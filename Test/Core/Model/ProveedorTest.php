@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ final class ProveedorTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $proveedor = new Proveedor();
         $proveedor->nombre = 'Test';
@@ -44,7 +45,7 @@ final class ProveedorTest extends TestCase
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
-    public function testCreateEmpty()
+    public function testCreateEmpty(): void
     {
         $proveedor = new Proveedor();
         $proveedor->nombre = '';
@@ -55,7 +56,7 @@ final class ProveedorTest extends TestCase
         $this->assertFalse($proveedor->exists(), 'proveedor-persisted');
     }
 
-    public function testHtmlOnFields()
+    public function testHtmlOnFields(): void
     {
         $proveedor = new Proveedor();
         $proveedor->nombre = '<test>';
@@ -81,7 +82,7 @@ final class ProveedorTest extends TestCase
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
-    public function testNotNullFields()
+    public function testNotNullFields(): void
     {
         // creamos un proveedor
         $proveedor = new Proveedor();
@@ -101,7 +102,7 @@ final class ProveedorTest extends TestCase
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
-    public function testBadEmail()
+    public function testBadEmail(): void
     {
         $proveedor = new Proveedor();
         $proveedor->nombre = 'Test';
@@ -121,7 +122,7 @@ final class ProveedorTest extends TestCase
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
-    public function testBadWeb()
+    public function testBadWeb(): void
     {
         $proveedor = new Proveedor();
         $proveedor->nombre = 'Test';
@@ -138,7 +139,7 @@ final class ProveedorTest extends TestCase
         $this->assertFalse($proveedor->save(), 'cliente-can-save-bad-web-3');
     }
 
-    public function testGoodWeb()
+    public function testGoodWeb(): void
     {
         $proveedor = new Proveedor();
         $proveedor->nombre = 'Test';
@@ -149,6 +150,38 @@ final class ProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
+    }
+
+    public function testVies(): void
+    {
+        // creamos un proveedor sin cif/nif
+        $proveedor = new Proveedor();
+        $proveedor->nombre = 'Test';
+        $proveedor->cifnif = '';
+        $this->assertTrue($proveedor->save());
+
+        $check1 = $proveedor->checkVies();
+        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+            $this->markTestSkipped('Vies service is not available');
+        }
+        $this->assertFalse($check1);
+
+        // asignamos dirección de Italia
+        $address = $proveedor->getDefaultAddress();
+        $address->codpais = 'ITA';
+        $this->assertTrue($address->save());
+
+        // asignamos un cif/nif incorrecto
+        $proveedor->cifnif = '12345678A';
+        $this->assertFalse($proveedor->checkVies());
+
+        // asignamos un cif/nif correcto
+        $proveedor->cifnif = '02839750995';
+        $this->assertTrue($proveedor->checkVies());
+
+        // eliminamos
+        $this->assertTrue($address->delete());
+        $this->assertTrue($proveedor->delete());
     }
 
     protected function tearDown(): void

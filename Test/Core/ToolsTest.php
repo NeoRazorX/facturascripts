@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
@@ -42,10 +43,37 @@ final class ToolsTest extends TestCase
         $this->assertNull(Tools::config('test1234'));
     }
 
+    public function testDateFunctions()
+    {
+        $date = '01-01-2019';
+        $time = strtotime($date);
+
+        $dateTime = '01-01-2019 12:00:00';
+        $time2 = strtotime($dateTime);
+
+        $date3 = '2020-10-07';
+        $tim3 = strtotime($date3);
+
+        $dateTime2 = '2020-05-17 12:00:00';
+        $time4 = strtotime($dateTime2);
+
+        $this->assertEquals($date, Tools::date($date));
+        $this->assertEquals($date, Tools::timeToDate($time));
+        $this->assertEquals($date, Tools::date($dateTime));
+        $this->assertEquals($date, Tools::timeToDate($time2));
+        $this->assertEquals('07-10-2020', Tools::date($date3));
+        $this->assertEquals('07-10-2020', Tools::timeToDate($tim3));
+
+        $this->assertEquals($dateTime, Tools::dateTime($dateTime));
+        $this->assertEquals($dateTime, Tools::timeToDateTime($time2));
+        $this->assertEquals('17-05-2020 12:00:00', Tools::dateTime($dateTime2));
+        $this->assertEquals('17-05-2020 12:00:00', Tools::timeToDateTime($time4));
+    }
+
     public function testFolderFunctions()
     {
         $this->assertEquals(FS_FOLDER, Tools::folder());
-        $this->assertEquals(FS_FOLDER . '/Test', Tools::folder('Test'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('Test'));
 
         // creamos la carpeta MyFiles/Test/Folder1
         $folder1 = Tools::folder('MyFiles', 'Test', 'Folder1');
@@ -60,12 +88,12 @@ final class ToolsTest extends TestCase
         file_put_contents(Tools::folder('MyFiles', 'Test', 'Folder1', 'file4.txt'), 'test');
 
         // comprobamos que existen los archivos
-        $fileListRecursive = ['Folder1', 'Folder1/file4.txt', 'file1.txt', 'file2.txt', 'file3.txt'];
-        $this->assertEquals($fileListRecursive, Tools::folderScan('MyFiles/Test'));
+        $fileListRecursive = ['Folder1', 'Folder1'.DIRECTORY_SEPARATOR.'file4.txt', 'file1.txt', 'file2.txt', 'file3.txt'];
+        $this->assertEquals($fileListRecursive, Tools::folderScan('MyFiles/Test', true));
 
         // sin recursividad
         $fileList = ['Folder1', 'file1.txt', 'file2.txt', 'file3.txt'];
-        $results1 = Tools::folderScan('MyFiles/Test', false);
+        $results1 = Tools::folderScan('MyFiles/Test');
         $this->assertEquals($fileList, array_values($results1));
 
         // excluyendo file1.txt
@@ -77,7 +105,7 @@ final class ToolsTest extends TestCase
         $this->assertTrue(Tools::folderCopy('MyFiles/Test', 'MyFiles/Test2'));
 
         // comprobamos que existen los archivos
-        $this->assertEquals($fileListRecursive, Tools::folderScan('MyFiles/Test2'));
+        $this->assertEquals($fileListRecursive, Tools::folderScan('MyFiles/Test2', true));
 
         // eliminamos la carpeta MyFiles/Test
         $this->assertTrue(Tools::folderDelete('MyFiles/Test'));
@@ -94,9 +122,45 @@ final class ToolsTest extends TestCase
         $this->assertEquals($html, Tools::fixHtml($noHtml));
     }
 
+    public function testRandomString()
+    {
+        $this->assertEquals(10, strlen(Tools::randomString(10)));
+        $this->assertEquals(20, strlen(Tools::randomString(20)));
+        $this->assertEquals(30, strlen(Tools::randomString(30)));
+        $this->assertEquals(40, strlen(Tools::randomString(40)));
+        $this->assertEquals(50, strlen(Tools::randomString(50)));
+    }
+
     public function testSettings()
     {
         $this->assertEquals(AppSettings::get('default', 'codpais'), Tools::settings('default', 'codpais'));
+
+        // nos guardamos el valor actual
+        $value = Tools::settings('default', 'codpais');
+
+        // cambiamos el valor
+        Tools::settingsSet('default', 'codpais', '222');
+
+        // comprobamos que se ha cambiado
+        $this->assertEquals('222', Tools::settings('default', 'codpais'));
+
+        // guardamos los cambios
+        $this->assertTrue(Tools::settingsSave());
+
+        // comprobamos que se ha cambiado
+        $settings = new Settings();
+        $this->assertTrue($settings->loadFromCode('default'));
+        $this->assertEquals('222', $settings->properties['codpais']);
+
+        // volvemos a poner el valor original
+        Tools::settingsSet('default', 'codpais', $value);
+
+        // guardamos los cambios
+        $this->assertTrue(Tools::settingsSave());
+
+        // comprobamos que se ha cambiado
+        $settings->loadFromCode('default');
+        $this->assertEquals($value, $settings->properties['codpais']);
     }
 
     public function testSlug()
@@ -128,5 +192,15 @@ final class ToolsTest extends TestCase
         $this->assertEquals("Lorem ipsum dolor sit amet, consectetur...", Tools::textBreak($text, 44));
         $this->assertEquals("Lorem ipsum dolor sit amet,...", Tools::textBreak($text, 30));
         $this->assertEquals("Lorem ipsum dolor sit amet,(...)", Tools::textBreak($text, 32, '(...)'));
+    }
+
+    public function testBytes()
+    {
+        $this->assertEquals('0 bytes', Tools::bytes(0, 0));
+        $this->assertEquals('1.0 byte', Tools::bytes(1, 1));
+        $this->assertEquals('2.00 bytes', Tools::bytes(2, 2));
+        $this->assertEquals('1.0 KB', Tools::bytes(1025, 1));
+        $this->assertEquals('1 MB', Tools::bytes(1048577, 0));
+        $this->assertEquals('1.00 GB', Tools::bytes(1073741825));
     }
 }

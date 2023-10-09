@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,11 @@ use FacturaScripts\Dinamic\Model\Pais;
 
 final class Paises implements DataSrcInterface
 {
+    const MIEMBROS_UE = [
+        'DE', 'AT', 'BE', 'BG', 'CZ', 'CY', 'HR', 'DK', 'SK', 'SI', 'EE', 'FI', 'FR', 'GR', 'HU', 'IE', 'IT', 'LV',
+        'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'GB', 'ES'
+    ];
+
     private static $list;
 
     /**
@@ -73,5 +78,16 @@ final class Paises implements DataSrcInterface
         }
 
         return new Pais();
+    }
+
+    public static function miembroUE($codpais): bool
+    {
+        $iso = self::get($codpais)->codiso;
+        return self::miembroUEbyIso($iso);
+    }
+
+    public static function miembroUEbyIso($iso): bool
+    {
+        return in_array($iso, self::MIEMBROS_UE);
     }
 }

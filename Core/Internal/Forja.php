@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Internal;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\Tools;
 
 final class Forja
 {
@@ -41,7 +41,7 @@ final class Forja
             self::$builds = Http::get(self::BUILDS_URL)->setTimeout(10)->json();
         }
 
-        return self::$builds;
+        return self::$builds ?? [];
     }
 
     public static function canUpdateCore(): bool
@@ -51,7 +51,7 @@ final class Forja
                 return true;
             }
 
-            if (false === AppSettings::get('default', 'enableupdatesbeta', false)) {
+            if (false === Tools::settings('default', 'enableupdatesbeta', false)) {
                 continue;
             }
 
@@ -91,6 +91,6 @@ final class Forja
             self::$pluginList = Http::get(self::PLUGIN_LIST_URL)->setTimeout(10)->json();
         }
 
-        return self::$pluginList;
+        return self::$pluginList ?? [];
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2022 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2023 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,12 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
+use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
+use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
+
 /**
  * A group of customers, which may be associated with a rate.
  *
@@ -26,36 +32,52 @@ namespace FacturaScripts\Core\Model;
  */
 class GrupoClientes extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Primary key.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codgrupo;
 
-    /**
-     * Accounting code.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codsubcuenta;
 
-    /**
-     * Code of the associated rate, if any.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codtarifa;
 
-    /**
-     * Group name.
-     *
-     * @var string
-     */
+    /** @var string */
     public $nombre;
+
+    public function getSubcuenta(string $codejercicio, bool $crear): Subcuenta
+    {
+        // si no tiene una subcuenta asignada, devolvemos una vacía
+        if (empty($this->codsubcuenta)) {
+            return new DinSubcuenta();
+        }
+
+        // buscamos la subcuenta para el ejercicio
+        $subAccount = new DinSubcuenta();
+        $where = [
+            new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
+            new DataBaseWhere('codejercicio', $codejercicio),
+        ];
+        if ($subAccount->loadFromCode('', $where)) {
+            return $subAccount;
+        }
+
+        // no hemos encontrado la subcuenta
+        // si no queremos crearla, devolvemos una vacía
+        if (false === $crear) {
+            return new DinSubcuenta();
+        }
+
+        // buscamos la cuenta especial
+        $special = new DinCuentaEspecial();
+        if (false === $special->loadFromCode(DinCliente::SPECIAL_ACCOUNT)) {
+            return new DinSubcuenta();
+        }
+
+        // ahora creamos la subcuenta
+        return $special->getCuenta($codejercicio)->createSubcuenta($this->codsubcuenta, $this->nombre);
+    }
 
     public function install(): string
     {
@@ -83,14 +105,14 @@ class GrupoClientes extends Base\ModelClass
     public function test(): bool
     {
         if (!empty($this->codgrupo) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codgrupo)) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codgrupo, '%column%' => 'codgrupo', '%min%' => '1', '%max%' => '6']
             );
             return false;
         }
 
-        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
+        $this->nombre = Tools::noHtml($this->nombre);
         return parent::test();
     }
 

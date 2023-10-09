@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,14 +28,13 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
 /**
  * Controller to edit a single item from the Cliente model
  *
- * @author       Carlos García Gómez        <carlos@facturascripts.com>
+ * @author       Carlos García Gómez           <carlos@facturascripts.com>
  * @author       Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author       Fco. Antonio Moreno Pérez  <famphuelva@gmail.com>
- * @collaborator Daniel Fernández Giménez   <hola@danielfg.es>
+ * @author       Fco. Antonio Moreno Pérez     <famphuelva@gmail.com>
+ * @collaborator Daniel Fernández Giménez      <hola@danielfg.es>
  */
 class EditCliente extends ComercialContactController
 {
-
     /**
      * Returns the customer's risk on pending delivery notes.
      *
@@ -95,6 +94,9 @@ class EditCliente extends ComercialContactController
     protected function createDocumentView(string $viewName, string $model, string $label)
     {
         $this->createCustomerListView($viewName, $model, $label);
+
+        // botones
+        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonGroupDocument($viewName);
         $this->addButtonApproveDocument($viewName);
     }
@@ -102,6 +104,9 @@ class EditCliente extends ComercialContactController
     protected function createInvoiceView(string $viewName)
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
+
+        // botones
+        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonLockInvoice($viewName);
     }
 
@@ -182,7 +187,8 @@ class EditCliente extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
-        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $mainViewName = $this->getMainViewName();
+        $codcliente = $this->getViewModelValue($mainViewName, 'codcliente');
         $where = [new DataBaseWhere('codcliente', $codcliente)];
 
         switch ($viewName) {
@@ -194,8 +200,12 @@ class EditCliente extends ComercialContactController
                 $view->loadData('', $where, ['idcontacto' => 'DESC']);
                 break;
 
-            case 'ListAlbaranCliente':
             case 'ListFacturaCliente':
+                $view->loadData('', $where);
+                $this->addButtonGenerateAccountingInvoices($viewName, $codcliente);
+                break;
+
+            case 'ListAlbaranCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
             case 'ListReciboCliente':
@@ -208,9 +218,30 @@ class EditCliente extends ComercialContactController
                 $view->loadData('', $where);
                 break;
 
+            case $mainViewName:
+                parent::loadData($viewName, $view);
+                $this->loadLanguageValues($viewName);
+                break;
+
             default:
                 parent::loadData($viewName, $view);
                 break;
+        }
+    }
+
+    /**
+     * Load the available language values from translator.
+     */
+    protected function loadLanguageValues(string $viewName)
+    {
+        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
+            $langs = [];
+            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+                $langs[] = ['value' => $key, 'title' => $value];
+            }
+
+            $columnLangCode->widget->setValuesFromArray($langs, false, true);
         }
     }
 

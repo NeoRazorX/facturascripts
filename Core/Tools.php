@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Model\Settings;
 
@@ -36,6 +35,9 @@ class Tools
         'î' => 'i', 'ï' => 'i', 'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o',
         'ø' => 'o', 'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y', 'Ŕ' => 'R', 'ŕ' => 'r'
     ];
+    const DATE_STYLE = 'd-m-Y';
+    const DATETIME_STYLE = 'd-m-Y H:i:s';
+    const HOUR_STYLE = 'H:i:s';
     const HTML_CHARS = ['<', '>', '"', "'"];
     const HTML_REPLACEMENTS = ['&lt;', '&gt;', '&quot;', '&#39;'];
 
@@ -61,12 +63,12 @@ class Tools
 
     public static function date(?string $date = null): string
     {
-        return empty($date) ? date('d-m-Y') : date('d-m-Y', strtotime($date));
+        return empty($date) ? date(self::DATE_STYLE) : date(self::DATE_STYLE, strtotime($date));
     }
 
     public static function dateTime(?string $date = null): string
     {
-        return empty($date) ? date('d-m-Y H:i:s') : date('d-m-Y H:i:s', strtotime($date));
+        return empty($date) ? date(self::DATETIME_STYLE) : date(self::DATETIME_STYLE, strtotime($date));
     }
 
     public static function fixHtml(?string $text = null): ?string
@@ -121,10 +123,10 @@ class Tools
             return rmdir($folder);
         }
 
-        return unlink($folder);
+        return file_exists($folder) ? unlink($folder) : true;
     }
 
-    public static function folderScan(string $folder, bool $recursive = true, array $exclude = ['.DS_Store', '.well-known']): array
+    public static function folderScan(string $folder, bool $recursive = false, array $exclude = ['.DS_Store', '.well-known']): array
     {
         $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
         if (false === is_array($scan)) {
@@ -154,7 +156,7 @@ class Tools
 
     public static function hour(?string $date = null): string
     {
-        return empty($date) ? date('H:i:s') : date('H:i:s', strtotime($date));
+        return empty($date) ? date(self::HOUR_STYLE) : date(self::HOUR_STYLE, strtotime($date));
     }
 
     public static function lang(string $lang = ''): Translator
@@ -230,6 +232,41 @@ class Tools
         return self::$settings[$group][$key];
     }
 
+    public static function settingsSave(): bool
+    {
+        if (empty(self::$settings)) {
+            return true;
+        }
+
+        $settingsModel = new Settings();
+        foreach ($settingsModel->all([], [], 0, 0) as $item) {
+            if (!isset(self::$settings[$item->name])) {
+                continue;
+            }
+
+            $item->properties = self::$settings[$item->name];
+            if (false === $item->save()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static function settingsSet(string $group, string $key, $value): void
+    {
+        // cargamos las opciones si no están cargadas
+        if (empty(self::$settings)) {
+            $settingsModel = new Settings();
+            foreach ($settingsModel->all([], [], 0, 0) as $item) {
+                self::$settings[$item->name] = $item->properties;
+            }
+        }
+
+        // asignamos el valor
+        self::$settings[$group][$key] = $value;
+    }
+
     public static function slug(string $text, string $separator = '-', int $maxLength = 0): string
     {
         $text = self::ascii($text);
@@ -273,5 +310,34 @@ class Tools
         }
 
         return $result;
+    }
+
+    public static function timeToDate(int $time): string
+    {
+        return date(self::DATE_STYLE, $time);
+    }
+
+    public static function timeToDateTime(int $time): string
+    {
+        return date(self::DATETIME_STYLE, $time);
+    }
+
+    public static function bytes($size, int $decimals = 2): string
+    {
+        if ($size >= 1073741824) {
+            $size = number_format($size / 1073741824, $decimals) . ' GB';
+        } elseif ($size >= 1048576) {
+            $size = number_format($size / 1048576, $decimals) . ' MB';
+        } elseif ($size >= 1024) {
+            $size = number_format($size / 1024, $decimals) . ' KB';
+        } elseif ($size > 1) {
+            $size = number_format($size, $decimals) . ' bytes';
+        } elseif ($size == 1) {
+            $size = number_format(1, $decimals) . ' byte';
+        } else {
+            $size = number_format(0, $decimals) . ' bytes';
+        }
+
+        return $size;
     }
 }

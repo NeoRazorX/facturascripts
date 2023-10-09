@@ -148,6 +148,11 @@
         <type>character varying(100)</type>
     </column>
     <column>
+        <name>numdocs</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <column>
         <name>numero</name>
         <type>character varying(12)</type>
         <null>NO</null>
@@ -161,6 +166,10 @@
         <type>text</type>
     </column>
     <column>
+        <name>operacion</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
         <name>provincia</name>
         <type>character varying(100)</type>
     </column>
@@ -170,6 +179,10 @@
     </column>
     <column>
         <name>total</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>totalbeneficio</name>
         <type>double precision</type>
     </column>
     <column>

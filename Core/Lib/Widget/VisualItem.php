@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Translator;
 
 /**
  * Description of VisualItem

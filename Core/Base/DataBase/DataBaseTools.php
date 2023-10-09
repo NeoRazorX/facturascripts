@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,6 @@ use SimpleXMLElement;
  */
 class DataBaseTools
 {
-
     /**
      * DataBase object.
      *
@@ -135,6 +134,15 @@ class DataBaseTools
         foreach ($xml->column as $col) {
             $columns[$key]['name'] = (string)$col->name;
             $columns[$key]['type'] = (string)$col->type;
+
+            if ($col->type == 'serial') {
+                $columns[$key]['type'] = (string)$col->type;
+                $columns[$key]['null'] = 'NO';
+                $columns[$key]['default'] = null;
+                ++$key;
+                continue;
+            }
+
             $columns[$key]['null'] = $col->null && strtolower($col->null) === 'no' ? 'NO' : 'YES';
             $columns[$key]['default'] = $col->default === '' ? null : (string)$col->default;
             ++$key;

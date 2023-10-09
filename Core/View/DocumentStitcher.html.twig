@@ -22,42 +22,55 @@
 
 {% block body %}
     <form action="{{ fsc.url() }}" method="post" name="formDocStitcher">
+        {{ formToken() }}
         <input type="hidden" name="model" value="{{ fsc.modelName }}"/>
-        <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
         <input type="hidden" name="status"/>
         <div class="container-fluid">
             <div class="row">
                 <div class="col">
                     <h1 class="h3">
                         <i class="{{ pageData.icon }}" aria-hidden="true"></i>
-                        {{ i18n.trans(pageData.title) }}
+                        {{ trans(pageData.title) }}
                     </h1>
-                    <p>{{ i18n.trans('group-or-split-p') }}</p>
+                    <p>{{ trans('group-or-split-p') }}</p>
                 </div>
             </div>
-            <div class="row">
+            <div class="form-row">
+                <div class="col-lg-2 col-sm-6 mb-2">
+                    <select name="codserie" class="form-control">
+                        <option value="">{{ trans('serie') }}</option>
+                        <option value="">------</option>
+                        {% for item in fsc.getSeries() %}
+                            {% if item.code is same as(fsc.documents[0].codserie) %}
+                                <option value="{{ item.code }}" selected>{{ item.description }}</option>
+                            {% else %}
+                                <option value="{{ item.code }}">{{ item.description }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
                 <div class="col-lg-2 col-sm-6 mb-2">
                     <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}" class="form-control"
                            autocomplete="off"/>
                 </div>
                 <div class="col-lg-2 col-sm-6 mb-2">
                     <select name="extralines" class="form-control">
-                        <option value="true">{{ i18n.trans('add-extra-lines') }}</option>
-                        <option value="false">{{ i18n.trans('no-extra-lines') }}</option>
+                        <option value="true">{{ trans('add-extra-lines') }}</option>
+                        <option value="false">{{ trans('no-extra-lines') }}</option>
                     </select>
                 </div>
                 <div class="col mb-2">
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-magic fa-fw"></i> {{ i18n.trans('generate') }}
+                            <i class="fas fa-magic fa-fw"></i> {{ trans('generate') }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             {% for status in fsc.getAvailableStatus() %}
                                 <button type="button" onclick="sendFormData('{{ status.primaryColumnValue() }}');"
                                         class="dropdown-item">
                                     <i class="fas fa-file fa-fw" aria-hidden="true"></i>
-                                    {{ i18n.trans(status.generadoc) }}
+                                    {{ trans(status.generadoc) }}
                                 </button>
                             {% endfor %}
                         </div>
@@ -67,14 +80,14 @@
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-check-square fa-fw"></i> {{ i18n.trans('selected-quantity') }}
+                            <i class="fas fa-check-square fa-fw"></i> {{ trans('selected-quantity') }}
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="#" onClick="return selectNone();">
-                                <i class="far fa-square fa-fw"></i> {{ i18n.trans('select-none') }}
+                                <i class="far fa-square fa-fw"></i> {{ trans('select-none') }}
                             </a>
                             <a class="dropdown-item" href="#" onClick="return selectAll();">
-                                <i class="fas fa-square fa-fw"></i> {{ i18n.trans('select-all') }}
+                                <i class="fas fa-square fa-fw"></i> {{ trans('select-all') }}
                             </a>
                         </div>
                     </div>
@@ -84,10 +97,10 @@
                 <div class="col mt-3">
                     {% for doc in fsc.documents %}
                         <input type="hidden" name="code[]" value="{{ doc.primaryColumnValue() }}"/>
-                        {{ _self.documentCard(doc, fsc, i18n) }}
+                        {{ _self.documentCard(doc, fsc) }}
                     {% else %}
                         <div class="alert alert-warning" role="alert">
-                            {{ i18n.trans('no-data') }}
+                            {{ trans('no-data') }}
                         </div>
                     {% endfor %}
                 </div>
@@ -104,10 +117,9 @@
                             <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse"
                                     data-target="#moreDocsCollapse" aria-expanded="{{ fsc.showFilters is same as(true) ? 'true' : 'false' }}">
                                 <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
-                                {{ i18n.trans('more') }}
+                                {{ trans('more') }}
                             </button>
-                            &nbsp;
-                            {{ i18n.trans('group-more-docs-p') }}
+                            &nbsp; {{ trans('group-more-docs-p') }}
                         </div>
                         <div class="collapse {{ fsc.showFilters is same as(true) ? 'show' : '' }}" id="moreDocsCollapse">
                             <div class="card-body">
@@ -143,11 +155,11 @@
                                         <thead>
                                         <tr>
                                             <th><input type="checkbox" onclick="checkAllDoc(this)" class="ml-1"></th>
-                                            <th>{{ i18n.trans('code') }}</th>
-                                            <th>{{ i18n.trans('observations') }}</th>
-                                            <th>{{ i18n.trans('payment-method') }}</th>
-                                            <th class="text-right">{{ i18n.trans('total') }}</th>
-                                            <th class="text-right">{{ i18n.trans('date') }}</th>
+                                            <th>{{ trans('code') }}</th>
+                                            <th>{{ trans('observations') }}</th>
+                                            <th>{{ trans('payment-method') }}</th>
+                                            <th class="text-right">{{ trans('total') }}</th>
+                                            <th class="text-right">{{ trans('date') }}</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -170,7 +182,7 @@
                                         {% else %}
                                             <tr class="table-warning">
                                                 <td></td>
-                                                <td colspan="5">{{ i18n.trans('no-data') }}</td>
+                                                <td colspan="4">{{ trans('no-data') }}</td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>
@@ -178,7 +190,7 @@
                                 </div>
                                 <div class="card-body">
                                     <button type="submit" class="btn btn-success">
-                                        {{ i18n.trans('add') }}
+                                        {{ trans('add') }}
                                     </button>
                                 </div>
                             </form>
@@ -236,14 +248,14 @@
     </script>
 {% endblock %}
 
-{% macro documentCard(doc, fsc, i18n) %}
+{% macro documentCard(doc, fsc) %}
     <div class="card shadow mb-3">
         <div class="p-2">
             <div class="row">
                 <div class="col-sm">
                     <a href="{{ doc.url() }}" class="h5">
                         <i class="fas fa-file fa-fw" aria-hidden="true"></i>
-                        {{ i18n.trans(fsc.modelName) }} {{ doc.codigo }}
+                        {{ trans(fsc.modelName) }} {{ doc.codigo }}
                     </a>
                     {% if doc.observaciones %}
                         <p>{{ doc.observaciones | raw }}</p>
@@ -255,11 +267,11 @@
                         &nbsp;
                         <i class="far fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
                         <br/>
-                        {{ i18n.trans('net') }}: {{ fsc.toolBox().coins().format(doc.neto) }}
+                        {{ trans('net') }}: {{ fsc.toolBox().coins().format(doc.neto) }}
                         &nbsp;
-                        {{ i18n.trans('taxes') }}: {{ fsc.toolBox().coins().format(doc.totaliva) }}
+                        {{ trans('taxes') }}: {{ fsc.toolBox().coins().format(doc.totaliva) }}
                         &nbsp;
-                        {{ i18n.trans('total') }}: {{ fsc.toolBox().coins().format(doc.total) }}
+                        {{ trans('total') }}: {{ fsc.toolBox().coins().format(doc.total) }}
                     </p>
                 </div>
             </div>
@@ -268,11 +280,11 @@
             <table class="table table-sm table-hover mb-0">
                 <thead>
                 <tr>
-                    <th>{{ i18n.trans('reference') }}</th>
-                    <th>{{ i18n.trans('description') }}</th>
-                    <th class="text-right td-quantity">{{ i18n.trans('quantity') }}</th>
-                    <th class="text-right td-quantity">{{ i18n.trans('quantity-served') }}</th>
-                    <th class="text-right td-quantity">{{ i18n.trans('selected-quantity') }}</th>
+                    <th>{{ trans('reference') }}</th>
+                    <th>{{ trans('description') }}</th>
+                    <th class="text-right td-quantity">{{ trans('quantity') }}</th>
+                    <th class="text-right td-quantity">{{ trans('quantity-served') }}</th>
+                    <th class="text-right td-quantity">{{ trans('selected-quantity') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -292,13 +304,13 @@
                         <td class="{{ newQuantity == 0 ? 'table-warning' : 'table-success' }}">
                             <input type="hidden" class="to_serve" value="{{ newQuantity }}"/>
                             <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}"
-                                   value="{{ newQuantity }}" step="any"
+                                   value="{{ newQuantity }}" step="any" min="0" max="{{ line.cantidad }}"
                                    class="form-control text-right to_be_served" autocomplete="off"/>
                         </td>
                     </tr>
                 {% else %}
                     <tr class="table-warning">
-                        <td colspan="5">{{ i18n.trans('no-data') }}</td>
+                        <td colspan="5">{{ trans('no-data') }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

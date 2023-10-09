@@ -47,12 +47,12 @@ class ListAlmacen extends ListController
         $this->createViewWarehouse();
     }
 
-    protected function createViewWarehouse(string $viewName = 'ListAlmacen')
+    protected function createViewWarehouse(string $viewName = 'ListAlmacen'): void
     {
         $this->addView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse');
         $this->addSearchFields($viewName, ['apartado', 'ciudad', 'codalmacen', 'codpostal', 'direccion', 'nombre', 'provincia']);
         $this->addOrderBy($viewName, ['codalmacen'], 'code');
-        $this->addOrderBy($viewName, ['nombre'], 'name');
+        $this->addOrderBy($viewName, ['nombre'], 'name', 1);
 
         // Filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());

@@ -64,6 +64,9 @@ class EditCuenta extends EditController
     {
         $this->addListView($viewName, 'Subcuenta', 'subaccounts');
         $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code', 1);
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
+        $this->views[$viewName]->addOrderBy(['debe'], 'debit');
+        $this->views[$viewName]->addOrderBy(['haber'], 'credit');
         $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
         $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
 
@@ -137,9 +140,14 @@ class EditCuenta extends EditController
         }
 
         // tablas con los listados
+        $options = [
+            'debe' => ['display' => 'right', 'css' => 'nowrap'],
+            'haber' => ['display' => 'right', 'css' => 'nowrap'],
+            'saldo' => ['display' => 'right', 'css' => 'nowrap'],
+        ];
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);
-            $this->exportManager->addTablePage($headers, $data);
+            $this->exportManager->addTablePage($headers, $data, $options);
         }
         $this->exportManager->show($this->response);
     }

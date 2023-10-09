@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ final class AgenteTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $agent = new Agente();
         $agent->codagente = 'Test';
@@ -39,7 +40,7 @@ final class AgenteTest extends TestCase
         $this->assertTrue($agent->delete(), 'agent-cant-delete');
     }
 
-    public function testCreateWithNewCode()
+    public function testCreateWithNewCode(): void
     {
         $agent = new Agente();
         $agent->nombre = 'Test Agent with new code';
@@ -48,7 +49,7 @@ final class AgenteTest extends TestCase
         $this->assertTrue($agent->delete(), 'agent-cant-delete');
     }
 
-    public function testNotNullFields()
+    public function testNotNullFields(): void
     {
         $agent = new Agente();
         $agent->codagente = 'Test';
@@ -67,7 +68,7 @@ final class AgenteTest extends TestCase
         $this->assertTrue($agent->delete(), 'agent-cant-delete-2');
     }
 
-    public function testEmailField()
+    public function testEmailField(): void
     {
         // probamos con un email mal formado
         $agent = new Agente();
@@ -83,6 +84,36 @@ final class AgenteTest extends TestCase
         // eliminamos
         $this->assertTrue($agent->getContact()->delete(), 'contacto-cant-delete');
         $this->assertTrue($agent->delete(), 'agent-cant-delete-3');
+    }
+
+    public function testVies(): void
+    {
+        // creamos un agente sin cifnif
+        $agent = new Agente();
+        $agent->codagente = 'Test';
+        $agent->nombre = 'Test Agent';
+
+        $check1 = $agent->checkVies();
+        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+            $this->markTestSkipped('Vies service is not available');
+        }
+        $this->assertFalse($check1);
+
+        // asignamos un nif incorrecto
+        $agent->cifnif = '12345678A';
+        $check2 = $agent->checkVies();
+        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+            $this->markTestSkipped('Vies service is not available');
+        }
+        $this->assertFalse($check2);
+
+        // asignamos un cif correcto
+        $agent->cifnif = 'B87533303';
+        $check3 = $agent->checkVies();
+        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+            $this->markTestSkipped('Vies service is not available');
+        }
+        $this->assertTrue($check3);
     }
 
     protected function tearDown(): void
