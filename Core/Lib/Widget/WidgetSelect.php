@@ -43,6 +43,9 @@ class WidgetSelect extends BaseWidget
     /** @var string */
     protected $fieldtitle;
 
+    /** @var int */
+    protected $limit;
+
     /** @var string */
     protected $parent;
 
@@ -94,7 +97,8 @@ class WidgetSelect extends BaseWidget
             'source' => $this->source,
             'fieldcode' => $this->fieldcode,
             'fieldfilter' => $this->fieldfilter,
-            'fieldtitle' => $this->fieldtitle
+            'fieldtitle' => $this->fieldtitle,
+            'limit' => $this->limit
         ];
     }
 
@@ -225,10 +229,9 @@ class WidgetSelect extends BaseWidget
 
         if ($this->readonly()) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-                . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>';
+                . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly/>';
         }
 
-        $found = false;
         $html = '<select'
             . ' name="' . $this->fieldname . '"'
             . ' id="' . $this->id . '"'
@@ -241,14 +244,19 @@ class WidgetSelect extends BaseWidget
             . ' data-fieldcode="' . $this->fieldcode . '"'
             . ' data-fieldtitle="' . $this->fieldtitle . '"'
             . ' data-fieldfilter="' . $this->fieldfilter . '"'
+            . ' data-limit="' . $this->limit . '"'
             . '>';
+
+        $found = false;
+        $selected = false;
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
             // don't use strict comparison (===)
-            if ($option['value'] == $this->value) {
+            if ($option['value'] == $this->value && !$selected) {
                 $found = true;
-                $html .= '<option value="' . $option['value'] . '" selected="">' . $title . '</option>';
+                $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
+                $selected = true;
                 continue;
             }
 
@@ -257,7 +265,7 @@ class WidgetSelect extends BaseWidget
 
         // value not found?
         if (!$found && !empty($this->value)) {
-            $html .= '<option value="' . $this->value . '" selected="">'
+            $html .= '<option value="' . $this->value . '" selected>'
                 . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
                 . '</option>';
         }
@@ -278,7 +286,9 @@ class WidgetSelect extends BaseWidget
         $this->fieldcode = $child['fieldcode'] ?? 'id';
         $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
+        $this->limit = $child['limit'] ?? CodeModel::ALL_LIMIT;
         if ($loadData && $this->source) {
+            static::$codeModel::setLimit($this->limit);
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
             $this->setValuesFromCodeModel($values, $this->translate);
         }

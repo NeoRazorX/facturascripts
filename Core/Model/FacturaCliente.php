@@ -33,6 +33,12 @@ class FacturaCliente extends Base\SalesDocument
     use Base\ModelTrait;
     use Base\InvoiceTrait;
 
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+        self::$dont_copy_fields[] = 'fechadevengo';
+    }
+
     public function clear()
     {
         parent::clear();

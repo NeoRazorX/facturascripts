@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
@@ -36,7 +37,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class BaseController extends Controller
 {
-
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
@@ -124,7 +124,7 @@ abstract class BaseController extends Controller
     public function addCustomView(string $viewName, $view)
     {
         if ($viewName !== $view->getViewName()) {
-            $this->toolBox()->log()->error('$viewName must be equals to $view->name');
+            Tools::log()->error('$viewName must be equals to $view->name');
             return;
         }
 
@@ -167,7 +167,11 @@ abstract class BaseController extends Controller
      */
     public function getSettings(string $viewName, string $property)
     {
-        return $this->views[$viewName]->settings[$property] ?? null;
+        if (isset($this->views[$viewName])) {
+            return $this->views[$viewName]->settings[$property] ?? null;
+        }
+
+        return null;
     }
 
     /**
@@ -213,9 +217,11 @@ abstract class BaseController extends Controller
      * @param string $property
      * @param mixed $value
      */
-    public function setSettings(string $viewName, string $property, $value)
+    public function setSettings(string $viewName, string $property, $value): void
     {
-        $this->views[$viewName]->settings[$property] = $value;
+        if (isset($this->views[$viewName])) {
+            $this->views[$viewName]->settings[$property] = $value;
+        }
     }
 
     /**
@@ -238,15 +244,14 @@ abstract class BaseController extends Controller
         }
 
         $results = [];
-        $utils = $this->toolBox()->utils();
         foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
-            $results[] = ['key' => $utils->fixHtml($value->code), 'value' => $utils->fixHtml($value->description)];
+            $results[] = ['key' => Tools::fixHtml($value->code), 'value' => Tools::fixHtml($value->description)];
         }
 
         if (empty($results) && '0' == $data['strict']) {
             $results[] = ['key' => $data['term'], 'value' => $data['term']];
         } elseif (empty($results)) {
-            $results[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-data')];
+            $results[] = ['key' => null, 'value' => Tools::lang()->trans('no-data')];
         }
 
         return $results;
@@ -295,7 +300,7 @@ abstract class BaseController extends Controller
     {
         // check user permissions
         if (false === $this->permissions->allowDelete || false === $this->views[$this->active]->settings['btnDelete']) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-delete');
+            Tools::log()->warning('not-allowed-delete');
             return false;
         } elseif (false === $this->validateFormToken()) {
             return false;
@@ -304,7 +309,7 @@ abstract class BaseController extends Controller
         $model = $this->views[$this->active]->model;
         $codes = $this->request->request->get('code', '');
         if (empty($codes)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return false;
         }
 
@@ -327,17 +332,17 @@ abstract class BaseController extends Controller
             $model->clear();
             $this->dataBase->commit();
             if ($numDeletes > 0) {
-                $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
+                Tools::log()->notice('record-deleted-correctly');
                 return true;
             }
         } elseif ($model->loadFromCode($codes) && $model->delete()) {
             // deleting a single row
-            $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
+            Tools::log()->notice('record-deleted-correctly');
             $model->clear();
             return true;
         }
 
-        $this->toolBox()->i18nLog()->warning('record-deleted-error');
+        Tools::log()->warning('record-deleted-error');
         $model->clear();
         return false;
     }
@@ -346,7 +351,7 @@ abstract class BaseController extends Controller
     {
         if (false === $this->views[$this->active]->settings['btnPrint']
             || false === $this->permissions->allowExport) {
-            $this->toolBox()->i18nLog()->warning('no-print-permission');
+            Tools::log()->warning('no-print-permission');
             return;
         }
 
@@ -385,7 +390,7 @@ abstract class BaseController extends Controller
         $column = $this->views[$viewName]->columnForField($fieldName);
         if (!empty($column)) {
             foreach ($column->widget->values as $value) {
-                $result[] = ['key' => $this->toolBox()->i18n()->trans($value['title']), 'value' => $value['value']];
+                $result[] = ['key' => Tools::lang()->trans($value['title']), 'value' => $value['value']];
             }
         }
         return $result;
@@ -415,6 +420,7 @@ abstract class BaseController extends Controller
      */
     protected function selectAction(): array
     {
+        $required = (bool)$this->request->get('required', false);
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
 
         $where = [];
@@ -423,15 +429,9 @@ abstract class BaseController extends Controller
         }
 
         $results = [];
-        $utils = $this->toolBox()->utils();
-        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $value) {
-            $results[] = ['key' => $utils->fixHtml($value->code), 'value' => $utils->fixHtml($value->description)];
+        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], !$required, $where) as $value) {
+            $results[] = ['key' => Tools::fixHtml($value->code), 'value' => Tools::fixHtml($value->description)];
         }
-
-        if (empty($results)) {
-            $results[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-data')];
-        }
-
         return $results;
     }
 }

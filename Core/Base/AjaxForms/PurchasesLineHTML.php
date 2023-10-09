@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,6 +34,7 @@ use FacturaScripts\Dinamic\Model\Variante;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class PurchasesLineHTML
 {
@@ -247,10 +248,19 @@ class PurchasesLineHTML
             return $model->getNewLine();
         }
 
+        // buscamos el código de barras en las variantes
         $variantModel = new Variante();
         $whereBarcode = [new DataBaseWhere('codbarras', $formData['fastli'])];
         foreach ($variantModel->all($whereBarcode) as $variante) {
             return $model->getNewProductLine($variante->referencia);
+        }
+
+        // buscamos el código de barras con los mods
+        foreach (self::$mods as $mod) {
+            $line = $mod->getFastLine($model, $formData);
+            if ($line) {
+                return $line;
+            }
         }
 
         ToolBox::i18nLog()->warning('product-not-found', ['%ref%' => $formData['fastli']]);
@@ -359,12 +369,12 @@ class PurchasesLineHTML
             . '</div>';
     }
 
-    private static function renderNewFields(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model): string
+    private static function renderNewModalFields(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
         foreach (self::$mods as $mod) {
-            foreach ($mod->newFields() as $field) {
+            foreach ($mod->newModalFields() as $field) {
                 if (false === in_array($field, $newFields)) {
                     $newFields[] = $field;
                 }
@@ -385,12 +395,12 @@ class PurchasesLineHTML
         return $html;
     }
 
-    private static function renderNewModalFields(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model): string
+    private static function renderNewFields(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
         foreach (self::$mods as $mod) {
-            foreach ($mod->newModalFields() as $field) {
+            foreach ($mod->newFields() as $field) {
                 if (false === in_array($field, $newFields)) {
                     $newFields[] = $field;
                 }

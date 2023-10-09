@@ -68,7 +68,7 @@ class ListCliente extends ListController
         $this->addOrderBy($viewName, ['iban'], 'iban');
         $this->addOrderBy($viewName, ['fmandato', 'codcuenta'], 'bank-mandate-date', 2);
 
-        // disable buttons
+        // desactivamos botones
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'checkBoxes', false);
@@ -78,7 +78,7 @@ class ListCliente extends ListController
     {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields($viewName, [
-            'apellidos', 'codpostal', 'descripcion', 'direccion', 'email', 'empresa', 'lastip',
+            'apartado', 'apellidos', 'codpostal', 'descripcion', 'direccion', 'email', 'empresa',
             'nombre', 'observaciones', 'telefono1', 'telefono2'
         ]);
         $this->addOrderBy($viewName, ['descripcion'], 'description');
@@ -86,7 +86,7 @@ class ListCliente extends ListController
         $this->addOrderBy($viewName, ['nombre'], 'name');
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date', 2);
 
-        // filters
+        // filtros
         $values = [
             [
                 'label' => Tools::lang()->trans('customers'),
@@ -115,6 +115,8 @@ class ListCliente extends ListController
             $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);
         }
 
+        $this->addFilterAutocomplete($viewName, 'codpostal', 'zip-code', 'codpostal', 'contactos', 'codpostal');
+
         $this->addFilterCheckbox($viewName, 'verificado', 'verified', 'verificado');
     }
 
@@ -131,7 +133,7 @@ class ListCliente extends ListController
             'telefono1', 'telefono2'
         ]);
 
-        // filters
+        // filtros
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::lang()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
             ['label' => Tools::lang()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
@@ -143,6 +145,9 @@ class ListCliente extends ListController
             ['label' => Tools::lang()->trans('company'), 'where' => [new DataBaseWhere('personafisica', false)]]
         ]);
 
+        $fiscalIds = $this->codeModel->all('clientes', 'tipoidfiscal', 'tipoidfiscal');
+        $this->addFilterSelect($viewName, 'tipoidfiscal', 'fiscal-id', 'tipoidfiscal', $fiscalIds);
+
         $groupValues = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
         $this->addFilterSelect($viewName, 'codgrupo', 'group', 'codgrupo', $groupValues);
 
@@ -152,6 +157,8 @@ class ListCliente extends ListController
 
         $vatRegimes = $this->codeModel->all('clientes', 'regimeniva', 'regimeniva');
         $this->addFilterSelect($viewName, 'regimeniva', 'vat-regime', 'regimeniva', $vatRegimes);
+
+        $this->addFilterNumber($viewName, 'riesgoalcanzado', 'current-risk', 'riesgoalcanzado');
     }
 
     protected function createViewGroups(string $viewName = 'ListGrupoClientes')

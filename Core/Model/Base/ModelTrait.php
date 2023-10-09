@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -77,7 +77,7 @@ trait ModelTrait
      * @param DataBase $dataBase
      * @param string $tableName
      */
-    protected function loadModelFields(DataBase &$dataBase, string $tableName)
+    protected function loadModelFields(DataBase &$dataBase, string $tableName): void
     {
         if (static::$fields) {
             return;
@@ -86,10 +86,18 @@ trait ModelTrait
         // read from the cache
         $key = 'model-fields-' . get_class($this);
         static::$fields = Cache::get($key);
-        if (is_null(static::$fields)) {
-            // empty value? Then get from the database and store on the cache
-            static::$fields = $dataBase->tableExists($tableName) ? $dataBase->getColumns($tableName) : [];
-            Cache::set($key, static::$fields);
+        if (is_array(static::$fields) && static::$fields) {
+            return;
         }
+
+        // table exists?
+        if (false === $dataBase->tableExists($tableName)) {
+            static::$fields = [];
+            return;
+        }
+
+        // get from the database and store on the cache
+        static::$fields = $dataBase->getColumns($tableName);
+        Cache::set($key, static::$fields);
     }
 }

@@ -55,15 +55,14 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public $descripcion;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $disableUpdateStock = false;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $disableUpdateTotals = false;
+
+    /** @var array */
+    protected static $dont_copy_fields = ['idlinea', 'orden', 'servido'];
 
     /**
      * Percentage of discount.
@@ -89,9 +88,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public $idlinea;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $idproducto;
 
     /**
@@ -157,9 +154,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public $servido;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $suplido;
 
     /**
@@ -212,6 +207,17 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public function documentColumnValue()
     {
         return $this->{$this->documentColumn()};
+    }
+
+    public static function dontCopyField(string $field): void
+    {
+        static::$dont_copy_fields[] = $field;
+    }
+
+    public static function dontCopyFields(): array
+    {
+        $more = [static::primaryColumn()];
+        return array_merge(static::$dont_copy_fields, $more);
     }
 
     public function getDisableUpdateStock(): bool

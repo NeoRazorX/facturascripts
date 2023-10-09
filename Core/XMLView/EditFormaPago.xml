@@ -48,8 +48,8 @@
                 </widget>
             </column>
             <column name="bank-account" numcolumns="3" titleurl="ListFormaPago?activetab=ListCuentaBanco" order="110">
-                <widget type="select" fieldname="codcuentabanco" onclick="EditCuentaBanco">
-                    <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion"/>
+                <widget type="select" fieldname="codcuentabanco" onclick="EditCuentaBanco" parent="idempresa">
+                    <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion" fieldfilter="idempresa"/>
                 </widget>
             </column>
             <column name="domiciled" numcolumns="2" order="120">

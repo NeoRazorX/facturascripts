@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,7 +33,6 @@ use FacturaScripts\Dinamic\Model\RoleAccess;
  */
 class EditContacto extends EditController
 {
-
     use DocFilesTrait;
 
     public function getImageUrl(): string
@@ -77,6 +76,17 @@ class EditContacto extends EditController
                 'label' => 'convert-into-supplier'
             ]);
         }
+    }
+
+    protected function checkViesAction(): bool
+    {
+        $model = $this->getModel();
+        if (false === $model->loadFromCode($this->request->get('code'))) {
+            return true;
+        }
+
+        $model->checkVies();
+        return true;
     }
 
     protected function createCustomerAction()
@@ -179,11 +189,14 @@ class EditContacto extends EditController
      *
      * @return bool
      */
-    protected function execPreviousAction($action)
+    protected function execPreviousAction($action): bool
     {
         switch ($action) {
             case 'add-file':
                 return $this->addFileAction();
+
+            case 'check-vies':
+                return $this->checkViesAction();
 
             case 'delete-file':
                 return $this->deleteFileAction();
@@ -242,9 +255,18 @@ class EditContacto extends EditController
             case $mainViewName:
                 parent::loadData($viewName, $view);
                 $this->loadLanguageValues($viewName);
-                if ($view->model->exists() && $this->permissions->allowUpdate) {
+                if (false === $view->model->exists()) {
+                    break;
+                }
+                if ($this->permissions->allowUpdate) {
                     $this->addConversionButtons($viewName, $view);
                 }
+                $this->addButton($viewName, [
+                    'action' => 'check-vies',
+                    'color' => 'info',
+                    'icon' => 'fas fa-check-double',
+                    'label' => 'check-vies'
+                ]);
                 break;
         }
     }

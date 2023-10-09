@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\ProductType;
 use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use FacturaScripts\Dinamic\Model\ProductoImagen as DinProductoImagen;
@@ -137,6 +138,7 @@ class Variante extends Base\ModelClass
         array_unshift(
             $where,
             new DataBaseWhere('LOWER(v.referencia)', $find . '%', 'LIKE'),
+            new DataBaseWhere('LOWER(v.referencia)', '%' . $find, 'LIKE', 'OR'),
             new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
             new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
         );
@@ -255,7 +257,16 @@ class Variante extends Base\ModelClass
 
     public function priceWithTax(): float
     {
-        return $this->precio * (100 + $this->getProducto()->getTax()->iva) / 100;
+        $product = $this->getProducto();
+
+        if ($product->tipo === ProductType::SECOND_HAND) {
+            $diff = $this->precio - $this->coste;
+            $newPrice = $this->precio + ($diff * $product->getTax()->iva / 100);
+            return round($newPrice, DinProducto::ROUND_DECIMALS);
+        }
+
+        $newPrice = $this->precio * (100 + $product->getTax()->iva) / 100;
+        return round($newPrice, DinProducto::ROUND_DECIMALS);
     }
 
     public static function primaryColumn(): string
@@ -270,6 +281,10 @@ class Variante extends Base\ModelClass
 
     public function save(): bool
     {
+        $this->precio = $this->precio ?: 0.0;
+        $this->coste = $this->coste ?: 0.0;
+        $this->margen = $this->margen ?: 0.0;
+
         if ($this->margen > 0) {
             $newPrice = $this->coste * (100 + $this->margen) / 100;
             $this->precio = round($newPrice, DinProducto::ROUND_DECIMALS);
@@ -283,9 +298,19 @@ class Variante extends Base\ModelClass
         return false;
     }
 
-    public function setPriceWithTax(float $price)
+    public function setPriceWithTax(float $price): void
     {
-        $newPrice = (100 * $price) / (100 + $this->getProducto()->getTax()->iva);
+        $product = $this->getProducto();
+        $this->margen = 0;
+
+        if ($product->tipo === ProductType::SECOND_HAND) {
+            $price -= $this->coste;
+            $newPrice = $this->coste + (100 * $price) / (100 + $product->getTax()->iva);
+            $this->precio = round($newPrice, DinProducto::ROUND_DECIMALS);
+            return;
+        }
+
+        $newPrice = (100 * $price) / (100 + $product->getTax()->iva);
         $this->precio = round($newPrice, DinProducto::ROUND_DECIMALS);
     }
 

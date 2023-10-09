@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -191,6 +191,7 @@ abstract class ListController extends BaseController
      * @param string $viewName
      * @param string $key (Filter identifier)
      * @param array $values (Values to show)
+     * @param string $label (Human reader description)
      *
      * Example of values:
      *   [
@@ -199,9 +200,9 @@ abstract class ListController extends BaseController
      *    ['label' => 'All records', 'where' => []],
      *   ]
      */
-    protected function addFilterSelectWhere(string $viewName, string $key, array $values)
+    protected function addFilterSelectWhere(string $viewName, string $key, array $values, string $label = '')
     {
-        $this->views[$viewName]->addFilterSelectWhere($key, $values);
+        $this->views[$viewName]->addFilterSelectWhere($key, $values, $label);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,11 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\Receipt;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 
 /**
  * Contains common utilities for grouping and collecting documents.
@@ -31,10 +33,11 @@ use FacturaScripts\Core\Model\Base\TransformerDocument;
  */
 trait ListBusinessActionTrait
 {
-
     abstract public function addButton(string $viewName, array $btnArray);
 
     abstract public function redirect(string $url, int $delay = 0);
+
+    abstract protected function validateFormToken(): bool;
 
     /**
      * Adds buttons to approve documents.
@@ -59,11 +62,47 @@ trait ListBusinessActionTrait
     }
 
     /**
+     * Adds button to lock invoices.
+     *
+     * @param string $viewName
+     * @param string|null $code
+     */
+    protected function addButtonGenerateAccountingInvoices(string $viewName, string $code = null): void
+    {
+        $model = $this->views[$viewName]->model;
+        if (false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
+            return;
+        }
+
+        $where = [
+            new DataBaseWhere('idasiento', null),
+            new DataBaseWhere('fecha', date('Y-m-d', strtotime('-1 year')), '>')
+        ];
+
+        if (false === empty($code) && property_exists($model, 'codcliente')) {
+            $where[] = new DataBaseWhere('codcliente', $code);
+        } elseif (false === empty($code) && property_exists($model, 'codproveedor')) {
+            $where[] = new DataBaseWhere('codproveedor', $code);
+        }
+
+        if ($model->count($where) <= 0) {
+            return;
+        }
+
+        $this->addButton($viewName, [
+            'action' => 'generate-accounting-entries',
+            'color' => 'warning',
+            'icon' => 'fas fa-magic',
+            'label' => 'generate-accounting-entries'
+        ]);
+    }
+
+    /**
      * Adds button to group documents.
      *
      * @param string $viewName
      */
-    protected function addButtonGroupDocument(string $viewName)
+    protected function addButtonGroupDocument(string $viewName): void
     {
         $this->addButton($viewName, [
             'action' => 'group-document',
@@ -77,7 +116,7 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonLockInvoice(string $viewName)
+    protected function addButtonLockInvoice(string $viewName): void
     {
         $this->addButton($viewName, [
             'action' => 'lock-invoice',
@@ -92,7 +131,7 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonPayReceipt(string $viewName)
+    protected function addButtonPayReceipt(string $viewName): void
     {
         $this->addButton($viewName, [
             'action' => 'pay-receipt',
@@ -120,6 +159,8 @@ trait ListBusinessActionTrait
             return true;
         } elseif (false === is_array($codes) || empty($model)) {
             ToolBox::i18nLog()->warning('no-selected-item');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
             return true;
         }
 
@@ -149,6 +190,48 @@ trait ListBusinessActionTrait
         ToolBox::i18nLog()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
+        return true;
+    }
+
+    protected function generateAccountingEntriesAction($model, $allowUpdate, $dataBase): bool
+    {
+        if (false === $allowUpdate) {
+            ToolBox::i18nLog()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
+        }
+
+        if (false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
+            return true;
+        }
+
+        $where = [
+            new DataBaseWhere('idasiento', null),
+            new DataBaseWhere('fecha', date('Y-m-d', strtotime('-1 year')), '>')
+        ];
+
+        $dataBase->beginTransaction();
+        foreach ($model->all($where, ['idfactura' => 'ASC'], 0, 0) as $invoice) {
+            if (false === empty($invoice->idasiento)) {
+                continue;
+            }
+
+            $generator = new InvoiceToAccounting();
+            $generator->generate($invoice);
+            if (empty($invoice->idasiento)) {
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                return true;
+            }
+
+            if (false === $invoice->save()) {
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                return true;
+            }
+        }
+
+        ToolBox::i18nLog()->notice('record-updated-correctly');
+        $dataBase->commit();
         return true;
     }
 
@@ -190,6 +273,8 @@ trait ListBusinessActionTrait
             return true;
         } elseif (false === is_array($codes) || empty($model)) {
             ToolBox::i18nLog()->warning('no-selected-item');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
             return true;
         }
 
@@ -240,6 +325,8 @@ trait ListBusinessActionTrait
             return true;
         } elseif (false === is_array($codes) || empty($model)) {
             ToolBox::i18nLog()->warning('no-selected-item');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
             return true;
         }
 

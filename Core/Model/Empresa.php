@@ -21,10 +21,13 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Almacen as DinAlmacen;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 
 /**
  * This class stores the main data of the company.
@@ -74,6 +77,12 @@ class Empresa extends Base\Contact
     /** @var string */
     public $web;
 
+    public function checkVies(): bool
+    {
+        $codiso = Paises::get($this->codpais)->codiso ?? '';
+        return Vies::check($this->cifnif ?? '', $codiso) === 1;
+    }
+
     public function clear()
     {
         parent::clear();
@@ -100,7 +109,7 @@ class Empresa extends Base\Contact
     /**
      * Returns the bank accounts associated with the company.
      *
-     * @return DinCuentaBanco[]
+     * @return CuentaBanco[]
      */
     public function getBankAccounts(): array
     {
@@ -110,9 +119,21 @@ class Empresa extends Base\Contact
     }
 
     /**
+     * Returns the exercises associated with the company.
+     *
+     * @return Ejercicio[]
+     */
+    public function getExercises(): array
+    {
+        $exercise = new DinEjercicio();
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
+        return $exercise->all($where, [], 0, 0);
+    }
+
+    /**
      * Returns the warehouses associated with the company.
      *
-     * @return DinAlmacen[]
+     * @return Almacen[]
      */
     public function getWarehouses(): array
     {

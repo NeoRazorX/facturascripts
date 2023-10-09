@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,10 +59,12 @@ class EditImpuesto extends EditController
         $this->createViewsAccounts();
     }
 
-    protected function createViewsAccounts(string $viewName = 'ListSubcuenta')
+    protected function createViewsAccounts(string $viewName = 'ListSubcuenta'): void
     {
         $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-folder-open');
-        $this->views[$viewName]->addOrderBy(['codsubcuenta', 'idsubcuenta'], 'code', 2);
+        $this->views[$viewName]->addOrderBy(['codejercicio', 'codsubcuenta'], 'code', 2);
+        $this->views[$viewName]->addOrderBy(['codejercicio', 'descripcion'], 'description');
+        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
         $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
 
         // desactivamos los botones de nuevo y eliminar
@@ -70,7 +72,7 @@ class EditImpuesto extends EditController
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
-    protected function createViewsProducts(string $viewName = 'ListProducto')
+    protected function createViewsProducts(string $viewName = 'ListProducto'): void
     {
         $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
@@ -83,7 +85,7 @@ class EditImpuesto extends EditController
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
-    protected function createViewsZones(string $viewName = 'EditImpuestoZona')
+    protected function createViewsZones(string $viewName = 'EditImpuestoZona'): void
     {
         $this->addEditListView($viewName, 'ImpuestoZona', 'exceptions', 'fas fa-globe-americas');
         $this->views[$viewName]->disableColumn('tax');
@@ -98,7 +100,8 @@ class EditImpuesto extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $code = $this->getViewModelValue($this->getMainViewName(), 'codimpuesto');
+        $mvn = $this->getMainViewName();
+        $code = $this->getViewModelValue($mvn, 'codimpuesto');
 
         switch ($viewName) {
             case 'EditImpuestoZona':
@@ -114,14 +117,13 @@ class EditImpuesto extends EditController
             case 'ListSubcuenta':
                 // cargamos la lista de subcuentas del impuesto
                 $codes = [];
-                if ($this->getViewModelValue($this->getMainViewName(), 'codsubcuentarep')) {
-                    $codes[] = $this->getViewModelValue($this->getMainViewName(), 'codsubcuentarep');
-                }
-                if ($this->getViewModelValue($this->getMainViewName(), 'codsubcuentasop')) {
-                    $codes[] = $this->getViewModelValue($this->getMainViewName(), 'codsubcuentasop');
+                foreach (['codsubcuentarep', 'codsubcuentarepre', 'codsubcuentasop', 'codsubcuentasopre'] as $field) {
+                    if ($this->getViewModelValue($mvn, $field)) {
+                        $codes[] = $this->getViewModelValue($mvn, $field);
+                    }
                 }
                 if (empty($codes)) {
-                    // so hay ninguna, desactivamos la pestaña
+                    // no hay ninguna cuenta, desactivamos la pestaña
                     $view->settings['active'] = false;
                     break;
                 }

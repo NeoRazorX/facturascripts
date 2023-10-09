@@ -96,6 +96,7 @@ class Dashboard extends Controller
     {
         // comprobamos si estamos el localhost
         if ($_SERVER['REMOTE_ADDR'] == 'localhost' ||
+            $_SERVER['REMOTE_ADDR'] == '::1' ||
             substr($_SERVER['REMOTE_ADDR'], 0, 4) == '192.' ||
             substr($_SERVER['REMOTE_ADDR'], 0, 4) == '172.') {
             // si el plugin Backup está activo, devolvemos false

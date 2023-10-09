@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,12 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\LogMessage;
+use FacturaScripts\Dinamic\Model\Serie;
 use ParseCsv\Csv;
 
 /**
@@ -32,9 +34,10 @@ use ParseCsv\Csv;
  */
 final class Migrations
 {
+    /** @var DataBase */
     private static $database;
 
-    public static function run()
+    public static function run(): void
     {
         self::unlockNullProducts();
         self::updateInvoiceStatus();
@@ -47,9 +50,10 @@ final class Migrations
         self::fixSuppliers();
         self::clearLogs();
         self::addEmailNotifications();
+        self::fixSeries();
     }
 
-    private static function addEmailNotifications()
+    private static function addEmailNotifications(): void
     {
         $csv = new Csv();
         $csv->auto(FS_FOLDER . '/Dinamic/Data/Lang/ES/emails_notifications.csv');
@@ -67,7 +71,7 @@ final class Migrations
         }
     }
 
-    private static function clearLogs()
+    private static function clearLogs(): void
     {
         $logModel = new LogMessage();
         $where = [new DataBaseWhere('channel', 'master')];
@@ -90,9 +94,9 @@ final class Migrations
         return self::$database;
     }
 
-    private static function fixAccountingEntries()
+    // version 2022.09, fecha 05-06-2022
+    private static function fixAccountingEntries(): void
     {
-        // version 2022.09, fecha 05-06-2022
         // si no existe la tabla 'partidas', terminamos
         if (false === self::db()->tableExists('partidas')) {
             return;
@@ -113,9 +117,9 @@ final class Migrations
         }
     }
 
-    private static function fixAgents()
+    // version 2022.09, fecha 05-06-2022
+    private static function fixAgents(): void
     {
-        // version 2022.09, fecha 05-06-2022
         $table = 'agentes';
         if (self::db()->tableExists($table)) {
             $sqlUpdate = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
@@ -123,9 +127,9 @@ final class Migrations
         }
     }
 
-    private static function fixClients()
+    // version 2022.09, fecha 05-06-2022
+    private static function fixClients(): void
     {
-        // version 2022.09, fecha 05-06-2022
         $table = 'clientes';
         if (self::db()->tableExists($table)) {
             $sqlUpdate = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;"
@@ -134,9 +138,9 @@ final class Migrations
         }
     }
 
-    private static function fixContacts()
+    // version 2022.09, fecha 05-06-2022
+    private static function fixContacts(): void
     {
-        // version 2022.09, fecha 05-06-2022
         $table = 'contactos';
         if (self::db()->tableExists($table)) {
             $sqlUpdate = "UPDATE " . $table . " SET aceptaprivacidad = false WHERE aceptaprivacidad IS NULL;"
@@ -148,9 +152,9 @@ final class Migrations
         }
     }
 
-    private static function fixInvoiceLines()
+    // version 2022.09, fecha 05-06-2022
+    private static function fixInvoiceLines(): void
     {
-        // version 2022.09, fecha 05-06-2022
         $tables = ['lineasfacturascli', 'lineasfacturasprov'];
         foreach ($tables as $table) {
             if (self::db()->tableExists($table)) {
@@ -160,9 +164,25 @@ final class Migrations
         }
     }
 
-    private static function fixSuppliers()
+    // version 2023.06, fecha 07-10-2023
+    private static function fixSeries(): void
     {
-        // version 2022.09, fecha 05-06-2022
+        // forzamos la comprobación de la tabla series
+        new Serie();
+
+        // actualizamos con el tipo R la serie marcada como rectificativa en el panel de control
+        $serieRectifying = AppSettings::get('default', 'codserierec', '');
+        if (empty($serieRectifying)) {
+            return;
+        }
+
+        $sqlUpdate = "UPDATE series SET tipo = 'R' WHERE codserie = " . self::db()->var2str($serieRectifying) . ";";
+        self::db()->exec($sqlUpdate);
+    }
+
+    // version 2022.09, fecha 05-06-2022
+    private static function fixSuppliers(): void
+    {
         $table = 'proveedores';
         if (self::db()->tableExists($table)) {
             $sqlUpdate = "UPDATE " . $table . " SET acreedor = false WHERE acreedor IS NULL;"
@@ -172,16 +192,16 @@ final class Migrations
         }
     }
 
-    private static function unlockNullProducts()
+    // version 2022.06, fecha 05-05-2022
+    private static function unlockNullProducts(): void
     {
-        // version 2022.06, fecha 05-05-2022
         if (self::db()->tableExists('productos')) {
             $sql = 'UPDATE productos SET bloqueado = false WHERE bloqueado IS NULL;';
             self::db()->exec($sql);
         }
     }
 
-    private static function updateExceptionVatCompany()
+    private static function updateExceptionVatCompany(): void
     {
         $existIVA = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . FS_DB_NAME . "' AND TABLE_NAME = 'empresas' AND COLUMN_NAME = 'excepcioniva';";
         $existVAT = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . FS_DB_NAME . "' AND TABLE_NAME = 'empresas' AND COLUMN_NAME = 'exceptioniva';";
@@ -206,9 +226,9 @@ final class Migrations
         }
     }
 
-    private static function updateInvoiceStatus()
+    // version 2021.81, fecha 01-02-2022
+    private static function updateInvoiceStatus(): void
     {
-        // version 2021.81, fecha 01-02-2022
         $status = new EstadoDocumento();
         if ($status->loadFromCode('10') && $status->nombre === 'Nueva') {
             // unlock

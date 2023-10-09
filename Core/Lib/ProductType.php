@@ -22,7 +22,8 @@ namespace FacturaScripts\Core\Lib;
 /**
  * This class centralizes all types of products.
  *
- * @author    Daniel Fernández Giménez    <hola@danielfg.es>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class ProductType
 {
@@ -32,12 +33,12 @@ class ProductType
     const TRAVEL = 'Viaje';
 
     /** @var array */
-    private static $types = [];
+    private static $all = [];
 
     public static function add(string $key, string $value): void
     {
         $fixedKey = substr($key, 0, 20);
-        self::$types[$fixedKey] = $value;
+        self::$all[$fixedKey] = $value;
     }
 
     public static function all(): array
@@ -49,6 +50,6 @@ class ProductType
             self::TRAVEL => 'travel'
         ];
 
-        return array_merge($defaultTypes, self::$types);
+        return array_merge($defaultTypes, self::$all);
     }
 }

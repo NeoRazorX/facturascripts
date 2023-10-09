@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,30 +19,67 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Cuenta as DinCuenta;
+use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
+
 /**
  * Allows to relate special accounts (SALES, for example)
- * with the real account or sub-account.
+ * with the real account or subaccount.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class CuentaEspecial extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Special account identifier.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codcuentaesp;
 
-    /**
-     * Description of the special account.
-     *
-     * @var string
-     */
+    /** @var string */
     public $descripcion;
+
+    public function getCuenta(string $codejercicio): Cuenta
+    {
+        // buscamos la primera cuenta relacionada
+        $cuenta = new DinCuenta();
+        $where = [
+            new DataBaseWhere('codcuentaesp', $this->codcuentaesp),
+            new DataBaseWhere('codejercicio', $codejercicio)
+        ];
+        if ($cuenta->loadFromCode('', $where)) {
+            return $cuenta;
+        }
+
+        // si no hay una cuenta definida, devolvemos una vacía
+        return new DinCuenta();
+    }
+
+    public function getSubcuenta(string $codejercicio): Subcuenta
+    {
+        // buscamos la primera subcuenta relacionada
+        $subcuenta = new DinSubcuenta();
+        $where = [
+            new DataBaseWhere('codcuentaesp', $this->codcuentaesp),
+            new DataBaseWhere('codejercicio', $codejercicio)
+        ];
+        if ($subcuenta->loadFromCode('', $where)) {
+            return $subcuenta;
+        }
+
+        // buscamos la primera cuenta relacionada
+        $cuenta = new DinCuenta();
+        if ($cuenta->loadFromCode('', $where)) {
+            // devolvemos su primera subcuenta
+            foreach ($cuenta->getSubcuentas() as $sub) {
+                return $sub;
+            }
+        }
+
+        // si no hay una subcuenta definida, devolvemos una vacía
+        return new DinSubcuenta();
+    }
 
     public static function primaryColumn(): string
     {
@@ -61,16 +98,16 @@ class CuentaEspecial extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->codcuentaesp = self::toolBox()::utils()::noHtml($this->codcuentaesp);
+        $this->codcuentaesp = Tools::noHtml($this->codcuentaesp);
         if ($this->codcuentaesp && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codcuentaesp)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codcuentaesp, '%column%' => 'codcuentaesp', '%min%' => '1', '%max%' => '6']
             );
             return false;
         }
 
-        $this->descripcion = self::toolBox()::utils()::noHtml($this->descripcion);
+        $this->descripcion = Tools::noHtml($this->descripcion);
         return parent::test();
     }
 

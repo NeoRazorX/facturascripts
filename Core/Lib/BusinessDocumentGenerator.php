@@ -20,10 +20,11 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\Calculator;
-use FacturaScripts\Core\Base\Database\DataBaseWhere;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
@@ -38,30 +39,10 @@ class BusinessDocumentGenerator
 {
     use ExtensionsTrait;
 
-    /**
-     * Document fields to exclude.
-     *
-     * @var array
-     */
-    public $excludeFields = [
-        'codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora', 'idasiento', 'idestado', 'idfacturarect',
-        'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf', 'totaliva', 'totalrecargo', 'totalsuplidos'];
-
-    /**
-     * Line fields to exclude.
-     *
-     * @var array
-     */
-    public $excludeLineFields = ['idlinea', 'orden', 'servido'];
-
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $lastDocs = [];
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private static $sameDate = false;
 
     /**
@@ -77,14 +58,18 @@ class BusinessDocumentGenerator
      */
     public function generate(BusinessDocument $prototype, string $newClass, array $lines = [], array $quantity = [], array $properties = []): bool
     {
-        // Add primary column to exclude fields
-        $this->excludeFields[] = $prototype->primaryColumn();
-
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
+        $fields = array_keys($newDoc->getModelFields());
+
         foreach (array_keys($prototype->getModelFields()) as $field) {
+            // exclude properties not in new line
+            if (false === in_array($field, $fields)) {
+                continue;
+            }
+
             // exclude some properties
-            if (in_array($field, $this->excludeFields)) {
+            if (in_array($field, $prototype::dontCopyFields())) {
                 continue;
             }
 
@@ -145,13 +130,23 @@ class BusinessDocumentGenerator
     protected function cloneLines(BusinessDocument $prototype, BusinessDocument $newDoc, array $lines, array $quantity): bool
     {
         $docTrans = new DocTransformation();
+        $fields = array_keys($newDoc->getNewLine()->getModelFields());
+
         foreach ($lines as $line) {
             // copy line properties to new line
             $arrayLine = [];
             foreach (array_keys($line->getModelFields()) as $field) {
-                if (in_array($field, $this->excludeLineFields) === false) {
-                    $arrayLine[$field] = $line->{$field};
+                // exclude properties not in new line
+                if (false === in_array($field, $fields)) {
+                    continue;
                 }
+
+                // exclude some properties
+                if (in_array($field, $line::dontCopyFields())) {
+                    continue;
+                }
+
+                $arrayLine[$field] = $line->{$field};
             }
 
             if (isset($quantity[$line->primaryColumnValue()])) {
@@ -186,7 +181,9 @@ class BusinessDocumentGenerator
         }
 
         // copy related files
-        $this->copyRelatedFiles($prototype, $newDoc);
+        if ($newDoc instanceof TransformerDocument) {
+            $this->copyRelatedFiles($newDoc);
+        }
 
         if (false === $this->pipeFalse('cloneLines', $prototype, $newDoc, $lines, $quantity)) {
             return false;
@@ -195,23 +192,25 @@ class BusinessDocumentGenerator
         return true;
     }
 
-    public function copyRelatedFiles(BusinessDocument $prototype, BusinessDocument $newDoc): bool
+    public function copyRelatedFiles(TransformerDocument $newDoc): bool
     {
         $relationModel = new AttachedFileRelation();
-        $whereDocs = [
-            new DatabaseWhere('model', $prototype->modelClassName()),
-            new DataBaseWhere('modelid', $prototype->primaryColumnValue())
-        ];
-        foreach ($relationModel->all($whereDocs, ['id' => 'ASC']) as $relation) {
-            $newRelation = new AttachedFileRelation();
-            $newRelation->idfile = $relation->idfile;
-            $newRelation->model = $newDoc->modelClassName();
-            $newRelation->modelid = $newDoc->primaryColumnValue();
-            $newRelation->nick = $relation->nick;
-            $newRelation->observations = $relation->observations;
-            $newRelation->modelcode = $newDoc->codigo;
-            if (false === $newRelation->save()) {
-                return false;
+        foreach ($newDoc->parentDocuments() as $parent) {
+            $whereDocs = [
+                new DataBaseWhere('model', $parent->modelClassName()),
+                new DataBaseWhere('modelid', $parent->primaryColumnValue())
+            ];
+            foreach ($relationModel->all($whereDocs, ['id' => 'ASC']) as $relation) {
+                $newRelation = new AttachedFileRelation();
+                $newRelation->idfile = $relation->idfile;
+                $newRelation->model = $newDoc->modelClassName();
+                $newRelation->modelid = $newDoc->primaryColumnValue();
+                $newRelation->nick = $relation->nick;
+                $newRelation->observations = $relation->observations;
+                $newRelation->modelcode = $newDoc->codigo;
+                if (false === $newRelation->save()) {
+                    return false;
+                }
             }
         }
 

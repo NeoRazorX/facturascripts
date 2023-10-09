@@ -127,9 +127,9 @@ class ProductoImagen extends Base\ModelClass
             $imageHeight = imagesy($image);
             $ratio = $imageWidth / $imageHeight;
             if ($width / $height > $ratio) {
-                $width = $height * $ratio;
+                $width = intval($height * $ratio);
             } else {
-                $height = $width / $ratio;
+                $height = intval($width / $ratio);
             }
             $thumb = imagecreatetruecolor($width, $height);
             imagecopyresampled($thumb, $image, 0, 0, 0, 0, $width, $height, $imageWidth, $imageHeight);

@@ -37,6 +37,7 @@ use FacturaScripts\Dinamic\Model\Provincia;
  * Description of SalesHeaderHTML
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class SalesHeaderHTML
 {
@@ -90,6 +91,7 @@ class SalesHeaderHTML
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombrecliente = $formData['nombrecliente'] ?? $model->nombrecliente;
         $model->numero2 = $formData['numero2'] ?? $model->numero2;
+        $model->operacion = $formData['operacion'] ?? $model->operacion;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
 
         foreach (['codagente', 'codtrans', 'fechadevengo', 'finoferta'] as $key) {
@@ -160,6 +162,7 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'codalmacen')
             . self::renderField($i18n, $model, 'codserie')
             . self::renderField($i18n, $model, 'fecha')
+            . self::renderNewFields($i18n, $model)
             . self::renderField($i18n, $model, 'numero2')
             . self::renderField($i18n, $model, 'codpago')
             . self::renderField($i18n, $model, 'finoferta')
@@ -170,6 +173,7 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, '_parents')
             . self::renderField($i18n, $model, '_children')
             . self::renderField($i18n, $model, '_email')
+            . self::renderNewBtnFields($i18n, $model)
             . self::renderField($i18n, $model, '_paid')
             . self::renderField($i18n, $model, 'idestado')
             . '</div>'
@@ -372,12 +376,13 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'codigoenv')
             . self::renderField($i18n, $model, 'fechadevengo')
             . self::renderField($i18n, $model, 'hora')
+            . self::renderField($i18n, $model, 'operacion')
             . self::renderField($i18n, $model, 'femail')
-            . self::renderField($i18n, $model, 'user')
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
+            . self::renderField($i18n, $model, 'user')
             . self::renderField($i18n, $model, 'codagente')
-            . self::renderNewFields($i18n, $model)
+            . self::renderNewModalFields($i18n, $model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
@@ -483,6 +488,34 @@ class SalesHeaderHTML
             . '</div>';
     }
 
+    private static function provincia(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
+    {
+        $list = '';
+        $dataList = '';
+        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
+            'name="provincia" maxlength="' . $maxlength . '" autocomplete="off"' :
+            'disabled=""';
+
+        if ($model->editable) {
+            // pre-cargamos listado de provincias
+            $list = 'list="provincias"';
+            $dataList = '<datalist id="provincias">';
+
+            $provinciaModel = new Provincia();
+            foreach ($provinciaModel->all([], ['provincia' => 'ASC'], 0, 0) as $provincia) {
+                $dataList .= '<option value="' . $provincia->provincia . '">' . $provincia->provincia . '</option>';
+            }
+            $dataList .= '</datalist>';
+        }
+
+        return '<div class="col-sm-' . $size . '">'
+            . '<div class="form-group">' . $i18n->trans('province')
+            . '<input type="text" ' . $attributes . ' value="' . $model->provincia . '" ' . $list . ' class="form-control"/>'
+            . $dataList
+            . '</div>'
+            . '</div>';
+    }
+
     private static function renderField(Translator $i18n, SalesDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
@@ -583,6 +616,9 @@ class SalesHeaderHTML
             case 'numero2':
                 return self::numero2($i18n, $model);
 
+            case 'operacion':
+                return self::operacion($i18n, $model);
+
             case 'provincia':
                 return self::provincia($i18n, $model, 6, 100);
 
@@ -599,32 +635,30 @@ class SalesHeaderHTML
         return null;
     }
 
-    private static function provincia(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
+    private static function renderNewBtnFields(Translator $i18n, SalesDocument $model): string
     {
-        $list = '';
-        $dataList = '';
-        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
-            'name="provincia" maxlength="' . $maxlength . '" autocomplete="off"' :
-            'disabled=""';
-
-        if ($model->editable) {
-            // pre-cargamos listado de provincias
-            $list = 'list="provincias"';
-            $dataList = '<datalist id="provincias">';
-
-            $provinciaModel = new Provincia();
-            foreach ($provinciaModel->all([], ['provincia' => 'ASC'], 0, 0) as $provincia) {
-                $dataList .= '<option value="' . $provincia->provincia . '">' . $provincia->provincia . '</option>';
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newBtnFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
             }
-            $dataList .= '</datalist>';
         }
 
-        return '<div class="col-sm-' . $size . '">'
-            . '<div class="form-group">' . $i18n->trans('province')
-            . '<input type="text" ' . $attributes . ' value="' . $model->provincia . '" ' . $list . ' class="form-control"/>'
-            . $dataList
-            . '</div>'
-            . '</div>';
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
     }
 
     private static function renderNewFields(Translator $i18n, SalesDocument $model): string
@@ -633,6 +667,32 @@ class SalesHeaderHTML
         $newFields = [];
         foreach (self::$mods as $mod) {
             foreach ($mod->newFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
+    }
+
+    private static function renderNewModalFields(Translator $i18n, SalesDocument $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newModalFields() as $field) {
                 if (false === in_array($field, $newFields)) {
                     $newFields[] = $field;
                 }

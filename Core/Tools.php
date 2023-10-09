@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Model\Settings;
 
@@ -124,7 +123,7 @@ class Tools
             return rmdir($folder);
         }
 
-        return unlink($folder);
+        return file_exists($folder) ? unlink($folder) : true;
     }
 
     public static function folderScan(string $folder, bool $recursive = false, array $exclude = ['.DS_Store', '.well-known']): array
@@ -321,5 +320,24 @@ class Tools
     public static function timeToDateTime(int $time): string
     {
         return date(self::DATETIME_STYLE, $time);
+    }
+
+    public static function bytes($size, int $decimals = 2): string
+    {
+        if ($size >= 1073741824) {
+            $size = number_format($size / 1073741824, $decimals) . ' GB';
+        } elseif ($size >= 1048576) {
+            $size = number_format($size / 1048576, $decimals) . ' MB';
+        } elseif ($size >= 1024) {
+            $size = number_format($size / 1024, $decimals) . ' KB';
+        } elseif ($size > 1) {
+            $size = number_format($size, $decimals) . ' bytes';
+        } elseif ($size == 1) {
+            $size = number_format(1, $decimals) . ' byte';
+        } else {
+            $size = number_format(0, $decimals) . ' bytes';
+        }
+
+        return $size;
     }
 }

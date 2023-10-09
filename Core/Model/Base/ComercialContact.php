@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,7 +31,6 @@ use FacturaScripts\Dinamic\Model\Serie;
  */
 abstract class ComercialContact extends Contact
 {
-
     /**
      * Identifier code of the customer.
      *
@@ -124,15 +123,6 @@ abstract class ComercialContact extends Contact
         parent::clear();
         $this->debaja = false;
         $this->regimeniva = RegimenIVA::defaultValue();
-    }
-
-    /**
-     * @return array
-     * @deprecated since version 2022.5
-     */
-    public function getAdresses(): array
-    {
-        return $this->getAddresses();
     }
 
     public function install(): string

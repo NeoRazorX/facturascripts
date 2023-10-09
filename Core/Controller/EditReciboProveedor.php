@@ -24,6 +24,8 @@ use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Lib\Accounting\PaymentToAccounting;
+use FacturaScripts\Dinamic\Model\PagoProveedor;
 
 /**
  * Description of EditReciboProveedor
@@ -51,7 +53,7 @@ class EditReciboProveedor extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        // disable selects with only one option
+        // desactivamos selects con una sola opción
         if (count(Empresas::all()) <= 1) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }
@@ -59,20 +61,67 @@ class EditReciboProveedor extends EditController
             $this->views[$this->getMainViewName()]->disableColumn('currency');
         }
 
-        // disable new button
+        // desactivamos el botón nuevo
         $this->setSettings($this->getMainViewName(), 'btnNew', false);
 
         $this->createViewPayments();
     }
 
-    protected function createViewPayments($viewName = 'ListPagoProveedor')
+    protected function createViewPayments($viewName = 'ListPagoProveedor'): void
     {
         $this->addListView($viewName, 'PagoProveedor', 'payments');
+        $this->views[$viewName]->addOrderBy(['fecha', 'hora'], 'date', 1);
 
-        // settings
-        $this->setSettings($viewName, 'btnDelete', false);
+        // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'checkBoxes', false);
+
+        // añadimos el botón de generar asiento
+        $this->addButton($viewName, [
+            'action' => 'generate-accounting',
+            'icon' => 'fas fa-magic',
+            'label' => 'generate-accounting-entry'
+        ]);
+    }
+
+    protected function generateAccountingAction(): void
+    {
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $codes = $this->request->request->get('code');
+        foreach ($codes as $code) {
+            $pago = new PagoProveedor();
+            if (false === $pago->loadFromCode($code)) {
+                $this->toolBox()->i18nLog()->warning('record-not-found');
+                continue;
+            } elseif ($pago->idasiento) {
+                $this->toolBox()->i18nLog()->warning('record-already-exists');
+                continue;
+            }
+
+            $tool = new PaymentToAccounting();
+            $tool->generate($pago);
+            if (empty($pago->idasiento) || false === $pago->save()) {
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                return;
+            }
+        }
+
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+    }
+
+    protected function execPreviousAction($action): bool
+    {
+        if ($action === 'generate-accounting') {
+            $this->generateAccountingAction();
+            return true;
+        }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -83,9 +132,9 @@ class EditReciboProveedor extends EditController
     {
         switch ($viewName) {
             case 'ListPagoProveedor':
-                $idrecibo = $this->getViewModelValue('EditReciboProveedor', 'idrecibo');
-                $where = [new DataBaseWhere('idrecibo', $idrecibo)];
-                $this->views[$viewName]->loadData('', $where, ['idpago' => 'DESC']);
+                $id = $this->getViewModelValue('EditReciboProveedor', 'idrecibo');
+                $where = [new DataBaseWhere('idrecibo', $id)];
+                $this->views[$viewName]->loadData('', $where);
                 break;
 
             case 'EditReciboProveedor':

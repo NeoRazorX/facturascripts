@@ -150,7 +150,7 @@ class ListAsiento extends ListController
     {
         $idasientos = [];
         $sql = 'SELECT partidas.idasiento, ABS(SUM(partidas.debe) - SUM(partidas.haber))'
-            . ' FROM partidas GROUP BY 1 HAVING ABS(SUM(partidas.debe) - SUM(partidas.haber)) > 0.001';
+            . ' FROM partidas GROUP BY 1 HAVING ABS(SUM(partidas.debe) - SUM(partidas.haber)) >= 0.01';
         foreach ($this->dataBase->select($sql) as $row) {
             $idasientos[] = $row['idasiento'];
         }

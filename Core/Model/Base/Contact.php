@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Dinamic\Lib\FiscalNumberValitator;
+use FacturaScripts\Dinamic\Lib\FiscalNumberValidator;
 
 /**
  * Description of Contact
@@ -29,6 +29,8 @@ use FacturaScripts\Dinamic\Lib\FiscalNumberValitator;
 abstract class Contact extends ModelClass
 {
     use GravatarTrait;
+
+    abstract public function checkVies(): bool;
 
     /**
      * Tax identifier of the customer.
@@ -131,7 +133,7 @@ abstract class Contact extends ModelClass
         $this->telefono1 = $utils->noHtml($this->telefono1) ?? '';
         $this->telefono2 = $utils->noHtml($this->telefono2) ?? '';
 
-        $validator = new FiscalNumberValitator();
+        $validator = new FiscalNumberValidator();
         if (!empty($this->cifnif) && false === $validator->validate($this->tipoidfiscal, $this->cifnif)) {
             $this->toolBox()->i18nLog()->warning('not-valid-fiscal-number', ['%type%' => $this->tipoidfiscal, '%number%' => $this->cifnif]);
             return false;

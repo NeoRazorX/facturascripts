@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,7 +31,11 @@ interface PurchasesModInterface
 
     public function assets(): void;
 
+    public function newBtnFields(): array;
+
     public function newFields(): array;
+
+    public function newModalFields(): array;
 
     public function renderField(Translator $i18n, PurchaseDocument $model, string $field): ?string;
 }

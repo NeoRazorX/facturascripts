@@ -21,7 +21,7 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
@@ -106,6 +106,13 @@ final class Html
             $attached = new AttachedFile();
             $attached->loadFromCode($id);
             return $attached;
+        });
+    }
+
+    private static function cacheFunction(): TwigFunction
+    {
+        return new TwigFunction('cache', function (string $key) {
+            return Cache::get($key);
         });
     }
 
@@ -249,7 +256,7 @@ final class Html
 
     private static function moneyFunction(): TwigFunction
     {
-        return new TwigFunction('money', function (float $number, string $coddivisa = '') {
+        return new TwigFunction('money', function (?float $number, string $coddivisa = '') {
             if (empty($coddivisa)) {
                 $coddivisa = AppSettings::get('default', 'coddivisa');
             }
@@ -267,9 +274,16 @@ final class Html
         });
     }
 
+    private static function myFilesUrlFunction(): TwigFunction
+    {
+        return new TwigFunction('myFilesUrl', function (string $path, bool $permanent = false, string $expiration = '') {
+            return $path . '?myft=' . MyFilesToken::get($path, $permanent, $expiration);
+        });
+    }
+
     private static function numberFunction(): TwigFunction
     {
-        return new TwigFunction('number', function (float $number, ?int $decimals = null) {
+        return new TwigFunction('number', function (?float $number, ?int $decimals = null) {
             if ($decimals === null) {
                 $decimals = AppSettings::get('default', 'decimals');
             }
@@ -296,6 +310,13 @@ final class Html
             return empty($langCode) ?
                 $trans->trans($txt, $parameters) :
                 $trans->customTrans($langCode, $txt, $parameters);
+        });
+    }
+
+    private static function bytesFunction(): TwigFunction
+    {
+        return new TwigFunction('bytes', function ($size, int $decimals = 2) {
+            return Tools::bytes($size, $decimals);
         });
     }
 
@@ -332,14 +353,17 @@ final class Html
         // cargamos las funciones de twig
         self::$twig->addFunction(self::assetFunction());
         self::$twig->addFunction(self::attachedFileFunction());
+        self::$twig->addFunction(self::cacheFunction());
         self::$twig->addFunction(self::configFunction());
         self::$twig->addFunction(self::fixHtmlFunction());
         self::$twig->addFunction(self::formTokenFunction());
         self::$twig->addFunction(self::getIncludeViews());
         self::$twig->addFunction(self::moneyFunction());
+        self::$twig->addFunction(self::myFilesUrlFunction());
         self::$twig->addFunction(self::numberFunction());
         self::$twig->addFunction(self::settingsFunction());
         self::$twig->addFunction(self::transFunction());
+        self::$twig->addFunction(self::bytesFunction());
         foreach (self::$functions as $function) {
             self::$twig->addFunction($function);
         }

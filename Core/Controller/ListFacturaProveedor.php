@@ -77,10 +77,11 @@ class ListFacturaProveedor extends ListBusinessDocument
             ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
             ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
         ]);
-        $this->addFilterCheckbox('ListFacturaProveedor', 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
+        $this->addFilterCheckbox($viewName, 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
 
         // botones
-        $this->addButtonLockInvoice('ListFacturaProveedor');
+        $this->addButtonLockInvoice($viewName);
+        $this->addButtonGenerateAccountingInvoices($viewName);
 
         if ($this->user->admin) {
             $this->addButton($viewName, [
@@ -95,6 +96,7 @@ class ListFacturaProveedor extends ListBusinessDocument
     protected function createViewReceipts(string $viewName = 'ListReciboProveedor')
     {
         $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
+        $this->addOrderBy($viewName, ['codproveedor'], 'supplier-code');
         $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date');
         $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
         $this->addOrderBy($viewName, ['vencimiento'], 'expiration', 2);

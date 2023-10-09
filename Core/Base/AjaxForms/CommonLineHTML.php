@@ -218,10 +218,11 @@ trait CommonLineHTML
         }
 
         // solamente se puede cambiar el recargo si el documento es editable,
-        // el sujeto tiene régimen de recargo, la serie tiene impuestos
-        // y la línea no tiene suplido
-        $editable = $model->editable && self::$regimeniva === RegimenIVA::TAX_SYSTEM_SURCHARGE
-            && false === Series::get($model->codserie)->siniva && false === $line->suplido;
+        // la línea no es un suplido, la serie no es sin IVA y el régimen de IVA es recargo de equivalencia
+        $editable = $model->editable
+            && false === $line->suplido
+            && false === Series::get($model->codserie)->siniva
+            && (self::$regimeniva === RegimenIVA::TAX_SYSTEM_SURCHARGE || $model->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_SURCHARGE);
 
         $attributes = $editable ?
             'name="recargo_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :

@@ -26,13 +26,39 @@ use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
+/**
+ * Description of CommonSalesPurchases
+ *
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
+ */
 trait CommonSalesPurchases
 {
     protected static $columnView;
+
+    protected static function checkLevel(int $level): bool
+    {
+        $user = Session::user();
+
+        // si el usuario no existe, devolvemos false
+        if (false === $user->exists()) {
+            return false;
+        }
+
+        // si el usuario es administrador, devolvemos true
+        if ($user->admin) {
+            return true;
+        }
+
+        // si el nivel es menor que el del usuario, devolvemos false
+        return $level <= $user->level;
+    }
 
     protected static function cifnif(Translator $i18n, BusinessDocument $model): string
     {
@@ -145,11 +171,27 @@ trait CommonSalesPurchases
 
     protected static function codserie(Translator $i18n, BusinessDocument $model, string $jsFunc): string
     {
+        // es una factura rectificativa?
+        $rectificativa = property_exists($model, 'idfacturarect') && $model->idfacturarect;
+
         $options = [];
         foreach (Series::all() as $row) {
-            $options[] = ($row->codserie === $model->codserie) ?
-                '<option value="' . $row->codserie . '" selected>' . $row->descripcion . '</option>' :
-                '<option value="' . $row->codserie . '">' . $row->descripcion . '</option>';
+            // es la serie seleccionada
+            if ($row->codserie === $model->codserie) {
+                $options[] = '<option value="' . $row->codserie . '" selected>' . $row->descripcion . '</option>';
+                continue;
+            }
+
+            // si la serie es rectificativa y la factura también, la añadimos
+            if ($rectificativa && $row->tipo === 'R') {
+                $options[] = '<option value="' . $row->codserie . '">' . $row->descripcion . '</option>';
+                continue;
+            }
+
+            // si la serie no es rectificativa y la factura tampoco, la añadimos
+            if (false === $rectificativa && $row->tipo !== 'R') {
+                $options[] = '<option value="' . $row->codserie . '">' . $row->descripcion . '</option>';
+            }
         }
 
         $attributes = $model->editable ?
@@ -163,8 +205,12 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function column(Translator $i18n, BusinessDocument $model, string $colName, string $label, bool $autoHide = false): string
+    protected static function column(Translator $i18n, BusinessDocument $model, string $colName, string $label, bool $autoHide = false, int $level = 0): string
     {
+        if (false === self::checkLevel($level)) {
+            return '';
+        }
+
         return empty($model->{$colName}) && $autoHide ? '' : '<div class="col-sm"><div class="form-group">' . $i18n->trans($label)
             . '<input type="text" value="' . number_format($model->{$colName}, FS_NF0, FS_NF1, '')
             . '" class="form-control" disabled=""/></div></div>';
@@ -269,7 +315,7 @@ trait CommonSalesPurchases
         }
 
         $attributes = $model->editable ? 'name="fechadevengo" required=""' : 'disabled=""';
-        $value = empty($model->fechadevengo) ? date('Y-m-d', strtotime($model->fecha)) : date('Y-m-d', strtotime($model->fechadevengo));
+        $value = empty($model->fechadevengo) ? '' : date('Y-m-d', strtotime($model->fechadevengo));
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
             . '<div class="form-group">' . $i18n->trans('accrual-date')
             . '<input type="date" ' . $attributes . ' value="' . $value . '" class="form-control"/>'
@@ -454,6 +500,23 @@ trait CommonSalesPurchases
             . '</div></div>';
     }
 
+    protected static function operacion(Translator $i18n, BusinessDocument $model): string
+    {
+        $options = ['<option value="">------</option>'];
+        foreach (InvoiceOperation::all() as $key => $value) {
+            $options[] = ($key === $model->operacion) ?
+                '<option value="' . $key . '" selected>' . $i18n->trans($value) . '</option>' :
+                '<option value="' . $key . '">' . $i18n->trans($value) . '</option>';
+        }
+
+        $attributes = $model->editable ? ' name="operacion"' : ' disabled';
+        return '<div class="col-sm-6">'
+            . '<div class="form-group">' . $i18n->trans('operation')
+            . '<select' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '</div>'
+            . '</div>';
+    }
+
     protected static function paid(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         if (empty($model->primaryColumnValue()) || false === method_exists($model, 'getReceipts')) {
@@ -582,6 +645,13 @@ trait CommonSalesPurchases
             . '(\'save-doc\', \'0\');" title="' . $i18n->trans('save') . '" type="button">'
             . '<i class="fas fa-save fa-fw"></i></button></div>'
             . '</div></div></div>';
+    }
+
+    protected static function undoBtn(Translator $i18n, BusinessDocument $model): string
+    {
+        return $model->subjectColumnValue() && $model->editable ? '<a href="' . $model->url() . '" class="btn btn-secondary mr-2">'
+            . '<i class="fas fa-undo fa-fw"></i> ' . $i18n->trans('undo')
+            . '</a>' : '';
     }
 
     protected static function user(Translator $i18n, BusinessDocument $model): string

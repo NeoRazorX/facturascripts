@@ -70,6 +70,7 @@ class ListFacturaCliente extends ListBusinessDocument
     protected function createViewReceipts(string $viewName = 'ListReciboCliente')
     {
         $this->addView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
+        $this->addOrderBy($viewName, ['codcliente'], 'customer-code');
         $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date');
         $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
         $this->addOrderBy($viewName, ['vencimiento'], 'expiration', 2);
@@ -150,6 +151,7 @@ class ListFacturaCliente extends ListBusinessDocument
 
         // añadimos botón de bloquear facturas
         $this->addButtonLockInvoice($viewName);
+        $this->addButtonGenerateAccountingInvoices($viewName);
 
         // añadimos botón para buscar huecos en las facturas, si el usuario tiene permiso
         if (false === $this->permissions->onlyOwnerData) {

@@ -177,6 +177,15 @@ class Producto extends Base\ModelClass
      */
     public $ventasinstock;
 
+    public function __get($name)
+    {
+        if ($name === 'precio_iva') {
+            return $this->priceWithTax();
+        }
+
+        return null;
+    }
+
     public function clear()
     {
         parent::clear();
