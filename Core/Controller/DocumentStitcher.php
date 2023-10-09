@@ -104,9 +104,8 @@ class DocumentStitcher extends Controller
     {
         parent::privateCore($response, $user, $permissions);
         $action = $this->request->request->get('action', '');
-        $status = (int)$this->request->request->get('status', '');
 
-        $this->codes = $this->getCodes($action);
+        $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
 
         // no se pueden agrupar o partir facturas
@@ -115,12 +114,12 @@ class DocumentStitcher extends Controller
             return;
         }
 
+        $this->loadDocuments();
         $this->addFilters();
         if ('search' === $action) {
             $this->processFormDataLoad();
         }
 
-        $this->loadDocuments();
         $this->loadMoreDocuments();
 
         $status = (int)$this->request->request->get('status', '');
@@ -136,7 +135,7 @@ class DocumentStitcher extends Controller
 
     protected function addFilters()
     {
-        $payMethods = FormasPago::codeModel();
+        $payMethods = FormasPago::codeModel(true, $this->documents[0]->idempresa);
         if (count($payMethods) > 2) {
             $this->addFilterSelect('codpago', 'payment-method', 'codpago', $payMethods);
         }

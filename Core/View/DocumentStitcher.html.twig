@@ -137,7 +137,7 @@
                                         {% if fsc.filters|length > 0 %}
                                             <div class="col-auto">
                                                 <div class="form-group">
-                                                    <button type="submit" class="btn btn-lg btn-secondary" title="{{ trans('search') }}">
+                                                    <button type="submit" class="btn btn-secondary" title="{{ trans('search') }}">
                                                         <i class="fas fa-search"></i>
                                                     </button>
                                                 </div>
@@ -182,7 +182,7 @@
                                         {% else %}
                                             <tr class="table-warning">
                                                 <td></td>
-                                                <td colspan="4">{{ trans('no-data') }}</td>
+                                                <td colspan="5">{{ trans('no-data') }}</td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>

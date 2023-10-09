@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\DataSrc;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
@@ -29,11 +30,11 @@ final class FormasPago implements DataSrcInterface
     /**
      * @return FormaPago[]
      */
-    public static function all(): array
+    public static function all(array $where = []): array
     {
         if (!isset(self::$list)) {
             $model = new FormaPago();
-            self::$list = $model->all([], [], 0, 0);
+            self::$list = $model->all($where, [], 0, 0);
         }
 
         return self::$list;
@@ -49,10 +50,15 @@ final class FormasPago implements DataSrcInterface
      *
      * @return array
      */
-    public static function codeModel(bool $addEmpty = true): array
+    public static function codeModel(bool $addEmpty = true, ?int $idempresa = null): array
     {
+        $where = [];
+        if (false === is_null($idempresa)) {
+            $where[] = new DataBaseWhere('idempresa', $idempresa);
+        }
+
         $codes = [];
-        foreach (self::all() as $formaPago) {
+        foreach (self::all($where) as $formaPago) {
             $codes[$formaPago->codpago] = $formaPago->descripcion;
         }
 
