@@ -63,6 +63,41 @@ class EditProducto extends EditController
         $this->createViewsProductImages();
         $this->createViewsStock();
         $this->createViewsSuppliers();
+
+		if ($this->user->can('ListAlbaranCliente')) {
+            $this->createViewDocuments('ListLineaAlbaranCliente', 'LineaAlbaranCliente', 'customer-delivery-notes', 'fas fa-cubes');
+			$this->views['ListLineaAlbaranCliente']->addOrderBy(['idalbaran'], 'delivery-note', 2);
+        }
+		if ($this->user->can('ListAlbaranProveedor')) {
+			$this->createViewDocuments('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor', 'supplier-delivery-notes', 'fas fa-cubes');
+			$this->views['ListLineaAlbaranProveedor']->addOrderBy(['idalbaran'], 'delivery-note', 2);
+        }
+		if ($this->user->can('ListFacturaCliente')) {
+            $this->createViewDocuments('ListLineaFacturaCliente', 'LineaFacturaCliente', 'customer-invoices', 'fas fa-cubes');
+			$this->views['ListLineaFacturaCliente']->addOrderBy(['idfactura'], 'code', 2);
+        }
+		if ($this->user->can('ListFacturaProveedor')) {
+            $this->createViewDocuments('ListLineaFacturaProveedor', 'LineaFacturaProveedor', 'supplier-invoices', 'fas fa-cubes');
+			$this->views['ListLineaFacturaProveedor']->addOrderBy(['idfactura'], 'code', 2);
+        }
+    }
+
+	protected function createViewDocuments(string $viewName, string $model, string $label)
+    {
+        $this->addListView($viewName, $model, $label);
+
+		// sort options
+        $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
+        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
+        $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
+
+        // search columns
+        $this->views[$viewName]->addSearchFields([ 'referencia', 'descripcion']);
+
+        // disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'checkBoxes', false);
     }
 
     protected function createViewsStock(string $viewName = 'EditStock')
@@ -243,6 +278,30 @@ class EditProducto extends EditController
 
             case 'EditProductoProveedor':
                 $view->loadData('', $where, ['id' => 'DESC']);
+                break;
+
+			case 'ListLineaAlbaranCliente':
+				$inSQL = 'SELECT idproducto FROM lineasalbaranescli WHERE idproducto = ' . $id;
+				$where = [new DataBaseWhere('idproducto', $inSQL, 'IN')];
+                $view->loadData('', $where);
+                break;
+
+			case 'ListLineaAlbaranProveedor':
+				$inSQL = 'SELECT idproducto FROM lineasalbaranesprov WHERE idproducto = ' . $id;
+				$where = [new DataBaseWhere('idproducto', $inSQL, 'IN')];
+                $view->loadData('', $where);
+                break;
+
+			case 'ListLineaFacturaCliente':
+                $inSQL = 'SELECT idproducto FROM lineasfacturascli WHERE idproducto = ' . $id;
+                $where = [new DataBaseWhere('idproducto', $inSQL, 'IN')];
+                $view->loadData('', $where);
+                break;
+
+			case 'ListLineaFacturaProveedor':
+                $inSQL = 'SELECT idproducto FROM lineasfacturasprov WHERE idproducto = ' . $id;
+                $where = [new DataBaseWhere('idproducto', $inSQL, 'IN')];
+                $view->loadData('', $where);
                 break;
         }
     }
