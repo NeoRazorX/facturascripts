@@ -82,9 +82,15 @@ class EditProducto extends EditController
         }
     }
 
+<<<<<<< Updated upstream
 	protected function createViewDocuments(string $viewName, string $model, string $label)
     {
         $this->addListView($viewName, $model, $label);
+=======
+	protected function createViewDocuments(string $viewName, string $model, string $label, string $icon)
+    {
+        $this->addListView($viewName, $model, $label, $icon);
+>>>>>>> Stashed changes
 
 		// sort options
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
