@@ -221,6 +221,7 @@ final class AppInstaller
                 fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
             }
 
+            fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-NHMBQS9');\n");
             fwrite($file, "\n");
             fclose($file);
             return true;
