@@ -1201,6 +1201,7 @@
     "renumber-accounting-ok": "Renumbering of accounting entries completed",
     "renumber-accounting-p": "Renumera los asientos por fecha, de menor a mayor",
     "renumber-invoices-p": "Renumera las facturas en base a la fecha, de menor a mayor",
+    "renumber-invoices-success": "Las facturas del ejercicio '%exercise%' han sido renumeradas correctamente",
     "repeat-new-password": "Repita a senha",
     "reply": "Respuesta",
     "report": "Relatório",

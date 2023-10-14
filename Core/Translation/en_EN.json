@@ -1201,6 +1201,7 @@
     "renumber-accounting-ok": "Renumbering of accounting entries completed",
     "renumber-accounting-p": "Renumbers entries by date, from lowest to highest",
     "renumber-invoices-p": "Renumber invoices based on date, from lowest to highest",
+    "renumber-invoices-success": "Las facturas del ejercicio '%exercise%' han sido renumeradas correctamente",
     "repeat-new-password": "Repeat password",
     "reply": "Reply",
     "report": "Report",

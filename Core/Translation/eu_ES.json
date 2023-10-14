@@ -1201,6 +1201,7 @@
     "renumber-accounting-ok": "Idazpenen zenbaki berri ematea bukatu da",
     "renumber-accounting-p": "Renumera los asientos por fecha, de menor a mayor",
     "renumber-invoices-p": "Renumera las facturas en base a la fecha, de menor a mayor",
+    "renumber-invoices-success": "Las facturas del ejercicio '%exercise%' han sido renumeradas correctamente",
     "repeat-new-password": "Pasahitza berriz sartu",
     "reply": "Erantzuna",
     "report": "Txostena",
