@@ -32,6 +32,7 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
  * Description of crm_contacto
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Raúl Jiménez Jiménez <raljopa@gmail.com>
  */
 class Contacto extends Base\Contact
 {
@@ -324,5 +325,30 @@ class Contacto extends Base\Contact
     public function verifyLogkey(string $value): bool
     {
         return $this->logkey === $value;
+    }
+
+    /**
+     * Remove the model data from the database.
+     *
+     * @return bool
+     */
+    public function delete() {
+        $contactid = $this->idcontacto;
+        if (parent::delete()) {
+            $customers = new Cliente();
+            $providers = new Proveedor();
+            $whereCustomer = [new DataBaseWhere('idcontactofact|idcontactoenv', $contactid)];
+            foreach ($customers->all($whereCustomer) as $customer) {
+                $customer->idcontactofact = $customer->idcontactofact == $contactid ? null : $customer->idcontactofact;
+                $customer->idcontactoenv = $customer->idcontactoenv == $contactid ? null : $customer->idcontactoenv;
+                $customer->save();
+            }
+            $whereProvider = [new DataBaseWhere('idcontacto', $contactid)];
+            foreach ($providers->all($whereProvider) as $provider) {
+                $provider->idcontacto = null;
+                $provider->save();
+            }
+            return true;
+        }
     }
 }
