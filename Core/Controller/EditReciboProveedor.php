@@ -78,7 +78,7 @@ class EditReciboProveedor extends EditController
         // añadimos el botón de generar asiento
         $this->addButton($viewName, [
             'action' => 'generate-accounting',
-            'icon' => 'fas fa-magic',
+            'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entry'
         ]);
     }

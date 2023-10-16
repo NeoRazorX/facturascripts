@@ -137,6 +137,13 @@ abstract class SalesDocument extends TransformerDocument
     public $provincia;
 
     /**
+     * sum total of the benefits of the lines.
+     *
+     * @var float
+     */
+    public $totalbeneficio;
+
+    /**
      * total sum of the costs of the lines.
      *
      * @var float
@@ -150,6 +157,7 @@ abstract class SalesDocument extends TransformerDocument
     {
         parent::clear();
         $this->direccion = '';
+        $this->totalbeneficio = 0.0;
         $this->totalcoste = 0.0;
 
         // select default currency

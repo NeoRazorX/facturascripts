@@ -182,6 +182,10 @@
         <type>double precision</type>
     </column>
     <column>
+        <name>totalbeneficio</name>
+        <type>double precision</type>
+    </column>
+    <column>
         <name>totalcoste</name>
         <type>double precision</type>
     </column>

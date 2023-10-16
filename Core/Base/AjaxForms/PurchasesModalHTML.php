@@ -41,6 +41,9 @@ class PurchasesModalHTML
     protected static $codalmacen;
 
     /** @var string */
+    protected static $coddivisa;
+
+    /** @var string */
     protected static $codfabricante;
 
     /** @var string */
@@ -61,9 +64,10 @@ class PurchasesModalHTML
     /** @var string */
     protected static $query;
 
-    public static function apply(PurchaseDocument &$model, array $formData)
+    public static function apply(PurchaseDocument &$model, array $formData): void
     {
         self::$codalmacen = $model->codalmacen;
+        self::$coddivisa = $model->coddivisa;
         self::$codfabricante = $formData['fp_codfabricante'] ?? '';
         self::$codfamilia = $formData['fp_codfamilia'] ?? '';
         self::$codproveedor = $model->codproveedor;
@@ -76,6 +80,8 @@ class PurchasesModalHTML
     public static function render(PurchaseDocument $model, string $url = ''): string
     {
         self::$codalmacen = $model->codalmacen;
+        self::$coddivisa = $model->coddivisa;
+        self::$codproveedor = $model->codproveedor;
 
         $i18n = new Translator();
         return $model->editable ? static::modalProveedores($i18n, $url) . static::modalProductos($i18n) : '';
@@ -155,8 +161,11 @@ class PurchasesModalHTML
             . ' v.idatributovalor4, v.coste, v.precio, pp.neto, COALESCE(s.disponible, 0) as disponible, p.nostock'
             . ' FROM variantes v'
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
-            . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
-            . ' LEFT JOIN productosprov pp ON pp.referencia = p.referencia AND pp.codproveedor = ' . $dataBase->var2str(self::$codproveedor)
+            . ' LEFT JOIN stocks s ON v.referencia = s.referencia'
+            . ' AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
+            . ' LEFT JOIN productosprov pp ON pp.referencia = p.referencia'
+            . ' AND pp.codproveedor = ' . $dataBase->var2str(self::$codproveedor)
+            . ' AND pp.coddivisa = ' . $dataBase->var2str(self::$coddivisa)
             . ' WHERE p.secompra = true AND p.bloqueado = false';
 
         if (self::$codfabricante) {

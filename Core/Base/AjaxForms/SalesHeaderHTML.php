@@ -37,6 +37,7 @@ use FacturaScripts\Dinamic\Model\Provincia;
  * Description of SalesHeaderHTML
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class SalesHeaderHTML
 {
@@ -161,6 +162,7 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'codalmacen')
             . self::renderField($i18n, $model, 'codserie')
             . self::renderField($i18n, $model, 'fecha')
+            . self::renderNewFields($i18n, $model)
             . self::renderField($i18n, $model, 'numero2')
             . self::renderField($i18n, $model, 'codpago')
             . self::renderField($i18n, $model, 'finoferta')
@@ -171,6 +173,7 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, '_parents')
             . self::renderField($i18n, $model, '_children')
             . self::renderField($i18n, $model, '_email')
+            . self::renderNewBtnFields($i18n, $model)
             . self::renderField($i18n, $model, '_paid')
             . self::renderField($i18n, $model, 'idestado')
             . '</div>'
@@ -381,6 +384,7 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'codagente')
             . self::renderField($i18n, $model, 'servido')
             . self::renderNewFields($i18n, $model)
+            . self::renderNewModalFields($i18n, $model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
@@ -482,6 +486,34 @@ class SalesHeaderHTML
             . '<div class="form-group">'
             . $i18n->trans('number2')
             . '<input type="text" ' . $attributes . ' value="' . $model->numero2 . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function provincia(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
+    {
+        $list = '';
+        $dataList = '';
+        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
+            'name="provincia" maxlength="' . $maxlength . '" autocomplete="off"' :
+            'disabled=""';
+
+        if ($model->editable) {
+            // pre-cargamos listado de provincias
+            $list = 'list="provincias"';
+            $dataList = '<datalist id="provincias">';
+
+            $provinciaModel = new Provincia();
+            foreach ($provinciaModel->all([], ['provincia' => 'ASC'], 0, 0) as $provincia) {
+                $dataList .= '<option value="' . $provincia->provincia . '">' . $provincia->provincia . '</option>';
+            }
+            $dataList .= '</datalist>';
+        }
+
+        return '<div class="col-sm-' . $size . '">'
+            . '<div class="form-group">' . $i18n->trans('province')
+            . '<input type="text" ' . $attributes . ' value="' . $model->provincia . '" ' . $list . ' class="form-control"/>'
+            . $dataList
             . '</div>'
             . '</div>';
     }
@@ -608,32 +640,30 @@ class SalesHeaderHTML
         return null;
     }
 
-    private static function provincia(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
+    private static function renderNewBtnFields(Translator $i18n, SalesDocument $model): string
     {
-        $list = '';
-        $dataList = '';
-        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
-            'name="provincia" maxlength="' . $maxlength . '" autocomplete="off"' :
-            'disabled=""';
-
-        if ($model->editable) {
-            // pre-cargamos listado de provincias
-            $list = 'list="provincias"';
-            $dataList = '<datalist id="provincias">';
-
-            $provinciaModel = new Provincia();
-            foreach ($provinciaModel->all([], ['provincia' => 'ASC'], 0, 0) as $provincia) {
-                $dataList .= '<option value="' . $provincia->provincia . '">' . $provincia->provincia . '</option>';
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newBtnFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
             }
-            $dataList .= '</datalist>';
         }
 
-        return '<div class="col-sm-' . $size . '">'
-            . '<div class="form-group">' . $i18n->trans('province')
-            . '<input type="text" ' . $attributes . ' value="' . $model->provincia . '" ' . $list . ' class="form-control"/>'
-            . $dataList
-            . '</div>'
-            . '</div>';
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
     }
 
     private static function renderNewFields(Translator $i18n, SalesDocument $model): string
@@ -642,6 +672,32 @@ class SalesHeaderHTML
         $newFields = [];
         foreach (self::$mods as $mod) {
             foreach ($mod->newFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
+    }
+
+    private static function renderNewModalFields(Translator $i18n, SalesDocument $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newModalFields() as $field) {
                 if (false === in_array($field, $newFields)) {
                     $newFields[] = $field;
                 }
@@ -687,5 +743,5 @@ class SalesHeaderHTML
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
-    }
+    }    
 }

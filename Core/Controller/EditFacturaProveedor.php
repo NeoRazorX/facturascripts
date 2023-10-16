@@ -63,7 +63,7 @@ class EditFacturaProveedor extends PurchasesController
         // buttons
         $this->addButton($viewName, [
             'action' => 'generate-accounting',
-            'icon' => 'fas fa-magic',
+            'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entry'
         ]);
 
@@ -93,7 +93,7 @@ class EditFacturaProveedor extends PurchasesController
         $this->addButton($viewName, [
             'action' => 'generate-receipts',
             'confirm' => 'true',
-            'icon' => 'fas fa-magic',
+            'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-receipts'
         ]);
 
