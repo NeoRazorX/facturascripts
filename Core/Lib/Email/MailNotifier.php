@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,10 @@ namespace FacturaScripts\Core\Lib\Email;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Lib\Email\NewMail as DinNewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
+use PHPMailer\PHPMailer\Exception;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /**
  * Description of MailNotifier
@@ -30,8 +34,22 @@ use FacturaScripts\Dinamic\Model\EmailNotification;
  */
 class MailNotifier
 {
+    public static function getText(string $text, array $params): string
+    {
+        foreach ($params as $key => $value) {
+            $text = str_replace('{' . $key . '}', $value, $text);
+        }
 
-    public static function send(string $notificationName, string $email, string $name = '', array $params = [], array $adjuntos = []): bool
+        return $text;
+    }
+
+    /**
+     * @throws Exception
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public static function send(string $notificationName, string $email, string $name = '', array $params = [], array $adjuntos = [], array $mainBlocks = [], array $footerBlocks = []): bool
     {
         // ¿La notificación existe?
         $notification = new EmailNotification();
@@ -42,14 +60,12 @@ class MailNotifier
 
         // ¿Está desactivada?
         if (false === $notification->enabled) {
+            ToolBox::i18nLog()->warning('email-notification-disabled', ['%name%' => $notificationName]);
             return false;
         }
 
-        // ¿El email está configurado?
+        // cargamos la clase NewMail
         $newMail = new DinNewMail();
-        if (false === $newMail->canSendMail()) {
-            return false;
-        }
 
         // añadimos algunos campos más a los parámetros
         if (!isset($params['email'])) {
@@ -66,20 +82,18 @@ class MailNotifier
         $newMail->title = static::getText($notification->subject, $params);
         $newMail->text = static::getText($notification->body, $params);
 
-        foreach ($adjuntos as $adjunto)
-        {
+        foreach ($mainBlocks as $block) {
+            $newMail->addMainBlock($block);
+        }
+
+        foreach ($footerBlocks as $block) {
+            $newMail->addFooterBlock($block);
+        }
+
+        foreach ($adjuntos as $adjunto) {
             $newMail->addAttachment($adjunto, basename($adjunto));
         }
 
         return $newMail->send();
-    }
-
-    protected static function getText(string $text, array $params): string
-    {
-        foreach ($params as $key => $value) {
-            $text = str_replace('{' . $key . '}', $value, $text);
-        }
-
-        return $text;
     }
 }

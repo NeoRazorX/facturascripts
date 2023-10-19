@@ -21,85 +21,61 @@ namespace FacturaScripts\Core\Lib\Email;
 
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /**
  * Description of NewMail
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class NewMail
 {
-
-    const DEFAULT_TEMPLATE = 'NewTemplate.html.twig';
-
-    /**
-     * @var Empresa
-     */
+    /** @var Empresa */
     public $empresa;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $fromEmail;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $fromName;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $fromNick;
 
-    /**
-     * @var BaseBlock[]
-     */
+    /** @var BaseBlock[] */
     protected $footerBlocks = [];
 
-    /**
-     * @var bool
-     */
+    /** @var string */
+    private static $template = 'NewTemplate.html.twig';
+
+    /** @var bool */
     protected $lowsecure;
 
-    /**
-     * @var PHPMailer
-     */
+    /** @var PHPMailer */
     protected $mail;
 
-    /**
-     * @var BaseBlock[]
-     */
+    /** @var BaseBlock[] */
     protected $mainBlocks = [];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $signature;
 
-    /**
-     * @var string
-     */
-    public $template;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     public $text;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $title;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $verificode;
 
     /**
@@ -142,13 +118,10 @@ class NewMail
         }
 
         $this->signature = $appSettings->get('email', 'signature', '');
-        $this->template = self::DEFAULT_TEMPLATE;
         $this->verificode = $this->toolBox()->utils()->randomString(20);
     }
 
     /**
-     * @param string $email
-     * @param string $name
      * @throws Exception
      */
     public function addAddress(string $email, string $name = '')
@@ -159,8 +132,6 @@ class NewMail
     /**
      * Add attachments to the email.
      *
-     * @param string $path
-     * @param string $name
      * @throws Exception
      */
     public function addAttachment(string $path, string $name)
@@ -169,8 +140,6 @@ class NewMail
     }
 
     /**
-     * @param string $email
-     * @param string $name
      * @throws Exception
      */
     public function addBCC(string $email, string $name = '')
@@ -179,8 +148,6 @@ class NewMail
     }
 
     /**
-     * @param string $email
-     * @param string $name
      * @throws Exception
      */
     public function addCC(string $email, string $name = '')
@@ -188,27 +155,21 @@ class NewMail
         $this->mail->addCC($email, $name);
     }
 
-    /**
-     * @param BaseBlock $block
-     */
-    public function addFooterBlock($block)
+    public function addFooterBlock(BaseBlock $block): NewMail
     {
         $block->setVerificode($this->verificode);
         $this->footerBlocks[] = $block;
+        return $this;
     }
 
-    /**
-     * @param BaseBlock $block
-     */
-    public function addMainBlock($block)
+    public function addMainBlock(BaseBlock $block): NewMail
     {
         $block->setVerificode($this->verificode);
         $this->mainBlocks[] = $block;
+        return $this;
     }
 
     /**
-     * @param string $address
-     * @param string $name
      * @throws Exception
      */
     public function addReplyTo(string $address, string $name = '')
@@ -218,8 +179,6 @@ class NewMail
 
     /**
      * Check if the email is configured
-     *
-     * @return bool
      */
     public function canSendMail(): bool
     {
@@ -238,8 +197,6 @@ class NewMail
 
     /**
      * Returns an array with available email trays
-     *
-     * @return array
      */
     public function getAvailableMailboxes(): array
     {
@@ -266,6 +223,11 @@ class NewMail
         return $addresses;
     }
 
+    public static function getTemplate(): string
+    {
+        return static::$template;
+    }
+
     public function getToAddresses(): array
     {
         $addresses = [];
@@ -277,12 +239,14 @@ class NewMail
     }
 
     /**
-     * @return bool
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws LoaderError
      * @throws Exception
      */
     public function send(): bool
     {
-        if (empty($this->mail->Username) || empty($this->mail->Password)) {
+        if (false === $this->canSendMail()) {
             $this->toolBox()->i18nLog()->warning('email-not-configured');
             return false;
         }
@@ -305,14 +269,48 @@ class NewMail
         return false;
     }
 
-    public function setMailbox(string $emailFrom)
+    /**
+     * @throws Exception
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public function sendNotification(string $notificationName, array $params): bool
     {
+        // ¿La notificación existe?
+        $notification = new EmailNotification();
+        if (false === $notification->loadFromCode($notificationName)) {
+            ToolBox::i18nLog()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
+            return false;
+        }
+
+        // ¿Está desactivada?
+        if (false === $notification->enabled) {
+            ToolBox::i18nLog()->warning('email-notification-disabled', ['%name%' => $notificationName]);
+            return false;
+        }
+
+        if (!isset($params['verificode'])) {
+            $params['verificode'] = $this->verificode;
+        }
+
+        $this->title = MailNotifier::getText($notification->subject, $params);
+        $this->text = MailNotifier::getText($notification->body, $params);
+
+        return $this->send();
     }
 
-    /**
-     * @param User $user
-     */
-    public function setUser($user)
+    public function setMailbox(string $emailFrom)
+    {
+        $this->fromEmail = $emailFrom;
+    }
+
+    public static function setTemplate(string $template)
+    {
+        static::$template = $template;
+    }
+
+    public function setUser(User $user)
     {
         $this->fromNick = $user->nick;
     }
@@ -333,7 +331,6 @@ class NewMail
     /**
      * Test the PHPMailer connection. Return the result of the connection.
      *
-     * @return bool
      * @throws Exception
      */
     public function test(): bool
@@ -352,23 +349,32 @@ class NewMail
     protected function getFooterBlocks(): array
     {
         $signature = $this->toolBox()->utils()->fixHtml($this->signature);
-        return array_merge([new TextBlock($signature)], $this->footerBlocks);
+        return empty($signature)
+            ? $this->footerBlocks
+            : array_merge($this->footerBlocks, [new TextBlock($signature, 'text-footer')]);
     }
 
     protected function getMainBlocks(): array
     {
-        return array_merge([new TextBlock($this->text)], $this->mainBlocks);
+        return empty($this->text)
+            ? $this->mainBlocks
+            : array_merge([new TextBlock($this->text, 'pb-15')], $this->mainBlocks);
     }
 
+    /**
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws LoaderError
+     */
     protected function renderHTML(): string
     {
         $params = [
-            'empresa' => $this->empresa,
+            'company' => $this->empresa,
             'footerBlocks' => $this->getFooterBlocks(),
             'mainBlocks' => $this->getMainBlocks(),
             'title' => $this->title
         ];
-        return Html::render('Email/' . $this->template, $params);
+        return Html::render('Email/' . static::$template, $params);
     }
 
     protected function saveMailSent()
