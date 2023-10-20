@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,7 @@
 {% endblock %}
 
 {% block body %}
-    <form method="post">
+    <form method="post" onsubmit="animateSpinner('add');">
         <input type="hidden" name="action" value="export"/>
         <div class="container" style="margin-top: -60px;">
             <div class="row">
@@ -37,7 +37,7 @@
                                 <i class="{{ fsc.getPageData().icon }}"></i> {{ fsc.title }}
                             </h1>
                             <div class="form-row">
-                                <div class="col-sm-3">
+                                <div class="col-sm">
                                     <div class="form-group">
                                         {{ i18n.trans('company') }}
                                         <select name="idempresa" class="form-control">
@@ -52,7 +52,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm">
                                     <div class="form-group">
                                         {{ i18n.trans('invoices') }}
                                         <select name="source" class="form-control">
@@ -64,6 +64,66 @@
                                                 <option value="sales" selected="">{{ i18n.trans('sales') }}</option>
                                                 <option value="purchases">{{ i18n.trans('purchases') }}</option>
                                             {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        {{ i18n.trans('serie') }}
+                                        <select name="codserie" class="form-control">
+                                            <option value="">{{ i18n.trans('all') }}</option>
+                                            <option value="">------</option>
+                                            {% for serie in fsc.serie.all({}, {'descripcion': 'ASC'}, 0, 0) %}
+                                                {% if serie.codserie == fsc.codserie %}
+                                                    <option value="{{ serie.codserie }}"
+                                                            selected="">{{ serie.descripcion | raw }}</option>
+                                                {% else %}
+                                                    <option value="{{ serie.codserie }}">{{ serie.descripcion | raw }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        {{ i18n.trans('currency') }}
+                                        <select name="coddivisa" class="form-control">
+                                            {% for divisa in fsc.divisa.all({}, {'descripcion': 'ASC'}, 0, 0) %}
+                                                {% if divisa.coddivisa == fsc.coddivisa %}
+                                                    <option value="{{ divisa.coddivisa }}"
+                                                            selected="">{{ divisa.descripcion | raw }}</option>
+                                                {% else %}
+                                                    <option value="{{ divisa.coddivisa }}">{{ divisa.descripcion | raw }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        {{ i18n.trans('country') }}
+                                        <select name="codpais" class="form-control">
+                                            <option value="">{{ i18n.trans('all') }}</option>
+                                            <option value="">------</option>
+                                            {% for pais in fsc.pais.all({}, {'nombre': 'ASC'}, 0, 0) %}
+                                                {% if pais.codpais == fsc.codpais %}
+                                                    <option value="{{ pais.codpais }}"
+                                                            selected="">{{ pais.nombre | raw }}</option>
+                                                {% else %}
+                                                    <option value="{{ pais.codpais }}">{{ pais.nombre | raw }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row align-items-end">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        {{ i18n.trans('date') }}
+                                        <select name="type-date" class="form-control">
+                                            <option value="create" {{ fsc.typeDate is same as('create') ? 'selected': '' }}>{{ i18n.trans('creation-date') }}</option>
+                                            <option value="accrual" {{ fsc.typeDate is same as('accrual') ? 'selected': '' }}>{{ i18n.trans('accrual-date') }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -81,43 +141,7 @@
                                                required=""/>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-row align-items-end">
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        {{ i18n.trans('serie') }}
-                                        <select name="codserie" class="form-control">
-                                            <option value="">{{ i18n.trans('all') }}</option>
-                                            <option value="">------</option>
-                                            {% for serie in fsc.serie.all({}, {'descripcion': 'ASC'}, 0, 0) %}
-                                                {% if serie.codserie == fsc.codserie %}
-                                                    <option value="{{ serie.codserie }}"
-                                                            selected="">{{ serie.descripcion | raw }}</option>
-                                                {% else %}
-                                                    <option value="{{ serie.codserie }}">{{ serie.descripcion | raw }}</option>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        {{ i18n.trans('country') }}
-                                        <select name="codpais" class="form-control">
-                                            <option value="">{{ i18n.trans('all') }}</option>
-                                            <option value="">------</option>
-                                            {% for pais in fsc.pais.all({}, {'nombre': 'ASC'}, 0, 0) %}
-                                                {% if pais.codpais == fsc.codpais %}
-                                                    <option value="{{ pais.codpais }}"
-                                                            selected="">{{ pais.nombre | raw }}</option>
-                                                {% else %}
-                                                    <option value="{{ pais.codpais }}">{{ pais.nombre | raw }}</option>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm">
                                     <div class="form-group">
                                         {{ i18n.trans('format') }}
                                         <select name="format" class="form-control">
@@ -129,7 +153,7 @@
                                 </div>
                                 <div class="col-sm">
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary">
+                                        <button type="submit" class="btn btn-block btn-primary btn-spin-action">
                                             {{ i18n.trans('generate') }}
                                         </button>
                                     </div>

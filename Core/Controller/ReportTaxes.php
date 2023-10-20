@@ -21,7 +21,10 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
+use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\User;
@@ -37,6 +40,9 @@ class ReportTaxes extends Controller
     const MAX_TOTAL_DIFF = 0.05;
 
     /** @var string */
+    public $coddivisa;
+
+    /** @var string */
     public $codpais;
 
     /** @var string */
@@ -47,6 +53,9 @@ class ReportTaxes extends Controller
 
     /** @var string */
     public $dateto;
+
+    /** @var Divisa */
+    public $divisa;
 
     /** @var string */
     public $format;
@@ -62,6 +71,9 @@ class ReportTaxes extends Controller
 
     /** @var string */
     public $source;
+
+    /** @var string */
+    public $typeDate;
 
     public function getPageData(): array
     {
@@ -80,6 +92,8 @@ class ReportTaxes extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        $this->coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa', 'EUR');
+        $this->divisa = new Divisa();
         $this->pais = new Pais();
         $this->serie = new Serie();
         $this->initFilters();
@@ -90,6 +104,7 @@ class ReportTaxes extends Controller
 
     protected function exportAction()
     {
+        $i18n = $this->toolBox()->i18n();
         $data = $this->getReportData();
         if (empty($data)) {
             $this->toolBox()->i18nLog()->warning('no-data');
@@ -102,21 +117,22 @@ class ReportTaxes extends Controller
         foreach ($data as $row) {
             $hide = $row['codigo'] === $lastCode && $this->format === 'PDF';
             $lines[] = [
-                'serie' => $hide ? '' : $row['codserie'],
-                'codigo' => $hide ? '' : $row['codigo'],
-                'numero2' => $hide ? '' : $row['numero2'],
-                'fecha' => $hide ? '' : date(User::DATE_STYLE, strtotime($row['fecha'])),
-                'nombre' => $hide ? '' : $this->toolBox()->utils()->fixHtml($row['nombre']),
-                'cifnif' => $hide ? '' : $row['cifnif'],
-                'neto' => $this->exportFieldFormat('number', $row['neto']),
-                'iva' => $this->exportFieldFormat('number', $row['iva']),
-                'totaliva' => $this->exportFieldFormat('number', $row['totaliva']),
-                'recargo' => $this->exportFieldFormat('number', $row['recargo']),
-                'totalrecargo' => $this->exportFieldFormat('number', $row['totalrecargo']),
-                'irpf' => $this->exportFieldFormat('number', $row['irpf']),
-                'totalirpf' => $this->exportFieldFormat('number', $row['totalirpf']),
-                'suplidos' => $this->exportFieldFormat('number', $row['suplidos']),
-                'total' => $hide ? '' : $this->exportFieldFormat('number', $row['total'])
+                $i18n->trans('serie') => $hide ? '' : $row['codserie'],
+                $i18n->trans('code') => $hide ? '' : $row['codigo'],
+                $i18n->trans('number2') => $hide ? '' : $row['numero2'],
+                $i18n->trans('date') => $hide ? '' : date(Tools::DATE_STYLE, strtotime($row['fecha'])),
+                $i18n->trans('accrual-date') => $hide ? '' : (empty($row['fechadevengo']) ? '' : date(Tools::DATE_STYLE, strtotime($row['fechadevengo']))),
+                $i18n->trans('name') => $hide ? '' : $this->toolBox()->utils()->fixHtml($row['nombre']),
+                $i18n->trans('cifnif') => $hide ? '' : $row['cifnif'],
+                $i18n->trans('net') => $this->exportFieldFormat('number', $row['neto']),
+                $i18n->trans('pct-tax') => $this->exportFieldFormat('number', $row['iva']),
+                $i18n->trans('tax') => $this->exportFieldFormat('number', $row['totaliva']),
+                $i18n->trans('pct-surcharge') => $this->exportFieldFormat('number', $row['recargo']),
+                $i18n->trans('surcharge') => $this->exportFieldFormat('number', $row['totalrecargo']),
+                $i18n->trans('pct-irpf') => $this->exportFieldFormat('number', $row['irpf']),
+                $i18n->trans('irpf') => $this->exportFieldFormat('number', $row['totalirpf']),
+                $i18n->trans('supplied-amount') => $this->exportFieldFormat('number', $row['suplidos']),
+                $i18n->trans('total') => $hide ? '' : $this->exportFieldFormat('number', $row['total'])
             ];
 
             $lastCode = $row['codigo'];
@@ -133,15 +149,15 @@ class ReportTaxes extends Controller
         foreach ($totalsData as $row) {
             $total = $row['neto'] + $row['totaliva'] + $row['totalrecargo'] - $row['totalirpf'] - $row['suplidos'];
             $totals[] = [
-                'neto' => $this->exportFieldFormat('coins', $row['neto']),
-                'iva' => $this->exportFieldFormat('percentage', $row['iva']),
-                'totaliva' => $this->exportFieldFormat('coins', $row['totaliva']),
-                'recargo' => $this->exportFieldFormat('percentage', $row['recargo']),
-                'totalrecargo' => $this->exportFieldFormat('coins', $row['totalrecargo']),
-                'irpf' => $this->exportFieldFormat('percentage', $row['irpf']),
-                'totalirpf' => $this->exportFieldFormat('coins', $row['totalirpf']),
-                'suplidos' => $this->exportFieldFormat('coins', $row['suplidos']),
-                'total' => $this->exportFieldFormat('coins', $total)
+                $i18n->trans('net') => $this->exportFieldFormat('number', $row['neto']),
+                $i18n->trans('pct-tax') => $this->exportFieldFormat('percentage', $row['iva']),
+                $i18n->trans('tax') => $this->exportFieldFormat('number', $row['totaliva']),
+                $i18n->trans('pct-surcharge') => $this->exportFieldFormat('percentage', $row['recargo']),
+                $i18n->trans('surcharge') => $this->exportFieldFormat('number', $row['totalrecargo']),
+                $i18n->trans('pct-irpf') => $this->exportFieldFormat('percentage', $row['irpf']),
+                $i18n->trans('irpf') => $this->exportFieldFormat('number', $row['totalirpf']),
+                $i18n->trans('supplied-amount') => $this->exportFieldFormat('number', $row['suplidos']),
+                $i18n->trans('total') => $this->exportFieldFormat('number', $total)
             ];
         }
 
@@ -152,14 +168,11 @@ class ReportTaxes extends Controller
     protected function exportFieldFormat(string $format, string $value): string
     {
         switch ($format) {
-            case 'coins':
-                return $this->format === 'PDF' ? $this->toolBox()->coins()->format($value) : $value;
-
             case 'number':
-                return $this->format === 'PDF' ? $this->toolBox()->numbers()->format($value) : $value;
+                return $this->format === 'PDF' ? Tools::number($value) : $value;
 
             case 'percentage':
-                return $this->format === 'PDF' ? $this->toolBox()->numbers()->format($value) . ' %' : $value;
+                return $this->format === 'PDF' ? Tools::number($value) . ' %' : $value;
 
             default:
                 return $value;
@@ -170,27 +183,30 @@ class ReportTaxes extends Controller
     {
         $sql = '';
         $numCol = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(f.numero as integer)' : 'CAST(f.numero as unsigned)';
+        $columnDate = $this->typeDate === 'create' ? 'fecha' : 'fechadevengo';
         switch ($this->source) {
             case 'purchases':
-                $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor AS numero2, f.fecha, f.nombre, f.cifnif, l.pvptotal,'
+                $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor AS numero2, f.fecha, f.fechadevengo, f.nombre, f.cifnif, l.pvptotal,'
                     . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total'
                     . ' FROM lineasfacturasprov AS l'
                     . ' LEFT JOIN facturasprov AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
-                    . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
-                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
-                    . ' AND (l.pvptotal <> 0.00 OR l.iva <> 0.00)';
+                    . ' AND f.' . $columnDate . ' >= ' . $this->dataBase->var2str($this->datefrom)
+                    . ' AND f.' . $columnDate . ' <= ' . $this->dataBase->var2str($this->dateto)
+                    . ' AND (l.pvptotal <> 0.00 OR l.iva <> 0.00)'
+                    . ' AND f.coddivisa = ' . $this->dataBase->var2str($this->coddivisa);
                 break;
 
             case 'sales':
-                $sql .= 'SELECT f.codserie, f.codigo, f.numero2, f.fecha, f.nombrecliente AS nombre, f.cifnif, l.pvptotal,'
+                $sql .= 'SELECT f.codserie, f.codigo, f.numero2, f.fecha, f.fechadevengo, f.nombrecliente AS nombre, f.cifnif, l.pvptotal,'
                     . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total'
                     . ' FROM lineasfacturascli AS l'
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
-                    . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
-                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
-                    . ' AND (l.pvptotal <> 0.00 OR l.iva <> 0.00)';
+                    . ' AND f.' . $columnDate . ' >= ' . $this->dataBase->var2str($this->datefrom)
+                    . ' AND f.' . $columnDate . ' <= ' . $this->dataBase->var2str($this->dateto)
+                    . ' AND (l.pvptotal <> 0.00 OR l.iva <> 0.00)'
+                    . ' AND f.coddivisa = ' . $this->dataBase->var2str($this->coddivisa);
                 if ($this->codpais) {
                     $sql .= ' AND codpais = ' . $this->dataBase->var2str($this->codpais);
                 }
@@ -202,7 +218,7 @@ class ReportTaxes extends Controller
         if ($this->codserie) {
             $sql .= ' AND codserie = ' . $this->dataBase->var2str($this->codserie);
         }
-        $sql .= ' ORDER BY f.fecha, ' . $numCol . ' ASC;';
+        $sql .= ' ORDER BY f.' . $columnDate . ', ' . $numCol . ' ASC;';
 
         $data = [];
         foreach ($this->dataBase->select($sql) as $row) {
@@ -222,6 +238,7 @@ class ReportTaxes extends Controller
                 'codigo' => $row['codigo'],
                 'numero2' => $row['numero2'],
                 'fecha' => $row['fecha'],
+                'fechadevengo' => $row['fechadevengo'],
                 'nombre' => $row['nombre'],
                 'cifnif' => $row['cifnif'],
                 'neto' => $row['suplido'] ? 0 : $pvpTotal,
@@ -279,6 +296,7 @@ class ReportTaxes extends Controller
 
     protected function initFilters()
     {
+        $this->coddivisa = $this->request->request->get('coddivisa', $this->coddivisa);
         $this->codpais = $this->request->request->get('codpais', '');
         $this->codserie = $this->request->request->get('codserie', '');
         $this->datefrom = $this->request->request->get('datefrom', date('Y-m-01'));
@@ -286,6 +304,7 @@ class ReportTaxes extends Controller
         $this->idempresa = (int)$this->request->request->get('idempresa', $this->empresa->idempresa);
         $this->format = $this->request->request->get('format');
         $this->source = $this->request->request->get('source');
+        $this->typeDate = $this->request->request->get('type-date');
     }
 
     protected function processLayout(array &$lines, array &$totals)
@@ -296,28 +315,37 @@ class ReportTaxes extends Controller
         $exportManager->newDoc($this->format, $i18n->trans('taxes'));
 
         // add information table
-        $exportManager->addTablePage([$i18n->trans('report'), $i18n->trans('from-date'), $i18n->trans('until-date')], [
+        $exportManager->addTablePage(
             [
+                $i18n->trans('report'),
+                $i18n->trans('currency'),
+                $i18n->trans('date'),
+                $i18n->trans('from-date'),
+                $i18n->trans('until-date')
+            ],
+            [[
                 $i18n->trans('report') => $i18n->trans('taxes') . ' ' . $i18n->trans($this->source),
-                $i18n->trans('from-date') => date(User::DATE_STYLE, strtotime($this->datefrom)),
-                $i18n->trans('until-date') => date(User::DATE_STYLE, strtotime($this->dateto))
-            ]
-        ]);
+                $i18n->trans('currency') => Divisas::get($this->coddivisa)->descripcion,
+                $i18n->trans('date') => $i18n->trans($this->typeDate === 'create' ? 'creation-date' : 'accrual-date'),
+                $i18n->trans('from-date') => date(Tools::DATE_STYLE, strtotime($this->datefrom)),
+                $i18n->trans('until-date') => date(Tools::DATE_STYLE, strtotime($this->dateto))
+            ]]
+        );
 
         $options = [
-            'neto' => ['display' => 'right'],
-            'iva' => ['display' => 'right'],
-            'totaliva' => ['display' => 'right'],
-            'recargo' => ['display' => 'right'],
-            'totalrecargo' => ['display' => 'right'],
-            'irpf' => ['display' => 'right'],
-            'totalirpf' => ['display' => 'right'],
-            'suplidos' => ['display' => 'right'],
-            'total' => ['display' => 'right']
+            $i18n->trans('net') => ['display' => 'right'],
+            $i18n->trans('pct-tax') => ['display' => 'right'],
+            $i18n->trans('tax') => ['display' => 'right'],
+            $i18n->trans('pct-surcharge') => ['display' => 'right'],
+            $i18n->trans('surcharge') => ['display' => 'right'],
+            $i18n->trans('pct-irpf') => ['display' => 'right'],
+            $i18n->trans('irpf') => ['display' => 'right'],
+            $i18n->trans('supplied-amount') => ['display' => 'right'],
+            $i18n->trans('total') => ['display' => 'right']
         ];
 
         // add lines table
-        $this->reduceLines($lines);
+        $this->reduceLines($lines, $i18n);
         $headers = empty($lines) ? [] : array_keys(end($lines));
         $exportManager->addTablePage($headers, $lines, $options);
 
@@ -328,59 +356,67 @@ class ReportTaxes extends Controller
         $exportManager->show($this->response);
     }
 
-    protected function reduceLines(array &$lines)
+    protected function reduceLines(array &$lines, $i18n)
     {
         $zero = $this->toolBox()->numbers()->format(0);
-        $numero2 = $recargo = $totalrecargo = $irpf = $totalirpf = $suplidos = false;
+        $fechadevengo = $numero2 = $recargo = $totalrecargo = $irpf = $totalirpf = $suplidos = false;
         foreach ($lines as $row) {
-            if (!empty($row['numero2'])) {
+            if (!empty($row[$i18n->trans('accrual-date')])) {
+                $fechadevengo = true;
+            }
+
+            if (!empty($row[$i18n->trans('number2')])) {
                 $numero2 = true;
             }
 
-            if ($row['recargo'] !== $zero) {
+            if ($row[$i18n->trans('pct-surcharge')] !== $zero) {
                 $recargo = true;
             }
 
-            if ($row['totalrecargo'] !== $zero) {
+            if ($row[$i18n->trans('surcharge')] !== $zero) {
                 $totalrecargo = true;
             }
 
-            if ($row['irpf'] !== $zero) {
+            if ($row[$i18n->trans('pct-irpf')] !== $zero) {
                 $irpf = true;
             }
 
-            if ($row['totalirpf'] !== $zero) {
+            if ($row[$i18n->trans('irpf')] !== $zero) {
                 $totalirpf = true;
             }
 
-            if ($row['suplidos'] !== $zero) {
+            if ($row[$i18n->trans('supplied-amount')] !== $zero) {
                 $suplidos = true;
             }
         }
 
         foreach (array_keys($lines) as $key) {
+            if (false === $fechadevengo) {
+                unset($lines[$key][$i18n->trans('accrual-date')]);
+            }
+
             if (false === $numero2) {
-                unset($lines[$key]['numero2']);
+                unset($lines[$key][$i18n->trans('number2')]);
             }
 
             if (false === $recargo) {
-                unset($lines[$key]['recargo']);
+                unset($lines[$key][$i18n->trans('pct-surcharge')]);
             }
 
             if (false === $totalrecargo) {
-                unset($lines[$key]['totalrecargo']);
+                unset($lines[$key][$i18n->trans('surcharge')]);
             }
 
             if (false === $irpf) {
-                unset($lines[$key]['irpf']);
+                unset($lines[$key][$i18n->trans('pct-irpf')]);
             }
 
             if (false === $totalirpf) {
-                unset($lines[$key]['totalirpf']);
+                unset($lines[$key][$i18n->trans('irpf')]);
             }
 
             if (false === $suplidos) {
-                unset($lines[$key]['suplidos']);
+                unset($lines[$key][$i18n->trans('supplied-amount')]);
             }
         }
     }
@@ -398,10 +434,13 @@ class ReportTaxes extends Controller
         // gets totals from the database
         $neto2 = $totalIva2 = $totalRecargo2 = 0.0;
         $tableName = $this->source === 'sales' ? 'facturascli' : 'facturasprov';
-        $sql = 'SELECT SUM(neto) as neto, SUM(totaliva) as t1, SUM(totalrecargo) as t2 FROM ' . $tableName
+        $columnDate = $this->typeDate === 'create' ? 'fecha' : 'fechadevengo';
+        $sql = 'SELECT SUM(neto) as neto, SUM(totaliva) as t1, SUM(totalrecargo) as t2'
+            . ' FROM ' . $tableName
             . ' WHERE idempresa = ' . $this->dataBase->var2str($this->idempresa)
-            . ' AND fecha >= ' . $this->dataBase->var2str($this->datefrom)
-            . ' AND fecha <= ' . $this->dataBase->var2str($this->dateto);
+            . ' AND ' . $columnDate . ' >= ' . $this->dataBase->var2str($this->datefrom)
+            . ' AND ' . $columnDate . ' <= ' . $this->dataBase->var2str($this->dateto)
+            . ' AND coddivisa = ' . $this->dataBase->var2str($this->coddivisa);
         if ($this->codserie) {
             $sql .= ' AND codserie = ' . $this->dataBase->var2str($this->codserie);
         }
