@@ -287,6 +287,19 @@ class NewMail
             return false;
         }
 
+        $this->addMainBlock(new TitleBlock('titulo1', 'h1', 'pb-15'))
+            ->addMainBlock(new TitleBlock('titulo2'))
+            ->addMainBlock(new TextBlock('texto de pruebas', 'pb-15'))
+            ->addMainBlock(new BoxBlock([new TitleBlock('titulo3'), new TextBlock('texto1'), new TextBlock('texto2')], 'pb-15'))
+            ->addMainBlock(new BoxBlock([new TextBlock('texto3', 'pb-15'), new ButtonBlock('boton1', 'https://www.google.es')], 'pb-15'))
+            ->addMainBlock(new BoxBlock([new TextBlock('texto4')], 'pb-15'))
+            ->addMainBlock(new TableBlock(['nombre', 'apellidos', 'telefono'], [['daniel', 'fernandez', 5558954], ['daniel', 'fernandez', 5558954], ['carlos', 'garcía', 8885134]], 'pb-15'))
+            ->addMainBlock(new BoxBlock([new TableBlock(['nombre', 'apellidos', 'telefono'], [['daniel', 'fernandez', 5558954], ['daniel', 'fernandez', 5558954], ['carlos', 'garcía', 8885134]])], 'pb-15'))
+            ->addMainBlock(new ButtonBlock('boton2', 'https://www.google.es', 'pb-15'))
+            ->addMainBlock(new ButtonBlock('boton3', 'https://www.google.es'));
+
+        $this->addFooterBlock(new TextBlock('pruebas footer', 'text-footer'));
+
         $this->mail->setFrom($this->fromEmail, $this->fromName);
         $this->mail->Subject = $this->title;
         $this->mail->msgHTML($this->renderHTML());
