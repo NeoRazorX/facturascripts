@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\MyFilesToken;
 use finfo;
+use FacturaScripts\Core\Cache;
 
 /**
  * Class to manage attached files.
@@ -101,17 +102,25 @@ class AttachedFile extends Base\ModelOnChangeClass
         return defined('FS_STORAGE_LIMIT') ? (int)FS_STORAGE_LIMIT : 0;
     }
 
-    public function getStorageUsed(array $exclude = []): int
-    {
-        $sql = 'SELECT SUM(size) as size FROM ' . static::tableName();
-        if ($exclude) {
-            $sql .= ' WHERE idfile NOT IN (' . implode(',', $exclude) . ')';
+    public function getStorageUsed(array $exclude = []): int {
+        $totalUsed = Cache::get('storageUsed');
+        if ($totalUsed) {
+            return $totalUsed;
         }
-        foreach (static::$dataBase->select($sql) as $row) {
-            return (int)$row ['size'];
-        }
+        $initFolder = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles';
+        $totalUsed = $this->folderSize($initFolder, $exclude);
+        Cache::set('storageUsed', $totalUsed);
+        return $totalUsed;
+    }
 
-        return 0;
+    private function folderSize($dir, $exclude) {
+        $size = 0;
+        foreach (glob(rtrim($dir, '/') . '/*', GLOB_NOSORT) as $fileOrDir) {
+            if (!in_array($fileOrDir, $exclude)) {
+                $size += is_file($fileOrDir) ? filesize($fileOrDir) : $this->folderSize($fileOrDir, $exclude);
+            }
+        }
+        return $size;
     }
 
     public static function primaryColumn(): string
