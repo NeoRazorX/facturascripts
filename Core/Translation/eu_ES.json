@@ -1209,6 +1209,7 @@
     "report": "Txostena",
     "report-grouping-account": "Kontuen arabera elkartu",
     "report-non-grouping-account": "Ez elkartu kontuen arabera",
+    "report-taxes-p": "Este informe permite obtener el desglose de impuestos de las facturas de compra o de venta del rango seleccionado",
     "reports": "Txostenak",
     "request-sent": "Eskaria bidalita",
     "requires-core": "FacturaScripts %version% behar du",

@@ -1209,6 +1209,7 @@
     "report": "Rapport",
     "report-grouping-account": "Grouper par compte",
     "report-non-grouping-account": "Non groupe par compte",
+    "report-taxes-p": "Este informe permite obtener el desglose de impuestos de las facturas de compra o de venta del rango seleccionado",
     "reports": "Rapports",
     "request-sent": "Requête envoyée",
     "requires-core": "Requiere FacturaScripts %version%",
