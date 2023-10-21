@@ -351,10 +351,15 @@ class Producto extends Base\ModelClass
 
         // recorremos las variantes y actualizamos el precio y la referencia
         foreach ($this->getVariants() as $variant) {
-            if ($variant->referencia === $this->referencia || is_null($newReferencia)) {
+            if ($variant->referencia === $this->referencia) {
                 $newPrecio = $variant->precio;
                 $newReferencia = $variant->referencia;
                 break;
+            }
+
+            if (is_null($newReferencia)) {
+                $newPrecio = $variant->precio;
+                $newReferencia = $variant->referencia;
             }
         }
 
