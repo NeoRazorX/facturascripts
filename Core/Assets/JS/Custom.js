@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,66 +16,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function animateSpinner(animation, result = '') {
-    $(".btn-spin-action").each(function () {
-        let btn = $(this);
-        if (animation === 'add') {
-            btn.prop('disabled', true);
-            let oldHtml = btn.children('.old-html');
-            if (!oldHtml.length) {
-                btn.html('<span class="old-html">' + btn.html() + '</span>');
-            }
-            if (!btn.children('.spinner').length) {
-                btn.append('<span class="spinner mx-auto" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i></span>');
-                btn.find('.old-html').fadeOut(100, function () {
-                    btn.find('.spinner').fadeIn();
-                });
-            }
-        }
+function animateSpinner(animation, result = false) {
+    if (animation === 'add') {
+        // añadimos la propiedad disabled al botón para evitar que se pueda pulsar varias veces
+        $("button.btn-spin-action").attr('disabled', true);
+        $("a.btn-spin-action").addClass('disabled').attr('aria-disabled', true);
 
-        let spinner = btn.children('.spinner');
+        setToast('', 'spinner', '', 0, true);
+        return;
+    }
 
-        if (spinner.data('animating')) {
-            spinner.removeClass(spinner.data('animating')).data('animating', null);
-            spinner.data('animationTimeout') && clearTimeout(spinner.data('animationTimeout'));
-        }
+    // eliminamos la propiedad disabled al botón para que se pueda pulsar de nuevo
+    $("button.btn-spin-action").removeAttr('disabled');
+    $("a.btn-spin-action").removeClass('disabled').attr('aria-disabled', false);
 
-        spinner.addClass('spinner-' + animation).data('animating', 'spinner-' + animation);
-        spinner.data('animationTimeout',
-            setTimeout(function () {
-                if (animation === 'remove') {
-                    btn.find('.spinner').fadeOut(100, function () {
-                        let attr = Boolean(btn.attr('load-after'));
-                        if (result !== '' && typeof attr !== 'undefined' && attr === true) {
-                            let icon = 'fas fa-times';
-                            if (result) {
-                                icon = 'fas fa-check';
-                            }
-                            btn.append('<div class="result mx-auto" style="display: none;"><i class="' + icon + '"></i></div>');
-                        }
+    // eliminamos el último toast-spinner añadido
+    $('#messages-toasts').children('.toast-spinner').last().remove();
 
-                        let checkResult = btn.children('.result');
-                        if (checkResult.length) {
-                            btn.find('.result').fadeIn();
-                            setTimeout(function () {
-                                btn.find('.result').fadeOut(200, function () {
-                                    btn.find('.old-html').fadeIn();
-                                    spinner.remove();
-                                    btn.find('.result').remove();
-                                    btn.prop('disabled', false);
-                                });
-                            }, 500);
-                        } else {
-                            btn.find('.old-html').fadeIn();
-                            spinner.remove();
-                            btn.prop('disabled', false);
-                        }
-                    });
-                }
-            },
-            parseFloat(spinner.css('animation-duration')) * 1000)
-        );
-    });
+    if (result) {
+        setToast('', 'completed', '', 3000, true);
+        return;
+    }
+
+    setToast('', 'danger', '', 0, true);
 }
 
 function confirmAction(viewName, action, title, message, cancel, confirm) {
