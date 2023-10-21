@@ -1,4 +1,4 @@
-<div id="messages-toasts" style="z-index: 9999; position: absolute; bottom: 25px; right: 25px;"></div>
+<div id="messages-toasts" style="z-index: 9999; position: absolute; bottom: 0; width: 100%; display: flex; justify-content: center;"></div>
 
 <script>
     function setToast(message, style = 'info', title = '', time = 10000, empty = false) {
@@ -68,9 +68,7 @@
             + '</div>';
 
             if (message !== '') {
-                html += '<div class="toast-body">'
-                    + message
-                    + '</div>';
+                html += '<div class="toast-body">' + message + '</div>';
             }
 
             html += '</div>';
