@@ -14,26 +14,26 @@
 </style>
 
 <form action="" method="post">
+    {{ formToken() }}
     <input type="hidden" name="action" value="edit-rules"/>
     <input type="hidden" name="activetab" value="{{ fsc.getCurrentView().getViewName() }}"/>
-    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <div class="card shadow">
         <div class="card-body text-right">
             <button type="submit" class="btn btn-sm btn-primary">
-                <i class="fas fa-save fa-fw"></i> {{ i18n.trans('save') }}
+                <i class="fas fa-save fa-fw"></i> {{ trans('save') }}
             </button>
         </div>
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead>
                 <tr>
-                    <th>{{ i18n.trans('menu') }}</th>
-                    <th class="text-center">{{ i18n.trans('show') }}</th>
-                    <th class="text-center">{{ i18n.trans('only-owner-data') }}</th>
-                    <th class="text-center">{{ i18n.trans('allow-update') }}</th>
-                    <th class="text-center">{{ i18n.trans('allow-import') }}</th>
-                    <th class="text-center">{{ i18n.trans('allow-export') }}</th>
-                    <th class="text-center">{{ i18n.trans('allow-delete') }}</th>
+                    <th>{{ trans('menu') }}</th>
+                    <th class="text-center">{{ trans('show') }}</th>
+                    <th class="text-center">{{ trans('only-owner-data') }}</th>
+                    <th class="text-center">{{ trans('allow-update') }}</th>
+                    <th class="text-center">{{ trans('allow-import') }}</th>
+                    <th class="text-center">{{ trans('allow-export') }}</th>
+                    <th class="text-center">{{ trans('allow-delete') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -87,7 +87,7 @@
                         <td>
                             {{ rule.menu }}
                             {% if 'List' in pageName %}
-                                <span class="badge badge-info ml-1">{{ i18n.trans('list') }}</span>
+                                <span class="badge badge-info ml-1">{{ trans('list') }}</span>
                             {% endif %}
                         </td>
                         <td class="text-center">
@@ -185,7 +185,7 @@
                 {% else %}
                     <tr class="table-warning">
                         <td colspan="7">
-                            {{ i18n.trans('no-data') }}
+                            {{ trans('no-data') }}
                         </td>
                     </tr>
                 {% endfor %}
@@ -194,7 +194,7 @@
         </div>
         <div class="card-body text-right">
             <button type="submit" class="btn btn-sm btn-primary">
-                <i class="fas fa-save fa-fw"></i> {{ i18n.trans('save') }}
+                <i class="fas fa-save fa-fw"></i> {{ trans('save') }}
             </button>
         </div>
     </div>

@@ -237,7 +237,7 @@
     }
 
     function purchasesLineTotalWithTaxes(id) {
-        const total = parseFloat(prompt('{{ i18n.trans('total-with-taxes') }}').replace(',', '.')) || 0;
+        const total = parseFloat(prompt('{{ trans('total-with-taxes') }}').replace(',', '.')) || 0;
         const dtopor = parseFloat(document.forms['purchasesForm']['dtopor_' + id].value) || 0;
         const dtopor2 = parseFloat(document.forms['purchasesForm']['dtopor2_' + id].value) || 0;
         const iva = parseFloat(document.forms['purchasesForm']['iva_' + id].value) || 0;
@@ -257,7 +257,7 @@
     }
 
     function purchasesLineTotalWithoutTaxes(id) {
-        const total = parseFloat(prompt('{{ i18n.trans('net') }}').replace(',', '.')) || 0;
+        const total = parseFloat(prompt('{{ trans('net') }}').replace(',', '.')) || 0;
         const dtopor = parseFloat(document.forms['purchasesForm']['dtopor_' + id].value) || 0;
         const dtopor2 = parseFloat(document.forms['purchasesForm']['dtopor2_' + id].value) || 0;
         const cantidad = parseFloat(document.forms['purchasesForm']['cantidad_' + id].value) || 0;
@@ -363,9 +363,9 @@
 </script>
 
 <form name="purchasesForm" method="post">
+    {{ formToken() }}
     <input type="hidden" name="action"/>
     <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
-    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <input type="hidden" name="selectedLine"/>
     <input type="hidden" name="columnView" value="{{ appSettings.get('default', 'columnetosubtotal', 'subtotal') }}"/>
     {{ fsc.renderPurchasesForm(model, model.getLines()) | raw }}

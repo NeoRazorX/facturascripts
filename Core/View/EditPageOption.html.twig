@@ -28,10 +28,10 @@
             <div class="col-4 d-print-none">
                 <a href="{{ fsc.backPage }}" class="btn btn-sm btn-secondary">
                     <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
-                    <span class="d-none d-md-inline-block">{{ i18n.trans('back') }} </span>
+                    <span class="d-none d-md-inline-block">{{ trans('back') }} </span>
                 </a>
                 <a href="{{ fsc.url() ~ '?code=' ~ fsc.selectedViewName }}" class="btn btn-sm btn-secondary"
-                   title="{{ i18n.trans('refresh') }}">
+                   title="{{ trans('refresh') }}">
                     <i class="fas fa-redo" aria-hidden="true"></i>
                 </a>
             </div>
@@ -58,7 +58,7 @@
                             <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
                             <div class="row">
                                 <div class="col">
-                                    <p>{{ i18n.trans('page-option-info') }}</p>
+                                    <p>{{ trans('page-option-info') }}</p>
                                 </div>
                                 <div class="col-3">
                                     <div class="input-group mb-3">
@@ -67,7 +67,7 @@
                                                 <i class="fas fa-users"></i>
                                             </span>
                                         </div>
-                                        {% set userList = {'': i18n.trans('all')} | merge(fsc.getUserList()) %}
+                                        {% set userList = {'': trans('all')} | merge(fsc.getUserList()) %}
                                         {{ simpleSelect(
                                             'nick',
                                             'nick',
@@ -89,13 +89,13 @@
                             <table class="table table-hover">
                                 <thead>
                                 <tr>
-                                    <th>{{ i18n.trans('title') }}</th>
-                                    <th class="text-center">{{ i18n.trans('display') }}</th>
-                                    <th>{{ i18n.trans('level') }}</th>
-                                    <th>{{ i18n.trans('readonly') }}</th>
-                                    <th width="150">{{ i18n.trans('decimals') }}</th>
-                                    <th>{{ i18n.trans('width') }}</th>
-                                    <th class="text-right" width="130">{{ i18n.trans('sort') }}</th>
+                                    <th>{{ trans('title') }}</th>
+                                    <th class="text-center">{{ trans('display') }}</th>
+                                    <th>{{ trans('level') }}</th>
+                                    <th>{{ trans('readonly') }}</th>
+                                    <th width="150">{{ trans('decimals') }}</th>
+                                    <th>{{ trans('width') }}</th>
+                                    <th class="text-right" width="130">{{ trans('sort') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -114,16 +114,16 @@
                                         <button class="btn btn-sm btn btn-danger" type="button"
                                                 onclick="deleteOptions();">
                                             <i class="fas fa-trash-alt fa-fw"
-                                               aria-hidden="true"></i> {{ i18n.trans('delete') }}
+                                               aria-hidden="true"></i> {{ trans('delete') }}
                                         </button>
                                     </div>
                                 {% endif %}
                                 <div class="col text-right">
                                     <button class="btn btn-sm btn btn-secondary" type="reset">
-                                        <i class="fas fa-undo fa-fw" aria-hidden="true"></i> {{ i18n.trans('undo') }}
+                                        <i class="fas fa-undo fa-fw" aria-hidden="true"></i> {{ trans('undo') }}
                                     </button>
                                     <button class="btn btn-sm btn-primary" type="submit">
-                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
+                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
                                 </div>
                             </div>
@@ -149,15 +149,15 @@
     <script>
         function deleteOptions() {
             bootbox.confirm({
-                title: "{{ i18n.trans('confirm-delete')|raw }}",
-                message: "{{ i18n.trans('are-you-sure') }}",
+                title: "{{ trans('confirm-delete')|raw }}",
+                message: "{{ trans('are-you-sure') }}",
                 closeButton: false,
                 buttons: {
                     cancel: {
-                        label: "<i class='fas fa-times'></i> {{ i18n.trans('cancel') }}"
+                        label: "<i class='fas fa-times'></i> {{ trans('cancel') }}"
                     },
                     confirm: {
-                        label: "<i class='fas fa-check'></i> {{ i18n.trans('delete') }}",
+                        label: "<i class='fas fa-check'></i> {{ trans('delete') }}",
                         className: 'btn-danger'
                     }
                 },
@@ -174,44 +174,44 @@
 
 {% macro editGroupColumn(col, i18n) %}
     <tr>
-        <td title="{{ i18n.trans('title') }}">
+        <td title="{{ trans('title') }}">
             <input type="text" class="form-control" name="{{ col.name }}-title"
-                   placeholder="{{ i18n.trans(col.title) }}" autocomplete="off"/>
+                   placeholder="{{ trans(col.title) }}" autocomplete="off"/>
         </td>
         <td class="text-center">
             {{ _self.editGroupColumnDisplay(col, i18n) }}
         </td>
-        <td title="{{ i18n.trans('level') }}">
+        <td title="{{ trans('level') }}">
             <input type="number" class="form-control" name="{{ col.name }}-level" min="0" max="99" step="1"
                    value="{{ col.level }}"/>
         </td>
-        <td title="{{ i18n.trans('readonly') }}">
+        <td title="{{ trans('readonly') }}">
             {{ simpleSelect(
                 col.name ~ '-readonly',
                 col.name ~ '-readonly',
                 col.widget.readonly,
-                {'true':i18n.trans('yes'), 'false':i18n.trans('no'), 'dinamic':i18n.trans('auto')},
+                {'true':trans('yes'), 'false':trans('no'), 'dinamic':trans('auto')},
                 FALSE,
                 FALSE,
                 {}) }}
         </td>
-        <td title="{{ i18n.trans('decimals') }}">
+        <td title="{{ trans('decimals') }}">
             {% if col.widget.gridFormat() is not empty %}
                 <input type="number" name="{{ col.name }}-decimal" min="0" max="7" step="1"
                        value="{{ col.widget.decimal }}" class="form-control"/>
             {% endif %}
         </td>
-        <td title="{{ i18n.trans('width') }}">
+        <td title="{{ trans('width') }}">
             {{ simpleSelect(
                 col.name ~ '-numcolumns',
                 col.name ~ '-numcolumns',
                 col.numcolumns,
-                {'0':i18n.trans('auto'), '1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9', '10':'10', '11':'11', '12':'12'},
+                {'0':trans('auto'), '1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9', '10':'10', '11':'11', '12':'12'},
                 FALSE,
                 FALSE,
                 {}) }}
         </td>
-        <td title="{{ i18n.trans('sort') }}">
+        <td title="{{ trans('sort') }}">
             <input type="number" name="{{ col.name }}-order" value="{{ col.order }}" class="form-control text-right"/>
         </td>
     </tr>
@@ -220,48 +220,48 @@
 {% macro editGroupColumnDisplay(col, i18n) %}
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
         {% if col.display == 'left' %}
-            <label class="btn btn-outline-secondary active" title="{{ i18n.trans('left') }}">
+            <label class="btn btn-outline-secondary active" title="{{ trans('left') }}">
                 <input type="radio" name="{{ col.name }}-display" value="left" checked="">
                 <i class="fas fa-align-left"></i>
             </label>
         {% else %}
-            <label class="btn btn-outline-secondary" title="{{ i18n.trans('left') }}">
+            <label class="btn btn-outline-secondary" title="{{ trans('left') }}">
                 <input type="radio" name="{{ col.name }}-display" value="left">
                 <i class="fas fa-align-left"></i>
             </label>
         {% endif %}
 
         {% if col.display == 'center' %}
-            <label class="btn btn-outline-secondary active" title="{{ i18n.trans('center') }}">
+            <label class="btn btn-outline-secondary active" title="{{ trans('center') }}">
                 <input type="radio" name="{{ col.name }}-display" value="center" checked="">
                 <i class="fas fa-align-center"></i>
             </label>
         {% else %}
-            <label class="btn btn-outline-secondary" title="{{ i18n.trans('center') }}">
+            <label class="btn btn-outline-secondary" title="{{ trans('center') }}">
                 <input type="radio" name="{{ col.name }}-display" value="center">
                 <i class="fas fa-align-center"></i>
             </label>
         {% endif %}
 
         {% if col.display == 'right' %}
-            <label class="btn btn-outline-secondary active" title="{{ i18n.trans('right') }}">
+            <label class="btn btn-outline-secondary active" title="{{ trans('right') }}">
                 <input type="radio" name="{{ col.name }}-display" value="right" checked="">
                 <i class="fas fa-align-right"></i>
             </label>
         {% else %}
-            <label class="btn btn-outline-secondary" title="{{ i18n.trans('right') }}">
+            <label class="btn btn-outline-secondary" title="{{ trans('right') }}">
                 <input type="radio" name="{{ col.name }}-display" value="right">
                 <i class="fas fa-align-right"></i>
             </label>
         {% endif %}
 
         {% if col.display == 'none' %}
-            <label class="btn btn-outline-secondary active" title="{{ i18n.trans('hide') }}">
+            <label class="btn btn-outline-secondary active" title="{{ trans('hide') }}">
                 <input type="radio" name="{{ col.name }}-display" value="none" checked="">
                 <i class="fas fa-eye-slash"></i>
             </label>
         {% else %}
-            <label class="btn btn-outline-secondary" title="{{ i18n.trans('hide') }}">
+            <label class="btn btn-outline-secondary" title="{{ trans('hide') }}">
                 <input type="radio" name="{{ col.name }}-display" value="none">
                 <i class="fas fa-eye-slash"></i>
             </label>

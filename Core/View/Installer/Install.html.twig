@@ -111,7 +111,7 @@
                                                     {% for langCode, langName in i18n.getAvailableLanguages() %}
                                                         {% if langCode == i18n.getLang() %}
                                                             <option value="{{ langCode }}"
-                                                                    selected="">{{ langName }}</option>
+                                                                    selected>{{ langName }}</option>
                                                         {% else %}
                                                             <option value="{{ langCode }}">{{ langName }}</option>
                                                         {% endif %}
@@ -150,14 +150,14 @@
                                         <div class="form-group">
                                             {{ trans('db-host') }}:
                                             <input type="text" name="fs_db_host" value="localhost" class="form-control"
-                                                   required=""/>
+                                                   required/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             {{ trans('db-port') }}:
                                             <input type="number" id="db_port" name="fs_db_port" value="3306"
-                                                   class="form-control" required=""/>
+                                                   class="form-control" required/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
@@ -170,7 +170,7 @@
                                                     </span>
                                                 </span>
                                                 <input type="text" name="fs_db_name" value="facturascripts"
-                                                       class="form-control" required=""/>
+                                                       class="form-control" required/>
                                             </div>
                                         </div>
                                     </div>
@@ -178,7 +178,7 @@
                                         <div class="form-group">
                                             {{ trans('db-user') }}:
                                             <input type="text" id="db_user" name="fs_db_user" value="root"
-                                                   class="form-control" required=""/>
+                                                   class="form-control" required/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
