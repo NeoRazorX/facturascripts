@@ -44,17 +44,23 @@ class ListSerie extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListSerie', 'Serie', 'series', 'fas fa-layer-group');
-        $this->addSearchFields('ListSerie', ['descripcion', 'codserie']);
-        $this->addOrderBy('ListSerie', ['codserie'], 'code');
-        $this->addOrderBy('ListSerie', ['descripcion'], 'description');
+        $this->createViewsSeries();
+    }
 
-        $this->addFilterCheckbox('ListSerie', 'siniva', 'without-tax', 'siniva');
-		
-		$this->addFilterSelect('ListSerie', 'tipo', 'type', 'tipo', 
-		[
-			'R' => Tools::lang()->trans('rectifying'),
-			'S' => Tools::lang()->trans('simplified'),
-		]);
+    protected function createViewsSeries(string $viewName = 'ListSerie'): void
+    {
+        $this->addView($viewName, 'Serie', 'series', 'fas fa-layer-group');
+        $this->addSearchFields($viewName, ['descripcion', 'codserie']);
+        $this->addOrderBy($viewName, ['codserie'], 'code');
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
+
+        // filtros
+        $this->addFilterCheckbox($viewName, 'siniva', 'without-tax', 'siniva');
+
+        $this->addFilterSelect($viewName, 'tipo', 'type', 'tipo', [
+            '' => '------',
+            'R' => Tools::lang()->trans('rectifying'),
+            'S' => Tools::lang()->trans('simplified'),
+        ]);
     }
 }

@@ -461,10 +461,11 @@ final class ProductoTest extends TestCase
         $this->assertTrue($variant->save(), 'variant-cant-save-with-ref');
 
         // eliminamos variante
-        $this->assertTrue($variant->delete(), 'variant-cant-delete');
+        $this->assertTrue($variant->delete(), 'variant-cant-delete: '
+            . $variant->referencia . ' === ' . $variant->getProducto()->referencia);
 
         // comprobamos que no podemos eliminar la única variante
-        $where = [ new DataBaseWhere('referencia', $product->referencia) ];
+        $where = [new DataBaseWhere('referencia', $product->referencia)];
         $this->assertTrue($variant->loadFromCode('', $where), 'cant-reload-variant');
         $this->assertFalse($variant->delete(), 'can-delete-only-variant');
 
