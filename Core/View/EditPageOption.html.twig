@@ -28,7 +28,7 @@
             <div class="col-4 d-print-none">
                 <a href="{{ fsc.backPage }}" class="btn btn-sm btn-secondary">
                     <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
-                    <span class="d-none d-md-inline-block">{{ trans('back') }} </span>
+                    <span class="d-none d-md-inline-block">{{ trans('back') }}</span>
                 </a>
                 <a href="{{ fsc.url() ~ '?code=' ~ fsc.selectedViewName }}" class="btn btn-sm btn-secondary"
                    title="{{ trans('refresh') }}">
@@ -56,7 +56,7 @@
                     <div class="card-body">
                         <form method="post">
                             <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
-                            <div class="row">
+                            <div class="form-row">
                                 <div class="col">
                                     <p>{{ trans('page-option-info') }}</p>
                                 </div>
@@ -82,11 +82,12 @@
                         </form>
                     </div>
                     <form method="post" name="main_form">
+                        {{ formToken() }}
                         <input type="hidden" name="action" value="save"/>
                         <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
                         <input type="hidden" name="nick" value="{{ fsc.selectedUser }}"/>
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-sm table-hover mb-0">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('title') }}</th>
@@ -101,20 +102,20 @@
                                 <tbody>
                                 {% for group in fsc.columns %}
                                     {% for col in group.columns %}
-                                        {{ _self.editGroupColumn(col, i18n) }}
+                                        {{ _self.editGroupColumn(col) }}
                                     {% endfor %}
                                 {% endfor %}
                                 </tbody>
                             </table>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
+                        <div class="card-footer">
+                            <div class="form-row">
                                 {% if fsc.model.exists() %}
                                     <div class="col">
                                         <button class="btn btn-sm btn btn-danger" type="button"
                                                 onclick="deleteOptions();">
-                                            <i class="fas fa-trash-alt fa-fw"
-                                               aria-hidden="true"></i> {{ trans('delete') }}
+                                            <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                                            {{ trans('delete') }}
                                         </button>
                                     </div>
                                 {% endif %}
@@ -172,14 +173,14 @@
     </script>
 {% endblock %}
 
-{% macro editGroupColumn(col, i18n) %}
+{% macro editGroupColumn(col) %}
     <tr>
         <td title="{{ trans('title') }}">
             <input type="text" class="form-control" name="{{ col.name }}-title"
                    placeholder="{{ trans(col.title) }}" autocomplete="off"/>
         </td>
         <td class="text-center">
-            {{ _self.editGroupColumnDisplay(col, i18n) }}
+            {{ _self.editGroupColumnDisplay(col) }}
         </td>
         <td title="{{ trans('level') }}">
             <input type="number" class="form-control" name="{{ col.name }}-level" min="0" max="99" step="1"
@@ -217,11 +218,11 @@
     </tr>
 {% endmacro %}
 
-{% macro editGroupColumnDisplay(col, i18n) %}
+{% macro editGroupColumnDisplay(col) %}
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
         {% if col.display == 'left' %}
             <label class="btn btn-outline-secondary active" title="{{ trans('left') }}">
-                <input type="radio" name="{{ col.name }}-display" value="left" checked="">
+                <input type="radio" name="{{ col.name }}-display" value="left" checked>
                 <i class="fas fa-align-left"></i>
             </label>
         {% else %}
@@ -233,7 +234,7 @@
 
         {% if col.display == 'center' %}
             <label class="btn btn-outline-secondary active" title="{{ trans('center') }}">
-                <input type="radio" name="{{ col.name }}-display" value="center" checked="">
+                <input type="radio" name="{{ col.name }}-display" value="center" checked>
                 <i class="fas fa-align-center"></i>
             </label>
         {% else %}
@@ -245,7 +246,7 @@
 
         {% if col.display == 'right' %}
             <label class="btn btn-outline-secondary active" title="{{ trans('right') }}">
-                <input type="radio" name="{{ col.name }}-display" value="right" checked="">
+                <input type="radio" name="{{ col.name }}-display" value="right" checked>
                 <i class="fas fa-align-right"></i>
             </label>
         {% else %}
@@ -257,7 +258,7 @@
 
         {% if col.display == 'none' %}
             <label class="btn btn-outline-secondary active" title="{{ trans('hide') }}">
-                <input type="radio" name="{{ col.name }}-display" value="none" checked="">
+                <input type="radio" name="{{ col.name }}-display" value="none" checked>
                 <i class="fas fa-eye-slash"></i>
             </label>
         {% else %}

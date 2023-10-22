@@ -95,7 +95,7 @@
                                 {% if rule.show %}
                                     <input class="show-permission custom-control-input"
                                            id="checkbox-large-show-{{ pageName }}" type="checkbox" name="show[]"
-                                           value="{{ pageName }}" checked=""/>
+                                           value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="show-permission custom-control-input"
                                            id="checkbox-large-show-{{ pageName }}" type="checkbox" name="show[]"
@@ -110,7 +110,7 @@
                                 {% if rule.onlyOwner %}
                                     <input class="only-owner-permission custom-control-input"
                                            id="checkbox-large-onlyOwner-{{ pageName }}" type="checkbox"
-                                           name="onlyOwner[]" value="{{ pageName }}" checked=""/>
+                                           name="onlyOwner[]" value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="only-owner-permission custom-control-input"
                                            id="checkbox-large-onlyOwner-{{ pageName }}" type="checkbox"
@@ -126,7 +126,7 @@
                                 {% if rule.update %}
                                     <input class="update-permission custom-control-input"
                                            id="checkbox-large-update-{{ pageName }}" type="checkbox" name="update[]"
-                                           value="{{ pageName }}" checked=""/>
+                                           value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="update-permission custom-control-input"
                                            id="checkbox-large-update-{{ pageName }}" type="checkbox" name="update[]"
@@ -141,7 +141,7 @@
                                 {% if rule.import %}
                                     <input class="import-permission custom-control-input"
                                            id="checkbox-large-import-{{ pageName }}" type="checkbox" name="import[]"
-                                           value="{{ pageName }}" checked=""/>
+                                           value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="import-permission custom-control-input"
                                            id="checkbox-large-import-{{ pageName }}" type="checkbox" name="import[]"
@@ -156,7 +156,7 @@
                                 {% if rule.export %}
                                     <input class="export-permission custom-control-input"
                                            id="checkbox-large-export-{{ pageName }}" type="checkbox" name="export[]"
-                                           value="{{ pageName }}" checked=""/>
+                                           value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="export-permission custom-control-input"
                                            id="checkbox-large-export-{{ pageName }}" type="checkbox" name="export[]"
@@ -171,7 +171,7 @@
                                 {% if rule.delete %}
                                     <input class="delete-permission custom-control-input"
                                            id="checkbox-large-delete-{{ pageName }}" type="checkbox" name="delete[]"
-                                           value="{{ pageName }}" checked=""/>
+                                           value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="delete-permission custom-control-input"
                                            id="checkbox-large-delete-{{ pageName }}" type="checkbox" name="delete[]"
@@ -184,9 +184,7 @@
                     </tr>
                 {% else %}
                     <tr class="table-warning">
-                        <td colspan="7">
-                            {{ trans('no-data') }}
-                        </td>
+                        <td colspan="7">{{ trans('no-data') }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

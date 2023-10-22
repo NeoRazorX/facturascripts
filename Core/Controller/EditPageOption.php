@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,7 +38,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EditPageOption extends Controller
 {
-
     /**
      * Contains the url to go back.
      *
@@ -86,9 +85,9 @@ class EditPageOption extends Controller
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
-        $data['showonmenu'] = false;
         $data['title'] = 'options';
         $data['icon'] = 'fas fa-wrench';
+        $data['showonmenu'] = false;
         return $data;
     }
 
@@ -146,6 +145,8 @@ class EditPageOption extends Controller
         if (false === $this->permissions->allowDelete) {
             $this->toolBox()->i18nLog()->warning('not-allowed-delete');
             return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
         }
 
         if ($this->model->delete()) {
@@ -194,6 +195,8 @@ class EditPageOption extends Controller
     {
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->validateFormToken()) {
             return;
         }
 
