@@ -22,7 +22,7 @@ function animateSpinner(animation, result = false) {
         $("button.btn-spin-action").attr('disabled', true);
         $("a.btn-spin-action").addClass('disabled').attr('aria-disabled', true);
 
-        setToast('', 'spinner', '', 0, true);
+        setToast('', 'spinner', '', 0);
         return;
     }
 
@@ -30,15 +30,15 @@ function animateSpinner(animation, result = false) {
     $("button.btn-spin-action").removeAttr('disabled');
     $("a.btn-spin-action").removeClass('disabled').attr('aria-disabled', false);
 
-    // eliminamos el último toast-spinner añadido
-    $('#messages-toasts').children('.toast-spinner').last().remove();
+    // eliminamos el toast-spinner y toast-completed si existen
+    $('#messages-toasts .toast-spinner, #messages-toasts .toast-completed').remove();
 
     if (result) {
-        setToast('', 'completed', '', 3000, true);
+        setToast('', 'completed', '', 3000);
         return;
     }
 
-    setToast('', 'danger', '', 0, true);
+    setToast('', 'danger', '', 0);
 }
 
 function confirmAction(viewName, action, title, message, cancel, confirm) {
