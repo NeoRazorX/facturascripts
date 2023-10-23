@@ -1,11 +1,7 @@
-<div id="messages-toasts" style="z-index: 9999; position: absolute; bottom: 0; width: 100%; display: flex; justify-content: center;"></div>
+<div id="messages-toasts" style="z-index: 9999; position: absolute; bottom: 0; width: 100%;"></div>
 
 <script>
-    function setToast(message, style = 'info', title = '', time = 10000, empty = false) {
-        if (empty) {
-            $('#messages-toasts').html('');
-        }
-
+    function setToast(message, style = 'info', title = '', time = 10000) {
         let icon = '';
         let styleBorder = '';
         let styleHeader = '';
@@ -59,7 +55,7 @@
                 break;
         }
 
-        let html = '<div class="toast toast-' + style + ' ' + styleBorder + '" role="' + role + '" aria-live="' + live + '" aria-atomic="true" ' + delay + '>'
+        let html = '<div class="toast toast-' + style + ' ' + styleBorder + '" style="margin: 15px auto 0 auto;" role="' + role + '" aria-live="' + live + '" aria-atomic="true" ' + delay + '>'
             + '<div class="toast-header ' + styleHeader + '">'
             + '<strong class="mr-auto">' + icon + title + '</strong>'
             + '<button type="button" class="ml-4 btn close ' + styleHeader + '" data-dismiss="toast" aria-label="{{ trans('close') }}">'
@@ -73,7 +69,13 @@
 
             html += '</div>';
 
+        // eliminamos los toast con la clase hide
+        $('#messages-toasts .toast.hide').remove();
+
+        // agregamos el toast al div
         $('#messages-toasts').append(html);
-        $('.toast').toast('show');
+
+        // mostramos los toast
+        $('#messages-toasts .toast').toast('show');
     }
 </script>
