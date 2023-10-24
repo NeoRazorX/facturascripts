@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Dinamic\Model\Base\JoinModel;
+use FacturaScripts\Core\Model\Base\JoinModel;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 
 /**
