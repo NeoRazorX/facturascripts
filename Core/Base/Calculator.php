@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -255,6 +255,13 @@ final class Calculator
                     $line->recargo = $line->getTax()->recargo;
                     break;
                 }
+            }
+
+            // ¿La serie es CON impuestos y el régimen exento?
+            if (false === $sinIva && $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
+                $line->codimpuesto = 'IVA0';
+                $line->iva = $line->recargo = 0.0;
+                continue;
             }
 
             // ¿La serie es sin impuestos o el régimen exento?
