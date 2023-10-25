@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
@@ -417,9 +418,28 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         // check exercise and date
         $exercise = $this->getExercise();
-        if (strtotime($this->fecha) < strtotime($exercise->fechainicio) || strtotime($this->fecha) > strtotime($exercise->fechafin)) {
-            $this->toolBox()->i18nLog()->error('date-out-of-exercise-range', ['%exerciseName%' => $this->codejercicio]);
-            return false;
+        if (false === $exercise->inRange($this->fecha)) {
+            // Verificamos que existe un ejercicio que coincida con la fecha del documento y lo asignamos.
+            $exerciseFound = false;
+            $likelyExercises = new Ejercicio();
+            $likelyExercises = $likelyExercises->all([
+                new DataBaseWhere('idempresa', $this->idempresa),
+                new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN),
+            ]);
+
+            foreach ($likelyExercises as $likelyExercise) {
+                if ($likelyExercise->inRange($this->fecha)) {
+                    // Asignamos el ejercicio que se encuentra dentro del rango al documento.
+                    $this->codejercicio = $likelyExercise->codejercicio;
+                    $exerciseFound = true;
+                    break;
+                };
+            }
+
+            if (false === $exerciseFound) {
+                $this->toolBox()->i18nLog()->error('date-out-of-exercises-range');
+                return false;
+            }
         }
 
         // check total
