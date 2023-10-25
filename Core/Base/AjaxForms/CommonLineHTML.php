@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
@@ -199,7 +200,7 @@ trait CommonLineHTML
             ' onclick="' . $jsNeto . '(\'' . $idlinea . '\')"' :
             '';
 
-        $subtotal = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+        $subtotal = self::subtotalValue($line, $model);
         return '<div class="col col-lg-1 order-7 columSubtotal ' . $cssSubtotal . '">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
             . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($subtotal, FS_NF0, '.', '')
@@ -273,6 +274,19 @@ trait CommonLineHTML
         return '<div class="col-auto order-9"><button type="button" data-toggle="modal" data-target="#lineModal-'
             . $idlinea . '" class="btn btn-sm btn-outline-secondary" title="'
             . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
+    }
+
+    private static function subtotalValue(BusinessDocumentLine $line, TransformerDocument $model): float
+    {
+        if ($model->subjectColumn() === 'codcliente'
+            && $model->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
+            && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+            $profit = $line->pvpunitario - $line->coste;
+            $tax = $profit * ($line->iva + $line->recargo - $line->irpf) / 100;
+            return ($line->coste + $profit + $tax) * $line->cantidad;
+        }
+
+        return $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
     }
 
     private static function suplido(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string

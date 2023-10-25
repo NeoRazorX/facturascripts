@@ -131,7 +131,7 @@ class PurchasesLineHTML
             $map['iva_' . $idlinea] = $line->iva;
 
             // total
-            $map['linetotal_' . $idlinea] = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+            $map['linetotal_' . $idlinea] = self::subtotalValue($line, $model);
 
             // neto
             $map['lineneto_' . $idlinea] = $line->pvptotal;
