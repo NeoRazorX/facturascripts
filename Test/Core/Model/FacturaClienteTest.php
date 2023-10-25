@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\InvoiceOperation;
@@ -136,9 +137,18 @@ final class FacturaClienteTest extends TestCase
         $invoice->codejercicio = $exercise->codejercicio;
 
         // intentamos guardar la factura, no debe permitirlo
-        $this->assertFalse($invoice->save(), 'can-create-invoice-with-bad-exercise');
+        $this->assertTrue($invoice->save(), 'can-create-invoice-with-bad-exercise');
+        $this->assertEquals($oldExercise->codejercicio, $invoice->codejercicio);
+        $this->assertNotEquals($exercise->codejercicio, $invoice->codejercicio);
+
+        // intentamos guardar con una fecha que no exista ningun ejercicio que coincida
+        MiniLog::clear();
+        $invoice->fecha = '11-01-2039';
+        $this->assertFalse($invoice->save());
+        $this->assertEquals('date-out-of-exercises-range', MiniLog::read()[0]['original']);
 
         // eliminamos
+        $this->assertTrue($invoice->delete());
         $this->assertTrue($exercise->delete());
         $this->assertTrue($oldExercise->delete());
         $this->assertTrue($customer->getDefaultAddress()->delete());
