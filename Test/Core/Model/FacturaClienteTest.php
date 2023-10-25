@@ -145,7 +145,7 @@ final class FacturaClienteTest extends TestCase
         MiniLog::clear();
         $invoice->fecha = '11-01-2039';
         $this->assertFalse($invoice->save());
-        $this->assertEquals('date-out-of-exercises-range', MiniLog::read()[0]['original']);
+        $this->assertEquals('date-out-of-exercises-range', MiniLog::read('master', ['error'])[0]['original']);
 
         // eliminamos
         $this->assertTrue($invoice->delete());
