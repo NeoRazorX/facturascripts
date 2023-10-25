@@ -5,14 +5,14 @@
     <div class="card-body">
         <div class="dropdown">
             <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-cloud-download-alt"></i> {{ i18n.trans('download') }}
+                <i class="fas fa-cloud-download-alt"></i> {{ trans('download') }}
             </button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" target="_blank" href="{{ asset(file.url('download')) }}">
-                    {{ trans('valid-for-day') }}
+                    <i class="fa-regular fa-hourglass-half fa-fw mr-1"></i> {{ trans('valid-for-day') }}
                 </a>
                 <a class="dropdown-item" target="_blank" href="{{ asset(file.url('download-permanent')) }}">
-                    {{ trans('unlimited') }}
+                    <i class="fa-solid fa-circle-check fa-fw mr-1"></i> {{ trans('unlimited') }}
                 </a>
             </div>
         </div>

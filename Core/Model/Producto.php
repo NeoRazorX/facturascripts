@@ -80,7 +80,7 @@ class Producto extends Base\ModelClass
     public $codsubcuentairpfcom;
 
     /**
-     * Aaccount code for sales.
+     * Account code for sales.
      *
      * @var string
      */
@@ -344,18 +344,26 @@ class Producto extends Base\ModelClass
     /**
      * Updated product price or reference if any change in variants.
      */
-    public function update()
+    public function update(): void
     {
         $newPrecio = 0.0;
         $newReferencia = null;
+
+        // recorremos las variantes y actualizamos el precio y la referencia
         foreach ($this->getVariants() as $variant) {
-            if ($variant->referencia == $this->referencia || is_null($newReferencia)) {
+            if ($variant->referencia === $this->referencia) {
                 $newPrecio = $variant->precio;
                 $newReferencia = $variant->referencia;
                 break;
             }
+
+            if (is_null($newReferencia)) {
+                $newPrecio = $variant->precio;
+                $newReferencia = $variant->referencia;
+            }
         }
 
+        // si hay cambios, actualizamos el producto
         if ($newPrecio != $this->precio || $newReferencia != $this->referencia) {
             $this->precio = $newPrecio;
             $this->referencia = $newReferencia;

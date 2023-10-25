@@ -267,11 +267,11 @@
                         &nbsp;
                         <i class="far fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
                         <br/>
-                        {{ trans('net') }}: {{ fsc.toolBox().coins().format(doc.neto) }}
+                        {{ trans('net') }}: {{ money(doc.neto) }}
                         &nbsp;
-                        {{ trans('taxes') }}: {{ fsc.toolBox().coins().format(doc.totaliva) }}
+                        {{ trans('taxes') }}: {{ money(doc.totaliva) }}
                         &nbsp;
-                        {{ trans('total') }}: {{ fsc.toolBox().coins().format(doc.total) }}
+                        {{ trans('total') }}: {{ money(doc.total) }}
                     </p>
                 </div>
             </div>

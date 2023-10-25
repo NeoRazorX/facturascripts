@@ -320,6 +320,8 @@ final class Plugin
         }
 
         $iniData = parse_ini_file($iniPath);
-        $this->loadIniData($iniData);
+        if ($iniData) {
+            $this->loadIniData($iniData);
+        }
     }
 }

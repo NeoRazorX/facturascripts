@@ -92,7 +92,7 @@ trait ListBusinessActionTrait
         $this->addButton($viewName, [
             'action' => 'generate-accounting-entries',
             'color' => 'warning',
-            'icon' => 'fas fa-magic',
+            'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entries'
         ]);
     }
@@ -106,7 +106,7 @@ trait ListBusinessActionTrait
     {
         $this->addButton($viewName, [
             'action' => 'group-document',
-            'icon' => 'fas fa-magic',
+            'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'group-or-split'
         ]);
     }

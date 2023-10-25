@@ -79,7 +79,7 @@ class DocumentStitcher extends Controller
         $data['menu'] = 'sales';
         $data['showonmenu'] = false;
         $data['title'] = 'group-or-split';
-        $data['icon'] = 'fas fa-magic';
+        $data['icon'] = 'fa-solid fa-wand-magic-sparkles';
         return $data;
     }
 

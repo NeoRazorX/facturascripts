@@ -55,6 +55,7 @@
     {% block fullBody %}
         <body>
             {% block messages %}
+                {% include 'Macro/Toasts.html.twig' %}
                 {% from 'Macro/Utils.html.twig' import message as showMessage %}
                 {{ showMessage(log, ['error', 'critical'], 'danger') }}
                 {{ showMessage(log, ['warning'], 'warning') }}
