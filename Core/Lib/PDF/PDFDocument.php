@@ -400,7 +400,7 @@ abstract class PDFDocument extends PDFCore
         if ($model->modelClassName() === 'FacturaCliente') {
             $this->insertInvoiceReceipts($model);
         } elseif (isset($model->codcliente)) {
-            $this->insertInvoicePayMehtod($model);
+            $this->insertInvoicePayMethod($model);
         }
 
         if (!empty($this->format->texto)) {
@@ -596,7 +596,7 @@ abstract class PDFDocument extends PDFCore
     /**
      * @param FacturaCliente $invoice
      */
-    protected function insertInvoicePayMehtod($invoice)
+    protected function insertInvoicePayMethod($invoice)
     {
         $headers = [
             'method' => $this->i18n->trans('payment-method'),
