@@ -36,7 +36,7 @@
         <column name="opened" display="center" order="140">
             <widget type="checkbox" fieldname="opened"/>
         </column>
-        <column name="attachments" display="center" order="150">
+        <column name="attachments" title="has-attachments" display="center" order="150">
             <widget type="checkbox" fieldname="attachment"/>
         </column>
         <column name="date" display="right" order="160">

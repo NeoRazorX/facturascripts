@@ -101,7 +101,7 @@ class ConfigEmail extends PanelController
 
         $this->views[$viewName]->addFilterPeriod('date', 'period', 'date');
         $this->views[$viewName]->addFilterCheckbox('opened');
-        $this->views[$viewName]->addFilterCheckbox('attachment', 'attachments');
+        $this->views[$viewName]->addFilterCheckbox('attachment', 'has-attachments');
 
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
