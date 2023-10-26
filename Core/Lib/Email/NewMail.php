@@ -403,7 +403,7 @@ class NewMail
             $emailSent->addressee = $address;
             $emailSent->attachment = count($attachments) > 0;
             $emailSent->body = $this->text;
-            $emailSent->email_from = $this->toolBox()->appSettings()->get('email', 'email');
+            $emailSent->email_from = $this->fromEmail;
             $emailSent->html = $this->html;
             $emailSent->nick = $this->fromNick;
             $emailSent->subject = $this->title;
