@@ -86,47 +86,40 @@ final class Html
             'appSettings' => new AppSettings(),
             'assetManager' => new AssetManager(),
             'i18n' => new Translator(),
-            'log' => new MiniLog(),
+            'log' => new MiniLog()
         ];
         return self::twig()->render($template, array_merge($params, $templateVars));
     }
 
     private static function assetFunction(): TwigFunction
     {
-        return new TwigFunction(
-            'asset', function ($string) {
+        return new TwigFunction('asset', function ($string) {
             $path = FS_ROUTE . '/';
             return substr($string, 0, strlen($path)) == $path ?
                 $string :
                 str_replace('//', '/', $path . $string);
-        }
-        );
+        });
     }
 
     private static function attachedFileFunction(): TwigFunction
     {
-        return new TwigFunction(
-            'attachedFile', function ($id) {
+        return new TwigFunction('attachedFile', function ($id) {
             $attached = new AttachedFile();
             $attached->loadFromCode($id);
             return $attached;
-        }
-        );
+        });
     }
 
     private static function cacheFunction(): TwigFunction
     {
-        return new TwigFunction(
-            'cache', function (string $key) {
+        return new TwigFunction('cache', function (string $key) {
             return Cache::get($key);
-        }
-        );
+        });
     }
 
     private static function configFunction(): TwigFunction
     {
-        return new TwigFunction(
-            'config', function (string $key, $default = null) {
+        return new TwigFunction('config', function (string $key, $default = null) {
             $constants = [$key, strtoupper($key), 'FS_' . strtoupper($key)];
             foreach ($constants as $constant) {
                 if (defined($constant)) {
@@ -135,8 +128,7 @@ final class Html
             }
 
             return $default;
-        }
-        );
+        });
     }
 
     private static function fixHtmlFunction(): TwigFunction
@@ -150,7 +142,7 @@ final class Html
             },
             [
                 'is_safe' => ['html'],
-                'is_safe_callback' => ['html'],
+                'is_safe_callback' => ['html']
             ]
         );
     }
@@ -167,15 +159,14 @@ final class Html
             },
             [
                 'is_safe' => ['html'],
-                'is_safe_callback' => ['html'],
+                'is_safe_callback' => ['html']
             ]
         );
     }
 
     private static function getIncludeViews(): TwigFunction
     {
-        return new TwigFunction(
-            'getIncludeViews', function (string $fileParent, string $position) {
+        return new TwigFunction('getIncludeViews', function (string $fileParent, string $position) {
             $files = [];
             $fileParentTemp = explode('/', $fileParent);
             $fileParent = str_replace('.html.twig', '', end($fileParentTemp));
@@ -210,7 +201,7 @@ final class Html
                     $arrayFile = [
                         'path' => '@PluginExtension' . $pluginName . '/' . $f->getFilename(),
                         'file' => $file[0],
-                        'position' => $file[1],
+                        'position' => $file[1]
                     ];
 
                     if (false === isset($file[2])) {
@@ -225,19 +216,15 @@ final class Html
                 return $files;
             }
 
-            usort(
-                $files,
-                function ($a, $b) {
-                    return strcmp($a['file'], $b['file']) // status ascending
-                        ?: strcmp($a['position'], $b['position']) // start ascending
-                            ?: strcmp($a['order'], $b['order']) // mh ascending
-                        ;
-                }
-            );
+            usort($files, function ($a, $b) {
+                return strcmp($a['file'], $b['file']) // status ascending
+                    ?: strcmp($a['position'], $b['position']) // start ascending
+                        ?: strcmp($a['order'], $b['order']) // mh ascending
+                    ;
+            });
 
             return $files;
-        }
-        );
+        });
     }
 
     /**
@@ -270,8 +257,7 @@ final class Html
 
     private static function moneyFunction(): TwigFunction
     {
-        return new TwigFunction(
-            'money', function (?float $number, string $coddivisa = '') {
+        return new TwigFunction('money', function (?float $number, string $coddivisa = '') {
             if (empty($coddivisa)) {
                 $coddivisa = AppSettings::get('default', 'coddivisa');
             }
@@ -286,23 +272,19 @@ final class Html
             return $currencyPosition === 'right' ?
                 number_format($number, $decimals, $decimalSeparator, $thousandsSeparator) . ' ' . $symbol :
                 $symbol . ' ' . number_format($number, $decimals, $decimalSeparator, $thousandsSeparator);
-        }
-        );
+        });
     }
 
     private static function myFilesUrlFunction(): TwigFunction
     {
-        return new TwigFunction(
-            'myFilesUrl', function (string $path, bool $permanent = false, string $expiration = '') {
+        return new TwigFunction('myFilesUrl', function (string $path, bool $permanent = false, string $expiration = '') {
             return $path . '?myft=' . MyFilesToken::get($path, $permanent, $expiration);
-        }
-        );
+        });
     }
 
     private static function numberFunction(): TwigFunction
     {
-        return new TwigFunction(
-            'number', function (?float $number, ?int $decimals = null) {
+        return new TwigFunction('number', function (?float $number, ?int $decimals = null) {
             if ($decimals === null) {
                 $decimals = AppSettings::get('default', 'decimals');
             }
@@ -312,29 +294,24 @@ final class Html
             $thousandsSeparator = AppSettings::get('default', 'thousands_separator');
 
             return number_format($number, $decimals, $decimalSeparator, $thousandsSeparator);
-        }
-        );
+        });
     }
 
     private static function settingsFunction(): TwigFunction
     {
-        return new TwigFunction(
-            'settings', function (string $group, string $property, $default = null) {
+        return new TwigFunction('settings', function (string $group, string $property, $default = null) {
             return AppSettings::get($group, $property, $default);
-        }
-        );
+        });
     }
 
     private static function transFunction(): TwigFunction
     {
-        return new TwigFunction(
-            'trans', function (string $txt, array $parameters = [], string $langCode = '') {
+        return new TwigFunction('trans', function (string $txt, array $parameters = [], string $langCode = '') {
             $trans = new Translator();
             return empty($langCode) ?
                 $trans->trans($txt, $parameters) :
                 $trans->customTrans($langCode, $txt, $parameters);
-        }
-        );
+        });
     }
 
     private static function bytesFunction(): TwigFunction
