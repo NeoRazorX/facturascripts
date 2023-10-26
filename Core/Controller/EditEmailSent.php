@@ -20,15 +20,19 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Lib\Email\NewMail;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Contacto;
 
 /**
- * Controller to edit a single registrer of EmailSent
+ * Controller to edit a single register of EmailSent
  *
- * @author Raul                 <raljopa@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Raul                     <raljopa@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class EditEmailSent extends EditController
 {
@@ -69,6 +73,8 @@ class EditEmailSent extends EditController
     {
         parent::createViews();
         $this->setTabsPosition('bottom');
+        $this->addHtmlView('EmailSentHtml', 'Tab\EmailSentHtml', 'EmailSent', 'html', 'fab fa-html5');
+        $this->addHtmlView('EmailSentAttachment', 'Tab\EmailSentAttachment', 'EmailSent', 'attachments', 'fas fa-paperclip');
 
         // buttons
         $mainView = $this->getMainViewName();
@@ -112,6 +118,35 @@ class EditEmailSent extends EditController
         }
     }
 
+    protected function execPreviousAction($action)
+    {
+        if ($action === 'getHtml') {
+            $this->getHtmlAction();
+            return false;
+        }
+        return parent::execPreviousAction($action);
+    }
+
+    protected function getHtmlAction(): void
+    {
+        $this->setTemplate(false);
+        $result = ['getHtml' => false];
+
+        // cargamos el modelo
+        $model = $this->getModel();
+        if (false === $model->loadFromCode($this->request->get('code', ''))) {
+            $this->response->setContent(json_encode($result));
+            return;
+        }
+
+        $result = [
+            'getHtml' => true,
+            'html' => Tools::fixHtml($model->html),
+        ];
+
+        $this->response->setContent(json_encode($result));
+    }
+
     /**
      * Load view data procedure
      *
@@ -133,6 +168,12 @@ class EditEmailSent extends EditController
 
             default:
                 parent::loadData($viewName, $view);
+
+                // si no hay adjuntos ocultamos la pestaña
+                if (false === $view->model->attachment) {
+                    $this->setSettings('EmailSentAttachment', 'active', false);
+                }
+
                 break;
         }
     }

@@ -29,7 +29,7 @@
     <div class="container" style="margin-top: -60px;">
         <div class="row">
             <div class="col-12">
-                <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data">
+                <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data" onsubmit="animateSpinner('add')">
                     {{ formToken() }}
                     <input type="hidden" name="action" value="send"/>
                     <div class="card shadow">
@@ -127,7 +127,7 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-sm-6 text-right">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-primary btn-spin-action">
                                         <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send') }}
                                     </button>
                                 </div>
