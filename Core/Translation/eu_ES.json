@@ -460,6 +460,7 @@
     "dto": "Beherapena",
     "dto-2": "2. deskontua",
     "duplicate-record": "Erregistro bikoiztua",
+    "duplicated-reference": "Referencia '%reference%' duplicada",
     "duplicated-request": "Bikoiztutako eskaera",
     "duration": "Iraupena",
     "edit": "Editatu",

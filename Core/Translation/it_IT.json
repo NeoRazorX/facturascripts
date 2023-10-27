@@ -460,6 +460,7 @@
     "dto": "Disco.",
     "dto-2": "dto-2",
     "duplicate-record": "duplicate-record",
+    "duplicated-reference": "Referencia '%reference%' duplicada",
     "duplicated-request": "duplicated-request",
     "duration": "duration",
     "edit": "edit",

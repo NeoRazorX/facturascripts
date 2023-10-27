@@ -460,6 +460,7 @@
     "dto": "Dto.",
     "dto-2": "Desconto 2",
     "duplicate-record": "Rexistro duplicado",
+    "duplicated-reference": "Referencia '%reference%' duplicada",
     "duplicated-request": "Petición duplicada",
     "duration": "duración",
     "edit": "Editar",

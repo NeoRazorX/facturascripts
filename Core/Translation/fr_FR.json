@@ -460,6 +460,7 @@
     "dto": "Disque.",
     "dto-2": "% de remise 2",
     "duplicate-record": "Enregistrement en double",
+    "duplicated-reference": "Referencia '%reference%' duplicada",
     "duplicated-request": "Requête dupliquée",
     "duration": "Durée",
     "edit": "Modifier",

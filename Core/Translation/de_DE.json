@@ -460,6 +460,7 @@
     "dto": "Scheibe.",
     "dto-2": "Rabatt-2",
     "duplicate-record": "Eintrag doppelt",
+    "duplicated-reference": "Referencia '%reference%' duplicada",
     "duplicated-request": "Antrag doppelt",
     "duration": "Dauer",
     "edit": "Bearbeiten",

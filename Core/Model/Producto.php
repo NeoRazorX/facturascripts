@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Fabricante as DinFabricante;
 use FacturaScripts\Dinamic\Model\Familia as DinFamilia;
 use FacturaScripts\Dinamic\Model\ProductoImagen as DinProductoImagen;
@@ -189,7 +190,7 @@ class Producto extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->actualizado = date(self::DATETIME_STYLE);
+        $this->actualizado = Tools::dateTime();
         $this->bloqueado = false;
         $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
         $this->fechaalta = date(self::DATE_STYLE);
@@ -301,10 +302,9 @@ class Producto extends Base\ModelClass
 
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->observaciones = $utils->noHtml($this->observaciones);
-        $this->referencia = $utils->noHtml($this->referencia);
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->observaciones = Tools::noHtml($this->observaciones);
+        $this->referencia = Tools::noHtml($this->referencia);
 
         if (empty($this->referencia)) {
             // obtenemos una nueva referencia de variantes, en lugar del producto
@@ -312,7 +312,7 @@ class Producto extends Base\ModelClass
             $this->referencia = (string)$variant->newCode('referencia');
         }
         if (strlen($this->referencia) > 30) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'invalid-column-lenght',
                 ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
             );
@@ -337,7 +337,8 @@ class Producto extends Base\ModelClass
             $this->secompra = false;
         }
 
-        $this->actualizado = date(self::DATETIME_STYLE);
+        $this->actualizado = Tools::dateTime();
+
         return parent::test();
     }
 
@@ -373,6 +374,13 @@ class Producto extends Base\ModelClass
 
     protected function saveInsert(array $values = []): bool
     {
+        // comprobamos si la referencia ya existe
+        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        if ($this->count($where) > 0) {
+            Tools::log()->warning('duplicated-reference', ['%reference%' => $this->referencia]);
+            return false;
+        }
+
         if (false === parent::saveInsert($values)) {
             return false;
         }

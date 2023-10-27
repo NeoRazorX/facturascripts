@@ -460,6 +460,7 @@
     "dto": "Disc.",
     "dto-2": "Discount 2",
     "duplicate-record": "Duplicated record",
+    "duplicated-reference": "Referencia '%reference%' duplicada",
     "duplicated-request": "Duplicated request",
     "duration": "Duration",
     "edit": "Edit",

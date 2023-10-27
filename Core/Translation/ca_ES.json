@@ -460,6 +460,7 @@
     "dto": "Dte.",
     "dto-2": "Dte. 2",
     "duplicate-record": "Registre Duplicat",
+    "duplicated-reference": "Referencia '%reference%' duplicada",
     "duplicated-request": "Petició duplicada",
     "duration": "Durada",
     "edit": "Editar",
