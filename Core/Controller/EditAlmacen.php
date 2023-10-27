@@ -59,6 +59,12 @@ class EditAlmacen extends EditController
         $this->views[$viewName]->addSearchFields(['stocks.referencia', 'productos.descripcion']);
 
         // filtros
+        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $this->views[$viewName]->addFilterSelect('manufacturer', 'manufacturer', 'productos.codfabricante', $manufacturers);
+
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->views[$viewName]->addFilterSelect('family', 'family', 'productos.codfamilia', $families);
+
         $this->views[$viewName]->addFilterSelectWhere('type', [
             [
                 'label' => Tools::lang()->trans('all'),
@@ -78,11 +84,8 @@ class EditAlmacen extends EditController
             ]
         ]);
 
-        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
-        $this->views[$viewName]->addFilterSelect('manufacturer', 'manufacturer', 'productos.codfabricante', $manufacturers);
-
-        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
-        $this->views[$viewName]->addFilterSelect('family', 'family', 'productos.codfamilia', $families);
+        $this->views[$viewName]->addFilterNumber('max-stock', 'quantity', 'cantidad', '>=');
+        $this->views[$viewName]->addFilterNumber('min-stock', 'quantity', 'cantidad', '<=');
 
         // desactivamos la columna de almacén
         $this->views[$viewName]->disableColumn('warehouse');

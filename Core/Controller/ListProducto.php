@@ -167,6 +167,15 @@ class ListProducto extends ListController
         $this->addSearchFields($viewName, ['stocks.referencia', 'productos.descripcion']);
 
         // filtros
+        $warehouses = Almacenes::codeModel();
+        $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
+
+        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'productos.codfabricante', $manufacturers);
+
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->addFilterSelect($viewName, 'codfamilia', 'family', 'productos.codfamilia', $families);
+
         $this->addFilterSelectWhere($viewName, 'type', [
             [
                 'label' => Tools::lang()->trans('all'),
@@ -185,15 +194,6 @@ class ListProducto extends ListController
                 'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmax', '>')]
             ]
         ]);
-
-        $warehouses = Almacenes::codeModel();
-        $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
-
-        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
-        $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'productos.codfabricante', $manufacturers);
-
-        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
-        $this->addFilterSelect($viewName, 'codfamilia', 'family', 'productos.codfamilia', $families);
 
         $this->addFilterNumber($viewName, 'max-stock', 'quantity', 'cantidad', '>=');
         $this->addFilterNumber($viewName, 'min-stock', 'quantity', 'cantidad', '<=');
