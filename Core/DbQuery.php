@@ -150,18 +150,18 @@ final class DbQuery
         return $this;
     }
 
-    public function min(string $field): int
+    public function min(string $field): float
     {
         $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ')';
 
-        return (int)$this->first();
+        return (float)$this->first();
     }
 
-    public function max(string $field): int
+    public function max(string $field): float
     {
         $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ')';
 
-        return (int)$this->first();
+        return (float)$this->first();
     }
 
     public function offset(int $offset): self
@@ -218,9 +218,11 @@ final class DbQuery
         return $sql;
     }
 
-    public function sum(string $field): int
+    public function sum(string $field): float
     {
-        return (int)$this->select('SUM(' . $field . ')')->first();
+        $this->fields = 'SUM(' . self::db()->escapeColumn($field) . ')';
+
+        return (float)$this->first();
     }
 
     public static function table(string $table): self
