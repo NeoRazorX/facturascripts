@@ -69,32 +69,36 @@ final class DbQuery
         return $result;
     }
 
-    public function avg(string $field): float
+    public function avg(string $field, ?int $decimals = null): float
     {
-        $this->fields = 'AVG(' . self::db()->escapeColumn($field) . ')';
+        $this->fields = 'AVG(' . self::db()->escapeColumn($field) . ') as _avg';
 
-        return (float)$this->first();
+        $row = $this->first();
+        return is_null($decimals) ?
+            (float)$row['_avg'] :
+            round((float)$row['_avg'], $decimals);
     }
 
     public function avgArray(string $field, string $groupByKey): array
     {
-        $this->fields = self::db()->escapeColumn($groupByKey) . ', AVG(' . self::db()->escapeColumn($field) . ') as avg';
+        $this->fields = self::db()->escapeColumn($groupByKey) . ', AVG(' . self::db()->escapeColumn($field) . ') as _avg';
 
-        return $this->groupBy($groupByKey)->array($groupByKey, 'avg');
+        return $this->groupBy($groupByKey)->array($groupByKey, '_avg');
     }
 
     public function count(): int
     {
-        $this->fields = 'COUNT(*)';
+        $this->fields = 'COUNT(*) as _count';
 
-        return (int)$this->first();
+        $row = $this->first();
+        return (int)$row['_count'];
     }
 
     public function countArray(string $field, string $groupByKey): array
     {
-        $this->fields = self::db()->escapeColumn($groupByKey) . ', COUNT(' . self::db()->escapeColumn($field) . ') as count';
+        $this->fields = self::db()->escapeColumn($groupByKey) . ', COUNT(' . self::db()->escapeColumn($field) . ') as _count';
 
-        return $this->groupBy($groupByKey)->array($groupByKey, 'count');
+        return $this->groupBy($groupByKey)->array($groupByKey, '_count');
     }
 
     public function delete(): bool
@@ -169,32 +173,38 @@ final class DbQuery
         return $this;
     }
 
-    public function max(string $field): float
+    public function max(string $field, ?int $decimals = null): float
     {
-        $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ')';
+        $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ') as _max';
 
-        return (float)$this->first();
+        $row = $this->first();
+        return is_null($decimals) ?
+            (float)$row['_max'] :
+            round((float)$row['_max'], $decimals);
     }
 
     public function maxArray(string $field, string $groupByKey): array
     {
-        $this->fields = self::db()->escapeColumn($groupByKey) . ', MAX(' . self::db()->escapeColumn($field) . ') as max';
+        $this->fields = self::db()->escapeColumn($groupByKey) . ', MAX(' . self::db()->escapeColumn($field) . ') as _max';
 
-        return $this->groupBy($groupByKey)->array($groupByKey, 'max');
+        return $this->groupBy($groupByKey)->array($groupByKey, '_max');
     }
 
-    public function min(string $field): float
+    public function min(string $field, ?int $decimals = null): float
     {
-        $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ')';
+        $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ') as _min';
 
-        return (float)$this->first();
+        $row = $this->first();
+        return is_null($decimals) ?
+            (float)$row['_min'] :
+            round((float)$row['_min'], $decimals);
     }
 
     public function minArray(string $field, string $groupByKey): array
     {
-        $this->fields = self::db()->escapeColumn($groupByKey) . ', MIN(' . self::db()->escapeColumn($field) . ') as min';
+        $this->fields = self::db()->escapeColumn($groupByKey) . ', MIN(' . self::db()->escapeColumn($field) . ') as _min';
 
-        return $this->groupBy($groupByKey)->array($groupByKey, 'min');
+        return $this->groupBy($groupByKey)->array($groupByKey, '_min');
     }
 
     public function offset(int $offset): self
@@ -251,18 +261,21 @@ final class DbQuery
         return $sql;
     }
 
-    public function sum(string $field): float
+    public function sum(string $field, ?int $decimals = null): float
     {
-        $this->fields = 'SUM(' . self::db()->escapeColumn($field) . ')';
+        $this->fields = 'SUM(' . self::db()->escapeColumn($field) . ') as _sum';
 
-        return (float)$this->first();
+        $row = $this->first();
+        return is_null($decimals) ?
+            (float)$row['_sum'] :
+            round((float)$row['_sum'], $decimals);
     }
 
     public function sumArray(string $field, string $groupByKey): array
     {
-        $this->fields = self::db()->escapeColumn($groupByKey) . ', SUM(' . self::db()->escapeColumn($field) . ') as sum';
+        $this->fields = self::db()->escapeColumn($groupByKey) . ', SUM(' . self::db()->escapeColumn($field) . ') as _sum';
 
-        return $this->groupBy($groupByKey)->array($groupByKey, 'sum');
+        return $this->groupBy($groupByKey)->array($groupByKey, '_sum');
     }
 
     public static function table(string $table): self
