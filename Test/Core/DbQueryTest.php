@@ -22,10 +22,13 @@ namespace Core;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class DbQueryTest extends TestCase
 {
+    use LogErrorsTrait;
+
     /** @var DataBase */
     private $db;
 
@@ -83,6 +86,78 @@ final class DbQueryTest extends TestCase
         $this->assertEquals($sql, $query->sql());
     }
 
+    public function testInsert(): void
+    {
+        $data = [
+            ['codimpuesto' => 'test1', 'descripcion' => 'test1', 'iva' => 29.99, 'recargo' => 0],
+            ['codimpuesto' => 'test2', 'descripcion' => 'test2', 'iva' => 11.5, 'recargo' => 2.3],
+            ['codimpuesto' => 'test3', 'descripcion' => 'test3', 'iva' => 3.76, 'recargo' => 0.5]
+        ];
+
+        // insertamos 3 impuestos
+        $done = DbQuery::table('impuestos')->insert($data);
+        $this->assertTrue($done);
+
+        // comprobamos que se han insertado
+        $row1 = DbQuery::table('impuestos')
+            ->select('codimpuesto, descripcion, iva, recargo')
+            ->whereEq('codimpuesto', 'test1')
+            ->first();
+        $this->assertEquals($data[0], $row1);
+
+        $row2 = DbQuery::table('impuestos')
+            ->select('codimpuesto, descripcion, iva, recargo')
+            ->whereEq('codimpuesto', 'test2')
+            ->first();
+        $this->assertEquals($data[1], $row2);
+
+        $row3 = DbQuery::table('impuestos')
+            ->select('codimpuesto, descripcion, iva, recargo')
+            ->whereEq('codimpuesto', 'test3')
+            ->first();
+        $this->assertEquals($data[2], $row3);
+
+        // calculamos la media del recargo
+        $avg = DbQuery::table('impuestos')
+            ->where([
+                Where::in('codimpuesto', ['test1', 'test2', 'test3'])
+            ])
+            ->avg('recargo', 3);
+        $this->assertEquals(0.933, $avg);
+
+        // calculamos el máximo del iva
+        $max = DbQuery::table('impuestos')
+            ->where([
+                Where::in('codimpuesto', ['test1', 'test2', 'test3'])
+            ])
+            ->max('iva');
+        $this->assertEquals(29.99, $max);
+
+        // calculamos el mínimo del iva
+        $min = DbQuery::table('impuestos')
+            ->where([
+                Where::in('codimpuesto', ['test1', 'test2', 'test3'])
+            ])
+            ->min('iva');
+        $this->assertEquals(3.76, $min);
+
+        // calculamos la suma del iva
+        $sum = DbQuery::table('impuestos')
+            ->where([
+                Where::in('codimpuesto', ['test1', 'test2', 'test3'])
+            ])
+            ->sum('iva', 2);
+        $this->assertEquals(45.25, $sum);
+
+        // eliminamos los impuestos
+        $done = DbQuery::table('impuestos')
+            ->where([
+                Where::in('codimpuesto', ['test1', 'test2', 'test3'])
+            ])
+            ->delete();
+        $this->assertTrue($done);
+    }
+
     private function db(): DataBase
     {
         if (null === $this->db) {
@@ -90,5 +165,10 @@ final class DbQueryTest extends TestCase
         }
 
         return $this->db;
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

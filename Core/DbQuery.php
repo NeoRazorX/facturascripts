@@ -155,14 +155,21 @@ final class DbQuery
         }
 
         $fields = [];
-        $values = [];
-        foreach ($data as $field => $value) {
+        foreach (array_keys($data[0]) as $field) {
             $fields[] = self::db()->escapeColumn($field);
-            $values[] = self::db()->var2str($value);
+        }
+
+        $values = [];
+        foreach ($data as $row) {
+            $line = [];
+            foreach ($row as $value) {
+                $line[] = self::db()->var2str($value);
+            }
+            $values[] = '(' . implode(', ', $line) . ')';
         }
 
         $sql = 'INSERT INTO ' . self::db()->escapeColumn($this->table)
-            . ' (' . implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ')';
+            . ' (' . implode(', ', $fields) . ') VALUES ' . implode(', ', $values) . ';';
         return self::db()->exec($sql);
     }
 
