@@ -21,6 +21,7 @@ namespace Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\Model\Pais;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -84,6 +85,16 @@ final class DbQueryTest extends TestCase
             . ' FROM ' . $this->db()->escapeColumn('series')
             . ' ORDER BY ' . $this->db()->escapeColumn('codserie') . ' ASC';
         $this->assertEquals($sql, $query->sql());
+    }
+
+    public function testCount(): void
+    {
+        // obtenemos el número de registros en la tabla paises
+        $count = DbQuery::table('paises')->count();
+
+        // lo comprobamos contra el modelo
+        $pais = new Pais();
+        $this->assertEquals($count, $pais->count());
     }
 
     public function testInsert(): void
