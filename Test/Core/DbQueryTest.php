@@ -130,41 +130,31 @@ final class DbQueryTest extends TestCase
 
         // calculamos la media del recargo
         $avg = DbQuery::table('impuestos')
-            ->where([
-                Where::in('codimpuesto', ['test1', 'test2', 'test3'])
-            ])
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
             ->avg('recargo', 3);
         $this->assertEquals(0.933, $avg);
 
         // calculamos el máximo del iva
         $max = DbQuery::table('impuestos')
-            ->where([
-                Where::in('codimpuesto', ['test1', 'test2', 'test3'])
-            ])
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
             ->max('iva');
         $this->assertEquals(29.99, $max);
 
         // calculamos el mínimo del iva
         $min = DbQuery::table('impuestos')
-            ->where([
-                Where::in('codimpuesto', ['test1', 'test2', 'test3'])
-            ])
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
             ->min('iva');
         $this->assertEquals(3.76, $min);
 
         // calculamos la suma del iva
         $sum = DbQuery::table('impuestos')
-            ->where([
-                Where::in('codimpuesto', ['test1', 'test2', 'test3'])
-            ])
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
             ->sum('iva', 2);
         $this->assertEquals(45.25, $sum);
 
         // eliminamos los impuestos
         $done = DbQuery::table('impuestos')
-            ->where([
-                Where::in('codimpuesto', ['test1', 'test2', 'test3'])
-            ])
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
             ->delete();
         $this->assertTrue($done);
     }

@@ -336,6 +336,13 @@ final class DbQuery
         return $this;
     }
 
+    public function whereIn(string $field, array $values): self
+    {
+        $this->where[] = Where::in($field, $values);
+
+        return $this;
+    }
+
     private static function db(): DataBase
     {
         if (null === self::$db) {
