@@ -21,6 +21,7 @@ namespace Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\Where;
 use PHPUnit\Framework\TestCase;
 
 final class DbQueryTest extends TestCase
@@ -37,6 +38,49 @@ final class DbQueryTest extends TestCase
 
         $data = $this->db()->select($sql);
         $this->assertEquals($data, $query->get());
+    }
+
+    public function testWhereEq(): void
+    {
+        $query = DbQuery::table('clientes')
+            ->select('codcliente, nombre')
+            ->whereEq('codcliente', 'test');
+
+        $sql = 'SELECT ' . $this->db()->escapeColumn('codcliente')
+            . ', ' . $this->db()->escapeColumn('nombre')
+            . ' FROM ' . $this->db()->escapeColumn('clientes')
+            . ' WHERE ' . $this->db()->escapeColumn('codcliente') . ' = ' . $this->db()->var2str('test');
+        $this->assertEquals($sql, $query->sql());
+    }
+
+    public function testWhere(): void
+    {
+        $query = DbQuery::table('clientes')
+            ->select('codcliente, nombre')
+            ->where([
+                Where::eq('codcliente', 'test'),
+                Where::gt('riesgomax', 1000)
+            ]);
+
+        $sql = 'SELECT ' . $this->db()->escapeColumn('codcliente')
+            . ', ' . $this->db()->escapeColumn('nombre')
+            . ' FROM ' . $this->db()->escapeColumn('clientes')
+            . ' WHERE ' . $this->db()->escapeColumn('codcliente') . ' = ' . $this->db()->var2str('test')
+            . ' AND ' . $this->db()->escapeColumn('riesgomax') . ' > ' . $this->db()->var2str(1000);
+        $this->assertEquals($sql, $query->sql());
+    }
+
+    public function testOrderBy(): void
+    {
+        $query = DbQuery::table('series')
+            ->select('codserie, descripcion')
+            ->orderBy('codserie', 'ASC');
+
+        $sql = 'SELECT ' . $this->db()->escapeColumn('codserie')
+            . ', ' . $this->db()->escapeColumn('descripcion')
+            . ' FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->escapeColumn('codserie') . ' ASC';
+        $this->assertEquals($sql, $query->sql());
     }
 
     private function db(): DataBase

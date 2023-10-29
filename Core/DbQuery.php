@@ -71,12 +71,16 @@ final class DbQuery
 
     public function avg(string $field): float
     {
-        return (float)$this->select('AVG(' . $field . ')')->first();
+        $this->fields = 'AVG(' . self::db()->escapeColumn($field) . ')';
+
+        return (float)$this->first();
     }
 
     public function count(): int
     {
-        return (int)$this->select('COUNT(*)')->first();
+        $this->fields = 'COUNT(*)';
+
+        return (int)$this->first();
     }
 
     public function delete(): bool
@@ -148,12 +152,16 @@ final class DbQuery
 
     public function min(string $field): int
     {
-        return (int)$this->select('MIN(' . $field . ')')->first();
+        $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ')';
+
+        return (int)$this->first();
     }
 
     public function max(string $field): int
     {
-        return (int)$this->select('MAX(' . $field . ')')->first();
+        $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ')';
+
+        return (int)$this->first();
     }
 
     public function offset(int $offset): self
@@ -165,14 +173,24 @@ final class DbQuery
 
     public function orderBy(string $field, string $order = 'ASC'): self
     {
-        $this->orderBy[] = $field . ' ' . $order;
+        // si el campo comienza por integer: hacemos el cast a integer
+        if (0 === strpos($field, 'integer:')) {
+            $field = self::db()->castInteger(substr($field, 8));
+        }
+
+        $this->orderBy[] = self::db()->escapeColumn($field) . ' ' . $order;
 
         return $this;
     }
 
     public function select(string $fields): self
     {
-        $this->fields = $fields;
+        $list = [];
+        foreach (explode(',', $fields) as $field) {
+            $list[] = self::db()->escapeColumn(trim($field));
+        }
+
+        $this->fields = implode(', ', $list);
 
         return $this;
     }
@@ -238,12 +256,6 @@ final class DbQuery
         }
 
         foreach ($where as $key => $value) {
-            // si el array contiene string, lo guardamos como un Where
-            if (is_string($key) && !($value instanceof Where)) {
-                $this->where[] = new Where($key, $value);
-                continue;
-            }
-
             // si no es una instancia de Where, lanzamos una excepción
             if (!($value instanceof Where)) {
                 throw new Exception('Invalid where clause ' . print_r($value, true));
@@ -251,6 +263,13 @@ final class DbQuery
 
             $this->where[] = $value;
         }
+
+        return $this;
+    }
+
+    public function whereEq(string $field, $value): self
+    {
+        $this->where[] = Where::eq($field, $value);
 
         return $this;
     }
