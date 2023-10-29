@@ -254,21 +254,21 @@ final class Where
                 case '=':
                     $sql .= is_null($this->value) ?
                         self::db()->escapeColumn($field) . ' IS NULL' :
-                        self::db()->escapeColumn($field) . ' = ' . self::db()->var2str($this->value);
+                        self::db()->escapeColumn($field) . ' = ' . self::sqlValue($this->value);
                     break;
 
                 case '!=':
                 case '<>':
                     $sql .= is_null($this->value) ?
                         self::db()->escapeColumn($field) . ' IS NOT NULL' :
-                        self::db()->escapeColumn($field) . ' != ' . self::db()->var2str($this->value);
+                        self::db()->escapeColumn($field) . ' != ' . self::sqlValue($this->value);
                     break;
 
                 case '>':
                 case '<':
                 case '>=':
                 case '<=':
-                    $sql .= self::db()->escapeColumn($field) . ' ' . $this->operator . ' ' . self::db()->var2str($this->value);
+                    $sql .= self::db()->escapeColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value);
                     break;
 
                 case 'IS':
@@ -299,8 +299,8 @@ final class Where
                     if (count($this->value) !== 2) {
                         throw new Exception('Invalid where clause ' . print_r($this, true));
                     }
-                    $sql .= self::db()->escapeColumn($field) . ' ' . $this->operator . ' ' . self::db()->var2str($this->value[0])
-                        . ' AND ' . self::db()->var2str($this->value[1]);
+                    $sql .= self::db()->escapeColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value[0])
+                        . ' AND ' . self::sqlValue($this->value[1]);
                     break;
 
                 case 'LIKE':
@@ -373,5 +373,16 @@ final class Where
         }
 
         return $sql . ')';
+    }
+
+    private static function sqlValue($value): string
+    {
+        // si empieza por field: lo tratamos como un campo
+        if (substr($value, 0, 6) === 'field:') {
+            return self::db()->escapeColumn(substr($value, 6));
+        }
+
+        // si no, lo tratamos como un valor
+        return self::db()->var2str($value);
     }
 }

@@ -65,6 +65,18 @@ final class WhereTest extends TestCase
         $this->assertEquals($sql, $item->sql());
     }
 
+    public function testColumnEqField(): void
+    {
+        $item = Where::lt('disponible', 'field:cantidad');
+        $this->assertEquals('disponible', $item->fields);
+        $this->assertEquals('field:cantidad', $item->value);
+        $this->assertEquals('<', $item->operator);
+        $this->assertEquals('AND', $item->operation);
+
+        $sql = $this->db()->escapeColumn('disponible') . ' < ' . $this->db()->escapeColumn('cantidad');
+        $this->assertEquals($sql, $item->sql());
+    }
+
     public function testMultiColumn(): void
     {
         $item = Where::column('col1|col2|col3', 'value');
