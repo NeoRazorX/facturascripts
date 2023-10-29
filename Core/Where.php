@@ -75,6 +75,11 @@ final class Where
         return new self($fields, $value, $operator, $operation);
     }
 
+    public static function eq(string $fields, $value): self
+    {
+        return new self($fields, $value, '=');
+    }
+
     public static function gt(string $fields, $value): self
     {
         return new self($fields, $value, '>');
@@ -128,7 +133,7 @@ final class Where
                 $sql .= ' ' . $item->operation . ' ';
             }
 
-            if (empty($item->operator)) {
+            if ($item->operator === '(') {
                 $sql .= '(' . self::multiSql($item->subWhere) . ')';
                 continue;
             }
@@ -159,9 +164,79 @@ final class Where
         return new self($fields, $value, $operator, 'OR');
     }
 
+    public static function orBetween(string $fields, $value1, $value2): self
+    {
+        return new self($fields, [$value1, $value2], 'BETWEEN', 'OR');
+    }
+
+    public static function orEq(string $fields, $value): self
+    {
+        return new self($fields, $value, '=', 'OR');
+    }
+
+    public static function orGt(string $fields, $value): self
+    {
+        return new self($fields, $value, '>', 'OR');
+    }
+
+    public static function orGte(string $fields, $value): self
+    {
+        return new self($fields, $value, '>=', 'OR');
+    }
+
+    public static function orIn(string $fields, $value): self
+    {
+        return new self($fields, $value, 'IN', 'OR');
+    }
+
+    public static function orIsNotNull(string $fields): self
+    {
+        return new self($fields, null, 'IS NOT', 'OR');
+    }
+
+    public static function orIsNull(string $fields): self
+    {
+        return new self($fields, null, 'IS', 'OR');
+    }
+
+    public static function orLike(string $fields, string $value): self
+    {
+        return new self($fields, $value, 'LIKE', 'OR');
+    }
+
+    public static function orLt(string $fields, $value): self
+    {
+        return new self($fields, $value, '<', 'OR');
+    }
+
+    public static function orLte(string $fields, $value): self
+    {
+        return new self($fields, $value, '<=', 'OR');
+    }
+
+    public static function orNotBetween(string $fields, $value1, $value2): self
+    {
+        return new self($fields, [$value1, $value2], 'NOT BETWEEN', 'OR');
+    }
+
+    public static function orNotEq(string $fields, $value): self
+    {
+        return new self($fields, $value, '!=', 'OR');
+    }
+
+    public static function orNotLike(string $fields, string $value): self
+    {
+        return new self($fields, $value, 'NOT LIKE', 'OR');
+    }
+
     public static function orSub(array $where): self
     {
         return self::sub($where, 'OR');
+    }
+
+    public static function orXlike(string $fields, string $value): self
+    {
+        return new self($fields, $value, 'XLIKE', 'OR');
     }
 
     public function sql(): string
@@ -170,8 +245,8 @@ final class Where
 
         $sql = count($fields) > 1 ? '(' : '';
 
-        foreach ($fields as $field) {
-            if (!empty($sql)) {
+        foreach ($fields as $key => $field) {
+            if ($key > 0) {
                 $sql .= ' OR ';
             }
 
