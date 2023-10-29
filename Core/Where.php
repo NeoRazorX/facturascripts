@@ -65,6 +65,11 @@ final class Where
         return self::sub($where, 'AND');
     }
 
+    public static function between(string $fields, $value1, $value2): self
+    {
+        return new self($fields, [$value1, $value2], 'BETWEEN');
+    }
+
     public static function column(string $fields, $value, string $operator = '=', string $operation = 'AND'): self
     {
         return new self($fields, $value, $operator, $operation);
@@ -132,6 +137,11 @@ final class Where
         }
 
         return $sql;
+    }
+
+    public static function notBetween(string $fields, $value1, $value2): self
+    {
+        return new self($fields, [$value1, $value2], 'NOT BETWEEN');
     }
 
     public static function notEq(string $fields, $value): self
