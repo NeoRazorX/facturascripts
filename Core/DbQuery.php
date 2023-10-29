@@ -76,11 +76,25 @@ final class DbQuery
         return (float)$this->first();
     }
 
+    public function avgArray(string $field, string $groupByKey): array
+    {
+        $this->fields = self::db()->escapeColumn($groupByKey) . ', AVG(' . self::db()->escapeColumn($field) . ') as avg';
+
+        return $this->groupBy($groupByKey)->array($groupByKey, 'avg');
+    }
+
     public function count(): int
     {
         $this->fields = 'COUNT(*)';
 
         return (int)$this->first();
+    }
+
+    public function countArray(string $field, string $groupByKey): array
+    {
+        $this->fields = self::db()->escapeColumn($groupByKey) . ', COUNT(' . self::db()->escapeColumn($field) . ') as count';
+
+        return $this->groupBy($groupByKey)->array($groupByKey, 'count');
     }
 
     public function delete(): bool
@@ -111,9 +125,14 @@ final class DbQuery
         return self::db()->selectLimit($this->sql(), $this->limit, $this->offset);
     }
 
-    public function groupBy(string $groupBy): self
+    public function groupBy(string $fields): self
     {
-        $this->groupBy = $groupBy;
+        $list = [];
+        foreach (explode(',', $fields) as $field) {
+            $list[] = self::db()->escapeColumn(trim($field));
+        }
+
+        $this->groupBy = implode(', ', $list);
 
         return $this;
     }
@@ -150,6 +169,20 @@ final class DbQuery
         return $this;
     }
 
+    public function max(string $field): float
+    {
+        $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ')';
+
+        return (float)$this->first();
+    }
+
+    public function maxArray(string $field, string $groupByKey): array
+    {
+        $this->fields = self::db()->escapeColumn($groupByKey) . ', MAX(' . self::db()->escapeColumn($field) . ') as max';
+
+        return $this->groupBy($groupByKey)->array($groupByKey, 'max');
+    }
+
     public function min(string $field): float
     {
         $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ')';
@@ -157,11 +190,11 @@ final class DbQuery
         return (float)$this->first();
     }
 
-    public function max(string $field): float
+    public function minArray(string $field, string $groupByKey): array
     {
-        $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ')';
+        $this->fields = self::db()->escapeColumn($groupByKey) . ', MIN(' . self::db()->escapeColumn($field) . ') as min';
 
-        return (float)$this->first();
+        return $this->groupBy($groupByKey)->array($groupByKey, 'min');
     }
 
     public function offset(int $offset): self
@@ -225,6 +258,13 @@ final class DbQuery
         return (float)$this->first();
     }
 
+    public function sumArray(string $field, string $groupByKey): array
+    {
+        $this->fields = self::db()->escapeColumn($groupByKey) . ', SUM(' . self::db()->escapeColumn($field) . ') as sum';
+
+        return $this->groupBy($groupByKey)->array($groupByKey, 'sum');
+    }
+
     public static function table(string $table): self
     {
         return new self($table);
@@ -257,7 +297,7 @@ final class DbQuery
             return $this;
         }
 
-        foreach ($where as $key => $value) {
+        foreach ($where as $value) {
             // si no es una instancia de Where, lanzamos una excepción
             if (!($value instanceof Where)) {
                 throw new Exception('Invalid where clause ' . print_r($value, true));
