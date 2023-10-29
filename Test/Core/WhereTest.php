@@ -91,6 +91,18 @@ final class WhereTest extends TestCase
         $this->assertEquals($sql, $item->sql());
     }
 
+    public function testColumnCastInteger(): void
+    {
+        $item = Where::gt('integer:codigo', 100);
+        $this->assertEquals('integer:codigo', $item->fields);
+        $this->assertEquals(100, $item->value);
+        $this->assertEquals('>', $item->operator);
+        $this->assertEquals('AND', $item->operation);
+
+        $sql = $this->db()->castInteger('codigo') . ' > ' . $this->db()->var2str(100);
+        $this->assertEquals($sql, $item->sql());
+    }
+
     public function testMultiAnd(): void
     {
         // hacemos una consulta por nombre = 'test' y total > 100

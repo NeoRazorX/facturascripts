@@ -55,16 +55,6 @@ final class Where
         $this->operation = $operation;
     }
 
-    public static function and(string $fields, $value, string $operator = '='): self
-    {
-        return new self($fields, $value, $operator, 'AND');
-    }
-
-    public static function andSub(array $where): self
-    {
-        return self::sub($where, 'AND');
-    }
-
     public static function between(string $fields, $value1, $value2): self
     {
         return new self($fields, [$value1, $value2], 'BETWEEN');
@@ -253,27 +243,27 @@ final class Where
             switch ($this->operator) {
                 case '=':
                     $sql .= is_null($this->value) ?
-                        self::db()->escapeColumn($field) . ' IS NULL' :
-                        self::db()->escapeColumn($field) . ' = ' . self::sqlValue($this->value);
+                        self::sqlColumn($field) . ' IS NULL' :
+                        self::sqlColumn($field) . ' = ' . self::sqlValue($this->value);
                     break;
 
                 case '!=':
                 case '<>':
                     $sql .= is_null($this->value) ?
-                        self::db()->escapeColumn($field) . ' IS NOT NULL' :
-                        self::db()->escapeColumn($field) . ' != ' . self::sqlValue($this->value);
+                        self::sqlColumn($field) . ' IS NOT NULL' :
+                        self::sqlColumn($field) . ' != ' . self::sqlValue($this->value);
                     break;
 
                 case '>':
                 case '<':
                 case '>=':
                 case '<=':
-                    $sql .= self::db()->escapeColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value);
+                    $sql .= self::sqlColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value);
                     break;
 
                 case 'IS':
                 case 'IS NOT':
-                    $sql .= self::db()->escapeColumn($field) . ' ' . $this->operator . ' NULL';
+                    $sql .= self::sqlColumn($field) . ' ' . $this->operator . ' NULL';
                     break;
 
                 case 'IN':
@@ -283,10 +273,10 @@ final class Where
                         foreach ($this->value as $value) {
                             $values[] = self::db()->var2str($value);
                         }
-                        $sql .= self::db()->escapeColumn($field) . ' ' . $this->operator . ' (' . implode(', ', $values) . ')';
+                        $sql .= self::sqlColumn($field) . ' ' . $this->operator . ' (' . implode(', ', $values) . ')';
                         break;
                     }
-                    $sql .= self::db()->escapeColumn($field) . ' ' . $this->operator . ' (' . $this->value . ')';
+                    $sql .= self::sqlColumn($field) . ' ' . $this->operator . ' (' . $this->value . ')';
                     break;
 
                 case 'BETWEEN':
@@ -299,7 +289,7 @@ final class Where
                     if (count($this->value) !== 2) {
                         throw new Exception('Invalid where clause ' . print_r($this, true));
                     }
-                    $sql .= self::db()->escapeColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value[0])
+                    $sql .= self::sqlColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value[0])
                         . ' AND ' . self::sqlValue($this->value[1]);
                     break;
 
@@ -346,16 +336,26 @@ final class Where
         return self::$db;
     }
 
+    private static function sqlColumn(string $field): string
+    {
+        // si empieza por integer: hacemos el cast
+        if (substr($field, 0, 8) === 'integer:') {
+            return self::db()->castInteger(substr($field, 8));
+        }
+
+        return self::db()->escapeColumn($field);
+    }
+
     private static function sqlOperatorLike(string $field, string $value, string $operator): string
     {
         // si no contiene %, se los añadimos
         if (strpos($value, '%') === false) {
-            return 'LOWER(' . self::db()->escapeColumn($field) . ') ' . $operator
+            return 'LOWER(' . self::sqlColumn($field) . ') ' . $operator
                 . " LOWER('%" . self::db()->escapeString($value) . "%')";
         }
 
         // contiene algún comodín
-        return 'LOWER(' . self::db()->escapeColumn($field) . ') ' . $operator
+        return 'LOWER(' . self::sqlColumn($field) . ') ' . $operator
             . " LOWER(" . self::db()->escapeString($value) . ")";
     }
 
@@ -379,7 +379,7 @@ final class Where
     {
         // si empieza por field: lo tratamos como un campo
         if (substr($value, 0, 6) === 'field:') {
-            return self::db()->escapeColumn(substr($value, 6));
+            return self::sqlColumn(substr($value, 6));
         }
 
         // si no, lo tratamos como un valor
