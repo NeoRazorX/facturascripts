@@ -4,6 +4,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Template\UIController;
 use FacturaScripts\Core\UI\Section;
+use FacturaScripts\Core\UI\TabForm;
 use FacturaScripts\Core\UI\TabList;
 
 class DashboardUI extends UIController
@@ -37,12 +38,15 @@ class DashboardUI extends UIController
         // añadimos un botón a la sección bottom
         $this->section('bottom')->addButton('button5');
 
+        // añadimos un tab de formulario a la sección top
+        $this->section('top')->addTab('tab1', new TabForm());
+
         // añadimos 2 pestañas de listado a la sección main
         $this->section('main')->addTab('tab1', new TabList());
         $this->section('main')->addTab('tab2', new TabList());
 
         // añadimos un tercer tab y lo ponemos después del tab 1
-        $this->section('main')->addTab('tab3', new TabList())
+        $this->section('main')->addTab('tab3', new TabForm())
             ->setPosition(1);
 
         // añadimos un tab a la sección bottom
