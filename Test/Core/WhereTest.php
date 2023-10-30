@@ -103,6 +103,45 @@ final class WhereTest extends TestCase
         $this->assertEquals($sql, $item->sql());
     }
 
+    public function testWhereIn(): void
+    {
+        // pasamos los valore como array
+        $item = Where::in('test', ['value1', 'value2']);
+        $this->assertEquals('test', $item->fields);
+        $this->assertEquals(['value1', 'value2'], $item->value);
+        $this->assertEquals('IN', $item->operator);
+        $this->assertEquals('AND', $item->operation);
+
+        $sql = $this->db()->escapeColumn('test')
+            . ' IN (' . $this->db()->var2str('value1')
+            . ', ' . $this->db()->var2str('value2') . ')';
+        $this->assertEquals($sql, $item->sql());
+
+        // pasamos los valore como string
+        $item2 = Where::in('test2', 'value3,value4, value5');
+        $this->assertEquals('test2', $item2->fields);
+        $this->assertEquals('value3,value4, value5', $item2->value);
+        $this->assertEquals('IN', $item2->operator);
+        $this->assertEquals('AND', $item2->operation);
+
+        $sql2 = $this->db()->escapeColumn('test2')
+            . ' IN (' . $this->db()->var2str('value3')
+            . ', ' . $this->db()->var2str('value4')
+            . ', ' . $this->db()->var2str('value5') . ')';
+        $this->assertEquals($sql2, $item2->sql());
+
+        // pasamos una consulta select
+        $item3 = Where::in('test3', 'SELECT col1 FROM test_table');
+        $this->assertEquals('test3', $item3->fields);
+        $this->assertEquals('SELECT col1 FROM test_table', $item3->value);
+        $this->assertEquals('IN', $item3->operator);
+        $this->assertEquals('AND', $item3->operation);
+
+        $sql3 = $this->db()->escapeColumn('test3')
+            . ' IN (SELECT col1 FROM test_table)';
+        $this->assertEquals($sql3, $item3->sql());
+    }
+
     public function testMultiAnd(): void
     {
         // hacemos una consulta por nombre = 'test' y total > 100

@@ -80,9 +80,9 @@ final class Where
         return new self($fields, $value, '>=');
     }
 
-    public static function in(string $fields, $value): self
+    public static function in(string $fields, $values): self
     {
-        return new self($fields, $value, 'IN');
+        return new self($fields, $values, 'IN');
     }
 
     public static function isNotNull(string $fields): self
@@ -144,6 +144,11 @@ final class Where
         return new self($fields, $value, '!=');
     }
 
+    public static function notIn(string $fields, $values): self
+    {
+        return new self($fields, $values, 'NOT IN');
+    }
+
     public static function notLike(string $fields, string $value): self
     {
         return new self($fields, $value, 'NOT LIKE');
@@ -174,9 +179,9 @@ final class Where
         return new self($fields, $value, '>=', 'OR');
     }
 
-    public static function orIn(string $fields, $value): self
+    public static function orIn(string $fields, $values): self
     {
-        return new self($fields, $value, 'IN', 'OR');
+        return new self($fields, $values, 'IN', 'OR');
     }
 
     public static function orIsNotNull(string $fields): self
@@ -212,6 +217,11 @@ final class Where
     public static function orNotEq(string $fields, $value): self
     {
         return new self($fields, $value, '!=', 'OR');
+    }
+
+    public static function orNotIn(string $fields, $values): self
+    {
+        return new self($fields, $values, 'NOT IN', 'OR');
     }
 
     public static function orNotLike(string $fields, string $value): self
@@ -268,29 +278,12 @@ final class Where
 
                 case 'IN':
                 case 'NOT IN':
-                    if (is_array($this->value)) {
-                        $values = [];
-                        foreach ($this->value as $value) {
-                            $values[] = self::db()->var2str($value);
-                        }
-                        $sql .= self::sqlColumn($field) . ' ' . $this->operator . ' (' . implode(', ', $values) . ')';
-                        break;
-                    }
-                    $sql .= self::sqlColumn($field) . ' ' . $this->operator . ' (' . $this->value . ')';
+                    $sql .= self::sqlOperatorIn($field, $this->value, $this->operator);
                     break;
 
                 case 'BETWEEN':
                 case 'NOT BETWEEN':
-                    // si no es un array, lanzamos una excepción
-                    if (!is_array($this->value)) {
-                        throw new Exception('Invalid where clause ' . print_r($this, true));
-                    }
-                    // si no tiene 2 elementos, lanzamos una excepción
-                    if (count($this->value) !== 2) {
-                        throw new Exception('Invalid where clause ' . print_r($this, true));
-                    }
-                    $sql .= self::sqlColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value[0])
-                        . ' AND ' . self::sqlValue($this->value[1]);
+                    $sql .= self::sqlOperatorBetween($field, $this->value, $this->operator);
                     break;
 
                 case 'LIKE':
@@ -344,6 +337,47 @@ final class Where
         }
 
         return self::db()->escapeColumn($field);
+    }
+
+    private static function sqlOperatorBetween(string $field, $values, string $operator): string
+    {
+        // si no es un array, lanzamos una excepción
+        if (!is_array($values)) {
+            throw new Exception('Invalid values in where clause ' . print_r($values, true));
+        }
+
+        // si no tiene 2 elementos, lanzamos una excepción
+        if (count($values) !== 2) {
+            throw new Exception('Invalid values in where clause ' . print_r($values, true));
+        }
+
+        return self::sqlColumn($field) . ' ' . $operator . ' ' . self::sqlValue($values[0])
+            . ' AND ' . self::sqlValue($values[1]);
+    }
+
+    private static function sqlOperatorIn(string $field, $values, string $operator): string
+    {
+        if (is_array($values)) {
+            $items = [];
+            foreach ($values as $val) {
+                $items[] = self::db()->var2str($val);
+            }
+
+            return self::sqlColumn($field) . ' ' . $operator . ' (' . implode(', ', $items) . ')';
+        }
+
+        // si comienza por SELECT, lo tratamos como una subconsulta
+        if (substr(strtoupper($values), 0, 6) === 'SELECT') {
+            return self::sqlColumn($field) . ' ' . $operator . ' (' . $values . ')';
+        }
+
+        // es un string, separamos los valores por coma
+        $items = [];
+        foreach (explode(',', $values) as $val) {
+            $items[] = self::db()->var2str(trim($val));
+        }
+
+        return self::sqlColumn($field) . ' ' . $operator . ' (' . implode(', ', $items) . ')';
     }
 
     private static function sqlOperatorLike(string $field, string $value, string $operator): string
