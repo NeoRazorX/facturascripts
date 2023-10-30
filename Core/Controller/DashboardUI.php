@@ -3,6 +3,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Template\UIController;
+use FacturaScripts\Core\UI\Dropdown;
 use FacturaScripts\Core\UI\Section;
 use FacturaScripts\Core\UI\TabForm;
 use FacturaScripts\Core\UI\TabList;
@@ -34,6 +35,13 @@ class DashboardUI extends UIController
 
         // añadimos un botón a la sección main
         $this->section('main')->addButton('button4');
+
+        // añadimos un dropdown a la sección main, con 2 enlaces, un separador y un tercer enlace
+        $this->section('main')->addButton('dropdown1', new Dropdown())
+            ->addLink('link1', 'https://www.google.com')
+            ->addLink('link2', 'https://www.google.com')
+            ->addLink('-', '#')
+            ->addLink('link3', 'https://www.google.com');
 
         // añadimos un botón a la sección bottom
         $this->section('bottom')->addButton('button5');

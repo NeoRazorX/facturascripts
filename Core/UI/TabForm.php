@@ -29,6 +29,9 @@ class TabForm extends SectionTab
             . '<textarea class="form-control" id="observation" rows="3"></textarea>'
             . '</div>'
             . '</div>'
+            . '<div class="col-12 text-right">'
+            . '<button type="submit" class="btn btn-primary">Submit</button>'
+            . '</div>'
             . '</div>'
             . '</div>'
             . '</form>';
