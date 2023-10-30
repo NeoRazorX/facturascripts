@@ -1,0 +1,8 @@
+{% extends "Master/MenuTemplate.html.twig" %}
+
+{% block body %}
+    {{ parent() }}
+    {% for section in fsc.sections() %}
+        {{ section.render() | raw }}
+    {% endfor %}
+{% endblock %}
