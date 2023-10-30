@@ -5,6 +5,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Template\UIController;
 use FacturaScripts\Core\UI\Dropdown;
 use FacturaScripts\Core\UI\Section;
+use FacturaScripts\Core\UI\TabCards;
 use FacturaScripts\Core\UI\TabForm;
 use FacturaScripts\Core\UI\TabList;
 
@@ -62,6 +63,6 @@ class DashboardUI extends UIController
             ->setPosition(1);
 
         // añadimos un tab a la sección bottom
-        $this->section('bottom')->addTab('tab4', new TabList());
+        $this->section('bottom')->addTab('tab4', new TabCards());
     }
 }
