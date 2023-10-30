@@ -22,7 +22,7 @@ class TabCards extends SectionTab
 
         $cards = [];
         foreach ($this->cursor as $card) {
-            $cards[] = '<div class="col mb-4">'
+            $cards[] = '<div class="col mb-3">'
                 . '<div class="card shadow-sm">'
                 . '<img src="..." class="card-img-top" alt="...">'
                 . '<div class="card-body">'

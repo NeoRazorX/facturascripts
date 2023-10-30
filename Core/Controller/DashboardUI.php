@@ -7,6 +7,7 @@ use FacturaScripts\Core\UI\Dropdown;
 use FacturaScripts\Core\UI\Section;
 use FacturaScripts\Core\UI\TabCards;
 use FacturaScripts\Core\UI\TabForm;
+use FacturaScripts\Core\UI\TabFormList;
 use FacturaScripts\Core\UI\TabList;
 
 class DashboardUI extends UIController
@@ -62,7 +63,10 @@ class DashboardUI extends UIController
         $this->section('main')->addTab('tab3', new TabForm())
             ->setPosition(1);
 
+        // añadimos un tab de listado de formularios
+        $this->section('main')->addTab('tab4', new TabFormList());
+
         // añadimos un tab a la sección bottom
-        $this->section('bottom')->addTab('tab4', new TabCards());
+        $this->section('bottom')->addTab('tab5', new TabCards());
     }
 }

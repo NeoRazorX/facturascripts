@@ -9,7 +9,7 @@ class TabForm extends SectionTab
     public function render(): string
     {
         return '<form>'
-            . '<div class="container-fluid">'
+            . '<div class="container-fluid mb-4">'
             . '<div class="form-row">'
             . '<div class="col">'
             . '<div class="form-group">'
@@ -30,7 +30,8 @@ class TabForm extends SectionTab
             . '</div>'
             . '</div>'
             . '<div class="col-12 text-right">'
-            . '<button type="submit" class="btn btn-primary">Submit</button>'
+            . '<button type="reset" class="btn btn-secondary">Reset</button>'
+            . '<button type="submit" class="btn btn-primary ml-1">Submit</button>'
             . '</div>'
             . '</div>'
             . '</div>'
