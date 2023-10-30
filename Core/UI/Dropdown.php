@@ -6,9 +6,10 @@ class Dropdown extends Button
 {
     protected $links = [];
 
-    public function addLink(string $label, string $url): self
+    public function addLink(string $label, string $url, string $icon = ''): self
     {
-        $this->links[] = ['label' => $label, 'url' => $url];
+        $this->links[] = ['icon' => $icon, 'label' => $label, 'url' => $url];
+
         return $this;
     }
 
@@ -21,13 +22,17 @@ class Dropdown extends Button
                 continue;
             }
 
-            $anchors[] = '<a class="dropdown-item" href="' . $link['url'] . '">' . $link['label'] . '</a>';
+            $icon = $link['icon'] ? '<i class="' . $link['icon'] . '"></i> ' : '';
+            $anchors[] = '<a class="dropdown-item" href="' . $link['url'] . '">' . $icon . $link['label'] . '</a>';
         }
+
+        $icon = $this->icon ? '<i class="' . $this->icon . '"></i> ' : '';
+        $label = $this->label ?? $this->name;
 
         return '<div class="btn-group">'
             . '<div class="dropdown">'
-            . '<button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">'
-            . ($this->label ?? $this->name)
+            . '<button class="btn btn-' . $this->color . ' dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">'
+            . $icon . $label
             . '</button>'
             . '<div class="dropdown-menu">' . implode("\n", $anchors) . '</div>'
             . '</div>'
