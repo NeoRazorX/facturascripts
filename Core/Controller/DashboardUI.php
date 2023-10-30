@@ -9,6 +9,7 @@ use FacturaScripts\Core\UI\TabCards;
 use FacturaScripts\Core\UI\TabForm;
 use FacturaScripts\Core\UI\TabFormList;
 use FacturaScripts\Core\UI\TabList;
+use FacturaScripts\Core\UI\TabMap;
 
 class DashboardUI extends UIController
 {
@@ -56,15 +57,23 @@ class DashboardUI extends UIController
         $this->section('top')->addTab('tab1', new TabForm());
 
         // añadimos 2 pestañas de listado a la sección main
-        $this->section('main')->addTab('tab1', new TabList());
-        $this->section('main')->addTab('tab2', new TabList());
+        $this->section('main')->addTab('tab1', new TabList())
+            ->setLabel('Listado 1');
+        $this->section('main')->addTab('tab2', new TabList())
+            ->setLabel('Listado 2');
 
         // añadimos un tercer tab y lo ponemos después del tab 1
         $this->section('main')->addTab('tab3', new TabForm())
+            ->setLabel('Formulario')
             ->setPosition(1);
 
         // añadimos un tab de listado de formularios
-        $this->section('main')->addTab('tab4', new TabFormList());
+        $this->section('main')->addTab('tab4', new TabFormList())
+            ->setLabel('+Formularios');
+
+        // añadimos un tab con un mapa
+        $this->section('bottom')->addTab('tab5', new TabMap())
+            ->setLabel('Mapa');
 
         // añadimos un tab a la sección bottom
         $this->section('bottom')->addTab('tab5', new TabCards());
