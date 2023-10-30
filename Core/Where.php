@@ -390,7 +390,7 @@ final class Where
 
         // contiene algún comodín
         return 'LOWER(' . self::sqlColumn($field) . ') ' . $operator
-            . " LOWER(" . self::db()->escapeString($value) . ")";
+            . " LOWER('" . self::db()->escapeString($value) . "')";
     }
 
     private static function sqlOperatorXLike(string $field, string $value): string

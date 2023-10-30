@@ -103,6 +103,20 @@ final class WhereTest extends TestCase
         $this->assertEquals($sql, $item->sql());
     }
 
+    public function testWhereBetween(): void
+    {
+        $item = Where::between('test', 'value1', 'value2');
+        $this->assertEquals('test', $item->fields);
+        $this->assertEquals(['value1', 'value2'], $item->value);
+        $this->assertEquals('BETWEEN', $item->operator);
+        $this->assertEquals('AND', $item->operation);
+
+        $sql = $this->db()->escapeColumn('test')
+            . ' BETWEEN ' . $this->db()->var2str('value1')
+            . ' AND ' . $this->db()->var2str('value2');
+        $this->assertEquals($sql, $item->sql());
+    }
+
     public function testWhereIn(): void
     {
         // pasamos los valore como array
@@ -140,6 +154,44 @@ final class WhereTest extends TestCase
         $sql3 = $this->db()->escapeColumn('test3')
             . ' IN (SELECT col1 FROM test_table)';
         $this->assertEquals($sql3, $item3->sql());
+    }
+
+    public function testWhereLike(): void
+    {
+        // sin comodines
+        $item = Where::like('test', 'value');
+        $this->assertEquals('test', $item->fields);
+        $this->assertEquals('value', $item->value);
+        $this->assertEquals('LIKE', $item->operator);
+        $this->assertEquals('AND', $item->operation);
+
+        $sql = 'LOWER(' . $this->db()->escapeColumn('test')
+            . ") LIKE LOWER('%" . $this->db()->escapeString('value') . "%')";
+        $this->assertEquals($sql, $item->sql());
+
+        // con comodín al principio
+        $item2 = Where::like('test2', '%value2');
+        $sql2 = 'LOWER(' . $this->db()->escapeColumn('test2')
+            . ") LIKE LOWER('%" . $this->db()->escapeString('value2') . "')";
+        $this->assertEquals($sql2, $item2->sql());
+
+        // con comodín al final
+        $item3 = Where::like('test3', 'value3%');
+        $sql3 = 'LOWER(' . $this->db()->escapeColumn('test3')
+            . ") LIKE LOWER('" . $this->db()->escapeString('value3') . "%')";
+        $this->assertEquals($sql3, $item3->sql());
+
+        // con comodín al principio y al final
+        $item4 = Where::like('test4', '%value4%');
+        $sql4 = 'LOWER(' . $this->db()->escapeColumn('test4')
+            . ") LIKE LOWER('%" . $this->db()->escapeString('value4') . "%')";
+        $this->assertEquals($sql4, $item4->sql());
+
+        // con comodín en medio
+        $item5 = Where::like('test5', 'value5%value5');
+        $sql5 = 'LOWER(' . $this->db()->escapeColumn('test5')
+            . ") LIKE LOWER('" . $this->db()->escapeString('value5%value5') . "')";
+        $this->assertEquals($sql5, $item5->sql());
     }
 
     public function testMultiAnd(): void
