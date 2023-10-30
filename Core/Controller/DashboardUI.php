@@ -76,6 +76,7 @@ class DashboardUI extends UIController
             ->setLabel('Mapa');
 
         // añadimos un tab a la sección bottom
-        $this->section('bottom')->addTab('tab5', new TabCards());
+        $this->section('bottom')->addTab('tab6', new TabCards())
+            ->setLabel('Galería');
     }
 }

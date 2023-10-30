@@ -21,7 +21,7 @@ class TabMap extends SectionTab
             . '</script>'
             . '<div id="map" style="height: 600px;"></div>'
             . '<script>'
-            . 'new Mapkick.Map("map", [{latitude: 37.7829, longitude: -122.4190}])'
+            . 'new Mapkick.Map("map", [{latitude: 37.7829, longitude: -122.4190}], {zoom: 2, controls: true})'
             . '</script>';
     }
 }

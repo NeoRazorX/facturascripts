@@ -2,6 +2,7 @@
 
 namespace FacturaScripts\Core\UI;
 
+use Exception;
 use FacturaScripts\Core\Template\SectionTab;
 use FacturaScripts\Core\Template\UIComponent;
 
@@ -33,6 +34,13 @@ class Section extends UIComponent
 
     public function addTab(string $name, SectionTab $tab, ?int $position = null): SectionTab
     {
+        // comprobamos que no exista ya una pestaña con ese nombre
+        foreach ($this->tabs as $item) {
+            if ($item->name === $name) {
+                throw new Exception('Tab name already exists: ' . $name);
+            }
+        }
+
         $tab->name = $name;
         $tab->position = $position ?? count($this->tabs) * 10;
 
