@@ -17,6 +17,7 @@ class TabCards extends SectionTab
         // creamos algunos datos de ejemplo
         foreach (range(1, 12) as $i) {
             $this->cursor[] = [
+                'image' => 'https://picsum.photos/200?random=' . $i,
                 'title' => 'Card title ' . $i,
                 'text' => 'This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.',
                 'footer' => 'Last updated ' . rand(1, 30) . ' mins ago',
@@ -32,7 +33,7 @@ class TabCards extends SectionTab
         foreach ($this->cursor as $num => $card) {
             $cards[] = '<div class="col mb-3">'
                 . '<div class="card shadow-sm">'
-                . '<img src="https://picsum.photos/200?random=' . $num . '" class="card-img-top" alt="' . Tools::slug($card['title']) . '" loading="lazy">'
+                . '<img src="' . $card['image'] . '" class="card-img-top" alt="' . Tools::slug($card['title']) . '" loading="lazy">'
                 . '<div class="card-body">'
                 . '<h5 class="card-title">' . $card['title'] . '</h5>'
                 . '<p class="card-text">' . $card['text'] . '</p>'

@@ -10,6 +10,7 @@ use FacturaScripts\Core\UI\TabCards;
 use FacturaScripts\Core\UI\TabCharts;
 use FacturaScripts\Core\UI\TabForm;
 use FacturaScripts\Core\UI\TabFormList;
+use FacturaScripts\Core\UI\TabGantt;
 use FacturaScripts\Core\UI\TabKanban;
 use FacturaScripts\Core\UI\TabList;
 use FacturaScripts\Core\UI\TabMap;
@@ -101,5 +102,11 @@ class DashboardUI extends UIController
             ->setTitle('Kanban section')
             ->addTab('tab1', new TabKanban())
             ->setLabel('Kanban');
+
+        // añadimos una sección con un diagrama de gantt
+        $this->addSection('gantt')
+            ->setTitle('Gantt section')
+            ->addTab('tab1', new TabGantt())
+            ->setLabel('Gantt');
     }
 }

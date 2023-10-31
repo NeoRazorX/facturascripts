@@ -2,8 +2,8 @@
 
 namespace FacturaScripts\Core\UI;
 
-use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Template\SectionTab;
+use FacturaScripts\Dinamic\Lib\AssetManager;
 
 class TabMap extends SectionTab
 {

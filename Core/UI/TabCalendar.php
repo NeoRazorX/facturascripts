@@ -2,8 +2,8 @@
 
 namespace FacturaScripts\Core\UI;
 
-use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Template\SectionTab;
+use FacturaScripts\Dinamic\Lib\AssetManager;
 
 class TabCalendar extends SectionTab
 {
@@ -14,7 +14,6 @@ class TabCalendar extends SectionTab
         $this->icon = 'fas fa-calendar-alt';
 
         // añadimos datos de prueba
-        $startDate = date('Y-m-01');
         foreach (range(1, rand(9, 50)) as $num) {
             $date = date('Y-m-' . rand(1, 28));
 
