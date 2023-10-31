@@ -22,7 +22,7 @@ class TabMap extends SectionTab
             $this->cursor[] = [
                 'tooltip' => 'Marker ' . $i,
                 'latitude' => rand(-90, 90),
-                'longitude' => rand(-180, 180),
+                'longitude' => rand(-90, 90),
             ];
 
             $this->counter++;

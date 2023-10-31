@@ -18,7 +18,7 @@ class TabCharts extends SectionTab
 
     public function render(): string
     {
-        return '<canvas id="chart471956358" style="max-height: 500px;"/>'
+        return '<canvas id="chart471956358" style="max-height: 500px;"></canvas>'
             . '<script>'
             . "let ctx471956358 = document.getElementById('chart471956358').getContext('2d');let myChart471956358 = new Chart(ctx471956358, {"
             . "type: 'line',"

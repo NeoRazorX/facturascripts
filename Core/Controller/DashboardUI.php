@@ -10,6 +10,7 @@ use FacturaScripts\Core\UI\TabCards;
 use FacturaScripts\Core\UI\TabCharts;
 use FacturaScripts\Core\UI\TabForm;
 use FacturaScripts\Core\UI\TabFormList;
+use FacturaScripts\Core\UI\TabKanban;
 use FacturaScripts\Core\UI\TabList;
 use FacturaScripts\Core\UI\TabMap;
 
@@ -94,5 +95,11 @@ class DashboardUI extends UIController
             ->setTitle('Charts section')
             ->addTab('tab1', new TabCharts())
             ->setLabel('Gráficos');
+
+        // añadimos otra sección con un kanban
+        $this->addSection('kanban')
+            ->setTitle('Kanban section')
+            ->addTab('tab1', new TabKanban())
+            ->setLabel('Kanban');
     }
 }

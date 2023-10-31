@@ -3,6 +3,7 @@
 namespace FacturaScripts\Core\UI;
 
 use FacturaScripts\Core\Template\SectionTab;
+use FacturaScripts\Core\Tools;
 
 class TabCards extends SectionTab
 {
@@ -28,10 +29,10 @@ class TabCards extends SectionTab
     public function render(): string
     {
         $cards = [];
-        foreach ($this->cursor as $card) {
+        foreach ($this->cursor as $num => $card) {
             $cards[] = '<div class="col mb-3">'
                 . '<div class="card shadow-sm">'
-                . '<img src="..." class="card-img-top" alt="...">'
+                . '<img src="https://picsum.photos/200?random=' . $num . '" class="card-img-top" alt="' . Tools::slug($card['title']) . '" loading="lazy">'
                 . '<div class="card-body">'
                 . '<h5 class="card-title">' . $card['title'] . '</h5>'
                 . '<p class="card-text">' . $card['text'] . '</p>'
