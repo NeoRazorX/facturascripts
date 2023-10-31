@@ -14,7 +14,7 @@ class TabForm extends SectionTab
     public function render(): string
     {
         return '<form>'
-            . '<div class="container-fluid mb-4">'
+            . '<div class="container-fluid mt-4 mb-4">'
             . '<div class="form-row">'
             . '<div class="col">'
             . '<div class="form-group">'

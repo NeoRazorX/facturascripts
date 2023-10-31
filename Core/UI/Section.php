@@ -70,7 +70,7 @@ class Section extends UIComponent
 
     public function render(): string
     {
-        return '<div class="container-fluid border-top">'
+        return '<div class="container-fluid' . ($this->position == 0 ? '' : ' border-top') . '">'
             . '<div class="row">'
             . '<div class="col">'
             . '<h1 class="mb-0">' . $this->name . '</h1>'
