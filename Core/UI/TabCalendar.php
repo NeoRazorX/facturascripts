@@ -31,18 +31,30 @@ class TabCalendar extends SectionTab
         }
     }
 
+    public function jsInitFunction(): string
+    {
+        return 'let cal_' . $this->name . ' = null;';
+    }
+
+    public function jsRedrawFunction(): string
+    {
+        return 'cal_' . $this->name . '.render();';
+    }
+
     public function render(): string
     {
-        return '<div class="p-3" id="calendar"></div>'
-            . '<script>'
-            . 'document.addEventListener("DOMContentLoaded", function() {'
-            . 'var calendarEl = document.getElementById("calendar");'
-            . 'var calendar = new FullCalendar.Calendar(calendarEl, {'
-            . 'initialView: "dayGridMonth",'
-            . 'events: ' . json_encode($this->cursor) . ','
-            . '});'
-            . 'calendar.render();'
-            . '});'
+        $name = 'cal_' . $this->name;
+
+        return '<div class="p-3" id="' . $name . '"></div>' . "\n"
+            . '<script>' . "\n"
+            . '   document.addEventListener("DOMContentLoaded", function() {' . "\n"
+            . '      let ' . $name . '_el = document.getElementById("' . $name . '");' . "\n"
+            . '      ' . $name . ' = new FullCalendar.Calendar(' . $name . '_el, {' . "\n"
+            . '         initialView: "dayGridMonth",' . "\n"
+            . '         events: ' . json_encode($this->cursor) . ',' . "\n"
+            . '      });' . "\n"
+            . '      ' . $name . '.render();' . "\n"
+            . '   });' . "\n"
             . '</script>';
     }
 }

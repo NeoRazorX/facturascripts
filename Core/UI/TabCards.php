@@ -19,12 +19,23 @@ class TabCards extends SectionTab
             $this->cursor[] = [
                 'image' => 'https://picsum.photos/200?random=' . $i,
                 'title' => 'Card title ' . $i,
-                'text' => 'This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.',
+                'text' => 'This is a longer card with supporting text below as a natural lead-in to additional content.'
+                    . ' This content is a little bit longer.',
                 'footer' => 'Last updated ' . rand(1, 30) . ' mins ago',
             ];
 
             $this->counter++;
         }
+    }
+
+    public function jsInitFunction(): string
+    {
+        return '';
+    }
+
+    public function jsRedrawFunction(): string
+    {
+        return '';
     }
 
     public function render(): string

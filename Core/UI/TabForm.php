@@ -11,6 +11,16 @@ class TabForm extends SectionTab
         $this->icon = 'fas fa-edit';
     }
 
+    public function jsInitFunction(): string
+    {
+        return '';
+    }
+
+    public function jsRedrawFunction(): string
+    {
+        return '';
+    }
+
     public function render(): string
     {
         return '<form>'

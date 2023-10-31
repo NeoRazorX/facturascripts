@@ -21,22 +21,32 @@ class TabMap extends SectionTab
         foreach (range(1, rand(3, 50)) as $i) {
             $this->cursor[] = [
                 'tooltip' => 'Marker ' . $i,
-                'latitude' => rand(-90, 90),
-                'longitude' => rand(-90, 90),
+                'latitude' => rand(-8000000, 8000000) / 100000,
+                'longitude' => rand(-9000000, 9000000) / 100000,
             ];
 
             $this->counter++;
         }
     }
 
+    public function jsInitFunction(): string
+    {
+        return 'let map_' . $this->name . ' = null;';
+    }
+
+    public function jsRedrawFunction(): string
+    {
+        return 'map_' . $this->name . '.map.resize();';
+    }
+
     public function render(): string
     {
-        return '<script>'
-            . 'Mapkick.options = {style: "https://demotiles.maplibre.org/style.json"}'
-            . '</script>'
-            . '<div id="map" style="height: 600px;"></div>'
-            . '<script>'
-            . 'new Mapkick.Map("map", ' . json_encode($this->cursor) . ', {zoom: 1, controls: true})'
-            . '</script>';
+        $name = 'map_' . $this->name;
+
+        return '<div id="' . $name . '" style="height: 600px;"></div>' . "\n"
+            . "<script>\n"
+            . 'Mapkick.options = {style: "https://demotiles.maplibre.org/style.json"};' . "\n"
+            . $name . ' = new Mapkick.Map("' . $name . '", ' . json_encode($this->cursor) . ', {zoom: 2, controls: true});' . "\n"
+            . " </script > \n";
     }
 }

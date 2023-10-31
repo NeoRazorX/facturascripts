@@ -34,12 +34,22 @@ class TabGantt extends SectionTab
         }
     }
 
+    public function jsInitFunction(): string
+    {
+        return '';
+    }
+
+    public function jsRedrawFunction(): string
+    {
+        return '';
+    }
+
     public function render(): string
     {
-        return '<svg id="gantt"></svg>'
+        return '<svg id="' . $this->name . '"></svg>'
             . '<script>'
-            . 'let tasks = ' . json_encode($this->cursor) . ';'
-            . 'let gantt = new Gantt("#gantt", tasks);'
+            . 'let tasks_' . $this->name . ' = ' . json_encode($this->cursor) . ';'
+            . 'let gantt_' . $this->name . ' = new Gantt("#' . $this->name . '", tasks_'.$this->name.');'
             . '</script>';
     }
 }

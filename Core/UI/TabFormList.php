@@ -13,7 +13,7 @@ class TabFormList extends SectionTab
         $this->icon = 'fas fa-edit';
 
         // añadimos datos de prueba
-        foreach (range(1, 10) as $i) {
+        foreach (range(1, rand(2, 20)) as $i) {
             $this->cursor[] = [
                 'id' => $i,
                 'name' => 'Name ' . $i,
@@ -22,6 +22,16 @@ class TabFormList extends SectionTab
             ];
             $this->counter++;
         }
+    }
+
+    public function jsInitFunction(): string
+    {
+        return '';
+    }
+
+    public function jsRedrawFunction(): string
+    {
+        return '';
     }
 
     public function render(): string

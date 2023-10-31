@@ -31,11 +31,21 @@ class TabDataTable extends SectionTab
         }
     }
 
+    public function jsInitFunction(): string
+    {
+        return '';
+    }
+
+    public function jsRedrawFunction(): string
+    {
+        return '';
+    }
+
     public function render(): string
     {
-        return '<div id="example-table"></div>'
+        return '<div id="' . $this->name . '"></div>'
             . '<script>'
-            . 'var table = new Tabulator("#example-table", {'
+            . 'let table_' . $this->name . ' = new Tabulator("#' . $this->name . '", {'
             . 'data:' . json_encode($this->cursor) . ','
             . 'columns:['
             . '{title:"Id", field:"id"},'

@@ -137,20 +137,53 @@ class Section extends UIComponent
             return '';
         }
 
-        if (count($this->tabs) === 1) {
-            return $this->tabs[0]->render();
+        $html = '';
+
+        // inicializamos el javascript
+        foreach ($this->tabs as $tab) {
+            $jsCode = $tab->jsInitFunction();
+            if (empty($jsCode)) {
+                continue;
+            }
+
+            $html .= '<script>' . "\n"
+                . $jsCode . "\n"
+                . '</script>' . "\n";
         }
 
-        $html = '<ul class="nav nav-tabs">';
+        if (count($this->tabs) === 1) {
+            return $html . $this->tabs[0]->render();
+        }
+
+        // definimos primero las funciones de redibujado de las pestañas
+        foreach ($this->tabs as $tab) {
+            $jsCode = $tab->jsRedrawFunction();
+            if (empty($jsCode)) {
+                continue;
+            }
+
+            $html .= '<script>' . "\n"
+                . 'function tab_' . $tab->name . '_redraw() {' . "\n"
+                . '    let tab = $("#' . $this->name . ' a[href=\'#' . $tab->name . '\']");' . "\n"
+                . '    if (tab.length > 0) {' . "\n"
+                . '        tab.tab("show");' . "\n"
+                . '        ' . $jsCode . "\n"
+                . '    }' . "\n"
+                . '}' . "\n"
+                . '</script>' . "\n";
+        }
+
+        $html .= '<ul class="nav nav-tabs" id="' . $this->name . '">';
 
         foreach ($this->tabs() as $key => $tab) {
             $icon = empty($tab->icon) ? '' : '<i class="' . $tab->icon . ' mr-1"></i> ';
             $label = $tab->label ?? $tab->name;
             $counter = empty($tab->counter) ? '' : ' <span class="badge badge-secondary ml-1">' . $tab->counter . '</span>';
+            $onclick = empty($tab->jsRedrawFunction()) ? '' : ' onclick="tab_' . $tab->name . '_redraw();"';
 
             if ($key === 0) {
                 $html .= '<li class="nav-item">'
-                    . '<a class="nav-link active" href="#' . $tab->name . '" data-toggle="tab">'
+                    . '<a class="nav-link active" href="#' . $tab->name . '" data-toggle="tab"' . $onclick . '>'
                     . $icon . $label . $counter
                     . '</a>'
                     . '</li>';
@@ -158,7 +191,7 @@ class Section extends UIComponent
             }
 
             $html .= '<li class="nav-item">'
-                . '<a class="nav-link" href="#' . $tab->name . '" data-toggle="tab">'
+                . '<a class="nav-link" href="#' . $tab->name . '" data-toggle="tab"' . $onclick . '>'
                 . $icon . $label . $counter
                 . '</a>'
                 . '</li>';

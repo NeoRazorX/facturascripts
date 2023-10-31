@@ -25,6 +25,16 @@ class TabList extends SectionTab
         }
     }
 
+    public function jsInitFunction(): string
+    {
+        return '';
+    }
+
+    public function jsRedrawFunction(): string
+    {
+        return '';
+    }
+
     public function render(): string
     {
         $html = '<div class="table-responsive">'

@@ -81,37 +81,30 @@ class DashboardUI extends UIController
 
         // añadimos un tab con un calendario
         $this->section('main')->addTab('tab5', new TabCalendar())
-            ->setLabel('Calendario')
-            ->setPosition(-1);
+            ->setLabel('Calendario');
 
         // añadimos un tab con un mapa
-        $this->section('bottom')->addTab('tab6', new TabMap())
+        $this->section('main')->addTab('tab6', new TabMap())
             ->setLabel('Mapa');
 
         // añadimos un tab a la sección bottom
         $this->section('bottom')->addTab('tab7', new TabCards())
             ->setLabel('Galería');
 
-        // añadimos una cuarta sección con una pestaña de gráficos
-        $this->addSection('charts')
-            ->setTitle('Charts section')
-            ->addTab('tab8', new TabCharts())
+        // añadimos una pestaña de gráficos
+        $this->section('bottom')->addTab('tab8', new TabCharts())
             ->setLabel('Gráficos');
 
-        // añadimos un datatable
-        $this->section('charts')->addTab('tab9', new TabDataTable())
+        // añadimos una pestaña datatable
+        $this->section('main')->addTab('tab9', new TabDataTable())
             ->setLabel('Datatable');
 
-        // añadimos otra sección con un kanban
-        $this->addSection('kanban')
-            ->setTitle('Kanban section')
-            ->addTab('tab10', new TabKanban())
+        // añadimos una pestaña con un kanban
+        $this->section('bottom')->addTab('tab10', new TabKanban())
             ->setLabel('Kanban');
 
-        // añadimos una sección con un diagrama de gantt
-        $this->addSection('gantt')
-            ->setTitle('Gantt section')
-            ->addTab('tab11', new TabGantt())
+        // añadimos una pestaña con un diagrama de gantt
+        $this->section('bottom')->addTab('tab11', new TabGantt())
             ->setLabel('Gantt');
     }
 }
