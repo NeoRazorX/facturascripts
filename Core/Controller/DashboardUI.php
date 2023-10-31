@@ -7,6 +7,7 @@ use FacturaScripts\Core\UI\Dropdown;
 use FacturaScripts\Core\UI\Section;
 use FacturaScripts\Core\UI\TabCalendar;
 use FacturaScripts\Core\UI\TabCards;
+use FacturaScripts\Core\UI\TabCharts;
 use FacturaScripts\Core\UI\TabForm;
 use FacturaScripts\Core\UI\TabFormList;
 use FacturaScripts\Core\UI\TabList;
@@ -87,5 +88,11 @@ class DashboardUI extends UIController
         // añadimos un tab a la sección bottom
         $this->section('bottom')->addTab('tab7', new TabCards())
             ->setLabel('Galería');
+
+        // añadimos una cuarta sección con una pestaña de gráficos
+        $this->addSection('charts')
+            ->setTitle('Charts section')
+            ->addTab('tab1', new TabCharts())
+            ->setLabel('Gráficos');
     }
 }
