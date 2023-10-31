@@ -26,13 +26,15 @@ class Dropdown extends Button
             $anchors[] = '<a class="dropdown-item" href="' . $link['url'] . '">' . $icon . $link['label'] . '</a>';
         }
 
-        $icon = $this->icon ? '<i class="' . $this->icon . '"></i> ' : '';
+        $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
         $label = $this->label ?? $this->name;
+        $counter = empty($this->counter) ? '' : '<span class="badge badge-light ml-1">' . $this->counter . '</span> ';
 
         return '<div class="btn-group">'
             . '<div class="dropdown">'
-            . '<button class="btn btn-' . $this->color . ' dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">'
-            . $icon . $label
+            . '<button class="btn btn-' . $this->color . ' dropdown-toggle" type="button" data-toggle="dropdown"'
+            . ' aria-expanded="false" title="' . $this->description . '">'
+            . $icon . $label . $counter
             . '</button>'
             . '<div class="dropdown-menu">' . implode("\n", $anchors) . '</div>'
             . '</div>'

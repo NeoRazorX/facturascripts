@@ -31,8 +31,10 @@ class DashboardUI extends UIController
         // añadimos 2 botones a la sección top
         $this->section('top')->addButton('button1')
             ->setIcon('fas fa-plus-square')
-            ->setColor('success');
-        $this->section('top')->addButton('button2');
+            ->setColor('success')
+            ->setDescription('Descripción del botón 1');
+        $this->section('top')->addButton('button2')
+            ->setCounter(5);
 
         // añadimos un tercer botón y lo ponemos después del botón 1
         $this->section('top')->addButton('button3')
@@ -45,6 +47,7 @@ class DashboardUI extends UIController
         $this->section('main')->addButton('dropdown1', new Dropdown())
             ->setIcon('fas fa-list')
             ->setColor('info')
+            ->setDescription('Descripción del dropdown')
             ->addLink('link1', 'https://www.google.com', 'fas fa-plus-square')
             ->addLink('link2', 'https://www.google.com')
             ->addLink('-', '#')
