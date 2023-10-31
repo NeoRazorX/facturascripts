@@ -9,8 +9,10 @@ class TabCards extends SectionTab
     /** @var array */
     public $cursor = [];
 
-    public function render(): string
+    public function __construct()
     {
+        $this->icon = 'fa-regular fa-images';
+
         // creamos algunos datos de ejemplo
         foreach (range(1, 12) as $i) {
             $this->cursor[] = [
@@ -18,8 +20,13 @@ class TabCards extends SectionTab
                 'text' => 'This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.',
                 'footer' => 'Last updated ' . rand(1, 30) . ' mins ago',
             ];
-        }
 
+            $this->counter++;
+        }
+    }
+
+    public function render(): string
+    {
         $cards = [];
         foreach ($this->cursor as $card) {
             $cards[] = '<div class="col mb-3">'

@@ -6,24 +6,33 @@ use FacturaScripts\Core\Template\SectionTab;
 
 class TabList extends SectionTab
 {
-    public function render(): string
+    public $cursor = [];
+
+    public function __construct()
     {
-        $columns = range(1, rand(3, 6));
-        $rows = [];
+        $this->icon = 'fas fa-list';
+
+        // creamos algunos datos de ejemplo
+        $columns = range(1, rand(3, 9));
         for ($i = 0; $i < rand(9, 49); $i++) {
             $row = [];
             for ($j = 0; $j < count($columns); $j++) {
                 $row[] = 'Valor ' . rand(1, 100);
             }
-            $rows[] = $row;
-        }
 
+            $this->cursor[] = $row;
+            $this->counter++;
+        }
+    }
+
+    public function render(): string
+    {
         $html = '<div class="table-responsive">'
             . '<table class="table table-striped table-hover table-sm">'
             . '<thead>'
             . '<tr>';
 
-        foreach ($columns as $column) {
+        foreach (array_keys($this->cursor[0]) as $column) {
             $html .= '<th>Columna ' . $column . '</th>';
         }
 
@@ -31,7 +40,7 @@ class TabList extends SectionTab
             . '</thead>'
             . '<tbody>';
 
-        foreach ($rows as $row) {
+        foreach ($this->cursor as $row) {
             $html .= '<tr>';
             foreach ($row as $value) {
                 $html .= '<td>' . $value . '</td>';

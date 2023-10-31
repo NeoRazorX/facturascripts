@@ -6,6 +6,11 @@ use FacturaScripts\Core\Template\SectionTab;
 
 class TabForm extends SectionTab
 {
+    public function __construct()
+    {
+        $this->icon = 'fas fa-edit';
+    }
+
     public function render(): string
     {
         return '<form>'
@@ -30,8 +35,9 @@ class TabForm extends SectionTab
             . '</div>'
             . '</div>'
             . '<div class="col-12 text-right">'
+            . '<button type="button" class="btn btn-danger float-left">Delete</button>'
             . '<button type="reset" class="btn btn-secondary">Reset</button>'
-            . '<button type="submit" class="btn btn-primary ml-1">Submit</button>'
+            . '<button type="submit" class="btn btn-primary ml-1">Save</button>'
             . '</div>'
             . '</div>'
             . '</div>'

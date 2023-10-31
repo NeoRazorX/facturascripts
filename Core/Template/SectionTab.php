@@ -8,7 +8,17 @@ abstract class SectionTab extends UIComponent
     public $icon;
 
     /** @var string */
+    public $counter = 0;
+
+    /** @var string */
     public $label;
+
+    public function setIcon(string $icon): self
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
 
     public function setLabel(string $label): self
     {

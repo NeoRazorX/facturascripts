@@ -144,15 +144,23 @@ class Section extends UIComponent
         $html = '<ul class="nav nav-tabs">';
 
         foreach ($this->tabs() as $key => $tab) {
+            $icon = empty($tab->icon) ? '' : '<i class="' . $tab->icon . ' mr-1"></i> ';
+            $label = $tab->label ?? $tab->name;
+            $counter = empty($tab->counter) ? '' : ' <span class="badge badge-secondary ml-1">' . $tab->counter . '</span>';
+
             if ($key === 0) {
                 $html .= '<li class="nav-item">'
-                    . '<a class="nav-link active" href="#' . $tab->name . '" data-toggle="tab">' . ($tab->label ?? $tab->name) . '</a>'
+                    . '<a class="nav-link active" href="#' . $tab->name . '" data-toggle="tab">'
+                    . $icon . $label . $counter
+                    . '</a>'
                     . '</li>';
                 continue;
             }
 
             $html .= '<li class="nav-item">'
-                . '<a class="nav-link" href="#' . $tab->name . '" data-toggle="tab">' . ($tab->label ?? $tab->name) . '</a>'
+                . '<a class="nav-link" href="#' . $tab->name . '" data-toggle="tab">'
+                . $icon . $label . $counter
+                . '</a>'
                 . '</li>';
         }
 

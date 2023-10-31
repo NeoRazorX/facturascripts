@@ -8,8 +8,10 @@ class TabFormList extends SectionTab
 {
     public $cursor = [];
 
-    public function render(): string
+    public function __construct()
     {
+        $this->icon = 'fas fa-edit';
+
         // añadimos datos de prueba
         foreach (range(1, 10) as $i) {
             $this->cursor[] = [
@@ -18,8 +20,12 @@ class TabFormList extends SectionTab
                 'surname' => 'Surname ' . $i,
                 'observation' => 'Observation ' . $i,
             ];
+            $this->counter++;
         }
+    }
 
+    public function render(): string
+    {
         $forms = [];
         foreach ($this->cursor as $row) {
             $forms[] = $this->renderForm($row);
