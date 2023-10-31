@@ -70,7 +70,7 @@ class Section extends UIComponent
 
     public function render(): string
     {
-        return '<div class="container-fluid p-2 border-top">'
+        return '<div class="container-fluid border-top">'
             . '<div class="row">'
             . '<div class="col">'
             . '<h1 class="mb-0">' . $this->name . '</h1>'
@@ -118,7 +118,7 @@ class Section extends UIComponent
             return '';
         }
 
-        $html = '<div class="row">'
+        $html = '<div class="row mb-3">'
             . '<div class="col">';
 
         foreach ($this->buttons() as $button) {

@@ -5,6 +5,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Template\UIController;
 use FacturaScripts\Core\UI\Dropdown;
 use FacturaScripts\Core\UI\Section;
+use FacturaScripts\Core\UI\TabCalendar;
 use FacturaScripts\Core\UI\TabCards;
 use FacturaScripts\Core\UI\TabForm;
 use FacturaScripts\Core\UI\TabFormList;
@@ -74,12 +75,17 @@ class DashboardUI extends UIController
         $this->section('main')->addTab('tab4', new TabFormList())
             ->setLabel('+Formularios');
 
+        // añadimos un tab con un calendario
+        $this->section('main')->addTab('tab5', new TabCalendar())
+            ->setLabel('Calendario')
+            ->setPosition(-1);
+
         // añadimos un tab con un mapa
-        $this->section('bottom')->addTab('tab5', new TabMap())
+        $this->section('bottom')->addTab('tab6', new TabMap())
             ->setLabel('Mapa');
 
         // añadimos un tab a la sección bottom
-        $this->section('bottom')->addTab('tab6', new TabCards())
+        $this->section('bottom')->addTab('tab7', new TabCards())
             ->setLabel('Galería');
     }
 }
