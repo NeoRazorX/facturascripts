@@ -95,25 +95,23 @@ class DashboardUI extends UIController
         // añadimos una cuarta sección con una pestaña de gráficos
         $this->addSection('charts')
             ->setTitle('Charts section')
-            ->addTab('tab1', new TabCharts())
+            ->addTab('tab8', new TabCharts())
             ->setLabel('Gráficos');
 
-        // añadimos otra sección con un datatable
-        $this->addSection('datatable')
-            ->setTitle('Datatable section')
-            ->addTab('tab1', new TabDataTable())
+        // añadimos un datatable
+        $this->section('charts')->addTab('tab9', new TabDataTable())
             ->setLabel('Datatable');
 
         // añadimos otra sección con un kanban
         $this->addSection('kanban')
             ->setTitle('Kanban section')
-            ->addTab('tab1', new TabKanban())
+            ->addTab('tab10', new TabKanban())
             ->setLabel('Kanban');
 
         // añadimos una sección con un diagrama de gantt
         $this->addSection('gantt')
             ->setTitle('Gantt section')
-            ->addTab('tab1', new TabGantt())
+            ->addTab('tab11', new TabGantt())
             ->setLabel('Gantt');
     }
 }

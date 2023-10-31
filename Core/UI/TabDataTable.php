@@ -17,7 +17,7 @@ class TabDataTable extends SectionTab
         AssetManager::add('js', 'https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js');
 
         // añadimos datos de prueba
-        foreach (range(1, 10) as $i) {
+        foreach (range(1, 200) as $i) {
             $this->cursor[] = [
                 'id' => $i,
                 'name' => 'name ' . $i,
