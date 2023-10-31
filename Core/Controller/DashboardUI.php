@@ -8,6 +8,7 @@ use FacturaScripts\Core\UI\Section;
 use FacturaScripts\Core\UI\TabCalendar;
 use FacturaScripts\Core\UI\TabCards;
 use FacturaScripts\Core\UI\TabCharts;
+use FacturaScripts\Core\UI\TabDataTable;
 use FacturaScripts\Core\UI\TabForm;
 use FacturaScripts\Core\UI\TabFormList;
 use FacturaScripts\Core\UI\TabGantt;
@@ -96,6 +97,12 @@ class DashboardUI extends UIController
             ->setTitle('Charts section')
             ->addTab('tab1', new TabCharts())
             ->setLabel('Gráficos');
+
+        // añadimos otra sección con un datatable
+        $this->addSection('datatable')
+            ->setTitle('Datatable section')
+            ->addTab('tab1', new TabDataTable())
+            ->setLabel('Datatable');
 
         // añadimos otra sección con un kanban
         $this->addSection('kanban')

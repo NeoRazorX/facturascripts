@@ -13,6 +13,7 @@ class TabCharts extends SectionTab
     {
         $this->icon = 'fas fa-chart-bar';
 
+        // reemplazar por https://frappe.io/charts
         AssetManager::add('js', 'node_modules/chart.js/dist/Chart.min.js');
     }
 

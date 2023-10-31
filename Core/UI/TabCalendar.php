@@ -13,6 +13,8 @@ class TabCalendar extends SectionTab
     {
         $this->icon = 'fas fa-calendar-alt';
 
+        AssetManager::add('js', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js');
+
         // añadimos datos de prueba
         foreach (range(1, rand(9, 50)) as $num) {
             $date = date('Y-m-' . rand(1, 28));
@@ -27,8 +29,6 @@ class TabCalendar extends SectionTab
 
             $this->counter++;
         }
-
-        AssetManager::add('js', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js');
     }
 
     public function render(): string
