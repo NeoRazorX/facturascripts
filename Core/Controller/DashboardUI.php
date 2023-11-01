@@ -9,6 +9,7 @@ use FacturaScripts\Core\UI\Tab\TabCalendar;
 use FacturaScripts\Core\UI\Tab\TabCards;
 use FacturaScripts\Core\UI\Tab\TabCharts;
 use FacturaScripts\Core\UI\Tab\TabDataTable;
+use FacturaScripts\Core\UI\Tab\TabFiles;
 use FacturaScripts\Core\UI\Tab\TabForm;
 use FacturaScripts\Core\UI\Tab\TabFormList;
 use FacturaScripts\Core\UI\Tab\TabGantt;
@@ -108,5 +109,9 @@ class DashboardUI extends UIController
         // añadimos una pestaña con un diagrama de gantt
         $this->section('bottom')->addTab('tab11', new TabGantt('tab11'))
             ->setLabel('Gantt');
+
+        // añadimos una pestaña con un un gestor de archivos
+        $this->section('bottom')->addTab('tab12', new TabFiles('tab12'))
+            ->setLabel('Archivos');
     }
 }
