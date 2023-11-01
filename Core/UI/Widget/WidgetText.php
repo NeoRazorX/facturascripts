@@ -20,15 +20,15 @@
 namespace FacturaScripts\Core\UI\Widget;
 
 use FacturaScripts\Core\Template\UI\Widget;
-use FacturaScripts\Core\Tools;
 
 class WidgetText extends Widget
 {
     public function render(string $context = ''): string
     {
         return '<div class="form-group">'
-            . Tools::lang()->trans($this->label)
-            . '<input type="text" name="' . $this->field . '" value="' . $this->value . '" class="form-control" />'
+            . '<label for="' . $this->id() . '">' . $this->label(true) . '</label>'
+            . '<input type="text" name="' . $this->field . '" value="' . $this->value . '" id="'
+            . $this->id() . '" class="form-control" />'
             . '</div>';
     }
 }

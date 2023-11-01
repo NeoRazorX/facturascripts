@@ -21,13 +21,13 @@ namespace FacturaScripts\Core\UI\Widget;
 
 use FacturaScripts\Core\Template\UI\Widget;
 
-class WidgetNumber extends Widget
+class WidgetDate extends Widget
 {
     public function render(string $context = ''): string
     {
         return '<div class="form-group">'
             . '<label for="' . $this->id() . '">' . $this->label(true) . '</label>'
-            . '<input type="number" name="' . $this->field . '" value="' . $this->value . '" id="'
+            . '<input type="date" name="' . $this->field . '" value="' . $this->value . '" id="'
             . $this->id() . '" class="form-control" />'
             . '</div>';
     }

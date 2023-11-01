@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Template\UI;
 
+use FacturaScripts\Core\Tools;
+
 abstract class Widget extends Component
 {
     /** @var string */
@@ -43,9 +45,9 @@ abstract class Widget extends Component
         return $this->field;
     }
 
-    public function label(): string
+    public function label(bool $translate = false): string
     {
-        return $this->label;
+        return $translate ? Tools::lang()->trans($this->label) : $this->label;
     }
 
     public function setField(string $field): self
