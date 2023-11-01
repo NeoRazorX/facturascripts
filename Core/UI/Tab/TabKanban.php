@@ -64,7 +64,7 @@ class TabKanban extends SectionTab
         return '';
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         return '<div class="mt-3 mb-4" id="' . $this->id() . '"></div>' . "\n"
             . '<script>' . "\n"

@@ -55,7 +55,7 @@ class TabFormList extends SectionTab
         return '';
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         $forms = [];
         foreach ($this->data as $row) {

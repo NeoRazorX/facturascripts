@@ -20,14 +20,28 @@
 namespace FacturaScripts\Core\UI\Tab;
 
 use FacturaScripts\Core\Template\UI\SectionTab;
+use FacturaScripts\Core\UI\Widget\WidgetNumber;
+use FacturaScripts\Core\UI\Widget\WidgetText;
+use FacturaScripts\Core\UI\Widget\WidgetTextarea;
 
 class TabForm extends SectionTab
 {
+    /** @var array */
+    protected $data;
+
     public function __construct(string $name)
     {
         parent::__construct($name);
 
         $this->icon = 'fas fa-edit';
+
+        // añadimos algunos datos de prueba
+        $this->data = [
+            ['widget' => new WidgetText('name'), 'cols' => 4],
+            ['widget' => new WidgetText('surname')],
+            ['widget' => new WidgetNumber('age'), 'cols' => 2],
+            ['widget' => new WidgetTextarea('observations'), 'cols' => 12]
+        ];
     }
 
     public function jsInitFunction(): string
@@ -40,30 +54,19 @@ class TabForm extends SectionTab
         return '';
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
-        return '<form>'
+        $html = '<form>'
             . '<div class="container-fluid mt-4 mb-4">'
-            . '<div class="form-row">'
-            . '<div class="col">'
-            . '<div class="form-group">'
-            . '<label for="name">Name</label>'
-            . '<input type="text" class="form-control" id="name" placeholder="Name">'
-            . '</div>'
-            . '</div>'
-            . '<div class="col">'
-            . '<div class="form-group">'
-            . '<label for="surname">Surname</label>'
-            . '<input type="text" class="form-control" id="surname" placeholder="Surname">'
-            . '</div>'
-            . '</div>'
-            . '<div class="col-12">'
-            . '<div class="form-group">'
-            . '<label for="observation">Observation</label>'
-            . '<textarea class="form-control" id="observation" rows="3"></textarea>'
-            . '</div>'
-            . '</div>'
-            . '<div class="col-12 text-right">'
+            . '<div class="form-row">';
+
+        foreach ($this->data as $row) {
+            $html .= empty($row['cols']) ?
+                '<div class="col-sm">' . $row['widget']->render() . '</div>' :
+                '<div class="col-sm-' . $row['cols'] . '">' . $row['widget']->render() . '</div>';
+        }
+
+        $html .= '<div class="col-12 text-right">'
             . '<button type="button" class="btn btn-danger float-left">Delete</button>'
             . '<button type="reset" class="btn btn-secondary">Reset</button>'
             . '<button type="submit" class="btn btn-primary ml-1">Save</button>'
@@ -71,5 +74,7 @@ class TabForm extends SectionTab
             . '</div>'
             . '</div>'
             . '</form>';
+
+        return $html;
     }
 }

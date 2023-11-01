@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\UI;
 
 use Exception;
 use FacturaScripts\Core\Template\UI\SectionTab;
-use FacturaScripts\Core\Template\UI\UIComponent;
+use FacturaScripts\Core\Template\UI\Component;
 
-class Section extends UIComponent
+class Section extends Component
 {
     /** @var Button[] */
     private $buttons = [];
@@ -111,7 +111,7 @@ class Section extends UIComponent
         return $this->icon;
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         return '<div class="container-fluid" id="' . $this->id() . '">'
             . '<div class="form-row align-items-center">'

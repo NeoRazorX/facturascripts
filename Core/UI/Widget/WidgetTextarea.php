@@ -17,34 +17,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Template\UI;
+namespace FacturaScripts\Core\UI\Widget;
 
-abstract class SectionTab extends Component
+use FacturaScripts\Core\Template\UI\Widget;
+use FacturaScripts\Core\Tools;
+
+class WidgetTextarea extends Widget
 {
-    /** @var string */
-    public $counter = 0;
-
-    /** @var string */
-    public $icon;
-
-    /** @var string */
-    public $label;
-
-    abstract public function jsInitFunction(): string;
-
-    abstract public function jsRedrawFunction(): string;
-
-    public function setIcon(string $icon): self
+    public function render(string $context = ''): string
     {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
-    public function setLabel(string $label): self
-    {
-        $this->label = $label;
-
-        return $this;
+        return '<div class="form-group">'
+            . Tools::lang()->trans($this->label)
+            . '<textarea name="' . $this->field . '" class="form-control">' . $this->value . '</textarea>'
+            . '</div>';
     }
 }

@@ -61,7 +61,7 @@ class TabDataTable extends SectionTab
         return '';
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         return '<div id="' . $this->id() . '"></div>'
             . '<script>'

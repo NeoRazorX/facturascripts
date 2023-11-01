@@ -30,7 +30,7 @@ class Dropdown extends Button
         return $this;
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
         $label = $this->label ?? $this->name();

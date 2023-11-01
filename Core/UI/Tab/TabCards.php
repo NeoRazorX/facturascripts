@@ -57,7 +57,7 @@ class TabCards extends SectionTab
         return '';
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         $cards = [];
         foreach ($this->data as $card) {

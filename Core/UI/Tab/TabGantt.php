@@ -64,7 +64,7 @@ class TabGantt extends SectionTab
         return '';
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         return '<svg id="' . $this->id() . '"></svg>'
             . '<script>'

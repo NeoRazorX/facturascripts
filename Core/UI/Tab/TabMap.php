@@ -59,7 +59,7 @@ class TabMap extends SectionTab
         return 'map_' . $this->id() . '.map.resize();';
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         $name = 'map_' . $this->id();
 

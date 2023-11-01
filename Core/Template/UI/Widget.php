@@ -19,24 +19,38 @@
 
 namespace FacturaScripts\Core\Template\UI;
 
-abstract class SectionTab extends Component
+abstract class Widget extends Component
 {
     /** @var string */
-    public $counter = 0;
+    protected $field = '';
 
     /** @var string */
-    public $icon;
+    protected $label = '';
 
-    /** @var string */
-    public $label;
+    /** @var mixed */
+    protected $value;
 
-    abstract public function jsInitFunction(): string;
-
-    abstract public function jsRedrawFunction(): string;
-
-    public function setIcon(string $icon): self
+    public function __construct(string $name, ?string $field = null, ?string $label = null)
     {
-        $this->icon = $icon;
+        parent::__construct($name);
+
+        $this->field = $field ?? $name;
+        $this->label = $label ?? $name;
+    }
+
+    public function field(): string
+    {
+        return $this->field;
+    }
+
+    public function label(): string
+    {
+        return $this->label;
+    }
+
+    public function setField(string $field): self
+    {
+        $this->field = $field;
 
         return $this;
     }
@@ -46,5 +60,17 @@ abstract class SectionTab extends Component
         $this->label = $label;
 
         return $this;
+    }
+
+    public function setValue($value): self
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    public function value()
+    {
+        return $this->value;
     }
 }

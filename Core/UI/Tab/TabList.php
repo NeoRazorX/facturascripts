@@ -56,7 +56,7 @@ class TabList extends SectionTab
         return '';
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         $html = '<div class="table-responsive">'
             . '<table class="table table-striped table-hover table-sm">'

@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Template\UI;
 use Exception;
 use FacturaScripts\Core\Validator;
 
-abstract class UIComponent
+abstract class Component
 {
     /** @var string */
     private $name;
@@ -33,7 +33,7 @@ abstract class UIComponent
     /** @var int */
     private $position = 0;
 
-    abstract public function render(): string;
+    abstract public function render(string $context = ''): string;
 
     public function __construct(string $name)
     {
@@ -68,7 +68,7 @@ abstract class UIComponent
         return $this;
     }
 
-    public function setParent(UIComponent $parent): self
+    public function setParent(Component $parent): self
     {
         $this->parent_id = $parent->id();
 

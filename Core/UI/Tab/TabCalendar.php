@@ -61,7 +61,7 @@ class TabCalendar extends SectionTab
         return 'cal_' . $this->id() . '.render();';
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         $name = 'cal_' . $this->id();
 

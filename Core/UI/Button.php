@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\UI;
 
-use FacturaScripts\Core\Template\UI\UIComponent;
+use FacturaScripts\Core\Template\UI\Component;
 
-class Button extends UIComponent
+class Button extends Component
 {
     /** @var string */
     public $color = 'secondary';
@@ -38,7 +38,7 @@ class Button extends UIComponent
     /** @var string */
     public $label;
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
         $label = $this->label ?? $this->name();

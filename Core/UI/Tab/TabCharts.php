@@ -55,7 +55,7 @@ class TabCharts extends SectionTab
         return '';
     }
 
-    public function render(): string
+    public function render(string $context = ''): string
     {
         $chartId = 'chart_' . $this->id();
 
