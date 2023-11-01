@@ -24,6 +24,7 @@ use FacturaScripts\Core\UI\Widget\WidgetCheckbox;
 use FacturaScripts\Core\UI\Widget\WidgetDate;
 use FacturaScripts\Core\UI\Widget\WidgetDatetime;
 use FacturaScripts\Core\UI\Widget\WidgetNumber;
+use FacturaScripts\Core\UI\Widget\WidgetSelect;
 use FacturaScripts\Core\UI\Widget\WidgetText;
 use FacturaScripts\Core\UI\Widget\WidgetTextarea;
 
@@ -45,9 +46,15 @@ class TabForm extends SectionTab
             ['widget' => new WidgetDate('date'), 'cols' => 2],
             ['widget' => new WidgetNumber('age'), 'cols' => 2],
             ['widget' => new WidgetTextarea('observations'), 'cols' => 12],
+            ['widget' => new WidgetCheckbox('active')],
+            ['widget' => new WidgetSelect('type'), 'cols' => 4],
             ['widget' => new WidgetDatetime('datetime'), 'cols' => 3],
-            ['widget' => new WidgetCheckbox('active')]
         ];
+
+        // para cada widget le añadimos el parent
+        foreach ($this->form as $item) {
+            $item['widget']->setParent($this);
+        }
     }
 
     public function jsInitFunction(): string

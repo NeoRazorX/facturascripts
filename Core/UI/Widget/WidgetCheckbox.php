@@ -26,7 +26,8 @@ class WidgetCheckbox extends Widget
     public function render(string $context = ''): string
     {
         return '<div class="form-check">'
-            . '<input class="form-check-input" type="checkbox" value="' . $this->value . '" id="' . $this->id() . '">'
+            . '<input class="form-check-input" type="checkbox" name="' . $this->field . '" value="' . $this->value
+            . '" id="' . $this->id() . '">'
             . '<label class="form-check-label" for="' . $this->id() . '">' . $this->label(true) . '</label>'
             . '</div>';
     }
