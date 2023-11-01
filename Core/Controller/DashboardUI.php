@@ -24,7 +24,9 @@ class DashboardUI extends UIController
 
         // añadimos un par de secciones
         $this->addSection('top', new Section('top'))
-            ->setTitle('Top section');
+            ->setTitle('Top section')
+            ->setDescription('Descripción de la sección top')
+            ->setIcon('fas fa-dashboard');
 
         $this->addSection('bottom')
             ->setTitle('Bottom section');

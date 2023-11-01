@@ -28,6 +28,12 @@ class Section extends UIComponent
     /** @var Button[] */
     private $buttons = [];
 
+    /** @var string */
+    private $description;
+
+    /** @var string */
+    private $icon;
+
     /** @var SectionTab[] */
     private $tabs = [];
 
@@ -95,19 +101,46 @@ class Section extends UIComponent
         return $this->buttons;
     }
 
+    public function description(): string
+    {
+        return $this->description;
+    }
+
+    public function icon(): string
+    {
+        return $this->icon;
+    }
+
     public function render(): string
     {
-        return '<div class="container-fluid' . ($this->position() == 0 ? '' : ' border-top')
-            . '" id="' . $this->id() . '">'
-            . '<div class="row">'
-            . '<div class="col">'
-            . '<h1 class="mb-0">' . $this->name() . '</h1>'
-            . '<p>' . $this->title . '</p>'
-            . '</div>'
-            . '</div>'
+        return '<div class="container-fluid" id="' . $this->id() . '">'
+            . '<div class="form-row align-items-center">'
+            . '<div class="col-sm">'
             . $this->renderButtons()
             . '</div>'
-            . $this->renderTabs();
+            . '<div class="col-sm-auto text-right">'
+            . $this->renderTitle()
+            . $this->renderDescription()
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . $this->renderTabs()
+            . '<br>'
+            . '<br>';
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function setIcon(string $icon): self
+    {
+        $this->icon = $icon;
+
+        return $this;
     }
 
     public function setTitle(string $title): self
@@ -168,24 +201,20 @@ class Section extends UIComponent
 
     protected function renderButtons(): string
     {
-        if (empty($this->buttons)) {
-            return '';
-        }
-
-        $html = '<div class="row mb-3">'
-            . '<div class="col">';
-
+        $html = '';
         foreach ($this->buttons() as $button) {
             $html .= $button->render();
         }
 
-        $html .= '</div>'
-            . '</div>';
-
         return $html;
     }
 
-    public function renderTabs(): string
+    protected function renderDescription(): string
+    {
+        return '<p>' . $this->description . '</p>';
+    }
+
+    protected function renderTabs(): string
     {
         if (empty($this->tabs)) {
             return '';
@@ -228,7 +257,7 @@ class Section extends UIComponent
                 . '</script>' . "\n";
         }
 
-        $html .= '<ul class="nav nav-tabs" id="' . $this->id() . '">';
+        $html .= '<ul class="nav nav-tabs mt-3" id="' . $this->id() . '">';
 
         foreach ($this->tabs() as $key => $tab) {
             $icon = empty($tab->icon) ? '' : '<i class="' . $tab->icon . ' mr-1"></i> ';
@@ -264,6 +293,25 @@ class Section extends UIComponent
         $html .= '</div>';
 
         return $html;
+    }
+
+    protected function renderTitle(): string
+    {
+        if (empty($this->title)) {
+            return '';
+        }
+
+        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' mr-1"></i> ';
+
+        if ($this->position() === 0) {
+            return '<h1 class="mb-0">' . $icon . $this->title . '</h1>';
+        }
+
+        if ($this->position() < 20) {
+            return '<h2 class="mb-0">' . $icon . $this->title . '</h2>';
+        }
+
+        return '<h3 class="mb-0">' . $icon . $this->title . '</h3>';
     }
 
     private function sortButtons(): void
