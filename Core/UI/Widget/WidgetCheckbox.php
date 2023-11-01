@@ -21,35 +21,13 @@ namespace FacturaScripts\Core\UI\Widget;
 
 use FacturaScripts\Core\Template\UI\Widget;
 
-class WidgetTextarea extends Widget
+class WidgetCheckbox extends Widget
 {
-    /** @var string */
-    protected $placeholder = '';
-
-    /** @var int */
-    protected $rows = 2;
-
     public function render(string $context = ''): string
     {
-        return '<div class="form-group">'
-            . '<label for="' . $this->id() . '">' . $this->label(true) . '</label>'
-            . '<textarea name="' . $this->field . '" class="form-control" id="' . $this->id() . '" placeholder="'
-            . $this->placeholder . '" rows="' . $this->rows . '">'
-            . $this->value . '</textarea>'
+        return '<div class="form-check">'
+            . '<input class="form-check-input" type="checkbox" value="' . $this->value . '" id="' . $this->id() . '">'
+            . '<label class="form-check-label" for="' . $this->id() . '">' . $this->label(true) . '</label>'
             . '</div>';
-    }
-
-    public function setPlaceholder(string $placeholder): self
-    {
-        $this->placeholder = $placeholder;
-
-        return $this;
-    }
-
-    public function setRows(int $rows): self
-    {
-        $this->rows = $rows;
-
-        return $this;
     }
 }

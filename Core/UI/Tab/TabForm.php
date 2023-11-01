@@ -20,7 +20,9 @@
 namespace FacturaScripts\Core\UI\Tab;
 
 use FacturaScripts\Core\Template\UI\SectionTab;
+use FacturaScripts\Core\UI\Widget\WidgetCheckbox;
 use FacturaScripts\Core\UI\Widget\WidgetDate;
+use FacturaScripts\Core\UI\Widget\WidgetDatetime;
 use FacturaScripts\Core\UI\Widget\WidgetNumber;
 use FacturaScripts\Core\UI\Widget\WidgetText;
 use FacturaScripts\Core\UI\Widget\WidgetTextarea;
@@ -42,7 +44,9 @@ class TabForm extends SectionTab
             ['widget' => new WidgetText('surname')],
             ['widget' => new WidgetDate('date'), 'cols' => 2],
             ['widget' => new WidgetNumber('age'), 'cols' => 2],
-            ['widget' => new WidgetTextarea('observations'), 'cols' => 12]
+            ['widget' => new WidgetTextarea('observations'), 'cols' => 12],
+            ['widget' => new WidgetDatetime('datetime'), 'cols' => 3],
+            ['widget' => new WidgetCheckbox('active')]
         ];
     }
 
