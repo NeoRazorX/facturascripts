@@ -24,6 +24,7 @@ use FacturaScripts\Core\UI\Widget\WidgetCheckbox;
 use FacturaScripts\Core\UI\Widget\WidgetColor;
 use FacturaScripts\Core\UI\Widget\WidgetDate;
 use FacturaScripts\Core\UI\Widget\WidgetDatetime;
+use FacturaScripts\Core\UI\Widget\WidgetFilemanager;
 use FacturaScripts\Core\UI\Widget\WidgetNumber;
 use FacturaScripts\Core\UI\Widget\WidgetSelect;
 use FacturaScripts\Core\UI\Widget\WidgetText;
@@ -49,8 +50,9 @@ class TabForm extends SectionTab
             ['widget' => new WidgetNumber('age'), 'cols' => 2],
             ['widget' => new WidgetTextarea('observations'), 'cols' => 12],
             ['widget' => new WidgetCheckbox('active'), 'cols' => 12],
-            ['widget' => new WidgetSelect('type'), 'cols' => 4],
-            ['widget' => new WidgetColor('color'), 'cols' => 3],
+            ['widget' => new WidgetSelect('type')],
+            ['widget' => new WidgetFilemanager('file')],
+            ['widget' => new WidgetColor('color'), 'cols' => 2],
             ['widget' => new WidgetTime('time'), 'cols' => 2],
             ['widget' => new WidgetDatetime('datetime')],
         ];
