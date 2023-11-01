@@ -17,20 +17,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\UI;
+namespace FacturaScripts\Core\Template\UI;
 
-use FacturaScripts\Core\Template\UI\UIComponent;
-
-class Button extends UIComponent
+abstract class SectionTab extends UIComponent
 {
     /** @var string */
-    public $color = 'secondary';
-
-    /** @var int */
     public $counter = 0;
-
-    /** @var string */
-    public $description;
 
     /** @var string */
     public $icon;
@@ -38,38 +30,9 @@ class Button extends UIComponent
     /** @var string */
     public $label;
 
-    public function render(): string
-    {
-        $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
-        $label = $this->label ?? $this->name();
-        $counter = empty($this->counter) ? '' : '<span class="badge badge-light ml-1">' . $this->counter . '</span> ';
+    abstract public function jsInitFunction(): string;
 
-        return '<button type="button" class="btn btn-' . $this->color . ' mr-1" id="'
-            . $this->id() . '" title="' . $this->description . '">'
-            . $icon . $label . $counter
-            . '</button>';
-    }
-
-    public function setColor(string $color): self
-    {
-        $this->color = $color;
-
-        return $this;
-    }
-
-    public function setCounter(int $counter): self
-    {
-        $this->counter = $counter;
-
-        return $this;
-    }
-
-    public function setDescription(string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
-    }
+    abstract public function jsRedrawFunction(): string;
 
     public function setIcon(string $icon): self
     {
