@@ -21,12 +21,14 @@ namespace FacturaScripts\Core\UI\Tab;
 
 use FacturaScripts\Core\Template\UI\SectionTab;
 use FacturaScripts\Core\UI\Widget\WidgetCheckbox;
+use FacturaScripts\Core\UI\Widget\WidgetColor;
 use FacturaScripts\Core\UI\Widget\WidgetDate;
 use FacturaScripts\Core\UI\Widget\WidgetDatetime;
 use FacturaScripts\Core\UI\Widget\WidgetNumber;
 use FacturaScripts\Core\UI\Widget\WidgetSelect;
 use FacturaScripts\Core\UI\Widget\WidgetText;
 use FacturaScripts\Core\UI\Widget\WidgetTextarea;
+use FacturaScripts\Core\UI\Widget\WidgetTime;
 
 class TabForm extends SectionTab
 {
@@ -46,9 +48,11 @@ class TabForm extends SectionTab
             ['widget' => new WidgetDate('date'), 'cols' => 2],
             ['widget' => new WidgetNumber('age'), 'cols' => 2],
             ['widget' => new WidgetTextarea('observations'), 'cols' => 12],
-            ['widget' => new WidgetCheckbox('active')],
+            ['widget' => new WidgetCheckbox('active'), 'cols' => 12],
             ['widget' => new WidgetSelect('type'), 'cols' => 4],
-            ['widget' => new WidgetDatetime('datetime'), 'cols' => 3],
+            ['widget' => new WidgetColor('color'), 'cols' => 3],
+            ['widget' => new WidgetTime('time'), 'cols' => 2],
+            ['widget' => new WidgetDatetime('datetime')],
         ];
 
         // para cada widget le añadimos el parent
