@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
+use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Dinamic\Model\EmailSent;
@@ -26,6 +27,9 @@ use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /**
  * Description of NewMail
@@ -34,77 +38,52 @@ use PHPMailer\PHPMailer\PHPMailer;
  */
 class NewMail
 {
-
+    const ATTACHMENTS_TMP_PATH = 'MyFiles/Tmp/Email/';
     const DEFAULT_TEMPLATE = 'NewTemplate.html.twig';
 
-    /**
-     * @var Empresa
-     */
+    /** @var Empresa */
     public $empresa;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $fromEmail;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $fromName;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $fromNick;
 
-    /**
-     * @var BaseBlock[]
-     */
+    /** @var BaseBlock[] */
     protected $footerBlocks = [];
 
-    /**
-     * @var bool
-     */
+    /** @var string */
+    protected $html = '';
+
+    /** @var bool */
     protected $lowsecure;
 
-    /**
-     * @var PHPMailer
-     */
+    /** @var PHPMailer */
     protected $mail;
 
-    /**
-     * @var BaseBlock[]
-     */
+    /** @var BaseBlock[] */
     protected $mainBlocks = [];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $signature;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $template;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $text;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $title;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $verificode;
 
-    /**
-     * @throws Exception
-     */
+    /** @throws Exception */
     public function __construct()
     {
         $appSettings = $this->toolBox()->appSettings();
@@ -147,85 +126,88 @@ class NewMail
     }
 
     /**
-     * @param string $email
-     * @param string $name
      * @throws Exception
      */
-    public function addAddress(string $email, string $name = '')
+    public function addAddress(string $email, string $name = ''): void
     {
         $this->mail->addAddress($email, $name);
     }
 
     /**
-     * Add attachments to the email.
+     * Añade un adjunto al correo.
      *
-     * @param string $path
-     * @param string $name
      * @throws Exception
      */
-    public function addAttachment(string $path, string $name)
+    public function addAttachment(string $path, string $name): void
     {
         $this->mail->addAttachment($path, $name);
     }
 
     /**
-     * @param string $email
-     * @param string $name
+     * Añade un email con copia oculta.
+     *
      * @throws Exception
      */
-    public function addBCC(string $email, string $name = '')
+    public function addBCC(string $email, string $name = ''): void
     {
         $this->mail->addBCC($email, $name);
     }
 
     /**
-     * @param string $email
-     * @param string $name
+     * Añade un email con copia.
+     *
      * @throws Exception
      */
-    public function addCC(string $email, string $name = '')
+    public function addCC(string $email, string $name = ''): void
     {
         $this->mail->addCC($email, $name);
     }
 
     /**
-     * @param BaseBlock $block
+     * Añade un bloque al pie del correo.
      */
-    public function addFooterBlock($block)
+    public function addFooterBlock(BaseBlock $block): void
     {
         $block->setVerificode($this->verificode);
         $this->footerBlocks[] = $block;
     }
 
     /**
-     * @param BaseBlock $block
+     * Añade un bloque al cuerpo del correo.
      */
-    public function addMainBlock($block)
+    public function addMainBlock(BaseBlock $block): void
     {
         $block->setVerificode($this->verificode);
         $this->mainBlocks[] = $block;
     }
 
     /**
-     * @param string $address
-     * @param string $name
+     * Añade un email de respuesta.
+     *
      * @throws Exception
      */
-    public function addReplyTo(string $address, string $name = '')
+    public function addReplyTo(string $address, string $name = ''): void
     {
         $this->mail->addReplyTo($address, $name);
     }
 
     /**
-     * Check if the email is configured
-     *
-     * @return bool
+     * Verifica si se puede enviar el correo.
      */
     public function canSendMail(): bool
     {
         return !empty($this->fromEmail) && !empty($this->mail->Password) && !empty($this->mail->Host);
     }
 
+    public static function getAttachmentPath(?string $email, string $folder): string
+    {
+        $path = 'MyFiles/Email/{{email}}/' . $folder . '/';
+        return str_replace('{{email}}', $email, $path);
+    }
+
+    /**
+     * Devuelve los nombres de los archivos adjuntos.
+     */
     public function getAttachmentNames(): array
     {
         $names = [];
@@ -237,15 +219,16 @@ class NewMail
     }
 
     /**
-     * Returns an array with available email trays
-     *
-     * @return array
+     * Devuelve un array con los emails disponibles para el usuario.
      */
     public function getAvailableMailboxes(): array
     {
         return empty($this->fromEmail) ? [] : [$this->fromEmail];
     }
 
+    /**
+     * Devuelve un array con los emails con copia oculta.
+     */
     public function getBCCAddresses(): array
     {
         $addresses = [];
@@ -256,6 +239,9 @@ class NewMail
         return $addresses;
     }
 
+    /**
+     * Devuelve un array con los emails con copia.
+     */
     public function getCCAddresses(): array
     {
         $addresses = [];
@@ -266,6 +252,9 @@ class NewMail
         return $addresses;
     }
 
+    /**
+     * Devuelve un array con los emails hacia donde va el mensaje.
+     */
     public function getToAddresses(): array
     {
         $addresses = [];
@@ -277,8 +266,13 @@ class NewMail
     }
 
     /**
+     * Envía el correo.
+     *
      * @return bool
      * @throws Exception
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function send(): bool
     {
@@ -289,7 +283,9 @@ class NewMail
 
         $this->mail->setFrom($this->fromEmail, $this->fromName);
         $this->mail->Subject = $this->title;
-        $this->mail->msgHTML($this->renderHTML());
+
+        $this->renderHTML();
+        $this->mail->msgHTML($this->html);
 
         if ('smtp' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
             $this->toolBox()->i18nLog()->warning('mail-server-error');
@@ -310,13 +306,16 @@ class NewMail
     }
 
     /**
-     * @param User $user
+     * Establece el usuario que manda el email.
      */
-    public function setUser($user)
+    public function setUser(User $user): void
     {
         $this->fromNick = $user->nick;
     }
 
+    /**
+     * Separa los emails de una cadena en array.
+     */
     public static function splitEmails(string $emails): array
     {
         $return = [];
@@ -331,9 +330,8 @@ class NewMail
     }
 
     /**
-     * Test the PHPMailer connection. Return the result of the connection.
+     * Pruebe la conexión PHPMailer.
      *
-     * @return bool
      * @throws Exception
      */
     public function test(): bool
@@ -349,18 +347,31 @@ class NewMail
         }
     }
 
+    /**
+     * Devuelve los bloques del pie del correo.
+     */
     protected function getFooterBlocks(): array
     {
         $signature = $this->toolBox()->utils()->fixHtml($this->signature);
         return array_merge([new TextBlock($signature)], $this->footerBlocks);
     }
 
+    /**
+     * Devuelve los bloques del cuerpo del correo.
+     */
     protected function getMainBlocks(): array
     {
         return array_merge([new TextBlock($this->text)], $this->mainBlocks);
     }
 
-    protected function renderHTML(): string
+    /**
+     * Renderiza el HTML del correo.
+     *
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    protected function renderHTML(): void
     {
         $params = [
             'empresa' => $this->empresa,
@@ -368,30 +379,60 @@ class NewMail
             'mainBlocks' => $this->getMainBlocks(),
             'title' => $this->title
         ];
-        return Html::render('Email/' . $this->template, $params);
+
+        $this->html = Html::render('Email/' . $this->template, $params);
     }
 
-    protected function saveMailSent()
+    /**
+     * Guarda el correo enviado en la base de datos.
+     */
+    protected function saveMailSent(): void
     {
-        // get all email address
+        // Obtiene todas las direcciones de correo electrónico
         $addresses = array_merge($this->getToAddresses(), $this->getCcAddresses(), $this->getBccAddresses());
 
-        // save email sent
+        // Generamos un identificador único para el correo electrónico
+        $uuid = uniqid();
+
+        // obtenemos los adjuntos
+        $attachments = $this->mail->getAttachments();
+
+        // guardar correo electrónico enviado
         foreach (array_unique($addresses) as $address) {
             $emailSent = new EmailSent();
             $emailSent->addressee = $address;
+            $emailSent->attachment = count($attachments) > 0;
             $emailSent->body = $this->text;
+            $emailSent->email_from = $this->fromEmail;
+            $emailSent->html = $this->html;
             $emailSent->nick = $this->fromNick;
             $emailSent->subject = $this->title;
+            $emailSent->uuid = $uuid;
             $emailSent->verificode = $this->verificode;
             $emailSent->save();
+        }
+
+        // si no hay adjuntos, terminamos
+        if (empty($attachments)) {
+            return;
+        }
+
+        // creamos la carpeta de adjuntos para el email
+        $path = FS_FOLDER . '/' . static::getAttachmentPath($this->fromEmail, 'Sent') . $uuid . '/';
+        FileManager::createFolder($path, true);
+
+        // movemos los adjuntos a la carpeta temporal a la carpeta de adjuntos del email
+        foreach ($attachments as $attach) {
+            $tmpPath = FS_FOLDER . '/' . static::ATTACHMENTS_TMP_PATH . $attach[1];
+            if (file_exists($tmpPath)) {
+                $newPath = $path . $attach[1];
+                rename($tmpPath, $newPath);
+            }
         }
     }
 
     /**
-     * Returns the SMTP Options.
-     *
-     * @return array
+     * Devuelve las opciones SMTP.
      */
     protected function smtpOptions(): array
     {

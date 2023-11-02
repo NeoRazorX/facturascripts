@@ -95,8 +95,13 @@ class ConfigEmail extends PanelController
         // filtros
         $users = $this->codeModel->all('users', 'nick', 'nick');
         $this->views[$viewName]->addFilterSelect('nick', 'user', 'nick', $users);
+
+        $from = $this->codeModel->all('emails_sent', 'email_from', 'email_from');
+        $this->views[$viewName]->addFilterSelect('from', 'from', 'email_from', $from);
+
         $this->views[$viewName]->addFilterPeriod('date', 'period', 'date');
         $this->views[$viewName]->addFilterCheckbox('opened');
+        $this->views[$viewName]->addFilterCheckbox('attachment', 'has-attachments');
 
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);

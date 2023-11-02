@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\Email\NewMail;
 
 /**
  * Model EmailSent
@@ -39,6 +42,9 @@ class EmailSent extends Base\ModelClass
      */
     public $addressee;
 
+    /** @var bool */
+    public $attachment;
+
     /**
      * Text of email
      *
@@ -53,11 +59,13 @@ class EmailSent extends Base\ModelClass
      */
     public $date;
 
-    /**
-     * Primary key.
-     *
-     * @var string
-     */
+    /** @var string */
+    public $email_from;
+
+    /** @var string */
+    public $html;
+
+    /** @var string */
     public $id;
 
     /**
@@ -67,9 +75,7 @@ class EmailSent extends Base\ModelClass
      */
     public $nick;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $opened;
 
     /**
@@ -79,9 +85,10 @@ class EmailSent extends Base\ModelClass
      */
     public $subject;
 
-    /**
-     * @var string
-     */
+    /** @var string */
+    public $uuid;
+
+    /** @var string */
     public $verificode;
 
     public function clear()
@@ -89,6 +96,32 @@ class EmailSent extends Base\ModelClass
         parent::clear();
         $this->date = date(self::DATETIME_STYLE);
         $this->opened = false;
+    }
+
+    public function getAttachments(): array
+    {
+        // leemos la carpeta de adjuntos
+        $folderPath = NewMail::getAttachmentPath($this->email_from, 'Sent') . $this->uuid;
+        if (false === is_dir(FS_FOLDER . '/' . $folderPath)) {
+            return [];
+        }
+
+        // devolvemos los archivos
+        $files = [];
+        foreach (scandir(FS_FOLDER . '/' . $folderPath) as $file) {
+            if ('.' === $file || '..' === $file) {
+                continue;
+            }
+
+            $filePath = $folderPath . '/' . $file;
+            $files[] = [
+                'name' => $file,
+                'size' => Tools::bytes(filesize($filePath)),
+                'path' => $filePath . '?myft=' . MyFilesToken::get($filePath, false),
+            ];
+        }
+
+        return $files;
     }
 
     public static function primaryColumn(): string
@@ -106,6 +139,7 @@ class EmailSent extends Base\ModelClass
         $utils = $this->toolBox()->utils();
         $body = $utils->noHtml($this->body);
         $this->body = strlen($body) > 5000 ? substr($body, 0, 4997) . '...' : $body;
+        $this->html = $utils->noHtml($this->html);
         $this->subject = $utils->noHtml($this->subject);
         return parent::test();
     }
