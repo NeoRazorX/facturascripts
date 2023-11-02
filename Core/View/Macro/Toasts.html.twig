@@ -1,4 +1,4 @@
-<div id="messages-toasts" style="z-index: 9999; position: absolute; bottom: 0; width: 100%;"></div>
+<div id="messages-toasts" style="z-index: 9999; position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);"></div>
 
 <script>
     function setToast(message, style = 'info', title = '', time = 10000) {
@@ -53,6 +53,10 @@
                 icon = '<i class="fas fa-exclamation-circle mr-1"></i>';
                 title = title !== '' ? title : '{{ trans('warning') }}';
                 break;
+        }
+
+        if (message === '') {
+            styleHeader += ' border-bottom-0';
         }
 
         let html = '<div class="toast toast-' + style + ' ' + styleBorder + '" style="margin: 15px auto 0 auto;" role="' + role + '" aria-live="' + live + '" aria-atomic="true" ' + delay + '>'
