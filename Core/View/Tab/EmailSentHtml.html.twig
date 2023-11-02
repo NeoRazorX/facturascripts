@@ -1,0 +1,43 @@
+{% set firstView = fsc.views | first %}
+{% set model = firstView.model %}
+
+<div class="card" id="email-html"></div>
+
+<script>
+    let formData = new FormData();
+    formData.append('action', 'getHtml');
+    formData.append('code', '{{ model.primaryColumnValue() }}');
+
+    fetch('{{ fsc.url() }}', {
+        method: 'POST',
+        body: formData,
+    }).then(function (response) {
+        if (response.ok) {
+            return response.json();
+        }
+        return Promise.reject(response);
+    }).then(function (data) {
+        if (data.getHtml) {
+            // creamos un div
+            var div = document.createElement('div');
+            div.className = 'message-content';
+            $('#email-html').prepend(div);
+
+            // obtenemos el div con la clase message-content
+            var content = document.querySelector('#email-html div.message-content');
+
+            // obtenemos el shadow del div
+            var shadow = content.attachShadow({mode: "open"});
+
+            // creamos un elemento html
+            var html = document.createElement('html');
+            html.innerHTML = data.html;
+
+            // añadimos el html al shadow
+            shadow.appendChild(html);
+        }
+    }).catch(function (error) {
+        alert('error getHtml');
+        console.warn(error);
+    });
+</script>

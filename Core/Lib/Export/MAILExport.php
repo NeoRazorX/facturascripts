@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Lib\Email\NewMail;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Lib\Export\PDFExport as ParentClass;
@@ -82,7 +83,7 @@ class MAILExport extends ParentClass
     public function show(Response &$response)
     {
         $fileName = $this->getFileName() . '_mail_' . time() . '.pdf';
-        $filePath = FS_FOLDER . '/MyFiles/' . $fileName;
+        $filePath = FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName;
         if (false === file_put_contents($filePath, $this->getDoc())) {
             $this->toolBox()->i18nLog()->error('folder-not-writable');
             return;

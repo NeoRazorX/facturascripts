@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -226,6 +227,8 @@ class SendMail extends Controller
     {
         $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName');
         if (false === class_exists($className)) {
+            $this->toolBox()->i18nLog()->notice('reloading');
+            $this->redirect('/SendMail', 3);
             return;
         }
 
@@ -296,16 +299,16 @@ class SendMail extends Controller
 
         $this->setAttachment();
         foreach ($this->request->files->get('uploads', []) as $file) {
-            $this->newMail->addAttachment($file->getPathname(), $file->getClientOriginalName());
+            // guardamos el adjunto en una carpeta temporal
+            if ($file->move(NewMail::ATTACHMENTS_TMP_PATH, $file->getClientOriginalName())) {
+                // añadimos el adjunto al email
+                $filePath = FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $file->getClientOriginalName();
+                $this->newMail->addAttachment($filePath, $file->getClientOriginalName());
+            }
         }
 
         if (false === $this->newMail->send()) {
             return false;
-        }
-
-        $fileName = $this->request->get('fileName', '');
-        if (file_exists(FS_FOLDER . '/MyFiles/' . $fileName)) {
-            unlink(FS_FOLDER . '/MyFiles/' . $fileName);
         }
 
         return true;
@@ -317,7 +320,8 @@ class SendMail extends Controller
     protected function setAttachment()
     {
         $fileName = $this->request->get('fileName', '');
-        $this->newMail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName, $fileName);
+        FileManager::createFolder(NewMail::ATTACHMENTS_TMP_PATH, true);
+        $this->newMail->addAttachment(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName, $fileName);
     }
 
     /**
