@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\UI\Tab;
 
 use FacturaScripts\Core\Template\UI\SectionTab;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\AssetManager;
 
 class TabFiles extends SectionTab
 {
@@ -32,6 +33,9 @@ class TabFiles extends SectionTab
         parent::__construct($name);
 
         $this->icon = 'fas fa-folder-open';
+
+        AssetManager::add('css', 'https://unpkg.com/dropzone@5/dist/min/dropzone.min.css');
+        AssetManager::add('js', 'https://unpkg.com/dropzone@5/dist/min/dropzone.min.js');
 
         // añadimos datos de prueba
         foreach (range(1, rand(2, 12)) as $i) {
@@ -62,9 +66,7 @@ class TabFiles extends SectionTab
         return '<div class="container-fluid mt-4">'
             . '<div class="row">'
             . '<div class="col-12">'
-            . '<div class="btn btn-lg btn-block btn-secondary">'
-            . '<i class="fas fa-file-upload mr-1"></i> ' . Tools::lang()->trans('upload-files')
-            . '</div>'
+            . '<form action="/target" class="dropzone"></form>'
             . '</div>'
             . '</div>'
             . '<div class="form-row mt-4">'
@@ -80,8 +82,25 @@ class TabFiles extends SectionTab
         foreach ($this->data as $item) {
             $html .= '<div class="col-sm-3">'
                 . '<div class="card shadow mb-2">'
-                . '<div class="card-body">'
+                . '<div class="card-body p-2">'
+                . '<div class="form-row">'
+                . '<div class="col">'
                 . '<h3 class="card-title">' . $item['name'] . '</h3>'
+                . '</div>'
+                . '<div class="col-auto">'
+                . '<div class="dropdown">
+  <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+    <i class="fas fa-ellipsis-v"></i>
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+    <a class="dropdown-item" href="#"><i class="fas fa-download fa-fw mr-1"></i> Descargar</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="#"><i class="fas fa-trash fa-fw mr-1"></i> Eliminar</a>
+    <a class="dropdown-item" href="#"><i class="fas fa-unlink fa-fw mr-1"></i> Desvincular</a>
+</div>'
+                . '</div>'
+                . '</div>'
+                . '</div>'
                 . '<p class="card-text">' . Tools::bytes($item['size']) . '</p>'
                 . '<p class="card-text">' . Tools::date($item['date']) . '</p>'
                 . '<p class="card-text">' . $item['user'] . '</p>'

@@ -35,7 +35,7 @@ class WidgetCanvas extends Widget
     {
         return '<div class="form-group">' . "\n"
             . '<label for="' . $this->id() . '">' . $this->label(true) . '</label>' . "\n"
-            . '<button type="button" class="btn btn-xs btn-light" onclick="signaturePad.clear();">'
+            . '<button type="button" class="btn btn-sm btn-light" onclick="signaturePad.clear();">'
             . '<i class="fa fa-eraser mr-1"></i> clear</button>' . "\n"
             . '<canvas id="' . $this->id() . '" class="border" height="100"></canvas>' . "\n"
             . '</div>' . "\n"
