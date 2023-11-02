@@ -26,22 +26,25 @@ use FacturaScripts\Core\Template\UI\SectionTab;
 class Section extends Component
 {
     /** @var Button[] */
-    private $buttons = [];
+    protected $buttons = [];
 
     /** @var string */
-    private $description;
+    protected $description;
 
     /** @var string */
-    private $icon;
+    protected $icon;
+
+    /** @var InfoBox[] */
+    protected $info_boxes = [];
 
     /** @var array */
-    private $nav_links = [];
+    protected $nav_links = [];
 
     /** @var SectionTab[] */
-    private $tabs = [];
+    protected $tabs = [];
 
     /** @var string */
-    private $title = '';
+    protected $title = '';
 
     public function addButton(string $name, ?Button $button = null): Button
     {
@@ -62,9 +65,28 @@ class Section extends Component
         $button->setPosition(count($this->buttons) * 10);
 
         $this->buttons[] = $button;
-        $this->sortButtons();
+        $this->sortElements($this->buttons);
 
         return $button;
+    }
+
+    public function addInfoBox(string $name, InfoBox $box): InfoBox
+    {
+        // comprobamos que no exista ya una con ese nombre
+        foreach ($this->info_boxes as $item) {
+            if ($item->name() === $name) {
+                throw new Exception('InfoBox name already exists: ' . $name);
+            }
+        }
+
+        $box->setName($name);
+        $box->setParent($this);
+        $box->setPosition(count($this->info_boxes) * 10);
+
+        $this->info_boxes[] = $box;
+        $this->sortElements($this->info_boxes);
+
+        return $box;
     }
 
     public function addNavLinks(string $link, string $label): self
@@ -88,7 +110,7 @@ class Section extends Component
         $tab->setPosition(count($this->tabs) * 10);
 
         $this->tabs[] = $tab;
-        $this->sortTabs();
+        $this->sortElements($this->tabs);
 
         return $tab;
     }
@@ -106,7 +128,7 @@ class Section extends Component
 
     public function buttons(): array
     {
-        $this->sortButtons();
+        $this->sortElements($this->buttons);
 
         return $this->buttons;
     }
@@ -121,19 +143,57 @@ class Section extends Component
         return $this->icon;
     }
 
+    public function removeButton(string $name): bool
+    {
+        foreach ($this->buttons as $key => $button) {
+            if ($button->name() === $name) {
+                unset($this->buttons[$key]);
+                $this->sortElements($this->buttons);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function removeInfoBox(string $name): bool
+    {
+        foreach ($this->info_boxes as $key => $box) {
+            if ($box->name() === $name) {
+                unset($this->info_boxes[$key]);
+                $this->sortElements($this->info_boxes);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function removeTab(string $name): bool
+    {
+        foreach ($this->tabs as $key => $tab) {
+            if ($tab->name() === $name) {
+                unset($this->tabs[$key]);
+                $this->sortElements($this->tabs);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function render(string $context = ''): string
     {
         return '<div class="container-fluid" id="' . $this->id() . '">'
             . $this->renderNavLinks()
             . '<div class="form-row align-items-center">'
-            . '<div class="col-sm">'
-            . $this->renderButtons()
-            . '</div>'
+            . '<div class="col-sm">' . $this->renderButtons() . '</div>'
             . '<div class="col-sm-auto text-right">'
             . $this->renderTitle()
             . $this->renderDescription()
             . '</div>'
             . '</div>'
+            . $this->renderInfoBoxes()
             . '</div>'
             . $this->renderTabs()
             . '<br>'
@@ -174,7 +234,7 @@ class Section extends Component
 
     public function tabs(): array
     {
-        $this->sortTabs();
+        $this->sortElements($this->tabs);
 
         return $this->tabs;
     }
@@ -182,32 +242,6 @@ class Section extends Component
     public function title(): string
     {
         return $this->title;
-    }
-
-    protected function removeButton(string $name): bool
-    {
-        foreach ($this->buttons as $key => $button) {
-            if ($button->name() === $name) {
-                unset($this->buttons[$key]);
-                $this->sortButtons();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected function removeTab(string $name): bool
-    {
-        foreach ($this->tabs as $key => $tab) {
-            if ($tab->name() === $name) {
-                unset($this->tabs[$key]);
-                $this->sortTabs();
-                return true;
-            }
-        }
-
-        return false;
     }
 
     protected function renderButtons(): string
@@ -223,6 +257,17 @@ class Section extends Component
     protected function renderDescription(): string
     {
         return '<p>' . $this->description . '</p>';
+    }
+
+    protected function renderInfoBoxes(): string
+    {
+        $html = '<div class="form-row">';
+        foreach ($this->info_boxes as $box) {
+            $html .= '<div class="col-sm">' . $box->render() . '</div>';
+        }
+        $html .= '</div>';
+
+        return empty($this->info_boxes) ? '' : $html;
     }
 
     protected function renderNavLinks(): string
@@ -341,16 +386,9 @@ class Section extends Component
         return '<h3 class="mb-0">' . $icon . $this->title . '</h3>';
     }
 
-    private function sortButtons(): void
+    protected function sortElements(array &$elements): void
     {
-        usort($this->buttons, function (Button $a, Button $b) {
-            return $a->position() <=> $b->position();
-        });
-    }
-
-    private function sortTabs(): void
-    {
-        usort($this->tabs, function (SectionTab $a, SectionTab $b) {
+        usort($elements, function (Component $a, Component $b) {
             return $a->position() <=> $b->position();
         });
     }

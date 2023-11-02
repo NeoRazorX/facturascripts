@@ -4,6 +4,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Template\Controller\UIController;
 use FacturaScripts\Core\UI\Dropdown;
+use FacturaScripts\Core\UI\InfoBox;
 use FacturaScripts\Core\UI\Section;
 use FacturaScripts\Core\UI\Tab\TabCalendar;
 use FacturaScripts\Core\UI\Tab\TabCards;
@@ -29,7 +30,8 @@ class DashboardUI extends UIController
             ->setDescription('Descripción de la sección top')
             ->setIcon('fas fa-dashboard')
             ->addNavLinks('#', 'Enlace 1')
-            ->addNavLinks('#', 'Enlace 2');
+            ->addNavLinks('#', 'Enlace 2')
+            ->addNavLinks('#', 'Enlace 3');
 
         $this->addSection('bottom')
             ->setTitle('Bottom section');
@@ -65,6 +67,15 @@ class DashboardUI extends UIController
 
         // añadimos un botón a la sección bottom
         $this->section('bottom')->addButton('button5');
+
+        // añadimos 2 cajas de información a la sección top
+        $this->section('top')->addInfoBox('info1', new InfoBox('info1'))
+            ->setTitle('Información 1')
+            ->setDescription('Descripción de la información 1');
+
+        $this->section('top')->addInfoBox('info2', new InfoBox('info2'))
+            ->setTitle('Información 2')
+            ->setDescription('Descripción de la información 2');
 
         // añadimos un tab de formulario a la sección top
         $this->section('top')->addTab('tab1', new TabForm('tab1'));
