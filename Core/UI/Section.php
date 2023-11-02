@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\UI;
 
 use Exception;
-use FacturaScripts\Core\Template\UI\SectionTab;
 use FacturaScripts\Core\Template\UI\Component;
+use FacturaScripts\Core\Template\UI\SectionTab;
 
 class Section extends Component
 {
@@ -33,6 +33,9 @@ class Section extends Component
 
     /** @var string */
     private $icon;
+
+    /** @var array */
+    private $nav_links = [];
 
     /** @var SectionTab[] */
     private $tabs = [];
@@ -62,6 +65,13 @@ class Section extends Component
         $this->sortButtons();
 
         return $button;
+    }
+
+    public function addNavLinks(string $link, string $label): self
+    {
+        $this->nav_links[] = ['link' => $link, 'label' => $label];
+
+        return $this;
     }
 
     public function addTab(string $name, SectionTab $tab): SectionTab
@@ -114,6 +124,7 @@ class Section extends Component
     public function render(string $context = ''): string
     {
         return '<div class="container-fluid" id="' . $this->id() . '">'
+            . $this->renderNavLinks()
             . '<div class="form-row align-items-center">'
             . '<div class="col-sm">'
             . $this->renderButtons()
@@ -212,6 +223,22 @@ class Section extends Component
     protected function renderDescription(): string
     {
         return '<p>' . $this->description . '</p>';
+    }
+
+    protected function renderNavLinks(): string
+    {
+        $html = '<nav aria-label="breadcrumb"><ol class="breadcrumb">';
+        foreach ($this->nav_links as $num => $link) {
+            if ($num === count($this->nav_links) - 1) {
+                $html .= '<li class="breadcrumb-item active" aria-current="page">' . $link['label'] . '</li>';
+                continue;
+            }
+
+            $html .= '<li class="breadcrumb-item"><a href="' . $link['link'] . '">' . $link['label'] . '</a></li>';
+        }
+        $html .= '</ol></nav>';
+
+        return empty($this->nav_links) ? '' : $html;
     }
 
     protected function renderTabs(): string
