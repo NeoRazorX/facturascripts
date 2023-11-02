@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\UI\Tab;
 
 use FacturaScripts\Core\Template\UI\SectionTab;
+use FacturaScripts\Core\UI\Widget\WidgetCanvas;
 use FacturaScripts\Core\UI\Widget\WidgetCheckbox;
 use FacturaScripts\Core\UI\Widget\WidgetColor;
 use FacturaScripts\Core\UI\Widget\WidgetDate;
@@ -55,6 +56,7 @@ class TabForm extends SectionTab
             ['widget' => new WidgetColor('color'), 'cols' => 2],
             ['widget' => new WidgetTime('time'), 'cols' => 2],
             ['widget' => new WidgetDatetime('datetime')],
+            ['widget' => new WidgetCanvas('canvas'), 'cols' => 12]
         ];
 
         // para cada widget le añadimos el parent
