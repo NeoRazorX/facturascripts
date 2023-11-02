@@ -37,6 +37,9 @@ class Section extends Component
     /** @var InfoBox[] */
     protected $info_boxes = [];
 
+    /** @var Modal[] */
+    protected $modals = [];
+
     /** @var array */
     protected $nav_links = [];
 
@@ -46,19 +49,13 @@ class Section extends Component
     /** @var string */
     protected $title = '';
 
-    public function addButton(string $name, ?Button $button = null): Button
+    public function addButton(Button $button): Button
     {
         // comprobamos que no exista ya un botón con ese nombre
         foreach ($this->buttons as $item) {
-            if ($item->name() === $name) {
-                throw new Exception('Button name already exists: ' . $name);
+            if ($item->name() === $button->name()) {
+                throw new Exception('Button name already exists: ' . $button->name());
             }
-        }
-
-        if (null === $button) {
-            $button = new Button($name);
-        } else {
-            $button->setName($name);
         }
 
         $button->setParent($this);
@@ -70,16 +67,15 @@ class Section extends Component
         return $button;
     }
 
-    public function addInfoBox(string $name, InfoBox $box): InfoBox
+    public function addInfoBox(InfoBox $box): InfoBox
     {
         // comprobamos que no exista ya una con ese nombre
         foreach ($this->info_boxes as $item) {
-            if ($item->name() === $name) {
-                throw new Exception('InfoBox name already exists: ' . $name);
+            if ($item->name() === $box->name()) {
+                throw new Exception('InfoBox name already exists: ' . $box->name());
             }
         }
 
-        $box->setName($name);
         $box->setParent($this);
         $box->setPosition(count($this->info_boxes) * 10);
 
@@ -89,6 +85,24 @@ class Section extends Component
         return $box;
     }
 
+    public function addModal(Modal $modal): Modal
+    {
+        // comprobamos que no exista ya un con ese nombre
+        foreach ($this->modals as $item) {
+            if ($item->name() === $modal->name()) {
+                throw new Exception('Modal name already exists: ' . $modal->name());
+            }
+        }
+
+        $modal->setParent($this);
+        $modal->setPosition(count($this->modals) * 10);
+
+        $this->modals[] = $modal;
+        $this->sortElements($this->modals);
+
+        return $modal;
+    }
+
     public function addNavLinks(string $link, string $label): self
     {
         $this->nav_links[] = ['link' => $link, 'label' => $label];
@@ -96,16 +110,15 @@ class Section extends Component
         return $this;
     }
 
-    public function addTab(string $name, SectionTab $tab): SectionTab
+    public function addTab(SectionTab $tab): SectionTab
     {
         // comprobamos que no exista ya una pestaña con ese nombre
         foreach ($this->tabs as $item) {
-            if ($item->name() === $name) {
-                throw new Exception('Tab name already exists: ' . $name);
+            if ($item->name() === $tab->name()) {
+                throw new Exception('Tab name already exists: ' . $tab->name());
             }
         }
 
-        $tab->setName($name);
         $tab->setParent($this);
         $tab->setPosition(count($this->tabs) * 10);
 
@@ -143,6 +156,42 @@ class Section extends Component
         return $this->icon;
     }
 
+    public function infoBox(string $name): ?InfoBox
+    {
+        foreach ($this->info_boxes as $box) {
+            if ($box->name() === $name) {
+                return $box;
+            }
+        }
+
+        return null;
+    }
+
+    public function infoBoxes(): array
+    {
+        $this->sortElements($this->info_boxes);
+
+        return $this->info_boxes;
+    }
+
+    public function modal(string $name): ?Modal
+    {
+        foreach ($this->modals as $modal) {
+            if ($modal->name() === $name) {
+                return $modal;
+            }
+        }
+
+        return null;
+    }
+
+    public function modals(): array
+    {
+        $this->sortElements($this->modals);
+
+        return $this->modals;
+    }
+
     public function removeButton(string $name): bool
     {
         foreach ($this->buttons as $key => $button) {
@@ -162,6 +211,19 @@ class Section extends Component
             if ($box->name() === $name) {
                 unset($this->info_boxes[$key]);
                 $this->sortElements($this->info_boxes);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function removeModal(string $name): bool
+    {
+        foreach ($this->modals as $key => $modal) {
+            if ($modal->name() === $name) {
+                unset($this->modals[$key]);
+                $this->sortElements($this->modals);
                 return true;
             }
         }
@@ -194,6 +256,7 @@ class Section extends Component
             . '</div>'
             . '</div>'
             . $this->renderInfoBoxes()
+            . $this->renderModals()
             . '</div>'
             . $this->renderTabs()
             . '<br>'
@@ -268,6 +331,16 @@ class Section extends Component
         $html .= '</div>';
 
         return empty($this->info_boxes) ? '' : $html;
+    }
+
+    protected function renderModals(): string
+    {
+        $html = '';
+        foreach ($this->modals() as $modal) {
+            $html .= $modal->render();
+        }
+
+        return $html;
     }
 
     protected function renderNavLinks(): string

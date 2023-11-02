@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\UI;
 
 class Dropdown extends Button
 {
+    /** @var array */
     protected $links = [];
 
     public function addLink(string $label, string $url, string $icon = ''): self
@@ -33,14 +34,13 @@ class Dropdown extends Button
     public function render(string $context = ''): string
     {
         $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
-        $label = $this->label ?? $this->name();
         $counter = empty($this->counter) ? '' : '<span class="badge badge-light ml-1">' . $this->counter . '</span> ';
 
         return '<div class="btn-group">'
             . '<div class="dropdown">'
             . '<button class="btn btn-' . $this->color . ' dropdown-toggle" type="button" data-toggle="dropdown"'
             . ' aria-expanded="false" id="' . $this->id() . '" title="' . $this->description . '">'
-            . $icon . $label . $counter
+            . $icon . $this->label . $counter
             . '</button>'
             . '<div class="dropdown-menu">' . $this->renderLinks() . '</div>'
             . '</div>'

@@ -20,33 +20,52 @@
 namespace FacturaScripts\Core\UI;
 
 use FacturaScripts\Core\Template\UI\Component;
+use FacturaScripts\Core\Tools;
 
 class Button extends Component
 {
     /** @var string */
-    public $color = 'secondary';
+    protected $color = 'secondary';
 
     /** @var int */
-    public $counter = 0;
+    protected $counter = 0;
 
     /** @var string */
-    public $description;
+    protected $description;
 
     /** @var string */
-    public $icon;
+    protected $icon;
 
     /** @var string */
-    public $label;
+    protected $label;
+
+    /** @var string */
+    protected $modal_id;
+
+    public function label(bool $translate = false): string
+    {
+        return $translate && !empty($this->label) ?
+            Tools::lang()->trans($this->label) :
+            $this->label ?? '';
+    }
+
+    public function linkModal(Modal $modal): self
+    {
+        $this->modal_id = $modal->id();
+
+        return $this;
+    }
 
     public function render(string $context = ''): string
     {
         $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
-        $label = $this->label ?? $this->name();
         $counter = empty($this->counter) ? '' : '<span class="badge badge-light ml-1">' . $this->counter . '</span> ';
 
+        $attributes = $this->modal_id ? 'data-toggle="modal" data-target="#' . $this->modal_id . '"' : '';
+
         return '<button type="button" class="btn btn-' . $this->color . ' mr-1" id="'
-            . $this->id() . '" title="' . $this->description . '">'
-            . $icon . $label . $counter
+            . $this->id() . '" title="' . $this->description . '"' . $attributes . '>'
+            . $icon . $this->label(true) . $counter
             . '</button>';
     }
 

@@ -53,20 +53,13 @@ class UIController extends Controller
         return $this->sections;
     }
 
-    protected function addSection(string $name, ?Section $section = null): Section
+    protected function addSection(Section $section): Section
     {
         // comprobamos que no exista ya una sección con ese nombre
         foreach ($this->sections as $sec) {
-            if ($sec->name() === $name) {
-                throw new Exception("Section $name already exists");
+            if ($sec->name() === $section->name()) {
+                throw new Exception("Section {$section->name()} already exists");
             }
-        }
-
-        // si section es null, lo creamos
-        if (null === $section) {
-            $section = new Section($name);
-        } else {
-            $section->setName($name);
         }
 
         $section->setPosition(count($this->sections) * 10);
