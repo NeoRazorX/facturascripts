@@ -21,6 +21,8 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 
@@ -30,33 +32,20 @@ use FacturaScripts\Dinamic\Lib\Email\NewMail;
  * @author Raul Jimenez         <raljopa@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class EmailSent extends Base\ModelClass
+class EmailSent extends ModelClass
 {
+    use ModelTrait;
 
-    use Base\ModelTrait;
-
-    /**
-     * Email addressee
-     *
-     * @var string
-     */
+    /** @var string */
     public $addressee;
 
     /** @var bool */
     public $attachment;
 
-    /**
-     * Text of email
-     *
-     * @var string
-     */
+    /** @var string */
     public $body;
 
-    /**
-     * Date and time of send
-     *
-     * @var string
-     */
+    /** @var string */
     public $date;
 
     /** @var string */
@@ -68,21 +57,13 @@ class EmailSent extends Base\ModelClass
     /** @var string */
     public $id;
 
-    /**
-     * User than sent email
-     *
-     * @var string
-     */
+    /** @var string */
     public $nick;
 
     /** @var bool */
     public $opened;
 
-    /**
-     * Subject of email
-     *
-     * @var string
-     */
+    /** @var string */
     public $subject;
 
     /** @var string */
@@ -94,7 +75,7 @@ class EmailSent extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->date = date(self::DATETIME_STYLE);
+        $this->date = Tools::dateTime();
         $this->opened = false;
     }
 
@@ -116,7 +97,7 @@ class EmailSent extends Base\ModelClass
             $filePath = $folderPath . '/' . $file;
             $files[] = [
                 'name' => $file,
-                'size' => Tools::bytes(filesize($filePath)),
+                'size' => filesize($filePath),
                 'path' => $filePath . '?myft=' . MyFilesToken::get($filePath, false),
             ];
         }
@@ -136,11 +117,12 @@ class EmailSent extends Base\ModelClass
 
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $body = $utils->noHtml($this->body);
+        $body = Tools::noHtml($this->body);
         $this->body = strlen($body) > 5000 ? substr($body, 0, 4997) . '...' : $body;
-        $this->html = $utils->noHtml($this->html);
-        $this->subject = $utils->noHtml($this->subject);
+
+        $this->html = Tools::noHtml($this->html);
+        $this->subject = Tools::noHtml($this->subject);
+
         return parent::test();
     }
 
@@ -151,8 +133,6 @@ class EmailSent extends Base\ModelClass
 
     public static function verify(string $verificode, string $addressee = ''): bool
     {
-        $found = false;
-
         $model = new static();
         $where = [new DataBaseWhere('verificode', $verificode)];
         if (!empty($addressee)) {
@@ -163,9 +143,9 @@ class EmailSent extends Base\ModelClass
             $item->opened = true;
             $item->save();
 
-            $found = true;
+            return true;
         }
 
-        return $found;
+        return false;
     }
 }

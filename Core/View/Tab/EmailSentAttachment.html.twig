@@ -1,8 +1,7 @@
-{% set firstView = fsc.views | first %}
-{% set model = firstView.model %}
+{% set currentView = fsc.getCurrentView() %}
 
-{% for attachment in model.getAttachments() %}
-    <div class="card mb-3">
+{% for attachment in currentView.cursor %}
+    <div class="card shadow mb-3">
         <div class="card-body">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
@@ -10,9 +9,8 @@
                     <span class="d-inline-block text-truncate">{{ attachment.name }}</span>
                 </div>
                 <div class="d-flex align-items-center">
-                    <span class="badge badge-dark">{{ attachment.size }}</span>
-                    <a href="{{ attachment.path }}" class="btn btn-sm btn-outline-secondary ml-1" target="_blank" download>
-                        <i class="fa-solid fa-download"></i>
+                    <a href="{{ attachment.path }}" class="btn btn-sm btn-outline-primary ml-1" target="_blank" download>
+                        {{ bytes(attachment.size) }} <i class="fa-solid fa-download ml-1"></i>
                     </a>
                 </div>
             </div>

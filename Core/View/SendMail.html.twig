@@ -29,7 +29,8 @@
     <div class="container" style="margin-top: -60px;">
         <div class="row">
             <div class="col-12">
-                <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data" onsubmit="animateSpinner('add')">
+                <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data"
+                      onsubmit="animateSpinner('add')">
                     {{ formToken() }}
                     <input type="hidden" name="action" value="send"/>
                     <div class="card shadow">
@@ -97,21 +98,25 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <textarea name="body" rows="5" class="form-control">{{ fsc.newMail.text | raw }}</textarea>
+                                <textarea name="body" rows="5"
+                                          class="form-control">{{ fsc.newMail.text | raw }}</textarea>
                             </div>
                             {% if fsc.newMail.signature %}
                                 <div class="form-group">
                                     {{ trans('email-signature') }}
-                                    <textarea rows="3" class="form-control" readonly>{{ fsc.newMail.signature }}</textarea>
+                                    <textarea rows="3" class="form-control"
+                                              readonly>{{ fsc.newMail.signature }}</textarea>
                                 </div>
                             {% endif %}
-                            <div class="form-group">
-                                {% for name in fsc.newMail.getAttachmentNames() %}
-                                    <p>
-                                        <i class="fas fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}
-                                    </p>
-                                {% endfor %}
-                                <input type="file" name="uploads[]" multiple=""/>
+                            {% for name in fsc.newMail.getAttachmentNames() %}
+                                <p>
+                                    <i class="fas fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}
+                                </p>
+                            {% endfor %}
+                            <div id="email-attachments">
+                                <div class="form-group">
+                                    <input type="file" name="uploads[]" onclick="addAnotherInputFile()"/>
+                                </div>
                             </div>
                             <div class="row align-items-end">
                                 <div class="col-sm-6">
@@ -149,16 +154,29 @@
     {{ parent() }}
     <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
     <script>
-        function split(val) {
-            return val.split(/,\s*/);
+        function addAnotherInputFile() {
+            let input = document.createElement('div');
+            input.className = 'form-group';
+
+            let file = document.createElement('input');
+            file.type = 'file';
+            file.name = 'uploads[]';
+            file.onclick = addAnotherInputFile;
+            input.appendChild(file);
+
+            document.getElementById('email-attachments').appendChild(input);
         }
 
         function extractLast(term) {
             return split(term).pop();
         }
 
+        function split(val) {
+            return val.split(/,\s*/);
+        }
+
         $(document).ready(function () {
-            var cacheQuery = {};
+            let cacheQuery = {};
             $("#email,#email-cc,#email-bcc").on("keydown", function (event) {
                 if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
                     event.preventDefault();
@@ -167,7 +185,7 @@
                 minLength: 0,
                 source: function (request, response) {
                     // Avoid re-query the same
-                    var term = request.term;
+                    let term = request.term;
                     if (term in cacheQuery) {
                         response(cacheQuery[term]);
                         return;
@@ -189,7 +207,7 @@
                     return false;
                 },
                 select: function (event, ui) {
-                    var terms = split(this.value);
+                    let terms = split(this.value);
                     // Remove the current input
                     terms.pop();
                     // Add the selected item

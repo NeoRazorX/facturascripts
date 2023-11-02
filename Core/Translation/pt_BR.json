@@ -976,6 +976,7 @@
     "not-allowed-modify": "not-allowed-modify",
     "not-enough-stock": "not-enough-stock",
     "not-passed-integrity-check": "Some files have not passed the integrity check...<br\/>You can <a class='alert-link' target='_blank' href='IntegritySystemCheck'>get more details here<\/a>.",
+    "not-stored-content": "Contenido no almacenado",
     "not-valid-email": "%email% não é um email válido",
     "not-valid-fiscal-number": "not-valid-fiscal-number",
     "not-valid-percentage-retention": "Not valid percentage retention",

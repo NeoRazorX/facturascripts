@@ -976,6 +976,7 @@
     "not-allowed-modify": "Ez duzu aldatzeko baimenik",
     "not-enough-stock": "%reference% artikuluaren stock nahikoa ez dago",
     "not-passed-integrity-check": "Fitxategi batzuk ez dute gainditu integritate egiaztapena ...  <br\/>Hemen <a class='alert-link' target='_blank' href='IntegritySystemCheck'> begiratu xehetasunak<\/a>.",
+    "not-stored-content": "Contenido no almacenado",
     "not-valid-email": "%email% eposta baliogabea",
     "not-valid-fiscal-number": "%type% %number% baliogabea",
     "not-valid-percentage-retention": "Ehuneko ez zuzena. 0.00 baino handiagoa izan behar da",

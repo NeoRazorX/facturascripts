@@ -48,7 +48,7 @@ class ConfigEmail extends PanelController
         $this->createViewsEmailNotification();
     }
 
-    protected function createViewsEmail(string $viewName = 'ConfigEmail')
+    protected function createViewsEmail(string $viewName = 'ConfigEmail'): void
     {
         $this->addEditView($viewName, 'Settings', 'email', 'fas fa-envelope');
 
@@ -57,7 +57,7 @@ class ConfigEmail extends PanelController
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
-    protected function createViewsEmailNotification(string $viewName = 'ListEmailNotification')
+    protected function createViewsEmailNotification(string $viewName = 'ListEmailNotification'): void
     {
         $this->addListView($viewName, 'EmailNotification', 'notifications', 'fas fa-bell');
         $this->views[$viewName]->addOrderBy(['date'], 'date');
@@ -86,7 +86,7 @@ class ConfigEmail extends PanelController
         ]);
     }
 
-    protected function createViewsEmailSent(string $viewName = 'ListEmailSent')
+    protected function createViewsEmailSent(string $viewName = 'ListEmailSent'): void
     {
         $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-paper-plane');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
@@ -194,7 +194,7 @@ class ConfigEmail extends PanelController
         }
     }
 
-    protected function testMailAction()
+    protected function testMailAction(): void
     {
         // guardamos los datos del formulario primero
         if (false === $this->editAction()) {

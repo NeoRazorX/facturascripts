@@ -976,6 +976,7 @@
     "not-allowed-modify": "Non ten permiso para mudar",
     "not-enough-stock": "Non hai suficientes existencias de %reference%",
     "not-passed-integrity-check": "Algúns arquivos non pasaron a verificación de integridade ... <br\/>Podes <a class='alert-link' target='_blank' href='IntegritySystemCheck'>obter máis detalles aquí<\/a>.",
+    "not-stored-content": "Contenido no almacenado",
     "not-valid-email": "Email %email% non válido",
     "not-valid-fiscal-number": "O %type% %number% non é válido",
     "not-valid-percentage-retention": "Porcentaxe non válido. Debe ser maior de 0.00",

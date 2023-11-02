@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
-use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
-use FacturaScripts\Dinamic\Model\User;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Twig\Error\LoaderError;
@@ -303,14 +303,17 @@ class NewMail
 
     public function setMailbox(string $emailFrom)
     {
+        return $this;
     }
 
     /**
      * Establece el usuario que manda el email.
      */
-    public function setUser(User $user): void
+    public function setUser(User $user)
     {
         $this->fromNick = $user->nick;
+
+        return $this;
     }
 
     /**
@@ -419,7 +422,7 @@ class NewMail
 
         // creamos la carpeta de adjuntos para el email
         $path = FS_FOLDER . '/' . static::getAttachmentPath($this->fromEmail, 'Sent') . $uuid . '/';
-        FileManager::createFolder($path, true);
+        Tools::folderCheckOrCreate($path);
 
         // movemos los adjuntos a la carpeta temporal a la carpeta de adjuntos del email
         foreach ($attachments as $attach) {
