@@ -150,10 +150,15 @@ class DashboardUI extends UIController
 
         // añadimos 2 cajas de información a la sección top
         $this->section('top')->addInfoBox(new InfoBox('info1'))
+            ->setColor('success')
+            ->setIcon('fas fa-chart-line')
             ->setTitle('Información 1')
-            ->setDescription('Descripción de la información 1');
+            ->setDescription('Descripción de la información 1')
+            ->setCounter(5);
 
         $this->section('top')->addInfoBox(new InfoBox('info2'))
+            ->setColor('danger')
+            ->setIcon('fas fa-chart-pie')
             ->setTitle('Información 2')
             ->setDescription('Descripción de la información 2');
 

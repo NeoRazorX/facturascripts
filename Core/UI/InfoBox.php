@@ -24,6 +24,15 @@ use FacturaScripts\Core\Template\UI\Component;
 class InfoBox extends Component
 {
     /** @var string */
+    protected $color = '';
+
+    /** @var int */
+    protected $counter = 0;
+
+    /** @var string */
+    protected $icon = '';
+
+    /** @var string */
     protected $description = '';
 
     /** @var string */
@@ -36,12 +45,51 @@ class InfoBox extends Component
 
     public function render(string $context = ''): string
     {
-        return '<div class="card shadow-sm mb-3">'
+        switch ($this->color) {
+            default:
+                $color = '';
+                break;
+
+            case 'danger':
+            case 'info':
+            case 'primary':
+            case 'secondary':
+            case 'success':
+            case 'warning':
+                $color = ' bg-' . $this->color . ' text-white';
+                break;
+        }
+
+        $icon = empty($this->icon) ? '' : '<i class="fas fa-' . $this->icon . ' mr-1"></i> ';
+        $count = empty($this->counter) ? '' : '<span class="badge badge-pill badge-light ml-2">' . $this->counter . '</span> ';
+
+        return '<div class="card' . $color . ' shadow-sm mb-3">'
             . '<div class="card-body">'
-            . '<h5 class="card-title">' . $this->title . '</h5>'
+            . '<h5 class="card-title mb-0">' . $icon . $this->title . $count . '</h5>'
             . '<p class="card-text">' . $this->description . '</p>'
             . '</div>'
             . '</div>';
+    }
+
+    public function setColor(string $color): self
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    public function setCounter(int $counter): self
+    {
+        $this->counter = $counter;
+
+        return $this;
+    }
+
+    public function setIcon(string $icon): self
+    {
+        $this->icon = $icon;
+
+        return $this;
     }
 
     public function setDescription(string $description): self
