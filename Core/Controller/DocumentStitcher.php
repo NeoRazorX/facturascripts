@@ -22,6 +22,8 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\Lib\ExtendedController\ListViewFiltersTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
@@ -38,6 +40,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DocumentStitcher extends Controller
 {
+    use ListViewFiltersTrait;
+
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /** @var array */
@@ -51,6 +55,9 @@ class DocumentStitcher extends Controller
 
     /** @var TransformerDocument[] */
     public $moreDocuments = [];
+
+    /** @var array */
+    public $where = [];
 
     public function getAvailableStatus(): array
     {
@@ -76,6 +83,11 @@ class DocumentStitcher extends Controller
         return $data;
     }
 
+    public function getViewName(): string
+    {
+        return 'DocumentSticker';
+    }
+
     public function getSeries(): array
     {
         return CodeModel::all('series', 'codserie', 'descripcion', false);
@@ -91,6 +103,8 @@ class DocumentStitcher extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        $action = $this->request->request->get('action', '');
+
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
 
@@ -101,6 +115,11 @@ class DocumentStitcher extends Controller
         }
 
         $this->loadDocuments();
+        $this->addFilters();
+        if ('search' === $action) {
+            $this->processFormDataLoad();
+        }
+
         $this->loadMoreDocuments();
 
         $status = (int)$this->request->request->get('status', '');
@@ -112,6 +131,16 @@ class DocumentStitcher extends Controller
 
             $this->generateNewDocument($status);
         }
+    }
+
+    protected function addFilters()
+    {
+        $payMethods = FormasPago::codeModel(true, $this->documents[0]->idempresa);
+        if (count($payMethods) > 2) {
+            $this->addFilterSelect('codpago', 'payment-method', 'codpago', $payMethods);
+        }
+
+        $this->addFilterPeriod('fecha', 'date', 'fecha');
     }
 
     /**
@@ -230,7 +259,6 @@ class DocumentStitcher extends Controller
 
             if (null === $prototype) {
                 $prototype = clone $doc;
-                $prototype->codserie = $this->request->request->get('codserie', $doc->codserie);
             } elseif ('true' === $this->request->request->get('extralines', '') && !empty($lines)) {
                 $this->addBlankLine($newLines, $doc);
             }
@@ -376,16 +404,25 @@ class DocumentStitcher extends Controller
 
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         $model = new $modelClass();
-        $where = [
-            new DataBaseWhere('editable', true),
-            new DataBaseWhere('codalmacen', $this->documents[0]->codalmacen),
-            new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa),
-            new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
-        ];
+        $this->where[] = new DataBaseWhere('editable', true);
+        $this->where[] = new DataBaseWhere('codalmacen', $this->documents[0]->codalmacen);
+        $this->where[] = new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa);
+        $this->where[] = new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue());
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
-        foreach ($model->all($where, $orderBy, 0, 0) as $doc) {
+        foreach ($model->all($this->where, $orderBy, 0, 0) as $doc) {
             if (false === in_array($doc->primaryColumnValue(), $this->getCodes())) {
                 $this->moreDocuments[] = $doc;
+            }
+        }
+    }
+
+    protected function processFormDataLoad()
+    {
+        // filters
+        foreach ($this->filters as $filter) {
+            $filter->setValueFromRequest($this->request);
+            if ($filter->getDataBaseWhere($this->where)) {
+                $this->showFilters = true;
             }
         }
     }
