@@ -24,6 +24,9 @@ use FacturaScripts\Core\Validator;
 
 abstract class Component
 {
+    /** @var array */
+    private $actions = [];
+
     /** @var string */
     private $name;
 
@@ -38,6 +41,11 @@ abstract class Component
     public function __construct(string $name)
     {
         $this->setName($name);
+    }
+
+    public function actions(): array
+    {
+        return $this->actions;
     }
 
     public function id(): string
@@ -85,5 +93,13 @@ abstract class Component
         $this->position = $position;
 
         return $this;
+    }
+
+    protected function addAction(string $type, string $function): void
+    {
+        $this->actions[] = [
+            'name' => $this->id() . ':' . $type,
+            'function' => $function,
+        ];
     }
 }

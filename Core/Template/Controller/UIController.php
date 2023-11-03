@@ -23,16 +23,21 @@ use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\UI\Section;
 
-class UIController extends Controller
+abstract class UIController extends Controller
 {
     /** @var Section[] */
     private $sections = [];
 
+    abstract protected function addComponents(): void;
+
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-
         $this->setTemplate('Master/UIController');
+
+        $this->addComponents();
+
+        $this->runActions();
     }
 
     public function section(string $name): Section
@@ -81,6 +86,18 @@ class UIController extends Controller
         }
 
         return false;
+    }
+
+    protected function runActions(): void
+    {
+        $action_name = $this->request->get('_action_name');
+        foreach ($this->sections() as $section) {
+            foreach ($section->actions() as $action) {
+                if ($action['name'] === $action_name) {
+                    $this->{$action['function']}();
+                }
+            }
+        }
     }
 
     private function sortSections(): void

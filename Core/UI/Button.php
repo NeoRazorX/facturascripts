@@ -62,15 +62,14 @@ class Button extends Component
 
     public function render(string $context = ''): string
     {
-        $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
-        $counter = empty($this->counter) ? '' : '<span class="badge badge-light ml-1">' . $this->counter . '</span> ';
+        if (empty($this->actions())) {
+            return $this->renderButton();
+        }
 
-        $attributes = $this->modal_id ? 'data-toggle="modal" data-target="#' . $this->modal_id . '"' : '';
-
-        return '<button type="button" class="btn btn-' . $this->color . ' mr-1" id="'
-            . $this->id() . '" title="' . $this->description . '"' . $attributes . '>'
-            . $icon . $this->label . $counter
-            . '</button>';
+        return '<form class="d-inline-block" method="post">'
+            . '<input type="hidden" name="_action_name" value="' . $this->id() . ':click">'
+            . $this->renderButton()
+            . '</form>';
     }
 
     public function setColor(string $color): self
@@ -106,5 +105,27 @@ class Button extends Component
         $this->label = Tools::lang()->trans($label, $params);
 
         return $this;
+    }
+
+    public function setOnClick(string $function): self
+    {
+        $this->addAction('click', $function);
+
+        return $this;
+    }
+
+    protected function renderButton(): string
+    {
+        $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
+        $counter = empty($this->counter) ? '' : '<span class="badge badge-light ml-1">' . $this->counter . '</span> ';
+
+        $attributes = $this->modal_id ? 'data-toggle="modal" data-target="#' . $this->modal_id . '"' : '';
+
+        $type = empty($this->actions()) ? 'button' : 'submit';
+
+        return '<button type="' . $type . '" class="btn btn-' . $this->color . ' mr-1" id="'
+            . $this->id() . '" title="' . $this->description . '"' . $attributes . '>'
+            . $icon . $this->label . $counter
+            . '</button>';
     }
 }

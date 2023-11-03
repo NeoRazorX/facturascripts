@@ -50,6 +50,29 @@ class Section extends Component
     /** @var string */
     protected $title = '';
 
+    public function actions(): array
+    {
+        $actions = [];
+
+        foreach ($this->buttons as $button) {
+            $actions = array_merge($actions, $button->actions());
+        }
+
+        foreach ($this->info_boxes as $box) {
+            $actions = array_merge($actions, $box->actions());
+        }
+
+        foreach ($this->modals as $modal) {
+            $actions = array_merge($actions, $modal->actions());
+        }
+
+        foreach ($this->tabs as $tab) {
+            $actions = array_merge($actions, $tab->actions());
+        }
+
+        return $actions;
+    }
+
     public function addButton(Button $button): Button
     {
         // comprobamos que no exista ya un botón con ese nombre

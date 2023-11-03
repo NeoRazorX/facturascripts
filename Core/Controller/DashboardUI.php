@@ -3,6 +3,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Template\Controller\UIController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UI\Button;
 use FacturaScripts\Core\UI\Dropdown;
 use FacturaScripts\Core\UI\InfoBox;
@@ -22,10 +23,8 @@ use FacturaScripts\Core\UI\Tab\TabMap;
 
 class DashboardUI extends UIController
 {
-    public function privateCore(&$response, $user, $permissions)
+    protected function addComponents(): void
     {
-        parent::privateCore($response, $user, $permissions);
-
         // añadimos un par de secciones
         $this->addSectionTop();
         $this->addSectionMain();
@@ -140,7 +139,8 @@ class DashboardUI extends UIController
             ->setIcon('fas fa-plus-square')
             ->setColor('success')
             ->setLabel('Botón 1')
-            ->setDescription('Descripción del botón 1');
+            ->setDescription('Descripción del botón 1')
+            ->setOnClick('function1');
 
         $this->section('top')->addButton(new Button('button2'))
             ->setIcon('fas fa-check-square')
@@ -176,5 +176,10 @@ class DashboardUI extends UIController
 
         // añadimos un tab de formulario a la sección top
         $this->section('top')->addTab(new TabForm('tab1'));
+    }
+
+    protected function function1(): void
+    {
+        Tools::log()->info('Se ha pulsado el botón 1');
     }
 }
