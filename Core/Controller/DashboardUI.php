@@ -80,10 +80,22 @@ class DashboardUI extends UIController
             ->setIcon('fas fa-list')
             ->setColor('info')
             ->setDescription('Descripción del dropdown')
-            ->addLink('link1', 'https://www.google.com', 'fas fa-plus-square')
-            ->addLink('link2', 'https://www.google.com')
-            ->addLink('-', '#')
-            ->addLink('link3', 'https://www.google.com');
+            ->addLink('https://www.google.com', 'link 1', [], 'fas fa-plus-square')
+            ->addLink('https://www.youtube.com', 'link 2', [], 'fab fa-youtube')
+            ->addLinkSeparator()
+            ->addLink('https://www.twitter.com', 'link 3', [], 'fab fa-twitter');
+
+        // añadimos un modal
+        $this->section('main')->addModal(new Modal('modal2'))
+            ->setTitle('Modal 2');
+
+        // enlazamos el modal con el dropdown
+        $this->section('main')->button('dropdown1')->addLinkModal(
+            $this->section('main')->modal('modal2'),
+            'Modal 2',
+            [],
+            'fas fa-window-maximize'
+        );
 
         // añadimos 2 pestañas de listado a la sección main
         $this->section('main')->addTab(new TabList('tab1'))

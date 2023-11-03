@@ -19,21 +19,51 @@
 
 namespace FacturaScripts\Core\UI;
 
+use Exception;
+use FacturaScripts\Core\Tools;
+
 class Dropdown extends Button
 {
     /** @var array */
     protected $links = [];
 
-    public function addLink(string $label, string $url, string $icon = ''): self
+    public function addLink(string $url, string $label, array $params = [], string $icon = ''): self
     {
-        $this->links[] = ['icon' => $icon, 'label' => $label, 'url' => $url];
+        $this->links[] = [
+            'icon' => $icon,
+            'label' => Tools::lang()->trans($label, $params),
+            'modal_id' => '',
+            'url' => $url
+        ];
 
         return $this;
     }
 
+    public function addLinkModal(Modal $modal, string $label, array $params = [], string $icon = ''): self
+    {
+        // si el modal no tiene padre, no lo podemos enlazar
+        if (empty($modal->parentId())) {
+            throw new Exception('Add the modal to a section or tab before linking it to a button.');
+        }
+
+        $this->links[] = [
+            'icon' => $icon,
+            'label' => Tools::lang()->trans($label, $params),
+            'modal_id' => $modal->id(),
+            'url' => '#'
+        ];
+
+        return $this;
+    }
+
+    public function addLinkSeparator(): self
+    {
+        return $this->addLink('#', '-');
+    }
+
     public function render(string $context = ''): string
     {
-        $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
+        $icon = $this->icon ? '<i class="' . $this->icon . ' fa-fw mr-1"></i> ' : '';
         $counter = empty($this->counter) ? '' : '<span class="badge badge-light ml-1">' . $this->counter . '</span> ';
 
         return '<div class="btn-group">'
@@ -56,7 +86,14 @@ class Dropdown extends Button
                 continue;
             }
 
-            $icon = $link['icon'] ? '<i class="' . $link['icon'] . '"></i> ' : '';
+            $icon = $link['icon'] ? '<i class="' . $link['icon'] . ' fa-fw mr-1"></i> ' : '';
+
+            if ($link['modal_id']) {
+                $anchors[] = '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#' . $link['modal_id'] . '">'
+                    . $icon . $link['label'] . '</a>';
+                continue;
+            }
+
             $anchors[] = '<a class="dropdown-item" href="' . $link['url'] . '">' . $icon . $link['label'] . '</a>';
         }
 
