@@ -122,7 +122,8 @@ abstract class UIController extends Controller
         $action_name = $this->request->get('_action');
         foreach ($this->sections() as $section) {
             foreach ($section->actions() as $action) {
-                if ($action['name'] != $action_name) {
+                $name = $action['component_id'] . ':' . $action['type'];
+                if ($name != $action_name) {
                     continue;
                 }
 
@@ -142,14 +143,7 @@ abstract class UIController extends Controller
     {
         // si comienza por component: buscamos el componente y ejecutamos su función
         if (substr($action['function'], 0, 10) === 'component:') {
-            // el ID del componente es lo que va antes de los dos puntos en el name del action
-            $pos = strpos($action['name'], ':');
-            if ($pos === false) {
-                throw new Exception("Component {$action['name']} not found");
-            }
-
-            $component_id = substr($action['name'], 0, $pos);
-            $component = $this->component($component_id);
+            $component = $this->component($action['component_id']);
             $function = substr($action['function'], 10);
             return $component->{$function}();
         }

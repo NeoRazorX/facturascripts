@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\UI\Tab;
 
-use FacturaScripts\Core\Template\UI\Component;
 use FacturaScripts\Core\Template\UI\SectionTab;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UI\ActionResult;
@@ -45,6 +44,8 @@ class TabForm extends SectionTab
         parent::__construct($name);
 
         $this->icon = 'fas fa-edit';
+
+        $this->setOnSave('component:saveAction');
 
         // añadimos algunos datos de prueba
         $this->form = [
@@ -118,19 +119,10 @@ class TabForm extends SectionTab
         return $this->actionResult();
     }
 
-    public function setOnSave(string $function): self
+    public function setOnSave(string $function, int $position = 0): self
     {
-        $this->addAction('save', $function);
+        $this->addAction('save', $function, $position);
 
         return $this;
-    }
-
-    public function setParent(Component $parent): Component
-    {
-        $return = parent::setParent($parent);
-
-        $this->setOnSave('component:saveAction');
-
-        return $return;
     }
 }

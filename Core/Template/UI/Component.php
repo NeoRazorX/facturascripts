@@ -46,6 +46,11 @@ abstract class Component
 
     public function actions(): array
     {
+        // actualizamos el id del componente, por si ha cambiado
+        foreach ($this->actions as &$action) {
+            $action['component_id'] = $this->id();
+        }
+
         return $this->actions;
     }
 
@@ -101,11 +106,13 @@ abstract class Component
         return new ActionResult();
     }
 
-    protected function addAction(string $type, string $function): void
+    protected function addAction(string $type, string $function, int $position = 0): void
     {
         $this->actions[] = [
-            'name' => $this->id() . ':' . $type,
             'function' => $function,
+            'component_id' => $this->id(),
+            'position' => $position,
+            'type' => $type,
         ];
     }
 }

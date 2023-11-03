@@ -70,6 +70,11 @@ class Section extends Component
             $actions = array_merge($actions, $tab->actions());
         }
 
+        // ordenamos por posición, de menor a mayor
+        usort($actions, function (array $a, array $b) {
+            return $a['position'] <=> $b['position'];
+        });
+
         return $actions;
     }
 

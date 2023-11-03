@@ -116,9 +116,9 @@ class Button extends Component
         return $this;
     }
 
-    public function setOnClick(string $function): self
+    public function setOnClick(string $function, int $position = 0): self
     {
-        $this->addAction('click', $function);
+        $this->addAction('click', $function, $position);
 
         return $this->setOnClickJs('send_ui_action(\'' . $this->id() . ':click\')');
     }
