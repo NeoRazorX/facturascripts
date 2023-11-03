@@ -170,6 +170,35 @@ class Section extends Component
         return $this->buttons;
     }
 
+    public function component(string $id): Component
+    {
+        foreach ($this->buttons as $button) {
+            if ($button->name() === $id) {
+                return $button;
+            }
+        }
+
+        foreach ($this->info_boxes as $box) {
+            if ($box->name() === $id) {
+                return $box;
+            }
+        }
+
+        foreach ($this->modals as $modal) {
+            if ($modal->name() === $id) {
+                return $modal;
+            }
+        }
+
+        foreach ($this->tabs as $tab) {
+            if ($tab->name() === $id) {
+                return $tab;
+            }
+        }
+
+        throw new Exception("Component $id not found");
+    }
+
     public function description(): string
     {
         return $this->description;

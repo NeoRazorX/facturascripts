@@ -21,6 +21,8 @@ namespace FacturaScripts\Core\Template\Controller;
 
 use Exception;
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Template\UI\Component;
+use FacturaScripts\Core\UI\ActionResult;
 use FacturaScripts\Core\UI\Section;
 
 abstract class UIController extends Controller
@@ -29,6 +31,28 @@ abstract class UIController extends Controller
     private $sections = [];
 
     abstract protected function addComponents(): void;
+
+    public function component(string $id): Component
+    {
+        // primero comprobamos si es de una sección
+        foreach ($this->sections as $section) {
+            if ($section->name() === $id) {
+                return $section;
+            }
+        }
+
+        // no es el name de una sección
+        // entonces obtenemos lo que haya antes del primer _ para saber a qué sección pertenece
+        $pos = strpos($id, '_');
+        if ($pos === false) {
+            throw new Exception("Component $id not found");
+        }
+
+        $section_name = substr($id, 0, $pos);
+
+        // el resto se lo pasamos a la función component de la sección
+        return $this->section($section_name)->component(substr($id, $pos + 1));
+    }
 
     public function privateCore(&$response, $user, $permissions)
     {
@@ -56,6 +80,11 @@ abstract class UIController extends Controller
         $this->sortSections();
 
         return $this->sections;
+    }
+
+    protected function actionResult(): ActionResult
+    {
+        return new ActionResult();
     }
 
     protected function addSection(Section $section): Section
@@ -93,11 +122,42 @@ abstract class UIController extends Controller
         $action_name = $this->request->get('_action');
         foreach ($this->sections() as $section) {
             foreach ($section->actions() as $action) {
-                if ($action['name'] === $action_name) {
-                    $this->{$action['function']}();
+                if ($action['name'] != $action_name) {
+                    continue;
+                }
+
+                $result = $this->runFunction($action);
+
+                if ($result->exit) {
+                    $this->setTemplate(false);
+                    return;
+                } elseif ($result->stop) {
+                    return;
                 }
             }
         }
+    }
+
+    private function runFunction(array $action): ActionResult
+    {
+        // si comienza por component: buscamos el componente y ejecutamos su función
+        if (substr($action['function'], 0, 10) === 'component:') {
+            // el ID del componente es lo que va antes de los dos puntos en el name del action
+            $pos = strpos($action['name'], ':');
+            if ($pos === false) {
+                throw new Exception("Component {$action['name']} not found");
+            }
+
+            $component_id = substr($action['name'], 0, $pos);
+            $component = $this->component($component_id);
+            $function = substr($action['function'], 10);
+            return $component->{$function}();
+        }
+
+        // ejecutamos la función del controlador
+        $function = $action['function'];
+        $return = $this->{$function}();
+        return $return instanceof ActionResult ? $return : new ActionResult();
     }
 
     private function sortSections(): void

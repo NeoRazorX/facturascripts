@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Template\UI;
 
 use Exception;
+use FacturaScripts\Core\UI\ActionResult;
 use FacturaScripts\Core\Validator;
 
 abstract class Component
@@ -93,6 +94,11 @@ abstract class Component
         $this->position = $position;
 
         return $this;
+    }
+
+    protected function actionResult(): ActionResult
+    {
+        return new ActionResult();
     }
 
     protected function addAction(string $type, string $function): void

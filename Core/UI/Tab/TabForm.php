@@ -19,8 +19,10 @@
 
 namespace FacturaScripts\Core\UI\Tab;
 
+use FacturaScripts\Core\Template\UI\Component;
 use FacturaScripts\Core\Template\UI\SectionTab;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\UI\ActionResult;
 use FacturaScripts\Core\UI\Widget\WidgetCanvas;
 use FacturaScripts\Core\UI\Widget\WidgetCheckbox;
 use FacturaScripts\Core\UI\Widget\WidgetColor;
@@ -109,10 +111,26 @@ class TabForm extends SectionTab
         return $html;
     }
 
+    public function saveAction(): ActionResult
+    {
+        Tools::log()->info('Función saveAction() del formulario ' . $this->id());
+
+        return $this->actionResult();
+    }
+
     public function setOnSave(string $function): self
     {
         $this->addAction('save', $function);
 
         return $this;
+    }
+
+    public function setParent(Component $parent): Component
+    {
+        $return = parent::setParent($parent);
+
+        $this->setOnSave('component:saveAction');
+
+        return $return;
     }
 }
