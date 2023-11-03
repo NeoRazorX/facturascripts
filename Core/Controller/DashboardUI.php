@@ -102,14 +102,10 @@ class DashboardUI extends UIController
         $this->section('main')->addTab(new TabList('tab2'))
             ->setLabel('Listado 2');
 
-        // añadimos un tercer tab y lo ponemos después del tab 1
-        $this->section('main')->addTab(new TabForm('tab3'))
-            ->setLabel('Formulario')
-            ->setPosition(1);
-
-        // añadimos un tab de listado de formularios
+        // añadimos un tab de listado de formularios, y lo ponemos en posición 1
         $this->section('main')->addTab(new TabFormList('tab4'))
-            ->setLabel('+Formularios');
+            ->setLabel('+Formularios')
+            ->setPosition(1);
 
         // añadimos un tab con un calendario
         $this->section('main')->addTab(new TabCalendar('tab5'))
@@ -175,11 +171,17 @@ class DashboardUI extends UIController
             ->setDescription('Descripción de la información 2');
 
         // añadimos un tab de formulario a la sección top
-        $this->section('top')->addTab(new TabForm('tab1'));
+        $this->section('top')->addTab(new TabForm('tab1'))
+            ->setOnSave('function2');
     }
 
     protected function function1(): void
     {
         Tools::log()->info('Se ha pulsado el botón 1');
+    }
+
+    protected function function2(): void
+    {
+        Tools::log()->info('Se ha pulsado el botón guardar del formulario');
     }
 }

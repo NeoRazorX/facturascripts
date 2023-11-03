@@ -77,7 +77,10 @@ class TabForm extends SectionTab
 
     public function render(string $context = ''): string
     {
-        $html = '<form>'
+        $action = $this->id() . ':save';
+
+        $html = '<form id="' . $this->id() . '" method="post">'
+            . '<input type="hidden" name="_action" value="' . $action . '">'
             . '<div class="container-fluid mt-4 mb-4">'
             . '<div class="form-row">';
 
@@ -97,5 +100,12 @@ class TabForm extends SectionTab
             . '</form>';
 
         return $html;
+    }
+
+    public function setOnSave(string $function): self
+    {
+        $this->addAction('save', $function);
+
+        return $this;
     }
 }
