@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\UI\Widget;
 
 use FacturaScripts\Core\Template\UI\Widget;
+use FacturaScripts\Core\Tools;
 
 class WidgetTextarea extends Widget
 {
@@ -32,16 +33,16 @@ class WidgetTextarea extends Widget
     public function render(string $context = ''): string
     {
         return '<div class="form-group">'
-            . '<label for="' . $this->id() . '">' . $this->label(true) . '</label>'
+            . '<label for="' . $this->id() . '">' . $this->label . '</label>'
             . '<textarea name="' . $this->field . '" class="form-control" id="' . $this->id() . '" placeholder="'
             . $this->placeholder . '" rows="' . $this->rows . '">'
             . $this->value . '</textarea>'
             . '</div>';
     }
 
-    public function setPlaceholder(string $placeholder): self
+    public function setPlaceholder(string $placeholder, array $params = []): self
     {
-        $this->placeholder = $placeholder;
+        $this->placeholder = Tools::lang()->trans($placeholder, $params);
 
         return $this;
     }

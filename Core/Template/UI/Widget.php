@@ -37,7 +37,7 @@ abstract class Widget extends Component
         parent::__construct($name);
 
         $this->field = $field ?? $name;
-        $this->label = $label ?? $name;
+        $this->setLabel($label ?? $name);
     }
 
     public function field(): string
@@ -45,9 +45,9 @@ abstract class Widget extends Component
         return $this->field;
     }
 
-    public function label(bool $translate = false): string
+    public function label(): string
     {
-        return $translate ? Tools::lang()->trans($this->label) : $this->label;
+        return $this->label;
     }
 
     public function setField(string $field): self
@@ -57,9 +57,9 @@ abstract class Widget extends Component
         return $this;
     }
 
-    public function setLabel(string $label): self
+    public function setLabel(string $label, array $params = []): self
     {
-        $this->label = $label;
+        $this->label = Tools::lang()->trans($label, $params);
 
         return $this;
     }

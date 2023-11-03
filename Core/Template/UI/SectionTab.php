@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Template\UI;
 
+use FacturaScripts\Core\Tools;
+
 abstract class SectionTab extends Component
 {
     /** @var string */
@@ -41,9 +43,9 @@ abstract class SectionTab extends Component
         return $this;
     }
 
-    public function setLabel(string $label): self
+    public function setLabel(string $label, array $params = []): self
     {
-        $this->label = $label;
+        $this->label = Tools::lang()->trans($label, $params);
 
         return $this;
     }

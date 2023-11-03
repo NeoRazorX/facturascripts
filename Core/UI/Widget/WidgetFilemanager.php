@@ -45,10 +45,10 @@ class WidgetFilemanager extends Widget
     public function render(string $context = ''): string
     {
         return '<div class="form-group">'
-            . '<label for="' . $this->id() . '">' . $this->label('true') . '</label>'
+            . '<label for="' . $this->id() . '">' . $this->label . '</label>'
             . '<button type="button" id="' . $this->id() . '" class="btn btn-secondary btn-block"'
             . ' data-toggle="modal" data-target="#modal_' . $this->id() . '">'
-            . '<i class="fas fa-folder-open mr-1"></i> ' . $this->label(true) . '</button>'
+            . '<i class="fas fa-folder-open mr-1"></i> ' . $this->label . '</button>'
             . '</div>'
             . $this->renderModal();
     }
@@ -81,8 +81,9 @@ class WidgetFilemanager extends Widget
             . '<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title" id="modal_' . $this->id() . '_label"><i class="fas fa-folder-open mr-1"></i> '
-            . $this->label(true) . '</h5>'
+            . '<h5 class="modal-title" id="modal_' . $this->id() . '_label">'
+            . '<i class="fas fa-folder-open mr-1"></i> ' . $this->label
+            . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
@@ -90,7 +91,7 @@ class WidgetFilemanager extends Widget
             . '<div class="modal-body">'
             . '<div class="form-row">'
             . '<div class="col-4">'
-            . '<input type="text" class="form-control mb-2" placeholder="Search">'
+            . '<input type="text" class="form-control mb-2" placeholder="' . Tools::lang()->trans('search') . '">'
             . '</div>'
             . '<div class="col-4">'
             . '<select class="form-control mb-2">'

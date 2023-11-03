@@ -28,7 +28,7 @@ class WidgetCheckbox extends Widget
         return '<div class="form-check mb-3">'
             . '<input class="form-check-input" type="checkbox" name="' . $this->field . '" value="' . $this->value
             . '" id="' . $this->id() . '">'
-            . '<label class="form-check-label" for="' . $this->id() . '">' . $this->label(true) . '</label>'
+            . '<label class="form-check-label" for="' . $this->id() . '">' . $this->label . '</label>'
             . '</div>';
     }
 }

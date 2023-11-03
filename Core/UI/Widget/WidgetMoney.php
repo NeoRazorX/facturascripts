@@ -21,5 +21,4 @@ namespace FacturaScripts\Core\UI\Widget;
 
 class WidgetMoney extends WidgetNumber
 {
-
 }

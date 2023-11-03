@@ -26,7 +26,7 @@ class WidgetTime extends Widget
     public function render(string $context = ''): string
     {
         return '<div class="form-group">'
-            . '<label for="' . $this->id() . '">' . $this->label(true) . '</label>'
+            . '<label for="' . $this->id() . '">' . $this->label . '</label>'
             . '<input type="time" name="' . $this->field . '" value="' . $this->value . '" id="'
             . $this->id() . '" class="form-control" />'
             . '</div>';

@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\UI\Widget;
 
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Template\UI\Widget;
+use FacturaScripts\Core\Tools;
 
 class WidgetCanvas extends Widget
 {
@@ -34,9 +35,9 @@ class WidgetCanvas extends Widget
     public function render(string $context = ''): string
     {
         return '<div class="form-group">' . "\n"
-            . '<label for="' . $this->id() . '">' . $this->label(true) . '</label>' . "\n"
+            . '<label for="' . $this->id() . '">' . $this->label . '</label>' . "\n"
             . '<button type="button" class="btn btn-sm btn-light" onclick="signaturePad.clear();">'
-            . '<i class="fa fa-eraser mr-1"></i> clear</button>' . "\n"
+            . '<i class="fa fa-eraser mr-1"></i> ' . Tools::lang()->trans('clear') . '</button>' . "\n"
             . '<canvas id="' . $this->id() . '" class="border" height="100"></canvas>' . "\n"
             . '</div>' . "\n"
             . '<script>' . "\n"

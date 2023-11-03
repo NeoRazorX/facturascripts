@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\UI;
 
 use FacturaScripts\Core\Template\UI\Component;
+use FacturaScripts\Core\Tools;
 
 class Modal extends Component
 {
@@ -48,9 +49,9 @@ class Modal extends Component
             . '</div>';
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(string $title, array $params = []): self
     {
-        $this->title = $title;
+        $this->title = Tools::lang()->trans($title, $params);
 
         return $this;
     }

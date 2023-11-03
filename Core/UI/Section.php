@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\UI;
 use Exception;
 use FacturaScripts\Core\Template\UI\Component;
 use FacturaScripts\Core\Template\UI\SectionTab;
+use FacturaScripts\Core\Tools;
 
 class Section extends Component
 {
@@ -263,9 +264,9 @@ class Section extends Component
             . '<br>';
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(string $description, array $params = []): self
     {
-        $this->description = $description;
+        $this->description = Tools::lang()->trans($description, $params);
 
         return $this;
     }
@@ -277,9 +278,9 @@ class Section extends Component
         return $this;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(string $title, array $params = []): self
     {
-        $this->title = $title;
+        $this->title = Tools::lang()->trans($title, $params);
 
         return $this;
     }

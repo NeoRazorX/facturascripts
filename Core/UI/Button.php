@@ -43,11 +43,9 @@ class Button extends Component
     /** @var string */
     protected $modal_id;
 
-    public function label(bool $translate = false): string
+    public function label(): string
     {
-        return $translate && !empty($this->label) ?
-            Tools::lang()->trans($this->label) :
-            $this->label ?? '';
+        return $this->label;
     }
 
     public function linkModal(Modal $modal): self
@@ -71,7 +69,7 @@ class Button extends Component
 
         return '<button type="button" class="btn btn-' . $this->color . ' mr-1" id="'
             . $this->id() . '" title="' . $this->description . '"' . $attributes . '>'
-            . $icon . $this->label(true) . $counter
+            . $icon . $this->label . $counter
             . '</button>';
     }
 
@@ -89,9 +87,9 @@ class Button extends Component
         return $this;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(string $description, array $params = []): self
     {
-        $this->description = $description;
+        $this->description = Tools::lang()->trans($description, $params);
 
         return $this;
     }
@@ -103,9 +101,9 @@ class Button extends Component
         return $this;
     }
 
-    public function setLabel(string $label): self
+    public function setLabel(string $label, array $params = []): self
     {
-        $this->label = $label;
+        $this->label = Tools::lang()->trans($label, $params);
 
         return $this;
     }
