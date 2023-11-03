@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\UI;
 
+use Exception;
 use FacturaScripts\Core\Template\UI\Component;
 use FacturaScripts\Core\Tools;
 
@@ -51,6 +52,11 @@ class Button extends Component
 
     public function linkModal(Modal $modal): self
     {
+        // si el modal no tiene padre, no lo podemos enlazar
+        if (empty($modal->parentId())) {
+            throw new Exception('Add the modal to a section or tab before linking it to a button.');
+        }
+
         $this->modal_id = $modal->id();
 
         return $this;

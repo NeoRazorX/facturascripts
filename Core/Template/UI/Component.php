@@ -52,6 +52,11 @@ abstract class Component
         return $this->name;
     }
 
+    public function parentId(): string
+    {
+        return $this->parent_id;
+    }
+
     public function position(): int
     {
         return $this->position;
