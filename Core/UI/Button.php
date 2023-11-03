@@ -38,6 +38,9 @@ class Button extends Component
     protected $icon;
 
     /** @var string */
+    protected $js_function = '';
+
+    /** @var string */
     protected $label;
 
     /** @var string */
@@ -62,14 +65,20 @@ class Button extends Component
 
     public function render(string $context = ''): string
     {
-        if (empty($this->actions())) {
-            return $this->renderButton();
+        $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
+        $counter = empty($this->counter) ? '' : '<span class="badge badge-light ml-1">' . $this->counter . '</span> ';
+
+        $attributes = '';
+        if ($this->modal_id) {
+            $attributes = ' data-toggle="modal" data-target="#' . $this->modal_id . '"';
+        } else if ($this->js_function) {
+            $attributes = ' onclick="' . $this->js_function . '"';
         }
 
-        return '<form class="d-inline-block" method="post">'
-            . '<input type="hidden" name="_action_name" value="' . $this->id() . ':click">'
-            . $this->renderButton()
-            . '</form>';
+        return '<button type="button" class="btn btn-' . $this->color . ' mr-1" id="'
+            . $this->id() . '" title="' . $this->description . '"' . $attributes . '>'
+            . $icon . $this->label . $counter
+            . '</button>';
     }
 
     public function setColor(string $color): self
@@ -111,21 +120,13 @@ class Button extends Component
     {
         $this->addAction('click', $function);
 
-        return $this;
+        return $this->setOnClickJs('send_ui_action(\'' . $this->id() . ':click\')');
     }
 
-    protected function renderButton(): string
+    public function setOnClickJs(string $function): self
     {
-        $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
-        $counter = empty($this->counter) ? '' : '<span class="badge badge-light ml-1">' . $this->counter . '</span> ';
+        $this->js_function = $function;
 
-        $attributes = $this->modal_id ? 'data-toggle="modal" data-target="#' . $this->modal_id . '"' : '';
-
-        $type = empty($this->actions()) ? 'button' : 'submit';
-
-        return '<button type="' . $type . '" class="btn btn-' . $this->color . ' mr-1" id="'
-            . $this->id() . '" title="' . $this->description . '"' . $attributes . '>'
-            . $icon . $this->label . $counter
-            . '</button>';
+        return $this;
     }
 }

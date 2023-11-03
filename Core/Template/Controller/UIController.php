@@ -90,7 +90,7 @@ abstract class UIController extends Controller
 
     protected function runActions(): void
     {
-        $action_name = $this->request->get('_action_name');
+        $action_name = $this->request->get('_action');
         foreach ($this->sections() as $section) {
             foreach ($section->actions() as $action) {
                 if ($action['name'] === $action_name) {

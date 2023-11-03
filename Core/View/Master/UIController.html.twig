@@ -2,7 +2,25 @@
 
 {% block body %}
     {{ parent() }}
+
+    <form id="f_ui_action" method="post">
+        {{ formToken() }}
+        <input type="hidden" name="_action">
+    </form>
+
     {% for section in fsc.sections() %}
         {{ section.render() | raw }}
     {% endfor %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        function send_ui_action(value) {
+            var form = document.getElementById("f_ui_action");
+            form._action.value = value;
+            form.submit();
+        }
+    </script>
 {% endblock %}
