@@ -45,7 +45,7 @@ class TabForm extends SectionTab
 
         $this->icon = 'fas fa-edit';
 
-        $this->setOnSave('component:saveAction');
+        $this->onSave('component:saveAction');
 
         // añadimos algunos datos de prueba
         $this->form = [
@@ -77,6 +77,13 @@ class TabForm extends SectionTab
     public function jsRedrawFunction(): string
     {
         return '';
+    }
+
+    public function onSave(string $function, int $position = 0): self
+    {
+        $this->addAction('save', $function, $position);
+
+        return $this;
     }
 
     public function render(string $context = ''): string
@@ -117,12 +124,5 @@ class TabForm extends SectionTab
         Tools::log()->info('Función saveAction() del formulario ' . $this->id());
 
         return $this->actionResult();
-    }
-
-    public function setOnSave(string $function, int $position = 0): self
-    {
-        $this->addAction('save', $function, $position);
-
-        return $this;
     }
 }

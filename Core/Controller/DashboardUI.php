@@ -136,7 +136,7 @@ class DashboardUI extends UIController
             ->setColor('success')
             ->setLabel('Botón 1')
             ->setDescription('Descripción del botón 1')
-            ->setOnClick('function1');
+            ->onClick('function1');
 
         $this->section('top')->addButton(new Button('button2'))
             ->setIcon('fas fa-check-square')
@@ -172,7 +172,7 @@ class DashboardUI extends UIController
 
         // añadimos un tab de formulario a la sección top
         $this->section('top')->addTab(new TabForm('tab1'))
-            ->setOnSave('function2');
+            ->onSave('function2');
     }
 
     protected function function1(): void

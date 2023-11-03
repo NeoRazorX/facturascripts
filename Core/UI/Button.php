@@ -63,6 +63,20 @@ class Button extends Component
         return $this;
     }
 
+    public function onClick(string $function, int $position = 0): self
+    {
+        $this->addAction('click', $function, $position);
+
+        return $this->onClickJs('send_ui_action(\'' . $this->id() . ':click\')');
+    }
+
+    public function onClickJs(string $function): self
+    {
+        $this->js_function = $function;
+
+        return $this;
+    }
+
     public function render(string $context = ''): string
     {
         $icon = $this->icon ? '<i class="' . $this->icon . ' mr-1"></i> ' : '';
@@ -112,20 +126,6 @@ class Button extends Component
     public function setLabel(string $label, array $params = []): self
     {
         $this->label = Tools::lang()->trans($label, $params);
-
-        return $this;
-    }
-
-    public function setOnClick(string $function, int $position = 0): self
-    {
-        $this->addAction('click', $function, $position);
-
-        return $this->setOnClickJs('send_ui_action(\'' . $this->id() . ':click\')');
-    }
-
-    public function setOnClickJs(string $function): self
-    {
-        $this->js_function = $function;
 
         return $this;
     }
