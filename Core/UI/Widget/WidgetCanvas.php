@@ -34,16 +34,18 @@ class WidgetCanvas extends Widget
 
     public function render(string $context = ''): string
     {
+        $var_name = 'canvas_' . $this->id();
+
         return '<div class="form-group">' . "\n"
             . '<label for="' . $this->id() . '">' . $this->label . '</label>' . "\n"
-            . '<button type="button" class="btn btn-sm btn-light" onclick="signaturePad.clear();">'
+            . '<button type="button" class="btn btn-sm btn-light" onclick="' . $var_name . '_pad.clear();">'
             . '<i class="fa fa-eraser mr-1"></i> ' . Tools::lang()->trans('clear') . '</button>' . "\n"
             . '<canvas id="' . $this->id() . '" class="border" height="100"></canvas>' . "\n"
             . '</div>' . "\n"
             . '<script>' . "\n"
-            . 'let canvas = document.getElementById("' . $this->id() . '");' . "\n"
-            . 'canvas.width = window.innerWidth - 40;' . "\n"
-            . 'let signaturePad = new SignaturePad(canvas);' . "\n"
+            . 'let ' . $var_name . ' = document.getElementById("' . $this->id() . '");' . "\n"
+            . $var_name . '.width = window.innerWidth - 40;' . "\n"
+            . 'let ' . $var_name . '_pad = new SignaturePad(' . $var_name . ');' . "\n"
             . '</script>';
     }
 }
