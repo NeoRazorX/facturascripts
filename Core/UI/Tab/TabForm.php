@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\UI\Tab;
 
 use FacturaScripts\Core\Template\UI\SectionTab;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UI\Widget\WidgetCanvas;
 use FacturaScripts\Core\UI\Widget\WidgetCheckbox;
 use FacturaScripts\Core\UI\Widget\WidgetColor;
@@ -91,9 +92,15 @@ class TabForm extends SectionTab
         }
 
         $html .= '<div class="col-12 text-right">'
-            . '<button type="button" class="btn btn-danger float-left">Delete</button>'
-            . '<button type="reset" class="btn btn-secondary">Reset</button>'
-            . '<button type="submit" class="btn btn-primary ml-1">Save</button>'
+            . '<button type="button" class="btn btn-danger float-left">'
+            . '<i class="fas fa-trash-alt mr-1"></i> ' . Tools::lang()->trans('delete')
+            . '</button>'
+            . '<button type="reset" class="btn btn-secondary">'
+            . '<i class="fas fa-undo mr-1"></i> ' . Tools::lang()->trans('undo')
+            . '</button>'
+            . '<button type="submit" class="btn btn-primary ml-1">'
+            . '<i class="fas fa-save mr-1"></i> ' . Tools::lang()->trans('save')
+            . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'

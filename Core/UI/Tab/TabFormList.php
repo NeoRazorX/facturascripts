@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\UI\Tab;
 
 use FacturaScripts\Core\Template\UI\SectionTab;
+use FacturaScripts\Core\Tools;
 
 class TabFormList extends SectionTab
 {
@@ -99,9 +100,15 @@ class TabFormList extends SectionTab
             . '</div>'
             . '</div>'
             . '<div class="card-footer p-2 text-right">'
-            . '<button type="button" class="btn btn-sm btn-danger float-left">Delete</button>'
-            . '<button type="reset" class="btn btn-sm btn-secondary">Undo</button>'
-            . '<button type="submit" class="btn btn-sm btn-primary ml-1">Save</button>'
+            . '<button type="button" class="btn btn-sm btn-danger float-left">'
+            . '<i class="fas fa-trash-alt mr-1"></i> ' . Tools::lang()->trans('delete')
+            . '</button>'
+            . '<button type="reset" class="btn btn-sm btn-secondary">'
+            . '<i class="fas fa-undo mr-1"></i> ' . Tools::lang()->trans('undo')
+            . '</button>'
+            . '<button type="submit" class="btn btn-sm btn-primary ml-1">'
+            . '<i class="fas fa-save mr-1"></i> ' . Tools::lang()->trans('save')
+            . '</button>'
             . '</div>'
             . '</div>'
             . '</form>';
@@ -134,7 +141,9 @@ class TabFormList extends SectionTab
             . '</div>'
             . '</div>'
             . '<div class="card-footer p-2 text-right">'
-            . '<button type="submit" class="btn btn-sm btn-success">Submit</button>'
+            . '<button type="submit" class="btn btn-sm btn-success">'
+            . '<i class="fa fa-save mr-1"></i> ' . Tools::lang()->trans('new')
+            . '</button>'
             . '</div>'
             . '</div>'
             . '</form>';
