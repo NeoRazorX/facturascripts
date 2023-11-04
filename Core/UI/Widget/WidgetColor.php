@@ -33,10 +33,20 @@ class WidgetColor extends Widget
 
     public function render(string $context = ''): string
     {
-        return '<div class="form-group">'
-            . '<label for="' . $this->id() . '">' . $this->label . '</label>'
-            . '<input type="text" name="' . $this->field . '" value="' . $this->value . '" id="'
-            . $this->id() . '" class="form-control" data-jscolor=""/>'
-            . '</div>';
+        switch ($context) {
+            default:
+                return '<div class="form-group">'
+                    . '<label for="' . $this->id() . '">' . $this->label . '</label>'
+                    . '<input type="text" name="' . $this->field . '" value="' . $this->value . '" id="'
+                    . $this->id() . '" class="form-control" data-jscolor=""/>'
+                    . '</div>';
+
+            case 'td':
+                return '<td class="text-' . $this->align . '"><div style="width: 20px; height: 20px; background-color: '
+                    . $this->value . ';"></div></td>';
+
+            case 'th':
+                return '<th class="text-' . $this->align . '">' . $this->label . '</th>';
+        }
     }
 }

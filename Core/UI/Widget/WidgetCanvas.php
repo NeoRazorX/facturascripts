@@ -34,8 +34,21 @@ class WidgetCanvas extends Widget
 
     public function render(string $context = ''): string
     {
-        $var_name = 'canvas_' . $this->id();
+        switch ($context) {
+            default:
+                return $this->renderInput();
 
+            case 'td':
+                return '<td></td>';
+
+            case 'th':
+                return '<th class="text-' . $this->align . '">' . $this->label . '</th>';
+        }
+    }
+
+    protected function renderInput(): string
+    {
+        $var_name = 'canvas_' . $this->id();
         return '<div class="form-group">' . "\n"
             . '<label for="' . $this->id() . '">' . $this->label . '</label>' . "\n"
             . '<button type="button" class="btn btn-sm btn-light" onclick="' . $var_name . '_pad.clear();">'

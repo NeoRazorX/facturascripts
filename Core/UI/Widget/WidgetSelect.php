@@ -57,12 +57,21 @@ class WidgetSelect extends Widget
 
     public function render(string $context = ''): string
     {
-        return '<div class="form-group">'
-            . '<label for="' . $this->id() . '">' . $this->label . '</label><br/>'
-            . '<select class="form-control ui-widget-select" id="' . $this->id() . '" name="' . $this->field . '">'
-            . $this->renderOptions()
-            . '</select>'
-            . '</div>';
+        switch ($context) {
+            default:
+                return '<div class="form-group">'
+                    . '<label for="' . $this->id() . '">' . $this->label . '</label><br/>'
+                    . '<select class="form-control ui-widget-select" id="' . $this->id() . '" name="' . $this->field . '">'
+                    . $this->renderOptions()
+                    . '</select>'
+                    . '</div>';
+
+            case 'td':
+                return '<td class="text-' . $this->align . '">' . $this->value . '</td>';
+
+            case 'th':
+                return '<th class="text-' . $this->align . '">' . $this->label . '</th>';
+        }
     }
 
     protected function renderOptions(): string

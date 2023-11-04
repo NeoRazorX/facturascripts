@@ -44,13 +44,22 @@ class WidgetFilemanager extends Widget
 
     public function render(string $context = ''): string
     {
-        return '<div class="form-group">'
-            . '<label for="' . $this->id() . '">' . $this->label . '</label>'
-            . '<button type="button" id="' . $this->id() . '" class="btn btn-secondary btn-block"'
-            . ' data-toggle="modal" data-target="#modal_' . $this->id() . '">'
-            . '<i class="fas fa-folder-open mr-1"></i> ' . $this->label . '</button>'
-            . '</div>'
-            . $this->renderModal();
+        switch ($context) {
+            default:
+                return '<div class="form-group">'
+                    . '<label for="' . $this->id() . '">' . $this->label . '</label>'
+                    . '<button type="button" id="' . $this->id() . '" class="btn btn-secondary btn-block"'
+                    . ' data-toggle="modal" data-target="#modal_' . $this->id() . '">'
+                    . '<i class="fas fa-folder-open mr-1"></i> ' . $this->label . '</button>'
+                    . '</div>'
+                    . $this->renderModal();
+
+            case 'td':
+                return '<td class="text-' . $this->align . '">' . $this->value . '</td>';
+
+            case 'th':
+                return '<th class="text-' . $this->align . '">' . $this->label . '</th>';
+        }
     }
 
     protected function renderFileList(): string
