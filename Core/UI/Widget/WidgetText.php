@@ -25,14 +25,19 @@ class WidgetText extends Widget
 {
     public function render(string $context = ''): string
     {
-        if ('td' === $context) {
-            return '<td>' . $this->value . '</td>';
-        }
+        switch ($context) {
+            default:
+                return '<div class="form-group">'
+                    . '<label for="' . $this->id() . '">' . $this->label . '</label>'
+                    . '<input type="text" name="' . $this->field . '" value="' . $this->value . '" id="'
+                    . $this->id() . '" class="form-control" />'
+                    . '</div>';
 
-        return '<div class="form-group">'
-            . '<label for="' . $this->id() . '">' . $this->label . '</label>'
-            . '<input type="text" name="' . $this->field . '" value="' . $this->value . '" id="'
-            . $this->id() . '" class="form-control" />'
-            . '</div>';
+            case 'td':
+                return '<td class="text-' . $this->align . '">' . $this->value . '</td>';
+
+            case 'th':
+                return '<th class="text-' . $this->align . '">' . $this->label . '</th>';
+        }
     }
 }

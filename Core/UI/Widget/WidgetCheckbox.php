@@ -20,15 +20,31 @@
 namespace FacturaScripts\Core\UI\Widget;
 
 use FacturaScripts\Core\Template\UI\Widget;
+use FacturaScripts\Core\Tools;
 
 class WidgetCheckbox extends Widget
 {
     public function render(string $context = ''): string
     {
-        return '<div class="form-check mb-3">'
-            . '<input class="form-check-input" type="checkbox" name="' . $this->field . '" value="' . $this->value
-            . '" id="' . $this->id() . '">'
-            . '<label class="form-check-label" for="' . $this->id() . '">' . $this->label . '</label>'
-            . '</div>';
+        switch ($context) {
+            default:
+                return '<div class="form-check mb-3">'
+                    . '<input class="form-check-input" type="checkbox" name="' . $this->field . '" value="' . $this->value
+                    . '" id="' . $this->id() . '">'
+                    . '<label class="form-check-label" for="' . $this->id() . '">' . $this->label . '</label>'
+                    . '</div>';
+
+            case 'td':
+                if ($this->value) {
+                    return '<td class="text-success text-' . $this->align . '">'
+                        . Tools::lang()->trans('yes') . '</td>';
+                }
+                return is_null($this->value) ?
+                    '<td class="text-warning text-' . $this->align . '">-</td>' :
+                    '<td class="text-danger text-' . $this->align . '">' . Tools::lang()->trans('no') . '</td>';
+
+            case 'th':
+                return '<th class="text-' . $this->align . '">' . $this->label . '</th>';
+        }
     }
 }

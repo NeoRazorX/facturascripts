@@ -24,6 +24,9 @@ use FacturaScripts\Core\Tools;
 
 abstract class Widget extends Component
 {
+    /** @var string */
+    protected $align = 'left';
+
     /** @var int */
     protected $cols = 0;
 
@@ -62,6 +65,13 @@ abstract class Widget extends Component
     public static function make(string $name, ?string $field = null, ?string $label = null)
     {
         return new static($name, $field, $label);
+    }
+
+    public function setAlign(string $align): self
+    {
+        $this->align = $align;
+
+        return $this;
     }
 
     public function setCols(int $cols): self

@@ -25,10 +25,15 @@ class WidgetMoney extends WidgetNumber
 {
     public function render(string $context = ''): string
     {
-        if ('td' === $context) {
-            return '<td>' . Tools::money($this->value) . '</td>';
-        }
+        switch ($context) {
+            default:
+                return parent::render($context);
 
-        return parent::render($context);
+            case 'td':
+                return '<td class="text-' . $this->align . '">' . Tools::money($this->value) . '</td>';
+
+            case 'th':
+                return '<th class="text-' . $this->align . '">' . $this->label . '</th>';
+        }
     }
 }

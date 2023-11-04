@@ -77,7 +77,7 @@ class TabTable extends SectionTab
             . '<tr>';
 
         foreach ($this->widgets as $widget) {
-            $html .= '<th>' . $widget->label() . '</th>';
+            $html .= $widget->render('th');
         }
 
         $html .= '</tr>'

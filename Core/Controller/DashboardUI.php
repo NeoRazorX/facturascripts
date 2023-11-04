@@ -20,7 +20,11 @@ use FacturaScripts\Core\UI\Tab\TabGantt;
 use FacturaScripts\Core\UI\Tab\TabKanban;
 use FacturaScripts\Core\UI\Tab\TabMap;
 use FacturaScripts\Core\UI\Tab\TabTable;
+use FacturaScripts\Core\UI\Widget\WidgetCheckbox;
+use FacturaScripts\Core\UI\Widget\WidgetDate;
+use FacturaScripts\Core\UI\Widget\WidgetDatetime;
 use FacturaScripts\Core\UI\Widget\WidgetMoney;
+use FacturaScripts\Core\UI\Widget\WidgetNumber;
 use FacturaScripts\Core\UI\Widget\WidgetText;
 use FacturaScripts\Core\UI\Widget\WidgetTextarea;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -107,7 +111,10 @@ class DashboardUI extends UIController
             ->setModel(new Producto())
             ->addWidget(WidgetText::make('reference', 'referencia'))
             ->addWidget(WidgetText::make('description', 'descripcion'))
-            ->addWidget(WidgetMoney::make('price', 'precio'));
+            ->addWidget(WidgetMoney::make('price', 'precio')->setAlign('right'))
+            ->addWidget(WidgetNumber::make('stock', 'stockfis')->setAlign('right'))
+            ->addWidget(WidgetCheckbox::make('locked', 'bloqueado')->setAlign('center'))
+            ->addWidget(WidgetDatetime::make('update', 'actualizado')->setAlign('right'));
 
         $this->section('main')->addTab(new TabTable('tab2'))
             ->setLabel('Listado 2')
