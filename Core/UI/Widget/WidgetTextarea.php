@@ -32,6 +32,10 @@ class WidgetTextarea extends Widget
 
     public function render(string $context = ''): string
     {
+        if ('td' === $context) {
+            return '<td>' . $this->value . '</td>';
+        }
+
         return '<div class="form-group">'
             . '<label for="' . $this->id() . '">' . $this->label . '</label>'
             . '<textarea name="' . $this->field . '" class="form-control" id="' . $this->id() . '" placeholder="'

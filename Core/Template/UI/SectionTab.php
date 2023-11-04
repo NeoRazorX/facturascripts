@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Template\UI;
 
 use FacturaScripts\Core\Tools;
+use Symfony\Component\HttpFoundation\Request;
 
 abstract class SectionTab extends Component
 {
@@ -35,6 +36,8 @@ abstract class SectionTab extends Component
     abstract public function jsInitFunction(): string;
 
     abstract public function jsRedrawFunction(): string;
+
+    abstract public function load(Request $request): bool;
 
     public function setIcon(string $icon): self
     {

@@ -19,31 +19,34 @@
 
 namespace FacturaScripts\Core\UI\Tab;
 
+use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Template\UI\SectionTab;
+use FacturaScripts\Core\Template\UI\Widget;
+use Symfony\Component\HttpFoundation\Request;
 
-class TabList extends SectionTab
+class TabTable extends SectionTab
 {
     /** @var array */
     public $data = [];
+
+    /** @var ModelClass */
+    protected $model;
+
+    /** @var Widget[] */
+    public $widgets = [];
 
     public function __construct(string $name)
     {
         parent::__construct($name);
 
         $this->icon = 'fas fa-list';
+    }
 
-        // creamos algunos datos de ejemplo
-        $columns = range(1, rand(3, 9));
-        for ($i = 0; $i < rand(9, 49); $i++) {
-            $row = [];
-            for ($j = 0; $j < count($columns); $j++) {
-                $row[] = 'Valor ' . rand(1, 100);
-            }
+    public function addWidget(Widget $widget): self
+    {
+        $this->widgets[] = $widget;
 
-            $this->data[] = $row;
-
-            $this->counter++;
-        }
+        return $this;
     }
 
     public function jsInitFunction(): string
@@ -56,6 +59,16 @@ class TabList extends SectionTab
         return '';
     }
 
+    public function load(Request $request): bool
+    {
+        if ($this->model) {
+            $this->counter = $this->model->count();
+            $this->data = $this->model->all();
+        }
+
+        return true;
+    }
+
     public function render(string $context = ''): string
     {
         $html = '<div class="table-responsive">'
@@ -63,8 +76,8 @@ class TabList extends SectionTab
             . '<thead>'
             . '<tr>';
 
-        foreach (array_keys($this->data[0]) as $column) {
-            $html .= '<th>Columna ' . $column . '</th>';
+        foreach ($this->widgets as $widget) {
+            $html .= '<th>' . $widget->label() . '</th>';
         }
 
         $html .= '</tr>'
@@ -73,9 +86,21 @@ class TabList extends SectionTab
 
         foreach ($this->data as $row) {
             $html .= '<tr>';
-            foreach ($row as $value) {
-                $html .= '<td>' . $value . '</td>';
+
+            foreach ($this->widgets as $widget) {
+                if ($row instanceof ModelClass) {
+                    $html .= $widget->setValueFromModel($row)->render('td');
+                    continue;
+                }
+
+                if (is_array($row)) {
+                    $html .= $widget->setValueFromArray($row)->render('td');
+                    continue;
+                }
+
+                $html .= '<td>' . $row . '</td>';
             }
+
             $html .= '</tr>';
         }
 
@@ -84,5 +109,12 @@ class TabList extends SectionTab
             . '</div>';
 
         return $html;
+    }
+
+    public function setModel(ModelClass $model): self
+    {
+        $this->model = $model;
+
+        return $this;
     }
 }

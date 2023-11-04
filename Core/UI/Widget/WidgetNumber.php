@@ -20,11 +20,16 @@
 namespace FacturaScripts\Core\UI\Widget;
 
 use FacturaScripts\Core\Template\UI\Widget;
+use FacturaScripts\Core\Tools;
 
 class WidgetNumber extends Widget
 {
     public function render(string $context = ''): string
     {
+        if ('td' === $context) {
+            return '<td>' . Tools::number($this->value) . '</td>';
+        }
+
         return '<div class="form-group">'
             . '<label for="' . $this->id() . '">' . $this->label . '</label>'
             . '<input type="number" name="' . $this->field . '" value="' . $this->value . '" id="'

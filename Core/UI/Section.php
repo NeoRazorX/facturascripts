@@ -23,6 +23,7 @@ use Exception;
 use FacturaScripts\Core\Template\UI\Component;
 use FacturaScripts\Core\Template\UI\SectionTab;
 use FacturaScripts\Core\Tools;
+use Symfony\Component\HttpFoundation\Request;
 
 class Section extends Component
 {
@@ -49,34 +50,6 @@ class Section extends Component
 
     /** @var string */
     protected $title = '';
-
-    public function actions(): array
-    {
-        $actions = [];
-
-        foreach ($this->buttons as $button) {
-            $actions = array_merge($actions, $button->actions());
-        }
-
-        foreach ($this->info_boxes as $box) {
-            $actions = array_merge($actions, $box->actions());
-        }
-
-        foreach ($this->modals as $modal) {
-            $actions = array_merge($actions, $modal->actions());
-        }
-
-        foreach ($this->tabs as $tab) {
-            $actions = array_merge($actions, $tab->actions());
-        }
-
-        // ordenamos por posición, de menor a mayor
-        usort($actions, function (array $a, array $b) {
-            return $a['position'] <=> $b['position'];
-        });
-
-        return $actions;
-    }
 
     public function addButton(Button $button): Button
     {
@@ -209,6 +182,35 @@ class Section extends Component
         return $this->description;
     }
 
+    /** @return Event[] */
+    public function events(): array
+    {
+        $events = [];
+
+        foreach ($this->buttons as $button) {
+            $events = array_merge($events, $button->events());
+        }
+
+        foreach ($this->info_boxes as $box) {
+            $events = array_merge($events, $box->events());
+        }
+
+        foreach ($this->modals as $modal) {
+            $events = array_merge($events, $modal->events());
+        }
+
+        foreach ($this->tabs as $tab) {
+            $events = array_merge($events, $tab->events());
+        }
+
+        // ordenamos por posición, de menor a mayor
+        usort($events, function (Event $a, Event $b) {
+            return $a->position() <=> $b->position();
+        });
+
+        return $events;
+    }
+
     public function icon(): string
     {
         return $this->icon;
@@ -230,6 +232,17 @@ class Section extends Component
         $this->sortElements($this->info_boxes);
 
         return $this->info_boxes;
+    }
+
+    public function load(Request $request): bool
+    {
+        foreach ($this->tabs as $tab) {
+            if (false === $tab->load($request)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function modal(string $name): ?Modal

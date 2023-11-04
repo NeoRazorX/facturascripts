@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\UI\Tab;
 
 use FacturaScripts\Core\Template\UI\SectionTab;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use Symfony\Component\HttpFoundation\Request;
 
 class TabCalendar extends SectionTab
 {
@@ -59,6 +60,11 @@ class TabCalendar extends SectionTab
     public function jsRedrawFunction(): string
     {
         return 'cal_' . $this->id() . '.render();';
+    }
+
+    public function load(Request $request): bool
+    {
+        return true;
     }
 
     public function render(string $context = ''): string

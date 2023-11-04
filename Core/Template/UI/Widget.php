@@ -19,10 +19,14 @@
 
 namespace FacturaScripts\Core\Template\UI;
 
+use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Tools;
 
 abstract class Widget extends Component
 {
+    /** @var int */
+    protected $cols = 0;
+
     /** @var string */
     protected $field = '';
 
@@ -40,6 +44,11 @@ abstract class Widget extends Component
         $this->setLabel($label ?? $name);
     }
 
+    public function cols(): int
+    {
+        return $this->cols;
+    }
+
     public function field(): string
     {
         return $this->field;
@@ -48,6 +57,18 @@ abstract class Widget extends Component
     public function label(): string
     {
         return $this->label;
+    }
+
+    public static function make(string $name, ?string $field = null, ?string $label = null)
+    {
+        return new static($name, $field, $label);
+    }
+
+    public function setCols(int $cols): self
+    {
+        $this->cols = $cols;
+
+        return $this;
     }
 
     public function setField(string $field): self
@@ -69,6 +90,24 @@ abstract class Widget extends Component
         $this->value = $value;
 
         return $this;
+    }
+
+    public function setValueFromArray(array $data): self
+    {
+        if (array_key_exists($this->field, $data)) {
+            $this->setValue($data[$this->field]);
+        }
+
+        return $this->setValue(null);
+    }
+
+    public function setValueFromModel(ModelClass $model): self
+    {
+        if (property_exists($model, $this->field)) {
+            return $this->setValue($model->{$this->field});
+        }
+
+        return $this->setValue(null);
     }
 
     public function value()

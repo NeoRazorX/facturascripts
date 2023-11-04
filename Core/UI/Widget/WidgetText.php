@@ -25,6 +25,10 @@ class WidgetText extends Widget
 {
     public function render(string $context = ''): string
     {
+        if ('td' === $context) {
+            return '<td>' . $this->value . '</td>';
+        }
+
         return '<div class="form-group">'
             . '<label for="' . $this->id() . '">' . $this->label . '</label>'
             . '<input type="text" name="' . $this->field . '" value="' . $this->value . '" id="'

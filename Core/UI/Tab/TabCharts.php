@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\UI\Tab;
 
 use FacturaScripts\Core\Template\UI\SectionTab;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use Symfony\Component\HttpFoundation\Request;
 
 class TabCharts extends SectionTab
 {
@@ -53,6 +54,11 @@ class TabCharts extends SectionTab
     public function jsRedrawFunction(): string
     {
         return '';
+    }
+
+    public function load(Request $request): bool
+    {
+        return true;
     }
 
     public function render(string $context = ''): string

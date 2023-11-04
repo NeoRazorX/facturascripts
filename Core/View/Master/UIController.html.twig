@@ -3,9 +3,9 @@
 {% block body %}
     {{ parent() }}
 
-    <form id="f_ui_action" method="post">
+    <form id="f_ui_event" method="post">
         {{ formToken() }}
-        <input type="hidden" name="_action">
+        <input type="hidden" name="_event">
     </form>
 
     {% for section in fsc.sections() %}
@@ -17,9 +17,9 @@
     {{ parent() }}
 
     <script>
-        function send_ui_action(value) {
-            var form = document.getElementById("f_ui_action");
-            form._action.value = value;
+        function send_ui_event(value) {
+            let form = document.getElementById("f_ui_event");
+            form._event.value = value;
             form.submit();
         }
     </script>

@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\UI\Tab;
 
 use FacturaScripts\Core\Template\UI\SectionTab;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use Symfony\Component\HttpFoundation\Request;
 
 class TabMap extends SectionTab
 {
@@ -57,6 +58,11 @@ class TabMap extends SectionTab
     public function jsRedrawFunction(): string
     {
         return 'map_' . $this->id() . '.map.resize();';
+    }
+
+    public function load(Request $request): bool
+    {
+        return true;
     }
 
     public function render(string $context = ''): string

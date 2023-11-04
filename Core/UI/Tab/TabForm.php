@@ -19,25 +19,20 @@
 
 namespace FacturaScripts\Core\UI\Tab;
 
+use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Template\UI\SectionTab;
+use FacturaScripts\Core\Template\UI\Widget;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UI\ActionResult;
-use FacturaScripts\Core\UI\Widget\WidgetCanvas;
-use FacturaScripts\Core\UI\Widget\WidgetCheckbox;
-use FacturaScripts\Core\UI\Widget\WidgetColor;
-use FacturaScripts\Core\UI\Widget\WidgetDate;
-use FacturaScripts\Core\UI\Widget\WidgetDatetime;
-use FacturaScripts\Core\UI\Widget\WidgetFilemanager;
-use FacturaScripts\Core\UI\Widget\WidgetNumber;
-use FacturaScripts\Core\UI\Widget\WidgetSelect;
-use FacturaScripts\Core\UI\Widget\WidgetText;
-use FacturaScripts\Core\UI\Widget\WidgetTextarea;
-use FacturaScripts\Core\UI\Widget\WidgetTime;
+use Symfony\Component\HttpFoundation\Request;
 
 class TabForm extends SectionTab
 {
-    /** @var array */
-    protected $form;
+    /** @var ModelClass */
+    protected $model;
+
+    /** @var Widget[] */
+    protected $widgets = [];
 
     public function __construct(string $name)
     {
@@ -46,27 +41,13 @@ class TabForm extends SectionTab
         $this->icon = 'fas fa-edit';
 
         $this->onSave('component:saveAction');
+    }
 
-        // añadimos algunos datos de prueba
-        $this->form = [
-            ['widget' => new WidgetText('name'), 'cols' => 4],
-            ['widget' => new WidgetText('surname')],
-            ['widget' => new WidgetDate('date'), 'cols' => 2],
-            ['widget' => new WidgetNumber('age'), 'cols' => 2],
-            ['widget' => new WidgetTextarea('observations'), 'cols' => 12],
-            ['widget' => new WidgetCheckbox('active'), 'cols' => 12],
-            ['widget' => new WidgetSelect('type')],
-            ['widget' => new WidgetFilemanager('file')],
-            ['widget' => new WidgetColor('color'), 'cols' => 2],
-            ['widget' => new WidgetTime('time'), 'cols' => 2],
-            ['widget' => new WidgetDatetime('datetime')],
-            ['widget' => new WidgetCanvas('canvas'), 'cols' => 12]
-        ];
+    public function addWidget(Widget $widget): self
+    {
+        $this->widgets[] = $widget;
 
-        // para cada widget le añadimos el parent
-        foreach ($this->form as $item) {
-            $item['widget']->setParent($this);
-        }
+        return $this;
     }
 
     public function jsInitFunction(): string
@@ -79,26 +60,32 @@ class TabForm extends SectionTab
         return '';
     }
 
+    public function load(Request $request): bool
+    {
+        return true;
+    }
+
     public function onSave(string $function, int $position = 0): self
     {
-        $this->addAction('save', $function, $position);
+        $this->addEvent('save', $function, $position);
 
         return $this;
     }
 
     public function render(string $context = ''): string
     {
-        $action = $this->id() . ':save';
+        $events = $this->events();
+        $eventName = empty($events) ? '' : $events[0]->name();
 
         $html = '<form id="' . $this->id() . '" method="post">'
-            . '<input type="hidden" name="_action" value="' . $action . '">'
+            . '<input type="hidden" name="_event" value="' . $eventName . '">'
             . '<div class="container-fluid mt-4 mb-4">'
             . '<div class="form-row">';
 
-        foreach ($this->form as $item) {
-            $html .= empty($item['cols']) ?
-                '<div class="col-sm">' . $item['widget']->render() . '</div>' :
-                '<div class="col-sm-' . $item['cols'] . '">' . $item['widget']->render() . '</div>';
+        foreach ($this->widgets as $widget) {
+            $html .= empty($widget->cols()) ?
+                '<div class="col-sm">' . $widget->render() . '</div>' :
+                '<div class="col-sm-' . $widget->cols() . '">' . $widget->render() . '</div>';
         }
 
         $html .= '<div class="col-12 text-right">'
@@ -124,5 +111,12 @@ class TabForm extends SectionTab
         Tools::log()->info('Función saveAction() del formulario ' . $this->id());
 
         return $this->actionResult();
+    }
+
+    public function setModel(ModelClass $model): self
+    {
+        $this->model = $model;
+
+        return $this;
     }
 }

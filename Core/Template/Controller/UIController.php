@@ -23,6 +23,7 @@ use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Template\UI\Component;
 use FacturaScripts\Core\UI\ActionResult;
+use FacturaScripts\Core\UI\Event;
 use FacturaScripts\Core\UI\Section;
 
 abstract class UIController extends Controller
@@ -61,7 +62,9 @@ abstract class UIController extends Controller
 
         $this->addComponents();
 
-        $this->runActions();
+        $this->runEventActions();
+
+        $this->loadData();
     }
 
     public function section(string $name): Section
@@ -104,6 +107,15 @@ abstract class UIController extends Controller
         return $section;
     }
 
+    protected function loadData(): void
+    {
+        foreach ($this->sections as $section) {
+            if (false === $section->load($this->request)) {
+                return;
+            }
+        }
+    }
+
     protected function removeSection(string $name): bool
     {
         foreach ($this->sections as $key => $section) {
@@ -117,17 +129,34 @@ abstract class UIController extends Controller
         return false;
     }
 
-    protected function runActions(): void
+    private function runActionFunction(Event $event): ActionResult
     {
-        $action_name = $this->request->get('_action');
+        if ($event->isFunctionOfComponent()) {
+            $component = $this->component($event->component_id);
+            $functionName = $event->functionName();
+            return $component->{$functionName}();
+        }
+
+        // ejecutamos la función del controlador
+        $functionName = $event->functionName();
+        $return = $this->{$functionName}();
+        return $return instanceof ActionResult ? $return : new ActionResult();
+    }
+
+    protected function runEventActions(): void
+    {
+        $eventName = $this->request->get('_event');
+        if (empty($eventName)) {
+            return;
+        }
+
         foreach ($this->sections() as $section) {
-            foreach ($section->actions() as $action) {
-                $name = $action['component_id'] . ':' . $action['type'];
-                if ($name != $action_name) {
+            foreach ($section->events() as $event) {
+                if ($event->name() != $eventName) {
                     continue;
                 }
 
-                $result = $this->runFunction($action);
+                $result = $this->runActionFunction($event);
 
                 if ($result->exit) {
                     $this->setTemplate(false);
@@ -137,21 +166,6 @@ abstract class UIController extends Controller
                 }
             }
         }
-    }
-
-    private function runFunction(array $action): ActionResult
-    {
-        // si comienza por component: buscamos el componente y ejecutamos su función
-        if (substr($action['function'], 0, 10) === 'component:') {
-            $component = $this->component($action['component_id']);
-            $function = substr($action['function'], 10);
-            return $component->{$function}();
-        }
-
-        // ejecutamos la función del controlador
-        $function = $action['function'];
-        $return = $this->{$function}();
-        return $return instanceof ActionResult ? $return : new ActionResult();
     }
 
     private function sortSections(): void

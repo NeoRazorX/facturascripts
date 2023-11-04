@@ -18,8 +18,13 @@ use FacturaScripts\Core\UI\Tab\TabForm;
 use FacturaScripts\Core\UI\Tab\TabFormList;
 use FacturaScripts\Core\UI\Tab\TabGantt;
 use FacturaScripts\Core\UI\Tab\TabKanban;
-use FacturaScripts\Core\UI\Tab\TabList;
 use FacturaScripts\Core\UI\Tab\TabMap;
+use FacturaScripts\Core\UI\Tab\TabTable;
+use FacturaScripts\Core\UI\Widget\WidgetMoney;
+use FacturaScripts\Core\UI\Widget\WidgetText;
+use FacturaScripts\Core\UI\Widget\WidgetTextarea;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Producto;
 
 class DashboardUI extends UIController
 {
@@ -97,10 +102,20 @@ class DashboardUI extends UIController
         );
 
         // añadimos 2 pestañas de listado a la sección main
-        $this->section('main')->addTab(new TabList('tab1'))
-            ->setLabel('Listado 1');
-        $this->section('main')->addTab(new TabList('tab2'))
-            ->setLabel('Listado 2');
+        $this->section('main')->addTab(new TabTable('tab1'))
+            ->setLabel('Listado 1')
+            ->setModel(new Producto())
+            ->addWidget(WidgetText::make('reference', 'referencia'))
+            ->addWidget(WidgetText::make('description', 'descripcion'))
+            ->addWidget(WidgetMoney::make('price', 'precio'));
+
+        $this->section('main')->addTab(new TabTable('tab2'))
+            ->setLabel('Listado 2')
+            ->setModel(new Cliente())
+            ->addWidget(WidgetText::make('name', 'nombre'))
+            ->addWidget(WidgetText::make('cifnif', 'cifnif', 'fiscal-number'))
+            ->addWidget(WidgetText::make('phone', 'telefono'))
+            ->addWidget(WidgetText::make('email'));
 
         // añadimos un tab de listado de formularios, y lo ponemos en posición 1
         $this->section('main')->addTab(new TabFormList('tab4'))
@@ -172,6 +187,12 @@ class DashboardUI extends UIController
 
         // añadimos un tab de formulario a la sección top
         $this->section('top')->addTab(new TabForm('tab1'))
+            ->setModel(new Cliente())
+            ->addWidget(WidgetText::make('name', 'nombre')->setCols(3))
+            ->addWidget(WidgetText::make('cifnif', 'cifnif', 'fiscal-number')->setCols(3))
+            ->addWidget(WidgetText::make('phone', 'telefono')->setCols(3))
+            ->addWidget(WidgetText::make('email')->setCols(3))
+            ->addWidget(WidgetTextarea::make('observations', 'observaciones'))
             ->onSave('function2');
     }
 

@@ -23,6 +23,7 @@ use FacturaScripts\Core\Template\UI\SectionTab;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UI\Widget\WidgetFilemanager;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use Symfony\Component\HttpFoundation\Request;
 
 class TabFiles extends SectionTab
 {
@@ -56,6 +57,11 @@ class TabFiles extends SectionTab
     public function jsRedrawFunction(): string
     {
         return '';
+    }
+
+    public function load(Request $request): bool
+    {
+        return true;
     }
 
     public function render(string $context = ''): string

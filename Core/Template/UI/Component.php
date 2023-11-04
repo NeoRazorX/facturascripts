@@ -21,12 +21,13 @@ namespace FacturaScripts\Core\Template\UI;
 
 use Exception;
 use FacturaScripts\Core\UI\ActionResult;
+use FacturaScripts\Core\UI\Event;
 use FacturaScripts\Core\Validator;
 
 abstract class Component
 {
-    /** @var array */
-    private $actions = [];
+    /** @var Event[] */
+    private $events = [];
 
     /** @var string */
     private $name;
@@ -44,14 +45,15 @@ abstract class Component
         $this->setName($name);
     }
 
-    public function actions(): array
+    /** @return Event[] */
+    public function events(): array
     {
-        // actualizamos el id del componente, por si ha cambiado
-        foreach ($this->actions as &$action) {
-            $action['component_id'] = $this->id();
+        // actualizamos el ID del componente, por si ha cambiado
+        foreach ($this->events as $event) {
+            $event->component_id = $this->id();
         }
 
-        return $this->actions;
+        return $this->events;
     }
 
     public function id(): string
@@ -106,13 +108,12 @@ abstract class Component
         return new ActionResult();
     }
 
-    protected function addAction(string $type, string $function, int $position = 0): void
+    protected function addEvent(string $type, string $function, int $position = 0): Event
     {
-        $this->actions[] = [
-            'function' => $function,
-            'component_id' => $this->id(),
-            'position' => $position,
-            'type' => $type,
-        ];
+        $event = new Event($this->id(), $type, $function, $position);
+
+        $this->events[] = $event;
+
+        return $event;
     }
 }

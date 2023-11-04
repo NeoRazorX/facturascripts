@@ -19,6 +19,16 @@
 
 namespace FacturaScripts\Core\UI\Widget;
 
+use FacturaScripts\Core\Tools;
+
 class WidgetMoney extends WidgetNumber
 {
+    public function render(string $context = ''): string
+    {
+        if ('td' === $context) {
+            return '<td>' . Tools::money($this->value) . '</td>';
+        }
+
+        return parent::render($context);
+    }
 }

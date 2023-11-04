@@ -65,9 +65,9 @@ class Button extends Component
 
     public function onClick(string $function, int $position = 0): self
     {
-        $this->addAction('click', $function, $position);
+        $event = $this->addEvent('click', $function, $position);
 
-        return $this->onClickJs('send_ui_action(\'' . $this->id() . ':click\')');
+        return $this->onClickJs('send_ui_event(\'' . $event->name() . '\')');
     }
 
     public function onClickJs(string $function): self
