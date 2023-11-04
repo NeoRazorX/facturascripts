@@ -21,10 +21,14 @@ namespace FacturaScripts\Core\UI\Widget;
 
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Template\UI\Widget;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
 class WidgetSelect extends Widget
 {
+    /** @var Widget[] */
+    public $creation_form = [];
+
     /** @var array */
     public $options = [];
 
@@ -38,6 +42,18 @@ class WidgetSelect extends Widget
         AssetManager::add('js', 'Dinamic/Assets/js/UIWidgetSelect.js');
     }
 
+    public function createOptionForm(array $widgets): self
+    {
+        $this->creation_form = $widgets;
+
+        // para cada widget añadimos el padre
+        foreach ($this->creation_form as $widget) {
+            $widget->setParent($this);
+        }
+
+        return $this;
+    }
+
     public function option($key)
     {
         return $this->options[$key] ?? '';
@@ -47,12 +63,7 @@ class WidgetSelect extends Widget
     {
         switch ($context) {
             default:
-                return '<div class="form-group">'
-                    . '<label for="' . $this->id() . '">' . $this->label . '</label><br/>'
-                    . '<select class="form-control ui-widget-select" id="' . $this->id() . '" name="' . $this->field . '">'
-                    . $this->renderOptions()
-                    . '</select>'
-                    . '</div>';
+                return $this->renderInput();
 
             case 'td':
                 return '<td class="text-' . $this->align . '">' . $this->option($this->value) . '</td>';
@@ -79,6 +90,64 @@ class WidgetSelect extends Widget
         $this->setOptions($options);
 
         return $this;
+    }
+
+    protected function renderCreationButton(): string
+    {
+        if (empty($this->creation_form)) {
+            return '';
+        }
+
+        return '<a href="#" class="text-success ml-2" data-toggle="modal" data-target="#' . $this->id() . '_creation">'
+            . '<i class="fas fa-plus-square"></i>'
+            . '</a>'
+            . $this->renderCreationModal();
+    }
+
+    protected function renderCreationModal(): string
+    {
+        $html = '<div class="modal fade" id="' . $this->id() . '_creation" tabindex="-1" aria-labelledby="'
+            . $this->id() . '_creation_label" aria-hidden="true">'
+            . '<div class="modal-dialog">'
+            . '<div class="modal-content">'
+            . '<div class="modal-header">'
+            . '<h5 class="modal-title" id="' . $this->id() . '_label">'
+            . '<i class="fas fa-plus-square mr-1"></i> ' . $this->label
+            . '</h5>'
+            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+            . '<span aria-hidden="true">&times;</span>'
+            . '</button>'
+            . '</div>'
+            . '<div class="modal-body">';
+
+        foreach ($this->creation_form as $widget) {
+            $html .= $widget->render();
+        }
+
+        $html .= '</div>'
+            . '<div class="modal-footer">'
+            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
+            . Tools::lang()->trans('close')
+            . '</button>'
+            . '<button type="button" class="btn btn-success">'
+            . Tools::lang()->trans('new')
+            . '</button>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>';
+
+        return $html;
+    }
+
+    protected function renderInput(): string
+    {
+        return '<div class="form-group">'
+            . '<label for="' . $this->id() . '">' . $this->label . $this->renderCreationButton() . '</label><br/>'
+            . '<select class="form-control ui-widget-select" id="' . $this->id() . '" name="' . $this->field . '">'
+            . $this->renderOptions()
+            . '</select>'
+            . '</div>';
     }
 
     protected function renderOptions(): string

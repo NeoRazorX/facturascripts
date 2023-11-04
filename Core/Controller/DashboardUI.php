@@ -208,6 +208,9 @@ class DashboardUI extends UIController
                 WidgetSelect::make('group', 'codgrupo')
                     ->setCols(3)
                     ->setOptionsFromModel(new GrupoClientes())
+                    ->createOptionForm([
+                        WidgetText::make('name', 'nombre')
+                    ])
             )
             ->addWidget(WidgetTextarea::make('observations', 'observaciones'))
             ->onSave('function2');
