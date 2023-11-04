@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\UI\Widget;
 
+use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Template\UI\Widget;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
@@ -35,24 +36,11 @@ class WidgetSelect extends Widget
         AssetManager::add('css', 'https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css');
         AssetManager::add('js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js');
         AssetManager::add('js', 'Dinamic/Assets/js/UIWidgetSelect.js');
+    }
 
-        // añadimos datos de prueba
-        foreach (range(1, rand(4, 10)) as $i) {
-            if (rand(0, 3)) {
-                $this->options[$i] = 'Opción ' . $i;
-                continue;
-            }
-
-            // añadimos un grupo
-            $this->options[$i] = [
-                'label' => 'Grupo ' . $i,
-                'options' => []
-            ];
-
-            foreach (range(1, rand(2, 5)) as $j) {
-                $this->options[$i]['options'][$j] = 'Opción ' . $i . '.' . $j;
-            }
-        }
+    public function option($key)
+    {
+        return $this->options[$key] ?? '';
     }
 
     public function render(string $context = ''): string
@@ -67,11 +55,30 @@ class WidgetSelect extends Widget
                     . '</div>';
 
             case 'td':
-                return '<td class="text-' . $this->align . '">' . $this->value . '</td>';
+                return '<td class="text-' . $this->align . '">' . $this->option($this->value) . '</td>';
 
             case 'th':
                 return '<th class="text-' . $this->align . '">' . $this->label . '</th>';
         }
+    }
+
+    public function setOptions(array $options): self
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    public function setOptionsFromModel(ModelClass $model, array $where = [], array $orderBy = [], int $offset = 0, int $limit = 0): self
+    {
+        $options = [];
+        foreach ($model->all($where, $orderBy, $offset, $limit) as $item) {
+            $options[$item->primaryColumnValue()] = $item->primaryDescription();
+        }
+
+        $this->setOptions($options);
+
+        return $this;
     }
 
     protected function renderOptions(): string

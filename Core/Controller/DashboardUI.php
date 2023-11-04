@@ -21,13 +21,15 @@ use FacturaScripts\Core\UI\Tab\TabKanban;
 use FacturaScripts\Core\UI\Tab\TabMap;
 use FacturaScripts\Core\UI\Tab\TabTable;
 use FacturaScripts\Core\UI\Widget\WidgetCheckbox;
-use FacturaScripts\Core\UI\Widget\WidgetDate;
 use FacturaScripts\Core\UI\Widget\WidgetDatetime;
 use FacturaScripts\Core\UI\Widget\WidgetMoney;
 use FacturaScripts\Core\UI\Widget\WidgetNumber;
+use FacturaScripts\Core\UI\Widget\WidgetSelect;
 use FacturaScripts\Core\UI\Widget\WidgetText;
 use FacturaScripts\Core\UI\Widget\WidgetTextarea;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Familia;
+use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Producto;
 
 class DashboardUI extends UIController
@@ -111,6 +113,10 @@ class DashboardUI extends UIController
             ->setModel(new Producto())
             ->addWidget(WidgetText::make('reference', 'referencia'))
             ->addWidget(WidgetText::make('description', 'descripcion'))
+            ->addWidget(
+                WidgetSelect::make('family', 'codfamilia')
+                    ->setOptionsFromModel(new Familia())
+            )
             ->addWidget(WidgetMoney::make('price', 'precio')->setAlign('right'))
             ->addWidget(WidgetNumber::make('stock', 'stockfis')->setAlign('right'))
             ->addWidget(WidgetCheckbox::make('locked', 'bloqueado')->setAlign('center'))
@@ -198,7 +204,11 @@ class DashboardUI extends UIController
             ->addWidget(WidgetText::make('name', 'nombre')->setCols(3))
             ->addWidget(WidgetText::make('cifnif', 'cifnif', 'fiscal-number')->setCols(3))
             ->addWidget(WidgetText::make('phone', 'telefono')->setCols(3))
-            ->addWidget(WidgetText::make('email')->setCols(3))
+            ->addWidget(
+                WidgetSelect::make('group', 'codgrupo')
+                    ->setCols(3)
+                    ->setOptionsFromModel(new GrupoClientes())
+            )
             ->addWidget(WidgetTextarea::make('observations', 'observaciones'))
             ->onSave('function2');
     }
