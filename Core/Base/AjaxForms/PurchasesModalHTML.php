@@ -143,11 +143,17 @@ class PurchasesModalHTML
 
     protected static function familias(Translator $i18n): string
     {
-        $familia = new Familia();
         $options = '<option value="">' . $i18n->trans('family') . '</option>'
             . '<option value="">------</option>';
-        foreach ($familia->all([], ['descripcion' => 'ASC'], 0, 0) as $fam) {
+
+        $familia = new Familia();
+        $where = [new DataBaseWhere('madre', null, 'IS')];
+        $orderBy = ['descripcion' => 'ASC'];
+        foreach ($familia->all($where, $orderBy, 0, 0) as $fam) {
             $options .= '<option value="' . $fam->codfamilia . '">' . $fam->descripcion . '</option>';
+
+            // añadimos las subfamilias de forma recursiva
+            $options .= static::subfamilias($fam, $i18n);
         }
 
         return '<select name="fp_codfamilia" class="form-control" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
@@ -173,7 +179,17 @@ class PurchasesModalHTML
         }
 
         if (self::$codfamilia) {
-            $sql .= ' AND codfamilia = ' . $dataBase->var2str(self::$codfamilia);
+            $codFamilias = [$dataBase->var2str(self::$codfamilia)];
+
+            // buscamos las subfamilias
+            $familia = new Familia();
+            if ($familia->loadFromCode(self::$codfamilia)) {
+                foreach ($familia->getSubfamilias() as $fam) {
+                    $codFamilias[] = $dataBase->var2str($fam->codfamilia);
+                }
+            }
+
+            $sql .= ' AND codfamilia IN (' . implode(',', $codFamilias) . ')';
         }
 
         if (self::$comprado) {
@@ -332,5 +348,20 @@ class PurchasesModalHTML
             . '<option value="stock_desc">' . $i18n->trans('stock') . '</option>'
             . '</select>'
             . '</div>';
+    }
+
+    private static function subfamilias(Familia $family, Translator $i18n, int $level = 1): string
+    {
+        $options = '';
+        foreach ($family->getSubfamilias() as $fam) {
+            $options .= '<option value="' . $fam->codfamilia . '">'
+                . str_repeat('-', $level) . ' ' . $fam->descripcion
+                . '</option>';
+
+            // añadimos las subfamilias de forma recursiva
+            $options .= static::subfamilias($fam, $i18n, $level + 1);
+        }
+
+        return $options;
     }
 }

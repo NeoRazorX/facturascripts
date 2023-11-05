@@ -93,7 +93,7 @@
             method: 'POST',
             body: data
         }).then(function (response) {
-            animateSpinner('remove', true);
+            animateSpinner('remove');
             if (response.ok) {
                 return response.json();
             }
