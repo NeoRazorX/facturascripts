@@ -44,6 +44,11 @@ class InfoBox extends Component
         return $this->description;
     }
 
+    public static function make(string $name): self
+    {
+        return new static($name);
+    }
+
     public function render(string $context = ''): string
     {
         switch ($this->color) {

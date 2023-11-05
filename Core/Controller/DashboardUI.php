@@ -44,49 +44,49 @@ class DashboardUI extends UIController
 
     protected function addSectionBottom(): void
     {
-        $this->addSection(new Section('bottom'))
+        $this->addSection(Section::make('bottom'))
             ->setTitle('Bottom section');
 
         // añadimos un botón a la sección bottom
-        $this->section('bottom')->addButton(new Button('button4'))
+        $this->section('bottom')->addButton(Button::make('button4'))
             ->setIcon('fas fa-plus-square')
             ->setColor('success')
             ->setLabel('Botón 4')
             ->setDescription('Descripción del botón 4');
 
         // añadimos un tab a la sección bottom
-        $this->section('bottom')->addTab(new TabCards('tab7'))
+        $this->section('bottom')->addTab(TabCards::make('tab7'))
             ->setLabel('Galería');
 
         // añadimos una pestaña de gráficos
-        $this->section('bottom')->addTab(new TabCharts('tab8'))
+        $this->section('bottom')->addTab(TabCharts::make('tab8'))
             ->setLabel('Gráficos');
 
         // añadimos una pestaña con un kanban
-        $this->section('bottom')->addTab(new TabKanban('tab10'))
+        $this->section('bottom')->addTab(TabKanban::make('tab10'))
             ->setLabel('Kanban');
 
         // añadimos una pestaña con un diagrama de gantt
-        $this->section('bottom')->addTab(new TabGantt('tab11'))
+        $this->section('bottom')->addTab(TabGantt::make('tab11'))
             ->setLabel('Gantt');
 
         // añadimos una pestaña con un un gestor de archivos
-        $this->section('bottom')->addTab(new TabFiles('tab12'))
+        $this->section('bottom')->addTab(TabFiles::make('tab12'))
             ->setLabel('Archivos');
     }
 
     protected function addSectionMain(): void
     {
-        $this->addSection(new Section('main'))
+        $this->addSection(Section::make('main'))
             ->setTitle('Main section')
             ->setPosition(1);
 
         // añadimos un botón a la sección main
-        $this->section('main')->addButton(new Button('button4'))
+        $this->section('main')->addButton(Button::make('button4'))
             ->setLabel('Botón 4');
 
         // añadimos un dropdown a la sección main, con 2 enlaces, un separador y un tercer enlace
-        $this->section('main')->addButton(new Dropdown('dropdown1'))
+        $this->section('main')->addButton(Dropdown::make('dropdown1'))
             ->setIcon('fas fa-list')
             ->setColor('info')
             ->setDescription('Descripción del dropdown')
@@ -96,7 +96,7 @@ class DashboardUI extends UIController
             ->addLink('https://www.twitter.com', 'link 3', [], 'fab fa-twitter');
 
         // añadimos un modal
-        $this->section('main')->addModal(new Modal('modal2'))
+        $this->section('main')->addModal(Modal::make('modal2'))
             ->setTitle('Modal 2');
 
         // enlazamos el modal con el dropdown
@@ -108,7 +108,7 @@ class DashboardUI extends UIController
         );
 
         // añadimos 2 pestañas de listado a la sección main
-        $this->section('main')->addTab(new TabTable('tab1'))
+        $this->section('main')->addTab(TabTable::make('tab1'))
             ->setLabel('Listado 1')
             ->setModel(new Producto())
             ->addWidget(WidgetText::make('reference', 'referencia'))
@@ -122,7 +122,7 @@ class DashboardUI extends UIController
             ->addWidget(WidgetCheckbox::make('locked', 'bloqueado')->setAlign('center'))
             ->addWidget(WidgetDatetime::make('update', 'actualizado')->setAlign('right'));
 
-        $this->section('main')->addTab(new TabTable('tab2'))
+        $this->section('main')->addTab(TabTable::make('tab2'))
             ->setLabel('Listado 2')
             ->setModel(new Cliente())
             ->addWidget(WidgetText::make('name', 'nombre'))
@@ -131,26 +131,26 @@ class DashboardUI extends UIController
             ->addWidget(WidgetText::make('email'));
 
         // añadimos un tab de listado de formularios, y lo ponemos en posición 1
-        $this->section('main')->addTab(new TabFormList('tab4'))
+        $this->section('main')->addTab(TabFormList::make('tab4'))
             ->setLabel('+Formularios')
             ->setPosition(1);
 
         // añadimos un tab con un calendario
-        $this->section('main')->addTab(new TabCalendar('tab5'))
+        $this->section('main')->addTab(TabCalendar::make('tab5'))
             ->setLabel('Calendario');
 
         // añadimos un tab con un mapa
-        $this->section('main')->addTab(new TabMap('tab6'))
+        $this->section('main')->addTab(TabMap::make('tab6'))
             ->setLabel('Mapa');
 
         // añadimos una pestaña datatable
-        $this->section('main')->addTab(new TabDataTable('tab9'))
+        $this->section('main')->addTab(TabDataTable::make('tab9'))
             ->setLabel('Datatable');
     }
 
     protected function addSectionTop(): void
     {
-        $this->addSection(new Section('top'))
+        $this->addSection(Section::make('top'))
             ->setTitle('Top section')
             ->setDescription('Descripción de la sección top')
             ->setIcon('fas fa-dashboard')
@@ -159,24 +159,24 @@ class DashboardUI extends UIController
             ->addNavLinks('#', 'Enlace 3');
 
         // añadimos 2 botones
-        $this->section('top')->addButton(new Button('button1'))
+        $this->section('top')->addButton(Button::make('button1'))
             ->setIcon('fas fa-plus-square')
             ->setColor('success')
             ->setLabel('Botón 1')
             ->setDescription('Descripción del botón 1')
             ->onClick('function1');
 
-        $this->section('top')->addButton(new Button('button2'))
+        $this->section('top')->addButton(Button::make('button2'))
             ->setIcon('fas fa-check-square')
             ->setCounter(5);
 
         // añadimos un tercer botón y lo ponemos después del botón 1
-        $this->section('top')->addButton(new Button('button3'))
+        $this->section('top')->addButton(Button::make('button3'))
             ->setPosition(1)
             ->setLabel('Botón 3');
 
         // añadimos un modal
-        $this->section('top')->addModal(new Modal('modal1'))
+        $this->section('top')->addModal(Modal::make('modal1'))
             ->setTitle('Modal 1');
 
         // enlazamos el botón 3 con el modal 1
@@ -185,21 +185,21 @@ class DashboardUI extends UIController
         );
 
         // añadimos 2 cajas de información a la sección top
-        $this->section('top')->addInfoBox(new InfoBox('info1'))
+        $this->section('top')->addInfoBox(InfoBox::make('info1'))
             ->setColor('success')
             ->setIcon('fas fa-chart-line')
             ->setTitle('Información 1')
             ->setDescription('Descripción de la información 1')
             ->setCounter(5);
 
-        $this->section('top')->addInfoBox(new InfoBox('info2'))
+        $this->section('top')->addInfoBox(InfoBox::make('info2'))
             ->setColor('danger')
             ->setIcon('fas fa-chart-pie')
             ->setTitle('Información 2')
             ->setDescription('Descripción de la información 2');
 
         // añadimos un tab de formulario a la sección top
-        $this->section('top')->addTab(new TabForm('tab1'))
+        $this->section('top')->addTab(TabForm::make('tab1'))
             ->setModel(new Cliente())
             ->addWidget(WidgetText::make('name', 'nombre')->setCols(3))
             ->addWidget(WidgetText::make('cifnif', 'cifnif', 'fiscal-number')->setCols(3))

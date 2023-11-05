@@ -63,6 +63,11 @@ class Button extends Component
         return $this;
     }
 
+    public static function make(string $name): self
+    {
+        return new static($name);
+    }
+
     public function onClick(string $function, int $position = 0): self
     {
         $event = $this->addEvent('click', $function, $position);

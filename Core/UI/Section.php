@@ -245,6 +245,11 @@ class Section extends Component
         return true;
     }
 
+    public static function make(string $name): self
+    {
+        return new static($name);
+    }
+
     public function modal(string $name): ?Modal
     {
         foreach ($this->modals as $modal) {

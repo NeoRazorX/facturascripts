@@ -39,6 +39,11 @@ abstract class SectionTab extends Component
 
     abstract public function load(Request $request): bool;
 
+    public static function make(string $name): self
+    {
+        return new static($name);
+    }
+
     public function setIcon(string $icon): self
     {
         $this->icon = $icon;

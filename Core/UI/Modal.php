@@ -27,6 +27,11 @@ class Modal extends Component
     /** @var string */
     protected $title = '';
 
+    public static function make(string $name): self
+    {
+        return new static($name);
+    }
+
     public function render(string $context = ''): string
     {
         return '<div class="modal fade" id="' . $this->id() . '" tabindex="-1" aria-labelledby="' . $this->id()

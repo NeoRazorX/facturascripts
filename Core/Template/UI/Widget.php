@@ -62,7 +62,7 @@ abstract class Widget extends Component
         return $this->label;
     }
 
-    public static function make(string $name, ?string $field = null, ?string $label = null)
+    public static function make(string $name, ?string $field = null, ?string $label = null): self
     {
         return new static($name, $field, $label);
     }
