@@ -67,7 +67,7 @@ class WidgetFilemanager extends Widget
                 . '<div class="card shadow-sm mb-2">'
                 . '<div class="card-body p-2">';
 
-            $info = '<p class="card-texttext-muted small">'
+            $info = '<p class="card-text text-muted small">'
                 . Tools::bytes($file->size) . ', ' . $file->date . ' ' . $file->hour
                 . '<a href="' . $file->url() . '" target="_blank" class="ml-2">'
                 . '<i class="fa-solid fa-up-right-from-square"></i>'
