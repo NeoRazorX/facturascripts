@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function animateSpinner(animation, result = false) {
+function animateSpinner(animation, result = null) {
     if (animation === 'add') {
         // añadimos la propiedad disabled al botón para evitar que se pueda pulsar varias veces
         $("button.btn-spin-action").attr('disabled', true);
@@ -26,19 +26,26 @@ function animateSpinner(animation, result = false) {
         return;
     }
 
-    // eliminamos la propiedad disabled al botón para que se pueda pulsar de nuevo
-    $("button.btn-spin-action").removeAttr('disabled');
-    $("a.btn-spin-action").removeClass('disabled').attr('aria-disabled', false);
+    if (animation === 'remove') {
+        // eliminamos la propiedad disabled al botón para que se pueda pulsar de nuevo
+        $("button.btn-spin-action").removeAttr('disabled');
+        $("a.btn-spin-action").removeClass('disabled').attr('aria-disabled', false);
 
-    // eliminamos el toast-spinner y toast-completed si existen
-    $('#messages-toasts .toast-spinner, #messages-toasts .toast-completed').remove();
+        // eliminamos el toast-spinner y toast-completed si existen
+        $('#messages-toasts .toast-spinner, #messages-toasts .toast-completed').remove();
 
-    if (result) {
-        setToast('', 'completed', '', 3000);
-        return;
+        // si result es null, terminamos
+        if (result === null) {
+            return;
+        }
+
+        if (result) {
+            setToast('', 'completed', '', 3000);
+            return;
+        }
+
+        setToast('', 'danger', '', 0);
     }
-
-    setToast('', 'danger', '', 0);
 }
 
 function confirmAction(viewName, action, title, message, cancel, confirm) {
