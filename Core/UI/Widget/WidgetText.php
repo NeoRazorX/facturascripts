@@ -27,11 +27,7 @@ class WidgetText extends Widget
     {
         switch ($context) {
             default:
-                return '<div class="form-group">'
-                    . '<label for="' . $this->id() . '">' . $this->label . '</label>'
-                    . '<input type="text" name="' . $this->field . '" value="' . $this->value . '" id="'
-                    . $this->id() . '" class="form-control" />'
-                    . '</div>';
+                return $this->renderInput();
 
             case 'td':
                 return '<td class="text-' . $this->align . '">' . $this->value . '</td>';
@@ -39,5 +35,16 @@ class WidgetText extends Widget
             case 'th':
                 return '<th class="text-' . $this->align . '">' . $this->label . '</th>';
         }
+    }
+
+    protected function renderInput(): string
+    {
+        $attributes = $this->required ? ' required' : '';
+
+        return '<div class="form-group">'
+            . '<label for="' . $this->id() . '">' . $this->label . '</label>'
+            . '<input type="text" name="' . $this->field . '" value="' . $this->value . '" id="' . $this->id()
+            . '" class="form-control"' . $attributes . '/>'
+            . '</div>';
     }
 }

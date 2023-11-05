@@ -36,6 +36,9 @@ abstract class Widget extends Component
     /** @var string */
     protected $label = '';
 
+    /** @var bool */
+    protected $required = false;
+
     /** @var mixed */
     protected $value;
 
@@ -67,6 +70,11 @@ abstract class Widget extends Component
         return new static($name, $field, $label);
     }
 
+    public function required(): bool
+    {
+        return $this->required;
+    }
+
     public function setAlign(string $align): self
     {
         $this->align = $align;
@@ -91,6 +99,13 @@ abstract class Widget extends Component
     public function setLabel(string $label, array $params = []): self
     {
         $this->label = Tools::lang()->trans($label, $params);
+
+        return $this;
+    }
+
+    public function setRequired(bool $required): self
+    {
+        $this->required = $required;
 
         return $this;
     }

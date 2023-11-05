@@ -34,12 +34,7 @@ class WidgetTextarea extends Widget
     {
         switch ($context) {
             default:
-                return '<div class="form-group">'
-                    . '<label for="' . $this->id() . '">' . $this->label . '</label>'
-                    . '<textarea name="' . $this->field . '" class="form-control" id="' . $this->id() . '" placeholder="'
-                    . $this->placeholder . '" rows="' . $this->rows . '">'
-                    . $this->value . '</textarea>'
-                    . '</div>';
+                return $this->renderInput();
 
             case 'td':
                 return '<td class="text-' . $this->align . '">' . $this->value . '</td>';
@@ -61,5 +56,17 @@ class WidgetTextarea extends Widget
         $this->rows = $rows;
 
         return $this;
+    }
+
+    protected function renderInput(): string
+    {
+        $attributes = $this->required ? ' required' : '';
+
+        return '<div class="form-group">'
+            . '<label for="' . $this->id() . '">' . $this->label . '</label>'
+            . '<textarea name="' . $this->field . '" class="form-control" id="' . $this->id() . '" placeholder="'
+            . $this->placeholder . '" rows="' . $this->rows . '"' . $attributes . '>'
+            . $this->value . '</textarea>'
+            . '</div>';
     }
 }

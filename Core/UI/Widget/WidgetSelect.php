@@ -142,17 +142,20 @@ class WidgetSelect extends Widget
 
     protected function renderInput(): string
     {
+        $attributes = $this->required ? ' required' : '';
+
         return '<div class="form-group">'
             . '<label for="' . $this->id() . '">' . $this->label . $this->renderCreationButton() . '</label><br/>'
-            . '<select class="form-control ui-widget-select" id="' . $this->id() . '" name="' . $this->field . '">'
-            . $this->renderOptions()
+            . '<select class="form-control ui-widget-select" id="' . $this->id() . '" name="' . $this->field . '"'
+            . $attributes . '>' . $this->renderOptions()
             . '</select>'
             . '</div>';
     }
 
     protected function renderOptions(): string
     {
-        $html = '';
+        $html = $this->required ? '' : '<option value="">------</option>';
+
         foreach ($this->options as $key => $value) {
             if (is_array($value)) {
                 $html .= '<optgroup label="' . $value['label'] . '">';
