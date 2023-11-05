@@ -329,6 +329,13 @@ final class DbQuery
         return $this;
     }
 
+    public function whereBetween(string $field, $value1, $value2): self
+    {
+        $this->where[] = Where::between($field, $value1, $value2);
+
+        return $this;
+    }
+
     public function whereEq(string $field, $value): self
     {
         $this->where[] = Where::eq($field, $value);
@@ -336,9 +343,72 @@ final class DbQuery
         return $this;
     }
 
+    public function whereGt(string $field, $value): self
+    {
+        $this->where[] = Where::gt($field, $value);
+
+        return $this;
+    }
+
+    public function whereGte(string $field, $value): self
+    {
+        $this->where[] = Where::gte($field, $value);
+
+        return $this;
+    }
+
     public function whereIn(string $field, array $values): self
     {
         $this->where[] = Where::in($field, $values);
+
+        return $this;
+    }
+
+    public function whereLike(string $field, string $value): self
+    {
+        $this->where[] = Where::like($field, $value);
+
+        return $this;
+    }
+
+    public function whereLt(string $field, $value): self
+    {
+        $this->where[] = Where::lt($field, $value);
+
+        return $this;
+    }
+
+    public function whereLte(string $field, $value): self
+    {
+        $this->where[] = Where::lte($field, $value);
+
+        return $this;
+    }
+
+    public function whereNotEq(string $field, $value): self
+    {
+        $this->where[] = Where::notEq($field, $value);
+
+        return $this;
+    }
+
+    public function whereNotIn(string $field, array $values): self
+    {
+        $this->where[] = Where::notIn($field, $values);
+
+        return $this;
+    }
+
+    public function whereNotNull(string $field): self
+    {
+        $this->where[] = Where::isNotNull($field);
+
+        return $this;
+    }
+
+    public function whereNull(string $field): self
+    {
+        $this->where[] = Where::isNull($field);
 
         return $this;
     }

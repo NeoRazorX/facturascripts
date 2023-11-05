@@ -89,7 +89,7 @@ final class DbQueryTest extends TestCase
 
     public function testCount(): void
     {
-        // obtenemos el número de registros en la tabla paises
+        // obtenemos el número de registros en la tabla países
         $count = DbQuery::table('paises')->count();
 
         // lo comprobamos contra el modelo
