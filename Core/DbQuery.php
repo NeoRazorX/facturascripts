@@ -173,6 +173,15 @@ final class DbQuery
         return self::db()->exec($sql);
     }
 
+    public function insertGetId(array $data): ?int
+    {
+        if ($this->insert($data)) {
+            return self::db()->lastval();
+        }
+
+        return null;
+    }
+
     public function limit(int $limit): self
     {
         $this->limit = $limit;
@@ -229,6 +238,22 @@ final class DbQuery
         }
 
         $this->orderBy[] = self::db()->escapeColumn($field) . ' ' . $order;
+
+        return $this;
+    }
+
+    public function orderMulti(array $fields): self
+    {
+        foreach ($fields as $field => $order) {
+            $this->orderBy($field, $order);
+        }
+
+        return $this;
+    }
+
+    public function reorder(): self
+    {
+        $this->orderBy = [];
 
         return $this;
     }
