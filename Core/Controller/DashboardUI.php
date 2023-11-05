@@ -22,6 +22,7 @@ use FacturaScripts\Core\UI\Tab\TabMap;
 use FacturaScripts\Core\UI\Tab\TabTable;
 use FacturaScripts\Core\UI\Widget\WidgetCheckbox;
 use FacturaScripts\Core\UI\Widget\WidgetDatetime;
+use FacturaScripts\Core\UI\Widget\WidgetFilemanager;
 use FacturaScripts\Core\UI\Widget\WidgetMoney;
 use FacturaScripts\Core\UI\Widget\WidgetNumber;
 use FacturaScripts\Core\UI\Widget\WidgetSelect;
@@ -212,7 +213,11 @@ class DashboardUI extends UIController
                         WidgetText::make('name', 'nombre')
                     ])
             )
-            ->addWidget(WidgetTextarea::make('observations', 'observaciones'))
+            ->addWidget(
+                WidgetTextarea::make('observations', 'observaciones')
+                ->setCols(12)
+            )
+            ->addWidget(WidgetFilemanager::make('logo', 'idfile'))
             ->onSave('function2');
     }
 

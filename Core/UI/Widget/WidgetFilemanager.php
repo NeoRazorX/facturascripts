@@ -21,38 +21,15 @@ namespace FacturaScripts\Core\UI\Widget;
 
 use FacturaScripts\Core\Template\UI\Widget;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\AttachedFile;
 
 class WidgetFilemanager extends Widget
 {
-    /** @var array */
-    protected $files = [];
-
-    public function __construct(string $name, ?string $field = null, ?string $label = null)
-    {
-        parent::__construct($name, $field, $label);
-
-        // cargamos algunos archivos de prueba
-        foreach (range(1, rand(3, 50)) as $i) {
-            $this->files[] = [
-                'name' => 'Archivo ' . $i,
-                'type' => 'file',
-                'size' => rand(1000, 1000000),
-                'date' => date('Y-m-d H:i:s', rand(0, time())),
-            ];
-        }
-    }
-
     public function render(string $context = ''): string
     {
         switch ($context) {
             default:
-                return '<div class="form-group">'
-                    . '<label for="' . $this->id() . '">' . $this->label . '</label>'
-                    . '<button type="button" id="' . $this->id() . '" class="btn btn-secondary btn-block"'
-                    . ' data-toggle="modal" data-target="#modal_' . $this->id() . '">'
-                    . '<i class="fas fa-folder-open mr-1"></i> ' . $this->label . '</button>'
-                    . '</div>'
-                    . $this->renderModal();
+                return $this->renderInput();
 
             case 'td':
                 return '<td class="text-' . $this->align . '">' . $this->value . '</td>';
@@ -62,20 +39,54 @@ class WidgetFilemanager extends Widget
         }
     }
 
+    /** @return AttachedFile[] */
+    protected function files(): array
+    {
+        $attachedFile = new AttachedFile();
+        $orderBy = ['date' => 'DESC', 'hour' => 'DESC'];
+        return $attachedFile->all([], $orderBy);
+    }
+
+    protected function renderInput(): string
+    {
+        return '<div class="form-group">'
+            . '<label for="' . $this->id() . '">' . $this->label . '</label>'
+            . '<button type="button" id="' . $this->id() . '" class="btn btn-secondary btn-block"'
+            . ' data-toggle="modal" data-target="#modal_' . $this->id() . '">'
+            . '<i class="fas fa-folder-open mr-1"></i> ' . $this->label . '</button>'
+            . '</div>'
+            . $this->renderModal();
+    }
+
     protected function renderFileList(): string
     {
         $html = '<div class="form-row">';
 
-        foreach ($this->files as $file) {
+        foreach ($this->files() as $file) {
             $html .= '<div class="col-6">'
                 . '<div class="card shadow-sm mb-2">'
-                . '<div class="card-body p-2">'
-                . '<h5 class="card-title mb-0">' . $file['name'] . '</h5>'
-                . '<p class="card-text">'
-                . '<small class="text-muted">' . Tools::bytes($file['size'])
-                . ', ' . Tools::dateTime($file['date']) . '</small>'
-                . '</p>'
-                . '</div>'
+                . '<div class="card-body p-2">';
+
+            $info = '<p class="card-texttext-muted small">'
+                . Tools::bytes($file->size) . ', ' . $file->date . ' ' . $file->hour
+                . '<a href="' . $file->url() . '" target="_blank" class="ml-2">'
+                . '<i class="fa-solid fa-up-right-from-square"></i>'
+                . '</a>'
+                . '</p>';
+
+            if ($file->isImage()) {
+                $html .= '<div class="media">'
+                    . '<img src="' . $file->url('download') . '" class="mr-3" alt="' . $file->filename . '" width="64">'
+                    . '<div class="media-body">'
+                    . '<h5 class="mt-0">' . $file->filename . '</h5>'
+                    . $info
+                    . '</div>'
+                    . '</div>';
+            } else {
+                $html .= '<h5 class="card-title mb-0">' . $file->filename . '</h5>' . $info;
+            }
+
+            $html .= '</div>'
                 . '</div>'
                 . '</div>';
         }

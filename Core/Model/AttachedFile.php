@@ -128,6 +128,11 @@ class AttachedFile extends Base\ModelOnChangeClass
         });
     }
 
+    public function isImage(): bool
+    {
+        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif']);
+    }
+
     public static function primaryColumn(): string
     {
         return 'idfile';
