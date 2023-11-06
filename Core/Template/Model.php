@@ -20,7 +20,10 @@
 namespace FacturaScripts\Core\Template;
 
 use Exception;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\Tools;
 
 abstract class Model
 {
@@ -28,13 +31,32 @@ abstract class Model
     const TABLE_NAME = '';
 
     /** @var array */
-    private $_changed = [];
+    private $m_changes = [];
+
+    /** @var array */
+    private $m_fields = [];
+
+    /** @var array */
+    private $m_values = [];
+
+    public function __get($name)
+    {
+        if (property_exists($this, $name)) {
+            return $this->{$name};
+        }
+
+        return $this->m_values[$name] ?? null;
+    }
 
     public function __set($name, $value)
     {
-        $this->_changed[$name] = $this->{$name};
+        $this->m_changes[$name] = $this->{$name};
 
-        $this->{$name} = $value;
+        if (property_exists($this, $name)) {
+            $this->{$name} = $value;
+        } else {
+            $this->m_values[$name] = $value;
+        }
     }
 
     public static function all(array $where = [], array $orderBy = [], int $offset = 0, int $limit = 0): array
@@ -85,10 +107,56 @@ abstract class Model
                 ->count() > 0;
     }
 
-    public function fill(array $data): self
+    public function fill(array $data, array $exclude = []): self
     {
+        $fields = $this->getModelFields();
+
         foreach ($data as $key => $value) {
-            $this->{$key} = $value;
+            if (in_array($key, $exclude)) {
+                continue;
+            }
+
+            if (!isset($fields[$key])) {
+                $this->{$key} = $value;
+                continue;
+            }
+
+            // We check if it is a varchar (with established length) or another type of data
+            $field = $fields[$key];
+            $type = strpos($field['type'], '(') === false ?
+                $field['type'] :
+                substr($field['type'], 0, strpos($field['type'], '('));
+
+            switch ($type) {
+                case 'tinyint':
+                case 'boolean':
+                    $this->{$key} = $this->getBoolValueForField($field, $value);
+                    break;
+
+                case 'integer':
+                case 'int':
+                    $this->{$key} = $this->getIntegerValueForField($field, $value);
+                    break;
+
+                case 'decimal':
+                case 'double':
+                case 'double precision':
+                case 'float':
+                    $this->{$key} = $this->getFloatValueForField($field, $value);
+                    break;
+
+                case 'date':
+                    $this->{$key} = empty($value) ? null : Tools::date($value);
+                    break;
+
+                case 'datetime':
+                case 'timestamp':
+                    $this->{$key} = empty($value) ? null : Tools::dateTime($value);
+                    break;
+
+                default:
+                    $this->{$key} = ($value === null && $field['is_nullable'] === 'NO') ? '' : $value;
+            }
         }
 
         return $this;
@@ -156,19 +224,33 @@ abstract class Model
         throw new Exception('Not found');
     }
 
+    public function getModelFields(): array
+    {
+        if (!empty($this->m_fields)) {
+            return $this->m_fields;
+        }
+
+        $this->m_fields = Cache::remember('_table_' . static::TABLE_NAME, function () {
+            $db = new DataBase();
+            return $db->getColumns(static::TABLE_NAME);
+        });
+
+        return $this->m_fields;
+    }
+
     public function getOriginal(string $field)
     {
         if (empty($field)) {
             $data = $this->toArray();
 
-            foreach ($this->_changed as $key => $value) {
+            foreach ($this->m_changes as $key => $value) {
                 $data[$key] = $value;
             }
 
             return $data;
         }
 
-        return $this->_changed[$field] ?? $this->{$field};
+        return $this->m_changes[$field] ?? $this->{$field};
     }
 
     public function id()
@@ -178,12 +260,12 @@ abstract class Model
 
     public function isClean(string $field): bool
     {
-        return empty($field) || !isset($this->_changed[$field]);
+        return empty($field) || !isset($this->m_changes[$field]);
     }
 
     public function isDirty(string $field): bool
     {
-        return empty($field) ? !empty($this->_changed) : isset($this->_changed[$field]);
+        return empty($field) ? !empty($this->m_changes) : isset($this->m_changes[$field]);
     }
 
     public function load($id): bool
@@ -194,7 +276,7 @@ abstract class Model
 
         if ($data) {
             $this->fill($data);
-            $this->_changed = [];
+            $this->m_changes = [];
 
             return true;
         }
@@ -228,7 +310,7 @@ abstract class Model
 
         if ($data) {
             $this->fill($data);
-            $this->_changed = [];
+            $this->m_changes = [];
 
             return true;
         }
@@ -243,6 +325,11 @@ abstract class Model
         }
 
         return $this->fill($data)->save();
+    }
+
+    public function reload(): bool
+    {
+        return $this->load($this->id());
     }
 
     public function save(): bool
@@ -268,7 +355,45 @@ abstract class Model
 
     public function toArray(): array
     {
-        return get_object_vars($this);
+        $data = get_object_vars($this);
+
+        // quitamos los campos m_changes, m_fields y m_values
+        unset($data['m_changes'], $data['m_fields'], $data['m_values']);
+
+        return $data;
+    }
+
+    private function getBoolValueForField(array $field, $value): ?bool
+    {
+        if ($value === null) {
+            return $field['is_nullable'] === 'NO' ? false : null;
+        }
+
+        return is_bool($value) ?
+            $value :
+            in_array(strtolower($value), ['true', 't', '1'], false);
+    }
+
+    private function getFloatValueForField($field, $value): ?float
+    {
+        if (is_numeric($value)) {
+            return (float)$value;
+        }
+
+        return $field['is_nullable'] === 'NO' ? 0.0 : null;
+    }
+
+    private function getIntegerValueForField($field, $value): ?int
+    {
+        if (is_numeric($value)) {
+            return (int)$value;
+        }
+
+        if ($field['name'] === static::ID_COLUMN) {
+            return null;
+        }
+
+        return $field['is_nullable'] === 'NO' ? 0 : null;
     }
 
     protected function saveInsert(): bool
@@ -277,7 +402,7 @@ abstract class Model
 
         if ($id) {
             $this->{static::ID_COLUMN} = $id;
-            $this->_changed = [];
+            $this->m_changes = [];
 
             return true;
         }
@@ -292,7 +417,7 @@ abstract class Model
             ->update($this->toArray());
 
         if ($updated) {
-            $this->_changed = [];
+            $this->m_changes = [];
 
             return true;
         }
