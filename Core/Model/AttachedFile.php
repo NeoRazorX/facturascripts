@@ -20,8 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Tools;
 use finfo;
 
 /**
@@ -35,6 +36,7 @@ class AttachedFile extends Base\ModelOnChangeClass
     use Base\ModelTrait;
 
     const MAX_FILENAME_LEN = 100;
+    const STORAGE_USED_KEY = 'storage-used';
 
     /** @var string */
     public $date;
@@ -60,8 +62,8 @@ class AttachedFile extends Base\ModelOnChangeClass
     public function clear()
     {
         parent::clear();
-        $this->date = date(self::DATE_STYLE);
-        $this->hour = date(self::HOUR_STYLE);
+        $this->date = Tools::date();
+        $this->hour = Tools::hour();
         $this->size = 0;
     }
 
@@ -70,7 +72,7 @@ class AttachedFile extends Base\ModelOnChangeClass
         // eliminamos el archivo
         $fullPath = $this->getFullPath();
         if (file_exists($fullPath) && false === unlink($fullPath)) {
-            $this->toolBox()->i18nLog()->warning('cant-delete-file', ['%fileName%' => $this->path]);
+            Tools::log()->warning('cant-delete-file', ['%fileName%' => $this->path]);
             return false;
         }
 
@@ -82,7 +84,14 @@ class AttachedFile extends Base\ModelOnChangeClass
         }
 
         // eliminamos el registro de la base de datos
-        return parent::delete();
+        if (false === parent::delete()) {
+            return false;
+        }
+
+        // eliminamos el registro de la caché
+        Cache::delete(self::STORAGE_USED_KEY);
+
+        return true;
     }
 
     public function getExtension(): string
@@ -96,22 +105,27 @@ class AttachedFile extends Base\ModelOnChangeClass
         return FS_FOLDER . '/' . $this->path;
     }
 
-    public function getStorageLimit(): int
+    public static function getStorageLimit(): int
     {
-        return defined('FS_STORAGE_LIMIT') ? (int)FS_STORAGE_LIMIT : 0;
+        return Tools::config('storage_limit', 0);
     }
 
-    public function getStorageUsed(array $exclude = []): int
+    public static function getStorageUsed(array $exclude = []): int
     {
-        $sql = 'SELECT SUM(size) as size FROM ' . static::tableName();
-        if ($exclude) {
-            $sql .= ' WHERE idfile NOT IN (' . implode(',', $exclude) . ')';
-        }
-        foreach (static::$dataBase->select($sql) as $row) {
-            return (int)$row ['size'];
-        }
+        return Cache::remember(self::STORAGE_USED_KEY, function () use ($exclude) {
+            $size = 0;
+            $sql = 'SELECT SUM(size) as size FROM ' . static::tableName();
+            if ($exclude) {
+                $sql .= ' WHERE idfile NOT IN (' . implode(',', $exclude) . ')';
+            }
+            foreach (static::$dataBase->select($sql) as $row) {
+                $size = (int)$row['size'];
+                break;
+            }
 
-        return 0;
+            $folderSize = Tools::folderSize(Tools::folder('MyFiles'));
+            return max($size, $folderSize);
+        });
     }
 
     public static function primaryColumn(): string
@@ -122,6 +136,18 @@ class AttachedFile extends Base\ModelOnChangeClass
     public function primaryDescriptionColumn(): string
     {
         return 'filename';
+    }
+
+    public function save(): bool
+    {
+        if (false === parent::save()) {
+            return false;
+        }
+
+        // eliminamos el registro de la caché
+        Cache::delete(self::STORAGE_USED_KEY);
+
+        return true;
     }
 
     public static function tableName(): string
@@ -136,9 +162,10 @@ class AttachedFile extends Base\ModelOnChangeClass
             return $this->setFile() && parent::test();
         }
 
-        $this->filename = self::toolBox()::utils()::noHtml($this->filename);
-        $this->mimetype = self::toolBox()::utils()::noHtml($this->mimetype);
-        $this->path = self::toolBox()::utils()::noHtml($this->path);
+        $this->filename = Tools::noHtml($this->filename);
+        $this->mimetype = Tools::noHtml($this->mimetype);
+        $this->path = Tools::noHtml($this->path);
+
         return parent::test();
     }
 
@@ -158,7 +185,7 @@ class AttachedFile extends Base\ModelOnChangeClass
 
     protected function fixFileName(string $original): string
     {
-        $fixed = self::toolBox()::utils()::noHtml($original);
+        $fixed = Tools::noHtml($original);
         if (strlen($fixed) <= static::MAX_FILENAME_LEN) {
             return empty($fixed) ? '' : strtolower($fixed);
         }
@@ -180,7 +207,7 @@ class AttachedFile extends Base\ModelOnChangeClass
             case 'path':
                 if ($this->previousData['path']) {
                     // remove old file
-                    unlink(\FS_FOLDER . '/' . $this->previousData['path']);
+                    unlink(FS_FOLDER . '/' . $this->previousData['path']);
                 }
                 return $this->setFile();
 
@@ -199,15 +226,15 @@ class AttachedFile extends Base\ModelOnChangeClass
         $this->filename = $this->fixFileName($this->path);
         $newFolder = 'MyFiles/' . date('Y/m', strtotime($this->date));
         $newFolderPath = FS_FOLDER . '/' . $newFolder;
-        if (false === FileManager::createFolder($newFolderPath, true)) {
-            $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => $newFolder]);
+        if (false === Tools::folderCheckOrCreate($newFolderPath)) {
+            Tools::log()->critical('cant-create-folder', ['%folderName%' => $newFolder]);
             return false;
         }
 
         $currentPath = FS_FOLDER . '/MyFiles/' . $this->path;
         if ($this->getStorageLimit() > 0 &&
-            filesize($currentPath) + $this->getStorageUsed([$this->idfile]) > $this->getStorageLimit()) {
-            $this->toolBox()->i18nLog()->critical('storage-limit-reached');
+            filesize($currentPath) + static::getStorageUsed([$this->idfile]) > $this->getStorageLimit()) {
+            Tools::log()->critical('storage-limit-reached');
             unlink($currentPath);
             return false;
         }

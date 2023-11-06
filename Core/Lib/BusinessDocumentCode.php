@@ -39,6 +39,25 @@ class BusinessDocumentCode
         return CodePatterns::trans($sequence->patron, $document, ['long' => $sequence->longnumero]);
     }
 
+    public static function getOtherExercises(SecuenciaDocumento $sequence): array
+    {
+        $other = [];
+
+        // find other exercises from equivalent sequences
+        $where = [
+            new DataBaseWhere('codejercicio', null, 'IS NOT'),
+            new DataBaseWhere('codserie', $sequence->codserie),
+            new DataBaseWhere('idsecuencia', $sequence->idsecuencia, '<>'),
+            new DataBaseWhere('idempresa', $sequence->idempresa),
+            new DataBaseWhere('tipodoc', $sequence->tipodoc)
+        ];
+        foreach ($sequence->all($where) as $item) {
+            $other[] = $item->codejercicio;
+        }
+
+        return $other;
+    }
+
     public static function getSequence(BusinessDocument $document): SecuenciaDocumento
     {
         $selectedSequence = new DinSecuenciaDocumento();
@@ -165,6 +184,11 @@ class BusinessDocumentCode
         ];
         if ($sequence->codejercicio) {
             $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
+        } else {
+            $other = implode(',', static::getOtherExercises($sequence));
+            if (!empty($other)) {
+                $where[] = new DataBaseWhere('codejercicio', $other, 'NOT IN');
+            }
         }
         $orderBy = strtolower(FS_DB_TYPE) == 'postgresql' ?
             ['CAST(numero as integer)' => 'DESC'] :

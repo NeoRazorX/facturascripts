@@ -217,9 +217,10 @@ class EditSettings extends PanelController
     protected function createViewSequences(string $viewName = 'ListSecuenciaDocumento')
     {
         $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
-        $this->views[$viewName]->addOrderBy(['codejercicio', 'codserie', 'tipodoc'], 'exercise', 2);
+        $this->views[$viewName]->addOrderBy(['codejercicio', 'codserie', 'tipodoc'], 'exercise');
         $this->views[$viewName]->addOrderBy(['codserie'], 'serie');
         $this->views[$viewName]->addOrderBy(['numero'], 'number');
+        $this->views[$viewName]->addOrderBy(['tipodoc', 'codejercicio', 'codserie'], 'doc-type', 1);
         $this->views[$viewName]->addSearchFields(['patron', 'tipodoc']);
 
         // disable company column if there is only one company

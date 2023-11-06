@@ -176,10 +176,10 @@
 </script>
 
 <form name="accEntryForm" method="post">
+    {{ formToken() }}
     <input type="hidden" name="action"/>
     <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
     <input type="hidden" name="{{ model.primaryColumn() }}" value="{{ model.primaryColumnValue() }}"/>
-    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken(fsc.user.logkey) }}"/>
     <input type="hidden" name="selectedLine"/>
     {{ fsc.renderAccEntryForm(model, model.getLines()) | raw }}
 </form>

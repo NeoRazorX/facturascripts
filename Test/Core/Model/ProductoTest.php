@@ -460,11 +460,17 @@ final class ProductoTest extends TestCase
         $variant->referencia = '0' . $product->referencia;
         $this->assertTrue($variant->save(), 'variant-cant-save-with-ref');
 
+        // comprobamos que la referencia del producto no se ha modificado
+        $ref = $product->referencia;
+        $this->assertTrue($product->loadFromCode($product->idproducto), 'cant-reload-product');
+        $this->assertEquals($ref, $product->referencia, 'product-reference-changed');
+
         // eliminamos variante
-        $this->assertTrue($variant->delete(), 'variant-cant-delete');
+        $this->assertTrue($variant->delete(), 'variant-cant-delete: '
+            . $variant->referencia . ' === ' . $variant->getProducto()->referencia);
 
         // comprobamos que no podemos eliminar la única variante
-        $where = [ new DataBaseWhere('referencia', $product->referencia) ];
+        $where = [new DataBaseWhere('referencia', $product->referencia)];
         $this->assertTrue($variant->loadFromCode('', $where), 'cant-reload-variant');
         $this->assertFalse($variant->delete(), 'can-delete-only-variant');
 

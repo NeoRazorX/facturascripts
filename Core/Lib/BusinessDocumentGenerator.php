@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
@@ -76,6 +77,9 @@ class BusinessDocumentGenerator
             // copy properties to new document
             $newDoc->{$field} = $prototype->{$field};
         }
+
+        // assign the user
+        $newDoc->nick = Session::user()->nick;
 
         if (self::$sameDate) {
             $newDoc->fecha = $prototype->fecha;

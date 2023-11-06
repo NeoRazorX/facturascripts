@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Model\AttachedFile;
+use FacturaScripts\Core\Tools;
 use ZipArchive;
 
 /**
@@ -46,9 +48,11 @@ class ListAttachedFile extends ListController
     protected function createViews()
     {
         $this->createViewsFiles();
+
+        $this->showStorageLimitWarning();
     }
 
-    protected function createViewsFiles(string $viewName = 'ListAttachedFile')
+    protected function createViewsFiles(string $viewName = 'ListAttachedFile'): void
     {
         $this->addView($viewName, 'AttachedFile', 'attached-files', 'fas fa-paperclip');
         $this->addSearchFields($viewName, ['filename', 'mimetype']);
@@ -120,5 +124,24 @@ class ListAttachedFile extends ListController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function showStorageLimitWarning(): void
+    {
+        $limit = AttachedFile::getStorageLimit();
+        if (empty($limit)) {
+            return;
+        }
+
+        // si el usado está cerca del límite (80%) mostramos un aviso
+        $used = AttachedFile::getStorageUsed();
+        if ($used > 0.8 * $limit) {
+            $free = $limit - $used;
+            Tools::log()->warning('storage-limit-almost', [
+                '%free%' => Tools::bytes($free),
+                '%limit%' => Tools::bytes($limit),
+                '%used%' => Tools::bytes($used)
+            ]);
+        }
     }
 }
