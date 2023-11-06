@@ -34,7 +34,7 @@ abstract class Model
     private $m_changes = [];
 
     /** @var array */
-    private $m_fields = [];
+    private static $m_fields = [];
 
     /** @var array */
     private $m_values = [];
@@ -84,6 +84,10 @@ abstract class Model
 
     public function delete(): bool
     {
+        if (false === $this->onDelete()) {
+            return false;
+        }
+
         return self::table()
             ->whereEq(static::ID_COLUMN, $this->id())
             ->delete();
@@ -226,19 +230,19 @@ abstract class Model
 
     public function getModelFields(): array
     {
-        if (!empty($this->m_fields)) {
-            return $this->m_fields;
+        if (isset(self::$m_fields[static::TABLE_NAME])) {
+            return self::$m_fields[static::TABLE_NAME];
         }
 
-        $this->m_fields = Cache::remember('_table_' . static::TABLE_NAME, function () {
+        self::$m_fields[static::TABLE_NAME] = Cache::remember('_table_' . static::TABLE_NAME, function () {
             $db = new DataBase();
             return $db->getColumns(static::TABLE_NAME);
         });
 
-        return $this->m_fields;
+        return self::$m_fields[static::TABLE_NAME];
     }
 
-    public function getOriginal(string $field)
+    public function getOriginal(string $field = '')
     {
         if (empty($field)) {
             $data = $this->toArray();
@@ -258,12 +262,12 @@ abstract class Model
         return $this->{static::ID_COLUMN};
     }
 
-    public function isClean(string $field): bool
+    public function isClean(string $field = ''): bool
     {
         return empty($field) || !isset($this->m_changes[$field]);
     }
 
-    public function isDirty(string $field): bool
+    public function isDirty(string $field = ''): bool
     {
         return empty($field) ? !empty($this->m_changes) : isset($this->m_changes[$field]);
     }
@@ -335,8 +339,8 @@ abstract class Model
     public function save(): bool
     {
         return $this->exists() ?
-            $this->saveUpdate() :
-            $this->saveInsert();
+            $this->onUpdate() && $this->saveUpdate() :
+            $this->onInsert() && $this->saveInsert();
     }
 
     public function saveOrFail(): bool
@@ -394,6 +398,21 @@ abstract class Model
         }
 
         return $field['is_nullable'] === 'NO' ? 0 : null;
+    }
+
+    protected function onDelete(): bool
+    {
+        return true;
+    }
+
+    protected function onInsert(): bool
+    {
+        return true;
+    }
+
+    protected function onUpdate(): bool
+    {
+        return true;
     }
 
     protected function saveInsert(): bool
