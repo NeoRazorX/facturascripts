@@ -41,7 +41,6 @@ use Twig\Error\SyntaxError;
 class NewMail
 {
     const ATTACHMENTS_TMP_PATH = 'MyFiles/Tmp/Email/';
-    const DEFAULT_TEMPLATE = 'NewTemplate.html.twig';
 
     /** @var Empresa */
     public $empresa;
@@ -59,7 +58,7 @@ class NewMail
     protected $footerBlocks = [];
 
     /** @var string */
-    private static $template = 'NewTemplate.html.twig';
+    protected $html;
 
     /** @var bool */
     protected $lowsecure;
@@ -72,6 +71,9 @@ class NewMail
 
     /** @var string */
     public $signature;
+
+    /** @var string */
+    private static $template = 'NewTemplate.html.twig';
 
     /** @var string */
     public $text;
@@ -122,7 +124,6 @@ class NewMail
         }
 
         $this->signature = $appSettings->get('email', 'signature', '');
-        static::$template = self::DEFAULT_TEMPLATE;
         $this->verificode = $this->toolBox()->utils()->randomString(20);
     }
 
