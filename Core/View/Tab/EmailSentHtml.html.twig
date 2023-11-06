@@ -46,6 +46,10 @@
 
             // añadimos el html al shadow
             shadow.appendChild(html);
+
+            // al hacer clic en cualquier enlace dentro del email
+            // se debe abrir en una nueva pestaña
+            $(shadow).find('a').attr('target', '_blank');
         }
     }).catch(function (error) {
         alert('error getHtml');
