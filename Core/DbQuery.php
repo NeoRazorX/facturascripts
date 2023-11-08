@@ -446,4 +446,42 @@ final class DbQuery
 
         return self::$db;
     }
+
+    /**
+     * Incluimos where dinámico
+     *
+     * @param $method
+     * @param $parameters
+     * @return $this
+     * @throws Exception
+     */
+    public function __call($method, $parameters)
+    {
+        // Si se llama al where dinamicamente
+        // whereNombre(), whereCiudad()
+        if (str_starts_with($method, 'where')) {
+            return $this->dynamicWhere($method, $parameters);
+        }
+
+        if(false === method_exists($this, $method)){
+            throw new \BadMethodCallException('Call to undefined method ' . get_class($this) . '::' . $method . '()');
+        }
+    }
+
+    /**
+     * Implementamos un where dinámico para que se pueda incluir
+     * el nombre del campo en el propio metodo where y así
+     * acortar código.
+     * ej. whereNombre(), whereCiudad()
+     *
+     * @param $method
+     * @param $parameters
+     * @return $this
+     * @throws Exception
+     */
+    protected function dynamicWhere($method, $parameters)
+    {
+        $field = strtolower(substr($method, 5));
+        return static::where([Where::column($field, $parameters[0])]);
+    }
 }
