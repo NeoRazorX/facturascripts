@@ -55,6 +55,10 @@ class EditSecuenciaDocumento extends EditController
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }
 
+        // desactivamos los botones de opciones e imprimir
+        $this->setSettings($this->getMainViewName(), 'btnOptions', false);
+        $this->setSettings($this->getMainViewName(), 'btnPrint', false);
+
         // añadimos las vistas de los documentos
         $this->createViewsDocuments('ListFacturaCliente', 'FacturaCliente', 'customer-invoices');
         $this->createViewsDocuments('ListFacturaProveedor', 'FacturaProveedor', 'supplier-invoices');

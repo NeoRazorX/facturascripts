@@ -84,18 +84,20 @@ class EditUser extends EditController
         $this->setTabsPosition('top');
 
         // disable company column if there is only one company
+        $mvn = $this->getMainViewName();
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->views[$mvn]->disableColumn('company');
         }
 
         // disable warehouse column if there is only one company
         $almacen = new Almacen();
         if ($almacen->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('warehouse');
+            $this->views[$mvn]->disableColumn('warehouse');
         }
 
-        // disable print button
-        $this->setSettings($this->getMainViewName(), 'btnPrint', false);
+        // disable options and print buttons
+        $this->setSettings($mvn, 'btnOptions', false);
+        $this->setSettings($mvn, 'btnPrint', false);
 
         // add roles tab
         if ($this->user->admin) {
