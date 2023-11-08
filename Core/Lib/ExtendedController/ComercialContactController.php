@@ -110,10 +110,10 @@ abstract class ComercialContactController extends EditController
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
 
-        // disable column
+        // desactivamos la columna de destinatario
         $this->views[$viewName]->disableColumn('to');
 
-        // disable buttons
+        // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
     }
 
@@ -325,9 +325,10 @@ abstract class ComercialContactController extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
+        $mvn = $this->getMainViewName();
+
         switch ($viewName) {
-            case $mainViewName:
+            case $mvn:
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($viewName);
                 if ($view->model->exists() && $view->model->cifnif) {
@@ -345,17 +346,35 @@ abstract class ComercialContactController extends EditController
                 break;
 
             case 'ListSubcuenta':
-                $codsubcuenta = $this->getViewModelValue($mainViewName, 'codsubcuenta');
+                $codsubcuenta = $this->getViewModelValue($mvn, 'codsubcuenta');
                 $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->count > 0);
                 break;
 
             case 'ListEmailSent':
-                $addressee = $this->getViewModelValue($mainViewName, 'email');
-                $where = [new DataBaseWhere('addressee', $addressee)];
+                $email = $this->getViewModelValue($mvn, 'email');
+                if (empty($email)) {
+                    $this->setSettings($viewName, 'active', false);
+                    break;
+                }
+
+                // si no tiene email y no hay emails enviados, desactivamos la pestaña
+                $where = [new DataBaseWhere('addressee', $email)];
                 $view->loadData('', $where);
-                $this->setSettings($viewName, 'active', $view->count > 0);
+                if ($view->count === 0) {
+                    $this->setSettings($viewName, 'active', false);
+                    break;
+                }
+
+                // añadimos un botón para enviar un nuevo email
+                $this->addButton($viewName, [
+                    'action' => 'SendMail?email=' . $email,
+                    'color' => 'success',
+                    'icon' => 'fas fa-envelope',
+                    'label' => 'send',
+                    'type' => 'link'
+                ]);
                 break;
         }
     }

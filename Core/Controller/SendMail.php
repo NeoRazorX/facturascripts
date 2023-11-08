@@ -325,6 +325,12 @@ class SendMail extends Controller
      */
     protected function setEmailAddress(): void
     {
+        $email = $this->request->get('email', '');
+        if (!empty($email)) {
+            $this->newMail->addAddress($email);
+            return;
+        }
+
         $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName', '');
         if (false === class_exists($className)) {
             return;

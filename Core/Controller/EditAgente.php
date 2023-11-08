@@ -198,9 +198,27 @@ class EditAgente extends ComercialContactController
 
             case 'ListEmailSent':
                 $email = $this->getViewModelValue($mvn, 'email');
+                if (empty($email)) {
+                    $this->setSettings($viewName, 'active', false);
+                    break;
+                }
+
+                // si no tiene emails enviados, desactivamos la pestaña
                 $where = [new DataBaseWhere('addressee', $email)];
                 $view->loadData('', $where);
-                $this->setSettings($viewName, 'active', $view->count > 0);
+                if ($view->count === 0) {
+                    $this->setSettings($viewName, 'active', false);
+                    break;
+                }
+
+                // añadimos un botón para enviar un nuevo email
+                $this->addButton($viewName, [
+                    'action' => 'SendMail?email=' . $email,
+                    'color' => 'success',
+                    'icon' => 'fas fa-envelope',
+                    'label' => 'send',
+                    'type' => 'link'
+                ]);
                 break;
 
             case $mvn:
