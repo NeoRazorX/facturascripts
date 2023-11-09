@@ -227,7 +227,7 @@ class SendMail extends Controller
         $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName');
         if (false === class_exists($className)) {
             Tools::log()->notice('reloading');
-            $this->redirect('/SendMail', 3);
+            $this->redirect('SendMail', 3);
             return;
         }
 
