@@ -44,19 +44,6 @@ final class DbQueryTest extends TestCase
         $this->assertEquals($data, $query->get());
     }
 
-    public function testWhereEq(): void
-    {
-        $query = DbQuery::table('clientes')
-            ->select('codcliente, nombre')
-            ->whereEq('codcliente', 'test');
-
-        $sql = 'SELECT ' . $this->db()->escapeColumn('codcliente')
-            . ', ' . $this->db()->escapeColumn('nombre')
-            . ' FROM ' . $this->db()->escapeColumn('clientes')
-            . ' WHERE ' . $this->db()->escapeColumn('codcliente') . ' = ' . $this->db()->var2str('test');
-        $this->assertEquals($sql, $query->sql());
-    }
-
     public function testWhere(): void
     {
         $query = DbQuery::table('clientes')
@@ -71,6 +58,32 @@ final class DbQueryTest extends TestCase
             . ' FROM ' . $this->db()->escapeColumn('clientes')
             . ' WHERE ' . $this->db()->escapeColumn('codcliente') . ' = ' . $this->db()->var2str('test')
             . ' AND ' . $this->db()->escapeColumn('riesgomax') . ' > ' . $this->db()->var2str(1000);
+        $this->assertEquals($sql, $query->sql());
+    }
+
+    public function testWhereEq(): void
+    {
+        $query = DbQuery::table('clientes')
+            ->select('codcliente, nombre')
+            ->whereEq('codcliente', 'test');
+
+        $sql = 'SELECT ' . $this->db()->escapeColumn('codcliente')
+            . ', ' . $this->db()->escapeColumn('nombre')
+            . ' FROM ' . $this->db()->escapeColumn('clientes')
+            . ' WHERE ' . $this->db()->escapeColumn('codcliente') . ' = ' . $this->db()->var2str('test');
+        $this->assertEquals($sql, $query->sql());
+    }
+
+    public function testWhereDynamic(): void
+    {
+        $query = DbQuery::table('clientes')
+            ->select('codcliente, nombre')
+            ->whereNombre('test');
+
+        $sql = 'SELECT ' . $this->db()->escapeColumn('codcliente')
+            . ', ' . $this->db()->escapeColumn('nombre')
+            . ' FROM ' . $this->db()->escapeColumn('clientes')
+            . ' WHERE ' . $this->db()->escapeColumn('nombre') . ' = ' . $this->db()->var2str('test');
         $this->assertEquals($sql, $query->sql());
     }
 
