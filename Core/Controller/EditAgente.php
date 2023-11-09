@@ -203,13 +203,8 @@ class EditAgente extends ComercialContactController
                     break;
                 }
 
-                // si no tiene emails enviados, desactivamos la pestaña
                 $where = [new DataBaseWhere('addressee', $email)];
                 $view->loadData('', $where);
-                if ($view->count === 0) {
-                    $this->setSettings($viewName, 'active', false);
-                    break;
-                }
 
                 // añadimos un botón para enviar un nuevo email
                 $this->addButton($viewName, [
