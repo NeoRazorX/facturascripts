@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Export\PDF;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -328,10 +329,23 @@ abstract class ListController extends BaseController
 
         $this->setTemplate(false);
         $codes = $this->request->request->get('code');
+
+        $pdf = PDF::create();
+
+        foreach($codes as $code) {
+            $model = $this->views[$this->active]->model->get($code);
+            $pdf->addModel($model);
+        }
+
+        $this->response->headers->set('Content-Type', 'application/pdf');
+        $this->response->setContent($pdf->output());
+
+        /*
         $option = $this->request->get('option', '');
         $this->exportManager->newDoc($option);
         $this->views[$this->active]->export($this->exportManager, $codes);
         $this->exportManager->show($this->response);
+        */
     }
 
     /**

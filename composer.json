@@ -34,7 +34,8 @@
     "ext-mysqli": "*",
     "ext-bcmath": "*",
     "ext-gd": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "setasign/fpdf": "^1.8"
   },
   "require-dev": {
     "phpunit/phpunit": "8.*",
