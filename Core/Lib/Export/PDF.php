@@ -39,6 +39,15 @@ class PDF extends PdfEngine
     protected $file_name;
 
     /** @var string */
+    protected $font_family = 'Arial';
+
+    /** @var int */
+    protected $font_size = 10;
+
+    /** @var string */
+    protected $font_weight = '';
+
+    /** @var string */
     protected $orientation;
 
     /** @var FPDF */
@@ -78,7 +87,7 @@ class PDF extends PdfEngine
             $this->addImage($attFile->getFullPath());
         }
 
-        $this->addText($company->nombre, ['font-size' => 16, 'font-weight' => 'bold']);
+        $this->addText($company->nombre, ['font-size' => 16, 'font-weight' => 'B']);
         $this->addText($company->cifnif);
         $this->addText($company->direccion . ', ' . $company->codpostal . ' ' . $company->ciudad
             . ' (' . $company->provincia . ')');
@@ -139,7 +148,7 @@ class PDF extends PdfEngine
 
         switch ($model->modelClassName()) {
             default:
-                $this->addText($model->modelClassName() . ': ' . $model->primaryDescription());
+                $this->addDefaultModel($model);
                 break;
 
             case 'AlbaranCliente':
@@ -187,6 +196,11 @@ class PDF extends PdfEngine
             return $this;
         }
 
+        // si la cabecera está vacía, la generamos a partir de la primera fila
+        if (empty($header)) {
+            $header = array_keys($rows[0]);
+        }
+
         // Calcula el ancho disponible de la página
         $anchoPagina = $this->pdf->GetPageWidth() - (2 * $this->pdf->GetX()); // 2 * margen izquierdo
 
@@ -194,7 +208,7 @@ class PDF extends PdfEngine
         $anchoColumna = $anchoPagina / count($header);
 
         // Crea la tabla
-        $this->pdf->SetFont('Arial', 'B', 12);
+        $this->pdf->SetFont($this->font_family, 'B', 12);
         $this->pdf->SetFillColor(150, 150, 150); // Establece el color de fondo de las celdas de la cabecera
         $this->pdf->SetTextColor(255); // Establece el color del texto de la cabecera
 
@@ -205,9 +219,10 @@ class PDF extends PdfEngine
 
         $this->pdf->Ln(); // Salta a la siguiente línea
 
-        // Restablece el color de fondo y el color del texto
+        // Restablece el color de fondo, el color del texto y el tipo de letra
         $this->pdf->SetFillColor(224, 224, 224);
         $this->pdf->SetTextColor(0);
+        $this->pdf->SetFont($this->font_family, $this->font_weight, $this->font_size);
 
         // Imprime las filas con el ancho ajustado
         foreach ($rows as $fila) {
@@ -235,7 +250,15 @@ class PDF extends PdfEngine
             $text .= "\n";
         }
 
-        $this->pdf->Write(10, $text);
+        // cambiamos el tamaño de la fuente
+        $fontSize = $options['font-size'] ?? 10;
+        $fontWeight = $options['font-weight'] ?? '';
+        $this->pdf->SetFont($this->font_family, $fontWeight, $fontSize);
+
+        $this->pdf->write($fontSize + 5, $text);
+
+        // volvemos al tamaño de fuente por defecto
+        $this->pdf->SetFont($this->font_family, $this->font_weight, $this->font_size);
 
         return $this;
     }
@@ -256,7 +279,7 @@ class PDF extends PdfEngine
             $this->pdf->SetTitle($this->title);
             $this->pdf->SetAuthor(Session::user()->nick);
             $this->pdf->SetCreator('FacturaScripts');
-            $this->pdf->SetFont('Arial', '', 10);
+            $this->pdf->SetFont($this->font_family, $this->font_weight, $this->font_size);
             $this->pdf->AddPage();
             return $this;
         }
@@ -339,6 +362,37 @@ class PDF extends PdfEngine
             ];
         }
         $this->addTable($rows, $header);
+    }
+
+    protected function addDefaultModel(ModelClass $model): void
+    {
+        // si el modelo tiene idempresa, añadimos la cabecera de la empresa
+        if (property_exists($model, 'idempresa')) {
+            $this->addCompanyHeader($model->idempresa);
+        } elseif (method_exists($model, 'getExercise')) {
+            $this->addCompanyHeader($model->getExercise()->idempresa);
+        }
+
+        $this->addText($model->modelClassName() . ': ' . $model->primaryDescription(), [
+            'font-size' => 16,
+            'font-weight' => 'B',
+        ]);
+
+        // obtenemos los datos del modelo como array
+        $data = $model->toArray();
+
+        // los imprimimos en una tabla donde la primera columna es la clave y la segunda el valor
+        $rows = [];
+        foreach ($data as $key => $value) {
+            // excluimos la clave primaria
+            if ($key === $model->primaryColumn()) {
+                continue;
+            }
+
+            $rows[] = ['key' => $key, 'value' => $value];
+        }
+
+        $this->addTable($rows);
     }
 
     protected function addPurchaseDocument(PurchaseDocument $doc): void
