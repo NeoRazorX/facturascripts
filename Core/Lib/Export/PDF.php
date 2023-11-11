@@ -87,7 +87,7 @@ class PDF extends PdfEngine
             $this->addImage($attFile->getFullPath());
         }
 
-        $this->addText($company->nombre, ['font-size' => 16, 'font-weight' => 'B']);
+        $this->addText($company->nombre, ['font-size' => 16, 'font-weight' => 'bold']);
         $this->addText($company->cifnif);
         $this->addText($company->direccion . ', ' . $company->codpostal . ' ' . $company->ciudad
             . ' (' . $company->provincia . ')');
@@ -138,9 +138,9 @@ class PDF extends PdfEngine
         return $this;
     }
 
-    public function addModel(ModelClass $model): self
+    public function addModel(ModelClass $model, array $options = []): self
     {
-        if (false === $this->pipeFalse('addModel', $model)) {
+        if (false === $this->pipeFalse('addModel', $model, $options)) {
             return $this;
         }
 
@@ -148,25 +148,25 @@ class PDF extends PdfEngine
 
         switch ($model->modelClassName()) {
             default:
-                $this->addDefaultModel($model);
+                $this->addDefaultModel($model, $options);
                 break;
 
             case 'AlbaranCliente':
             case 'FacturaCliente':
             case 'PedidoCliente':
             case 'PresupuestoCliente':
-                $this->addSalesDocument($model);
+                $this->addSalesDocument($model, $options);
                 break;
 
             case 'AlbaranProveedor':
             case 'FacturaProveedor':
             case 'PedidoProveedor':
             case 'PresupuestoProveedor':
-                $this->addPurchaseDocument($model);
+                $this->addPurchaseDocument($model, $options);
                 break;
 
             case 'Asiento':
-                $this->addAccountingEntry($model);
+                $this->addAccountingEntry($model, $options);
                 break;
         }
 
@@ -183,6 +183,8 @@ class PDF extends PdfEngine
             return $this;
         }
 
+        $this->checkOptions($options);
+
         return $this;
     }
 
@@ -195,6 +197,8 @@ class PDF extends PdfEngine
         if (false === $this->pipeFalse('addTable', $rows, $header, $options)) {
             return $this;
         }
+
+        $this->checkOptions($options);
 
         // si la cabecera está vacía, la generamos a partir de la primera fila
         if (empty($header)) {
@@ -250,12 +254,12 @@ class PDF extends PdfEngine
             $text .= "\n";
         }
 
-        // cambiamos el tamaño de la fuente
-        $fontSize = $options['font-size'] ?? 10;
-        $fontWeight = $options['font-weight'] ?? '';
-        $this->pdf->SetFont($this->font_family, $fontWeight, $fontSize);
+        $this->checkOptions($options);
 
-        $this->pdf->write($fontSize + 5, $text);
+        // cambiamos el tamaño de la fuente
+        $this->pdf->SetFont($this->font_family, $options['font-weight'], $options['font-size']);
+
+        $this->pdf->cell(0, $options['font-size'] + 5, $text, 0, 1, $options['align']);
 
         // volvemos al tamaño de fuente por defecto
         $this->pdf->SetFont($this->font_family, $this->font_weight, $this->font_size);
@@ -342,7 +346,7 @@ class PDF extends PdfEngine
         return $this;
     }
 
-    protected function addAccountingEntry(Asiento $model): void
+    protected function addAccountingEntry(Asiento $model, array $options = []): void
     {
         // cabecera
         $this->addCompanyHeader($model->getExercise()->idempresa);
@@ -364,7 +368,7 @@ class PDF extends PdfEngine
         $this->addTable($rows, $header);
     }
 
-    protected function addDefaultModel(ModelClass $model): void
+    protected function addDefaultModel(ModelClass $model, array $options = []): void
     {
         // si el modelo tiene idempresa, añadimos la cabecera de la empresa
         if (property_exists($model, 'idempresa')) {
@@ -374,8 +378,9 @@ class PDF extends PdfEngine
         }
 
         $this->addText($model->modelClassName() . ': ' . $model->primaryDescription(), [
+            'align' => 'center',
             'font-size' => 16,
-            'font-weight' => 'B',
+            'font-weight' => 'bold',
         ]);
 
         // obtenemos los datos del modelo como array
@@ -395,7 +400,7 @@ class PDF extends PdfEngine
         $this->addTable($rows);
     }
 
-    protected function addPurchaseDocument(PurchaseDocument $doc): void
+    protected function addPurchaseDocument(PurchaseDocument $doc, array $options = []): void
     {
         // cabecera
         $this->addCompanyHeader($doc->idempresa);
@@ -428,7 +433,7 @@ class PDF extends PdfEngine
         }
     }
 
-    protected function addSalesDocument(SalesDocument $doc): void
+    protected function addSalesDocument(SalesDocument $doc, array $options = []): void
     {
         // cabecera
         $this->addCompanyHeader($doc->idempresa);
@@ -438,7 +443,12 @@ class PDF extends PdfEngine
         $this->addText("\n");
 
         // líneas
-        $header = ['reference', 'description', 'quantity', 'price'];
+        $header = [
+            $this->trans('reference'),
+            $this->trans('description'),
+            $this->trans('quantity'),
+            $this->trans('price')
+        ];
         $rows = [];
         foreach ($doc->getLines() as $line) {
             $rows[] = [
@@ -452,12 +462,62 @@ class PDF extends PdfEngine
 
         // totales
         $this->addText("\n");
-        $header = ['base', 'tax', 'total'];
+        $header = [
+            $this->trans('net'),
+            $this->trans('tax'),
+            $this->trans('total')
+        ];
         $rows = [$doc->neto, $doc->totaliva, $doc->total];
         $this->addTable([$rows], $header);
 
         if ($doc->observaciones) {
             $this->addText($doc->observaciones);
+        }
+    }
+
+    protected function checkOptions(array &$options): void
+    {
+        switch ($options['align'] ?? '') {
+            case 'C':
+            case 'center':
+                $options['align'] = 'C';
+                break;
+
+            case 'R':
+            case 'right':
+                $options['align'] = 'R';
+                break;
+
+            default:
+                $options['align'] = 'left';
+                break;
+        }
+
+        if (isset($options['font-size'])) {
+            $options['font-size'] = (int)$options['font-size'];
+        } else {
+            $options['font-size'] = $this->font_size;
+        }
+
+        switch ($options['font-weight'] ?? '') {
+            case 'B':
+            case 'bold':
+                $options['font-weight'] = 'B';
+                break;
+
+            case 'I':
+            case 'italic':
+                $options['font-weight'] = 'I';
+                break;
+
+            case 'U':
+            case 'underline':
+                $options['font-weight'] = 'U';
+                break;
+
+            default:
+                $options['font-weight'] = '';
+                break;
         }
     }
 }

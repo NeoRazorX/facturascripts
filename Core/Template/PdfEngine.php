@@ -36,7 +36,7 @@ abstract class PdfEngine
 
     abstract public function addImage(string $filePath);
 
-    abstract public function addModel(ModelClass $model);
+    abstract public function addModel(ModelClass $model, array $options = []);
 
     abstract public function addModelList(array $list, array $header = [], array $options = []);
 
