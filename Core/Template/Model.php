@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 abstract class Model
 {
@@ -413,6 +414,25 @@ abstract class Model
     protected function onUpdate(): bool
     {
         return true;
+    }
+
+    protected function relatedAll(string $model, string $column, array $orderBy = [], int $offset = 0, int $limit = 0): array
+    {
+        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $model;
+
+        return $modelClass::all(
+            [Where::eq($modelClass::ID_COLUMN, $this->{$column})],
+            $orderBy,
+            $offset,
+            $limit
+        );
+    }
+
+    protected function relatedOne(string $model, string $column): Model
+    {
+        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $model;
+
+        return $modelClass::find($this->{$column});
     }
 
     protected function saveInsert(): bool
