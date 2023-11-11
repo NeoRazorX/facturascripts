@@ -239,12 +239,13 @@ class PDF extends PdfEngine
 
         // Crea la tabla
         $this->pdf->SetFont($this->font_family, 'B', 11);
-        $this->pdf->SetFillColor(150, 150, 150); // Establece el color de fondo de las celdas de la cabecera
+        $this->pdf->SetFillColor(55, 153, 240); // Establece el color de fondo de las celdas de la cabecera
         $this->pdf->SetTextColor(255); // Establece el color del texto de la cabecera
 
         // Imprime las cabeceras con el ancho ajustado
-        foreach ($header as $cabecera) {
-            $this->pdf->Cell($anchoColumna, 15, $cabecera, 1, 0, 'C', 1);
+        foreach ($header as $key => $title) {
+            $align = $options['col-align'][$key] ?? $options['align'] ?? 'left';
+            $this->pdf->Cell($anchoColumna, 15, $title, 1, 0, $align, 1);
         }
 
         $this->pdf->Ln(); // Salta a la siguiente línea
@@ -256,8 +257,9 @@ class PDF extends PdfEngine
 
         // Imprime las filas con el ancho ajustado
         foreach ($rows as $fila) {
-            foreach ($fila as $columna) {
-                $this->pdf->Cell($anchoColumna, 15, $columna, 1);
+            foreach ($fila as $key => $columna) {
+                $align = $options['col-align'][$key] ?? $options['align'] ?? 'left';
+                $this->pdf->Cell($anchoColumna, 15, $columna, 1, 0, $align);
             }
             $this->pdf->Ln(); // Salta a la siguiente línea
         }
@@ -391,22 +393,35 @@ class PDF extends PdfEngine
     {
         // cabecera
         $this->addCompanyHeader($model->getExercise()->idempresa);
-        $this->addText($this->trans('accounting-entry') . ': ' . $model->numero);
+        $this->addText($this->trans('accounting-entry') . ' ' . $model->numero, [
+            'font-size' => 14,
+            'font-weight' => 'bold',
+        ]);
         $this->addText($this->trans('date') . ': ' . $model->fecha);
         $this->addText("\n");
 
         // líneas
-        $header = ['account', 'description', 'debit', 'credit'];
+        $header = [
+            'account' => $this->trans('account'),
+            'description' => $this->trans('description'),
+            'debit' => $this->trans('debit'),
+            'credit' => $this->trans('credit')
+        ];
         $rows = [];
         foreach ($model->getLines() as $line) {
             $rows[] = [
-                $line->codsubcuenta,
-                $line->getSubcuenta()->descripcion,
-                $line->debe,
-                $line->haber,
+                'account' => $line->codsubcuenta,
+                'description' => $line->getSubcuenta()->descripcion,
+                'debit' => Tools::money($line->debe),
+                'credit' => Tools::money($line->haber),
             ];
         }
-        $this->addTable($rows, $header);
+        $this->addTable($rows, $header, [
+            'col-align' => [
+                'debit' => 'right',
+                'credit' => 'right'
+            ],
+        ]);
     }
 
     protected function addDefaultModel(ModelClass $model, array $options = []): void
@@ -445,29 +460,56 @@ class PDF extends PdfEngine
     {
         // cabecera
         $this->addCompanyHeader($doc->idempresa);
-        $this->addText($this->trans($doc->modelClassName() . '-min') . ': ' . $doc->codigo);
+        $this->addText($this->trans($doc->modelClassName() . '-min') . ' ' . $doc->codigo, [
+            'font-size' => 14,
+            'font-weight' => 'bold',
+        ]);
         $this->addText($this->trans('date') . ': ' . $doc->fecha);
         $this->addText($this->trans('supplier') . ': ' . $doc->nombre);
         $this->addText("\n");
 
         // líneas
-        $header = ['reference', 'description', 'quantity', 'price'];
+        $header = [
+            'reference' => $this->trans('reference'),
+            'description' => $this->trans('description'),
+            'quantity' => $this->trans('quantity'),
+            'price' => $this->trans('price')
+        ];
         $rows = [];
         foreach ($doc->getLines() as $line) {
             $rows[] = [
-                $line->referencia,
-                $line->descripcion,
-                $line->cantidad,
-                $line->pvpunitario,
+                'reference' => $line->referencia,
+                'description' => $line->descripcion,
+                'quantity' => $line->cantidad,
+                'price' => Tools::money($line->pvpunitario),
             ];
         }
-        $this->addTable($rows, $header);
+        $this->addTable($rows, $header, [
+            'col-align' => [
+                'quantity' => 'right',
+                'price' => 'right'
+            ],
+        ]);
 
         // totales
         $this->addText("\n");
-        $header = ['base', 'tax', 'total'];
-        $rows = [$doc->neto, $doc->totaliva, $doc->total];
-        $this->addTable([$rows], $header);
+        $header = [
+            'net' => $this->trans('net'),
+            'taxes' => $this->trans('taxes'),
+            'total' => $this->trans('total')
+        ];
+        $rows = [
+            'net' => Tools::money($doc->neto),
+            'taxes' => Tools::money($doc->totaliva),
+            'total' => Tools::money($doc->total)
+        ];
+        $this->addTable([$rows], $header, [
+            'col-align' => [
+                'net' => 'right',
+                'taxes' => 'right',
+                'total' => 'right'
+            ],
+        ]);
 
         if ($doc->observaciones) {
             $this->addText($doc->observaciones);
@@ -478,38 +520,56 @@ class PDF extends PdfEngine
     {
         // cabecera
         $this->addCompanyHeader($doc->idempresa);
-        $this->addText($this->trans($doc->modelClassName() . '-min') . ': ' . $doc->codigo);
+        $this->addText($this->trans($doc->modelClassName() . '-min') . ' ' . $doc->codigo, [
+            'font-size' => 14,
+            'font-weight' => 'bold',
+        ]);
         $this->addText($this->trans('date') . ': ' . $doc->fecha);
         $this->addText($this->trans('customer') . ': ' . $doc->nombrecliente);
         $this->addText("\n");
 
         // líneas
         $header = [
-            $this->trans('reference'),
-            $this->trans('description'),
-            $this->trans('quantity'),
-            $this->trans('price')
+            'reference' => $this->trans('reference'),
+            'description' => $this->trans('description'),
+            'quantity' => $this->trans('quantity'),
+            'price' => $this->trans('price')
         ];
         $rows = [];
         foreach ($doc->getLines() as $line) {
             $rows[] = [
-                $line->referencia,
-                $line->descripcion,
-                $line->cantidad,
-                $line->pvpunitario,
+                'reference' => $line->referencia,
+                'description' => $line->descripcion,
+                'quantity' => $line->cantidad,
+                'price' => Tools::money($line->pvpunitario),
             ];
         }
-        $this->addTable($rows, $header);
+        $this->addTable($rows, $header, [
+            'col-align' => [
+                'quantity' => 'right',
+                'price' => 'right'
+            ],
+        ]);
 
         // totales
         $this->addText("\n");
         $header = [
-            $this->trans('net'),
-            $this->trans('tax'),
-            $this->trans('total')
+            'net' => $this->trans('net'),
+            'taxes' => $this->trans('taxes'),
+            'total' => $this->trans('total')
         ];
-        $rows = [$doc->neto, $doc->totaliva, $doc->total];
-        $this->addTable([$rows], $header);
+        $rows = [
+            'net' => Tools::money($doc->neto),
+            'taxes' => Tools::money($doc->totaliva),
+            'total' => Tools::money($doc->total)
+        ];
+        $this->addTable([$rows], $header, [
+            'col-align' => [
+                'net' => 'right',
+                'taxes' => 'right',
+                'total' => 'right'
+            ],
+        ]);
 
         if ($doc->observaciones) {
             $this->addText($doc->observaciones);
@@ -532,6 +592,26 @@ class PDF extends PdfEngine
             default:
                 $options['align'] = 'left';
                 break;
+        }
+
+        if (isset($options['col-align'])) {
+            foreach ($options['col-align'] as $key => $value) {
+                switch ($value) {
+                    case 'C':
+                    case 'center':
+                        $options['col-align'][$key] = 'C';
+                        break;
+
+                    case 'R':
+                    case 'right':
+                        $options['col-align'][$key] = 'R';
+                        break;
+
+                    default:
+                        $options['col-align'][$key] = 'left';
+                        break;
+                }
+            }
         }
 
         if (isset($options['font-size'])) {
