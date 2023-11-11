@@ -199,6 +199,7 @@ class PDF extends PdfEngine
             return $this;
         }
 
+        $this->newPage();
         $this->checkOptions($options);
 
         // convertimos los datos en array

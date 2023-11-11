@@ -328,13 +328,16 @@ abstract class ListController extends BaseController
         }
 
         $this->setTemplate(false);
-        $codes = $this->request->request->get('code');
-
         $pdf = PDF::create();
 
-        foreach($codes as $code) {
-            $model = $this->views[$this->active]->model->get($code);
-            $pdf->addModel($model);
+        $codes = $this->request->request->get('code');
+        if (is_array($codes)) {
+            foreach ($codes as $code) {
+                $model = $this->views[$this->active]->model->get($code);
+                $pdf->addModel($model);
+            }
+        } else {
+            $pdf->addModelList($this->views[$this->active]->cursor);
         }
 
         $this->response->headers->set('Content-Type', 'application/pdf');
