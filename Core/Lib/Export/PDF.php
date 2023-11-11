@@ -29,7 +29,7 @@ use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\PdfEngine;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AttachedFile;
-use FPDF;
+use tFPDF;
 
 class PDF extends PdfEngine
 {
@@ -39,7 +39,7 @@ class PDF extends PdfEngine
     protected $file_name;
 
     /** @var string */
-    protected $font_family = 'Arial';
+    protected $font_family = 'DejaVuSans';
 
     /** @var int */
     protected $font_size = 10;
@@ -50,7 +50,7 @@ class PDF extends PdfEngine
     /** @var string */
     protected $orientation;
 
-    /** @var FPDF */
+    /** @var tFPDF */
     protected $pdf;
 
     /** @var bool */
@@ -212,13 +212,13 @@ class PDF extends PdfEngine
         $anchoColumna = $anchoPagina / count($header);
 
         // Crea la tabla
-        $this->pdf->SetFont($this->font_family, 'B', 12);
+        $this->pdf->SetFont($this->font_family, 'B', 11);
         $this->pdf->SetFillColor(150, 150, 150); // Establece el color de fondo de las celdas de la cabecera
         $this->pdf->SetTextColor(255); // Establece el color del texto de la cabecera
 
         // Imprime las cabeceras con el ancho ajustado
         foreach ($header as $cabecera) {
-            $this->pdf->Cell($anchoColumna, 10, $cabecera, 1, 0, 'C', 1);
+            $this->pdf->Cell($anchoColumna, 15, $cabecera, 1, 0, 'C', 1);
         }
 
         $this->pdf->Ln(); // Salta a la siguiente línea
@@ -231,7 +231,7 @@ class PDF extends PdfEngine
         // Imprime las filas con el ancho ajustado
         foreach ($rows as $fila) {
             foreach ($fila as $columna) {
-                $this->pdf->Cell($anchoColumna, 10, $columna, 1);
+                $this->pdf->Cell($anchoColumna, 15, $columna, 1);
             }
             $this->pdf->Ln(); // Salta a la siguiente línea
         }
@@ -259,7 +259,7 @@ class PDF extends PdfEngine
         // cambiamos el tamaño de la fuente
         $this->pdf->SetFont($this->font_family, $options['font-weight'], $options['font-size']);
 
-        $this->pdf->cell(0, $options['font-size'] + 5, $text, 0, 1, $options['align']);
+        $this->pdf->MultiCell(0, $options['font-size'] + 5, $text, 0, $options['align']);
 
         // volvemos al tamaño de fuente por defecto
         $this->pdf->SetFont($this->font_family, $this->font_weight, $this->font_size);
@@ -279,11 +279,18 @@ class PDF extends PdfEngine
         }
 
         if (null === $this->pdf) {
-            $this->pdf = new FPDF($this->orientation, 'pt', $this->size);
+            $this->pdf = new tFPDF($this->orientation, 'pt', $this->size);
             $this->pdf->SetTitle($this->title);
             $this->pdf->SetAuthor(Session::user()->nick);
             $this->pdf->SetCreator('FacturaScripts');
+
+            // añadimos las fuentes
+            $this->pdf->AddFont($this->font_family, '', 'DejaVuSans.ttf', true);
+            $this->pdf->AddFont($this->font_family, 'B', 'DejaVuSans-Bold.ttf', true);
+
+            // establece la fuente por defecto
             $this->pdf->SetFont($this->font_family, $this->font_weight, $this->font_size);
+
             $this->pdf->AddPage();
             return $this;
         }
