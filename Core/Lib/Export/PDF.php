@@ -71,11 +71,17 @@ class PDF extends PdfEngine
         $this->orientation = $orientation;
         $this->size = $size;
         $this->title = 'DOC ' . date('YmdHis') . '_' . rand(1, 9999);
+
+        $this->pipeFalse('init', $size, $orientation);
     }
 
     public function addCompanyHeader(int $idempresa): void
     {
         if (!$this->show_header) {
+            return;
+        }
+
+        if (false === $this->pipeFalse('addCompanyHeaderBefore', $idempresa)) {
             return;
         }
 
@@ -112,6 +118,8 @@ class PDF extends PdfEngine
         }
 
         $this->addText("\n");
+
+        $this->pipeFalse('addCompanyHeaderAfter', $idempresa);
     }
 
     public function addHtml(string $html): self
@@ -120,27 +128,33 @@ class PDF extends PdfEngine
             return $this;
         }
 
-        if (false === $this->pipeFalse('addHtml', $html)) {
+        if (false === $this->pipeFalse('addHtmlBefore', $html)) {
             return $this;
         }
+
+        // no soportado
+
+        $this->pipeFalse('addHtmlAfter', $html);
 
         return $this;
     }
 
     public function addImage(string $filePath): self
     {
-        if (false === $this->pipeFalse('addImage', $filePath)) {
+        if (false === $this->pipeFalse('addImageBefore', $filePath)) {
             return $this;
         }
 
         $this->pdf->Image($filePath);
+
+        $this->pipeFalse('addImageAfter', $filePath);
 
         return $this;
     }
 
     public function addModel(ModelClass $model, array $options = []): self
     {
-        if (false === $this->pipeFalse('addModel', $model, $options)) {
+        if (false === $this->pipeFalse('addModelBefore', $model, $options)) {
             return $this;
         }
 
@@ -170,6 +184,8 @@ class PDF extends PdfEngine
                 break;
         }
 
+        $this->pipeFalse('addModelAfter', $model, $options);
+
         return $this;
     }
 
@@ -179,11 +195,21 @@ class PDF extends PdfEngine
             return $this;
         }
 
-        if (false === $this->pipeFalse('addModelList', $list, $header, $options)) {
+        if (false === $this->pipeFalse('addModelListBefore', $list, $header, $options)) {
             return $this;
         }
 
         $this->checkOptions($options);
+
+        // convertimos los datos en array
+        $rows = [];
+        foreach ($list as $model) {
+            $rows[] = $model->toArray();
+        }
+
+        $this->addTable($rows, $header, $options);
+
+        $this->pipeFalse('addModelListAfter', $list, $header, $options);
 
         return $this;
     }
@@ -194,7 +220,7 @@ class PDF extends PdfEngine
             return $this;
         }
 
-        if (false === $this->pipeFalse('addTable', $rows, $header, $options)) {
+        if (false === $this->pipeFalse('addTableBefore', $rows, $header, $options)) {
             return $this;
         }
 
@@ -236,6 +262,10 @@ class PDF extends PdfEngine
             $this->pdf->Ln(); // Salta a la siguiente línea
         }
 
+        $this->pdf->Ln(); // Salta a la siguiente línea
+
+        $this->pipeFalse('addTableAfter', $rows, $header, $options);
+
         return $this;
     }
 
@@ -245,7 +275,7 @@ class PDF extends PdfEngine
             return $this;
         }
 
-        if (false === $this->pipeFalse('addText', $text, $options)) {
+        if (false === $this->pipeFalse('addTextBefore', $text, $options)) {
             return $this;
         }
 
@@ -264,6 +294,8 @@ class PDF extends PdfEngine
         // volvemos al tamaño de fuente por defecto
         $this->pdf->SetFont($this->font_family, $this->font_weight, $this->font_size);
 
+        $this->pipeFalse('addTextAfter', $text, $options);
+
         return $this;
     }
 
@@ -274,7 +306,7 @@ class PDF extends PdfEngine
 
     public function newPage(): self
     {
-        if (false === $this->pipeFalse('newPage')) {
+        if (false === $this->pipeFalse('newPageBefore')) {
             return $this;
         }
 
@@ -285,8 +317,7 @@ class PDF extends PdfEngine
             $this->pdf->SetCreator('FacturaScripts');
 
             // añadimos las fuentes
-            $this->pdf->AddFont($this->font_family, '', 'DejaVuSans.ttf', true);
-            $this->pdf->AddFont($this->font_family, 'B', 'DejaVuSans-Bold.ttf', true);
+            $this->loadFonts();
 
             // establece la fuente por defecto
             $this->pdf->SetFont($this->font_family, $this->font_weight, $this->font_size);
@@ -296,6 +327,9 @@ class PDF extends PdfEngine
         }
 
         $this->pdf->AddPage($this->orientation, $this->size);
+
+        $this->pipeFalse('newPageAfter');
+
         return $this;
     }
 
@@ -526,5 +560,17 @@ class PDF extends PdfEngine
                 $options['font-weight'] = '';
                 break;
         }
+    }
+
+    protected function loadFonts(): void
+    {
+        if (false === $this->pipeFalse('loadFontsBefore')) {
+            return;
+        }
+
+        $this->pdf->AddFont($this->font_family, '', 'DejaVuSans.ttf', true);
+        $this->pdf->AddFont($this->font_family, 'B', 'DejaVuSans-Bold.ttf', true);
+
+        $this->pipeFalse('loadFontsAfter');
     }
 }

@@ -46,6 +46,8 @@ abstract class PdfEngine
 
     abstract public static function create(string $size = 'a4', string $orientation = 'portrait');
 
+    abstract protected function loadFonts(): void;
+
     abstract public function newPage();
 
     abstract public function output(): string;
