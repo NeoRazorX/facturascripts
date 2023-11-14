@@ -1,6 +1,6 @@
 <p align="center">
   <br/>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg?color=2670c9&style=for-the-badge&label=License&logoColor=000000&labelColor=ececec" alt="License: MIT"></a>
+  <a href="https://opensource.org/licenses/LGPL"><img src="https://img.shields.io/badge/license-LGPL-green.svg?color=2670c9&style=for-the-badge&label=License&logoColor=000000&labelColor=ececec" alt="License: LGPL"></a>
   <a href="https://github.com/NeoRazorX/facturascripts/pulls"><img alt="PR´s Welcome" src="https://img.shields.io/badge/PR´s_Welcome-brightgreen?style=for-the-badge"></a>
   <br/>  
   <br/>
