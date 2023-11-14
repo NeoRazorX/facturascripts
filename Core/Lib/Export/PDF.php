@@ -19,17 +19,16 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
+use Dompdf\Dompdf;
 use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\Base\SalesDocument;
-use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\PdfEngine;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AttachedFile;
-use tFPDF;
 
 class PDF extends PdfEngine
 {
@@ -48,9 +47,12 @@ class PDF extends PdfEngine
     protected $font_weight = '';
 
     /** @var string */
+    protected $html = '';
+
+    /** @var string */
     protected $orientation;
 
-    /** @var tFPDF */
+    /** @var Dompdf */
     protected $pdf;
 
     /** @var bool */
@@ -132,7 +134,7 @@ class PDF extends PdfEngine
             return $this;
         }
 
-        // no soportado
+        $this->html .= $html;
 
         $this->pipeFalse('addHtmlAfter', $html);
 
@@ -145,7 +147,7 @@ class PDF extends PdfEngine
             return $this;
         }
 
-        $this->pdf->Image($filePath);
+        $this->html .= '<img src="' . $filePath . '" />';
 
         $this->pipeFalse('addImageAfter', $filePath);
 
@@ -200,7 +202,6 @@ class PDF extends PdfEngine
         }
 
         $this->newPage();
-        $this->checkOptions($options);
 
         // convertimos los datos en array
         $rows = [];
@@ -225,47 +226,38 @@ class PDF extends PdfEngine
             return $this;
         }
 
-        $this->checkOptions($options);
-
         // si la cabecera está vacía, la generamos a partir de la primera fila
         if (empty($header)) {
             $header = array_keys($rows[0]);
         }
 
-        // Calcula el ancho disponible de la página
-        $anchoPagina = $this->pdf->GetPageWidth() - (2 * $this->pdf->GetX()); // 2 * margen izquierdo
+        $html = '<table width="100%">';
 
-        // Calcula el ancho igual para todas las columnas
-        $anchoColumna = $anchoPagina / count($header);
-
-        // Crea la tabla
-        $this->pdf->SetFont($this->font_family, 'B', 11);
-        $this->pdf->SetFillColor(55, 153, 240); // Establece el color de fondo de las celdas de la cabecera
-        $this->pdf->SetTextColor(255); // Establece el color del texto de la cabecera
-
-        // Imprime las cabeceras con el ancho ajustado
-        foreach ($header as $key => $title) {
-            $align = $options['col-align'][$key] ?? $options['align'] ?? 'left';
-            $this->pdf->Cell($anchoColumna, 15, $title, 1, 0, $align, 1);
+        // cabecera
+        $html .= '<thead><tr>';
+        foreach ($header as $key => $value) {
+            $align = $options['col-align'][$key] ?? 'left';
+            $style = 'text-align: ' . $align . '; background-color: #eee;';
+            $html .= '<th style="' . $style . '">' . $value . '</th>';
         }
+        $html .= '</tr></thead>';
 
-        $this->pdf->Ln(); // Salta a la siguiente línea
-
-        // Restablece el color de fondo, el color del texto y el tipo de letra
-        $this->pdf->SetFillColor(224, 224, 224);
-        $this->pdf->SetTextColor(0);
-        $this->pdf->SetFont($this->font_family, $this->font_weight, $this->font_size);
-
-        // Imprime las filas con el ancho ajustado
-        foreach ($rows as $fila) {
-            foreach ($fila as $key => $columna) {
-                $align = $options['col-align'][$key] ?? $options['align'] ?? 'left';
-                $this->pdf->Cell($anchoColumna, 15, $columna, 1, 0, $align);
+        // cuerpo
+        $html .= '<tbody>';
+        foreach ($rows as $row) {
+            $html .= '<tr>';
+            foreach ($row as $key => $value) {
+                $align = $options['col-align'][$key] ?? 'left';
+                $style = 'text-align: ' . $align . '; border-bottom: 1px solid #ddd;';
+                $html .= '<td style="' . $style . '">' . $value . '</td>';
             }
-            $this->pdf->Ln(); // Salta a la siguiente línea
+            $html .= '</tr>';
         }
+        $html .= '</tbody>';
 
-        $this->pdf->Ln(); // Salta a la siguiente línea
+        $html .= '</table>';
+
+        $this->html .= $html;
 
         $this->pipeFalse('addTableAfter', $rows, $header, $options);
 
@@ -282,20 +274,11 @@ class PDF extends PdfEngine
             return $this;
         }
 
-        // si no termina en salto de línea, lo añadimos
-        if (substr($text, -1) !== "\n") {
-            $text .= "\n";
-        }
-
-        $this->checkOptions($options);
-
-        // cambiamos el tamaño de la fuente
-        $this->pdf->SetFont($this->font_family, $options['font-weight'], $options['font-size']);
-
-        $this->pdf->MultiCell(0, $options['font-size'] + 5, $text, 0, $options['align']);
-
-        // volvemos al tamaño de fuente por defecto
-        $this->pdf->SetFont($this->font_family, $this->font_weight, $this->font_size);
+        $align = $options['align'] ?? 'left';
+        $font_size = $options['font-size'] ?? $this->font_size;
+        $font_weight = $options['font-weight'] ?? $this->font_weight;
+        $this->html .= '<p style="text-align: ' . $align . '; font-size: ' . $font_size
+            . 'px; font-weight: ' . $font_weight . ';">' . $text . '</p>';
 
         $this->pipeFalse('addTextAfter', $text, $options);
 
@@ -314,22 +297,10 @@ class PDF extends PdfEngine
         }
 
         if (null === $this->pdf) {
-            $this->pdf = new tFPDF($this->orientation, 'pt', $this->size);
-            $this->pdf->SetTitle($this->title);
-            $this->pdf->SetAuthor(Session::user()->nick);
-            $this->pdf->SetCreator('FacturaScripts');
-
-            // añadimos las fuentes
-            $this->loadFonts();
-
-            // establece la fuente por defecto
-            $this->pdf->SetFont($this->font_family, $this->font_weight, $this->font_size);
-
-            $this->pdf->AddPage();
+            $this->pdf = new Dompdf();
+            $this->pdf->setPaper($this->size, $this->orientation);
             return $this;
         }
-
-        $this->pdf->AddPage($this->orientation, $this->size);
 
         $this->pipeFalse('newPageAfter');
 
@@ -342,7 +313,10 @@ class PDF extends PdfEngine
             $this->newPage();
         }
 
-        return $this->pdf->output('', 'S');
+        $this->pdf->loadHtml($this->html);
+        $this->pdf->render();
+
+        return $this->pdf->output();
     }
 
     public function save(string $filePath): bool
@@ -575,83 +549,5 @@ class PDF extends PdfEngine
         if ($doc->observaciones) {
             $this->addText($doc->observaciones);
         }
-    }
-
-    protected function checkOptions(array &$options): void
-    {
-        switch ($options['align'] ?? '') {
-            case 'C':
-            case 'center':
-                $options['align'] = 'C';
-                break;
-
-            case 'R':
-            case 'right':
-                $options['align'] = 'R';
-                break;
-
-            default:
-                $options['align'] = 'left';
-                break;
-        }
-
-        if (isset($options['col-align'])) {
-            foreach ($options['col-align'] as $key => $value) {
-                switch ($value) {
-                    case 'C':
-                    case 'center':
-                        $options['col-align'][$key] = 'C';
-                        break;
-
-                    case 'R':
-                    case 'right':
-                        $options['col-align'][$key] = 'R';
-                        break;
-
-                    default:
-                        $options['col-align'][$key] = 'left';
-                        break;
-                }
-            }
-        }
-
-        if (isset($options['font-size'])) {
-            $options['font-size'] = (int)$options['font-size'];
-        } else {
-            $options['font-size'] = $this->font_size;
-        }
-
-        switch ($options['font-weight'] ?? '') {
-            case 'B':
-            case 'bold':
-                $options['font-weight'] = 'B';
-                break;
-
-            case 'I':
-            case 'italic':
-                $options['font-weight'] = 'I';
-                break;
-
-            case 'U':
-            case 'underline':
-                $options['font-weight'] = 'U';
-                break;
-
-            default:
-                $options['font-weight'] = '';
-                break;
-        }
-    }
-
-    protected function loadFonts(): void
-    {
-        if (false === $this->pipeFalse('loadFontsBefore')) {
-            return;
-        }
-
-        $this->pdf->AddFont($this->font_family, '', 'DejaVuSans.ttf', true);
-        $this->pdf->AddFont($this->font_family, 'B', 'DejaVuSans-Bold.ttf', true);
-
-        $this->pipeFalse('loadFontsAfter');
     }
 }

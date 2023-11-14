@@ -35,7 +35,7 @@
     "ext-bcmath": "*",
     "ext-gd": "*",
     "ext-curl": "*",
-    "setasign/tfpdf": "^1.33"
+    "dompdf/dompdf": "^2.0"
   },
   "require-dev": {
     "phpunit/phpunit": "8.*",
