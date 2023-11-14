@@ -2,7 +2,6 @@
   <br/>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg?color=2670c9&style=for-the-badge&label=License&logoColor=000000&labelColor=ececec" alt="License: MIT"></a>
   <a href="https://github.com/NeoRazorX/facturascripts/pulls"><img alt="PR´s Welcome" src="https://img.shields.io/badge/PR´s_Welcome-brightgreen?style=for-the-badge"></a>
-  <a href="https://huntr.dev"><img alt="Security Bounty" src="https://img.shields.io/badge/Security_Bounty-Up_to_$750_+_CVE-brightgreen?style=for-the-badge&labelColor=ececec"></a>
   <br/>  
   <br/>
 </p>
