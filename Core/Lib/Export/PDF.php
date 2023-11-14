@@ -313,6 +313,10 @@ class PDF extends PdfEngine
             $this->newPage();
         }
 
+        $this->html = '<html><head><meta charset="utf-8"><title>' . $this->title . '</title></head><body>'
+            . $this->html
+            . '</body></html>';
+
         $this->pdf->loadHtml($this->html);
         $this->pdf->render();
 
@@ -493,15 +497,25 @@ class PDF extends PdfEngine
 
     protected function addSalesDocument(SalesDocument $doc, array $options = []): void
     {
+        $logo = $doc->getCompany()->getLogo();
+        $logo_img = $logo->exists() ?
+            $logo->getFullPath() :
+            Tools::folder('Dinamic/Assets/Images/horizontal-logo.png');
+
         // cabecera
-        $this->addCompanyHeader($doc->idempresa);
-        $this->addText($this->trans($doc->modelClassName() . '-min') . ' ' . $doc->codigo, [
-            'font-size' => 14,
-            'font-weight' => 'bold',
-        ]);
-        $this->addText($this->trans('date') . ': ' . $doc->fecha);
-        $this->addText($this->trans('customer') . ': ' . $doc->nombrecliente);
-        $this->addText("\n");
+        $html = '<table style="width: 100%; margin-bottom: 30px;">'
+            . '<tr>'
+            . '<td>'
+            . '<h1 style="margin-bottom: 5px;">' . strtoupper($this->trans($doc->modelClassName() . '-min')) . '</h1>'
+            . $this->trans('code') . ': ' . $doc->codigo . '<br>'
+            . $this->trans('date') . ': ' . $doc->fecha
+            . '</td>'
+            . '<td style="text-align: right;">'
+            . '<img src="' . $this->getImgSrc($logo_img) . '" alt="logo" style="max-width: 300px;" />'
+            . '</td>'
+            . '</tr>'
+            . '</table>';
+        $this->addHtml($html);
 
         // líneas
         $header = [
@@ -549,5 +563,11 @@ class PDF extends PdfEngine
         if ($doc->observaciones) {
             $this->addText($doc->observaciones);
         }
+    }
+
+    protected function getImgSrc(string $filePath): string
+    {
+        return 'data:image/' . pathinfo($filePath, PATHINFO_EXTENSION) . ';base64,'
+            . base64_encode(file_get_contents($filePath));
     }
 }

@@ -130,6 +130,13 @@ class Empresa extends Base\Contact
         return $exercise->all($where, [], 0, 0);
     }
 
+    public function getLogo(): AttachedFile
+    {
+        $logo = new AttachedFile();
+        $logo->loadFromCode($this->idlogo);
+        return $logo;
+    }
+
     /**
      * Returns the warehouses associated with the company.
      *
