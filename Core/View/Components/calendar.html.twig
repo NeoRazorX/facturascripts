@@ -1,0 +1,70 @@
+<div class="facturascripts-calendar mb-3">
+    <div class="encabezado-dia-semana">Lunes</div>
+    <div class="encabezado-dia-semana">Martes</div>
+    <div class="encabezado-dia-semana">Miércoles</div>
+    <div class="encabezado-dia-semana">Jueves</div>
+    <div class="encabezado-dia-semana">Viernes</div>
+    <div class="encabezado-dia-semana">Sábado</div>
+    <div class="encabezado-dia-semana">Domingo</div>
+
+    {% for days in month['weeks'] %}
+        {% for day in days %}
+            <div class="container-dia-semana {{ day['withinMonth'] ? '' : 'withinMonth' }} {{ day['selected'] ? 'selected' : '' }}">
+
+                {{ day['day'] }}
+
+                {% for event in day['events'] %}
+
+                    <a href="{{ event.url }}">
+                        <div class="card m-0 p-0">
+                            <div class="card-body m-0 p-0">
+                                {{ event.titulo }} <br />
+                                {{ event.descripcion }}
+                            </div>
+                        </div>
+                    </a>
+
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<style>
+    .facturascripts-calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+    }
+
+    .encabezado-dia-semana {
+        border: #17a2b8 1px solid;
+        text-align: center;
+    }
+
+    .container-dia-semana {
+        border: #17a2b8 1px solid;
+        padding: 1px;
+        height: 150px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .container-dia-semana .card-body {
+        padding-left: 5px !important;
+    }
+
+    .container-dia-semana .card {
+        margin-bottom: 5px !important;
+        font-size: 0.8rem;
+    }
+
+    .withinMonth {
+        background-color: lightgray;
+    }
+
+    .selected {
+        background-color: #17a2b8;
+        color: white;
+    }
+</style>

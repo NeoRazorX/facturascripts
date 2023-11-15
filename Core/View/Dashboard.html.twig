@@ -74,6 +74,9 @@
                 </div>
             </div>
         {% endif %}
+        {% block sectionCalendar %}
+            {{ _self.sectionCalendar(fsc) }}
+        {% endblock %}
         {% block sectionStats %}
             {{ _self.sectionStats(fsc) }}
         {% endblock %}
@@ -290,4 +293,9 @@
             {{ _self.drawStatsBox(fsc, 'new-customers', 'bg-info', false) }}
         </div>
     </div>
+{% endmacro %}
+
+{% macro sectionCalendar(fsc) %}
+    <h1>Calendario</h1>
+    {{ fsc.calendario | raw }}
 {% endmacro %}
