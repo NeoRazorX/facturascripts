@@ -21,10 +21,11 @@ namespace FacturaScripts\Core\Lib\Email;
 
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Html;
-use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Dinamic\Model\User;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Twig\Error\LoaderError;
@@ -35,11 +36,11 @@ use Twig\Error\SyntaxError;
  * Description of NewMail
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class NewMail
 {
     const ATTACHMENTS_TMP_PATH = 'MyFiles/Tmp/Email/';
-    const DEFAULT_TEMPLATE = 'NewTemplate.html.twig';
 
     /** @var Empresa */
     public $empresa;
@@ -57,7 +58,7 @@ class NewMail
     protected $footerBlocks = [];
 
     /** @var string */
-    protected $html = '';
+    protected $html;
 
     /** @var bool */
     protected $lowsecure;
@@ -72,7 +73,7 @@ class NewMail
     public $signature;
 
     /** @var string */
-    public $template;
+    private static $template = 'NewTemplate.html.twig';
 
     /** @var string */
     public $text;
@@ -83,7 +84,9 @@ class NewMail
     /** @var string */
     public $verificode;
 
-    /** @throws Exception */
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
         $appSettings = $this->toolBox()->appSettings();
@@ -121,7 +124,6 @@ class NewMail
         }
 
         $this->signature = $appSettings->get('email', 'signature', '');
-        $this->template = self::DEFAULT_TEMPLATE;
         $this->verificode = $this->toolBox()->utils()->randomString(20);
     }
 
@@ -166,19 +168,21 @@ class NewMail
     /**
      * Añade un bloque al pie del correo.
      */
-    public function addFooterBlock(BaseBlock $block): void
+    public function addFooterBlock(BaseBlock $block): NewMail
     {
         $block->setVerificode($this->verificode);
         $this->footerBlocks[] = $block;
+        return $this;
     }
 
     /**
      * Añade un bloque al cuerpo del correo.
      */
-    public function addMainBlock(BaseBlock $block): void
+    public function addMainBlock(BaseBlock $block): NewMail
     {
         $block->setVerificode($this->verificode);
         $this->mainBlocks[] = $block;
+        return $this;
     }
 
     /**
@@ -252,6 +256,11 @@ class NewMail
         return $addresses;
     }
 
+    public static function getTemplate(): string
+    {
+        return static::$template;
+    }
+
     /**
      * Devuelve un array con los emails hacia donde va el mensaje.
      */
@@ -268,7 +277,6 @@ class NewMail
     /**
      * Envía el correo.
      *
-     * @return bool
      * @throws Exception
      * @throws LoaderError
      * @throws RuntimeError
@@ -276,7 +284,7 @@ class NewMail
      */
     public function send(): bool
     {
-        if (empty($this->mail->Username) || empty($this->mail->Password)) {
+        if (false === $this->canSendMail()) {
             $this->toolBox()->i18nLog()->warning('email-not-configured');
             return false;
         }
@@ -301,18 +309,54 @@ class NewMail
         return false;
     }
 
-    public function setMailbox(string $emailFrom)
+    /**
+     * @throws Exception
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public function sendNotification(string $notificationName, array $params): bool
     {
+        // ¿La notificación existe?
+        $notification = new EmailNotification();
+        if (false === $notification->loadFromCode($notificationName)) {
+            ToolBox::i18nLog()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
+            return false;
+        }
+
+        // ¿Está desactivada?
+        if (false === $notification->enabled) {
+            ToolBox::i18nLog()->warning('email-notification-disabled', ['%name%' => $notificationName]);
+            return false;
+        }
+
+        if (!isset($params['verificode'])) {
+            $params['verificode'] = $this->verificode;
+        }
+
+        $this->title = MailNotifier::getText($notification->subject, $params);
+        $this->text = MailNotifier::getText($notification->body, $params);
+
+        return $this->send();
+    }
+
+    public function setMailbox(string $emailFrom): NewMail
+    {
+        $this->fromEmail = $emailFrom;
         return $this;
+    }
+
+    public static function setTemplate(string $template)
+    {
+        static::$template = $template;
     }
 
     /**
      * Establece el usuario que manda el email.
      */
-    public function setUser(User $user)
+    public function setUser(User $user): NewMail
     {
         $this->fromNick = $user->nick;
-
         return $this;
     }
 
@@ -356,7 +400,9 @@ class NewMail
     protected function getFooterBlocks(): array
     {
         $signature = $this->toolBox()->utils()->fixHtml($this->signature);
-        return array_merge([new TextBlock($signature)], $this->footerBlocks);
+        return empty($signature)
+            ? $this->footerBlocks
+            : array_merge($this->footerBlocks, [new TextBlock($signature, 'text-footer')]);
     }
 
     /**
@@ -364,7 +410,9 @@ class NewMail
      */
     protected function getMainBlocks(): array
     {
-        return array_merge([new TextBlock($this->text)], $this->mainBlocks);
+        return empty($this->text)
+            ? $this->mainBlocks
+            : array_merge([new TextBlock($this->text, 'pb-15')], $this->mainBlocks);
     }
 
     /**
@@ -377,13 +425,13 @@ class NewMail
     protected function renderHTML(): void
     {
         $params = [
-            'empresa' => $this->empresa,
+            'company' => $this->empresa,
             'footerBlocks' => $this->getFooterBlocks(),
             'mainBlocks' => $this->getMainBlocks(),
             'title' => $this->title
         ];
 
-        $this->html = Html::render('Email/' . $this->template, $params);
+        $this->html = Html::render('Email/' . static::$template, $params);
     }
 
     /**
