@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\ExtensionsTrait;
 /**
  * Description of HtmlBlock
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class HtmlBlock extends BaseBlock

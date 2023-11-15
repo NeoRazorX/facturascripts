@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\ExtensionsTrait;
 /**
  * Description of TitleBlock
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class TitleBlock extends BaseBlock
@@ -48,7 +48,7 @@ class TitleBlock extends BaseBlock
     public function render(): string
     {
         $return = $this->pipe('render');
-        return $return ?? '<' . $this->type . ' class="' . (empty($this->css) ? 'title' : $this->css) .'">'
+        return $return ?? '<' . $this->type . ' class="' . (empty($this->css) ? 'title' : $this->css) . '">'
         . $this->text . '</' . $this->type . '>';
     }
 }

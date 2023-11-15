@@ -54,13 +54,13 @@ class MailNotifier
         // ¿La notificación existe?
         $notification = new EmailNotification();
         if (false === $notification->loadFromCode($notificationName)) {
-            ToolBox::i18nLog()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
+            ToolBox::log()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
             return false;
         }
 
         // ¿Está desactivada?
         if (false === $notification->enabled) {
-            ToolBox::i18nLog()->warning('email-notification-disabled', ['%name%' => $notificationName]);
+            ToolBox::log()->warning('email-notification-disabled', ['%name%' => $notificationName]);
             return false;
         }
 

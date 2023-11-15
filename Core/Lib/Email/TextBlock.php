@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\ExtensionsTrait;
 /**
  * Description of TextBlock
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class TextBlock extends BaseBlock
@@ -44,7 +44,7 @@ class TextBlock extends BaseBlock
     public function render(): string
     {
         $return = $this->pipe('render');
-        return $return ?? '<p class="' . (empty($this->css) ? 'text' : $this->css) .'">'
+        return $return ?? '<p class="' . (empty($this->css) ? 'text' : $this->css) . '">'
         . nl2br($this->text) . '</p>';
     }
 }

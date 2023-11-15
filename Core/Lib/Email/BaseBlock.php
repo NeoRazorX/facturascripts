@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Lib\Email;
 /**
  * Description of BaseBlock
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 abstract class BaseBlock
@@ -38,7 +38,7 @@ abstract class BaseBlock
 
     abstract public function render(): string;
 
-    public function setVerificode(string $code)
+    public function setVerificode(string $code): void
     {
         $this->verificode = $code;
     }

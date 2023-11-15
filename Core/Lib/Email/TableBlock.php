@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\ExtensionsTrait;
 /**
  * Description of TableBlock
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class TableBlock extends BaseBlock
@@ -49,15 +49,11 @@ class TableBlock extends BaseBlock
     {
         $return = $this->pipe('render');
         return $return ??
-            '<table class="' . (empty($this->css) ? 'table mb-15 w-100' : $this->css) .'">'
+            '<table class="' . (empty($this->css) ? 'table mb-15 w-100' : $this->css) . '">'
             . '<thead>'
-            . '<tr>'
-            . $this->renderHeaders()
-            . '</tr>'
+            . '<tr>' . $this->renderHeaders() . '</tr>'
             . '</thead>'
-            . '<tbody>'
-            . $this->renderRows()
-            . '</tbody>'
+            . '<tbody>' . $this->renderRows() . '</tbody>'
             . '</table>';
     }
 

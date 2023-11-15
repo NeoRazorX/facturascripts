@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\ExtensionsTrait;
 /**
  * Description of BoxBlock
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class BoxBlock extends BaseBlock
@@ -45,7 +45,7 @@ class BoxBlock extends BaseBlock
     {
         $return = $this->pipe('render');
         if ($return) {
-           return $return;
+            return $return;
         }
 
         $html = '';
