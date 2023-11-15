@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -24,9 +24,11 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
+use ZipArchive;
 
 /**
  * AdminPlugins.
@@ -62,9 +64,11 @@ class AdminPlugins extends Controller
      * @param User $user
      * @param ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user, $permissions)
+    public function privateCore(&$response, $user, $permissions): void
     {
         parent::privateCore($response, $user, $permissions);
+
+        $this->extractPluginsZipFiles();
 
         $action = $this->request->get('action', '');
         switch ($action) {
@@ -208,6 +212,24 @@ class AdminPlugins extends Controller
         if ($ok) {
             $this->toolBox()->i18nLog()->notice('reloading');
             $this->redirect($this->url(), 3);
+        }
+    }
+
+    /**
+     * Descomprime todos los archivos zip que se encuentren
+     * en la carpeta Plugins
+     */
+    protected function extractPluginsZipFiles(): void
+    {
+        $zipFileNames = Tools::folderScan(Plugins::folder());
+
+        foreach($zipFileNames as $zipFileName){
+            $zipFile = new ZipArchive();
+            $zipPath = Plugins::folder() . DIRECTORY_SEPARATOR . $zipFileName;
+            if (true === $zipFile->open($zipPath, ZipArchive::CHECKCONS)) {
+                $zipFile->extractTo(Plugins::folder());
+                $zipFile->close();
+            }
         }
     }
 }
