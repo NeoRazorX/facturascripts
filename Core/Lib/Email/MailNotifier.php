@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail as DinNewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use PHPMailer\PHPMailer\Exception;
@@ -49,18 +49,18 @@ class MailNotifier
      * @throws RuntimeError
      * @throws LoaderError
      */
-    public static function send(string $notificationName, string $email, string $name = '', array $params = [], array $adjuntos = [], array $mainBlocks = [], array $footerBlocks = []): bool
+    public static function send(string $notificationName, string $email, string $name = '', array $params = [], array $attach = [], array $mainBlocks = [], array $footerBlocks = []): bool
     {
         // ¿La notificación existe?
         $notification = new EmailNotification();
         if (false === $notification->loadFromCode($notificationName)) {
-            ToolBox::log()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
+            Tools::log()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
             return false;
         }
 
         // ¿Está desactivada?
         if (false === $notification->enabled) {
-            ToolBox::log()->warning('email-notification-disabled', ['%name%' => $notificationName]);
+            Tools::log()->warning('email-notification-disabled', ['%name%' => $notificationName]);
             return false;
         }
 
@@ -78,7 +78,7 @@ class MailNotifier
             $params['verificode'] = $newMail->verificode;
         }
 
-        $newMail->addAddress($email, $name);
+        $newMail->to($email, $name);
         $newMail->title = static::getText($notification->subject, $params);
         $newMail->text = static::getText($notification->body, $params);
 
@@ -90,7 +90,7 @@ class MailNotifier
             $newMail->addFooterBlock($block);
         }
 
-        foreach ($adjuntos as $adjunto) {
+        foreach ($attach as $adjunto) {
             $newMail->addAttachment($adjunto, basename($adjunto));
         }
 

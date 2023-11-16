@@ -341,6 +341,7 @@ class NewMail
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
+     * @deprecated since version 2023.09
      */
     public function sendNotification(string $notificationName, array $params): bool
     {
