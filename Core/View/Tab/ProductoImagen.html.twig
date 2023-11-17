@@ -28,7 +28,7 @@
     <div class="row">
         <div class="col">
             <form id="{{ 'form' ~ currentView.getViewName() ~ '0' }}" action="{{ product.url() }}" method="post"
-                  enctype="multipart/form-data">
+                  enctype="multipart/form-data" onsubmit="animateSpinner('add')">
                 {{ formToken() }}
                 <input type="hidden" name="action" value="add-image"/>
                 <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
@@ -78,7 +78,7 @@
                     <div class="card-footer">
                         {% set formName = currentView.getViewName() ~ (counter + 1) %}
                         <form id="{{ 'form' ~ formName }}" action="{{ product.url() }}" method="post"
-                              enctype="multipart/form-data">
+                              enctype="multipart/form-data" onsubmit="animateSpinner('add')">
                             {{ formToken() }}
                             <input type="hidden" name="action" value=""/>
                             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>

@@ -224,7 +224,7 @@
             {% endif %}
         </div>
     </div>
-    <form action="{{ firstView.model.url() }}" method="post" target="_blank">
+    <form action="{{ firstView.model.url() }}" method="post" target="_blank" onsubmit="animateSpinner('add')">
         <input type="hidden" name="action" value="export"/>
         <div class="modal fade" id="advancedExportModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">

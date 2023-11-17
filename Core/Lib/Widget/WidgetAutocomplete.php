@@ -134,7 +134,7 @@ class WidgetAutocomplete extends WidgetSelect
         }
 
         return '<div class="' . $this->css('input-group-prepend') . '">'
-            . '<button class="btn btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.submit();">'
+            . '<button class="btn-spin-action btn btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
             . '<i class="fas fa-times" aria-hidden="true"></i>'
             . '</button>'
             . '</div>';

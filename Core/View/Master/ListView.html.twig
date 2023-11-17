@@ -27,7 +27,7 @@
     var listViewDeleteTitle = "{{ trans('confirm-delete') }}";
 </script>
 
-<form id="{{ formName }}" method="post">
+<form id="{{ formName }}" method="post" onsubmit="animateSpinner('add')">
     {{ formToken() }}
     <input type="hidden" name="action"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
