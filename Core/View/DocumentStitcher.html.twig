@@ -21,7 +21,7 @@
 {% set pageData = fsc.getPageData() %}
 
 {% block body %}
-    <form action="{{ fsc.url() }}" method="post" name="formDocStitcher">
+    <form action="{{ fsc.url() }}" method="post" name="formDocStitcher" onsubmit="animateSpinner('add')">
         {{ formToken() }}
         <input type="hidden" name="model" value="{{ fsc.modelName }}"/>
         <input type="hidden" name="status"/>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="col mb-2">
                     <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"
+                        <button class="btn-spin-action btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-magic fa-fw"></i> {{ trans('generate') }}
                         </button>
@@ -78,7 +78,7 @@
                 </div>
                 <div class="col text-right mb-2">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+                        <button class="btn-spin-action btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-check-square fa-fw"></i> {{ trans('selected-quantity') }}
                         </button>
@@ -114,7 +114,7 @@
                 <div class="col mt-3">
                     <div class="card border-success shadow mb-2">
                         <div class="card-body p-2">
-                            <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse"
+                            <button class="btn-spin-action btn btn-sm btn-outline-success" type="button" data-toggle="collapse"
                                     data-target="#moreDocsCollapse" aria-expanded="false">
                                 <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
                                 {{ trans('more') }}
@@ -122,7 +122,7 @@
                             &nbsp; {{ trans('group-more-docs-p') }}
                         </div>
                         <div class="collapse" id="moreDocsCollapse">
-                            <form action="{{ fsc.url() }}" method="post">
+                            <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
                                 <input type="hidden" name="model" value="{{ fsc.modelName }}">
                                 <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
                                 <div class="table-responsive">
@@ -162,7 +162,7 @@
                                     </table>
                                 </div>
                                 <div class="card-body">
-                                    <button type="submit" class="btn btn-success">
+                                    <button type="submit" class="btn-spin-action btn btn-success">
                                         {{ trans('add') }}
                                     </button>
                                 </div>
@@ -216,6 +216,7 @@
 
         function sendFormData(status) {
             document.formDocStitcher.status.value = status;
+            document.formDocStitcher.onsubmit();
             document.formDocStitcher.submit();
         }
     </script>

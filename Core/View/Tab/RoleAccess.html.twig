@@ -13,7 +13,7 @@
     }
 </style>
 
-<form action="" method="post">
+<form action="" method="post" onsubmit="animateSpinner('add')">
     {{ formToken() }}
     <input type="hidden" name="action" value="edit-rules"/>
     <input type="hidden" name="activetab" value="{{ fsc.getCurrentView().getViewName() }}"/>

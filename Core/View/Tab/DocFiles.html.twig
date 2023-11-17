@@ -6,9 +6,11 @@
     <div class="row">
         <div class="col">
             {% for docfile in currentView.cursor %}
-                <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data">
+                <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
+                      onsubmit="animateSpinner('add')">
                     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
                     <input type="hidden" name="id" value="{{ docfile.id }}"/>
+                    <input type="hidden" name="action" value=""/>
                     {{ formToken() }}
                     <div class="card shadow mb-3">
                         <div class="card-body">
@@ -32,8 +34,8 @@
                                     </p>
                                 </div>
                                 <div class="col text-right">
-                                    <button type="submit" name="action" value="edit-file"
-                                            class="btn btn-sm btn-primary">
+                                    <button type="button" class="btn btn-sm btn-primary"
+                                            onclick="this.form.action.value='edit-file';this.form.onsubmit();this.form.submit();">
                                         <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
                                     {% if fsc.permissions.allowDelete %}
@@ -45,11 +47,13 @@
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <button type="submit" name="action" value="delete-file"
+                                                    <button type="button"
+                                                            onclick="this.form.action.value='delete-file';this.form.submit();"
                                                             class="dropdown-item" href="#">
                                                         <i class="far fa-trash-alt fa-fw"></i> {{ trans('delete-file') }}
                                                     </button>
-                                                    <button type="submit" name="action" value="unlink-file"
+                                                    <button type="button"
+                                                            onclick="this.form.action.value='unlink-file';this.form.onsubmit();this.form.submit();"
                                                             class="dropdown-item" href="#">
                                                         <i class="fas fa-unlink fa-fw"></i> {{ trans('unlink-file') }}
                                                     </button>
@@ -64,7 +68,8 @@
                 </form>
             {% endfor %}
             {% if fsc.permissions.allowUpdate %}
-                <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data">
+                <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
+                      onsubmit="animateSpinner('add')">
                     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
                     <input type="hidden" name="action" value="add-file"/>
                     {{ formToken() }}

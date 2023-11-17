@@ -28,7 +28,7 @@
 {% endblock %}
 
 {% block body %}
-    <form id="fReportTaxes" method="post">
+    <form id="fReportTaxes" method="post" onsubmit="animateSpinner('add')">
         {{ formToken() }}
         <input type="hidden" name="action" value="export"/>
         <input type="hidden" name="source" value="sales"/>
@@ -145,13 +145,13 @@
                             <div class="form-row">
                                 <div class="col-sm">
                                     <button type="button" onclick="sendReportTaxes('purchases')"
-                                            class="btn btn-block btn-secondary btn-spin-action">
+                                            class="btn-spin-action btn btn-block btn-secondary btn-spin-action">
                                         {{ trans('purchases') }}
                                     </button>
                                 </div>
                                 <div class="col-sm">
                                     <button type="button" onclick="sendReportTaxes('sales')"
-                                            class="btn btn-block btn-primary btn-spin-action">
+                                            class="btn-spin-action btn btn-block btn-primary btn-spin-action">
                                         {{ trans('sales') }}
                                     </button>
                                 </div>
@@ -170,9 +170,8 @@
         function sendReportTaxes(source) {
             let form = document.getElementById('fReportTaxes');
             form.source.value = source;
+            form.onsubmit();
             form.submit();
-
-            animateSpinner('add');
         }
     </script>
 {% endblock %}

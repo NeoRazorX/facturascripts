@@ -17,7 +17,7 @@
     {# -- New form -- #}
     <div class="row">
         <div class="col">
-            <form id="{{ 'form' ~ currentView.getViewName() ~ '0' }}" action="{{ doc.url() }}" method="post" enctype="multipart/form-data">
+            <form id="{{ 'form' ~ currentView.getViewName() ~ '0' }}" action="{{ doc.url() }}" method="post" enctype="multipart/form-data" onsubmit="animateSpinner('add')">
                 {{ formToken() }}
                 <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}" />
                 <input type="hidden" name="action" value="add-file" />
@@ -57,7 +57,7 @@
                 {% set formName = currentView.getViewName() ~ (counter + 1) %}
                 {% set file = docfile.getFile() %}
                 {% set urlDownload = file.url('download') %}
-                <form id="{{ 'form' ~ formName }}" action="{{ doc.url() }}" method="post" enctype="multipart/form-data">
+                <form id="{{ 'form' ~ formName }}" action="{{ doc.url() }}" method="post" enctype="multipart/form-data" onsubmit="animateSpinner('add')">
                     {{ formToken() }}
                     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}" />
                     <input type="hidden" name="id" value="{{ docfile.id }}" />
