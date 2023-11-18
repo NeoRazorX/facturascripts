@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\UI\Tab;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Template\UI\SectionTab;
 use FacturaScripts\Core\Template\UI\Widget;
+use FacturaScripts\Core\Tools;
 use Symfony\Component\HttpFoundation\Request;
 
 class TabTable extends SectionTab
@@ -71,10 +72,22 @@ class TabTable extends SectionTab
 
     public function render(string $context = ''): string
     {
-        $html = '<div class="table-responsive">'
+        $html = '<div class="container-fluid mt-3 mb-3">'
+            . '<div class="form-row">'
+            . '<div class="col-sm-auto">' . $this->renderNewButton() . $this->renderDeleteButton() . '</div>'
+            . '<div class="col-sm">' . $this->renderSearchForm() . '</div>'
+            . '<div class="col-sm-auto">' . $this->renderFilterButton() . $this->renderSortButton() . '</div>'
+            . '</div>'
+            . '</div>'
+            . '<div class="table-responsive">'
             . '<table class="table table-striped table-hover table-sm">'
             . '<thead>'
-            . '<tr>';
+            . '<tr>'
+            . '<th class="text-center">'
+            . '<div class="form-check form-check-inline m-0 toggle-ext-link">'
+            . '<input class="form-check-input listActionCB" type="checkbox">'
+            . '</div>'
+            . '</th>';
 
         foreach ($this->widgets as $widget) {
             $html .= $widget->render('th');
@@ -85,7 +98,12 @@ class TabTable extends SectionTab
             . '<tbody>';
 
         foreach ($this->data as $row) {
-            $html .= '<tr>';
+            $html .= '<tr>'
+                . '<td class="text-center">'
+                . '<div class="form-check form-check-inline m-0 toggle-ext-link">'
+                . '<input class="form-check-input listActionCB" type="checkbox">'
+                . '</div>'
+                . '</td>';
 
             foreach ($this->widgets as $widget) {
                 if ($row instanceof ModelClass) {
@@ -109,6 +127,39 @@ class TabTable extends SectionTab
             . '</div>';
 
         return $html;
+    }
+
+    protected function renderDeleteButton(): string
+    {
+        return '<a href="#" class="btn btn-danger" title="' . Tools::lang()->trans('delete')
+            . '"><i class="fas fa-trash-alt"></i></a> ';
+    }
+
+    protected function renderFilterButton(): string
+    {
+        return '<a href="#" class="btn btn-light"><i class="fas fa-filter"></i> '
+            . Tools::lang()->trans('filters') . '</a> ';
+    }
+
+    protected function renderNewButton(): string
+    {
+        return '<a href="#" class="btn btn-success">' . Tools::lang()->trans('new') . '</a> ';
+    }
+
+    protected function renderSearchForm(): string
+    {
+        return '<div class="input-group">'
+            . '<input type="text" class="form-control" placeholder="' . Tools::lang()->trans('search') . '">'
+            . '<div class="input-group-append">'
+            . '<button class="btn btn-secondary" type="button"><i class="fas fa-search"></i></button>'
+            . '</div>'
+            . '</div>';
+    }
+
+    protected function renderSortButton(): string
+    {
+        return '<a href="#" class="btn btn-light"><i class="fas fa-sort"></i> '
+            . Tools::lang()->trans('sort') . '</a> ';
     }
 
     public function setModel(ModelClass $model): self

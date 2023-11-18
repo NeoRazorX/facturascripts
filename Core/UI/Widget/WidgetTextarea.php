@@ -37,6 +37,11 @@ class WidgetTextarea extends Widget
                 return $this->renderInput();
 
             case 'td':
+                $maxLength = 60;
+                if (strlen($this->value) > $maxLength) {
+                    return '<td class="text-' . $this->align . '" title="' . $this->value . '">'
+                        . Tools::textBreak($this->value, 60) . '</td>';
+                }
                 return '<td class="text-' . $this->align . '">' . $this->value . '</td>';
 
             case 'th':

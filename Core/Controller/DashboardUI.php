@@ -113,7 +113,7 @@ class DashboardUI extends UIController
             ->setLabel('Listado 1')
             ->setModel(new Producto())
             ->addWidget(WidgetText::make('reference', 'referencia'))
-            ->addWidget(WidgetText::make('description', 'descripcion'))
+            ->addWidget(WidgetTextarea::make('description', 'descripcion'))
             ->addWidget(
                 WidgetSelect::make('family', 'codfamilia')
                     ->setOptionsFromModel(new Familia())
