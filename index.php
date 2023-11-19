@@ -54,12 +54,12 @@ $url = isset($argv[1]) && $argv[1] === '-cron' ?
     parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 Kernel::run($url);
 
-// ejecutamos la cola de trabajos
-WorkQueue::run();
-
-// guardamos los logs y cerramos la conexión a la base de datos
 $db = new DataBase();
 if ($db->connected()) {
+    // ejecutamos la cola de trabajos
+    WorkQueue::run();
+
+    // guardamos los logs y cerramos la conexión a la base de datos
     MiniLog::save();
     $db->close();
 }

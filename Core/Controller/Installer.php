@@ -31,6 +31,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Installer implements ControllerInterface
 {
+    /** @var bool */
+    protected $created_mysql_db = false;
+
     /** @var Request */
     protected $request;
 
@@ -108,7 +111,7 @@ class Installer implements ControllerInterface
                 return $this->testMysql($dbData);
 
             case 'postgresql':
-                return $this->testPostgreSql($dbData);
+                return $this->testPostgresql($dbData);
         }
 
         Tools::log()->critical('cant-connect-database');
@@ -211,7 +214,7 @@ class Installer implements ControllerInterface
             }
             if (!$foundMarker) {
                 $preLines[] = $line;
-            } elseif ($foundMarker && $foundEndMarker) {
+            } elseif ($foundEndMarker) {
                 $postLines[] = $line;
             } else {
                 $existingLines[] = $line;
@@ -258,38 +261,44 @@ class Installer implements ControllerInterface
     private function saveInstall(): bool
     {
         $file = fopen(FS_FOLDER . '/config.php', 'wb');
-        if (is_resource($file)) {
-            fwrite($file, "<?php\n");
-            fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 31536000) . ");\n");
-            fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
-            fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
-            fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
-            fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8');\n");
-            fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
-
-            $fields = [
-                'lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user', 'db_pass', 'hidden_plugins'
-            ];
-            foreach ($fields as $field) {
-                fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, '') . "');\n");
-            }
-
-            $booleanFields = ['debug', 'disable_add_plugins', 'disable_rm_plugins'];
-            foreach ($booleanFields as $field) {
-                fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->request->get('fs_' . $field, 'false') . ");\n");
-            }
-
-            if ($this->request->request->get('db_type') === 'MYSQL' && $this->request->request->get('mysql_socket') !== '') {
-                fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
-            }
-
-            fwrite($file, "\n");
-            fclose($file);
-            return true;
+        if (false === is_resource($file)) {
+            Tools::log()->critical('cant-save-install');
+            return false;
         }
 
-        Tools::log()->critical('cant-save-install');
-        return false;
+        fwrite($file, "<?php\n");
+        fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 31536000) . ");\n");
+        fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
+        fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
+        fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
+
+        if ($this->created_mysql_db) {
+            // for new databases, we use utf8mb4
+            fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8mb4');\n");
+            fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8mb4_unicode_520_ci');\n");
+        } elseif ($this->request->request->get('db_type') === 'MYSQL') {
+            // for existing databases, we use utf8
+            fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8');\n");
+            fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
+        }
+
+        $fields = ['lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user', 'db_pass', 'hidden_plugins'];
+        foreach ($fields as $field) {
+            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, '') . "');\n");
+        }
+
+        $booleanFields = ['debug', 'disable_add_plugins', 'disable_rm_plugins'];
+        foreach ($booleanFields as $field) {
+            fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->request->get('fs_' . $field, 'false') . ");\n");
+        }
+
+        if ($this->request->request->get('db_type') === 'MYSQL' && $this->request->request->get('mysql_socket') !== '') {
+            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
+        }
+
+        fwrite($file, "\n");
+        fclose($file);
+        return true;
     }
 
     private function searchErrors(): bool
@@ -341,10 +350,15 @@ class Installer implements ControllerInterface
         }
 
         $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS `' . $dbData['name'] . '`;';
-        return (bool)$connection->query($sqlCrearBD);
+        if ($connection->query($sqlCrearBD)) {
+            $this->created_mysql_db = true;
+            return true;
+        }
+
+        return false;
     }
 
-    private function testPostgreSql(array $dbData): bool
+    private function testPostgresql(array $dbData): bool
     {
         if (false === function_exists('pg_connect')) {
             Tools::log()->critical('php-extension-not-found', ['%extension%' => 'postgresql']);

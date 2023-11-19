@@ -147,6 +147,7 @@
     {% endblock %}
     <div class="pt-3">
         {% block messages %}
+            {% include 'Macro/Toasts.html.twig' %}
             {% from 'Macro/Utils.html.twig' import message as showMessage %}
             <div class="container-fluid">
                 <div class="row">

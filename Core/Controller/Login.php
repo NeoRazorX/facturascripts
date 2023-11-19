@@ -61,11 +61,11 @@ class Login implements ControllerInterface
                 break;
         }
 
-        echo Html::render('Login/login.html.twig', [
+        echo Html::render('Login/Login.html.twig', [
             'controllerName' => 'Login',
             'debugBarRender' => false,
             'fsc' => $this,
-            'template' => 'Login/login.html.twig',
+            'template' => 'Login/Login.html.twig',
         ]);
     }
 

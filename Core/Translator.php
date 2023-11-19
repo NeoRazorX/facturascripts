@@ -172,11 +172,13 @@ final class Translator
 
     private function getFolders(): array
     {
-        // cargamos primero las traducciones del core y dinamic
-        $folders = [
-            FS_FOLDER . '/Core/Translation',
-            FS_FOLDER . '/Dinamic/Translation',
-        ];
+        // cargamos primero las traducciones del core
+        $folders = [FS_FOLDER . '/Core/Translation'];
+
+        // después las de dinamic
+        if (file_exists(FS_FOLDER . '/Dinamic/Translation')) {
+            $folders[] = FS_FOLDER . '/Dinamic/Translation';
+        }
 
         // por último las de myfiles
         if (file_exists(FS_FOLDER . '/MyFiles/Translation')) {
