@@ -358,6 +358,7 @@
     "date-of-the-document": "Fecha del documento a generar",
     "date-out": "Fecha salida",
     "date-out-of-exercise-range": "La fecha está fuera del rango del ejercicio %exerciseName%",
+    "date-out-of-exercises-range": "No existe ningún ejercicio que coincida con la fecha del documento. Debe crear un ejercicio acorde con la fecha del documento.",
     "date-wildcard-info": "Fecha actual (fecha del ordenador)",
     "dateentry-wildcard-info": "Fecha indicada en la cabecera del asiento contable",
     "day": "Día",
