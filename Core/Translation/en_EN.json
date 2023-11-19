@@ -1027,6 +1027,8 @@
     "page": "Page",
     "page-break": "Page break",
     "page-configuration": "Configuration Page",
+    "page-not-found": "Page not found",
+    "page-not-found-p": "We have not found the page you are looking for.",
     "page-option-info": "Here you can modify the visible fields in this list or form",
     "page-total-amount": "Page total amount",
     "pagename": "Page name",

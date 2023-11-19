@@ -1027,6 +1027,8 @@
     "page": "Página",
     "page-break": "Salto de página",
     "page-configuration": "Página de Configuración",
+    "page-not-found": "Página no encontrada",
+    "page-not-found-p": "No hemos encontrado la página que busca.",
     "page-option-info": "Estas son las opciones de maquetación y permisos de este formulario o listado. Puedes modificar el orden de los campos, ocultarlos, hacerlos de solo lectura o aumentar el nivel de privilegios. Los cambios se aplicarán al usuario seleccionado.",
     "page-total-amount": "Total de la página",
     "pagename": "Nombre de página",

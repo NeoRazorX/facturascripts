@@ -1027,6 +1027,8 @@
     "page": "page",
     "page-break": "Salto de página",
     "page-configuration": "Page de configuration",
+    "page-not-found": "Página no encontrada",
+    "page-not-found-p": "No hemos encontrado la página que busca.",
     "page-option-info": "Desde aquí puedes modificar los campos visibles en este listado o formulario",
     "page-total-amount": "Montant total de la page",
     "pagename": "Nom de la page",

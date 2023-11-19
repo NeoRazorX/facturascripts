@@ -1027,6 +1027,8 @@
     "page": "Pàgina",
     "page-break": "Salt de pàgina",
     "page-configuration": "Pàgina de configuració",
+    "page-not-found": "Pàgina no trobada",
+    "page-not-found-p": "No hem trobat la pàgina que cerca.",
     "page-option-info": "Des d'aquí podeu modificar els camps visibles en aquest llistat o formulari",
     "page-total-amount": "Total de la pàgina",
     "pagename": "Nom de la pàgina",
