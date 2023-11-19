@@ -151,7 +151,7 @@ class GroupItem extends VisualItem
         $html .= '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn-spin-action btn btn-secondary" data-dismiss="modal">'
+            . '<button type="button" class="btn btn-spin-action btn-secondary" data-dismiss="modal">'
             . static::$i18n->trans('cancel')
             . '</button>'
             . '<button type="submit" name="action" value="' . $this->name . '" class="btn-spin-action  btn btn-primary">'

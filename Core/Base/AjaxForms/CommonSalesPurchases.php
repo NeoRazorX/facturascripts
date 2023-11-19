@@ -219,7 +219,7 @@ trait CommonSalesPurchases
     protected static function deleteBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         return $model->primaryColumnValue() && $model->editable ?
-            '<button type="button" class="btn-spin-action btn btn-danger mb-3" data-toggle="modal" data-target="#deleteDocModal">'
+            '<button type="button" class="btn btn-spin-action btn-danger mb-3" data-toggle="modal" data-target="#deleteDocModal">'
             . '<i class="fas fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete')
             . '</button>'
             . '<div class="modal fade" id="deleteDocModal" tabindex="-1" aria-hidden="true">'
@@ -238,7 +238,8 @@ trait CommonSalesPurchases
             . '</div>'
             . '<div class="modal-footer">'
             . '<button type="button" class="btn btn-spin-action btn-secondary" data-dismiss="modal">' . $i18n->trans('cancel') . '</button>'
-            . '<button type="button" class="btn btn-spin-action btn-danger" onclick="return ' . $jsName . '(\'delete-doc\', \'0\');">' . $i18n->trans('delete') . '</button>'
+            . '<button type="button" class="btn btn-spin-action btn-danger" onclick="return ' . $jsName . '(\'delete-doc\', \'0\');">'
+            . $i18n->trans('delete') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -536,7 +537,7 @@ trait CommonSalesPurchases
 
         return '<div class="col-sm-auto">'
             . '<div class="form-group">'
-            . '<button class="btn-spin-action btn btn-outline-danger dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">'
+            . '<button class="btn btn-spin-action btn-outline-danger dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">'
             . '<i class="fas fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</button>'
             . '<div class="dropdown-menu"><a class="dropdown-item text-success" href="#" onclick="return ' . $jsName . '(\'save-paid\', \'1\');">'
             . '<i class="fas fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</a></div>'

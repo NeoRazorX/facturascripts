@@ -41,7 +41,7 @@
                     {% endif %}
                 </div>
                 {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
-                    <button class="btn-spin-action btn btn-sm btn-success" type="button" data-toggle="modal"
+                    <button class="btn btn-spin-action btn-sm btn-success" type="button" data-toggle="modal"
                             data-target="#modalAddPlugin">
                         <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ trans('add') }}</span>
@@ -49,7 +49,7 @@
                 {% endif %}
                 <div class="btn-group">
                     <a href="{{ fsc.url() }}?action=rebuild&multireqtoken={{ formToken(false) }}" onclick="animateSpinner('add')"
-                       class="btn-spin-action btn btn-sm btn-warning">
+                       class="btn btn-spin-action btn-sm btn-warning">
                         <i class="fas fa-hammer fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ trans('rebuild') }}</span>
                     </a>
@@ -130,9 +130,9 @@
                                 {% endif %}
                             </div>
                             <div class="text-right mt-5">
-                                <button type="button" class="btn-spin-action btn btn-secondary"
+                                <button type="button" class="btn btn-spin-action btn-secondary"
                                         data-dismiss="modal">{{ trans('cancel') }}</button>
-                                <button type="submit" class="btn-spin-action btn btn-primary">{{ trans('continue') }}</button>
+                                <button type="submit" class="btn btn-spin-action btn-primary">{{ trans('continue') }}</button>
                             </div>
                         </div>
                     </div>
@@ -285,7 +285,7 @@
                     </td>
                     <td class="text-right text-nowrap">
                         {% if plugin.hasUpdate() %}
-                            <a href="Updater" class="btn-spin-action btn btn-sm btn-info mr-1" title="{{ trans('updater') }}">
+                            <a href="Updater" class="btn btn-spin-action btn-sm btn-info mr-1" title="{{ trans('updater') }}">
                                 <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
                             </a>
                         {% endif %}
