@@ -48,7 +48,7 @@ class ConfigEmail extends PanelController
         $this->createViewsEmailNotification();
     }
 
-    protected function createViewsEmail(string $viewName = 'ConfigEmail')
+    protected function createViewsEmail(string $viewName = 'ConfigEmail'): void
     {
         $this->addEditView($viewName, 'Settings', 'email', 'fas fa-envelope');
 
@@ -57,7 +57,7 @@ class ConfigEmail extends PanelController
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
-    protected function createViewsEmailNotification(string $viewName = 'ListEmailNotification')
+    protected function createViewsEmailNotification(string $viewName = 'ListEmailNotification'): void
     {
         $this->addListView($viewName, 'EmailNotification', 'notifications', 'fas fa-bell');
         $this->views[$viewName]->addOrderBy(['date'], 'date');
@@ -86,7 +86,7 @@ class ConfigEmail extends PanelController
         ]);
     }
 
-    protected function createViewsEmailSent(string $viewName = 'ListEmailSent')
+    protected function createViewsEmailSent(string $viewName = 'ListEmailSent'): void
     {
         $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-paper-plane');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
@@ -95,8 +95,13 @@ class ConfigEmail extends PanelController
         // filtros
         $users = $this->codeModel->all('users', 'nick', 'nick');
         $this->views[$viewName]->addFilterSelect('nick', 'user', 'nick', $users);
+
+        $from = $this->codeModel->all('emails_sent', 'email_from', 'email_from');
+        $this->views[$viewName]->addFilterSelect('from', 'from', 'email_from', $from);
+
         $this->views[$viewName]->addFilterPeriod('date', 'period', 'date');
         $this->views[$viewName]->addFilterCheckbox('opened');
+        $this->views[$viewName]->addFilterCheckbox('attachment', 'has-attachments');
 
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
@@ -189,7 +194,7 @@ class ConfigEmail extends PanelController
         }
     }
 
-    protected function testMailAction()
+    protected function testMailAction(): void
     {
         // guardamos los datos del formulario primero
         if (false === $this->editAction()) {

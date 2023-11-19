@@ -22,13 +22,15 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Contacto;
 
 /**
- * Controller to edit a single registrer of EmailSent
+ * Controller to edit a single register of EmailSent
  *
- * @author Raul                 <raljopa@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Raul                     <raljopa@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class EditEmailSent extends EditController
 {
@@ -70,6 +72,9 @@ class EditEmailSent extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
+        $this->createViewHtml();
+        $this->createViewAttachments();
+
         // buttons
         $mainView = $this->getMainViewName();
         $this->addButton($mainView, [
@@ -87,7 +92,17 @@ class EditEmailSent extends EditController
         $this->createViewOtherEmails();
     }
 
-    protected function createViewOtherEmails(string $viewName = 'ListEmailSent')
+    protected function createViewAttachments(string $viewName = 'EmailSentAttachment'): void
+    {
+        $this->addHtmlView($viewName, 'Tab\EmailSentAttachment', 'EmailSent', 'attached-files', 'fas fa-paperclip');
+    }
+
+    protected function createViewHtml(string $viewName = 'EmailSentHtml'): void
+    {
+        $this->addHtmlView($viewName, 'Tab\EmailSentHtml', 'EmailSent', 'html');
+    }
+
+    protected function createViewOtherEmails(string $viewName = 'ListEmailSent'): void
     {
         $this->addListView($viewName, 'EmailSent', 'emails', 'fas fa-paper-plane');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
@@ -112,6 +127,35 @@ class EditEmailSent extends EditController
         }
     }
 
+    protected function execPreviousAction($action)
+    {
+        if ($action === 'getHtml') {
+            $this->getHtmlAction();
+            return false;
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
+    protected function getHtmlAction(): void
+    {
+        $this->setTemplate(false);
+
+        // cargamos el modelo
+        $model = $this->getModel();
+        if (false === $model->loadFromCode($this->request->get('code', ''))) {
+            $this->response->setContent(json_encode(['getHtml' => false]));
+            return;
+        }
+
+        $this->response->setContent(json_encode([
+            'getHtml' => true,
+            'html' => empty($model->html) ?
+                '<h1 style="text-align: center">' . Tools::lang()->trans('not-stored-content') . '</h1>' :
+                Tools::fixHtml($model->html),
+        ]));
+    }
+
     /**
      * Load view data procedure
      *
@@ -120,10 +164,17 @@ class EditEmailSent extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+
         switch ($viewName) {
+            case 'EmailSentAttachment':
+                $view->cursor = $this->views[$mvn]->model->getAttachments();
+                $view->count = count($view->cursor);
+                break;
+
             case 'ListEmailSent':
-                $addressee = $this->getViewModelValue($this->getMainViewName(), 'addressee');
-                $id = $this->getViewModelValue($this->getMainViewName(), 'id');
+                $addressee = $this->getViewModelValue($mvn, 'addressee');
+                $id = $this->getViewModelValue($mvn, 'id');
                 $where = [
                     new DataBaseWhere('addressee', $addressee),
                     new DataBaseWhere('id', $id, '!=')
@@ -133,6 +184,11 @@ class EditEmailSent extends EditController
 
             default:
                 parent::loadData($viewName, $view);
+
+                // si no hay adjuntos ocultamos la pestaña
+                if (false === $view->model->attachment) {
+                    $this->setSettings('EmailSentAttachment', 'active', false);
+                }
                 break;
         }
     }

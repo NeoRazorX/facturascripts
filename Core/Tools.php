@@ -145,6 +145,29 @@ class Tools
         return !file_exists($folder) || unlink($folder);
     }
 
+    public static function folderSize(string $folder, array $exclude = ['.DS_Store', '.well-known']): int
+    {
+        $size = 0;
+        $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
+        if (false === is_array($scan)) {
+            return $size;
+        }
+
+        $exclude[] = '.';
+        $exclude[] = '..';
+        $files = array_diff($scan, $exclude);
+        foreach ($files as $file) {
+            $newFile = $folder . DIRECTORY_SEPARATOR . $file;
+            if (is_dir($newFile)) {
+                $size += static::folderSize($newFile, $exclude);
+            } else {
+                $size += filesize($newFile);
+            }
+        }
+
+        return $size;
+    }
+
     public static function folderScan(string $folder, bool $recursive = false, array $exclude = ['.DS_Store', '.well-known']): array
     {
         $scan = scandir($folder, SCANDIR_SORT_ASCENDING);

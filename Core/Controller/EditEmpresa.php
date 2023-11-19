@@ -54,7 +54,10 @@ class EditEmpresa extends EditController
             return true;
         }
 
-        $model->checkVies();
+        if ($model->checkVies()) {
+            self::toolBox()->i18nLog()->notice('vies-check-success', ['%vat-number%' => $model->cifnif]);
+        }
+
         return true;
     }
 
@@ -67,25 +70,25 @@ class EditEmpresa extends EditController
         $this->createViewExercises();
     }
 
-    protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco')
+    protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco'): void
     {
         $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
         $this->views[$viewName]->disableColumn('company');
     }
 
-    protected function createViewExercises(string $viewName = 'ListEjercicio')
+    protected function createViewExercises(string $viewName = 'ListEjercicio'): void
     {
         $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
         $this->views[$viewName]->disableColumn('company');
     }
 
-    protected function createViewPaymentMethods(string $viewName = 'ListFormaPago')
+    protected function createViewPaymentMethods(string $viewName = 'ListFormaPago'): void
     {
         $this->addListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card');
         $this->views[$viewName]->disableColumn('company');
     }
 
-    protected function createViewWarehouse(string $viewName = 'EditAlmacen')
+    protected function createViewWarehouse(string $viewName = 'EditAlmacen'): void
     {
         $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse');
         $this->views[$viewName]->disableColumn('company');
@@ -125,13 +128,12 @@ class EditEmpresa extends EditController
             case $mvn:
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($view);
-                if ($view->model->exists()) {
+                if ($view->model->exists() && $view->model->cifnif) {
                     $this->addButton($viewName, [
                         'action' => 'check-vies',
                         'color' => 'info',
                         'icon' => 'fas fa-check-double',
-                        'label' => 'check-vies',
-                        'type' => 'action'
+                        'label' => 'check-vies'
                     ]);
                 }
                 break;
@@ -142,7 +144,7 @@ class EditEmpresa extends EditController
         }
     }
 
-    protected function setCustomWidgetValues(BaseView &$view)
+    protected function setCustomWidgetValues(BaseView &$view): void
     {
         $columnVATType = $view->columnForName('vat-regime');
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {

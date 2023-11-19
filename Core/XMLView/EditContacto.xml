@@ -93,7 +93,7 @@
             </column>
             <column name="city" numcolumns="4" order="130">
                 <widget type="datalist" fieldname="ciudad">
-                    <values source="ciudades" fieldcode="idciudad" fieldtitle="ciudad"/>
+                    <values source="ciudades" fieldcode="ciudad" fieldtitle="ciudad" limit="9000"/>
                 </widget>
             </column>
             <column name="province" numcolumns="4" order="140">

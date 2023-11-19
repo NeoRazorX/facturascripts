@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ProductType;
 use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
@@ -132,7 +133,7 @@ class Variante extends Base\ModelClass
     {
         $results = [];
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
-        $find = $this->toolBox()->utils()->noHtml(mb_strtolower($query, 'UTF8'));
+        $find = Tools::noHtml(mb_strtolower($query, 'UTF8'));
 
         // añadimos opciones al inicio del where
         array_unshift(
@@ -179,7 +180,7 @@ class Variante extends Base\ModelClass
     {
         // no se puede eliminar la variante principal
         if ($this->referencia === $this->getProducto()->referencia) {
-            $this->toolBox()->i18nLog()->warning('you-cant-delete-primary-variant');
+            Tools::log()->warning('you-cant-delete-primary-variant');
             return false;
         }
 
@@ -321,21 +322,20 @@ class Variante extends Base\ModelClass
 
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->referencia = $utils->noHtml($this->referencia);
+        $this->codbarras = Tools::noHtml($this->codbarras);
+        $this->referencia = Tools::noHtml($this->referencia);
 
         if (empty($this->referencia)) {
             $this->referencia = (string)$this->newCode('referencia');
         }
         if (strlen($this->referencia) > 30) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'invalid-column-lenght',
                 ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
             );
             return false;
         }
 
-        $this->codbarras = $utils->noHtml($this->codbarras);
         return parent::test();
     }
 
@@ -346,11 +346,18 @@ class Variante extends Base\ModelClass
 
     protected function saveInsert(array $values = []): bool
     {
+        // comprobamos si la referencia ya existe
+        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        if ($this->count($where) > 0) {
+            Tools::log()->warning('duplicated-reference', ['%reference%' => $this->referencia]);
+            return false;
+        }
+
         if (false === parent::saveInsert($values)) {
             return false;
         }
 
-        // set new stock?
+        // establecemos el nuevo stock
         if ($this->stockfis != 0.0) {
             $stock = new DinStock();
             $stock->cantidad = $this->stockfis;

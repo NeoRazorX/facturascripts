@@ -27,11 +27,11 @@
     var listViewDeleteTitle = "{{ trans('confirm-delete') }}";
 </script>
 
-<form id="{{ formName }}" method="post">
+<form id="{{ formName }}" method="post" onsubmit="animateSpinner('add')">
+    {{ formToken() }}
     <input type="hidden" name="action"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="loadfilter" value="{{ currentView.pageFilterKey }}"/>
-    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
@@ -200,7 +200,7 @@
                         <td class="text-right">{{ trans('page-total-amount') }}</td>
                         {% for item in currentView.totalAmounts %}
                             <td class="text-right">
-                                {{ fsc.toolBox().numbers().format(item.page) }}
+                                {{ number(item.page) }}
                             </td>
                         {% endfor %}
                     </tr>
@@ -208,7 +208,7 @@
                         <td class="text-right">{{ trans('total-amount') }}</td>
                         {% for item in currentView.totalAmounts %}
                             <td class="text-right">
-                                {{ fsc.toolBox().numbers().format(item.total) }}
+                                {{ number(item.total) }}
                             </td>
                         {% endfor %}
                     </tr>

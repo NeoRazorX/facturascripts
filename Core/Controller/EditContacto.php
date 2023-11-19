@@ -114,10 +114,10 @@ class EditContacto extends EditController
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
 
-        // disable column
+        // desactivamos la columna de destinatario
         $this->views[$viewName]->disableColumn('to');
 
-        // disable buttons
+        // desactivamos el botón de nuevo
         $this->setSettings($viewName, 'btnNew', false);
     }
 
@@ -238,7 +238,7 @@ class EditContacto extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
+        $mvn = $this->getMainViewName();
 
         switch ($viewName) {
             case 'docfiles':
@@ -246,13 +246,26 @@ class EditContacto extends EditController
                 break;
 
             case 'ListEmailSent':
-                $email = $this->getViewModelValue($mainViewName, 'email');
+                $email = $this->getViewModelValue($mvn, 'email');
+                if (empty($email)) {
+                    $this->setSettings($viewName, 'active', false);
+                    break;
+                }
+
                 $where = [new DataBaseWhere('addressee', $email)];
                 $view->loadData('', $where);
-                $this->setSettings($viewName, 'active', $view->count > 0);
+
+                // añadimos un botón para enviar un nuevo email
+                $this->addButton($viewName, [
+                    'action' => 'SendMail?email=' . $email,
+                    'color' => 'success',
+                    'icon' => 'fas fa-envelope',
+                    'label' => 'send',
+                    'type' => 'link'
+                ]);
                 break;
 
-            case $mainViewName:
+            case $mvn:
                 parent::loadData($viewName, $view);
                 $this->loadLanguageValues($viewName);
                 if (false === $view->model->exists()) {

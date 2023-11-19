@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
 
@@ -66,7 +67,7 @@ class ListProducto extends ListController
         $this->addSearchFields($viewName, ['referencia', 'descripcion', 'observaciones']);
 
         // filtros
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
             ['label' => $i18n->trans('blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
@@ -84,7 +85,7 @@ class ListProducto extends ListController
         foreach (ProductType::all() as $key => $value) {
             $types[] = [
                 'code' => $key,
-                'description' => $this->toolBox()->i18n()->trans($value)
+                'description' => $i18n->trans($value)
             ];
         }
         $this->addFilterSelect($viewName, 'tipo', 'type', 'tipo', $types);
@@ -99,7 +100,7 @@ class ListProducto extends ListController
         foreach (RegimenIVA::allExceptions() as $key => $value) {
             $exceptions[] = [
                 'code' => $key,
-                'description' => $this->toolBox()->i18n()->trans($value)
+                'description' => $i18n->trans($value)
             ];
         }
         $this->addFilterSelect($viewName, 'excepcioniva', 'vat-exception', 'excepcioniva', $exceptions);
@@ -169,17 +170,27 @@ class ListProducto extends ListController
         $warehouses = Almacenes::codeModel();
         $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
 
+        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'productos.codfabricante', $manufacturers);
+
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->addFilterSelect($viewName, 'codfamilia', 'family', 'productos.codfamilia', $families);
+
         $this->addFilterSelectWhere($viewName, 'type', [
             [
-                'label' => $this->toolBox()->i18n()->trans('all'),
+                'label' => Tools::lang()->trans('all'),
                 'where' => []
             ],
             [
-                'label' => $this->toolBox()->i18n()->trans('under-minimums'),
+                'label' => '------',
+                'where' => []
+            ],
+            [
+                'label' => Tools::lang()->trans('under-minimums'),
                 'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmin', '<')]
             ],
             [
-                'label' => $this->toolBox()->i18n()->trans('excess'),
+                'label' => Tools::lang()->trans('excess'),
                 'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmax', '>')]
             ]
         ]);

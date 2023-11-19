@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,31 +32,31 @@
                     <values/>
                 </widget>
             </column>
-            <column name="currency" order="120">
+            <column name="supplier-reference" order="120">
+                <widget type="text" fieldname="refproveedor"/>
+            </column>
+            <column name="price" order="130">
+                <widget type="money" fieldname="precio"/>
+            </column>
+            <column name="dto" order="140">
+                <widget type="percentage" fieldname="dtopor"/>
+            </column>
+            <column name="dto-2" display="none" order="150">
+                <widget type="percentage" fieldname="dtopor2"/>
+            </column>
+            <column name="net" order="160">
+                <widget type="money" fieldname="neto" readonly="true"/>
+            </column>
+            <column name="stock" display="none" order="170">
+                <widget type="number" fieldname="stock"/>
+            </column>
+            <column name="update-time" display="none" order="180">
+                <widget type="datetime" fieldname="actualizado" readonly="true"/>
+            </column>
+            <column name="currency" order="190">
                 <widget type="select" fieldname="coddivisa" onclick="EditDivisa" readonly="dinamic">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"/>
                 </widget>
-            </column>
-            <column name="supplier-reference" order="130">
-                <widget type="text" fieldname="refproveedor"/>
-            </column>
-            <column name="price" order="140">
-                <widget type="money" fieldname="precio"/>
-            </column>
-            <column name="dto" order="150">
-                <widget type="percentage" fieldname="dtopor"/>
-            </column>
-            <column name="dto-2" display="none" order="160">
-                <widget type="percentage" fieldname="dtopor2"/>
-            </column>
-            <column name="net" order="170">
-                <widget type="money" fieldname="neto" readonly="true"/>
-            </column>
-            <column name="stock" display="none" order="180">
-                <widget type="number" fieldname="stock"/>
-            </column>
-            <column name="update-time" display="none" order="190">
-                <widget type="datetime" fieldname="actualizado" readonly="true"/>
             </column>
         </group>
     </columns>

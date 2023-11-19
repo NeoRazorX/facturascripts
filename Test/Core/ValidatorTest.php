@@ -22,9 +22,9 @@ namespace FacturaScripts\Test\Core;
 use FacturaScripts\Core\Validator;
 use PHPUnit\Framework\TestCase;
 
-class ValidatorTest extends TestCase
+final class ValidatorTest extends TestCase
 {
-    public function testAlphaNumeric()
+    public function testAlphaNumeric(): void
     {
         $this->assertTrue(Validator::alphaNumeric('test'));
         $this->assertTrue(Validator::alphaNumeric('test123'));
@@ -126,7 +126,7 @@ class ValidatorTest extends TestCase
         $this->assertFalse(Validator::alphaNumeric('test-456+Y', '-_.+\\', 1, 9));
     }
 
-    public function testEmail()
+    public function testEmail(): void
     {
         $this->assertTrue(Validator::email('carlos@facturascripts.com'));
         $this->assertFalse(Validator::email('carlos'));
@@ -134,7 +134,7 @@ class ValidatorTest extends TestCase
         $this->assertFalse(Validator::email('@facturascripts.com'));
     }
 
-    public function testString()
+    public function testString(): void
     {
         $this->assertTrue(Validator::string('test'));
         $this->assertFalse(Validator::string(''));
@@ -146,7 +146,7 @@ class ValidatorTest extends TestCase
         $this->assertFalse(Validator::string('test', 1, 3));
     }
 
-    public function testUrl()
+    public function testUrl(): void
     {
         $this->assertTrue(Validator::url('http://facturascripts.com'));
         $this->assertTrue(Validator::url('https://facturascripts.com'));

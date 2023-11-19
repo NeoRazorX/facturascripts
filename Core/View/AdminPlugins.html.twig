@@ -41,15 +41,15 @@
                     {% endif %}
                 </div>
                 {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
-                    <button class="btn btn-sm btn-success" type="button" data-toggle="modal"
+                    <button class="btn-spin-action btn btn-sm btn-success" type="button" data-toggle="modal"
                             data-target="#modalAddPlugin">
                         <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ trans('add') }}</span>
                     </button>
                 {% endif %}
                 <div class="btn-group">
-                    <a href="{{ fsc.url() }}?action=rebuild&multireqtoken={{ formToken(false) }}"
-                       class="btn btn-sm btn-warning">
+                    <a href="{{ fsc.url() }}?action=rebuild&multireqtoken={{ formToken(false) }}" onclick="animateSpinner('add')"
+                       class="btn-spin-action btn btn-sm btn-warning">
                         <i class="fas fa-hammer fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ trans('rebuild') }}</span>
                     </a>
@@ -101,7 +101,7 @@
 
     {# Modal for add new plugins #}
     {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
-        <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data">
+        <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data" onsubmit="animateSpinner('add')">
             {{ formToken() }}
             <input type="hidden" name="action" value="upload"/>
             <div class="modal fade" id="modalAddPlugin" tabindex="-1" role="dialog" aria-hidden="true">
@@ -122,7 +122,7 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 {{ trans('select-plugin-zip-file') }}
-                                <input type="file" name="plugin[]" multiple="" accept="application/zip" required=""/>
+                                <input type="file" name="plugin[]" multiple="" accept="application/zip" required/>
                                 {% if fsc.getMaxFileUpload() >= 99 %}
                                     <small class="form-text text-muted">
                                         {{ trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}
@@ -130,9 +130,9 @@
                                 {% endif %}
                             </div>
                             <div class="text-right mt-5">
-                                <button type="button" class="btn btn-secondary"
+                                <button type="button" class="btn-spin-action btn btn-secondary"
                                         data-dismiss="modal">{{ trans('cancel') }}</button>
-                                <button type="submit" class="btn btn-primary">{{ trans('continue') }}</button>
+                                <button type="submit" class="btn-spin-action btn btn-primary">{{ trans('continue') }}</button>
                             </div>
                         </div>
                     </div>
@@ -285,7 +285,7 @@
                     </td>
                     <td class="text-right text-nowrap">
                         {% if plugin.hasUpdate() %}
-                            <a href="Updater" class="btn btn-sm btn-info mr-1" title="{{ trans('updater') }}">
+                            <a href="Updater" class="btn-spin-action btn btn-sm btn-info mr-1" title="{{ trans('updater') }}">
                                 <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
                             </a>
                         {% endif %}

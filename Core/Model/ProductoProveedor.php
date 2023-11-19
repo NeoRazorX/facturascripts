@@ -74,6 +74,13 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     /** @var float */
     public $stock;
 
+    public function __get($name)
+    {
+        if ($name == 'descripcion') {
+            return $this->getVariant()->getProducto()->descripcion;
+        }
+    }
+
     public function clear()
     {
         parent::clear();

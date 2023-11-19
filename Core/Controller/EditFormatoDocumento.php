@@ -46,7 +46,6 @@ class EditFormatoDocumento extends EditController
     }
 
     /**
-     *
      * @param string $viewName
      * @param BaseView $view
      */
@@ -57,10 +56,16 @@ class EditFormatoDocumento extends EditController
         switch ($viewName) {
             case $mvn:
                 parent::loadData($viewName, $view);
-                /// disable company column if there is only one company
+
+                // desactivamos los botones de imprimir y opciones
+                $this->setSettings($viewName, 'btnOptions', false);
+                $this->setSettings($viewName, 'btnPrint', false);
+
+                // deshabilitar la columna de empresa si solo hay una
                 if ($this->empresa->count() < 2) {
                     $view->disableColumn('company');
                 }
+
                 $this->loadLogoWidget($view);
                 break;
 
@@ -70,11 +75,7 @@ class EditFormatoDocumento extends EditController
         }
     }
 
-    /**
-     *
-     * @param BaseView $view
-     */
-    protected function loadLogoWidget(&$view)
+    protected function loadLogoWidget(BaseView &$view): void
     {
         $columnLogo = $view->columnForName('logo');
         if ($columnLogo && $columnLogo->widget->getType() === 'select') {

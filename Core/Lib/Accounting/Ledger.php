@@ -80,7 +80,8 @@ class Ledger
                 }
                 $ledger['totals'] = [[
                     'debe' => $this->formatMoney($debe, true),
-                    'haber' => $this->formatMoney($haber, true)
+                    'haber' => $this->formatMoney($haber, true),
+                    'saldo' => $this->formatMoney($debe - $haber, true)
                 ]];
                 break;
 
@@ -94,7 +95,8 @@ class Ledger
                 }
                 $ledger['totals'] = [[
                     'debe' => $this->formatMoney($debe, true),
-                    'haber' => $this->formatMoney($haber, true)
+                    'haber' => $this->formatMoney($haber, true),
+                    'saldo' => $this->formatMoney($debe - $haber, true)
                 ]];
                 break;
 
@@ -109,10 +111,10 @@ class Ledger
                 $ledger['lines'][] = [
                     'asiento' => '',
                     'fecha' => '',
-                    'cuenta' => '',
                     'concepto' => '',
                     'debe' => $this->formatMoney($debe, true),
-                    'haber' => $this->formatMoney($haber, true)
+                    'haber' => $this->formatMoney($haber, true),
+                    'saldo' => $this->formatMoney($debe - $haber, true)
                 ];
                 break;
         }

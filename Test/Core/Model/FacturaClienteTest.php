@@ -742,7 +742,12 @@ final class FacturaClienteTest extends TestCase
         // creamos una factura
         $invoice = new FacturaCliente();
         $invoice->setSubject($customer);
-        $this->assertTrue($invoice->setIntracomunitaria());
+
+        $check = $invoice->setIntracomunitaria();
+        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+            $this->markTestSkipped('Vies service is not available');
+        }
+        $this->assertTrue($check);
 
         // comprobamos que se ha establecido el tipo de operación
         $this->assertEquals(InvoiceOperation::INTRA_COMMUNITY, $invoice->operacion);

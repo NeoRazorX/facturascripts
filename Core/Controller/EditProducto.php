@@ -62,10 +62,53 @@ class EditProducto extends EditController
         $this->createViewsVariants();
         $this->createViewsProductImages();
         $this->createViewsStock();
+        $this->createViewsPedidosClientes();
+        $this->createViewsPedidosProveedores();
         $this->createViewsSuppliers();
     }
 
-    protected function createViewsStock(string $viewName = 'EditStock')
+    protected function createViewsPedidosClientes(string $viewName = 'ListLineaPedidoCliente'): void
+    {
+        $this->addListView($viewName, 'LineaPedidoCliente', 'reserved', 'fas fa-lock');
+        $this->views[$viewName]->addSearchFields(['referencia', 'descripcion']);
+        $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
+        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
+        $this->views[$viewName]->addOrderBy(['servido'], 'quantity-served');
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
+        $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
+        $this->views[$viewName]->addOrderBy(['idlinea'], 'code', 2);
+
+        // ocultamos la columna product
+        $this->views[$viewName]->disableColumn('product');
+
+        // desactivamos los botones de nuevo, eliminar y checkbox
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'checkBoxes', false);
+    }
+
+    protected function createViewsPedidosProveedores(string $viewName = 'ListLineaPedidoProveedor'): void
+    {
+        $this->addListView($viewName, 'LineaPedidoProveedor', 'pending-reception', 'fas fa-ship');
+        $this->views[$viewName]->addSearchFields(['referencia', 'descripcion']);
+        $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
+        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
+        $this->views[$viewName]->addOrderBy(['servido'], 'quantity-served');
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
+        $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
+        $this->views[$viewName]->addOrderBy(['idlinea'], 'code', 2);
+
+
+        // ocultamos la columna product
+        $this->views[$viewName]->disableColumn('product');
+
+        // desactivamos los botones de nuevo, eliminar y checkbox
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'checkBoxes', false);
+    }
+
+    protected function createViewsStock(string $viewName = 'EditStock'): void
     {
         $this->addEditListView($viewName, 'Stock', 'stock', 'fas fa-dolly');
 
@@ -75,12 +118,12 @@ class EditProducto extends EditController
         }
     }
 
-    protected function createViewsSuppliers(string $viewName = 'EditProductoProveedor')
+    protected function createViewsSuppliers(string $viewName = 'EditProductoProveedor'): void
     {
         $this->addEditListView($viewName, 'ProductoProveedor', 'suppliers', 'fas fa-users');
     }
 
-    protected function createViewsVariants(string $viewName = 'EditVariante')
+    protected function createViewsVariants(string $viewName = 'EditVariante'): void
     {
         $this->addEditListView($viewName, 'Variante', 'variants', 'fas fa-project-diagram');
 
@@ -227,7 +270,6 @@ class EditProducto extends EditController
                 break;
 
             case 'EditProductoImagen':
-                $where = [new DataBaseWhere('idproducto', $id)];
                 $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
                 $view->loadData('', $where, $orderBy);
                 break;
@@ -243,6 +285,18 @@ class EditProducto extends EditController
 
             case 'EditProductoProveedor':
                 $view->loadData('', $where, ['id' => 'DESC']);
+                break;
+
+            case 'ListLineaPedidoCliente':
+                $where[] = new DataBaseWhere('actualizastock', -2);
+                $view->loadData('', $where);
+                $this->setSettings($viewName, 'active', $view->model->count($where) > 0);
+                break;
+
+            case 'ListLineaPedidoProveedor':
+                $where[] = new DataBaseWhere('actualizastock', 2);
+                $view->loadData('', $where);
+                $this->setSettings($viewName, 'active', $view->model->count($where) > 0);
                 break;
         }
     }

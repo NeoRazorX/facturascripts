@@ -20,6 +20,7 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
 {% block messages %}
+    {% include 'Macro/Toasts.html.twig' %}
     {% from 'Macro/Utils.html.twig' import messageCompat as showMessage %}
     <div class="container-fluid">
         <div class="row">
@@ -87,23 +88,23 @@
                         {% if item.mincore > fsc.getCoreVersion() %}
                             {{ trans('requires-core', {'%version%': item.mincore}) }}
                         {% elseif item.downloaded %}
-                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
+                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn-spin-action btn btn-sm btn-success" onclick="animateSpinner('add')">
                                 <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ trans('update') }}
                             </a>
-                            <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}" class="btn btn-sm btn-warning">
+                            <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}" class="btn-spin-action btn btn-sm btn-warning" onclick="animateSpinner('add')">
                                 <i class="fas fa-times fa-fw" aria-hidden="true"></i> {{ trans('cancel') }}
                             </a>
                         {% elseif item.name == 'CORE' and fsc.coreUpdateWarnings %}
-                            <button type="button" class="btn btn-warning" data-toggle="modal"
+                            <button type="button" class="btn-spin-action btn btn-warning" data-toggle="modal"
                                     data-target="#coreWarningModal">{{ trans('download') }}
                             </button>
                         {% elseif item.stable %}
                             <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
-                               class="btn btn-sm btn-secondary">{{ trans('download') }}
+                               class="btn-spin-action btn btn-sm btn-secondary" onclick="animateSpinner('add')">{{ trans('download') }}
                             </a>
                         {% else %}
                             <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
-                               class="btn btn-sm btn-outline-warning">{{ trans('beta') }}
+                               class="btn-spin-action btn btn-sm btn-outline-warning" onclick="animateSpinner('add')">{{ trans('beta') }}
                             </a>
                         {% endif %}
                     </td>
@@ -136,9 +137,9 @@
                                 </a>
                             </div>
                             <div class="col text-right">
-                                <form action="{{ fsc.url() }}" method="post">
+                                <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
                                     <input type="hidden" name="action" value="unlink"/>
-                                    <button type="submit" class="btn btn-danger">
+                                    <button type="submit" class="btn-spin-action btn btn-danger">
                                         {{ trans('unlink') }}
                                     </button>
                                 </form>
@@ -146,7 +147,7 @@
                         </div>
                     </div>
                 {% else %}
-                    <form action="{{ fsc.url() }}" method="post">
+                    <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
                         <input type="hidden" name="action" value="register"/>
                         <div class="modal-header">
                             <h5 class="modal-title">{{ trans('register-installation') }}</h5>
@@ -158,7 +159,7 @@
                         <div class="modal-body">
                             <p>{{ trans('register-installation-p') }}</p>
                             <p>{{ trans('telemetry-data-to-send') }}</p>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn-spin-action btn btn-primary">
                                 {{ trans('register-installation') }}
                             </button>
                         </div>
@@ -192,15 +193,15 @@
                             {% if item.name == 'CORE' and fsc.coreUpdateWarnings %}
                                 <div class="btn-group">
                                     <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&disable={{ fsc.coreUpdateWarnings | keys | join(',') }}"
-                                       class="btn btn-warning">{{ trans('download') }}
+                                       class="btn-spin-action btn btn-warning" onclick="animateSpinner('add')">{{ trans('download') }}
                                     </a>
-                                    <button type="button" class="btn btn-warning dropdown-toggle dropdown-toggle-split"
+                                    <button type="button" class="btn-spin-action btn btn-warning dropdown-toggle dropdown-toggle-split"
                                             data-toggle="dropdown" aria-expanded="false">
                                         <span class="sr-only">{{ trans('options') }}</span>
                                     </button>
                                     <div class="dropdown-menu">
                                         <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
-                                           class="btn btn-warning">{{ trans('do-not-disable-plugins') }}
+                                           class="btn btn-warning" onclick="animateSpinner('add')">{{ trans('do-not-disable-plugins') }}
                                         </a>
                                     </div>
                                 </div>

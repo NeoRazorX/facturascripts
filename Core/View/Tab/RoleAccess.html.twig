@@ -13,27 +13,27 @@
     }
 </style>
 
-<form action="" method="post">
+<form action="" method="post" onsubmit="animateSpinner('add')">
+    {{ formToken() }}
     <input type="hidden" name="action" value="edit-rules"/>
     <input type="hidden" name="activetab" value="{{ fsc.getCurrentView().getViewName() }}"/>
-    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <div class="card shadow">
         <div class="card-body text-right">
             <button type="submit" class="btn btn-sm btn-primary">
-                <i class="fas fa-save fa-fw"></i> {{ i18n.trans('save') }}
+                <i class="fas fa-save fa-fw"></i> {{ trans('save') }}
             </button>
         </div>
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead>
                 <tr>
-                    <th>{{ i18n.trans('menu') }}</th>
-                    <th class="text-center">{{ i18n.trans('show') }}</th>
-                    <th class="text-center">{{ i18n.trans('only-owner-data') }}</th>
-                    <th class="text-center">{{ i18n.trans('allow-update') }}</th>
-                    <th class="text-center">{{ i18n.trans('allow-import') }}</th>
-                    <th class="text-center">{{ i18n.trans('allow-export') }}</th>
-                    <th class="text-center">{{ i18n.trans('allow-delete') }}</th>
+                    <th>{{ trans('menu') }}</th>
+                    <th class="text-center">{{ trans('show') }}</th>
+                    <th class="text-center">{{ trans('only-owner-data') }}</th>
+                    <th class="text-center">{{ trans('allow-update') }}</th>
+                    <th class="text-center">{{ trans('allow-import') }}</th>
+                    <th class="text-center">{{ trans('allow-export') }}</th>
+                    <th class="text-center">{{ trans('allow-delete') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -87,7 +87,7 @@
                         <td>
                             {{ rule.menu }}
                             {% if 'List' in pageName %}
-                                <span class="badge badge-info ml-1">{{ i18n.trans('list') }}</span>
+                                <span class="badge badge-info ml-1">{{ trans('list') }}</span>
                             {% endif %}
                         </td>
                         <td class="text-center">
@@ -95,7 +95,7 @@
                                 {% if rule.show %}
                                     <input class="show-permission custom-control-input"
                                            id="checkbox-large-show-{{ pageName }}" type="checkbox" name="show[]"
-                                           value="{{ pageName }}" checked=""/>
+                                           value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="show-permission custom-control-input"
                                            id="checkbox-large-show-{{ pageName }}" type="checkbox" name="show[]"
@@ -110,7 +110,7 @@
                                 {% if rule.onlyOwner %}
                                     <input class="only-owner-permission custom-control-input"
                                            id="checkbox-large-onlyOwner-{{ pageName }}" type="checkbox"
-                                           name="onlyOwner[]" value="{{ pageName }}" checked=""/>
+                                           name="onlyOwner[]" value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="only-owner-permission custom-control-input"
                                            id="checkbox-large-onlyOwner-{{ pageName }}" type="checkbox"
@@ -126,7 +126,7 @@
                                 {% if rule.update %}
                                     <input class="update-permission custom-control-input"
                                            id="checkbox-large-update-{{ pageName }}" type="checkbox" name="update[]"
-                                           value="{{ pageName }}" checked=""/>
+                                           value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="update-permission custom-control-input"
                                            id="checkbox-large-update-{{ pageName }}" type="checkbox" name="update[]"
@@ -141,7 +141,7 @@
                                 {% if rule.import %}
                                     <input class="import-permission custom-control-input"
                                            id="checkbox-large-import-{{ pageName }}" type="checkbox" name="import[]"
-                                           value="{{ pageName }}" checked=""/>
+                                           value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="import-permission custom-control-input"
                                            id="checkbox-large-import-{{ pageName }}" type="checkbox" name="import[]"
@@ -156,7 +156,7 @@
                                 {% if rule.export %}
                                     <input class="export-permission custom-control-input"
                                            id="checkbox-large-export-{{ pageName }}" type="checkbox" name="export[]"
-                                           value="{{ pageName }}" checked=""/>
+                                           value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="export-permission custom-control-input"
                                            id="checkbox-large-export-{{ pageName }}" type="checkbox" name="export[]"
@@ -171,7 +171,7 @@
                                 {% if rule.delete %}
                                     <input class="delete-permission custom-control-input"
                                            id="checkbox-large-delete-{{ pageName }}" type="checkbox" name="delete[]"
-                                           value="{{ pageName }}" checked=""/>
+                                           value="{{ pageName }}" checked/>
                                 {% else %}
                                     <input class="delete-permission custom-control-input"
                                            id="checkbox-large-delete-{{ pageName }}" type="checkbox" name="delete[]"
@@ -184,9 +184,7 @@
                     </tr>
                 {% else %}
                     <tr class="table-warning">
-                        <td colspan="7">
-                            {{ i18n.trans('no-data') }}
-                        </td>
+                        <td colspan="7">{{ trans('no-data') }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -194,7 +192,7 @@
         </div>
         <div class="card-body text-right">
             <button type="submit" class="btn btn-sm btn-primary">
-                <i class="fas fa-save fa-fw"></i> {{ i18n.trans('save') }}
+                <i class="fas fa-save fa-fw"></i> {{ trans('save') }}
             </button>
         </div>
     </div>

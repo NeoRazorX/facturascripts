@@ -64,7 +64,7 @@ class EditAgente extends ComercialContactController
         return $data;
     }
 
-    protected function createContactView(string $viewName = 'EditContacto')
+    protected function createContactView(string $viewName = 'EditContacto'): void
     {
         $this->addEditView($viewName, 'Contacto', 'contact', 'fa fa-address-book');
 
@@ -79,7 +79,7 @@ class EditAgente extends ComercialContactController
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
-    protected function createCustomerView(string $viewName = 'ListCliente')
+    protected function createCustomerView(string $viewName = 'ListCliente'): void
     {
         $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
         $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
@@ -91,7 +91,7 @@ class EditAgente extends ComercialContactController
         $this->setSettings($viewName, 'btnNew', false);
     }
 
-    protected function createDocumentView(string $viewName, string $model, string $label)
+    protected function createDocumentView(string $viewName, string $model, string $label): void
     {
         $this->createCustomerListView($viewName, $model, $label);
 
@@ -101,7 +101,7 @@ class EditAgente extends ComercialContactController
         $this->addButtonApproveDocument($viewName);
     }
 
-    protected function createEmailsView(string $viewName = 'ListEmailSent')
+    protected function createEmailsView(string $viewName = 'ListEmailSent'): void
     {
         $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
@@ -114,7 +114,7 @@ class EditAgente extends ComercialContactController
         $this->setSettings($viewName, 'btnNew', false);
     }
 
-    protected function createInvoiceView(string $viewName)
+    protected function createInvoiceView(string $viewName): void
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
 
@@ -198,9 +198,22 @@ class EditAgente extends ComercialContactController
 
             case 'ListEmailSent':
                 $email = $this->getViewModelValue($mvn, 'email');
+                if (empty($email)) {
+                    $this->setSettings($viewName, 'active', false);
+                    break;
+                }
+
                 $where = [new DataBaseWhere('addressee', $email)];
                 $view->loadData('', $where);
-                $this->setSettings($viewName, 'active', $view->count > 0);
+
+                // añadimos un botón para enviar un nuevo email
+                $this->addButton($viewName, [
+                    'action' => 'SendMail?email=' . $email,
+                    'color' => 'success',
+                    'icon' => 'fas fa-envelope',
+                    'label' => 'send',
+                    'type' => 'link'
+                ]);
                 break;
 
             case $mvn:

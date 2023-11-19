@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 
@@ -29,15 +30,14 @@ use FacturaScripts\Dinamic\Model\RoleAccess;
  * Controller to edit a single item from the Role model.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  */
 class EditRole extends EditController
 {
-
     public function getAccessRules(): array
     {
         $rules = [];
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         foreach ($this->getAllPages() as $page) {
             $rules[$page->name] = [
                 'menu' => $i18n->trans($page->menu) . ' » ' . $i18n->trans($page->title),
@@ -82,9 +82,15 @@ class EditRole extends EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        // desactivamos los botones de opciones e imprimir
+        $mvn = $this->getMainViewName();
+        $this->setSettings($mvn, 'btnOptions', false);
+        $this->setSettings($mvn, 'btnPrint', false);
+
         $this->createViewsAccess();
         $this->createViewsUsers();
-        $this->setTabsPosition('bottom');
     }
 
     protected function createViewsAccess(string $viewName = 'RoleAccess')
@@ -97,7 +103,7 @@ class EditRole extends EditController
         $this->addEditListView($viewName, 'RoleUser', 'users', 'fas fa-address-card');
         $this->views[$viewName]->setInLine(true);
 
-        // Disable column
+        // desactivamos la columna de rol
         $this->views[$viewName]->disableColumn('role', true);
     }
 
@@ -105,7 +111,7 @@ class EditRole extends EditController
     {
         // check user permissions
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            Tools::log()->warning('not-allowed-update');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -191,8 +197,8 @@ class EditRole extends EditController
     protected function getAllPages(): array
     {
         $page = new Page();
-        $order = ['menu' => 'ASC', 'title' => 'ASC'];
-        return $page->all([], $order, 0, 0);
+        $orderBy = ['menu' => 'ASC', 'title' => 'ASC'];
+        return $page->all([], $orderBy, 0, 0);
     }
 
     /**

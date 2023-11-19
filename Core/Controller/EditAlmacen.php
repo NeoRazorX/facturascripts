@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to edit a single item from the Almacen model
@@ -59,10 +60,32 @@ class EditAlmacen extends EditController
 
         // filtros
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
-        $this->views[$viewName]->addFilterSelect('manufacturer', 'manufacturer', 'manufacturer', $manufacturers);
+        $this->views[$viewName]->addFilterSelect('manufacturer', 'manufacturer', 'productos.codfabricante', $manufacturers);
 
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
-        $this->views[$viewName]->addFilterSelect('family', 'family', 'family', $families);
+        $this->views[$viewName]->addFilterSelect('family', 'family', 'productos.codfamilia', $families);
+
+        $this->views[$viewName]->addFilterSelectWhere('type', [
+            [
+                'label' => Tools::lang()->trans('all'),
+                'where' => []
+            ],
+            [
+                'label' => '------',
+                'where' => []
+            ],
+            [
+                'label' => Tools::lang()->trans('under-minimums'),
+                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmin', '<')]
+            ],
+            [
+                'label' => Tools::lang()->trans('excess'),
+                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmax', '>')]
+            ]
+        ]);
+
+        $this->views[$viewName]->addFilterNumber('max-stock', 'quantity', 'cantidad', '>=');
+        $this->views[$viewName]->addFilterNumber('min-stock', 'quantity', 'cantidad', '<=');
 
         // desactivamos la columna de almacén
         $this->views[$viewName]->disableColumn('warehouse');
