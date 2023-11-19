@@ -94,7 +94,7 @@ class SalesHeaderHTML
         $model->operacion = $formData['operacion'] ?? $model->operacion;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
 
-        foreach (['codagente', 'codtrans', 'fechadevengo', 'finoferta'] as $key) {
+        foreach (['codagente', 'codtrans', 'fechadevengo', 'finoferta', 'servido'] as $key) {
             if (isset($formData[$key])) {
                 $model->{$key} = empty($formData[$key]) ? null : $formData[$key];
             }
@@ -382,6 +382,8 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'tasaconv')
             . self::renderField($i18n, $model, 'user')
             . self::renderField($i18n, $model, 'codagente')
+            . self::renderField($i18n, $model, 'servido')
+            . self::renderNewFields($i18n, $model)
             . self::renderNewModalFields($i18n, $model)
             . '</div>'
             . '</div>'
@@ -622,6 +624,9 @@ class SalesHeaderHTML
             case 'provincia':
                 return self::provincia($i18n, $model, 6, 100);
 
+            case 'servido':
+                return self::servido($i18n, $model);
+
             case 'tasaconv':
                 return self::tasaconv($i18n, $model);
 
@@ -712,4 +717,31 @@ class SalesHeaderHTML
         }
         return $html;
     }
+
+    private static function servido(Translator $i18n, SalesDocument $model): string
+    {
+        if (false === property_exists($model, 'servido') || empty($model->primaryColumnValue())) {
+            return '';
+        }
+
+        $values = [
+            0 => $i18n->trans('pending'),
+            1 => $i18n->trans('partial'),
+            100 => $i18n->trans('completed'),
+        ];
+        $options = [];
+        foreach ($values as $key => $value) {
+            $options[] = ($key === $model->servido) ?
+                '<option value="' . $key . '" selected="">' . $value . '</option>' :
+                '<option value="' . $key . '">' . $value . '</option>';
+        }
+
+        $attributes = $model->editable ? 'name="servido"' : 'disabled=""';
+        return '<div class="col-sm-6">'
+            . '<div class="form-group">'
+            . $i18n->trans('served')
+            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '</div>'
+            . '</div>';
+    }    
 }
