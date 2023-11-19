@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Tools;
 
 /**
  * This class allow sending telemetry data to the master server,
@@ -34,47 +34,33 @@ final class TelemetryManager
 {
     const TELEMETRY_URL = 'https://facturascripts.com/Telemetry';
 
-    /**
-     * Weekly update
-     */
+    /** Weekly update*/
     const UPDATE_INTERVAL = 604800;
 
-    /**
-     * @var AppSettings
-     */
-    private $appSettings;
+    /** @var int */
+    private $id_install;
 
-    /**
-     * @var int
-     */
-    private $idinstall;
+    /** @var int */
+    private $last_update;
 
-    /**
-     * @var int
-     */
-    private $lastupdate;
-
-    /**
-     * @var string
-     */
-    private $signkey;
+    /** @var string */
+    private $sign_key;
 
     public function __construct()
     {
-        $this->appSettings = new AppSettings();
-        $this->idinstall = (int)$this->appSettings->get('default', 'telemetryinstall');
-        $this->lastupdate = (int)$this->appSettings->get('default', 'telemetrylastu');
-        $this->signkey = $this->appSettings->get('default', 'telemetrykey');
+        $this->id_install = (int)Tools::settings('default', 'telemetryinstall');
+        $this->last_update = (int)Tools::settings('default', 'telemetrylastu');
+        $this->sign_key = Tools::settings('default', 'telemetrykey');
 
         /**
          * Is telemetry data defined in the config.php?
          * FS_TELEMETRY_TOKEN = IDINSTALL:SIGNKEY
          */
-        if (empty($this->idinstall) && defined('FS_TELEMETRY_TOKEN')) {
-            $data = explode(':', FS_TELEMETRY_TOKEN);
+        if (empty($this->id_install) && defined('FS_TELEMETRY_TOKEN')) {
+            $data = explode(':', Tools::config('telemetry_token'));
             if (count($data) === 2) {
-                $this->idinstall = (int)$data[0];
-                $this->signkey = $data[1];
+                $this->id_install = (int)$data[0];
+                $this->sign_key = $data[1];
                 $this->update();
             }
         }
@@ -90,12 +76,12 @@ final class TelemetryManager
 
     public function id()
     {
-        return $this->idinstall;
+        return $this->id_install;
     }
 
     public function install(): bool
     {
-        if ($this->idinstall) {
+        if ($this->id_install) {
             return true;
         }
 
@@ -103,8 +89,8 @@ final class TelemetryManager
         $params['action'] = 'install';
         $data = Http::get(self::TELEMETRY_URL, $params)->setTimeout(10)->json();
         if ($data['idinstall']) {
-            $this->idinstall = $data['idinstall'];
-            $this->signkey = $data['signkey'];
+            $this->id_install = $data['idinstall'];
+            $this->sign_key = $data['signkey'];
             $this->save();
             return true;
         }
@@ -114,12 +100,12 @@ final class TelemetryManager
 
     public function ready(): bool
     {
-        return !empty($this->idinstall);
+        return !empty($this->id_install);
     }
 
     public function signUrl(string $url): string
     {
-        if (empty($this->idinstall)) {
+        if (empty($this->id_install)) {
             return $url;
         }
 
@@ -130,7 +116,7 @@ final class TelemetryManager
 
     public function unlink(): bool
     {
-        if (empty($this->idinstall)) {
+        if (empty($this->id_install)) {
             return true;
         }
 
@@ -142,19 +128,18 @@ final class TelemetryManager
             return false;
         }
 
-        $appSettings = new AppSettings();
-        $appSettings->set('default', 'telemetryinstall', null);
-        $appSettings->set('default', 'telemetrylastu', null);
-        $appSettings->set('default', 'telemetrykey', null);
-        $appSettings->save();
+        Tools::settingsSet('default', 'telemetryinstall', null);
+        Tools::settingsSet('default', 'telemetrylastu', null);
+        Tools::settingsSet('default', 'telemetrykey', null);
+        Tools::settingsSave();
 
-        $this->idinstall = null;
+        $this->id_install = null;
         return true;
     }
 
     public function update(): bool
     {
-        if (false === $this->ready() || time() - $this->lastupdate < self::UPDATE_INTERVAL) {
+        if (false === $this->ready() || time() - $this->last_update < self::UPDATE_INTERVAL) {
             return false;
         }
 
@@ -168,9 +153,9 @@ final class TelemetryManager
         return isset($data['ok']) && $data['ok'];
     }
 
-    private function calculateHash(array &$data)
+    private function calculateHash(array &$data): void
     {
-        $data['hash'] = sha1($data['randomnum'] . $this->signkey);
+        $data['hash'] = sha1($data['randomnum'] . $this->sign_key);
     }
 
     private function collectData(bool $minimum = false): array
@@ -178,7 +163,7 @@ final class TelemetryManager
         $data = [
             'codpais' => FS_CODPAIS,
             'coreversion' => Kernel::version(),
-            'idinstall' => $this->idinstall,
+            'idinstall' => $this->id_install,
             'langcode' => FS_LANG,
             'phpversion' => (float)PHP_VERSION,
             'randomnum' => mt_rand()
@@ -191,12 +176,13 @@ final class TelemetryManager
         return $data;
     }
 
-    private function save()
+    private function save(): void
     {
-        $this->lastupdate = time();
-        $this->appSettings->set('default', 'telemetryinstall', $this->idinstall);
-        $this->appSettings->set('default', 'telemetrykey', $this->signkey);
-        $this->appSettings->set('default', 'telemetrylastu', $this->lastupdate);
-        $this->appSettings->save();
+        $this->last_update = time();
+
+        Tools::settingsSet('default', 'telemetryinstall', $this->id_install);
+        Tools::settingsSet('default', 'telemetrykey', $this->sign_key);
+        Tools::settingsSet('default', 'telemetrylastu', $this->last_update);
+        Tools::settingsSave();
     }
 }
