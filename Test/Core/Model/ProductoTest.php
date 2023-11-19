@@ -539,7 +539,7 @@ final class ProductoTest extends TestCase
         // añadimos una variante
         $variant = new Variante();
         $variant->idproducto = $product->idproducto;
-        $variant->referencia = 'test';
+        $variant->referencia = 'test-2';
         $this->assertTrue($variant->save(), 'variant-cant-save');
 
         // copiamos una imagen
