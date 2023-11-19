@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,24 +17,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Test\Core\App;
+namespace FacturaScripts\Core\Error;
 
-use FacturaScripts\Core\App\AppCron;
-use PHPUnit\Framework\TestCase;
+use FacturaScripts\Core\Template\ErrorController;
+use FacturaScripts\Core\Tools;
 
-/**
- * Description of AppCronTest
- *
- * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
- * @covers \FacturaScripts\Core\App\AppCron
- */
-final class AppCronTest extends TestCase
+class MyfilesTokenError extends ErrorController
 {
-
-    public function testCronWorks()
+    public function run(): void
     {
-        $app = new AppCron();
-        $this->assertTrue($app->connect(), 'db-connection-error');
-        $this->assertTrue($app->run(), 'cron-run-fail');
+        http_response_code(403);
+
+        $title = Tools::lang()->trans('invalid-token');
+        $body = '<h1>' . $title . '</h1>'
+            . '<p>' . $this->exception->getMessage() . '</p>';
+
+        echo $this->htmlCard($title, $body, 'bg-danger');
     }
 }

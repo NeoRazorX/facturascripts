@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\Debug;
+namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Translator;
@@ -28,24 +28,8 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class DebugBar extends DumbBar
+class DebugBar
 {
-
-    /**
-     * @var array
-     */
-    private static $end = [];
-
-    /**
-     * @var array
-     */
-    private static $init = [];
-
-    public static function end(string $task = '')
-    {
-        self::$end[$task] = microtime(true);
-    }
-
     public function render(): string
     {
         $items = [];
@@ -56,27 +40,25 @@ class DebugBar extends DumbBar
         $this->addItemLogs($items);
         $this->addItemTranslations($items);
 
-        return '<div class="debugbar"><ul>' . $this->renderItems($items) . '</ul>' . $this->renderSections($items) . '</div>';
+        return '<div class="debugbar">'
+            . '<ul>' . $this->renderItems($items) . '</ul>'
+            . $this->renderSections($items)
+            . '</div>';
     }
 
     public function renderHead(): string
     {
-        return '<link rel="stylesheet" href="' . FS_ROUTE . '/Dinamic/Assets/CSS/debugbar.css" />'
+        return '<link rel="stylesheet" href="' . FS_ROUTE . '/Dinamic/Assets/CSS/debugbar.css"/>'
             . '<script src="' . FS_ROUTE . '/Dinamic/Assets/JS/DebugBar.js"></script>';
     }
 
-    public static function start(string $task = '')
-    {
-        self::$init[$task] = microtime(true);
-    }
-
-    private function addItem(array &$items, string $label, array $data, bool $counter = false)
+    private function addItem(array &$items, string $label, array $data, bool $counter = false): void
     {
         $key = 1 + count($items);
         $items[$key] = ['label' => $label, 'data' => $data, 'counter' => $counter];
     }
 
-    private function addItemAssets(array &$items)
+    private function addItemAssets(array &$items): void
     {
         foreach (['css', 'js'] as $type) {
             $label = '<i class="fas fa-file"></i> ' . strtoupper($type);
@@ -87,7 +69,7 @@ class DebugBar extends DumbBar
         }
     }
 
-    private function addItemInputs(array &$items)
+    private function addItemInputs(array &$items): void
     {
         $inputs = [
             'get' => filter_input_array(INPUT_GET),
@@ -115,11 +97,12 @@ class DebugBar extends DumbBar
         }
     }
 
-    private function addItemLogs(array &$items)
+    private function addItemLogs(array &$items): void
     {
         $channels = [];
 
-        $lastMicrotime = self::$init[''];
+        $timers = Kernel::getTimers();
+        $lastMicroTime = $timers['kernel::init']['start'] ?? microtime(true);
         foreach (MiniLog::read() as $log) {
             if (!isset($channels[$log['channel']])) {
                 $channels[$log['channel']] = [
@@ -128,12 +111,12 @@ class DebugBar extends DumbBar
                 ];
             }
 
-            $diff = ($log['time'] - $lastMicrotime) * 1000;
+            $diff = ($log['time'] - $lastMicroTime) * 1000;
             $diffText = round($diff) > 0 ? '&#8593;+' . number_format($diff) . 'ms' : '&#8593;';
             $channels[$log['channel']]['data'][] = [
                 'level' => $log['level'], 'message' => $log['message'], 'time' => $diffText
             ];
-            $lastMicrotime = $log['time'];
+            $lastMicroTime = $log['time'];
         }
 
         foreach ($channels as $channel) {
@@ -142,7 +125,7 @@ class DebugBar extends DumbBar
         }
     }
 
-    private function addItemMemory(array &$items)
+    private function addItemMemory(array &$items): void
     {
         $usage = memory_get_usage();
         $peak = memory_get_peak_usage();
@@ -156,15 +139,15 @@ class DebugBar extends DumbBar
         $this->addItem($items, $label, $data);
     }
 
-    private function addItemTimer(array &$items)
+    private function addItemTimer(array &$items): void
     {
-        $totalTime = microtime(true) - self::$init[''];
+        $totalTime = Kernel::getExecutionTime();
         $label = '<i class="fas fa-hourglass-half"></i> ' . number_format($totalTime * 1000) . 'ms';
 
         $data = [];
-        foreach (self::$init as $task => $init) {
-            $end = self::$end[$task] ?? microtime(true);
-            $diff = $end - $init;
+        foreach (Kernel::getTimers() as $task => $timer) {
+            $stop = $timer['stop'] ?? microtime(true);
+            $diff = $stop - $timer['start'];
             $data[] = [
                 'task' => empty($task) ? 'Total' : $task,
                 'time' => number_format($diff * 1000) . 'ms'
@@ -174,7 +157,7 @@ class DebugBar extends DumbBar
         $this->addItem($items, $label, $data);
     }
 
-    private function addItemTranslations(array &$items)
+    private function addItemTranslations(array &$items): void
     {
         $i18n = new Translator();
         $missing = $i18n->getMissingStrings();
@@ -188,13 +171,6 @@ class DebugBar extends DumbBar
     {
         $unit = ['b', 'kb', 'mb', 'gb', 'tb', 'pb'];
         return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
-    }
-
-    private function noHtml(string $string): string
-    {
-        return str_replace(
-            ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], $string
-        );
     }
 
     private function renderItems(array $items): string
@@ -234,13 +210,15 @@ class DebugBar extends DumbBar
         foreach ($data as $row) {
             $count++;
             if (false === is_array($row)) {
-                $html .= '<tr><td>' . $this->noHtml($row) . '</td></tr>';
+                $html .= '<tr><td>' . Tools::noHtml($row) . '</td></tr>';
                 continue;
             }
 
             $html .= '<tr><td>#' . $count . '</td>';
             foreach ($row as $cell) {
-                $html .= is_array($cell) ? '<td>' . var_export($cell, true) . '</td>' : '<td>' . $this->noHtml($cell) . '</td>';
+                $html .= is_array($cell) ?
+                    '<td>' . var_export($cell, true) . '</td>' :
+                    '<td>' . Tools::noHtml($cell) . '</td>';
             }
             $html .= '</tr>';
         }

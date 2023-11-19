@@ -153,7 +153,7 @@ final class Translator
         self::$translations = [];
     }
 
-    public function setDefaultLang(string $langCode): void
+    public static function setDefaultLang(string $langCode): void
     {
         self::$defaultLang = $langCode;
     }

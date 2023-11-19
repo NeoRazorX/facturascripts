@@ -1027,6 +1027,8 @@
     "page": "Orria",
     "page-break": "Orrialde-jauzia",
     "page-configuration": "Konfigurazio orria",
+    "page-not-found": "Ez da orria aurkitu",
+    "page-not-found-p": "Ez dugu bilatzen ari zaren orria aurkitu.",
     "page-option-info": "Hemen zerrenda edo formulario honetan ikusgai dauden eremuak alda ditzakezu",
     "page-total-amount": "Orrialdeko totala",
     "pagename": "Orriaren izena",

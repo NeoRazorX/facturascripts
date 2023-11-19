@@ -37,6 +37,7 @@ class User extends Base\ModelClass
     use Base\GravatarTrait;
 
     const DEFAULT_LEVEL = 2;
+    const UPDATE_ACTIVITY_PERIOD = 3600;
 
     /** @var bool */
     public $admin;

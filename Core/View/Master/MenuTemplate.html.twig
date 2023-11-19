@@ -43,7 +43,7 @@
     {% block css %}
         <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}"/>
         <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}"/>
-        <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}?v={{ 'now' | date('ymd') }}"/>
+        <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}?v=6"/>
     {% endblock %}
     {# Adds custom CSS assets #}
     {% for css in assetManager.get('css') %}
@@ -62,7 +62,7 @@
         <script src="{{ asset('node_modules/bootbox/dist/bootbox.locales.min.js') }}"></script>
         <script src="{{ asset('node_modules/pace-js/pace.min.js') }}"></script>
         <script src="{{ asset('node_modules/@fortawesome/fontawesome-free/js/all.min.js') }}"></script>
-        <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}?v={{ 'now' | date('ymd') }}"></script>
+        <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}?v=6"></script>
     {% endblock %}
     {# Adds custom JS assets #}
     {% for js in assetManager.get('js') %}
@@ -115,7 +115,8 @@
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle mr-md-2" href="#" data-toggle="dropdown"
-                                   aria-haspopup="true" aria-expanded="false" id="menuIconUser" title="{{ trans('user') }}">
+                                   aria-haspopup="true" aria-expanded="false" id="menuIconUser"
+                                   title="{{ trans('user') }}">
                                     <i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user-list">
@@ -123,13 +124,14 @@
                                         <i class="fas fa-user-circle fa-fw" aria-hidden="true"></i> {{ fsc.user.nick }}
                                     </a>
                                     <a class="dropdown-item send-email" href="SendMail">
-                                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send-mail') }}
+                                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i>
+                                        {{ trans('send-mail') }}
                                     </a>
                                     {% for item in getIncludeViews('MenuTemplate', 'MenuIconUser') %}
                                         {% include item['path'] %}
                                     {% endfor %}
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="?logout=TRUE">
+                                    <a class="dropdown-item" href="{{ asset('login') }}?action=logout&multireqtoken={{ formToken(false) }}">
                                         <i class="fas fa-door-open fa-fw" aria-hidden="true"></i> {{ trans('logout') }}
                                     </a>
                                 </div>
@@ -145,7 +147,6 @@
     {% endblock %}
     <div class="pt-3">
         {% block messages %}
-            {% include 'Macro/Toasts.html.twig' %}
             {% from 'Macro/Utils.html.twig' import message as showMessage %}
             <div class="container-fluid">
                 <div class="row">

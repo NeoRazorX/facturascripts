@@ -2,6 +2,7 @@
 <phpunit
         beStrictAboutTestsThatDoNotTestAnything="false"
         bootstrap="Test/bootstrap.php"
+        colors="true"
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
         stopOnError="false"
@@ -15,12 +16,6 @@
                     phpVersion="7.2"
                     phpVersionOperator=">=">
                 Test/Core/
-            </directory>
-            <directory
-                    suffix="Test.php"
-                    phpVersion="7.2"
-                    phpVersionOperator=">=">
-                Test/Core/App/
             </directory>
             <directory
                     suffix="Test.php"

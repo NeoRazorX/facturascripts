@@ -84,6 +84,7 @@ final class Html
         $templateVars = [
             'appSettings' => new AppSettings(),
             'assetManager' => new AssetManager(),
+            'debugBarRender' => Tools::config('debug') ? new DebugBar() : false,
             'i18n' => new Translator(),
             'log' => new MiniLog()
         ];

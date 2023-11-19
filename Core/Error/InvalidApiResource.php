@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,31 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\Debug;
 
-/**
- * Description of DumbBar
- *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- */
-class DumbBar
+namespace FacturaScripts\Core\Error;
+
+use FacturaScripts\Core\Template\ErrorController;
+
+class InvalidApiResource extends ErrorController
 {
-
-    /**
-     * 
-     * @return string
-     */
-    public function render(): string
+    public function run(): void
     {
-        return '';
-    }
+        http_response_code(404);
+        header('content-type: application/json');
 
-    /**
-     * 
-     * @return string
-     */
-    public function renderHead(): string
-    {
-        return '';
+        echo json_encode([
+            'status' => 'error',
+            'message' => $this->exception->getMessage(),
+        ]);
     }
 }

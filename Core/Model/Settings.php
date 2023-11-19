@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * Description of Settings
  *
@@ -27,7 +29,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Settings extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -51,7 +52,17 @@ class Settings extends Base\ModelClass
      */
     public function __get($name)
     {
-        return isset($this->properties[$name]) ? $this->properties[$name] : null;
+        return $this->properties[$name] ?? null;
+    }
+
+    public function delete(): bool
+    {
+        if (parent::delete()) {
+            Tools::settingsClear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -84,6 +95,16 @@ class Settings extends Base\ModelClass
     public static function primaryColumn(): string
     {
         return 'name';
+    }
+
+    public function save(): bool
+    {
+        if (parent::save()) {
+            Tools::settingsClear();
+            return true;
+        }
+
+        return false;
     }
 
     public static function tableName(): string
