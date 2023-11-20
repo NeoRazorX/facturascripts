@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Contract\SalesLineModInterface;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
@@ -27,6 +26,7 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
@@ -59,7 +59,7 @@ class SalesLineHTML
      */
     public static function apply(SalesDocument &$model, array &$lines, array $formData)
     {
-        self::$columnView = $formData['columnView'] ?? AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+        self::$columnView = $formData['columnView'] ?? Tools::settings('default', 'columnetosubtotal', 'subtotal');
 
         // update or remove lines
         $rmLineId = $formData['action'] === 'rm-line' ? $formData['selectedLine'] : 0;
@@ -157,7 +157,7 @@ class SalesLineHTML
     public static function render(array $lines, SalesDocument $model): string
     {
         if (empty(self::$columnView)) {
-            self::$columnView = AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+            self::$columnView = Tools::settings('default', 'columnetosubtotal', 'subtotal');
         }
 
         self::$numlines = count($lines);

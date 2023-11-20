@@ -20,6 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Model\Base\ProductRelationTrait;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Almacen as DinAlmacen;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use FacturaScripts\Dinamic\Model\Variante as DinVariante;
@@ -29,11 +33,10 @@ use FacturaScripts\Dinamic\Model\Variante as DinVariante;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Stock extends Base\ModelClass
+class Stock extends ModelClass
 {
-
-    use Base\ModelTrait;
-    use Base\ProductRelationTrait;
+    use ModelTrait;
+    use ProductRelationTrait;
 
     const MAX_DECIMALS = 3;
 
@@ -109,7 +112,7 @@ class Stock extends Base\ModelClass
     {
         parent::clear();
         $this->cantidad = 0.0;
-        $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
+        $this->codalmacen = Tools::settings('default', 'codalmacen');
         $this->disponible = 0.0;
         $this->pterecibir = 0.0;
         $this->reservada = 0.0;
@@ -188,14 +191,14 @@ class Stock extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->ubicacion = self::toolBox()::utils()::noHtml($this->ubicacion);
+        $this->ubicacion = Tools::noHtml($this->ubicacion);
 
         $this->cantidad = round($this->cantidad, self::MAX_DECIMALS);
         $this->reservada = round($this->reservada, self::MAX_DECIMALS);
         $this->pterecibir = round($this->pterecibir, self::MAX_DECIMALS);
         $this->disponible = max([0, $this->cantidad - $this->reservada]);
 
-        $this->referencia = $this->toolBox()->utils()->noHtml($this->referencia);
+        $this->referencia = Tools::noHtml($this->referencia);
         if (empty($this->idproducto)) {
             $variante = new DinVariante();
             $whereRef = [new DataBaseWhere('referencia', $this->referencia)];

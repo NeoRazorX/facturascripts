@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\BankAccount;
+use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
@@ -29,9 +31,9 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class CuentaBanco extends Base\BankAccount
+class CuentaBanco extends BankAccount
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     const SPECIAL_ACCOUNT = 'CAJA';
 
@@ -141,12 +143,13 @@ class CuentaBanco extends Base\BankAccount
     public function test(): bool
     {
         if (empty($this->idempresa)) {
-            $this->idempresa = self::toolBox()::appSettings()::get('default', 'idempresa');
+            $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
         $this->codsubcuenta = Tools::noHtml($this->codsubcuenta);
         $this->codsubcuentagasto = Tools::noHtml($this->codsubcuentagasto);
         $this->sufijosepa = Tools::noHtml($this->sufijosepa);
+
         return parent::test();
     }
 

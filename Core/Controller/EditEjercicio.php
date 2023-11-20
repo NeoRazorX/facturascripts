@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Accounting\ClosingToAcounting;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -288,7 +289,7 @@ class EditEjercicio extends EditController
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . FS_LANG . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
-            $codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
+            $codpais = Tools::settings('default', 'codpais');
             $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
         }
 

@@ -20,6 +20,12 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
+use FacturaScripts\Core\Model\Base\GravatarTrait;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Model\Base\PasswordTrait;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
 
@@ -29,12 +35,12 @@ use FacturaScripts\Dinamic\Model\Page as DinPage;
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
-class User extends Base\ModelClass
+class User extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\CompanyRelationTrait;
-    use Base\PasswordTrait;
-    use Base\GravatarTrait;
+    use ModelTrait;
+    use CompanyRelationTrait;
+    use PasswordTrait;
+    use GravatarTrait;
 
     const DEFAULT_LEVEL = 2;
     const UPDATE_ACTIVITY_PERIOD = 3600;
@@ -144,10 +150,10 @@ class User extends Base\ModelClass
     {
         parent::clear();
         $this->admin = false;
-        $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
-        $this->creationdate = date(self::DATE_STYLE);
+        $this->codalmacen = Tools::settings('default', 'codalmacen');
+        $this->creationdate = Tools::date();
         $this->enabled = true;
-        $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa', 1);
+        $this->idempresa = Tools::settings('default', 'idempresa', 1);
         $this->langcode = FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
     }
@@ -156,7 +162,7 @@ class User extends Base\ModelClass
     {
         if ($this->count() === 1) {
             // impide eliminar el último usuario
-            $this->toolBox()->i18nLog()->error('cant-delete-last-user');
+            Tools::log()->error('cant-delete-last-user');
             return false;
         }
 
@@ -187,7 +193,9 @@ class User extends Base\ModelClass
         $email = filter_var($this->nick, FILTER_VALIDATE_EMAIL) ?
             $this->nick :
             (defined('FS_INITIAL_EMAIL') ? FS_INITIAL_EMAIL : '');
-        $this->toolBox()->i18nLog()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
+
+        Tools::log()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
+
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,email,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
             . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT) . "','" . $email
             . "',TRUE,TRUE,'1','1','" . FS_LANG . "','Wizard','99');";
@@ -196,7 +204,7 @@ class User extends Base\ModelClass
     public function newLogkey(string $ipAddress, string $browser = ''): string
     {
         $this->updateActivity($ipAddress, $browser);
-        $this->logkey = $this->toolBox()->utils()->randomString(99);
+        $this->logkey = Tools::randomString(99);
         return $this->logkey;
     }
 
@@ -214,22 +222,22 @@ class User extends Base\ModelClass
     {
         $this->nick = trim($this->nick);
         if (1 !== preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']
             );
             return false;
         }
 
-        $this->email = $this->toolBox()->utils()->noHtml(mb_strtolower($this->email ?? '', 'UTF8'));
+        $this->email = Tools::noHtml(mb_strtolower($this->email ?? '', 'UTF8'));
         if ($this->email && false === filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-            $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
+            Tools::log()->warning('not-valid-email', ['%email%' => $this->email]);
             $this->email = null;
             return false;
         }
 
         if (empty($this->creationdate)) {
-            $this->creationdate = date(self::DATE_STYLE);
+            $this->creationdate = Tools::date();
         }
 
         if (empty($this->lastactivity)) {
@@ -237,10 +245,10 @@ class User extends Base\ModelClass
         }
 
         // escapamos lastbrowser y comprobamos que no excede los 200 caracteres
-        $this->lastbrowser = substr($this->toolBox()->utils()->noHtml($this->lastbrowser ?? ''), 0, 200);
+        $this->lastbrowser = substr(Tools::noHtml($this->lastbrowser ?? ''), 0, 200);
 
         // escapamos el html de lastip y comprobamos que no excede los 40 caracteres
-        $this->lastip = substr($this->toolBox()->utils()->noHtml($this->lastip ?? ''), 0, 40);
+        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 40);
 
         if ($this->admin) {
             $this->level = 99;
@@ -253,7 +261,7 @@ class User extends Base\ModelClass
 
     public function updateActivity(string $ipAddress, string $browser = '')
     {
-        $this->lastactivity = date(self::DATETIME_STYLE);
+        $this->lastactivity = Tools::dateTime();
         $this->lastip = $ipAddress;
         $this->lastbrowser = $browser;
     }
@@ -278,7 +286,7 @@ class User extends Base\ModelClass
 
         // si el usuario no es admin, le asignamos el rol por defecto
         if (false === $this->admin) {
-            $code = $this->toolBox()->appSettings()->get('default', 'codrole');
+            $code = Tools::settings('default', 'codrole');
             $this->addRole($code);
         }
 
@@ -302,18 +310,16 @@ class User extends Base\ModelClass
 
     protected function testWarehouse(): bool
     {
-        $appSettings = $this->toolBox()->appSettings();
-
         if (empty($this->codalmacen)) {
-            $this->codalmacen = $appSettings->get('default', 'codalmacen');
-            $this->idempresa = $appSettings->get('default', 'idempresa');
+            $this->codalmacen = Tools::settings('default', 'codalmacen');
+            $this->idempresa = Tools::settings('default', 'idempresa');
             return true;
         }
 
         $warehouse = new Almacen();
         if (false === $warehouse->loadFromCode($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
-            $this->codalmacen = $appSettings->get('default', 'codalmacen');
-            $this->idempresa = $appSettings->get('default', 'idempresa');
+            $this->codalmacen = Tools::settings('default', 'codalmacen');
+            $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
         return true;

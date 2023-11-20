@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\AccEntryRelationTrait;
+use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
@@ -32,10 +35,10 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
-class Partida extends Base\ModelOnChangeClass
+class Partida extends ModelOnChangeClass
 {
-    use Base\ModelTrait;
-    use Base\AccEntryRelationTrait;
+    use ModelTrait;
+    use AccEntryRelationTrait;
 
     /**
      * Amount of the tax base.
@@ -179,7 +182,7 @@ class Partida extends Base\ModelOnChangeClass
     {
         parent::clear();
         $this->baseimponible = 0.0;
-        $this->coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
+        $this->coddivisa = Tools::settings('default', 'coddivisa');
         $this->debe = 0.0;
         $this->haber = 0.0;
         $this->orden = 0;

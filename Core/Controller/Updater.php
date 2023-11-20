@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\FileManager;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
@@ -243,7 +243,7 @@ class Updater extends Controller
                 return $item;
             }
 
-            if ($build['beta'] && AppSettings::get('default', 'enableupdatesbeta', false)) {
+            if ($build['beta'] && Tools::settings('default', 'enableupdatesbeta', false)) {
                 return $item;
             }
         }
@@ -280,7 +280,7 @@ class Updater extends Controller
                 return $item;
             }
 
-            if ($build['beta'] && AppSettings::get('default', 'enableupdatesbeta', false)) {
+            if ($build['beta'] && Tools::settings('default', 'enableupdatesbeta', false)) {
                 return $item;
             }
         }

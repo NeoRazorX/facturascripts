@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use Exception;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator as CoreTranslator;
 use SimpleXMLElement;
 
@@ -116,10 +117,13 @@ final class PluginDeploy
         $menuManager->reload();
 
         // checks app homepage
-        $appSettings = ToolBox::appSettings();
-        if (!in_array($appSettings->get('default', 'homepage', ''), $pageNames)) {
-            $appSettings->set('default', 'homepage', 'AdminPlugins');
-            $appSettings->save();
+        $saveSettings = false;
+        if (!in_array(Tools::settings('default', 'homepage', ''), $pageNames)) {
+            Tools::settingsSet('default', 'homepage', 'AdminPlugins');
+            $saveSettings = true;
+        }
+        if ($saveSettings) {
+            Tools::settingsSave();
         }
     }
 

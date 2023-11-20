@@ -250,8 +250,7 @@ class Controller
         $this->response = &$response;
         $this->template = 'Login/Login.html.twig';
 
-        $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
-        $this->empresa = Empresas::get($idempresa);
+        $this->empresa = Empresas::default();
     }
 
     /**

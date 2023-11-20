@@ -57,7 +57,7 @@ final class TelemetryManager
          * FS_TELEMETRY_TOKEN = IDINSTALL:SIGNKEY
          */
         if (empty($this->id_install) && defined('FS_TELEMETRY_TOKEN')) {
-            $data = explode(':', Tools::config('telemetry_token'));
+            $data = explode(':', Tools::config('telemetry_token', ''));
             if (count($data) === 2) {
                 $this->id_install = (int)$data[0];
                 $this->sign_key = $data[1];

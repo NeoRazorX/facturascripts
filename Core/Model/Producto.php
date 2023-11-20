@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Model\Base\TaxRelationTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Fabricante as DinFabricante;
 use FacturaScripts\Dinamic\Model\Familia as DinFamilia;
@@ -31,10 +34,10 @@ use FacturaScripts\Dinamic\Model\Variante as DinVariante;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Producto extends Base\ModelClass
+class Producto extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\TaxRelationTrait;
+    use ModelTrait;
+    use TaxRelationTrait;
 
     const ROUND_DECIMALS = 5;
 
@@ -192,7 +195,7 @@ class Producto extends Base\ModelClass
         parent::clear();
         $this->actualizado = Tools::dateTime();
         $this->bloqueado = false;
-        $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
+        $this->codimpuesto = Tools::settings('default', 'codimpuesto');
         $this->fechaalta = date(self::DATE_STYLE);
         $this->nostock = false;
         $this->precio = 0.0;
@@ -200,7 +203,7 @@ class Producto extends Base\ModelClass
         $this->secompra = true;
         $this->sevende = true;
         $this->stockfis = 0.0;
-        $this->ventasinstock = (bool)$this->toolBox()->appSettings()->get('default', 'ventasinstock', false);
+        $this->ventasinstock = (bool)Tools::settings('default', 'ventasinstock', false);
     }
 
     public function delete(): bool

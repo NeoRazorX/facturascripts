@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -46,7 +47,7 @@ abstract class AccountingClass extends AccountingAccounts
     public function generate($model)
     {
         $this->document = $model;
-        $this->exercise->idempresa = $model->idempresa ?? $this->toolBox()->appSettings()->get('default', 'idempresa');
+        $this->exercise->idempresa = $model->idempresa ?? Tools::settings('default', 'idempresa');
     }
 
     /**
@@ -68,7 +69,7 @@ abstract class AccountingClass extends AccountingAccounts
      * Add a group of lines from array of subaccounts/amount.
      *
      * @param Asiento $accountEntry
-     * @param Array $totals
+     * @param array $totals
      * @param bool $isDebit
      * @param Subcuenta $counterpart
      * @param string $accountError
