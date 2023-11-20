@@ -381,7 +381,7 @@ final class PluginManager
             'compatible' => false,
             'description' => 'Incompatible',
             'enabled' => false,
-            'min_php' => 7.2,
+            'min_php' => 7.3,
             'min_version' => 0.0,
             'name' => $pluginName,
             'require' => [],
