@@ -21,6 +21,7 @@ namespace FacturaScripts\Core;
 
 use Closure;
 use Exception;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
 use FacturaScripts\Core\Error\DefaultError;
 
@@ -119,6 +120,9 @@ final class Kernel
         // cargamos el idioma almacenado en la cookie o el predeterminado
         $lang = $_COOKIE['fsLang'] ?? Tools::config('lang', 'es_ES');
         Translator::setDefaultLang($lang);
+
+        // inicializamos el antiguo traductor
+        ToolBox::i18n()->setDefaultLang($lang);
 
         self::stopTimer('kernel::init');
     }
