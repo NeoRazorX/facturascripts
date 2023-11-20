@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Tools;
@@ -89,37 +88,36 @@ class NewMail
     {
         $this->empresa = Empresas::default();
 
-        $appSettings = new AppSettings();
-        $this->fromEmail = $appSettings->get('email', 'email');
+        $this->fromEmail = Tools::settings('email', 'email');
         $this->fromName = $this->empresa->nombrecorto;
 
         $this->mail = new PHPMailer();
         $this->mail->CharSet = PHPMailer::CHARSET_UTF8;
-        $this->mail->Mailer = $appSettings->get('email', 'mailer');
+        $this->mail->Mailer = Tools::settings('email', 'mailer');
 
-        $this->mail->SMTPSecure = $appSettings->get('email', 'enc', '');
+        $this->mail->SMTPSecure = Tools::settings('email', 'enc', '');
         if ($this->mail->SMTPSecure) {
             $this->mail->SMTPAuth = true;
-            $this->mail->AuthType = $appSettings->get('email', 'authtype', '');
+            $this->mail->AuthType = Tools::settings('email', 'authtype', '');
         }
 
-        $this->mail->Host = $appSettings->get('email', 'host');
-        $this->mail->Port = $appSettings->get('email', 'port');
-        $this->mail->Username = $appSettings->get('email', 'user') ?
-            $appSettings->get('email', 'user') :
-            $appSettings->get('email', 'email');
-        $this->mail->Password = $appSettings->get('email', 'password');
-        $this->lowsecure = (bool)$appSettings->get('email', 'lowsecure');
+        $this->mail->Host = Tools::settings('email', 'host');
+        $this->mail->Port = Tools::settings('email', 'port');
+        $this->mail->Username = Tools::settings('email', 'user') ?
+            Tools::settings('email', 'user') :
+            Tools::settings('email', 'email');
+        $this->mail->Password = Tools::settings('email', 'password');
+        $this->lowsecure = (bool)Tools::settings('email', 'lowsecure');
 
-        foreach (static::splitEmails($appSettings->get('email', 'emailcc', '')) as $email) {
+        foreach (static::splitEmails(Tools::settings('email', 'emailcc', '')) as $email) {
             $this->cc($email);
         }
 
-        foreach (static::splitEmails($appSettings->get('email', 'emailbcc', '')) as $email) {
+        foreach (static::splitEmails(Tools::settings('email', 'emailbcc', '')) as $email) {
             $this->bcc($email);
         }
 
-        $this->signature = $appSettings->get('email', 'signature', '');
+        $this->signature = Tools::settings('email', 'signature', '');
         $this->verificode = Tools::randomString(20);
     }
 

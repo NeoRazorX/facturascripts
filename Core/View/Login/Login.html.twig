@@ -10,7 +10,7 @@
                     <input type="hidden" name="action" value="login">
                     <div class="card mt-4">
                         <a href="{{ asset('login') }}">
-                            {% set idfile = appSettings.get('default','idloginimage', 0) %}
+                            {% set idfile = settings('default','idloginimage', 0) %}
                             {{ _self.loadLogo(idfile) }}
                         </a>
                         <div class="card-body">

@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Core\DataSrc\Divisas;
@@ -82,7 +81,6 @@ final class Html
     public static function render(string $template, array $params = []): string
     {
         $templateVars = [
-            'appSettings' => new AppSettings(),
             'assetManager' => new AssetManager(),
             'debugBarRender' => Tools::config('debug') ? new DebugBar() : false,
             'i18n' => new Translator(),
@@ -259,15 +257,15 @@ final class Html
     {
         return new TwigFunction('money', function (?float $number, string $coddivisa = '') {
             if (empty($coddivisa)) {
-                $coddivisa = AppSettings::get('default', 'coddivisa');
+                $coddivisa = Tools::settings('default', 'coddivisa');
             }
 
             // cargamos la configuración de divisas
             $symbol = Divisas::get($coddivisa)->simbolo;
-            $decimals = AppSettings::get('default', 'decimals');
-            $decimalSeparator = AppSettings::get('default', 'decimal_separator');
-            $thousandsSeparator = AppSettings::get('default', 'thousands_separator');
-            $currencyPosition = AppSettings::get('default', 'currency_position');
+            $decimals = Tools::settings('default', 'decimals');
+            $decimalSeparator = Tools::settings('default', 'decimal_separator');
+            $thousandsSeparator = Tools::settings('default', 'thousands_separator');
+            $currencyPosition = Tools::settings('default', 'currency_position');
 
             return $currencyPosition === 'right' ?
                 number_format($number, $decimals, $decimalSeparator, $thousandsSeparator) . ' ' . $symbol :
@@ -286,12 +284,12 @@ final class Html
     {
         return new TwigFunction('number', function (?float $number, ?int $decimals = null) {
             if ($decimals === null) {
-                $decimals = AppSettings::get('default', 'decimals');
+                $decimals = Tools::settings('default', 'decimals');
             }
 
             // cargamos la configuración
-            $decimalSeparator = AppSettings::get('default', 'decimal_separator');
-            $thousandsSeparator = AppSettings::get('default', 'thousands_separator');
+            $decimalSeparator = Tools::settings('default', 'decimal_separator');
+            $thousandsSeparator = Tools::settings('default', 'thousands_separator');
 
             return number_format($number, $decimals, $decimalSeparator, $thousandsSeparator);
         });
@@ -300,7 +298,7 @@ final class Html
     private static function settingsFunction(): TwigFunction
     {
         return new TwigFunction('settings', function (string $group, string $property, $default = null) {
-            return AppSettings::get($group, $property, $default);
+            return Tools::settings($group, $property, $default);
         });
     }
 
