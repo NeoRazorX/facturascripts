@@ -19,6 +19,7 @@
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
@@ -58,6 +59,10 @@ $db = new DataBase();
 if ($db->connected()) {
     // ejecutamos la cola de trabajos
     WorkQueue::run();
+
+    // actualizamos la telemetría
+    $telemetry = new TelemetryManager();
+    $telemetry->update();
 
     // guardamos los logs y cerramos la conexión a la base de datos
     MiniLog::save();
