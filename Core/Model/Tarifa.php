@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * A fee for the products.
  *
@@ -26,7 +28,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Tarifa extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     const APPLY_COST = 'coste';
@@ -154,7 +155,8 @@ class Tarifa extends Base\ModelClass
             return false;
         }
 
-        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
+        $this->nombre = Tools::noHtml($this->nombre);
+
         return parent::test();
     }
 

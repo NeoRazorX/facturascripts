@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * A division of acounting entries in different journals
  *
@@ -27,7 +29,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Diario extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -56,7 +57,7 @@ class Diario extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
+        $this->descripcion = Tools::noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
             $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'description', '%min%' => '1', '%max%' => '100']);
             return false;
