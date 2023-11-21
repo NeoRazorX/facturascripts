@@ -49,7 +49,7 @@ final class PluginDeploy
     {
         $this->enabledPlugins = array_reverse($enabledPlugins);
 
-        $folders = ['Assets', 'Controller', 'Data', 'Lib', 'Model', 'Table', 'View', 'XMLView'];
+        $folders = ['Assets', 'Controller', 'Data', 'Lib', 'Model', 'Table', 'View', 'Worker', 'XMLView'];
         foreach ($folders as $folder) {
             if ($clean) {
                 ToolBox::files()::delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
