@@ -207,7 +207,7 @@ class Subcuenta extends Base\ModelClass
 
         // escape html
         foreach (['codcuenta', 'codsubcuenta', 'descripcion', 'codcuentaesp'] as $field) {
-            $this->{$field} = self::toolBox()::utils()::noHtml($this->{$field});
+            $this->{$field} = Tools::noHtml($this->{$field});
         }
 
         $this->codsubcuenta = empty($this->idsubcuenta) ? $this->transformCodsubcuenta($this->codsubcuenta) : $this->codsubcuenta;
