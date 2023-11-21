@@ -23,7 +23,7 @@ use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\WorkEvent;
 use FacturaScripts\Core\Template\WorkerClass;
 
-final class TestWorker extends WorkerClass
+class TestWorker extends WorkerClass
 {
     public function run(WorkEvent $event): bool
     {

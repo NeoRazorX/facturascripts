@@ -124,7 +124,7 @@
         {% endif %}
         {# -- Table -- #}
         <div class="table-responsive">
-            {% set tableClass = fsc.toolBox().appSettings().get('default', 'tablesize') == 'small' ? 'table-sm' : '' %}
+            {% set tableClass = settings('default', 'tablesize') == 'small' ? 'table-sm' : '' %}
             <table class="table table-hover mb-0 {{ tableClass }}">
                 <thead>
                 <tr>
