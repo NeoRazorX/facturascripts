@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * A manufacturer of products.
  *
@@ -27,7 +29,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Fabricante extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -69,9 +70,8 @@ class Fabricante extends Base\ModelClass
 
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->codfabricante = $utils->noHtml($this->codfabricante);
-        $this->nombre = $utils->noHtml($this->nombre);
+        $this->codfabricante = Tools::noHtml($this->codfabricante);
+        $this->nombre = Tools::noHtml($this->nombre);
 
         if ($this->codfabricante && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfabricante)) {
             $this->toolBox()->i18nLog()->error(
