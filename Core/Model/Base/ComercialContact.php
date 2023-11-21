@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\Retencion;
@@ -171,7 +172,7 @@ abstract class ComercialContact extends Contact
 
         $this->web = Tools::noHtml($this->web);
         // check if the web is a valid url
-        if (!empty($this->web) && false === self::toolBox()::utils()::isValidUrl($this->web)) {
+        if (!empty($this->web) && false === Validator::url($this->web)) {
             Tools::log()->warning('invalid-web', ['%web%' => $this->web]);
             return false;
         }

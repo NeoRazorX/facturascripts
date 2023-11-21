@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 
 /**
  * Merchandise transport agency.
@@ -93,7 +94,7 @@ class AgenciaTransporte extends Base\ModelClass
         $this->web = Tools::noHtml($this->web);
 
         // check if the web is a valid url
-        if (!empty($this->web) && false === self::toolBox()::utils()::isValidUrl($this->web)) {
+        if (!empty($this->web) && false === Validator::url($this->web)) {
             Tools::log()->error('invalid-web', ['%web%' => $this->web]);
             return false;
         }

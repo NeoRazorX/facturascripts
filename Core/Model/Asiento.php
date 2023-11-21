@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Diario as DinDiario;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
@@ -247,7 +248,7 @@ class Asiento extends Base\ModelOnChangeClass
             $haber += $line->haber;
         }
 
-        return self::toolBox()::utils()->floatcmp($debe, $haber, FS_NF0, true);
+        return Utils::floatcmp($debe, $haber, FS_NF0, true);
     }
 
     /**

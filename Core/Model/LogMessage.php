@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -119,7 +118,7 @@ class LogMessage extends Base\ModelClass
      */
     public function context(): array
     {
-        return json_decode(ToolBox::utils()::fixHtml($this->context), true);
+        return json_decode(Tools::fixHtml($this->context), true);
     }
 
     public function delete(): bool

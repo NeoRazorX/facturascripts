@@ -50,8 +50,6 @@ trait PasswordTrait
 
     abstract public function primaryColumnValue();
 
-    abstract protected static function toolBox();
-
     /**
      * Assigns the new password to the user.
      *
