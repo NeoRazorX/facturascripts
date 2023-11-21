@@ -196,7 +196,7 @@ class Producto extends ModelClass
         $this->actualizado = Tools::dateTime();
         $this->bloqueado = false;
         $this->codimpuesto = Tools::settings('default', 'codimpuesto');
-        $this->fechaalta = date(self::DATE_STYLE);
+        $this->fechaalta = Tools::date();
         $this->nostock = false;
         $this->precio = 0.0;
         $this->publico = false;

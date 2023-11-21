@@ -75,7 +75,7 @@ class AttachedFileRelation extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->creationdate = date(self::DATETIME_STYLE);
+        $this->creationdate = Tools::dateTime();
     }
 
     public function getFile(): DinFile

@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -59,7 +58,7 @@ class EmailNotification extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->creationdate = date(self::DATE_STYLE);
+        $this->creationdate = Tools::date();
         $this->enabled = true;
     }
 

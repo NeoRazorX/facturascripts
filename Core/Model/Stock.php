@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -240,7 +240,7 @@ class Stock extends ModelClass
     {
         $total = $this->totalFromProduct($this->idproducto);
         $sql = "UPDATE " . DinProducto::tableName() . " SET stockfis = " . self::$dataBase->var2str($total)
-            . ", actualizado = " . self::$dataBase->var2str(date(self::DATETIME_STYLE))
+            . ", actualizado = " . self::$dataBase->var2str(Tools::dateTime())
             . " WHERE idproducto = " . self::$dataBase->var2str($this->idproducto) . ';';
 
         $totalVariant = $this->totalFromProduct($this->idproducto, $this->referencia);

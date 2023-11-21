@@ -108,7 +108,7 @@ class LogMessage extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->time = date(self::DATETIME_STYLE);
+        $this->time = Tools::dateTime();
     }
 
     /**
