@@ -81,7 +81,7 @@ class AgenciaTransporte extends Base\ModelClass
     public function test(): bool
     {
         if (!empty($this->codtrans) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codtrans)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codtrans, '%column%' => 'codtrans', '%min%' => '1', '%max%' => '8']
             );
@@ -94,7 +94,7 @@ class AgenciaTransporte extends Base\ModelClass
 
         // check if the web is a valid url
         if (!empty($this->web) && false === self::toolBox()::utils()::isValidUrl($this->web)) {
-            self::toolBox()::i18nLog()->error('invalid-web', ['%web%' => $this->web]);
+            Tools::log()->error('invalid-web', ['%web%' => $this->web]);
             return false;
         }
 

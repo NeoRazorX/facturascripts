@@ -145,14 +145,14 @@ class Ejercicio extends Base\ModelClass
 
         if ($fecha2 > strtotime($this->fechainicio)) {
             if ($showError) {
-                $this->toolBox()->i18nLog()->warning('date-out-of-rage-selected-better');
+                Tools::log()->warning('date-out-of-rage-selected-better');
             }
 
             return $this->fechafin;
         }
 
         if ($showError) {
-            $this->toolBox()->i18nLog()->warning('date-out-of-rage-selected-better');
+            Tools::log()->warning('date-out-of-rage-selected-better');
         }
 
         return $this->fechainicio;

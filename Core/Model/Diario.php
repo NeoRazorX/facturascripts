@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Tools;
 
 /**
- * A division of acounting entries in different journals
+ * A division of accounting entries in different journals
  *
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
  * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>
@@ -59,7 +59,7 @@ class Diario extends Base\ModelClass
     {
         $this->descripcion = Tools::noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
-            $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'description', '%min%' => '1', '%max%' => '100']);
+            Tools::log()->warning('invalid-column-lenght', ['%column%' => 'description', '%min%' => '1', '%max%' => '100']);
             return false;
         }
 

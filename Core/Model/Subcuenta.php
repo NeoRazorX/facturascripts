@@ -118,7 +118,7 @@ class Subcuenta extends Base\ModelClass
             return parent::delete();
         }
 
-        $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
+        Tools::log()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
         return false;
     }
 
@@ -192,7 +192,7 @@ class Subcuenta extends Base\ModelClass
             return parent::save();
         }
 
-        $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
+        Tools::log()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
         return false;
     }
 
@@ -213,7 +213,7 @@ class Subcuenta extends Base\ModelClass
         $this->codsubcuenta = empty($this->idsubcuenta) ? $this->transformCodsubcuenta($this->codsubcuenta) : $this->codsubcuenta;
         $this->descripcion = Tools::noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'invalid-column-lenght',
                 ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']
             );
@@ -223,7 +223,7 @@ class Subcuenta extends Base\ModelClass
         // check exercise
         $exercise = $this->getExercise();
         if (false === $this->disableAdditionalTest && strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
-            $this->toolBox()->i18nLog()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
+            Tools::log()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
             return false;
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
@@ -31,7 +32,6 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
  */
 abstract class TransformerDocument extends BusinessDocument
 {
-
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
@@ -124,7 +124,7 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         if (count($this->childrenDocuments()) > 0) {
-            $this->toolBox()->i18nLog()->warning('non-editable-document');
+            Tools::log()->warning('non-editable-document');
             return false;
         }
 
@@ -167,7 +167,7 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         // add audit log
-        self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->warning('deleted-model', [
+        Tools::log(self::AUDIT_CHANNEL)->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
@@ -287,7 +287,7 @@ abstract class TransformerDocument extends BusinessDocument
     protected function onChange($field)
     {
         if (false === $this->editable && false === $this->previousData['editable'] && $field != 'idestado') {
-            $this->toolBox()->i18nLog()->warning('non-editable-document');
+            Tools::log()->warning('non-editable-document');
             return false;
         } elseif ($field !== 'idestado') {
             return parent::onChange($field);

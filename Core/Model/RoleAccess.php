@@ -21,6 +21,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
 use FacturaScripts\Dinamic\Model\Role as DinRole;
 use FacturaScripts\Dinamic\Model\User as DinUser;
@@ -127,7 +128,7 @@ class RoleAccess extends Base\ModelClass
                 return $this->onlyownerdata;
 
             default:
-                self::toolBox()::i18nLog()->error('invalid-user-can-permission', ['%permission%' => $permission]);
+                Tools::log()->error('invalid-user-can-permission', ['%permission%' => $permission]);
                 return false;
         }
     }

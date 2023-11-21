@@ -108,7 +108,7 @@ class PageFilter extends Base\ModelClass
     {
         $this->description = Tools::noHtml($this->description);
         if (empty($this->description)) {
-            $this->toolBox()->i18nLog()->warning('description-error');
+            Tools::log()->warning('description-error');
             return false;
         }
 

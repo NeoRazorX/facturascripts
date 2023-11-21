@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 
 /**
  * Auxiliary model to load a list of codes and their descriptions
@@ -87,7 +87,7 @@ class CodeModel
 
         self::initDataBase();
         if (!self::$dataBase->tableExists($tableName)) {
-            ToolBox::i18nLog()->error('table-not-found', ['%tableName%' => $tableName]);
+            Tools::log()->error('table-not-found', ['%tableName%' => $tableName]);
             return $result;
         }
 
@@ -212,7 +212,7 @@ class CodeModel
     /**
      * Inits database connection.
      */
-    protected static function initDataBase()
+    protected static function initDataBase(): void
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();

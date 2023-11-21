@@ -74,7 +74,7 @@ class Fabricante extends Base\ModelClass
         $this->nombre = Tools::noHtml($this->nombre);
 
         if ($this->codfabricante && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfabricante)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codfabricante, '%column%' => 'codfabricante', '%min%' => '1', '%max%' => '8']
             );
@@ -82,7 +82,7 @@ class Fabricante extends Base\ModelClass
         }
 
         if (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'invalid-column-lenght',
                 ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
             );

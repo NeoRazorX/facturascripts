@@ -125,7 +125,7 @@ class LogMessage extends Base\ModelClass
     public function delete(): bool
     {
         if ($this->channel === self::AUDIT_CHANNEL) {
-            self::toolBox()::i18nLog()->warning('cant-delete-audit-log');
+            Tools::log()->warning('cant-delete-audit-log');
             return false;
         }
 
@@ -161,7 +161,7 @@ class LogMessage extends Base\ModelClass
     protected function saveUpdate(array $values = []): bool
     {
         if ($this->channel === self::AUDIT_CHANNEL) {
-            self::toolBox()::i18nLog()->warning('cant-update-audit-log');
+            Tools::log()->warning('cant-update-audit-log');
             return false;
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseTools;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\Import\CSVImport;
+use FacturaScripts\Core\Tools;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -140,7 +141,7 @@ abstract class ModelCore
         }
 
         if (static::tableName() !== '' && false === in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
-            $this->toolBox()->i18nLog()->debug('table-checked', ['%tableName%' => static::tableName()]);
+            Tools::log()->debug('table-checked', ['%tableName%' => static::tableName()]);
             self::$checkedTables[] = static::tableName();
             Cache::set('fs_checked_tables', self::$checkedTables);
         }
@@ -289,7 +290,7 @@ abstract class ModelCore
         $xmlCols = [];
         $xmlCons = [];
         if (false === DataBaseTools::getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
-            $this->toolBox()->i18nLog()->critical('error-on-xml-file', ['%fileName%' => static::tableName() . '.xml']);
+            Tools::log()->critical('error-on-xml-file', ['%fileName%' => static::tableName() . '.xml']);
             return false;
         }
 
@@ -298,7 +299,7 @@ abstract class ModelCore
             DataBaseTools::generateTable(static::tableName(), $xmlCols, $xmlCons) . $this->install();
 
         if ($sql !== '' && false === self::$dataBase->exec($sql)) {
-            $this->toolBox()->i18nLog()->critical('check-table', ['%tableName%' => static::tableName()]);
+            Tools::log()->critical('check-table', ['%tableName%' => static::tableName()]);
             Cache::clear();
             return false;
         }

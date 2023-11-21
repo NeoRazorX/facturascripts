@@ -75,7 +75,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
     public function delete(): bool
     {
         if ($this->bloquear) {
-            $this->toolBox()->i18nLog()->warning('locked');
+            Tools::log()->warning('locked');
             return false;
         }
 
@@ -121,7 +121,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
             $this->editable = false;
 
             if (in_array($this->tipodoc, ['FacturaCliente', 'FacturaProveedor'])) {
-                self::toolBox()::i18nLog()->warning('invoices-cant-generate-new-docs');
+                Tools::log()->warning('invoices-cant-generate-new-docs');
                 return false;
             }
         }
@@ -142,7 +142,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
     protected function onChange($field)
     {
         if ($this->bloquear && $this->previousData['bloquear']) {
-            $this->toolBox()->i18nLog()->warning('locked');
+            Tools::log()->warning('locked');
             return false;
         }
 

@@ -92,7 +92,7 @@ class Impuesto extends ModelClass
     public function delete(): bool
     {
         if ($this->isDefault()) {
-            $this->toolBox()->i18nLog()->warning('cant-delete-default-tax');
+            Tools::log()->warning('cant-delete-default-tax');
             return false;
         }
 
@@ -179,6 +179,7 @@ class Impuesto extends ModelClass
         $this->codsubcuentasop = empty($this->codsubcuentasop) ? null : $this->codsubcuentasop;
         $this->codsubcuentasopre = empty($this->codsubcuentasopre) ? null : $this->codsubcuentasopre;
         $this->descripcion = Tools::noHtml($this->descripcion);
+
         return parent::test();
     }
 

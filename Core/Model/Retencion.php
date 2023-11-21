@@ -114,7 +114,7 @@ class Retencion extends Base\ModelClass
     {
         $this->codretencion = trim($this->codretencion);
         if ($this->codretencion && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codretencion)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codretencion, '%column%' => 'codretencion', '%min%' => '1', '%max%' => '10']
             );
@@ -126,7 +126,7 @@ class Retencion extends Base\ModelClass
         $this->descripcion = Tools::noHtml($this->descripcion);
 
         if (empty($this->porcentaje) || intval($this->porcentaje) < 1) {
-            $this->toolBox()->i18nLog()->warning('not-valid-percentage-retention');
+            Tools::log()->warning('not-valid-percentage-retention');
             return false;
         }
 
