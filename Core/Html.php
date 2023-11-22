@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -319,6 +319,14 @@ final class Html
         });
     }
 
+    private static function isInstanceofFunction(): TwigFunction
+    {
+        return new TwigFunction('isInstanceof', function ($var, $instance) {
+            $instance = '\\FacturaScripts\\Core\\Lib\\ExtendedController\\' . $instance;
+            return $var instanceof $instance;
+        });
+    }
+
     /**
      * @throws LoaderError
      */
@@ -363,6 +371,7 @@ final class Html
         self::$twig->addFunction(self::settingsFunction());
         self::$twig->addFunction(self::transFunction());
         self::$twig->addFunction(self::bytesFunction());
+        self::$twig->addFunction(self::isInstanceofFunction());
         foreach (self::$functions as $function) {
             self::$twig->addFunction($function);
         }
