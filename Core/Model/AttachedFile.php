@@ -59,12 +59,16 @@ class AttachedFile extends Base\ModelOnChangeClass
     /** @var int */
     public $size;
 
+    /** @var int */
+    public $downloads;
+
     public function clear()
     {
         parent::clear();
         $this->date = Tools::date();
         $this->hour = Tools::hour();
         $this->size = 0;
+        $this->downloads = 0;
     }
 
     public function delete(): bool
