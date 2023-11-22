@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
@@ -433,7 +433,7 @@ trait CommonSalesPurchases
             $list .= '<tr>'
                 . '<td><a href="' . $doc->url() . '">' . $i18n->trans($doc->modelClassName()) . ' ' . $doc->codigo . '</a></td>'
                 . '<td>' . $doc->observaciones . '</td>'
-                . '<td class="text-right text-nowrap">' . ToolBox::coins()::format($doc->total) . '</td>'
+                . '<td class="text-right text-nowrap">' . Tools::money($doc->total) . '</td>'
                 . '<td class="text-right text-nowrap">' . $doc->fecha . ' ' . $doc->hora . '</td>'
                 . '</tr>';
             $sum += $doc->total;
@@ -442,7 +442,7 @@ trait CommonSalesPurchases
         // añadimos el total
         $list .= '<tr class="table-warning">'
             . '<td class="text-right text-nowrap" colspan="3">'
-            . $i18n->trans('total') . ' <b>' . ToolBox::coins()::format($sum) . '</b></td>'
+            . $i18n->trans('total') . ' <b>' . Tools::money($sum) . '</b></td>'
             . '<td></td>'
             . '</tr>';
 

@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\KernelException;
@@ -37,7 +38,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Controller
+class Controller implements ControllerInterface
 {
     /**
      * Name of the class of the controller (although its in inheritance from this class,
@@ -135,7 +136,7 @@ class Controller
         $this->uri = $uri;
 
         $pageData = $this->getPageData();
-        $this->title = empty($pageData) ? $this->className : $this->toolBox()->i18n()->trans($pageData['title']);
+        $this->title = empty($pageData) ? $this->className : Tools::lang()->trans($pageData['title']);
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
@@ -148,7 +149,7 @@ class Controller
      */
     public static function addExtension($extension)
     {
-        static::toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
+        Tools::log()->error('no-extension-support', ['%className%' => static::class]);
     }
 
     /**
@@ -187,7 +188,7 @@ class Controller
      */
     public function pipe($name, ...$arguments)
     {
-        $this->toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
+        Tools::log()->error('no-extension-support', ['%className%' => static::class]);
         return null;
     }
 
@@ -199,7 +200,7 @@ class Controller
      */
     public function pipeFalse($name, ...$arguments): bool
     {
-        $this->toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
+        Tools::log()->error('no-extension-support', ['%className%' => static::class]);
         return true;
     }
 
@@ -316,6 +317,7 @@ class Controller
 
     /**
      * @return ToolBox
+     * @deprecated since version 2023.1
      */
     public static function toolBox(): ToolBox
     {
@@ -369,7 +371,7 @@ class Controller
     {
         $current = (float)substr(phpversion(), 0, 3);
         if ($current < $min) {
-            $this->toolBox()->i18nLog()->warning('php-support-end', ['%current%' => $current, '%min%' => $min]);
+            Tools::log()->warning('php-support-end', ['%current%' => $current, '%min%' => $min]);
         }
     }
 
@@ -397,13 +399,13 @@ class Controller
         $urlToken = $this->request->query->get('multireqtoken', '');
         $token = $this->request->request->get('multireqtoken', $urlToken);
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
-            $this->toolBox()->i18nLog()->warning('invalid-request');
+            Tools::log()->warning('invalid-request');
             return false;
         }
 
         // duplicated request?
         if ($this->multiRequestProtection->tokenExist($token)) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
+            Tools::log()->warning('duplicated-request');
             return false;
         }
 

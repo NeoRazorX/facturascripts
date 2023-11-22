@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\Contract\PurchasesLineModInterface;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
@@ -263,7 +262,7 @@ class PurchasesLineHTML
             }
         }
 
-        ToolBox::i18nLog()->warning('product-not-found', ['%ref%' => $formData['fastli']]);
+        Tools::log()->warning('product-not-found', ['%ref%' => $formData['fastli']]);
         return null;
     }
 
