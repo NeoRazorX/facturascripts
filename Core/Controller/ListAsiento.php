@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Model\Asiento;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to list the items in the Asiento model
@@ -99,9 +100,9 @@ class ListAsiento extends ListController
         // filtro de operación
         $operaciones = [
             '' => '------',
-            Asiento::OPERATION_OPENING => self::toolBox()::i18n()->trans('opening-operation'),
-            Asiento::OPERATION_CLOSING => self::toolBox()::i18n()->trans('closing-operation'),
-            Asiento::OPERATION_REGULARIZATION => self::toolBox()::i18n()->trans('regularization-operation')
+            Asiento::OPERATION_OPENING => Tools::lang()->trans('opening-operation'),
+            Asiento::OPERATION_CLOSING => Tools::lang()->trans('closing-operation'),
+            Asiento::OPERATION_REGULARIZATION => Tools::lang()->trans('regularization-operation')
         ];
         $this->addFilterSelect($viewName, 'operacion', 'operation', 'operacion', $operaciones);
 
@@ -165,7 +166,7 @@ class ListAsiento extends ListController
             // filter
             $this->addFilterSelectWhere($viewName, 'status', [
                 [
-                    'label' => $this->toolBox()->i18n()->trans('unbalance'),
+                    'label' => Tools::lang()->trans('unbalance'),
                     'where' => [new DataBaseWhere('idasiento', join(',', $idasientos), 'IN')]
                 ]
             ]);
@@ -197,7 +198,7 @@ class ListAsiento extends ListController
     protected function lockEntriesAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -206,14 +207,14 @@ class ListAsiento extends ListController
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
         if (false === is_array($codes) || empty($model)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return;
         }
 
         $this->dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                $this->toolBox()->i18nLog()->error('record-not-found');
+                Tools::log()->error('record-not-found');
                 continue;
             } elseif (false === $model->editable) {
                 continue;
@@ -221,13 +222,13 @@ class ListAsiento extends ListController
 
             $model->editable = false;
             if (false === $model->save()) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 $this->dataBase->rollback();
                 return;
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $this->dataBase->commit();
         $model->clear();
     }
@@ -235,7 +236,7 @@ class ListAsiento extends ListController
     protected function renumberAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -244,12 +245,12 @@ class ListAsiento extends ListController
         $this->dataBase->beginTransaction();
         $codejercicio = $this->request->request->get('exercise');
         if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
-            $this->toolBox()->i18nLog()->notice('renumber-accounting-ok');
+            Tools::log()->notice('renumber-accounting-ok');
             $this->dataBase->commit();
             return;
         }
 
         $this->dataBase->rollback();
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
     }
 }

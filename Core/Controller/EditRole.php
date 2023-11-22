@@ -169,7 +169,7 @@ class EditRole extends EditController
             $newRoleAccess->save();
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 

@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -97,7 +98,7 @@ class EditCuenta extends EditController
     {
         if ($action == 'ledger') {
             if (false === $this->permissions->allowExport) {
-                $this->toolBox()->i18nLog()->warning('no-print-permission');
+                Tools::log()->warning('no-print-permission');
                 return true;
             }
 
@@ -125,16 +126,16 @@ class EditCuenta extends EditController
             'grouped' => $request['groupingtype'],
             'account-from' => $account->codcuenta
         ]);
-        $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $account->codcuenta;
+        $title = Tools::lang()->trans('ledger') . ' ' . $account->codcuenta;
         $this->exportManager->newDoc($request['format'], $title);
 
         // añadimos la tabla de cabecera con la info del informe
         if ($request['format'] === 'PDF') {
             $titles = [[
-                self::toolBox()::i18n()->trans('account') => $account->codcuenta,
-                self::toolBox()::i18n()->trans('exercise') => $account->codejercicio,
-                self::toolBox()::i18n()->trans('from-date') => $request['dateFrom'],
-                self::toolBox()::i18n()->trans('until-date') => $request['dateTo']
+                Tools::lang()->trans('account') => $account->codcuenta,
+                Tools::lang()->trans('exercise') => $account->codejercicio,
+                Tools::lang()->trans('from-date') => $request['dateFrom'],
+                Tools::lang()->trans('until-date') => $request['dateTo']
             ]];
             $this->exportManager->addTablePage(array_keys($titles[0]), $titles);
         }

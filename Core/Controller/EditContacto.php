@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 
@@ -93,19 +94,19 @@ class EditContacto extends EditController
     {
         $access = $this->getRolePermissions('EditCliente');
         if (false === $access['allowupdate']) {
-            self::toolBox()::i18nLog()->warning('not-allowed-update');
+            Tools::log()->warning('not-allowed-update');
             return;
         }
 
         $mvn = $this->getMainViewName();
         $customer = $this->views[$mvn]->model->getCustomer();
         if ($customer->exists()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             $this->redirect($customer->url() . '&action=save-ok');
             return;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
     }
 
     protected function createEmailsView(string $viewName = 'ListEmailSent')
@@ -125,19 +126,19 @@ class EditContacto extends EditController
     {
         $access = $this->getRolePermissions('EditProveedor');
         if (false === $access['allowupdate']) {
-            self::toolBox()::i18nLog()->warning('not-allowed-update');
+            Tools::log()->warning('not-allowed-update');
             return;
         }
 
         $mvn = $this->getMainViewName();
         $supplier = $this->views[$mvn]->model->getSupplier();
         if ($supplier->exists()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             $this->redirect($supplier->url() . '&action=save-ok');
             return;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
     }
 
     /**
@@ -292,7 +293,7 @@ class EditContacto extends EditController
         $columnLangCode = $this->views[$viewName]->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
-            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
                 $langs[] = ['value' => $key, 'title' => $value];
             }
 

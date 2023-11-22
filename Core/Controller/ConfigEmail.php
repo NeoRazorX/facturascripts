@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 
@@ -112,7 +113,7 @@ class ConfigEmail extends PanelController
         if (false === $this->validateFormToken()) {
             return;
         } elseif (false === $this->user->can('EditEmailNotification', 'update')) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         }
 
@@ -129,12 +130,12 @@ class ConfigEmail extends PanelController
 
             $notification->enabled = $value;
             if (false === $notification->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
+                Tools::log()->warning('record-save-error');
                 return;
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
     }
 
     /**
@@ -203,10 +204,10 @@ class ConfigEmail extends PanelController
 
         $email = new NewMail();
         if ($email->test()) {
-            $this->toolBox()->i18nLog()->notice('mail-test-ok');
+            Tools::log()->notice('mail-test-ok');
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('mail-test-error');
+        Tools::log()->warning('mail-test-error');
     }
 }

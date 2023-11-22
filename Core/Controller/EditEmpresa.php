@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
@@ -55,7 +56,7 @@ class EditEmpresa extends EditController
         }
 
         if ($model->checkVies()) {
-            self::toolBox()->i18nLog()->notice('vies-check-success', ['%vat-number%' => $model->cifnif]);
+            Tools::log()->notice('vies-check-success', ['%vat-number%' => $model->cifnif]);
         }
 
         return true;

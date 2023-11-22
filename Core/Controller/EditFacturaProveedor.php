@@ -9,6 +9,7 @@ use FacturaScripts\Core\Base\AjaxForms\PurchasesController;
 use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
@@ -142,10 +143,10 @@ class EditFacturaProveedor extends PurchasesController
     {
         $invoice = new FacturaProveedor();
         if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -154,16 +155,16 @@ class EditFacturaProveedor extends PurchasesController
         $generator = new InvoiceToAccounting();
         $generator->generate($invoice);
         if (empty($invoice->idasiento)) {
-            $this->toolBox()->i18nLog()->error('record-save-error');
+            Tools::log()->error('record-save-error');
             return true;
         }
 
         if ($invoice->save()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             return true;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
         return true;
     }
 
@@ -171,10 +172,10 @@ class EditFacturaProveedor extends PurchasesController
     {
         $invoice = new FacturaProveedor();
         if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -186,11 +187,11 @@ class EditFacturaProveedor extends PurchasesController
             $generator->update($invoice);
             $invoice->save();
 
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             return true;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
         return true;
     }
 
@@ -235,10 +236,10 @@ class EditFacturaProveedor extends PurchasesController
     {
         $invoice = new FacturaProveedor();
         if (false === $invoice->loadFromCode($this->request->request->get('idfactura'))) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -252,7 +253,7 @@ class EditFacturaProveedor extends PurchasesController
             }
         }
         if (empty($lines)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return true;
         }
 
@@ -266,7 +267,7 @@ class EditFacturaProveedor extends PurchasesController
 
                 $invoice->idestado = $status->idestado;
                 if (false === $invoice->save()) {
-                    $this->toolBox()->i18nLog()->error('record-save-error');
+                    Tools::log()->error('record-save-error');
                     $this->dataBase->rollback();
                     return true;
                 }
@@ -283,7 +284,7 @@ class EditFacturaProveedor extends PurchasesController
         $newRefund->observaciones = $this->request->request->get('observaciones');
         $newRefund->setDate($this->request->request->get('fecha'), date(FacturaProveedor::HOUR_STYLE));
         if (false === $newRefund->save()) {
-            $this->toolBox()->i18nLog()->error('record-save-error');
+            Tools::log()->error('record-save-error');
             $this->dataBase->rollback();
             return true;
         }
@@ -293,7 +294,7 @@ class EditFacturaProveedor extends PurchasesController
             $newLine->cantidad = 0 - (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
             $newLine->idlinearect = $line->idlinea;
             if (false === $newLine->save()) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 $this->dataBase->rollback();
                 return true;
             }
@@ -303,7 +304,7 @@ class EditFacturaProveedor extends PurchasesController
         Calculator::calculate($newRefund, $newLines, false);
         $newRefund->idestado = $invoice->idestado;
         if (false === $newRefund->save()) {
-            $this->toolBox()->i18nLog()->error('record-save-error');
+            Tools::log()->error('record-save-error');
             $this->dataBase->rollback();
             return true;
         }
@@ -317,7 +318,7 @@ class EditFacturaProveedor extends PurchasesController
         }
 
         $this->dataBase->commit();
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $this->redirect($newRefund->url() . '&action=save-ok');
         return false;
     }
@@ -337,14 +338,14 @@ class EditFacturaProveedor extends PurchasesController
 
         $diff = $this->getModel()->total - $total;
         if (abs($diff) > 0.01) {
-            $this->toolBox()->i18nLog()->warning('invoice-receipts-diff', ['%diff%' => $diff]);
+            Tools::log()->warning('invoice-receipts-diff', ['%diff%' => $diff]);
         }
     }
 
     private function paidAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -353,25 +354,25 @@ class EditFacturaProveedor extends PurchasesController
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
         if (false === is_array($codes) || empty($model)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return true;
         }
 
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                $this->toolBox()->i18nLog()->error('record-not-found');
+                Tools::log()->error('record-not-found');
                 continue;
             }
 
             $model->nick = $this->user->nick;
             $model->pagado = true;
             if (false === $model->save()) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 return true;
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $model->clear();
         return true;
     }

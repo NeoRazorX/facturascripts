@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 
@@ -192,7 +193,7 @@ class EditTarifa extends EditController
     {
         $codes = $this->request->request->get('code', '');
         if (empty($codes) || false === \is_array($codes)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return;
         }
 
@@ -204,14 +205,14 @@ class EditTarifa extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
     }
 
     protected function unsetGroupRate()
     {
         $codes = $this->request->request->get('code', '');
         if (empty($codes) || false === \is_array($codes)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return;
         }
 
@@ -223,7 +224,7 @@ class EditTarifa extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
     }
 
     protected function setCustomerRate()
@@ -231,17 +232,17 @@ class EditTarifa extends EditController
         $customer = new Cliente();
         $code = $this->request->request->get('setcustomerrate');
         if (empty($code) || false === $customer->loadFromCode($code)) {
-            $this->toolBox()->i18nLog()->warning('customer-not-found');
+            Tools::log()->warning('customer-not-found');
             return;
         }
 
         $customer->codtarifa = $this->request->get('code');
         if ($customer->save()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('record-save-error');
+        Tools::log()->warning('record-save-error');
     }
 
     protected function setGroupRate()
@@ -249,16 +250,16 @@ class EditTarifa extends EditController
         $group = new GrupoClientes();
         $code = $this->request->request->get('setgrouprate');
         if (empty($code) || false === $group->loadFromCode($code)) {
-            $this->toolBox()->i18nLog()->warning('group-not-found');
+            Tools::log()->warning('group-not-found');
             return;
         }
 
         $group->codtarifa = $this->request->get('code');
         if ($group->save()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('record-save-error');
+        Tools::log()->warning('record-save-error');
     }
 }

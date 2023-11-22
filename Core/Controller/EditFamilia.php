@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Producto;
 
 /**
@@ -68,7 +69,7 @@ class EditFamilia extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('items-added-correctly', ['%num%' => $num]);
+        Tools::log()->notice('items-added-correctly', ['%num%' => $num]);
     }
 
     /**
@@ -134,7 +135,7 @@ class EditFamilia extends EditController
         $this->views[$viewName]->addOrderBy(['stockfis'], 'stock');
 
         // filtros
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         $this->views[$viewName]->addFilterSelectWhere('status', [
             ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
             ['label' => $i18n->trans('blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
@@ -237,6 +238,6 @@ class EditFamilia extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('items-removed-correctly', ['%num%' => $num]);
+        Tools::log()->notice('items-removed-correctly', ['%num%' => $num]);
     }
 }

@@ -27,6 +27,7 @@ use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -88,7 +89,9 @@ class Dashboard extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        $this->title = $this->toolBox()->i18n()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
+
+        $this->title = Tools::lang()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
+
         $this->loadExtensions();
     }
 
@@ -271,7 +274,7 @@ class Dashboard extends Controller
         $receiptModel = new ReciboCliente();
         $where = [
             new DataBaseWhere('pagado', false),
-            new DataBaseWhere('vencimiento', $this->toolBox()->today(), '<'),
+            new DataBaseWhere('vencimiento', Tools::date(), '<'),
             new DataBaseWhere('vencimiento', date('Y-m-d', strtotime('-1 year')), '>')
         ];
         $this->receipts = $receiptModel->all($where, ['vencimiento' => 'DESC']);

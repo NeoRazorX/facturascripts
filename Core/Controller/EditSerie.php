@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to edit a single item from the Serie model
@@ -75,7 +76,7 @@ class EditSerie extends EditController
         $types = $this->codeModel->all('estados_documentos', 'tipodoc', 'tipodoc');
         foreach ($types as $value) {
             if (!empty($value->code)) {
-                $value->description = $this->toolBox()->i18n()->trans($value->code);
+                $value->description = Tools::lang()->trans($value->code);
             }
         }
         $this->views[$viewName]->addFilterSelect('tipodoc', 'doc-type', 'tipodoc', $types);

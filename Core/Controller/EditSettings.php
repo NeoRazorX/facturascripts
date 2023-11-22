@@ -120,7 +120,7 @@ class EditSettings extends PanelController
         // custom translation
         foreach ($types as $key => $value) {
             if (!empty($value->code)) {
-                $value->description = $this->toolBox()->i18n()->trans($value->code);
+                $value->description = Tools::lang()->trans($value->code);
             }
         }
 
@@ -243,11 +243,11 @@ class EditSettings extends PanelController
         $this->createDocTypeFilter($viewName);
         $this->views[$viewName]->addFilterSelect('actualizastock', 'update-stock', 'actualizastock', [
             ['code' => null, 'description' => '------'],
-            ['code' => -2, 'description' => $this->toolBox()->i18n()->trans('book')],
-            ['code' => -1, 'description' => $this->toolBox()->i18n()->trans('subtract')],
-            ['code' => 0, 'description' => $this->toolBox()->i18n()->trans('do-nothing')],
-            ['code' => 1, 'description' => $this->toolBox()->i18n()->trans('add')],
-            ['code' => 2, 'description' => $this->toolBox()->i18n()->trans('foresee')],
+            ['code' => -2, 'description' => Tools::lang()->trans('book')],
+            ['code' => -1, 'description' => Tools::lang()->trans('subtract')],
+            ['code' => 0, 'description' => Tools::lang()->trans('do-nothing')],
+            ['code' => 1, 'description' => Tools::lang()->trans('add')],
+            ['code' => 2, 'description' => Tools::lang()->trans('foresee')],
         ]);
         $this->views[$viewName]->addFilterCheckbox('predeterminado', 'default', 'predeterminado');
         $this->views[$viewName]->addFilterCheckbox('editable', 'editable', 'editable');

@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CronJob;
 
 /**
@@ -128,7 +129,7 @@ class ListLogMessage extends ListController
         if (false === $this->validateFormToken()) {
             return;
         } elseif (false === $this->user->can('EditCronJob', 'update')) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         }
 
@@ -145,12 +146,12 @@ class ListLogMessage extends ListController
 
             $cron->enabled = $value;
             if (false === $cron->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
+                Tools::log()->warning('record-save-error');
                 return;
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
     }
 
     /**

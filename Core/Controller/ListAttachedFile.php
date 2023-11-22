@@ -32,7 +32,6 @@ use ZipArchive;
  */
 class ListAttachedFile extends ListController
 {
-
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -79,7 +78,7 @@ class ListAttachedFile extends ListController
     {
         $codes = $this->request->request->get('code');
         if (empty($codes)) {
-            self::toolBox()::i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return true;
         }
 
@@ -88,7 +87,7 @@ class ListAttachedFile extends ListController
         $filename = 'attached-files.zip';
         $filepath = FS_FOLDER . '/MyFiles/' . $filename;
         if ($zip->open($filepath, ZipArchive::CREATE) !== true) {
-            self::toolBox()->i18nLog()->warning('error-creating-zip-file');
+            Tools::log()->warning('error-creating-zip-file');
             return true;
         }
 

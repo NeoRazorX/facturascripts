@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 
 /**
@@ -70,7 +71,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addSearchFields($viewName, ['codigorect']);
 
         // filtros
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
             ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
@@ -119,7 +120,7 @@ class ListFacturaProveedor extends ListBusinessDocument
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $payMethods);
         }
 
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
             ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
@@ -148,7 +149,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         // añadimos un filtro select where para forzar las que tienen idfacturarect
         $this->addFilterSelectWhere($viewName, 'idfacturarect', [
             [
-                'label' => self::toolBox()::i18n()->trans('rectified-invoices'),
+                'label' => Tools::lang()->trans('rectified-invoices'),
                 'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
             ]
         ]);
@@ -180,7 +181,7 @@ class ListFacturaProveedor extends ListBusinessDocument
     protected function renumberInvoicesAction(): void
     {
         if (false === $this->user->admin) {
-            self::toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -188,11 +189,11 @@ class ListFacturaProveedor extends ListBusinessDocument
 
         $codejercicio = $this->request->request->get('exercise');
         if (FacturaProveedorRenumber::run($codejercicio)) {
-            self::toolBox()->i18nLog('facturasprov')->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);
-            self::toolBox()->i18nLog()->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);
+            Tools::log('facturasprov')->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);
+            Tools::log()->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);
             return;
         }
 
-        self::toolBox()->i18nLog()->warning('record-save-error');
+        Tools::log()->warning('record-save-error');
     }
 }

@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to list the items in the Ejercicio model
@@ -58,9 +59,9 @@ class ListEjercicio extends ListController
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
 
         $values = [
-            ['label' => $this->toolBox()->i18n()->trans('all'), 'where' => []],
-            ['label' => $this->toolBox()->i18n()->trans('only-active'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN)]],
-            ['label' => $this->toolBox()->i18n()->trans('only-closed'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]],
+            ['label' => Tools::lang()->trans('all'), 'where' => []],
+            ['label' => Tools::lang()->trans('only-active'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN)]],
+            ['label' => Tools::lang()->trans('only-closed'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]],
         ];
         $this->addFilterSelectWhere($viewName, 'status', $values);
     }

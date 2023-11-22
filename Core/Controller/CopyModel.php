@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Variante;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -79,7 +80,7 @@ class CopyModel extends Controller
             $this->autocompleteAction();
             return;
         } elseif (false === $this->loadModel()) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return;
         }
 
@@ -126,10 +127,12 @@ class CopyModel extends Controller
     {
         $this->setTemplate(false);
         $results = [];
-        $utils = $this->toolBox()->utils();
         $data = $this->request->request->all();
         foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
-            $results[] = ['key' => $utils->fixHtml($value->code), 'value' => $utils->fixHtml($value->description)];
+            $results[] = [
+                'key' => Tools::fixHtml($value->code),
+                'value' => Tools::fixHtml($value->description)
+            ];
         }
 
         $this->response->setContent(json_encode($results));
@@ -152,13 +155,13 @@ class CopyModel extends Controller
     {
         $lines = $newDoc->getLines();
         if (false === Calculator::calculate($newDoc, $lines, true)) {
-            $this->toolBox()->i18nLog()->warning('record-save-error');
+            Tools::log()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
         }
 
         $this->dataBase->commit();
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $this->redirect($newDoc->url() . '&action=save-ok');
     }
 
@@ -184,7 +187,7 @@ class CopyModel extends Controller
 
         $fecha = $this->request->request->get('fecha');
         if (false === $newEntry->setDate($fecha) || false === $newEntry->save()) {
-            $this->toolBox()->i18nLog()->warning('record-save-error');
+            Tools::log()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
         }
@@ -194,14 +197,14 @@ class CopyModel extends Controller
             $newLine = $newEntry->getNewLine();
             $newLine->loadFromData($line->toArray(), ['idasiento', 'idpartida', 'idsubcuenta']);
             if (false === $newLine->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
+                Tools::log()->warning('record-save-error');
                 $this->dataBase->rollback();
                 return;
             }
         }
 
         $this->dataBase->commit();
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $this->redirect($newEntry->url() . '&action=save-ok');
     }
 
@@ -214,7 +217,7 @@ class CopyModel extends Controller
         // buscamos el proveedor
         $subject = new Proveedor();
         if (false === $subject->loadFromCode($this->request->request->get('codproveedor'))) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return;
         }
 
@@ -235,7 +238,7 @@ class CopyModel extends Controller
         $newDoc->numproveedor = $this->request->request->get('numproveedor');
         $newDoc->observaciones = $this->request->request->get('observaciones');
         if (false === $newDoc->save()) {
-            $this->toolBox()->i18nLog()->warning('record-save-error');
+            Tools::log()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
         }
@@ -244,7 +247,7 @@ class CopyModel extends Controller
         foreach ($this->model->getLines() as $line) {
             $newLine = $newDoc->getNewLine($line->toArray());
             if (false === $newLine->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
+                Tools::log()->warning('record-save-error');
                 $this->dataBase->rollback();
                 return;
             }
@@ -262,7 +265,7 @@ class CopyModel extends Controller
         // buscamos el cliente
         $subject = new Cliente();
         if (false === $subject->loadFromCode($this->request->request->get('codcliente'))) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return;
         }
 
@@ -283,7 +286,7 @@ class CopyModel extends Controller
         $newDoc->numero2 = $this->request->request->get('numero2');
         $newDoc->observaciones = $this->request->request->get('observaciones');
         if (false === $newDoc->save()) {
-            $this->toolBox()->i18nLog()->warning('record-save-error');
+            Tools::log()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
         }
@@ -292,7 +295,7 @@ class CopyModel extends Controller
         foreach ($this->model->getLines() as $line) {
             $newLine = $newDoc->getNewLine($line->toArray());
             if (false === $newLine->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
+                Tools::log()->warning('record-save-error');
                 $this->dataBase->rollback();
                 return;
             }
@@ -332,7 +335,7 @@ class CopyModel extends Controller
         $productoDestino->referencia = $this->request->request->get('referencia');
 
         if (false === $productoDestino->save()) {
-            $this->toolBox()->i18nLog()->warning('record-save-error');
+            Tools::log()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
         }
@@ -362,14 +365,14 @@ class CopyModel extends Controller
             // asignamos variantes al producto nuevo
             $varianteDestino->idproducto = $productoDestino->idproducto;
             if (false === $varianteDestino->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
+                Tools::log()->warning('record-save-error');
                 $this->dataBase->rollback();
                 return;
             }
         }
 
         $this->dataBase->commit();
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $this->redirect($productoDestino->url() . '&action=save-ok');
     }
 }

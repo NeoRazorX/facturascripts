@@ -76,14 +76,15 @@ class Updater extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
         $this->telemetryManager = new TelemetryManager();
 
         // Folders writable?
         $folders = FileManager::notWritableFolders();
         if ($folders) {
-            $this->toolBox()->i18nLog()->warning('folder-not-writable');
+            Tools::log()->warning('folder-not-writable');
             foreach ($folders as $folder) {
-                $this->toolBox()->log()->warning($folder);
+                Tools::log()->warning($folder);
             }
             return;
         }
@@ -100,10 +101,10 @@ class Updater extends Controller
         $fileName = 'update-' . $this->request->get('item', '') . '.zip';
         if (file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName)) {
             unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName);
-            $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
+            Tools::log()->notice('record-deleted-correctly');
         }
 
-        $this->toolBox()->i18nLog()->notice('reloading');
+        Tools::log()->notice('reloading');
         $this->redirect($this->getClassName() . '?action=post-update', 3);
     }
 
@@ -126,12 +127,12 @@ class Updater extends Controller
             $url = $this->telemetryManager->signUrl($item['url']);
             $http = Http::get($url);
             if ($http->saveAs(FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
-                $this->toolBox()->i18nLog()->notice('download-completed');
+                Tools::log()->notice('download-completed');
                 $this->updaterItems[$key]['downloaded'] = true;
                 break;
             }
 
-            $this->toolBox()->i18nLog()->error('download-error', [
+            Tools::log()->error('download-error', [
                 '%body%' => $http->body(),
                 '%error%' => $http->errorMessage(),
                 '%status%' => $http->status(),
@@ -171,19 +172,19 @@ class Updater extends Controller
 
             case 'register':
                 if ($this->telemetryManager->install()) {
-                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+                    Tools::log()->notice('record-updated-correctly');
                     break;
                 }
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 break;
 
             case 'unlink':
                 if ($this->telemetryManager->unlink()) {
                     $this->telemetryManager = new TelemetryManager();
-                    $this->toolBox()->i18nLog()->notice('unlink-install-ok');
+                    Tools::log()->notice('unlink-install-ok');
                     break;
                 }
-                $this->toolBox()->i18nLog()->error('unlink-install-ko');
+                Tools::log()->error('unlink-install-ko');
                 break;
 
             case 'update':
@@ -227,7 +228,7 @@ class Updater extends Controller
             }
 
             $item = [
-                'description' => $this->toolBox()->i18n()->trans('core-update', ['%version%' => $build['version']]),
+                'description' => Tools::lang()->trans('core-update', ['%version%' => $build['version']]),
                 'downloaded' => file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
                 'filename' => $fileName,
                 'id' => Forja::CORE_PROJECT_ID,
@@ -261,7 +262,7 @@ class Updater extends Controller
             }
 
             $item = [
-                'description' => $this->toolBox()->i18n()->trans('plugin-update', [
+                'description' => Tools::lang()->trans('plugin-update', [
                     '%pluginName%' => $plugin->name,
                     '%version%' => $build['version']
                 ]),
@@ -328,11 +329,11 @@ class Updater extends Controller
 
             // ¿Hay actualización para el nuevo core?
             if ($plugin->forja('maxcore', 0) >= $newCore) {
-                $this->coreUpdateWarnings[$plugin->name] = self::toolBox()::i18n()->trans('plugin-need-update', ['%plugin%' => $plugin->name]);
+                $this->coreUpdateWarnings[$plugin->name] = Tools::lang()->trans('plugin-need-update', ['%plugin%' => $plugin->name]);
                 continue;
             }
 
-            $this->coreUpdateWarnings[$plugin->name] = self::toolBox()::i18n()->trans('plugin-need-update-but', ['%plugin%' => $plugin->name]);
+            $this->coreUpdateWarnings[$plugin->name] = Tools::lang()->trans('plugin-need-update-but', ['%plugin%' => $plugin->name]);
         }
     }
 
@@ -348,7 +349,7 @@ class Updater extends Controller
         $zip = new ZipArchive();
         $zipStatus = $zip->open(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName, ZipArchive::CHECKCONS);
         if ($zipStatus !== true) {
-            $this->toolBox()->log()->critical('ZIP ERROR: ' . $zipStatus);
+            Tools::log()->critical('ZIP ERROR: ' . $zipStatus);
             return;
         }
 
@@ -370,7 +371,7 @@ class Updater extends Controller
         if ($done) {
             Plugins::deploy(true, false);
             Cache::clear();
-            $this->toolBox()->i18nLog()->notice('reloading');
+            Tools::log()->notice('reloading');
             $this->redirect($this->getClassName() . '?action=post-update&init=' . $init, 3);
         }
     }
@@ -379,7 +380,7 @@ class Updater extends Controller
     {
         // extract zip content
         if (false === $zip->extractTo(FS_FOLDER)) {
-            $this->toolBox()->log()->critical('ZIP EXTRACT ERROR: ' . $fileName);
+            Tools::log()->critical('ZIP EXTRACT ERROR: ' . $fileName);
             $zip->close();
             return false;
         }
@@ -393,13 +394,13 @@ class Updater extends Controller
             $origin = FS_FOLDER . DIRECTORY_SEPARATOR . self::CORE_ZIP_FOLDER . DIRECTORY_SEPARATOR . $folder;
             $dest = FS_FOLDER . DIRECTORY_SEPARATOR . $folder;
             if (false === file_exists($origin)) {
-                $this->toolBox()->log()->critical('COPY ERROR: ' . $origin);
+                Tools::log()->critical('COPY ERROR: ' . $origin);
                 return false;
             }
 
             FileManager::delTree($dest);
             if (false === FileManager::recurseCopy($origin, $dest)) {
-                $this->toolBox()->log()->critical('COPY ERROR2: ' . $origin);
+                Tools::log()->critical('COPY ERROR2: ' . $origin);
                 return false;
             }
         }

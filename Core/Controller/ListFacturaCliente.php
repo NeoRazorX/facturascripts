@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
@@ -93,7 +94,7 @@ class ListFacturaCliente extends ListBusinessDocument
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $payMethods);
         }
 
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
             ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
@@ -122,7 +123,7 @@ class ListFacturaCliente extends ListBusinessDocument
         // añadimos un filtro select where para forzar las que tienen idfacturarect
         $this->addFilterSelectWhere($viewName, 'idfacturarect', [
             [
-                'label' => self::toolBox()::i18n()->trans('rectified-invoices'),
+                'label' => Tools::lang()->trans('rectified-invoices'),
                 'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
             ]
         ]);
@@ -140,7 +141,7 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addSearchFields($viewName, ['codigorect']);
 
         // filtros
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
             ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
@@ -232,13 +233,13 @@ class ListFacturaCliente extends ListBusinessDocument
 
         // si no hemos encontrado huecos, mostramos un mensaje
         if (empty($gaps)) {
-            $this->toolBox()->i18nLog()->notice('no-gaps-found');
+            Tools::log()->notice('no-gaps-found');
             return;
         }
 
         // si hemos encontrado huecos, los mostramos uno a uno
         foreach ($gaps as $gap) {
-            $this->toolBox()->i18nLog()->warning('gap-found', [
+            Tools::log()->warning('gap-found', [
                 '%codserie%' => Series::get($gap['codserie'])->descripcion,
                 '%numero%' => $gap['numero'],
                 '%fecha%' => $gap['fecha'],
