@@ -20,10 +20,10 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
@@ -87,14 +87,14 @@ class ListView extends BaseView
         $key1 = count($this->orderOptions);
         $this->orderOptions[$key1] = [
             'fields' => $fields,
-            'label' => ToolBox::i18n()->trans($label),
+            'label' => Tools::lang()->trans($label),
             'type' => 'ASC'
         ];
 
         $key2 = count($this->orderOptions);
         $this->orderOptions[$key2] = [
             'fields' => $fields,
-            'label' => ToolBox::i18n()->trans($label),
+            'label' => Tools::lang()->trans($label),
             'type' => 'DESC'
         ];
 
@@ -341,7 +341,7 @@ class ListView extends BaseView
         $this->query = $request->request->get('query', '');
         if ('' !== $this->query) {
             $fields = implode('|', $this->searchFields);
-            $this->where[] = new DataBaseWhere($fields, ToolBox::utils()::noHtml($this->query), 'XLIKE');
+            $this->where[] = new DataBaseWhere($fields, Tools::noHtml($this->query), 'XLIKE');
         }
 
         // filtro guardado seleccionado?

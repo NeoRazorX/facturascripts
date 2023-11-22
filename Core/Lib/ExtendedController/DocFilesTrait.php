@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\AttachedFileRelation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
 /**
@@ -32,13 +32,12 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
  */
 trait DocFilesTrait
 {
-
     abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5');
 
     private function addFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFileActionToken()) {
             return true;
@@ -49,7 +48,7 @@ trait DocFilesTrait
             $newFile = new AttachedFile();
             $newFile->path = $uploadFile->getClientOriginalName();
             if (false === $newFile->save()) {
-                ToolBox::i18nLog()->error('fail');
+                Tools::log()->error('fail');
                 return true;
             }
 
@@ -61,7 +60,7 @@ trait DocFilesTrait
             $fileRelation->nick = $this->user->nick;
             $fileRelation->observations = $this->request->request->get('observations');
             if (false === $fileRelation->save()) {
-                ToolBox::i18nLog()->error('fail-relation');
+                Tools::log()->error('fail-relation');
                 return true;
             }
 
@@ -71,7 +70,7 @@ trait DocFilesTrait
             }
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 
@@ -83,7 +82,7 @@ trait DocFilesTrait
     private function deleteFileAction(): bool
     {
         if (false === $this->permissions->allowDelete) {
-            ToolBox::i18nLog()->warning('not-allowed-delete');
+            Tools::log()->warning('not-allowed-delete');
             return true;
         } elseif (false === $this->validateFileActionToken()) {
             return true;
@@ -97,7 +96,7 @@ trait DocFilesTrait
             $file->delete();
         }
 
-        ToolBox::i18nLog()->notice('record-deleted-correctly');
+        Tools::log()->notice('record-deleted-correctly');
 
         // Si se trata de un documento, actualizamos el número de documentos adjuntos.
         if ($this->getModel() instanceof BusinessDocument) {
@@ -110,7 +109,7 @@ trait DocFilesTrait
     private function editFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFileActionToken()) {
             return true;
@@ -123,7 +122,7 @@ trait DocFilesTrait
             $fileRelation->save();
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 
@@ -144,7 +143,7 @@ trait DocFilesTrait
     private function unlinkFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFileActionToken()) {
             return true;
@@ -156,7 +155,7 @@ trait DocFilesTrait
             $fileRelation->delete();
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
 
         // Si se trata de un documento, actualizamos el número de documentos adjuntos.
         if ($this->getModel() instanceof BusinessDocument) {
@@ -180,8 +179,12 @@ trait DocFilesTrait
 
         $model = $this->getModel();
         $model->numdocs = $numDocs;
+
         if (false === $model->save()) {
-            $this->response->setContent(json_encode(['ok' => false, 'messages' => self::toolBox()::log()::read('', $this->logLevels)]));
+            $this->response->setContent(json_encode([
+                'ok' => false,
+                'messages' => Tools::log()::read('', $this->logLevels)
+            ]));
         }
     }
 
@@ -190,13 +193,13 @@ trait DocFilesTrait
         // valid request?
         $token = $this->request->request->get('multireqtoken', '');
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
-            ToolBox::i18nLog()->warning('invalid-request');
+            Tools::log()->warning('invalid-request');
             return false;
         }
 
         // duplicated request?
         if ($this->multiRequestProtection->tokenExist($token)) {
-            ToolBox::i18nLog()->warning('duplicated-request');
+            Tools::log()->warning('duplicated-request');
             return false;
         }
 

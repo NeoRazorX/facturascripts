@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
 use FacturaScripts\Dinamic\Lib\Widget\GroupItem;
 use FacturaScripts\Dinamic\Lib\Widget\VisualItemLoadEngine;
@@ -163,7 +163,7 @@ abstract class BaseView
         if (class_exists($modelName)) {
             $this->model = new $modelName();
         } else {
-            ToolBox::i18nLog()->critical('model-not-found', ['%model%' => $modelName]);
+            Tools::log()->critical('model-not-found', ['%model%' => $modelName]);
         }
 
         $this->icon = $icon;
@@ -184,7 +184,7 @@ abstract class BaseView
             'megasearch' => false
         ];
         $this->template = static::DEFAULT_TEMPLATE;
-        $this->title = ToolBox::i18n()->trans($title);
+        $this->title = Tools::lang()->trans($title);
         $this->assets();
     }
 
@@ -217,7 +217,7 @@ abstract class BaseView
      *
      * @param string $fieldName
      *
-     * @return ColumnItem
+     * @return ?ColumnItem
      */
     public function columnForField(string $fieldName)
     {
@@ -253,7 +253,7 @@ abstract class BaseView
      *
      * @return GroupItem[]
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
@@ -263,7 +263,7 @@ abstract class BaseView
      *
      * @return GroupItem[]
      */
-    public function getModals()
+    public function getModals(): array
     {
         return $this->modals;
     }

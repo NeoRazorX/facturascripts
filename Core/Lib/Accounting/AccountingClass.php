@@ -34,9 +34,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 abstract class AccountingClass extends AccountingAccounts
 {
-    /**
-     * @var ModelClass
-     */
+    /** @var ModelClass */
     protected $document;
 
     /**
@@ -82,7 +80,7 @@ abstract class AccountingClass extends AccountingAccounts
         foreach ($totals as $code => $total) {
             $subaccount = $this->getSubAccount($code);
             if (empty($subaccount->codsubcuenta)) {
-                $this->toolBox()->i18nLog()->warning($accountError);
+                Tools::log()->warning($accountError);
                 return false;
             }
 
@@ -93,7 +91,7 @@ abstract class AccountingClass extends AccountingAccounts
             }
 
             if (false === $line->save()) {
-                $this->toolBox()->i18nLog()->warning($saveError);
+                Tools::log()->warning($saveError);
                 return false;
             }
         }
@@ -201,6 +199,7 @@ abstract class AccountingClass extends AccountingAccounts
 
     /**
      * @return ToolBox
+     * @deprecated since version 2023.1
      */
     protected function toolBox(): ToolBox
     {

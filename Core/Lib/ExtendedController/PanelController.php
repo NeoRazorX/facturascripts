@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,18 +20,18 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to edit data through the vertical panel
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class PanelController extends BaseController
 {
-
     /**
      * Indicates if the main view has data or is empty.
      *
@@ -211,7 +211,7 @@ abstract class PanelController extends BaseController
     protected function editAction()
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return false;
         } elseif (false === $this->validateFormToken()) {
             return false;
@@ -220,7 +220,7 @@ abstract class PanelController extends BaseController
         // loads model data
         $code = $this->request->request->get('code', '');
         if (!$this->views[$this->active]->model->loadFromCode($code)) {
-            $this->toolBox()->i18nLog()->error('record-not-found');
+            Tools::log()->error('record-not-found');
             return false;
         }
 
@@ -234,18 +234,18 @@ abstract class PanelController extends BaseController
             $this->views[$this->active]->model->{$pkColumn} = $code;
             // change in database
             if (!$this->views[$this->active]->model->changePrimaryColumnValue($this->views[$this->active]->newCode)) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 return false;
             }
         }
 
         // save in database
         if ($this->views[$this->active]->model->save()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             return true;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
         return false;
     }
 
@@ -262,7 +262,7 @@ abstract class PanelController extends BaseController
                 break;
 
             case 'save-ok':
-                $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+                Tools::log()->notice('record-updated-correctly');
                 break;
         }
     }
@@ -324,7 +324,7 @@ abstract class PanelController extends BaseController
     protected function insertAction()
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return false;
         } elseif (false === $this->validateFormToken()) {
             return false;
@@ -333,13 +333,13 @@ abstract class PanelController extends BaseController
         // loads form data
         $this->views[$this->active]->processFormData($this->request, 'edit');
         if ($this->views[$this->active]->model->exists()) {
-            $this->toolBox()->i18nLog()->error('duplicate-record');
+            Tools::log()->error('duplicate-record');
             return false;
         }
 
         // save in database
         if (false === $this->views[$this->active]->model->save()) {
-            $this->toolBox()->i18nLog()->error('record-save-error');
+            Tools::log()->error('record-save-error');
             return false;
         }
 
@@ -349,7 +349,7 @@ abstract class PanelController extends BaseController
         }
 
         $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 }

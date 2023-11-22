@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\CuentaEspecial;
@@ -64,12 +64,12 @@ class AccountingPlanImport
     public function importCSV(string $filePath, string $codejercicio): bool
     {
         if (false === $this->exercise->loadFromCode($codejercicio)) {
-            $this->toolBox()->i18nLog()->error('exercise-not-found');
+            Tools::log()->error('exercise-not-found');
             return false;
         }
 
         if (false === file_exists($filePath)) {
-            $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => $filePath]);
+            Tools::log()->warning('file-not-found', ['%fileName%' => $filePath]);
             return false;
         }
 
@@ -86,7 +86,7 @@ class AccountingPlanImport
             return true;
         } catch (Exception $exp) {
             $this->dataBase->rollback();
-            $this->toolBox()->log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
+            Tools::log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
             return false;
         }
     }
@@ -97,7 +97,7 @@ class AccountingPlanImport
     public function importXML(string $filePath, string $codejercicio): bool
     {
         if (false === $this->exercise->loadFromCode($codejercicio)) {
-            $this->toolBox()->i18nLog()->error('exercise-not-found');
+            Tools::log()->error('exercise-not-found');
             return false;
         }
 
@@ -131,7 +131,7 @@ class AccountingPlanImport
             return true;
         } catch (Exception $exp) {
             $this->dataBase->rollback();
-            $this->toolBox()->log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
+            Tools::log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
             return false;
         }
     }
@@ -331,11 +331,6 @@ class AccountingPlanImport
         }
 
         return $parentCode;
-    }
-
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 
     /**

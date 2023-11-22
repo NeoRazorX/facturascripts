@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\Receipt;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 
 /**
@@ -155,10 +155,10 @@ trait ListBusinessActionTrait
     protected function approveDocumentAction($codes, $model, $allowUpdate, $dataBase): bool
     {
         if (false === $allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === is_array($codes) || empty($model)) {
-            ToolBox::i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -167,7 +167,7 @@ trait ListBusinessActionTrait
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                ToolBox::i18nLog()->error('record-not-found');
+                Tools::log()->error('record-not-found');
                 continue;
             }
 
@@ -181,13 +181,13 @@ trait ListBusinessActionTrait
                     break;
                 }
 
-                ToolBox::i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 $dataBase->rollback();
                 return true;
             }
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
         return true;
@@ -196,7 +196,7 @@ trait ListBusinessActionTrait
     protected function generateAccountingEntriesAction($model, $allowUpdate, $dataBase): bool
     {
         if (false === $allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -220,17 +220,17 @@ trait ListBusinessActionTrait
             $generator = new InvoiceToAccounting();
             $generator->generate($invoice);
             if (empty($invoice->idasiento)) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 return true;
             }
 
             if (false === $invoice->save()) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 return true;
             }
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $dataBase->commit();
         return true;
     }
@@ -252,7 +252,7 @@ trait ListBusinessActionTrait
             return false;
         }
 
-        ToolBox::i18nLog()->warning('no-selected-item');
+        Tools::log()->warning('no-selected-item');
         return true;
     }
 
@@ -269,10 +269,10 @@ trait ListBusinessActionTrait
     protected function lockInvoiceAction($codes, $model, $allowUpdate, $dataBase): bool
     {
         if (false === $allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === is_array($codes) || empty($model)) {
-            ToolBox::i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -281,7 +281,7 @@ trait ListBusinessActionTrait
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                ToolBox::i18nLog()->error('record-not-found');
+                Tools::log()->error('record-not-found');
                 continue;
             }
 
@@ -295,13 +295,13 @@ trait ListBusinessActionTrait
                     break;
                 }
 
-                ToolBox::i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 $dataBase->rollback();
                 return true;
             }
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
         return true;
@@ -321,10 +321,10 @@ trait ListBusinessActionTrait
     protected function payReceiptAction($codes, $model, $allowUpdate, $dataBase, $nick): bool
     {
         if (false === $allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === is_array($codes) || empty($model)) {
-            ToolBox::i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -333,20 +333,20 @@ trait ListBusinessActionTrait
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                ToolBox::i18nLog()->error('record-not-found');
+                Tools::log()->error('record-not-found');
                 continue;
             }
 
             $model->nick = $nick;
             $model->pagado = true;
             if (false === $model->save()) {
-                ToolBox::i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 $dataBase->rollback();
                 return true;
             }
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
         return true;

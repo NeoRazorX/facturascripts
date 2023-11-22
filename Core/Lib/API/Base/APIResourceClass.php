@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\API\Base;
 
 use Exception;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,7 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class APIResourceClass
 {
-
     /**
      * Contains the HTTP method (GET, PUT, PATCH, POST, DELETE).
      * PUT, PATCH and POST used in the same way.
@@ -71,9 +72,9 @@ abstract class APIResourceClass
     /**
      * APIResourceClass constructor.
      *
-     * @param Response   $response
-     * @param Request    $request
-     * @param array      $params
+     * @param Response $response
+     * @param Request $request
+     * @param array $params
      */
     public function __construct($response, $request, array $params)
     {
@@ -134,7 +135,7 @@ abstract class APIResourceClass
      * Process the resource, allowing POST/PUT/DELETE/GET ALL actions
      *
      * @param string $name of resource, used only if are several.
-     * @param array  $params are URI segments. Can be an empty array, not null.
+     * @param array $params are URI segments. Can be an empty array, not null.
      *
      * @return bool
      */
@@ -174,7 +175,7 @@ abstract class APIResourceClass
      */
     public function setResource(string $name): array
     {
-        return ['API' => \get_class($this), 'Name' => $name];
+        return ['API' => get_class($this), 'Name' => $name];
     }
 
     /**
@@ -193,11 +194,11 @@ abstract class APIResourceClass
      * Can return an array with additional information.
      *
      * @param string $message is an informative text of the confirmation message
-     * @param array  $data with additional information.
+     * @param array $data with additional information.
      */
     protected function setOk(string $message, $data = null)
     {
-        $this->toolBox()->log('api')->notice($message);
+        Tools::log('api')->notice($message);
 
         $res = ['ok' => $message];
         if ($data !== null) {
@@ -213,12 +214,12 @@ abstract class APIResourceClass
      * Can also return an array with additional information.
      *
      * @param string $message
-     * @param array  $data
-     * @param int    $status
+     * @param array $data
+     * @param int $status
      */
     protected function setError(string $message, $data = null, int $status = Response::HTTP_BAD_REQUEST)
     {
-        $this->toolBox()->log('api')->error($message);
+        Tools::log('api')->error($message);
 
         $res = ['error' => $message];
         if ($data !== null) {
@@ -230,10 +231,10 @@ abstract class APIResourceClass
     }
 
     /**
-     * 
      * @return ToolBox
+     * @deprecated since version 2023.1
      */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }

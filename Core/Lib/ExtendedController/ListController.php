@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -256,12 +257,12 @@ abstract class ListController extends BaseController
     {
         $idfilter = $this->request->request->get('loadfilter', 0);
         if ($this->views[$this->active]->deletePageFilter($idfilter)) {
-            $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
+            Tools::log()->notice('record-deleted-correctly');
             $this->request->request->remove('loadfilter');
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('record-deleted-error');
+        Tools::log()->warning('record-deleted-error');
     }
 
     /**
@@ -273,7 +274,7 @@ abstract class ListController extends BaseController
     {
         switch ($action) {
             case 'delete-ok':
-                $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
+                Tools::log()->notice('record-deleted-correctly');
                 break;
 
             case 'export':
@@ -322,7 +323,7 @@ abstract class ListController extends BaseController
     {
         if (false === $this->views[$this->active]->settings['btnPrint']
             || false === $this->permissions->allowExport) {
-            $this->toolBox()->i18nLog()->warning('no-print-permission');
+            Tools::log()->warning('no-print-permission');
             return;
         }
 
@@ -423,7 +424,7 @@ abstract class ListController extends BaseController
         $result = [];
         foreach ($view->getColumns() as $col) {
             if (false === $col->hidden()) {
-                $result[] = $this->toolBox()->i18n()->trans($col->title);
+                $result[] = Tools::lang()->trans($col->title);
             }
         }
 
@@ -437,7 +438,7 @@ abstract class ListController extends BaseController
     {
         $idFilter = $this->views[$this->active]->savePageFilter($this->request, $this->user);
         if (!empty($idFilter)) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
 
             // load filters in request
             $this->request->request->set('loadfilter', $idFilter);

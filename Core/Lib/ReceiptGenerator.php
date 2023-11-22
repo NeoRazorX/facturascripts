@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,10 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
 
@@ -52,10 +54,14 @@ class ReceiptGenerator
 
         switch ($invoice->modelClassName()) {
             case 'FacturaCliente':
-                return empty($number) ? $this->updateCustomerReceipts($invoice) : $this->generateCustomerReceipts($invoice, $number);
+                return empty($number) ?
+                    $this->updateCustomerReceipts($invoice) :
+                    $this->generateCustomerReceipts($invoice, $number);
 
             case 'FacturaProveedor':
-                return empty($number) ? $this->updateSupplierReceipts($invoice) : $this->generateSupplierReceipts($invoice, $number);
+                return empty($number) ?
+                    $this->updateSupplierReceipts($invoice) :
+                    $this->generateSupplierReceipts($invoice, $number);
         }
 
         return false;
@@ -104,7 +110,7 @@ class ReceiptGenerator
         // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
         if (empty($amount)) {
-            $this->toolBox()->i18nLog()->warning('no-outstanding-amount');
+            Tools::log()->warning('no-outstanding-amount');
             return false;
         }
 
@@ -145,7 +151,7 @@ class ReceiptGenerator
         // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
         if (empty($amount)) {
-            $this->toolBox()->i18nLog()->warning('no-outstanding-amount');
+            Tools::log()->warning('no-outstanding-amount');
             return false;
         }
 
@@ -197,7 +203,7 @@ class ReceiptGenerator
      */
     protected function isCero($amount): bool
     {
-        return $this->toolBox()->utils()->floatcmp($amount, 0.0, FS_NF0, true);
+        return Utils::floatcmp($amount, 0.0, FS_NF0, true);
     }
 
     /**
