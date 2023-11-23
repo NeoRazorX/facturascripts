@@ -969,6 +969,7 @@
     "no-stock": "No controlar stock",
     "non-editable-accounting-entry": "Asiento no editable",
     "non-editable-columns": "Columnas no editables: %columns%",
+    "non-editable-default-not-allowed": "Un estado predeterminado y no editable no esta permitido.",
     "non-editable-document": "Documento no editable",
     "none": "Ninguno",
     "normal": "Normal",

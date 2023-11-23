@@ -105,6 +105,12 @@ class EstadoDocumento extends Base\ModelOnChangeClass
 
     public function test(): bool
     {
+        // No permitimos que un estado predeterminado sea no editable.
+        if (true === $this->predeterminado && false === $this->editable){
+            Tools::log()->error('non-editable-default-not-allowed');
+            return false;
+        }
+
         // escapamos el html
         $this->color = Tools::noHtml($this->color);
         $this->generadoc = Tools::noHtml($this->generadoc);

@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model\EstadoDocumento;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -146,6 +147,25 @@ final class EstadoDocumentoTest extends TestCase
         $status->generadoc = 'PedidoProveedor';
         $status->tipodoc = 'FacturaProveedor';
         $this->assertFalse($status->save(), 'invalid-estado-documento-for-purchase-invoice-can-save');
+    }
+
+    /**
+     * No permitir crear estados predeterminados y no editables.
+     */
+    public function testNonEditableDefaultNotAllowed()
+    {
+        MiniLog::clear();
+
+        // Crear nuevo estado predeterminado y no editable
+        $status = new EstadoDocumento();
+        $status->nombre = 'Test default';
+        $status->predeterminado = true;
+        $status->editable = false;
+        $status->tipodoc = 'PresupuestoProveedor';
+
+        // Comprobamos que no se pueda guardar un estado que sea predeterminado y no editable.
+        $this->assertFalse($status->save());
+        $this->assertEquals('non-editable-default-not-allowed', MiniLog::read('master', ['error'])[0]['original']);
     }
 
     protected function tearDown(): void
