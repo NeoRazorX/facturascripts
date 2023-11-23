@@ -282,6 +282,15 @@
                                 {{ trans('more') }} <i class="fas fa-external-link-alt"></i>
                             </a>
                         {% endif %}
+
+                        <br />
+                        {% if plugin.require|length > 0 %}
+                            {% for requiredPluginName in plugin.require %}
+                                <div class="badge badge-pill badge-danger p-2 my-1">
+                                    {{ trans('plugin-needed', {'%pluginName%': requiredPluginName}) }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
                     </td>
                     <td class="text-right text-nowrap">
                         {% if plugin.hasUpdate() %}
