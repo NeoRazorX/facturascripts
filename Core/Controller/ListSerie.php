@@ -49,10 +49,10 @@ class ListSerie extends ListController
 
     protected function createViewsSeries(string $viewName = 'ListSerie'): void
     {
-        $this->addView($viewName, 'Serie', 'series', 'fas fa-layer-group');
-        $this->addSearchFields($viewName, ['descripcion', 'codserie']);
-        $this->addOrderBy($viewName, ['codserie'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addView($viewName, 'Serie', 'series', 'fas fa-layer-group')
+            ->addSearchFields(['descripcion', 'codserie'])
+            ->addOrderBy(['codserie'], 'code')
+            ->addOrderBy(['descripcion'], 'description');
 
         // filtros
         $this->addFilterCheckbox($viewName, 'siniva', 'without-tax', 'siniva');

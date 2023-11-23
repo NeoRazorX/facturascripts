@@ -53,12 +53,12 @@ class ListAttachedFile extends ListController
 
     protected function createViewsFiles(string $viewName = 'ListAttachedFile'): void
     {
-        $this->addView($viewName, 'AttachedFile', 'attached-files', 'fas fa-paperclip');
-        $this->addSearchFields($viewName, ['filename', 'mimetype']);
-        $this->addOrderBy($viewName, ['idfile'], 'code');
-        $this->addOrderBy($viewName, ['date', 'hour'], 'date', 2);
-        $this->addOrderBy($viewName, ['filename'], 'file-name');
-        $this->addOrderBy($viewName, ['size'], 'size');
+        $this->addView($viewName, 'AttachedFile', 'attached-files', 'fas fa-paperclip')
+            ->addSearchFields(['filename', 'mimetype'])
+            ->addOrderBy(['idfile'], 'code')
+            ->addOrderBy(['date', 'hour'], 'date', 2)
+            ->addOrderBy(['filename'], 'file-name')
+            ->addOrderBy(['size'], 'size');
 
         // filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'date');

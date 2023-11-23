@@ -50,12 +50,12 @@ class ListLogMessage extends ListController
 
     protected function createViewsCronJobs(string $viewName = 'ListCronJob'): void
     {
-        $this->addView($viewName, 'CronJob', 'crons', 'fas fa-cogs');
-        $this->addSearchFields($viewName, ['jobname', 'pluginname']);
-        $this->addOrderBy($viewName, ['jobname'], 'job-name');
-        $this->addOrderBy($viewName, ['pluginname'], 'plugin');
-        $this->addOrderBy($viewName, ['date'], 'date');
-        $this->addOrderBy($viewName, ['duration'], 'duration');
+        $this->addView($viewName, 'CronJob', 'crons', 'fas fa-cogs')
+            ->addSearchFields(['jobname', 'pluginname'])
+            ->addOrderBy(['jobname'], 'job-name')
+            ->addOrderBy(['pluginname'], 'plugin')
+            ->addOrderBy(['date'], 'date')
+            ->addOrderBy(['duration'], 'duration');
 
         // filtros
         $plugins = $this->codeModel->all('cronjobs', 'pluginname', 'pluginname');
@@ -83,11 +83,11 @@ class ListLogMessage extends ListController
 
     protected function createViewsLogs(string $viewName = 'ListLogMessage'): void
     {
-        $this->addView($viewName, 'LogMessage', 'history', 'fas fa-history');
-        $this->addSearchFields($viewName, ['context', 'message', 'uri']);
-        $this->addOrderBy($viewName, ['time', 'id'], 'date', 2);
-        $this->addOrderBy($viewName, ['level'], 'level');
-        $this->addOrderBy($viewName, ['ip'], 'ip');
+        $this->addView($viewName, 'LogMessage', 'history', 'fas fa-history')
+            ->addSearchFields(['context', 'message', 'uri'])
+            ->addOrderBy(['time', 'id'], 'date', 2)
+            ->addOrderBy(['level'], 'level')
+            ->addOrderBy(['ip'], 'ip');
 
         // filtros
         $channels = $this->codeModel->all('logs', 'channel', 'channel');
@@ -113,11 +113,11 @@ class ListLogMessage extends ListController
 
     protected function createViewsWorkEvents(string $viewName = 'ListWorkEvent'): void
     {
-        $this->addView($viewName, 'WorkEvent', 'work-events', 'fas fa-calendar-alt');
-        $this->addSearchFields($viewName, ['name', 'value']);
-        $this->addOrderBy($viewName, ['creation_date'], 'creation-date');
-        $this->addOrderBy($viewName, ['done_date'], 'date');
-        $this->addOrderBy($viewName, ['id'], 'id');
+        $this->addView($viewName, 'WorkEvent', 'work-events', 'fas fa-calendar-alt')
+            ->addSearchFields(['name', 'value'])
+            ->addOrderBy(['creation_date'], 'creation-date')
+            ->addOrderBy(['done_date'], 'date')
+            ->addOrderBy(['id'], 'id');
 
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);

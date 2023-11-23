@@ -47,25 +47,25 @@ class EditAlmacen extends EditController
         return $data;
     }
 
-    protected function createStockView(string $viewName = 'ListStock')
+    protected function createStockView(string $viewName = 'ListStock'): void
     {
-        $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly');
-        $this->views[$viewName]->addOrderBy(['stocks.referencia'], 'reference');
-        $this->views[$viewName]->addOrderBy(['stocks.cantidad'], 'quantity');
-        $this->views[$viewName]->addOrderBy(['stocks.disponible'], 'available');
-        $this->views[$viewName]->addOrderBy(['stocks.reservada'], 'reserved');
-        $this->views[$viewName]->addOrderBy(['stocks.pterecibir'], 'pending-reception');
-        $this->views[$viewName]->addOrderBy(['productos.descripcion', 'stocks.referencia'], 'product');
-        $this->views[$viewName]->addSearchFields(['stocks.referencia', 'productos.descripcion']);
+        $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly')
+            ->addSearchFields(['stocks.referencia', 'productos.descripcion'])
+            ->addOrderBy(['stocks.referencia'], 'reference')
+            ->addOrderBy(['stocks.cantidad'], 'quantity')
+            ->addOrderBy(['stocks.disponible'], 'available')
+            ->addOrderBy(['stocks.reservada'], 'reserved')
+            ->addOrderBy(['stocks.pterecibir'], 'pending-reception')
+            ->addOrderBy(['productos.descripcion', 'stocks.referencia'], 'product');
 
         // filtros
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
-        $this->views[$viewName]->addFilterSelect('manufacturer', 'manufacturer', 'productos.codfabricante', $manufacturers);
+        $this->listView($viewName)->addFilterSelect('manufacturer', 'manufacturer', 'productos.codfabricante', $manufacturers);
 
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
-        $this->views[$viewName]->addFilterSelect('family', 'family', 'productos.codfamilia', $families);
+        $this->listView($viewName)->addFilterSelect('family', 'family', 'productos.codfamilia', $families);
 
-        $this->views[$viewName]->addFilterSelectWhere('type', [
+        $this->listView($viewName)->addFilterSelectWhere('type', [
             [
                 'label' => Tools::lang()->trans('all'),
                 'where' => []
@@ -84,15 +84,17 @@ class EditAlmacen extends EditController
             ]
         ]);
 
-        $this->views[$viewName]->addFilterNumber('max-stock', 'quantity', 'cantidad', '>=');
-        $this->views[$viewName]->addFilterNumber('min-stock', 'quantity', 'cantidad', '<=');
+        $this->listView($viewName)
+            ->addFilterNumber('max-stock', 'quantity', 'cantidad', '>=')
+            ->addFilterNumber('min-stock', 'quantity', 'cantidad', '<=');
 
         // desactivamos la columna de almacén
-        $this->views[$viewName]->disableColumn('warehouse');
+        $this->tab($viewName)->disableColumn('warehouse');
 
         // desactivamos botones
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->tab($viewName)
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false);
     }
 
     /**

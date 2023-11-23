@@ -43,9 +43,9 @@ class ListEmpresa extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListEmpresa', 'Empresa', 'companies', 'fas fa-building');
-        $this->addSearchFields('ListEmpresa', ['nombre', 'nombrecorto']);
-        $this->addOrderBy('ListEmpresa', ['idempresa'], 'code');
-        $this->addOrderBy('ListEmpresa', ['nombre'], 'name');
+        $this->addView('ListEmpresa', 'Empresa', 'companies', 'fas fa-building')
+            ->addSearchFields(['nombre', 'nombrecorto'])
+            ->addOrderBy(['idempresa'], 'code')
+            ->addOrderBy(['nombre'], 'name');
     }
 }

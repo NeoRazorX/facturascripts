@@ -31,11 +31,6 @@ use FacturaScripts\Core\Tools;
  */
 class ListAgente extends ListController
 {
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -45,17 +40,12 @@ class ListAgente extends ListController
         return $data;
     }
 
-    /**
-     * Add Agent View
-     *
-     * @param string $viewName
-     */
-    protected function createAgentView(string $viewName = 'ListAgente')
+    protected function createAgentView(string $viewName = 'ListAgente'): void
     {
-        $this->addView($viewName, 'Agente', 'agents', 'fas fa-user-tie');
-        $this->addOrderBy($viewName, ['codagente'], 'code');
-        $this->addOrderBy($viewName, ['nombre'], 'name', 1);
-        $this->addSearchFields($viewName, ['nombre', 'codagente', 'email', 'telefono1', 'telefono2', 'observaciones']);
+        $this->addView($viewName, 'Agente', 'agents', 'fas fa-user-tie')
+            ->addSearchFields(['nombre', 'codagente', 'email', 'telefono1', 'telefono2', 'observaciones'])
+            ->addOrderBy(['codagente'], 'code')
+            ->addOrderBy(['nombre'], 'name', 1);
 
         // Filters
         $this->addFilterSelectWhere($viewName, 'status', [
