@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -19,9 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Tools;
 
 class Myfiles implements ControllerInterface
@@ -64,6 +66,16 @@ class Myfiles implements ControllerInterface
         if (empty($token) || false === MyFilesToken::validate($fixedFilePath, $token)) {
             throw new KernelException('MyfilesTokenError', 'Invalid token for file: ' . $fixedFilePath);
         }
+
+        // Incrementamos el número de descargas del archivo
+        // siempre que la petición no sea de un elemento embebido en el html.
+        $isEmbed = filter_input(INPUT_GET, 'embed', FILTER_VALIDATE_BOOL);
+        $url = ltrim($url, '/');
+        $attachedFile = new AttachedFile();
+        if ($attachedFile->loadFromCode('', [new DataBaseWhere('path', $url)]) && null === $isEmbed) {
+            $attachedFile->downloads++;
+            $attachedFile->save();
+        }
     }
 
     public function getPageData(): array
@@ -75,10 +87,50 @@ class Myfiles implements ControllerInterface
     {
         $parts = explode('.', $filePath);
         $safe = [
-            'accdb', 'ai', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'html', 'ico', 'jfif',
-            'jpeg', 'jpg', 'js', 'json', 'map', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf',
-            'png', 'pptx', 'sql', 'svg', 'ttf', 'txt', 'webm', 'webp', 'woff', 'woff2', 'xls', 'xlsm', 'xlsx',
-            'xml', 'xsig', 'zip'
+            'accdb',
+            'ai',
+            'avi',
+            'cdr',
+            'css',
+            'csv',
+            'doc',
+            'docx',
+            'eot',
+            'gif',
+            'gz',
+            'html',
+            'ico',
+            'jfif',
+            'jpeg',
+            'jpg',
+            'js',
+            'json',
+            'map',
+            'mdb',
+            'mkv',
+            'mp3',
+            'mp4',
+            'ndg',
+            'ods',
+            'odt',
+            'ogg',
+            'pdf',
+            'png',
+            'pptx',
+            'sql',
+            'svg',
+            'ttf',
+            'txt',
+            'webm',
+            'webp',
+            'woff',
+            'woff2',
+            'xls',
+            'xlsm',
+            'xlsx',
+            'xml',
+            'xsig',
+            'zip',
         ];
         return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
     }

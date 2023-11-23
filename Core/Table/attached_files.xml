@@ -39,6 +39,11 @@
         <type>integer</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>downloads</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
     <constraint>
         <name>attached_files_pkey</name>
         <type>PRIMARY KEY (idfile)</type>
