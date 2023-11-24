@@ -128,7 +128,7 @@ final class Plugins
     {
         // si el plugin no existe o ya está desactivado, no hacemos nada
         $plugin = self::get($pluginName);
-        if (null === $plugin || false === $plugin->enabled) {
+        if (null === $plugin || $plugin->disabled()) {
             return true;
         }
 
