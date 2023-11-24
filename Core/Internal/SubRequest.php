@@ -25,7 +25,7 @@ use FacturaScripts\Core\Validator;
 final class SubRequest
 {
     /** @var string */
-    private $cast = 'string';
+    private $cast = '';
 
     /** @var array */
     private $data;
@@ -51,13 +51,6 @@ final class SubRequest
         return $result;
     }
 
-    public function asArray(): self
-    {
-        $this->cast = 'array';
-
-        return $this;
-    }
-
     public function asBool(): self
     {
         $this->cast = 'bool';
@@ -75,6 +68,14 @@ final class SubRequest
     public function asDateTime(): self
     {
         $this->cast = 'datetime';
+
+        return $this;
+    }
+
+    public function asDefault(): self
+    {
+        $this->cast = '';
+        $this->only = [];
 
         return $this;
     }
@@ -171,17 +172,13 @@ final class SubRequest
         $only = $this->only;
 
         // ponemos el cast por defecto
-        $this->cast = 'string';
-        $this->only = [];
+        $this->asDefault();
 
         if (is_null($value)) {
             return null;
         }
 
         switch ($cast) {
-            case 'array':
-                return (array)$value;
-
             case 'bool':
                 return (bool)$value;
 
@@ -195,6 +192,8 @@ final class SubRequest
                 return Validator::email($value) ? $value : null;
 
             case 'float':
+                // reemplazamos la coma decimal por un punto
+                $value = str_replace(',', '.', $value);
                 return (float)$value;
 
             case 'hour':

@@ -105,7 +105,7 @@ class Validator
     public static function hour(string $time): bool
     {
         // si no tiene ningún : entonces no es una hora válida
-        if (substr_count($time, ':') !== 1) {
+        if (substr_count($time, ':') < 1) {
             return false;
         }
 
@@ -114,11 +114,14 @@ class Validator
 
         // comprobamos la hora si tiene 2 partes
         if (count($parts) == 2) {
-            return $parts[0] >= 0 && $parts[0] <= 23 && $parts[1] >= 0 && $parts[1] <= 59;
+            return $parts[0] >= 0 && $parts[0] <= 23 &&
+                $parts[1] >= 0 && $parts[1] <= 59;
         }
 
         // comprobamos la hora si tiene 3 partes
-        return $parts[0] >= 0 && $parts[0] <= 23 && $parts[1] >= 0 && $parts[1] <= 59 && $parts[2] >= 0 && $parts[2] <= 59;
+        return $parts[0] >= 0 && $parts[0] <= 23 &&
+            $parts[1] >= 0 && $parts[1] <= 59 &&
+            $parts[2] >= 0 && $parts[2] <= 59;
     }
 
     /**

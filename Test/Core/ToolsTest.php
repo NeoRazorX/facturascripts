@@ -20,18 +20,19 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
 final class ToolsTest extends TestCase
 {
-    public function testAscii()
+    public function testAscii(): void
     {
         $this->assertEquals(' aeiou aeiou aeiou aeiou ao cn ', Tools::ascii(' aeiou áéíóú àèìòù âêîôû ãõ çñ '));
     }
 
-    public function testConfig()
+    public function testConfig(): void
     {
         $this->assertEquals(FS_FOLDER, Tools::config('folder'));
         $this->assertEquals(FS_FOLDER, Tools::config('FOLDER'));
@@ -43,7 +44,7 @@ final class ToolsTest extends TestCase
         $this->assertNull(Tools::config('test1234'));
     }
 
-    public function testDateFunctions()
+    public function testDateFunctions(): void
     {
         $date = '01-01-2019';
         $time = strtotime($date);
@@ -51,10 +52,10 @@ final class ToolsTest extends TestCase
         $dateTime = '01-01-2019 12:00:00';
         $time2 = strtotime($dateTime);
 
-        $date3 = '2020-10-07';
+        $date3 = '2020/10/07';
         $tim3 = strtotime($date3);
 
-        $dateTime2 = '2020-05-17 12:00:00';
+        $dateTime2 = '2020/05/17 12:00:00';
         $time4 = strtotime($dateTime2);
 
         $this->assertEquals($date, Tools::date($date));
@@ -70,7 +71,7 @@ final class ToolsTest extends TestCase
         $this->assertEquals('17-05-2020 12:00:00', Tools::timeToDateTime($time4));
     }
 
-    public function testFolderFunctions()
+    public function testFolderFunctions(): void
     {
         $this->assertEquals(FS_FOLDER, Tools::folder());
         $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('Test'));
@@ -88,7 +89,7 @@ final class ToolsTest extends TestCase
         file_put_contents(Tools::folder('MyFiles', 'Test', 'Folder1', 'file4.txt'), 'test');
 
         // comprobamos que existen los archivos
-        $fileListRecursive = ['Folder1', 'Folder1'.DIRECTORY_SEPARATOR.'file4.txt', 'file1.txt', 'file2.txt', 'file3.txt'];
+        $fileListRecursive = ['Folder1', 'Folder1' . DIRECTORY_SEPARATOR . 'file4.txt', 'file1.txt', 'file2.txt', 'file3.txt'];
         $this->assertEquals($fileListRecursive, Tools::folderScan('MyFiles/Test', true));
 
         // sin recursividad
@@ -114,7 +115,7 @@ final class ToolsTest extends TestCase
         $this->assertFalse(file_exists(Tools::folder('MyFiles', 'Test')));
     }
 
-    public function testHtmlFunctions()
+    public function testHtmlFunctions(): void
     {
         $html = '<p class=\'test\'>Test</p><script>alert("test");</script>';
         $noHtml = '&lt;p class=&#39;test&#39;&gt;Test&lt;/p&gt;&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;';
@@ -122,7 +123,7 @@ final class ToolsTest extends TestCase
         $this->assertEquals($html, Tools::fixHtml($noHtml));
     }
 
-    public function testRandomString()
+    public function testRandomString(): void
     {
         $this->assertEquals(10, strlen(Tools::randomString(10)));
         $this->assertEquals(20, strlen(Tools::randomString(20)));
@@ -131,7 +132,7 @@ final class ToolsTest extends TestCase
         $this->assertEquals(50, strlen(Tools::randomString(50)));
     }
 
-    public function testSettings()
+    public function testSettings(): void
     {
         $this->assertEquals(AppSettings::get('default', 'codpais'), Tools::settings('default', 'codpais'));
 
@@ -163,7 +164,7 @@ final class ToolsTest extends TestCase
         $this->assertEquals($value, $settings->properties['codpais']);
     }
 
-    public function testSlug()
+    public function testSlug(): void
     {
         $text = ' aeiou áéíóú--àèìòù  âêîôû ãõ çñ ';
         $this->assertEquals('aeiou-aeiou-aeiou-aeiou-ao-cn', Tools::slug($text));
@@ -171,7 +172,7 @@ final class ToolsTest extends TestCase
         $this->assertEquals('aeiou_aeio', Tools::slug($text, '_', 10));
     }
 
-    public function testTextBreak()
+    public function testTextBreak(): void
     {
         $text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies aliquet, "
             . "nisl nisl aliquam nisl, nec aliquet nisl nisl nec nisl. Nullam auctor, nisl nec ultricies aliquet, "
@@ -194,7 +195,7 @@ final class ToolsTest extends TestCase
         $this->assertEquals("Lorem ipsum dolor sit amet,(...)", Tools::textBreak($text, 32, '(...)'));
     }
 
-    public function testBytes()
+    public function testBytes(): void
     {
         $this->assertEquals('0 bytes', Tools::bytes(0, 0));
         $this->assertEquals('1.0 byte', Tools::bytes(1, 1));
@@ -202,5 +203,41 @@ final class ToolsTest extends TestCase
         $this->assertEquals('1.0 KB', Tools::bytes(1025, 1));
         $this->assertEquals('1 MB', Tools::bytes(1048577, 0));
         $this->assertEquals('1.00 GB', Tools::bytes(1073741825));
+    }
+
+    public function testNumberFunctions(): void
+    {
+        Tools::settingsSet('default', 'decimals', 2);
+        Tools::settingsSet('default', 'decimal_separator', ',');
+        Tools::settingsSet('default', 'thousands_separator', '_');
+        $this->assertEquals('1,00', Tools::number(1));
+        $this->assertEquals('1,00', Tools::number(1.00));
+        $this->assertEquals('12_345,67', Tools::number(12345.67));
+        $this->assertEquals('12_345,670', Tools::number(12345.67, 3));
+        $this->assertEquals('12_345,67', Tools::number(12345.67, 2));
+        $this->assertEquals('12_345,7', Tools::number(12345.67, 1));
+        $this->assertEquals('12_346', Tools::number(12345.67, 0));
+
+        Tools::settingsSet('default', 'decimals', 1);
+        Tools::settingsSet('default', 'decimal_separator', '.');
+        Tools::settingsSet('default', 'thousands_separator', ' ');
+        $this->assertEquals('1.0', Tools::number(1));
+        $this->assertEquals('1 234.6', Tools::number(1234.56));
+        $this->assertEquals('1 234.5670', Tools::number(1234.567, 4));
+
+        Tools::settingsSet('default', 'coddivisa', 'EUR');
+        Tools::settingsSet('default', 'currency_position', 'right');
+        $this->assertEquals('1.0 €', Tools::money(1));
+        $this->assertEquals('23 456.8 €', Tools::money(23456.78));
+        $this->assertEquals('23 456.8 ?', Tools::money(23456.78, '?'));
+
+
+        Tools::settingsSet('default', 'decimals', 2);
+        $symbol = Divisas::get('USD')->simbolo ?? '?';
+        Tools::settingsSet('default', 'coddivisa', 'USD');
+        Tools::settingsSet('default', 'currency_position', 'left');
+        $this->assertEquals($symbol . ' 1.00', Tools::money(1));
+        $this->assertEquals($symbol . ' 23 456.78', Tools::money(23456.78));
+        $this->assertEquals('€ 23 456.78', Tools::money(23456.78, 'EUR'));
     }
 }

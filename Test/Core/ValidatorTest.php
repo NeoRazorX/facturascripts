@@ -126,6 +126,48 @@ final class ValidatorTest extends TestCase
         $this->assertFalse(Validator::alphaNumeric('test-456+Y', '-_.+\\', 1, 9));
     }
 
+    public function testDate(): void
+    {
+        $this->assertTrue(Validator::date('2020-01-01'));
+        $this->assertTrue(Validator::date('01-01-2020'));
+        $this->assertTrue(Validator::date('2-6-2020'));
+        $this->assertTrue(Validator::date('2020/01/01'));
+        $this->assertTrue(Validator::date('01/01/2020'));
+
+        $this->assertFalse(Validator::date('2020-01-32'));
+        $this->assertFalse(Validator::date('2020-13-01'));
+        $this->assertFalse(Validator::date('2020-00-01'));
+        $this->assertFalse(Validator::date('2020-01-00'));
+        $this->assertFalse(Validator::date('2020/01/32'));
+        $this->assertFalse(Validator::date('2020/13/01'));
+        $this->assertFalse(Validator::date('2020/00/01'));
+        $this->assertFalse(Validator::date('2020/01/00'));
+    }
+
+    public function testDateTime(): void
+    {
+        $this->assertTrue(Validator::dateTime('2020-01-01 00:00:00'));
+        $this->assertTrue(Validator::dateTime('01-01-2020 09:08:07'));
+        $this->assertTrue(Validator::dateTime('2-6-2020 12:34:56'));
+        $this->assertTrue(Validator::dateTime('2020/01/01 00:00:00'));
+        $this->assertTrue(Validator::dateTime('01/01/2020 15:45:30'));
+
+        $this->assertFalse(Validator::dateTime('2020-01-32 00:00:00'));
+        $this->assertFalse(Validator::dateTime('2020-13-01 00:00:00'));
+        $this->assertFalse(Validator::dateTime('2020-00-01 00:00:00'));
+        $this->assertFalse(Validator::dateTime('2020-01-00 00:00:00'));
+        $this->assertFalse(Validator::dateTime('2021-02-11 25:00:00'));
+        $this->assertFalse(Validator::dateTime('2021-02-11 00:61:00'));
+        $this->assertFalse(Validator::dateTime('2021-02-11 00:00:64'));
+        $this->assertFalse(Validator::dateTime('2020/01/32 00:00:00'));
+        $this->assertFalse(Validator::dateTime('2020/13/01 00:00:00'));
+        $this->assertFalse(Validator::dateTime('2020/00/01 00:00:00'));
+        $this->assertFalse(Validator::dateTime('2020/01/00 00:00:00'));
+        $this->assertFalse(Validator::dateTime('2021/02/11 25:00:00'));
+        $this->assertFalse(Validator::dateTime('2021/02/11 00:81:90'));
+        $this->assertFalse(Validator::dateTime('2021/02/11 00:00:64'));
+    }
+
     public function testEmail(): void
     {
         $this->assertTrue(Validator::email('carlos@facturascripts.com'));
@@ -144,6 +186,19 @@ final class ValidatorTest extends TestCase
         $this->assertTrue(Validator::string('test', 4, 5));
         $this->assertTrue(Validator::string('test', 4, 4));
         $this->assertFalse(Validator::string('test', 1, 3));
+    }
+
+    public function testHour(): void
+    {
+        $this->assertTrue(Validator::hour('00:00:00'));
+        $this->assertTrue(Validator::hour('09:08:07'));
+        $this->assertTrue(Validator::hour('12:34:56'));
+        $this->assertTrue(Validator::hour('15:45:30'));
+
+        $this->assertFalse(Validator::hour('26:00:00'));
+        $this->assertFalse(Validator::hour('00:71:00'));
+        $this->assertFalse(Validator::hour('00:00:64'));
+        $this->assertFalse(Validator::hour('25:00:98'));
     }
 
     public function testUrl(): void
