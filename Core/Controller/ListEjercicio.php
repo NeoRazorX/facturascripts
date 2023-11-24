@@ -48,21 +48,29 @@ class ListEjercicio extends ListController
     protected function createViews()
     {
         $viewName = 'ListEjercicio';
-        $this->addView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
-        $this->addSearchFields($viewName, ['nombre', 'codejercicio']);
-        $this->addOrderBy($viewName, ['fechainicio'], 'start-date', 2);
-        $this->addOrderBy($viewName, ['codejercicio'], 'code');
-        $this->addOrderBy($viewName, ['nombre'], 'name');
-        $this->addOrderBy($viewName, ['idempresa, codejercicio'], 'company');
+        $this->addView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt')
+            ->addSearchFields(['nombre', 'codejercicio'])
+            ->addOrderBy(['fechainicio'], 'start-date', 2)
+            ->addOrderBy(['codejercicio'], 'code')
+            ->addOrderBy(['nombre'], 'name')
+            ->addOrderBy(['idempresa, codejercicio'], 'company');
 
         // filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
 
-        $values = [
-            ['label' => Tools::lang()->trans('all'), 'where' => []],
-            ['label' => Tools::lang()->trans('only-active'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN)]],
-            ['label' => Tools::lang()->trans('only-closed'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]],
-        ];
-        $this->addFilterSelectWhere($viewName, 'status', $values);
+        $this->addFilterSelectWhere($viewName, 'status', [
+            [
+                'label' => Tools::lang()->trans('all'),
+                'where' => []
+            ],
+            [
+                'label' => Tools::lang()->trans('only-active'),
+                'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN)]
+            ],
+            [
+                'label' => Tools::lang()->trans('only-closed'),
+                'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]
+            ],
+        ]);
     }
 }
