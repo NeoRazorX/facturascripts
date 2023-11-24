@@ -19,29 +19,139 @@
 
 namespace FacturaScripts\Core\Internal;
 
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
+
 final class SubRequest
 {
+    /** @var string */
+    private $cast = 'string';
+
     /** @var array */
     private $data;
+
+    /** @var array */
+    private $only = [];
 
     public function __construct(array $data)
     {
         $this->data = $data;
     }
 
-    public function all(): array
+    public function all(string ...$key): array
     {
-        return $this->data;
+        if (empty($key)) {
+            return $this->data;
+        }
+
+        $result = [];
+        foreach ($key as $k) {
+            $result[$k] = $this->get($k);
+        }
+        return $result;
+    }
+
+    public function asArray(): self
+    {
+        $this->cast = 'array';
+
+        return $this;
+    }
+
+    public function asBool(): self
+    {
+        $this->cast = 'bool';
+
+        return $this;
+    }
+
+    public function asDate(): self
+    {
+        $this->cast = 'date';
+
+        return $this;
+    }
+
+    public function asDateTime(): self
+    {
+        $this->cast = 'datetime';
+
+        return $this;
+    }
+
+    public function asEmail(): self
+    {
+        $this->cast = 'email';
+
+        return $this;
+    }
+
+    public function asFloat(): self
+    {
+        $this->cast = 'float';
+
+        return $this;
+    }
+
+    public function asHour(): self
+    {
+        $this->cast = 'hour';
+
+        return $this;
+    }
+
+    public function asInt(): self
+    {
+        $this->cast = 'int';
+
+        return $this;
+    }
+
+    public function asOnly(array $values): self
+    {
+        $this->cast = 'only';
+        $this->only = $values;
+
+        return $this;
+    }
+
+    public function asString(): self
+    {
+        $this->cast = 'string';
+
+        return $this;
+    }
+
+    public function asUrl(): self
+    {
+        $this->cast = 'url';
+
+        return $this;
     }
 
     public function get(string $key, $default = null)
     {
-        return $this->data[$key] ?? $default;
+        return $this->transform($this->data[$key] ?? $default);
     }
 
-    public function has(string $key): bool
+    public function has(string ...$key): bool
     {
-        return isset($this->data[$key]);
+        foreach ($key as $k) {
+            if (!isset($this->data[$k])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function isMissing(string ...$key): bool
+    {
+        foreach ($key as $k) {
+            if (isset($this->data[$k])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function remove(string $key): void
@@ -52,5 +162,58 @@ final class SubRequest
     public function set(string $key, $value): void
     {
         $this->data[$key] = $value;
+    }
+
+
+    public function transform($value)
+    {
+        $cast = $this->cast;
+        $only = $this->only;
+
+        // ponemos el cast por defecto
+        $this->cast = 'string';
+        $this->only = [];
+
+        if (is_null($value)) {
+            return null;
+        }
+
+        switch ($cast) {
+            case 'array':
+                return (array)$value;
+
+            case 'bool':
+                return (bool)$value;
+
+            case 'date':
+                return Tools::date($value);
+
+            case 'datetime':
+                return Tools::dateTime($value);
+
+            case 'email':
+                return Validator::email($value) ? $value : null;
+
+            case 'float':
+                return (float)$value;
+
+            case 'hour':
+                return Tools::hour($value);
+
+            case 'int':
+                return (int)$value;
+
+            case 'only':
+                return in_array($value, $only) ? $value : null;
+
+            case 'string':
+                return (string)$value;
+
+            case 'url':
+                return Validator::url($value) ? $value : null;
+
+            default:
+                return $value;
+        }
     }
 }

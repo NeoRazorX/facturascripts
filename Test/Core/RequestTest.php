@@ -36,13 +36,13 @@ final class RequestTest extends TestCase
         $this->assertEquals('value2', $request->cookie('test', 'default'));
         $this->assertNull($request->cookie('test2'));
 
-        $this->assertEquals($data, $request->cookies());
+        $this->assertEquals($data, $request->cookies->all());
 
-        $this->assertTrue($request->hasCookie('test'));
-        $this->assertFalse($request->hasCookie('test2'));
+        $this->assertTrue($request->cookies->has('test'));
+        $this->assertFalse($request->cookies->has('test2'));
 
-        $this->assertTrue($request->isCookieMissing('test2'));
-        $this->assertFalse($request->isCookieMissing('test'));
+        $this->assertTrue($request->cookies->isMissing('test2'));
+        $this->assertFalse($request->cookies->isMissing('test'));
 
         // asignamos un valor
         $request->cookies->set('test3', 'value3');
@@ -51,32 +51,6 @@ final class RequestTest extends TestCase
         // eliminamos un valor
         $request->cookies->remove('test3');
         $this->assertNull($request->cookie('test3'));
-    }
-
-    public function testFoundationCookies(): void
-    {
-        $emptyRequest = new Request();
-        $this->assertNull($emptyRequest->cookies->get('test'));
-        $this->assertEquals('default', $emptyRequest->cookies->get('test', 'default'));
-
-        $data = ['test' => 'value2'];
-        $request = new Request($data);
-        $this->assertEquals('value2', $request->cookies->get('test'));
-        $this->assertEquals('value2', $request->cookies->get('test', 'default'));
-        $this->assertNull($request->cookies->get('test2'));
-
-        $this->assertEquals($data, $request->cookies->all());
-
-        $this->assertTrue($request->cookies->has('test'));
-        $this->assertFalse($request->cookies->has('test2'));
-
-        // asignamos un valor
-        $request->cookies->set('test3', 'value3');
-        $this->assertEquals('value3', $request->cookies->get('test3'));
-
-        // eliminamos un valor
-        $request->cookies->remove('test3');
-        $this->assertNull($request->cookies->get('test3'));
     }
 
     public function testInputs(): void
@@ -91,13 +65,13 @@ final class RequestTest extends TestCase
         $this->assertEquals('value3', $request->input('test', 'default'));
         $this->assertNull($request->input('test2'));
 
-        $this->assertEquals($data, $request->inputs());
+        $this->assertEquals($data, $request->request->all());
 
-        $this->assertTrue($request->hasInput('test'));
-        $this->assertFalse($request->hasInput('test2'));
+        $this->assertTrue($request->request->has('test'));
+        $this->assertFalse($request->request->has('test2'));
 
-        $this->assertTrue($request->isInputMissing('test2'));
-        $this->assertFalse($request->isInputMissing('test'));
+        $this->assertTrue($request->request->isMissing('test2'));
+        $this->assertFalse($request->request->isMissing('test'));
 
         // asignamos un valor
         $request->request->set('test3', 'value3');
@@ -106,32 +80,6 @@ final class RequestTest extends TestCase
         // eliminamos un valor
         $request->request->remove('test3');
         $this->assertNull($request->input('test3'));
-    }
-
-    public function testFoundationRequest(): void
-    {
-        $emptyRequest = new Request();
-        $this->assertNull($emptyRequest->request->get('test'));
-        $this->assertEquals('default', $emptyRequest->request->get('test', 'default'));
-
-        $data = ['test' => 'value3'];
-        $request = new Request([], [], [], $data);
-        $this->assertEquals('value3', $request->request->get('test'));
-        $this->assertEquals('value3', $request->request->get('test', 'default'));
-        $this->assertNull($request->request->get('test2'));
-
-        $this->assertEquals($data, $request->request->all());
-
-        $this->assertTrue($request->request->has('test'));
-        $this->assertFalse($request->request->has('test2'));
-
-        // asignamos un valor
-        $request->request->set('test3', 'value3');
-        $this->assertEquals('value3', $request->request->get('test3'));
-
-        // eliminamos un valor
-        $request->request->remove('test3');
-        $this->assertNull($request->request->get('test3'));
     }
 
     public function testQueries(): void
@@ -146,13 +94,13 @@ final class RequestTest extends TestCase
         $this->assertEquals('value4', $request->query('test', 'default'));
         $this->assertNull($request->query('test2'));
 
-        $this->assertEquals($data, $request->queries());
+        $this->assertEquals($data, $request->query->all());
 
-        $this->assertTrue($request->hasQuery('test'));
-        $this->assertFalse($request->hasQuery('test2'));
+        $this->assertTrue($request->query->has('test'));
+        $this->assertFalse($request->query->has('test2'));
 
-        $this->assertTrue($request->isQueryMissing('test2'));
-        $this->assertFalse($request->isQueryMissing('test'));
+        $this->assertTrue($request->query->isMissing('test2'));
+        $this->assertFalse($request->query->isMissing('test'));
 
         // asignamos un valor
         $request->query->set('test3', 'value3');
@@ -163,29 +111,66 @@ final class RequestTest extends TestCase
         $this->assertNull($request->query('test3'));
     }
 
-    public function testFoundationQueries(): void
+    public function testCastsCookies(): void
     {
-        $emptyRequest = new Request();
-        $this->assertNull($emptyRequest->query->get('test'));
-        $this->assertEquals('default', $emptyRequest->query->get('test', 'default'));
+        $request = new Request();
 
-        $data = ['test' => 'value4'];
-        $request = new Request([], [], $data);
-        $this->assertEquals('value4', $request->query->get('test'));
-        $this->assertEquals('value4', $request->query->get('test', 'default'));
-        $this->assertNull($request->query->get('test2'));
+        $request->cookies->set('test', '1');
+        $this->assertEquals('1', $request->cookie('test'));
+        $this->assertEquals(1, $request->cookies->asInt()->get('test'));
+        $this->assertEquals(1.0, $request->cookies->asFloat()->get('test'));
+        $this->assertTrue($request->cookies->asBool()->get('test'));
+        $this->assertEquals('1', $request->cookies->asString()->get('test'));
 
-        $this->assertEquals($data, $request->query->all());
+        $request->cookies->set('test-only', 'value-1');
+        $this->assertEquals('value-1', $request->cookie('test-only'));
+        $this->assertEquals(0, $request->cookies->asInt()->get('test-only'));
+        $this->assertEquals(0.0, $request->cookies->asFloat()->get('test-only'));
+        $this->assertTrue($request->cookies->asBool()->get('test-only'));
+        $this->assertEquals('value-1', $request->cookies->asString()->get('test-only'));
+        $this->assertEquals('value-1', $request->cookies->asOnly(['value-1', 'value-2'])->get('test-only'));
+        $this->assertNull($request->cookies->asOnly(['value-3', 'value-4'])->get('test-only'));
+    }
 
-        $this->assertTrue($request->query->has('test'));
-        $this->assertFalse($request->query->has('test2'));
+    public function testCastsInputs(): void
+    {
+        $request = new Request();
 
-        // asignamos un valor
-        $request->query->set('test3', 'value3');
-        $this->assertEquals('value3', $request->query->get('test3'));
+        $request->request->set('test', '1');
+        $this->assertEquals('1', $request->input('test'));
+        $this->assertEquals(1, $request->request->asInt()->get('test'));
+        $this->assertEquals(1.0, $request->request->asFloat()->get('test'));
+        $this->assertTrue($request->request->asBool()->get('test'));
+        $this->assertEquals('1', $request->request->asString()->get('test'));
 
-        // eliminamos un valor
-        $request->query->remove('test3');
-        $this->assertNull($request->query->get('test3'));
+        $request->request->set('test-only', 'value-1');
+        $this->assertEquals('value-1', $request->input('test-only'));
+        $this->assertEquals(0, $request->request->asInt()->get('test-only'));
+        $this->assertEquals(0.0, $request->request->asFloat()->get('test-only'));
+        $this->assertTrue($request->request->asBool()->get('test-only'));
+        $this->assertEquals('value-1', $request->request->asString()->get('test-only'));
+        $this->assertEquals('value-1', $request->request->asOnly(['value-1', 'value-2'])->get('test-only'));
+        $this->assertNull($request->request->asOnly(['value-3', 'value-4'])->get('test-only'));
+    }
+
+    public function testCastsQueries(): void
+    {
+        $request = new Request();
+
+        $request->query->set('test', '1');
+        $this->assertEquals('1', $request->query('test'));
+        $this->assertEquals(1, $request->query->asInt()->get('test'));
+        $this->assertEquals(1.0, $request->query->asFloat()->get('test'));
+        $this->assertTrue($request->query->asBool()->get('test'));
+        $this->assertEquals('1', $request->query->asString()->get('test'));
+
+        $request->query->set('test-only', 'value-1');
+        $this->assertEquals('value-1', $request->query('test-only'));
+        $this->assertEquals(0, $request->query->asInt()->get('test-only'));
+        $this->assertEquals(0.0, $request->query->asFloat()->get('test-only'));
+        $this->assertTrue($request->query->asBool()->get('test-only'));
+        $this->assertEquals('value-1', $request->query->asString()->get('test-only'));
+        $this->assertEquals('value-1', $request->query->asOnly(['value-1', 'value-2'])->get('test-only'));
+        $this->assertNull($request->query->asOnly(['value-3', 'value-4'])->get('test-only'));
     }
 }

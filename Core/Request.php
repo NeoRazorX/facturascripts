@@ -24,9 +24,6 @@ use FacturaScripts\Core\Internal\SubRequest;
 
 final class Request
 {
-    /** @var string */
-    private $cast = 'string';
-
     /** @var SubRequest */
     public $cookies;
 
@@ -35,9 +32,6 @@ final class Request
 
     /** @var SubRequest */
     public $headers;
-
-    /** @var array */
-    private $only = [];
 
     /** @var SubRequest */
     public $query;
@@ -57,92 +51,14 @@ final class Request
     public function all(string ...$key): array
     {
         if (empty($key)) {
-            return $_REQUEST;
+            return array_merge($this->query->all(), $this->request->all());
         }
 
-        $values = [];
+        $result = [];
         foreach ($key as $k) {
-            $values[$k] = $this->transform($_REQUEST[$k] ?? null);
+            $result[$k] = $this->get($k);
         }
-        return $values;
-    }
-
-    public function asArray(): self
-    {
-        $this->cast = 'array';
-
-        return $this;
-    }
-
-    public function asBool(): self
-    {
-        $this->cast = 'bool';
-
-        return $this;
-    }
-
-    public function asDate(): self
-    {
-        $this->cast = 'date';
-
-        return $this;
-    }
-
-    public function asDateTime(): self
-    {
-        $this->cast = 'datetime';
-
-        return $this;
-    }
-
-    public function asEmail(): self
-    {
-        $this->cast = 'email';
-
-        return $this;
-    }
-
-    public function asFloat(): self
-    {
-        $this->cast = 'float';
-
-        return $this;
-    }
-
-    public function asHour(): self
-    {
-        $this->cast = 'hour';
-
-        return $this;
-    }
-
-    public function asInt(): self
-    {
-        $this->cast = 'int';
-
-        return $this;
-    }
-
-    public function asOnly(array $values): self
-    {
-        $this->cast = 'only';
-        $this->only = $values;
-
-        return $this;
-    }
-
-    public function asString(): self
-    {
-        $this->cast = 'string';
-
-        return $this;
-    }
-
-    public function asUrl(): self
-    {
-        $this->cast = 'url';
-
-        return $this;
+        return $result;
     }
 
     public function browser(): string
@@ -171,20 +87,7 @@ final class Request
 
     public function cookie(string $key, $default = null)
     {
-        return $this->transform($this->cookies->get($key, $default));
-    }
-
-    public function cookies(string ...$key): array
-    {
-        if (empty($key)) {
-            return $this->cookies->all();
-        }
-
-        $values = [];
-        foreach ($key as $k) {
-            $values[$k] = $this->cookie($k);
-        }
-        return $values;
+        return $this->cookies->get($key, $default);
     }
 
     public static function createFromGlobals(): self
@@ -197,19 +100,6 @@ final class Request
         return $this->files->get($key, $default);
     }
 
-    public function files(string ...$key): array
-    {
-        if (empty($key)) {
-            return $this->files->all();
-        }
-
-        $values = [];
-        foreach ($key as $k) {
-            $values[$k] = $this->file($k);
-        }
-        return $values;
-    }
-
     public function fullUrl(): string
     {
         return $this->protocol() . '://' . $this->host() . $this->urlWithQuery();
@@ -217,85 +107,31 @@ final class Request
 
     public function get(string $key, $default = null)
     {
-        return $this->transform($_REQUEST[$key] ?? $default);
+        if ($this->request->has($key)) {
+            return $this->request->get($key);
+        }
+
+        return $this->query->get($key, $default);
     }
 
     public function has(string ...$key): bool
     {
+        $found = false;
         foreach ($key as $k) {
-            if (!isset($_REQUEST[$k])) {
-                return false;
+            if ($this->request->has($k) || $this->query->has($k)) {
+                $found = true;
+                continue;
             }
-        }
-        return true;
-    }
 
-    public function hasCookie(string ...$key): bool
-    {
-        foreach ($key as $k) {
-            if (!$this->cookies->has($k)) {
-                return false;
-            }
+            return false;
         }
-        return true;
-    }
 
-    public function hasFile(string ...$key): bool
-    {
-        foreach ($key as $k) {
-            if (!$this->files->has($k)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function hasHeader(string ...$key): bool
-    {
-        foreach ($key as $k) {
-            if (!$this->headers->has($k)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function hasInput(string ...$key): bool
-    {
-        foreach ($key as $k) {
-            if (!$this->request->has($k)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function hasQuery(string ...$key): bool
-    {
-        foreach ($key as $k) {
-            if (!$this->query->has($k)) {
-                return false;
-            }
-        }
-        return true;
+        return $found;
     }
 
     public function header(string $key, $default = null)
     {
-        return $this->transform($this->headers->get($key, $default));
-    }
-
-    public function headers(string ...$key): array
-    {
-        if (empty($key)) {
-            return $this->headers->all();
-        }
-
-        $values = [];
-        foreach ($key as $k) {
-            $values[$k] = $this->header($k);
-        }
-        return $values;
+        return $this->headers->get($key, $default);
     }
 
     public function host(): string
@@ -305,20 +141,7 @@ final class Request
 
     public function input(string $key, $default = null)
     {
-        return $this->transform($this->request->get($key, $default));
-    }
-
-    public function inputs(string ...$key): array
-    {
-        if (empty($key)) {
-            return $this->request->all();
-        }
-
-        $values = [];
-        foreach ($key as $k) {
-            $values[$k] = $this->input($k);
-        }
-        return $values;
+        return $this->request->get($key, $default);
     }
 
     public function ip(): string
@@ -332,56 +155,6 @@ final class Request
         return '::1';
     }
 
-    public function isCookieMissing(string ...$key): bool
-    {
-        foreach ($key as $k) {
-            if ($this->cookies->has($k)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function isFileMissing(string ...$key): bool
-    {
-        foreach ($key as $k) {
-            if ($this->files->has($k)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function isHeaderMissing(string ...$key): bool
-    {
-        foreach ($key as $k) {
-            if ($this->headers->has($k)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function isInputMissing(string ...$key): bool
-    {
-        foreach ($key as $k) {
-            if ($this->request->has($k)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function isQueryMissing(string ...$key): bool
-    {
-        foreach ($key as $k) {
-            if ($this->query->has($k)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public function isMethod(string $method): bool
     {
         return $this->method() === $method;
@@ -390,16 +163,6 @@ final class Request
     public function method(): string
     {
         return $_SERVER['REQUEST_METHOD'];
-    }
-
-    public function missing(string ...$key): bool
-    {
-        foreach ($key as $k) {
-            if (isset($_REQUEST[$k])) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public function os(): string
@@ -431,22 +194,9 @@ final class Request
         return $_SERVER['SERVER_PROTOCOL'] ?? '';
     }
 
-    public function queries(string ...$key): array
-    {
-        if (empty($key)) {
-            return $this->query->all();
-        }
-
-        $values = [];
-        foreach ($key as $k) {
-            $values[$k] = $this->query($k);
-        }
-        return $values;
-    }
-
     public function query(string $key, $default = null)
     {
-        return $this->transform($this->query->get($key, $default));
+        return $this->query->get($key, $default);
     }
 
     public function url(?int $position = null): string
@@ -483,57 +233,5 @@ final class Request
     public function userAgent(): string
     {
         return $_SERVER['HTTP_USER_AGENT'] ?? '';
-    }
-
-    private function transform($value)
-    {
-        $cast = $this->cast;
-        $only = $this->only;
-
-        // ponemos el cast por defecto
-        $this->cast = 'string';
-        $this->only = [];
-
-        if (is_null($value)) {
-            return null;
-        }
-
-        switch ($cast) {
-            case 'array':
-                return (array)$value;
-
-            case 'bool':
-                return (bool)$value;
-
-            case 'date':
-                return Tools::date($value);
-
-            case 'datetime':
-                return Tools::dateTime($value);
-
-            case 'email':
-                return Validator::email($value) ? $value : null;
-
-            case 'float':
-                return (float)$value;
-
-            case 'hour':
-                return Tools::hour($value);
-
-            case 'int':
-                return (int)$value;
-
-            case 'only':
-                return in_array($value, $only) ? $value : null;
-
-            case 'string':
-                return (string)$value;
-
-            case 'url':
-                return Validator::url($value) ? $value : null;
-
-            default:
-                return $value;
-        }
     }
 }
