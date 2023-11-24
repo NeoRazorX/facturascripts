@@ -19,13 +19,40 @@
 
 namespace FacturaScripts\Core;
 
+use FacturaScripts\Core\Internal\RequestFiles;
+use FacturaScripts\Core\Internal\SubRequest;
+
 final class Request
 {
     /** @var string */
     private $cast = 'string';
 
+    /** @var SubRequest */
+    public $cookies;
+
+    /** @var RequestFiles */
+    public $files;
+
+    /** @var SubRequest */
+    public $headers;
+
     /** @var array */
     private $only = [];
+
+    /** @var SubRequest */
+    public $query;
+
+    /** @var SubRequest */
+    public $request;
+
+    public function __construct(array $cookies = [], array $headers = [], array $query = [], array $request = [])
+    {
+        $this->cookies = new SubRequest($cookies);
+        $this->files = new RequestFiles();
+        $this->headers = new SubRequest($headers);
+        $this->query = new SubRequest($query);
+        $this->request = new SubRequest($request);
+    }
 
     public function all(string ...$key): array
     {
@@ -144,38 +171,48 @@ final class Request
 
     public function cookie(string $key, $default = null)
     {
-        return $this->transform($_COOKIE[$key] ?? $default);
+        return $this->transform($this->cookies->get($key, $default));
     }
 
     public function cookies(string ...$key): array
     {
         if (empty($key)) {
-            return $_COOKIE;
+            return $this->cookies->all();
         }
 
         $values = [];
         foreach ($key as $k) {
-            $values[$k] = $this->transform($_COOKIE[$k] ?? null);
+            $values[$k] = $this->cookie($k);
         }
         return $values;
     }
 
+    public static function createFromGlobals(): self
+    {
+        return new self($_COOKIE, $_SERVER, $_GET, $_POST);
+    }
+
     public function file(string $key, $default = null)
     {
-        return $_FILES[$key] ?? $default;
+        return $this->files->get($key, $default);
     }
 
     public function files(string ...$key): array
     {
         if (empty($key)) {
-            return $_FILES;
+            return $this->files->all();
         }
 
         $values = [];
         foreach ($key as $k) {
-            $values[$k] = $_FILES[$k] ?? null;
+            $values[$k] = $this->file($k);
         }
         return $values;
+    }
+
+    public function fullUrl(): string
+    {
+        return $this->protocol() . '://' . $this->host() . $this->urlWithQuery();
     }
 
     public function get(string $key, $default = null)
@@ -196,7 +233,7 @@ final class Request
     public function hasCookie(string ...$key): bool
     {
         foreach ($key as $k) {
-            if (!isset($_COOKIE[$k])) {
+            if (!$this->cookies->has($k)) {
                 return false;
             }
         }
@@ -206,7 +243,7 @@ final class Request
     public function hasFile(string ...$key): bool
     {
         foreach ($key as $k) {
-            if (!isset($_FILES[$k])) {
+            if (!$this->files->has($k)) {
                 return false;
             }
         }
@@ -216,8 +253,7 @@ final class Request
     public function hasHeader(string ...$key): bool
     {
         foreach ($key as $k) {
-            $k = 'HTTP_' . strtoupper(str_replace('-', '_', $k));
-            if (!isset($_SERVER[$k])) {
+            if (!$this->headers->has($k)) {
                 return false;
             }
         }
@@ -227,7 +263,7 @@ final class Request
     public function hasInput(string ...$key): bool
     {
         foreach ($key as $k) {
-            if (!isset($_POST[$k])) {
+            if (!$this->request->has($k)) {
                 return false;
             }
         }
@@ -237,7 +273,7 @@ final class Request
     public function hasQuery(string ...$key): bool
     {
         foreach ($key as $k) {
-            if (!isset($_GET[$k])) {
+            if (!$this->query->has($k)) {
                 return false;
             }
         }
@@ -246,20 +282,18 @@ final class Request
 
     public function header(string $key, $default = null)
     {
-        $key = 'HTTP_' . strtoupper(str_replace('-', '_', $key));
-        return $this->transform($_SERVER[$key] ?? $default);
+        return $this->transform($this->headers->get($key, $default));
     }
 
     public function headers(string ...$key): array
     {
         if (empty($key)) {
-            return $_SERVER;
+            return $this->headers->all();
         }
 
         $values = [];
         foreach ($key as $k) {
-            $k = 'HTTP_' . strtoupper(str_replace('-', '_', $k));
-            $values[$k] = $this->transform($_SERVER[$k] ?? null);
+            $values[$k] = $this->header($k);
         }
         return $values;
     }
@@ -271,18 +305,18 @@ final class Request
 
     public function input(string $key, $default = null)
     {
-        return $this->transform($_POST[$key] ?? $default);
+        return $this->transform($this->request->get($key, $default));
     }
 
     public function inputs(string ...$key): array
     {
         if (empty($key)) {
-            return $_POST;
+            return $this->request->all();
         }
 
         $values = [];
         foreach ($key as $k) {
-            $values[$k] = $this->transform($_POST[$k] ?? null);
+            $values[$k] = $this->input($k);
         }
         return $values;
     }
@@ -301,7 +335,7 @@ final class Request
     public function isCookieMissing(string ...$key): bool
     {
         foreach ($key as $k) {
-            if (isset($_COOKIE[$k])) {
+            if ($this->cookies->has($k)) {
                 return false;
             }
         }
@@ -311,7 +345,7 @@ final class Request
     public function isFileMissing(string ...$key): bool
     {
         foreach ($key as $k) {
-            if (isset($_FILES[$k])) {
+            if ($this->files->has($k)) {
                 return false;
             }
         }
@@ -321,8 +355,7 @@ final class Request
     public function isHeaderMissing(string ...$key): bool
     {
         foreach ($key as $k) {
-            $k = 'HTTP_' . strtoupper(str_replace('-', '_', $k));
-            if (isset($_SERVER[$k])) {
+            if ($this->headers->has($k)) {
                 return false;
             }
         }
@@ -332,7 +365,7 @@ final class Request
     public function isInputMissing(string ...$key): bool
     {
         foreach ($key as $k) {
-            if (isset($_POST[$k])) {
+            if ($this->request->has($k)) {
                 return false;
             }
         }
@@ -342,7 +375,7 @@ final class Request
     public function isQueryMissing(string ...$key): bool
     {
         foreach ($key as $k) {
-            if (isset($_GET[$k])) {
+            if ($this->query->has($k)) {
                 return false;
             }
         }
@@ -401,19 +434,19 @@ final class Request
     public function queries(string ...$key): array
     {
         if (empty($key)) {
-            return $_GET;
+            return $this->query->all();
         }
 
         $values = [];
         foreach ($key as $k) {
-            $values[$k] = $this->transform($_GET[$k] ?? null);
+            $values[$k] = $this->query($k);
         }
         return $values;
     }
 
     public function query(string $key, $default = null)
     {
-        return $this->transform($_GET[$key] ?? $default);
+        return $this->transform($this->query->get($key, $default));
     }
 
     public function url(?int $position = null): string
@@ -442,6 +475,11 @@ final class Request
         return $path[$position] ?? '';
     }
 
+    public function urlWithQuery(): string
+    {
+        return $this->url() . '?' . $_SERVER['QUERY_STRING'];
+    }
+
     public function userAgent(): string
     {
         return $_SERVER['HTTP_USER_AGENT'] ?? '';
@@ -455,6 +493,10 @@ final class Request
         // ponemos el cast por defecto
         $this->cast = 'string';
         $this->only = [];
+
+        if (is_null($value)) {
+            return null;
+        }
 
         switch ($cast) {
             case 'array':
