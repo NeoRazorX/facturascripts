@@ -25,7 +25,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
@@ -147,7 +146,7 @@ class Dashboard extends Controller
      * Set the quick links for data creation.
      * Example: createLinks['EditControllerName'] = 'label'
      */
-    private function loadCreateLinks()
+    private function loadCreateLinks(): void
     {
         $this->createLinks['EditProducto'] = 'product';
         $this->createLinks['EditCliente'] = 'customer';
@@ -163,7 +162,7 @@ class Dashboard extends Controller
     /**
      * Establish the sections to be displayed on the dashboard.
      */
-    private function loadExtensions()
+    private function loadExtensions(): void
     {
         $this->loadCreateLinks();
         $this->loadOpenLinks();
@@ -178,7 +177,7 @@ class Dashboard extends Controller
     /**
      * Load the data regarding the stock under minimum.
      */
-    private function loadLowStockSection()
+    private function loadLowStockSection(): void
     {
         if (false === $this->dataBase->tableExists('stocks')) {
             return;
@@ -199,11 +198,11 @@ class Dashboard extends Controller
     /**
      * Load last news from facturascripts.com
      */
-    private function loadNews()
+    private function loadNews(): void
     {
         // buscamos en la caché
         $news = Cache::get('dashboard-news');
-        if($news !== null) {
+        if ($news !== null) {
             $this->news = $news;
             return;
         }
@@ -220,7 +219,7 @@ class Dashboard extends Controller
     /**
      * Loads the links to the latest data created by the user.
      */
-    private function loadOpenLinks()
+    private function loadOpenLinks(): void
     {
         $this->setOpenLinksForDocument(new FacturaCliente(), 'invoice');
         $this->setOpenLinksForDocument(new AlbaranCliente(), 'delivery-note');
@@ -269,7 +268,7 @@ class Dashboard extends Controller
     /**
      * Load the receipts pending collection.
      */
-    private function loadReceiptSection()
+    private function loadReceiptSection(): void
     {
         $receiptModel = new ReciboCliente();
         $where = [
@@ -287,7 +286,7 @@ class Dashboard extends Controller
     /**
      * Load statistical data.
      */
-    private function loadStats()
+    private function loadStats(): void
     {
         $totalModel = new TotalModel();
 
@@ -327,9 +326,9 @@ class Dashboard extends Controller
      * @param BusinessDocument $model
      * @param string $label
      */
-    private function setOpenLinksForDocument($model, $label)
+    private function setOpenLinksForDocument($model, $label): void
     {
-        $minDate = date(ModelCore::DATE_STYLE, strtotime('-2 days'));
+        $minDate = Tools::date('-2 days');
         $where = [
             new DataBaseWhere('fecha', $minDate, '>='),
             new DataBaseWhere('nick', $this->user->nick)
