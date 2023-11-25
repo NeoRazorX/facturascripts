@@ -27,19 +27,24 @@ final class RequestString
     /** @var ?string */
     private $value;
 
-    public function __construct(string $value = '')
+    public function __construct(?string $value = '')
     {
         $this->value = $value;
     }
 
     public function __toString(): string
     {
-        return trim($this->value);
+        return $this->value ?? '';
     }
 
-    public static function create(string $value = ''): RequestString
+    public static function create(?string $value = ''): RequestString
     {
         return new self($value);
+    }
+
+    public function get(): ?string
+    {
+        return $this->value;
     }
 
     public function set(?string $value): RequestString
@@ -60,25 +65,25 @@ final class RequestString
 
     public function toDate(bool $allowNull = true): ?string
     {
-        if ($allowNull && is_null($this->value)) {
-            return null;
+        if (Validator::date($this->value ?? '')) {
+            return Tools::date($this->value);
         }
 
-        return Tools::date($this->value);
+        return $allowNull ? null : '';
     }
 
     public function toDateTime(bool $allowNull = true): ?string
     {
-        if ($allowNull && is_null($this->value)) {
-            return null;
+        if (Validator::datetime($this->value ?? '') || Validator::date($this->value ?? '')) {
+            return Tools::dateTime($this->value);
         }
 
-        return Tools::dateTime($this->value);
+        return $allowNull ? null : '';
     }
 
     public function toEmail(bool $allowNull = true): ?string
     {
-        if (Validator::email($this->value)) {
+        if (Validator::email($this->value ?? '')) {
             return $this->value;
         }
 
@@ -97,7 +102,7 @@ final class RequestString
 
     public function toHour(bool $allowNull = true): ?string
     {
-        if (Validator::hour($this->value)) {
+        if (Validator::hour($this->value ?? '')) {
             return Tools::hour($this->value);
         }
 
@@ -133,7 +138,7 @@ final class RequestString
 
     public function toUrl(bool $allowNull = true): ?string
     {
-        if (Validator::url($this->value)) {
+        if (Validator::url($this->value ?? '')) {
             return $this->value;
         }
 
