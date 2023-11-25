@@ -20,7 +20,9 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Internal\RequestFiles;
+use FacturaScripts\Core\Internal\RequestString;
 use FacturaScripts\Core\Internal\SubRequest;
+use FacturaScripts\Core\Internal\UploadedFile;
 
 final class Request
 {
@@ -48,6 +50,10 @@ final class Request
         $this->request = new SubRequest($request);
     }
 
+    /**
+     * @param string ...$key
+     * @return RequestString[]
+     */
     public function all(string ...$key): array
     {
         if (empty($key)) {
@@ -85,7 +91,7 @@ final class Request
         return 'unknown';
     }
 
-    public function cookie(string $key, $default = null)
+    public function cookie(string $key, $default = null): RequestString
     {
         return $this->cookies->get($key, $default);
     }
@@ -95,7 +101,7 @@ final class Request
         return new self($_COOKIE, $_SERVER, $_GET, $_POST);
     }
 
-    public function file(string $key, $default = null)
+    public function file(string $key, $default = null): UploadedFile
     {
         return $this->files->get($key, $default);
     }
@@ -105,7 +111,7 @@ final class Request
         return $this->protocol() . '://' . $this->host() . $this->urlWithQuery();
     }
 
-    public function get(string $key, $default = null)
+    public function get(string $key, $default = null): RequestString
     {
         if ($this->request->has($key)) {
             return $this->request->get($key);
@@ -129,7 +135,7 @@ final class Request
         return $found;
     }
 
-    public function header(string $key, $default = null)
+    public function header(string $key, $default = null): RequestString
     {
         return $this->headers->get($key, $default);
     }
@@ -139,7 +145,7 @@ final class Request
         return $_SERVER['HTTP_HOST'] ?? '';
     }
 
-    public function input(string $key, $default = null)
+    public function input(string $key, $default = null): RequestString
     {
         return $this->request->get($key, $default);
     }
@@ -194,7 +200,7 @@ final class Request
         return $_SERVER['SERVER_PROTOCOL'] ?? '';
     }
 
-    public function query(string $key, $default = null)
+    public function query(string $key, $default = null): RequestString
     {
         return $this->query->get($key, $default);
     }

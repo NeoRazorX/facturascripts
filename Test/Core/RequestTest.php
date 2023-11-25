@@ -117,43 +117,45 @@ final class RequestTest extends TestCase
 
         $request->cookies->set('test', '123.45');
         $this->assertEquals('123.45', $request->cookie('test'));
-        $this->assertEquals(123, $request->cookies->asInt()->get('test'));
-        $this->assertEquals(123.45, $request->cookies->asFloat()->get('test'));
-        $this->assertTrue($request->cookies->asBool()->get('test'));
-        $this->assertEquals('123.45', $request->cookies->asString()->get('test'));
+        $this->assertEquals(123, $request->cookies->get('test')->toInt());
+        $this->assertEquals(123.45, $request->cookies->get('test')->toFloat());
+        $this->assertTrue($request->cookies->get('test')->toBool());
+        $this->assertEquals('123.45', $request->cookies->get('test')->toString());
 
         $request->cookies->set('test-only', 'value-1');
         $this->assertEquals('value-1', $request->cookie('test-only'));
-        $this->assertEquals('value-1', $request->cookies->asOnly(['value-1', 'value-2'])->get('test-only'));
-        $this->assertNull($request->cookies->asOnly(['value-3', 'value-4'])->get('test-only'));
+        $this->assertEquals('value-1', $request->cookies->get('test-only')->toOnly(['value-1', 'value-2']));
+        $this->assertNull($request->cookies->get('test-only')->toOnly(['value-3', 'value-4']));
 
         $request->cookies->set('test-date', '2020/01/01');
         $this->assertEquals('2020/01/01', $request->cookie('test-date'));
-        $this->assertEquals('01-01-2020', $request->cookies->asDate()->get('test-date'));
+        $this->assertEquals('01-01-2020', $request->cookies->get('test-date')->toDate());
 
         $request->cookies->set('test-date-time', '2020/01/01 12:13:14');
         $this->assertEquals('2020/01/01 12:13:14', $request->cookie('test-date-time'));
-        $this->assertEquals('01-01-2020 12:13:14', $request->cookies->asDateTime()->get('test-date-time'));
+        $this->assertEquals('01-01-2020 12:13:14', $request->cookies->get('test-date-time')->toDateTime());
 
         $request->cookies->set('test-time', '12:13:14');
         $this->assertEquals('12:13:14', $request->cookie('test-time'));
-        $this->assertEquals('12:13:14', $request->cookies->asHour()->get('test-time'));
+        $this->assertEquals('12:13:14', $request->cookies->get('test-time')->toHour());
 
         $request->cookies->set('test-email', 'carlos@test.com');
         $this->assertEquals('carlos@test.com', $request->cookie('test-email'));
-        $this->assertEquals('carlos@test.com', $request->cookies->asEmail()->get('test-email'));
+        $this->assertEquals('carlos@test.com', $request->cookies->get('test-email')->toEmail());
 
         $request->cookies->set('test-bad-email', 'carlos-test');
         $this->assertEquals('carlos-test', $request->cookie('test-bad-email'));
-        $this->assertNull($request->cookies->asEmail()->get('test-bad-email'));
+        $this->assertNull($request->cookies->get('test-bad-email')->toEmail());
+        $this->assertEquals('', $request->cookies->get('test-bad-email')->toEmail(false));
 
         $request->cookies->set('test-url', 'http://www.test.com');
         $this->assertEquals('http://www.test.com', $request->cookie('test-url'));
-        $this->assertEquals('http://www.test.com', $request->cookies->asUrl()->get('test-url'));
+        $this->assertEquals('http://www.test.com', $request->cookies->get('test-url')->toUrl());
 
         $request->cookies->set('test-bad-url', 'wwwcosa');
         $this->assertEquals('wwwcosa', $request->cookie('test-bad-url'));
-        $this->assertNull($request->cookies->asUrl()->get('test-bad-url'));
+        $this->assertNull($request->cookies->get('test-bad-url')->toUrl());
+        $this->assertEquals('', $request->cookies->get('test-bad-url')->toUrl(false));
     }
 
     public function testCastsInputs(): void
@@ -162,43 +164,45 @@ final class RequestTest extends TestCase
 
         $request->request->set('test', '456,78');
         $this->assertEquals('456,78', $request->input('test'));
-        $this->assertEquals(456, $request->request->asInt()->get('test'));
-        $this->assertEquals(456.78, $request->request->asFloat()->get('test'));
-        $this->assertTrue($request->request->asBool()->get('test'));
-        $this->assertEquals('456,78', $request->request->asString()->get('test'));
+        $this->assertEquals(456, $request->request->get('test')->toInt());
+        $this->assertEquals(456.78, $request->request->get('test')->toFloat());
+        $this->assertTrue($request->request->get('test')->toBool());
+        $this->assertEquals('456,78', $request->request->get('test')->toString());
 
         $request->request->set('test-only', 'code1');
         $this->assertEquals('code1', $request->input('test-only'));
-        $this->assertEquals('code1', $request->request->asOnly(['code1', 'code2'])->get('test-only'));
-        $this->assertNull($request->request->asOnly(['code3', 'code4'])->get('test-only'));
+        $this->assertEquals('code1', $request->request->get('test-only')->toOnly(['code1', 'code2']));
+        $this->assertNull($request->request->get('test-only')->toOnly(['code3', 'code4']));
 
         $request->request->set('test-date', '01/02/2023');
         $this->assertEquals('01/02/2023', $request->input('test-date'));
-        $this->assertEquals('02-01-2023', $request->request->asDate()->get('test-date'));
+        $this->assertEquals('02-01-2023', $request->request->get('test-date')->toDate());
 
         $request->request->set('test-date-time', '02-03-2024 00:01:02');
         $this->assertEquals('02-03-2024 00:01:02', $request->input('test-date-time'));
-        $this->assertEquals('02-03-2024 00:01:02', $request->request->asDateTime()->get('test-date-time'));
+        $this->assertEquals('02-03-2024 00:01:02', $request->request->get('test-date-time')->toDateTime());
 
         $request->request->set('test-time', '03:04:05');
         $this->assertEquals('03:04:05', $request->input('test-time'));
-        $this->assertEquals('03:04:05', $request->request->asHour()->get('test-time'));
+        $this->assertEquals('03:04:05', $request->request->get('test-time')->toHour());
 
         $request->request->set('test-email', 'test@yolo.com');
         $this->assertEquals('test@yolo.com', $request->input('test-email'));
-        $this->assertEquals('test@yolo.com', $request->request->asEmail()->get('test-email'));
+        $this->assertEquals('test@yolo.com', $request->request->get('test-email')->toEmail());
 
         $request->request->set('test-bad-email', 'test:yolo');
         $this->assertEquals('test:yolo', $request->input('test-bad-email'));
-        $this->assertNull($request->request->asEmail()->get('test-bad-email'));
+        $this->assertNull($request->request->get('test-bad-email')->toEmail());
+        $this->assertEquals('', $request->request->get('test-bad-email')->toEmail(false));
 
         $request->request->set('test-url', 'http://google.com/test/1234?test=1');
         $this->assertEquals('http://google.com/test/1234?test=1', $request->input('test-url'));
-        $this->assertEquals('http://google.com/test/1234?test=1', $request->request->asUrl()->get('test-url'));
+        $this->assertEquals('http://google.com/test/1234?test=1', $request->request->get('test-url')->toUrl());
 
         $request->request->set('test-bad-url', 'javascript:alert("test")');
         $this->assertEquals('javascript:alert("test")', $request->input('test-bad-url'));
-        $this->assertNull($request->request->asUrl()->get('test-bad-url'));
+        $this->assertNull($request->request->get('test-bad-url')->toUrl());
+        $this->assertEquals('', $request->request->get('test-bad-url')->toUrl(false));
     }
 
     public function testCastsQueries(): void
@@ -207,38 +211,40 @@ final class RequestTest extends TestCase
 
         $request->query->set('test', '0123.99');
         $this->assertEquals('0123.99', $request->query('test'));
-        $this->assertEquals(123, $request->query->asInt()->get('test'));
-        $this->assertEquals(123.99, $request->query->asFloat()->get('test'));
-        $this->assertTrue($request->query->asBool()->get('test'));
-        $this->assertEquals('0123.99', $request->query->asString()->get('test'));
+        $this->assertEquals(123, $request->query->get('test')->toInt());
+        $this->assertEquals(123.99, $request->query->get('test')->toFloat());
+        $this->assertTrue($request->query->get('test')->toBool());
+        $this->assertEquals('0123.99', $request->query->get('test')->toString());
 
         $request->query->set('test-only', 'status1');
         $this->assertEquals('status1', $request->query('test-only'));
-        $this->assertEquals('status1', $request->query->asOnly(['status1', 'status2'])->get('test-only'));
-        $this->assertNull($request->query->asOnly(['status3', 'status4'])->get('test-only'));
+        $this->assertEquals('status1', $request->query->get('test-only')->toOnly(['status1', 'status2']));
+        $this->assertNull($request->query->get('test-only')->toOnly(['status3', 'status4']));
 
         $request->query->set('test-date', '2019-09-08');
         $this->assertEquals('2019-09-08', $request->query('test-date'));
-        $this->assertEquals('08-09-2019', $request->query->asDate()->get('test-date'));
+        $this->assertEquals('08-09-2019', $request->query->get('test-date')->toDate());
 
         $request->query->set('test-date-time', '2019-09-08');
         $this->assertEquals('2019-09-08', $request->query('test-date-time'));
-        $this->assertEquals('08-09-2019 00:00:00', $request->query->asDateTime()->get('test-date-time'));
+        $this->assertEquals('08-09-2019 00:00:00', $request->query->get('test-date-time')->toDateTime());
 
         $request->query->set('test-time', '12:13');
         $this->assertEquals('12:13', $request->query('test-time'));
-        $this->assertEquals('12:13:00', $request->query->asHour()->get('test-time'));
+        $this->assertEquals('12:13:00', $request->query->get('test-time')->toHour());
 
         $request->query->set('test-email', 'mail@mail.com');
         $this->assertEquals('mail@mail.com', $request->query('test-email'));
-        $this->assertEquals('mail@mail.com', $request->query->asEmail()->get('test-email'));
+        $this->assertEquals('mail@mail.com', $request->query->get('test-email')->toEmail());
 
         $request->query->set('test-bad-email', 'mailcom');
         $this->assertEquals('mailcom', $request->query('test-bad-email'));
-        $this->assertNull($request->query->asEmail()->get('test-bad-email'));
+        $this->assertNull($request->query->get('test-bad-email')->toEmail());
+        $this->assertEquals('', $request->query->get('test-bad-email')->toEmail(false));
 
         $request->query->set('test-url', '.com.test');
         $this->assertEquals('.com.test', $request->query('test-url'));
-        $this->assertNull($request->query->asUrl()->get('test-url'));
+        $this->assertNull($request->query->get('test-url')->toUrl());
+        $this->assertEquals('', $request->query->get('test-url')->toUrl(false));
     }
 }

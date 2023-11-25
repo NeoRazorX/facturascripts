@@ -19,25 +19,20 @@
 
 namespace FacturaScripts\Core\Internal;
 
-use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Validator;
-
 final class SubRequest
 {
-    /** @var string */
-    private $cast = '';
-
     /** @var array */
     private $data;
-
-    /** @var array */
-    private $only = [];
 
     public function __construct(array $data)
     {
         $this->data = $data;
     }
 
+    /**
+     * @param string ...$key
+     * @return RequestString[]
+     */
     public function all(string ...$key): array
     {
         if (empty($key)) {
@@ -51,88 +46,9 @@ final class SubRequest
         return $result;
     }
 
-    public function asBool(): self
+    public function get(string $key, $default = null): RequestString
     {
-        $this->cast = 'bool';
-
-        return $this;
-    }
-
-    public function asDate(): self
-    {
-        $this->cast = 'date';
-
-        return $this;
-    }
-
-    public function asDateTime(): self
-    {
-        $this->cast = 'datetime';
-
-        return $this;
-    }
-
-    public function asDefault(): self
-    {
-        $this->cast = '';
-        $this->only = [];
-
-        return $this;
-    }
-
-    public function asEmail(): self
-    {
-        $this->cast = 'email';
-
-        return $this;
-    }
-
-    public function asFloat(): self
-    {
-        $this->cast = 'float';
-
-        return $this;
-    }
-
-    public function asHour(): self
-    {
-        $this->cast = 'hour';
-
-        return $this;
-    }
-
-    public function asInt(): self
-    {
-        $this->cast = 'int';
-
-        return $this;
-    }
-
-    public function asOnly(array $values): self
-    {
-        $this->cast = 'only';
-        $this->only = $values;
-
-        return $this;
-    }
-
-    public function asString(): self
-    {
-        $this->cast = 'string';
-
-        return $this;
-    }
-
-    public function asUrl(): self
-    {
-        $this->cast = 'url';
-
-        return $this;
-    }
-
-    public function get(string $key, $default = null)
-    {
-        return $this->transform($this->data[$key] ?? $default);
+        return RequestString::create($this->data[$key] ?? $default);
     }
 
     public function has(string ...$key): bool
@@ -162,57 +78,6 @@ final class SubRequest
 
     public function set(string $key, $value): void
     {
-        $this->data[$key] = $value;
-    }
-
-
-    public function transform($value)
-    {
-        $cast = $this->cast;
-        $only = $this->only;
-
-        // ponemos el cast por defecto
-        $this->asDefault();
-
-        if (is_null($value)) {
-            return null;
-        }
-
-        switch ($cast) {
-            case 'bool':
-                return (bool)$value;
-
-            case 'date':
-                return Tools::date($value);
-
-            case 'datetime':
-                return Tools::dateTime($value);
-
-            case 'email':
-                return Validator::email($value) ? $value : null;
-
-            case 'float':
-                // reemplazamos la coma decimal por un punto
-                $value = str_replace(',', '.', $value);
-                return (float)$value;
-
-            case 'hour':
-                return Tools::hour($value);
-
-            case 'int':
-                return (int)$value;
-
-            case 'only':
-                return in_array($value, $only) ? $value : null;
-
-            case 'string':
-                return (string)$value;
-
-            case 'url':
-                return Validator::url($value) ? $value : null;
-
-            default:
-                return $value;
-        }
+        $this->data[$key] = RequestString::create($value);
     }
 }
