@@ -107,7 +107,7 @@ final class Request
         ]);
     }
 
-    public function file(string $key): UploadedFile
+    public function file(string $key): ?UploadedFile
     {
         return $this->files->get($key);
     }

@@ -20,6 +20,7 @@
 namespace Core;
 
 use FacturaScripts\Core\Internal\RequestString;
+use FacturaScripts\Core\Internal\UploadedFile;
 use FacturaScripts\Core\Request;
 use PHPUnit\Framework\TestCase;
 
@@ -38,6 +39,25 @@ final class RequestTest extends TestCase
         // asignamos un null
         $string->set(null);
         $this->assertNull($string->get());
+    }
+
+    public function testUploadFile(): void
+    {
+        $file = new UploadedFile([
+            'name' => 'test.txt',
+            'type' => 'text/plain',
+            'tmp_name' => '/tmp/php/php1h4j1o',
+            'error' => 0,
+            'size' => 123,
+        ]);
+
+        $this->assertEquals('test.txt', $file->name);
+        $this->assertEquals('text/plain', $file->type);
+        $this->assertEquals('/tmp/php/php1h4j1o', $file->tmp_name);
+        $this->assertEquals(0, $file->error);
+        $this->assertEquals(123, $file->size);
+
+        $this->assertEquals('txt', $file->extension());
     }
 
     public function testCookies(): void
@@ -74,13 +94,12 @@ final class RequestTest extends TestCase
         $emptyRequest = new Request();
         $this->assertNull($emptyRequest->file('test'));
 
-        $data = ['files' => ['test' => 'value2']];
+        $data = ['files' => ['test' => ['name' => 'test.txt']]];
         $request = new Request($data);
-        $this->assertEquals('value2', $request->file('test'));
-        $this->assertEquals('value2', $request->file('test', 'default'));
-        $this->assertNull($request->file('test2')->get());
+        $this->assertEquals('test.txt', $request->file('test')->name);
+        $this->assertNull($request->file('test2'));
 
-        $this->assertEquals($data['files'], $request->files->all());
+        $this->assertCount(1, $request->files->all());
 
         $this->assertTrue($request->files->has('test'));
         $this->assertFalse($request->files->has('test2'));
