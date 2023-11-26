@@ -22,10 +22,68 @@ namespace FacturaScripts\Core\Internal;
 final class UploadedFile
 {
     /** @var string */
-    public $name;
+    public $clientFilename;
 
-    public function __construct(string $name)
+    /** @var string */
+    public $clientMediaType;
+
+    /** @var int */
+    public $error;
+
+    /** @var string */
+    public $extension;
+
+    /** @var string */
+    public $filename;
+
+    /** @var string */
+    public $mediaType;
+
+    /** @var int */
+    public $size;
+
+    /** @var string */
+    public $tmpName;
+
+    public function __construct(array $data)
     {
-        $this->name = $name;
+        $this->clientFilename = $data['name'] ?? '';
+        $this->clientMediaType = $data['type'] ?? '';
+        $this->error = $data['error'] ?? 0;
+        $this->size = $data['size'] ?? 0;
+        $this->tmpName = $data['tmp_name'] ?? '';
+        $this->filename = $this->tmpName;
+        $this->extension = pathinfo($this->clientFilename, PATHINFO_EXTENSION);
+        $this->mediaType = $this->clientMediaType;
+    }
+
+    public function getExtension(): string
+    {
+        return $this->extension;
+    }
+
+    public function getMediaType(): string
+    {
+        return $this->mediaType;
+    }
+
+    public function getSize(): int
+    {
+        return $this->size;
+    }
+
+    public function getTmpName(): string
+    {
+        return $this->tmpName;
+    }
+
+    public function isUploadedFile(): bool
+    {
+        return is_uploaded_file($this->tmpName);
+    }
+
+    public function moveTo(string $targetPath): bool
+    {
+        return move_uploaded_file($this->tmpName, $targetPath);
     }
 }

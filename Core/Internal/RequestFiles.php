@@ -21,26 +21,50 @@ namespace FacturaScripts\Core\Internal;
 
 final class RequestFiles
 {
+    /** @return array */
+    private $data;
+
+    public function __construct(array $data = [])
+    {
+        $this->data = $data;
+    }
+
+    /** @return UploadedFile[] */
     public function all(): array
     {
         $files = [];
-        foreach ($_FILES as $key => $value) {
+        foreach ($this->data as $key => $value) {
             $files[$key] = new UploadedFile($value);
         }
         return $files;
     }
 
-    public function get(string $key, $default = null)
+    public function get(string $key): ?UploadedFile
     {
-        if (isset($_FILES[$key])) {
-            return new UploadedFile($_FILES[$key]);
+        if (isset($this->data[$key])) {
+            return new UploadedFile($this->data[$key]);
         }
 
-        return $default;
+        return null;
     }
 
     public function has(string $key): bool
     {
-        return isset($_FILES[$key]);
+        return isset($this->data[$key]);
+    }
+
+    public function isMissing(string $key): bool
+    {
+        return !isset($this->data[$key]);
+    }
+
+    public function remove(string $key): void
+    {
+        unset($this->data[$key]);
+    }
+
+    public function set(string $key, UploadedFile $value): void
+    {
+        $this->data[$key] = $value;
     }
 }

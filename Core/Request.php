@@ -41,13 +41,13 @@ final class Request
     /** @var SubRequest */
     public $request;
 
-    public function __construct(array $cookies = [], array $headers = [], array $query = [], array $request = [])
+    public function __construct(array $data = [])
     {
-        $this->cookies = new SubRequest($cookies);
-        $this->files = new RequestFiles();
-        $this->headers = new SubRequest($headers);
-        $this->query = new SubRequest($query);
-        $this->request = new SubRequest($request);
+        $this->cookies = new SubRequest($data['cookies'] ?? []);
+        $this->files = new RequestFiles($data['files'] ?? []);
+        $this->headers = new SubRequest($data['headers'] ?? []);
+        $this->query = new SubRequest($data['query'] ?? []);
+        $this->request = new SubRequest($data['request'] ?? []);
     }
 
     /**
@@ -98,12 +98,18 @@ final class Request
 
     public static function createFromGlobals(): self
     {
-        return new self($_COOKIE, $_SERVER, $_GET, $_POST);
+        return new self([
+            'cookies' => $_COOKIE,
+            'files' => $_FILES,
+            'headers' => getallheaders(),
+            'query' => $_GET,
+            'request' => $_POST,
+        ]);
     }
 
-    public function file(string $key, $default = null): UploadedFile
+    public function file(string $key): UploadedFile
     {
-        return $this->files->get($key, $default);
+        return $this->files->get($key);
     }
 
     public function fullUrl(): string

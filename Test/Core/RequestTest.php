@@ -46,13 +46,13 @@ final class RequestTest extends TestCase
         $this->assertNull($emptyRequest->cookie('test')->get());
         $this->assertEquals('default', $emptyRequest->cookie('test', 'default'));
 
-        $data = ['test' => 'value2'];
+        $data = ['cookies' => ['test' => 'value2']];
         $request = new Request($data);
         $this->assertEquals('value2', $request->cookie('test'));
         $this->assertEquals('value2', $request->cookie('test', 'default'));
         $this->assertNull($request->cookie('test2')->get());
 
-        $this->assertEquals($data, $request->cookies->all());
+        $this->assertEquals($data['cookies'], $request->cookies->all());
 
         $this->assertTrue($request->cookies->has('test'));
         $this->assertFalse($request->cookies->has('test2'));
@@ -69,19 +69,68 @@ final class RequestTest extends TestCase
         $this->assertNull($request->cookie('test3')->get());
     }
 
+    public function testFiles(): void
+    {
+        $emptyRequest = new Request();
+        $this->assertNull($emptyRequest->file('test'));
+
+        $data = ['files' => ['test' => 'value2']];
+        $request = new Request($data);
+        $this->assertEquals('value2', $request->file('test'));
+        $this->assertEquals('value2', $request->file('test', 'default'));
+        $this->assertNull($request->file('test2')->get());
+
+        $this->assertEquals($data['files'], $request->files->all());
+
+        $this->assertTrue($request->files->has('test'));
+        $this->assertFalse($request->files->has('test2'));
+
+        $this->assertTrue($request->files->isMissing('test2'));
+        $this->assertFalse($request->files->isMissing('test'));
+    }
+
+    public function testHeaders(): void
+    {
+        $emptyRequest = new Request();
+        $this->assertNull($emptyRequest->header('test')->get());
+        $this->assertEquals('default', $emptyRequest->header('test', 'default'));
+
+        $data = ['headers' => ['test' => 'value2']];
+        $request = new Request($data);
+        $this->assertEquals('value2', $request->header('test'));
+        $this->assertEquals('value2', $request->header('test', 'default'));
+        $this->assertNull($request->header('test2')->get());
+
+        $this->assertEquals($data['headers'], $request->headers->all());
+
+        $this->assertTrue($request->headers->has('test'));
+        $this->assertFalse($request->headers->has('test2'));
+
+        $this->assertTrue($request->headers->isMissing('test2'));
+        $this->assertFalse($request->headers->isMissing('test'));
+
+        // asignamos un valor
+        $request->headers->set('test3', 'value3');
+        $this->assertEquals('value3', $request->header('test3'));
+
+        // eliminamos un valor
+        $request->headers->remove('test3');
+        $this->assertNull($request->header('test3')->get());
+    }
+
     public function testInputs(): void
     {
         $emptyRequest = new Request();
         $this->assertNull($emptyRequest->input('test')->get());
         $this->assertEquals('default', $emptyRequest->input('test', 'default'));
 
-        $data = ['test' => 'value3'];
-        $request = new Request([], [], [], $data);
+        $data = ['request' => ['test' => 'value3']];
+        $request = new Request($data);
         $this->assertEquals('value3', $request->input('test'));
         $this->assertEquals('value3', $request->input('test', 'default'));
         $this->assertNull($request->input('test2')->get());
 
-        $this->assertEquals($data, $request->request->all());
+        $this->assertEquals($data['request'], $request->request->all());
 
         $this->assertTrue($request->request->has('test'));
         $this->assertFalse($request->request->has('test2'));
@@ -104,13 +153,13 @@ final class RequestTest extends TestCase
         $this->assertNull($emptyRequest->query('test')->get());
         $this->assertEquals('default', $emptyRequest->query('test', 'default'));
 
-        $data = ['test' => 'value4'];
-        $request = new Request([], [], $data);
+        $data = ['query' => ['test' => 'value4']];
+        $request = new Request($data);
         $this->assertEquals('value4', $request->query('test'));
         $this->assertEquals('value4', $request->query('test', 'default'));
         $this->assertNull($request->query('test2')->get());
 
-        $this->assertEquals($data, $request->query->all());
+        $this->assertEquals($data['query'], $request->query->all());
 
         $this->assertTrue($request->query->has('test'));
         $this->assertFalse($request->query->has('test2'));
