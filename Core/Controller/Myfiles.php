@@ -77,7 +77,7 @@ class Myfiles implements ControllerInterface
         $safe = [
             'accdb', 'ai', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'html', 'ico', 'jfif',
             'jpeg', 'jpg', 'js', 'json', 'map', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf',
-            'png', 'pptx', 'sql', 'svg', 'ttf', 'txt', 'webm', 'webp', 'woff', 'woff2', 'xls', 'xlsm', 'xlsx',
+            'png', 'pptx', 'rar', 'sql', 'svg', 'ttf', 'txt', 'webm', 'webp', 'woff', 'woff2', 'xls', 'xlsm', 'xlsx',
             'xml', 'xsig', 'zip'
         ];
         return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
