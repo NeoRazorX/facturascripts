@@ -349,7 +349,7 @@ final class Kernel
         }
 
         foreach ($routes as $route => $params) {
-            self::addRoute($route, $params['controller'], $params['position'], $params['customId']);
+            self::addRoute($route, $params['controller'], $params['position'] ?? 0, $params['customId'] ?? '');
         }
 
         // ordenamos colocando primero las que tienen una posición menor
