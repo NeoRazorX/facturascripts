@@ -64,9 +64,9 @@ final class Kernel
     {
         // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
         $errorUrl = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-        $errorMessage = self::cleanErrorMessage($file, $message);
+        $errorMessage = self::cleanErrorMessage($message);
         $errorFile = str_replace(FS_FOLDER, '', $file);
-        $errorHash = md5($code . $errorFile . $line . $errorMessage . $errorUrl);
+        $errorHash = md5($code . $errorFile . $line . $errorMessage);
         $reportUrl = 'https://facturascripts.com/errores/' . $errorHash;
         $reportQr = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($reportUrl);
 
@@ -289,10 +289,9 @@ final class Kernel
         return 2023.1;
     }
 
-    private static function cleanErrorMessage(string $file, string $message): string
+    private static function cleanErrorMessage(string $message): string
     {
-        $parts = explode(' in ' . $file, $message);
-        return $parts[0];
+        return str_replace([FS_FOLDER, 'Stack trace:'], ['', "\nStack trace:"], $message);
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
