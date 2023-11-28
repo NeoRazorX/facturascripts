@@ -67,7 +67,7 @@ END;
         }
 
         $executionTime = Kernel::getExecutionTime();
-        echo Tools::lang()->trans('finished-cron', ['%timeNeeded%' => $executionTime]) . PHP_EOL;
+        echo PHP_EOL . Tools::lang()->trans('finished-cron', ['%timeNeeded%' => $executionTime]) . PHP_EOL;
         Tools::log()->notice('finished-cron', ['%timeNeeded%' => $executionTime]);
     }
 
@@ -79,7 +79,7 @@ END;
                 continue;
             }
 
-            echo Tools::lang()->trans('running-plugin-cron', ['%pluginName%' => $pluginName]) . PHP_EOL;
+            echo PHP_EOL . Tools::lang()->trans('running-plugin-cron', ['%pluginName%' => $pluginName]) . PHP_EOL;
             Tools::log('cron')->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);
 
             try {

@@ -58,7 +58,7 @@ abstract class ApiController implements ControllerInterface
         $this->url = $url;
 
         // si no hay constante api_key y la api está desactivada, no se puede acceder
-        if (!defined('API_KEY') && false == Tools::settings('default', 'enable_api', false)) {
+        if (null === Tools::config('api_key') && false == Tools::settings('default', 'enable_api', false)) {
             throw new KernelException('DisabledApi', Tools::lang()->trans('api-disabled'));
         }
 
