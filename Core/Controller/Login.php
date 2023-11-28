@@ -287,7 +287,10 @@ class Login implements ControllerInterface
         setcookie('fsLogkey', $user->logkey, $expiration, Tools::config('route'));
         setcookie('fsLang', $user->langcode, $expiration, Tools::config('route'));
 
-        // redirect to the main page
+        // redirect to the user's main page
+        if (empty($user->homepage)) {
+            $user->homepage = Tools::config('route');
+        }
         header('Location: ' . $user->homepage);
     }
 
