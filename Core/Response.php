@@ -41,6 +41,10 @@ final class Response
 
     public function cookie(string $name, string $value, int $expire = 0): self
     {
+        if (empty($expire)) {
+            $expire = time() + (int)Tools::config('cookies_expire');
+        }
+
         setcookie($name, $value, $expire, Tools::config('route', '/'));
 
         return $this;
