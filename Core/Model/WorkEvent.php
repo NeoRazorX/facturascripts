@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 
 class WorkEvent extends ModelClass
@@ -43,6 +44,9 @@ class WorkEvent extends ModelClass
     public $name;
 
     /** @var string */
+    public $nick;
+
+    /** @var string */
     public $params;
 
     /** @var string */
@@ -59,6 +63,7 @@ class WorkEvent extends ModelClass
         parent::clear();
         $this->creation_date = Tools::dateTime();
         $this->done = false;
+        $this->nick = Session::user()->nick;
         $this->workers = 0;
         $this->worker_list = '';
     }
