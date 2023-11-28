@@ -79,7 +79,7 @@ END;
                 continue;
             }
 
-            echo Tools::lang()->trans('running-plugin-cron', ['%pluginName%' => $pluginName]);
+            echo Tools::lang()->trans('running-plugin-cron', ['%pluginName%' => $pluginName]) . PHP_EOL;
             Tools::log('cron')->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);
 
             try {
