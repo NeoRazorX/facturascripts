@@ -312,18 +312,29 @@ final class Kernel
     private static function loadDefaultRoutes(): void
     {
         // añadimos las rutas por defecto
-        self::addRoute('/', '\\FacturaScripts\\Core\\Controller\\Dashboard', 1);
-        self::addRoute('/AdminPlugins', '\\FacturaScripts\\Core\\Controller\\AdminPlugins', 1);
-        self::addRoute('/api', '\\FacturaScripts\\Core\\Controller\\ApiRoot', 1);
-        self::addRoute('/api/*', '\\FacturaScripts\\Core\\Controller\\ApiRoot', 1);
-        self::addRoute('/Core/Assets/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
-        self::addRoute('/cron', '\\FacturaScripts\\Core\\Controller\\Cron', 1);
-        self::addRoute('/deploy', '\\FacturaScripts\\Core\\Controller\\Deploy', 1);
-        self::addRoute('/Dinamic/Assets/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
-        self::addRoute('/login', '\\FacturaScripts\\Core\\Controller\\Login', 1);
-        self::addRoute('/MyFiles/*', '\\FacturaScripts\\Core\\Controller\\Myfiles', 1);
-        self::addRoute('/node_modules/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
-        self::addRoute('/Plugins/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
+        $routes = [
+            '/' => 'Dashboard',
+            '/AdminPlugins' => 'AdminPlugins',
+            '/api' => 'ApiRoot',
+            '/api/*' => 'ApiRoot',
+            '/Core/Assets/*' => 'Files',
+            '/cron' => 'Cron',
+            '/deploy' => 'Deploy',
+            '/Dinamic/Assets/*' => 'Files',
+            '/login' => 'Login',
+            '/MyFiles/*' => 'Myfiles',
+            '/node_modules/*' => 'Files',
+            '/Plugins/*' => 'Files',
+        ];
+
+        foreach ($routes as $route => $controller) {
+            if (class_exists('\\FacturaScripts\\Dinamic\\Controller\\' . $controller)) {
+                self::addRoute($route, '\\FacturaScripts\\Dinamic\\Controller\\' . $controller, 1);
+                continue;
+            }
+
+            self::addRoute($route, '\\FacturaScripts\\Core\\Controller\\' . $controller, 1);
+        }
     }
 
     private static function loadRoutes(): void
