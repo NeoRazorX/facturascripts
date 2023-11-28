@@ -43,30 +43,27 @@ trait DocFilesTrait
             return true;
         }
 
-        $uploadFile = $this->request->files->get('new-file');
-        if ($uploadFile && $uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
-            $newFile = new AttachedFile();
-            $newFile->path = $uploadFile->getClientOriginalName();
-            if (false === $newFile->save()) {
-                Tools::log()->error('fail');
-                return true;
-            }
+        $uploadFiles = $this->request->files->get('new-files', []);
+        foreach ($uploadFiles as $uploadFile) {
+            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
+                $newFile = new AttachedFile();
+                $newFile->path = $uploadFile->getClientOriginalName();
+                if (false === $newFile->save()) {
+                    Tools::log()->error('fail');
+                    return true;
+                }
 
-            $fileRelation = new AttachedFileRelation();
-            $fileRelation->idfile = $newFile->idfile;
-            $fileRelation->model = $this->getModelClassName();
-            $fileRelation->modelcode = $this->request->query->get('code');
-            $fileRelation->modelid = (int)$fileRelation->modelcode;
-            $fileRelation->nick = $this->user->nick;
-            $fileRelation->observations = $this->request->request->get('observations');
-            if (false === $fileRelation->save()) {
-                Tools::log()->error('fail-relation');
-                return true;
-            }
-
-            // Si se trata de un documento, actualizamos el número de documentos adjuntos.
-            if ($this->getModel() instanceof BusinessDocument) {
-                $this->updateNumDocs();
+                $fileRelation = new AttachedFileRelation();
+                $fileRelation->idfile = $newFile->idfile;
+                $fileRelation->model = $this->getModelClassName();
+                $fileRelation->modelcode = $this->request->query->get('code');
+                $fileRelation->modelid = (int)$fileRelation->modelcode;
+                $fileRelation->nick = $this->user->nick;
+                $fileRelation->observations = $this->request->request->get('observations');
+                if (false === $fileRelation->save()) {
+                    Tools::log()->error('fail-relation');
+                    return true;
+                }
             }
         }
 

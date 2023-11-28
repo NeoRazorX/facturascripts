@@ -84,7 +84,7 @@
                             </div>
                             <div class="form-row align-items-end">
                                 <div class="col">
-                                    <input type="file" name="new-file" class="form-control-file" required/>
+                                    <input type="file" name="new-files[]" class="form-control-file" multiple required/>
                                     <p class="text-muted mb-0">
                                         {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
                                     </p>
