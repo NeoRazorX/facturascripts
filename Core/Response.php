@@ -26,6 +26,9 @@ final class Response
     /** @var string */
     private $content;
 
+    /** @var array */
+    private $cookies;
+
     /** @var ResponseHeaders */
     public $headers;
 
@@ -35,6 +38,7 @@ final class Response
     public function __construct(int $http_code = 200)
     {
         $this->content = '';
+        $this->cookies = [];
         $this->headers = new ResponseHeaders();
         $this->http_code = $http_code;
     }
@@ -45,18 +49,31 @@ final class Response
             $expire = time() + (int)Tools::config('cookies_expire');
         }
 
-        setcookie($name, $value, $expire, Tools::config('route', '/'));
+        $this->cookies[$name] = [
+            'name' => $name,
+            'value' => $value,
+            'expire' => $expire,
+        ];
 
         return $this;
     }
 
-    public function file(string $file_path, string $file_name): void
+    public function download(string $file_path, string $file_name = ''): void
     {
-        http_response_code($this->http_code);
+        $this->file($file_path, $file_name, 'attachment');
+    }
 
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="' . $file_name . '"');
-        header('Content-Length: ' . filesize($file_path));
+    public function file(string $file_path, string $file_name = '', string $disposition = 'inline'): void
+    {
+        if ($file_name) {
+            $disposition .= '; filename="' . $file_name . '"';
+        }
+
+        $this->headers->set('Content-Type', 'application/octet-stream');
+        $this->headers->set('Content-Disposition', $disposition);
+        $this->headers->set('Content-Length', (int)filesize($file_path));
+
+        $this->sendHeaders();
 
         readfile($file_path);
     }
@@ -80,6 +97,7 @@ final class Response
 
     public function json(array $data): void
     {
+        $this->headers->set('Content-Type', 'application/json');
         $this->content = json_encode($data);
 
         $this->send();
@@ -92,22 +110,28 @@ final class Response
             $file_name = 'doc_' . uniqid() . '.pdf';
         }
 
-        http_response_code($this->http_code);
+        $this->headers->set('Content-Type', 'application/pdf');
+        $this->headers->set('Content-Disposition', 'inline; filename="' . $file_name . '"');
+        $this->headers->set('Content-Length', strlen($content));
+        $this->content = $content;
 
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: inline; filename="' . $file_name . '"');
-        header('Content-Length: ' . strlen($content));
+        $this->send();
+    }
 
-        echo $content;
+    public function redirect(string $url, int $delay = 0): self
+    {
+        if ($delay > 0) {
+            $this->headers->set('Refresh', $delay . '; url=' . $url);
+            return $this;
+        }
+
+        $this->headers->set('Location', $url);
+        return $this;
     }
 
     public function send(): void
     {
-        http_response_code($this->http_code);
-
-        foreach ($this->headers->all() as $name => $value) {
-            header($name . ': ' . $value);
-        }
+        $this->sendHeaders();
 
         echo $this->content;
     }
@@ -124,5 +148,32 @@ final class Response
         $this->http_code = $http_code;
 
         return $this;
+    }
+
+    public function view(string $view, array $data = []): void
+    {
+        $this->content = Html::render($view, $data);
+
+        $this->send();
+    }
+
+    public function withoutCookie(string $name): self
+    {
+        $this->cookie($name, '', time() - 3600);
+
+        return $this;
+    }
+
+    private function sendHeaders(): void
+    {
+        http_response_code($this->http_code);
+
+        foreach ($this->headers->all() as $name => $value) {
+            header($name . ': ' . $value);
+        }
+
+        foreach ($this->cookies as $cookie) {
+            setcookie($cookie['name'], $cookie['value'], $cookie['expire'], Tools::config('route', '/'));
+        }
     }
 }
