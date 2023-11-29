@@ -65,6 +65,7 @@
             {% block body %}
             {% endblock %}
             {{ debugBarRender.render() | raw }}
+            <!-- execution time: {{ executionTime() }} s -->
         </body>
     {% endblock %}
 </html>

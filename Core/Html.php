@@ -129,6 +129,13 @@ final class Html
         });
     }
 
+    private static function executionTimeFunction(): TwigFunction
+    {
+        return new TwigFunction('executionTime', function () {
+            return Kernel::getExecutionTime();
+        });
+    }
+
     private static function fixHtmlFunction(): TwigFunction
     {
         return new TwigFunction(
@@ -354,6 +361,7 @@ final class Html
         self::$twig->addFunction(self::attachedFileFunction());
         self::$twig->addFunction(self::cacheFunction());
         self::$twig->addFunction(self::configFunction());
+        self::$twig->addFunction(self::executionTimeFunction());
         self::$twig->addFunction(self::fixHtmlFunction());
         self::$twig->addFunction(self::formTokenFunction());
         self::$twig->addFunction(self::getIncludeViews());
