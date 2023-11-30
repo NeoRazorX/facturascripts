@@ -190,12 +190,12 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->recargo = $this->getTax()->recargo;
     }
 
-    public function disableUpdateStock(bool $value)
+    public function disableUpdateStock(bool $value): void
     {
         $this->disableUpdateStock = $value;
     }
 
-    public function disableUpdateTotals(bool $value)
+    public function disableUpdateTotals(bool $value): void
     {
         $this->disableUpdateTotals = $value;
     }

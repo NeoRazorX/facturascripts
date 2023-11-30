@@ -278,7 +278,7 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
-     * Check changed fields before updata the database.
+     * Check changed fields before update the database.
      *
      * @param string $field
      *
@@ -298,6 +298,7 @@ abstract class TransformerDocument extends BusinessDocument
             // update lines to update stock
             foreach ($this->getLines() as $line) {
                 $line->actualizastock = $status->actualizastock;
+                $line->disableUpdateTotals(true);
                 $line->save();
             }
             // do not generate a new document
@@ -315,6 +316,7 @@ abstract class TransformerDocument extends BusinessDocument
 
             $line->actualizastock = $status->actualizastock;
             $line->servido = $line->cantidad;
+            $line->disableUpdateTotals(true);
             $line->save();
         }
 
