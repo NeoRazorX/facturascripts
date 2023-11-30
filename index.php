@@ -44,15 +44,21 @@ date_default_timezone_set($timeZone);
 // cargamos el gestor de errores
 register_shutdown_function('FacturaScripts\Core\Kernel::shutdown');
 
-// iniciamos el kernel y los plugins
+// iniciamos el kernel
 Kernel::init();
-Plugins::init();
 
 // obtenemos la url y ejecutamos el controlador
 // si se le pasa el parámetro cron, entonces ejecutamos la url /cron
 $url = isset($argv[1]) && $argv[1] === '-cron' ?
     '/cron' :
     parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+
+// iniciamos los plugins, a menos que la ruta sea /deploy
+if ($url !== '/deploy') {
+    Plugins::init();
+}
+
+// ejecutamos el controlador
 Kernel::run($url);
 
 $db = new DataBase();

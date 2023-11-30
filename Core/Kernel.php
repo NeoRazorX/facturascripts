@@ -374,6 +374,13 @@ final class Kernel
         foreach (self::$routes as $route => $info) {
             $controller = $info['controller'];
             $class = explode('\\', $controller);
+
+            // si la ruta no tiene namespace, lo añadimos
+            if (count($class) === 1) {
+                $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . $controller;
+                $class = explode('\\', $controller);
+            }
+
             $name = end($class);
 
             // coincidencia exacta
