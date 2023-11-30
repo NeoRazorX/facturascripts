@@ -238,7 +238,7 @@ final class PluginDeploy
         $className = basename($fileName, '.php');
         $txt = '<?php namespace ' . $newNamespace . ";\n\n"
             . '/**' . "\n"
-            . ' * Class created by Core/Base/PluginManager' . "\n"
+            . ' * Class created by Core/Base/PluginDeploy' . "\n"
             . ' * @author FacturaScripts <carlos@facturascripts.com>' . "\n"
             . ' */' . "\n"
             . $this->getClassType($fileName, $folder, $place, $pluginName) . ' ' . $className . ' extends \\' . $namespace . '\\' . $className;
