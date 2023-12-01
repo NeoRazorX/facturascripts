@@ -71,7 +71,9 @@
     {% for item in getIncludeViews('MenuTemplate', 'JsHeadAfter') %}
         {% include item['path'] %}
     {% endfor %}
-    {{ debugBarRender.renderHead() | raw }}
+    {% if debugBarRender %}
+        {{ debugBarRender.renderHead() | raw }}
+    {% endif %}
     {% for item in getIncludeViews('MenuTemplate', 'HeadEnd') %}
         {% include item['path'] %}
     {% endfor %}
@@ -171,7 +173,9 @@
     {% for item in getIncludeViews('MenuTemplate', 'BodyEnd') %}
         {% include item['path'] %}
     {% endfor %}
-    {{ debugBarRender.render() | raw }}
+    {% if debugBarRender %}
+        {{ debugBarRender.render() | raw }}
+    {% endif %}
     <br/>
     <br/>
     <br/>

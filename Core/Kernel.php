@@ -286,7 +286,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2023.1;
+        return 2023.11;
     }
 
     private static function cleanErrorMessage(string $message): string
@@ -325,6 +325,7 @@ final class Kernel
             '/MyFiles/*' => 'Myfiles',
             '/node_modules/*' => 'Files',
             '/Plugins/*' => 'Files',
+            '/Updater' => 'Updater',
         ];
 
         foreach ($routes as $route => $controller) {
