@@ -107,6 +107,9 @@ class Contacto extends Base\Contact
     /** @var bool */
     public $verificado;
 
+    /** @var string */
+    public $web;
+
     public function alias(): string
     {
         if (empty($this->email) || strpos($this->email, '@') === false) {
@@ -206,6 +209,7 @@ class Contacto extends Base\Contact
             $cliente->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
             $cliente->telefono1 = $this->telefono1;
             $cliente->telefono2 = $this->telefono2;
+            $cliente->web = $this->web;
             if ($cliente->save()) {
                 $this->codcliente = $cliente->codcliente;
                 $this->save();
@@ -236,6 +240,7 @@ class Contacto extends Base\Contact
             $proveedor->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
             $proveedor->telefono1 = $this->telefono1;
             $proveedor->telefono2 = $this->telefono2;
+            $proveedor->web = $this->web;
             if ($proveedor->save()) {
                 $this->codproveedor = $proveedor->codproveedor;
                 $this->save();
@@ -305,6 +310,7 @@ class Contacto extends Base\Contact
         $this->direccion = Tools::noHtml($this->direccion) ?? '';
         $this->empresa = Tools::noHtml($this->empresa) ?? '';
         $this->provincia = Tools::noHtml($this->provincia) ?? '';
+        $this->web = Tools::noHtml($this->web) ?? '';
 
         return $this->testPassword() && parent::test();
     }
