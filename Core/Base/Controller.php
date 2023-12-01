@@ -29,6 +29,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Dinamic\Model\User as DinUser;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -341,7 +342,7 @@ class Controller implements ControllerInterface
             return false;
         }
 
-        $user = new User();
+        $user = new DinUser();
         if (false === $user->loadFromCode($cookieNick) && $user->enabled) {
             Tools::log()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
             return false;
