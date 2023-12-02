@@ -53,7 +53,7 @@ class Cron implements ControllerInterface
                                                        |_|
 END;
 
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('starting-cron') . PHP_EOL;
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('starting-cron');
         Tools::log('cron')->notice('starting-cron');
 
         // ejecutamos el cron de cada plugin
@@ -67,7 +67,7 @@ END;
         }
 
         $executionTime = Kernel::getExecutionTime();
-        echo PHP_EOL . Tools::lang()->trans('finished-cron', ['%timeNeeded%' => $executionTime]) . PHP_EOL;
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('finished-cron', ['%timeNeeded%' => $executionTime]) . PHP_EOL;
         Tools::log()->notice('finished-cron', ['%timeNeeded%' => $executionTime]);
     }
 
@@ -79,13 +79,14 @@ END;
                 continue;
             }
 
-            echo PHP_EOL . Tools::lang()->trans('running-plugin-cron', ['%pluginName%' => $pluginName]) . PHP_EOL;
+            echo PHP_EOL . Tools::lang()->trans('running-plugin-cron', ['%pluginName%' => $pluginName]) . ' ... ';
             Tools::log('cron')->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);
 
             try {
                 $cron = new $cronClass($pluginName);
                 $cron->run();
             } catch (Exception $ex) {
+                echo $ex->getMessage() . PHP_EOL;
                 Tools::log()->error($ex->getMessage());
             }
 

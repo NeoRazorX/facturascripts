@@ -215,6 +215,13 @@ final class Kernel
             return;
         }
 
+        // comprobamos si el content-type es text/plain
+        if (isset($_SERVER['CONTENT_TYPE']) && 'text/plain' === $_SERVER['CONTENT_TYPE']) {
+            header('Content-Type: text/plain');
+            echo $error['message'];
+            return;
+        }
+
         echo '<!doctype html>'
             . '<html lang="en">'
             . '<head>'
@@ -286,7 +293,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2023.11;
+        return 2023.12;
     }
 
     private static function cleanErrorMessage(string $message): string

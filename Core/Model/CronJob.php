@@ -62,7 +62,7 @@ class CronJob extends ModelClass
     /** @var bool */
     public $ready;
 
-    /** @var int */
+    /** @var float */
     private $start;
 
     public function clear()
@@ -164,8 +164,14 @@ class CronJob extends ModelClass
         $this->done = false;
         $this->failed = false;
         $this->duration = 0.0;
-        $this->date = Tools::dateTime($this->start);
-        $this->save();
+        $this->date = Tools::dateTime();
+        if (false === $this->save()) {
+            Tools::log('cron')->error('Error saving cronjob', [
+                'jobname' => $this->jobname,
+                'pluginname' => $this->pluginname,
+            ]);
+            return false;
+        }
 
         try {
             $function();
