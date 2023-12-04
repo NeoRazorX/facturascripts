@@ -93,6 +93,17 @@ final class Kernel
         return round($diff, $decimals);
     }
 
+    public static function getTimer(string $name): float
+    {
+        if (!array_key_exists($name, self::$timers)) {
+            return 0.0;
+        }
+
+        $start = self::$timers[$name]['start'];
+        $stop = self::$timers[$name]['stop'] ?? microtime(true);
+        return round($stop - $start, 5);
+    }
+
     public static function getTimers(): array
     {
         return self::$timers;
@@ -282,18 +293,20 @@ final class Kernel
         self::$timers[$name] = ['start' => microtime(true)];
     }
 
-    public static function stopTimer(string $name): void
+    public static function stopTimer(string $name): float
     {
         if (!array_key_exists($name, self::$timers)) {
             self::startTimer($name);
         }
 
         self::$timers[$name]['stop'] = microtime(true);
+
+        return round(self::$timers[$name]['stop'] - self::$timers[$name]['start'], 5);
     }
 
     public static function version(): float
     {
-        return 2023.12;
+        return 2023.13;
     }
 
     private static function cleanErrorMessage(string $message): string
