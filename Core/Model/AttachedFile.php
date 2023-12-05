@@ -22,6 +22,8 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 use finfo;
 
@@ -31,9 +33,9 @@ use finfo;
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class AttachedFile extends Base\ModelOnChangeClass
+class AttachedFile extends ModelOnChangeClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     const MAX_FILENAME_LEN = 100;
     const STORAGE_USED_KEY = 'storage-used';
@@ -126,6 +128,26 @@ class AttachedFile extends Base\ModelOnChangeClass
             $folderSize = Tools::folderSize(Tools::folder('MyFiles'));
             return max($size, $folderSize);
         });
+    }
+
+    public function isArchive(): bool
+    {
+        return in_array($this->mimetype, ['application/zip', 'application/x-rar-compressed']);
+    }
+
+    public function isImage(): bool
+    {
+        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif']);
+    }
+
+    public function isPdf(): bool
+    {
+        return $this->mimetype === 'application/pdf';
+    }
+
+    public function isVideo(): bool
+    {
+        return in_array($this->mimetype, ['video/mp4', 'video/ogg', 'video/webm']);
     }
 
     public static function primaryColumn(): string
