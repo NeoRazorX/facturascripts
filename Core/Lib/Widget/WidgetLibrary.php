@@ -167,13 +167,7 @@ class WidgetLibrary extends BaseWidget
 
     protected function renderFileList(): string
     {
-        $html = '<div id="list_' . $this->id . '" class="form-row">'
-            . '<div class="col-12">'
-            . '<a href="#" class="btn btn-block btn-outline-secondary mb-2" onclick="widgetLibrarySelect(\''
-            . $this->id . '\', \'\');">'
-            . '<i class="fas fa-times mr-1"></i>' . Tools::lang()->trans('none')
-            . '</a>'
-            . '</div>';
+        $html = '<div id="list_' . $this->id . '" class="form-row">';
 
         foreach ($this->files() as $file) {
             $cssCard = $file->idfile == $this->value ? ' bg-primary text-white' : '';
@@ -229,7 +223,7 @@ class WidgetLibrary extends BaseWidget
             . '</div>'
             . '<div class="modal-body bg-light">'
             . '<div class="form-row">'
-            . '<div class="col">'
+            . '<div class="col-6">'
             . '<div class="input-group mb-2">'
             . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
             . Tools::lang()->trans('search') . '" onkeydown="widgetLibrarySearchKp(\'' . $this->id . '\', event);">'
@@ -240,18 +234,24 @@ class WidgetLibrary extends BaseWidget
             . '</div>'
             . '</div>'
             . '</div>'
-            . '<div class="col">'
+            . '<div class="col-6">'
             . '<select class="form-control mb-2" id="modal_' . $this->id . '_s" onchange="widgetLibrarySearch(\'' . $this->id . '\');">'
             . '<option value="date-asc">' . Tools::lang()->trans('sort-by-date-asc') . '</option>'
             . '<option value="date-desc" selected>' . Tools::lang()->trans('sort-by-date-desc') . '</option>'
             . '</select>'
             . '</div>'
+            . '<div class="col-6">'
+            . '<a href="#" class="btn btn-block btn-outline-secondary mb-2" onclick="widgetLibrarySelect(\''
+            . $this->id . '\', \'\');">'
+            . '<i class="fas fa-times mr-1"></i>' . Tools::lang()->trans('none')
+            . '</a>'
             . '</div>'
-            . $this->renderFileList()
-            . '</div>'
-            . '<div class="modal-footer">'
+            . '<div class="col-6">'
             . '<input type="file" class="form-control-file" accept="' . $this->accept . '" onchange="widgetLibraryUpload(\''
             . $this->id . '\', this.files[0]);">'
+            . '</div>'
+            . '</div>'
+            . $this->renderFileList()
             . '</div>'
             . '</div>'
             . '</div>'

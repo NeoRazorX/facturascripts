@@ -20,13 +20,7 @@ var widgetLibraryNoneStr = "";
 var widgetLibrarySelectStr = "";
 
 function widgetLibraryDraw(id, results) {
-    let html = '<div id="list_' + id + '" class="form-row">'
-        + '<div class="col-12">'
-        + '<a href="#" class="btn btn-block btn-outline-secondary mb-2" onclick="widgetLibrarySelect(\''
-        + id + '\', \'\');">'
-        + '<i class="fas fa-times mr-1"></i> ' + widgetLibraryNoneStr
-        + '</a>'
-        + '</div>';
+    let html = '';
 
     results.forEach(function (element) {
         let cssCard = '';
