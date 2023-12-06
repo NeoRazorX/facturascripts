@@ -36,6 +36,7 @@ class VisualItem
 
     /**
      * @var Translator
+     * @deprecated since version 2023.1
      */
     protected static $i18n;
 

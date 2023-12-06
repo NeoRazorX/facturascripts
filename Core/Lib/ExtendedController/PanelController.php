@@ -276,6 +276,18 @@ abstract class PanelController extends BaseController
             case 'save-ok':
                 Tools::log()->notice('record-updated-correctly');
                 break;
+
+            case 'widget-library-search':
+                $this->setTemplate(false);
+                $results = $this->widgetLibrarySearchAction();
+                $this->response->setContent(json_encode($results));
+                break;
+
+            case 'widget-library-upload':
+                $this->setTemplate(false);
+                $results = $this->widgetLibraryUploadAction();
+                $this->response->setContent(json_encode($results));
+                break;
         }
     }
 
@@ -300,7 +312,9 @@ abstract class PanelController extends BaseController
                 if ($this->deleteAction() && $this->active === $this->getMainViewName()) {
                     // al eliminar el registro principal, redirigimos al listado para mostrar ahí el mensaje de éxito
                     $listUrl = $this->views[$this->active]->model->url('list');
-                    $redirect = strpos($listUrl, '?') === false ? $listUrl . '?action=delete-ok' : $listUrl . '&action=delete-ok';
+                    $redirect = strpos($listUrl, '?') === false ?
+                        $listUrl . '?action=delete-ok' :
+                        $listUrl . '&action=delete-ok';
                     $this->redirect($redirect);
                 }
                 break;
@@ -363,5 +377,81 @@ abstract class PanelController extends BaseController
         $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
         Tools::log()->notice('record-updated-correctly');
         return true;
+    }
+
+    protected function widgetLibrarySearchAction(): array
+    {
+        // localizamos la pestaña y el nombre de la columna
+        $activeTab = $this->request->request->get('active_tab', '');
+        $colName = $this->request->request->get('col_name', '');
+
+        // si está vacío, no hacemos nada
+        if (empty($activeTab) || empty($colName)) {
+            return [];
+        }
+
+        // buscamos la columna
+        $column = $this->tab($activeTab)->columnForField($colName);
+        if (empty($column) || $column->widget->getType() !== 'library') {
+            return [];
+        }
+
+        $files = $column->widget->files(
+            $this->request->request->get('query', ''),
+            $this->request->request->get('sort', '')
+        );
+
+        $results = [];
+        foreach ($files as $file) {
+            $results[] = [
+                'id_file' => $file->idfile,
+                'filename' => $file->filename,
+                'date' => $file->date,
+                'hour' => $file->hour,
+                'size' => Tools::bytes($file->size),
+                'mime_type' => $file->mimetype,
+                'is_image' => $file->isImage(),
+                'url' => $file->url('download-permanent'),
+                'selected_value' => (int)$column->widget->plainText($this->tab($activeTab)->model),
+            ];
+        }
+        return $results;
+    }
+
+    protected function widgetLibraryUploadAction(): array
+    {
+        // localizamos la pestaña y el nombre de la columna
+        $activeTab = $this->request->request->get('active_tab', '');
+        $colName = $this->request->request->get('col_name', '');
+
+        // si está vacío, no hacemos nada
+        if (empty($activeTab) || empty($colName)) {
+            return [];
+        }
+
+        // buscamos la columna
+        $column = $this->tab($activeTab)->columnForField($colName);
+        if (empty($column) || $column->widget->getType() !== 'library') {
+            return [];
+        }
+
+        $file = $column->widget->uploadFile($this->request->files->get('file'));
+        if (empty($file)) {
+            return [];
+        }
+
+        return [
+            [
+                'id_file' => $file->idfile,
+                'filename' => $file->filename,
+                'date' => $file->date,
+                'hour' => $file->hour,
+                'size' => Tools::bytes($file->size),
+                'mime_type' => $file->mimetype,
+                'is_image' => $file->isImage(),
+                'url' => $file->url('download-permanent'),
+                'selected_value' => (int)$column->widget->plainText($this->tab($activeTab)->model),
+            ]
+        ];
     }
 }
