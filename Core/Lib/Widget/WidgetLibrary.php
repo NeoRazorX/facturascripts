@@ -114,11 +114,11 @@ class WidgetLibrary extends BaseWidget
 
         switch ($sort) {
             default:
-                $orderBy = ['date' => 'DESC'];
+                $orderBy = ['date' => 'DESC', 'hour' => 'DESC'];
                 break;
 
             case 'date-asc':
-                $orderBy = ['date' => 'ASC'];
+                $orderBy = ['date' => 'ASC', 'hour' => 'ASC'];
                 break;
         }
 
