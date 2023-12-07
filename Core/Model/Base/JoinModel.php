@@ -443,6 +443,10 @@ abstract class JoinModel
         $this->masterModel = $model;
     }
 
+    /**
+     * @return ToolBox
+     * @deprecated since version 2023.1
+     */
     protected function toolBox(): ToolBox
     {
         return new ToolBox();
