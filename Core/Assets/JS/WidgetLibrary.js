@@ -16,7 +16,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var widgetLibraryNoneStr = "";
 var widgetLibrarySelectStr = "";
 
 function widgetLibraryDraw(id, results) {
@@ -25,7 +24,7 @@ function widgetLibraryDraw(id, results) {
     results.forEach(function (element) {
         let cssCard = '';
         if (element.id_file === element.selected_value) {
-            cssCard = ' bg-primary text-white';
+            cssCard = ' border-primary';
         }
 
         html += '<div class="col-6">'
