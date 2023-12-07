@@ -234,8 +234,8 @@ class WidgetVariante extends WidgetText
 
             $items[] = '<tr class="clickableRow" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'' . $match . '\');">'
                 . '<td><b>' . $item->referencia . '</b> ' . $item->description() . '</td>'
-                . '<td class="text-right">' . Tools::money($item->precio) . '</td>'
-                . '<td class="text-right">' . Tools::number($item->stockfis, 0) . '</td>'
+                . '<td class="text-right text-nowrap">' . Tools::money($item->precio) . '</td>'
+                . '<td class="text-right text-nowrap">' . Tools::number($item->stockfis, 0) . '</td>'
                 . '</tr>';
         }
 

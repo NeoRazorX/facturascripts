@@ -22,8 +22,8 @@ function widgetVarianteDraw(id, results) {
     results.forEach(function (element) {
         html += '<tr class="clickableRow" onclick="widgetVarianteSelect(\'' + id + '\', \'' + element.match + '\');">'
             + '<td><b>' + element.referencia + '</b> ' + element.descripcion + '</td>'
-            + '<td class="text-right">' + element.precio_str + '</td>'
-            + '<td class="text-right">' + element.stock_str + '</td>'
+            + '<td class="text-right text-nowrap">' + element.precio_str + '</td>'
+            + '<td class="text-right text-nowrap">' + element.stock_str + '</td>'
             + '</tr>';
     });
 
