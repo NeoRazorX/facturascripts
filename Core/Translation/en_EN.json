@@ -1343,6 +1343,8 @@
     "sort": "Order",
     "sort-by-date-asc": "Sort by date asc.",
     "sort-by-date-desc": "Sort by date desc.",
+    "sort-by-ref-asc": "Ordenar por referencia asc.",
+    "sort-by-ref-desc": "Ordenar por referencia desc.",
     "source": "Fuente",
     "source-code": "Source code",
     "special-account": "Special account",
