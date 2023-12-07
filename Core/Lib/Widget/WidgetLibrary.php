@@ -59,7 +59,7 @@ class WidgetLibrary extends BaseWidget
             . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
             . '<a href="#" class="btn btn-block btn-outline-secondary" data-toggle="modal" data-target="#modal_' . $this->id . '">'
-            . '<i class="' . $icon . ' fa-fw"></i> ' . ($file->filename ? $file->shortFileName() : $label)
+            . '<i class="' . $icon . ' fa-fw"></i> ' . ($file->filename ? $file->shortFileName() : Tools::lang()->trans('select'))
             . '</a>'
             . $descriptionHtml
             . '</div>'
@@ -217,6 +217,19 @@ class WidgetLibrary extends BaseWidget
         return $html . '</div>';
     }
 
+    protected function renderQueryFilter(): string
+    {
+        return '<div class="input-group mb-2">'
+            . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
+            . Tools::lang()->trans('search') . '" onkeydown="widgetLibrarySearchKp(\'' . $this->id . '\', event);">'
+            . '<div class="input-group-append">'
+            . '<button type="button" class="btn btn-primary" onclick="widgetLibrarySearch(\'' . $this->id . '\');">'
+            . '<i class="fas fa-search"></i>'
+            . '</button>'
+            . '</div>'
+            . '</div>';
+    }
+
     protected function renderModal(string $icon, string $label): string
     {
         return '<div class="modal fade" id="modal_' . $this->id . '" tabindex="-1" aria-labelledby="modal_'
@@ -241,23 +254,8 @@ class WidgetLibrary extends BaseWidget
             . '">' . Tools::lang()->trans('add-file') . '</label>'
             . '</div>'
             . '</div>'
-            . '<div class="col-6">'
-            . '<div class="input-group mb-2">'
-            . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
-            . Tools::lang()->trans('search') . '" onkeydown="widgetLibrarySearchKp(\'' . $this->id . '\', event);">'
-            . '<div class="input-group-append">'
-            . '<button type="button" class="btn btn-primary" onclick="widgetLibrarySearch(\'' . $this->id . '\');">'
-            . '<i class="fas fa-search"></i>'
-            . '</button>'
-            . '</div>'
-            . '</div>'
-            . '</div>'
-            . '<div class="col-6">'
-            . '<select class="form-control mb-2" id="modal_' . $this->id . '_s" onchange="widgetLibrarySearch(\'' . $this->id . '\');">'
-            . '<option value="date-asc">' . Tools::lang()->trans('sort-by-date-asc') . '</option>'
-            . '<option value="date-desc" selected>' . Tools::lang()->trans('sort-by-date-desc') . '</option>'
-            . '</select>'
-            . '</div>'
+            . '<div class="col-6">' . $this->renderQueryFilter() . '</div>'
+            . '<div class="col-6">' . $this->renderSortFilter() . '</div>'
             . '</div>'
             . $this->renderFileList()
             . '</div>'
@@ -270,5 +268,13 @@ class WidgetLibrary extends BaseWidget
             . '</div>'
             . '</div>'
             . '</div>';
+    }
+
+    protected function renderSortFilter(): string
+    {
+        return '<select class="form-control mb-2" id="modal_' . $this->id . '_s" onchange="widgetLibrarySearch(\'' . $this->id . '\');">'
+            . '<option value="date-asc">' . Tools::lang()->trans('sort-by-date-asc') . '</option>'
+            . '<option value="date-desc" selected>' . Tools::lang()->trans('sort-by-date-desc') . '</option>'
+            . '</select>';
     }
 }
