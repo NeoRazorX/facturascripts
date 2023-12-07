@@ -172,6 +172,14 @@ class AttachedFile extends ModelOnChangeClass
         return true;
     }
 
+    public function shortFileName(int $length = 20): string
+    {
+        $parts = explode('.', $this->filename);
+        $extension = count($parts) > 1 ? end($parts) : '';
+        $name = substr($this->filename, 0, $length - strlen('...' . $extension));
+        return $name . '...' . $extension;
+    }
+
     public static function tableName(): string
     {
         return 'attached_files';

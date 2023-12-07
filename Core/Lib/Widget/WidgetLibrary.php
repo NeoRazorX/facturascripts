@@ -59,7 +59,7 @@ class WidgetLibrary extends BaseWidget
             . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
             . '<a href="#" class="btn btn-block btn-outline-secondary" data-toggle="modal" data-target="#modal_' . $this->id . '">'
-            . '<i class="' . $icon . ' fa-fw"></i> ' . ($file->filename ?? $label)
+            . '<i class="' . $icon . ' fa-fw"></i> ' . ($file->filename ? $file->shortFileName() : $label)
             . '</a>'
             . $descriptionHtml
             . '</div>'
@@ -77,6 +77,17 @@ class WidgetLibrary extends BaseWidget
     {
         $value = $request->request->get($this->fieldname, '');
         $model->{$this->fieldname} = ('' === $value) ? null : $value;
+    }
+
+    public function tableCell($model, $display = 'left')
+    {
+        $this->setValue($model);
+        $class = $this->combineClasses($this->tableCellClass('text-' . $display), $this->class);
+
+        $file = new AttachedFile();
+        $file->loadFromCode($this->value);
+
+        return '<td class="' . $class . '">' . $this->onclickHtml($file->shortFileName()) . '</td>';
     }
 
     protected function assets()
