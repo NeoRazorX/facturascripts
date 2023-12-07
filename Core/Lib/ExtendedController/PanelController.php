@@ -288,6 +288,12 @@ abstract class PanelController extends BaseController
                 $results = $this->widgetLibraryUploadAction();
                 $this->response->setContent(json_encode($results));
                 break;
+
+            case 'widget-variante-search':
+                $this->setTemplate(false);
+                $results = $this->widgetVarianteSearchAction();
+                $this->response->setContent(json_encode($results));
+                break;
         }
     }
 
@@ -453,5 +459,46 @@ abstract class PanelController extends BaseController
                 'selected_value' => (int)$column->widget->plainText($this->tab($activeTab)->model),
             ]
         ];
+    }
+
+    protected function widgetVarianteSearchAction(): array
+    {
+        // localizamos la pestaña y el nombre de la columna
+        $activeTab = $this->request->request->get('active_tab', '');
+        $colName = $this->request->request->get('col_name', '');
+
+        // si está vacío, no hacemos nada
+        if (empty($activeTab) || empty($colName)) {
+            return [];
+        }
+
+        // buscamos la columna
+        $column = $this->tab($activeTab)->columnForField($colName);
+        if (empty($column) || $column->widget->getType() !== 'variante') {
+            return [];
+        }
+
+        $variantes = $column->widget->variantes(
+            $this->request->request->get('query', ''),
+            $this->request->request->get('codfabricante', ''),
+            $this->request->request->get('codfamilia', ''),
+            $this->request->request->get('sort', '')
+        );
+
+        $results = [];
+        foreach ($variantes as $variante) {
+            $results[] = [
+                'id_variante' => $variante->idvariante,
+                'id_producto' => $variante->idproducto,
+                'referencia' => $variante->referencia,
+                'descripcion' => $variante->description(),
+                'precio' => $variante->precio,
+                'precio_str' => Tools::money($variante->precio),
+                'stock' => $variante->stockfis,
+                'stock_str' => Tools::number($variante->stockfis, 0),
+                'match' => $variante->{$column->widget->match},
+            ];
+        }
+        return $results;
     }
 }
