@@ -48,7 +48,7 @@
         <column name="blocked" display="none" order="180">
             <widget type="checkbox" fieldname="debaja" />
         </column>
-        <column name="settlement-product" order="190">
+        <column name="settlement-product" display="none" order="190">
             <widget type="variante" fieldname="idproducto" match="idproducto"/>
         </column>
         <column name="creation-date" display="none" order="200">
