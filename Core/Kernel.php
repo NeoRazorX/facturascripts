@@ -306,7 +306,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2023.13;
+        return 2023.14;
     }
 
     private static function cleanErrorMessage(string $message): string

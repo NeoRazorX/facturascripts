@@ -55,6 +55,17 @@ class WidgetLibrary extends BaseWidget
         $file = new AttachedFile();
         $file->loadFromCode($this->value);
 
+        if ($this->readonly()) {
+            return '<div class="form-group mb-2">'
+                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+                . $labelHtml
+                . '<a href="' . $file->url() . '" class="btn btn-block btn-outline-secondary">'
+                . '<i class="' . $icon . ' fa-fw"></i> ' . ($file->filename ? $file->shortFileName() : Tools::lang()->trans('select'))
+                . '</a>'
+                . $descriptionHtml
+                . '</div>';
+        }
+
         return '<div class="form-group mb-2">'
             . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
@@ -259,15 +270,21 @@ class WidgetLibrary extends BaseWidget
             . '</div>'
             . $this->renderFileList()
             . '</div>'
-            . '<div class="modal-footer p-2">'
-            . '<a href="#" class="btn btn-block btn-secondary" onclick="widgetLibrarySelect(\''
-            . $this->id . '\', \'\');">'
-            . '<i class="fas fa-times mr-1"></i>' . Tools::lang()->trans('none')
-            . '</a>'
-            . '</div>'
+            . '<div class="modal-footer p-2">' . $this->renderSelectNoneBtn() . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
+    }
+
+    protected function renderSelectNoneBtn(): string
+    {
+        if ($this->required) {
+            return '';
+        }
+
+        return '<a href="#" class="btn btn-block btn-secondary" onclick="widgetLibrarySelect(\'' . $this->id . '\', \'\');">'
+            . '<i class="fas fa-times mr-1"></i>' . Tools::lang()->trans('none')
+            . '</a>';
     }
 
     protected function renderSortFilter(): string

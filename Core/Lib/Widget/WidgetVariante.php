@@ -61,6 +61,17 @@ class WidgetVariante extends WidgetText
             new DataBaseWhere($this->match, $this->value)
         ]);
 
+        if ($this->readonly()) {
+            return '<div class="form-group mb-2">'
+                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+                . $labelHtml
+                . '<a href="' . $variante->url() . '" class="btn btn-block btn-outline-secondary">'
+                . '<i class="' . $icon . ' fa-fw"></i> ' . ($variante->referencia ?? Tools::lang()->trans('select'))
+                . '</a>'
+                . $descriptionHtml
+                . '</div>';
+        }
+
         return '<div class="form-group mb-2">'
             . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
@@ -80,6 +91,20 @@ class WidgetVariante extends WidgetText
     {
         $value = $request->request->get($this->fieldname, '');
         $model->{$this->fieldname} = ('' === $value) ? null : $value;
+    }
+
+    public function tableCell($model, $display = 'left')
+    {
+        $this->setValue($model);
+        $class = $this->combineClasses($this->tableCellClass('text-' . $display), $this->class);
+
+        // hay que cargar el producto para mostrar su referencia
+        $variante = new Variante();
+        $variante->loadFromCode('', [
+            new DataBaseWhere($this->match, $this->value)
+        ]);
+
+        return '<td class="' . $class . '">' . $this->onclickHtml($variante->referencia) . '</td>';
     }
 
     /**
@@ -195,11 +220,7 @@ class WidgetVariante extends WidgetText
             . '</div>'
             . '</div>'
             . $this->renderVariantList()
-            . '<div class="modal-footer p-2">'
-            . '<a href="#" class="btn btn-block btn-secondary" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'\');">'
-            . '<i class="fas fa-times mr-1"></i>' . Tools::lang()->trans('none')
-            . '</a>'
-            . '</div>'
+            . '<div class="modal-footer p-2">' . $this->renderSelectNoneBtn() . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
@@ -216,6 +237,17 @@ class WidgetVariante extends WidgetText
             . '</button>'
             . '</div>'
             . '</div>';
+    }
+
+    protected function renderSelectNoneBtn(): string
+    {
+        if ($this->required) {
+            return '';
+        }
+
+        return '<a href="#" class="btn btn-block btn-secondary" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'\');">'
+            . '<i class="fas fa-times mr-1"></i>' . Tools::lang()->trans('none')
+            . '</a>';
     }
 
     protected function renderSortFilter(): string
