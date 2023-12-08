@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseTools;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Tools;
 
@@ -220,7 +221,9 @@ abstract class ModelCore
 
             // We check if it is a varchar (with established length) or another type of data
             $field = $fields[$key];
-            $type = strpos($field['type'], '(') === false ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
+            $type = strpos($field['type'], '(') === false ?
+                $field['type'] :
+                substr($field['type'], 0, strpos($field['type'], '('));
 
             switch ($type) {
                 case 'tinyint':
@@ -263,6 +266,11 @@ abstract class ModelCore
     public function primaryColumnValue()
     {
         return $this->{$this->primaryColumn()};
+    }
+
+    public static function table(): DbQuery
+    {
+        return DbQuery::table(static::tableName());
     }
 
     /**

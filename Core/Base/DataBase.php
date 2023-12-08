@@ -98,6 +98,11 @@ final class DataBase
         return self::$engine->beginTransaction(self::$link);
     }
 
+    public function castInteger(string $col): string
+    {
+        return self::$engine->castInteger(self::$link, $col);
+    }
+
     /**
      * Disconnect from the database.
      *
