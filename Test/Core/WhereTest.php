@@ -210,7 +210,7 @@ final class WhereTest extends TestCase
         $item2 = Where::xlike('test3', 'value3 value4');
         $sql2 = '(LOWER(' . $this->db()->escapeColumn('test3')
             . ") LIKE LOWER('%" . $this->db()->escapeString('value3') . "%')"
-            . ' OR LOWER(' . $this->db()->escapeColumn('test3')
+            . ' AND LOWER(' . $this->db()->escapeColumn('test3')
             . ") LIKE LOWER('%" . $this->db()->escapeString('value4') . "%'))";
         $this->assertEquals($sql2, $item2->sql());
     }
@@ -276,6 +276,9 @@ final class WhereTest extends TestCase
         $whereEq = [new DataBaseWhere('name', 'test')];
         $this->assertEquals(DataBaseWhere::getSQLWhere($whereEq), Where::multiSqlLegacy($whereEq));
 
+        $whereEqMulti = [new DataBaseWhere('name|nick', 'test2')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereEqMulti), Where::multiSqlLegacy($whereEqMulti));
+
         $whereNotEq = [new DataBaseWhere('name', 'test', '<>')];
         $this->assertEquals(DataBaseWhere::getSQLWhere($whereNotEq), Where::multiSqlLegacy($whereNotEq));
 
@@ -284,6 +287,9 @@ final class WhereTest extends TestCase
 
         $whereNull = [new DataBaseWhere('name', null, 'IS')];
         $this->assertEquals(DataBaseWhere::getSQLWhere($whereNull), Where::multiSqlLegacy($whereNull));
+
+        $whereNullMulti = [new DataBaseWhere('name|nick', null, 'IS')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereNullMulti), Where::multiSqlLegacy($whereNullMulti));
 
         $whereEqNull = [new DataBaseWhere('name', null)];
         $this->assertEquals(DataBaseWhere::getSQLWhere($whereEqNull), Where::multiSqlLegacy($whereEqNull));
@@ -298,8 +304,17 @@ final class WhereTest extends TestCase
         $whereLike = [new DataBaseWhere('name', 'test', 'LIKE')];
         $this->assertEquals(DataBaseWhere::getSQLWhere($whereLike), Where::multiSqlLegacy($whereLike));
 
+        $whereLikeMulti = [new DataBaseWhere('name|nick', 'test', 'LIKE')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereLikeMulti), Where::multiSqlLegacy($whereLikeMulti));
+
         $whereXLike = [new DataBaseWhere('name', 'test', 'XLIKE')];
         $this->assertEquals(DataBaseWhere::getSQLWhere($whereXLike), Where::multiSqlLegacy($whereXLike));
+
+        $whereXLike2 = [new DataBaseWhere('name', 'mi test 2', 'XLIKE')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereXLike2), Where::multiSqlLegacy($whereXLike2));
+
+        $whereXLikeMulti = [new DataBaseWhere('name|nick', 'test', 'XLIKE')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereXLikeMulti), Where::multiSqlLegacy($whereXLikeMulti));
 
         $whereAndOr = [
             new DataBaseWhere('name', 'test'),
@@ -307,11 +322,23 @@ final class WhereTest extends TestCase
         ];
         $this->assertEquals(DataBaseWhere::getSQLWhere($whereAndOr), Where::multiSqlLegacy($whereAndOr));
 
+        $whereAndMultiOr = [
+            new DataBaseWhere('name|nick', 'test'),
+            new DataBaseWhere('nick', null, 'IS', 'OR')
+        ];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereAndMultiOr), Where::multiSqlLegacy($whereAndMultiOr));
+
         $whereOrAnd = [
             new DataBaseWhere('nick', null, 'IS', 'OR'),
             new DataBaseWhere('name', 'test'),
         ];
         $this->assertEquals(DataBaseWhere::getSQLWhere($whereOrAnd), Where::multiSqlLegacy($whereOrAnd));
+
+        $whereOrMultiAnd = [
+            new DataBaseWhere('name|nick', null, 'IS', 'OR'),
+            new DataBaseWhere('name', 'test'),
+        ];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereOrMultiAnd), Where::multiSqlLegacy($whereOrMultiAnd));
 
         $whereAndOr2 = [
             new DataBaseWhere('name', 'test'),

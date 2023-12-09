@@ -469,7 +469,7 @@ final class Where
         $sql = '';
         foreach ($words as $word) {
             if (!empty($sql)) {
-                $sql .= ' OR ';
+                $sql .= ' AND ';
             }
             $sql .= self::sqlOperatorLike($field, trim($word), 'LIKE');
         }
