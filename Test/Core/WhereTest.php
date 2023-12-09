@@ -17,9 +17,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Core;
+namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Where;
 use PHPUnit\Framework\TestCase;
 
@@ -128,10 +129,10 @@ final class WhereTest extends TestCase
 
         $sql = $this->db()->escapeColumn('test')
             . ' IN (' . $this->db()->var2str('value1')
-            . ', ' . $this->db()->var2str('value2') . ')';
+            . ',' . $this->db()->var2str('value2') . ')';
         $this->assertEquals($sql, $item->sql());
 
-        // pasamos los valore como string
+        // pasamos los valores como string
         $item2 = Where::in('test2', 'value3,value4, value5');
         $this->assertEquals('test2', $item2->fields);
         $this->assertEquals('value3,value4, value5', $item2->value);
@@ -140,8 +141,8 @@ final class WhereTest extends TestCase
 
         $sql2 = $this->db()->escapeColumn('test2')
             . ' IN (' . $this->db()->var2str('value3')
-            . ', ' . $this->db()->var2str('value4')
-            . ', ' . $this->db()->var2str('value5') . ')';
+            . ',' . $this->db()->var2str('value4')
+            . ',' . $this->db()->var2str('value5') . ')';
         $this->assertEquals($sql2, $item2->sql());
 
         // pasamos una consulta select
@@ -192,6 +193,26 @@ final class WhereTest extends TestCase
         $sql5 = 'LOWER(' . $this->db()->escapeColumn('test5')
             . ") LIKE LOWER('" . $this->db()->escapeString('value5%value5') . "')";
         $this->assertEquals($sql5, $item5->sql());
+    }
+
+    public function testWhereXLike(): void
+    {
+        $item = Where::xlike('test2', 'value2');
+        $this->assertEquals('test2', $item->fields);
+        $this->assertEquals('value2', $item->value);
+        $this->assertEquals('XLIKE', $item->operator);
+        $this->assertEquals('AND', $item->operation);
+
+        $sql = '(LOWER(' . $this->db()->escapeColumn('test2')
+            . ") LIKE LOWER('%" . $this->db()->escapeString('value2') . "%'))";
+        $this->assertEquals($sql, $item->sql());
+
+        $item2 = Where::xlike('test3', 'value3 value4');
+        $sql2 = '(LOWER(' . $this->db()->escapeColumn('test3')
+            . ") LIKE LOWER('%" . $this->db()->escapeString('value3') . "%')"
+            . ' OR LOWER(' . $this->db()->escapeColumn('test3')
+            . ") LIKE LOWER('%" . $this->db()->escapeString('value4') . "%'))";
+        $this->assertEquals($sql2, $item2->sql());
     }
 
     public function testMultiAnd(): void
@@ -248,6 +269,104 @@ final class WhereTest extends TestCase
             . ' OR ' . $this->db()->escapeColumn('nombre') . ' = ' . $this->db()->var2str('test3') . ')'
             . ' AND ' . $this->db()->escapeColumn('total') . ' >= ' . $this->db()->var2str(100);
         $this->assertEquals($sql, Where::multiSql($where));
+    }
+
+    public function testLegacyCompatibility(): void
+    {
+        $whereEq = [new DataBaseWhere('name', 'test')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereEq), Where::multiSqlLegacy($whereEq));
+
+        $whereNotEq = [new DataBaseWhere('name', 'test', '<>')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereNotEq), Where::multiSqlLegacy($whereNotEq));
+
+        $whereNotEq2 = [new DataBaseWhere('name', 'test', '!=')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereNotEq2), Where::multiSqlLegacy($whereNotEq2));
+
+        $whereNull = [new DataBaseWhere('name', null, 'IS')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereNull), Where::multiSqlLegacy($whereNull));
+
+        $whereEqNull = [new DataBaseWhere('name', null)];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereEqNull), Where::multiSqlLegacy($whereEqNull));
+
+        $whereIn = [new DataBaseWhere('codcuentaesp', 'IVAREX,IVAREP,IVARRE', 'IN')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereIn), Where::multiSqlLegacy($whereIn));
+
+        $sql = "select codcliente from contactos where codpais = 'ESP'";
+        $whereInSql = [new DataBaseWhere('codcliente', $sql, 'IN')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereInSql), Where::multiSqlLegacy($whereInSql));
+
+        $whereLike = [new DataBaseWhere('name', 'test', 'LIKE')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereLike), Where::multiSqlLegacy($whereLike));
+
+        $whereXLike = [new DataBaseWhere('name', 'test', 'XLIKE')];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereXLike), Where::multiSqlLegacy($whereXLike));
+
+        $whereAndOr = [
+            new DataBaseWhere('name', 'test'),
+            new DataBaseWhere('nick', null, 'IS', 'OR')
+        ];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereAndOr), Where::multiSqlLegacy($whereAndOr));
+
+        $whereOrAnd = [
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
+            new DataBaseWhere('name', 'test'),
+        ];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereOrAnd), Where::multiSqlLegacy($whereOrAnd));
+
+        $whereAndOr2 = [
+            new DataBaseWhere('name', 'test'),
+            new DataBaseWhere('nick', 'user1', '=', 'OR'),
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
+        ];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereAndOr2), Where::multiSqlLegacy($whereAndOr2));
+
+        $whereAnd2Or = [
+            new DataBaseWhere('name', 'test'),
+            new DataBaseWhere('nick', 'user1'),
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
+        ];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereAnd2Or), Where::multiSqlLegacy($whereAnd2Or));
+
+        $whereAndOrAnd = [
+            new DataBaseWhere('name', 'test'),
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
+            new DataBaseWhere('nick', 'user1'),
+        ];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereAndOrAnd), Where::multiSqlLegacy($whereAndOrAnd));
+
+        $whereOrAndOr = [
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
+            new DataBaseWhere('name', 'test'),
+            new DataBaseWhere('nick', 'user1', '=', 'OR'),
+        ];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereOrAndOr), Where::multiSqlLegacy($whereOrAndOr));
+
+        $whereAndOr2And = [
+            new DataBaseWhere('name', 'test'),
+            new DataBaseWhere('nick', 'user1', '=', 'OR'),
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
+            new DataBaseWhere('public', true),
+        ];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereAndOr2And), Where::multiSqlLegacy($whereAndOr2And));
+
+        $whereOrAnd2Or = [
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
+            new DataBaseWhere('name', 'test'),
+            new DataBaseWhere('nick', 'user1'),
+            new DataBaseWhere('public', true, '=', 'OR'),
+        ];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereOrAnd2Or), Where::multiSqlLegacy($whereOrAnd2Or));
+
+        $whereAnd2Or3And2 = [
+            new DataBaseWhere('name', 'test'),
+            new DataBaseWhere('nick', 'user1'),
+            new DataBaseWhere('public', true, '=', 'OR'),
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
+            new DataBaseWhere('name', 'test2', '=', 'OR'),
+            new DataBaseWhere('nick', 'user2'),
+            new DataBaseWhere('public', false),
+        ];
+        $this->assertEquals(DataBaseWhere::getSQLWhere($whereAnd2Or3And2), Where::multiSqlLegacy($whereAnd2Or3And2));
     }
 
     private function db(): DataBase

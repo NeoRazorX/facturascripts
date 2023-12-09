@@ -21,6 +21,7 @@ namespace FacturaScripts\Core;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -134,6 +135,56 @@ final class Where
         return $sql;
     }
 
+    public static function multiSqlLegacy(array $where): string
+    {
+        $sql = '';
+        $group = false;
+
+        foreach ($where as $key => $item) {
+            // si es una instancia de DataBaseWhere, lo convertimos a sql
+            if ($item instanceof DataBaseWhere) {
+                $dbWhere = new self($item->fields, $item->value, $item->operator, $item->operation);
+
+                if (!empty($sql)) {
+                    $sql .= ' ' . $item->operation . ' ';
+                }
+
+                // si el siguiente elemento es un OR, lo agrupamos
+                if (!$group && isset($where[$key + 1]) && $where[$key + 1] instanceof DataBaseWhere && $where[$key + 1]->operation === 'OR') {
+                    $sql .= '(';
+                    $group = true;
+                }
+
+                $sql .= $dbWhere->sql();
+
+                // si estamos agrupando y el siguiente elemento no es un OR, cerramos el grupo
+                if ($group && (!isset($where[$key + 1]) || !($where[$key + 1] instanceof DataBaseWhere) || $where[$key + 1]->operation !== 'OR')) {
+                    $sql .= ')';
+                    $group = false;
+                }
+                continue;
+            }
+
+            // si no es una instancia de Where, lanzamos una excepción
+            if (!($item instanceof self)) {
+                throw new Exception('Invalid where clause ' . print_r($item, true));
+            }
+
+            if (!empty($sql)) {
+                $sql .= ' ' . $item->operation . ' ';
+            }
+
+            if ($item->operator === '(') {
+                $sql .= '(' . self::multiSql($item->subWhere) . ')';
+                continue;
+            }
+
+            $sql .= $item->sql();
+        }
+
+        return empty($sql) ? '' : ' WHERE ' . $sql;
+    }
+
     public static function notBetween(string $fields, $value1, $value2): self
     {
         return new self($fields, [$value1, $value2], 'NOT BETWEEN');
@@ -229,6 +280,11 @@ final class Where
         return new self($fields, $value, 'NOT LIKE', 'OR');
     }
 
+    public static function orRegexp(string $fields, string $value): self
+    {
+        return new self($fields, $value, 'REGEXP', 'OR');
+    }
+
     public static function orSub(array $where): self
     {
         return self::sub($where, 'OR');
@@ -237,6 +293,11 @@ final class Where
     public static function orXlike(string $fields, string $value): self
     {
         return new self($fields, $value, 'XLIKE', 'OR');
+    }
+
+    public static function regexp(string $fields, string $value): self
+    {
+        return new self($fields, $value, 'REGEXP');
     }
 
     public function sql(): string
@@ -261,13 +322,14 @@ final class Where
                 case '<>':
                     $sql .= is_null($this->value) ?
                         self::sqlColumn($field) . ' IS NOT NULL' :
-                        self::sqlColumn($field) . ' != ' . self::sqlValue($this->value);
+                        self::sqlColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value);
                     break;
 
                 case '>':
                 case '<':
                 case '>=':
                 case '<=':
+                case 'REGEXP':
                     $sql .= self::sqlColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value);
                     break;
 
@@ -363,7 +425,7 @@ final class Where
                 $items[] = self::db()->var2str($val);
             }
 
-            return self::sqlColumn($field) . ' ' . $operator . ' (' . implode(', ', $items) . ')';
+            return self::sqlColumn($field) . ' ' . $operator . ' (' . implode(',', $items) . ')';
         }
 
         // si comienza por SELECT, lo tratamos como una subconsulta
@@ -377,7 +439,7 @@ final class Where
             $items[] = self::db()->var2str(trim($val));
         }
 
-        return self::sqlColumn($field) . ' ' . $operator . ' (' . implode(', ', $items) . ')';
+        return self::sqlColumn($field) . ' ' . $operator . ' (' . implode(',', $items) . ')';
     }
 
     private static function sqlOperatorLike(string $field, string $value, string $operator): string
@@ -395,10 +457,16 @@ final class Where
 
     private static function sqlOperatorXLike(string $field, string $value): string
     {
-        $sql = '(';
-
         // separamos las palabras en $value
         $words = explode(' ', $value);
+
+        // si solamente hay una palabra, la tratamos como un like
+        if (count($words) === 1) {
+            return '(' . self::sqlOperatorLike($field, $value, 'LIKE') . ')';
+        }
+
+        // si hay más de una palabra, las tratamos como un like con OR
+        $sql = '';
         foreach ($words as $word) {
             if (!empty($sql)) {
                 $sql .= ' OR ';
@@ -406,7 +474,7 @@ final class Where
             $sql .= self::sqlOperatorLike($field, trim($word), 'LIKE');
         }
 
-        return $sql . ')';
+        return '(' . $sql . ')';
     }
 
     private static function sqlValue($value): string
