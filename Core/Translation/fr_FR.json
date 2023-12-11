@@ -1339,6 +1339,7 @@
     "sketch-invoice-warning": "Cette facture est une ébauche. Officialisez-la en modifiant son état pour 'Émis'.",
     "small": "Petit",
     "smaller-than": "Plus petit que",
+    "soap-extension-not-installed": "La extensión SOAP no está activada en PHP. Contacta con tu proveedor de hosting para activarla.",
     "social-security-number": "Numéro de sécurité sociale",
     "sort": "Commande",
     "sort-by-date-asc": "Ordenar por fecha desc.",

@@ -1339,6 +1339,7 @@
     "sketch-invoice-warning": "This invoice is still a draft. Make it official by changing its status to issued.",
     "small": "Small",
     "smaller-than": "Smaller than",
+    "soap-extension-not-installed": "La extensión SOAP no está activada en PHP. Contacta con tu proveedor de hosting para activarla.",
     "social-security-number": "Social Security number",
     "sort": "Order",
     "sort-by-date-asc": "Sort by date asc.",

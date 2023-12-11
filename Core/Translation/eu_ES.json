@@ -1339,6 +1339,7 @@
     "sketch-invoice-warning": "Faktura hau zirriborro bat dat. Ofiziala egin ezazu bere egoera igortuta-ra aldatuz.",
     "small": "Txikia",
     "smaller-than": "Baino txikiagoa",
+    "soap-extension-not-installed": "La extensión SOAP no está activada en PHP. Contacta con tu proveedor de hosting para activarla.",
     "social-security-number": "Gizarte segurantza zenbakia",
     "sort": "Ordena",
     "sort-by-date-asc": "Ordenar por fecha desc.",

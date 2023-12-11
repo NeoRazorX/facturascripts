@@ -1339,6 +1339,7 @@
     "sketch-invoice-warning": "Esta factura aínda é un bosquexo. Fágaa oficial cambiado o seu estado á emitida.",
     "small": "Pequeno",
     "smaller-than": "Máis pequena que",
+    "soap-extension-not-installed": "A extensión SOAP non está activada en PHP. Contacta co teu provedor de hosting para activala.",
     "social-security-number": "Número Seguridade Social",
     "sort": "Orde",
     "sort-by-date-asc": "Ordear por data asc.",
