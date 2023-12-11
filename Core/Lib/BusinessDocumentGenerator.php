@@ -63,6 +63,10 @@ class BusinessDocumentGenerator
         $newDoc = new $newDocClass();
         $fields = array_keys($newDoc->getModelFields());
 
+        if (false === $this->pipeFalse('generateBefore', $prototype, $lines, $quantity, $properties, $newDoc)) {
+            return false;
+        }
+
         foreach (array_keys($prototype->getModelFields()) as $field) {
             // exclude properties not in new line
             if (false === in_array($field, $fields)) {
@@ -97,6 +101,8 @@ class BusinessDocumentGenerator
             if (Calculator::calculate($newDoc, $newLines, true)) {
                 // add to last doc list
                 $this->lastDocs[] = $newDoc;
+
+                $this->pipeFalse('generateTrue', $prototype, $lines, $quantity, $properties, $newDoc, $newLines);
                 return true;
             }
         }
@@ -105,6 +111,7 @@ class BusinessDocumentGenerator
             $newDoc->delete();
         }
 
+        $this->pipeFalse('generateFalse', $prototype, $lines, $quantity, $properties, $newDoc);
         return false;
     }
 
