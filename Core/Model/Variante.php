@@ -178,8 +178,46 @@ class Variante extends Base\ModelClass
 
     public function delete(): bool
     {
-        // no se puede eliminar la variante principal
-        if ($this->referencia === $this->getProducto()->referencia) {
+        $whereVar = [
+            new DataBaseWhere('idproducto', $this->idproducto),
+            new DataBaseWhere('referencia', $this->referencia)
+        ];
+
+        // comprobar si está en algún albarán de ventas
+        $lineaAV = new LineaAlbaranCliente();
+        $lineasAV = $lineaAV->all($whereVar, [], 0, 0);
+        if (!empty($lineasAV)) {
+            Tools::log()->warning('you-cant-delete-variant-in-customer-delivery-note');
+            return false;
+        }
+
+        // comprobar si está en alguna factura de ventas
+        $lineaFV = new LineaFacturaCliente();
+        $lineasFV = $lineaFV->all($whereVar, [], 0, 0);
+        if (!empty($lineasFV)) {
+            Tools::log()->warning('you-cant-delete-variant-in-customer-invoice');
+            return false;
+        }
+
+        // comprobar si está en algún albarán de compras
+        $lineaAC = new LineaAlbaranProveedor();
+        $lineasAC = $lineaAC->all($whereVar, [], 0, 0);
+        if (!empty($lineasAC)) {
+            Tools::log()->warning('you-cant-delete-variant-in-supplier-delivery-note');
+            return false;
+        }
+
+        // comprobar si está en alguna factura de compras
+        $lineaFC = new LineaFacturaProveedor();
+        $lineasFC = $lineaFC->all($whereVar, [], 0, 0);
+        if (!empty($lineasFC)) {
+            Tools::log()->warning('you-cant-delete-variant-in-supplier-invoice');
+            return false;
+        }
+
+        // no se puede eliminar la variante principal, salvo que no se compre ni se venda (para poder eliminar el producto)
+        $producto = $this->getProducto();
+        if ($this->referencia === $producto->referencia && !(false === $producto->secompra && false === $producto->sevende)) {
             Tools::log()->warning('you-cant-delete-primary-variant');
             return false;
         }
@@ -192,6 +230,7 @@ class Variante extends Base\ModelClass
         // eliminamos el registro de la base de datos
         return parent::delete();
     }
+
 
     /**
      * @param int $idAttVal1

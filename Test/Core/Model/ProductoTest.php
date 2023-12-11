@@ -29,6 +29,8 @@ use FacturaScripts\Core\Model\Familia;
 use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\PresupuestoCliente;
+use FacturaScripts\Core\Model\AlbaranCliente;
+use FacturaScripts\Core\Model\LineaAlbaranCliente;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Core\Model\ProductoProveedor;
@@ -38,11 +40,13 @@ use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ProductoTest extends TestCase
 {
     use LogErrorsTrait;
+    use RandomDataTrait;
 
     const TEST_REFERENCE = 'Test';
 
@@ -473,6 +477,85 @@ final class ProductoTest extends TestCase
         // eliminamos el producto
         $this->assertTrue($product->delete(), 'product-cant-delete');
         $this->assertFalse($variant->exists(), 'variant-still-exists');
+    }
+
+
+    public function testEliminarProductoConVariantesConMovimientos()
+    {
+        // creamos un producto
+        $product = new Producto();
+        $product->referencia = self::TEST_REFERENCE . mt_rand(1, 9999);
+        $product->descripcion = 'Test Product';
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        $numvariantes = 5;
+        for ($i = 1; $i < $numvariantes; $i++) {
+            $variant = new Variante();
+            $variant->idproducto = $product->idproducto;
+            $variant->referencia = $i . '-' . $product->referencia;
+            $variant->precio = $i * 10;
+            $this->assertTrue($variant->save(), 'variant-cant-save-with-ref ' . $variant->referencia);
+        }
+
+        // comprobamos en número de variantes creadas
+        $where = [new DataBaseWhere('idproducto', $product->idproducto)];
+        $n = count($variant->all($where, [], 0, 0 ));
+        $this->assertTrue($numvariantes === count($variant->all($where, [], 0, 0 )), 'cant-create-variants');
+
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer-1');
+
+        // creamos un albarán y le asignamos el cliente
+        $doc = new AlbaranCliente();
+        $doc->setSubject($subject);
+        $this->assertTrue($doc->save(), 'can-not-create-albaran-cliente-1');
+
+        $lineaDoc = new LineaAlbaranCliente();
+        $lineaDoc->referencia = '1-' . $product->referencia;
+        $lineaDoc->idproducto = $product->idproducto;
+        $lineaDoc->idalbaran = $doc->idalbaran;
+        $lineaDoc->idlinea = 1;
+        $lineaDoc->save();
+
+        // borramos el producto y comprobamos que no se han borrado todos
+        $product->delete();
+        $this->assertTrue($numvariantes >= count($variant->all($where, [], 0, 0)), 'cant-delete-variants-in-documents');
+
+        // borramos el documento
+        $doc->delete();
+
+        // borramos el producto y comprobamos que ya no quedan variantes
+        $product->delete();
+        $this->assertTrue(0 === count($variant->all($where, [], 0, 0)), 'cant-delete-all-variants');
+    }
+
+    public function testEliminarProductoConVariantesSinMovimientos()
+    {
+        // creamos un producto
+        $product = new Producto();
+        $product->referencia = self::TEST_REFERENCE . mt_rand(1, 9999);
+        $product->descripcion = 'Test Product';
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // añadimos variantes con referencia
+        $numvariantes = 5;
+        for ($i = 0; $i < $numvariantes; $i++) {
+            $variant = new Variante();
+            $variant->idproducto = $product->idproducto;
+            $variant->referencia = $i . '-' . $product->referencia;
+            $this->assertTrue($variant->save(), 'variant-cant-save-with-ref');
+        }
+
+        // comprobamos en número de variantes creadas
+        $where = [new DataBaseWhere('idproducto', $product->idproducto)];
+        $this->assertTrue($numvariantes < count($variant->all($where, [], 0, 0 )), 'cant-create-variants');
+
+        // borramos el producto
+        $product->delete();
+
+        // comprobamos que no quedan variantes
+        $this->assertTrue(0 === count($variant->all($where, [], 0, 0)), 'cant-create-variants');
     }
 
     public function testNegativePrice()

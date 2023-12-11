@@ -208,6 +208,27 @@ class Producto extends ModelClass
 
     public function delete(): bool
     {
+        //desactivamos la compra y la venta para poder eliminar las variantes
+        $this->secompra = false;
+        $this->sevende = false;
+        $this->save();
+
+        $whereVar = [
+            new DataBaseWhere('idproducto', $this->idproducto)
+        ];
+
+        // comprobar si está en algún albarán de ventas
+        $var = new Variante();
+        $variantes = $var->all($whereVar, [], 0, 0);
+        if (!empty($variantes)) {
+            foreach ($variantes as $variante) {
+                $res = $variante->delete();
+                if(false === $res) {
+                    return $res;
+                }
+            }
+        }
+
         // eliminamos las imágenes del producto
         foreach ($this->getImages() as $image) {
             $image->delete();
