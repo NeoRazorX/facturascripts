@@ -18,11 +18,6 @@
     <input type="hidden" name="action" value="edit-rules"/>
     <input type="hidden" name="activetab" value="{{ fsc.getCurrentView().getViewName() }}"/>
     <div class="card shadow">
-        <div class="card-body text-right">
-            <button type="submit" class="btn btn-sm btn-primary btn-spin-action">
-                <i class="fas fa-save fa-fw"></i> {{ trans('save') }}
-            </button>
-        </div>
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead>
@@ -128,37 +123,37 @@
                             {% endif %}
                         </td>
                         <td class="text-center">
-                            <div class="custom-control-lg custom-control custom-checkbox">
+                            <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('show') }}">
                                 <input class="permission show-permission show-menu-permission show-{{menu}}-permission custom-control-input" id="checkbox-large-show-{{ pageName }}" type="checkbox" name="show[]" data-menu="{{ menu }}" data-type="show" value="{{ pageName }}" {% if rule.show %}checked="" {% endif %}/>
                                 <label class="custom-control-label" for="checkbox-large-show-{{ pageName }}">&nbsp</label>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="custom-control-lg custom-control custom-checkbox">
+                            <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('only-owner-data') }}">
                                 <input class="permission only-owner-permission only-owner-menu-permission only-owner-{{menu}}-permission custom-control-input" id="checkbox-large-onlyOwner-{{ pageName }}" type="checkbox" name="onlyOwner[]" data-menu="{{ menu }}" data-type="only-owner" value="{{ pageName }}" {% if rule.onlyOwner %}checked="" {% endif %}/>
                                 <label class="custom-control-label" for="checkbox-large-onlyOwner-{{ pageName }}">&nbsp</label>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="custom-control-lg custom-control custom-checkbox">
+                            <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('allow-update') }}">
                                 <input class="permission update-permission update-menu-permission update-{{menu}}-permission custom-control-input" id="checkbox-large-update-{{ pageName }}" type="checkbox" name="update[]" data-menu="{{ menu }}" data-type="update" value="{{ pageName }}" {% if rule.update %} checked="" {% endif %}/>
                                 <label class="custom-control-label" for="checkbox-large-update-{{ pageName }}">&nbsp</label>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="custom-control-lg custom-control custom-checkbox">
+                            <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('allow-import') }}">
                                 <input class="permission import-permission import-menu-permission import-{{menu}}-permission custom-control-input" id="checkbox-large-import-{{ pageName }}" type="checkbox" name="import[]" data-menu="{{ menu }}" data-type="import" value="{{ pageName }}" {% if rule.import %} checked="" {% endif %}/>
                                 <label class="custom-control-label" for="checkbox-large-import-{{ pageName }}">&nbsp</label>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="custom-control-lg custom-control custom-checkbox">
+                            <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('allow-export') }}">
                                 <input class="permission export-permission export-menu-permission export-{{menu}}-permission custom-control-input" id="checkbox-large-export-{{ pageName }}" type="checkbox" name="export[]" data-menu="{{ menu }}" data-type="export" value="{{ pageName }}" {% if rule.export %} checked="" {% endif %}/>
                                 <label class="custom-control-label" for="checkbox-large-export-{{ pageName }}">&nbsp</label>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="custom-control-lg custom-control custom-checkbox">
+                            <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('allow-delete') }}">
                                 <input class="permission delete-permission delete-menu-permission delete-{{menu}}-permission custom-control-input" id="checkbox-large-delete-{{ pageName }}" type="checkbox" name="delete[]" data-menu="{{ menu }}" data-type="delete" value="{{ pageName }}" {% if rule.delete %} checked="" {% endif %}/>
                                 <label class="custom-control-label" for="checkbox-large-delete-{{ pageName }}">&nbsp</label>
                             </div>
@@ -174,7 +169,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="card-body text-right">
+        <div class="card-footer text-right">
             <button type="submit" class="btn btn-sm btn-primary btn-spin-action">
                 <i class="fas fa-save fa-fw"></i> {{ trans('save') }}
             </button>
