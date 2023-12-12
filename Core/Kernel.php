@@ -113,6 +113,8 @@ final class Kernel
     {
         self::startTimer('kernel::init');
 
+        ob_start();
+
         // cargamos algunas constantes para dar soporte a versiones antiguas
         $constants = [
             'FS_CODPAIS' => ['property' => 'codpais', 'default' => 'ESP'],
@@ -233,6 +235,8 @@ final class Kernel
             return;
         }
 
+        $messageParts = explode("\nStack trace:\n", $info['message']);
+
         echo '<!doctype html>'
             . '<html lang="en">'
             . '<head>'
@@ -250,7 +254,7 @@ final class Kernel
             . '<div class="card-body">'
             . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-end">'
             . '<h1 class="mt-0">Fatal error #' . $info['code'] . '</h1>'
-            . '<p>' . nl2br($info['message']) . '</p>'
+            . '<p>' . nl2br($messageParts[0]) . '</p>'
             . '<p class="mb-0">Url: ' . $info['url'] . '</p>';
 
         if (Tools::config('debug', false)) {
@@ -264,8 +268,23 @@ final class Kernel
                 . '<p class="mb-0">PHP: ' . $info['php_version'] . ', OS: ' . $info['os'] . '</p>';
         }
 
-        echo '</div>'
-            . '<div class="card-footer">'
+        echo '</div>';
+
+        if (Tools::config('debug', false)) {
+            echo '<div class="table-responsive">'
+                . '<table class="table table-striped mb-0">'
+                . '<thead><tr><th>#</th><th>Trace</th></tr></thead>'
+                . '<tbody>';
+
+            $trace = explode("\n", $messageParts[1]);
+            foreach (array_reverse($trace) as $key => $value) {
+                echo '<tr><td>' . (1 + $key) . '</td><td>' . substr($value, 3) . '</td></tr>';
+            }
+
+            echo '</tbody></table></div>';
+        }
+
+        echo '<div class="card-footer">'
             . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
             . '<input type="hidden" name="error_code" value="' . $info['code'] . '">'
             . '<input type="hidden" name="error_message" value="' . $info['message'] . '">'

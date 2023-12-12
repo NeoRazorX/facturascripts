@@ -54,11 +54,11 @@ abstract class ErrorController implements ErrorControllerInterface
             . '</html>';
     }
 
-    protected function htmlCard(string $title, string $cardBody, string $bodyCss): string
+    protected function htmlCard(string $title, string $cardBody, string $bodyCss, string $table = ''): string
     {
         $info = Kernel::getErrorInfo(
             $this->exception->getCode(),
-            $this->exception->getMessage(),
+            $this->exception->getMessage() . "\nStack trace:\n" . $this->exception->getTraceAsString(),
             $this->exception->getFile(),
             $this->exception->getLine()
         );
@@ -68,9 +68,9 @@ abstract class ErrorController implements ErrorControllerInterface
             . '<div class="col-sm-6">'
             . '<div class="card shadow mt-5 mb-5">'
             . '<div class="card-body">'
-            . '<img src="' . $info['report_qr'] . '" class="float-end" alt="QR" />'
-            . $cardBody
+            . '<img src="' . $info['report_qr'] . '" class="float-end" alt="QR" />' . $cardBody
             . '</div>'
+            . $table
             . '<div class="card-footer">'
             . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
             . '<input type="hidden" name="error_code" value="' . $info['code'] . '">'
