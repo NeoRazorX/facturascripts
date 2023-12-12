@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Error;
 
 use FacturaScripts\Core\Template\ErrorController;
+use FacturaScripts\Core\Tools;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -64,6 +65,10 @@ class DefaultError extends ErrorController
         $body = '<h1>' . $title . '</h1>'
             . '<p>' . $this->exception->getMessage() . '</p>'
             . '<p>File: ' . $this->exception->getFile() . ':' . $this->exception->getLine() . '</p>';
+
+        if (Tools::config('debug')) {
+            $body .= '<p>' . nl2br($this->exception->getTraceAsString()) . '</p>';
+        }
 
         echo $this->htmlCard($title, $body, 'bg-danger');
     }
