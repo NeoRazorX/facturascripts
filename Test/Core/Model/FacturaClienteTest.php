@@ -866,12 +866,12 @@ final class FacturaClienteTest extends TestCase
 
         // Cambiamos el almacen a la factura.
         // Creamos nueva empresa
-        $empresa2 = $this->getRandomCompany();
-        $this->assertTrue($empresa2->save());
+        $company2 = $this->getRandomCompany();
+        $this->assertTrue($company2->save());
 
         // Creamos nuevo almacen y asignamos nueva empresa
         $warehouse2 = $this->getRandomWarehouse();
-        $warehouse2->idempresa = $empresa2->idempresa;
+        $warehouse2->idempresa = $company2->idempresa;
         $this->assertTrue($warehouse2->save());
 
         // Asigamos nuevo almacen a la factura
@@ -880,7 +880,7 @@ final class FacturaClienteTest extends TestCase
 
         // Verificamos que al cambiar el almacen se cambia la empresa asociada a este.
         $this->assertEquals($warehouse2->codalmacen, $invoice->codalmacen);
-        $this->assertEquals($empresa2->idempresa, $invoice->idempresa);
+        $this->assertEquals($company2->idempresa, $invoice->idempresa);
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
@@ -888,6 +888,7 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
         $this->assertTrue($warehouse2->delete(), 'cant-delete-warehouse2');
+        $this->assertTrue($company2->delete(), 'cant-delete-company2');
     }
 
     protected function tearDown(): void
