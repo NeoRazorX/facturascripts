@@ -31,6 +31,7 @@ use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 
@@ -355,6 +356,10 @@ final class Html
             $options['auto_reload'] = true;
         }
         self::$twig = new Environment(self::$loader, $options);
+
+        if (FS_DEBUG) {
+            self::$twig->addExtension(new DebugExtension());
+        }
 
         // cargamos las funciones de twig
         self::$twig->addFunction(self::assetFunction());
