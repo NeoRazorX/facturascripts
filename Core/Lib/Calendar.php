@@ -6,11 +6,7 @@ namespace FacturaScripts\Core\Lib;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
-use Twig\Loader\FilesystemLoader;
+use FacturaScripts\Core\Html;
 
 /**
  * Adapted from https://tighten.com/insights/building-a-calendar-with-carbon/.
@@ -26,7 +22,7 @@ class Calendar
         return [
             'year' => $year,
             'months' => array_map(
-                function ($month) use ($year): void {
+                function ($month) use ($year):void {
                     static::buildMonth($year, $month);
                 },
                 range(1, 12)
@@ -93,21 +89,11 @@ class Calendar
      * @param CalendarEvent[] $eventos
      * @return string|null
      */
-    public static function renderMonth($year, $month, $day = null, $eventos = []): ?string
+    public static function renderMonth($year, $month, $day = null, $eventos = []):?string
     {
         $month = static::buildMonth($year, $month, $day, $eventos);
+        $templatePath = 'Components' . DIRECTORY_SEPARATOR . 'calendar.html.twig';
 
-        $loader = new FilesystemLoader(implode(DIRECTORY_SEPARATOR, ['Core', 'View', 'Components']));
-        $twig = new Environment($loader);
-
-        try {
-            return $twig->render('calendar.html.twig', ['month' => $month]);
-        } catch (LoaderError $e) {
-            return null;
-        } catch (RuntimeError $e) {
-            return null;
-        } catch (SyntaxError $e) {
-            return null;
-        }
+        return Html::render($templatePath, compact('month'));
     }
 }
