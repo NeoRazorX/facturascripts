@@ -144,7 +144,12 @@ class EditUser extends EditController
 
             $expire = time() + FS_COOKIES_EXPIRE;
             $this->response->headers->setCookie(
-                new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire, \FS_ROUTE)
+                Cookie::create(
+                    'fsLang',
+                    $this->views['EditUser']->model->langcode,
+                    $expire,
+                    Tools::config('route', '/')
+                )
             );
         }
 

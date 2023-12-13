@@ -282,14 +282,14 @@ class Login implements ControllerInterface
         }
 
         // save cookies
-        $expiration = time() + (int)Tools::config('cookies_expire');
-        setcookie('fsNick', $user->nick, $expiration, Tools::config('route'));
-        setcookie('fsLogkey', $user->logkey, $expiration, Tools::config('route'));
-        setcookie('fsLang', $user->langcode, $expiration, Tools::config('route'));
+        $expiration = time() + (int)Tools::config('cookies_expire', 31536000);
+        setcookie('fsNick', $user->nick, $expiration, Tools::config('route', '/'));
+        setcookie('fsLogkey', $user->logkey, $expiration, Tools::config('route', '/'));
+        setcookie('fsLang', $user->langcode, $expiration, Tools::config('route', '/'));
 
         // redirect to the user's main page
         if (empty($user->homepage)) {
-            $user->homepage = Tools::config('route');
+            $user->homepage = Tools::config('route', '/');
         }
         header('Location: ' . $user->homepage);
     }
@@ -301,9 +301,9 @@ class Login implements ControllerInterface
         }
 
         // remove cookies
-        setcookie('fsNick', '', time() - 3600, Tools::config('route'));
-        setcookie('fsLogkey', '', time() - 3600, Tools::config('route'));
-        setcookie('fsLang', '', time() - 3600, Tools::config('route'));
+        setcookie('fsNick', '', time() - 3600, Tools::config('route', '/'));
+        setcookie('fsLogkey', '', time() - 3600, Tools::config('route', '/'));
+        setcookie('fsLang', '', time() - 3600, Tools::config('route', '/'));
 
         Tools::log()->notice('logout-ok');
     }
