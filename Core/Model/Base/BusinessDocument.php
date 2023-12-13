@@ -469,6 +469,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 break;
 
             case 'idempresa':
+                if($this->codalmacen !== $this->previousData['codalmacen']) {
+                    return true;
+                }
                 Tools::log()->warning('non-editable-columns', ['%columns%' => 'idempresa']);
                 return false;
 
