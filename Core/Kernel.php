@@ -63,7 +63,7 @@ final class Kernel
     public static function getErrorInfo(int $code, string $message, string $file, int $line): array
     {
         // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
-        $errorUrl = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+        $errorUrl = parse_url($_SERVER["REQUEST_URI"] ?? '', PHP_URL_PATH);
         $errorMessage = self::cleanErrorMessage($message);
         $errorFile = str_replace(FS_FOLDER, '', $file);
         $errorHash = md5($code . $errorFile . $line . $errorMessage);
