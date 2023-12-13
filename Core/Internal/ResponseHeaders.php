@@ -27,10 +27,11 @@ final class ResponseHeaders
     public function __construct()
     {
         $this->data = [
+            'Content-Type' => 'text/html',
+            'Strict-Transport-Security' => 'max-age=31536000',
+            'X-Content-Type-Options' => 'nosniff',
             'X-Frame-Options' => 'SAMEORIGIN',
             'X-XSS-Protection' => '1; mode=block',
-            'X-Content-Type-Options' => 'nosniff',
-            'Strict-Transport-Security' => 'max-age=31536000'
         ];
     }
 

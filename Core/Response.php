@@ -152,6 +152,8 @@ final class Response
 
     public function view(string $view, array $data = []): void
     {
+        $this->headers->set('Content-Type', 'text/html');
+
         $this->content = Html::render($view, $data);
 
         $this->send();

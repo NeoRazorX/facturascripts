@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Core;
+namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Internal\RequestString;
 use FacturaScripts\Core\Internal\UploadedFile;
