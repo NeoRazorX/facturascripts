@@ -174,6 +174,10 @@ class AttachedFile extends ModelOnChangeClass
 
     public function shortFileName(int $length = 20): string
     {
+        if (strlen($this->filename) <= $length) {
+            return $this->filename;
+        }
+
         $parts = explode('.', $this->filename);
         $extension = count($parts) > 1 ? end($parts) : '';
         $name = substr($this->filename, 0, $length - strlen('...' . $extension));
