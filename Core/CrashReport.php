@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core;
 
-class CrashReport
+final class CrashReport
 {
     public static function getErrorInfo(int $code, string $message, string $file, int $line): array
     {
@@ -33,7 +33,7 @@ class CrashReport
 
         return [
             'code' => $code,
-            'message' => $errorMessage,
+            'message' => Tools::noHtml($errorMessage),
             'file' => $errorFile,
             'line' => $line,
             'hash' => $errorHash,
@@ -139,7 +139,7 @@ class CrashReport
             echo '</tbody></table></div>';
         }
 
-        echo '<div class="card-footer">'
+        echo '<div class="card-footer p-2">'
             . '<div class="row">'
             . '<div class="col">'
             . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
@@ -153,16 +153,20 @@ class CrashReport
             . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">'
             . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">'
             . '<input type="hidden" name="error_os" value="' . $info['os'] . '">'
-            . '<button type="submit" class="btn btn-secondary">' . self::trans('report') . '</button>'
+            . '<button type="submit" class="btn btn-secondary">' . self::trans('to-report') . '</button>'
             . '</form>'
-            . '</div>'
-            . '<div class="col-auto">'
-            . '<a href="' . Tools::config('route') . '/deploy?action=disable-plugins&token=' . self::newToken()
-            . '" class="btn btn-light">' . self::trans('disable-plugins') . '</a> '
-            . '<a href="' . Tools::config('route') . '/deploy?action=rebuild&token=' . self::newToken()
-            . '" class="btn btn-light">' . self::trans('rebuild') . '</a> '
-            . '</div>'
-            . '</div>'
+            . '</div>';
+
+        if (false === Tools::config('disable_deploy_actions', false)) {
+            echo '<div class="col-auto">'
+                . '<a href="' . Tools::config('route') . '/deploy?action=disable-plugins&token=' . self::newToken()
+                . '" class="btn btn-light">' . self::trans('disable-plugins') . '</a> '
+                . '<a href="' . Tools::config('route') . '/deploy?action=rebuild&token=' . self::newToken()
+                . '" class="btn btn-light">' . self::trans('rebuild') . '</a> '
+                . '</div>';
+        }
+
+        echo '</div>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -185,7 +189,7 @@ class CrashReport
     {
         $translations = [
             'es_ES' => [
-                'report' => 'Enviar informe',
+                'to-report' => 'Enviar informe',
                 'disable-plugins' => 'Desactivar plugins',
                 'rebuild' => 'Reconstruir',
             ],

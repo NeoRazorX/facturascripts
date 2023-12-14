@@ -48,6 +48,7 @@ class Deploy implements ControllerInterface
 
             default:
                 $this->deployAction();
+                break;
         }
 
         echo '<a href="' . Tools::config('route') . '/">Reload</a>';
@@ -61,7 +62,6 @@ class Deploy implements ControllerInterface
             return;
         }
 
-
         Plugins::deploy();
 
         echo '<p>Deploy finished.</p>';
@@ -69,6 +69,12 @@ class Deploy implements ControllerInterface
 
     protected function disablePluginsAction(): void
     {
+        // comprobamos que no se ha desactivado
+        if (Tools::config('disable_deploy_actions', false)) {
+            echo '<p>Deploy actions already disabled.</p>';
+            return;
+        }
+
         // comprobamos el token
         if (false === CrashReport::validateToken($_GET['token'] ?? '')) {
             echo '<p>Invalid token.</p>';
@@ -85,6 +91,12 @@ class Deploy implements ControllerInterface
 
     protected function rebuildAction(): void
     {
+        // comprobamos que no se ha desactivado
+        if (Tools::config('disable_deploy_actions', false)) {
+            echo '<p>Deploy actions already disabled.</p>';
+            return;
+        }
+
         // comprobamos el token
         if (false === CrashReport::validateToken($_GET['token'] ?? '')) {
             echo '<p>Invalid token.</p>';
