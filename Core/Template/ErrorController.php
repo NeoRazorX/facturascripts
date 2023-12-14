@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Template;
 
 use Exception;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
-use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\CrashReport;
 
 abstract class ErrorController implements ErrorControllerInterface
 {
@@ -56,7 +56,7 @@ abstract class ErrorController implements ErrorControllerInterface
 
     protected function htmlCard(string $title, string $cardBody, string $bodyCss, string $table = ''): string
     {
-        $info = Kernel::getErrorInfo(
+        $info = CrashReport::getErrorInfo(
             $this->exception->getCode(),
             $this->exception->getMessage() . "\nStack trace:\n" . $this->exception->getTraceAsString(),
             $this->exception->getFile(),

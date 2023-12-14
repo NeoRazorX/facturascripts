@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Contract\ControllerInterface;
+use FacturaScripts\Core\CrashReport;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
 
@@ -36,16 +37,62 @@ class Deploy implements ControllerInterface
 
     public function run(): void
     {
-        header('Content-Type: text/plain');
+        switch ($_GET['action'] ?? '') {
+            case 'disable-plugins':
+                $this->disablePluginsAction();
+                break;
 
-        // si no existe la carpeta Dinamic, hacemos deploy
-        if (!is_dir(Tools::folder('Dinamic'))) {
-            Plugins::deploy();
+            case 'rebuild':
+                $this->rebuildAction();
+                break;
 
-            echo 'Deploy finished.';
+            default:
+                $this->deployAction();
+        }
+
+        echo '<a href="' . Tools::config('route') . '/">Reload</a>';
+    }
+
+    protected function deployAction(): void
+    {
+        // si ya existe la carpeta Dinamic, no hacemos deploy
+        if (is_dir(Tools::folder('Dinamic'))) {
+            echo '<p>Deploy not needed. Dinamic folder already exists. Delete it if you want to deploy again.</p>';
             return;
         }
 
-        echo 'Deploy not needed.';
+
+        Plugins::deploy();
+
+        echo '<p>Deploy finished.</p>';
+    }
+
+    protected function disablePluginsAction(): void
+    {
+        // comprobamos el token
+        if (false === CrashReport::validateToken($_GET['token'] ?? '')) {
+            echo '<p>Invalid token.</p>';
+            return;
+        }
+
+        // desactivamos todos los plugins
+        foreach (Plugins::enabled() as $name) {
+            Plugins::disable($name);
+        }
+
+        echo '<p>Plugins disabled.</p>';
+    }
+
+    protected function rebuildAction(): void
+    {
+        // comprobamos el token
+        if (false === CrashReport::validateToken($_GET['token'] ?? '')) {
+            echo '<p>Invalid token.</p>';
+            return;
+        }
+
+        Plugins::deploy();
+
+        echo '<p>Rebuild finished.</p>';
     }
 }

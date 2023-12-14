@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Error;
 
-use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\CrashReport;
 use FacturaScripts\Core\Template\ErrorController;
 use FacturaScripts\Core\Tools;
 
@@ -30,7 +30,7 @@ class DatabaseError extends ErrorController
         ob_clean();
         http_response_code(500);
 
-        $info = Kernel::getErrorInfo(
+        $info = CrashReport::getErrorInfo(
             $this->exception->getCode(),
             $this->exception->getMessage(),
             $this->exception->getFile(),

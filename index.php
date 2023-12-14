@@ -42,7 +42,7 @@ $timeZone = Tools::config('timezone', 'Europe/Madrid');
 date_default_timezone_set($timeZone);
 
 // cargamos el gestor de errores
-register_shutdown_function('FacturaScripts\Core\Kernel::shutdown');
+register_shutdown_function('FacturaScripts\Core\CrashReport::shutdown');
 
 // iniciamos el kernel
 Kernel::init();
