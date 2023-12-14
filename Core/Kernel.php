@@ -255,22 +255,22 @@ final class Kernel
             . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-end">'
             . '<h1 class="mt-0">Fatal error #' . $info['code'] . '</h1>'
             . '<p>' . nl2br($messageParts[0]) . '</p>'
-            . '<p class="mb-0">Url: ' . $info['url'] . '</p>';
+            . '<p class="mb-0"><b>Url</b>: ' . $info['url'] . '</p>';
 
         if (Tools::config('debug', false)) {
-            echo '<p class="mb-0">File: ' . $info['file'] . ', line: ' . $info['line'] . '</p>';
+            echo '<p class="mb-0"><b>File</b>: ' . $info['file'] . ', <b>line</b>: ' . $info['line'] . '</p>';
         }
 
-        echo '<p class="mb-0">Hash: ' . $info['hash'] . '</p>';
+        echo '<p class="mb-0"><b>Hash</b>: ' . $info['hash'] . '</p>';
 
         if (Tools::config('debug', false)) {
-            echo '<p class="mb-0">Core: ' . $info['core_version'] . ', plugins: ' . $info['plugin_list'] . '</p>'
-                . '<p class="mb-0">PHP: ' . $info['php_version'] . ', OS: ' . $info['os'] . '</p>';
+            echo '<p class="mb-0"><b>Core</b>: ' . $info['core_version'] . ', <b>plugins</b>: ' . $info['plugin_list'] . '</p>'
+                . '<p class="mb-0"><b>PHP</b>: ' . $info['php_version'] . ', <b>OS</b>: ' . $info['os'] . '</p>';
         }
 
         echo '</div>';
 
-        if (Tools::config('debug', false)) {
+        if (Tools::config('debug', false) && isset($messageParts[1])) {
             echo '<div class="table-responsive">'
                 . '<table class="table table-striped mb-0">'
                 . '<thead><tr><th>#</th><th>Trace</th></tr></thead>'
