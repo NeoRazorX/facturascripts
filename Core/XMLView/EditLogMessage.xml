@@ -51,7 +51,7 @@
                 <widget type="textarea" fieldname="message" readonly="true"/>
             </column>
             <column name="context" numcolumns="6" order="110">
-                <widget type="textarea" fieldname="context" readonly="true"/>
+                <widget type="json" fieldname="context" readonly="true"/>
             </column>
         </group>
     </columns>
