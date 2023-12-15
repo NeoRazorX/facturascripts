@@ -47,6 +47,13 @@ final class CrashReport
         ];
     }
 
+    public static function init(): void
+    {
+        ob_start();
+
+        register_shutdown_function('FacturaScripts\Core\CrashReport::shutdown');
+    }
+
     public static function newToken(): string
     {
         $seed = Tools::config('db_name') . Tools::config('db_user') . Tools::config('db_password');

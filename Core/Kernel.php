@@ -87,8 +87,6 @@ final class Kernel
     {
         self::startTimer('kernel::init');
 
-        ob_start();
-
         // cargamos algunas constantes para dar soporte a versiones antiguas
         $constants = [
             'FS_CODPAIS' => ['property' => 'codpais', 'default' => 'ESP'],
