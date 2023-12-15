@@ -12,7 +12,7 @@
         <testsuite name="Plugins test suite">
             <directory
                     suffix="Test.php"
-                    phpVersion="7.2"
+                    phpVersion="7.3"
                     phpVersionOperator=">=">
                 Test/Plugins/
             </directory>
