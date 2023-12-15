@@ -196,6 +196,29 @@ class Tools
         return $result;
     }
 
+    protected function getSiteUrl(string $query = ''): string
+    {
+        // obtenemos si es http o https
+        $url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+
+        // obtenemos el dominio y el resto de la url
+        $url .= '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+        // eliminamos la / del final
+        $url = substr($url, 0, strrpos($url, '/'));
+
+        // si no hay query, devolvemos la url
+        if (empty($query)) {
+            return $url;
+        }
+
+        // eliminamos la / del principio
+        $query = substr($query, 0, 1) === '/' ? substr($query, 1) : $query;
+
+        // devolvemos la url con la query
+        return $url . '/' . $query;
+    }
+
     public static function hour(?string $date = null): string
     {
         return empty($date) ? date(self::HOUR_STYLE) : date(self::HOUR_STYLE, strtotime($date));
@@ -344,6 +367,11 @@ class Tools
         }
 
         return $result;
+    }
+
+    public static function textNotLineBreak(string $text): string
+    {
+        return preg_replace("/[\r\n|\n|\r]+/", " ", $text);
     }
 
     public static function timeToDate(int $time): string
