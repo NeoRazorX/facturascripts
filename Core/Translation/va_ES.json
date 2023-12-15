@@ -357,6 +357,7 @@
     "dashboard-for": "Tauler de %company%",
     "data-source": "Senyes d'orige",
     "database": "base de dades",
+    "database-error": "Error al conectar a la base de datos",
     "database-name-must-be-lowercase": "El nom de la base de senyes deu estar en minúscules",
     "date": "Data",
     "date-in": "Data d'entrada",

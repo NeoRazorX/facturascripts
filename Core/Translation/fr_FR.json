@@ -357,6 +357,7 @@
     "dashboard-for": "Tableau de bord pour %company%",
     "data-source": "Données d'origine",
     "database": "Base de données",
+    "database-error": "Error al conectar a la base de datos",
     "database-name-must-be-lowercase": "Le nom de la base de données doit être en minuscules",
     "date": "Date",
     "date-in": "Date dans",

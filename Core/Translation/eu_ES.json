@@ -357,6 +357,7 @@
     "dashboard-for": "%company%-ren arbela",
     "data-source": "Jatorrizko datuak",
     "database": "Datu basea",
+    "database-error": "Error al conectar a la base de datos",
     "database-name-must-be-lowercase": "Datu-basearen izena minuskuletan izan behar du",
     "date": "Data",
     "date-in": "Sarrera data",

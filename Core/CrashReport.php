@@ -53,6 +53,18 @@ final class CrashReport
         return md5($seed . date('Y-m-d H'));
     }
 
+    public static function save(array $info): void
+    {
+        // guardamos los datos en un archivo en MyFiles
+        $file_name = 'crash_' . $info['hash'] . '.json';
+        $file_path = Tools::folder('MyFiles', $file_name);
+        if (file_exists($file_path)) {
+            return;
+        }
+
+        file_put_contents($file_path, json_encode($info, JSON_PRETTY_PRINT));
+    }
+
     public static function shutdown(): void
     {
         $error = error_get_last();
@@ -68,6 +80,7 @@ final class CrashReport
         http_response_code(500);
 
         $info = self::getErrorInfo($error['type'], $error['message'], $error['file'], $error['line']);
+        self::save($info);
 
         // comprobamos si el content-type es json
         if (isset($_SERVER['CONTENT_TYPE']) && 'application/json' === $_SERVER['CONTENT_TYPE']) {

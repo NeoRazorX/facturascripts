@@ -61,6 +61,7 @@ abstract class ErrorController implements ErrorControllerInterface
             $this->exception->getFile(),
             $this->exception->getLine()
         );
+        CrashReport::save($info);
 
         $body = '<div class="container">'
             . '<div class="row justify-content-center">'

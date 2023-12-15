@@ -357,6 +357,7 @@
     "dashboard-for": "Tauler de %company%",
     "data-source": "Dades d'origen",
     "database": "Base de dades",
+    "database-error": "Error al conectar a la base de datos",
     "database-name-must-be-lowercase": "El nom de la base de dades ha de ser en minúscules",
     "date": "Data",
     "date-in": "Data d'entrada",

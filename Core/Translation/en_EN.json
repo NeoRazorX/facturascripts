@@ -357,6 +357,7 @@
     "dashboard-for": "Dashboard for %company%",
     "data-source": "Origin data",
     "database": "Database",
+    "database-error": "Error al conectar a la base de datos",
     "database-name-must-be-lowercase": "The database name must be lowercase",
     "date": "Date",
     "date-in": "Date in",
