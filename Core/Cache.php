@@ -101,10 +101,14 @@ final class Cache
         // guardamos el contenido
         $data = serialize($value);
         $fileName = self::filename($key);
+        $exists = file_exists($fileName);
+
         file_put_contents($fileName, $data);
 
-        // cambiamos los permisos
-        chmod($fileName, 0777);
+        // si no existía el archivo, le damos permisos de escritura
+        if (!$exists) {
+            chmod($fileName, 0664);
+        }
     }
 
     private static function filename(string $key): string
