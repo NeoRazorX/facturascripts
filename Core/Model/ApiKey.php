@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * ApiKey model to manage the connection tokens through the api
  * that will be generated to synchronize different applications.
@@ -54,8 +56,8 @@ class ApiKey extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->apikey = $this->toolBox()->utils()->randomString(20);
-        $this->creationdate = date(self::DATE_STYLE);
+        $this->apikey = Tools::randomString(20);
+        $this->creationdate = Tools::date();
         $this->enabled = true;
         $this->fullaccess = false;
     }

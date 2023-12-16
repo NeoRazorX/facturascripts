@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use Exception;
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\ProductoImagen;
@@ -44,7 +44,7 @@ trait ProductImagesTrait
     protected function addImageAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return false;
         } elseif (false === $this->validateFormToken()) {
             return false;
@@ -54,12 +54,12 @@ trait ProductImagesTrait
         $uploadFiles = $this->request->files->get('newfiles', []);
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
-                ToolBox::log()->error($uploadFile->getErrorMessage());
+                Tools::log()->error($uploadFile->getErrorMessage());
                 continue;
             }
 
             if (false === strpos($uploadFile->getMimeType(), 'image/')) {
-                ToolBox::i18nLog()->error('file-not-supported');
+                Tools::log()->error('file-not-supported');
                 continue;
             }
 
@@ -67,25 +67,25 @@ trait ProductImagesTrait
                 $uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName());
                 $idfile = $this->createAttachedFile($uploadFile->getClientOriginalName());
                 if (empty($idfile)) {
-                    ToolBox::i18nLog()->error('record-save-error');
+                    Tools::log()->error('record-save-error');
                     break;
                 }
 
                 $idproduct = $this->createProductImage($idfile);
                 if (empty($idproduct)) {
-                    ToolBox::i18nLog()->error('record-save-error');
+                    Tools::log()->error('record-save-error');
                     break;
                 }
 
                 $this->createFileRelation($idproduct, $idfile);
                 ++$count;
             } catch (Exception $exc) {
-                ToolBox::i18nLog()->error($exc->getMessage());
+                Tools::log()->error($exc->getMessage());
                 return true;
             }
         }
 
-        ToolBox::i18nLog()->notice('images-added-correctly', ['%count%' => $count]);
+        Tools::log()->notice('images-added-correctly', ['%count%' => $count]);
         return true;
     }
 
@@ -107,7 +107,7 @@ trait ProductImagesTrait
     protected function deleteImageAction(): bool
     {
         if (false === $this->permissions->allowDelete) {
-            ToolBox::i18nLog()->warning('not-allowed-delete');
+            Tools::log()->warning('not-allowed-delete');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return false;
@@ -122,12 +122,12 @@ trait ProductImagesTrait
         $this->dataBase->beginTransaction();
         if ($productImage->delete() && $productImage->getFile()->delete()) {
             $this->dataBase->commit();
-            ToolBox::i18nLog()->notice('record-deleted-correctly');
+            Tools::log()->notice('record-deleted-correctly');
             return true;
         }
 
         $this->dataBase->rollback();
-        ToolBox::i18nLog()->error('record-delete-error');
+        Tools::log()->error('record-delete-error');
         return true;
     }
 

@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AtributoValor;
 use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\Familia;
@@ -74,7 +74,7 @@ class PurchasesModalHTML
         self::$orden = $formData['fp_orden'] ?? 'ref_asc';
         self::$comprado = (bool)($formData['fp_comprado'] ?? false);
         self::$query = isset($formData['fp_query']) ?
-            ToolBox::utils()->noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
+            Tools::noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
     }
 
     public static function render(PurchaseDocument $model, string $url = ''): string
@@ -97,7 +97,7 @@ class PurchasesModalHTML
             $label = empty($row['refproveedor']) || $row['refproveedor'] === $row['referencia'] ?
                 '<b>' . $row['referencia'] . '</b>' :
                 '<b>' . $row['referencia'] . '</b> <span class="badge badge-light">' . $row['refproveedor'] . '</span>';
-            $description = ToolBox::utils()->trueTextBreak($row['descripcion'], 120)
+            $description = Tools::textBreak($row['descripcion'], 120)
                 . static::idatributovalor($row['idatributovalor1'])
                 . static::idatributovalor($row['idatributovalor2'])
                 . static::idatributovalor($row['idatributovalor3'])
@@ -105,8 +105,8 @@ class PurchasesModalHTML
             $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return purchasesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
                 . '<td>' . $label . ' ' . $description . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($cost)) . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['precio'])) . '</td>'
+                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($cost)) . '</td>'
+                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>'
                 . '<td class="text-right">' . $row['disponible'] . '</td>'
                 . '</tr>';
         }

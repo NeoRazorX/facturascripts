@@ -5,10 +5,12 @@
     <div class="container">
         <div class="row justify-content-md-center">
             <div class="col-md-6">
-                <form action="{{ asset('') }}" method="post" class="form">
+                <form action="{{ asset('login') }}" method="post" class="form">
+                    {{ formToken() }}
+                    <input type="hidden" name="action" value="login">
                     <div class="card mt-4">
-                        <a href="{{ asset('') }}">
-                            {% set idfile = appSettings.get('default','idloginimage', 0) %}
+                        <a href="{{ asset('login') }}">
+                            {% set idfile = settings('default','idloginimage', 0) %}
                             {{ _self.loadLogo(idfile) }}
                         </a>
                         <div class="card-body">
@@ -67,7 +69,9 @@
             </div>
         </div>
     </div>
-    <form action="{{ asset('') }}" method="post" class="form">
+    <form action="{{ asset('login') }}" method="post" class="form">
+        {{ formToken() }}
+        <input type="hidden" name="action" value="change-password">
         <div class="modal fade" id="newPasswordModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">

@@ -133,13 +133,14 @@ final class ProductoProveedorTest extends TestCase
     {
         [$subject, $product, $doc, $pvpUnitario, $dtopor, $dtopor2] = $this->getAlbaranConLineaProducto();
 
-        $productoProveedor = new ProductoProveedor();
-        $productoProveedor = $productoProveedor->all(
-            [
-                new DataBaseWhere('referencia', $product->referencia),
-                new DataBaseWhere('codproveedor', $subject->codproveedor),
-            ]
-        )[0];
+        $model = new ProductoProveedor();
+        $productosProveedor = $model->all([
+            new DataBaseWhere('referencia', $product->referencia),
+            new DataBaseWhere('codproveedor', $subject->codproveedor),
+        ]);
+
+        $this->assertCount(1, $productosProveedor);
+        $productoProveedor = $productosProveedor[0];
 
         $this->assertEquals($doc->coddivisa, $productoProveedor->coddivisa);
         $this->assertEquals($doc->codproveedor, $subject->codproveedor);

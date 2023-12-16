@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Divisa;
@@ -241,15 +243,14 @@ abstract class BusinessDocument extends ModelOnChangeClass
     {
         parent::clear();
 
-        $appSettings = $this->toolBox()->appSettings();
-        $this->codalmacen = $appSettings->get('default', 'codalmacen');
-        $this->codpago = $appSettings->get('default', 'codpago');
-        $this->codserie = $appSettings->get('default', 'codserie');
+        $this->codalmacen = Tools::settings('default', 'codalmacen');
+        $this->codpago = Tools::settings('default', 'codpago');
+        $this->codserie = Tools::settings('default', 'codserie');
         $this->dtopor1 = 0.0;
         $this->dtopor2 = 0.0;
-        $this->fecha = date(self::DATE_STYLE);
-        $this->hora = date(self::HOUR_STYLE);
-        $this->idempresa = $appSettings->get('default', 'idempresa');
+        $this->fecha = Tools::date();
+        $this->hora = Tools::hour();
+        $this->idempresa = Tools::settings('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
         $this->netosindto = 0.0;
@@ -366,7 +367,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
             return true;
         }
 
-        $this->toolBox()->i18nLog()->warning('accounting-exercise-not-found');
+        Tools::log()->warning('accounting-exercise-not-found');
         return false;
     }
 
@@ -387,7 +388,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
             }
         }
 
-        $this->toolBox()->i18nLog()->warning('warehouse-not-found');
+        Tools::log()->warning('warehouse-not-found');
         return false;
     }
 
@@ -406,26 +407,25 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     public function test()
     {
-        $utils = $this->toolBox()->utils();
-        $this->observaciones = $utils->noHtml($this->observaciones);
+        $this->observaciones = Tools::noHtml($this->observaciones);
 
         // check number
         if ((int)$this->numero < 1) {
-            $this->toolBox()->i18nLog()->error('invalid-number', ['%number%' => $this->numero]);
+            Tools::log()->error('invalid-number', ['%number%' => $this->numero]);
             return false;
         }
 
         // check exercise and date
         $exercise = $this->getExercise();
         if (strtotime($this->fecha) < strtotime($exercise->fechainicio) || strtotime($this->fecha) > strtotime($exercise->fechafin)) {
-            $this->toolBox()->i18nLog()->error('date-out-of-exercise-range', ['%exerciseName%' => $this->codejercicio]);
+            Tools::log()->error('date-out-of-exercise-range', ['%exerciseName%' => $this->codejercicio]);
             return false;
         }
 
         // check total
         $total = $this->neto + $this->totalsuplidos + $this->totaliva - $this->totalirpf + $this->totalrecargo;
-        if (false === $utils->floatcmp($this->total, $total, FS_NF0, true)) {
-            $this->toolBox()->i18nLog()->error('bad-total-error');
+        if (false === Utils::floatcmp($this->total, $total, FS_NF0, true)) {
+            Tools::log()->error('bad-total-error');
             return false;
         }
 
@@ -469,7 +469,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 break;
 
             case 'idempresa':
-                $this->toolBox()->i18nLog()->warning('non-editable-columns', ['%columns%' => 'idempresa']);
+                Tools::log()->warning('non-editable-columns', ['%columns%' => 'idempresa']);
                 return false;
 
             case 'numero':
@@ -492,7 +492,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         }
 
         // add audit log
-        self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->info('updated-model', [
+        Tools::log(self::AUDIT_CHANNEL)->info('updated-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),

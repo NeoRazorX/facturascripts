@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\LogMessage;
@@ -171,7 +171,7 @@ final class Migrations
         new Serie();
 
         // actualizamos con el tipo R la serie marcada como rectificativa en el panel de control
-        $serieRectifying = AppSettings::get('default', 'codserierec', '');
+        $serieRectifying = Tools::settings('default', 'codserierec', '');
         if (empty($serieRectifying)) {
             return;
         }

@@ -361,7 +361,7 @@ class Variante extends Base\ModelClass
         if ($this->stockfis != 0.0) {
             $stock = new DinStock();
             $stock->cantidad = $this->stockfis;
-            $stock->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
+            $stock->codalmacen = Tools::settings('default', 'codalmacen');
             $stock->idproducto = $this->idproducto;
             $stock->referencia = $this->referencia;
             $stock->save();

@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -24,11 +24,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
-use FacturaScripts\Core\Lib\Calendar;
-use FacturaScripts\Core\Lib\CalendarEvent;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelCore;
-use FacturaScripts\Core\Model\ReciboProveedor;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
@@ -73,9 +69,6 @@ class Dashboard extends Controller
     /** @var array */
     public $stats = [];
 
-    /** @var string|null */
-    public $calendario = null;
-
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -92,10 +85,12 @@ class Dashboard extends Controller
      * @param User $user
      * @param ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user, $permissions): void
+    public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        $this->title = $this->toolBox()->i18n()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
+
+        $this->title = Tools::lang()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
+
         $this->loadExtensions();
     }
 
@@ -175,7 +170,6 @@ class Dashboard extends Controller
         $this->loadLowStockSection();
         $this->loadReceiptSection();
         $this->loadNews();
-        $this->loadCalendar();
 
         $this->pipe('loadExtensions');
     }
@@ -220,25 +214,6 @@ class Dashboard extends Controller
 
         // guardamos en caché
         Cache::set('dashboard-news', $this->news);
-    }
-
-    private function loadCalendar(): void
-    {
-        $recibosProveedores = new ReciboProveedor();
-        $recibosClientes = new ReciboCliente();
-        $recibos = array_merge($recibosProveedores->all(), $recibosClientes->all());
-
-        $eventos = [];
-        foreach ($recibos as $recibo) {
-            $eventos[] = new CalendarEvent(
-                $recibo->vencimiento,
-                $recibo->url(),
-                $recibo->getSubject()->nombre,
-                Tools::money($recibo->importe)
-            );
-        }
-
-        $this->calendario = Calendar::renderMonth(date('Y'), date('m'), date('d'), $eventos);
     }
 
     /**
@@ -298,7 +273,7 @@ class Dashboard extends Controller
         $receiptModel = new ReciboCliente();
         $where = [
             new DataBaseWhere('pagado', false),
-            new DataBaseWhere('vencimiento', $this->toolBox()->today(), '<'),
+            new DataBaseWhere('vencimiento', Tools::date(), '<'),
             new DataBaseWhere('vencimiento', date('Y-m-d', strtotime('-1 year')), '>')
         ];
         $this->receipts = $receiptModel->all($where, ['vencimiento' => 'DESC']);
@@ -353,7 +328,7 @@ class Dashboard extends Controller
      */
     private function setOpenLinksForDocument($model, $label): void
     {
-        $minDate = date(ModelCore::DATE_STYLE, strtotime('-2 days'));
+        $minDate = Tools::date('-2 days');
         $where = [
             new DataBaseWhere('fecha', $minDate, '>='),
             new DataBaseWhere('nick', $this->user->nick)

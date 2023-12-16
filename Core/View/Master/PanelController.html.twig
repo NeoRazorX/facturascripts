@@ -24,7 +24,7 @@
     {% set pageData = fsc.getPageData() %}
     {% set firstView = fsc.views | first %}
     <div class="container-fluid d-print-none">
-        <div class="row">
+        <div class="form-row">
             <div class="col-md-12">
                 {# -- Hidden alternative page info -- #}
                 <nav aria-label="breadcrumb">
@@ -51,7 +51,7 @@
                 </nav>
             </div>
         </div>
-        <div class="row">
+        <div class="form-row">
             {# -- Top left buttons -- #}
             <div class="col-md-8 mb-2">
                 <div class="btn-group">
@@ -102,7 +102,7 @@
 {% block body %}
     {% set firstView = fsc.views | first %}
     <div class="container-fluid">
-        <div class="row">
+        <div class="form-row">
             {# -- Left Panel -- #}
             {% if fsc.views | length > 1 %}
                 <div class="col-lg-2">
@@ -224,7 +224,7 @@
             {% endif %}
         </div>
     </div>
-    <form action="{{ firstView.model.url() }}" method="post" target="_blank">
+    <form action="{{ firstView.model.url() }}" method="post" target="_blank" onsubmit="animateSpinner('add')">
         <input type="hidden" name="action" value="export"/>
         <div class="modal fade" id="advancedExportModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">

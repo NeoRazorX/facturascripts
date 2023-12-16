@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
 use FacturaScripts\Core\Base\Translator;
-use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez      <hola@danielfg.es>
  */
 class PurchasesHeaderHTML
 {
@@ -76,7 +76,7 @@ class PurchasesHeaderHTML
         $model->codpago = $formData['codpago'] ?? $model->codpago;
         $model->codproveedor = $formData['codproveedor'] ?? $model->codproveedor;
         $model->codserie = $formData['codserie'] ?? $model->codserie;
-        $model->fecha = empty($formData['fecha']) ? $model->fecha : date(ModelCore::DATE_STYLE, strtotime($formData['fecha']));
+        $model->fecha = empty($formData['fecha']) ? $model->fecha : Tools::date($formData['fecha']);
         $model->femail = isset($formData['femail']) && !empty($formData['femail']) ? $formData['femail'] : $model->femail;
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombre = $formData['nombre'] ?? $model->nombre;

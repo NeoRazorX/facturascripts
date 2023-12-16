@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use Exception;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator as CoreTranslator;
 use SimpleXMLElement;
 
@@ -48,7 +49,7 @@ final class PluginDeploy
     {
         $this->enabledPlugins = array_reverse($enabledPlugins);
 
-        $folders = ['Assets', 'Controller', 'Data', 'Lib', 'Model', 'Table', 'View', 'XMLView'];
+        $folders = ['Assets', 'Controller', 'Data', 'Lib', 'Model', 'Table', 'View', 'Worker', 'XMLView'];
         foreach ($folders as $folder) {
             if ($clean) {
                 ToolBox::files()::delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
@@ -89,6 +90,11 @@ final class PluginDeploy
                 continue;
             }
 
+            // excluimos Installer y ApiRoot
+            if (in_array(substr($fileName, 0, -4), ['Installer', 'ApiRoot'])) {
+                continue;
+            }
+
             $controllerName = substr($fileName, 0, -4);
             $controllerNamespace = '\\FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
 
@@ -111,10 +117,13 @@ final class PluginDeploy
         $menuManager->reload();
 
         // checks app homepage
-        $appSettings = ToolBox::appSettings();
-        if (!in_array($appSettings->get('default', 'homepage', ''), $pageNames)) {
-            $appSettings->set('default', 'homepage', 'AdminPlugins');
-            $appSettings->save();
+        $saveSettings = false;
+        if (!in_array(Tools::settings('default', 'homepage', ''), $pageNames)) {
+            Tools::settingsSet('default', 'homepage', 'AdminPlugins');
+            $saveSettings = true;
+        }
+        if ($saveSettings) {
+            Tools::settingsSave();
         }
     }
 
@@ -229,7 +238,7 @@ final class PluginDeploy
         $className = basename($fileName, '.php');
         $txt = '<?php namespace ' . $newNamespace . ";\n\n"
             . '/**' . "\n"
-            . ' * Class created by Core/Base/PluginManager' . "\n"
+            . ' * Class created by Core/Base/PluginDeploy' . "\n"
             . ' * @author FacturaScripts <carlos@facturascripts.com>' . "\n"
             . ' */' . "\n"
             . $this->getClassType($fileName, $folder, $place, $pluginName) . ' ' . $className . ' extends \\' . $namespace . '\\' . $className;

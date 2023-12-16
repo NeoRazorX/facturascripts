@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
@@ -219,7 +219,7 @@ trait CommonSalesPurchases
     protected static function deleteBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         return $model->primaryColumnValue() && $model->editable ?
-            '<button type="button" class="btn btn-danger mb-3" data-toggle="modal" data-target="#deleteDocModal">'
+            '<button type="button" class="btn btn-spin-action btn-danger mb-3" data-toggle="modal" data-target="#deleteDocModal">'
             . '<i class="fas fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete')
             . '</button>'
             . '<div class="modal fade" id="deleteDocModal" tabindex="-1" aria-hidden="true">'
@@ -237,8 +237,9 @@ trait CommonSalesPurchases
             . '<p class="mb-0">' . $i18n->trans('are-you-sure') . '</p>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('cancel') . '</button>'
-            . '<button type="button" class="btn btn-danger" onclick="return ' . $jsName . '(\'delete-doc\', \'0\');">' . $i18n->trans('delete') . '</button>'
+            . '<button type="button" class="btn btn-spin-action btn-secondary" data-dismiss="modal">' . $i18n->trans('cancel') . '</button>'
+            . '<button type="button" class="btn btn-spin-action btn-danger" onclick="return ' . $jsName . '(\'delete-doc\', \'0\');">'
+            . $i18n->trans('delete') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -432,7 +433,7 @@ trait CommonSalesPurchases
             $list .= '<tr>'
                 . '<td><a href="' . $doc->url() . '">' . $i18n->trans($doc->modelClassName()) . ' ' . $doc->codigo . '</a></td>'
                 . '<td>' . $doc->observaciones . '</td>'
-                . '<td class="text-right text-nowrap">' . ToolBox::coins()::format($doc->total) . '</td>'
+                . '<td class="text-right text-nowrap">' . Tools::money($doc->total) . '</td>'
                 . '<td class="text-right text-nowrap">' . $doc->fecha . ' ' . $doc->hora . '</td>'
                 . '</tr>';
             $sum += $doc->total;
@@ -441,7 +442,7 @@ trait CommonSalesPurchases
         // añadimos el total
         $list .= '<tr class="table-warning">'
             . '<td class="text-right text-nowrap" colspan="3">'
-            . $i18n->trans('total') . ' <b>' . ToolBox::coins()::format($sum) . '</b></td>'
+            . $i18n->trans('total') . ' <b>' . Tools::money($sum) . '</b></td>'
             . '<td></td>'
             . '</tr>';
 
@@ -536,7 +537,7 @@ trait CommonSalesPurchases
 
         return '<div class="col-sm-auto">'
             . '<div class="form-group">'
-            . '<button class="btn btn-outline-danger dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">'
+            . '<button class="btn btn-spin-action btn-outline-danger dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">'
             . '<i class="fas fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</button>'
             . '<div class="dropdown-menu"><a class="dropdown-item text-success" href="#" onclick="return ' . $jsName . '(\'save-paid\', \'1\');">'
             . '<i class="fas fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</a></div>'

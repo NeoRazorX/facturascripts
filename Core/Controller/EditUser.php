@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleUser;
@@ -139,11 +140,16 @@ class EditUser extends EditController
 
         // Are we changing user language?
         if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
-            $this->toolBox()->i18n()->setLang($this->views['EditUser']->model->langcode);
+            Tools::lang()->setLang($this->views['EditUser']->model->langcode);
 
             $expire = time() + FS_COOKIES_EXPIRE;
             $this->response->headers->setCookie(
-                new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire, \FS_ROUTE)
+                Cookie::create(
+                    'fsLang',
+                    $this->views['EditUser']->model->langcode,
+                    $expire,
+                    Tools::config('route', '/')
+                )
             );
         }
 
@@ -253,7 +259,7 @@ class EditUser extends EditController
         $columnLangCode = $this->views['EditUser']->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
-            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
                 $langs[] = ['value' => $key, 'title' => $value];
             }
 

@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor;
 use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
 use FacturaScripts\Dinamic\Model\Producto;
@@ -37,7 +37,7 @@ class CostPriceTools
 {
     public static function update(Variante $variant): void
     {
-        $policy = AppSettings::get('default', 'costpricepolicy');
+        $policy = Tools::settings('default', 'costpricepolicy');
 
         switch ($policy) {
             case 'actual-price':

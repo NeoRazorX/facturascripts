@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,16 +21,17 @@ namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\CronJob;
+use FacturaScripts\Core\Tools;
 
 /**
  * Defines global attributes and methods for all classes.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Rafael San José Tovar
+ * @deprecated since version 2023
  */
 abstract class CronClass
 {
-
     /**
      * Database object.
      *
@@ -130,7 +131,7 @@ abstract class CronClass
         $cronJob->done = true;
         $cronJob->duration = microtime(true) - $this->init;
         if (false === $cronJob->save()) {
-            $this->toolBox()->i18nLog('cron')->error('record-save-error');
+            Tools::log('cron')->error('record-save-error');
         }
     }
 

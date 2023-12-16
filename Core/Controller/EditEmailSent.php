@@ -61,7 +61,7 @@ class EditEmailSent extends EditController
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('record-not-found');
+        Tools::log()->warning('record-not-found');
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,10 +34,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class ExportBase
 {
-
-    /**
-     * @var string
-     */
+    /** @var string */
     private $fileName;
 
     /**
@@ -45,7 +43,7 @@ abstract class ExportBase
     abstract public function addBusinessDocPage($model): bool;
 
     /**
-     * Adds a new page with a table listing the models data.
+     * Adds a new page with a table listing the model's data.
      */
     abstract public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool;
 
@@ -130,7 +128,7 @@ abstract class ExportBase
             }
 
             if (!$col->hidden()) {
-                $titles[$col->widget->fieldname] = $this->toolBox()->i18n()->trans($col->title);
+                $titles[$col->widget->fieldname] = Tools::lang()->trans($col->title);
             }
         }
 
@@ -257,7 +255,7 @@ abstract class ExportBase
 
             if (!$col->hidden()) {
                 $data[$col->widget->fieldname] = [
-                    'title' => $this->toolBox()->i18n()->trans($col->title),
+                    'title' => Tools::lang()->trans($col->title),
                     'value' => $col->widget->plainText($model)
                 ];
             }
@@ -295,12 +293,13 @@ abstract class ExportBase
     protected function setFileName(string $name)
     {
         if (empty($this->fileName)) {
-            $this->fileName = str_replace([' ', '"', "'", '/', '\\', ','], '_', ToolBox::utils()->fixHtml($name));
+            $this->fileName = str_replace([' ', '"', "'", '/', '\\', ','], '_', Tools::fixHtml($name));
         }
     }
 
     /**
      * @return ToolBox
+     * @deprecated since 2023.1
      */
     protected function toolBox(): ToolBox
     {

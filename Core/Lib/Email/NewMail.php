@@ -19,10 +19,11 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
 use PHPMailer\PHPMailer\Exception;
@@ -34,12 +35,12 @@ use Twig\Error\SyntaxError;
 /**
  * Description of NewMail
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class NewMail
 {
     const ATTACHMENTS_TMP_PATH = 'MyFiles/Tmp/Email/';
-    const DEFAULT_TEMPLATE = 'NewTemplate.html.twig';
 
     /** @var Empresa */
     public $empresa;
@@ -57,7 +58,7 @@ class NewMail
     protected $footerBlocks = [];
 
     /** @var string */
-    protected $html = '';
+    protected $html;
 
     /** @var bool */
     protected $lowsecure;
@@ -72,7 +73,7 @@ class NewMail
     public $signature;
 
     /** @var string */
-    public $template;
+    protected static $template = 'NewTemplate.html.twig';
 
     /** @var string */
     public $text;
@@ -83,54 +84,49 @@ class NewMail
     /** @var string */
     public $verificode;
 
-    /** @throws Exception */
     public function __construct()
     {
-        $appSettings = $this->toolBox()->appSettings();
+        $this->empresa = Empresas::default();
 
-        $this->empresa = new Empresa();
-        $this->empresa->loadFromCode($appSettings->get('default', 'idempresa'));
-
-        $this->fromEmail = $appSettings->get('email', 'email');
+        $this->fromEmail = Tools::settings('email', 'email');
         $this->fromName = $this->empresa->nombrecorto;
 
         $this->mail = new PHPMailer();
         $this->mail->CharSet = PHPMailer::CHARSET_UTF8;
-        $this->mail->Mailer = $appSettings->get('email', 'mailer');
+        $this->mail->Mailer = Tools::settings('email', 'mailer');
 
-        $this->mail->SMTPSecure = $appSettings->get('email', 'enc', '');
+        $this->mail->SMTPSecure = Tools::settings('email', 'enc', '');
         if ($this->mail->SMTPSecure) {
             $this->mail->SMTPAuth = true;
-            $this->mail->AuthType = $appSettings->get('email', 'authtype', '');
+            $this->mail->AuthType = Tools::settings('email', 'authtype', '');
         }
 
-        $this->mail->Host = $appSettings->get('email', 'host');
-        $this->mail->Port = $appSettings->get('email', 'port');
-        $this->mail->Username = $appSettings->get('email', 'user') ?
-            $appSettings->get('email', 'user') :
-            $appSettings->get('email', 'email');
-        $this->mail->Password = $appSettings->get('email', 'password');
-        $this->lowsecure = (bool)$appSettings->get('email', 'lowsecure');
+        $this->mail->Host = Tools::settings('email', 'host');
+        $this->mail->Port = Tools::settings('email', 'port');
+        $this->mail->Username = Tools::settings('email', 'user') ?
+            Tools::settings('email', 'user') :
+            Tools::settings('email', 'email');
+        $this->mail->Password = Tools::settings('email', 'password');
+        $this->lowsecure = (bool)Tools::settings('email', 'lowsecure');
 
-        foreach (static::splitEmails($appSettings->get('email', 'emailcc', '')) as $email) {
-            $this->addCC($email);
+        foreach (static::splitEmails(Tools::settings('email', 'emailcc', '')) as $email) {
+            $this->cc($email);
         }
 
-        foreach (static::splitEmails($appSettings->get('email', 'emailbcc', '')) as $email) {
-            $this->addBCC($email);
+        foreach (static::splitEmails(Tools::settings('email', 'emailbcc', '')) as $email) {
+            $this->bcc($email);
         }
 
-        $this->signature = $appSettings->get('email', 'signature', '');
-        $this->template = self::DEFAULT_TEMPLATE;
-        $this->verificode = $this->toolBox()->utils()->randomString(20);
+        $this->signature = Tools::settings('email', 'signature', '');
+        $this->verificode = Tools::randomString(20);
     }
 
     /**
-     * @throws Exception
+     * @deprecated since version 2023.09
      */
-    public function addAddress(string $email, string $name = ''): void
+    public function addAddress(string $email, string $name = ''): NewMail
     {
-        $this->mail->addAddress($email, $name);
+        return $this->to($email, $name);
     }
 
     /**
@@ -138,57 +134,71 @@ class NewMail
      *
      * @throws Exception
      */
-    public function addAttachment(string $path, string $name): void
+    public function addAttachment(string $path, string $name): NewMail
     {
         $this->mail->addAttachment($path, $name);
+
+        return $this;
     }
 
     /**
-     * Añade un email con copia oculta.
-     *
-     * @throws Exception
+     * @deprecated since version 2023.09
      */
-    public function addBCC(string $email, string $name = ''): void
+    public function addBCC(string $email, string $name = ''): NewMail
     {
-        $this->mail->addBCC($email, $name);
+        return $this->bcc($email, $name);
     }
 
     /**
-     * Añade un email con copia.
-     *
-     * @throws Exception
+     * @deprecated since version 2023.09
      */
-    public function addCC(string $email, string $name = ''): void
+    public function addCC(string $email, string $name = ''): NewMail
     {
-        $this->mail->addCC($email, $name);
+        return $this->cc($email, $name);
     }
 
     /**
      * Añade un bloque al pie del correo.
      */
-    public function addFooterBlock(BaseBlock $block): void
+    public function addFooterBlock(BaseBlock $block): NewMail
     {
         $block->setVerificode($this->verificode);
         $this->footerBlocks[] = $block;
+
+        return $this;
     }
 
     /**
      * Añade un bloque al cuerpo del correo.
      */
-    public function addMainBlock(BaseBlock $block): void
+    public function addMainBlock(BaseBlock $block): NewMail
     {
         $block->setVerificode($this->verificode);
         $this->mainBlocks[] = $block;
+
+        return $this;
     }
 
     /**
-     * Añade un email de respuesta.
-     *
-     * @throws Exception
+     * @deprecated since version 2023.09
      */
-    public function addReplyTo(string $address, string $name = ''): void
+    public function addReplyTo(string $address, string $name = ''): NewMail
     {
-        $this->mail->addReplyTo($address, $name);
+        return $this->replyTo($address, $name);
+    }
+
+    public function bcc(string $email, string $name = ''): NewMail
+    {
+        $this->mail->addBCC($email, $name);
+
+        return $this;
+    }
+
+    public function body(string $body): NewMail
+    {
+        $this->text = $body;
+
+        return $this;
     }
 
     /**
@@ -197,6 +207,18 @@ class NewMail
     public function canSendMail(): bool
     {
         return !empty($this->fromEmail) && !empty($this->mail->Password) && !empty($this->mail->Host);
+    }
+
+    public function cc(string $email, string $name = ''): NewMail
+    {
+        $this->mail->addCC($email, $name);
+
+        return $this;
+    }
+
+    public static function create(): NewMail
+    {
+        return new static();
     }
 
     public static function getAttachmentPath(?string $email, string $folder): string
@@ -252,6 +274,11 @@ class NewMail
         return $addresses;
     }
 
+    public static function getTemplate(): string
+    {
+        return static::$template;
+    }
+
     /**
      * Devuelve un array con los emails hacia donde va el mensaje.
      */
@@ -265,10 +292,16 @@ class NewMail
         return $addresses;
     }
 
+    public function replyTo(string $address, string $name = ''): NewMail
+    {
+        $this->mail->addReplyTo($address, $name);
+
+        return $this;
+    }
+
     /**
      * Envía el correo.
      *
-     * @return bool
      * @throws Exception
      * @throws LoaderError
      * @throws RuntimeError
@@ -276,8 +309,8 @@ class NewMail
      */
     public function send(): bool
     {
-        if (empty($this->mail->Username) || empty($this->mail->Password)) {
-            $this->toolBox()->i18nLog()->warning('email-not-configured');
+        if (false === $this->canSendMail()) {
+            Tools::log()->warning('email-not-configured');
             return false;
         }
 
@@ -288,7 +321,7 @@ class NewMail
         $this->mail->msgHTML($this->html);
 
         if ('smtp' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
-            $this->toolBox()->i18nLog()->warning('mail-server-error');
+            Tools::log()->warning('mail-server-error');
             return false;
         }
 
@@ -297,19 +330,65 @@ class NewMail
             return true;
         }
 
-        $this->toolBox()->i18nLog()->error('error', ['%error%' => $this->mail->ErrorInfo]);
+        Tools::log()->error('error', ['%error%' => $this->mail->ErrorInfo]);
         return false;
     }
 
-    public function setMailbox(string $emailFrom)
+    /**
+     * @throws Exception
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @deprecated since version 2023.09
+     */
+    public function sendNotification(string $notificationName, array $params): bool
     {
+        // ¿La notificación existe?
+        $notification = new EmailNotification();
+        if (false === $notification->loadFromCode($notificationName)) {
+            Tools::log()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
+            return false;
+        }
+
+        // ¿Está desactivada?
+        if (false === $notification->enabled) {
+            Tools::log()->warning('email-notification-disabled', ['%name%' => $notificationName]);
+            return false;
+        }
+
+        if (!isset($params['verificode'])) {
+            $params['verificode'] = $this->verificode;
+        }
+
+        $this->title = MailNotifier::getText($notification->subject, $params);
+        $this->text = MailNotifier::getText($notification->body, $params);
+
+        return $this->send();
+    }
+
+    public function setMailbox(string $emailFrom): NewMail
+    {
+        $this->fromEmail = $emailFrom;
+
         return $this;
+    }
+
+    public function subject(string $subject): NewMail
+    {
+        $this->title = $subject;
+
+        return $this;
+    }
+
+    public static function setTemplate(string $template): void
+    {
+        static::$template = $template;
     }
 
     /**
      * Establece el usuario que manda el email.
      */
-    public function setUser(User $user)
+    public function setUser(User $user): NewMail
     {
         $this->fromNick = $user->nick;
 
@@ -345,9 +424,16 @@ class NewMail
                 return $this->mail->smtpConnect($this->smtpOptions());
 
             default:
-                $this->toolBox()->i18nLog()->warning('test-' . $this->mail->Mailer . '-not-implemented');
+                Tools::log()->warning('test-' . $this->mail->Mailer . '-not-implemented');
                 return false;
         }
+    }
+
+    public function to(string $email, string $name = ''): NewMail
+    {
+        $this->mail->addAddress($email, $name);
+
+        return $this;
     }
 
     /**
@@ -355,8 +441,10 @@ class NewMail
      */
     protected function getFooterBlocks(): array
     {
-        $signature = $this->toolBox()->utils()->fixHtml($this->signature);
-        return array_merge([new TextBlock($signature)], $this->footerBlocks);
+        $signature = Tools::fixHtml($this->signature);
+        return empty($signature)
+            ? $this->footerBlocks
+            : array_merge($this->footerBlocks, [new TextBlock($signature, 'text-footer')]);
     }
 
     /**
@@ -364,7 +452,9 @@ class NewMail
      */
     protected function getMainBlocks(): array
     {
-        return array_merge([new TextBlock($this->text)], $this->mainBlocks);
+        return empty($this->text)
+            ? $this->mainBlocks
+            : array_merge([new TextBlock($this->text, 'pb-15')], $this->mainBlocks);
     }
 
     /**
@@ -376,14 +466,12 @@ class NewMail
      */
     protected function renderHTML(): void
     {
-        $params = [
-            'empresa' => $this->empresa,
+        $this->html = Html::render('Email/' . static::$template, [
+            'company' => $this->empresa,
             'footerBlocks' => $this->getFooterBlocks(),
             'mainBlocks' => $this->getMainBlocks(),
             'title' => $this->title
-        ];
-
-        $this->html = Html::render('Email/' . $this->template, $params);
+        ]);
     }
 
     /**
@@ -450,10 +538,5 @@ class NewMail
         }
 
         return [];
-    }
-
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 }

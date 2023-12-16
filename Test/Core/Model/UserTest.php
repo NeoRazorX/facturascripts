@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\Page;
 use FacturaScripts\Core\Model\Role;
 use FacturaScripts\Core\Model\RoleAccess;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
 final class UserTest extends TestCase
@@ -130,9 +130,8 @@ final class UserTest extends TestCase
         $this->assertTrue($role->save());
 
         // asignamos el rol por defecto
-        $appSettings = new AppSettings();
-        $appSettings->set('default', 'codrole', 'test1');
-        $appSettings->save();
+        Tools::settingsSet('default', 'codrole', 'test1');
+        Tools::settingsSave();
 
         // creamos un usuario
         $user = new User();
@@ -146,8 +145,8 @@ final class UserTest extends TestCase
         $this->assertEquals('test1', $roles[0]->codrole);
 
         // restauramos el rol por defecto
-        $appSettings->set('default', 'codrole', null);
-        $appSettings->save();
+        Tools::settingsSet('default', 'codrole', null);
+        Tools::settingsSave();
 
         // eliminamos
         $this->assertTrue($user->delete());

@@ -66,7 +66,7 @@
     </div>
 {% endif %}
 
-<form action="{{ firstView.model.url() }}" method="post">
+<form action="{{ firstView.model.url() }}" method="post" onsubmit="animateSpinner('add')">
     {{ formToken() }}
     <input type="hidden" name="action" value="new-refund"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
@@ -87,7 +87,7 @@
                                     <select name="codserie" class="form-control">
                                         {% for serie in fsc.series() %}
                                             {% if serie.tipo is same as('R') %}
-                                                {% if serie.codserie == appSettings.get('default','codserierec','R') %}
+                                                {% if serie.codserie == settings('default','codserierec','R') %}
                                                     <option value="{{ serie.codserie }}" selected>
                                                         {{ serie.descripcion }}
                                                     </option>
@@ -124,7 +124,7 @@
                                     </div>
                                 </div>
                                 <div class="btn-group mb-3 ml-3">
-                                    <button type="submit" class="btn btn-warning">
+                                    <button type="submit" class="btn btn-spin-action btn-warning">
                                         <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
                                 </div>

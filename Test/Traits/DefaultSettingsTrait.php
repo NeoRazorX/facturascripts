@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Traits;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
@@ -27,6 +26,7 @@ use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\RegularizacionImpuesto;
+use FacturaScripts\Core\Tools;
 
 trait DefaultSettingsTrait
 {
@@ -76,23 +76,20 @@ trait DefaultSettingsTrait
 
     protected static function setDefaultSettings(): void
     {
-        $appSettings = new AppSettings();
-        $appSettings->load();
-
         $fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/ESP/default.json');
         $defaultValues = json_decode($fileContent, true) ?? [];
         foreach ($defaultValues as $group => $values) {
             foreach ($values as $key => $value) {
-                $appSettings->set($group, $key, $value);
+                Tools::settingsSet($group, $key, $value);
             }
         }
 
         $almacenModel = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $appSettings->get('default', 'idempresa', 1))];
+        $where = [new DataBaseWhere('idempresa', Tools::settings('default', 'idempresa', 1))];
         foreach ($almacenModel->all($where) as $almacen) {
-            $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
+            Tools::settingsSet('default', 'codalmacen', $almacen->codalmacen);
         }
 
-        $appSettings->save();
+        Tools::settingsSave();
     }
 }

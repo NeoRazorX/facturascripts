@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase as db;
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use SimpleXMLElement;
 
 /**
@@ -83,13 +83,13 @@ class DataBaseTools
     {
         $filename = static::getXmlTableLocation($tableName);
         if (false === file_exists($filename)) {
-            ToolBox::i18nLog()->critical('file-not-found', ['%fileName%' => $filename]);
+            Tools::log()->critical('file-not-found', ['%fileName%' => $filename]);
             return false;
         }
 
         $xml = simplexml_load_string(file_get_contents($filename, true));
         if (false === $xml) {
-            ToolBox::i18nLog()->critical('error-reading-file', ['%fileName%' => $filename]);
+            Tools::log()->critical('error-reading-file', ['%fileName%' => $filename]);
             return false;
         }
 

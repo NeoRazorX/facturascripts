@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as DinLineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
 
@@ -119,7 +120,7 @@ class FacturaCliente extends Base\SalesDocument
         ];
         foreach ($this->all($whereOld, ['fecha' => 'DESC'], 0, 1) as $old) {
             if (strtotime($old->fecha) > strtotime($this->fecha)) {
-                self::toolBox()::i18nLog()->error(
+                Tools::log()->error(
                     'invalid-date-there-are-invoices-before',
                     ['%date%' => $this->fecha, '%other-date%' => $old->fecha, '%other%' => $old->codigo]
                 );
@@ -135,7 +136,7 @@ class FacturaCliente extends Base\SalesDocument
         ];
         foreach ($this->all($whereNew, ['fecha' => 'ASC'], 0, 1) as $old) {
             if (strtotime($old->fecha) < strtotime($this->fecha)) {
-                self::toolBox()::i18nLog()->error(
+                Tools::log()->error(
                     'invalid-date-there-are-invoices-after',
                     ['%date%' => $this->fecha, '%other-date%' => $old->fecha, '%other%' => $old->codigo]
                 );

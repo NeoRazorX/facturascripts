@@ -18,11 +18,14 @@
  */
 
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
-
-define("FS_FOLDER", getcwd());
+use FacturaScripts\Core\Tools;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+
+// cargamos la configuración
+define("FS_FOLDER", getcwd());
 
 $config = FS_FOLDER . '/config.php';
 if (__DIR__ === '/home/scrutinizer/build/Test') {
@@ -44,8 +47,15 @@ echo "\n" . 'DB User: ' . FS_DB_USER;
 echo "\n" . 'DB Pass: ' . FS_DB_PASS;
 echo "\n" . 'DB Name: ' . FS_DB_NAME . "\n\n";
 
+// establecemos la zona horaria
+$timeZone = Tools::config('timezone', 'Europe/Madrid');
+date_default_timezone_set($timeZone);
+
 // clean cache
 Cache::clear();
+
+// iniciamos el kernel
+Kernel::init();
 
 // deploy
 Plugins::deploy();

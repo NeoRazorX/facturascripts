@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 
 /**
  * Model to persist data from logs.
@@ -29,7 +29,6 @@ use FacturaScripts\Core\Base\ToolBox;
  */
 class LogMessage extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     const MAX_MESSAGE_LEN = 3000;
@@ -109,7 +108,7 @@ class LogMessage extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->time = date(self::DATETIME_STYLE);
+        $this->time = Tools::dateTime();
     }
 
     /**
@@ -119,13 +118,13 @@ class LogMessage extends Base\ModelClass
      */
     public function context(): array
     {
-        return json_decode(ToolBox::utils()::fixHtml($this->context), true);
+        return json_decode(Tools::fixHtml($this->context), true);
     }
 
     public function delete(): bool
     {
         if ($this->channel === self::AUDIT_CHANNEL) {
-            self::toolBox()::i18nLog()->warning('cant-delete-audit-log');
+            Tools::log()->warning('cant-delete-audit-log');
             return false;
         }
 
@@ -144,24 +143,24 @@ class LogMessage extends Base\ModelClass
 
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->channel = $utils->noHtml($this->channel);
-        $this->context = $utils->noHtml($this->context);
-        $this->message = $utils->noHtml($this->message);
+        $this->channel = Tools::noHtml($this->channel);
+        $this->context = Tools::noHtml($this->context);
+        $this->message = Tools::noHtml($this->message);
         if (strlen($this->message) > static::MAX_MESSAGE_LEN) {
             $this->message = substr($this->message, 0, static::MAX_MESSAGE_LEN);
         }
 
-        $this->model = $utils->noHtml($this->model);
-        $this->modelcode = $utils->noHtml($this->modelcode);
-        $this->uri = $utils->noHtml($this->uri);
+        $this->model = Tools::noHtml($this->model);
+        $this->modelcode = Tools::noHtml($this->modelcode);
+        $this->uri = Tools::noHtml($this->uri);
+
         return parent::test();
     }
 
     protected function saveUpdate(array $values = []): bool
     {
         if ($this->channel === self::AUDIT_CHANNEL) {
-            self::toolBox()::i18nLog()->warning('cant-update-audit-log');
+            Tools::log()->warning('cant-update-audit-log');
             return false;
         }
 

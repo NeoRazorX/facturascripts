@@ -128,7 +128,7 @@ class GroupItem extends VisualItem
     public function modal($model, string $viewName): string
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
-        $html = '<form id="formModal' . $this->getUniqueId() . '" method="post" enctype="multipart/form-data">'
+        $html = '<form id="formModal' . $this->getUniqueId() . '" method="post" enctype="multipart/form-data" onsubmit="animateSpinner(\'add\')">'
             . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
             . '<input type="hidden" name="code" value=""/>'
             . '<input type="hidden" name="multireqtoken" value="' . static::getToken() . '"/>'
@@ -151,10 +151,11 @@ class GroupItem extends VisualItem
         $html .= '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
+            . '<button type="button" class="btn btn-spin-action btn-secondary" data-dismiss="modal">'
             . static::$i18n->trans('cancel')
             . '</button>'
-            . '<button type="submit" name="action" value="' . $this->name . '" class="btn btn-primary">'
+            . '<input type="hidden" name="action" value="' . $this->name . '"/>'
+            . '<button type="submit" class="btn-spin-action btn btn-primary">'
             . static::$i18n->trans('accept')
             . '</button>'
             . '</div>'

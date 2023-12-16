@@ -145,7 +145,7 @@ class PaymentToAccounting
         $account = $this->payment->getPaymentMethod()->getSubcuentaGastos($this->exercise->codejercicio, true);
 
         $expLine = $entry->getNewLine($account);
-        $expLine->concepto = ToolBox::i18n()->trans('receipt-expense-account', ['%document%' => $entry->documento]);
+        $expLine->concepto = Tools::lang()->trans('receipt-expense-account', ['%document%' => $entry->documento]);
         $expLine->haber = abs($this->payment->gastos);
         return $expLine->save();
     }

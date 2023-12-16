@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinAttachedFile;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -153,7 +154,7 @@ class ProductoImagen extends Base\ModelClass
             imagedestroy($image);
             imagedestroy($thumb);
         } catch (Throwable $th) {
-            self::toolBox()->log()->error($th->getMessage());
+            Tools::log()->error($th->getMessage());
             return '';
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
 
 /**
  * A series of invoicing or accounting, to have different numbering
@@ -27,10 +30,9 @@ use FacturaScripts\Core\DataSrc\Series;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Serie extends Base\ModelClass
+class Serie extends ModelClass
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * @var int
@@ -78,7 +80,7 @@ class Serie extends Base\ModelClass
     public function delete(): bool
     {
         if ($this->isDefault()) {
-            $this->toolBox()->i18nLog()->warning('cant-delete-default-serie');
+            Tools::log()->warning('cant-delete-default-serie');
             return false;
         }
 
@@ -106,7 +108,7 @@ class Serie extends Base\ModelClass
      */
     public function isDefault(): bool
     {
-        return $this->codserie === $this->toolBox()->appSettings()->get('default', 'codserie');
+        return $this->codserie === Tools::settings('default', 'codserie');
     }
 
     public static function primaryColumn(): string
@@ -134,14 +136,15 @@ class Serie extends Base\ModelClass
     {
         $this->codserie = trim($this->codserie);
         if ($this->codserie && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codserie)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codserie, '%column%' => 'codserie', '%min%' => '1', '%max%' => '4']
             );
             return false;
         }
 
-        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
+        $this->descripcion = Tools::noHtml($this->descripcion);
+
         return parent::test();
     }
 

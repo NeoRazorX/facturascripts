@@ -211,7 +211,7 @@ class WidgetSelect extends BaseWidget
 
     protected function assets()
     {
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
+        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
     }
 
     /**

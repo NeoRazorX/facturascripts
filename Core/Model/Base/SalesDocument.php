@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Cliente as CoreCliente;
 use FacturaScripts\Core\Model\Contacto as CoreContacto;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -161,7 +162,7 @@ abstract class SalesDocument extends TransformerDocument
         $this->totalcoste = 0.0;
 
         // select default currency
-        $coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
+        $coddivisa = Tools::settings('default', 'coddivisa');
         $this->setCurrency($coddivisa, false);
     }
 
@@ -169,7 +170,7 @@ abstract class SalesDocument extends TransformerDocument
     {
         $country = new Pais();
         if ($country->loadFromCode($this->codpais)) {
-            return $this->toolBox()->utils()->fixHtml($country->nombre) ?? '';
+            return Tools::fixHtml($country->nombre) ?? '';
         }
 
         return $this->codpais ?? '';
@@ -210,8 +211,8 @@ abstract class SalesDocument extends TransformerDocument
         }
 
         $variant = new Variante();
-        $where1 = [new DataBaseWhere('referencia', $this->toolBox()->utils()->noHtml($reference))];
-        $where2 = [new DataBaseWhere('codbarras', $this->toolBox()->utils()->noHtml($reference))];
+        $where1 = [new DataBaseWhere('referencia', Tools::noHtml($reference))];
+        $where2 = [new DataBaseWhere('codbarras', Tools::noHtml($reference))];
         if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
             $product = $variant->getProducto();
 
@@ -277,7 +278,7 @@ abstract class SalesDocument extends TransformerDocument
         // check if the customer has exceeded the maximum risk
         $customer = $this->getSubject();
         if ($customer->riesgomax && $customer->riesgoalcanzado > $customer->riesgomax) {
-            $this->toolBox()->i18nLog()->warning('customer-reached-maximum-risk');
+            Tools::log()->warning('customer-reached-maximum-risk');
             return false;
         } elseif (empty($customer->primaryColumnValue())) {
             return parent::save();
@@ -356,15 +357,14 @@ abstract class SalesDocument extends TransformerDocument
      */
     public function test()
     {
-        $utils = $this->toolBox()->utils();
-        $this->apartado = $utils->noHtml($this->apartado);
-        $this->ciudad = $utils->noHtml($this->ciudad);
-        $this->codigoenv = $utils->noHtml($this->codigoenv);
-        $this->codpostal = $utils->noHtml($this->codpostal);
-        $this->direccion = $utils->noHtml($this->direccion);
-        $this->nombrecliente = $utils->noHtml($this->nombrecliente);
-        $this->numero2 = $utils->noHtml($this->numero2);
-        $this->provincia = $utils->noHtml($this->provincia);
+        $this->apartado = Tools::noHtml($this->apartado);
+        $this->ciudad = Tools::noHtml($this->ciudad);
+        $this->codigoenv = Tools::noHtml($this->codigoenv);
+        $this->codpostal = Tools::noHtml($this->codpostal);
+        $this->direccion = Tools::noHtml($this->direccion);
+        $this->nombrecliente = Tools::noHtml($this->nombrecliente);
+        $this->numero2 = Tools::noHtml($this->numero2);
+        $this->provincia = Tools::noHtml($this->provincia);
 
         return parent::test();
     }

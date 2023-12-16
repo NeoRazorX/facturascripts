@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -104,7 +105,7 @@ class AdminPlugins extends Controller
     private function disablePluginAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -118,7 +119,7 @@ class AdminPlugins extends Controller
     private function enablePluginAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -151,7 +152,7 @@ class AdminPlugins extends Controller
     private function rebuildAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            Tools::log()->warning('not-allowed-update');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -159,13 +160,13 @@ class AdminPlugins extends Controller
 
         Plugins::deploy(true, true);
         Cache::clear();
-        $this->toolBox()->i18nLog()->notice('rebuild-completed');
+        Tools::log()->notice('rebuild-completed');
     }
 
     private function removePluginAction(): void
     {
         if (false === $this->permissions->allowDelete) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-delete');
+            Tools::log()->warning('not-allowed-delete');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -179,7 +180,7 @@ class AdminPlugins extends Controller
     private function uploadPluginAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            Tools::log()->warning('not-allowed-update');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -189,12 +190,12 @@ class AdminPlugins extends Controller
         $uploadFiles = $this->request->files->get('plugin', []);
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
-                $this->toolBox()->log()->error($uploadFile->getErrorMessage());
+                Tools::log()->error($uploadFile->getErrorMessage());
                 continue;
             }
 
             if ($uploadFile->getMimeType() !== 'application/zip') {
-                $this->toolBox()->i18nLog()->error('file-not-supported');
+                Tools::log()->error('file-not-supported');
                 continue;
             }
 
@@ -206,7 +207,7 @@ class AdminPlugins extends Controller
 
         Cache::clear();
         if ($ok) {
-            $this->toolBox()->i18nLog()->notice('reloading');
+            Tools::log()->notice('reloading');
             $this->redirect($this->url(), 3);
         }
     }

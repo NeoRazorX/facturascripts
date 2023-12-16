@@ -24,11 +24,11 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\AgenciaTransporte;
-use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Provincia;
@@ -36,7 +36,7 @@ use FacturaScripts\Dinamic\Model\Provincia;
 /**
  * Description of SalesHeaderHTML
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class SalesHeaderHTML
@@ -86,7 +86,7 @@ class SalesHeaderHTML
         $model->coddivisa = $formData['coddivisa'] ?? $model->coddivisa;
         $model->codpago = $formData['codpago'] ?? $model->codpago;
         $model->codserie = $formData['codserie'] ?? $model->codserie;
-        $model->fecha = empty($formData['fecha']) ? $model->fecha : date(ModelCore::DATE_STYLE, strtotime($formData['fecha']));
+        $model->fecha = empty($formData['fecha']) ? $model->fecha : Tools::date($formData['fecha']);
         $model->femail = isset($formData['femail']) && !empty($formData['femail']) ? $formData['femail'] : $model->femail;
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombrecliente = $formData['nombrecliente'] ?? $model->nombrecliente;

@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
@@ -77,7 +77,7 @@ class AccountingLineHTML
         if ($formData['action'] === 'new-line' && !empty($formData['new_subaccount'])) {
             $subcuenta = static::getSubcuenta($formData['new_subaccount'], $model);
             if (false === $subcuenta->exists()) {
-                ToolBox::i18nLog()->error('subaccount-not-found', ['%subAccountCode%' => $formData['new_subaccount']]);
+                Tools::log()->error('subaccount-not-found', ['%subAccountCode%' => $formData['new_subaccount']]);
                 return;
             }
 
@@ -117,7 +117,7 @@ class AccountingLineHTML
         }
 
         return empty($html) ?
-            '<div class="alert alert-warning border-top mb-0">' . ToolBox::i18n()->trans('new-acc-entry-line-p') . '</div>' :
+            '<div class="alert alert-warning border-top mb-0">' . Tools::lang()->trans('new-acc-entry-line-p') . '</div>' :
             $html;
     }
 
@@ -152,9 +152,7 @@ class AccountingLineHTML
             . '<div class="modal-dialog modal-dialog-centered">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">'
-            . $line->codsubcuenta
-            . '</h5>'
+            . '<h5 class="modal-title">' . $line->codsubcuenta . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
@@ -459,7 +457,7 @@ class AccountingLineHTML
     protected static function saldo(Translator $i18n, Subcuenta $subcuenta): string
     {
         return '<div class="col pb-2 small">' . $i18n->trans('balance')
-            . '<input type="text" class="form-control" value="' . ToolBox::numbers()::format($subcuenta->saldo) . '" tabindex="-1" readonly>'
+            . '<input type="text" class="form-control" value="' . Tools::number($subcuenta->saldo) . '" tabindex="-1" readonly>'
             . '</div>';
     }
 

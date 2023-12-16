@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 
@@ -53,22 +54,23 @@ class ConfigEmail extends PanelController
         $this->addEditView($viewName, 'Settings', 'email', 'fas fa-envelope');
 
         // desactivamos los botones nuevo y eliminar
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
+        $this->tab($viewName)
+            ->setSettings('btnNew', false)
+            ->setSettings('btnDelete', false);
     }
 
     protected function createViewsEmailNotification(string $viewName = 'ListEmailNotification'): void
     {
-        $this->addListView($viewName, 'EmailNotification', 'notifications', 'fas fa-bell');
-        $this->views[$viewName]->addOrderBy(['date'], 'date');
-        $this->views[$viewName]->addOrderBy(['name'], 'name', 1);
-        $this->views[$viewName]->addSearchFields(['body', 'name', 'subject']);
+        $this->addListView($viewName, 'EmailNotification', 'notifications', 'fas fa-bell')
+            ->addSearchFields(['body', 'name', 'subject'])
+            ->addOrderBy(['date'], 'date')
+            ->addOrderBy(['name'], 'name', 1);
 
         // filtros
-        $this->views[$viewName]->addFilterCheckbox('enabled');
+        $this->listView($viewName)->addFilterCheckbox('enabled');
 
         // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->tab($viewName)->setSettings('btnNew', false);
 
         // añadimos los botones de activar y desactivar
         $this->addButton($viewName, [
@@ -88,23 +90,24 @@ class ConfigEmail extends PanelController
 
     protected function createViewsEmailSent(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-paper-plane');
-        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
-        $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-paper-plane')
+            ->addSearchFields(['addressee', 'body', 'subject'])
+            ->addOrderBy(['date'], 'date', 2);
 
         // filtros
         $users = $this->codeModel->all('users', 'nick', 'nick');
-        $this->views[$viewName]->addFilterSelect('nick', 'user', 'nick', $users);
+        $this->listView($viewName)->addFilterSelect('nick', 'user', 'nick', $users);
 
         $from = $this->codeModel->all('emails_sent', 'email_from', 'email_from');
-        $this->views[$viewName]->addFilterSelect('from', 'from', 'email_from', $from);
+        $this->listView($viewName)->addFilterSelect('from', 'from', 'email_from', $from);
 
-        $this->views[$viewName]->addFilterPeriod('date', 'period', 'date');
-        $this->views[$viewName]->addFilterCheckbox('opened');
-        $this->views[$viewName]->addFilterCheckbox('attachment', 'has-attachments');
+        $this->listView($viewName)
+            ->addFilterPeriod('date', 'period', 'date')
+            ->addFilterCheckbox('opened')
+            ->addFilterCheckbox('attachment', 'has-attachments');
 
         // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->tab($viewName)->setSettings('btnNew', false);
     }
 
     protected function enableNotificationAction(bool $value): void
@@ -112,7 +115,7 @@ class ConfigEmail extends PanelController
         if (false === $this->validateFormToken()) {
             return;
         } elseif (false === $this->user->can('EditEmailNotification', 'update')) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         }
 
@@ -129,12 +132,12 @@ class ConfigEmail extends PanelController
 
             $notification->enabled = $value;
             if (false === $notification->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
+                Tools::log()->warning('record-save-error');
                 return;
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
     }
 
     /**
@@ -203,10 +206,10 @@ class ConfigEmail extends PanelController
 
         $email = new NewMail();
         if ($email->test()) {
-            $this->toolBox()->i18nLog()->notice('mail-test-ok');
+            Tools::log()->notice('mail-test-ok');
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('mail-test-error');
+        Tools::log()->warning('mail-test-error');
     }
 }

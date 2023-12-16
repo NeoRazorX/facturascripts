@@ -22,10 +22,10 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AtributoValor;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Fabricante;
@@ -72,7 +72,7 @@ class SalesModalHTML
         self::$orden = $formData['fp_orden'] ?? 'ref_asc';
         self::$vendido = (bool)($formData['fp_vendido'] ?? false);
         self::$query = isset($formData['fp_query']) ?
-            ToolBox::utils()->noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
+            Tools::noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
     }
 
     public static function render(SalesDocument $model, string $url, User $user, ControllerPermissions $permissions): string
@@ -89,7 +89,7 @@ class SalesModalHTML
         $i18n = new Translator();
         foreach (static::getProducts() as $row) {
             $cssClass = $row['nostock'] ? 'table-info clickableRow' : ($row['disponible'] > 0 ? 'clickableRow' : 'table-warning clickableRow');
-            $description = ToolBox::utils()->trueTextBreak($row['descripcion'], 120)
+            $description = Tools::textBreak($row['descripcion'], 120)
                 . static::idatributovalor($row['idatributovalor1'])
                 . static::idatributovalor($row['idatributovalor2'])
                 . static::idatributovalor($row['idatributovalor3'])
@@ -97,10 +97,10 @@ class SalesModalHTML
             $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return salesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
                 . '<td><b>' . $row['referencia'] . '</b> ' . $description . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['precio'])) . '</td>';
+                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>';
 
             if (self::$vendido) {
-                $tbody .= '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['ultimo_precio'])) . '</td>';
+                $tbody .= '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['ultimo_precio'])) . '</td>';
             }
 
             $tbody .= '<td class="text-right">' . $row['disponible'] . '</td>'

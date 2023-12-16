@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\AttachedFile;
@@ -37,6 +36,7 @@ use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Model\Variante;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -171,8 +171,7 @@ final class ProductoTest extends TestCase
     public function testCostPriceNoPolicy()
     {
         // asignamos ninguna política de precio de coste
-        $settings = new AppSettings();
-        $settings->set('default', 'costpricepolicy', '');
+        Tools::settingsSet('default', 'costpricepolicy', '');
 
         // creamos un producto con coste 100
         $product = $this->getTestProduct();
@@ -206,8 +205,7 @@ final class ProductoTest extends TestCase
     public function testCostPricePolicyLastPrice()
     {
         // asignamos la política de precio de coste último precio
-        $settings = new AppSettings();
-        $settings->set('default', 'costpricepolicy', 'last-price');
+        Tools::settingsSet('default', 'costpricepolicy', 'last-price');
 
         // creamos un producto con coste 50
         $product = $this->getTestProduct();
@@ -256,8 +254,7 @@ final class ProductoTest extends TestCase
     public function testCostPricePolicyHighPrice()
     {
         // asignamos la política de precio de coste precio más alto
-        $settings = new AppSettings();
-        $settings->set('default', 'costpricepolicy', 'high-price');
+        Tools::settingsSet('default', 'costpricepolicy', 'high-price');
 
         // creamos un producto con coste 50
         $product = $this->getTestProduct();
@@ -306,8 +303,7 @@ final class ProductoTest extends TestCase
     public function testCostPricePolicyAveragePrice()
     {
         // asignamos la política de precio de coste precio medio
-        $settings = new AppSettings();
-        $settings->set('default', 'costpricepolicy', 'average-price');
+        Tools::settingsSet('default', 'costpricepolicy', 'average-price');
 
         // creamos un producto con coste 50
         $product = $this->getTestProduct();
@@ -539,7 +535,7 @@ final class ProductoTest extends TestCase
         // añadimos una variante
         $variant = new Variante();
         $variant->idproducto = $product->idproducto;
-        $variant->referencia = 'test';
+        $variant->referencia = 'test-2';
         $this->assertTrue($variant->save(), 'variant-cant-save');
 
         // copiamos una imagen

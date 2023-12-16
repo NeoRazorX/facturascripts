@@ -67,7 +67,7 @@ class RowFooter extends VisualItem
         }
 
         if (empty($jsFunction)) {
-            return '<form method="post">'
+            return '<form method="post" onsubmit="animateSpinner(\'add\')">'
                 . '<input type="hidden" name="action"/>'
                 . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
                 . $html

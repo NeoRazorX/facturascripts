@@ -20,8 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use Exception;
-use FacturaScripts\Core\App\AppRouter;
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +27,13 @@ use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
-use FacturaScripts\Dinamic\Model;
+use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Page;
+use FacturaScripts\Dinamic\Model\Role;
+use FacturaScripts\Dinamic\Model\RoleAccess;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -41,9 +45,6 @@ class Wizard extends Controller
 {
     const ITEM_SELECT_LIMIT = 500;
     const NEW_DEFAULT_PAGE = 'Dashboard';
-
-    /** @var AppSettings */
-    protected $appSettings;
 
     public function getPageData(): array
     {
@@ -90,13 +91,12 @@ class Wizard extends Controller
      * Runs the controller's private logic.
      *
      * @param Response $response
-     * @param Model\User $user
+     * @param User $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        $this->appSettings = new AppSettings();
 
         $action = $this->request->get('action', '');
         switch ($action) {
@@ -127,7 +127,7 @@ class Wizard extends Controller
      */
     private function addDefaultRoleAccess(): void
     {
-        $role = new Model\Role();
+        $role = new Role();
         $role->codrole = 'employee';
         $role->descripcion = Tools::lang()->trans('employee');
         if ($role->exists()) {
@@ -138,8 +138,8 @@ class Wizard extends Controller
         $this->addPagesToRole($role->codrole);
 
         // asignamos este rol como el predeterminado
-        $this->appSettings->set('default', 'codrole', $role->codrole);
-        $this->appSettings->save();
+        Tools::settingsSet('default', 'codrole', $role->codrole);
+        Tools::settingsSave();
     }
 
     /**
@@ -154,8 +154,8 @@ class Wizard extends Controller
         $this->dataBase->beginTransaction();
 
         try {
-            $page = new Model\Page();
-            $roleAccess = new Model\RoleAccess();
+            $page = new Page();
+            $roleAccess = new RoleAccess();
 
             // all pages not in admin menu and not yet enabled
             $inSQL = "SELECT name FROM pages WHERE menu != 'admin' AND name NOT IN "
@@ -181,7 +181,7 @@ class Wizard extends Controller
         }
     }
 
-    protected function finalRedirect()
+    protected function finalRedirect(): void
     {
         // redirect to the home page
         $this->redirect($this->user->homepage, 2);
@@ -192,7 +192,7 @@ class Wizard extends Controller
      *
      * @param array $names
      */
-    private function initModels(array $names)
+    private function initModels(array $names): void
     {
         foreach ($names as $name) {
             $className = '\\FacturaScripts\\Dinamic\\Model\\' . $name;
@@ -216,12 +216,12 @@ class Wizard extends Controller
         }
 
         // Does an accounting plan already exist?
-        $cuenta = new Model\Cuenta();
+        $cuenta = new Cuenta();
         if ($cuenta->count() > 0 || $this->dataBase->tableExists('co_cuentas')) {
             return;
         }
 
-        $exerciseModel = new Model\Ejercicio();
+        $exerciseModel = new Ejercicio();
         foreach ($exerciseModel->all() as $exercise) {
             $planImport = new AccountingPlanImport();
             $planImport->importCSV($filePath, $exercise->codejercicio);
@@ -234,7 +234,7 @@ class Wizard extends Controller
      *
      * @param string $codpais
      */
-    private function preSetAppSettings(string $codpais)
+    private function preSetAppSettings(string $codpais): void
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/default.json';
         if (false === file_exists($filePath)) {
@@ -245,13 +245,13 @@ class Wizard extends Controller
         $defaultValues = json_decode($fileContent, true) ?? [];
         foreach ($defaultValues as $group => $values) {
             foreach ($values as $key => $value) {
-                $this->appSettings->set($group, $key, $value);
+                Tools::settingsSet($group, $key, $value);
             }
         }
 
-        $this->appSettings->set('default', 'codpais', $codpais);
-        $this->appSettings->set('default', 'homepage', 'AdminPlugins');
-        $this->appSettings->save();
+        Tools::settingsSet('default', 'codpais', $codpais);
+        Tools::settingsSet('default', 'homepage', 'AdminPlugins');
+        Tools::settingsSave();
     }
 
     /**
@@ -259,7 +259,7 @@ class Wizard extends Controller
      *
      * @param string $codpais
      */
-    private function saveAddress(string $codpais)
+    private function saveAddress(string $codpais): void
     {
         $this->empresa->apartado = $this->request->request->get('apartado', '');
         $this->empresa->cifnif = $this->request->request->get('cifnif', '');
@@ -275,12 +275,12 @@ class Wizard extends Controller
         $this->empresa->telefono2 = $this->request->request->get('telefono2', '');
         $this->empresa->tipoidfiscal = $this->request->request->get('tipoidfiscal', '');
         if (empty($this->empresa->tipoidfiscal)) {
-            $this->empresa->tipoidfiscal = $this->appSettings->get('default', 'tipoidfiscal');
+            $this->empresa->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
         }
         $this->empresa->save();
 
         // assigns warehouse?
-        $almacenModel = new Model\Almacen();
+        $almacenModel = new Almacen();
         $where = [
             new DataBaseWhere('idempresa', $this->empresa->idempresa),
             new DataBaseWhere('idempresa', null, 'IS', 'OR')
@@ -291,7 +291,7 @@ class Wizard extends Controller
         }
 
         // no assigned warehouse? Create a new one
-        $almacen = new Model\Almacen();
+        $almacen = new Almacen();
         $this->setWarehouse($almacen, $codpais);
     }
 
@@ -320,7 +320,7 @@ class Wizard extends Controller
         return $this->user->save();
     }
 
-    private function saveStep1()
+    private function saveStep1(): void
     {
         if (false === $this->validateFormToken()) {
             return;
@@ -349,7 +349,7 @@ class Wizard extends Controller
         $this->setTemplate('Wizard-2');
     }
 
-    private function saveStep2()
+    private function saveStep2(): void
     {
         if (false === $this->validateFormToken()) {
             return;
@@ -361,11 +361,11 @@ class Wizard extends Controller
         foreach (['codimpuesto', 'costpricepolicy'] as $key) {
             $value = $this->request->request->get($key);
             $finalValue = empty($value) ? null : $value;
-            $this->appSettings->set('default', $key, $finalValue);
+            Tools::settingsSet('default', $key, $finalValue);
         }
-        $this->appSettings->set('default', 'updatesupplierprices', (bool)$this->request->request->get('updatesupplierprices', '0'));
-        $this->appSettings->set('default', 'ventasinstock', (bool)$this->request->request->get('ventasinstock', '0'));
-        $this->appSettings->save();
+        Tools::settingsSet('default', 'updatesupplierprices', (bool)$this->request->request->get('updatesupplierprices', '0'));
+        Tools::settingsSet('default', 'ventasinstock', (bool)$this->request->request->get('ventasinstock', '0'));
+        Tools::settingsSave();
 
         if ($this->request->request->get('defaultplan', '0')) {
             $this->loadDefaultAccountingPlan($this->empresa->codpais);
@@ -376,7 +376,7 @@ class Wizard extends Controller
         $this->redirect($this->url() . '?action=step3', 2);
     }
 
-    protected function saveStep3()
+    protected function saveStep3(): void
     {
         // load all models
         $modelNames = [];
@@ -397,10 +397,6 @@ class Wizard extends Controller
         // add the default role for employees
         $this->addDefaultRoleAccess();
 
-        // clear routes
-        $appRouter = new AppRouter();
-        $appRouter->clear();
-
         // change user homepage
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : static::NEW_DEFAULT_PAGE;
         $this->user->save();
@@ -410,7 +406,7 @@ class Wizard extends Controller
         $this->finalRedirect();
     }
 
-    private function setWarehouse(Model\Almacen $almacen, string $codpais): void
+    private function setWarehouse(Almacen $almacen, string $codpais): void
     {
         $almacen->ciudad = $this->empresa->ciudad;
         $almacen->codpais = $codpais;
@@ -421,8 +417,8 @@ class Wizard extends Controller
         $almacen->provincia = $this->empresa->provincia;
         $almacen->save();
 
-        $this->appSettings->set('default', 'codalmacen', $almacen->codalmacen);
-        $this->appSettings->set('default', 'idempresa', $this->empresa->idempresa);
-        $this->appSettings->save();
+        Tools::settingsSet('default', 'codalmacen', $almacen->codalmacen);
+        Tools::settingsSet('default', 'idempresa', $this->empresa->idempresa);
+        Tools::settingsSave();
     }
 }

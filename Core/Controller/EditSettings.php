@@ -26,6 +26,7 @@ use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\EditView;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Model\Settings;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
@@ -49,13 +50,11 @@ class EditSettings extends PanelController
 
     protected function checkPaymentMethod(): bool
     {
-        $appSettings = $this->toolBox()->appSettings();
-
-        $idempresa = $appSettings->get('default', 'idempresa');
+        $idempresa = Tools::settings('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
         $values = $this->codeModel->all('formaspago', 'codpago', 'descripcion', false, $where);
         foreach ($values as $value) {
-            if ($value->code == $appSettings->get('default', 'codpago')) {
+            if ($value->code == Tools::settings('default', 'codpago')) {
                 // perfect
                 return true;
             }
@@ -63,26 +62,24 @@ class EditSettings extends PanelController
 
         // assign a new payment method
         foreach ($values as $value) {
-            $appSettings->set('default', 'codpago', $value->code);
-            $appSettings->save();
+            Tools::settingsSet('default', 'codpago', $value->code);
+            Tools::settingsSave();
             return true;
         }
 
         // assign no payment method
-        $appSettings->set('default', 'codpago', null);
-        $appSettings->save();
+        Tools::settingsSet('default', 'codpago', null);
+        Tools::settingsSave();
         return false;
     }
 
     protected function checkWarehouse(): bool
     {
-        $appSettings = $this->toolBox()->appSettings();
-
-        $idempresa = $appSettings->get('default', 'idempresa');
+        $idempresa = Tools::settings('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
         $values = $this->codeModel->all('almacenes', 'codalmacen', 'nombre', false, $where);
         foreach ($values as $value) {
-            if ($value->code == $appSettings->get('default', 'codalmacen')) {
+            if ($value->code == Tools::settings('default', 'codalmacen')) {
                 // perfect
                 return true;
             }
@@ -90,31 +87,29 @@ class EditSettings extends PanelController
 
         // assign a new warehouse
         foreach ($values as $value) {
-            $appSettings->set('default', 'codalmacen', $value->code);
-            $appSettings->save();
+            Tools::settingsSet('default', 'codalmacen', $value->code);
+            Tools::settingsSave();
             return true;
         }
 
         // assign no warehouse
-        $appSettings->set('default', 'codalmacen', null);
-        $appSettings->save();
+        Tools::settingsSet('default', 'codalmacen', null);
+        Tools::settingsSave();
         return false;
     }
 
     protected function checkTax(): bool
     {
-        $appSettings = $this->toolBox()->appSettings();
-
         // find current default tax
         $taxModel = new Impuesto();
-        $codimpuesto = $appSettings->get('default', 'codimpuesto');
+        $codimpuesto = Tools::settings('default', 'codimpuesto');
         if ($taxModel->loadFromCode($codimpuesto)) {
             return true;
         }
 
         // assign no tax
-        $appSettings->set('default', 'codimpuesto', null);
-        $appSettings->save();
+        Tools::settingsSet('default', 'codimpuesto', null);
+        Tools::settingsSave();
         return false;
     }
 
@@ -125,7 +120,7 @@ class EditSettings extends PanelController
         // custom translation
         foreach ($types as $key => $value) {
             if (!empty($value->code)) {
-                $value->description = $this->toolBox()->i18n()->trans($value->code);
+                $value->description = Tools::lang()->trans($value->code);
             }
         }
 
@@ -248,11 +243,11 @@ class EditSettings extends PanelController
         $this->createDocTypeFilter($viewName);
         $this->views[$viewName]->addFilterSelect('actualizastock', 'update-stock', 'actualizastock', [
             ['code' => null, 'description' => '------'],
-            ['code' => -2, 'description' => $this->toolBox()->i18n()->trans('book')],
-            ['code' => -1, 'description' => $this->toolBox()->i18n()->trans('subtract')],
-            ['code' => 0, 'description' => $this->toolBox()->i18n()->trans('do-nothing')],
-            ['code' => 1, 'description' => $this->toolBox()->i18n()->trans('add')],
-            ['code' => 2, 'description' => $this->toolBox()->i18n()->trans('foresee')],
+            ['code' => -2, 'description' => Tools::lang()->trans('book')],
+            ['code' => -1, 'description' => Tools::lang()->trans('subtract')],
+            ['code' => 0, 'description' => Tools::lang()->trans('do-nothing')],
+            ['code' => 1, 'description' => Tools::lang()->trans('add')],
+            ['code' => 2, 'description' => Tools::lang()->trans('foresee')],
         ]);
         $this->views[$viewName]->addFilterCheckbox('predeterminado', 'default', 'predeterminado');
         $this->views[$viewName]->addFilterCheckbox('editable', 'editable', 'editable');
@@ -264,7 +259,7 @@ class EditSettings extends PanelController
             return false;
         }
 
-        $this->toolBox()->appSettings()->reload();
+        Tools::settingsClear();
 
         // check relations
         $this->checkPaymentMethod();
@@ -289,7 +284,7 @@ class EditSettings extends PanelController
         switch ($viewName) {
             case 'ListApiKey':
                 $view->loadData();
-                if (false === (bool)$this->toolBox()->appSettings()->get('default', 'enable_api', '0')) {
+                if (false === (bool)Tools::settings('default', 'enable_api', '0')) {
                     $this->setSettings($viewName, 'active', false);
                 }
                 break;
@@ -334,7 +329,7 @@ class EditSettings extends PanelController
 
     protected function loadPaymentMethodValues(string $viewName): void
     {
-        $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        $idempresa = Tools::settings('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
         $methods = $this->codeModel->all('formaspago', 'codpago', 'descripcion', false, $where);
 
@@ -369,7 +364,7 @@ class EditSettings extends PanelController
 
     protected function loadWarehouseValues(string $viewName): void
     {
-        $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        $idempresa = Tools::settings('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
         $almacenes = $this->codeModel->all('almacenes', 'codalmacen', 'nombre', false, $where);
 

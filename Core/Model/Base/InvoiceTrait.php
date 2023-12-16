@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -73,7 +73,7 @@ trait InvoiceTrait
     public function delete()
     {
         if (false === $this->editable) {
-            ToolBox::i18nLog()->warning('non-editable-document');
+            Tools::log()->warning('non-editable-document');
             return false;
         }
 
@@ -81,7 +81,7 @@ trait InvoiceTrait
         foreach ($this->getReceipts() as $receipt) {
             $receipt->disableInvoiceUpdate(true);
             if (false === $receipt->delete()) {
-                ToolBox::i18nLog()->warning('cant-remove-receipt');
+                Tools::log()->warning('cant-remove-receipt');
                 return false;
             }
         }
@@ -90,7 +90,7 @@ trait InvoiceTrait
         $acEntry = $this->getAccountingEntry();
         $acEntry->editable = true;
         if ($acEntry->exists() && false === $acEntry->delete()) {
-            ToolBox::i18nLog()->warning('cant-remove-accounting-entry');
+            Tools::log()->warning('cant-remove-accounting-entry');
             return false;
         }
 
@@ -184,7 +184,7 @@ trait InvoiceTrait
                 // prevent from removing paid receipts
                 foreach ($this->getReceipts() as $receipt) {
                     if ($receipt->pagado) {
-                        ToolBox::i18nLog()->warning('paid-receipts-prevent-action');
+                        Tools::log()->warning('paid-receipts-prevent-action');
                         return false;
                     }
                 }
@@ -193,7 +193,7 @@ trait InvoiceTrait
                 // remove unpaid receipts
                 foreach ($this->getReceipts() as $receipt) {
                     if (false === $receipt->pagado && false === $receipt->delete()) {
-                        ToolBox::i18nLog()->warning('cant-remove-receipt');
+                        Tools::log()->warning('cant-remove-receipt');
                         return false;
                     }
                 }
@@ -217,7 +217,7 @@ trait InvoiceTrait
         $asiento = $this->getAccountingEntry();
         $asiento->editable = true;
         if ($asiento->exists() && false === $asiento->delete()) {
-            ToolBox::i18nLog()->warning('cant-remove-account-entry');
+            Tools::log()->warning('cant-remove-account-entry');
             return false;
         }
 

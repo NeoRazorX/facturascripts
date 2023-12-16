@@ -8,7 +8,7 @@
                     <i class="fas fa-cut"></i> {{ fsc.title }}
                 </h1>
                 <p>{{ trans('copy-p') }}</p>
-                <form method="post">
+                <form method="post" onsubmit="animateSpinner('add')">
                     {{ formToken() }}
                     <input type="hidden" name="action" value="save"/>
                     <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
@@ -219,7 +219,7 @@
                         </div>
                         <div class="card-footer">
                             <div class="text-right">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-spin-action btn-primary">
                                     <i class="fas fa-save"></i> {{ trans('save') }}
                                 </button>
                             </div>

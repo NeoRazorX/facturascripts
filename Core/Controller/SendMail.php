@@ -73,9 +73,11 @@ class SendMail extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
         $this->codeModel = new CodeModel();
-        $this->newMail = new NewMail();
-        $this->newMail->setUser($this->user);
+
+        $this->newMail = NewMail::create()
+            ->setUser($this->user);
 
         // Check if the email is configurate
         if (false === $this->newMail->canSendMail()) {
@@ -279,7 +281,7 @@ class SendMail extends Controller
     protected function send(): bool
     {
         if ($this->newMail->fromEmail != $this->user->email && $this->request->request->get('replyto', '0')) {
-            $this->newMail->addReplyTo($this->user->email, $this->user->nick);
+            $this->newMail->replyTo($this->user->email, $this->user->nick);
         }
 
         $this->newMail->title = $this->request->request->get('subject', '');
@@ -287,13 +289,13 @@ class SendMail extends Controller
         $this->newMail->setMailbox($this->request->request->get('email-from', ''));
 
         foreach ($this->getEmails('email') as $email) {
-            $this->newMail->addAddress($email);
+            $this->newMail->to($email);
         }
         foreach ($this->getEmails('email-cc') as $email) {
-            $this->newMail->addCC($email);
+            $this->newMail->cc($email);
         }
         foreach ($this->getEmails('email-bcc') as $email) {
-            $this->newMail->addBCC($email);
+            $this->newMail->bcc($email);
         }
 
         $this->setAttachment();
@@ -327,7 +329,7 @@ class SendMail extends Controller
     {
         $email = $this->request->get('email', '');
         if (!empty($email)) {
-            $this->newMail->addAddress($email);
+            $this->newMail->to($email);
             return;
         }
 
@@ -341,25 +343,25 @@ class SendMail extends Controller
         $this->loadDataDefault($model);
 
         if (property_exists($model, 'email')) {
-            $this->newMail->addAddress($model->email);
+            $this->newMail->to($model->email);
             return;
         }
 
         $proveedor = new Proveedor();
         if (property_exists($model, 'codproveedor') && $proveedor->loadFromCode($model->codproveedor) && $proveedor->email) {
-            $this->newMail->addAddress($proveedor->email, $proveedor->razonsocial);
+            $this->newMail->to($proveedor->email, $proveedor->razonsocial);
             return;
         }
 
         $contact = new Contacto();
         if (property_exists($model, 'idcontactofact') && $contact->loadFromCode($model->idcontactofact) && $contact->email) {
-            $this->newMail->addAddress($contact->email, $contact->fullName());
+            $this->newMail->to($contact->email, $contact->fullName());
             return;
         }
 
         $cliente = new Cliente();
         if (property_exists($model, 'codcliente') && $cliente->loadFromCode($model->codcliente) && $cliente->email) {
-            $this->newMail->addAddress($cliente->email, $cliente->razonsocial);
+            $this->newMail->to($cliente->email, $cliente->razonsocial);
         }
     }
 

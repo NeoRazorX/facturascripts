@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,8 @@ namespace FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
 use FacturaScripts\Core\Base\DataBase\MysqlEngine;
 use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
+use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Tools;
 
 /**
  * Generic class of access to the database, either MySQL or PostgreSQL.
@@ -66,7 +68,7 @@ final class DataBase
      */
     public function __construct()
     {
-        if (self::$link === null) {
+        if (Tools::config('db_name') && self::$link === null) {
             self::$miniLog = new MiniLog(self::CHANNEL);
 
             switch (strtolower(FS_DB_TYPE)) {
@@ -94,6 +96,11 @@ final class DataBase
 
         self::$miniLog->debug('Begin Transaction');
         return self::$engine->beginTransaction(self::$link);
+    }
+
+    public function castInteger(string $col): string
+    {
+        return self::$engine->castInteger(self::$link, $col);
     }
 
     /**
@@ -449,6 +456,16 @@ final class DataBase
 
         if (is_bool($val)) {
             return $val ? 'TRUE' : 'FALSE';
+        }
+
+        // If it's an array
+        if (is_array($val)) {
+            throw new KernelException('DatabaseError', 'Array not allowed in var2str function');
+        }
+
+        // If it's an object
+        if (is_object($val)) {
+            throw new KernelException('DatabaseError', 'Object not allowed in var2str function');
         }
 
         // If it's a date

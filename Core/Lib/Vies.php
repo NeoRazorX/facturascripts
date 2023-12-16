@@ -35,6 +35,12 @@ class Vies
 
     public static function check(string $cifnif, string $codiso): int
     {
+        // comprobamos si la extensión soap está instalada
+        if (!extension_loaded('soap')) {
+            Tools::log()->warning('soap-extension-not-installed');
+            return -1;
+        }
+
         // quitamos caracteres especiales del cifnif
         $cifnif = str_replace(['_', '-', '.', ',', '?', '¿', ' ', '/', '\\'], '', strtoupper(trim($cifnif)));
 

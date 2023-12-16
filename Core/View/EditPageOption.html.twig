@@ -81,7 +81,7 @@
                             </div>
                         </form>
                     </div>
-                    <form method="post" name="main_form">
+                    <form method="post" name="main_form" onsubmit="animateSpinner('add')">
                         {{ formToken() }}
                         <input type="hidden" name="action" value="save"/>
                         <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
@@ -112,7 +112,7 @@
                             <div class="form-row">
                                 {% if fsc.model.exists() %}
                                     <div class="col">
-                                        <button class="btn btn-sm btn btn-danger" type="button"
+                                        <button class="btn btn-spin-action btn-sm btn btn-danger" type="button"
                                                 onclick="deleteOptions();">
                                             <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
                                             {{ trans('delete') }}
@@ -120,10 +120,10 @@
                                     </div>
                                 {% endif %}
                                 <div class="col text-right">
-                                    <button class="btn btn-sm btn btn-secondary" type="reset">
+                                    <button class="btn btn-spin-action btn-sm btn btn-secondary" type="reset">
                                         <i class="fas fa-undo fa-fw" aria-hidden="true"></i> {{ trans('undo') }}
                                     </button>
-                                    <button class="btn btn-sm btn-primary" type="submit">
+                                    <button class="btn btn-spin-action btn-sm btn-primary" type="submit">
                                         <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
                                 </div>
@@ -164,6 +164,7 @@
                 },
                 callback: function (result) {
                     if (result) {
+                        animateSpinner('add');
                         document.main_form.action.value = 'delete';
                         document.main_form.submit();
                     }

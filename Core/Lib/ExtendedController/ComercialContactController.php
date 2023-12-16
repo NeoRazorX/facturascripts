@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -58,7 +59,7 @@ abstract class ComercialContactController extends EditController
         $exercise = new Ejercicio();
         foreach ($exercise->all([], [], 0, 0) as $exe) {
             if ($exe->isOpened() && strlen($code) != $exe->longsubcuenta) {
-                $this->toolBox()->i18nLog()->warning('account-length-error', ['%code%' => $code]);
+                Tools::log()->warning('account-length-error', ['%code%' => $code]);
             }
         }
     }
@@ -71,7 +72,7 @@ abstract class ComercialContactController extends EditController
         }
 
         if ($model->checkVies()) {
-            self::toolBox()->i18nLog()->notice('vies-check-success', ['%vat-number%' => $model->cifnif]);
+            Tools::log()->notice('vies-check-success', ['%vat-number%' => $model->cifnif]);
         }
 
         return true;

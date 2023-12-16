@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\PaymentToAccounting;
 use FacturaScripts\Dinamic\Model\PagoCliente;
 
@@ -86,7 +87,7 @@ class EditReciboCliente extends EditController
     protected function generateAccountingAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -96,22 +97,22 @@ class EditReciboCliente extends EditController
         foreach ($codes as $code) {
             $pago = new PagoCliente();
             if (false === $pago->loadFromCode($code)) {
-                $this->toolBox()->i18nLog()->warning('record-not-found');
+                Tools::log()->warning('record-not-found');
                 continue;
             } elseif ($pago->idasiento) {
-                $this->toolBox()->i18nLog()->warning('record-already-exists');
+                Tools::log()->warning('record-already-exists');
                 continue;
             }
 
             $tool = new PaymentToAccounting();
             $tool->generate($pago);
             if (empty($pago->idasiento) || false === $pago->save()) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 return;
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
     }
 
     protected function execPreviousAction($action): bool

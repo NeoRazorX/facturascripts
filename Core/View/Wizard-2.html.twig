@@ -35,8 +35,8 @@
 {% block body %}
     <!-- Macros Template Imports -->
     {% import 'Macro/Forms.html.twig' as forms %}
-    {% set codimpuesto = appSettings.get('default', 'codimpuesto') %}
-    {% set codretencion = appSettings.get('default', 'codretencion') %}
+    {% set codimpuesto = settings('default', 'codimpuesto') %}
+    {% set codretencion = settings('default', 'codretencion') %}
 
     <div class="container" style="margin-top: -100px;">
         <form action="#" method="post" class="form" id="formWizard">
@@ -88,7 +88,7 @@
                         </div>
                         <div class="col-sm-auto">
                             <div class="form-group form-check pr-3">
-                                {% if appSettings.get('default', 'ventasinstock') %}
+                                {% if settings('default', 'ventasinstock') %}
                                     <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock"
                                            class="form-check-input" checked/>
                                 {% else %}
@@ -100,7 +100,7 @@
                         </div>
                         <div class="col-sm-auto">
                             <div class="form-group form-check">
-                                {% if appSettings.get('default', 'updatesupplierprices') %}
+                                {% if settings('default', 'updatesupplierprices') %}
                                     <input type="checkbox" name="updatesupplierprices" value="1"
                                            id="cbUpdateSupplierPrices" class="form-check-input" checked/>
                                 {% else %}

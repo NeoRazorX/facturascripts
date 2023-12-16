@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
@@ -65,24 +64,11 @@ class EditFormatoDocumento extends EditController
                 if ($this->empresa->count() < 2) {
                     $view->disableColumn('company');
                 }
-
-                $this->loadLogoWidget($view);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
                 break;
-        }
-    }
-
-    protected function loadLogoWidget(BaseView &$view): void
-    {
-        $columnLogo = $view->columnForName('logo');
-        if ($columnLogo && $columnLogo->widget->getType() === 'select') {
-            $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
-                new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
-            ]);
-            $columnLogo->widget->setValuesFromCodeModel($images);
         }
     }
 }

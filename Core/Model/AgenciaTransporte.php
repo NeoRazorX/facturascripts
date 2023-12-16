@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
+
 /**
  * Merchandise transport agency.
  *
@@ -27,7 +30,6 @@ namespace FacturaScripts\Core\Model;
  */
 class AgenciaTransporte extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -80,21 +82,20 @@ class AgenciaTransporte extends Base\ModelClass
     public function test(): bool
     {
         if (!empty($this->codtrans) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codtrans)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codtrans, '%column%' => 'codtrans', '%min%' => '1', '%max%' => '8']
             );
             return false;
         }
 
-        $utils = $this->toolBox()->utils();
-        $this->nombre = $utils->noHtml($this->nombre);
-        $this->telefono = $utils->noHtml($this->telefono);
-        $this->web = $utils->noHtml($this->web);
+        $this->nombre = Tools::noHtml($this->nombre);
+        $this->telefono = Tools::noHtml($this->telefono);
+        $this->web = Tools::noHtml($this->web);
 
         // check if the web is a valid url
-        if (!empty($this->web) && false === self::toolBox()::utils()::isValidUrl($this->web)) {
-            self::toolBox()::i18nLog()->error('invalid-web', ['%web%' => $this->web]);
+        if (!empty($this->web) && false === Validator::url($this->web)) {
+            Tools::log()->error('invalid-web', ['%web%' => $this->web]);
             return false;
         }
 

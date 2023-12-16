@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\DataSrc\Ejercicios;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\CuentaEspecial;
@@ -51,12 +52,12 @@ class ListCuenta extends ListController
         $this->createViewsSpecialAccounts();
     }
 
-    protected function createViewsAccounts(string $viewName = 'ListCuenta')
+    protected function createViewsAccounts(string $viewName = 'ListCuenta'): void
     {
-        $this->addView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
-        $this->addOrderBy($viewName, ['codejercicio desc, codcuenta'], 'code');
-        $this->addOrderBy($viewName, ['codejercicio desc, descripcion'], 'description');
-        $this->addSearchFields($viewName, ['descripcion', 'codcuenta', 'codejercicio', 'codcuentaesp']);
+        $this->addView($viewName, 'Cuenta', 'accounts', 'fas fa-book')
+            ->addSearchFields(['descripcion', 'codcuenta', 'codejercicio', 'codcuentaesp'])
+            ->addOrderBy(['codejercicio desc, codcuenta'], 'code')
+            ->addOrderBy(['codejercicio desc, descripcion'], 'description');
 
         // filters
         $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
@@ -65,17 +66,18 @@ class ListCuenta extends ListController
         $this->addFilterSelect($viewName, 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccounts);
     }
 
-    protected function createViewsSpecialAccounts(string $viewName = 'ListCuentaEspecial')
+    protected function createViewsSpecialAccounts(string $viewName = 'ListCuentaEspecial'): void
     {
-        $this->addView($viewName, 'CuentaEspecial', 'special-accounts', 'fas fa-newspaper');
-        $this->addOrderBy($viewName, ['codcuentaesp'], 'code', 1);
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
-        $this->addSearchFields($viewName, ['descripcion', 'codcuentaesp']);
+        $this->addView($viewName, 'CuentaEspecial', 'special-accounts', 'fas fa-newspaper')
+            ->addSearchFields(['descripcion', 'codcuentaesp'])
+            ->addOrderBy(['codcuentaesp'], 'code', 1)
+            ->addOrderBy(['descripcion'], 'description');
 
         // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'checkBoxes', false);
+        $this->tab($viewName)
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false)
+            ->setSettings('checkBoxes', false);
 
         // add restore button
         if ($this->user->admin) {
@@ -89,25 +91,25 @@ class ListCuenta extends ListController
         }
     }
 
-    protected function createViewsSubaccounts(string $viewName = 'ListSubcuenta')
+    protected function createViewsSubaccounts(string $viewName = 'ListSubcuenta'): void
     {
-        $this->addView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-th-list');
-        $this->addOrderBy($viewName, ['codejercicio desc, codsubcuenta'], 'code');
-        $this->addOrderBy($viewName, ['codejercicio desc, descripcion'], 'description');
-        $this->addOrderBy($viewName, ['debe'], 'debit');
-        $this->addOrderBy($viewName, ['haber'], 'credit');
-        $this->addOrderBy($viewName, ['saldo'], 'balance');
-        $this->addSearchFields($viewName, ['codsubcuenta', 'descripcion', 'codejercicio', 'codcuentaesp']);
+        $this->addView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-th-list')
+            ->addSearchFields(['codsubcuenta', 'descripcion', 'codejercicio', 'codcuentaesp'])
+            ->addOrderBy(['codejercicio desc, codsubcuenta'], 'code')
+            ->addOrderBy(['codejercicio desc, descripcion'], 'description')
+            ->addOrderBy(['debe'], 'debit')
+            ->addOrderBy(['haber'], 'credit')
+            ->addOrderBy(['saldo'], 'balance');
 
         // filters
-        $this->addFilterNumber($viewName, 'debit-major', 'debit', 'debe', '>=');
-        $this->addFilterNumber($viewName, 'debit-minor', 'debit', 'debe', '<=');
-        $this->addFilterNumber($viewName, 'credit-major', 'credit', 'haber', '>=');
-        $this->addFilterNumber($viewName, 'credit-minor', 'credit', 'haber', '<=');
-        $this->addFilterNumber($viewName, 'balance-major', 'balance', 'saldo', '>=');
-        $this->addFilterNumber($viewName, 'balance-minor', 'balance', 'saldo', '<=');
-
-        $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
+        $this->listView($viewName)
+            ->addFilterNumber('debit-major', 'debit', 'debe')
+            ->addFilterNumber('debit-minor', 'debit', 'debe', '<=')
+            ->addFilterNumber('credit-major', 'credit', 'haber')
+            ->addFilterNumber('credit-minor', 'credit', 'haber', '<=')
+            ->addFilterNumber('balance-major', 'balance', 'saldo')
+            ->addFilterNumber('balance-minor', 'balance', 'saldo', '<=')
+            ->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
 
         $specialAccounts = $this->codeModel->all('cuentasesp', 'codcuentaesp', 'codcuentaesp');
         $this->addFilterSelect($viewName, 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccounts);
@@ -127,13 +129,13 @@ class ListCuenta extends ListController
         return parent::execPreviousAction($action);
     }
 
-    protected function restoreSpecialAccountsAction()
+    protected function restoreSpecialAccountsAction(): void
     {
         $sql = CSVImport::updateTableSQL(CuentaEspecial::tableName());
         if (!empty($sql)) {
             $this->dataBase->exec($sql);
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
     }
 }

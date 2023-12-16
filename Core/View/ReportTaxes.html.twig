@@ -145,13 +145,13 @@
                             <div class="form-row">
                                 <div class="col-sm">
                                     <button type="button" onclick="sendReportTaxes('purchases')"
-                                            class="btn btn-block btn-secondary btn-spin-action">
+                                            class="btn btn-spin-action btn-block btn-secondary btn-spin-action">
                                         {{ trans('purchases') }}
                                     </button>
                                 </div>
                                 <div class="col-sm">
                                     <button type="button" onclick="sendReportTaxes('sales')"
-                                            class="btn btn-block btn-primary btn-spin-action">
+                                            class="btn btn-spin-action btn-block btn-primary btn-spin-action">
                                         {{ trans('sales') }}
                                     </button>
                                 </div>
@@ -169,10 +169,9 @@
     <script>
         function sendReportTaxes(source) {
             let form = document.getElementById('fReportTaxes');
+            animateSpinner('add');
             form.source.value = source;
             form.submit();
-
-            animateSpinner('add');
         }
     </script>
 {% endblock %}

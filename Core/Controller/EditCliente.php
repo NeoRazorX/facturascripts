@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
@@ -44,7 +45,7 @@ class EditCliente extends ComercialContactController
     {
         $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
         $total = empty($codcliente) ? 0 : CustomerRiskTools::getDeliveryNotesRisk($codcliente);
-        return $this->toolBox()->coins()->format($total);
+        return Tools::money($total);
     }
 
     public function getImageUrl(): string
@@ -62,7 +63,7 @@ class EditCliente extends ComercialContactController
     {
         $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
         $total = empty($codcliente) ? 0 : CustomerRiskTools::getInvoicesRisk($codcliente);
-        return $this->toolBox()->coins()->format($total);
+        return Tools::money($total);
     }
 
     public function getModelClassName(): string
@@ -79,7 +80,7 @@ class EditCliente extends ComercialContactController
     {
         $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
         $total = empty($codcliente) ? 0 : CustomerRiskTools::getOrdersRisk($codcliente);
-        return $this->toolBox()->coins()->format($total);
+        return Tools::money($total);
     }
 
     public function getPageData(): array
@@ -237,7 +238,7 @@ class EditCliente extends ComercialContactController
         $columnLangCode = $this->views[$viewName]->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
-            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
                 $langs[] = ['value' => $key, 'title' => $value];
             }
 

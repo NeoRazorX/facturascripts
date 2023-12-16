@@ -49,10 +49,10 @@ class ListAlmacen extends ListController
 
     protected function createViewWarehouse(string $viewName = 'ListAlmacen'): void
     {
-        $this->addView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse');
-        $this->addSearchFields($viewName, ['apartado', 'ciudad', 'codalmacen', 'codpostal', 'direccion', 'nombre', 'provincia']);
-        $this->addOrderBy($viewName, ['codalmacen'], 'code');
-        $this->addOrderBy($viewName, ['nombre'], 'name', 1);
+        $this->addView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse')
+            ->addSearchFields(['apartado', 'ciudad', 'codalmacen', 'codpostal', 'direccion', 'nombre', 'provincia'])
+            ->addOrderBy(['codalmacen'], 'code')
+            ->addOrderBy(['nombre'], 'name', 1);
 
         // Filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());

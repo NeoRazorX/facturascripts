@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 
 /**
  * Class to apply patterns.
@@ -79,7 +79,7 @@ class CodePatterns
             '{SERIE}' => $serie,
             '{0NUM}' => str_pad($numero, $long, '0', STR_PAD_LEFT),
             '{0SERIE}' => str_pad($serie, 2, '0', STR_PAD_LEFT),
-            '{NOMBREMES}' => ToolBox::i18n()->trans(strtolower(date('F', strtotime($fecha))))
+            '{NOMBREMES}' => Tools::lang()->trans(strtolower(date('F', strtotime($fecha))))
         ]);
 
         // si hay filtros, los aplicamos ahora

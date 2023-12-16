@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,16 +20,19 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
+
 /**
  * A province.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class Provincia extends Base\ModelClass
+class Provincia extends ModelClass
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Code id
@@ -71,7 +74,7 @@ class Provincia extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
+        $this->codpais = Tools::settings('default', 'codpais');
     }
 
     public function install(): string
@@ -94,7 +97,7 @@ class Provincia extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->provincia = $this->toolBox()->utils()->noHtml($this->provincia);
+        $this->provincia = Tools::noHtml($this->provincia);
         return parent::test();
     }
 

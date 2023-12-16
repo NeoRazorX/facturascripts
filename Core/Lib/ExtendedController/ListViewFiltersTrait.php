@@ -74,13 +74,16 @@ trait ListViewFiltersTrait
      * @param string $label
      * @param string $field
      * @param string $table
-     * @param string $fieldcode
-     * @param string $fieldtitle
+     * @param string $field_code
+     * @param string $field_title
      * @param array $where
+     * @return ListView
      */
-    public function addFilterAutocomplete(string $key, string $label, string $field, string $table, string $fieldcode = '', string $fieldtitle = '', array $where = [])
+    public function addFilterAutocomplete(string $key, string $label, string $field, string $table, string $field_code = '', string $field_title = '', array $where = []): ListView
     {
-        $this->filters[$key] = new AutocompleteFilter($key, $field, $label, $table, $fieldcode, $fieldtitle, $where);
+        $this->filters[$key] = new AutocompleteFilter($key, $field, $label, $table, $field_code, $field_title, $where);
+
+        return $this;
     }
 
     /**
@@ -90,12 +93,15 @@ trait ListViewFiltersTrait
      * @param string $label
      * @param string $field
      * @param string $operation
-     * @param mixed $matchValue
+     * @param mixed $match_value
      * @param array $default
+     * @return ListView
      */
-    public function addFilterCheckbox(string $key, string $label = '', string $field = '', string $operation = '=', $matchValue = true, array $default = [])
+    public function addFilterCheckbox(string $key, string $label = '', string $field = '', string $operation = '=', $match_value = true, array $default = []): ListView
     {
-        $this->filters[$key] = new CheckboxFilter($key, $field, $label, $operation, $matchValue, $default);
+        $this->filters[$key] = new CheckboxFilter($key, $field, $label, $operation, $match_value, $default);
+
+        return $this;
     }
 
     /**
@@ -105,10 +111,13 @@ trait ListViewFiltersTrait
      * @param string $label
      * @param string $field
      * @param string $operation
+     * @return ListView
      */
-    public function addFilterDatePicker(string $key, string $label = '', string $field = '', string $operation = '>=')
+    public function addFilterDatePicker(string $key, string $label = '', string $field = '', string $operation = '>='): ListView
     {
         $this->filters[$key] = new DateFilter($key, $field, $label, $operation);
+
+        return $this;
     }
 
     /**
@@ -118,10 +127,13 @@ trait ListViewFiltersTrait
      * @param string $label
      * @param string $field
      * @param string $operation
+     * @return ListView
      */
-    public function addFilterNumber(string $key, string $label = '', string $field = '', string $operation = '>=')
+    public function addFilterNumber(string $key, string $label = '', string $field = '', string $operation = '>='): ListView
     {
         $this->filters[$key] = new NumberFilter($key, $field, $label, $operation);
+
+        return $this;
     }
 
     /**
@@ -131,10 +143,13 @@ trait ListViewFiltersTrait
      * @param string $key
      * @param string $label
      * @param string $field
+     * @return ListView
      */
-    public function addFilterPeriod(string $key, string $label, string $field)
+    public function addFilterPeriod(string $key, string $label, string $field): ListView
     {
         $this->filters[$key] = new PeriodFilter($key, $field, $label);
+
+        return $this;
     }
 
     /**
@@ -144,10 +159,13 @@ trait ListViewFiltersTrait
      * @param string $label
      * @param string $field
      * @param array $values
+     * @return ListView
      */
-    public function addFilterSelect(string $key, string $label, string $field, array $values = [])
+    public function addFilterSelect(string $key, string $label, string $field, array $values = []): ListView
     {
         $this->filters[$key] = new SelectFilter($key, $field, $label, $values);
+
+        return $this;
     }
 
     /**
@@ -159,29 +177,32 @@ trait ListViewFiltersTrait
      *
      * Example of values:
      *   [
-     *    ['label' => 'Only active', 'where' => [ new DataBaseWhere('suspended', 'FALSE') ]]
-     *    ['label' => 'Only suspended', 'where' => [ new DataBaseWhere('suspended', 'TRUE') ]]
+     *    ['label' => 'Only active', 'where' => [new DataBaseWhere('suspended', false)]]
+     *    ['label' => 'Only suspended', 'where' => [new DataBaseWhere('suspended', true)]]
      *    ['label' => 'All records', 'where' => []],
      *   ]
+     * @return ListView
      */
-    public function addFilterSelectWhere(string $key, array $values, string $label = '')
+    public function addFilterSelectWhere(string $key, array $values, string $label = ''): ListView
     {
         $this->filters[$key] = new SelectWhereFilter($key, $values, $label);
+
+        return $this;
     }
 
     /**
      * Removes a saved user filter.
      *
-     * @param string $idfilter
+     * @param string $id_filter
      *
      * @return bool
      */
-    public function deletePageFilter(string $idfilter): bool
+    public function deletePageFilter(string $id_filter): bool
     {
         $pageFilter = new PageFilter();
-        if ($pageFilter->loadFromCode($idfilter) && $pageFilter->delete()) {
+        if ($pageFilter->loadFromCode($id_filter) && $pageFilter->delete()) {
             // remove form the list
-            unset($this->pageFilters[$idfilter]);
+            unset($this->pageFilters[$id_filter]);
 
             return true;
         }
@@ -232,7 +253,7 @@ trait ListViewFiltersTrait
     /**
      * @param DataBaseWhere[] $where
      */
-    private function loadSavedFilters(array $where)
+    private function loadSavedFilters(array $where): void
     {
         $pageFilter = new PageFilter();
         $orderBy = ['nick' => 'ASC', 'description' => 'ASC'];
@@ -241,7 +262,7 @@ trait ListViewFiltersTrait
         }
     }
 
-    private function sortFilters()
+    private function sortFilters(): void
     {
         uasort($this->filters, function ($filter1, $filter2) {
             if ($filter1->ordernum === $filter2->ordernum) {

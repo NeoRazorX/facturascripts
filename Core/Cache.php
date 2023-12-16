@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -112,15 +112,15 @@ final class Cache
     }
 
     /**
-     * Obtenemos el valor almacenado si existe o por el contrario almacenamos lo que devuelva la funcion callback.
+     * Obtenemos el valor almacenado si existe o, por el contrario, almacenamos lo que devuelva la función callback.
      *
-     * @param  string  $key
-     * @param  \Closure  $callback
+     * @param string $key
+     * @param Closure $callback
      * @return mixed
      */
-    public static function remember($key, Closure $callback)
+    public static function remember(string $key, Closure $callback)
     {
-        if (! is_null($value = self::get($key))) {
+        if (!is_null($value = self::get($key))) {
             return $value;
         }
 

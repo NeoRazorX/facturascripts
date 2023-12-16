@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Accounting\ClosingToAcounting;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -97,12 +98,12 @@ class EditEjercicio extends EditController
     private function checkAndLoad(string $code): bool
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return false;
         }
 
         if (false === $this->getModel()->loadFromCode($code)) {
-            $this->toolBox()->i18nLog()->error('record-not-found');
+            Tools::log()->error('record-not-found');
             return false;
         }
 
@@ -125,7 +126,7 @@ class EditEjercicio extends EditController
         $model = $this->getModel();
         $closing = new ClosingToAcounting();
         if ($closing->exec($model, $data)) {
-            $this->toolBox()->i18nLog()->notice('closing-accounting-completed');
+            Tools::log()->notice('closing-accounting-completed');
         }
         // error message not needed
         return true;
@@ -218,13 +219,13 @@ class EditEjercicio extends EditController
     protected function exportAccountingPlan(): bool
     {
         if (false === $this->permissions->allowImport) {
-            $this->toolBox()->i18nLog()->warning('no-print-permission');
+            Tools::log()->warning('no-print-permission');
             return true;
         }
 
         $codejercicio = $this->request->get('code', '');
         if (empty($codejercicio)) {
-            $this->toolBox()->i18nLog()->error('exercise-not-found');
+            Tools::log()->error('exercise-not-found');
             return true;
         }
 
@@ -244,13 +245,13 @@ class EditEjercicio extends EditController
     protected function importAccountingPlan(): bool
     {
         if (false === $this->permissions->allowImport) {
-            $this->toolBox()->i18nLog()->warning('no-import-permission');
+            Tools::log()->warning('no-import-permission');
             return true;
         }
 
         $codejercicio = $this->request->request->get('codejercicio', '');
         if (empty($codejercicio)) {
-            $this->toolBox()->i18nLog()->error('exercise-not-found');
+            Tools::log()->error('exercise-not-found');
             return true;
         }
 
@@ -264,23 +265,23 @@ class EditEjercicio extends EditController
             case 'application/xml':
             case 'text/xml':
                 if ($accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio)) {
-                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+                    Tools::log()->notice('record-updated-correctly');
                     return true;
                 }
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 return true;
 
             case 'text/csv':
             case 'text/plain':
                 if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio)) {
-                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+                    Tools::log()->notice('record-updated-correctly');
                     return true;
                 }
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 return true;
         }
 
-        $this->toolBox()->i18nLog()->error('file-not-supported');
+        Tools::log()->error('file-not-supported');
         return true;
     }
 
@@ -288,22 +289,22 @@ class EditEjercicio extends EditController
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . FS_LANG . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
-            $codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
+            $codpais = Tools::settings('default', 'codpais');
             $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
         }
 
         if (false === file_exists($filePath)) {
-            $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => $filePath]);
+            Tools::log()->warning('file-not-found', ['%fileName%' => $filePath]);
             return true;
         }
 
         $accountingPlanImport = new AccountingPlanImport();
         if ($accountingPlanImport->importCSV($filePath, $codejercicio)) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             return true;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
         return true;
     }
 
@@ -359,7 +360,7 @@ class EditEjercicio extends EditController
 
         $closing = new ClosingToAcounting();
         if ($closing->delete($model, $data)) {
-            $this->toolBox()->i18nLog()->notice('opening-acounting-completed');
+            Tools::log()->notice('opening-acounting-completed');
         }
         // error message not needed
         return true;

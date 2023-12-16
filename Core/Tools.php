@@ -42,11 +42,30 @@ class Tools
     const HTML_REPLACEMENTS = ['&lt;', '&gt;', '&quot;', '&#39;'];
 
     /** @var array */
-    private static $settings = [];
+    private static $settings;
 
     public static function ascii(string $text): string
     {
         return strtr($text, self::ASCII);
+    }
+
+    public static function bytes($size, int $decimals = 2): string
+    {
+        if ($size >= 1073741824) {
+            $size = number_format($size / 1073741824, $decimals) . ' GB';
+        } elseif ($size >= 1048576) {
+            $size = number_format($size / 1048576, $decimals) . ' MB';
+        } elseif ($size >= 1024) {
+            $size = number_format($size / 1024, $decimals) . ' KB';
+        } elseif ($size > 1) {
+            $size = number_format($size, $decimals) . ' bytes';
+        } elseif ($size == 1) {
+            $size = number_format(1, $decimals) . ' byte';
+        } else {
+            $size = number_format(0, $decimals) . ' bytes';
+        }
+
+        return $size;
     }
 
     public static function config(string $key, $default = null)
@@ -123,7 +142,7 @@ class Tools
             return rmdir($folder);
         }
 
-        return file_exists($folder) ? unlink($folder) : true;
+        return !file_exists($folder) || unlink($folder);
     }
 
     public static function folderSize(string $folder, array $exclude = ['.DS_Store', '.well-known']): int
@@ -240,11 +259,8 @@ class Tools
     public static function settings(string $group, string $key, $default = null)
     {
         // cargamos las opciones si no están cargadas
-        if (empty(self::$settings)) {
-            $settingsModel = new Settings();
-            foreach ($settingsModel->all([], [], 0, 0) as $item) {
-                self::$settings[$item->name] = $item->properties;
-            }
+        if (null === self::$settings) {
+            self::settingsLoad();
         }
 
         // si no tenemos la clave, añadimos el valor predeterminado
@@ -255,20 +271,18 @@ class Tools
         return self::$settings[$group][$key];
     }
 
+    public static function settingsClear(): void
+    {
+        Cache::delete('tools-settings');
+    }
+
     public static function settingsSave(): bool
     {
-        if (empty(self::$settings)) {
-            return true;
-        }
-
-        $settingsModel = new Settings();
-        foreach ($settingsModel->all([], [], 0, 0) as $item) {
-            if (!isset(self::$settings[$item->name])) {
-                continue;
-            }
-
-            $item->properties = self::$settings[$item->name];
-            if (false === $item->save()) {
+        foreach (self::$settings as $key => $properties) {
+            $model = new Settings();
+            $model->name = $key;
+            $model->properties = $properties;
+            if (false === $model->save()) {
                 return false;
             }
         }
@@ -279,11 +293,8 @@ class Tools
     public static function settingsSet(string $group, string $key, $value): void
     {
         // cargamos las opciones si no están cargadas
-        if (empty(self::$settings)) {
-            $settingsModel = new Settings();
-            foreach ($settingsModel->all([], [], 0, 0) as $item) {
-                self::$settings[$item->name] = $item->properties;
-            }
+        if (null === self::$settings) {
+            self::settingsLoad();
         }
 
         // asignamos el valor
@@ -345,22 +356,22 @@ class Tools
         return date(self::DATETIME_STYLE, $time);
     }
 
-    public static function bytes($size, int $decimals = 2): string
+    private static function settingsLoad(): void
     {
-        if ($size >= 1073741824) {
-            $size = number_format($size / 1073741824, $decimals) . ' GB';
-        } elseif ($size >= 1048576) {
-            $size = number_format($size / 1048576, $decimals) . ' MB';
-        } elseif ($size >= 1024) {
-            $size = number_format($size / 1024, $decimals) . ' KB';
-        } elseif ($size > 1) {
-            $size = number_format($size, $decimals) . ' bytes';
-        } elseif ($size == 1) {
-            $size = number_format(1, $decimals) . ' byte';
-        } else {
-            $size = number_format(0, $decimals) . ' bytes';
+        if ('' === Tools::config('db_name', '')) {
+            self::$settings = [];
+            return;
         }
 
-        return $size;
+        self::$settings = Cache::remember('tools-settings', function () {
+            $settings = [];
+
+            $model = new Settings();
+            foreach ($model->all([], [], 0, 0) as $item) {
+                $settings[$item->name] = $item->properties;
+            }
+
+            return $settings;
+        });
     }
 }

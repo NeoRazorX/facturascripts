@@ -365,6 +365,6 @@
     <input type="hidden" name="action"/>
     <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
     <input type="hidden" name="selectedLine"/>
-    <input type="hidden" name="columnView" value="{{ appSettings.get('default', 'columnetosubtotal', 'subtotal') }}"/>
+    <input type="hidden" name="columnView" value="{{ settings('default', 'columnetosubtotal', 'subtotal') }}"/>
     {{ fsc.renderSalesForm(model, model.getLines()) | raw }}
 </form>

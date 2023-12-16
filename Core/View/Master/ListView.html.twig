@@ -27,7 +27,7 @@
     var listViewDeleteTitle = "{{ trans('confirm-delete') }}";
 </script>
 
-<form id="{{ formName }}" method="post">
+<form id="{{ formName }}" method="post" onsubmit="animateSpinner('add')">
     {{ formToken() }}
     <input type="hidden" name="action"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
@@ -124,7 +124,7 @@
         {% endif %}
         {# -- Table -- #}
         <div class="table-responsive">
-            {% set tableClass = fsc.toolBox().appSettings().get('default', 'tablesize') == 'small' ? 'table-sm' : '' %}
+            {% set tableClass = settings('default', 'tablesize') == 'small' ? 'table-sm' : '' %}
             <table class="table table-hover mb-0 {{ tableClass }}">
                 <thead>
                 <tr>
