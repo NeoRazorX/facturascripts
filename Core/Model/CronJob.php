@@ -109,42 +109,42 @@ class CronJob extends ModelClass
         return $this->everyDayAux('today', $hour, $strict);
     }
 
-    public function everyFridayAt(int $hour, bool $strict): self
+    public function everyFridayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('friday', $hour, $strict);
     }
 
-    public function everyLastDayOfMonthAt(int $hour, bool $strict): self
+    public function everyLastDayOfMonthAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('last day of this month', $hour, $strict);
     }
 
-    public function everyMondayAt(int $hour, bool $strict): self
+    public function everyMondayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('monday', $hour, $strict);
     }
 
-    public function everySaturdayAt(int $hour, bool $strict): self
+    public function everySaturdayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('saturday', $hour, $strict);
     }
 
-    public function everySundayAt(int $hour, bool $strict): self
+    public function everySundayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('sunday', $hour, $strict);
     }
 
-    public function everyThursdayAt(int $hour, bool $strict): self
+    public function everyThursdayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('thursday', $hour, $strict);
     }
 
-    public function everyTuesdayAt(int $hour, bool $strict): self
+    public function everyTuesdayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('tuesday', $hour, $strict);
     }
 
-    public function everyWednesdayAt(int $hour, bool $strict): self
+    public function everyWednesdayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('wednesday', $hour, $strict);
     }
