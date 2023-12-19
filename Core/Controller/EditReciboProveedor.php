@@ -93,7 +93,12 @@ class EditReciboProveedor extends EditController
             return;
         }
 
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->get('code', []);
+        if (empty($codes) || false === is_array($codes)) {
+            Tools::log()->warning('no-selected-item');
+            return;
+        }
+
         foreach ($codes as $code) {
             $pago = new PagoProveedor();
             if (false === $pago->loadFromCode($code)) {
