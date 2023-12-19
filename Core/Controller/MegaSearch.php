@@ -58,6 +58,7 @@ class MegaSearch extends Controller
     public function getPageData(): array
     {
         $data = parent::getPageData();
+        $data['menu'] = 'reports';
         $data['title'] = 'mega-search';
         $data['showonmenu'] = false;
         return $data;
