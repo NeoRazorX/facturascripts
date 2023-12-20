@@ -6,24 +6,16 @@ namespace FacturaScripts\Core\Lib;
 
 class CalendarEvent
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $vencimiento;
 
-    /**
-     * @var string
-     */
-
+    /** @var string */
     public $url;
-    /**
-     * @var string
-     */
+
+    /** @var string */
     public $titulo;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $descripcion;
 
     /**
