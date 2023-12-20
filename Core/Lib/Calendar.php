@@ -4,8 +4,6 @@
 namespace FacturaScripts\Core\Lib;
 
 
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use FacturaScripts\Core\Html;
 
 /**
@@ -22,7 +20,7 @@ class Calendar
         return [
             'year' => $year,
             'months' => array_map(
-                function ($month) use ($year):void {
+                function ($month) use ($year): void {
                     static::buildMonth($year, $month);
                 },
                 range(1, 12)
@@ -31,29 +29,22 @@ class Calendar
     }
 
     /**
-     * @param int $year
-     * @param int $month
-     * @param int|null $day
+     * @param string $year
+     * @param string $month
+     * @param string|null $day
      * @param CalendarEvent[] $eventos
      * @return mixed[]|null
      */
     public static function buildMonth($year, $month, $day = null, $eventos = [])
     {
-        $selectedDate = CarbonImmutable::create($year, $month, $day ?? 1);
+        $selectedDate = new FechaImmutable($year, $month, $day ?? 1);
+
         if (false === $selectedDate) {
             return null;
         }
 
-        $startOfMonth = $selectedDate->startOfMonth();
-
-        $endOfMonth = $selectedDate->endOfMonth();
-
-        $startOfWeek = $startOfMonth->startOfWeek(Carbon::MONDAY);
-
-        $endOfWeek = $endOfMonth->endOfWeek(Carbon::SUNDAY);
-
         $weeks = array_map(
-            function ($date) use ($day, $startOfMonth, $endOfMonth, $selectedDate, $eventos) {
+            function ($date) use ($day, $selectedDate, $eventos) {
                 $eventosDelDia = array_filter(
                     $eventos,
                     function ($evento) use ($date) {
@@ -63,20 +54,19 @@ class Calendar
                 );
 
                 return [
-                    'day' => $date->day,
-                    'withinMonth' => $date->between($startOfMonth, $endOfMonth),
-                    'selected' => $day && $date->is($selectedDate->format('d-m-Y')),
+                    'day' => $date->format('d'),
+                    'withinMonth' => $selectedDate->between($date),
+                    'selected' => $day && $selectedDate->is($date),
                     'events' => $eventosDelDia,
                 ];
             },
-            $startOfWeek->toPeriod($endOfWeek)->toArray()
+            $selectedDate->toPeriod()
         );
 
         $weeks = array_chunk($weeks, 7, true);
 
-
         return [
-            'year' => $selectedDate->year,
+            'year' => $selectedDate->format("Y"),
             'month' => $selectedDate->format('F'),
             'weeks' => $weeks,
         ];
@@ -89,7 +79,7 @@ class Calendar
      * @param CalendarEvent[] $eventos
      * @return string|null
      */
-    public static function renderMonth($year, $month, $day = null, $eventos = []):?string
+    public static function renderMonth($year, $month, $day = null, $eventos = []): ?string
     {
         $month = static::buildMonth($year, $month, $day, $eventos);
         $templatePath = 'Components' . DIRECTORY_SEPARATOR . 'calendar.html.twig';
