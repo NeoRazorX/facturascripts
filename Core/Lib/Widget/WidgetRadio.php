@@ -28,7 +28,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class WidgetRadio extends BaseWidget
 {
-
     /** @var CodeModel */
     protected static $codeModel;
 
@@ -126,7 +125,7 @@ class WidgetRadio extends BaseWidget
      * @param string $col1
      * @param string $col2
      */
-    public function setValuesFromArray($items, $translate = false, $addEmpty = false, $col1 = 'value', $col2 = 'title'): void
+    public function setValuesFromArray(array $items, bool $translate = false, bool $addEmpty = false, string $col1 = 'value', string $col2 = 'title'): void
     {
         $this->values = [];
         foreach ($items as $item) {
@@ -150,12 +149,7 @@ class WidgetRadio extends BaseWidget
         }
     }
 
-    /**
-     * @param array $values
-     * @param bool $translate
-     * @param bool $addEmpty
-     */
-    public function setValuesFromArrayKeys($values, $translate = false, $addEmpty = false): void
+    public function setValuesFromArrayKeys(array $values, bool $translate = false, bool $addEmpty = false): void
     {
         $this->values = [];
         foreach ($values as $key => $value) {
@@ -176,7 +170,7 @@ class WidgetRadio extends BaseWidget
      * @param array $rows
      * @param bool $translate
      */
-    public function setValuesFromCodeModel($rows, $translate = false): void
+    public function setValuesFromCodeModel(array $rows, bool $translate = false): void
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
@@ -194,9 +188,9 @@ class WidgetRadio extends BaseWidget
     /**
      * @param int $start
      * @param int $end
-     * @param int $step
+     * @param float $step
      */
-    public function setValuesFromRange($start, $end, $step): void
+    public function setValuesFromRange(int $start, int $end, float $step): void
     {
         $values = range($start, $end, $step);
         $this->setValuesFromArray($values);
@@ -221,7 +215,7 @@ class WidgetRadio extends BaseWidget
      */
     protected function assets(): void
     {
-        AssetManager::add('css', FS_ROUTE . '/Dinamic/Assets/CSS/WidgetRadio.css', 2);
+        AssetManager::addCss(FS_ROUTE . '/Dinamic/Assets/CSS/WidgetRadio.css', 2);
     }
 
     protected function clearImagesPath(): void
@@ -256,7 +250,7 @@ class WidgetRadio extends BaseWidget
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
             $check = '';
-            // don't use strict comparation (===)
+            // don't use strict comparison (===)
             if ($option['value'] == $this->value) {
                 $check = 'checked';
             }
@@ -288,7 +282,7 @@ class WidgetRadio extends BaseWidget
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
             $check = '';
-            // don't use strict comparation (===)
+            // don't use strict comparison (===)
             if ($option['value'] == $this->value) {
                 $check = 'checked';
             }
@@ -317,7 +311,7 @@ class WidgetRadio extends BaseWidget
      * @param array $child
      * @param bool $loadData
      */
-    protected function setSourceData(array $child, bool $loadData = true)
+    protected function setSourceData(array $child, bool $loadData = true): void
     {
         $this->source = $child['source'];
         $this->fieldcode = $child['fieldcode'] ?? 'id';
@@ -339,7 +333,7 @@ class WidgetRadio extends BaseWidget
 
         $selected = null;
         foreach ($this->values as $option) {
-            // don't use strict comparation (===)
+            // don't use strict comparison (===)
             if ($option['value'] == $this->value) {
                 $selected = $option['title'];
             }

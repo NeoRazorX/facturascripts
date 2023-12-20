@@ -20,6 +20,7 @@
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\TelemetryManager;
+use FacturaScripts\Core\CrashReport;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
@@ -42,7 +43,7 @@ $timeZone = Tools::config('timezone', 'Europe/Madrid');
 date_default_timezone_set($timeZone);
 
 // cargamos el gestor de errores
-register_shutdown_function('FacturaScripts\Core\Kernel::shutdown');
+CrashReport::init();
 
 // iniciamos el kernel
 Kernel::init();

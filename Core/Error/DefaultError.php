@@ -35,7 +35,8 @@ class DefaultError extends ErrorController
             $title = 'Twig syntax error';
             $body = '<h1>' . $title . '</h1>'
                 . '<p>' . $this->exception->getRawMessage() . '</p>'
-                . '<p>File: ' . $this->exception->getFile() . ':' . $this->exception->getLine() . '</p>';
+                . '<p><b>File</b>: ' . $this->exception->getFile()
+                . ', <b>line</b>:' . $this->exception->getLine() . '</p>';
 
             echo $this->htmlCard($title, $body, 'bg-danger');
             return;
@@ -45,7 +46,8 @@ class DefaultError extends ErrorController
             $title = 'Twig runtime error';
             $body = '<h1>' . $title . '</h1>'
                 . '<p>' . $this->exception->getRawMessage() . '</p>'
-                . '<p>File: ' . $this->exception->getFile() . ':' . $this->exception->getLine() . '</p>';
+                . '<p><b>File</b>: ' . $this->exception->getFile()
+                . ', <b>line</b>:' . $this->exception->getLine() . '</p>';
 
             echo $this->htmlCard($title, $body, 'bg-danger');
             return;
@@ -55,7 +57,8 @@ class DefaultError extends ErrorController
             $title = 'Twig loader error';
             $body = '<h1>' . $title . '</h1>'
                 . '<p>' . $this->exception->getRawMessage() . '</p>'
-                . '<p>File: ' . $this->exception->getFile() . ':' . $this->exception->getLine() . '</p>';
+                . '<p><b>File</b>: ' . $this->exception->getFile()
+                . ', <b>line</b>:' . $this->exception->getLine() . '</p>';
 
             echo $this->htmlCard($title, $body, 'bg-danger');
             return;
@@ -64,7 +67,8 @@ class DefaultError extends ErrorController
         $title = 'Internal error #' . $this->exception->getCode();
         $body = '<h1>' . $title . '</h1>'
             . '<p>' . $this->exception->getMessage() . '</p>'
-            . '<p>File: ' . $this->exception->getFile() . ':' . $this->exception->getLine() . '</p>';
+            . '<p><b>File</b>: ' . $this->exception->getFile()
+            . ', <b>line</b>:' . $this->exception->getLine() . '</p>';
 
         $table = $this->getTrace();
 

@@ -60,32 +60,6 @@ final class Kernel
         self::$routesCallbacks[] = $closure;
     }
 
-    public static function getErrorInfo(int $code, string $message, string $file, int $line): array
-    {
-        // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
-        $errorUrl = parse_url($_SERVER["REQUEST_URI"] ?? '', PHP_URL_PATH);
-        $errorMessage = self::cleanErrorMessage($message);
-        $errorFile = str_replace(FS_FOLDER, '', $file);
-        $errorHash = md5($code . $errorFile . $line . $errorMessage);
-        $reportUrl = 'https://facturascripts.com/errores/' . $errorHash;
-        $reportQr = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($reportUrl);
-
-        return [
-            'code' => $code,
-            'message' => $errorMessage,
-            'file' => $errorFile,
-            'line' => $line,
-            'hash' => $errorHash,
-            'url' => $errorUrl,
-            'report_url' => $reportUrl,
-            'report_qr' => $reportQr,
-            'core_version' => self::version(),
-            'php_version' => phpversion(),
-            'os' => PHP_OS,
-            'plugin_list' => implode(',', Plugins::enabled()),
-        ];
-    }
-
     public static function getExecutionTime(int $decimals = 5): float
     {
         $start = self::$timers['kernel::init']['start'] ?? microtime(true);
@@ -112,8 +86,6 @@ final class Kernel
     public static function init(): void
     {
         self::startTimer('kernel::init');
-
-        ob_start();
 
         // cargamos algunas constantes para dar soporte a versiones antiguas
         $constants = [
@@ -205,108 +177,6 @@ final class Kernel
         return false === file_put_contents($filePath, $content);
     }
 
-    public static function shutdown(): void
-    {
-        $error = error_get_last();
-        if (!isset($error)) {
-            return;
-        }
-
-        // limpiamos el buffer si es necesario
-        if (ob_get_length() > 0) {
-            ob_end_clean();
-        }
-
-        http_response_code(500);
-
-        $info = self::getErrorInfo($error['type'], $error['message'], $error['file'], $error['line']);
-
-        // comprobamos si el content-type es json
-        if (isset($_SERVER['CONTENT_TYPE']) && 'application/json' === $_SERVER['CONTENT_TYPE']) {
-            header('Content-Type: application/json');
-            echo json_encode(['error' => $error['message'], 'info' => $info]);
-            return;
-        }
-
-        // comprobamos si el content-type es text/plain
-        if (isset($_SERVER['CONTENT_TYPE']) && 'text/plain' === $_SERVER['CONTENT_TYPE']) {
-            header('Content-Type: text/plain');
-            echo $error['message'];
-            return;
-        }
-
-        $messageParts = explode("\nStack trace:\n", $info['message']);
-
-        echo '<!doctype html>'
-            . '<html lang="en">'
-            . '<head>'
-            . '<meta charset="utf-8">'
-            . '<meta name="viewport" content="width=device-width, initial-scale=1">'
-            . '<title>Fatal error #' . $info['code'] . '</title>'
-            . '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"'
-            . ' integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">'
-            . '</head>'
-            . '<body class="bg-danger">'
-            . '<div class="container mt-5 mb-5">'
-            . '<div class="row justify-content-center">'
-            . '<div class="col-sm-6">'
-            . '<div class="card shadow">'
-            . '<div class="card-body">'
-            . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-end">'
-            . '<h1 class="mt-0">Fatal error #' . $info['code'] . '</h1>'
-            . '<p>' . nl2br($messageParts[0]) . '</p>'
-            . '<p class="mb-0"><b>Url</b>: ' . $info['url'] . '</p>';
-
-        if (Tools::config('debug', false)) {
-            echo '<p class="mb-0"><b>File</b>: ' . $info['file'] . ', <b>line</b>: ' . $info['line'] . '</p>';
-        }
-
-        echo '<p class="mb-0"><b>Hash</b>: ' . $info['hash'] . '</p>';
-
-        if (Tools::config('debug', false)) {
-            echo '<p class="mb-0"><b>Core</b>: ' . $info['core_version'] . ', <b>plugins</b>: ' . $info['plugin_list'] . '</p>'
-                . '<p class="mb-0"><b>PHP</b>: ' . $info['php_version'] . ', <b>OS</b>: ' . $info['os'] . '</p>';
-        }
-
-        echo '</div>';
-
-        if (Tools::config('debug', false) && isset($messageParts[1])) {
-            echo '<div class="table-responsive">'
-                . '<table class="table table-striped mb-0">'
-                . '<thead><tr><th>#</th><th>Trace</th></tr></thead>'
-                . '<tbody>';
-
-            $trace = explode("\n", $messageParts[1]);
-            foreach (array_reverse($trace) as $key => $value) {
-                echo '<tr><td>' . (1 + $key) . '</td><td>' . substr($value, 3) . '</td></tr>';
-            }
-
-            echo '</tbody></table></div>';
-        }
-
-        echo '<div class="card-footer">'
-            . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
-            . '<input type="hidden" name="error_code" value="' . $info['code'] . '">'
-            . '<input type="hidden" name="error_message" value="' . $info['message'] . '">'
-            . '<input type="hidden" name="error_file" value="' . $info['file'] . '">'
-            . '<input type="hidden" name="error_line" value="' . $info['line'] . '">'
-            . '<input type="hidden" name="error_hash" value="' . $info['hash'] . '">'
-            . '<input type="hidden" name="error_url" value="' . $info['url'] . '">'
-            . '<input type="hidden" name="error_core_version" value="' . $info['core_version'] . '">'
-            . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">'
-            . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">'
-            . '<input type="hidden" name="error_os" value="' . $info['os'] . '">'
-            . '<button type="submit" class="btn btn-secondary">Read more / Leer más</button>'
-            . '</form>'
-            . '</div>'
-            . '</div>'
-            . '</div>'
-            . '</div>'
-            . '</div>'
-            . '</body>'
-            . '</html>';
-    }
-
     public static function startTimer(string $name): void
     {
         self::$timers[$name] = ['start' => microtime(true)];
@@ -325,12 +195,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2023.16;
-    }
-
-    private static function cleanErrorMessage(string $message): string
-    {
-        return str_replace([FS_FOLDER, 'Stack trace:'], ['', "\nStack trace:"], $message);
+        return 2023.17;
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface

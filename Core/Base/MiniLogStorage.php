@@ -49,7 +49,7 @@ final class MiniLogStorage implements MiniLogStorageInterface
             $logItem->message = $item['message'];
             $logItem->model = $item['context']['model-class'] ?? null;
             $logItem->modelcode = $item['context']['model-code'] ?? null;
-            $logItem->nick = $item['context']['nick'] ?? null;
+            $logItem->nick = $item['context']['nick'] ?? Session::user()->nick;
             $logItem->time = date('d-m-Y H:i:s', (int)$item['time']);
             $logItem->uri = $item['context']['uri'] ?? null;
             if (false === $logItem->save()) {

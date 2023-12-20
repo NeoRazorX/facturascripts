@@ -60,7 +60,7 @@ class Myfiles implements ControllerInterface
 
         // get the myft parameter
         $fixedFilePath = substr(urldecode($url), 1);
-        $token = filter_input(INPUT_GET, 'myft', FILTER_SANITIZE_STRING);
+        $token = filter_input(INPUT_GET, 'myft');
         if (empty($token) || false === MyFilesToken::validate($fixedFilePath, $token)) {
             throw new KernelException('MyfilesTokenError', 'Invalid token for file: ' . $fixedFilePath);
         }

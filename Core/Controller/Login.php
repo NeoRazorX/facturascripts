@@ -289,7 +289,7 @@ class Login implements ControllerInterface
 
         // redirect to the user's main page
         if (empty($user->homepage)) {
-            $user->homepage = Tools::config('route', '/');
+            $user->homepage = Tools::config('route') . '/';
         }
         header('Location: ' . $user->homepage);
     }

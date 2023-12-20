@@ -56,6 +56,8 @@ END;
         echo PHP_EOL . PHP_EOL . Tools::lang()->trans('starting-cron');
         Tools::log('cron')->notice('starting-cron');
 
+        ob_flush();
+
         // ejecutamos el cron de cada plugin
         $this->runPlugins();
 
@@ -89,6 +91,8 @@ END;
                 echo $ex->getMessage() . PHP_EOL;
                 Tools::log()->error($ex->getMessage());
             }
+
+            ob_flush();
 
             // si no se está ejecutando en modo cli y lleva más de 20 segundos, se detiene
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 20) {
