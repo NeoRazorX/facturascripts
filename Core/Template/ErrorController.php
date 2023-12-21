@@ -29,6 +29,9 @@ abstract class ErrorController implements ErrorControllerInterface
     /** @var Exception */
     protected $exception;
 
+    /** @var bool */
+    private $save_crash = true;
+
     /** @var string */
     protected $url;
 
@@ -61,7 +64,10 @@ abstract class ErrorController implements ErrorControllerInterface
             $this->exception->getFile(),
             $this->exception->getLine()
         );
-        CrashReport::save($info);
+
+        if ($this->save_crash) {
+            CrashReport::save($info);
+        }
 
         $body = '<div class="container">'
             . '<div class="row justify-content-center">'
@@ -106,5 +112,10 @@ abstract class ErrorController implements ErrorControllerInterface
             . '</div>';
 
         return $this->html($title, $body, $bodyCss);
+    }
+
+    protected function setSaveCrash(bool $save): void
+    {
+        $this->save_crash = $save;
     }
 }
