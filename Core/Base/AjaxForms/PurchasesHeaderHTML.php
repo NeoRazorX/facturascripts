@@ -155,7 +155,7 @@ class PurchasesHeaderHTML
             . '<a href="' . $proveedor->url() . '">' . $i18n->trans('supplier') . '</a>'
             . '<input type="hidden" name="codproveedor" value="' . $model->codproveedor . '" />'
             . '<div class="input-group">'
-            . '<input type="text" value="' . $proveedor->nombre . '" class="form-control" readonly />'
+            . '<input type="text" value="' . Tools::noHtml($proveedor->nombre) . '" class="form-control" readonly />'
             . '<div class="input-group-append">' . $btnProveedor . '</div>'
             . '</div>'
             . '</div>'
@@ -224,7 +224,7 @@ class PurchasesHeaderHTML
         $attributes = $model->editable ? 'name="nombre" required=""' : 'disabled=""';
         return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('business-name')
-            . '<input type="text" ' . $attributes . ' value="' . $model->nombre . '" class="form-control" maxlength="100" autocomplete="off" />'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nombre) . '" class="form-control" maxlength="100" autocomplete="off" />'
             . '</div>'
             . '</div>';
     }
@@ -234,7 +234,7 @@ class PurchasesHeaderHTML
         $attributes = $model->editable ? 'name="numproveedor"' : 'disabled=""';
         return empty($model->codproveedor) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
             . '<div class="form-group">' . $i18n->trans('numsupplier')
-            . '<input type="text" ' . $attributes . ' value="' . $model->numproveedor . '" class="form-control" maxlength="50"'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->numproveedor) . '" class="form-control" maxlength="50"'
             . ' placeholder="' . $i18n->trans('optional') . '" />'
             . '</div>'
             . '</div>';

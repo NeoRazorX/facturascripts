@@ -66,7 +66,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="cifnif" maxlength="30" autocomplete="off"' : 'disabled';
         return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('cifnif')
-            . '<input type="text" ' . $attributes . ' value="' . $model->cifnif . '" class="form-control"/>'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->cifnif) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -258,7 +258,7 @@ trait CommonSalesPurchases
         return '<div class="col-sm"><div class="form-group">' . $i18n->trans('global-dto')
             . '<div class="input-group">'
             . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-percentage"></i></span></div>'
-            . '<input type="number" ' . $attributes . ' value="' . $model->dtopor1 . '" class="form-control"/>'
+            . '<input type="number" ' . $attributes . ' value="' . floatval($model->dtopor1) . '" class="form-control"/>'
             . '</div></div></div>';
     }
 
@@ -276,7 +276,7 @@ trait CommonSalesPurchases
             . '<div class="input-group-prepend">'
             . '<span class="input-group-text"><i class="fas fa-percentage"></i></span>'
             . '</div>'
-            . '<input type="number" ' . $attributes . ' value="' . $model->dtopor2 . '" class="form-control"/>'
+            . '<input type="number" ' . $attributes . ' value="' . floatval($model->dtopor2) . '" class="form-control"/>'
             . '</div></div></div>';
     }
 
@@ -497,7 +497,7 @@ trait CommonSalesPurchases
 
         return '<div class="col-sm-12"><div class="form-group">' . $i18n->trans('observations')
             . '<textarea ' . $attributes . ' class="form-control" placeholder="' . $i18n->trans('observations')
-            . '" rows="' . $rows . '">' . $model->observaciones . '</textarea>'
+            . '" rows="' . $rows . '">' . Tools::noHtml($model->observaciones) . '</textarea>'
             . '</div></div>';
     }
 
@@ -631,7 +631,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="tasaconv" step="any" autocomplete="off"' : 'disabled';
         return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('conversion-rate')
-            . '<input type="number" ' . $attributes . ' value="' . $model->tasaconv . '" class="form-control"/>'
+            . '<input type="number" ' . $attributes . ' value="' . floatval($model->tasaconv) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -660,7 +660,7 @@ trait CommonSalesPurchases
         $attributes = 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('user')
-            . '<input type="text" ' . $attributes . ' value="' . $model->nick . '" class="form-control"/>'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nick) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
