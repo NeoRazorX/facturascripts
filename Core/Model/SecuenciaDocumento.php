@@ -23,6 +23,8 @@ use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 
+use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Lib\CodePatterns;
 /**
  * Personalize the numeration and code of sale and purchase documents.
  *
@@ -146,6 +148,15 @@ class SecuenciaDocumento extends ModelClass
             Tools::log()->warning('pattern-without-serie');
         }
 
+        $factura = new FacturaCliente();
+        $factura->codejercicio = $this->codejercicio;
+        $factura->numero = $this->numero;
+        $longitudPatron = strlen(CodePatterns::trans($this->patron, $factura, ['long' => $this->longnumero]));
+        var_dump($longitudPatron);
+        if(20 < $longitudPatron) {
+            Tools::log()->warning('pattern-too-long');
+            return false;
+        }
         return true;
     }
 }
