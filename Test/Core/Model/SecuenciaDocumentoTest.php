@@ -79,6 +79,32 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertTrue($company->delete(), 'document-sequence-cant-delete');
     }
 
+
+    public function testCantCreateLongPattern(): void
+    {
+        // creamos una empresa
+        $company = $this->getRandomCompany();
+        $this->assertTrue($company->save(), 'company-cant-save');
+
+        // creamos una serie
+        $serie = $this->getRandomSerie();
+        $this->assertTrue($serie->save(), 'serie-cant-save');
+
+        // creamos una secuencia
+        $sequence = new SecuenciaDocumento();
+        $sequence->codserie = $serie->codserie;
+        $sequence->idempresa = $company->idempresa;
+        $sequence->codejercicio = 2023;
+        $sequence->longnumero = 12;
+        $sequence->numero = 1;
+        $sequence->patron = 'FACTURA_{EJE}_{SERIE}_{0NUM}';
+        $sequence->tipodoc = 'FacturaCliente';
+        $sequence->usarhuecos = false;
+        $this->assertFalse($sequence->save(), 'document-sequence-can-save-long-patterns');
+        $this->assertTrue($serie->delete(), 'document-sequence-cant-delete');
+        $this->assertTrue($company->delete(), 'document-sequence-cant-delete');
+    }
+
     public function testCantCreateEmptyOrInvalid(): void
     {
         // creamos una empresa
