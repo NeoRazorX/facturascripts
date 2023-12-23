@@ -27,6 +27,7 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\DataSrc\GrupoClientes;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
@@ -209,6 +210,18 @@ abstract class ListBusinessDocument extends ListController
         $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
         $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
+
+        $i18n = Tools::lang();
+        $grupos = GrupoClientes::codeModel(false);
+        if(count($grupos) > 0) {
+            $gruposFiltro = [];
+            array_push($gruposFiltro,  ['label' => $i18n->trans('any-group'), 'where' => [ ] ]);
+            array_push($gruposFiltro,  ['label' => $i18n->trans('without-groups'), 'where' => [  new DataBaseWhere('codcliente', "SELECT DISTINCT codcliente FROM clientes WHERE codgrupo IS NOT NULL", 'NOT IN') ] ]);
+            foreach($grupos as $grupo) {
+                array_push($gruposFiltro, ['label' => $grupo->description, 'where' => ($grupo->code ? [ new DataBaseWhere('codcliente', "SELECT DISTINCT codcliente FROM clientes WHERE codgrupo = '{$grupo->code}'", 'IN')] : []) ]);
+            }
+            $this->addFilterSelectWhere($viewName, 'codcliente', $gruposFiltro);
+        }
 
         // asignamos los colores
         $this->addColorStatus($viewName, $modelName);
