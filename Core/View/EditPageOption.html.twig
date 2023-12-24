@@ -81,7 +81,7 @@
                             </div>
                         </form>
                     </div>
-                    <form method="post" name="main_form">
+                    <form method="post" name="main_form" id="formMain">
                         <input type="hidden" name="action" value="save"/>
                         <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
                         <input type="hidden" name="nick" value="{{ fsc.selectedUser }}"/>
@@ -147,27 +147,15 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        function deleteOptions() {
-            bootbox.confirm({
-                title: "{{ i18n.trans('confirm-delete')|raw }}",
-                message: "{{ i18n.trans('are-you-sure') }}",
-                closeButton: false,
-                buttons: {
-                    cancel: {
-                        label: "<i class='fas fa-times'></i> {{ i18n.trans('cancel') }}"
-                    },
-                    confirm: {
-                        label: "<i class='fas fa-check'></i> {{ i18n.trans('delete') }}",
-                        className: 'btn-danger'
-                    }
-                },
-                callback: function (result) {
-                    if (result) {
-                        document.main_form.action.value = 'delete';
-                        document.main_form.submit();
-                    }
-                }
-            });
+        function deleteOptions() {           
+            Fsbootbox.confirmAction(
+                'Main',
+                "delete",
+                "{{ i18n.trans('confirm-delete')|raw }}",
+                "{{ i18n.trans('are-you-sure') }}",
+                "{{ i18n.trans('cancel') }}",
+                "{{ i18n.trans('confirm') }}"
+            );
         }
     </script>
 {% endblock %}
