@@ -22,43 +22,25 @@ var editListViewDeleteMessage = "";
 var editListViewDeleteTitle = "";
 
 function editListViewDelete(viewName) {
-    bootbox.confirm({
-        title: editListViewDeleteTitle,
-        message: editListViewDeleteMessage,
-        closeButton: false,
-        buttons: {
-            cancel: {
-                label: '<i class="fas fa-times"></i> ' + editListViewDeleteCancel
-            },
-            confirm: {
-                label: '<i class="fas fa-check"></i> ' + editListViewDeleteConfirm,
-                className: "btn-danger"
-            }
-        },
-        callback: function (result) {
-            if (result) {
-                editListViewSetAction(viewName, "delete");
-            }
-        }
-    });
+  Fsbootbox.confirmAction(
+    viewName,
+    "delete",
+    editListViewDeleteTitle,
+    editListViewDeleteMessage
+  );
 
-    return false;
-}
-
-function editListViewSetAction(viewName, value) {
-    $("#form" + viewName + " :input[name=\"action\"]").val(value);
-    $("#form" + viewName).submit();
+  return false;
 }
 
 function editListViewSetOffset(viewName, value) {
-    $("#form" + viewName + " :input[name=\"action\"]").val('');
-    $("#form" + viewName + "Offset :input[name=\"offset\"]").val(value);
-    $("#form" + viewName + "Offset").submit();
+  $("#form" + viewName + ' :input[name="action"]').val("");
+  $("#form" + viewName + 'Offset :input[name="offset"]').val(value);
+  $("#form" + viewName + "Offset").submit();
 }
 
 $(document).ready(function () {
-    var formSelected = document.getElementById('EditListViewSelected');
-    if (formSelected !== null) {
-        formSelected.scrollIntoView();
-    }
+  var formSelected = document.getElementById("EditListViewSelected");
+  if (formSelected !== null) {
+    formSelected.scrollIntoView();
+  }
 });
