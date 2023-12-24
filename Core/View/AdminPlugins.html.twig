@@ -146,28 +146,52 @@
     {{ parent() }}
     {% if not constant('FS_DISABLE_RM_PLUGINS') %}
         <script>
+            function generateUniqueId() {
+                return `modal-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+            }
+
             function deletePlugin(pluginName) {
-                bootbox.confirm({
-                    title: "{{ trans('confirm-delete')|raw }}",
-                    message: "{{ trans('are-you-sure') }}",
-                    closeButton: false,
-                    buttons: {
-                        cancel: {
-                            label: "<i class='fas fa-times'></i> {{ trans('cancel') }}"
-                        },
-                        confirm: {
-                            label: "<i class='fas fa-check'></i> {{ trans('delete') }}",
-                            className: 'btn-danger'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            animateSpinner('add');
-                            window.location = "{{ fsc.url() }}?action=remove" + "\u0026" + "plugin=" + pluginName
-                                + "\u0026" + "multireqtoken={{ formToken(false) }}";
-                        }
-                    }
+                const uniqueModalId = generateUniqueId();
+
+                const modalContent = `
+                    <div class="modal fade" id="${uniqueModalId}" tabindex="-1" role="dialog" aria-labelledby="${uniqueModalId}Label" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="${uniqueModalId}Label">{{ trans('confirm-delete')|raw }}</h5>                                   
+                                </div>
+                                <div class="modal-body">
+                                    <p>{{ trans('are-you-sure') }}</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class='fas fa-times'></i> {{ trans('cancel') }}</button>
+                                    <button type="button" class="btn btn-danger" id="confirmButton">
+                                        <i class='fas fa-check'></i> {{ trans('delete') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                $("body").append(modalContent);
+               
+                $(`#${uniqueModalId}`).modal({
+                    backdrop: "static",
+                    keyboard: false,
                 });
+
+                $(`#${uniqueModalId}`).on("hidden.bs.modal", function () {
+                    $(this).remove();
+                });
+
+                $(`#${uniqueModalId} #confirmButton`).on("click", function () {
+                    $(`#${uniqueModalId}`).modal("hide");
+                    animateSpinner('add');
+                    window.location = "{{ fsc.url() }}?action=remove" + "\u0026" + "plugin=" + pluginName
+                        + "\u0026" + "multireqtoken={{ formToken(false) }}";
+                });
+                
             }
         </script>
     {% endif %}
