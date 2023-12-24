@@ -26,26 +26,14 @@
 
 <script>
     function editViewDelete(viewName) {
-        bootbox.confirm({
-            title: "{{ i18n.trans('confirm-delete') }}",
-            message: "{{ i18n.trans('are-you-sure') }}",
-            closeButton: false,
-            buttons: {
-                cancel: {
-                    label: '<i class="fas fa-times"></i> {{ i18n.trans('cancel') }}'
-                },
-                confirm: {
-                    label: '<i class="fas fa-check"></i> {{ i18n.trans('confirm') }}',
-                    className: "btn-danger"
-                }
-            },
-            callback: function (result) {
-                if (result) {
-                    $("#form" + viewName + " :input[name=\"action\"]").val("delete");
-                    $("#form" + viewName).submit();
-                }
-            }
-        });
+        Fsbootbox.confirmAction(
+            viewName,
+            "delete",
+            "{{ i18n.trans('confirm-delete') }}",
+            "{{ i18n.trans('are-you-sure') }}",
+            "{{ i18n.trans('cancel') }}",
+            "{{ i18n.trans('confirm') }}"
+        );
 
         return false;
     }
