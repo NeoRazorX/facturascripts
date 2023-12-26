@@ -107,7 +107,7 @@ final class Cache
 
         // si no existía el archivo, le damos permisos de escritura
         if (!$exists) {
-            chmod($fileName, 0664);
+            chmod($fileName, 0666);
         }
     }
 
