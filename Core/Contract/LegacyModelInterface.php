@@ -27,7 +27,7 @@ use FacturaScripts\Core\DbQuery;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-interface LegacyModelClassInterface
+interface LegacyModelInterface
 {
     public static function addExtension($extension): void;
 

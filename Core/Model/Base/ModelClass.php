@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
-use FacturaScripts\Core\Contract\LegacyModelClassInterface;
+use FacturaScripts\Core\Contract\LegacyModelInterface;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\CodeModel;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class ModelClass extends ModelCore implements LegacyModelClassInterface
+abstract class ModelClass extends ModelCore implements LegacyModelInterface
 {
     /**
      * Returns all models that correspond to the selected filters.
