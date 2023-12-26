@@ -99,7 +99,7 @@ class FacturaCliente extends Base\SalesDocument
         return 'facturascli';
     }
 
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return $this->testDate() && parent::saveInsert($values);
     }

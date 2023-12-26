@@ -191,7 +191,7 @@ abstract class PurchaseDocument extends TransformerDocument
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->nombre = Tools::noHtml($this->nombre);
         $this->numproveedor = Tools::noHtml($this->numproveedor);

@@ -86,7 +86,7 @@ class PageFilter extends Base\ModelClass
      * @param array $data
      * @param array $exclude
      */
-    public function loadFromData(array $data = [], array $exclude = [])
+    public function loadFromData(array $data = [], array $exclude = []): void
     {
         array_push($exclude, 'filters', 'code', 'action');
         parent::loadFromData($data, $exclude);

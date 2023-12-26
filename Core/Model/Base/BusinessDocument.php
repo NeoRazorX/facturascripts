@@ -328,7 +328,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         // check accounting exercise
         if (empty($this->codejercicio)) {
@@ -405,7 +405,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->observaciones = Tools::noHtml($this->observaciones);
 
@@ -485,7 +485,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         if (false === parent::saveUpdate($values)) {
             return false;

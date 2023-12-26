@@ -86,7 +86,7 @@ class Settings extends Base\ModelClass
      * @param array $data
      * @param array $exclude
      */
-    public function loadFromData(array $data = [], array $exclude = [])
+    public function loadFromData(array $data = [], array $exclude = []): void
     {
         parent::loadFromData($data, ['properties', 'action']);
         $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];

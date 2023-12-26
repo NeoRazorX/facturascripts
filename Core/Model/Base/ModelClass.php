@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Contract\LegacyModelClassInterface;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -31,7 +32,7 @@ use FacturaScripts\Dinamic\Model\CodeModel;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class ModelClass extends ModelCore
+abstract class ModelClass extends ModelCore implements LegacyModelClassInterface
 {
     /**
      * Returns all models that correspond to the selected filters.
@@ -122,7 +123,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (null === $this->primaryColumnValue()) {
             return true;
@@ -248,7 +249,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    public function primaryDescription()
+    public function primaryDescription(): string
     {
         $field = $this->primaryDescriptionColumn();
         return $this->{$field} ?? (string)$this->primaryColumnValue();
@@ -259,7 +260,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if ($this->pipeFalse('saveBefore') === false) {
             return false;
@@ -288,7 +289,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if ($this->pipeFalse('testBefore') === false) {
             return false;
@@ -349,7 +350,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if ($this->pipeFalse('saveInsertBefore') === false) {
             return false;
@@ -396,7 +397,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         if ($this->pipeFalse('saveUpdateBefore') === false) {
             return false;

@@ -161,7 +161,7 @@ abstract class ComercialContact extends Contact
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->debaja = !empty($this->fechabaja);
 

@@ -117,7 +117,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (false === $this->exists()) {
             return true;
@@ -265,7 +265,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         // match editable with status
         $this->editable = $this->getStatus()->editable;

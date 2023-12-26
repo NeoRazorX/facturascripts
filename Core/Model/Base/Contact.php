@@ -121,7 +121,7 @@ abstract class Contact extends ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->cifnif = Tools::noHtml($this->cifnif);
         if ($this->email !== null) {

@@ -286,7 +286,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->codimpuesto)) {
             $this->codimpuesto = null;
@@ -307,10 +307,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return parent::test();
     }
 
-    /**
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         $done = parent::save();
         $this->disableUpdateStock(false);
@@ -428,12 +425,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         parent::onDelete();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return $this->updateStock() && parent::saveInsert($values);
     }

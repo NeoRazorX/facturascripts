@@ -57,7 +57,7 @@ trait ExtensionsTrait
     /**
      * @param mixed $extension
      */
-    public static function addExtension($extension)
+    public static function addExtension($extension): void
     {
         $methods = (new ReflectionClass($extension))->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED);
         foreach ($methods as $method) {

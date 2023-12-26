@@ -107,7 +107,7 @@ abstract class BankAccount extends ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (!empty($this->codcuenta) && false === is_numeric($this->codcuenta)) {
             Tools::log()->error('invalid-number', ['%number%' => $this->codcuenta]);
@@ -143,7 +143,7 @@ abstract class BankAccount extends ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codcuenta)) {
             $this->codcuenta = $this->newCode();

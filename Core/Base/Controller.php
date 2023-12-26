@@ -148,7 +148,7 @@ class Controller implements ControllerInterface
     /**
      * @param mixed $extension
      */
-    public static function addExtension($extension)
+    public static function addExtension($extension): void
     {
         Tools::log()->error('no-extension-support', ['%className%' => static::class]);
     }

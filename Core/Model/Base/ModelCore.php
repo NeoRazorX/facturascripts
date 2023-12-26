@@ -59,7 +59,7 @@ abstract class ModelCore
      *
      * @param mixed $extension
      */
-    abstract public static function addExtension($extension);
+    abstract public static function addExtension($extension): void;
 
     /**
      * Returns the list of fields in the table.
@@ -197,7 +197,7 @@ abstract class ModelCore
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         return CSVImport::importTableSQL(static::tableName());
     }
@@ -208,7 +208,7 @@ abstract class ModelCore
      * @param array $data
      * @param array $exclude
      */
-    public function loadFromData(array $data = [], array $exclude = [])
+    public function loadFromData(array $data = [], array $exclude = []): void
     {
         $fields = $this->getModelFields();
         foreach ($data as $key => $value) {

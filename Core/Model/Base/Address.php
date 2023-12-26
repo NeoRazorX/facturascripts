@@ -84,7 +84,7 @@ abstract class Address extends ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->apartado = Tools::noHtml($this->apartado);
         $this->ciudad = Tools::noHtml($this->ciudad);

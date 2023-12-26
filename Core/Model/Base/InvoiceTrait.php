@@ -67,10 +67,7 @@ trait InvoiceTrait
 
     abstract public function testDate(): bool;
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if (false === $this->editable) {
             Tools::log()->warning('non-editable-document');

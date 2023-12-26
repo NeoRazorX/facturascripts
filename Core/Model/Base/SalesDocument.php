@@ -176,7 +176,7 @@ abstract class SalesDocument extends TransformerDocument
         return $this->codpais ?? '';
     }
 
-    public function delete()
+    public function delete(): bool
     {
         if (empty($this->total)) {
             return parent::delete();
@@ -269,7 +269,7 @@ abstract class SalesDocument extends TransformerDocument
         return $result;
     }
 
-    public function save()
+    public function save(): bool
     {
         if (empty($this->total)) {
             return parent::save();
@@ -355,7 +355,7 @@ abstract class SalesDocument extends TransformerDocument
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->apartado = Tools::noHtml($this->apartado);
         $this->ciudad = Tools::noHtml($this->ciudad);
