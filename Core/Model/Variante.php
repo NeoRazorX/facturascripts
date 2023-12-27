@@ -176,7 +176,7 @@ class Variante extends Base\ModelClass
         );
     }
 
-    public function delete(): bool
+    public function delete($complete = false): bool
     {
         $whereVar = [
             new DataBaseWhere('idproducto', $this->idproducto),
@@ -217,7 +217,7 @@ class Variante extends Base\ModelClass
 
         // no se puede eliminar la variante principal, salvo que no se compre ni se venda (para poder eliminar el producto)
         $producto = $this->getProducto();
-        if ($this->referencia === $producto->referencia && !(false === $producto->secompra && false === $producto->sevende)) {
+        if ($this->referencia === $producto->referencia && (false === $complete)) {
             Tools::log()->warning('you-cant-delete-primary-variant');
             return false;
         }
