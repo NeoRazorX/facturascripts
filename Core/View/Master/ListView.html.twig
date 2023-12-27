@@ -143,7 +143,38 @@
                         </th>
                     {% endif %}
                     {% for column in currentView.getColumns() %}
-                        {{ column.tableHeader() | raw }}
+                        {# { column.tableHeader() | raw }#}
+                        {%  if not column.hidden %}
+                            <th class="text-{{column.display }}">
+                            {% if column.titleurl %}
+                                <a href="{{ column.titleurl }}">{{ trans(column.title) }}</a>
+                            {% else %}
+                                {{ trans(column.title) }}
+                            {% endif %}
+
+                            {% set columna = 'zzzzzzz' %}
+                            {% set columnaOrden = 'zzzzzzz' %}
+                            {% set botonOrden = 'zzzzzzz' %}
+                            {% for key, orderby in currentView.orderOptions  %}
+                                {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
+                                {% set icon = (orderby.type == 'ASC') ? 'fas fa-sort-amount-down-alt' : 'fas fa-sort-amount-down' %}
+                                {% if columna != orderby.fields.0 or columnaOrden != orderby.type %}
+                                    {% set columna = orderby.fields.0 %}
+                                    {% set columnaOrden = orderby.type %}
+                                    {% if orderby.fields[0] == column.widget.fieldname  %}
+                                        {% if currentView.orderKey != key or (currentView.orderKey == key and columnaOrden != orderby.type) %}
+                                            {% if botonOrden != columna or botonOrden == 'zzzzzzz' %}
+                                                {% set botonOrden = columna %}
+                                                <a class="drop down-item{{ activeClass }}" href="#" onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}');" title="{{ trans("order." ~ orderby.type) }}">
+                                                    <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            </th>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 </thead>
