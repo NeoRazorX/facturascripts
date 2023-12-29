@@ -45,8 +45,9 @@ class TableBlock extends BaseBlock
         $this->rows = $rows;
     }
 
-    public function render(): string
+    public function render(bool $footer = false): string
     {
+        $this->footer = $footer;
         $return = $this->pipe('render');
         return $return ??
             '<table class="' . (empty($this->css) ? 'table mb-15 w-100' : $this->css) . '">'

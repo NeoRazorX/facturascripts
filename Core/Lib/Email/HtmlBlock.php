@@ -39,8 +39,9 @@ class HtmlBlock extends BaseBlock
         $this->html = $html;
     }
 
-    public function render(): string
+    public function render(bool $footer = false): string
     {
+        $this->footer = $footer;
         $return = $this->pipe('render');
         return $return ?? $this->html;
     }
