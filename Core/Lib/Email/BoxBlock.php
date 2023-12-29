@@ -52,7 +52,7 @@ class BoxBlock extends BaseBlock
         $html = '';
         foreach ($this->blocks as $block) {
             if ($block instanceof BaseBlock) {
-                $html .= $block->render();
+                $html .= $block->render($footer);
             }
         }
 
