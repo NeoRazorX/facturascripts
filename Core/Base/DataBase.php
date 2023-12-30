@@ -297,7 +297,7 @@ final class DataBase
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
         foreach ($data as $row) {
-            $result[] = ['name' => $row['Key_name']];
+            $result[] = ['name' => $row['Key_name'] ?? $row['key_name'] ?? ''];
         }
 
         return $result;
