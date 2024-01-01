@@ -20,6 +20,7 @@
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 
 define("FS_FOLDER", getcwd());
@@ -39,6 +40,9 @@ $db->connect();
 
 // clean cache
 Cache::clear();
+
+// iniciamos el kernel
+Kernel::init();
 
 // deploy
 Plugins::deploy();
