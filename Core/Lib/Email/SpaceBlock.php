@@ -33,8 +33,9 @@ class SpaceBlock extends BaseBlock
         $this->height = $height;
     }
 
-    public function render(): string
+    public function render(bool $footer = false): string
     {
+        $this->footer = $footer;
         $return = $this->pipe('render');
         return $return ??
             '<div style="width: 100%; height: ' . $this->height . 'px;"></div>';

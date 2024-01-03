@@ -45,8 +45,9 @@ class ButtonBlock extends BaseBlock
         $this->link = $link;
     }
 
-    public function render(): string
+    public function render(bool $footer = false): string
     {
+        $this->footer = $footer;
         $return = $this->pipe('render');
         return $return ?? '<span class="' . (empty($this->css) ? 'btn w-100' : $this->css) . '">'
         . '<a href="' . $this->link() . '">' . $this->label . '</a></span>';

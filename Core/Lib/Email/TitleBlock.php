@@ -45,8 +45,9 @@ class TitleBlock extends BaseBlock
         $this->type = $type;
     }
 
-    public function render(): string
+    public function render(bool $footer = false): string
     {
+        $this->footer = $footer;
         $return = $this->pipe('render');
         return $return ?? '<' . $this->type . ' class="' . (empty($this->css) ? 'title' : $this->css) . '">'
         . $this->text . '</' . $this->type . '>';

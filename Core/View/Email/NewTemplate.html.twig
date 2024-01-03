@@ -115,7 +115,7 @@
                         <td>&nbsp;&nbsp;&nbsp;</td>
                         <td class="footer" style="font-size:10px; color:black; padding:10px">
                             {% for block in footerBlocks %}
-                                {{ block.render() | raw }}
+                                {{ block.render(true) | raw }}
                             {% endfor %}
                         </td>
                         <td>&nbsp;&nbsp;&nbsp;</td>
