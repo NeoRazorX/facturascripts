@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -512,12 +512,20 @@ class NewMail
         $path = FS_FOLDER . '/' . static::getAttachmentPath($this->fromEmail, 'Sent') . $uuid . '/';
         Tools::folderCheckOrCreate($path);
 
-        // movemos los adjuntos a la carpeta temporal a la carpeta de adjuntos del email
         foreach ($attachments as $attach) {
+            $newPath = $path . $attach[1];
+
+            // movemos los adjuntos de la carpeta temporal a la carpeta de adjuntos del email
             $tmpPath = FS_FOLDER . '/' . static::ATTACHMENTS_TMP_PATH . $attach[1];
             if (file_exists($tmpPath)) {
-                $newPath = $path . $attach[1];
                 rename($tmpPath, $newPath);
+                continue;
+            }
+
+            // comprobamos si el adjunto está fuera de la carpeta temporal
+            $newPath = FS_FOLDER . '/' . $attach[0];
+            if (file_exists($newPath)) {
+                rename($newPath, $newPath);
             }
         }
     }
