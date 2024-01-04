@@ -522,10 +522,10 @@ class NewMail
                 continue;
             }
 
-            // comprobamos si el adjunto está fuera de la carpeta temporal
-            $newPath = FS_FOLDER . '/' . $attach[0];
+            // si el adjunto está fuera de la carpeta temporal, lo copiamos
+            $currentPath = FS_FOLDER . '/' . $attach[0];
             if (file_exists($newPath)) {
-                rename($newPath, $newPath);
+                copy($currentPath, $newPath);
             }
         }
     }
