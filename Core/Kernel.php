@@ -109,6 +109,14 @@ final class Kernel
         // inicializamos el antiguo traductor
         ToolBox::i18n()->setDefaultLang($lang);
 
+        // workers
+        WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Insert', 100);
+        WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Update', 100);
+        WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Delete', 100);
+        WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Insert', 200);
+        WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Update', 200);
+        WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Delete', 200);
+
         self::stopTimer('kernel::init');
     }
 
