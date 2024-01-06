@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,12 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -34,6 +36,12 @@ class Login implements ControllerInterface
     const IP_LIST = 'login-ip-list';
     const MAX_INCIDENT_COUNT = 5;
     const USER_LIST = 'login-user-list';
+
+    /** @var Empresa */
+    public $empresa;
+
+    /** @var string */
+    public $title = 'Login';
 
     public function __construct(string $className, string $url = '')
     {
@@ -46,6 +54,9 @@ class Login implements ControllerInterface
 
     public function run(): void
     {
+        $this->empresa = Empresas::default();
+        $this->title = $this->empresa->nombrecorto;
+
         $request = Request::createFromGlobals();
         switch ($request->get('action')) {
             case 'change-password':
