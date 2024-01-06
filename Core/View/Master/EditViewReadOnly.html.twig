@@ -20,7 +20,7 @@
 {% set currentView = fsc.getCurrentView() %}
 
 {# -- Row header -- #}
-<div class="row">
+<div class="row View-Master-EditViewReadOnly">
     {% set row = currentView.getRow('header') %}
     {{ row.render(currentView.getViewName(), '', fsc) | raw }}
 </div>

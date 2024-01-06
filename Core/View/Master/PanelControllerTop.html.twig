@@ -23,7 +23,7 @@
     {{ parent() }}
     {% set pageData = fsc.getPageData() %}
     {% set firstView = fsc.views | first %}
-    <div class="container-fluid d-print-none">
+    <div class="container-fluid d-print-none View-Master-PanelControllerTop">
         <div class="form-row">
             <div class="col-md-12">
                 {# -- Hidden alternative page info -- #}
@@ -53,7 +53,7 @@
         </div>
         <div class="form-row">
             {# -- Top left buttons -- #}
-            <div class="col-md-8 mb-2">
+            <div class="col-md-8 mb-2 top-left-buttons">
                 <div class="btn-group">
                     <a href="{{ firstView.model.url('list') }}" class="btn btn-sm btn-secondary">
                         <i class="fas fa-list fa-fw" aria-hidden="true"></i>

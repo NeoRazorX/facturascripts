@@ -79,7 +79,7 @@
     {% endfor %}
 </head>
 {% block fullBody %}
-    <body>
+    <body class="View-Master-MenuTemplate">
     {% for item in getIncludeViews('MenuTemplate', 'BodyFirst') %}
         {% include item['path'] %}
     {% endfor %}
