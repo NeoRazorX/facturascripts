@@ -215,11 +215,11 @@ class Tools
     public static function money(?float $number, string $coddivisa = ''): string
     {
         if (empty($coddivisa)) {
-            $coddivisa = self::settings('default', 'coddivisa');
+            $coddivisa = self::settings('default', 'coddivisa', '');
         }
 
         $symbol = Divisas::get($coddivisa)->simbolo;
-        $currencyPosition = self::settings('default', 'currency_position');
+        $currencyPosition = self::settings('default', 'currency_position', 'right');
         return $currencyPosition === 'right' ?
             self::number($number) . ' ' . $symbol :
             $symbol . ' ' . self::number($number);
@@ -235,14 +235,14 @@ class Tools
     public static function number(?float $number, ?int $decimals = null): string
     {
         if ($decimals === null) {
-            $decimals = self::settings('default', 'decimals');
+            $decimals = self::settings('default', 'decimals', 2);
         }
 
         // cargamos la configuración
-        $decimalSeparator = self::settings('default', 'decimal_separator');
-        $thousandsSeparator = self::settings('default', 'thousands_separator');
+        $decimalSeparator = self::settings('default', 'decimal_separator', '.');
+        $thousandsSeparator = self::settings('default', 'thousands_separator', ' ');
 
-        return number_format($number, $decimals, $decimalSeparator, $thousandsSeparator);
+        return number_format($number ?? 0, $decimals, $decimalSeparator, $thousandsSeparator);
     }
 
     public static function password(int $length = 10): string
