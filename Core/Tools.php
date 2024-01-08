@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -212,7 +212,7 @@ class Tools
         return new MiniLog($channel, $translator);
     }
 
-    public static function money(float $number, string $coddivisa = ''): string
+    public static function money(?float $number, string $coddivisa = ''): string
     {
         if (empty($coddivisa)) {
             $coddivisa = self::settings('default', 'coddivisa');
@@ -232,7 +232,7 @@ class Tools
             str_replace(self::HTML_CHARS, self::HTML_REPLACEMENTS, trim($text));
     }
 
-    public static function number(float $number, ?int $decimals = null): string
+    public static function number(?float $number, ?int $decimals = null): string
     {
         if ($decimals === null) {
             $decimals = self::settings('default', 'decimals');
