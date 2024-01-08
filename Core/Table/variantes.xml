@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : variantes.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the variante table.
+-->
+<table>
+    <column>
+        <name>codbarras</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
+        <name>coste</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>idatributovalor1</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idatributovalor2</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idatributovalor3</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idatributovalor4</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idproducto</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idvariante</name>
+        <type>serial</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>margen</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>precio</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion_alt</name>
+        <type>text</type>
+        <null>yes</null>
+    </column>
+    <column>
+        <name>stockfis</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <constraint>
+        <name>variantes_pkey</name>
+        <type>PRIMARY KEY (idvariante)</type>
+    </constraint>
+    <constraint>
+        <name>ca_variantes_atributo1</name>
+        <type>FOREIGN KEY (idatributovalor1) REFERENCES atributos_valores (id) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_variantes_atributo2</name>
+        <type>FOREIGN KEY (idatributovalor2) REFERENCES atributos_valores (id) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_variantes_atributo3</name>
+        <type>FOREIGN KEY (idatributovalor3) REFERENCES atributos_valores (id) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_variantes_atributo4</name>
+        <type>FOREIGN KEY (idatributovalor4) REFERENCES atributos_valores (id) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_variantes_productos</name>
+        <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_variantes_referencia</name>
+        <type>UNIQUE (referencia)</type>
+    </constraint>
+</table>
