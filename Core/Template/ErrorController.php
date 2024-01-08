@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,7 @@ abstract class ErrorController implements ErrorControllerInterface
     protected $exception;
 
     /** @var bool */
-    private $save_crash = true;
+    protected $save_crash = true;
 
     /** @var string */
     protected $url;

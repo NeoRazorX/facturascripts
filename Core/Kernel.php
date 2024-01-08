@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -208,6 +208,11 @@ final class Kernel
 
             $mainClass = '\\FacturaScripts\\Core\\Error\\' . $exception->handler;
             return new $mainClass($exception);
+        }
+
+        $dynClass = '\\FacturaScripts\\Dinamic\\Error\\DefaultError';
+        if (class_exists($dynClass)) {
+            return new $dynClass($exception);
         }
 
         return new DefaultError($exception);
