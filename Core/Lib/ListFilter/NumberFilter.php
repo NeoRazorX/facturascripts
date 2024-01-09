@@ -54,6 +54,7 @@ class NumberFilter extends BaseFilter
     public function getDataBaseWhere(array &$where): bool
     {
         if ('' !== $this->value && null !== $this->value) {
+			$this->value = str_replace(",", ".", $this->value);
             $where[] = new DataBaseWhere($this->field, $this->value, $this->operation);
             return true;
         }
