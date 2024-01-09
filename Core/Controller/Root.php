@@ -23,6 +23,16 @@ use FacturaScripts\Core\Base\Controller;
 
 class Root extends Controller
 {
+    public function getPageData(): array
+    {
+        $data = parent::getPageData();
+        $data['menu'] = 'reports';
+        $data['title'] = 'root';
+        $data['icon'] = 'fas fa-home';
+        $data['showonmenu'] = false;
+        return $data;
+    }
+
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
