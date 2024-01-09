@@ -118,7 +118,7 @@ final class Kernel
         self::loadDefaultRoutes();
 
         // cargamos la página por defecto
-        $homePage = Tools::settings('default', 'homepage', 'Dashboard');
+        $homePage = Tools::settings('default', 'homepage', 'Root');
 
         // recorremos toda la lista de archivos de la carpeta Dinamic/Controller
         $dir = Tools::folder('Dinamic', 'Controller');
@@ -222,7 +222,7 @@ final class Kernel
     {
         // añadimos las rutas por defecto
         $routes = [
-            '/' => 'Dashboard',
+            '/' => 'Root',
             '/AdminPlugins' => 'AdminPlugins',
             '/api' => 'ApiRoot',
             '/api/*' => 'ApiRoot',
