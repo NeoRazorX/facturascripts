@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -192,7 +192,7 @@ class AttachedFile extends ModelOnChangeClass
     public function test(): bool
     {
         if (empty($this->idfile)) {
-            $this->idfile = $this->newCode();
+            $this->idfile = $this->getNextCode();
             return $this->setFile() && parent::test();
         }
 
@@ -228,6 +228,28 @@ class AttachedFile extends ModelOnChangeClass
         $extension = count($parts) > 1 ? end($parts) : '';
         $name = substr($fixed, 0, static::MAX_FILENAME_LEN - strlen('.' . $extension));
         return $name . '.' . $extension;
+    }
+
+    protected function getNextCode(): int
+    {
+        switch (Tools::config('db_type')) {
+            case 'mysql':
+                $sql = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . Tools::config('db_name')
+                    . "' AND TABLE_NAME = '" . static::tableName() . "'";
+                foreach (static::$dataBase->select($sql) as $row) {
+                    return (int)$row['AUTO_INCREMENT'] ?? $this->newCode();
+                }
+                break;
+
+            case 'postgresql':
+                $sql = "SELECT nextval('" . static::tableName() . "_idfile_seq')";
+                foreach (static::$dataBase->select($sql) as $row) {
+                    return (int)$row['nextval'] ?? $this->newCode();
+                }
+                break;
+        }
+
+        return (int)$this->newCode();
     }
 
     /**
