@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -142,7 +142,6 @@ class ReportTaxes extends Controller
 
         $totalsData = $this->getTotals($data);
         if (false === $this->validateTotals($totalsData)) {
-            Tools::log()->error('wrong-total-tax-calculation');
             return;
         }
 
@@ -259,9 +258,9 @@ class ReportTaxes extends Controller
             $code = $row['codigo'] . '-' . $row['iva'] . '-' . $row['recargo'] . '-' . $row['irpf'] . '-' . $row['suplido'];
             if (isset($data[$code])) {
                 $data[$code]['neto'] += $row['suplido'] ? 0 : $pvpTotal;
-                $data[$code]['totaliva'] += (float)$row['iva'] * $pvpTotal / 100;
-                $data[$code]['totalrecargo'] += (float)$row['recargo'] * $pvpTotal / 100;
-                $data[$code]['totalirpf'] += (float)$row['irpf'] * $pvpTotal / 100;
+                $data[$code]['totaliva'] += $row['suplido'] ? 0 : (float)$row['iva'] * $pvpTotal / 100;
+                $data[$code]['totalrecargo'] += $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100;
+                $data[$code]['totalirpf'] += $row['suplido'] ? 0 : (float)$row['irpf'] * $pvpTotal / 100;
                 $data[$code]['suplidos'] += $row['suplido'] ? $pvpTotal : 0;
                 continue;
             }
@@ -276,12 +275,12 @@ class ReportTaxes extends Controller
                 'nombre' => $row['nombre'],
                 'cifnif' => $row['cifnif'],
                 'neto' => $row['suplido'] ? 0 : $pvpTotal,
-                'iva' => (float)$row['iva'],
-                'totaliva' => (float)$row['iva'] * $pvpTotal / 100,
-                'recargo' => (float)$row['recargo'],
-                'totalrecargo' => (float)$row['recargo'] * $pvpTotal / 100,
-                'irpf' => (float)$row['irpf'],
-                'totalirpf' => (float)$row['irpf'] * $pvpTotal / 100,
+                'iva' => $row['suplido'] ? 0 : (float)$row['iva'],
+                'totaliva' => $row['suplido'] ? 0 : (float)$row['iva'] * $pvpTotal / 100,
+                'recargo' => $row['suplido'] ? 0 : (float)$row['recargo'],
+                'totalrecargo' => $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100,
+                'irpf' => $row['suplido'] ? 0 : (float)$row['irpf'],
+                'totalirpf' => $row['suplido'] ? 0 : (float)$row['irpf'] * $pvpTotal / 100,
                 'suplidos' => $row['suplido'] ? $pvpTotal : 0,
                 'total' => (float)$row['total']
             ];
@@ -490,8 +489,24 @@ class ReportTaxes extends Controller
         }
 
         // compare
-        return abs($neto - $neto2) <= self::MAX_TOTAL_DIFF &&
-            abs($totalIva - $totalIva2) <= self::MAX_TOTAL_DIFF &&
-            abs($totalRecargo - $totalRecargo2) <= self::MAX_TOTAL_DIFF;
+        $result = true;
+        if (abs($neto - $neto2) > self::MAX_TOTAL_DIFF) {
+            Tools::log()->error('calculated-net-diff', ['%net%' => $neto, '%net2%' => $neto2]);
+            $result = false;
+        }
+
+        if (abs($totalIva - $totalIva2) > self::MAX_TOTAL_DIFF) {
+            Tools::log()->error('calculated-tax-diff', ['%tax%' => $totalIva, '%tax2%' => $totalIva2]);
+            $result = false;
+        }
+
+        if (abs($totalRecargo - $totalRecargo2) > self::MAX_TOTAL_DIFF) {
+            Tools::log()->error('calculated-surcharge-diff', [
+                '%surcharge%' => $totalRecargo, '%surcharge2%' => $totalRecargo2
+            ]);
+            $result = false;
+        }
+
+        return $result;
     }
 }
