@@ -155,7 +155,9 @@ final class Kernel
         Kernel::startTimer('kernel::run');
 
         $route = Tools::config('route', '');
-        $relativeUrl = substr($url, strlen($route));
+        $relativeUrl = substr($url, 0, strlen($route)) === $route ?
+            substr($url, strlen($route)) :
+            $url;
 
         try {
             self::loadRoutes();
