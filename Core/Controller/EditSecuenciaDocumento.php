@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -127,7 +127,9 @@ class EditSecuenciaDocumento extends EditController
                 $this->setSettings('ListPresupuestoProveedor', 'active', false);
 
                 // en función del tipo de documento, mostramos o no la pestaña de facturas de cliente
-                $this->setSettings('List' . $view->model->tipodoc, 'active', true);
+                if ($view->model->tipodoc) {
+                    $this->setSettings('List' . $view->model->tipodoc, 'active', true);
+                }
                 break;
         }
     }
