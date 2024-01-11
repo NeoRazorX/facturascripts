@@ -235,21 +235,21 @@ class AttachedFile extends ModelOnChangeClass
         switch (Tools::config('db_type')) {
             case 'mysql':
                 $sql = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . Tools::config('db_name')
-                    . "' AND TABLE_NAME = '" . static::tableName() . "'";
+                    . "' AND TABLE_NAME = '" . static::tableName() . "';";
                 foreach (static::$dataBase->select($sql) as $row) {
-                    return (int)$row['AUTO_INCREMENT'] ?? $this->newCode();
+                    return max($this->newCode(), $row['AUTO_INCREMENT']);
                 }
                 break;
 
             case 'postgresql':
-                $sql = "SELECT nextval('" . static::tableName() . "_idfile_seq')";
+                $sql = "SELECT nextval('" . static::tableName() . "_idfile_seq');";
                 foreach (static::$dataBase->select($sql) as $row) {
-                    return (int)$row['nextval'] ?? $this->newCode();
+                    return max($this->newCode(), $row['nextval']);
                 }
                 break;
         }
 
-        return (int)$this->newCode();
+        return $this->newCode();
     }
 
     /**
