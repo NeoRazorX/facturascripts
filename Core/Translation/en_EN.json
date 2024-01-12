@@ -173,6 +173,7 @@
     "calculated-net-diff": "Difference found when calculating the net. %net% VS %net2%",
     "calculated-surcharge-diff": "Difference found when calculating the equivalence surcharge. %surcharge% VS %surcharge2%",
     "calculated-tax-diff": "Difference found when calculating the total VAT. %tax% VS %tax2%",
+    "calculation": "Calculation",
     "calendar": "Calendar",
     "can-not-open-zip-file": "Can't open zip file '%zipFile%'",
     "cancel": "Cancel",

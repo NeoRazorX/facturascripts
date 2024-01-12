@@ -173,6 +173,7 @@
     "calculated-net-diff": "Diferenza atopada ó calcular o neto. %net% VS %net2%",
     "calculated-surcharge-diff": "Diferenza atopada ó calcular o recargo de equivalencia. %surcharge% VS %surcharge2%",
     "calculated-tax-diff": "Diferenza atopada ó calcular o total do IVE. %tax% VS %tax2%",
+    "calculation": "Cálculo",
     "calendar": "Calendario",
     "can-not-open-zip-file": "Non podo abrir o ficheiro zip '%zipFile%'",
     "cancel": "Cancelar",
