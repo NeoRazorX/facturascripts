@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -75,7 +75,7 @@ final class CrashReport
     public static function shutdown(): void
     {
         $error = error_get_last();
-        if (!isset($error)) {
+        if (!isset($error) || in_array($error['type'], [E_WARNING, E_NOTICE, E_DEPRECATED])) {
             return;
         }
 
