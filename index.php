@@ -34,6 +34,11 @@ if (file_exists(__DIR__ . '/config.php')) {
     require_once __DIR__ . '/config.php';
 }
 
+$url = parse_url($_SERVER["REQUEST_URI"] ?? '', PHP_URL_PATH);
+if(true === file_exists(Tools::folder('MyFiles', 'down')) && $url !== '/Up'){
+    die('APLICACIÓN EN MANTENIMIENTO');
+}
+
 // desactivamos el tiempo de ejecución y el aborto de la conexión
 @set_time_limit(0);
 ignore_user_abort(true);

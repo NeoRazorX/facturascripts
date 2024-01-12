@@ -237,6 +237,8 @@ final class Kernel
             '/node_modules/*' => 'Files',
             '/Plugins/*' => 'Files',
             '/Updater' => 'Updater',
+            '/Up' => 'Up',
+            '/Down' => 'Down',
         ];
 
         foreach ($routes as $route => $controller) {
@@ -311,5 +313,27 @@ final class Kernel
         }
 
         throw new KernelException('PageNotFound', $url);
+    }
+
+    /**
+     * Desactiva el modo mantenimiento de la aplicación.
+     */
+    public static function up()
+    {
+        $filePath = Tools::folder('MyFiles', 'down');
+        if (true === file_exists($filePath)) {
+            unlink($filePath);
+        }
+    }
+
+    /**
+     * Activa el modo mantenimiento de la aplicación.
+     */
+    public static function down()
+    {
+        $filePath = Tools::folder('MyFiles', 'down');
+        if (false === file_exists($filePath)) {
+            touch($filePath);
+        }
     }
 }
