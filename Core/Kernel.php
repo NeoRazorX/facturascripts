@@ -154,10 +154,7 @@ final class Kernel
     {
         Kernel::startTimer('kernel::run');
 
-        $route = Tools::config('route', '');
-        $relativeUrl = substr($url, 0, strlen($route)) === $route ?
-            substr($url, strlen($route)) :
-            $url;
+        $relativeUrl = self::getRelativeUrl($url);
 
         try {
             self::loadRoutes();
@@ -218,6 +215,30 @@ final class Kernel
         }
 
         return new DefaultError($exception);
+    }
+
+    private static function getRelativeUrl(string $url): string
+    {
+        // obtenemos la ruta base de la configuración
+        $route = Tools::config('route');
+        if ($route === null) {
+            // no tenemos el config.php, por lo que debemos averiguar la ruta base
+            $route = '';
+
+            // partimos la url y añadimos cada parte hasta encontrar una carpeta interna como Core
+            foreach (explode('/', $url) as $part) {
+                if (in_array($part, ['', 'Core', 'node_modules'], true)) {
+                    break;
+                }
+
+                $route .= $part . '/';
+            }
+        }
+
+        // calculamos la url relativa (sin la ruta base)
+        return substr($url, 0, strlen($route)) === $route ?
+            substr($url, strlen($route)) :
+            $url;
     }
 
     private static function loadDefaultRoutes(): void
