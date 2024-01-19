@@ -42,7 +42,8 @@ class PageNotFound extends ErrorController
             . '<div class="card-footer">'
             . '<div class="row">'
             . '<div class="col">'
-            . '<a href="/" class="btn btn-secondary">' . Tools::lang()->trans('homepage') . '</a>'
+            . '<a href="' . Tools::config('route') . '/" class="btn btn-secondary">'
+            . Tools::lang()->trans('homepage') . '</a>'
             . '</div>';
 
         if (false === Tools::config('disable_deploy_actions', false)) {
