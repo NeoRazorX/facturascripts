@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -199,7 +199,7 @@
                                             data-toggle="dropdown" aria-expanded="false">
                                         <span class="sr-only">{{ trans('options') }}</span>
                                     </button>
-                                    <div class="dropdown-menu">
+                                    <div class="dropdown-menu dropdown-menu-right">
                                         <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
                                            class="btn btn-warning" onclick="animateSpinner('add')">{{ trans('do-not-disable-plugins') }}
                                         </a>
