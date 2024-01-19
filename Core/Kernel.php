@@ -194,7 +194,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2023.18;
+        return 2023.19;
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
@@ -227,11 +227,13 @@ final class Kernel
 
             // partimos la url y añadimos cada parte hasta encontrar una carpeta interna como Core
             foreach (explode('/', $url) as $part) {
-                if (in_array($part, ['', 'Core', 'node_modules'], true)) {
+                if (in_array($part, ['Core', 'node_modules'], true)) {
                     break;
                 }
 
-                $route .= $part . '/';
+                if ($part != '') {
+                    $route .= '/' . $part;
+                }
             }
         }
 
