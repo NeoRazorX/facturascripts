@@ -96,13 +96,13 @@ function copy_folder($source, $dest)
 }
 
 // para las carpetas Core, node_modules y vendor, eliminamos la carpeta existente y copiamos la nueva
-delete_folder(__DIR__ . '/facturascripts/Core');
+delete_folder(__DIR__ . '/Core');
 copy_folder(__DIR__ . '/facturascripts/Core', __DIR__ . '/Core');
 
-delete_folder(__DIR__ . '/facturascripts/node_modules');
+delete_folder(__DIR__ . '/node_modules');
 copy_folder(__DIR__ . '/facturascripts/node_modules', __DIR__ . '/node_modules');
 
-delete_folder(__DIR__ . '/facturascripts/vendor');
+delete_folder(__DIR__ . '/vendor');
 copy_folder(__DIR__ . '/facturascripts/vendor', __DIR__ . '/vendor');
 
 // reemplazamos el index.php por el nuevo
