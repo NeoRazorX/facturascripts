@@ -263,7 +263,8 @@ final class Kernel
         // añadimos las rutas del archivo MyFiles/routes.json file
         $routesFile = Tools::folder('MyFiles', 'routes.json');
         if (false === file_exists($routesFile)) {
-            return;
+            self::rebuildRoutes();
+            self::saveRoutes();
         }
 
         $routes = json_decode(file_get_contents($routesFile), true);
