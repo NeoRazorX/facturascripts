@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,7 +40,18 @@ class PageNotFound extends ErrorController
             . '<p class="mb-0">' . Tools::lang()->trans('page-not-found-p') . '</p>'
             . '</div>'
             . '<div class="card-footer">'
+            . '<div class="row">'
+            . '<div class="col">'
             . '<a href="/" class="btn btn-secondary">' . Tools::lang()->trans('homepage') . '</a>'
+            . '</div>';
+
+        if (false === Tools::config('disable_deploy_actions', false)) {
+            $bodyHtml .= '<div class="col-auto">'
+                . '<a href="/AdminPlugins" class="btn btn-warning">' . Tools::lang()->trans('plugins') . '</a>'
+                . '</div>';
+        }
+
+        $bodyHtml .= '</div>'
             . '</div>'
             . '</div>'
             . '</div>'
