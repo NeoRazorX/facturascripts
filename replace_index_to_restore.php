@@ -17,6 +17,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// si existe el index.php, entonces mostramos un error
+if (file_exists(__DIR__ . '/index.php')) {
+    echo 'Remove index.php and rename this file to index.php';
+    exit(1);
+}
+
 // si la versión de PHP es inferior a 7.3, entonces mostramos un error
 if (version_compare(PHP_VERSION, '7.3.0') < 0) {
     echo 'FacturaScripts requires PHP 7.3.0 or newer.';
