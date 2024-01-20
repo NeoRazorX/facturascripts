@@ -408,9 +408,11 @@ class Updater extends Controller
         }
 
         // update files
-        $origin = Tools::folder(self::CORE_ZIP_FOLDER, 'index.php');
-        $dest = Tools::folder('index.php');
-        copy($origin, $dest);
+        foreach (['index.php', 'replace_index_to_restore.php'] as $name) {
+            $origin = Tools::folder(self::CORE_ZIP_FOLDER, $name);
+            $dest = Tools::folder($name);
+            copy($origin, $dest);
+        }
 
         // remove zip folder
         FileManager::delTree(Tools::folder(self::CORE_ZIP_FOLDER));
