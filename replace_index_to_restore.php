@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// si existe el index.php, entonces mostramos un error
-if (file_exists(__DIR__ . '/index.php')) {
+// si este archivo no es index.php, entonces mostramos un error
+if (basename(__FILE__) !== 'index.php') {
     echo 'Remove index.php and rename this file to index.php';
     exit(1);
 }
