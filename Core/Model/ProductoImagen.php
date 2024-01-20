@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,6 +29,7 @@ use Throwable;
 /**
  * Description of ProductoImagen
  *
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author José Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ProductoImagen extends Base\ModelClass
@@ -179,6 +180,17 @@ class ProductoImagen extends Base\ModelClass
     public static function tableName(): string
     {
         return 'productos_imagenes';
+    }
+
+    public function test(): bool
+    {
+        // si el archivo no es una imagen, devolvemos false
+        if (false === $this->getFile()->isImage()) {
+            Tools::log()->error('not-valid-image');
+            return false;
+        }
+
+        return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'List'): string

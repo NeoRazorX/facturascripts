@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,7 +97,7 @@ class Myfiles implements ControllerInterface
         }
 
         // force to download svg files to prevent XSS attacks
-        if (strpos($this->filePath, '.svg') !== false) {
+        if ($this->isSvg($this->filePath)) {
             header('Content-Disposition: attachment; filename="' . basename($this->filePath) . '"');
         }
 
@@ -121,5 +121,20 @@ class Myfiles implements ControllerInterface
         }
 
         return mime_content_type($filePath);
+    }
+
+    private function isSvg(string $filePath): bool
+    {
+        // comprobamos la extensión
+        if (strpos($filePath, '.svg') !== false) {
+            return true;
+        }
+
+        // comprobamos mime
+        if (strpos($this->getMime($filePath), 'image/svg') !== false) {
+            return true;
+        }
+
+        return false;
     }
 }
