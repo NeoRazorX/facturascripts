@@ -1005,6 +1005,7 @@
     "not-stored-content": "Contingut no emmagatzemat",
     "not-valid-email": "E-mail %email% no vàlid",
     "not-valid-fiscal-number": "El %type% %number% no és vàlid",
+    "not-valid-image": "No es una imagen válida",
     "not-valid-percentage-retention": "Percentatge no vàlid. Ha de ser major de 0.00",
     "note": "Nota",
     "notes": "Notes",

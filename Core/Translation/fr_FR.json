@@ -1005,6 +1005,7 @@
     "not-stored-content": "Contenido no almacenado",
     "not-valid-email": "Adresse e-mail incorrecte %email%",
     "not-valid-fiscal-number": "Le %type% %number% n'est pas valable",
+    "not-valid-image": "No es una imagen válida",
     "not-valid-percentage-retention": "Pourcentage de rétention incorrect",
     "note": "Note",
     "notes": "Remarques",

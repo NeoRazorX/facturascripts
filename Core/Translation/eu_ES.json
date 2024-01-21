@@ -1005,6 +1005,7 @@
     "not-stored-content": "Contenido no almacenado",
     "not-valid-email": "%email% eposta baliogabea",
     "not-valid-fiscal-number": "%type% %number% baliogabea",
+    "not-valid-image": "No es una imagen válida",
     "not-valid-percentage-retention": "Ehuneko ez zuzena. 0.00 baino handiagoa izan behar da",
     "note": "Oharra",
     "notes": "Oharrak",
