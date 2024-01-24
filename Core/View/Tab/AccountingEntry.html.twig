@@ -114,7 +114,6 @@
             body: data
         }).then(function (response) {
             if (response.ok) {
-                animateSpinner('remove', true);
                 return response.json();
             }
             animateSpinner('remove', false);
@@ -125,6 +124,8 @@
             }
             if (data.ok) {
                 window.location.replace(data.newurl);
+            } else {
+                animateSpinner('remove', true);
             }
         }).catch(function (error) {
             alert('error');
