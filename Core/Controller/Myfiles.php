@@ -40,7 +40,7 @@ class Myfiles implements ControllerInterface
             return;
         }
 
-        $this->filePath = Tools::folder() . $url;
+        $this->filePath = Tools::folder() . urldecode($url);
 
         if (false === is_file($this->filePath)) {
             throw new KernelException(
