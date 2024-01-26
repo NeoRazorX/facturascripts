@@ -172,6 +172,15 @@
                     }
                 });
             }
+
+            $(document).ready(function () {
+                $('#querySearchPlugin').on('keyup', function (e) {
+                    const query = this.value.toLowerCase().trim();
+                    $('#all-plugins .card').each(function(index, value){
+                       $(value).toggle($('.card-title', value).text().toLowerCase().trim().includes(query));
+                    });
+                })
+            });
         </script>
     {% endif %}
 {% endblock %}
@@ -217,34 +226,32 @@
 {% endmacro %}
 
 {% macro showAllPlugins(fsc) %}
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead>
-            <tr>
-                <th>{{ trans('name') }}</th>
-                <th>{{ trans('description') }}</th>
-            </tr>
-            </thead>
-            <tbody>
+    <div class="m-1">
+        <div class="form-group">
+            <input type="text" class="form-control shadow" id="querySearchPlugin" placeholder="{{ trans('search') }}">
+        </div>
+
+        <div class="card-columns" id="all-plugins">
             {% for plugin in fsc.remotePluginList %}
-                {% set extraClass = plugin.health > 2 ? 'table-success' : plugin.health == 0 ? 'table-danger' : 'table-warning' %}
-                <tr class="clickableRow {{ extraClass }}" data-href="{{ plugin.url }}" data-target="_blank">
-                    <td>
-                        <div class="h6">{{ plugin.name }}</div>
-                        <span class="mr-1 text-secondary" title="{{ trans('health') }}">
-                            {{ _self.healthStatus(plugin.health) }}
-                        </span>
-                        v{{ plugin.version }}
-                    </td>
-                    <td>{{ plugin.description | slice(0, 300) | nl2br }}</td>
-                </tr>
+                {% set extraClass = plugin.health > 2 ? 'border-success' : plugin.health == 0 ? 'border-danger' : 'border-warning' %}
+                <div class="card {{ extraClass }}" id="{{ plugin.idplugin }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ plugin.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-danger"
+                            title="{{ trans('health') }}">{{ _self.healthStatus(plugin.health) }}</h6>
+                        <p class="card-text" style="text-wrap: pretty">{{ plugin.description | slice(0, 300) | nl2br }}
+                            v{{ plugin.version }}</p>
+                        {% set extraBtnClass = plugin.health > 2 ? 'btn-outline-success' : plugin.health == 0 ? 'btn-outline-danger' : 'btn-outline-warning' %}
+                        <a href="{{ plugin.url }}" class="btn {{ extraBtnClass }}"
+                           target="_blank">{{ trans('add') }}</a>
+                    </div>
+                </div>
             {% else %}
-                <tr class="table-warning">
-                    <td colspan="2">{{ trans('no-data') }}</td>
-                </tr>
+                <div class="text-center bg-warning rounded">
+                    <h2>{{ trans('no-data') }}</h2>
+                </div>
             {% endfor %}
-            </tbody>
-        </table>
+        </div>
     </div>
 {% endmacro %}
 
