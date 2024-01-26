@@ -236,11 +236,10 @@
                 {% set extraClass = plugin.health > 2 ? 'border-success' : plugin.health == 0 ? 'border-danger' : 'border-warning' %}
                 <div class="card {{ extraClass }}" id="{{ plugin.idplugin }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ plugin.name }}</h5>
+                        <h5 class="card-title">{{ plugin.name }} v{{ plugin.version }}</h5>
                         <h6 class="card-subtitle mb-2 text-danger"
                             title="{{ trans('health') }}">{{ _self.healthStatus(plugin.health) }}</h6>
-                        <p class="card-text" style="text-wrap: pretty">{{ plugin.description | slice(0, 300) | nl2br }}
-                            v{{ plugin.version }}</p>
+                        <p class="card-text" style="text-wrap: pretty">{{ plugin.description | slice(0, 300) | nl2br }}</p>
                         {% set extraBtnClass = plugin.health > 2 ? 'btn-outline-success' : plugin.health == 0 ? 'btn-outline-danger' : 'btn-outline-warning' %}
                         <a href="{{ plugin.url }}" class="btn {{ extraBtnClass }}"
                            target="_blank">{{ trans('add') }}</a>
