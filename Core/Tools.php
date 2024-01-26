@@ -274,6 +274,7 @@ class Tools
     public static function settingsClear(): void
     {
         Cache::delete('tools-settings');
+        self::$settings = null;
     }
 
     public static function settingsSave(): bool

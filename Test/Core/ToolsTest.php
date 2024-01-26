@@ -132,7 +132,7 @@ final class ToolsTest extends TestCase
         $this->assertEquals(50, strlen(Tools::randomString(50)));
     }
 
-    public function testSettings()
+    public function testSettings(): void
     {
         $this->assertEquals(AppSettings::get('default', 'codpais'), Tools::settings('default', 'codpais'));
 
@@ -162,6 +162,25 @@ final class ToolsTest extends TestCase
         // comprobamos que se ha cambiado
         $settings->loadFromCode('default');
         $this->assertEquals($value, $settings->properties['codpais']);
+    }
+
+    public function testSettingsClear(): void
+    {
+        // nos guardamos el valor actual
+        $value = Tools::settings('default', 'codpais');
+
+        // cambiamos el valor
+        Tools::settingsSet('default', 'codpais', '666');
+
+        // comprobamos que se ha cambiado
+        $this->assertEquals('666', Tools::settings('default', 'codpais'));
+        $this->assertNotEquals($value, Tools::settings('default', 'codpais'));
+
+        // limpiamos la cache
+        Tools::settingsClear();
+
+        // comprobamos que vuelve a ser el valor original
+        $this->assertEquals($value, Tools::settings('default', 'codpais'));
     }
 
     public function testSlug(): void
