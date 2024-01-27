@@ -174,13 +174,17 @@
             }
 
             $(document).ready(function () {
-                $('#querySearchPlugin').on('keyup', function (e) {
-                    const query = this.value.toLowerCase().trim();
-                    $('#all-plugins .card').each(function(index, value){
-                       $(value).toggle($('.card-title', value).text().toLowerCase().trim().includes(query));
-                    });
-                })
+                searchList('#querySearchPlugin', '#all-plugins .card', '.card-title');
+                searchList('#querySearchInstalledPlugins', '#installed-plugins .item-plugin', '.plugin-name');
             });
+            function searchList(querySelectorInput, querySelectorItem, querySelectorPluginName){
+                $(querySelectorInput).on('keyup', function (e) {
+                    const query = this.value.toLowerCase().trim();
+                    $(querySelectorItem).each(function(index, value){
+                        $(value).toggle($(querySelectorPluginName, value).text().toLowerCase().trim().includes(query));
+                    });
+                });
+            }
         </script>
     {% endif %}
 {% endblock %}
@@ -255,7 +259,12 @@
 {% endmacro %}
 
 {% macro showInstalledPlugins(fsc) %}
-    <div class="table-responsive">
+    <div class="m-1">
+        <div class="form-group">
+            <input type="text" class="form-control shadow" id="querySearchInstalledPlugins" placeholder="{{ trans('search') }}">
+        </div>
+    </div>
+    <div class="table-responsive" id="installed-plugins">
         <table class="table table-striped table-hover">
             <thead>
             <tr>
@@ -273,8 +282,8 @@
                 {% elseif plugin.compatible %}
                     {% set trClass = '' %}
                 {% endif %}
-                <tr class="{{ trClass }}">
-                    <td>{{ plugin.name }}</td>
+                <tr class="{{ trClass }} item-plugin">
+                    <td class="plugin-name">{{ plugin.name }}</td>
                     <td class="text-right">
                         {% if plugin.version == 0 %}
                             <span class="text-danger">v{{ plugin.version }}</span>
