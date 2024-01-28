@@ -177,10 +177,11 @@
                 searchList('#querySearchPlugin', '#all-plugins .card', '.card-title');
                 searchList('#querySearchInstalledPlugins', '#installed-plugins .item-plugin', '.plugin-name');
             });
-            function searchList(querySelectorInput, querySelectorItem, querySelectorPluginName){
+
+            function searchList(querySelectorInput, querySelectorItem, querySelectorPluginName) {
                 $(querySelectorInput).on('keyup', function (e) {
                     const query = this.value.toLowerCase().trim();
-                    $(querySelectorItem).each(function(index, value){
+                    $(querySelectorItem).each(function (index, value) {
                         $(value).toggle($(querySelectorPluginName, value).text().toLowerCase().trim().includes(query));
                     });
                 });
@@ -230,39 +231,37 @@
 {% endmacro %}
 
 {% macro showAllPlugins(fsc) %}
-    <div class="m-1">
-        <div class="form-group">
-            <input type="text" class="form-control shadow" id="querySearchPlugin" placeholder="{{ trans('search') }}">
-        </div>
-
-        <div class="card-columns" id="all-plugins">
-            {% for plugin in fsc.remotePluginList %}
-                {% set extraClass = plugin.health > 2 ? 'border-success' : plugin.health == 0 ? 'border-danger' : 'border-warning' %}
-                <div class="card {{ extraClass }}" id="{{ plugin.idplugin }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ plugin.name }} v{{ plugin.version }}</h5>
-                        <h6 class="card-subtitle mb-2 text-danger"
-                            title="{{ trans('health') }}">{{ _self.healthStatus(plugin.health) }}</h6>
-                        <p class="card-text" style="text-wrap: pretty">{{ plugin.description | slice(0, 300) | nl2br }}</p>
-                        {% set extraBtnClass = plugin.health > 2 ? 'btn-outline-success' : plugin.health == 0 ? 'btn-outline-danger' : 'btn-outline-warning' %}
-                        <a href="{{ plugin.url }}" class="btn {{ extraBtnClass }}"
-                           target="_blank">{{ trans('add') }}</a>
-                    </div>
+    <div class="p-2">
+        <input type="text" class="form-control shadow-sm" id="querySearchPlugin" placeholder="{{ trans('search') }}"/>
+    </div>
+    <div class="card-columns pl-2 pr-2" id="all-plugins">
+        {% for plugin in fsc.remotePluginList %}
+            {% set extraClass = plugin.health > 2 ? 'border-success' : plugin.health == 0 ? 'border-danger' : 'border-warning' %}
+            <div class="card {{ extraClass }} shadow-sm" id="{{ plugin.idplugin }}">
+                <div class="card-body p-2">
+                    <h5 class="card-title">{{ plugin.name }} v{{ plugin.version }}</h5>
+                    <p class="card-text">{{ plugin.description | slice(0, 300) | nl2br }}</p>
                 </div>
-            {% else %}
-                <div class="text-center bg-warning rounded">
-                    <h2>{{ trans('no-data') }}</h2>
+                <div class="card-footer p-2">
+                    {% set extraBtnClass = plugin.health > 2 ? 'btn-outline-success' : plugin.health == 0 ? 'btn-outline-danger' : 'btn-outline-warning' %}
+                    <a href="{{ plugin.url }}" class="btn {{ extraBtnClass }}"
+                       target="_blank">{{ trans('add') }}</a>
+                    <span class="ml-2 text-danger" title="{{ trans('health') }}">
+                        {{ _self.healthStatus(plugin.health) }}
+                    </span>
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+        {% else %}
+            <div class="text-center bg-warning rounded">
+                <h2>{{ trans('no-data') }}</h2>
+            </div>
+        {% endfor %}
     </div>
 {% endmacro %}
 
 {% macro showInstalledPlugins(fsc) %}
-    <div class="m-1">
-        <div class="form-group">
-            <input type="text" class="form-control shadow" id="querySearchInstalledPlugins" placeholder="{{ trans('search') }}">
-        </div>
+    <div class="p-2">
+        <input type="text" class="form-control" id="querySearchInstalledPlugins" placeholder="{{ trans('search') }}"/>
     </div>
     <div class="table-responsive" id="installed-plugins">
         <table class="table table-striped table-hover">
@@ -309,7 +308,8 @@
                     </td>
                     <td class="text-right text-nowrap">
                         {% if plugin.hasUpdate() %}
-                            <a href="Updater" class="btn btn-spin-action btn-sm btn-info mr-1" title="{{ trans('updater') }}">
+                            <a href="Updater" class="btn btn-spin-action btn-sm btn-info mr-1"
+                               title="{{ trans('updater') }}">
                                 <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
                             </a>
                         {% endif %}
@@ -330,23 +330,26 @@
                             {% endif %}
                             {% if plugin.hasUpdate() %}
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <button type="button" class="btn btn-sm btn-warning dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false">
                                         {{ trans('enable') }}
                                     </button>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="Updater">
-                                            <i class="fas fa-cloud-download-alt fa-fw mr-1" aria-hidden="true"></i> {{ trans('update') }}
+                                            <i class="fas fa-cloud-download-alt fa-fw mr-1"
+                                               aria-hidden="true"></i> {{ trans('update') }}
                                         </a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item"
                                            href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
-                                            <i class="fas fa-check fa-fw mr-1" aria-hidden="true"></i> {{ trans('enable') }}
+                                            <i class="fas fa-check fa-fw mr-1"
+                                               aria-hidden="true"></i> {{ trans('enable') }}
                                         </a>
                                     </div>
                                 </div>
                             {% else %}
                                 <a class="btn btn-sm btn-success btn-spin-action" onclick="animateSpinner('add');"
-                                    href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
+                                   href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
                                     <i class="fas fa-check" aria-hidden="true"></i>
                                     <span class="d-none d-sm-inline-block">{{ trans('enable') }}</span>
                                 </a>
