@@ -245,14 +245,15 @@ final class CrashReport
         
         $length = $linesToShow + 1;
 
-        $errorFragment = array_slice($lines, $start, $length);
+        $errorFragment = array_slice($lines, $start, $length, true);
 
         foreach($errorFragment as $index => $value){
-            $errorLine = ($index + $line - ($linesToShow / 2));
-            if($errorLine === $line){
-                $errorFragment[$index] = '<spam style="padding-top: 0.1rem; padding-bottom: 0.1rem; background-color: red; color: white">' . $errorLine . $value . '</spam>';
+            $index = $index + 1;
+
+            if($index === $line){
+                $errorFragment[$index] = '<spam style="padding-top: 0.1rem; padding-bottom: 0.1rem; background-color: red; color: white">' . $index . $value . '</spam>';
             }else{
-                $errorFragment[$index] = $errorLine . $value;
+                $errorFragment[$index] = $index . $value;
             }
         }
 
