@@ -485,6 +485,7 @@
     "email-not-configured": "Posta elektronikoa ez dago konfiguratuta. Administratzailea, kontrol panela, aplikazioaren lehentasunak menutik ahal duzu konfiguratu.",
     "email-not-sent": "Bidali gabe",
     "email-notification": "Email Jakinarazpena",
+    "email-notification-disabled": "La notificación de email %name% está desactivada",
     "email-notification-not-exists": "%name% mezu elektronikoaren jakinarazpena ez da aurkitu",
     "email-replies": "Posta elektronikoen erantzuna",
     "email-replies-to": "Email honen erantzunak %email% helbidera joango dira",

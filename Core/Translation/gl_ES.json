@@ -485,6 +485,7 @@
     "email-not-configured": "Email non configurado. Podes configurar ou email desde ou menú administrador, panel de control, preferencias de aplicación.",
     "email-not-sent": "Non enviado",
     "email-notification": "Notificación por email",
+    "email-notification-disabled": "La notificación de email %name% está desactivada",
     "email-notification-not-exists": "Notificación de email %name% non atopada",
     "email-replies": "Resposta de emails",
     "email-replies-to": "As respostas a este email irán a %email%",

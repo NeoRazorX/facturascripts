@@ -485,6 +485,7 @@
     "email-not-configured": "email-not-configured",
     "email-not-sent": "Non inviato",
     "email-notification": "Notificación por email",
+    "email-notification-disabled": "La notificación de email %name% está desactivada",
     "email-notification-not-exists": "Notificación de email %name% no encontrada",
     "email-replies": "risposta e-mail",
     "email-replies-to": "email-replies-to",
