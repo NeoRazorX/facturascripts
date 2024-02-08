@@ -327,6 +327,12 @@ abstract class ModelClass extends ModelCore
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
+
+        $return = $this->pipe('url', $type, $list);
+        if ($return) {
+            return $return;
+        }
+
         switch ($type) {
             case 'edit':
                 return is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
