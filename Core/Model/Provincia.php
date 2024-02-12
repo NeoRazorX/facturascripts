@@ -20,6 +20,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -97,6 +98,8 @@ class Provincia extends ModelClass
 
     public function test(): bool
     {
+        Cache::delete('DataModel.' . $this->modelClassName());
+
         $this->provincia = Tools::noHtml($this->provincia);
         return parent::test();
     }
@@ -114,5 +117,19 @@ class Provincia extends ModelClass
         }
 
         return parent::saveInsert($values);
+    }
+
+    public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
+    {
+        if ($where === []) {
+            return Cache::remember(
+                'DataModel.' . $this->modelClassName(),
+                function () use ($where, $order, $offset, $limit) {
+                    return parent::all($where, $order, $offset, $limit);
+                }
+            );
+        }
+
+        return parent::all($where, $order, $offset, $limit);
     }
 }

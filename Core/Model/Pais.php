@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
@@ -110,6 +111,8 @@ class Pais extends ModelClass
 
     public function test(): bool
     {
+        Cache::delete('DataModel.' . $this->modelClassName());
+        
         $this->codpais = Tools::noHtml($this->codpais);
         if ($this->codpais && 1 !== preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
             Tools::log()->error(
@@ -122,5 +125,19 @@ class Pais extends ModelClass
         $this->nombre = Tools::noHtml($this->nombre);
 
         return parent::test();
+    }
+
+    public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
+    {
+        if ($where === []) {
+            return Cache::remember(
+                'DataModel.' . $this->modelClassName(),
+                function () use ($where, $order, $offset, $limit) {
+                    return parent::all($where, $order, $offset, $limit);
+                }
+            );
+        }
+
+        return parent::all($where, $order, $offset, $limit);
     }
 }
