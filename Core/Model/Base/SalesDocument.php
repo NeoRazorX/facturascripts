@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cliente as CoreCliente;
 use FacturaScripts\Core\Model\Contacto as CoreContacto;
 use FacturaScripts\Core\Model\User;
@@ -273,6 +275,11 @@ abstract class SalesDocument extends TransformerDocument
     {
         if (empty($this->total)) {
             return parent::save();
+        }
+
+        $almacen = Almacenes::get($this->codalmacen);
+        if($this->idempresa !== $almacen->getCompany()->idempresa) {
+            $this->idempresa = $almacen->getCompany()->idempresa;
         }
 
         // check if the customer has exceeded the maximum risk
