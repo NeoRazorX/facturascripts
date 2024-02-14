@@ -66,11 +66,14 @@ class WidgetLibrary extends BaseWidget
                 . '</div>';
         }
 
-        return '<div class="form-group mb-2">'
-            . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+        return '<div class="form-group mb-2" id="' . $this->id . '">'
+            . '<input type="hidden" class="input-hidden" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
             . '<a href="#" class="btn btn-block btn-outline-secondary" data-toggle="modal" data-target="#modal_' . $this->id . '">'
-            . '<i class="' . $icon . ' fa-fw"></i> ' . ($file->filename ? $file->shortFileName() : Tools::lang()->trans('select'))
+            . '<i class="' . $icon . ' fa-fw"></i> '
+            . '<span class="file-name">'
+            . ($file->filename ? $file->shortFileName() : Tools::lang()->trans('select'))
+            . '</span>'
             . '</a>'
             . $descriptionHtml
             . '</div>'
@@ -156,6 +159,51 @@ class WidgetLibrary extends BaseWidget
         return $list;
     }
 
+    public function renderFileList(array $files = [], ?int $selected_value = null): string
+    {
+        $html = '';
+
+        $files = empty($files) ? $this->files() : $files;
+        foreach ($files as $file) {
+            $cssCard = $file->idfile == $this->value || $file->idfile == $selected_value
+                ? ' border-primary'
+                : '';
+
+            $html .= '<div class="col-6">'
+                . '<div class="file card ' . $cssCard . ' shadow-sm mb-2" data-idfile="' . $file->idfile . '">'
+                . '<div class="card-body p-2">';
+
+            $info = '<p class="card-text small">'
+                . Tools::bytes($file->size) . ', ' . $file->date . ' ' . $file->hour
+                . '<a href="' . $file->url() . '" target="_blank" class="ml-2">'
+                . '<i class="fa-solid fa-up-right-from-square"></i>'
+                . '</a>'
+                . '</p>';
+
+            $js = "widgetLibrarySelect('" . $this->id . "', '" . $file->idfile . "', '" . $file->shortFileName() . "');";
+
+            if ($file->isImage()) {
+                $html .= '<div class="media">'
+                    . '<img src="' . $file->url('download-permanent') . '" class="mr-3" alt="' . $file->filename
+                    . '" width="64" type="button" onclick="' . $js . '" title="' . Tools::lang()->trans('select') . '">'
+                    . '<div class="media-body">'
+                    . '<h5 class="text-break mt-0">' . $file->filename . '</h5>'
+                    . $info
+                    . '</div>'
+                    . '</div>';
+            } else {
+                $html .= '<h5 class="card-title text-break mb-0" type="button" onclick="' . $js . '" title="'
+                    . Tools::lang()->trans('select') . '">' . $file->filename . '</h5>' . $info;
+            }
+
+            $html .= '</div>'
+                . '</div>'
+                . '</div>';
+        }
+
+        return $html;
+    }
+
     public function uploadFile(UploadedFile $uploadFile): AttachedFile
     {
         if (false === $uploadFile->isValid()) {
@@ -184,48 +232,6 @@ class WidgetLibrary extends BaseWidget
         }
 
         return new AttachedFile();
-    }
-
-    protected function renderFileList(): string
-    {
-        $html = '<div id="list_' . $this->id . '" class="form-row pt-3">';
-
-        foreach ($this->files() as $file) {
-            $cssCard = $file->idfile == $this->value ? ' border-primary' : '';
-
-            $html .= '<div class="col-6">'
-                . '<div class="card ' . $cssCard . ' shadow-sm mb-2">'
-                . '<div class="card-body p-2">';
-
-            $info = '<p class="card-text small">'
-                . Tools::bytes($file->size) . ', ' . $file->date . ' ' . $file->hour
-                . '<a href="' . $file->url() . '" target="_blank" class="ml-2">'
-                . '<i class="fa-solid fa-up-right-from-square"></i>'
-                . '</a>'
-                . '</p>';
-
-            $js = "widgetLibrarySelect('" . $this->id . "', '" . $file->idfile . "');";
-
-            if ($file->isImage()) {
-                $html .= '<div class="media">'
-                    . '<img src="' . $file->url('download-permanent') . '" class="mr-3" alt="' . $file->filename
-                    . '" width="64" type="button" onclick="' . $js . '" title="' . Tools::lang()->trans('select') . '">'
-                    . '<div class="media-body">'
-                    . '<h5 class="text-break mt-0">' . $file->filename . '</h5>'
-                    . $info
-                    . '</div>'
-                    . '</div>';
-            } else {
-                $html .= '<h5 class="card-title text-break mb-0" type="button" onclick="' . $js . '" title="'
-                    . Tools::lang()->trans('select') . '">' . $file->filename . '</h5>' . $info;
-            }
-
-            $html .= '</div>'
-                . '</div>'
-                . '</div>';
-        }
-
-        return $html . '</div>';
     }
 
     protected function renderQueryFilter(): string
@@ -268,7 +274,9 @@ class WidgetLibrary extends BaseWidget
             . '<div class="col-6">' . $this->renderQueryFilter() . '</div>'
             . '<div class="col-6">' . $this->renderSortFilter() . '</div>'
             . '</div>'
+            . '<div id="list_' . $this->id . '" class="form-row pt-3">'
             . $this->renderFileList()
+            . '</div>'
             . '</div>'
             . '<div class="modal-footer p-2">' . $this->renderSelectNoneBtn() . '</div>'
             . '</div>'
@@ -282,7 +290,7 @@ class WidgetLibrary extends BaseWidget
             return '';
         }
 
-        return '<a href="#" class="btn btn-block btn-secondary" onclick="widgetLibrarySelect(\'' . $this->id . '\', \'\');">'
+        return '<a href="#" class="btn btn-block btn-secondary" onclick="widgetLibrarySelect(\'' . $this->id . '\', \'\', \'' . Tools::lang()->trans('select') . '\');">'
             . '<i class="fas fa-times mr-1"></i>' . Tools::lang()->trans('none')
             . '</a>';
     }

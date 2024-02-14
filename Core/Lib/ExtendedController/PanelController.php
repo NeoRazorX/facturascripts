@@ -393,13 +393,13 @@ abstract class PanelController extends BaseController
 
         // si está vacío, no hacemos nada
         if (empty($activeTab) || empty($colName)) {
-            return [];
+            return ['records' => 0, 'html' => ''];
         }
 
         // buscamos la columna
         $column = $this->tab($activeTab)->columnForField($colName);
         if (empty($column) || $column->widget->getType() !== 'library') {
-            return [];
+            return ['records' => 0, 'html' => ''];
         }
 
         $files = $column->widget->files(
@@ -407,21 +407,11 @@ abstract class PanelController extends BaseController
             $this->request->request->get('sort', '')
         );
 
-        $results = [];
-        foreach ($files as $file) {
-            $results[] = [
-                'id_file' => $file->idfile,
-                'filename' => $file->filename,
-                'date' => $file->date,
-                'hour' => $file->hour,
-                'size' => Tools::bytes($file->size),
-                'mime_type' => $file->mimetype,
-                'is_image' => $file->isImage(),
-                'url' => $file->url('download-permanent'),
-                'selected_value' => (int)$column->widget->plainText($this->tab($activeTab)->model),
-            ];
-        }
-        return $results;
+        $selected_value = (int)$column->widget->plainText($this->tab($activeTab)->model);
+        return [
+            'html' => $column->widget->renderFileList($files, $selected_value),
+            'records' => count($files),
+        ];
     }
 
     protected function widgetLibraryUploadAction(): array
@@ -442,22 +432,16 @@ abstract class PanelController extends BaseController
         }
 
         $file = $column->widget->uploadFile($this->request->files->get('file'));
-        if (empty($file)) {
+        if (false === $file->exists()) {
             return [];
         }
 
+        $files = $column->widget->files();
         return [
-            [
-                'id_file' => $file->idfile,
-                'filename' => $file->filename,
-                'date' => $file->date,
-                'hour' => $file->hour,
-                'size' => Tools::bytes($file->size),
-                'mime_type' => $file->mimetype,
-                'is_image' => $file->isImage(),
-                'url' => $file->url('download-permanent'),
-                'selected_value' => (int)$column->widget->plainText($this->tab($activeTab)->model),
-            ]
+            'html' => $column->widget->renderFileList($files),
+            'records' => count($files),
+            'new_file' => $file->idfile,
+            'new_filename' => $file->shortFileName(),
         ];
     }
 
