@@ -179,6 +179,7 @@
     "cancel": "Ezeztatu",
     "cancel-data": "Aldaketak edo eragiketa ezeztatu",
     "cancelled": "Ezeztatuta",
+    "cannot-generate-accounting-entry": "Error al generar el asiento de la factura %invoice%",
     "cant-assign-date-already-regularized": "Ezin duzu %date% data esleitu, dagoeneko %tax%(e)ko erregularizazioa dagoelako epe horrentzat.",
     "cant-assing-subaccount-supplier": "%supplierCode% azpikontua ezin zaio esleitu hornitzaileari",
     "cant-associate-customer-subaccount": "%customerCode% azpikontua ezin zaio esleitu bezeroari",

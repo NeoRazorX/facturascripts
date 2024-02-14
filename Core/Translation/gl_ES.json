@@ -179,6 +179,7 @@
     "cancel": "Cancelar",
     "cancel-data": "Cancelar cambios ou operación",
     "cancelled": "Cancelado",
+    "cannot-generate-accounting-entry": "Error al generar el asiento de la factura %invoice%",
     "cant-assign-date-already-regularized": "Non se pode asignar a data %date% porque xa existe unha regularización de %tax% para ese período.",
     "cant-assing-subaccount-supplier": "Non se pode asociar a subconta para o provedor %supplierCode%",
     "cant-associate-customer-subaccount": "Non se puido asociar a subconta para o cliente %customerCode%",

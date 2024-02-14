@@ -179,6 +179,7 @@
     "cancel": "Stornieren",
     "cancel-data": "Brechen Sie Änderungen oder Operationen ab",
     "cancelled": "abgebrochen",
+    "cannot-generate-accounting-entry": "Error al generar el asiento de la factura %invoice%",
     "cant-assign-date-already-regularized": "Sie können das Datum 0 nicht zuordnen, da für diesen Zeitraum bereits eine Regularisierung von 1 vorliegt.",
     "cant-assing-subaccount-supplier": "Unterkonto für Anbieter 0 kann nicht zugeordnet werden",
     "cant-associate-customer-subaccount": "Unterkonto für Client 0 kann nicht zugeordnet werden",

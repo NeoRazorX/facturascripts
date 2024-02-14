@@ -179,6 +179,7 @@
     "cancel": "Annulla",
     "cancel-data": "Annulla modifiche o operazione",
     "cancelled": "cancelled",
+    "cannot-generate-accounting-entry": "Error al generar el asiento de la factura %invoice%",
     "cant-assign-date-already-regularized": "Non si può assegnare la data 0 perché esiste già una regolarizzazione di 1 per quel periodo.",
     "cant-assing-subaccount-supplier": "Impossibile associare il subaccount al provider 0",
     "cant-associate-customer-subaccount": "Impossibile associare il subaccount per il client 0",
