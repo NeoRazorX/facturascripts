@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -66,6 +66,18 @@ END;
             if (false === WorkQueue::run()) {
                 break;
             }
+        }
+
+        // mostramos los mensajes del log
+        $levels = ['critical', 'error', 'info', 'notice', 'warning'];
+        foreach (Tools::log()::read('', $levels) as $message) {
+            // si el canal no es master o database, no lo mostramos
+            if (!in_array($message['channel'], ['master', 'database'])) {
+                continue;
+            }
+
+            echo PHP_EOL . $message['message'];
+            ob_flush();
         }
 
         $executionTime = Kernel::getExecutionTime();
