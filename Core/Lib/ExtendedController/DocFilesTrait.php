@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Model\AttachedFileRelation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Tools;
@@ -59,7 +60,9 @@ trait DocFilesTrait
                 $fileRelation->modelcode = $this->request->query->get('code');
                 $fileRelation->modelid = (int)$fileRelation->modelcode;
                 $fileRelation->nick = $this->user->nick;
-                $fileRelation->observations = $this->request->request->get('observations');
+                $fileRelation->observations = $this->request->request->get('observations', '');
+                $this->pipeFalse('addFileAction', $fileRelation, $this->request);
+
                 if (false === $fileRelation->save()) {
                     Tools::log()->error('fail-relation');
                     return true;
@@ -87,11 +90,20 @@ trait DocFilesTrait
 
         $fileRelation = new AttachedFileRelation();
         $id = $this->request->request->get('id');
-        if ($fileRelation->loadFromCode($id)) {
-            $file = $fileRelation->getFile();
-            $fileRelation->delete();
-            $file->delete();
+        if (false === $fileRelation->loadFromCode($id)) {
+            Tools::log()->warning('record-not-found');
+            return true;
         }
+
+        if ($fileRelation->modelcode != $this->request->query->get('code')
+            || $fileRelation->model !== $this->getModelClassName()) {
+            Tools::log()->warning('not-allowed-delete');
+            return true;
+        }
+
+        $file = $fileRelation->getFile();
+        $fileRelation->delete();
+        $file->delete();
 
         Tools::log()->notice('record-deleted-correctly');
 
@@ -114,9 +126,23 @@ trait DocFilesTrait
 
         $fileRelation = new AttachedFileRelation();
         $id = $this->request->request->get('id');
-        if ($fileRelation->loadFromCode($id)) {
-            $fileRelation->observations = $this->request->request->get('observations');
-            $fileRelation->save();
+        if (false === $fileRelation->loadFromCode($id)) {
+            Tools::log()->warning('record-not-found');
+            return true;
+        }
+
+        if ($fileRelation->modelcode != $this->request->query->get('code')
+            || $fileRelation->model !== $this->getModelClassName()) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $fileRelation->observations = $this->request->request->get('observations', '');
+        $this->pipeFalse('editFileAction', $fileRelation, $this->request);
+
+        if (false === $fileRelation->save()) {
+            Tools::log()->error('record-save-error');
+            return true;
         }
 
         Tools::log()->notice('record-updated-correctly');
