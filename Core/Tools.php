@@ -201,7 +201,7 @@ class Tools
         return empty($date) ? date(self::HOUR_STYLE) : date(self::HOUR_STYLE, strtotime($date));
     }
 
-    public static function lang(string $lang = ''): Translator
+    public static function lang(?string $lang = ''): Translator
     {
         return new Translator($lang);
     }
