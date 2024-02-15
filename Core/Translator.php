@@ -35,13 +35,14 @@ final class Translator
     /** @var array */
     private static $translations = [];
 
-    public function __construct(string $langCode = '')
+    public function __construct(?string $langCode = '')
     {
         $this->setLang($langCode);
     }
 
-    public function customTrans(string $langCode, ?string $txt, array $parameters = []): string
+    public function customTrans(?string $langCode, ?string $txt, array $parameters = []): string
     {
+        $langCode = empty($langCode) ? $this->getDefaultLang() : $langCode;
         $this->load($langCode);
 
         $key = $this->getTransKey($txt) . '@' . $langCode;
@@ -158,7 +159,7 @@ final class Translator
         self::$defaultLang = $langCode;
     }
 
-    public function setLang(string $langCode): void
+    public function setLang(?string $langCode): void
     {
         $this->lang = empty($langCode) ? $this->getDefaultLang() : $langCode;
 
