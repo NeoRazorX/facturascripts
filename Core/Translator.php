@@ -154,9 +154,9 @@ final class Translator
         self::$translations = [];
     }
 
-    public static function setDefaultLang(string $langCode): void
+    public static function setDefaultLang(?string $langCode): void
     {
-        self::$defaultLang = $langCode;
+        self::$defaultLang = empty($langCode) ? constant('FS_LANG') : $langCode;
     }
 
     public function setLang(?string $langCode): void
