@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -113,11 +113,7 @@
                                     <i class="fas fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}
                                 </p>
                             {% endfor %}
-                            <div id="email-attachments">
-                                <div class="form-group">
-                                    <input type="file" name="uploads[]" onclick="addAnotherInputFile()"/>
-                                </div>
-                            </div>
+                            <div id="email-attachments"></div>
                             <div class="row align-items-end">
                                 <div class="col-sm-6">
                                     {% if settings('email', 'replytouseremail', '1') in ['1', '0'] %}
@@ -154,17 +150,44 @@
     {{ parent() }}
     <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
     <script>
-        function addAnotherInputFile() {
-            let input = document.createElement('div');
-            input.className = 'form-group';
+        function addAnotherInputFile(input) {
+            // si en el div de email-attachments el último input file está vacío, no añadimos otro
+            let inputs = document.getElementById('email-attachments').getElementsByTagName('input');
+            if (inputs.length > 0 && inputs[inputs.length - 1].value === '') {
+                clearInputFile();
+                return;
+            }
+
+            // si el archivo subido es una carpeta, no lo añadimos y limpiamos el input
+            if (input && input.target.files.length > 0 && input.target.files[0].type === '') {
+                input.target.value = '';
+                return;
+            }
+
+            let div = document.createElement('div');
+            div.className = 'form-group';
 
             let file = document.createElement('input');
             file.type = 'file';
             file.name = 'uploads[]';
-            file.onclick = addAnotherInputFile;
-            input.appendChild(file);
+            file.onchange = addAnotherInputFile;
+            file.multiple = true;
+            div.appendChild(file);
 
-            document.getElementById('email-attachments').appendChild(input);
+            document.getElementById('email-attachments').appendChild(div);
+            clearInputFile();
+        }
+
+        function clearInputFile() {
+            // obtenemos todos los inputs file
+            let inputs = document.getElementById('email-attachments').getElementsByTagName('input');
+
+            // eliminamos los inputs que estén vacíos, excepto el último
+            for (let i = 0; i < inputs.length - 1; i++) {
+                if (inputs[i].value === '') {
+                    inputs[i].parentNode.remove();
+                }
+            }
         }
 
         function extractLast(term) {
@@ -218,6 +241,8 @@
                     return false;
                 }
             });
+
+            addAnotherInputFile();
         });
     </script>
 {% endblock %}
