@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Tools;
 use stdClass;
+use Throwable;
 
 class OpenAi
 {
@@ -149,11 +150,12 @@ class OpenAi
 
     public function image(string $prompt, int $width = 256, int $height = 256, $count = 1, string $model = 'dall-e-2'): string
     {
+        $resize = false;
         $data = [
             'model' => $model,
             'prompt' => $prompt,
             'n' => $count,
-            'size' => $width . 'x' . $height,
+            'size' => $this->getDalleSize($resize, $model, $width, $height)
         ];
         $response = Http::post(self::IMAGES_URL, json_encode($data))
             ->setHeader('Content-Type', 'application/json')
@@ -173,14 +175,23 @@ class OpenAi
             return '';
         }
 
-        $filename = 'image_' . uniqid() . '.png';
+        $file_name = 'image_' . uniqid() . '.png';
+        $file_path = 'MyFiles/' . $file_name;
         $image = file_get_contents($url);
-        if (file_put_contents(Tools::folder('MyFiles', $filename), $image) === false) {
+        if (file_put_contents($file_path, $image) === false) {
             Tools::log()->error('dalle error: saving image');
             return '';
         }
 
-        return 'MyFiles/' . $filename;
+        if ($resize) {
+            $resized = $this->imageResize($file_path, $width, $height);
+            if (!empty($resized)) {
+                unlink($file_path);
+                return $resized;
+            }
+        }
+
+        return $file_path;
     }
 
     public static function init(string $api_key): self
@@ -188,9 +199,11 @@ class OpenAi
         return new OpenAi($api_key);
     }
 
-    public function setSystemMessage(array &$messages, string $message): void
+    public function setSystemMessage(array &$messages, string $message): self
     {
         $messages[] = ['role' => 'system', 'content' => $message];
+
+        return $this;
     }
 
     public function setTimeout(int $timeout): self
@@ -199,8 +212,79 @@ class OpenAi
         return $this;
     }
 
-    public function setUserMessage(array &$messages, string $message): void
+    public function setUserMessage(array &$messages, string $message): self
     {
         $messages[] = ['role' => 'user', 'content' => $message];
+
+        return $this;
+    }
+
+    private function getDalleSize(bool &$resize, string $model, int $width, int $height): string
+    {
+        switch ($model) {
+            case 'dall-e-2':
+                $sizes = ['256', '512', '1024'];
+                if (!in_array($width, $sizes) || !in_array($height, $sizes)) {
+                    $resize = true;
+                    return '256x256';
+                }
+                break;
+
+            case 'dall-e-3':
+                $sizes = ['1024', '1792'];
+                if (!in_array($width, $sizes) || !in_array($height, $sizes)) {
+                    $resize = true;
+                    return '1024x1024';
+                } elseif ($width === 1792 && $height === 1792) {
+                    $resize = true;
+                    return '1024x1024';
+                }
+                break;
+        }
+
+        return $width . 'x' . $height;
+    }
+
+    private function imageResize(string $filePath, int $width, int $height): string
+    {
+        try {
+            $image = imagecreatefromstring(file_get_contents($filePath));
+            $imageWidth = imagesx($image);
+            $imageHeight = imagesy($image);
+            $ratio = $imageWidth / $imageHeight;
+            if ($width / $height > $ratio) {
+                $width = intval($height * $ratio);
+            } else {
+                $height = intval($width / $ratio);
+            }
+
+            $thumb = imagecreatetruecolor($width, $height);
+            imagecopyresampled($thumb, $image, 0, 0, 0, 0, $width, $height, $imageWidth, $imageHeight);
+            $ext = pathinfo($filePath, PATHINFO_EXTENSION);
+            $thumbName = pathinfo($filePath, PATHINFO_FILENAME) . '_' . $width . 'x' . $height . '.' . $ext;
+            $thumbFile = 'MyFiles/' . $thumbName;
+            switch ($ext) {
+                case 'jpg':
+                case 'jpeg':
+                    imagejpeg($thumb, $thumbFile);
+                    break;
+
+                case 'png':
+                    imagepng($thumb, $thumbFile);
+                    break;
+
+                case 'gif':
+                    imagegif($thumb, $thumbFile);
+                    break;
+            }
+
+            imagedestroy($image);
+
+        } catch (Throwable $th) {
+            Tools::log()->error($th->getMessage());
+            return '';
+        }
+
+        return $thumbFile;
     }
 }
