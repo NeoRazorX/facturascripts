@@ -66,17 +66,9 @@ class OpenAi
             return '';
         }
 
-        $json = $response->json();
-        $url = $json['data'][0]['url'] ?? '';
-        if (empty($url)) {
-            Tools::log()->error('audio speech error: empty response');
-            return '';
-        }
-
-        // descargamos el audio en MyFiles
+        // guardamos el audio en MyFiles
         $filename = 'audio_' . uniqid() . '.' . $format;
-        $audio = file_get_contents($url);
-        if (file_put_contents(Tools::folder('MyFiles', $filename), $audio) === false) {
+        if ($response->saveAs(Tools::folder('MyFiles', $filename)) === false) {
             Tools::log()->error('audio speech error: saving audio');
             return '';
         }
