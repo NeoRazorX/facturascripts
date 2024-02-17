@@ -1,7 +1,7 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,7 +28,6 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
-use ZipArchive;
 
 /**
  * AdminPlugins.
@@ -64,11 +63,9 @@ class AdminPlugins extends Controller
      * @param User $user
      * @param ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user, $permissions): void
+    public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-
-        $this->extractPluginsZipFiles();
 
         $action = $this->request->get('action', '');
         switch ($action) {
@@ -93,6 +90,7 @@ class AdminPlugins extends Controller
                 break;
 
             default:
+                $this->extractPluginsZipFiles();
                 if (FS_DEBUG) {
                     // On debug mode, always deploy the contents of Dinamic.
                     Plugins::deploy(true, true);
@@ -131,6 +129,29 @@ class AdminPlugins extends Controller
         $pluginName = $this->request->get('plugin', '');
         Plugins::enable($pluginName);
         Cache::clear();
+    }
+
+    private function extractPluginsZipFiles(): void
+    {
+        $ok = false;
+        foreach (Tools::folderScan(Plugins::folder()) as $zipFileName) {
+            // si el archivo no es un zip, lo ignoramos
+            if (pathinfo($zipFileName, PATHINFO_EXTENSION) !== 'zip') {
+                continue;
+            }
+
+            // instalamos el plugin
+            $zipPath = Plugins::folder() . DIRECTORY_SEPARATOR . $zipFileName;
+            if (Plugins::add($zipPath, $zipFileName)) {
+                $ok = true;
+                unlink($zipPath);
+            }
+        }
+
+        if ($ok) {
+            Tools::log()->notice('reloading');
+            $this->redirect($this->url(), 3);
+        }
     }
 
     private function loadRemotePluginList(): void
@@ -212,24 +233,6 @@ class AdminPlugins extends Controller
         if ($ok) {
             Tools::log()->notice('reloading');
             $this->redirect($this->url(), 3);
-        }
-    }
-
-    /**
-     * Descomprime todos los archivos zip que se encuentren
-     * en la carpeta Plugins
-     */
-    protected function extractPluginsZipFiles(): void
-    {
-        $zipFileNames = Tools::folderScan(Plugins::folder());
-
-        foreach($zipFileNames as $zipFileName){
-            $zipFile = new ZipArchive();
-            $zipPath = Plugins::folder() . DIRECTORY_SEPARATOR . $zipFileName;
-            if (true === $zipFile->open($zipPath, ZipArchive::CHECKCONS)) {
-                $zipFile->extractTo(Plugins::folder());
-                $zipFile->close();
-            }
         }
     }
 }

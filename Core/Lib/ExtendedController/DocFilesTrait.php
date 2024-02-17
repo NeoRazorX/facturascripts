@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Model\AttachedFileRelation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Tools;
@@ -60,7 +59,7 @@ trait DocFilesTrait
                 $fileRelation->modelcode = $this->request->query->get('code');
                 $fileRelation->modelid = (int)$fileRelation->modelcode;
                 $fileRelation->nick = $this->user->nick;
-                $fileRelation->observations = $this->request->request->get('observations', '');
+                $fileRelation->observations = $this->request->request->get('observations');
                 $this->pipeFalse('addFileAction', $fileRelation, $this->request);
 
                 if (false === $fileRelation->save()) {
@@ -95,8 +94,8 @@ trait DocFilesTrait
             return true;
         }
 
-        if ($fileRelation->modelcode != $this->request->query->get('code')
-            || $fileRelation->model !== $this->getModelClassName()) {
+        if ($fileRelation->modelcode != $this->request->query->get('code') ||
+            $fileRelation->model !== $this->getModelClassName()) {
             Tools::log()->warning('not-allowed-delete');
             return true;
         }
@@ -131,13 +130,13 @@ trait DocFilesTrait
             return true;
         }
 
-        if ($fileRelation->modelcode != $this->request->query->get('code')
-            || $fileRelation->model !== $this->getModelClassName()) {
+        if ($fileRelation->modelcode != $this->request->query->get('code') ||
+            $fileRelation->model !== $this->getModelClassName()) {
             Tools::log()->warning('not-allowed-modify');
             return true;
         }
 
-        $fileRelation->observations = $this->request->request->get('observations', '');
+        $fileRelation->observations = $this->request->request->get('observations');
         $this->pipeFalse('editFileAction', $fileRelation, $this->request);
 
         if (false === $fileRelation->save()) {
