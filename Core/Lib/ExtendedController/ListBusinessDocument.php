@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,9 +25,9 @@ use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\DataSrc\GruposClientes;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Series;
-use FacturaScripts\Core\DataSrc\GrupoClientes;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
@@ -211,16 +211,24 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
 
-        $i18n = Tools::lang();
-        $grupos = GrupoClientes::codeModel(false);
-        if(count($grupos) > 0) {
-            $gruposFiltro = [];
-            array_push($gruposFiltro,  ['label' => $i18n->trans('any-group'), 'where' => [ ] ]);
-            array_push($gruposFiltro,  ['label' => $i18n->trans('without-groups'), 'where' => [  new DataBaseWhere('codcliente', "SELECT DISTINCT codcliente FROM clientes WHERE codgrupo IS NOT NULL", 'NOT IN') ] ]);
-            foreach($grupos as $grupo) {
-                array_push($gruposFiltro, ['label' => $grupo->description, 'where' => ($grupo->code ? [ new DataBaseWhere('codcliente', "SELECT DISTINCT codcliente FROM clientes WHERE codgrupo = '{$grupo->code}'", 'IN')] : []) ]);
-            }
-            $this->addFilterSelectWhere($viewName, 'codcliente', $gruposFiltro);
+        // filtramos por grupos de clientes
+        $optionsGroup = [
+            ['label' => Tools::lang()->trans('any-group'), 'where' => []],
+            [
+                'label' => Tools::lang()->trans('without-groups'),
+                'where' => [new DataBaseWhere('codcliente', "SELECT DISTINCT codcliente FROM clientes WHERE codgrupo IS NULL", 'IN')]
+            ],
+            ['label' => '------', 'where' => []],
+        ];
+        foreach (GruposClientes::all() as $grupo) {
+            $sqlGrupo = 'SELECT DISTINCT codcliente FROM clientes WHERE codgrupo = ' . $this->dataBase->var2str($grupo->codgrupo);
+            $optionsGroup[] = [
+                'label' => $grupo->nombre,
+                'where' => [new DataBaseWhere('codcliente', $sqlGrupo, 'IN')]
+            ];
+        }
+        if (count($optionsGroup) > 3) {
+            $this->addFilterSelectWhere($viewName, 'codcliente', $optionsGroup);
         }
 
         // asignamos los colores
