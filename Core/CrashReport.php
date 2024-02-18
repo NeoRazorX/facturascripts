@@ -234,27 +234,29 @@ final class CrashReport
         return $translations[FS_LANG][$code] ?? $code;
     }
 
-    protected static function getErrorFragment($file, $line, $linesToShow = 10)
+    protected static function getErrorFragment($file, $line, $linesToShow = 10): string
     {
+        // leemos el archivo
         $content = file_get_contents($file);
-
         $lines = explode("\n", $content);
 
-        $start = ($line - ($linesToShow / 2)) - 1;
-        $start = $start < 0 ? 0 : $start;
-        
+        // calculamos el fragmento
+        $startLine = ($line - ($linesToShow / 2)) - 1;
+        $start = max($startLine, 0);
         $length = $linesToShow + 1;
 
         $errorFragment = array_slice($lines, $start, $length, true);
+        foreach ($errorFragment as $index => $value) {
+            $index++;
 
-        foreach($errorFragment as $index => $value){
-            $index = $index + 1;
-
-            if($index === $line){
-                $errorFragment[$index] = '<spam style="padding-top: 0.1rem; padding-bottom: 0.1rem; background-color: red; color: white">' . $index . $value . '</spam>';
-            }else{
-                $errorFragment[$index] = $index . $value;
+            // marcamos la línea del error
+            if ($index === $line) {
+                $errorFragment[$index] = '<spam style="padding-top: 0.1rem; padding-bottom: 0.1rem; '
+                    . 'background-color: red; color: white">' . $index . $value . '</spam>';
+                continue;
             }
+
+            $errorFragment[$index] = $index . $value;
         }
 
         return implode("\n", $errorFragment);
