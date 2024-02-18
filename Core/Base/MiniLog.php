@@ -107,7 +107,11 @@ final class MiniLog
      */
     public function debug(string $message, array $context = [])
     {
-        if (FS_DEBUG && defined('FS_ENV') && FS_ENV != 'testing') {
+        if (defined('FS_ENV') && FS_ENV == 'testing'){
+            return;
+        }
+
+        if (FS_DEBUG) {    
             $this->log('debug', $message, $context);
         }
     }
