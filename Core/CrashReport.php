@@ -36,6 +36,7 @@ final class CrashReport
             'message' => Tools::noHtml($errorMessage),
             'file' => $errorFile,
             'line' => $line,
+            'fragment' => self::getErrorFragment($file, $line),
             'hash' => $errorHash,
             'url' => $errorUrl,
             'report_url' => $reportUrl,
@@ -135,6 +136,8 @@ final class CrashReport
             echo '<p class="mb-0"><b>Core</b>: ' . $info['core_version']
                 . ', <b>plugins</b>: ' . implode(', ', Plugins::enabled()) . '<br/>'
                 . '<b>PHP</b>: ' . $info['php_version'] . ', <b>OS</b>: ' . $info['os'] . '</p>';
+
+            echo '<pre style="border: solid 1px grey; margin: 2px; padding: 5px">' . htmlspecialchars_decode($info['fragment']) . '</pre>';
         }
 
         echo '</div>';
@@ -229,5 +232,31 @@ final class CrashReport
         ];
 
         return $translations[FS_LANG][$code] ?? $code;
+    }
+
+    protected static function getErrorFragment($file, $line, $linesToShow = 10)
+    {
+        $content = file_get_contents($file);
+
+        $lines = explode("\n", $content);
+
+        $start = ($line - ($linesToShow / 2)) - 1;
+        $start = $start < 0 ? 0 : $start;
+        
+        $length = $linesToShow + 1;
+
+        $errorFragment = array_slice($lines, $start, $length, true);
+
+        foreach($errorFragment as $index => $value){
+            $index = $index + 1;
+
+            if($index === $line){
+                $errorFragment[$index] = '<spam style="padding-top: 0.1rem; padding-bottom: 0.1rem; background-color: red; color: white">' . $index . $value . '</spam>';
+            }else{
+                $errorFragment[$index] = $index . $value;
+            }
+        }
+
+        return implode("\n", $errorFragment);
     }
 }
