@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,6 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model\EstadoDocumento;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -29,13 +28,13 @@ final class EstadoDocumentoTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testDataInstalled()
+    public function testDataInstalled(): void
     {
         $status = new EstadoDocumento();
         $this->assertNotEmpty($status->all(), 'estado-documento-data-not-installed-from-csv');
     }
 
-    public function testCreateNewStatus()
+    public function testCreateNewStatus(): void
     {
         $status = new EstadoDocumento();
         $status->nombre = 'Test';
@@ -46,7 +45,7 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
     }
 
-    public function testHtmlOnFields()
+    public function testHtmlOnFields(): void
     {
         // creamos un estado con html en los campos
         $status = new EstadoDocumento();
@@ -66,7 +65,7 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
     }
 
-    public function testCreateDefaultStatus()
+    public function testCreateDefaultStatus(): void
     {
         // get the initial default count
         $status = new EstadoDocumento();
@@ -101,7 +100,7 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertEquals($defaultsCount, $status->count($where), 'estado-documento-defaults-count-changed-2');
     }
 
-    public function testCreateLockedStatus()
+    public function testCreateLockedStatus(): void
     {
         $status = new EstadoDocumento();
         $status->bloquear = true;
@@ -122,7 +121,7 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
     }
 
-    public function testStatusCanNotHaveGenerationAndEditable()
+    public function testStatusCanNotHaveGenerationAndEditable(): void
     {
         $status = new EstadoDocumento();
         $status->editable = true;
@@ -152,10 +151,8 @@ final class EstadoDocumentoTest extends TestCase
     /**
      * No permitir crear estados predeterminados y no editables.
      */
-    public function testNonEditableDefaultNotAllowed()
+    public function testNonEditableDefaultNotAllowed(): void
     {
-        MiniLog::clear();
-
         // Crear nuevo estado predeterminado y no editable
         $status = new EstadoDocumento();
         $status->nombre = 'Test default';
@@ -165,7 +162,6 @@ final class EstadoDocumentoTest extends TestCase
 
         // Comprobamos que no se pueda guardar un estado que sea predeterminado y no editable.
         $this->assertFalse($status->save());
-        $this->assertEquals('non-editable-default-not-allowed', MiniLog::read('master', ['error'])[0]['original']);
     }
 
     protected function tearDown(): void

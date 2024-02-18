@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -105,12 +105,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
 
     public function test(): bool
     {
-        // No permitimos que un estado predeterminado sea no editable.
-        if (true === $this->predeterminado && false === $this->editable){
-            Tools::log()->error('non-editable-default-not-allowed');
-            return false;
-        }
-
         // escapamos el html
         $this->color = Tools::noHtml($this->color);
         $this->generadoc = Tools::noHtml($this->generadoc);
@@ -123,6 +117,13 @@ class EstadoDocumento extends Base\ModelOnChangeClass
             return false;
         }
 
+        // No permitimos que un estado predeterminado sea no editable.
+        if ($this->predeterminado && false === $this->editable) {
+            Tools::log()->error('non-editable-default-not-allowed');
+            return false;
+        }
+
+        // No permitimos que un estado predeterminado sea bloqueado.
         if (!empty($this->generadoc)) {
             $this->editable = false;
 
@@ -169,7 +170,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
             return self::$dataBase->exec($sql);
         }
 
-        // set other status as default
+        // establecemos el primer estado como predeterminado
         $where = [
             new DataBaseWhere('editable', true),
             new DataBaseWhere('tipodoc', $this->tipodoc)
