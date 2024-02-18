@@ -147,6 +147,10 @@
         <type>boolean</type>
         <default>false</default>
     </column>
+    <column>
+        <name>web</name>
+        <type>character varying(100)</type>
+    </column>
     <constraint>
         <name>contactos_pkey</name>
         <type>PRIMARY KEY (idcontacto)</type>
