@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Model\Agente as DinAgente;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 use FacturaScripts\Dinamic\Model\Pais as DinPais;
@@ -311,6 +312,12 @@ class Contacto extends Base\Contact
         $this->empresa = Tools::noHtml($this->empresa) ?? '';
         $this->provincia = Tools::noHtml($this->provincia) ?? '';
         $this->web = Tools::noHtml($this->web) ?? '';
+
+        // comprobamos si la web es una url válida
+        if (!empty($this->web) && false === Validator::url($this->web)) {
+            Tools::log()->warning('invalid-web', ['%web%' => $this->web]);
+            return false;
+        }
 
         return $this->testPassword() && parent::test();
     }
