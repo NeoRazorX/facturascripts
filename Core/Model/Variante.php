@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -206,19 +206,35 @@ class Variante extends Base\ModelClass
      */
     protected function getAttributeDescription($idAttVal1, $idAttVal2, $idAttVal3, $idAttVal4, $description = '', $separator1 = "\n", $separator2 = ', '): string
     {
+        // obtenemos las descripciones de los atributos
         $attributeValue = new DinAtributoValor();
-        $extra = [];
+        $attDesc = [];
         foreach ([$idAttVal1, $idAttVal2, $idAttVal3, $idAttVal4] as $id) {
             if (!empty($id) && $attributeValue->loadFromCode($id)) {
-                $extra[] = $attributeValue->descripcion;
+                $attribute = $attributeValue->getAtributo();
+                $attDesc[] = [
+                    'position' => empty($attribute->num_selector) ? 99 : $attribute->num_selector,
+                    'value' => $attributeValue->descripcion
+                ];
             }
         }
 
-        // compose text
+        // ordenamos por posición
+        usort($attDesc, function ($a, $b) {
+            return $a['position'] <=> $b['position'];
+        });
+
+        $extra = [];
+        foreach ($attDesc as $item) {
+            $extra[] = $item['value'];
+        }
+
+        // devolvemos la descripción
         if (empty($description)) {
             return implode($separator2, $extra);
         }
 
+        // combinamos la descripción con los atributos
         return empty($extra) ? $description : implode($separator1, [$description, implode($separator2, $extra)]);
     }
 
