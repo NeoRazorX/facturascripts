@@ -1423,6 +1423,7 @@
     "supplier-delivery-notes": "Hornitzaileen albaranak",
     "supplier-estimation": "Hornitzaile aurrekontua",
     "supplier-estimations": "Hornitzaileen aurrekontuak",
+    "supplier-have-no-iban": "El proveedor %%supplier no tiene IBAN (cuenta bancaria)",
     "supplier-invoice": "Hornitzaile faktura",
     "supplier-invoice-deleted-successfully": "%docCode% erosketa faktura ondo ezabatu da.",
     "supplier-invoices": "Hornitzaileen fakturak",

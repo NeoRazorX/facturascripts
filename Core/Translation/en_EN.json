@@ -1423,6 +1423,7 @@
     "supplier-delivery-notes": "Supplier delivery notes",
     "supplier-estimation": "Supplier estimation",
     "supplier-estimations": "Supplier estimations",
+    "supplier-have-no-iban": "The supplier %%supplier has no IBAN (bank account)",
     "supplier-invoice": "Supplier invoice",
     "supplier-invoice-deleted-successfully": "Purchase invoice %docCode% deleted successfully.",
     "supplier-invoices": "Supplier invoices",

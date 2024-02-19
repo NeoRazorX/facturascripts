@@ -1423,6 +1423,7 @@
     "supplier-delivery-notes": "Remisiones de proveedores",
     "supplier-estimation": "Cotización de Proveedor",
     "supplier-estimations": "Cotizaciones de proveedores",
+    "supplier-have-no-iban": "El proveedor %supplier% no tiene IBAN (cuenta bancaria)",
     "supplier-invoice": "Factura de Proveedor",
     "supplier-invoice-deleted-successfully": "Factura de compra %docCode% ha sido eliminada correctamente.",
     "supplier-invoices": "Facturas de proveedores",

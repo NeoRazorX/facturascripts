@@ -1423,6 +1423,7 @@
     "supplier-delivery-notes": "Albaráns de provedores",
     "supplier-estimation": "Orzamento de provedor",
     "supplier-estimations": "Estimacións de provedores",
+    "supplier-have-no-iban": "O provedor %supplier% non ten IBAN (conta bancaria)",
     "supplier-invoice": "Factura de provedor",
     "supplier-invoice-deleted-successfully": "A factura de compra %docCode% foi eliminada con éxito.",
     "supplier-invoices": "Facturas do provedor",

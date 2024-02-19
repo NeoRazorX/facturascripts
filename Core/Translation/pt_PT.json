@@ -1423,6 +1423,7 @@
     "supplier-delivery-notes": "Notas de Entrega de Fornecedores",
     "supplier-estimation": "Estimativa de Fornecedor",
     "supplier-estimations": "Estimativas de Fornecedor",
+    "supplier-have-no-iban": "El proveedor %%supplier no tiene IBAN (cuenta bancaria)",
     "supplier-invoice": "Fatura de Fornecedor",
     "supplier-invoice-deleted-successfully": "Comprar fatura 0 excluída com sucesso.",
     "supplier-invoices": "Faturas de Fornecedor",

@@ -1423,6 +1423,7 @@
     "supplier-delivery-notes": "Albarans dels proveïdors",
     "supplier-estimation": "Presupost del proveïdor",
     "supplier-estimations": "Presuposts dels proveïdors",
+    "supplier-have-no-iban": "El proveedor %%supplier no tiene IBAN (cuenta bancaria)",
     "supplier-invoice": "Factura del proveïdor",
     "supplier-invoice-deleted-successfully": "La factura de compra %docCode% s'ha borrat correctament.",
     "supplier-invoices": "Factures dels Proveïdors",

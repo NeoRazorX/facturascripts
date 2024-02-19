@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,17 +19,18 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Lib\ExtendedController\ListView;
+use FacturaScripts\Core\Tools;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of ColumnItem
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  */
 class ColumnItem extends VisualItem
 {
-
     /**
      * Additional text that explains the field to the user
      *
@@ -160,51 +161,64 @@ class ColumnItem extends VisualItem
         return $this->hidden() ? '' : $this->widget->tableCell($model, $this->display);
     }
 
-    /**
-     * @return string
-     */
-    public function tableHeader($currentView): string
+    public function tableHeader(ListView $currentView): string
     {
         if ($this->hidden()) {
             return '';
         }
 
-        $header = '<th class="text-' . $this->display . '">';
-        if (empty($this->titleurl)) {
-            $header .= static::$i18n->trans($this->title);
-        }
+        $content = '';
 
-        $columna = 'zzzzzzz';
-        $columnaOrden = 'zzzzzzz';
-        $botonOrden = 'zzzzzzz';
-
-        foreach ($currentView->orderOptions as $key => $orderby) {
-            $activeClass = ($currentView->orderKey == $key) ? ' active' : '';
-            $icon = ($orderby["type"] == 'ASC') ? 'fas fa-sort-amount-down-alt' : 'fas fa-sort-amount-down';
-
-            if ($columna != $orderby["fields"][0] || $columnaOrden != $orderby["type"]) {
-                $columna = $orderby["fields"][0];
-                $columnaOrden = $orderby["type"];
-
-                if ($orderby["fields"][0] == $this->widget->fieldname) {
-                    if ($currentView->orderKey != $key || ($currentView->orderKey == $key && $columnaOrden != $orderby["type"])) {
-                        if ($botonOrden != $columna || $botonOrden == 'zzzzzzz') {
-                            $botonOrden = $columna;
-                            $header.= '<a class="drop down-item'.$activeClass.'" href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \'' . $key . '\');" title="' . static::$i18n->trans("order." . $orderby["type"]) . '"> '
-                                        . '<i class="' . $icon . ' fa-fw" aria-hidden="true"></i>'
-                                        . '</a>';
-                        }
-                    }
-                }
+        // recorremos las opciones de ordenación
+        $orderKey = 0;
+        $orderMode = '';
+        foreach ($currentView->orderOptions as $key => $orderBy) {
+            // si no es esta columna, pasamos a la siguiente
+            if ($orderBy['fields'][0] !== $this->widget->fieldname) {
+                continue;
             }
+
+            // si está seleccionada, guardamos el modo de ordenación
+            if ($currentView->orderKey == $key) {
+                $orderMode = $orderBy['type'];
+                continue;
+            }
+
+            // si no está seleccionada, guardamos la clave de ordenación
+            $orderMode = empty($orderMode) ? '-' : $orderMode;
+            $orderKey = $key;
         }
 
-        $header .= '</th>';
+        switch ($orderMode) {
+            case '-':
+                $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
+                    . $orderKey . '\');">' . Tools::lang()->trans($this->title) . '</a>';
+                break;
 
-        return $header;
+            case 'ASC':
+                $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
+                    . $orderKey . '\');"><i class="fa-solid fa-angles-up"></i> ' . Tools::lang()->trans($this->title) . '</a>';
+                break;
+
+            case 'DESC':
+                $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
+                    . $orderKey . '\');"><i class="fa-solid fa-angles-down"></i> ' . Tools::lang()->trans($this->title) . '</a>';
+                break;
+
+            default:
+                $content .= Tools::lang()->trans($this->title);
+                break;
+        }
+
+        // si tiene url, la añadimos como otro enlace
+        if (!empty($this->titleurl)) {
+            $content .= ' <a href="' . $this->titleurl . '"><i class="fa-solid fa-circle-question"></i></a>';
+        }
+
+        return '<th class="text-' . $this->display . '">' . $content . '</th>';
     }
 
-    protected function loadWidget(array $children)
+    protected function loadWidget(array $children): void
     {
         foreach ($children as $child) {
             if ($child['tag'] !== 'widget') {

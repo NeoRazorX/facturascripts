@@ -1423,6 +1423,7 @@
     "supplier-delivery-notes": "Les bons de livraison des fournisseurs",
     "supplier-estimation": "Devis fournisseur",
     "supplier-estimations": "Budgets des fournisseurs",
+    "supplier-have-no-iban": "El proveedor %%supplier no tiene IBAN (cuenta bancaria)",
     "supplier-invoice": "Facture fournisseur",
     "supplier-invoice-deleted-successfully": "La facture d'achat %docCode% a été supprimée avec succès.",
     "supplier-invoices": "Factures fournisseurs",
