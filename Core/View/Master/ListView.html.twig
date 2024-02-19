@@ -143,7 +143,7 @@
                         </th>
                     {% endif %}
                     {% for column in currentView.getColumns() %}
-                        {{ column.tableHeader() | raw }}
+                        {{ column.tableHeader(currentView) | raw }}
                     {% endfor %}
                 </tr>
                 </thead>

@@ -163,19 +163,45 @@ class ColumnItem extends VisualItem
     /**
      * @return string
      */
-    public function tableHeader(): string
+    public function tableHeader($currentView): string
     {
         if ($this->hidden()) {
             return '';
         }
 
+        $header = '<th class="text-' . $this->display . '">';
         if (empty($this->titleurl)) {
-            return '<th class="text-' . $this->display . '">' . static::$i18n->trans($this->title) . '</th>';
+            $header .= static::$i18n->trans($this->title);
         }
 
-        return '<th class="text-' . $this->display . '">'
-            . '<a href="' . $this->titleurl . '">' . static::$i18n->trans($this->title) . '</a>'
-            . '</th>';
+        $columna = 'zzzzzzz';
+        $columnaOrden = 'zzzzzzz';
+        $botonOrden = 'zzzzzzz';
+
+        foreach ($currentView->orderOptions as $key => $orderby) {
+            $activeClass = ($currentView->orderKey == $key) ? ' active' : '';
+            $icon = ($orderby["type"] == 'ASC') ? 'fas fa-sort-amount-down-alt' : 'fas fa-sort-amount-down';
+
+            if ($columna != $orderby["fields"][0] || $columnaOrden != $orderby["type"]) {
+                $columna = $orderby["fields"][0];
+                $columnaOrden = $orderby["type"];
+
+                if ($orderby["fields"][0] == $this->widget->fieldname) {
+                    if ($currentView->orderKey != $key || ($currentView->orderKey == $key && $columnaOrden != $orderby["type"])) {
+                        if ($botonOrden != $columna || $botonOrden == 'zzzzzzz') {
+                            $botonOrden = $columna;
+                            $header.= '<a class="drop down-item'.$activeClass.'" href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \'' . $key . '\');" title="' . static::$i18n->trans("order." . $orderby["type"]) . '"> '
+                                        . '<i class="' . $icon . ' fa-fw" aria-hidden="true"></i>'
+                                        . '</a>';
+                        }
+                    }
+                }
+            }
+        }
+
+        $header .= '</th>';
+
+        return $header;
     }
 
     protected function loadWidget(array $children)
