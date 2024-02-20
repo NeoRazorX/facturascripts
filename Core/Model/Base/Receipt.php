@@ -185,6 +185,10 @@ abstract class Receipt extends ModelOnChangeClass
      */
     protected function onChange($field)
     {
+        if (false === parent::onChange($field)) {
+            return false;
+        }
+
         switch ($field) {
             case 'importe':
                 return !$this->previousData['pagado'];
@@ -194,7 +198,8 @@ abstract class Receipt extends ModelOnChangeClass
                 return true;
 
             default:
-                return parent::onChange($field);
+                return true;
+                //return parent::onChange($field);
         }
     }
 
