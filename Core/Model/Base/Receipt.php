@@ -199,7 +199,6 @@ abstract class Receipt extends ModelOnChangeClass
 
             default:
                 return true;
-                //return parent::onChange($field);
         }
     }
 
