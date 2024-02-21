@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use Closure;
 use Exception;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -65,6 +66,9 @@ class CronJob extends ModelClass
     /** @var float */
     private $start;
 
+    /** @var array */
+    private $jobsAvoidOverlapping;
+
     public function clear()
     {
         parent::clear();
@@ -74,6 +78,7 @@ class CronJob extends ModelClass
         $this->enabled = true;
         $this->failed = false;
         $this->ready = false;
+        $this->jobsAvoidOverlapping = [];
     }
 
     public function every(string $period): self
@@ -160,6 +165,20 @@ class CronJob extends ModelClass
             return false;
         }
 
+        foreach ($this->jobsAvoidOverlapping as $name){
+            $job = new \FacturaScripts\Core\Model\CronJob();
+            $where = [
+                new DataBaseWhere('jobname', $name),
+            ];
+            if (false === $job->loadFromCode('', $where)) {
+                break;
+            }
+
+            if(false === $job->done){
+                return false;
+            }
+        }
+
         $this->start = microtime(true);
         $this->done = false;
         $this->failed = false;
@@ -239,6 +258,12 @@ class CronJob extends ModelClass
         }
 
         $this->ready = false;
+        return $this;
+    }
+
+    public function withoutOverlapping(array $jobs)
+    {
+        $this->jobsAvoidOverlapping = array_merge($this->jobsAvoidOverlapping, $jobs);
         return $this;
     }
 }
