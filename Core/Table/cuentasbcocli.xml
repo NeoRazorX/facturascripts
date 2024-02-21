@@ -29,6 +29,10 @@
         <type>character varying(34)</type>
     </column>
     <column>
+        <name>mandato</name>
+        <type>character varying(35)</type>
+    </column>
+    <column>
         <name>principal</name>
         <type>boolean</type>
     </column>
@@ -39,6 +43,10 @@
     <constraint>
         <name>cuentasbcocli_pkey</name>
         <type>PRIMARY KEY (codcuenta)</type>
+    </constraint>
+    <constraint>
+        <name>unique_cuentasbcocli_mandato</name>
+        <type>UNIQUE (mandato)</type>
     </constraint>
     <constraint>
         <name>ca_cuentasbcocli_clientes</name>
