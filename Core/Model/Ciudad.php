@@ -72,8 +72,6 @@ class Ciudad extends Base\ModelClass
 
     public function test(): bool
     {
-        Cache::delete('DataModel.' . $this->modelClassName());
-
         $this->ciudad = Tools::noHtml($this->ciudad);
 
         return parent::test();
@@ -86,7 +84,7 @@ class Ciudad extends Base\ModelClass
 
     public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
     {
-        if ($where === []) {
+        if ($where === [] && $order === [] && $offset === 0 && $limit === 50) {
             return Cache::remember(
                 'DataModel.' . $this->modelClassName(),
                 function () use ($where, $order, $offset, $limit) {
@@ -96,5 +94,16 @@ class Ciudad extends Base\ModelClass
         }
 
         return parent::all($where, $order, $offset, $limit);
+    }
+
+    public function save(): bool
+    {
+        $isSaved = parent::save();
+
+        if($isSaved){
+            Cache::delete('DataModel.' . $this->modelClassName());
+        }
+
+        return $isSaved;
     }
 }

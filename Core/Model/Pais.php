@@ -95,13 +95,14 @@ class Pais extends ModelClass
 
     public function save(): bool
     {
-        if (parent::save()) {
-            // limpiamos la caché
+        $isSaved = parent::save();
+
+        if($isSaved){
             Paises::clear();
-            return true;
+            Cache::delete('DataModel.' . $this->modelClassName());
         }
 
-        return false;
+        return $isSaved;
     }
 
     public static function tableName(): string
@@ -111,8 +112,6 @@ class Pais extends ModelClass
 
     public function test(): bool
     {
-        Cache::delete('DataModel.' . $this->modelClassName());
-        
         $this->codpais = Tools::noHtml($this->codpais);
         if ($this->codpais && 1 !== preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
             Tools::log()->error(
@@ -129,7 +128,7 @@ class Pais extends ModelClass
 
     public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
     {
-        if ($where === []) {
+        if ($where === [] && $order === [] && $offset === 0 && $limit === 50) {
             return Cache::remember(
                 'DataModel.' . $this->modelClassName(),
                 function () use ($where, $order, $offset, $limit) {
