@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -67,10 +67,7 @@ trait InvoiceTrait
 
     abstract public function testDate(): bool;
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if (false === $this->editable) {
             Tools::log()->warning('non-editable-document');
