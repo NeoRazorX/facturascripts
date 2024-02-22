@@ -194,7 +194,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2024;
+        return 2024.1;
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
