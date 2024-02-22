@@ -106,11 +106,6 @@ class FacturaCliente extends Base\SalesDocument
 
     protected function testDate(): bool
     {
-        if ($this->codserie != $this->previousData['codserie']) {
-            // prevent check date if serie is changed
-            return true;
-        }
-
         // prevent form using old dates
         $numColumn = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
         $whereOld = [
