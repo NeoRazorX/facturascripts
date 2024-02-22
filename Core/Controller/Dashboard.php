@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -24,9 +24,12 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
+use FacturaScripts\Core\Lib\Calendar;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\ReciboProveedor;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\CalendarEvent;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -69,6 +72,9 @@ class Dashboard extends Controller
     /** @var array */
     public $stats = [];
 
+    /** @var string|null */
+    public $calendario = null;
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -85,7 +91,7 @@ class Dashboard extends Controller
      * @param User $user
      * @param ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user, $permissions)
+    public function privateCore(&$response, $user, $permissions): void
     {
         parent::privateCore($response, $user, $permissions);
 
@@ -138,7 +144,7 @@ class Dashboard extends Controller
 
         return [
             new DataBaseWhere($field, $fromDate, '>='),
-            new DataBaseWhere($field, $untilDate, '<')
+            new DataBaseWhere($field, $untilDate, '<'),
         ];
     }
 
@@ -170,6 +176,7 @@ class Dashboard extends Controller
         $this->loadLowStockSection();
         $this->loadReceiptSection();
         $this->loadNews();
+        $this->loadCalendar();
 
         $this->pipe('loadExtensions');
     }
@@ -216,6 +223,25 @@ class Dashboard extends Controller
         Cache::set('dashboard-news', $this->news);
     }
 
+    private function loadCalendar(): void
+    {
+        $recibosProveedores = new ReciboProveedor();
+        $recibosClientes = new ReciboCliente();
+        $recibos = array_merge($recibosProveedores->all(), $recibosClientes->all());
+
+        $eventos = [];
+        foreach ($recibos as $recibo) {
+            $eventos[] = new CalendarEvent(
+                $recibo->vencimiento,
+                $recibo->url(),
+                $recibo->getSubject()->nombre,
+                Tools::money($recibo->importe)
+            );
+        }
+
+        $this->calendario = Calendar::renderMonth(date('Y'), date('m'), date('d'), $eventos);
+    }
+
     /**
      * Loads the links to the latest data created by the user.
      */
@@ -236,7 +262,7 @@ class Dashboard extends Controller
                 'type' => 'customer',
                 'url' => $customer->url(),
                 'name' => $customer->nombre,
-                'date' => $customer->fechaalta
+                'date' => $customer->fechaalta,
             ];
         }
 
@@ -247,7 +273,7 @@ class Dashboard extends Controller
                 'type' => 'contact',
                 'url' => $contact->url(),
                 'name' => $contact->fullName(),
-                'date' => $contact->fechaalta
+                'date' => $contact->fechaalta,
             ];
         }
 
@@ -258,7 +284,7 @@ class Dashboard extends Controller
                 'type' => 'product',
                 'url' => $product->url(),
                 'name' => $product->referencia,
-                'date' => $product->actualizado
+                'date' => $product->actualizado,
             ];
         }
 
@@ -274,7 +300,7 @@ class Dashboard extends Controller
         $where = [
             new DataBaseWhere('pagado', false),
             new DataBaseWhere('vencimiento', Tools::date(), '<'),
-            new DataBaseWhere('vencimiento', date('Y-m-d', strtotime('-1 year')), '>')
+            new DataBaseWhere('vencimiento', date('Y-m-d', strtotime('-1 year')), '>'),
         ];
         $this->receipts = $receiptModel->all($where, ['vencimiento' => 'DESC']);
 
@@ -331,14 +357,14 @@ class Dashboard extends Controller
         $minDate = Tools::date('-2 days');
         $where = [
             new DataBaseWhere('fecha', $minDate, '>='),
-            new DataBaseWhere('nick', $this->user->nick)
+            new DataBaseWhere('nick', $this->user->nick),
         ];
         foreach ($model->all($where, [$model->primaryColumn() => 'DESC'], 0, 3) as $doc) {
             $this->openLinks[] = [
                 'type' => $label,
                 'url' => $doc->url(),
                 'name' => $doc->codigo,
-                'date' => $doc->fecha
+                'date' => $doc->fecha,
             ];
         }
     }
