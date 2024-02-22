@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -171,7 +171,7 @@ class CronJob extends ModelClass
                 new DataBaseWhere('jobname', $name),
             ];
             if (false === $job->loadFromCode('', $where)) {
-                break;
+                continue;
             }
 
             if(false === $job->done){
