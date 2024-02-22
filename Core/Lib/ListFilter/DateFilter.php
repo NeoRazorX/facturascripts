@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,42 +28,47 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class DateFilter extends BaseFilter
 {
+    /** @var bool */
+    public $dateTime;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $operation;
 
-    /**
-     * @param string $key
-     * @param string $field
-     * @param string $label
-     * @param string $operation
-     */
-    public function __construct(string $key, string $field = '', string $label = '', string $operation = '>=')
+    public function __construct(string $key, string $field = '', string $label = '', string $operation = '>=', bool $dateTime = false)
     {
         parent::__construct($key, $field, $label);
+
+        $this->dateTime = $dateTime;
         $this->operation = $operation;
     }
 
-    /**
-     * @param array $where
-     *
-     * @return bool
-     */
     public function getDataBaseWhere(array &$where): bool
     {
-        if ('' !== $this->value && null !== $this->value) {
-            $where[] = new DataBaseWhere($this->field, $this->value, $this->operation);
-            return true;
+        if ('' === $this->value || null === $this->value) {
+            return false;
         }
 
-        return false;
+        // si es dateTime, añadimos la hora
+        switch ($this->operation) {
+            case '>':
+            case '>=':
+            case '<':
+                if ($this->dateTime) {
+                    $this->value .= ' 00:00:00';
+                }
+                break;
+
+            case '<=':
+                if ($this->dateTime) {
+                    $this->value .= ' 23:59:59';
+                }
+                break;
+        }
+
+        $where[] = new DataBaseWhere($this->field, $this->value, $this->operation);
+        return true;
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
         $value = empty($this->value) ? '' : date('Y-m-d', strtotime($this->value));

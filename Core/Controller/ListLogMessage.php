@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -60,7 +60,7 @@ class ListLogMessage extends ListController
         // filtros
         $plugins = $this->codeModel->all('cronjobs', 'pluginname', 'pluginname');
         $this->addFilterSelect($viewName, 'pluginname', 'plugin', 'pluginname', $plugins);
-        $this->addFilterPeriod($viewName, 'date', 'period', 'date');
+        $this->addFilterPeriod($viewName, 'date', 'period', 'date', true);
 
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
@@ -105,7 +105,7 @@ class ListLogMessage extends ListController
         $models = $this->codeModel->all('logs', 'model', 'model');
         $this->addFilterSelect($viewName, 'model', 'doc-type', 'model', $models);
 
-        $this->addFilterPeriod($viewName, 'time', 'period', 'time');
+        $this->addFilterPeriod($viewName, 'time', 'period', 'time', true);
 
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
