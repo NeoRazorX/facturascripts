@@ -61,7 +61,7 @@ trait InvoiceTrait
     /** @return bool */
     public $vencida;
 
-    abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array;
+    abstract public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array;
 
     abstract public function getReceipts(): array;
 

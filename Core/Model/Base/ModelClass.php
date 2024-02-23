@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,10 +43,15 @@ abstract class ModelClass extends ModelCore
      *
      * @return static[]
      */
-    public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
+    public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
     {
+        // si todavía no se ha conectado a la base de datos, lo hacemos ahora
+        if (null === self::$dataBase) {
+            new static();
+        }
+
         $modelList = [];
-        $sql = 'SELECT * FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where) . $this->getOrderBy($order);
+        $sql = 'SELECT * FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where) . self::getOrderBy($order);
         foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $row) {
             $modelList[] = new static($row);
         }
@@ -441,7 +446,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    private function getOrderBy(array $order): string
+    private static function getOrderBy(array $order): string
     {
         $result = '';
         $coma = ' ORDER BY ';
@@ -465,8 +470,10 @@ abstract class ModelClass extends ModelCore
      */
     private function getRecord($code, array $where = [], array $order = []): array
     {
-        $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($code) : DataBaseWhere::getSQLWhere($where);
-        $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($order);
+        $sqlWhere = empty($where) ?
+            ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($code) :
+            DataBaseWhere::getSQLWhere($where);
+        $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . self::getOrderBy($order);
         return empty($code) && empty($where) ? [] : self::$dataBase->selectLimit($sql, 1);
     }
 }
