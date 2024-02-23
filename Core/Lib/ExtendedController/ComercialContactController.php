@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -101,21 +101,24 @@ abstract class ComercialContactController extends EditController
     }
 
     /**
-     * Add a Email Sent List View.
+     * Add an Email Sent List View.
      *
      * @param string $viewName
      */
     protected function createEmailsView(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
-        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
-        $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope')
+            ->addOrderBy(['date'], 'date', 2)
+            ->addSearchFields(['addressee', 'body', 'subject']);
 
         // desactivamos la columna de destinatario
         $this->views[$viewName]->disableColumn('to');
 
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
+
+        // filtros
+        $this->listView($viewName)->addFilterPeriod('period', 'date', 'date', true);
     }
 
     /**
@@ -127,15 +130,11 @@ abstract class ComercialContactController extends EditController
      */
     protected function createLineView(string $viewName, string $model, string $label = 'products'): void
     {
-        $this->addListView($viewName, $model, $label, 'fas fa-cubes');
-
-        // opciones de ordenación
-        $this->views[$viewName]->addOrderBy(['idlinea'], 'code', 2);
-        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
-        $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
-
-        // columnas de búsqueda
-        $this->views[$viewName]->addSearchFields(['referencia', 'descripcion']);
+        $this->addListView($viewName, $model, $label, 'fas fa-cubes')
+            ->addOrderBy(['idlinea'], 'code', 2)
+            ->addOrderBy(['cantidad'], 'quantity')
+            ->addOrderBy(['pvptotal'], 'amount')
+            ->addSearchFields(['referencia', 'descripcion']);
 
         // botones
         $this->setSettings($viewName, 'btnDelete', false);
@@ -153,20 +152,19 @@ abstract class ComercialContactController extends EditController
      */
     private function createListView(string $viewName, string $model, string $label, array $fields): void
     {
-        $this->addListView($viewName, $model, $label, 'fas fa-copy');
-
-        // sort options
-        $this->views[$viewName]->addOrderBy(['codigo'], 'code');
-        $this->views[$viewName]->addOrderBy(['fecha', 'hora'], 'date', 2);
-        $this->views[$viewName]->addOrderBy(['numero'], 'number');
-        $this->views[$viewName]->addOrderBy([$fields['numfield']], $fields['numtitle']);
-        $this->views[$viewName]->addOrderBy(['total'], 'amount');
-
-        // search columns
-        $this->views[$viewName]->addSearchFields(['codigo', 'observaciones', $fields['numfield']]);
+        $this->addListView($viewName, $model, $label, 'fas fa-copy')
+            ->addOrderBy(['codigo'], 'code')
+            ->addOrderBy(['fecha', 'hora'], 'date', 2)
+            ->addOrderBy(['numero'], 'number')
+            ->addOrderBy([$fields['numfield']], $fields['numtitle'])
+            ->addOrderBy(['total'], 'amount')
+            ->addSearchFields(['codigo', 'observaciones', $fields['numfield']]);
 
         // disable columns
-        $this->views[$viewName]->disableColumn($fields['linkfield'], true);
+        $this->listView($viewName)->disableColumn($fields['linkfield'], true);
+
+        // filters
+        $this->listView($viewName)->addFilterPeriod('period', 'date', 'fecha');
     }
 
     /**
@@ -177,19 +175,15 @@ abstract class ComercialContactController extends EditController
      */
     protected function createReceiptView(string $viewName, string $model): void
     {
-        $this->addListView($viewName, $model, 'receipts', 'fas fa-dollar-sign');
-
-        // opciones de ordenación
-        $this->views[$viewName]->addOrderBy(['fecha'], 'date');
-        $this->views[$viewName]->addOrderBy(['fechapago'], 'payment-date');
-        $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration', 2);
-        $this->views[$viewName]->addOrderBy(['importe'], 'amount');
+        $this->addListView($viewName, $model, 'receipts', 'fas fa-dollar-sign')
+            ->addOrderBy(['fecha'], 'date')
+            ->addOrderBy(['fechapago'], 'payment-date')
+            ->addOrderBy(['vencimiento'], 'expiration', 2)
+            ->addOrderBy(['importe'], 'amount')
+            ->addSearchFields(['codigofactura', 'observaciones']);
 
         // filtros
-        $this->views[$viewName]->addFilterPeriod('period', 'expiration', 'vencimiento');
-
-        // campos de búsqueda
-        $this->views[$viewName]->addSearchFields(['codigofactura', 'observaciones']);
+        $this->listView($viewName)->addFilterPeriod('period', 'expiration', 'vencimiento');
 
         // botones
         $this->addButtonPayReceipt($viewName);
@@ -209,16 +203,12 @@ abstract class ComercialContactController extends EditController
      */
     protected function createSubaccountsView(string $viewName = 'ListSubcuenta'): void
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book');
-
-        // sort options
-        $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code');
-        $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
-
-        // search columns
-        $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book')
+            ->addOrderBy(['codsubcuenta'], 'code')
+            ->addOrderBy(['codejercicio'], 'exercise', 2)
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['saldo'], 'balance')
+            ->addSearchFields(['codsubcuenta', 'descripcion']);
 
         // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);

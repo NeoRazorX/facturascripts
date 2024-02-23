@@ -259,7 +259,8 @@ abstract class ListController extends BaseController
         $this->addCustomView($viewName, $view)
             ->setSettings('btnPrint', true)
             ->setSettings('card', false)
-            ->setSettings('megasearch', true);
+            ->setSettings('megasearch', true)
+            ->setSettings('saveFilters', true);
 
         return $view;
     }

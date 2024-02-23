@@ -256,7 +256,7 @@
             <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
                 <i class="fas fa-filter fa-fw"></i> {{ trans('filters') }}
             </button>
-            {% if currentView.showFilters %}
+            {% if currentView.showFilters and currentView.settings.saveFilters %}
                 {# -- Save user filters -- #}
                 <button type="button" class="btn btn-success" data-toggle="modal"
                         data-target="#savefilter{{ viewName }}" title="{{ trans('save-filter') }}">
