@@ -319,6 +319,7 @@
     "counterpart": "Kontrakontua",
     "countries": "Estatuak",
     "country": "Estatua",
+    "country-not-in-eu": "El %codiso% no pertenece a ningún país de la unión Europea",
     "create": "Sortu",
     "create-accounting-entry": "Kontabilitate Idazpena Sortu",
     "create-delivery-note": "Crear albarán",

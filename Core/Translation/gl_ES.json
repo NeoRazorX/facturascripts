@@ -319,6 +319,7 @@
     "counterpart": "Contrapartida",
     "countries": "Países",
     "country": "País",
+    "country-not-in-eu": "O %codiso% non pertence a ningún país da unión Europea",
     "create": "Crear",
     "create-accounting-entry": "Crear Asento Contable",
     "create-delivery-note": "Novo albarán",

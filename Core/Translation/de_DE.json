@@ -319,6 +319,7 @@
     "counterpart": "Gegenstück",
     "countries": "Länder",
     "country": "Land",
+    "country-not-in-eu": "El %codiso% no pertenece a ningún país de la unión Europea",
     "create": "erstellen",
     "create-accounting-entry": "Buchung erstellen",
     "create-delivery-note": "Crear albarán",

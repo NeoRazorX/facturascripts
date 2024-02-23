@@ -319,6 +319,7 @@
     "counterpart": "Offsetting",
     "countries": "paesi",
     "country": "Nazione",
+    "country-not-in-eu": "El %codiso% no pertenece a ningún país de la unión Europea",
     "create": "create",
     "create-accounting-entry": "Create Accounting Entry",
     "create-delivery-note": "Crear albarán",

@@ -319,6 +319,7 @@
     "counterpart": "Compensation",
     "countries": "Des pays",
     "country": "Pays",
+    "country-not-in-eu": "El %codiso% no pertenece a ningún país de la unión Europea",
     "create": "Créer",
     "create-accounting-entry": "Créer une entrée comptable",
     "create-delivery-note": "Crear albarán",
