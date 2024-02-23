@@ -45,8 +45,8 @@ abstract class ModelClass extends ModelCore
      */
     public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
     {
-        // si todavía no se ha conectado a la base de datos, lo hacemos ahora
-        if (null === self::$dataBase) {
+        // si todavía no se ha comprobado la tabla, inicializamos la clase
+        if (!in_array(static::tableName(), self::$checkedTables)) {
             new static();
         }
 
