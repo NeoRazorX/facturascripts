@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Contract\LegacyModelInterface;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -351,7 +351,7 @@ abstract class ListController extends BaseController
     /**
      * Returns the where filter to apply to obtain the data created by the active user.
      *
-     * @param ModelClass $model
+     * @param LegacyModelInterface $model
      *
      * @return DataBaseWhere[]
      */

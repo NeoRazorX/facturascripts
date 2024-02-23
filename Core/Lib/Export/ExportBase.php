@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Contract\LegacyModelInterface;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,11 +77,6 @@ abstract class ExportBase
      */
     abstract public function show(Response &$response);
 
-    /**
-     * @param array $columns
-     *
-     * @return array
-     */
     protected function getColumnAlignments(array $columns): array
     {
         $alignments = [];
@@ -106,11 +101,6 @@ abstract class ExportBase
         return $alignments;
     }
 
-    /**
-     * @param array $columns
-     *
-     * @return array
-     */
     protected function getColumnTitles(array $columns): array
     {
         $titles = [];
@@ -135,11 +125,6 @@ abstract class ExportBase
         return $titles;
     }
 
-    /**
-     * @param array $columns
-     *
-     * @return array
-     */
     protected function getColumnWidgets(array $columns): array
     {
         $widgets = [];
@@ -164,7 +149,7 @@ abstract class ExportBase
     }
 
     /**
-     * @param ModelClass[] $cursor
+     * @param LegacyModelInterface[] $cursor
      * @param array $columns
      *
      * @return array
@@ -183,7 +168,7 @@ abstract class ExportBase
     }
 
     /**
-     * @param ModelClass[] $cursor
+     * @param LegacyModelInterface[] $cursor
      * @param array $fields
      *
      * @return array
@@ -232,13 +217,7 @@ abstract class ExportBase
         return $documentFormat;
     }
 
-    /**
-     * @param ModelClass $model
-     * @param array $columns
-     *
-     * @return array
-     */
-    protected function getModelColumnsData(ModelClass $model, array $columns): array
+    protected function getModelColumnsData(LegacyModelInterface $model, array $columns): array
     {
         $data = [];
         foreach ($columns as $col) {
@@ -265,7 +244,7 @@ abstract class ExportBase
     }
 
     /**
-     * @param ModelClass $model
+     * @param LegacyModelInterface $model
      *
      * @return array
      */
@@ -279,17 +258,11 @@ abstract class ExportBase
         return $fields;
     }
 
-    /**
-     * @return string
-     */
     protected function getFileName(): string
     {
         return empty($this->fileName) ? 'file_' . mt_rand(1, 9999) : $this->fileName;
     }
 
-    /**
-     * @param string $name
-     */
     protected function setFileName(string $name)
     {
         if (empty($this->fileName)) {

@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Lib\API;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Contract\LegacyModelInterface;
 use FacturaScripts\Core\Lib\API\Base\APIResourceClass;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Tools;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,7 +37,7 @@ class APIModel extends APIResourceClass
     /**
      * ModelClass object.
      *
-     * @var ModelClass $model
+     * @var LegacyModelInterface $model
      */
     private $model;
 

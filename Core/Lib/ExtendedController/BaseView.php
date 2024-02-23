@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Contract\LegacyModelInterface;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
 use FacturaScripts\Dinamic\Lib\Widget\GroupItem;
@@ -71,7 +71,7 @@ abstract class BaseView
     /**
      * Model to use in this view.
      *
-     * @var ModelClass
+     * @var LegacyModelInterface
      */
     public $model;
 

@@ -23,8 +23,8 @@ use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Contract\LegacyModelInterface;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -280,7 +280,7 @@ abstract class BaseController extends Controller
      * Returns true if the active user has permission to view the information
      * of the active record in the informed model.
      *
-     * @param ModelClass $model
+     * @param LegacyModelInterface $model
      *
      * @return bool
      */
