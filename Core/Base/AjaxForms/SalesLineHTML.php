@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -194,6 +194,7 @@ class SalesLineHTML
     {
         $line->orden = (int)$formData['orden_' . $id];
         $line->cantidad = (float)$formData['cantidad_' . $id];
+        $line->coste = (float)$formData['coste_' . $id];
         $line->dtopor = (float)$formData['dtopor_' . $id];
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];
@@ -285,6 +286,23 @@ class SalesLineHTML
             '<div class="input-group-prepend" title="' . $i18n->trans('stock') . '">' . $html . '</div>';
     }
 
+    private static function coste(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): string
+    {
+        if (false === CommonSalesPurchases::checkLevel(Tools::settings('default', 'levelcostsales', 0))) {
+            return '';
+        }
+
+        $attributes = $model->editable ?
+            'name="' . $field . '_' . $idlinea . '" min="0" step="any"' :
+            'disabled=""';
+
+        return '<div class="col-6">'
+            . '<div class="mb-2">' . $i18n->trans('cost')
+            . '<input type="number" ' . $attributes . ' value="' . $line->{$field} . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
     private static function getFastLine(SalesDocument $model, array $formData): ?SalesDocumentLine
     {
         if (empty($formData['fastli'])) {
@@ -344,6 +362,9 @@ class SalesLineHTML
 
             case 'codimpuesto':
                 return self::codimpuesto($i18n, $idlinea, $line, $model, 'salesFormAction');
+
+            case 'coste':
+                return self::coste($i18n, $idlinea, $line, $model, 'coste');
 
             case 'descripcion':
                 return self::descripcion($i18n, $idlinea, $line, $model);
@@ -406,6 +427,7 @@ class SalesLineHTML
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_cantidad')
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_precio')
             . self::renderField($i18n, $idlinea, $line, $model, 'salto_pagina')
+            . self::renderField($i18n, $idlinea, $line, $model, 'coste')
             . self::renderNewModalFields($i18n, $idlinea, $line, $model)
             . '</div>'
             . '</div>'
