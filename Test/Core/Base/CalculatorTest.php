@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -27,14 +27,23 @@ use FacturaScripts\Core\Model\ImpuestoZona;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Serie;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CalculatorTest extends TestCase
 {
     use RandomDataTrait;
+    use LogErrorsTrait;
+    use DefaultSettingsTrait;
 
-    public function testEmptyDoc()
+    public static function setUpBeforeClass(): void
+    {
+        self::setDefaultSettings();
+    }
+
+    public function testEmptyDoc(): void
     {
         $doc = new PresupuestoCliente();
         $lines = [];
@@ -50,7 +59,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
     }
 
-    public function testEmptyLine()
+    public function testEmptyLine(): void
     {
         $doc = new PresupuestoCliente();
         $lines = [$doc->getNewLine()];
@@ -70,7 +79,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $lines[0]->pvptotal, 'bad-line-pvptotal');
     }
 
-    public function testLines()
+    public function testLines(): void
     {
         $doc = new PresupuestoCliente();
 
@@ -109,7 +118,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(20.0, $lines[1]->pvptotal, 'bad-line2-pvptotal');
     }
 
-    public function testDiscounts()
+    public function testDiscounts(): void
     {
         $doc = new PresupuestoCliente();
         $doc->dtopor1 = 5;
@@ -150,7 +159,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(17.1, $lines[1]->pvptotal, 'bad-line2-pvptotal');
     }
 
-    public function testRetention()
+    public function testRetention(): void
     {
         $doc = new PresupuestoCliente();
 
@@ -187,7 +196,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
     }
 
-    public function testCustomerRe()
+    public function testCustomerRe(): void
     {
         // creamos un cliente con recargo de equivalencia
         $subject = $this->getRandomCustomer();
@@ -235,7 +244,7 @@ final class CalculatorTest extends TestCase
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');
     }
 
-    public function testSupplierRe()
+    public function testSupplierRe(): void
     {
         // creamos un proveedor con recargo de equivalencia
         $subject = $this->getRandomSupplier();
@@ -269,7 +278,7 @@ final class CalculatorTest extends TestCase
         $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
     }
 
-    public function testSupplied()
+    public function testSupplied(): void
     {
         $doc = new PresupuestoCliente();
 
@@ -306,7 +315,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(50.0, $doc->totalsuplidos, 'bad-totalsuplidos');
     }
 
-    public function testNoTaxSerie()
+    public function testNoTaxSerie(): void
     {
         // creamos una serie sin impuestos
         $serie = new Serie();
@@ -352,7 +361,7 @@ final class CalculatorTest extends TestCase
         $serie->delete();
     }
 
-    public function testCustomerExempt()
+    public function testCustomerExempt(): void
     {
         // creamos un cliente exento
         $subject = $this->getRandomCustomer();
@@ -386,7 +395,7 @@ final class CalculatorTest extends TestCase
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');
     }
 
-    public function testSupplierExempt()
+    public function testSupplierExempt(): void
     {
         // creamos un proveedor exento
         $subject = $this->getRandomSupplier();
@@ -420,7 +429,7 @@ final class CalculatorTest extends TestCase
         $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
     }
 
-    public function testTaxZone()
+    public function testTaxZone(): void
     {
         // creamos un impuesto del 20%
         $tax1 = new Impuesto();
@@ -486,7 +495,7 @@ final class CalculatorTest extends TestCase
         $tax2->delete();
     }
 
-    public function testNoTaxZone()
+    public function testNoTaxZone(): void
     {
         // creamos un impuesto del 20%
         $tax1 = new Impuesto();
@@ -530,5 +539,88 @@ final class CalculatorTest extends TestCase
         // eliminamos
         $zone1->delete();
         $tax1->delete();
+    }
+
+    /**
+     *  Sujeto exento de impuesto y Serie sin impuesto
+     */
+    public function testSubjectWithoutTaxSeriesWithoutTax(): void
+    {
+        // creamos una serie sin impuestos
+        $serie = new Serie();
+        $serie->codserie = 'NT';
+        if (false === $serie->exists()) {
+            $serie->descripcion = 'NO TAX';
+            $serie->siniva = true;
+            $this->assertTrue($serie->save(), 'can-not-save-no-tax-serie');
+
+            // limpiamos la caché
+            Series::clear();
+        }
+
+        // creamos un cliente exento
+        $subject = $this->getRandomCustomer();
+        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_EXEMPT;
+        $this->assertTrue($subject->save(), 'can-not-create-customer-exempt');
+
+        // creamos el documento
+        $doc = new PresupuestoCliente();
+        $doc->codserie = $serie->codserie;
+        $doc->setSubject($subject);
+        $this->assertTrue($doc->save());
+
+        // primera línea
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 1;
+        $line1->pvpunitario = 100;
+        $this->assertTrue($line1->save());
+
+        $lines = [$line1];
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+
+        $this->assertNull($doc->getLines()[0]->codimpuesto);
+
+        // eliminamos
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
+        $serie->delete();
+    }
+
+    /**
+     *  Sujeto exento de impuesto y Serie con impuesto
+     */
+    public function testSubjectWithoutTaxSeriesWithTax(): void
+    {
+        // creamos un cliente exento
+        $subject = $this->getRandomCustomer();
+        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_EXEMPT;
+        $this->assertTrue($subject->save(), 'can-not-create-customer-exempt');
+
+        // creamos el documento
+        $doc = new PresupuestoCliente();
+        $doc->setSubject($subject);
+        $this->assertTrue($doc->save());
+
+        // primera línea
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 1;
+        $line1->pvpunitario = 100;
+        $this->assertTrue($line1->save());
+
+        $lines = [$line1];
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+
+        $this->assertEquals('IVA0', $doc->getLines()[0]->codimpuesto);
+
+        // eliminamos
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }
