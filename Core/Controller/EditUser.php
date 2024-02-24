@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -104,9 +104,42 @@ class EditUser extends EditController
         if ($this->user->admin) {
             $this->createViewsRole();
         }
+
+        // add page options tab
+        $this->createViewsPageOptions();
+
+        // add emails tab
+        $this->createViewsEmails();
     }
 
-    protected function createViewsRole(string $viewName = 'EditRoleUser')
+    protected function createViewsEmails(string $viewName = 'ListEmailSent'): void
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope')
+            ->addOrderBy(['date'], 'date', 2)
+            ->addSearchFields(['addressee', 'body', 'subject']);
+
+        // desactivamos la columna de destinatario
+        $this->views[$viewName]->disableColumn('user');
+
+        // desactivamos el botón nuevo
+        $this->setSettings($viewName, 'btnNew', false);
+
+        // filtros
+        $this->listView($viewName)->addFilterPeriod('period', 'date', 'date', true);
+    }
+
+    protected function createViewsPageOptions(string $viewName = 'ListPageOption'): void
+    {
+        $this->addListView($viewName, 'PageOption', 'options', 'fas fa-wrench')
+            ->addOrderBy(['name'], 'name', 1)
+            ->addOrderBy(['last_update'], 'last-update')
+            ->addSearchFields(['name']);
+
+        // desactivamos el botón nuevo
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    protected function createViewsRole(string $viewName = 'EditRoleUser'): void
     {
         $this->addEditListView($viewName, 'RoleUser', 'roles', 'fas fa-address-card');
         $this->views[$viewName]->setInLine('true');
@@ -209,9 +242,11 @@ class EditUser extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+        $nick = $this->getViewModelValue($mvn, 'nick');
+
         switch ($viewName) {
             case 'EditRoleUser':
-                $nick = $this->getViewModelValue('EditUser', 'nick');
                 $where = [new DataBaseWhere('nick', $nick)];
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;
@@ -231,13 +266,26 @@ class EditUser extends EditController
                     $this->setSettings('EditRoleUser', 'active', false);
                 }
                 break;
+
+            case 'ListEmailSent':
+                $where = [new DataBaseWhere('nick', $nick)];
+                $view->loadData('', $where);
+                break;
+
+            case 'ListPageOption':
+                $where = [
+                    new DataBaseWhere('nick', $nick),
+                    new DataBaseWhere('nick', null, 'IS', 'OR'),
+                ];
+                $view->loadData('', $where);
+                break;
         }
     }
 
     /**
      * Load a list of pages where user has access that can be set as homepage.
      */
-    protected function loadHomepageValues()
+    protected function loadHomepageValues(): void
     {
         if (false === $this->views['EditUser']->model->exists()) {
             $this->views['EditUser']->disableColumn('homepage');
@@ -254,7 +302,7 @@ class EditUser extends EditController
     /**
      * Load the available language values from translator.
      */
-    protected function loadLanguageValues()
+    protected function loadLanguageValues(): void
     {
         $columnLangCode = $this->views['EditUser']->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
