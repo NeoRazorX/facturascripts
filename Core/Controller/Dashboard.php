@@ -1,7 +1,7 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -217,8 +217,8 @@ class Dashboard extends Controller
         $this->setOpenLinksForDocument(new PedidoCliente(), 'order');
         $this->setOpenLinksForDocument(new PresupuestoCliente(), 'estimation');
 
-        $minDate = date(Producto::DATE_STYLE, strtotime('-2 days'));
-        $minDateTime = date(Producto::DATETIME_STYLE, strtotime('-2 days'));
+        $minDate = Tools::date('-2 days');
+        $minDateTime = Tools::dateTime('-2 days');
 
         $customerModel = new Cliente();
         $whereCustomer = [new DataBaseWhere('fechaalta', $minDate, '>=')];
