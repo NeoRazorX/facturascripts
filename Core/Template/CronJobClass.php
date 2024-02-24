@@ -34,7 +34,7 @@ abstract class CronJobClass
     /** @var string */
     private static $echo = '';
 
-    private static function echo(string $text): void
+    protected static function echo(string $text): void
     {
         echo $text;
         ob_flush();
@@ -42,17 +42,17 @@ abstract class CronJobClass
         self::$echo .= $text;
     }
 
-    private static function getEcho(): string
+    protected static function getEcho(): string
     {
         return self::$echo;
     }
 
-    private static function text(string $text): void
+    protected static function text(string $text): void
     {
         self::$echo .= $text;
     }
 
-    private static function saveEcho(): void
+    protected static function saveEcho(): void
     {
         if (empty(self::$echo)) {
             return;
@@ -71,7 +71,7 @@ abstract class CronJobClass
         }
     }
 
-    private static function sendToAdmins(string $subject, string $body): void
+    protected static function sendToAdmins(string $subject, string $body): void
     {
         foreach (Users::all() as $user) {
             if (false === $user->admin) {
