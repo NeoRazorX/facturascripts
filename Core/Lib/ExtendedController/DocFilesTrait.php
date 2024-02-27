@@ -69,6 +69,11 @@ trait DocFilesTrait
             }
         }
 
+        // Si se trata de un documento, actualizamos el número de documentos adjuntos.
+        if ($this->getModel() instanceof BusinessDocument) {
+            $this->updateNumDocs();
+        }
+
         Tools::log()->notice('record-updated-correctly');
         return true;
     }
