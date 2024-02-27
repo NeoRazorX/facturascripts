@@ -112,14 +112,14 @@ abstract class ListBusinessDocument extends ListController
 
     protected function createViewLines(string $viewName, string $modelName): void
     {
-        $this->addView($viewName, $modelName, 'lines', 'fas fa-list');
-        $this->addSearchFields($viewName, ['referencia', 'descripcion']);
-        $this->addOrderBy($viewName, ['referencia'], 'reference');
-        $this->addOrderBy($viewName, ['cantidad'], 'quantity');
-        $this->addOrderBy($viewName, ['servido'], 'quantity-served');
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
-        $this->addOrderBy($viewName, ['pvptotal'], 'amount');
-        $this->addOrderBy($viewName, ['idlinea'], 'code', 2);
+        $this->addView($viewName, $modelName, 'lines', 'fas fa-list')
+            ->addOrderBy(['referencia'], 'reference')
+            ->addOrderBy(['cantidad'], 'quantity')
+            ->addOrderBy(['servido'], 'quantity-served')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['pvptotal'], 'amount')
+            ->addOrderBy(['idlinea'], 'code', 2)
+            ->addSearchFields(['referencia', 'descripcion']);
 
         // filtros
         $this->addFilterAutocomplete($viewName, 'idproducto', 'product', 'idproducto', 'productos', 'idproducto', 'referencia');
@@ -165,14 +165,14 @@ abstract class ListBusinessDocument extends ListController
 
     protected function createViewPurchases(string $viewName, string $modelName, string $label)
     {
-        $this->addView($viewName, $modelName, $label, 'fas fa-copy');
-        $this->addSearchFields($viewName, ['cifnif', 'codigo', 'nombre', 'numproveedor', 'observaciones']);
-        $this->addOrderBy($viewName, ['codigo'], 'code');
-        $this->addOrderBy($viewName, ['fecha', $this->tableColToNumber('numero')], 'date', 2);
-        $this->addOrderBy($viewName, [$this->tableColToNumber('numero')], 'number');
-        $this->addOrderBy($viewName, ['numproveedor'], 'numsupplier');
-        $this->addOrderBy($viewName, ['codproveedor'], 'supplier-code');
-        $this->addOrderBy($viewName, ['total'], 'total');
+        $this->addView($viewName, $modelName, $label, 'fas fa-copy')
+            ->addOrderBy(['codigo'], 'code')
+            ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)
+            ->addOrderBy([$this->tableColToNumber('numero')], 'number')
+            ->addOrderBy(['numproveedor'], 'numsupplier')
+            ->addOrderBy(['codproveedor'], 'supplier-code')
+            ->addOrderBy(['total'], 'total')
+            ->addSearchFields(['cifnif', 'codigo', 'nombre', 'numproveedor', 'observaciones']);
 
         // filtros
         $this->addCommonViewFilters($viewName, $modelName);
@@ -185,31 +185,17 @@ abstract class ListBusinessDocument extends ListController
 
     protected function createViewSales(string $viewName, string $modelName, string $label)
     {
-        $this->addView($viewName, $modelName, $label, 'fas fa-copy');
-        $this->addSearchFields($viewName, ['cifnif', 'codigo', 'codigoenv', 'nombrecliente', 'numero2', 'observaciones']);
-        $this->addOrderBy($viewName, ['codigo'], 'code');
-        $this->addOrderBy($viewName, ['codcliente'], 'customer-code');
-        $this->addOrderBy($viewName, ['fecha', $this->tableColToNumber('numero')], 'date', 2);
-        $this->addOrderBy($viewName, [$this->tableColToNumber('numero')], 'number');
-        $this->addOrderBy($viewName, ['numero2'], 'number2');
-        $this->addOrderBy($viewName, ['total'], 'total');
+        $this->addView($viewName, $modelName, $label, 'fas fa-copy')
+            ->addOrderBy(['codigo'], 'code')
+            ->addOrderBy(['codcliente'], 'customer-code')
+            ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)
+            ->addOrderBy([$this->tableColToNumber('numero')], 'number')
+            ->addOrderBy(['numero2'], 'number2')
+            ->addOrderBy(['total'], 'total')
+            ->addSearchFields(['cifnif', 'codigo', 'codigoenv', 'nombrecliente', 'numero2', 'observaciones']);
 
         // filtros
         $this->addCommonViewFilters($viewName, $modelName);
-        $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
-        $this->addFilterAutocomplete($viewName, 'idcontactofact', 'billing-address', 'idcontactofact', 'contactos', 'idcontacto', 'direccion');
-        $this->addFilterautocomplete($viewName, 'idcontactoenv', 'shipping-address', 'idcontactoenv', 'contactos', 'idcontacto', 'direccion');
-
-        if ($this->permissions->onlyOwnerData === false) {
-            $agents = Agentes::codeModel();
-            if (count($agents) > 1) {
-                $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
-            }
-        }
-
-        $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
-        $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
-        $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
 
         // filtramos por grupos de clientes
         $optionsGroup = [
@@ -228,8 +214,24 @@ abstract class ListBusinessDocument extends ListController
             ];
         }
         if (count($optionsGroup) > 3) {
-            $this->addFilterSelectWhere($viewName, 'codcliente', $optionsGroup);
+            $this->addFilterSelectWhere($viewName, 'codgrupo', $optionsGroup);
         }
+
+        // filtramos por clientes y direcciones
+        $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
+        $this->addFilterAutocomplete($viewName, 'idcontactofact', 'billing-address', 'idcontactofact', 'contactos', 'idcontacto', 'direccion');
+        $this->addFilterautocomplete($viewName, 'idcontactoenv', 'shipping-address', 'idcontactoenv', 'contactos', 'idcontacto', 'direccion');
+
+        if ($this->permissions->onlyOwnerData === false) {
+            $agents = Agentes::codeModel();
+            if (count($agents) > 1) {
+                $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
+            }
+        }
+
+        $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
+        $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
+        $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
 
         // asignamos los colores
         $this->addColorStatus($viewName, $modelName);
