@@ -3,44 +3,96 @@
 {% set currentView = fsc.getCurrentView() %}
 
 <div class="container-fluid">
+    {% if fsc.permissions.allowUpdate %}
     <div class="form-row">
-        <div class="col-sm-12">
-            {% if fsc.permissions.allowUpdate %}
-                <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
+        <div class="col-sm-6">
+            <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
                       onsubmit="animateSpinner('add')">
-                    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-                    <input type="hidden" name="action" value="add-file"/>
-                    {{ formToken() }}
-                    <div class="card border-success shadow mb-3">
-                        <div class="card-body p-3">
-                            <h5 class="card-title">
-                                <i class="fas fa-folder-plus fa-fw"></i> {{ trans('add') }}
-                            </h5>
-                            <div class="form-group">
-                                <textarea name="observations" class="form-control"
-                                          placeholder="{{ trans('observations') }}"></textarea>
+                <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+                <input type="hidden" name="action" value="add-file"/>
+                {{ formToken() }}
+                <div class="card border-success shadow mb-3">
+                    <div class="card-body p-3">
+                        <h5 class="card-title">
+                            <i class="fas fa-folder-plus fa-fw"></i> {{ trans('add') }}
+                        </h5>
+                        <div class="form-group">
+                            <textarea name="observations" class="form-control"
+                                      placeholder="{{ trans('observations') }}"></textarea>
+                        </div>
+                        <div class="form-row align-items-end">
+                            <div class="col">
+                                <input type="file" name="new-files[]" class="form-control-file" multiple required/>
+                                <p class="text-muted mb-0">
+                                    {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
+                                </p>
+                                {% for item in getIncludeViews('DocFiles', 'formAddBody') %}
+                                    {% include item['path'] %}
+                                {% endfor %}
                             </div>
-                            <div class="form-row align-items-end">
-                                <div class="col">
-                                    <input type="file" name="new-files[]" class="form-control-file" multiple required/>
-                                    <p class="text-muted mb-0">
-                                        {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
-                                    </p>
-                                    {% for item in getIncludeViews('DocFiles', 'formAddBody') %}
-                                        {% include item['path'] %}
-                                    {% endfor %}
-                                </div>
-                                <div class="col text-right">
-                                    <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
-                                    </button>
-                                </div>
+                            <div class="col text-right">
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
+                                </button>
                             </div>
                         </div>
                     </div>
-                </form>
-            {% endif %}
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-6">
+            <div class="card border-success shadow mb-3 overflow-auto" style="max-height: 225px;">
+                <div class="card-body p-3">
+                    <h5 class="card-title">
+                        <i class="fas fa-folder-plus fa-fw"></i> {{ trans('choose-files') }}
+                    </h5>
+                    <div class="row">
+                        <div class="col-sm-12">
 
+                            <div class="p-2">
+                                <input type="text" class="form-control shadow-sm" id="querySearchFile" placeholder="{{ trans('search') }}"/>
+                            </div>
+
+                            <ul id="listado-archivos" class="list-unstyled">
+                                {% for file in fsc.lastFiles %}
+                                    <li class="media mb-3">
+                                        {% if file.isImage() %}
+                                            <a href="{{ file.url('download-permanent') }}" target="_blank" class="mr-2">
+                                                <img src="{{ file.url('download') }}" style="max-height: 50px;" class="card-img-top img-thumbnail"
+                                                     alt="{{ file.filename }}">
+                                            </a>
+                                        {% else %}
+                                            <div style="max-height: 64px;">
+                                                <i class="far fa-file-archive fa-fw"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div class="media-body">
+                                            {{ file.filename | raw }}
+                                        </div>
+                                        <div>
+                                            <form action="{{ doc.url() }}" method="post" onsubmit="animateSpinner('add')">
+                                                <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+                                                <input type="hidden" name="action" value="relate-file"/>
+                                                <input type="hidden" name="idfile" value="{{ file.idfile }}"/>
+                                                <input type="hidden" name="{{ doc.primaryColumn() }}" value="{{ doc.primaryColumnValue() }}"/>
+                                                {{ formToken() }}
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('relate-file') }}
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-sm-12">
             <div class="card-columns">
                 {% for docfile in currentView.cursor %}
                     {% set file = docfile.getFile() %}
@@ -127,3 +179,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('#querySearchFile').on('keyup', function (e) {
+            const query = this.value.toLowerCase().trim();
+            $('#listado-archivos li').each(function (index, value) {
+                $(value).toggle($('.media-body', value).text().toLowerCase().trim().includes(query));
+            });
+        })
+    });
+</script>

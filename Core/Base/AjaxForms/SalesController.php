@@ -207,6 +207,9 @@ abstract class SalesController extends PanelController
             case 'recalculate-line':
                 return $this->recalculateAction(false);
 
+            case 'relate-file':
+                return $this->relateFileAction();
+
             case 'save-doc':
                 $this->saveDocAction();
                 return false;
