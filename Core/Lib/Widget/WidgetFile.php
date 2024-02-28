@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Tools;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -97,7 +98,11 @@ class WidgetFile extends BaseWidget
 
             // check if the file already exists
             $destiny = FS_FOLDER . '/MyFiles/';
-            $destinyName = $uploadFile->getClientOriginalName();
+
+            $filename = Tools::slug(pathinfo($uploadFile->getClientOriginalName(), PATHINFO_FILENAME), '_');
+            $extension = pathinfo($uploadFile->getClientOriginalName(), PATHINFO_EXTENSION);
+            $destinyName = $filename . '.' . $extension;
+
             if (file_exists($destiny . $destinyName)) {
                 $destinyName = mt_rand(1, 999999) . '_' . $destinyName;
             }
