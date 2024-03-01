@@ -76,7 +76,7 @@ final class CrashReport
     public static function shutdown(): void
     {
         $error = error_get_last();
-        if (!isset($error) || in_array($error['type'], [E_WARNING, E_NOTICE, E_DEPRECATED])) {
+        if (!isset($error) || in_array($error['type'], [E_WARNING, E_NOTICE, E_DEPRECATED, E_CORE_ERROR, E_CORE_WARNING])) {
             return;
         }
 
