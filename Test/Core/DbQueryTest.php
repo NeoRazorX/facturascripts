@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\Model\LogMessage;
 use FacturaScripts\Core\Model\Pais;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -108,6 +109,38 @@ final class DbQueryTest extends TestCase
         // lo comprobamos contra el modelo
         $pais = new Pais();
         $this->assertEquals($count, $pais->count());
+
+        // limpiamos la lista de logs
+        $sqlDelete = 'DELETE FROM logs;';
+        $this->db()->exec($sqlDelete);
+
+        // añadimos 2 mensajes de log al canal test1
+        foreach (range(1, 2) as $i) {
+            $logMessage = new LogMessage();
+            $logMessage->channel = 'test1';
+            $logMessage->level = 'info';
+            $logMessage->message = 'test' . $i;
+            $this->assertTrue($logMessage->save());
+        }
+
+        // añadimos un mensaje de log al canal test2
+        $logMessage = new LogMessage();
+        $logMessage->channel = 'test2';
+        $logMessage->level = 'info';
+        $logMessage->message = 'test3';
+        $this->assertTrue($logMessage->save());
+
+        // obtenemos el número de canales de log
+        $count = DbQuery::table('logs')->count('channel');
+        $this->assertEquals(2, $count);
+
+        // comprobamos con selectRaw
+        $data = DbQuery::table('logs')->selectRaw('COUNT(DISTINCT channel) as c')->first();
+        $this->assertEquals(2, $data['c']);
+
+        // comprobamos con selectRaw + count
+        $count = DbQuery::table('logs')->selectRaw('DISTINCT channel')->count();
+        $this->assertEquals(2, $count);
     }
 
     public function testInsert(): void

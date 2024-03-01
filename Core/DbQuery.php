@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -102,12 +102,21 @@ final class DbQuery
         return $this->groupBy($groupByKey)->array($groupByKey, '_avg');
     }
 
-    public function count(): int
+    public function count(string $field = ''): int
     {
-        $this->fields = 'COUNT(*) as _count';
+        if ($field !== '') {
+            $this->fields = 'COUNT(DISTINCT ' . self::db()->escapeColumn($field) . ') as _count';
+        } elseif ($this->fields === '*' || empty($this->fields)) {
+            $this->fields = 'COUNT(*) as _count';
+        } else {
+            $this->fields = 'COUNT(' . $this->fields . ') as _count';
+        }
 
-        $row = $this->first();
-        return (int)$row['_count'];
+        foreach ($this->first() as $value) {
+            return (int)$value;
+        }
+
+        return 0;
     }
 
     public function countArray(string $field, string $groupByKey): array
@@ -282,6 +291,13 @@ final class DbQuery
         }
 
         $this->fields = implode(', ', $list);
+
+        return $this;
+    }
+
+    public function selectRaw(string $fields): self
+    {
+        $this->fields = $fields;
 
         return $this;
     }
