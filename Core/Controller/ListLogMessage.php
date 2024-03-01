@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CronJob;
+use FacturaScripts\Dinamic\Model\LogMessage;
 
 /**
  * Controller to list the items in the LogMessage model
@@ -109,6 +110,15 @@ class ListLogMessage extends ListController
 
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
+
+        // añadimos un botón para el modal delete-logs
+        $this->addButton($viewName, [
+            'action' => 'delete-logs',
+            'color' => 'warning',
+            'icon' => 'fas fa-trash-alt',
+            'label' => 'delete',
+            'type' => 'modal',
+        ]);
     }
 
     protected function createViewsWorkEvents(string $viewName = 'ListWorkEvent'): void
@@ -121,6 +131,41 @@ class ListLogMessage extends ListController
 
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    protected function deleteLogsAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        } elseif (false === $this->permissions->allowDelete) {
+            Tools::log()->warning('not-allowed-delete');
+            return;
+        }
+
+        $from = $this->request->request->get('delete_from', '');
+        $to = $this->request->request->get('delete_to', '');
+        $channel = $this->request->request->get('delete_channel', '');
+
+        $query = LogMessage::table()
+            ->whereGte('time', $from)
+            ->whereLte('time', $to);
+
+        // si el canal es 'audit' no se pueden borrar los logs
+        if ('audit' === $channel) {
+            Tools::log()->warning('cant-delete-audit-log');
+            return;
+        } elseif ($channel !== '') {
+            $query->whereEq('channel', $channel);
+        } else {
+            $query->whereNotEq('channel', 'audit');
+        }
+
+        if (false === $query->delete()) {
+            Tools::log()->warning('record-deleted-error');
+            return;
+        }
+
+        Tools::log()->notice('record-deleted-correctly');
     }
 
 
@@ -161,6 +206,10 @@ class ListLogMessage extends ListController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'delete-logs':
+                $this->deleteLogsAction();
+                break;
+
             case 'disable-cronjob':
                 $this->enableCronJobAction(false);
                 break;
