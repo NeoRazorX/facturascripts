@@ -67,7 +67,7 @@ https://facturascripts.com/traducciones
 ## Tests
 ```
 vendor/bin/phpunit
-vendor/bin/phpstan analyse Core
+vendor/bin/phpstan analyse
 ```
 
 ## Links
