@@ -245,12 +245,12 @@ class Wizard extends Controller
         $defaultValues = json_decode($fileContent, true) ?? [];
         foreach ($defaultValues as $group => $values) {
             foreach ($values as $key => $value) {
-                Tools::settings($group, $key, $value);
+                Tools::settingsSet($group, $key, $value);
             }
         }
 
-        Tools::settings('default', 'codpais', $codpais);
-        Tools::settings('default', 'homepage', 'AdminPlugins');
+        Tools::settingsSet('default', 'codpais', $codpais);
+        Tools::settingsSet('default', 'homepage', 'AdminPlugins');
         Tools::settingsSave();
     }
 
