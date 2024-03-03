@@ -45,5 +45,14 @@
                 <values source="cuentas" fieldcode="idcuenta" fieldtitle="descripcion"/>
             </widget>
         </column>
+        <column name="debit" display="right" order="150">
+            <widget type="money" fieldname="debe"/>
+        </column>
+        <column name="credit" display="right" order="160">
+            <widget type="money" fieldname="haber"/>
+        </column>
+        <column name="balance" display="right" order="170">
+            <widget type="money" fieldname="saldo"/>
+        </column>
     </columns>
 </view>

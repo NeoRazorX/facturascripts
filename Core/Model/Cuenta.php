@@ -42,11 +42,17 @@ class Cuenta extends Base\ModelClass
     /** @var string */
     public $codcuentaesp;
 
+    /** @var float */
+    public $debe;
+
     /** @var string */
     public $descripcion;
 
     /** @var bool */
     private $disableAdditionalTest = false;
+
+    /** @var float */
+    public $haber;
 
     /** @var int */
     public $idcuenta;
@@ -56,6 +62,9 @@ class Cuenta extends Base\ModelClass
 
     /** @var int */
     public $parent_idcuenta;
+
+    /** @var float */
+    public $saldo;
 
     public function createSubcuenta(string $codsubcuenta, string $description): Subcuenta
     {

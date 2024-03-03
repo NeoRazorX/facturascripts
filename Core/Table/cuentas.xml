@@ -21,8 +21,16 @@
         <null>NO</null>
     </column>
     <column>
+        <name>debe</name>
+        <type>double precision</type>
+    </column>
+    <column>
         <name>descripcion</name>
         <type>character varying(255)</type>
+    </column>
+    <column>
+        <name>haber</name>
+        <type>double precision</type>
     </column>
     <column>
         <name>idcuenta</name>
@@ -36,6 +44,10 @@
     <column>
         <name>parent_idcuenta</name>
         <type>integer</type>
+    </column>
+    <column>
+        <name>saldo</name>
+        <type>double precision</type>
     </column>
     <constraint>
         <name>cuentas_pkey</name>
