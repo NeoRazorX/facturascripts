@@ -183,7 +183,8 @@ abstract class ComercialContactController extends EditController
             ->addSearchFields(['codigofactura', 'observaciones']);
 
         // filtros
-        $this->listView($viewName)->addFilterPeriod('period', 'expiration', 'vencimiento');
+        $this->listView($viewName)->addFilterPeriod('period-f', 'fecha', 'fecha');
+        $this->listView($viewName)->addFilterPeriod('period-v', 'expiration', 'vencimiento');
 
         // botones
         $this->addButtonPayReceipt($viewName);
