@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -385,7 +385,8 @@ abstract class PurchasesController extends PanelController
             }
         }
 
-        if (false === $model->save()) {
+        $lines = $model->getLines();
+        if (false === Calculator::calculate($model, $lines, true)) {
             $this->response->setContent(json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]));
             $this->dataBase->rollback();
             return false;
