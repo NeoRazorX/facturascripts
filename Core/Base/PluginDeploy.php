@@ -97,6 +97,7 @@ final class PluginDeploy
 
             $controllerName = substr($fileName, 0, -4);
             $controllerNamespace = '\\FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
+            Tools::log()->debug('Loading controller: ' . $controllerName);
 
             if (!class_exists($controllerNamespace)) {
                 // we force the loading of the file because at this point the autoloader will not find it
