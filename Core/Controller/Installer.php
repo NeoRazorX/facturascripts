@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,11 +31,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Installer implements ControllerInterface
 {
-    /** @var bool */
-    protected $created_mysql_db = false;
-
     /** @var Request */
     protected $request;
+
+    /** @var bool */
+    protected $use_new_mysql = false;
 
     public function __construct(string $className, string $url = '')
     {
@@ -272,7 +272,7 @@ class Installer implements ControllerInterface
         fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
         fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
 
-        if ($this->created_mysql_db) {
+        if ($this->use_new_mysql) {
             // for new databases, we use utf8mb4
             fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8mb4');\n");
             fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8mb4_unicode_520_ci');\n");
@@ -350,12 +350,15 @@ class Installer implements ControllerInterface
         }
 
         $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS `' . $dbData['name'] . '`;';
-        if ($connection->query($sqlCrearBD)) {
-            $this->created_mysql_db = true;
-            return true;
+        if (!$connection->query($sqlCrearBD)) {
+            return false;
         }
 
-        return false;
+        // for mysql >= 8 or mariadb >= 10.2, we use utf8mb4
+        $version = $connection->server_version;
+        $this->use_new_mysql = $version >= 100200 || ($version >= 80000 && $version < 100000);
+
+        return true;
     }
 
     private function testPostgresql(array $dbData): bool
