@@ -282,7 +282,7 @@ abstract class ModelCore
     {
         $data = [];
         foreach (array_keys($this->getModelFields()) as $fieldName) {
-            $data[$fieldName] = $this->{$fieldName};
+            $data[$fieldName] = $this->{$fieldName} ?? null;
         }
 
         return $data;
