@@ -349,6 +349,12 @@ class Installer implements ControllerInterface
             return false;
         }
 
+        // if mysql version is too old, we can't continue
+        if ($connection->server_version < 50700) {
+            Tools::log()->critical('mysql-version-too-old');
+            return false;
+        }
+
         $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS `' . $dbData['name'] . '`;';
         if (!$connection->query($sqlCrearBD)) {
             return false;
@@ -371,6 +377,12 @@ class Installer implements ControllerInterface
         $connectionStr = 'host=' . $dbData['host'] . ' port=' . $dbData['port'];
         $connection = @pg_connect($connectionStr . ' dbname=postgres user=' . $dbData['user'] . ' password=' . $dbData['pass']);
         if (is_resource($connection)) {
+            // if postgresql version is too old, we can't continue
+            if ($this->versionPostgres($connection) < 10) {
+                Tools::log()->critical('postgresql-version-too-old');
+                return false;
+            }
+
             // Check that the DB exists, if it doesn't, we try to create a new one
             $sqlExistsBD = "SELECT 1 AS result FROM pg_database WHERE datname = '" . $dbData['name'] . "';";
             $result = pg_query($connection, $sqlExistsBD);
@@ -390,5 +402,12 @@ class Installer implements ControllerInterface
         }
 
         return false;
+    }
+
+    private function versionPostgres($connection): float
+    {
+        $version = pg_version($connection);
+        $parts = explode(' ', $version['server']);
+        return (float)$parts[0];
     }
 }
