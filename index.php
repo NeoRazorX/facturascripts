@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,7 +52,7 @@ Kernel::init();
 // si se le pasa el parámetro cron, entonces ejecutamos la url /cron
 $url = isset($argv[1]) && $argv[1] === '-cron' ?
     '/cron' :
-    parse_url($_SERVER["REQUEST_URI"] ?? '', PHP_URL_PATH);
+    parse_url($_SERVER["REQUEST_URI"] ?? '', PHP_URL_PATH) ?? '';
 
 // iniciamos los plugins, a menos que la ruta sea /deploy
 if ($url !== '/deploy') {
