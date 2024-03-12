@@ -295,7 +295,7 @@ class EditUser extends EditController
         $columnHomepage = $this->views['EditUser']->columnForName('homepage');
         if ($columnHomepage && $columnHomepage->widget->getType() === 'select') {
             $userPages = $this->getUserPages($this->views['EditUser']->model);
-            $columnHomepage->widget->setValuesFromArray($userPages);
+            $columnHomepage->widget->setValuesFromArray($userPages, false, true);
         }
     }
 
