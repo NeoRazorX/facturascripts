@@ -98,7 +98,7 @@ class ProductoImagen extends Base\ModelClass
     {
         // comprobamos si no existe la imagen
         $file = $this->getFile();
-        if (false === $file->exists()) {
+        if (false === $file->exists() || false === file_exists($file->getFullPath())) {
             return '';
         }
 
