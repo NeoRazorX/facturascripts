@@ -215,11 +215,15 @@ final class DataBase
             $inTransaction = $this->inTransaction();
             $this->beginTransaction();
 
-            // adds the sql query to the history
-            self::$miniLog->debug($sql);
-
             // execute sql
+            $start = microtime(true);
             $result = self::$engine->exec(self::$link, $sql);
+            $end = microtime(true);
+
+            // adds the sql query to the history
+            self::$miniLog->debug($sql, ['time' => (($end - $start)*1000)]);
+
+
             if (!$result) {
                 self::$miniLog->error(self::$engine->errorMessage(self::$link), ['sql' => $sql]);
             }
@@ -399,9 +403,13 @@ final class DataBase
             $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
         }
 
-        // add the sql query to the history
-        self::$miniLog->debug($sql);
+        $start = microtime(true);
         $result = self::$engine->select(self::$link, $sql);
+        $end = microtime(true);
+
+        // add the sql query to the history
+        self::$miniLog->debug($sql, ['time' => (($end - $start)*1000)]);
+
         if (!empty($result)) {
             return $result;
         }
