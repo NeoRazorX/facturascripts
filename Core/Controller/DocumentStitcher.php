@@ -126,6 +126,8 @@ class DocumentStitcher extends Controller
             'mostrar_cantidad' => false,
             'mostrar_precio' => false
         ]);
+
+        $this->pipe('addBlankLine', $blankLine);
         $newLines[] = $blankLine;
     }
 
@@ -164,6 +166,7 @@ class DocumentStitcher extends Controller
             'mostrar_cantidad' => false,
             'mostrar_precio' => false
         ]);
+        $this->pipe('addInfoLine', $infoLine);
         $newLines[] = $infoLine;
     }
 
@@ -188,6 +191,7 @@ class DocumentStitcher extends Controller
                 $full = false;
             }
 
+            $this->pipe('breakDownLines', $line);
             $newLines[] = $line;
         }
 
