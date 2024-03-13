@@ -34,7 +34,8 @@
     "ext-mysqli": "*",
     "ext-bcmath": "*",
     "ext-gd": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "ext-pgsql": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "8.*",
