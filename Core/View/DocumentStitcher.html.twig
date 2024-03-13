@@ -262,7 +262,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for line in doc.getLines() %}
+                {% for line in doc.getLines()|filter(line => (line.cantidad - line.servido) > 0) %}
                     <tr>
                         <td class="align-middle">{{ line.referencia }}</td>
                         <td class="align-middle">{{ line.descripcion | raw | nl2br }}</td>
@@ -282,11 +282,26 @@
                                    class="form-control text-right to_be_served" autocomplete="off"/>
                         </td>
                     </tr>
-                {% else %}
+                {% endfor %}
+                {% if (doc.getLines()|filter(line => (line.cantidad - line.servido) == 0))|length > 0 %}
+                <tr>
+                    <td colspan="5" class="text-center table-secondary">{{ trans('fully-served-lines') }}:</td>
+                </tr>
+                {% endif %}
+                {% for line in doc.getLines()|filter(line => (line.cantidad - line.servido) == 0) %}
+                    <tr>
+                        <td class="align-middle">{{ line.referencia }}</td>
+                        <td class="align-middle">{{ line.descripcion | raw | nl2br }}</td>
+                        <td class="align-middle text-right" style="padding-right: 2.1rem">{{ line.cantidad }}</td>
+                        <td class="align-middle text-right" style="padding-right: 2.1rem">{{ line.servido }}</td>
+                        <td class="align-middle text-right" style="padding-right: 2.1rem">0</td>
+                    </tr>
+                {% endfor %}
+                {% if doc.getLines()|length == 0 %}
                     <tr class="table-warning">
                         <td colspan="5">{{ trans('no-data') }}</td>
                     </tr>
-                {% endfor %}
+                {% endif %}
                 </tbody>
             </table>
         </div>
