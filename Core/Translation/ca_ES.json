@@ -1595,6 +1595,7 @@
     "version": "Versió",
     "video": "Vídeo",
     "vies-check-success": "El número '%vat-*number%' està registrat en el sistema VIES",
+    "view-api": "Veure API",
     "view-column-net-subtotal": "Veure columna subtotal o net",
     "warehouse": "Magatzem",
     "warehouse-cant-be-same": "El magatzem d'origen i destí no pot ser el mateix.",

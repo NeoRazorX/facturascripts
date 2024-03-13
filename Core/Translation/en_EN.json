@@ -1595,6 +1595,7 @@
     "version": "Version",
     "video": "Video",
     "vies-check-success": "Number '%vat-number%' is registered in VIES system",
+    "view-api": "View API",
     "view-column-net-subtotal": "See subtotal or net column",
     "warehouse": "Warehouse",
     "warehouse-cant-be-same": "The origin and destination warehouse can not be the same.",

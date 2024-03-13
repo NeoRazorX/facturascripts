@@ -1595,6 +1595,7 @@
     "version": "Version",
     "video": "Video",
     "vies-check-success": "El número '%vat-number%' está registrado en el sistema VIES",
+    "view-api": "Ver API",
     "view-column-net-subtotal": "Ver columna subtotal o neto",
     "warehouse": "Warenhaus",
     "warehouse-cant-be-same": "Das Ursprungs- und das Ziellager können nicht identisch sein.",
