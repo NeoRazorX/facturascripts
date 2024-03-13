@@ -144,6 +144,8 @@ class Controller implements ControllerInterface
         AssetManager::setAssetsForPage($className);
 
         $this->checkPhpVersion(7.3);
+
+        $this->checkRequestProtection();
     }
 
     /**
@@ -428,5 +430,14 @@ class Controller implements ControllerInterface
         }
 
         return true;
+    }
+
+    protected function checkRequestProtection(): void
+    {
+        if(false === $this->request->isMethodSafe()){
+            if (false === $this->validateFormToken()) {
+                throw new \Exception('TOKEN NO VÁLIDO');
+            }
+        }
     }
 }
