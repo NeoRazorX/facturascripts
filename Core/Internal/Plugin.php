@@ -224,7 +224,9 @@ final class Plugin
         // ejecutamos los procesos de la clase Init del plugin
         $init = new $className();
         if ($this->enabled && $this->post_enable) {
-            $init->update();
+            if ($this->checkFileLock()) {
+                $init->update();
+            }
         }
         if ($this->disabled() && $this->post_disable) {
             $init->uninstall();
@@ -329,6 +331,22 @@ final class Plugin
         $iniData = parse_ini_file($iniPath);
         if ($iniData) {
             $this->loadIniData($iniData);
+        }
+    }
+
+    private function checkFileLock(): bool {
+        $filename = 'MyFiles/Tmp/plugins-init.lock';
+        if (file_exists($filename)) {
+            if (time() - filemtime($filename) > 300) {
+                unset($filename);
+                file_put_contents($filename, '');
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            file_put_contents($filename, '');
+            return true;
         }
     }
 }
