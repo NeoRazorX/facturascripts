@@ -23,7 +23,7 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" title="bank-mandate" numcolumns="2" order="100">
+            <column name="code" numcolumns="2" order="100">
                 <widget type="number" fieldname="codcuenta" decimal="0" readonly="true" />
             </column>
             <column name="customer" display="none" order="110">
@@ -43,7 +43,10 @@
             <column name="bank-mandate-date" numcolumns="3" order="100">
                 <widget type="date" fieldname="fmandato" />
             </column>
-            <column name="principal" order="110">
+            <column name="bank-mandate" numcolumns="4" order="110">
+                <widget type="text" fieldname="mandato" maxlength="35"/>
+            </column>
+            <column name="principal" order="120">
                 <widget type="checkbox" fieldname="principal" />
             </column>
         </group>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,6 +45,9 @@ class CuentaBancoCliente extends Base\BankAccount
      */
     public $fmandato;
 
+    /** @var string */
+    public $mandato;
+
     /**
      * Is it the customer's main account?
      *
@@ -72,6 +75,12 @@ class CuentaBancoCliente extends Base\BankAccount
         new DinCliente();
 
         return parent::install();
+    }
+
+    public function test()
+    {
+        $this->mandato = Tools::noHtml($this->mandato);
+        return parent::test();
     }
 
     public function save(): bool
