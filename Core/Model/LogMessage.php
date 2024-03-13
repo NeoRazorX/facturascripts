@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Tools;
 
 /**

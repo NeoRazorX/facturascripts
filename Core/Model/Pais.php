@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
@@ -94,13 +95,14 @@ class Pais extends ModelClass
 
     public function save(): bool
     {
-        if (parent::save()) {
-            // limpiamos la caché
+        $isSaved = parent::save();
+
+        if($isSaved){
             Paises::clear();
-            return true;
+            Cache::delete('DataModel.' . $this->modelClassName());
         }
 
-        return false;
+        return $isSaved;
     }
 
     public static function tableName(): string
@@ -122,5 +124,19 @@ class Pais extends ModelClass
         $this->nombre = Tools::noHtml($this->nombre);
 
         return parent::test();
+    }
+
+    public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
+    {
+        if ($where === [] && $order === [] && $offset === 0 && $limit === 50) {
+            return Cache::remember(
+                'DataModel.' . $this->modelClassName(),
+                function () use ($where, $order, $offset, $limit) {
+                    return parent::all($where, $order, $offset, $limit);
+                }
+            );
+        }
+
+        return parent::all($where, $order, $offset, $limit);
     }
 }

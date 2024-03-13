@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -79,5 +80,30 @@ class Ciudad extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
+    {
+        if ($where === [] && $order === [] && $offset === 0 && $limit === 50) {
+            return Cache::remember(
+                'DataModel.' . $this->modelClassName(),
+                function () use ($where, $order, $offset, $limit) {
+                    return parent::all($where, $order, $offset, $limit);
+                }
+            );
+        }
+
+        return parent::all($where, $order, $offset, $limit);
+    }
+
+    public function save(): bool
+    {
+        $isSaved = parent::save();
+
+        if($isSaved){
+            Cache::delete('DataModel.' . $this->modelClassName());
+        }
+
+        return $isSaved;
     }
 }

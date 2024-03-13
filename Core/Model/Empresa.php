@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
@@ -178,13 +179,14 @@ class Empresa extends Base\Contact
 
     public function save(): bool
     {
-        if (parent::save()) {
-            // limpiamos la caché
+        $isSaved = parent::save();
+
+        if($isSaved){
             Empresas::clear();
-            return true;
+            Cache::delete('DataModel.' . $this->modelClassName());
         }
 
-        return false;
+        return $isSaved;
     }
 
     public static function tableName(): string
@@ -238,5 +240,19 @@ class Empresa extends Base\Contact
         }
 
         return parent::saveInsert($values) && $this->createPaymentMethods() && $this->createWarehouse();
+    }
+
+    public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
+    {
+        if ($where === [] && $order === [] && $offset === 0 && $limit === 50) {
+            return Cache::remember(
+                'DataModel.' . $this->modelClassName(),
+                function () use ($where, $order, $offset, $limit) {
+                    return parent::all($where, $order, $offset, $limit);
+                }
+            );
+        }
+
+        return parent::all($where, $order, $offset, $limit);
     }
 }
