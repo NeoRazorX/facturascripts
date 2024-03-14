@@ -421,10 +421,10 @@ class SalesLineHTML
             . self::renderField($i18n, $idlinea, $line, $model, 'irpf')
             . self::renderField($i18n, $idlinea, $line, $model, 'excepcioniva')
             . self::renderField($i18n, $idlinea, $line, $model, 'suplido')
+            . self::renderField($i18n, $idlinea, $line, $model, 'coste')
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_cantidad')
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_precio')
             . self::renderField($i18n, $idlinea, $line, $model, 'salto_pagina')
-            . self::renderField($i18n, $idlinea, $line, $model, 'coste')
             . self::renderNewModalFields($i18n, $idlinea, $line, $model)
             . '</div>'
             . '</div>'
