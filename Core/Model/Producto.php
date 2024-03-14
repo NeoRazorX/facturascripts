@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -208,9 +208,19 @@ class Producto extends ModelClass
 
     public function delete(): bool
     {
+        // comprobamos si podemos eliminar las variantes
+        foreach ($this->getVariants() as $variant) {
+            if ($variant->isInDocuments()) {
+                Tools::log()->warning('cant-delete-variant-with-documents', ['%reference%' => $variant->referencia]);
+                return false;
+            }
+        }
+
         // eliminamos las imágenes del producto
         foreach ($this->getImages() as $image) {
-            $image->delete();
+            if (false === $image->delete()) {
+                return false;
+            }
         }
 
         // eliminamos el resto de la base de datos

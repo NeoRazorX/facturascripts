@@ -200,6 +200,7 @@
     "cant-delete-default-tax": "Sie können die Standardsteuer löschen",
     "cant-delete-default-warehouse": "Sie können den Standardslager löschen",
     "cant-delete-last-user": "Der letzte Benutzer kann nicht gelöscht werden",
+    "cant-delete-variant-with-documents": "No se puede eliminar el producto o variante %reference% porque ya ha sido comprado o vendido. Pero puede bloquearlo si lo desea.",
     "cant-load-controller": "Controller kann nicht geladen werden.",
     "cant-modify-reference": "Kann keine Referenz bearbeiten.",
     "cant-remove-accounting-entry": "Buchung kann nicht gelöscht werden",

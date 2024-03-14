@@ -200,6 +200,7 @@
     "cant-delete-default-tax": "Impossibile eliminare la tassa predefinita",
     "cant-delete-default-warehouse": "cant-delete-default-warehouse",
     "cant-delete-last-user": "Impossibile eliminare l'ultimo utente",
+    "cant-delete-variant-with-documents": "No se puede eliminar el producto o variante %reference% porque ya ha sido comprado o vendido. Pero puede bloquearlo si lo desea.",
     "cant-load-controller": "Impossibile caricare il controller.",
     "cant-modify-reference": "Non modificare il riferimento.",
     "cant-remove-accounting-entry": "cant-remove-accounting-entry",

@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ProductType;
 use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
@@ -184,6 +185,12 @@ class Variante extends Base\ModelClass
             return false;
         }
 
+        // no podemos eliminar la variante si hay documentos relacionados
+        if ($this->isInDocuments()) {
+            Tools::log()->warning('cant-delete-variant-with-documents', ['%reference%' => $this->referencia]);
+            return false;
+        }
+
         // eliminamos las imágenes de la variante
         foreach ($this->getImages(false) as $image) {
             $image->delete();
@@ -270,6 +277,25 @@ class Variante extends Base\ModelClass
         new DinAtributoValor();
 
         return parent::install();
+    }
+
+    public function isInDocuments(): bool
+    {
+        $tables = [
+            'lineasalbaranescli', 'lineasalbaranesprov', 'lineasfacturascli', 'lineasfacturasprov',
+            'lineaspedidoscli', 'lineaspedidosprov', 'lineaspresupuestoscli', 'lineaspresupuestosprov'
+        ];
+        foreach ($tables as $table) {
+            $count = DbQuery::table($table)
+                ->whereEq('referencia', $this->referencia)
+                ->count();
+
+            if ($count > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function priceWithTax(): float

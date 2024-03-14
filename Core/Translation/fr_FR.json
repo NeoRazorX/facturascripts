@@ -200,6 +200,7 @@
     "cant-delete-default-tax": "L'imposition par défaut ne peut être supprimée",
     "cant-delete-default-warehouse": "L'entrepôt par défaut ne peut être supprimé",
     "cant-delete-last-user": "Le dernier utilisateur ne peut être supprimé",
+    "cant-delete-variant-with-documents": "No se puede eliminar el producto o variante %reference% porque ya ha sido comprado o vendido. Pero puede bloquearlo si lo desea.",
     "cant-load-controller": "Impossible de charger le contrôleur '%controllerName%'.",
     "cant-modify-reference": "Impossible d'éditer la référence.",
     "cant-remove-accounting-entry": "L'entrée comptable ne peut être supprimée",

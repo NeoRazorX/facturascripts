@@ -200,6 +200,7 @@
     "cant-delete-default-tax": "No es pot borrar l'impost predeterminat",
     "cant-delete-default-warehouse": "No es pot borrar l'almagasén predeterminant",
     "cant-delete-last-user": "No es pot eliminar a l'últim usuari",
+    "cant-delete-variant-with-documents": "No se puede eliminar el producto o variante %reference% porque ya ha sido comprado o vendido. Pero puede bloquearlo si lo desea.",
     "cant-load-controller": "No es pot carregar el controlador '%controllerName%'.",
     "cant-modify-reference": "No es pot modificar la referència.",
     "cant-remove-accounting-entry": "No es pot eliminar l'assentament",

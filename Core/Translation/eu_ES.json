@@ -200,6 +200,7 @@
     "cant-delete-default-tax": "Ezin da zerga lehenetsia ezabatu",
     "cant-delete-default-warehouse": "Ezin da biltegi lehenetsia ezabatu",
     "cant-delete-last-user": "Ezin da azkenengo erabiltzailea ezabatu",
+    "cant-delete-variant-with-documents": "No se puede eliminar el producto o variante %reference% porque ya ha sido comprado o vendido. Pero puede bloquearlo si lo desea.",
     "cant-load-controller": "Ezin da  '%controllerName%' kontroladorea kargatu.",
     "cant-modify-reference": "Ezin da erreferentzia aldatu.",
     "cant-remove-accounting-entry": "Ezin da idazpena ezabatu",
