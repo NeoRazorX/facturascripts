@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,13 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Serie;
@@ -273,6 +275,16 @@ abstract class BusinessDocument extends ModelOnChangeClass
     {
         $more = [static::primaryColumn()];
         return array_merge(static::$dont_copy_fields, $more);
+    }
+
+    public function getAttachedFiles(): array
+    {
+        $relationModel = new AttachedFileRelation();
+        $where = [new DataBaseWhere('model', $this->modelClassName())];
+        $where[] = is_numeric($this->primaryColumnValue()) ?
+            new DataBaseWhere('modelid|modelcode', $this->primaryColumnValue()) :
+            new DataBaseWhere('modelcode', $this->primaryColumnValue());
+        return $relationModel->all($where, ['creationdate' => 'DESC'], 0, 0);
     }
 
     /**
