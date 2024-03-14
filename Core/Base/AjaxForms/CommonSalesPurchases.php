@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,7 +43,7 @@ trait CommonSalesPurchases
     /** @var string */
     protected static $columnView;
 
-    protected static function checkLevel(int $level): bool
+    public static function checkLevel(int $level): bool
     {
         $user = Session::user();
 
