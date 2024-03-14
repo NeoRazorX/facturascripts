@@ -468,6 +468,8 @@ class InvoiceToAccounting extends AccountingClass
         $concept .= $this->document->numproveedor ? ' (' . $this->document->numproveedor . ') - ' . $this->document->nombre :
             ' - ' . $this->document->nombre;
 
+        $serie = $this->document->getSerie();
+
         $entry = new Asiento();
         $this->setAccountingData($entry, $concept);
         if (false === $entry->save()) {
@@ -476,7 +478,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         if ($this->addSupplierLine($entry) &&
-            $this->addPurchaseTaxLines($entry) &&
+            ($serie->siniva || $this->addPurchaseTaxLines($entry)) &&
             $this->addPurchaseIrpfLines($entry) &&
             $this->addPurchaseSuppliedLines($entry) &&
             $this->addGoodsPurchaseLine($entry) &&
@@ -498,6 +500,8 @@ class InvoiceToAccounting extends AccountingClass
         $concept .= $this->document->numero2 ? ' (' . $this->document->numero2 . ') - ' . $this->document->nombrecliente :
             ' - ' . $this->document->nombrecliente;
 
+        $serie = $this->document->getSerie();
+
         $entry = new Asiento();
         $this->setAccountingData($entry, $concept);
         if (false === $entry->save()) {
@@ -506,7 +510,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         if ($this->addCustomerLine($entry) &&
-            $this->addSalesTaxLines($entry) &&
+            ($serie->siniva || $this->addSalesTaxLines($entry)) &&
             $this->addSalesIrpfLines($entry) &&
             $this->addSalesSuppliedLines($entry) &&
             $this->addGoodsSalesLine($entry) &&
