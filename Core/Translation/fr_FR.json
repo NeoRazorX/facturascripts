@@ -409,6 +409,7 @@
     "delete-closing": "Éliminer les entrées de clôture de compte",
     "delete-data": "Suprimmer les données",
     "delete-file": "Supprimer le fichier",
+    "delete-logs": "Eliminar historial",
     "delete-opening": "Supprimer l'entrée d'ouverture de compte",
     "delete-record": "Supprimer l'enregistrement",
     "deleted-model": "%model% (%key%) %desc% supprimé",

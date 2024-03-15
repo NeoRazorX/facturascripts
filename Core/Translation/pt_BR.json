@@ -409,6 +409,7 @@
     "delete-closing": "delete-closing",
     "delete-data": "Eliminar dados",
     "delete-file": "delete-file",
+    "delete-logs": "Eliminar historial",
     "delete-opening": "delete-opening",
     "delete-record": "Remover registro",
     "deleted-model": "Eliminado %model% (%key%) %desc%",

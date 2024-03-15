@@ -409,6 +409,7 @@
     "delete-closing": "Eliminar assentaments de tancament",
     "delete-data": "Esborrar dades",
     "delete-file": "esborrar-arxiu",
+    "delete-logs": "Eliminar historial",
     "delete-opening": "Eliminar l'assentament d'obertura",
     "delete-record": "Eliminar el registre",
     "deleted-model": "Eliminat %model% (%key%) %desc%",

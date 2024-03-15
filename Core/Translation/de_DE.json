@@ -409,6 +409,7 @@
     "delete-closing": "Abschlussbuchungen löschen",
     "delete-data": "Daten löschen",
     "delete-file": "Datei löschen",
+    "delete-logs": "Eliminar historial",
     "delete-opening": "Öffnungsbuchung löschen",
     "delete-record": "Datensatz entfernen",
     "deleted-model": "Eliminado %model% (%key%) %desc%",

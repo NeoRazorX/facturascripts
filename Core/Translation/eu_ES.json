@@ -409,6 +409,7 @@
     "delete-closing": "Ixte idazpenak ezabatu",
     "delete-data": "Datuak ezabatu",
     "delete-file": "Artxiboa ezabatu",
+    "delete-logs": "Eliminar historial",
     "delete-opening": "Irekitze idazpena ezabatu",
     "delete-record": "Erregistroa ezabatu",
     "deleted-model": "Ezabatuta %model% (%key%) %desc%",
