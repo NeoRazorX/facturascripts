@@ -47,6 +47,7 @@ class ListPais extends ListController
         $this->createViewsDivisas();
         $this->createViewProvinces();
         $this->createViewCities();
+        $this->createViewPOIs();
     }
 
     protected function createViewCities(string $viewName = 'ListCiudad'): void
@@ -73,6 +74,14 @@ class ListPais extends ListController
             ->addOrderBy(['descripcion'], 'description', 1)
             ->addOrderBy(['codiso'], 'codiso')
             ->addSearchFields(['descripcion', 'coddivisa']);
+    }
+
+    protected function createViewPOIs(string $viewName = 'ListPuntoInteresCiudad'): void
+    {
+        $this->addView($viewName, 'PuntoInteresCiudad', 'points-of-interest', 'fas fa-location-dot')
+            ->addOrderBy(['name'], 'name')
+            ->addOrderBy(['idciudad'], 'city')
+            ->addSearchFields(['name', 'alias']);
     }
 
     protected function createViewProvinces(string $viewName = 'ListProvincia'): void
