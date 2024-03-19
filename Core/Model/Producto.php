@@ -319,6 +319,14 @@ class Producto extends ModelClass
         $this->observaciones = Tools::noHtml($this->observaciones);
         $this->referencia = Tools::noHtml($this->referencia);
 
+        // descripción y observaciones no pueden ser null
+        if ($this->descripcion === null) {
+            $this->descripcion = '';
+        }
+        if ($this->observaciones === null) {
+            $this->observaciones = '';
+        }
+
         if (empty($this->referencia)) {
             // obtenemos una nueva referencia de variantes, en lugar del producto
             $variant = new DinVariante();

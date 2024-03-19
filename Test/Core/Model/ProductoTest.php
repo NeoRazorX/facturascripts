@@ -78,6 +78,41 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->delete(), 'product-cant-delete-without-ref');
     }
 
+    public function textCreateWithNullDescription(): void
+    {
+        // creamos un producto con descripción nula
+        $product = new Producto();
+        $product->referencia = self::TEST_REFERENCE;
+        $this->assertTrue($product->save(), 'product-cant-save-with-null-description');
+
+        // recargamos el producto para comprobar que se ha guardado correctamente
+        $product->loadFromCode($product->primaryColumnValue());
+
+        // comprobamos que la descripción no es nula
+        $this->assertNotNull($product->descripcion, 'product-description-is-null');
+
+        // lo eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete-with-null-description');
+    }
+
+    public function textCreateWithNullObservations(): void
+    {
+        // creamos un producto con observaciones nulas
+        $product = new Producto();
+        $product->referencia = self::TEST_REFERENCE;
+        $product->descripcion = 'Test Product';
+        $this->assertTrue($product->save(), 'product-cant-save-with-null-observations');
+
+        // recargamos el producto para comprobar que se ha guardado correctamente
+        $product->loadFromCode($product->primaryColumnValue());
+
+        // comprobamos que las observaciones no son nulas
+        $this->assertNotNull($product->observaciones, 'product-observations-is-null');
+
+        // lo eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete-with-null-observations');
+    }
+
     public function testBlocked(): void
     {
         // creamos un producto
