@@ -76,7 +76,7 @@ class Myfiles implements ControllerInterface
         $parts = explode('.', $filePath);
         $safe = [
             'accdb', 'ai', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'html', 'ico', 'jfif',
-            'jpeg', 'jpg', 'js', 'json', 'map', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf',
+            'jpeg', 'jpg', 'js', 'json', 'map', 'md', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf',
             'png', 'pptx', 'rar', 'sql', 'svg', 'ttf', 'txt', 'webm', 'webp', 'woff', 'woff2', 'xls', 'xlsm', 'xlsx',
             'xml', 'xsig', 'zip'
         ];
