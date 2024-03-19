@@ -325,8 +325,12 @@ class Tools
         return $randomString;
     }
 
-    public static function textBreak(string $text, int $length = 50, string $break = '...'): string
+    public static function textBreak(?string $text, int $length = 50, string $break = '...'): string
     {
+        if ($text === null) {
+            return '';
+        }
+
         if (strlen($text) <= $length) {
             return trim($text);
         }

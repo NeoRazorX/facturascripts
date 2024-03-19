@@ -117,10 +117,15 @@ final class ToolsTest extends TestCase
 
     public function testHtmlFunctions(): void
     {
+        // escapamos y des-escapamos el html
         $html = '<p class=\'test\'>Test</p><script>alert("test");</script>';
         $noHtml = '&lt;p class=&#39;test&#39;&gt;Test&lt;/p&gt;&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;';
         $this->assertEquals($noHtml, Tools::noHtml($html));
         $this->assertEquals($html, Tools::fixHtml($noHtml));
+
+        // comprobamos que podemos pasar un null a las funciones
+        $this->assertNull(Tools::noHtml(null));
+        $this->assertNull(Tools::fixHtml(null));
     }
 
     public function testRandomString(): void
@@ -193,6 +198,7 @@ final class ToolsTest extends TestCase
 
     public function testTextBreak(): void
     {
+        // acortamos el texto de varias formas
         $text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies aliquet, "
             . "nisl nisl aliquam nisl, nec aliquet nisl nisl nec nisl. Nullam auctor, nisl nec ultricies aliquet, "
             . "nisl nisl aliquam nisl, nec aliquet nisl nisl nec nisl. Nullam auctor, nisl nec ultricies aliquet, "
@@ -212,6 +218,9 @@ final class ToolsTest extends TestCase
         $this->assertEquals("Lorem ipsum dolor sit amet, consectetur...", Tools::textBreak($text, 44));
         $this->assertEquals("Lorem ipsum dolor sit amet,...", Tools::textBreak($text, 30));
         $this->assertEquals("Lorem ipsum dolor sit amet,(...)", Tools::textBreak($text, 32, '(...)'));
+
+        // comprobamos que podemos pasar un null a la función
+        $this->assertEquals('', Tools::textBreak(null));
     }
 
     public function testBytes(): void
