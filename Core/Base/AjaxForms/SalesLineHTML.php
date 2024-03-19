@@ -285,7 +285,7 @@ class SalesLineHTML
 
     private static function coste(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): string
     {
-        if (false === CommonSalesPurchases::checkLevel(Tools::settings('default', 'levelcostsales', 0))) {
+        if (false === SalesHeaderHTML::checkLevel(Tools::settings('default', 'levelcostsales', 0))) {
             return '';
         }
 
