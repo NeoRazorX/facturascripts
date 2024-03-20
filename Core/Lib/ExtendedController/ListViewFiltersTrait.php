@@ -29,6 +29,7 @@ use FacturaScripts\Dinamic\Lib\ListFilter\NumberFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\PeriodFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\SelectFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\SelectWhereFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\TreeFilter;
 use FacturaScripts\Dinamic\Model\PageFilter;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -189,6 +190,25 @@ trait ListViewFiltersTrait
     {
         $this->filters[$key] = new SelectWhereFilter($key, $values, $label);
 
+        return $this;
+    }
+
+    /**
+     * Add a tree type filter to the ListView.
+     *
+     * @param string $key
+     * @param string $label
+     * @param string $field
+     * @param string $table
+     * @param string $field_parent
+     * @param string $field_code
+     * @param string $field_title
+     * @param array $where
+     * @return ListView
+     */
+    public function addFilterTree(string $key, string $label, string $field, string $table, string $field_parent, string $field_code = '', string $field_title = '', array $where = []): ListView
+    {
+        $this->filters[$key] = new TreeFilter($key, $field, $label, $table, $field_parent, $field_code, $field_title, $where);
         return $this;
     }
 

@@ -216,6 +216,25 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Add an autocomplete type filter to the ListView.
+     *
+     * @param string $viewName
+     * @param string $key (Filter identifier)
+     * @param string $label (Human reader description)
+     * @param string $field (Field of the model to apply filter)
+     * @param string $table (Table to search)
+     * @param string $fieldparent (Field that determines the hierarchy)
+     * @param string $fieldcode (Primary column of the table to search and match)
+     * @param string $fieldtitle (Column to show name or description)
+     * @param array $where (Extra where conditions)
+     * @return ListView
+     */
+    protected function addFilterTree(string $viewName, string $key, string $label, string $field, string $table, string $fieldparent, string $fieldcode = '', string $fieldtitle = '', array $where = []): ListView
+    {
+        return $this->listView($viewName)->addFilterTree($key, $label, $field, $table, $fieldparent, $fieldcode, $fieldtitle, $where);
+    }
+
+    /**
      * Adds an order field to the ListView.
      *
      * @param string $viewName
