@@ -255,9 +255,9 @@
         {% set viewName = currentView.getViewName() %}
         {% if currentView.pageFilterKey %}
             {# -- Disable user filters -- #}
-            <a href="{{ fsc.url() }}?activetab={{ viewName }}" class="btn btn-light" title="{{ trans('all') }}">
+            <button type="button" class="btn btn-light" onclick="listViewSetLoadFilter('{{ viewName }}', '0');">
                 <i class="fas fa-filter fa-fw"></i> {{ trans('all') }}
-            </a>
+            </button>
         {% else %}
             <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
                 <i class="fas fa-filter fa-fw"></i> {{ trans('filters') }}
