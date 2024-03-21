@@ -32,8 +32,6 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
  */
 trait DocFilesTrait
 {
-    public $lastFiles;
-
     abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5');
 
     private function addFileAction(): bool
@@ -162,8 +160,6 @@ trait DocFilesTrait
             new DataBaseWhere('modelid|modelcode', $modelid) :
             new DataBaseWhere('modelcode', $modelid);
         $view->loadData('', $where, ['creationdate' => 'DESC']);
-
-        $this->lastFiles = AttachedFile::all([], ['date' => 'ASC', 'hour' => 'ASC']);
     }
 
     private function unlinkFileAction(): bool
