@@ -3,44 +3,64 @@
 {% set currentView = fsc.getCurrentView() %}
 
 <div class="container-fluid">
+    {% if fsc.permissions.allowUpdate %}
     <div class="form-row">
-        <div class="col-sm-12">
-            {% if fsc.permissions.allowUpdate %}
-                <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
+        <div class="col-sm-6">
+            <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
                       onsubmit="animateSpinner('add')">
-                    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-                    <input type="hidden" name="action" value="add-file"/>
-                    {{ formToken() }}
-                    <div class="card border-success shadow mb-3">
-                        <div class="card-body p-3">
-                            <h5 class="card-title">
-                                <i class="fas fa-folder-plus fa-fw"></i> {{ trans('add') }}
-                            </h5>
-                            <div class="form-group">
-                                <textarea name="observations" class="form-control"
-                                          placeholder="{{ trans('observations') }}"></textarea>
+                <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+                <input type="hidden" name="action" value="add-file"/>
+                {{ formToken() }}
+                <div class="card border-success shadow mb-3">
+                    <div class="card-body p-3">
+                        <h5 class="card-title">
+                            <i class="fas fa-folder-plus fa-fw"></i> {{ trans('add') }}
+                        </h5>
+                        <div class="form-group">
+                            <textarea name="observations" class="form-control"
+                                      placeholder="{{ trans('observations') }}"></textarea>
+                        </div>
+                        <div class="form-row align-items-end">
+                            <div class="col">
+                                <input type="file" name="new-files[]" class="form-control-file" multiple required/>
+                                <p class="text-muted mb-0">
+                                    {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
+                                </p>
+                                {% for item in getIncludeViews('DocFiles', 'formAddBody') %}
+                                    {% include item['path'] %}
+                                {% endfor %}
                             </div>
-                            <div class="form-row align-items-end">
-                                <div class="col">
-                                    <input type="file" name="new-files[]" class="form-control-file" multiple required/>
-                                    <p class="text-muted mb-0">
-                                        {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
-                                    </p>
-                                    {% for item in getIncludeViews('DocFiles', 'formAddBody') %}
-                                        {% include item['path'] %}
-                                    {% endfor %}
-                                </div>
-                                <div class="col text-right">
-                                    <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
-                                    </button>
-                                </div>
+                            <div class="col text-right">
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
+                                </button>
                             </div>
                         </div>
                     </div>
-                </form>
-            {% endif %}
-
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-6">
+            <div class="card border-success shadow mb-3 overflow-auto">
+                <div class="card-body p-3">
+                    <h5 class="card-title">
+                        <i class="fas fa-folder-plus fa-fw"></i> {{ trans('choose-files') }}
+                    </h5>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="p-2">
+                                <input type="text" class="form-control shadow-sm" id="querySearchFile" placeholder="{{ trans('search') }}"/>
+                            </div>
+                            <ul id="listado-archivos" class="list-unstyled"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-sm-12">
             <div class="card-columns">
                 {% for docfile in currentView.cursor %}
                     {% set file = docfile.getFile() %}
@@ -127,3 +147,60 @@
         </div>
     </div>
 </div>
+
+<script>
+    const docUrl = "{{ doc.url() }}";
+    const currentViewGetViewName = "{{ currentView.getViewName() }}";
+    const docPrimaryColumn = "{{ doc.primaryColumn() }}";
+    const docPrimaryColumnValue = {{ doc.primaryColumnValue() }};
+    const formToken = $("input[type='hidden'][name='multireqtoken']")[0].value;
+    const transRelateFile = "{{ trans('relate-file') }}";
+
+    $(document).ready(function () {
+        $( "#querySearchFile" ).autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    method: "POST",
+                    url: '{{ fsc.url() }}',
+                    data: {
+                        action: 'find-related-file',
+                        term: request.term,
+                        code: docPrimaryColumnValue
+                    },
+                    dataType: "json",
+                    success: function (results){
+                        if (results.ok){
+
+                            $('#listado-archivos').empty();
+
+                            results.attachedFiles.forEach(function(archivo){
+                                const html = `
+                                    <div class="media mb-3">
+                                        ${(archivo.mimetype).includes('image') ? `<img src="${archivo.path}" class="mr-3" style="height: 64px; aspect-ratio: auto;">` : ''}
+                                        <div class="media-body">
+                                            <h5 class="mt-0">${archivo.filename}</h5>
+                                            <div>
+                                                <form action="${docUrl}" method="post" onsubmit="animateSpinner('add')">
+                                                    <input type="hidden" name="activetab" value="${currentViewGetViewName}"/>
+                                                    <input type="hidden" name="action" value="relate-file"/>
+                                                    <input type="hidden" name="idfile" value="${archivo.idfile}"/>
+                                                    <input type="hidden" name="${docPrimaryColumn}" value="${docPrimaryColumnValue}"/>
+                                                    <input type="hidden" name="multireqtoken" value="${formToken}"/>
+                                                    <button type="submit" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> ${transRelateFile}
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+
+                                $('#listado-archivos').append(html);
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>

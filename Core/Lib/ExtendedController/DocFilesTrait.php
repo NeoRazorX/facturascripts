@@ -232,4 +232,35 @@ trait DocFilesTrait
 
         return true;
     }
+
+    /**
+     * Relaciona el archivo con el documento
+     *
+     * @return bool
+     */
+    private function relateFileAction(): bool
+    {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === $this->validateFileActionToken()) {
+            return true;
+        }
+
+        $fileRelation = new AttachedFileRelation();
+        $fileRelation->idfile = $this->request->request->get('idfile');
+        $fileRelation->model = $this->getModelClassName();
+        $fileRelation->modelcode = $this->request->query->get('code');
+        $fileRelation->modelid = (int)$fileRelation->modelcode;
+        $fileRelation->nick = $this->user->nick;
+        $fileRelation->observations = $this->request->request->get('observations');
+
+        if (false === $fileRelation->save()) {
+            Tools::log()->error('fail-relation');
+            return true;
+        }
+
+        Tools::log()->notice('record-updated-correctly');
+        return true;
+    }
 }
