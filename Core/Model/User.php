@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,6 @@ use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
 use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
-use FacturaScripts\Core\Model\Base\PasswordTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
@@ -39,7 +38,6 @@ class User extends ModelClass
 {
     use ModelTrait;
     use CompanyRelationTrait;
-    use PasswordTrait;
     use GravatarTrait;
 
     const DEFAULT_LEVEL = 2;
@@ -86,6 +84,15 @@ class User extends ModelClass
 
     /** @var string */
     public $nick;
+
+    /** @var string */
+    public $newPassword;
+
+    /** @var string */
+    public $newPassword2;
+
+    /** @var string */
+    public $password;
 
     public function addRole(?string $code): bool
     {
@@ -213,6 +220,11 @@ class User extends ModelClass
         return 'nick';
     }
 
+    public function setPassword($value)
+    {
+        $this->password = password_hash($value, PASSWORD_DEFAULT);
+    }
+
     public static function tableName(): string
     {
         return 'users';
@@ -266,16 +278,36 @@ class User extends ModelClass
         $this->lastbrowser = $browser;
     }
 
-    /**
-     * Verifies the login key.
-     *
-     * @param string $value
-     *
-     * @return bool
-     */
     public function verifyLogkey(string $value): bool
     {
         return $this->logkey === $value;
+    }
+
+    public function verifyPassword(string $value): bool
+    {
+        if (password_verify($value, $this->password)) {
+            if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
+                $this->setPassword($value);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function testPassword(): bool
+    {
+        if (isset($this->newPassword, $this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
+            if ($this->newPassword !== $this->newPassword2) {
+                Tools::log()->warning('different-passwords', ['%userNick%' => $this->primaryColumnValue()]);
+                return false;
+            }
+
+            $this->setPassword($this->newPassword);
+        }
+
+        return true;
     }
 
     protected function saveInsert(array $values = []): bool

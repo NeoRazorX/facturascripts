@@ -37,7 +37,6 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 class Contacto extends Base\Contact
 {
     use Base\ModelTrait;
-    use Base\PasswordTrait;
 
     /** @var bool */
     public $aceptaprivacidad;
@@ -87,17 +86,8 @@ class Contacto extends Base\Contact
     /** @var int */
     public $idcontacto;
 
-    /** @var string */
-    public $lastactivity;
-
-    /** @var string */
-    public $lastip;
-
     /** @var integer */
     public $level;
-
-    /** @var string */
-    public $logkey;
 
     /** @var string */
     public $provincia;
@@ -261,21 +251,6 @@ class Contacto extends Base\Contact
         return parent::install();
     }
 
-    /**
-     * Generates a new login key for the user. It also updates last activity and last IP.
-     *
-     * @param string $ipAddress
-     *
-     * @return string
-     */
-    public function newLogkey($ipAddress): string
-    {
-        $this->lastactivity = Tools::dateTime();
-        $this->lastip = $ipAddress;
-        $this->logkey = Tools::randomString(99);
-        return $this->logkey;
-    }
-
     public static function primaryColumn(): string
     {
         return 'idcontacto';
@@ -319,23 +294,11 @@ class Contacto extends Base\Contact
             return false;
         }
 
-        return $this->testPassword() && parent::test();
+        return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         return parent::url($type, $list);
-    }
-
-    /**
-     * Verifies the login key.
-     *
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function verifyLogkey(string $value): bool
-    {
-        return $this->logkey === $value;
     }
 }
