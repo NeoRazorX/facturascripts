@@ -217,7 +217,11 @@ class Updater extends Controller
     private function getUpdateItemsCore(): array
     {
         $fileName = 'update-' . Forja::CORE_PROJECT_ID . '.zip';
-        foreach (Forja::getBuilds(Forja::CORE_PROJECT_ID) as $build) {
+
+        $builds = Forja::getBuilds(Forja::CORE_PROJECT_ID);
+        $builds = array_reverse($builds);
+
+        foreach ($builds as $build) {
             if ($build['version'] <= $this->getCoreVersion()) {
                 continue;
             }
