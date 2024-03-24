@@ -192,14 +192,19 @@ final class UserTest extends TestCase
         $logKey = $user->logkey;
 
         // registramos la actividad
-        $user->newLogkey('12.34.56.78', 'Mozilla/5.0');
+        $newLogKey = $user->newLogkey('12.34.56.78', 'Mozilla/5.0');
 
         // comprobamos que se ha guardado la clave
         $this->assertNotNull($user->logkey);
         $this->assertNotEmpty($user->logkey);
         $this->assertNotEquals($logKey, $user->logkey);
+        $this->assertEquals($newLogKey, $user->logkey);
         $this->assertEquals('12.34.56.78', $user->lastip);
         $this->assertEquals('Mozilla/5.0', $user->lastbrowser);
+
+        // verificamos la clave
+        $this->assertTrue($user->verifyLogkey($newLogKey));
+        $this->assertFalse($user->verifyLogkey('1234'));
 
         // eliminamos
         $this->assertTrue($user->delete());
