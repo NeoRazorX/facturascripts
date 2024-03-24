@@ -178,7 +178,7 @@ final class ContactoTest extends TestCase
         $contact->nombre = 'Test';
         $this->assertTrue($contact->save(), 'contact-cant-save');
 
-        // comprobamos que apellidos, cargo, direccion, teléfonos, fax, email y observaciones no sean nulos
+        // comprobamos que apellidos, cargo, dirección, teléfonos, fax, email y observaciones no sean nulos
         $this->assertNotNull($contact->apellidos, 'contact-apellidos-null');
         $this->assertNotNull($contact->cargo, 'contact-cargo-null');
         $this->assertNotNull($contact->empresa, 'contact-empresa-null');
@@ -261,7 +261,7 @@ final class ContactoTest extends TestCase
         $results = (new Contacto())->codeModelSearch($query, $fieldCode, []);
         $this->assertCount(0, $results);
 
-        // Pasando una clausula where devuelve el resultado de la consulta
+        // Pasando una cláusula where devuelve el resultado de la consulta
         $query = '';
         $fieldCode = '';
         $where = [new DataBaseWhere('empresa', $contact2->empresa)];
@@ -382,18 +382,6 @@ final class ContactoTest extends TestCase
         $this->assertEquals('', $result);
     }
 
-    public function testNewLogkey(): void
-    {
-        $fakeIP = '192.192.192.192';
-
-        $contacto = new Contacto();
-
-        $result = $contacto->newLogkey($fakeIP);
-
-        $this->assertEquals($fakeIP, $contacto->lastip);
-        $this->assertEquals($contacto->logkey, $result);
-    }
-
     public function testPrimaryDescriptionColumn(): void
     {
         $contacto = new Contacto();
@@ -410,18 +398,6 @@ final class ContactoTest extends TestCase
         $result = $contacto->url();
 
         $this->assertEquals('ListCliente?activetab=ListContacto', $result);
-    }
-
-    public function testVerifyLogkey(): void
-    {
-        $contacto = new Contacto();
-        $contacto->logkey = 'fake-logkey';
-
-        $result = $contacto->verifyLogkey('fake-logkey');
-        $this->assertTrue($result);
-
-        $result = $contacto->verifyLogkey('fake-logkey-2');
-        $this->assertFalse($result);
     }
 
     protected function tearDown(): void

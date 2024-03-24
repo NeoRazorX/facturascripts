@@ -220,7 +220,7 @@ class User extends ModelClass
         return 'nick';
     }
 
-    public function setPassword($value)
+    public function setPassword($value): void
     {
         $this->password = password_hash($value, PASSWORD_DEFAULT);
     }
@@ -271,7 +271,7 @@ class User extends ModelClass
         return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();
     }
 
-    public function updateActivity(string $ipAddress, string $browser = '')
+    public function updateActivity(string $ipAddress, string $browser = ''): void
     {
         $this->lastactivity = Tools::dateTime();
         $this->lastip = $ipAddress;

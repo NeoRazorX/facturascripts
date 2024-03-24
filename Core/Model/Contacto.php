@@ -80,20 +80,11 @@ class Contacto extends Base\Contact
     /** @var string */
     public $empresa;
 
-    /** @var bool */
-    public $habilitado;
-
     /** @var int */
     public $idcontacto;
 
-    /** @var integer */
-    public $level;
-
     /** @var string */
     public $provincia;
-
-    /** @var integer */
-    public $puntos;
 
     /** @var bool */
     public $verificado;
@@ -131,9 +122,6 @@ class Contacto extends Base\Contact
         $this->aceptaprivacidad = false;
         $this->admitemarketing = false;
         $this->codpais = Tools::settings('default', 'codpais');
-        $this->habilitado = true;
-        $this->level = 1;
-        $this->puntos = 0;
         $this->verificado = false;
     }
 
