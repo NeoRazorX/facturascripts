@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -454,6 +454,18 @@ final class PluginsTest extends TestCase
         $this->assertTrue(Plugins::remove('TestPlugin2'));
         $this->assertTrue(Plugins::remove('TestPlugin3'));
         $this->assertTrue(Plugins::remove('TestPlugin4'));
+    }
+
+    public function testEnableMissingPlugin(): void
+    {
+        // activamos un plugin que no existe
+        $this->assertFalse(Plugins::enable('MissingPlugin'));
+    }
+
+    public function testDisableMissingPlugin(): void
+    {
+        // desactivamos un plugin que no existe
+        $this->assertFalse(Plugins::disable('MissingPlugin'));
     }
 
     public function testIsInstalled(): void
