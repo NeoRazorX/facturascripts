@@ -42,11 +42,4 @@ class Root extends Controller
             $this->redirect($this->user->homepage);
         }
     }
-
-    public function publicCore(&$response)
-    {
-        parent::publicCore($response);
-
-        $this->redirect('login');
-    }
 }
