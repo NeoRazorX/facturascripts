@@ -31,6 +31,7 @@ use FacturaScripts\Dinamic\Lib\Widget\RowStatus;
 use FacturaScripts\Dinamic\Model\TotalModel;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Session;
 
 /**
  * View definition for its use in ListController
@@ -353,7 +354,18 @@ class ListView extends BaseView
         }
 
         // filtro guardado seleccionado?
-        $this->pageFilterKey = $request->request->get('loadfilter', 0);
+        $this->pageFilterKey = Cache::get(get_class($this->model) . '_' . Session::user()->nick . '_filter');
+
+        if($request->request->get('loadfilter', -1) != -1) {
+          if($request->request->get('loadfilter', 0) == Cache::get(get_class($this->model) . '_' . Session::user()->nick . '_filter')) {
+            $this->pageFilterKey = 0;
+          }
+          else {
+            $this->pageFilterKey = $request->request->get('loadfilter', 0);
+          }
+        }
+        Cache::set(get_class($this->model) . '_' . Session::user()->nick . '_filter', $this->pageFilterKey);
+
         if ($this->pageFilterKey) {
             $filterLoad = [];
             // cargamos los valores en la request
