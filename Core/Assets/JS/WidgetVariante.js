@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -65,7 +65,8 @@ function widgetVarianteSearchKp(id, event) {
     }
 }
 
-function widgetVarianteSelect(id, id_file) {
-    $("#" + id).val(id_file);
+function widgetVarianteSelect(id, value) {
+    $("#" + id).val(value);
     $("#modal_" + id).modal("hide");
+    $("#modal_span_" + id).html(value);
 }
