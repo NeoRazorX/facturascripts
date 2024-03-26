@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -56,10 +56,28 @@ abstract class ApiController implements ControllerInterface
         $this->request = Request::createFromGlobals();
         $this->response = new Response();
         $this->url = $url;
+    }
 
+    public function getPageData(): array
+    {
+        return [];
+    }
+
+    public function run(): void
+    {
         // si no hay constante api_key y la api está desactivada, no se puede acceder
         if (null === Tools::config('api_key') && false == Tools::settings('default', 'enable_api', false)) {
             throw new KernelException('DisabledApi', Tools::lang()->trans('api-disabled'));
+        }
+
+        if ($this->request->server->get('REQUEST_METHOD') == 'OPTIONS') {
+            $this->response->headers->set('Access-Control-Allow-Origin', '*');
+            $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+            $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
+            $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->send();
+            return;
         }
 
         // comprobamos si la IP está bloqueada
@@ -89,20 +107,6 @@ abstract class ApiController implements ControllerInterface
         }
         if ($version != self::API_VERSION) {
             throw new KernelException('InvalidApiVersion', Tools::lang()->trans('api-version-invalid'));
-        }
-    }
-
-    public function getPageData(): array
-    {
-        return [];
-    }
-
-    public function run(): void
-    {
-        if ($this->request->server->get('REQUEST_METHOD') == 'OPTIONS') {
-            $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
-            $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
-            return;
         }
 
         $this->response->headers->set('Access-Control-Allow-Origin', '*');

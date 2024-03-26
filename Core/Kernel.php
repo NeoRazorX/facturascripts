@@ -250,7 +250,7 @@ final class Kernel
             '/' => 'Root',
             '/AdminPlugins' => 'AdminPlugins',
             '/api' => 'ApiRoot',
-            '/api/3/crearFactura' => 'ApiCreateFacturaCliente',
+            '/api/3/crearFacturaCliente' => 'ApiCreateFacturaCliente',
             '/api/*' => 'ApiRoot',
             '/Core/Assets/*' => 'Files',
             '/cron' => 'Cron',
