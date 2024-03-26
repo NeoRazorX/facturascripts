@@ -80,14 +80,17 @@ class ApiCreateFacturaCliente extends ApiController
             return;
         }
 
-        // asignamos la serie y forma de pago
-        $factura->codserie = $this->request->get('codserie', $factura->codserie);
-        $factura->codpago = $this->request->get('codpago', $factura->codpago);
-
         // asignamos la divisa
         $coddivisa = $this->request->get('coddivisa');
         if ($coddivisa) {
             $factura->setCurrency($coddivisa);
+        }
+
+        // asignamos el resto de campos del modelo
+        foreach ($factura->getModelFields() as $key => $field) {
+            if ($this->request->request->has($key)) {
+                $factura->{$key} = $this->request->request->get($key);
+            }
         }
 
         // guardamos la factura
@@ -101,16 +104,33 @@ class ApiCreateFacturaCliente extends ApiController
 
         // guardamos las líneas
         $this->saveLines($factura);
+
+        // ¿Está pagada?
+        if ($this->request->get('pagada', false)) {
+            foreach ($factura->getReceipts() as $receipt) {
+                $receipt->pagado = true;
+                $receipt->save();
+            }
+
+            // recargamos la factura
+            $factura->loadFromCode($factura->idfactura);
+        }
+
+        // devolvemos la respuesta
+        $this->response->setContent(json_encode([
+            'doc' => $factura->toArray(),
+            'lines' => $factura->getLines(),
+        ]));
     }
 
-    protected function saveLines(FacturaCliente &$factura): void
+    protected function saveLines(FacturaCliente &$factura): bool
     {
         if (!$this->request->request->has('lineas')) {
             $this->response->setContent(json_encode([
                 'status' => 'error',
                 'message' => 'Lines are required',
             ]));
-            return;
+            return false;
         }
 
         $lineData = $this->request->request->get('lineas');
@@ -120,14 +140,14 @@ class ApiCreateFacturaCliente extends ApiController
                 'status' => 'error',
                 'message' => 'Invalid lines',
             ]));
-            return;
+            return false;
         }
 
         $newLines = [];
         foreach ($lineas as $line) {
-            $newLine = empty($line['referencia']) ?
+            $newLine = empty($line['referencia'] ?? '') ?
                 $factura->getNewLine() :
-                $factura->getNewLine($line['referencia']);
+                $factura->getNewProductLine($line['referencia']);
 
             $newLine->cantidad = (float)($line['cantidad'] ?? 1);
             $newLine->descripcion = $line['descripcion'] ?? $newLine->descripcion ?? '?';
@@ -135,12 +155,28 @@ class ApiCreateFacturaCliente extends ApiController
             $newLine->dtopor = (float)($line['dtopor'] ?? 0);
             $newLine->dtopor2 = (float)($line['dtopor2'] ?? 0);
 
-            if ($line['excepcioniva']) {
+            if (!empty($line['excepcioniva'] ?? '')) {
                 $newLine->excepcioniva = $line['excepcioniva'];
             }
 
-            if ($line['codimpuesto']) {
+            if (!empty($line['codimpuesto'] ?? '')) {
                 $newLine->codimpuesto = $line['codimpuesto'];
+            }
+
+            if (!empty($line['suplido'] ?? '')) {
+                $newLine->suplido = (bool)$line['suplido'];
+            }
+
+            if (!empty($line['mostrar_cantidad'] ?? '')) {
+                $newLine->mostrar_cantidad = (bool)$line['mostrar_cantidad'];
+            }
+
+            if (!empty($line['mostrar_precio'] ?? '')) {
+                $newLine->mostrar_precio = (bool)$line['mostrar_precio'];
+            }
+
+            if (!empty($line['salto_pagina'] ?? '')) {
+                $newLine->salto_pagina = (bool)$line['salto_pagina'];
             }
 
             $newLines[] = $newLine;
@@ -152,13 +188,9 @@ class ApiCreateFacturaCliente extends ApiController
                 'status' => 'error',
                 'message' => 'Error calculating the invoice',
             ]));
-            return;
+            return false;
         }
 
-        // devolvemos la respuesta
-        $this->response->setContent(json_encode([
-            'doc' => $factura->toArray(),
-            'lines' => $factura->getLines(),
-        ]));
+        return true;
     }
 }
