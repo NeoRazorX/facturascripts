@@ -103,7 +103,9 @@ class ApiCreateFacturaCliente extends ApiController
         }
 
         // guardamos las líneas
-        $this->saveLines($factura);
+        if (false === $this->saveLines($factura)) {
+            return;
+        }
 
         // ¿Está pagada?
         if ($this->request->get('pagada', false)) {
@@ -151,9 +153,9 @@ class ApiCreateFacturaCliente extends ApiController
 
             $newLine->cantidad = (float)($line['cantidad'] ?? 1);
             $newLine->descripcion = $line['descripcion'] ?? $newLine->descripcion ?? '?';
-            $newLine->pvpunitario = (float)($line['pvpunitario'] ?? 0);
-            $newLine->dtopor = (float)($line['dtopor'] ?? 0);
-            $newLine->dtopor2 = (float)($line['dtopor2'] ?? 0);
+            $newLine->pvpunitario = (float)($line['pvpunitario'] ?? $newLine->pvpunitario);
+            $newLine->dtopor = (float)($line['dtopor'] ?? $newLine->dtopor);
+            $newLine->dtopor2 = (float)($line['dtopor2'] ?? $newLine->dtopor2);
 
             if (!empty($line['excepcioniva'] ?? '')) {
                 $newLine->excepcioniva = $line['excepcioniva'];
