@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
@@ -93,17 +94,22 @@ class ApiCreateFacturaCliente extends ApiController
             }
         }
 
+        $db = new DataBase();
+        $db->beginTransaction();
+
         // guardamos la factura
         if (false === $factura->save()) {
             $this->response->setContent(json_encode([
                 'status' => 'error',
                 'message' => 'Error saving the invoice',
             ]));
+            $db->rollback();
             return;
         }
 
         // guardamos las líneas
         if (false === $this->saveLines($factura)) {
+            $db->rollback();
             return;
         }
 
@@ -117,6 +123,8 @@ class ApiCreateFacturaCliente extends ApiController
             // recargamos la factura
             $factura->loadFromCode($factura->idfactura);
         }
+
+        $db->commit();
 
         // devolvemos la respuesta
         $this->response->setContent(json_encode([
