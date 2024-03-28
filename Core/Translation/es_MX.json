@@ -100,7 +100,7 @@
     "apc-get-key-item": "Obtenido elemento '%item%' desde APC.",
     "apc-set-key-item": "Asignado elemento '%item%' a APC.",
     "api": "API",
-    "api-disabled": "API desactivada. Puede activarla desde preferencias de aplicación.",
+    "api-disabled": "API desactivada. Puede activarla desde el panel de control",
     "api-key": "API Key",
     "api-keys": "API Keys",
     "api-version-not-found": "Versión de API no encontrada",
