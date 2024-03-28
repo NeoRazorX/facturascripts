@@ -28,7 +28,7 @@ class ApiRoot extends ApiController
     /** @var array */
     private static $custom_resources = ['crearFacturaCliente'];
 
-    public function addCustomResource(string $name): void
+    public static function addCustomResource(string $name): void
     {
         self::$custom_resources[] = $name;
     }
