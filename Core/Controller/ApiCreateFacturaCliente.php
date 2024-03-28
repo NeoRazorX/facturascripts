@@ -74,8 +74,8 @@ class ApiCreateFacturaCliente extends ApiController
         // cargamos el cliente
         $cliente = new Cliente();
         $codcliente = $this->request->get('codcliente');
-        $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
         if (!$cliente->loadFromCode($codcliente)) {
+            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
             $this->response->setContent(json_encode([
                 'status' => 'error',
                 'message' => 'Customer not found',
