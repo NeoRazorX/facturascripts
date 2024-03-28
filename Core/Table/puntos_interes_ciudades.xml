@@ -7,7 +7,6 @@
     <column>
         <name>creation_date</name>
         <type>timestamp</type>
-        <null>NO</null>
     </column>
     <column>
         <name>id</name>
@@ -28,11 +27,11 @@
         <type>timestamp</type>
     </column>
     <column>
-        <name>latitud</name>
+        <name>latitude</name>
         <type>double precision</type>
     </column>
     <column>
-        <name>longitud</name>
+        <name>longitude</name>
         <type>double precision</type>
     </column>
     <column>
@@ -46,6 +45,10 @@
     <constraint>
         <name>puntos_interes_ciudades_pkey</name>
         <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>uniq_puntos_interes_ciudades</name>
+        <type>UNIQUE (idciudad, name)</type>
     </constraint>
     <constraint>
         <name>ca_puntos_interes_ciudades_users_last_nick</name>

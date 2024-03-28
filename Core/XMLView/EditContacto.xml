@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -100,8 +100,8 @@
                 </widget>
             </column>
             <column name="province" numcolumns="4" order="140">
-                <widget type="datalist" fieldname="provincia">
-                    <values source="provincias" fieldcode="provincia" fieldtitle="provincia"/>
+                <widget type="datalist" fieldname="provincia" parent="codpais">
+                    <values source="provincias" fieldcode="provincia" fieldtitle="provincia" fieldfilter="codpais"/>
                 </widget>
             </column>
             <column name="country" titleurl="ListPais" numcolumns="4" order="150">

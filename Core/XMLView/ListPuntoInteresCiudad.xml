@@ -31,11 +31,11 @@
                 <values source="ciudades" fieldcode="idciudad" fieldtitle="ciudad"/>
             </widget>
         </column>
-        <column name="latitud" order="130">
-            <widget type="number" fieldname="latitud"/>
+        <column name="latitude" order="130">
+            <widget type="number" fieldname="latitude"/>
         </column>
-        <column name="longitud" order="140">
-            <widget type="number" fieldname="longitud"/>
+        <column name="longitude" order="140">
+            <widget type="number" fieldname="longitude"/>
         </column>
     </columns>
 </view>

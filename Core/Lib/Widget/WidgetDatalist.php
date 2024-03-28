@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Model\CodeModel;
 
 /**
@@ -28,6 +29,11 @@ use FacturaScripts\Core\Model\CodeModel;
  */
 class WidgetDatalist extends WidgetSelect
 {
+    protected function assets()
+    {
+        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetDatalist.js');
+    }
+
     /**
      * @param string $type
      * @param string $extraClass
@@ -37,11 +43,22 @@ class WidgetDatalist extends WidgetSelect
     protected function inputHtml($type = 'datalist', $extraClass = '')
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
+        if ($this->parent) {
+            $class = $class . ' parentDatalist';
+        }
+
         $list = $this->fieldname . '-list-' . $this->getUniqueId();
         $html = '<input type="text" name="' . $this->fieldname . '" value="' . $this->value . '"'
             . ' class="' . $class . '"'
             . ' list="' . $list . '"'
             . $this->inputHtmlExtraParams()
+            . ' parent="' . $this->parent . '"'
+            . ' data-field="' . $this->fieldname . '"'
+            . ' data-source="' . $this->source . '"'
+            . ' data-fieldcode="' . $this->fieldcode . '"'
+            . ' data-fieldtitle="' . $this->fieldtitle . '"'
+            . ' data-fieldfilter="' . $this->fieldfilter . '"'
+            . ' data-limit="' . $this->limit . '"'
             . '/>';
 
         $html .= '<datalist id="' . $list . '">';

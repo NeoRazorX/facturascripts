@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,13 +30,22 @@
         <column name="iso" order="120">
             <widget type="text" fieldname="codisoprov" />
         </column>
-        <column name="country" display="right" order="130">
-            <widget type="autocomplete" fieldname="codpais" onclick="EditPais">
+        <column name="country" order="130">
+            <widget type="autocomplete" fieldname="codpais">
                 <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
             </widget>
         </column>
-        <column name="code" display="right" order="140">
+        <column name="code" order="140">
             <widget type="text" maxlength="2" fieldname="codeid" icon="fas fa-hashtag"/>
+        </column>
+        <column name="latitude" order="150">
+            <widget type="number" fieldname="latitude"/>
+        </column>
+        <column name="longitude" order="160">
+            <widget type="number" fieldname="longitude"/>
+        </column>
+        <column name="telephone-prefix" order="170">
+            <widget type="text" fieldname="telephone_prefix"/>
         </column>
     </columns>
 </view>

@@ -1,1875 +1,1863 @@
-"ciudad";"idprovincia"
-"Aramango";1
-"Asunción";1
-"Bagua";1
-"Bagua Grande";1
-"Balsas";1
-"Cajaruro";1
-"Camporredondo";1
-"Chachapoyas";1
-"Cheto";1
-"Chiliquin";1
-"Chirimoto";1
-"Chisquilla";1
-"Chuquibamba";1
-"Churuja";1
-"Cocabamba";1
-"Cochamal";1
-"Colcamar";1
-"Conila";1
-"Copallin";1
-"Corosha";1
-"Cuispes";1
-"Cumba";1
-"El Cenepa";1
-"El Milagro";1
-"El Parco";1
-"Florida";1
-"Granada";1
-"Huambo";1
-"Huancas";1
-"Imaza";1
-"Inguilpata";1
-"Jamalca";1
-"Jazan";1
-"Jumbilla";1
-"La Jalca";1
-"La Peca";1
-"Lamud";1
-"Leimebamba";1
-"Levanto";1
-"Limabamba";1
-"Longar";1
-"Longuita";1
-"Lonya Chico";1
-"Lonya Grande";1
-"Luya";1
-"Luya Viejo";1
-"Magdalena";1
-"María";1
-"Mariscal Benavides";1
-"Mariscal Castilla";1
-"Milpuc";1
-"Molinopampa";1
-"Montevideo";1
-"Nieva";1
-"Ocalli";1
-"Ocumal";1
-"Olleros";1
-"Omia";1
-"Pisuquia";1
-"Providencia";1
-"Quinjalca";1
-"Recta";1
-"Río Santiago";1
-"San Carlos";1
-"San Cristóbal";1
-"San Francisco de Daguas";1
-"San Francisco de Yeso";1
-"San Isidro de Maino";1
-"San Jerónimo";1
-"San Juan de Lopecancha";1
-"San Nicolás";1
-"Santa Catalina";1
-"Santa Rosa";1
-"Santo Tomas";1
-"Shipasbamba";1
-"Soloco";1
-"Sonche";1
-"Tingo";1
-"Totora";1
-"Trita";1
-"Valera";1
-"Vista Alegre";1
-"Yambrasbamba";1
-"Yamon";1
-"Abelardo Pardo Lezameta";2
-"Acas";2
-"Aco";2
-"Acobamba";2
-"Acochaca";2
-"Acopampa";2
-"Aczo";2
-"Aija";2
-"Alfonso Ugarte";2
-"Amashca";2
-"Anra";2
-"Anta";2
-"Antonio Raymondi";2
-"Aquia";2
-"Ataquero";2
-"Bambas";2
-"Bolognesi";2
-"Buena Vista Alta";2
-"Cabana";2
-"Cáceres del Perú";2
-"Cajacay";2
-"Cajamarquilla";2
-"Cajay";2
-"Canis";2
-"Caraz";2
-"Carhuapampa";2
-"Carhuaz";2
-"Casca";2
-"Cascapara";2
-"Cashapampa";2
-"Casma";2
-"Catac";2
-"Chacas";2
-"Chaccho";2
-"Chavin de Huantar";2
-"Chimbote";2
-"Chingalpo";2
-"Chingas";2
-"Chiquian";2
-"Cochabamba";2
-"Cochapeti";2
-"Cochas";2
-"Coishco";2
-"Colcabamba";2
-"Colquioc";2
-"Comandante Noel";2
-"Conchucos";2
-"Congas";2
-"Coris";2
-"Corongo";2
-"Cotaparaco";2
-"Culebras";2
-"Cusca";2
-"Eleazar Guzmán Barron";2
-"Fidel Olivas Escudero";2
-"Huacachi";2
-"Huacaschuque";2
-"Huacchis";2
-"Huachis";2
-"Huacllan";2
-"Huallanca";2
-"Huallanca";2
-"Huanchay";2
-"Huandoval";2
-"Huantar";2
-"Huaraz";2
-"Huari";2
-"Huarmey";2
-"Huasta";2
-"Huata";2
-"Huayan";2
-"Huaylas";2
-"Huayllabamba";2
-"Huayllacayan";2
-"Huayllan";2
-"Huayllapampa";2
-"Independencia";2
-"Jangas";2
-"La Libertad";2
-"La Merced";2
-"La Pampa";2
-"La Primavera";2
-"Lacabamba";2
-"Llacllin";2
-"Llama";2
-"Llamellin";2
-"Llapo";2
-"Llipa";2
-"Llumpa";2
-"Lucma";2
-"Macate";2
-"Malvas";2
-"Mancos";2
-"Mangas";2
-"Marca";2
-"Marcara";2
-"Masin";2
-"Matacoto";2
-"Mato";2
-"Mirgas";2
-"Moro";2
-"Musga";2
-"Nepeña";2
-"Nuevo Chimbote";2
-"Ocros";2
-"Olleros";2
-"Pacllon";2
-"Pallasca";2
-"Pamparomas";2
-"Pampas";2
-"Pampas Chico";2
-"Pampas Grande";2
-"Pararin";2
-"Pariacoto";2
-"Pariahuanca";2
-"Parobamba";2
-"Paucas";2
-"Pira";2
-"Piscobamba";2
-"Pomabamba";2
-"Ponto";2
-"Pueblo Libre";2
-"Quiches";2
-"Quillo";2
-"Quinuabamba";2
-"Ragash";2
-"Rahuapampa";2
-"Ranrahirca";2
-"Rapayan";2
-"Recuay";2
-"Samanco";2
-"San Cristóbal de Rajan";2
-"San Juan";2
-"San Juan de Rontoy";2
-"San Luis";2
-"San Marcos";2
-"San Miguel de Aco";2
-"San Miguel de Corpanqui";2
-"San Nicolás";2
-"San Pedro";2
-"San Pedro de Chana";2
-"Santa";2
-"Santa Cruz";2
-"Santa Rosa";2
-"Santiago de Chilcas";2
-"Santo Toribio";2
-"Shilla";2
-"Shupluy";2
-"Sicsibamba";2
-"Sihuas";2
-"Succha";2
-"Tapacocha";2
-"Tarica";2
-"Tauca";2
-"Ticapampa";2
-"Ticllos";2
-"Tinco";2
-"Uco";2
-"Yanac";2
-"Yanama";2
-"Yautan";2
-"Yauya";2
-"Yungar";2
-"Yungay";2
-"Yupan";2
-"Yuracmarca";2
-"Abancay";3
-"Anco_Huallo";3
-"Andahuaylas";3
-"Andarapa";3
-"Antabamba";3
-"Capaya";3
-"Caraybamba";3
-"Chacoche";3
-"Chalhuanca";3
-"Challhuahuacho";3
-"Chapimarca";3
-"Chiara";3
-"Chincheros";3
-"Chuquibambilla";3
-"Circa";3
-"Cocharcas";3
-"Colcabamba";3
-"Cotabambas";3
-"Cotaruse";3
-"Coyllurqui";3
-"Curahuasi";3
-"Curasco";3
-"Curpahuasi";3
-"El Oro";3
-"El Porvenir";3
-"Gamarra";3
-"Haquira";3
-"Huaccana";3
-"Huancarama";3
-"Huancaray";3
-"Huanipaca";3
-"Huaquirca";3
-"Huayana";3
-"Huayllati";3
-"Ihuayllo";3
-"José María Arguedas";3
-"Juan Espinoza Medrano";3
-"Justo Apu Sahuaraura";3
-"Kaquiabamba";3
-"Kishuara";3
-"Lambrama";3
-"Los Chankas";3
-"Lucre";3
-"Mamara";3
-"Mara";3
-"Micaela Bastidas";3
-"Ocobamba";3
-"Ongoy";3
-"Oropesa";3
-"Pachaconas";3
-"Pacobamba";3
-"Pacucha";3
-"Pampachiri";3
-"Pataypampa";3
-"Pichirhua";3
-"Pocohuanca";3
-"Pomacocha";3
-"Progreso";3
-"Ranracancha";3
-"Rocchacc";3
-"Sabaino";3
-"San Antonio";3
-"San Antonio de Cachi";3
-"San Jerónimo";3
-"San Juan de Chacña";3
-"San Miguel de Chaccrampa";3
-"San Pedro de Cachora";3
-"Sañayca";3
-"Santa María de Chicmo";3
-"Santa Rosa";3
-"Soraya";3
-"Talavera";3
-"Tambobamba";3
-"Tamburco";3
-"Tapairihua";3
-"Tintay";3
-"Toraya";3
-"Tumay Huaraca";3
-"Turpay";3
-"Turpo";3
-"Uranmarca";3
-"Vilcabamba";3
-"Virundo";3
-"Yanaca";3
-"Acarí";4
-"Achoma";4
-"Alca";4
-"Alto Selva Alegre";4
-"Andagua";4
-"Andaray";4
-"Aplao";4
-"Arequipa";4
-"Atico";4
-"Atiquipa";4
-"Ayo";4
-"Bella Unión";4
-"Cabanaconde";4
-"Cahuacho";4
-"Callalli";4
-"Camaná";4
-"Caravelí";4
-"Cayarani";4
-"Caylloma";4
-"Cayma";4
-"Cerro Colorado";4
-"Chachas";4
-"Chala";4
-"Chaparra";4
-"Characato";4
-"Charcana";4
-"Chichas";4
-"Chiguata";4
-"Chilcaymarca";4
-"Chivay";4
-"Choco";4
-"Chuquibamba";4
-"Cocachacra";4
-"Coporaque";4
-"Cotahuasi";4
-"Dean Valdivia";4
-"Huambo";4
-"Huanca";4
-"Huancarqui";4
-"Huanuhuanu";4
-"Huaynacotas";4
-"Ichupampa";4
-"Iray";4
-"Islay";4
-"Jacobo Hunter";4
-"Jaqui";4
-"José Luis Bustamante Y Rivero";4
-"José María Quimper";4
-"La Joya";4
-"Lari";4
-"Lluta";4
-"Lomas";4
-"Maca";4
-"Machaguay";4
-"Madrigal";4
-"Majes";4
-"Mariano Melgar";4
-"Mariano Nicolás Valcárcel";4
-"Mariscal Cáceres";4
-"Mejia";4
-"Miraflores";4
-"Mollebaya";4
-"Mollendo";4
-"Nicolás de Pierola";4
-"Ocoña";4
-"Orcopampa";4
-"Pampacolca";4
-"Pampamarca";4
-"Paucarpata";4
-"Pocsi";4
-"Polobaya";4
-"Punta de Bombón";4
-"Puyca";4
-"Quechualla";4
-"Quequeña";4
-"Quicacha";4
-"Quilca";4
-"Río Grande";4
-"Sabandia";4
-"Sachaca";4
-"Salamanca";4
-"Samuel Pastor";4
-"San Antonio de Chuca";4
-"San Juan de Siguas";4
-"San Juan de Tarucani";4
-"Santa Isabel de Siguas";4
-"Santa Rita de Siguas";4
-"Sayla";4
-"Sibayo";4
-"Socabaya";4
-"Tapay";4
-"Tauria";4
-"Tiabaya";4
-"Tipan";4
-"Tisco";4
-"Tomepampa";4
-"Toro";4
-"Tuti";4
-"Uchumayo";4
-"Uñon";4
-"Uraca";4
-"Viraco";4
-"Vitor";4
-"Yanahuara";4
-"Yanaquihua";4
-"Yanque";4
-"Yarabamba";4
-"Yauca";4
-"Yura";4
-"Accomarca";5
-"Acocro";5
-"Acos Vinchos";5
-"Alcamenca";5
-"Anchihuay";5
-"Anco";5
-"Andrés Avelino Cáceres Dorregaray";5
-"Apongo";5
-"Asquipata";5
-"Aucara";5
-"Ayacucho";5
-"Ayahuanco";5
-"Ayna";5
-"Belén";5
-"Cabana";5
-"Canaria";5
-"Canayre";5
-"Cangallo";5
-"Carapo";5
-"Carhuanca";5
-"Carmen Alto";5
-"Carmen Salcedo";5
-"Cayara";5
-"Chaca";5
-"Chalcos";5
-"Chaviña";5
-"Chiara";5
-"Chilcas";5
-"Chilcayoc";5
-"Chipao";5
-"Chumpi";5
-"Chungui";5
-"Chuschi";5
-"Colca";5
-"Colta";5
-"Concepción";5
-"Coracora";5
-"Corculla";5
-"Coronel Castañeda";5
-"Huac-Huas";5
-"Huacaña";5
-"Huamanguilla";5
-"Huamanquiquia";5
-"Huambalpa";5
-"Huancapi";5
-"Huancaraylla";5
-"Huanta";5
-"Huaya";5
-"Iguain";5
-"Independencia";5
-"Jesús Nazareno";5
-"Lampa";5
-"Laramate";5
-"Leoncio Prado";5
-"Llauta";5
-"Llochegua";5
-"Los Morochucos";5
-"Lucanas";5
-"Luis Carranza";5
-"Luricocha";5
-"Marcabamba";5
-"María Parado de Bellido";5
-"Morcolla";5
-"Ocaña";5
-"Ocros";5
-"Oronccoy";5
-"Otoca";5
-"Oyolo";5
-"Pacapausa";5
-"Pacaycasa";5
-"Paico";5
-"Pararca";5
-"Paras";5
-"Pausa";5
-"Pucacolpa";5
-"Pullo";5
-"Puquio";5
-"Puyusca";5
-"Querobamba";5
-"Quinua";5
-"Sacsamarca";5
-"Saisa";5
-"Samugari";5
-"San Cristóbal";5
-"San Francisco de Ravacayco";5
-"San Javier de Alpabamba";5
-"San José de Ticllas";5
-"San José de Ushua";5
-"San Juan";5
-"San Juan Bautista";5
-"San Miguel";5
-"San Pedro";5
-"San Pedro de Larcay";5
-"San Pedro de Palco";5
-"San Salvador de Quije";5
-"Sancos";5
-"Sancos";5
-"Santa Ana de Huaycahuacho";5
-"Santa Lucia";5
-"Santa Rosa";5
-"Santiago de Lucanamarca";5
-"Santiago de Paucaray";5
-"Santiago de Pischa";5
-"Santillana";5
-"Sara Sara";5
-"Sarhua";5
-"Saurama";5
-"Sivia";5
-"Socos";5
-"Soras";5
-"Tambillo";5
-"Tambo";5
-"Totos";5
-"Uchuraccay";5
-"Upahuacho";5
-"Vilcanchos";5
-"Vilcas Huaman";5
-"Vinchos";5
-"Vischongo";5
-"Andabamba";6
-"Anguia";6
-"Asunción";6
-"Bambamarca";6
-"Bellavista";6
-"Bolívar";6
-"Cachachi";6
-"Cajabamba";6
-"Cajamarca";6
-"Callayuc";6
-"Calquis";6
-"Catache";6
-"Catilluc";6
-"Celendín";6
-"Chadin";6
-"Chalamarca";6
-"Chancay";6
-"Chancaybaños";6
-"Chetilla";6
-"Chiguirip";6
-"Chilete";6
-"Chimban";6
-"Chirinos";6
-"Chontali";6
-"Choropampa";6
-"Choros";6
-"Chota";6
-"Chugur";6
-"Chumuch";6
-"Cochabamba";6
-"Colasay";6
-"Conchan";6
-"Condebamba";6
-"Contumaza";6
-"Cortegana";6
-"Cospan";6
-"Cujillo";6
-"Cupisnique";6
-"Cutervo";6
-"Eduardo Villanueva";6
-"El Prado";6
-"Encañada";6
-"Gregorio Pita";6
-"Guzmango";6
-"Huabal";6
-"Hualgayoc";6
-"Huambos";6
-"Huarango";6
-"Huasmin";6
-"Ichocan";6
-"Jaén";6
-"Jesús";6
-"Jorge Chávez";6
-"José Gálvez";6
-"José Manuel Quiroz";6
-"José Sabogal";6
-"La Coipa";6
-"La Esperanza";6
-"La Florida";6
-"La Libertad de Pallan";6
-"La Ramada";6
-"Lajas";6
-"Las Pirias";6
-"Llacanora";6
-"Llama";6
-"Llapa";6
-"Los Baños del Inca";6
-"Magdalena";6
-"Matara";6
-"Miguel Iglesias";6
-"Miracosta";6
-"Namballe";6
-"Namora";6
-"Nanchoc";6
-"Niepos";6
-"Ninabamba";6
-"Oxamarca";6
-"Paccha";6
-"Pedro Gálvez";6
-"Pimpingos";6
-"Pion";6
-"Pomahuaca";6
-"Pucara";6
-"Pulan";6
-"Querocotillo";6
-"Querocoto";6
-"Sallique";6
-"San Andrés de Cutervo";6
-"San Benito";6
-"San Bernardino";6
-"San Felipe";6
-"San Gregorio";6
-"San Ignacio";6
-"San José de Lourdes";6
-"San José del Alto";6
-"San Juan";6
-"San Juan de Cutervo";6
-"San Juan de Licupis";6
-"San Luis";6
-"San Luis de Lucma";6
-"San Miguel";6
-"San Pablo";6
-"San Silvestre de Cochan";6
-"Santa Cruz";6
-"Santa Cruz";6
-"Santa Cruz de Toledo";6
-"Santa Rosa";6
-"Santo Domingo de la Capilla";6
-"Santo Tomas";6
-"Saucepampa";6
-"Sexi";6
-"Sitacocha";6
-"Socota";6
-"Sorochuco";6
-"Sucre";6
-"Tabaconas";6
-"Tacabamba";6
-"Tantarica";6
-"Tocmoche";6
-"Tongod";6
-"Toribio Casanova";6
-"Tumbaden";6
-"Unión Agua Blanca";6
-"Utco";6
-"Uticyacu";6
-"Yauyucan";6
-"Yonan";6
-"Bellavista";25
-"Callao";25
-"Carmen de la Legua Reynoso";25
-"La Perla";25
-"La Punta";25
-"Mi Perú";25
-"Ventanilla";25
-"Accha";7
-"Acomayo";7
-"Acopia";7
-"Acos";7
-"Alto Pichigua";7
-"Ancahuasi";7
-"Andahuaylillas";7
-"Anta";7
-"Cachimayo";7
-"Caicay";7
-"Calca";7
-"Camanti";7
-"Capacmarca";7
-"Ccapi";7
-"Ccarhuayo";7
-"Ccatca";7
-"Ccorca";7
-"Challabamba";7
-"Chamaca";7
-"Checacupe";7
-"Checca";7
-"Chinchaypujio";7
-"Chinchero";7
-"Colcha";7
-"Colquemarca";7
-"Colquepata";7
-"Combapata";7
-"Condoroma";7
-"Coporaque";7
-"Coya";7
-"Cusco";7
-"Cusipata";7
-"Echarate";7
-"Espinar";7
-"Huancarani";7
-"Huanoquite";7
-"Huaro";7
-"Huarocondo";7
-"Huayllabamba";7
-"Huayopata";7
-"Inkawasi";7
-"Kimbiri";7
-"Kosñipata";7
-"Kunturkanki";7
-"Lamay";7
-"Langui";7
-"Lares";7
-"Layo";7
-"Limatambo";7
-"Livitaca";7
-"Llusco";7
-"Lucre";7
-"Machupicchu";7
-"Marangani";7
-"Maranura";7
-"Maras";7
-"Marcapata";7
-"Megantoni";7
-"Mollepata";7
-"Mosoc Llacta";7
-"Ocobamba";7
-"Ocongate";7
-"Ocoruro";7
-"Ollantaytambo";7
-"Omacha";7
-"Oropesa";7
-"Paccaritambo";7
-"Pallpata";7
-"Pampamarca";7
-"Paruro";7
-"Paucartambo";7
-"Pichari";7
-"Pichigua";7
-"Pillpinto";7
-"Pisac";7
-"Pitumarca";7
-"Pomacanchi";7
-"Poroy";7
-"Pucyura";7
-"Quehue";7
-"Quellouno";7
-"Quiñota";7
-"Quiquijana";7
-"Rondocan";7
-"San Jerónimo";7
-"San Pablo";7
-"San Pedro";7
-"San Salvador";7
-"San Sebastian";7
-"Sangarara";7
-"Santa Ana";7
-"Santa Teresa";7
-"Santiago";7
-"Santo Tomas";7
-"Saylla";7
-"Sicuani";7
-"Suyckutambo";7
-"Taray";7
-"Tinta";7
-"Tupac Amaru";7
-"Urcos";7
-"Urubamba";7
-"Velille";7
-"Vilcabamba";7
-"Villa Kintiarina";7
-"Villa Virgen";7
-"Wanchaq";7
-"Yanaoca";7
-"Yanatile";7
-"Yaurisque";7
-"Yucay";7
-"Zurite";7
-"Acobamba";8
-"Acobambilla";8
-"Acoria";8
-"Acostambo";8
-"Acraquia";8
-"Ahuaycha";8
-"Anchonga";8
-"Anco";8
-"Andabamba";8
-"Andaymarca";8
-"Anta";8
-"Arma";8
-"Ascensión";8
-"Aurahua";8
-"Ayavi";8
-"Caja";8
-"Callanmarca";8
-"Capillas";8
-"Castrovirreyna";8
-"Ccochaccasa";8
-"Chinchihuasi";8
-"Chincho";8
-"Chupamarca";8
-"Churcampa";8
-"Cocas";8
-"Colcabamba";8
-"Conayca";8
-"Congalla";8
-"Córdova";8
-"Cosme";8
-"Cuenca";8
-"Daniel Hernández";8
-"El Carmen";8
-"Huachocolpa";8
-"Huachocolpa";8
-"Huachos";8
-"Huamatambo";8
-"Huanca-Huanca";8
-"Huancavelica";8
-"Huando";8
-"Huaribamba";8
-"Huayacundo Arma";8
-"Huayllahuara";8
-"Huayllay Grande";8
-"Huaytara";8
-"Izcuchaca";8
-"Julcamarca";8
-"La Merced";8
-"Laramarca";8
-"Laria";8
-"Lircay";8
-"Locroja";8
-"Manta";8
-"Marcas";8
-"Mariscal Cáceres";8
-"Mollepampa";8
-"Moya";8
-"Ñahuimpuquio";8
-"Nuevo Occoro";8
-"Ocoyo";8
-"Pachamarca";8
-"Palca";8
-"Pampas";8
-"Paucara";8
-"Paucarbamba";8
-"Pazos";8
-"Pichos";8
-"Pilchaca";8
-"Pilpichaca";8
-"Pomacocha";8
-"Querco";8
-"Quichuas";8
-"Quishuar";8
-"Quito-Arma";8
-"Roble";8
-"Rosario";8
-"Salcabamba";8
-"Salcahuasi";8
-"San Antonio de Antaparco";8
-"San Antonio de Cusicancha";8
-"San Francisco de Sangayaico";8
-"San Isidro";8
-"San Juan";8
-"San Marcos de Rocchac";8
-"San Miguel de Mayocc";8
-"San Pedro de Coris";8
-"Santa Ana";8
-"Santiago de Chocorvos";8
-"Santiago de Quirahuara";8
-"Santiago de Tucuma";8
-"Santo Domingo de Capillas";8
-"Santo Tomas de Pata";8
-"Secclla";8
-"Surcubamba";8
-"Tambo";8
-"Tantara";8
-"Ticrapo";8
-"Tintay Puncu";8
-"Vilca";8
-"Yauli";8
-"Amarilis";9
-"Ambo";9
-"Aparicio Pomares";9
-"Arancay";9
-"Baños";9
-"Cahuac";9
-"Canchabamba";9
-"Castillo Grande";9
-"Cayna";9
-"Chacabamba";9
-"Chaglla";9
-"Chavín de Pariarca";9
-"Chavinillo";9
-"Chinchao";9
-"Cholon";9
-"Choras";9
-"Chuquis";9
-"Churubamba";9
-"Cochabamba";9
-"Codo del Pozuzo";9
-"Colpas";9
-"Conchamarca";9
-"Daniel Alomía Robles";9
-"Hermílio Valdizan";9
-"Honoria";9
-"Huacar";9
-"Huacaybamba";9
-"Huacrachuco";9
-"Huanuco";9
-"Jacas Chico";9
-"Jacas Grande";9
-"Jesús";9
-"Jircan";9
-"Jivia";9
-"José Crespo y Castillo";9
-"La Morada";9
-"La Unión";9
-"Llata";9
-"Luyando";9
-"Margos";9
-"Mariano Damaso Beraun";9
-"Marías";9
-"Miraflores";9
-"Molino";9
-"Monzón";9
-"Obas";9
-"Pachas";9
-"Pampamarca";9
-"Panao";9
-"Pillco Marca";9
-"Pinra";9
-"Pucayacu";9
-"Pueblo Nuevo";9
-"Puerto Inca";9
-"Punchao";9
-"Puños";9
-"Queropalca";9
-"Quisqui (Kichki)";9
-"Quivilla";9
-"Ripan";9
-"Rondos";9
-"Rupa-Rupa";9
-"San Buenaventura";9
-"San Francisco";9
-"San Francisco de Asís";9
-"San Francisco de Cayran";9
-"San Miguel de Cauri";9
-"San Pablo de Pillao";9
-"San Pedro de Chaulan";9
-"San Rafael";9
-"Santa María del Valle";9
-"Santa Rosa de Alto Yanajanca";9
-"Santo Domingo de Anda";9
-"Shunqui";9
-"Sillapata";9
-"Singa";9
-"Tantamayo";9
-"Tomay Kichwa";9
-"Tournavista";9
-"Umari";9
-"Yacus";9
-"Yanas";9
-"Yarumayo";9
-"Yuyapichis";9
-"Alto Laran";10
-"Changuillo";10
-"Chavin";10
-"Chincha Alta";10
-"Chincha Baja";10
-"El Carmen";10
-"El Ingenio";10
-"Grocio Prado";10
-"Huancano";10
-"Humay";10
-"Ica";10
-"Independencia";10
-"La Tinguiña";10
-"Llipata";10
-"Los Aquijes";10
-"Marcona";10
-"Nasca";10
-"Ocucaje";10
-"Pachacutec";10
-"Palpa";10
-"Paracas";10
-"Parcona";10
-"Pisco";10
-"Pueblo Nuevo";10
-"Pueblo Nuevo";10
-"Río Grande";10
-"Salas";10
-"San Andrés";10
-"San Clemente";10
-"San José de Los Molinos";10
-"San Juan Bautista";10
-"San Juan de Yanac";10
-"San Pedro de Huacarpana";10
-"Santa Cruz";10
-"Santiago";10
-"Subtanjalla";10
-"Sunampe";10
-"Tambo de Mora";10
-"Tate";10
-"Tibillo";10
-"Tupac Amaru Inca";10
-"Vista Alegre";10
-"Yauca del Rosario";10
-"Aco";11
-"Acobamba";11
-"Acolla";11
-"Ahuac";11
-"Andamarca";11
-"Apata";11
-"Ataura";11
-"Canchayllo";11
-"Carhuacallanga";11
-"Carhuamayo";11
-"Chacapalpa";11
-"Chacapampa";11
-"Chambara";11
-"Chanchamayo";11
-"Chicche";11
-"Chilca";11
-"Chongos Alto";11
-"Chongos Bajo";11
-"Chupaca";11
-"Chupuro";11
-"Cochas";11
-"Colca";11
-"Comas";11
-"Concepción";11
-"Coviriali";11
-"Cullhuas";11
-"Curicaca";11
-"El Mantaro";11
-"El Tambo";11
-"Heroínas Toledo";11
-"Huachac";11
-"Huacrapuquio";11
-"Hualhuas";11
-"Huamali";11
-"Huamancaca Chico";11
-"Huancan";11
-"Huancayo";11
-"Huaricolca";11
-"Huaripampa";11
-"Huasahuasi";11
-"Huasicancha";11
-"Huay-Huay";11
-"Huayucachi";11
-"Huertas";11
-"Ingenio";11
-"Janjaillo";11
-"Jauja";11
-"Julcán";11
-"Junin";11
-"La Oroya";11
-"La Unión";11
-"Leonor Ordóñez";11
-"Llaylla";11
-"Llocllapampa";11
-"Manzanares";11
-"Marcapomacocha";11
-"Marco";11
-"Mariscal Castilla";11
-"Masma";11
-"Masma Chicche";11
-"Matahuasi";11
-"Mazamari";11
-"Mito";11
-"Molinos";11
-"Monobamba";11
-"Morococha";11
-"Muqui";11
-"Muquiyauyo";11
-"Nueve de Julio";11
-"Ondores";11
-"Orcotuna";11
-"Paca";11
-"Paccha";11
-"Paccha";11
-"Palca";11
-"Palcamayo";11
-"Pampa Hermosa";11
-"Pancan";11
-"Pangoa";11
-"Parco";11
-"Pariahuanca";11
-"Perene";11
-"Pichanaqui";11
-"Pilcomayo";11
-"Pomacancha";11
-"Pucara";11
-"Quichuay";11
-"Quilcas";11
-"Ricran";11
-"Río Negro";11
-"Río Tambo";11
-"San Agustín";11
-"San Jerónimo de Tunan";11
-"San José de Quero";11
-"San Juan de Iscos";11
-"San Juan de Jarpa";11
-"San Lorenzo";11
-"San Luis de Shuaro";11
-"San Pedro de Cajas";11
-"San Pedro de Chunan";11
-"San Ramón";11
-"Saño";11
-"Santa Bárbara de Carhuacayan";11
-"Santa Rosa de Ocopa";11
-"Santa Rosa de Sacco";11
-"Santo Domingo de Acobamba";11
-"Sapallanga";11
-"Satipo";11
-"Sausa";11
-"Sicaya";11
-"Sincos";11
-"Suitucancha";11
-"Tapo";11
-"Tarma";11
-"Tres de Diciembre";11
-"Tunan Marca";11
-"Ulcumayo";11
-"Viques";11
-"Vitoc";11
-"Vizcatan del Ene";11
-"Yanacancha";11
-"Yauli";11
-"Yauli";11
-"Yauyos";11
-"Agallpampa";12
-"Angasmarca";12
-"Ascope";12
-"Bambamarca";12
-"Bolívar";12
-"Buldibuyo";12
-"Cachicadan";12
-"Calamarca";12
-"Carabamba";12
-"Casa Grande";12
-"Cascas";12
-"Chao";12
-"Charat";12
-"Chepen";12
-"Chicama";12
-"Chillia";12
-"Chocope";12
-"Chugay";12
-"Cochorco";12
-"Condormarca";12
-"Curgos";12
-"El Porvenir";12
-"Florencia de Mora";12
-"Guadalupe";12
-"Guadalupito";12
-"Huamachuco";12
-"Huancaspata";12
-"Huanchaco";12
-"Huaranchal";12
-"Huaso";12
-"Huaylillas";12
-"Huayo";12
-"Jequetepeque";12
-"Julcan";12
-"La Cuesta";12
-"La Esperanza";12
-"Laredo";12
-"Longotea";12
-"Lucma";12
-"Mache";12
-"Magdalena de Cao";12
-"Marcabal";12
-"Marmot";12
-"Moche";12
-"Mollebamba";12
-"Mollepata";12
-"Ongon";12
-"Otuzco";12
-"Pacanga";12
-"Pacasmayo";12
-"Paijan";12
-"Paranday";12
-"Parcoy";12
-"Pataz";12
-"Pias";12
-"Poroto";12
-"Pueblo Nuevo";12
-"Quiruvilca";12
-"Rázuri";12
-"Salaverry";12
-"Salpo";12
-"San José";12
-"San Pedro de Lloc";12
-"Sanagoran";12
-"Santa Cruz de Chuca";12
-"Santiago de Cao";12
-"Santiago de Challas";12
-"Santiago de Chuco";12
-"Sarin";12
-"Sartimbamba";12
-"Sayapullo";12
-"Simbal";12
-"Sinsicap";12
-"Sitabamba";12
-"Taurija";12
-"Tayabamba";12
-"Trujillo";12
-"Uchumarca";12
-"Ucuncha";12
-"Urpay";12
-"Usquil";12
-"Victor Larco Herrera";12
-"Viru";12
-"Cañaris";13
-"Cayalti";13
-"Chiclayo";13
-"Chochope";13
-"Chongoyape";13
-"Eten";13
-"Eten Puerto";13
-"Ferreñafe";13
-"Illimo";13
-"Incahuasi";13
-"Jayanca";13
-"José Leonardo Ortiz";13
-"La Victoria";13
-"Lagunas";13
-"Lambayeque";13
-"Manuel Antonio Mesones Muro";13
-"Mochumi";13
-"Monsefu";13
-"Morrope";13
-"Motupe";13
-"Nueva Arica";13
-"Olmos";13
-"Oyotun";13
-"Pacora";13
-"Patapo";13
-"Picsi";13
-"Pimentel";13
-"Pitipo";13
-"Pomalca";13
-"Pucala";13
-"Pueblo Nuevo";13
-"Reque";13
-"Salas";13
-"San José";13
-"Saña";13
-"Santa Rosa";13
-"Tucume";13
-"Tuman";13
-"Alis";14
-"Allauca";14
-"Ambar";14
-"Ancón";14
-"Andajes";14
-"Antioquia";14
-"Arahuay";14
-"Asia";14
-"Atavillos Alto";14
-"Atavillos Bajo";14
-"Ate";14
-"Aucallama";14
-"Ayaviri";14
-"Azángaro";14
-"Barranca";14
-"Barranco";14
-"Breña";14
-"Cacra";14
-"Cajatambo";14
-"Calango";14
-"Caleta de Carquin";14
-"Callahuanca";14
-"Canta";14
-"Carabayllo";14
-"Carampoma";14
-"Carania";14
-"Catahuasi";14
-"Caujul";14
-"Cerro Azul";14
-"Chaclacayo";14
-"Chancay";14
-"Checras";14
-"Chicla";14
-"Chilca";14
-"Chocos";14
-"Chorrillos";14
-"Cieneguilla";14
-"Coayllo";14
-"Cochamarca";14
-"Cochas";14
-"Colonia";14
-"Comas";14
-"Copa";14
-"Cuenca";14
-"El Agustino";14
-"Gorgor";14
-"Hongos";14
-"Huacho";14
-"Huachupampa";14
-"Hualmay";14
-"Huamantanga";14
-"Huampara";14
-"Huancapon";14
-"Huancaya";14
-"Huañec";14
-"Huangascar";14
-"Huantan";14
-"Huanza";14
-"Huaral";14
-"Huarochiri";14
-"Huaros";14
-"Huaura";14
-"Ihuari";14
-"Imperial";14
-"Independencia";14
-"Jesús María";14
-"La Molina";14
-"La Victoria";14
-"Lachaqui";14
-"Lahuaytambo";14
-"Lampian";14
-"Langa";14
-"Laraos";14
-"Laraos";14
-"Leoncio Prado";14
-"Lima";14
-"Lince";14
-"Lincha";14
-"Los Olivos";14
-"Lunahuana";14
-"Lurigancho";14
-"Lurin";14
-"Madean";14
-"Magdalena del Mar";14
-"Mala";14
-"Manas";14
-"Mariatana";14
-"Matucana";14
-"Miraflores";14
-"Miraflores";14
-"Navan";14
-"Nuevo Imperial";14
-"Omas";14
-"Oyon";14
-"Pacaran";14
-"Pacaraos";14
-"Paccho";14
-"Pachacamac";14
-"Pachangara";14
-"Paramonga";14
-"Pativilca";14
-"Pucusana";14
-"Pueblo Libre";14
-"Puente Piedra";14
-"Punta Hermosa";14
-"Punta Negra";14
-"Putinza";14
-"Quilmana";14
-"Quinches";14
-"Quinocay";14
-"Ricardo Palma";14
-"Rímac";14
-"San Andrés de Tupicocha";14
-"San Antonio";14
-"San Antonio";14
-"San Bartolo";14
-"San Bartolomé";14
-"San Borja";14
-"San Buenaventura";14
-"San Damian";14
-"San Isidro";14
-"San Joaquín";14
-"San Juan de Iris";14
-"San Juan de Lurigancho";14
-"San Juan de Miraflores";14
-"San Juan de Tantaranche";14
-"San Lorenzo de Quinti";14
-"San Luis";14
-"San Luis";14
-"San Martín de Porres";14
-"San Mateo";14
-"San Mateo de Otao";14
-"San Miguel";14
-"San Miguel de Acos";14
-"San Pedro de Casta";14
-"San Pedro de Huancayre";14
-"San Pedro de Pilas";14
-"San Vicente de Cañete";14
-"Sangallaya";14
-"Santa Anita";14
-"Santa Cruz de Andamarca";14
-"Santa Cruz de Cocachacra";14
-"Santa Cruz de Flores";14
-"Santa Eulalia";14
-"Santa Leonor";14
-"Santa María";14
-"Santa María del Mar";14
-"Santa Rosa";14
-"Santa Rosa de Quives";14
-"Santiago de Anchucaya";14
-"Santiago de Surco";14
-"Santiago de Tuna";14
-"Santo Domingo de Los Olleros";14
-"Sayan";14
-"Sumbilca";14
-"Supe";14
-"Supe Puerto";14
-"Surco";14
-"Surquillo";14
-"Tanta";14
-"Tauripampa";14
-"Tomas";14
-"Tupe";14
-"Vegueta";14
-"Veintisiete de Noviembre";14
-"Villa El Salvador";14
-"Villa María del Triunfo";14
-"Viñac";14
-"Vitis";14
-"Yauyos";14
-"Zúñiga";14
-"Alto Nanay";15
-"Alto Tapiche";15
-"Andoas";15
-"Balsapuerto";15
-"Barranca";15
-"Belén";15
-"Cahuapanas";15
-"Capelo";15
-"Contamana";15
-"Emilio San Martín";15
-"Fernando Lores";15
-"Inahuaya";15
-"Indiana";15
-"Iquitos";15
-"Jeberos";15
-"Jenaro Herrera";15
-"Lagunas";15
-"Las Amazonas";15
-"Manseriche";15
-"Maquia";15
-"Mazan";15
-"Morona";15
-"Napo";15
-"Nauta";15
-"Padre Márquez";15
-"Pampa Hermosa";15
-"Parinari";15
-"Pastaza";15
-"Pebas";15
-"Puinahua";15
-"Punchana";15
-"Putumayo";15
-"Ramón Castilla";15
-"Requena";15
-"Rosa Panduro";15
-"San Juan Bautista";15
-"San Pablo";15
-"Santa Cruz";15
-"Saquena";15
-"Sarayacu";15
-"Soplin";15
-"Tapiche";15
-"Teniente Cesar López Rojas";15
-"Teniente Manuel Clavero";15
-"Tigre";15
-"Torres Causana";15
-"Trompeteros";15
-"Urarinas";15
-"Vargas Guerra";15
-"Yaguas";15
-"Yaquerana";15
-"Yavari";15
-"Yurimaguas";15
-"Fitzcarrald";16
-"Huepetuhe";16
-"Iberia";16
-"Inambari";16
-"Iñapari";16
-"Laberinto";16
-"Las Piedras";16
-"Madre de Dios";16
-"Manu";16
-"Tahuamanu";16
-"Tambopata";16
-"Carumas";17
-"Chojata";17
-"Coalaque";17
-"Cuchumbaya";17
-"El Algarrobal";17
-"Ichuña";17
-"Ilo";17
-"La Capilla";17
-"Lloque";17
-"Matalaque";17
-"Moquegua";17
-"Omate";17
-"Pacocha";17
-"Puquina";17
-"Quinistaquillas";17
-"Samegua";17
-"San Cristóbal";17
-"Torata";17
-"Ubinas";17
-"Yunga";17
-"Chacayan";18
-"Chaupimarca";18
-"Chontabamba";18
-"Constitución";18
-"Goyllarisquizga";18
-"Huachon";18
-"Huancabamba";18
-"Huariaca";18
-"Huayllay";18
-"Ninacaca";18
-"Oxapampa";18
-"Palcazu";18
-"Pallanchacra";18
-"Paucar";18
-"Paucartambo";18
-"Pozuzo";18
-"Puerto Bermúdez";18
-"San Francisco de Asís de Yarusyacan";18
-"San Pedro de Pillao";18
-"Santa Ana de Tusi";18
-"Simon Bolívar";18
-"Tapuc";18
-"Ticlacayan";18
-"Tinyahuarco";18
-"Vicco";18
-"Vilcabamba";18
-"Villa Rica";18
-"Yanacancha";18
-"Yanahuanca";18
-"Amotape";19
-"Arenal";19
-"Ayabaca";19
-"Bellavista";19
-"Bellavista de la Unión";19
-"Bernal";19
-"Buenos Aires";19
-"Canchaque";19
-"Castilla";19
-"Catacaos";19
-"Chalaco";19
-"Chulucanas";19
-"Colan";19
-"Cristo Nos Valga";19
-"Cura Mori";19
-"El Alto";19
-"El Carmen de la Frontera";19
-"El Tallan";19
-"Frias";19
-"Huancabamba";19
-"Huarmaca";19
-"Ignacio Escudero";19
-"Jilili";19
-"La Arena";19
-"La Brea";19
-"La Huaca";19
-"La Matanza";19
-"La Unión";19
-"Lagunas";19
-"Lalaquiz";19
-"Lancones";19
-"Las Lomas";19
-"Lobitos";19
-"Los Organos";19
-"Mancora";19
-"Marcavelica";19
-"Miguel Checa";19
-"Montero";19
-"Morropon";19
-"Pacaipampa";19
-"Paimas";19
-"Paita";19
-"Pariñas";19
-"Piura";19
-"Querecotillo";19
-"Rinconada Llicuar";19
-"Salitral";19
-"Salitral";19
-"San Juan de Bigote";19
-"San Miguel de El Faique";19
-"Santa Catalina de Mossa";19
-"Santo Domingo";19
-"Sapillica";19
-"Sechura";19
-"Sicchez";19
-"Sondor";19
-"Sondorillo";19
-"Sullana";19
-"Suyo";19
-"Tamarindo";19
-"Tambo Grande";19
-"Veintiseis de Octubre";19
-"Vice";19
-"Vichayal";19
-"Yamango";19
-"Achaya";20
-"Acora";20
-"Ajoyani";20
-"Alto Inambari";20
-"Amantani";20
-"Ananea";20
-"Anapia";20
-"Antauta";20
-"Arapa";20
-"Asillo";20
-"Atuncolla";20
-"Ayapata";20
-"Ayaviri";20
-"Azángaro";20
-"Cabana";20
-"Cabanilla";20
-"Cabanillas";20
-"Calapuja";20
-"Caminaca";20
-"Capachica";20
-"Capazo";20
-"Caracoto";20
-"Chucuito";20
-"Chupa";20
-"Coasa";20
-"Coata";20
-"Cojata";20
-"Conduriri";20
-"Conima";20
-"Copani";20
-"Corani";20
-"Crucero";20
-"Cupi";20
-"Cuturapi";20
-"Cuyocuyo";20
-"Desaguadero";20
-"Huacullani";20
-"Huancane";20
-"Huata";20
-"Huatasani";20
-"Huayrapata";20
-"Ilave";20
-"Inchupalla";20
-"Ituata";20
-"José Domingo Choquehuanca";20
-"Juli";20
-"Juliaca";20
-"Kelluyo";20
-"Lampa";20
-"Limbani";20
-"Llalli";20
-"Macari";20
-"Macusani";20
-"Mañazo";20
-"Moho";20
-"Muñani";20
-"Nicasio";20
-"Nuñoa";20
-"Ocuviri";20
-"Ollachea";20
-"Ollaraya";20
-"Orurillo";20
-"Palca";20
-"Paratia";20
-"Patambuco";20
-"Paucarcolla";20
-"Pedro Vilca Apaza";20
-"Phara";20
-"Pichacani";20
-"Pilcuyo";20
-"Pisacoma";20
-"Plateria";20
-"Pomata";20
-"Potoni";20
-"Pucara";20
-"Puno";20
-"Pusi";20
-"Putina";20
-"Quiaca";20
-"Quilcapuncu";20
-"Rosaspata";20
-"Saman";20
-"San Anton";20
-"San Antonio";20
-"San Gaban";20
-"San José";20
-"San Juan de Salinas";20
-"San Juan del Oro";20
-"San Miguel";20
-"San Pedro de Putina Punco";20
-"Sandia";20
-"Santa Lucia";20
-"Santa Rosa";20
-"Santa Rosa";20
-"Santiago de Pupuja";20
-"Sina";20
-"Taraco";20
-"Tilali";20
-"Tinicachi";20
-"Tiquillaca";20
-"Tirapata";20
-"Umachiri";20
-"Unicachi";20
-"Usicayos";20
-"Vilavila";20
-"Vilque";20
-"Vilque Chico";20
-"Yanahuaya";20
-"Yunguyo";20
-"Zepita";20
-"Agua Blanca";21
-"Alberto Leveau";21
-"Alonso de Alvarado";21
-"Alto Biavo";21
-"Alto Saposoa";21
-"Awajun";21
-"Bajo Biavo";21
-"Barranquita";21
-"Bellavista";21
-"Buenos Aires";21
-"Cacatachi";21
-"Calzada";21
-"Campanilla";21
-"Caspisapa";21
-"Caynarachi";21
-"Chazuta";21
-"Chipurana";21
-"Cuñumbuqui";21
-"El Eslabón";21
-"El Porvenir";21
-"Elías Soplin Vargas";21
-"Habana";21
-"Huallaga";21
-"Huicungo";21
-"Huimbayoc";21
-"Jepelacio";21
-"Juan Guerra";21
-"Juanjuí";21
-"La Banda de Shilcayo";21
-"Lamas";21
-"Morales";21
-"Moyobamba";21
-"Nueva Cajamarca";21
-"Nuevo Progreso";21
-"Pachiza";21
-"Pajarillo";21
-"Papaplaya";21
-"Pardo Miguel";21
-"Picota";21
-"Pilluana";21
-"Pinto Recodo";21
-"Piscoyacu";21
-"Polvora";21
-"Posic";21
-"Pucacaca";21
-"Rioja";21
-"Rumisapa";21
-"Sacanche";21
-"San Antonio";21
-"San Cristóbal";21
-"San Fernando";21
-"San Hilarión";21
-"San José de Sisa";21
-"San Martín";21
-"San Pablo";21
-"San Rafael";21
-"San Roque de Cumbaza";21
-"Santa Rosa";21
-"Saposoa";21
-"Sauce";21
-"Shamboyacu";21
-"Shanao";21
-"Shapaja";21
-"Shatoja";21
-"Shunte";21
-"Soritor";21
-"Tabalosos";21
-"Tarapoto";21
-"Tingo de Ponasa";21
-"Tingo de Saposoa";21
-"Tocache";21
-"Tres Unidos";21
-"Uchiza";21
-"Yantalo";21
-"Yorongos";21
-"Yuracyacu";21
-"Zapatero";21
-"Alto de la Alianza";22
-"Cairani";22
-"Calana";22
-"Camilaca";22
-"Candarave";22
-"Ciudad Nueva";22
-"Coronel Gregorio Albarracín Lanchipa";22
-"Curibaya";22
-"Estique";22
-"Estique-Pampa";22
-"Héroes Albarracín";22
-"Huanuara";22
-"Ilabaya";22
-"Inclan";22
-"Ite";22
-"La Yarada los Palos";22
-"Locumba";22
-"Pachia";22
-"Palca";22
-"Pocollay";22
-"Quilahuani";22
-"Sama";22
-"Sitajara";22
-"Susapaya";22
-"Tacna";22
-"Tarata";22
-"Tarucachi";22
-"Ticaco";22
-"Aguas Verdes";23
-"Canoas de Punta Sal";23
-"Casitas";23
-"Corrales";23
-"La Cruz";23
-"Matapalo";23
-"Pampas de Hospital";23
-"Papayal";23
-"San Jacinto";23
-"San Juan de la Virgen";23
-"Tumbes";23
-"Zarumilla";23
-"Zorritos";23
-"Alexander Von Humboldt";24
-"Calleria";24
-"Campoverde";24
-"Curimana";24
-"Iparia";24
-"Irazola";24
-"Manantay";24
-"Masisea";24
-"Neshuya";24
-"Nueva Requena";24
-"Padre Abad";24
-"Purús";24
-"Raymondi";24
-"Sepahua";24
-"Tahuania";24
-"Yarinacocha";24
-"Yurua";24
+"ciudad";"idprovincia";"codeid";"latitude";"longitude"
+"Aramango";"631";"";"-5.1292";"-78.4819"
+"Asunción";"631";"";"-11.6328";"-75.8394"
+"Bagua";"631";"";"-5.7411";"-78.4411"
+"Bagua Grande";"631";"";"-5.7486";"-78.4392"
+"Balsas";"631";"";"-5.9472";"-78.4694"
+"Cajaruro";"631";"";"-5.7411";"-78.4411"
+"Camporredondo";"631";"";"-7.1858";"-78.7794"
+"Chachapoyas";"631";"";"-6.2314";"-77.8691"
+"Cheto";"631";"";"-5.9667";"-78.0500"
+"Chiliquin";"631";"";"-6.0472";"-77.5336"
+"Chirimoto";"631";"";"-6.0136";"-77.6222"
+"Chisquilla";"631";"";"-6.0064";"-77.5711"
+"Chuquibamba";"631";"";"-7.6192";"-78.2553"
+"Churuja";"631";"";"-6.0167";"-77.9833"
+"Cocabamba";"631";"";"-5.5792";"-78.5294"
+"Cochamal";"631";"";"-5.7000";"-78.5000"
+"Colcamar";"631";"";"-6.5167";"-77.8000"
+"Conila";"631";"";"-5.5822";"-78.2417"
+"Copallin";"631";"";"-5.5667";"-78.4667"
+"Corosha";"631";"";"-6.4853";"-77.8708"
+"Cuispes";"631";"";"-6.0736";"-77.9003"
+"Cumba";"631";"";"-6.1333";"-78.2667"
+"El Cenepa";"631";"";"-4.9750";"-78.1667"
+"El Milagro";"631";"";"-7.4229";"-78.3048"
+"El Parco";"631";"";"-6.7750";"-78.1564"
+"Florida";"631";"";"-5.9611";"-78.4742"
+"Granada";"631";"";"-6.4167";"-78.5833"
+"Huambo";"631";"";"-6.8333";"-78.0000"
+"Huancas";"631";"";"-6.3875";"-77.8769"
+"Imaza";"631";"";"-5.6208";"-78.8364"
+"Inguilpata";"631";"";"-6.1583";"-78.2536"
+"Jamalca";"631";"";"-6.1617";"-77.5172"
+"Jazan";"631";"";"-5.9833";"-78.1333"
+"Jumbilla";"631";"";"-6.6167";"-77.7167"
+"La Jalca";"631";"";"-6.6208";"-78.0139"
+"La Peca";"631";"";"-5.6139";"-78.4511"
+"Lamud";"631";"";"-6.4333";"-77.9333"
+"Leimebamba";"631";"";"-6.7333";"-77.8333"
+"Levanto";"631";"";"-5.2167";"-80.8167"
+"Limabamba";"631";"";"-6.2872";"-77.8461"
+"Longar";"631";"";"-6.0000";"-77.8667"
+"Longuita";"631";"";"-5.7333";"-77.8833"
+"Lonya Chico";"631";"";"-6.4000";"-78.0667"
+"Lonya Grande";"631";"";"-6.2194";"-77.9361"
+"Luya";"631";"";"-6.2225";"-77.9042"
+"Luya Viejo";"631";"";"-6.2558";"-77.9050"
+"Magdalena";"631";"";"-6.3000";"-77.4500"
+"María";"631";"";"-6.8550";"-77.6531"
+"Mariscal Benavides";"631";"";"-7.3000";"-78.0000"
+"Mariscal Castilla";"631";"";"-6.9000";"-78.0667"
+"Milpuc";"631";"";"-6.6800";"-78.7317"
+"Molinopampa";"631";"";"-7.3242";"-78.4889"
+"Montevideo";"631";"";"-6.5603";"-78.6372"
+"Nieva";"631";"";"-6.0675";"-77.1814"
+"Ocalli";"631";"";"-6.0833";"-77.9833"
+"Ocumal";"631";"";"-6.6333";"-78.7333"
+"Olleros";"631";"";"-6.1150";"-77.5167"
+"Omia";"631";"";"-6.1833";"-78.0000"
+"Pisuquia";"631";"";"-6.2292";"-78.1444"
+"Providencia";"631";"";"-5.0000";"-79.7500"
+"Quinjalca";"631";"";"-6.2167";"-78.0000"
+"Recta";"631";"";"-6.1500";"-77.7500"
+"Río Santiago";"631";"";"-4.5203";"-77.8206"
+"San Carlos";"631";"";"-8.3778";"-77.5636"
+"San Cristóbal";"631";"";"-9.9975";"-77.8097"
+"San Francisco de Daguas";"631";"";"-4.2517";"-76.3128"
+"San Francisco de Yeso";"631";"";"-10.1483";"-77.4161"
+"San Isidro de Maino";"631";"";"-5.6667";"-78.5500"
+"San Jerónimo";"631";"";"-8.8000";"-77.2000"
+"San Juan de Lopecancha";"631";"";"-6.1708";"-78.1753"
+"San Nicolás";"631";"";"-8.3583";"-77.6842"
+"Santa Catalina";"631";"";"-8.3408";"-76.2542"
+"Santa Rosa";"631";"";"-8.0417";"-77.3847"
+"Santo Tomas";"631";"";"-9.0217";"-77.9800"
+"Shipasbamba";"631";"";"-8.3117";"-77.0992"
+"Soloco";"631";"";"-6.5736";"-76.1847"
+"Sonche";"631";"";"-6.6400";"-78.7600"
+"Tingo";"631";"";"-7.3142";"-77.8333"
+"Totora";"631";"";"-10.9781";"-77.8475"
+"Trita";"631";"";"-8.7778";"-78.4294"
+"Valera";"631";"";"-8.6758";"-78.7533"
+"Vista Alegre";"631";"";"-6.8194";"-77.3736"
+"Yambrasbamba";"631";"";"-6.9675";"-78.6414"
+"Yamon";"631";"";"-6.9167";"-77.4833"
+"Abelardo Pardo Lezameta";"632";"";"-6.2761";"-78.4350"
+"Acas";"632";"";"-10.2792";"-77.8619"
+"Aco";"632";"";"-11.0386";"-76.6950"
+"Acobamba";"632";"";"-10.8964";"-75.4075"
+"Acochaca";"632";"";"-9.3183";"-77.6681"
+"Acopampa";"632";"";"-9.4500";"-77.8667"
+"Aczo";"632";"";"-10.1994";"-77.8175"
+"Aija";"632";"";"-9.5167";"-77.5000"
+"Alfonso Ugarte";"632";"";"-9.2461";"-77.5881"
+"Amashca";"632";"";"-8.9492";"-78.5200"
+"Anra";"632";"";"-9.4408";"-77.8489"
+"Anta";"632";"";"-9.5350";"-77.5294"
+"Antonio Raymondi";"632";"";"-9.6667";"-77.4333"
+"Aquia";"632";"";"-9.0450";"-77.5869"
+"Ataquero";"632";"";"-10.6833";"-77.5000"
+"Bambas";"632";"";"-10.3586";"-76.3525"
+"Bolognesi";"632";"";"-8.8322";"-77.2989"
+"Buena Vista Alta";"632";"";"-7.6239";"-78.1647"
+"Cabana";"632";"";"-8.2694";"-77.9311"
+"Cáceres del Perú";"632";"";"-10.4167";"-78.5000"
+"Cajacay";"632";"";"-8.9892";"-78.4661"
+"Cajamarquilla";"632";"";"-11.8500";"-76.6667"
+"Cajay";"632";"";"-11.5500";"-76.6333"
+"Canis";"632";"";"-9.0342";"-77.6600"
+"Caraz";"632";"";"-9.0519";"-77.8086"
+"Carhuapampa";"632";"";"-9.5275";"-78.5786"
+"Carhuaz";"632";"";"-9.2800";"-77.6475"
+"Casca";"632";"";"-8.8308";"-77.9839"
+"Cascapara";"632";"";"-9.4500";"-78.1167"
+"Cashapampa";"632";"";"-8.9056";"-77.6397"
+"Casma";"632";"";"-9.4444";"-78.2903"
+"Catac";"632";"";"-9.0833";"-77.9667"
+"Chacas";"632";"";"-8.2253";"-77.6944"
+"Chaccho";"632";"";"-9.6706";"-77.3600"
+"Chavin de Huantar";"632";"";"-9.6000";"-77.1670"
+"Chimbote";"632";"";"-9.0853";"-78.5783"
+"Chingalpo";"632";"";"-8.9333";"-78.5833"
+"Chingas";"632";"";"-8.7000";"-78.2333"
+"Chiquian";"632";"";"-10.0667";"-77.7833"
+"Cochabamba";"632";"";"-9.9333";"-76.4333"
+"Cochapeti";"632";"";"-9.0495";"-77.5311"
+"Cochas";"632";"";"-10.3294";"-76.5553"
+"Coishco";"632";"";"-9.0528";"-78.6133"
+"Colcabamba";"632";"";"-10.2144";"-76.4875"
+"Colquioc";"632";"";"-8.6953";"-78.2331"
+"Comandante Noel";"632";"";"-9.7919";"-77.5878"
+"Conchucos";"632";"";"-9.9978";"-77.4653"
+"Congas";"632";"";"-8.4467";"-78.5922"
+"Coris";"632";"";"-9.8553";"-78.1956"
+"Corongo";"632";"";"-8.6289";"-77.6875"
+"Cotaparaco";"632";"";"-8.8744";"-78.0400"
+"Culebras";"632";"";"-7.1867";"-77.7914"
+"Cusca";"632";"";"-10.0944";"-76.8975"
+"Eleazar Guzmán Barron";"632";"";"-7.6967";"-78.4431"
+"Fidel Olivas Escudero";"632";"";"-7.8908";"-78.6172"
+"Huacachi";"632";"";"-9.3622";"-77.0656"
+"Huacaschuque";"632";"";"-8.9667";"-77.8833"
+"Huacchis";"632";"";"-9.7772";"-77.4447"
+"Huachis";"632";"";"-8.8211";"-77.4542"
+"Huacllan";"632";"";"-9.8125";"-77.5567"
+"Huallanca";"632";"";"-9.8678";"-77.8814"
+"Huanchay";"632";"";"-9.3833";"-77.4667"
+"Huandoval";"632";"";"-8.5144";"-77.6872"
+"Huantar";"632";"";"-9.9356";"-76.2417"
+"Huaraz";"632";"";"-9.5289";"-77.5300"
+"Huari";"632";"";"-9.3500";"-77.1833"
+"Huarmey";"632";"";"-10.0689";"-78.1522"
+"Huasta";"632";"";"-10.1044";"-76.9522"
+"Huata";"632";"";"-9.7083";"-77.1781"
+"Huayan";"632";"";"-8.8442";"-77.1117"
+"Huaylas";"632";"";"-9.8000";"-77.5000"
+"Huayllabamba";"632";"";"-9.4097";"-77.4542"
+"Huayllacayan";"632";"";"-9.9208";"-77.5694"
+"Huayllan";"632";"";"-9.6053";"-77.5642"
+"Huayllapampa";"632";"";"-9.8278";"-77.6808"
+"Independencia";"632";"";"-9.5333";"-77.5000"
+"Jangas";"632";"";"-9.3997";"-77.4272"
+"La Libertad";"632";"";"-8.1608";"-76.3800"
+"La Merced";"632";"";"-11.4394";"-75.2842"
+"La Pampa";"632";"";"-7.8281";"-78.0508"
+"La Primavera";"632";"";"-8.4725";"-77.5489"
+"Lacabamba";"632";"";"-8.8817";"-78.0769"
+"Llacllin";"632";"";"-9.8478";"-77.5433"
+"Llama";"632";"";"-8.9297";"-78.5997"
+"Llamellin";"632";"";"-9.8553";"-77.8842"
+"Llapo";"632";"";"-9.7942";"-77.8608"
+"Llipa";"632";"";"-9.4000";"-77.3167"
+"Llumpa";"632";"";"-9.7000";"-78.1333"
+"Lucma";"632";"";"-7.5694";"-77.1436"
+"Macate";"632";"";"-8.8814";"-78.0636"
+"Malvas";"632";"";"-9.0956";"-77.9714"
+"Mancos";"632";"";"-8.1667";"-77.4000"
+"Mangas";"632";"";"-9.1178";"-78.6794"
+"Marca";"632";"";"-8.6356";"-77.6506"
+"Marcara";"632";"";"-7.8667";"-79.2000"
+"Masin";"632";"";"-8.0000";"-77.8000"
+"Matacoto";"632";"";"-9.4397";"-77.1561"
+"Mato";"632";"";"-8.8667";"-78.0333"
+"Mirgas";"632";"";"-8.8000";"-77.5167"
+"Moro";"632";"";"-9.2000";"-77.7000"
+"Musga";"632";"";"-8.6208";"-77.8661"
+"Nepeña";"632";"";"-8.7833";"-78.7833"
+"Nuevo Chimbote";"632";"";"-9.0853";"-78.5783"
+"Ocros";"632";"";"-10.1936";"-77.7658"
+"Olleros";"632";"";"-9.4444";"-77.4206"
+"Pacllon";"632";"";"-8.0731";"-77.3367"
+"Pallasca";"632";"";"-8.3278";"-77.6511"
+"Pamparomas";"632";"";"-8.8500";"-78.2333"
+"Pampas";"632";"";"-9.6833";"-77.5000"
+"Pampas Chico";"632";"";"-10.1994";"-77.7636"
+"Pampas Grande";"632";"";"-8.6458";"-78.2364"
+"Pararin";"632";"";"-9.6400";"-78.0900"
+"Pariacoto";"632";"";"-9.5100";"-77.6844"
+"Pariahuanca";"632";"";"-10.3714";"-77.9536"
+"Parobamba";"632";"";"-8.7000";"-77.6000"
+"Paucas";"632";"";"-8.3728";"-77.5097"
+"Pira";"632";"";"-8.9275";"-78.0742"
+"Piscobamba";"632";"";"-8.4167";"-77.7000"
+"Pomabamba";"632";"";"-8.8250";"-77.5333"
+"Ponto";"632";"";"-8.6753";"-77.4567"
+"Pueblo Libre";"632";"";"-9.6786";"-78.3344"
+"Quiches";"632";"";"-8.7833";"-77.9667"
+"Quillo";"632";"";"-9.7833";"-77.5000"
+"Quinuabamba";"632";"";"-8.7658";"-77.9750"
+"Ragash";"632";"";"-9.8567";"-77.8297"
+"Rahuapampa";"632";"";"-9.4167";"-77.6333"
+"Ranrahirca";"632";"";"-9.9167";"-77.8000"
+"Rapayan";"632";"";"-9.6667";"-78.0833"
+"Recuay";"632";"";"-9.5997";"-77.3689"
+"Samanco";"632";"";"-9.1628";"-78.5236"
+"San Cristóbal de Rajan";"632";"";"-9.5167";"-77.7500"
+"San Juan";"632";"";"-8.4333";"-77.8667"
+"San Juan de Rontoy";"632";"";"-9.0333";"-78.0500"
+"San Luis";"632";"";"-9.5092";"-77.5975"
+"San Marcos";"632";"";"-9.4050";"-77.5778"
+"San Miguel de Aco";"632";"";"-9.0333";"-77.8000"
+"San Miguel de Corpanqui";"632";"";"-9.5392";"-77.4053"
+"San Nicolás";"632";"";"-9.8497";"-77.3489"
+"San Pedro";"632";"";"-8.2675";"-77.6886"
+"San Pedro de Chana";"632";"";"-9.4431";"-77.9644"
+"Santa";"632";"";"-8.7889";"-77.7158"
+"Santa Cruz";"632";"";"-8.8500";"-77.7000"
+"Santa Rosa";"632";"";"-8.0667";"-77.7667"
+"Santiago de Chilcas";"632";"";"-9.6517";"-77.3167"
+"Santo Toribio";"632";"";"-9.2500";"-77.7667"
+"Shilla";"632";"";"-8.9950";"-77.7222"
+"Shupluy";"632";"";"-8.9833";"-77.4500"
+"Sicsibamba";"632";"";"-9.8667";"-77.4500"
+"Sihuas";"632";"";"-8.1572";"-76.2414"
+"Succha";"632";"";"-10.2619";"-77.7956"
+"Tapacocha";"632";"";"-10.3488";"-77.8019"
+"Tarica";"632";"";"-10.4000";"-77.7500"
+"Tauca";"632";"";"-9.9167";"-78.0167"
+"Ticapampa";"632";"";"-9.6500";"-78.2667"
+"Ticllos";"632";"";"-10.1322";"-77.7811"
+"Tinco";"632";"";"-10.0767";"-77.8464"
+"Uco";"632";"";"-9.9431";"-77.8847"
+"Yanac";"632";"";"-10.0472";"-77.8392"
+"Yanama";"632";"";"-9.9544";"-77.8983"
+"Yautan";"632";"";"-9.7500";"-78.0667"
+"Yauya";"632";"";"-9.9147";"-78.0306"
+"Yungar";"632";"";"-8.8889";"-78.6333"
+"Yungay";"632";"";"-9.1397";"-77.7361"
+"Yupan";"632";"";"-9.9242";"-77.9792"
+"Yuracmarca";"632";"";"-9.6592";"-77.8011"
+"Abancay";"633";"";"-13.6392";"-72.8814"
+"Anco_Huallo";"633";"";"-13.1375";"-74.2236"
+"Andahuaylas";"633";"";"-13.6600";"-73.3922"
+"Andarapa";"633";"";"-14.2928";"-73.6942"
+"Antabamba";"633";"";"-14.3200";"-72.5333"
+"Capaya";"633";"";"-14.0833";"-72.8167"
+"Caraybamba";"633";"";"-13.8500";"-73.7500"
+"Chacoche";"633";"";"-14.3000";"-73.1500"
+"Chalhuanca";"633";"";"-13.1786";"-74.2236"
+"Challhuahuacho";"633";"";"-14.3000";"-73.0000"
+"Chapimarca";"633";"";"-13.9500";"-74.1167"
+"Chiara";"633";"";"-14.1333";"-73.8333"
+"Chincheros";"633";"";"-13.4056";"-73.3211"
+"Chuquibambilla";"633";"";"-13.6094";"-73.9669"
+"Circa";"633";"";"-13.6333";"-73.8500"
+"Cocharcas";"633";"";"-13.0333";"-74.1333"
+"Colcabamba";"633";"";"-13.9000";"-74.2000"
+"Cotabambas";"633";"";"-13.6228";"-73.9997"
+"Cotaruse";"633";"";"-14.1447";"-73.8967"
+"Coyllurqui";"633";"";"-13.9639";"-73.7308"
+"Curahuasi";"633";"";"-13.5514";"-72.6497"
+"Curasco";"633";"";"-13.5267";"-73.5936"
+"Curpahuasi";"633";"";"-13.5667";"-72.8667"
+"El Oro";"633";"";"-14.9167";"-72.5667"
+"El Porvenir";"633";"";"-14.8281";"-73.9144"
+"Gamarra";"633";"";"-13.5175";"-73.0711"
+"Haquira";"633";"";"-14.5667";"-72.7667"
+"Huaccana";"633";"";"-13.0667";"-74.7667"
+"Huancarama";"633";"";"-14.1173";"-73.8311"
+"Huancaray";"633";"";"-13.5706";"-73.5608"
+"Huanipaca";"633";"";"-13.6650";"-73.5889"
+"Huaquirca";"633";"";"-14.4528";"-73.8867"
+"Huayana";"633";"";"-13.7306";"-73.7572"
+"Huayllati";"633";"";"-13.7778";"-73.6747"
+"Ihuayllo";"633";"";"-13.3089";"-74.1497"
+"José María Arguedas";"633";"";"-13.9775";"-73.0006"
+"Juan Espinoza Medrano";"633";"";"-13.6653";"-74.2183"
+"Justo Apu Sahuaraura";"633";"";"-13.4000";"-74.2167"
+"Kaquiabamba";"633";"";"-13.8750";"-74.1833"
+"Kishuara";"633";"";"-14.6667";"-72.7667"
+"Lambrama";"633";"";"-14.8667";"-72.8667"
+"Los Chankas";"633";"";"-13.6167";"-73.7833"
+"Lucre";"633";"";"-13.4553";"-72.4194"
+"Mamara";"633";"";"-13.4500";"-72.6167"
+"Mara";"633";"";"-13.7667";"-74.8000"
+"Micaela Bastidas";"633";"";"-13.4417";"-74.8283"
+"Ocobamba";"633";"";"-13.6414";"-72.5856"
+"Ongoy";"633";"";"-15.1956";"-72.6222"
+"Oropesa";"633";"";"-13.5553";"-71.7603"
+"Pachaconas";"633";"";"-13.6750";"-71.9497"
+"Pacobamba";"633";"";"-13.7625";"-71.6722"
+"Pacucha";"633";"";"-13.7075";"-71.9872"
+"Pampachiri";"633";"";"-13.6625";"-72.8483"
+"Pataypampa";"633";"";"-13.5375";"-71.7375"
+"Pichirhua";"633";"";"-13.7333";"-72.7833"
+"Pocohuanca";"633";"";"-13.7333";"-72.8333"
+"Pomacocha";"633";"";"-13.8656";"-72.7933"
+"Progreso";"633";"";"-15.0781";"-74.6997"
+"Ranracancha";"633";"";"-13.8333";"-72.8167"
+"Rocchacc";"633";"";"-13.8853";"-72.5153"
+"Sabaino";"633";"";"-13.4333";"-74.7833"
+"San Antonio";"633";"";"-13.7167";"-72.7500"
+"San Antonio de Cachi";"633";"";"-15.2656";"-73.8953"
+"San Jerónimo";"633";"";"-13.5500";"-71.7333"
+"San Juan de Chacña";"633";"";"-13.5625";"-72.5500"
+"San Miguel de Chaccrampa";"633";"";"-15.2039";"-73.6203"
+"San Pedro de Cachora";"633";"";"-13.3711";"-72.8800"
+"Sañayca";"633";"";"-13.4919";"-72.5433"
+"Santa María de Chicmo";"633";"";"-13.5883";"-71.6033"
+"Santa Rosa";"633";"";"-15.1833";"-72.8667"
+"Soraya";"633";"";"-15.1833";"-72.7500"
+"Talavera";"633";"";"-15.3361";"-74.3672"
+"Tambobamba";"633";"";"-13.3000";"-72.7500"
+"Tamburco";"633";"";"-15.0628";"-74.7206"
+"Tapairihua";"633";"";"-13.4208";"-72.5581"
+"Tintay";"633";"";"-13.8000";"-72.7833"
+"Toraya";"633";"";"-13.7000";"-72.6667"
+"Tumay Huaraca";"633";"";"-13.9167";"-72.9167"
+"Turpay";"633";"";"-13.8333";"-72.8167"
+"Turpo";"633";"";"-14.1086";"-71.6494"
+"Uranmarca";"633";"";"-14.4175";"-72.3506"
+"Vilcabamba";"633";"";"-13.4000";"-72.9000"
+"Virundo";"633";"";"-13.7667";"-73.0500"
+"Yanaca";"633";"";"-13.7667";"-72.9667"
+"Acarí";"634";"";"-15.4347";"-74.6167"
+"Achoma";"634";"";"-15.4833";"-71.8167"
+"Alca";"634";"";"-15.9167";"-74.9833"
+"Alto Selva Alegre";"634";"";"-16.4167";"-71.5333"
+"Andagua";"634";"";"-15.8094";"-72.8322"
+"Andaray";"634";"";"-15.1528";"-72.6658"
+"Aplao";"634";"";"-16.0775";"-72.5192"
+"Arequipa";"634";"";"-16.4090";"-71.5374"
+"Atico";"634";"";"-16.2283";"-73.5125"
+"Atiquipa";"634";"";"-16.2872";"-73.2136"
+"Ayo";"634";"";"-15.8775";"-73.9475"
+"Bella Unión";"634";"";"-14.0692";"-73.5442"
+"Cabanaconde";"634";"";"-15.6283";"-72.8906"
+"Cahuacho";"634";"";"-17.0492";"-71.7500"
+"Callalli";"634";"";"-15.5681";"-71.5500"
+"Camaná";"634";"";"-16.6225";"-72.7111"
+"Caravelí";"634";"";"-15.8225";"-73.7564"
+"Cayarani";"634";"";"-15.5000";"-72.8833"
+"Caylloma";"634";"";"-15.2906";"-71.5544"
+"Cayma";"634";"";"-16.3833";"-71.5333"
+"Cerro Colorado";"634";"";"-16.4000";"-71.5667"
+"Chachas";"634";"";"-15.0000";"-72.4000"
+"Chala";"634";"";"-15.8333";"-74.2500"
+"Chaparra";"634";"";"-17.2950";"-70.6783"
+"Characato";"634";"";"-16.4833";"-71.6167"
+"Charcana";"634";"";"-15.0400";"-72.0572"
+"Chichas";"634";"";"-15.3000";"-73.7500"
+"Chiguata";"634";"";"-16.4583";"-71.6142"
+"Chilcaymarca";"634";"";"-15.7894";"-72.7114"
+"Chivay";"634";"";"-15.6356";"-71.5992"
+"Choco";"634";"";"-17.2781";"-70.8550"
+"Chuquibamba";"634";"";"-15.6667";"-72.8333"
+"Cocachacra";"634";"";"-17.1103";"-71.7911"
+"Coporaque";"634";"";"-15.5947";"-71.9283"
+"Cotahuasi";"634";"";"-15.8681";"-72.6317"
+"Dean Valdivia";"634";"";"-16.4606";"-71.5069"
+"Huambo";"634";"";"-15.7692";"-72.8769"
+"Huanca";"634";"";"-16.1256";"-72.6892"
+"Huancarqui";"634";"";"-16.2581";"-72.4056"
+"Huanuhuanu";"634";"";"-16.2850";"-71.9350"
+"Huaynacotas";"634";"";"-15.8278";"-73.5019"
+"Ichupampa";"634";"";"-15.0739";"-72.7581"
+"Iray";"634";"";"-15.5439";"-71.8647"
+"Islay";"634";"";"-17.1772";"-71.3322"
+"Jacobo Hunter";"634";"";"-16.4497";"-71.4961"
+"Jaqui";"634";"";"-15.8333";"-72.8500"
+"José Luis Bustamante Y Rivero";"634";"";"-16.4383";"-71.5458"
+"José María Quimper";"634";"";"-17.1794";"-71.2747"
+"La Joya";"634";"";"-16.5406";"-71.7414"
+"Lari";"634";"";"-16.0617";"-71.6747"
+"Lluta";"634";"";"-17.0308";"-71.7922"
+"Lomas";"634";"";"-17.0022";"-71.7694"
+"Maca";"634";"";"-16.2500";"-72.0167"
+"Machaguay";"634";"";"-17.1117";"-71.7564"
+"Madrigal";"634";"";"-15.0000";"-73.0000"
+"Majes";"634";"";"-16.3075";"-72.3389"
+"Mariano Melgar";"634";"";"-16.3733";"-71.5267"
+"Mariano Nicolás Valcárcel";"634";"";"-16.3297";"-71.6828"
+"Mariscal Cáceres";"634";"";"-15.6667";"-72.8833"
+"Mejia";"634";"";"-16.8472";"-72.6436"
+"Miraflores";"634";"";"-16.3869";"-71.5356"
+"Mollebaya";"634";"";"-16.3483";"-71.5336"
+"Mollendo";"634";"";"-17.0208";"-72.0064"
+"Nicolás de Pierola";"634";"";"-17.1419";"-70.8814"
+"Ocoña";"634";"";"-16.6317";"-72.6822"
+"Orcopampa";"634";"";"-15.0764";"-73.7800"
+"Pampacolca";"634";"";"-15.6000";"-72.4167"
+"Pampamarca";"634";"";"-15.8750";"-72.5986"
+"Paucarpata";"634";"";"-16.4447";"-71.5100"
+"Pocsi";"634";"";"-16.5547";"-71.6664"
+"Polobaya";"634";"";"-16.4700";"-71.5292"
+"Punta de Bombón";"634";"";"-17.1528";"-71.7922"
+"Puyca";"634";"";"-15.3653";"-73.1075"
+"Quechualla";"634";"";"-16.4833";"-71.6167"
+"Quequeña";"634";"";"-16.4167";"-71.5833"
+"Quicacha";"634";"";"-15.4569";"-73.4364"
+"Quilca";"634";"";"-17.0131";"-72.0167"
+"Río Grande";"634";"";"-15.3500";"-73.5000"
+"Sabandia";"634";"";"-16.3278";"-71.6283"
+"Sachaca";"634";"";"-16.3614";"-71.5714"
+"Salamanca";"634";"";"-16.4847";"-71.9586"
+"Samuel Pastor";"634";"";"-16.3964";"-71.6325"
+"San Antonio de Chuca";"634";"";"-15.3167";"-73.1333"
+"San Juan de Siguas";"634";"";"-16.2333";"-71.6667"
+"San Juan de Tarucani";"634";"";"-16.1417";"-71.5475"
+"Santa Isabel de Siguas";"634";"";"-16.1500";"-71.7500"
+"Santa Rita de Siguas";"634";"";"-16.2000";"-71.7500"
+"Sayla";"634";"";"-15.4500";"-73.2500"
+"Sibayo";"634";"";"-15.3167";"-71.7000"
+"Socabaya";"634";"";"-16.4167";"-71.5833"
+"Tapay";"634";"";"-15.5800";"-72.1483"
+"Tauria";"634";"";"-15.2903";"-73.4011"
+"Tiabaya";"634";"";"-16.4308";"-71.6767"
+"Tipan";"634";"";"-16.1333";"-71.8833"
+"Tisco";"634";"";"-15.7000";"-72.3333"
+"Tomepampa";"634";"";"-15.3058";"-73.3939"
+"Toro";"634";"";"-17.1575";"-72.6783"
+"Tuti";"634";"";"-15.2706";"-73.4814"
+"Uchumayo";"634";"";"-16.4000";"-71.6667"
+"Uñon";"634";"";"-15.4547";"-72.7825"
+"Uraca";"634";"";"-15.3722";"-72.9142"
+"Viraco";"634";"";"-15.3500";"-73.0000"
+"Vitor";"634";"";"-16.4667";"-71.5833"
+"Yanahuara";"634";"";"-16.3950";"-71.5350"
+"Yanaquihua";"634";"";"-15.2197";"-73.2797"
+"Yanque";"634";"";"-15.2333";"-71.8500"
+"Yarabamba";"634";"";"-16.2458";"-71.6028"
+"Yauca";"634";"";"-16.9786";"-71.2406"
+"Yura";"634";"";"-16.2547";"-71.6783"
+"Accomarca";"635";"";"-13.6442";"-74.1644"
+"Acocro";"635";"";"-13.4271";"-74.2003"
+"Acos Vinchos";"635";"";"-13.0286";"-74.1842"
+"Alcamenca";"635";"";"-13.9071";"-74.2123"
+"Anchihuay";"635";"";"-14.4825";"-74.7733"
+"Anco";"635";"";"-12.6648";"-73.9316"
+"Andrés Avelino Cáceres Dorregaray";"635";"";"-12.7909";"-73.6071"
+"Apongo";"635";"";"-12.9623";"-74.0203"
+"Asquipata";"635";"";"-13.625";"-74.3583"
+"Aucara";"635";"";"-13.7701";"-74.332"
+"Ayacucho";"635";"";"-13.1583";"-74.2234"
+"Ayahuanco";"635";"";"-12.9302";"-74.5565"
+"Ayna";"635";"";"-12.5431";"-74.5447"
+"Belén";"635";"";"-12.5075";"-75.1528"
+"Cabana";"635";"";"-15.326";"-73.9561"
+"Canaria";"635";"";"-14.3879";"-73.9549"
+"Canayre";"635";"";"-12.377";"-73.875"
+"Cangallo";"635";"";"-13.4667";"-74.226"
+"Carapo";"635";"";"-12.1684";"-74.1081"
+"Carhuanca";"635";"";"-13.3819";"-74.3129"
+"Carmen Alto";"635";"";"-16.3906";"-71.5214"
+"Carmen Salcedo";"635";"";"-13.3463";"-75.0856"
+"Cayara";"635";"";"-14.2958";"-73.9957"
+"Chaca";"635";"";"-12.337";"-74.4867"
+"Chalcos";"635";"";"-14.5385";"-73.4697"
+"Chaviña";"635";"";"-14.4065";"-73.7375"
+"Chiara";"635";"";"-13.55";"-74.0833"
+"Chilcas";"635";"";"-12.6361";"-74.0322"
+"Chilcayoc";"635";"";"-12.204";"-73.941"
+"Chipao";"635";"";"-12.7708";"-74.054"
+"Chumpi";"635";"";"-14.4705";"-73.8613"
+"Chungui";"635";"";"-12.8773";"-73.677"
+"Chuschi";"635";"";"-12.5303";"-73.9647"
+"Colca";"635";"";"-15.2574";"-72.3443"
+"Colta";"635";"";"-14.2706";"-74.3044"
+"Concepción";"635";"";"-11.9484";"-75.2944"
+"Coracora";"635";"";"-15.0274";"-73.7792"
+"Corculla";"635";"";"-14.1333";"-73.8333"
+"Coronel Castañeda";"635";"";"-15.329";"-74.3241"
+"Huac-Huas";"635";"";"-14.5245";"-73.314"
+"Huacaña";"635";"";"-13.6656";"-74.4416"
+"Huamanguilla";"635";"";"-12.9571";"-74.4436"
+"Huamanquiquia";"635";"";"-12.9932";"-74.1122"
+"Huambalpa";"635";"";"-13.2005";"-74.3348"
+"Huancapi";"635";"";"-14.2635";"-73.921"
+"Huancaraylla";"635";"";"-13.585";"-74.038"
+"Huanta";"635";"";"-12.9333";"-74.25"
+"Huaya";"635";"";"-15.0849";"-73.5224"
+"Iguain";"635";"";"-14.0708";"-73.6894"
+"Independencia";"635";"";"-13.5484";"-74.367"
+"Jesús Nazareno";"635";"";"-12.8542";"-73.839"
+"Lampa";"635";"";"-15.3535";"-73.084"
+"Laramate";"635";"";"-14.6444";"-72.908"
+"Leoncio Prado";"635";"";"-9.2547";"-75.9947"
+"Llauta";"635";"";"-12.9561";"-74.2894"
+"Llochegua";"635";"";"-12.6586";"-73.8386"
+"Los Morochucos";"635";"";"-13.8489";"-73.8644"
+"Lucanas";"635";"";"-15.2015";"-73.9592"
+"Luis Carranza";"635";"";"-13.3754";"-74.1387"
+"Luricocha";"635";"";"-12.7269";"-74.7889"
+"Marcabamba";"635";"";"-12.75";"-73.6167"
+"María Parado de Bellido";"635";"";"-14.0229";"-74.1225"
+"Morcolla";"635";"";"-13.5454";"-74.4562"
+"Ocaña";"635";"";"-12.7667";"-75.0833"
+"Ocros";"635";"";"-10.3807";"-76.5453"
+"Oronccoy";"635";"";"-14.0845";"-74.0041"
+"Otoca";"635";"";"-14.1799";"-74.634"
+"Oyolo";"635";"";"-14.2333";"-74.75"
+"Pacapausa";"635";"";"-14.3206";"-73.8331"
+"Pacaycasa";"635";"";"-13.9375";"-73.7925"
+"Paico";"635";"";"-14.8833";"-74.15"
+"Pararca";"635";"";"-14.0417";"-74.1396"
+"Paras";"635";"";"-13.6778";"-74.2286"
+"Pausa";"635";"";"-14.0289";"-73.9228"
+"Pucacolpa";"635";"";"-14.478";"-73.7961"
+"Pullo";"635";"";"-14.318";"-73.9286"
+"Puquio";"635";"";"-14.7021";"-74.1303"
+"Puyusca";"635";"";"-14.7813";"-74.1761"
+"Querobamba";"635";"";"-12.9446";"-74.035"
+"Quinua";"635";"";"-13.2653";"-74.3069"
+"Sacsamarca";"635";"";"-14.6556";"-73.8692"
+"Saisa";"635";"";"-13.1833";"-74.0833"
+"Samugari";"635";"";"-12.6929";"-73.9617"
+"San Cristóbal";"635";"";"-13.9767";"-75.7858"
+"San Francisco de Ravacayco";"635";"";"-12.6361";"-73.8267"
+"San Javier de Alpabamba";"635";"";"-14.3071";"-73.789"
+"San José de Ticllas";"635";"";"-12.9526";"-74.2581"
+"San José de Ushua";"635";"";"-12.6667";"-74.3667"
+"San Juan";"635";"";"-15.2415";"-74.0047"
+"San Juan Bautista";"635";"";"-13.1715";"-74.219"
+"San Miguel";"635";"";"-12.4844";"-73.8425"
+"San Pedro";"635";"";"-13.6667";"-74.3833"
+"San Pedro de Larcay";"635";"";"-11.942";"-76.046"
+"San Pedro de Palco";"635";"";"-14.1333";"-74.4667"
+"San Salvador de Quije";"635";"";"-14.6";"-73.7667"
+"Sancos";"635";"";"-12.215";"-74.046"
+"Santa Ana de Huaycahuacho";"635";"";"-14.8447";"-74.1186"
+"Santa Lucia";"635";"";"-14.0031";"-73.692"
+"Santa Rosa";"635";"";"-12.8824";"-74.4137"
+"Santiago de Lucanamarca";"635";"";"-14.6792";"-73.5464"
+"Santiago de Paucaray";"635";"";"-14.5361";"-73.8078"
+"Santiago de Pischa";"635";"";"-14.528";"-73.648"
+"Santillana";"635";"";"-14.7873";"-73.8009"
+"Sara Sara";"635";"";"-15.0786";"-73.3521"
+"Sarhua";"635";"";"-13.8167";"-74.65"
+"Saurama";"635";"";"-12.868";"-74.288"
+"Sivia";"635";"";"-12.4833";"-74.1833"
+"Socos";"635";"";"-13.7167";"-75.8667"
+"Soras";"635";"";"-14.0667";"-74.0667"
+"Tambillo";"635";"";"-13.5716";"-75.2062"
+"Tambo";"635";"";"-13.2913";"-75.8967"
+"Totos";"635";"";"-14.0492";"-74.4648"
+"Uchuraccay";"635";"";"-13.2717";"-74.9803"
+"Upahuacho";"635";"";"-14.0";"-74.0"
+"Vilcanchos";"635";"";"-13.6667";"-75.5"
+"Vilcas Huaman";"635";"";"-13.8333";"-74.8667"
+"Vinchos";"635";"";"-13.85";"-75.1667"
+"Vischongo";"635";"";"-14.0139";"-74.2367"
+"Andabamba";"636";"";"-7.4533";"-78.0517"
+"Anguia";"636";"";"-6.4667";"-78.7167"
+"Asunción";"636";"";"-7.3833";"-78.5833"
+"Bambamarca";"636";"";"-6.8628";"-78.4423"
+"Bellavista";"636";"";"-6.4969";"-77.7369"
+"Bolívar";"636";"";"-7.2833";"-79.5167"
+"Cachachi";"636";"";"-6.9181";"-78.0761"
+"Cajabamba";"636";"";"-7.6208";"-78.045"
+"Cajamarca";"636";"";"-7.1638";"-78.5003"
+"Callayuc";"636";"";"-7.0383";"-78.0283"
+"Calquis";"636";"";"-7.1333";"-78.1833"
+"Catache";"636";"";"-6.625";"-78.4111"
+"Catilluc";"636";"";"-7.1667";"-78.5333"
+"Celendín";"636";"";"-6.867";"-78.1453"
+"Chadin";"636";"";"-6.442";"-78.4449"
+"Chalamarca";"636";"";"-7.421";"-78.472"
+"Chancay";"636";"";"-7.342";"-78.833"
+"Chancaybaños";"636";"";"-7.038";"-78.189"
+"Chetilla";"636";"";"-6.4931";"-78.4822"
+"Chiguirip";"636";"";"-6.6833";"-78.8833"
+"Chilete";"636";"";"-6.416";"-78.819"
+"Chimban";"636";"";"-6.5833";"-78.4167"
+"Chirinos";"636";"";"-5.8333";"-79.0"
+"Chontali";"636";"";"-7.65";"-78.7"
+"Choropampa";"636";"";"-6.871";"-78.339"
+"Choros";"636";"";"-7.2086";"-78.5661"
+"Chota";"636";"";"-6.555";"-78.65"
+"Chugur";"636";"";"-6.7194";"-78.6133"
+"Chumuch";"636";"";"-7.1667";"-78.9167"
+"Cochabamba";"636";"";"-7.15";"-78.7167"
+"Colasay";"636";"";"-6.9242";"-78.3475"
+"Conchan";"636";"";"-7.1667";"-78.3333"
+"Condebamba";"636";"";"-6.6667";"-78.6667"
+"Contumaza";"636";"";"-7.3028";"-78.6264"
+"Cortegana";"636";"";"-7.05";"-78.6667"
+"Cospan";"636";"";"-6.7736";"-78.5481"
+"Cujillo";"636";"";"-7.2586";"-79.1564"
+"Cupisnique";"636";"";"-7.7383";"-79.3278"
+"Cutervo";"636";"";"-6.386";"-78.82"
+"Eduardo Villanueva";"636";"";"-6.6936";"-79.0967"
+"El Prado";"636";"";"-6.4458";"-79.0292"
+"Encañada";"636";"";"-7.75";"-78.0667"
+"Gregorio Pita";"636";"";"-7.3333";"-78.5"
+"Guzmango";"636";"";"-5.5763";"-78.1744"
+"Huabal";"636";"";"-5.6969";"-78.3122"
+"Hualgayoc";"636";"";"-6.6929";"-78.5259"
+"Huambos";"636";"";"-5.9372";"-78.155"
+"Huarango";"636";"";"-5.5534";"-78.0954"
+"Huasmin";"636";"";"-6.2617";"-78.0406"
+"Ichocan";"636";"";"-6.2716";"-78.4379"
+"Jaén";"636";"";"-5.7103";"-78.8047"
+"Jesús";"636";"";"-5.4939";"-78.5233"
+"Jorge Chávez";"636";"";"-5.4185";"-78.5215"
+"José Gálvez";"636";"";"-5.8313";"-78.1342"
+"José Manuel Quiroz";"636";"";"-6.6238";"-78.1214"
+"José Sabogal";"636";"";"-5.3874";"-78.3865"
+"La Coipa";"636";"";"-6.0059";"-78.8333"
+"La Esperanza";"636";"";"-6.0859";"-78.9246"
+"La Florida";"636";"";"-5.799";"-78.432"
+"La Libertad de Pallan";"636";"";"-6.8333";"-79.3333"
+"La Ramada";"636";"";"-5.6506";"-78.8658"
+"Lajas";"636";"";"-5.5667";"-78.6833"
+"Las Pirias";"636";"";"-5.9822";"-78.5333"
+"Llacanora";"636";"";"-6.584";"-78.5073"
+"Llama";"636";"";"-6.476";"-78.0417"
+"Llapa";"636";"";"-6.038";"-78.688"
+"Los Baños del Inca";"636";"";"-7.1686";"-78.5235"
+"Magdalena";"636";"";"-5.3993";"-78.4416"
+"Matara";"636";"";"-6.285";"-78.258"
+"Miguel Iglesias";"636";"";"-5.5333";"-78.5167"
+"Miracosta";"636";"";"-6.4783";"-78.5978"
+"Namballe";"636";"";"-5.974";"-79.167"
+"Namora";"636";"";"-6.017";"-79.2"
+"Nanchoc";"636";"";"-6.6456";"-79.43"
+"Niepos";"636";"";"-6.1383";"-78.4228"
+"Ninabamba";"636";"";"-6.3706";"-78.4053"
+"Oxamarca";"636";"";"-6.1206";"-78.5917"
+"Paccha";"636";"";"-5.551";"-78.747"
+"Pedro Gálvez";"636";"";"-5.8758";"-78.2674"
+"Pimpingos";"636";"";"-5.9903";"-78.3103"
+"Pion";"636";"";"-6.5505";"-78.2699"
+"Pomahuaca";"636";"";"-6.1667";"-78.3167"
+"Pucara";"636";"";"-6.017";"-78.267"
+"Pulan";"636";"";"-5.8233";"-78.1606"
+"Querocotillo";"636";"";"-5.5";"-78.75"
+"Querocoto";"636";"";"-6.042";"-78.782"
+"Sallique";"636";"";"-5.6713";"-78.131"
+"San Andrés de Cutervo";"636";"";"-6.405";"-78.745"
+"San Benito";"636";"";"-5.5703";"-78.6306"
+"San Bernardino";"636";"";"-6.0667";"-79.3"
+"San Felipe";"636";"";"-6.1067";"-79.5283"
+"San Gregorio";"636";"";"-6.491";"-78.847"
+"San Ignacio";"636";"";"-5.194";"-79.023"
+"San José de Lourdes";"636";"";"-5.7128";"-78.9083"
+"San José del Alto";"636";"";"-5.932";"-78.5305"
+"San Juan";"636";"";"-5.6806";"-78.5489"
+"San Juan de Cutervo";"636";"";"-6.375";"-78.833"
+"San Juan de Licupis";"636";"";"-6.021";"-78.766"
+"San Luis";"636";"";"-5.0167";"-78.9833"
+"San Luis de Lucma";"636";"";"-6.2758";"-78.165"
+"San Miguel";"636";"";"-6.902";"-79.127"
+"San Pablo";"636";"";"-5.6506";"-78.8064"
+"San Silvestre de Cochan";"636";"";"-6.5333";"-78.0167"
+"Santa Cruz";"636";"";"-8.0933";"-77.8108"
+"Santa Cruz de Toledo";"636";"";"-6.5353";"-78.8708"
+"Santa Rosa";"636";"";"-5.7275";"-78.9689"
+"Santo Domingo de la Capilla";"636";"";"-6.7431";"-78.9308"
+"Santo Tomas";"636";"";"-14.409";"-71.0042"
+"Saucepampa";"636";"";"-8.8191";"-77.8603"
+"Sexi";"636";"";"-7.2602";"-78.0181"
+"Sitacocha";"636";"";"-7.284";"-78.427"
+"Socota";"636";"";"-6.5444";"-78.6453"
+"Sorochuco";"636";"";"-6.7633";"-78.6906"
+"Sucre";"636";"";"-6.559";"-78.892"
+"Tabaconas";"636";"";"-7.3167";"-78.3167"
+"Tacabamba";"636";"";"-6.197";"-78.625"
+"Tantarica";"636";"";"-8.798";"-77.738"
+"Tocmoche";"636";"";"-7.5028";"-78.5069"
+"Tongod";"636";"";"-7.731";"-78.296"
+"Toribio Casanova";"636";"";"-6.603";"-78.935"
+"Tumbaden";"636";"";"-6.753";"-78.8803"
+"Unión Agua Blanca";"636";"";"-8.884";"-77.836"
+"Utco";"636";"";"-6.451";"-78.801"
+"Uticyacu";"636";"";"-7.544";"-78.539"
+"Yauyucan";"636";"";"-6.3667";"-78.4833"
+"Yonan";"636";"";"-6.437";"-78.8853"
+"Bellavista";"24";"";"-12.0621";"-77.1492"
+"Callao";"24";"";"-12.0561";"-77.1182"
+"Carmen de la Legua Reynoso";"24";"";"-12.0396";"-77.0931"
+"La Perla";"24";"";"-12.062";"-77.1187"
+"La Punta";"24";"";"-12.0729";"-77.1476"
+"Mi Perú";"24";"";"-11.9193";"-77.091"
+"Ventanilla";"24";"";"-11.8765";"-77.1299"
+"Accha";"638";"";"-14.022";"-73.924"
+"Acomayo";"638";"";"-13.862";"-72.566"
+"Acopia";"638";"";"-13.605";"-71.866"
+"Acos";"638";"";"-13.012";"-74.259"
+"Alto Pichigua";"638";"";"-13.454";"-73.398"
+"Ancahuaylillas";"638";"";"-13.683";"-71.783"
+"Anta";"638";"";"-13.466";"-72.083"
+"Cachimayo";"638";"";"-13.285";"-72.213"
+"Caicay";"638";"";"-14.081";"-73.634"
+"Calca";"638";"";"-13.323";"-72.117"
+"Camanti";"638";"";"-12.9";"-72.85"
+"Capacmarca";"638";"";"-13.33";"-73.967"
+"Ccapi";"638";"";"-14.204";"-72.674"
+"Ccarhuayo";"638";"";"-13.476";"-74.316"
+"Ccatca";"638";"";"-13.481";"-71.927"
+"Ccorca";"638";"";"-13.402";"-71.953"
+"Challabamba";"638";"";"-13.412";"-72.201"
+"Chamaca";"638";"";"-13.62";"-71.83"
+"Checacupe";"638";"";"-13.729";"-71.645"
+"Checca";"638";"";"-13.303";"-71.8"
+"Chinchaypujio";"638";"";"-13.388";"-71.883"
+"Chinchero";"638";"";"-13.405";"-72.045"
+"Colcha";"638";"";"-13.476";"-74.316"
+"Colquemarca";"638";"";"-14.5";"-71.25"
+"Colquepata";"638";"";"-13.8";"-72.083"
+"Combapata";"638";"";"-13.6";"-71.333"
+"Condoroma";"638";"";"-14.6667";"-71.4"
+"Coporaque";"638";"";"-15.6167";"-71.7667"
+"Coya";"638";"";"-13.5306";"-72.0017"
+"Cusco";"638";"";"-13.5319";"-71.9675"
+"Cusipata";"638";"";"-13.6167";"-71.5833"
+"Echarate";"638";"";"-12.6892";"-73.4194"
+"Espinar";"638";"";"-14.9167";"-71.1833"
+"Huancarani";"638";"";"-13.8833";"-71.5167"
+"Huanoquite";"638";"";"-13.675";"-71.5431"
+"Huaro";"638";"";"-13.5095";"-72.2076"
+"Huarocondo";"638";"";"-13.65";"-71.9667"
+"Huayllabamba";"638";"";"-13.2574";"-72.622"
+"Huayopata";"638";"";"-12.9167";"-72.7167"
+"Inkawasi";"638";"";"-13.454";"-71.775"
+"Kimbiri";"638";"";"-12.7408";"-73.8075"
+"Kosñipata";"638";"";"-13.2536";"-71.6953"
+"Kunturkanki";"638";"";"-13.289";"-72.3965"
+"Lamay";"638";"";"-13.3167";"-72.1"
+"Langui";"638";"";"-14.1707";"-72.5991"
+"Lares";"638";"";"-13.3033";"-72.064"
+"Layo";"638";"";"-13.0361";"-72.3438"
+"Limatambo";"638";"";"-13.5167";"-72.7"
+"Livitaca";"638";"";"-13.3086";"-72.074"
+"Llusco";"638";"";"-13.441";"-71.829"
+"Lucre";"638";"";"-13.535";"-71.975"
+"Machupicchu";"638";"";"-13.1631";"-72.5456"
+"Marangani";"638";"";"-13.4917";"-71.8769"
+"Maranura";"638";"";"-12.5731";"-72.6508"
+"Maras";"638";"";"-13.3367";"-72.1578"
+"Marcapata";"638";"";"-13.5333";"-71.5"
+"Megantoni";"638";"";"-11.8981";"-73.9449"
+"Mollepata";"638";"";"-13.339";"-72.444"
+"Mosoc Llacta";"638";"";"-13.2083";"-72.0833"
+"Ocobamba";"638";"";"-13.9";"-71.5333"
+"Ocongate";"638";"";"-13.7275";"-71.5836"
+"Ocoruro";"638";"";"-14.0333";"-72.0833"
+"Ollantaytambo";"638";"";"-13.2583";"-72.2647"
+"Omacha";"638";"";"-13.5333";"-71.5667"
+"Oropesa";"638";"";"-13.5386";"-71.7436"
+"Paccaritambo";"638";"";"-13.6167";"-71.55"
+"Pallpata";"638";"";"-13.5519";"-71.5383"
+"Pampamarca";"638";"";"-13.7127";"-71.5513"
+"Paruro";"638";"";"-13.4694";"-71.9381"
+"Paucartambo";"638";"";"-13.0533";"-71.5875"
+"Pichari";"638";"";"-12.5967";"-73.7872"
+"Pichigua";"638";"";"-14.5144";"-71.1142"
+"Pillpinto";"638";"";"-14.1881";"-71.4264"
+"Pisac";"638";"";"-13.4167";"-71.8333"
+"Pitumarca";"638";"";"-14.125";"-71.4167"
+"Pomacanchi";"638";"";"-13.715";"-71.732"
+"Poroy";"638";"";"-13.4833";"-72.1333"
+"Pucyura";"638";"";"-13.6172";"-71.6011"
+"Quehue";"638";"";"-13.65";"-71.6667"
+"Quellouno";"638";"";"-12.8775";"-73.0369"
+"Quiñota";"638";"";"-13.45";"-71.7167"
+"Quiquijana";"638";"";"-13.3579";"-71.5994"
+"Rondocan";"638";"";"-12.6";"-74.2333"
+"San Jerónimo";"638";"";"-13.5247";"-71.9819"
+"San Pablo";"638";"";"-11.5744";"-77.2692"
+"San Pedro";"638";"";"-13.5247";"-71.9819"
+"San Salvador";"638";"";"-13.6742";"-72.8817"
+"San Sebastian";"638";"";"-13.5367";"-71.9783"
+"Sangarara";"638";"";"-13.3333";"-71.6"
+"Santa Ana";"638";"";"-11.6757";"-76.3217"
+"Santa Teresa";"638";"";"-13.1581";"-72.5269"
+"Santiago";"638";"";"-13.5319";"-71.9675"
+"Santo Tomas";"638";"";"-13.7717";"-71.875"
+"Saylla";"638";"";"-13.605";"-71.5792"
+"Sicuani";"638";"";"-14.2719";"-71.2261"
+"Suyckutambo";"638";"";"-13.7333";"-73.7167"
+"Taray";"638";"";"-13.6";"-71.8833"
+"Tinta";"638";"";"-14.1575";"-71.3803"
+"Tupac Amaru";"638";"";"-12.485";"-76.9167"
+"Urcos";"638";"";"-13.6872";"-71.5278"
+"Urubamba";"638";"";"-13.3042";"-72.1169"
+"Velille";"638";"";"-14.4333";"-71.0833"
+"Vilcabamba";"638";"";"-12.95";"-72.6833"
+"Villa Kintiarina";"638";"";"-14.2333";"-71.4667"
+"Villa Virgen";"638";"";"-14.206";"-73.1527"
+"Wanchaq";"638";"";"-13.5208";"-71.9725"
+"Yanaoca";"638";"";"-14.35";"-71.5833"
+"Yanatile";"638";"";"-13.3503";"-72.1364"
+"Yaurisque";"638";"";"-14.4716";"-72.1748"
+"Yucay";"638";"";"-13.2149";"-72.0436"
+"Zurite";"638";"";"-11.7133";"-76.2828"
+"Acobamba";"639";"";"-11.1306";"-75.345"
+"Acobambilla";"639";"";"-12.7667";"-74.7833"
+"Acoria";"639";"";"-11.3914";"-74.4939"
+"Acostambo";"639";"";"-13.4667";"-74.8667"
+"Acraquia";"639";"";"-13.7814";"-75.1394"
+"Ahuaycha";"639";"";"-12.6417";"-74.2186"
+"Anchonga";"639";"";"-12.055";"-75.3217"
+"Anco";"639";"";"-12.3";"-74.5167"
+"Andabamba";"639";"";"-12.9667";"-75.45"
+"Andaymarca";"639";"";"-12.4167";"-74.95"
+"Anta";"639";"";"-13.2442";"-72.3422"
+"Arma";"639";"";"-13.3167";"-75.6167"
+"Ascensión";"639";"";"-12.2167";"-75.5"
+"Aurahua";"639";"";"-12.9149";"-74.9789"
+"Ayavi";"639";"";"-12.805";"-74.3181"
+"Caja";"639";"";"-12.55";"-75.4667"
+"Callanmarca";"639";"";"-11.7583";"-75.4025"
+"Capillas";"639";"";"-12.945";"-74.9333"
+"Castrovirreyna";"639";"";"-13.2981";"-75.1642"
+"Ccochaccasa";"639";"";"-12.8167";"-75.1167"
+"Chinchihuasi";"639";"";"-12.75";"-75.05"
+"Chincho";"639";"";"-12.9667";"-74.75"
+"Chupamarca";"639";"";"-13.5464";"-74.9011"
+"Churcampa";"639";"";"-12.7";"-74.8333"
+"Cocas";"639";"";"-12.9333";"-74.4167"
+"Colcabamba";"639";"";"-13.9";"-74.2167"
+"Conayca";"639";"";"-13.2167";"-75.0333"
+"Congalla";"639";"";"-13.1667";"-75.05"
+"Córdova";"639";"";"-13.1667";"-75.15"
+"Cosme";"639";"";"-12.9267";"-75.0547"
+"Cuenca";"639";"";"-12.7833";"-74.9833"
+"Daniel Hernández";"639";"";"-12.9792";"-74.0636"
+"El Carmen";"639";"";"-13.4167";"-74.8333"
+"Huachocolpa";"639";"";"-13.1333";"-75.2167"
+"Huachos";"639";"";"-13.0583";"-74.8961"
+"Huamatambo";"639";"";"-13.3614";"-75.0889"
+"Huanca-Huanca";"639";"";"-12.7";"-75.0667"
+"Huancavelica";"639";"";"-12.7875";"-74.9783"
+"Huando";"639";"";"-12.85";"-75.2167"
+"Huaribamba";"639";"";"-13.4333";"-74.8333"
+"Huayacundo Arma";"639";"";"-13.6167";"-74.6167"
+"Huayllahuara";"639";"";"-12.6667";"-75.0667"
+"Huayllay Grande";"639";"";"-12.85";"-75.25"
+"Huaytara";"639";"";"-13.3833";"-75.0167"
+"Izcuchaca";"639";"";"-13.05";"-75.3667"
+"Julcamarca";"639";"";"-12.9833";"-75.0667"
+"La Merced";"639";"";"-13.2167";"-75.0667"
+"Laramarca";"639";"";"-13.9";"-75.2167"
+"Laria";"639";"";"-12.9889";"-75.1225"
+"Lircay";"639";"";"-13.2386";"-75.2078"
+"Locroja";"639";"";"-13.5";"-75.5"
+"Manta";"639";"";"-12.0667";"-75.4167"
+"Marcas";"639";"";"-12.85";"-75.0667"
+"Mariscal Cáceres";"639";"";"-13.9333";"-74.4"
+"Mollepampa";"639";"";"-12.85";"-75.0667"
+"Moya";"639";"";"-13.8";"-74.7333"
+"Ñahuimpuquio";"639";"";"-12.95";"-75.0167"
+"Nuevo Occoro";"639";"";"-13.0833";"-75.0667"
+"Ocoyo";"639";"";"-12.3667";"-75.6667"
+"Pachamarca";"639";"";"-13.0333";"-75.3833"
+"Palca";"639";"";"-13.015";"-74.75"
+"Pampas";"639";"";"-12.8";"-74.95"
+"Paucara";"639";"";"-13.95";"-74.2"
+"Paucarbamba";"639";"";"-13.8333";"-75.2833"
+"Pazos";"639";"";"-13.8833";"-75.2667"
+"Pichos";"639";"";"-13.9";"-75.2333"
+"Pilchaca";"639";"";"-13.15";"-75.5167"
+"Pilpichaca";"639";"";"-13.1333";"-75.5"
+"Pomacocha";"639";"";"-13.8667";"-74.5"
+"Querco";"639";"";"-13.9833";"-74.5"
+"Quichuas";"639";"";"-13.1833";"-74.8833"
+"Quishuar";"639";"";"-12.8167";"-74.7"
+"Quito-Arma";"639";"";"-13.5";"-74.9167"
+"Roble";"639";"";"-13.5";"-74.9"
+"Rosario";"639";"";"-12.95";"-75.2167"
+"Salcabamba";"639";"";"-13.1667";"-75.4"
+"Salcahuasi";"639";"";"-13.8167";"-74.8"
+"San Antonio de Antaparco";"639";"";"-13.6167";"-75.65"
+"San Antonio de Cusicancha";"639";"";"-11.9325";"-74.8075"
+"San Francisco de Sangayaico";"639";"";"-11.8813";"-75.1121"
+"San Isidro";"639";"";"-11.8283";"-75.2764"
+"San Juan";"639";"";"-11.789";"-75.2506"
+"San Marcos de Rocchac";"639";"";"-12.0659";"-75.2232"
+"San Miguel de Mayocc";"639";"";"-12.1865";"-75.2638"
+"San Pedro de Coris";"639";"";"-12.0444";"-75.2919"
+"Santa Ana";"639";"";"-11.9067";"-75.3045"
+"Santiago de Chocorvos";"639";"";"-11.9";"-75.1333"
+"Santiago de Quirahuara";"639";"";"-12.0057";"-75.194"
+"Santiago de Tucuma";"639";"";"-11.8";"-75.1833"
+"Santo Domingo de Capillas";"639";"";"-11.997";"-75.2095"
+"Santo Tomas de Pata";"639";"";"-11.8761";"-75.2674"
+"Secclla";"639";"";"-12.1039";"-75.255"
+"Surcubamba";"639";"";"-12.1458";"-75.2627"
+"Tambo";"639";"";"-11.791";"-75.2874"
+"Tantara";"639";"";"-11.8571";"-75.2567"
+"Ticrapo";"639";"";"-12.5409";"-74.835"
+"Tintay Puncu";"639";"";"-11.8833";"-74.8167"
+"Vilca";"639";"";"-12.0534";"-75.171"
+"Yauli";"639";"";"-12.1508";"-75.2461"
+"Amarilis";"640";"";"-9.9481";"-76.2342"
+"Ambo";"640";"";"-10.1486";"-76.2433"
+"Aparicio Pomares";"640";"";"-9.8417";"-76.2042"
+"Arancay";"640";"";"-10.035";"-76.286"
+"Baños";"640";"";"-9.8975";"-76.2083"
+"Cahuac";"640";"";"-9.8064";"-76.2042"
+"Canchabamba";"640";"";"-10.3883";"-76.2419"
+"Castillo Grande";"640";"";"-9.9833";"-76.2167"
+"Cayna";"640";"";"-9.7306";"-76.0111"
+"Chacabamba";"640";"";"-9.7522";"-76.0808"
+"Chaglla";"640";"";"-9.3206";"-76.1925"
+"Chavín de Pariarca";"640";"";"-10.4306";"-76.0869"
+"Chavinillo";"640";"";"-9.6425";"-76.245"
+"Chinchao";"640";"";"-9.9181";"-76.2369"
+"Cholon";"640";"";"-9.905";"-76.1914"
+"Choras";"640";"";"-10.0563";"-76.1705"
+"Chuquis";"640";"";"-10.4081";"-76.1539"
+"Churubamba";"640";"";"-9.895";"-76.1325"
+"Cochabamba";"640";"";"-9.6833";"-76.3333"
+"Codo del Pozuzo";"640";"";"-9.5733";"-74.9306"
+"Colpas";"640";"";"-9.6708";"-76.0944"
+"Conchamarca";"640";"";"-9.8";"-76.3833"
+"Daniel Alomía Robles";"640";"";"-9.7742";"-76.2114"
+"Hermílio Valdizan";"640";"";"-9.947";"-76.242"
+"Honoria";"640";"";"-9.993";"-76.18"
+"Huacar";"640";"";"-9.993";"-76.18"
+"Huacaybamba";"640";"";"-9.584";"-76.157"
+"Huacrachuco";"640";"";"-9.623";"-76.13"
+"Huanuco";"640";"";"-9.9306";"-76.2428"
+"Jacas Chico";"640";"";"-9.8406";"-76.0678"
+"Jacas Grande";"640";"";"-9.857";"-76.056"
+"Jesús";"640";"";"-9.995";"-76.226"
+"Jircan";"640";"";"-9.909";"-76.24"
+"Jivia";"640";"";"-9.807";"-76.105"
+"José Crespo y Castillo";"640";"";"-9.958";"-76.235"
+"La Morada";"640";"";"-9.8572";"-76.4494"
+"La Unión";"640";"";"-9.9375";"-76.1333"
+"Llata";"640";"";"-9.7536";"-77.2783"
+"Luyando";"640";"";"-9.9039";"-76.2903"
+"Margos";"640";"";"-9.6464";"-77.0108"
+"Mariano Damaso Beraun";"640";"";"-9.9";"-76.45"
+"Marías";"640";"";"-9.9592";"-76.3467"
+"Miraflores";"640";"";"-9.876";"-75.993"
+"Molino";"640";"";"-10.0883";"-76.2281"
+"Monzón";"640";"";"-9.7";"-75.8"
+"Obas";"640";"";"-9.7";"-75.883"
+"Pachas";"640";"";"-9.8333";"-75.9"
+"Pampamarca";"640";"";"-9.9531";"-75.9908"
+"Panao";"640";"";"-9.9";"-76.0833"
+"Pillco Marca";"640";"";"-9.6";"-76.2"
+"Pinra";"640";"";"-9.737";"-76.066"
+"Pucayacu";"640";"";"-9.868";"-76.058"
+"Pueblo Nuevo";"640";"";"-9.7128";"-75.9"
+"Puerto Inca";"640";"";"-9.95";"-74.6667"
+"Punchao";"640";"";"-9.8167";"-75.95"
+"Puños";"640";"";"-10.0833";"-76.2"
+"Queropalca";"640";"";"-9.8507";"-76.05"
+"Quisqui (Kichki)";"640";"";"-9.972";"-76.029"
+"Quivilla";"640";"";"-9.9444";"-76.0986"
+"Ripan";"640";"";"-9.827";"-76.311"
+"Rondos";"640";"";"-9.663";"-76.197"
+"Rupa-Rupa";"640";"";"-9.935";"-76.153"
+"San Buenaventura";"640";"";"-9.7833";"-76.0333"
+"San Francisco";"640";"";"-9.7833";"-76.1667"
+"San Francisco de Asís";"640";"";"-9.934";"-75.99"
+"San Francisco de Cayran";"640";"";"-9.6825";"-76.2553"
+"San Miguel de Cauri";"640";"";"-10.075";"-76.2"
+"San Pablo de Pillao";"640";"";"-10.0531";"-76.1286"
+"San Pedro de Chaulan";"640";"";"-9.8667";"-76.0667"
+"San Rafael";"640";"";"-9.9";"-76.0333"
+"Santa María del Valle";"640";"";"-9.869";"-76.079"
+"Santa Rosa de Alto Yanajanca";"640";"";"-9.727";"-76.131"
+"Santo Domingo de Anda";"640";"";"-9.7";"-75.9333"
+"Shunqui";"640";"";"-9.733";"-76.051"
+"Sillapata";"640";"";"-9.654";"-76.275"
+"Singa";"640";"";"-9.886";"-76.031"
+"Tantamayo";"640";"";"-9.737";"-76.294"
+"Tomay Kichwa";"640";"";"-9.731";"-76.042"
+"Tournavista";"640";"";"-9.915";"-75.999"
+"Umari";"640";"";"-9.75";"-76.0167"
+"Yacus";"640";"";"-9.85";"-76.1167"
+"Yanas";"640";"";"-9.682";"-76.231"
+"Yarumayo";"640";"";"-9.558";"-76.053"
+"Yuyapichis";"640";"";"-9.983";"-74.983"
+"Alto Laran";"641";"";"-13.4578";"-76.1342"
+"Changuillo";"641";"";"-13.3942";"-76.3147"
+"Chavin";"641";"";"-13.335";"-76.308"
+"Chincha Alta";"641";"";"-13.419";"-76.132"
+"Chincha Baja";"641";"";"-13.456";"-76.136"
+"El Carmen";"641";"";"-13.3708";"-76.1533"
+"El Ingenio";"641";"";"-13.4453";"-76.1172"
+"Grocio Prado";"641";"";"-12.656";"-75.625"
+"Huancano";"641";"";"-13.8014";"-75.6929"
+"Humay";"641";"";"-13.75";"-75.8667"
+"Ica";"641";"";"-14.067";"-75.728"
+"Independencia";"641";"";"-13.846";"-75.745"
+"La Tinguiña";"641";"";"-14.113";"-75.752"
+"Llipata";"641";"";"-12.942";"-75.528"
+"Los Aquijes";"641";"";"-14.186";"-75.707"
+"Marcona";"641";"";"-15.419";"-75.019"
+"Nasca";"641";"";"-14.833";"-74.945"
+"Ocucaje";"641";"";"-14.954";"-75.636"
+"Pachacutec";"641";"";"-14.067";"-75.728"
+"Palpa";"641";"";"-14.535";"-75.186"
+"Paracas";"641";"";"-13.836";"-76.263"
+"Parcona";"641";"";"-14.06";"-75.729"
+"Pisco";"641";"";"-13.711";"-76.203"
+"Pueblo Nuevo";"641";"";"-11.919";"-76.707"
+"Río Grande";"641";"";"-12.874";"-75.414"
+"Salas";"641";"";"-13.916";"-75.828"
+"San Andrés";"641";"";"-13.75";"-76.2"
+"San Clemente";"641";"";"-13.698";"-76.146"
+"San José de Los Molinos";"641";"";"-13.641";"-76.173"
+"San Juan Bautista";"641";"";"-13.166";"-74.216"
+"San Juan de Yanac";"641";"";"-13.833";"-75.883"
+"San Pedro de Huacarpana";"641";"";"-13.739";"-76.175"
+"Santa Cruz";"641";"";"-13.083";"-75.85"
+"Santiago";"641";"";"-14.185";"-75.716"
+"Subtanjalla";"641";"";"-13.527";"-75.181"
+"Sunampe";"641";"";"-13.666";"-76.15"
+"Tambo de Mora";"641";"";"-13.502";"-76.133"
+"Tate";"641";"";"-13.777";"-76.188"
+"Tibillo";"641";"";"-13.216";"-74.935"
+"Tupac Amaru Inca";"641";"";"-13.157";"-74.224"
+"Vista Alegre";"641";"";"-13.063";"-75.822"
+"Yauca del Rosario";"641";"";"-14.25";"-75.72"
+"Aco";"642";"";"-11.636";"-75.287"
+"Acobamba";"642";"";"-11.499";"-75.525"
+"Acolla";"642";"";"-11.507";"-75.337"
+"Ahuac";"642";"";"-11.598";"-75.252"
+"Andamarca";"642";"";"-11.608";"-75.182"
+"Apata";"642";"";"-11.432";"-75.393"
+"Ataura";"642";"";"-11.083";"-75.5"
+"Canchayllo";"642";"";"-11.111";"-75.601"
+"Carhuacallanga";"642";"";"-11.55";"-75.5"
+"Carhuamayo";"642";"";"-11.1";"-75.2"
+"Chacapalpa";"642";"";"-11.616";"-75.338"
+"Chacapampa";"642";"";"-11.667";"-75.333"
+"Chambara";"642";"";"-11.333";"-75.383"
+"Chanchamayo";"642";"";"-11.055";"-75.305"
+"Chicche";"642";"";"-11.04";"-75.329"
+"Chilca";"642";"";"-11.424";"-75.633"
+"Chongos Alto";"642";"";"-12.096";"-75.084"
+"Chongos Bajo";"642";"";"-12.1";"-75.083"
+"Chupaca";"642";"";"-12.071";"-75.297"
+"Chupuro";"642";"";"-11.938";"-75.312"
+"Cochas";"642";"";"-11.796";"-75.481"
+"Colca";"642";"";"-11.272";"-75.991"
+"Comas";"642";"";"-11.928";"-75.677"
+"Concepción";"642";"";"-11.926";"-75.294"
+"Coviriali";"642";"";"-11.983";"-74.933"
+"Cullhuas";"642";"";"-12.073";"-75.091"
+"Curicaca";"642";"";"-11.228";"-75.868"
+"El Mantaro";"642";"";"-11.569";"-75.821"
+"El Tambo";"642";"";"-12.045";"-75.277"
+"Heroínas Toledo";"642";"";"-11.114";"-75.364"
+"Huachac";"642";"";"-11.279";"-75.512"
+"Huacrapuquio";"642";"";"-11.405";"-75.342"
+"Hualhuas";"642";"";"-12.041";"-75.363"
+"Huamali";"642";"";"-12.059";"-75.343"
+"Huamancaca Chico";"642";"";"-12.18";"-75.088"
+"Huancan";"642";"";"-11.148";"-75.152"
+"Huancayo";"642";"";"-12.065";"-75.204"
+"Huaricolca";"642";"";"-12.133";"-75.116"
+"Huaripampa";"642";"";"-11.726";"-75.365"
+"Huasahuasi";"642";"";"-11.749";"-75.576"
+"Huasicancha";"642";"";"-11.616";"-75.543"
+"Huay-Huay";"642";"";"-11.662";"-75.352"
+"Huayucachi";"642";"";"-11.608";"-75.302"
+"Huertas";"642";"";"-11.818";"-75.36"
+"Ingenio";"642";"";"-11.966";"-75.667"
+"Janjaillo";"642";"";"-11.152";"-75.605"
+"Jauja";"642";"";"-11.775";"-75.497"
+"Julcán";"642";"";"-10.927";"-76.148"
+"Junin";"642";"";"-11.148";"-75.992"
+"La Oroya";"642";"";"-11.52";"-75.892"
+"La Unión";"642";"";"-11.966";"-75.667"
+"Leonor Ordóñez";"642";"";"-11.436";"-75.468"
+"Llaylla";"642";"";"-11.028";"-75.318"
+"Llocllapampa";"642";"";"-11.128";"-75.447"
+"Manzanares";"642";"";"-11.466";"-75.282"
+"Marcapomacocha";"642";"";"-11.848";"-76.108"
+"Marco";"642";"";"-11.874";"-75.394"
+"Mariscal Castilla";"642";"";"-11.053";"-76.018"
+"Masma";"642";"";"-11.733";"-75.283"
+"Masma Chicche";"642";"";"-11.758";"-75.255"
+"Matahuasi";"642";"";"-11.379";"-75.348"
+"Mazamari";"642";"";"-11.321";"-74.869"
+"Mito";"642";"";"-11.714";"-75.468"
+"Molinos";"642";"";"-12.154";"-75.169"
+"Monobamba";"642";"";"-12.071";"-75.091"
+"Morococha";"642";"";"-11.485";"-76.08"
+"Muqui";"642";"";"-11.755";"-75.286"
+"Muquiyauyo";"642";"";"-12.152";"-75.425"
+"Nueve de Julio";"642";"";"-12.434";"-75.742"
+"Ondores";"642";"";"-11.219";"-75.899"
+"Orcotuna";"642";"";"-11.158";"-75.642"
+"Paca";"642";"";"-11.733";"-75.417"
+"Paccha";"642";"";"-12.775";"-75.28"
+"Palca";"642";"";"-11.933";"-75.668"
+"Palcamayo";"642";"";"-10.696";"-75.623"
+"Pampa Hermosa";"642";"";"-11.358";"-74.992"
+"Pancan";"642";"";"-11.395";"-74.621"
+"Pangoa";"642";"";"-11.072";"-74.204"
+"Parco";"642";"";"-11.454";"-74.916"
+"Pariahuanca";"642";"";"-11.758";"-75.274"
+"Perene";"642";"";"-10.912";"-74.834"
+"Pichanaqui";"642";"";"-10.931";"-74.799"
+"Pilcomayo";"642";"";"-12.025";"-75.292"
+"Pomacancha";"642";"";"-10.912";"-74.799"
+"Pucara";"642";"";"-11.231";"-75.677"
+"Quichuay";"642";"";"-11.874";"-75.392"
+"Quilcas";"642";"";"-11.123";"-75.274"
+"Ricran";"642";"";"-11.728";"-75.324"
+"Río Negro";"642";"";"-10.725";"-75.027"
+"Río Tambo";"642";"";"-11.135";"-74.932"
+"San Agustín";"642";"";"-11.938";"-75.661"
+"San Jerónimo de Tunan";"642";"";"-11.837";"-75.005"
+"San José de Quero";"642";"";"-11.694";"-75.522"
+"San Juan de Iscos";"642";"";"-11.751";"-75.304"
+"San Juan de Jarpa";"642";"";"-10.944";"-75.004"
+"San Lorenzo";"642";"";"-11.76";"-74.677"
+"San Luis de Shuaro";"642";"";"-11.095";"-75.947"
+"San Pedro de Cajas";"642";"";"-11.106";"-75.377"
+"San Pedro de Chunan";"642";"";"-10.954";"-75.068"
+"San Ramón";"642";"";"-11.129";"-75.347"
+"Saño";"642";"";"-11.417";"-75.357"
+"Santa Bárbara de Carhuacayan";"642";"";"-11.869";"-75.015"
+"Santa Rosa de Ocopa";"642";"";"-11.269";"-75.392"
+"Santa Rosa de Sacco";"642";"";"-10.884";"-75.047"
+"Santo Domingo de Acobamba";"642";"";"-11.055";"-75.3"
+"Sapallanga";"642";"";"-11.108";"-75.333"
+"Satipo";"642";"";"-11.254";"-74.636"
+"Sausa";"642";"";"-11.295";"-76.059"
+"Sicaya";"642";"";"-11.128";"-75.389"
+"Sincos";"642";"";"-11.701";"-75.383"
+"Suitucancha";"642";"";"-11.967";"-75.582"
+"Tapo";"642";"";"-11.4";"-75.497"
+"Tarma";"642";"";"-11.419";"-75.687"
+"Tres de Diciembre";"642";"";"-11.797";"-75.696"
+"Tunan Marca";"642";"";"-11.549";"-75.681"
+"Ulcumayo";"642";"";"-11.108";"-75.192"
+"Viques";"642";"";"-11.188";"-75.588"
+"Vitoc";"642";"";"-11.166";"-75.833"
+"Vizcatan del Ene";"642";"";"-11.411";"-74.676"
+"Yanacancha";"642";"";"-10.659";"-76.05"
+"Yauli";"642";"";"-11.754";"-76.198"
+"Yauyos";"642";"";"-11.524";"-75.899"
+"Agallpampa";"643";"";"-7.216";"-78.415"
+"Angasmarca";"643";"";"-7.709";"-78.147"
+"Ascope";"643";"";"-7.708";"-79.112"
+"Bambamarca";"643";"";"-7.128";"-78.399"
+"Bolívar";"643";"";"-7.106";"-78.419"
+"Buldibuyo";"643";"";"-7.271";"-77.507"
+"Cachicadan";"643";"";"-7.325";"-78.039"
+"Calamarca";"643";"";"-7.301";"-77.958"
+"Carabamba";"643";"";"-8.219";"-77.893"
+"Casa Grande";"643";"";"-7.696";"-79.240"
+"Cascas";"643";"";"-7.481";"-78.823"
+"Chao";"643";"";"-7.316";"-79.011"
+"Charat";"643";"";"-7.398";"-78.773"
+"Chepen";"643";"";"-7.226";"-79.429"
+"Chicama";"643";"";"-7.843";"-79.146"
+"Chillia";"643";"";"-7.477";"-78.560"
+"Chocope";"643";"";"-7.757";"-79.302"
+"Chugay";"643";"";"-7.722";"-78.928"
+"Cochorco";"643";"";"-7.512";"-78.263"
+"Condormarca";"643";"";"-7.077";"-77.864"
+"Curgos";"643";"";"-7.311";"-78.158"
+"El Porvenir";"643";"";"-8.088";"-79.033"
+"Florencia de Mora";"643";"";"-8.102";"-79.029"
+"Guadalupe";"643";"";"-7.250";"-79.479"
+"Guadalupito";"643";"";"-8.538";"-78.713"
+"Huamachuco";"643";"";"-7.814";"-78.041"
+"Huancaspata";"643";"";"-7.816";"-78.272"
+"Huanchaco";"643";"";"-8.076";"-79.120"
+"Huaranchal";"643";"";"-7.832";"-78.201"
+"Huaso";"643";"";"-7.917";"-77.755"
+"Huaylillas";"643";"";"-7.761";"-78.732"
+"Huayo";"643";"";"-7.919";"-78.563"
+"Jequetepeque";"643";"";"-7.426";"-79.019"
+"Julcan";"643";"";"-7.149";"-78.640"
+"La Cuesta";"643";"";"-7.155";"-79.032"
+"La Esperanza";"643";"";"-8.073";"-79.028"
+"Laredo";"643";"";"-8.090";"-78.981"
+"Longotea";"643";"";"-7.705";"-78.688"
+"Lucma";"643";"";"-7.374";"-78.029"
+"Mache";"643";"";"-7.349";"-79.547"
+"Magdalena de Cao";"643";"";"-7.341";"-79.538"
+"Marcabal";"643";"";"-7.373";"-78.190"
+"Marmot";"643";"";"-7.372";"-78.182"
+"Moche";"643";"";"-8.171";"-79.009"
+"Mollebamba";"643";"";"-7.282";"-78.115"
+"Mollepata";"643";"";"-7.637";"-78.646"
+"Ongon";"643";"";"-7.467";"-78.636"
+"Otuzco";"643";"";"-7.895";"-78.575"
+"Pacanga";"643";"";"-7.399";"-79.575"
+"Pacasmayo";"643";"";"-7.400";"-79.569"
+"Paijan";"643";"";"-7.721";"-79.307"
+"Paranday";"643";"";"-7.071";"-78.777"
+"Parcoy";"643";"";"-8.430";"-78.703"
+"Pataz";"643";"";"-8.224";"-77.654"
+"Pias";"643";"";"-7.351";"-78.232"
+"Poroto";"643";"";"-7.532";"-78.365"
+"Pueblo Nuevo";"643";"";"-7.766";"-79.193"
+"Quiruvilca";"643";"";"-7.604";"-78.718"
+"Rázuri";"643";"";"-7.790";"-79.419"
+"Salaverry";"643";"";"-8.224";"-78.977"
+"Salpo";"643";"";"-7.612";"-78.301"
+"San José";"643";"";"-8.152";"-78.778"
+"San Pedro de Lloc";"643";"";"-7.418";"-79.502"
+"Sanagoran";"643";"";"-6.759";"-79.437"
+"Santa Cruz de Chuca";"643";"";"-7.727";"-78.401"
+"Santiago de Cao";"643";"";"-7.893";"-79.214"
+"Santiago de Challas";"643";"";"-7.511";"-78.590"
+"Santiago de Chuco";"643";"";"-8.149";"-78.173"
+"Sarin";"643";"";"-8.045";"-78.876"
+"Sartimbamba";"643";"";"-6.912";"-79.079"
+"Sayapullo";"643";"";"-7.071";"-79.315"
+"Simbal";"643";"";"-8.262";"-78.978"
+"Sinsicap";"643";"";"-7.870";"-78.764"
+"Sitabamba";"643";"";"-7.593";"-79.003"
+"Taurija";"643";"";"-7.888";"-78.547"
+"Tayabamba";"643";"";"-7.386";"-77.816"
+"Trujillo";"643";"";"-8.109";"-79.026"
+"Uchumarca";"643";"";"-7.690";"-78.682"
+"Ucuncha";"643";"";"-7.845";"-78.575"
+"Urpay";"643";"";"-7.932";"-78.960"
+"Usquil";"643";"";"-7.102";"-79.303"
+"Victor Larco Herrera";"643";"";"-8.107";"-79.017"
+"Viru";"643";"";"-8.417";"-78.752"
+"Cañaris";"644";"";"-6.953";"-79.570"
+"Cayalti";"644";"";"-6.747";"-79.628"
+"Chiclayo";"644";"";"-6.771";"-79.840"
+"Chochope";"644";"";"-7.002";"-79.460"
+"Chongoyape";"644";"";"-6.640";"-79.287"
+"Eten";"644";"";"-6.897";"-79.866"
+"Eten Puerto";"644";"";"-6.906";"-79.868"
+"Ferreñafe";"644";"";"-6.640";"-79.792"
+"Illimo";"644";"";"-6.613";"-79.856"
+"Incahuasi";"644";"";"-6.827";"-79.439"
+"Jayanca";"644";"";"-6.386";"-79.835"
+"José Leonardo Ortiz";"644";"";"-6.767";"-79.827"
+"La Victoria";"644";"";"-6.812";"-79.841"
+"Lagunas";"644";"";"-6.505";"-79.491"
+"Lambayeque";"644";"";"-6.697";"-79.903"
+"Manuel Antonio Mesones Muro";"644";"";"-6.708";"-79.899"
+"Mochumi";"644";"";"-6.590";"-79.682"
+"Monsefu";"644";"";"-6.870";"-79.873"
+"Morrope";"644";"";"-6.545";"-80.017"
+"Motupe";"644";"";"-6.157";"-79.712"
+"Nueva Arica";"644";"";"-6.474";"-79.423"
+"Olmos";"644";"";"-5.991";"-79.743"
+"Oyotun";"644";"";"-6.784";"-79.952"
+"Pacora";"644";"";"-7.329";"-79.416"
+"Patapo";"644";"";"-7.163";"-79.343"
+"Picsi";"644";"";"-6.703";"-79.832"
+"Pimentel";"644";"";"-6.823";"-79.934"
+"Pitipo";"644";"";"-6.545";"-79.814"
+"Pomalca";"644";"";"-6.643";"-79.753"
+"Pucala";"644";"";"-6.935";"-79.713"
+"Pueblo Nuevo";"644";"";"-7.094";"-79.951"
+"Reque";"644";"";"-6.756";"-79.773"
+"Salas";"644";"";"-6.626";"-79.950"
+"San José";"644";"";"-6.690";"-79.884"
+"Saña";"644";"";"-6.840";"-79.225"
+"Santa Rosa";"644";"";"-6.628";"-79.467"
+"Tucume";"644";"";"-6.510";"-79.864"
+"Tuman";"644";"";"-6.894";"-79.559"
+"Alis";"645";"";"-12.636";"-76.303"
+"Allauca";"645";"";"-11.292";"-75.827"
+"Ambar";"645";"";"-9.864";"-77.767"
+"Ancón";"645";"";"-11.783";"-77.166"
+"Andajes";"645";"";"-11.422";"-76.831"
+"Antioquia";"645";"";"-11.160";"-77.250"
+"Arahuay";"645";"";"-11.771";"-76.497"
+"Asia";"645";"";"-12.765";"-76.161"
+"Atavillos Alto";"645";"";"-11.287";"-76.631"
+"Atavillos Bajo";"645";"";"-11.350";"-76.643"
+"Ate";"645";"";"-12.038";"-77.067"
+"Aucallama";"645";"";"-11.264";"-77.623"
+"Ayaviri";"645";"";"-13.724";"-69.183"
+"Azángaro";"645";"";"-14.914";"-70.742"
+"Barranca";"645";"";"-10.750";"-77.766"
+"Barranco";"645";"";"-12.143";"-77.021"
+"Breña";"645";"";"-12.052";"-77.046"
+"Cacra";"645";"";"-12.164";"-75.011"
+"Cajatambo";"645";"";"-10.792";"-76.522"
+"Calango";"645";"";"-12.314";"-76.341"
+"Caleta de Carquin";"645";"";"-11.143";"-77.572"
+"Callahuanca";"645";"";"-11.795";"-76.454"
+"Canta";"645";"";"-11.495";"-76.651"
+"Carabayllo";"645";"";"-11.852";"-77.043"
+"Carampoma";"645";"";"-11.982";"-76.752"
+"Carania";"645";"";"-12.143";"-75.866"
+"Catahuasi";"645";"";"-12.946";"-74.347"
+"Caujul";"645";"";"-12.200";"-75.421"
+"Cerro Azul";"645";"";"-12.276";"-76.619"
+"Chaclacayo";"645";"";"-11.990";"-76.790"
+"Chancay";"645";"";"-11.563";"-77.269"
+"Checras";"645";"";"-11.940";"-76.673"
+"Chicla";"645";"";"-11.682";"-76.561"
+"Chilca";"645";"";"-12.510";"-76.739"
+"Chocos";"645";"";"-11.977";"-76.741"
+"Chorrillos";"645";"";"-12.181";"-77.009"
+"Cieneguilla";"645";"";"-12.114";"-76.807"
+"Coayllo";"645";"";"-12.479";"-76.720"
+"Cochamarca";"645";"";"-11.949";"-76.132"
+"Cochas";"645";"";"-12.650";"-75.450"
+"Colonia";"645";"";"-11.865";"-76.627"
+"Comas";"645";"";"-11.933";"-77.039"
+"Copa";"645";"";"-12.144";"-76.724"
+"Cuenca";"645";"";"-12.351";"-75.162"
+"El Agustino";"645";"";"-12.040";"-76.969"
+"Gorgor";"645";"";"-11.798";"-75.954"
+"Hongos";"645";"";"-11.402";"-76.690"
+"Huacho";"645";"";"-11.109";"-77.610"
+"Huachupampa";"645";"";"-11.820";"-76.795"
+"Hualmay";"645";"";"-11.078";"-77.608"
+"Huamantanga";"645";"";"-11.265";"-76.821"
+"Huampara";"645";"";"-11.725";"-75.615"
+"Huancapon";"645";"";"-11.865";"-75.617"
+"Huancaya";"645";"";"-11.847";"-75.590"
+"Huañec";"645";"";"-11.692";"-76.115"
+"Huangascar";"645";"";"-11.605";"-76.538"
+"Huantan";"645";"";"-10.592";"-77.890"
+"Huanza";"645";"";"-11.235";"-76.707"
+"Huaral";"645";"";"-11.495";"-77.213"
+"Huarochiri";"645";"";"-11.966";"-76.872"
+"Huaros";"645";"";"-11.791";"-76.577"
+"Huaura";"645";"";"-11.068";"-77.599"
+"Ihuari";"645";"";"-11.467";"-77.185"
+"Imperial";"645";"";"-12.840";"-76.641"
+"Independencia";"645";"";"-9.506";"-77.037"
+"Jesús María";"645";"";"-12.080";"-77.045"
+"La Molina";"645";"";"-12.083";"-76.913"
+"La Victoria";"645";"";"-12.072";"-77.018"
+"Lachaqui";"645";"";"-11.673";"-76.600"
+"Lahuaytambo";"645";"";"-11.351";"-76.588"
+"Lampian";"645";"";"-11.730";"-76.699"
+"Langa";"645";"";"-11.918";"-76.739"
+"Laraos";"645";"";"-11.737";"-76.378"
+"Leoncio Prado";"645";"";"-10.691";"-76.255"
+"Lima";"645";"";"-12.046";"-77.042"
+"Lince";"645";"";"-12.085";"-77.041"
+"Lincha";"645";"";"-11.111";"-77.130"
+"Los Olivos";"645";"";"-11.991";"-77.070"
+"Lunahuana";"645";"";"-12.884";"-76.675"
+"Lurigancho";"645";"";"-11.994";"-76.992"
+"Lurin";"645";"";"-12.268";"-76.870"
+"Madean";"645";"";"-12.658";"-76.536"
+"Magdalena del Mar";"645";"";"-12.096";"-77.068"
+"Mala";"645";"";"-12.658";"-76.625"
+"Manas";"645";"";"-10.669";"-76.874"
+"Mariatana";"645";"";"-12.141";"-76.749"
+"Matucana";"645";"";"-11.781";"-76.280"
+"Miraflores";"645";"";"-12.120";"-77.029"
+"Navan";"645";"";"-10.838";"-77.259"
+"Nuevo Imperial";"645";"";"-13.105";"-76.339"
+"Omas";"645";"";"-11.395";"-77.734"
+"Oyon";"645";"";"-10.669";"-76.761"
+"Pacaran";"645";"";"-12.540";"-76.659"
+"Pacaraos";"645";"";"-11.488";"-77.161"
+"Paccho";"645";"";"-11.791";"-76.642"
+"Pachacamac";"645";"";"-12.234";"-76.903"
+"Pachangara";"645";"";"-12.592";"-76.877"
+"Paramonga";"645";"";"-10.666";"-77.825"
+"Pativilca";"645";"";"-10.694";"-77.745"
+"Pucusana";"645";"";"-12.492";"-76.787"
+"Pueblo Libre";"645";"";"-12.076";"-77.069"
+"Puente Piedra";"645";"";"-11.860";"-77.058"
+"Punta Hermosa";"645";"";"-12.363";"-76.797"
+"Punta Negra";"645";"";"-12.366";"-76.827"
+"Putinza";"645";"";"-11.133";"-76.083"
+"Quilmana";"645";"";"-12.627";"-76.682"
+"Quinches";"645";"";"-12.245";"-76.535"
+"Quinocay";"645";"";"-11.033";"-76.502"
+"Ricardo Palma";"645";"";"-11.931";"-76.809"
+"Rímac";"645";"";"-12.025";"-77.033"
+"San Andrés de Tupicocha";"645";"";"-11.536";"-76.287"
+"San Antonio";"645";"";"-13.344";"-75.194"
+"San Bartolo";"645";"";"-12.389";"-76.770"
+"San Bartolomé";"645";"";"-12.575";"-76.641"
+"San Borja";"645";"";"-12.092";"-77.002"
+"San Buenaventura";"645";"";"-10.978";"-76.705"
+"San Damian";"645";"";"-11.987";"-76.669"
+"San Isidro";"645";"";"-12.099";"-77.035"
+"San Joaquín";"645";"";"-12.863";"-74.350"
+"San Juan de Iris";"645";"";"-11.053";"-75.150"
+"San Juan de Lurigancho";"645";"";"-12.008";"-76.992"
+"San Juan de Miraflores";"645";"";"-12.140";"-76.974"
+"San Juan de Tantaranche";"645";"";"-11.103";"-76.896"
+"San Lorenzo de Quinti";"645";"";"-11.102";"-76.845"
+"San Luis";"645";"";"-11.575";"-75.700"
+"San Martín de Porres";"645";"";"-11.998";"-77.103"
+"San Mateo";"645";"";"-11.760";"-76.346"
+"San Mateo de Otao";"645";"";"-11.783";"-76.357"
+"San Miguel";"645";"";"-12.072";"-77.090"
+"San Miguel de Acos";"645";"";"-11.233";"-76.482"
+"San Pedro de Casta";"645";"";"-11.754";"-76.335"
+"San Pedro de Huancayre";"645";"";"-11.942";"-76.634"
+"San Pedro de Pilas";"645";"";"-11.546";"-75.821"
+"San Vicente de Cañete";"645";"";"-13.095";"-76.385"
+"Sangallaya";"645";"";"-11.709";"-76.390"
+"Santa Anita";"645";"";"-12.055";"-77.057"
+"Santa Cruz de Andamarca";"645";"";"-11.066";"-76.430"
+"Santa Cruz de Cocachacra";"645";"";"-12.000";"-76.433"
+"Santa Cruz de Flores";"645";"";"-12.469";"-76.679"
+"Santa Eulalia";"645";"";"-11.988";"-76.781"
+"Santa Leonor";"645";"";"-11.953";"-76.712"
+"Santa María";"645";"";"-12.522";"-76.803"
+"Santa María del Mar";"645";"";"-12.406";"-76.793"
+"Santa Rosa";"645";"";"-13.327";"-76.157"
+"Santa Rosa de Quives";"645";"";"-11.673";"-76.387"
+"Santiago de Anchucaya";"645";"";"-11.196";"-76.308"
+"Santiago de Surco";"645";"";"-12.135";"-76.994"
+"Santiago de Tuna";"645";"";"-11.141";"-76.263"
+"Santo Domingo de Los Olleros";"645";"";"-11.701";"-76.464"
+"Sayan";"645";"";"-10.859";"-77.041"
+"Sumbilca";"645";"";"-11.642";"-76.459"
+"Supe";"645";"";"-10.811";"-77.684"
+"Supe Puerto";"645";"";"-10.820";"-77.742"
+"Surco";"645";"";"-12.133";"-76.990"
+"Surquillo";"645";"";"-12.116";"-77.007"
+"Tanta";"645";"";"-11.530";"-76.641"
+"Tauripampa";"645";"";"-11.076";"-77.079"
+"Tomas";"645";"";"-11.044";"-77.371"
+"Tupe";"645";"";"-12.527";"-76.951"
+"Vegueta";"645";"";"-12.517";"-76.669"
+"Veintisiete de Noviembre";"645";"";"-11.808";"-76.495"
+"Villa El Salvador";"645";"";"-12.223";"-76.956"
+"Villa María del Triunfo";"645";"";"-12.170";"-76.929"
+"Viñac";"645";"";"-11.419";"-76.863"
+"Vitis";"645";"";"-11.250";"-76.838"
+"Yauyos";"645";"";"-11.855";"-75.675"
+"Zúñiga";"645";"";"-11.522";"-76.785"
+"Alto Nanay";"646";"";"-3.768";"-73.333"
+"Alto Tapiche";"646";"";"-4.597";"-74.383"
+"Andoas";"646";"";"-2.854";"-76.435"
+"Balsapuerto";"646";"";"-5.732";"-75.973"
+"Barranca";"646";"";"-5.443";"-77.531"
+"Belén";"646";"";"-3.748";"-73.243"
+"Cahuapanas";"646";"";"-5.084";"-76.860"
+"Capelo";"646";"";"-3.687";"-72.978"
+"Contamana";"646";"";"-7.349";"-75.012"
+"Emilio San Martín";"646";"";"-6.986";"-75.274"
+"Fernando Lores";"646";"";"-4.223";"-73.778"
+"Inahuaya";"646";"";"-5.417";"-75.991"
+"Indiana";"646";"";"-5.149";"-75.333"
+"Iquitos";"646";"";"-3.749";"-73.253"
+"Jeberos";"646";"";"-5.321";"-76.109"
+"Jenaro Herrera";"646";"";"-7.031";"-75.568"
+"Lagunas";"646";"";"-5.229";"-75.676"
+"Las Amazonas";"646";"";"-3.790";"-73.324"
+"Manseriche";"646";"";"-3.529";"-73.459"
+"Maquia";"646";"";"-4.742";"-73.203"
+"Mazan";"646";"";"-4.281";"-73.552"
+"Morona";"646";"";"-4.580";"-73.270"
+"Napo";"646";"";"-2.823";"-75.448"
+"Nauta";"646";"";"-4.511";"-73.570"
+"Padre Márquez";"646";"";"-5.190";"-76.820"
+"Pampa Hermosa";"646";"";"-4.558";"-75.631"
+"Parinari";"646";"";"-3.750";"-73.133"
+"Pastaza";"646";"";"-3.397";"-73.538"
+"Pebas";"646";"";"-3.623";"-72.911"
+"Puinahua";"646";"";"-4.288";"-74.096"
+"Punchana";"646";"";"-3.747";"-73.251"
+"Putumayo";"646";"";"-3.987";"-73.695"
+"Ramón Castilla";"646";"";"-3.922";"-73.247"
+"Requena";"646";"";"-5.068";"-73.942"
+"Rosa Panduro";"646";"";"-4.460";"-75.576"
+"San Juan Bautista";"646";"";"-3.696";"-73.252"
+"San Pablo";"646";"";"-4.796";"-73.659"
+"Santa Cruz";"646";"";"-4.728";"-73.226"
+"Saquena";"646";"";"-4.360";"-75.985"
+"Sarayacu";"646";"";"-2.520";"-74.789"
+"Soplin";"646";"";"-3.091";"-73.832"
+"Tapiche";"646";"";"-4.849";"-74.044"
+"Teniente Cesar López Rojas";"646";"";"-3.900";"-73.917"
+"Teniente Manuel Clavero";"646";"";"-4.213";"-73.722"
+"Tigre";"646";"";"-3.990";"-73.437"
+"Torres Causana";"646";"";"-3.957";"-73.403"
+"Trompeteros";"646";"";"-4.311";"-73.573"
+"Urarinas";"646";"";"-3.910";"-73.881"
+"Vargas Guerra";"646";"";"-3.666";"-73.511"
+"Yaguas";"646";"";"-3.750";"-73.251"
+"Yaquerana";"646";"";"-3.698";"-73.234"
+"Yavari";"646";"";"-4.262";"-73.320"
+"Yurimaguas";"646";"";"-5.896";"-76.132"
+"Fitzcarrald";"647";"";"-12.083";"-70.991"
+"Huepetuhe";"647";"";"-12.705";"-70.798"
+"Iberia";"647";"";"-12.670";"-70.992"
+"Inambari";"647";"";"-12.796";"-70.973"
+"Iñapari";"647";"";"-9.180";"-69.449"
+"Laberinto";"647";"";"-12.884";"-69.841"
+"Las Piedras";"647";"";"-12.829";"-69.963"
+"Madre de Dios";"647";"";"-11.109";"-69.190"
+"Manu";"647";"";"-11.697";"-71.289"
+"Tahuamanu";"647";"";"-12.726";"-69.350"
+"Tambopata";"647";"";"-12.764";"-69.289"
+"Carumas";"648";"";"-17.569";"-70.861"
+"Chojata";"648";"";"-17.322";"-70.750"
+"Coalaque";"648";"";"-17.499";"-70.895"
+"Cuchumbaya";"648";"";"-17.336";"-70.813"
+"El Algarrobal";"648";"";"-17.196";"-70.932"
+"Ichuña";"648";"";"-17.426";"-70.824"
+"Ilo";"648";"";"-17.641";"-71.337"
+"La Capilla";"648";"";"-17.584";"-70.928"
+"Lloque";"648";"";"-17.402";"-70.874"
+"Matalaque";"648";"";"-17.363";"-70.822"
+"Moquegua";"648";"";"-17.194";"-70.932"
+"Omate";"648";"";"-16.500";"-70.796"
+"Pacocha";"648";"";"-17.183";"-70.955"
+"Puquina";"648";"";"-16.916";"-70.782"
+"Quinistaquillas";"648";"";"-17.243";"-70.921"
+"Samegua";"648";"";"-17.313";"-70.917"
+"San Cristóbal";"648";"";"-17.564";"-70.873"
+"Torata";"648";"";"-17.609";"-70.781"
+"Ubinas";"648";"";"-16.355";"-70.903"
+"Yunga";"648";"";"-17.270";"-70.925"
+"Chacayan";"649";"";"-10.365";"-76.633"
+"Chaupimarca";"649";"";"-10.422";"-76.514"
+"Chontabamba";"649";"";"-10.429";"-76.355"
+"Constitución";"649";"";"-10.646";"-76.636"
+"Goyllarisquizga";"649";"";"-10.919";"-76.045"
+"Huachon";"649";"";"-10.864";"-76.535"
+"Huancabamba";"649";"";"-5.238";"-79.451"
+"Huariaca";"649";"";"-10.408";"-76.200"
+"Huayllay";"649";"";"-11.019";"-76.243"
+"Ninacaca";"649";"";"-10.930";"-76.216"
+"Oxapampa";"649";"";"-10.578";"-75.402"
+"Palcazu";"649";"";"-10.382";"-75.021"
+"Pallanchacra";"649";"";"-10.703";"-76.328"
+"Paucar";"649";"";"-10.389";"-75.611"
+"Paucartambo";"649";"";"-13.187";"-71.575"
+"Pozuzo";"649";"";"-10.130";"-75.402"
+"Puerto Bermúdez";"649";"";"-10.917";"-74.780"
+"San Francisco de Asís de Yarusyacan";"649";"";"-10.709";"-76.150"
+"San Pedro de Pillao";"649";"";"-10.168";"-75.290"
+"Santa Ana de Tusi";"649";"";"-10.291";"-76.116"
+"Simon Bolívar";"649";"";"-11.398";"-76.176"
+"Tapuc";"649";"";"-10.706";"-76.335"
+"Ticlacayan";"649";"";"-10.970";"-76.231"
+"Tinyahuarco";"649";"";"-10.978";"-76.251"
+"Vicco";"649";"";"-10.696";"-76.343"
+"Vilcabamba";"649";"";"-10.926";"-75.961"
+"Villa Rica";"649";"";"-10.733";"-75.267"
+"Yanacancha";"649";"";"-10.729";"-75.262"
+"Yanahuanca";"649";"";"-10.566";"-75.273"
+"Amotape";"650";"";"-4.971";"-80.671"
+"Arenal";"650";"";"-5.050";"-80.170"
+"Ayabaca";"650";"";"-4.634";"-79.715"
+"Bellavista";"650";"";"-5.434";"-76.018"
+"Bellavista de la Unión";"650";"";"-5.654";"-76.330"
+"Bernal";"650";"";"-5.801";"-77.892"
+"Buenos Aires";"650";"";"-5.247";"-79.483"
+"Canchaque";"650";"";"-5.262";"-80.334"
+"Castilla";"650";"";"-5.254";"-80.633"
+"Catacaos";"650";"";"-5.277";"-80.676"
+"Chalaco";"650";"";"-5.239";"-79.691"
+"Chulucanas";"650";"";"-5.092";"-80.162"
+"Colan";"650";"";"-5.260";"-81.213"
+"Cristo Nos Valga";"650";"";"-4.916";"-80.708"
+"Cura Mori";"650";"";"-5.056";"-80.685"
+"El Alto";"650";"";"-5.342";"-80.615"
+"El Carmen de la Frontera";"650";"";"-4.908";"-80.471"
+"El Tallan";"650";"";"-5.440";"-80.685"
+"Frias";"650";"";"-4.981";"-80.604"
+"Huancabamba";"650";"";"-5.256";"-79.450"
+"Huarmaca";"650";"";"-5.331";"-79.783"
+"Ignacio Escudero";"650";"";"-5.110";"-80.658"
+"Jilili";"650";"";"-5.332";"-80.347"
+"La Arena";"650";"";"-5.386";"-80.752"
+"La Brea";"650";"";"-5.012";"-80.724"
+"La Huaca";"650";"";"-4.950";"-80.645"
+"La Matanza";"650";"";"-5.002";"-80.708"
+"La Unión";"650";"";"-4.890";"-80.768"
+"Lagunas";"650";"";"-5.258";"-79.901"
+"Lalaquiz";"650";"";"-4.932";"-80.698"
+"Lancones";"650";"";"-4.667";"-80.702"
+"Las Lomas";"650";"";"-4.342";"-81.199"
+"Lobitos";"650";"";"-4.446";"-81.272"
+"Los Organos";"650";"";"-4.261";"-81.213"
+"Mancora";"650";"";"-4.104";"-81.050"
+"Marcavelica";"650";"";"-4.884";"-80.730"
+"Miguel Checa";"650";"";"-5.645";"-80.537"
+"Montero";"650";"";"-4.731";"-80.716"
+"Morropon";"650";"";"-5.201";"-80.632"
+"Pacaipampa";"650";"";"-4.933";"-79.833"
+"Paimas";"650";"";"-5.012";"-79.821"
+"Paita";"650";"";"-5.091";"-81.115"
+"Pariñas";"650";"";"-5.093";"-81.112"
+"Piura";"650";"";"-5.194";"-80.632"
+"Querecotillo";"650";"";"-4.941";"-79.577"
+"Rinconada Llicuar";"650";"";"-4.905";"-79.825"
+"Salitral";"650";"";"-5.181";"-80.896"
+"San Juan de Bigote";"650";"";"-5.118";"-81.099"
+"San Miguel de El Faique";"650";"";"-5.223";"-80.605"
+"Santa Catalina de Mossa";"650";"";"-5.204";"-80.907"
+"Santo Domingo";"650";"";"-5.205";"-80.836"
+"Sapillica";"650";"";"-5.319";"-80.757"
+"Sechura";"650";"";"-5.570";"-80.822"
+"Sicchez";"650";"";"-5.441";"-80.816"
+"Sondor";"650";"";"-5.423";"-79.665"
+"Sondorillo";"650";"";"-5.377";"-79.598"
+"Sullana";"650";"";"-4.894";"-80.681"
+"Suyo";"650";"";"-4.905";"-80.349"
+"Tamarindo";"650";"";"-5.221";"-79.895"
+"Tambo Grande";"650";"";"-5.893";"-79.815"
+"Veintiseis de Octubre";"650";"";"-5.199";"-80.629"
+"Vice";"650";"";"-5.131";"-80.607"
+"Vichayal";"650";"";"-5.314";"-80.744"
+"Yamango";"650";"";"-5.271";"-80.589"
+"Achaya";"651";"";"-15.718";"-69.957"
+"Acora";"651";"";"-15.767";"-69.899"
+"Ajoyani";"651";"";"-16.266";"-69.725"
+"Alto Inambari";"651";"";"-14.001";"-69.662"
+"Amantani";"651";"";"-15.723";"-69.711"
+"Ananea";"651";"";"-14.619";"-69.390"
+"Anapia";"651";"";"-15.739";"-69.696"
+"Antauta";"651";"";"-15.810";"-70.200"
+"Arapa";"651";"";"-15.293";"-69.788"
+"Asillo";"651";"";"-15.486";"-69.608"
+"Atuncolla";"651";"";"-15.462";"-69.429"
+"Ayapata";"651";"";"-14.926";"-69.858"
+"Ayaviri";"651";"";"-14.885";"-70.588"
+"Azángaro";"651";"";"-14.914";"-70.022"
+"Cabana";"651";"";"-14.169";"-69.221"
+"Cabanilla";"651";"";"-15.553";"-70.373"
+"Cabanillas";"651";"";"-15.234";"-70.248"
+"Calapuja";"651";"";"-14.542";"-70.835"
+"Caminaca";"651";"";"-15.789";"-69.917"
+"Capachica";"651";"";"-15.717";"-70.042"
+"Capazo";"651";"";"-15.721";"-69.536"
+"Caracoto";"651";"";"-15.257";"-70.082"
+"Chucuito";"651";"";"-15.383";"-70.516"
+"Chupa";"651";"";"-15.347";"-70.676"
+"Coasa";"651";"";"-14.299";"-70.695"
+"Coata";"651";"";"-15.496";"-70.147"
+"Cojata";"651";"";"-15.522";"-69.898"
+"Conduriri";"651";"";"-15.434";"-69.973"
+"Conima";"651";"";"-15.119";"-70.621"
+"Copani";"651";"";"-15.183";"-69.918"
+"Corani";"651";"";"-15.283";"-70.400"
+"Crucero";"651";"";"-14.992";"-70.222"
+"Cupi";"651";"";"-14.917";"-70.416"
+"Cuturapi";"651";"";"-15.242";"-70.088"
+"Cuyocuyo";"651";"";"-14.925";"-70.516"
+"Desaguadero";"651";"";"-16.577";"-69.046"
+"Huacullani";"651";"";"-15.963";"-69.894"
+"Huancane";"651";"";"-15.362";"-70.153"
+"Huata";"651";"";"-14.829";"-70.404"
+"Huatasani";"651";"";"-14.790";"-70.331"
+"Huayrapata";"651";"";"-15.631";"-70.100"
+"Ilave";"651";"";"-16.098";"-69.669"
+"Inchupalla";"651";"";"-15.477";"-69.954"
+"Ituata";"651";"";"-15.358";"-69.831"
+"José Domingo Choquehuanca";"651";"";"-14.596";"-69.539"
+"Juli";"651";"";"-15.494";"-70.133"
+"Juliaca";"651";"";"-15.499";"-70.133"
+"Kelluyo";"651";"";"-15.816";"-70.108"
+"Lampa";"651";"";"-15.478";"-70.228"
+"Limbani";"651";"";"-14.940";"-70.120"
+"Llalli";"651";"";"-15.550";"-70.508"
+"Macari";"651";"";"-14.576";"-70.400"
+"Macusani";"651";"";"-14.072";"-70.426"
+"Mañazo";"651";"";"-15.488";"-69.804"
+"Moho";"651";"";"-15.403";"-70.456"
+"Muñani";"651";"";"-14.990";"-70.099"
+"Nicasio";"651";"";"-15.125";"-70.440"
+"Nuñoa";"651";"";"-14.110";"-70.274"
+"Ocuviri";"651";"";"-15.588";"-70.334"
+"Ollachea";"651";"";"-14.291";"-70.359"
+"Ollaraya";"651";"";"-15.501";"-70.356"
+"Orurillo";"651";"";"-15.250";"-70.142"
+"Palca";"651";"";"-16.358";"-70.194"
+"Paratia";"651";"";"-15.530";"-70.027"
+"Patambuco";"651";"";"-15.637";"-69.605"
+"Paucarcolla";"651";"";"-15.316";"-70.045"
+"Pedro Vilca Apaza";"651";"";"-14.332";"-70.537"
+"Phara";"651";"";"-15.187";"-70.233"
+"Pichacani";"651";"";"-15.393";"-70.137"
+"Pilcuyo";"651";"";"-15.784";"-69.691"
+"Pisacoma";"651";"";"-16.601";"-69.037"
+"Plateria";"651";"";"-15.160";"-69.769"
+"Pomata";"651";"";"-15.840";"-69.747"
+"Potoni";"651";"";"-15.439";"-69.630"
+"Pucara";"651";"";"-15.116";"-69.950"
+"Puno";"651";"";"-15.840";"-70.022"
+"Pusi";"651";"";"-15.503";"-70.251"
+"Putina";"651";"";"-14.899";"-69.881"
+"Quiaca";"651";"";"-15.330";"-70.157"
+"Quilcapuncu";"651";"";"-15.501";"-70.159"
+"Rosaspata";"651";"";"-14.888";"-69.831"
+"Saman";"651";"";"-15.354";"-69.676"
+"San Anton";"651";"";"-14.760";"-69.446"
+"San Antonio";"651";"";"-14.797";"-70.056"
+"San Gaban";"651";"";"-13.898";"-69.394"
+"San José";"651";"";"-15.532";"-70.095"
+"San Juan de Salinas";"651";"";"-15.392";"-69.844"
+"San Juan del Oro";"651";"";"-14.903";"-69.848"
+"San Miguel";"651";"";"-14.958";"-69.391"
+"San Pedro de Putina Punco";"651";"";"-15.472";"-69.890"
+"Sandia";"651";"";"-14.316";"-69.761"
+"Santa Lucia";"651";"";"-15.627";"-69.910"
+"Santa Rosa";"651";"";"-14.104";"-69.098"
+"Santiago de Pupuja";"651";"";"-15.916";"-69.987"
+"Sina";"651";"";"-15.425";"-69.693"
+"Taraco";"651";"";"-16.065";"-69.120"
+"Tilali";"651";"";"-15.255";"-69.907"
+"Tinicachi";"651";"";"-15.595";"-69.975"
+"Tiquillaca";"651";"";"-15.605";"-69.476"
+"Tirapata";"651";"";"-14.830";"-70.073"
+"Umachiri";"651";"";"-15.980";"-69.630"
+"Unicachi";"651";"";"-15.852";"-69.825"
+"Usicayos";"651";"";"-16.091";"-69.536"
+"Vilavila";"651";"";"-15.582";"-69.878"
+"Vilque";"651";"";"-15.257";"-70.020"
+"Vilque Chico";"651";"";"-15.326";"-70.134"
+"Yanahuaya";"651";"";"-14.936";"-69.702"
+"Yunguyo";"651";"";"-15.834";"-69.300"
+"Zepita";"651";"";"-15.042";"-69.919"
+"Agua Blanca";"652";"";"-6.116";"-77.133"
+"Alberto Leveau";"652";"";"-6.038";"-77.153"
+"Alonso de Alvarado";"652";"";"-6.063";"-77.170"
+"Alto Biavo";"652";"";"-7.760";"-76.716"
+"Alto Saposoa";"652";"";"-6.872";"-76.832"
+"Awajun";"652";"";"-6.700";"-76.316"
+"Bajo Biavo";"652";"";"-7.810";"-76.718"
+"Barranquita";"652";"";"-5.891";"-77.137"
+"Bellavista";"652";"";"-5.935";"-77.097"
+"Buenos Aires";"652";"";"-6.516";"-77.383"
+"Cacatachi";"652";"";"-6.074";"-76.663"
+"Calzada";"652";"";"-6.386";"-76.591"
+"Campanilla";"652";"";"-7.132";"-76.951"
+"Caspisapa";"652";"";"-6.516";"-77.383"
+"Caynarachi";"652";"";"-6.356";"-76.476"
+"Chazuta";"652";"";"-6.552";"-76.161"
+"Chipurana";"652";"";"-7.058";"-76.235"
+"Cuñumbuqui";"652";"";"-6.700";"-76.281"
+"El Eslabón";"652";"";"-6.646";"-76.374"
+"El Porvenir";"652";"";"-6.505";"-76.365"
+"Elías Soplin Vargas";"652";"";"-6.471";"-76.380"
+"Habana";"652";"";"-7.389";"-76.535"
+"Huallaga";"652";"";"-7.657";"-76.105"
+"Huicungo";"652";"";"-6.673";"-75.918"
+"Huimbayoc";"652";"";"-6.774";"-75.815"
+"Jepelacio";"652";"";"-6.394";"-76.006"
+"Juan Guerra";"652";"";"-6.887";"-76.007"
+"Juanjuí";"652";"";"-7.169";"-76.729"
+"La Banda de Shilcayo";"652";"";"-6.450";"-76.364"
+"Lamas";"652";"";"-6.416";"-76.534"
+"Morales";"652";"";"-6.655";"-76.308"
+"Moyobamba";"652";"";"-6.050";"-76.966"
+"Nueva Cajamarca";"652";"";"-6.005";"-77.009"
+"Nuevo Progreso";"652";"";"-5.722";"-77.546"
+"Pachiza";"652";"";"-7.395";"-76.084"
+"Pajarillo";"652";"";"-6.216";"-76.883"
+"Papaplaya";"652";"";"-7.319";"-76.408"
+"Pardo Miguel";"652";"";"-6.629";"-75.962"
+"Picota";"652";"";"-6.976";"-76.341"
+"Pilluana";"652";"";"-6.866";"-76.129"
+"Pinto Recodo";"652";"";"-6.726";"-76.511"
+"Piscoyacu";"652";"";"-6.827";"-76.213"
+"Polvora";"652";"";"-7.076";"-76.171"
+"Posic";"652";"";"-7.202";"-76.673"
+"Pucacaca";"652";"";"-7.161";"-76.484"
+"Rioja";"652";"";"-6.054";"-77.167"
+"Rumisapa";"652";"";"-6.683";"-76.453"
+"Sacanche";"652";"";"-6.227";"-76.911"
+"San Antonio";"652";"";"-6.777";"-76.382"
+"San Cristóbal";"652";"";"-7.261";"-76.216"
+"San Fernando";"652";"";"-7.487";"-76.669"
+"San Hilarión";"652";"";"-6.488";"-76.617"
+"San José de Sisa";"652";"";"-6.658";"-76.860"
+"San Martín";"652";"";"-6.864";"-76.423"
+"San Pablo";"652";"";"-7.002";"-76.466"
+"San Rafael";"652";"";"-7.276";"-76.810"
+"San Roque de Cumbaza";"652";"";"-6.833";"-76.375"
+"Santa Rosa";"652";"";"-6.739";"-76.028"
+"Saposoa";"652";"";"-6.938";"-76.711"
+"Sauce";"652";"";"-6.489";"-76.972"
+"Shamboyacu";"652";"";"-6.671";"-76.715"
+"Shanao";"652";"";"-6.876";"-76.056"
+"Shapaja";"652";"";"-6.580";"-76.368"
+"Shatoja";"652";"";"-6.413";"-76.487"
+"Shunte";"652";"";"-6.346";"-76.469"
+"Soritor";"652";"";"-6.924";"-76.447"
+"Tabalosos";"652";"";"-7.308";"-76.636"
+"Tarapoto";"652";"";"-6.481";"-76.365"
+"Tingo de Ponasa";"652";"";"-6.827";"-76.456"
+"Tingo de Saposoa";"652";"";"-6.937";"-76.896"
+"Tocache";"652";"";"-8.182";"-76.516"
+"Tres Unidos";"652";"";"-8.086";"-76.498"
+"Uchiza";"652";"";"-8.447";"-76.463"
+"Yantalo";"652";"";"-6.727";"-76.484"
+"Yorongos";"652";"";"-6.586";"-76.771"
+"Yuracyacu";"652";"";"-6.920";"-76.832"
+"Zapatero";"652";"";"-6.596";"-76.625"
+"Alto de la Alianza";"653";"";"-17.986";"-70.242"
+"Cairani";"653";"";"-17.380";"-69.597"
+"Calana";"653";"";"-17.405";"-70.850"
+"Camilaca";"653";"";"-17.575";"-70.053"
+"Candarave";"653";"";"-17.281";"-69.541"
+"Ciudad Nueva";"653";"";"-17.971";"-70.278"
+"Coronel Gregorio Albarracín Lanchipa";"653";"";"-18.040";"-70.271"
+"Curibaya";"653";"";"-17.422";"-70.138"
+"Estique";"653";"";"-17.638";"-70.488"
+"Estique-Pampa";"653";"";"-17.648";"-70.491"
+"Héroes Albarracín";"653";"";"-18.005";"-70.275"
+"Huanuara";"653";"";"-17.417";"-69.902"
+"Ilabaya";"653";"";"-17.625";"-70.355"
+"Inclan";"653";"";"-17.124";"-70.016"
+"Ite";"653";"";"-17.405";"-71.346"
+"La Yarada los Palos";"653";"";"-17.990";"-70.287"
+"Locumba";"653";"";"-17.619";"-70.245"
+"Pachia";"653";"";"-17.795";"-70.278"
+"Palca";"653";"";"-17.276";"-70.080"
+"Pocollay";"653";"";"-17.935";"-70.258"
+"Quilahuani";"653";"";"-17.381";"-70.134"
+"Sama";"653";"";"-17.188";"-70.898"
+"Sitajara";"653";"";"-17.635";"-70.429"
+"Susapaya";"653";"";"-17.309";"-69.841"
+"Tacna";"653";"";"-18.006";"-70.253"
+"Tarata";"653";"";"-17.616";"-71.400"
+"Tarucachi";"653";"";"-17.364";"-69.952"
+"Ticaco";"653";"";"-17.067";"-69.903"
+"Aguas Verdes";"654";"";"-3.579";"-80.451"
+"Canoas de Punta Sal";"654";"";"-3.531";"-80.388"
+"Casitas";"654";"";"-3.763";"-80.386"
+"Corrales";"654";"";"-3.921";"-80.593"
+"La Cruz";"654";"";"-3.793";"-80.235"
+"Matapalo";"654";"";"-3.669";"-80.576"
+"Pampas de Hospital";"654";"";"-3.607";"-80.354"
+"Papayal";"654";"";"-3.677";"-80.692"
+"San Jacinto";"654";"";"-3.379";"-80.162"
+"San Juan de la Virgen";"654";"";"-3.622";"-80.536"
+"Tumbes";"654";"";"-3.570";"-80.453"
+"Zarumilla";"654";"";"-3.500";"-80.276"
+"Zorritos";"654";"";"-3.694";"-80.675"
+"Alexander Von Humboldt";"655";"";"-8.404";"-74.567"
+"Calleria";"655";"";"-8.393";"-74.558"
+"Campoverde";"655";"";"-8.394";"-74.568"
+"Curimana";"655";"";"-8.168";"-74.432"
+"Iparia";"655";"";"-7.747";"-73.252"
+"Irazola";"655";"";"-8.342";"-75.594"
+"Manantay";"655";"";"-8.381";"-74.559"
+"Masisea";"655";"";"-9.420";"-74.969"
+"Neshuya";"655";"";"-9.906";"-75.074"
+"Nueva Requena";"655";"";"-8.677";"-73.796"
+"Padre Abad";"655";"";"-9.026";"-75.507"
+"Purús";"655";"";"-9.735";"-70.536"
+"Raymondi";"655";"";"-10.737";"-73.727"
+"Sepahua";"655";"";"-10.701";"-73.742"
+"Tahuania";"655";"";"-10.899";"-73.593"
+"Yarinacocha";"655";"";"-8.370";"-74.572"
+"Yurua";"655";"";"-9.161";"-73.870"
+"Ancahuasi";"638";"";"-13.6671";"-71.3125"
+"Andahuaylillas";"638";"";"-13.6869";"-71.6222"
