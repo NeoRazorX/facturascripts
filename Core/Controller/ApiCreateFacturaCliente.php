@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
@@ -93,17 +94,24 @@ class ApiCreateFacturaCliente extends ApiController
             }
         }
 
+        $db = new DataBase();
+        $db->beginTransaction();
+
         // guardamos la factura
         if (false === $factura->save()) {
             $this->response->setContent(json_encode([
                 'status' => 'error',
                 'message' => 'Error saving the invoice',
             ]));
+            $db->rollback();
             return;
         }
 
         // guardamos las líneas
-        $this->saveLines($factura);
+        if (false === $this->saveLines($factura)) {
+            $db->rollback();
+            return;
+        }
 
         // ¿Está pagada?
         if ($this->request->get('pagada', false)) {
@@ -115,6 +123,8 @@ class ApiCreateFacturaCliente extends ApiController
             // recargamos la factura
             $factura->loadFromCode($factura->idfactura);
         }
+
+        $db->commit();
 
         // devolvemos la respuesta
         $this->response->setContent(json_encode([
@@ -151,9 +161,9 @@ class ApiCreateFacturaCliente extends ApiController
 
             $newLine->cantidad = (float)($line['cantidad'] ?? 1);
             $newLine->descripcion = $line['descripcion'] ?? $newLine->descripcion ?? '?';
-            $newLine->pvpunitario = (float)($line['pvpunitario'] ?? 0);
-            $newLine->dtopor = (float)($line['dtopor'] ?? 0);
-            $newLine->dtopor2 = (float)($line['dtopor2'] ?? 0);
+            $newLine->pvpunitario = (float)($line['pvpunitario'] ?? $newLine->pvpunitario);
+            $newLine->dtopor = (float)($line['dtopor'] ?? $newLine->dtopor);
+            $newLine->dtopor2 = (float)($line['dtopor2'] ?? $newLine->dtopor2);
 
             if (!empty($line['excepcioniva'] ?? '')) {
                 $newLine->excepcioniva = $line['excepcioniva'];

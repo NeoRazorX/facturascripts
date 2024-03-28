@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,15 +39,15 @@ class WidgetVariante extends WidgetText
         parent::__construct($data);
 
         $this->match = $data['match'] ?? 'referencia';
-
-        if (empty($this->id)) {
-            $this->id = $this->getUniqueId();
-        }
     }
 
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
+
+        // obtenemos un nuevo ID cada vez
+        $this->id = $this->getUniqueId();
+
         $descriptionHtml = empty($description) ?
             '' :
             '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
@@ -76,7 +76,8 @@ class WidgetVariante extends WidgetText
             . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
             . '<a href="#" class="btn btn-block btn-outline-secondary" data-toggle="modal" data-target="#modal_' . $this->id . '">'
-            . '<i class="' . $icon . ' fa-fw"></i> ' . ($variante->referencia ?? Tools::lang()->trans('select'))
+            . '<i class="' . $icon . ' fa-fw"></i> '
+            . '<span id="modal_span_' . $this->id . '">' . ($variante->referencia ?? Tools::lang()->trans('select')) . '</span>'
             . '</a>'
             . $descriptionHtml
             . '</div>'
