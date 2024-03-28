@@ -45,6 +45,22 @@ date_default_timezone_set($timeZone);
 // cargamos el gestor de errores
 CrashReport::init();
 
+// cargamos la variable APP_KEY para poder encriptar
+// en entornos de desarrollo usamos el archivo .env para poner la APP_KEY en variable de entorno
+// en entornos de producción se debe configurar la variable de entorno APP_KEY en el hosting
+if(FS_DEBUG){
+    $envFilePath = Tools::folder('.env');
+    if (false === is_file($envFilePath)){
+        $key = base64_encode(\FacturaScripts\Core\Lib\Encrypter::generateKey());
+        file_put_contents($envFilePath, 'APP_KEY=' . $key, FILE_APPEND);
+    }
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->safeLoad();
+}else{
+    $key = base64_encode(\FacturaScripts\Core\Lib\Encrypter::generateKey());
+    throw new \FacturaScripts\Core\KernelException('DefaultError', 'Debe configurar esta variable de entorno en el hosting: APP_KEY="' . $key . '"');
+}
+
 // iniciamos el kernel
 Kernel::init();
 

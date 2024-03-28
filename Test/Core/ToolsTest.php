@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Lib\Encrypter;
 use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Divisa;
@@ -283,5 +284,13 @@ final class ToolsTest extends TestCase
         $this->assertEquals('1.23', Tools::number(1.234, 2));
         $this->assertEquals('1.234', Tools::number(1.234, 3));
         $this->assertEquals('1.23', Tools::number(1.234, 2));
+    }
+
+    public function testEncrypter(): void
+    {
+        $_ENV['APP_KEY'] = base64_encode(Encrypter::generateKey());
+        $texto = 'test';
+        $textoEncriptado = Tools::encriptar($texto);
+        $this->assertEquals($texto, Tools::desencriptar($textoEncriptado));
     }
 }
