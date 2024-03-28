@@ -40,7 +40,7 @@ class ApiCreateFacturaCliente extends ApiController
         }
 
         // si no viene codcliente, devolvemos un error
-        if ($this->request->request->has('codcliente')) {
+        if (!$this->request->request->has('codcliente')) {
             $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
             $this->response->setContent(json_encode([
                 'status' => 'error',
@@ -55,6 +55,18 @@ class ApiCreateFacturaCliente extends ApiController
             $this->response->setContent(json_encode([
                 'status' => 'error',
                 'message' => 'lineas field is required',
+            ]));
+            return;
+        }
+
+        // si las lineas no vienen en un array, devolvemos un error
+        $lineData = $this->request->request->get('lineas');
+        $lineas = json_decode($lineData, true);
+        if (!is_array($lineas)) {
+            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $this->response->setContent(json_encode([
+                'status' => 'error',
+                'message' => 'Invalid lines',
             ]));
             return;
         }
@@ -146,14 +158,6 @@ class ApiCreateFacturaCliente extends ApiController
     {
         $lineData = $this->request->request->get('lineas');
         $lineas = json_decode($lineData, true);
-        if (!is_array($lineas)) {
-            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Invalid lines',
-            ]));
-            return false;
-        }
 
         $newLines = [];
         foreach ($lineas as $line) {
