@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -32,6 +33,9 @@ use FacturaScripts\Core\Tools;
 class Pais extends ModelClass
 {
     use ModelTrait;
+
+    /** @var string */
+    public $alias;
 
     /**
      * Alpha-2 code of the country.
@@ -49,12 +53,29 @@ class Pais extends ModelClass
      */
     public $codpais;
 
-    /**
-     * Country name.
-     *
-     * @var string
-     */
+    /** @var string */
+    public $creation_date;
+
+    /** @var string */
+    public $last_nick;
+
+    /** @var string */
+    public $last_update;
+
+    /** @var float */
+    public $latitude;
+
+    /** @var float */
+    public $longitude;
+
+    /** @var string */
+    public $nick;
+
+    /** @var string */
     public $nombre;
+
+    /** @var string */
+    public $telephone_prefix;
 
     public function delete(): bool
     {
@@ -119,8 +140,18 @@ class Pais extends ModelClass
             return false;
         }
 
+        $this->creation_date = $this->creation_date ?? Tools::dateTime();
+        $this->nick = $this->nick ?? Session::user()->nick;
+        $this->alias = Tools::noHtml($this->alias);
+        $this->telephone_prefix = Tools::noHtml($this->telephone_prefix);
         $this->nombre = Tools::noHtml($this->nombre);
-
         return parent::test();
+    }
+
+    protected function saveUpdate(array $values = []): bool
+    {
+        $this->last_nick = Session::user()->nick;
+        $this->last_update = Tools::dateTime();
+        return parent::saveUpdate($values);
     }
 }

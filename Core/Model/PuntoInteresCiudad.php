@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024  Carlos Garcia Gomez     <carlos@facturascripts.com>
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,16 +21,10 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
-use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Session;
 
-/**
- * A province.
- *
- * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
- */
-class Provincia extends ModelClass
+class PuntoInteresCiudad extends ModelClass
 {
     use ModelTrait;
 
@@ -41,23 +34,11 @@ class Provincia extends ModelClass
     /** @var string */
     public $creation_date;
 
-    /** @var string */
-    public $codeid;
+    /** @var int */
+    public $id;
 
-    /**
-     * 'Normalized' code in Spain to identify the provinces.
-     *
-     * @url: https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias
-     *
-     * @var string
-     */
-    public $codisoprov;
-
-    /** @var string */
-    public $codpais;
-
-    /** @var string */
-    public $idprovincia;
+    /** @var int */
+    public $idciudad;
 
     /** @var string */
     public $last_nick;
@@ -72,43 +53,34 @@ class Provincia extends ModelClass
     public $longitude;
 
     /** @var string */
+    public $name;
+
+    /** @var string */
     public $nick;
 
-    /** @var string */
-    public $provincia;
-
-    /** @var string */
-    public $telephone_prefix;
-
-    public function clear()
+    public function getCity(): Ciudad
     {
-        parent::clear();
-        $this->codpais = Tools::settings('default', 'codpais');
-    }
-
-    public function getCountry(): Pais
-    {
-        $country = new Pais();
-        $country->loadFromCode($this->codpais);
-        return $country;
+        $city = new Ciudad();
+        $city->loadFromCode($this->idciudad);
+        return $city;
     }
 
     public function install(): string
     {
-        // needed dependencies
-        new Pais();
+        // needed dependency
+        new Ciudad();
 
         return parent::install();
     }
 
     public static function primaryColumn(): string
     {
-        return 'idprovincia';
+        return "id";
     }
 
     public static function tableName(): string
     {
-        return 'provincias';
+        return "puntos_interes_ciudades";
     }
 
     public function test(): bool
@@ -116,28 +88,17 @@ class Provincia extends ModelClass
         $this->creation_date = $this->creation_date ?? Tools::dateTime();
         $this->nick = $this->nick ?? Session::user()->nick;
         $this->alias = Tools::noHtml($this->alias);
-        $this->provincia = Tools::noHtml($this->provincia);
-        $this->telephone_prefix = Tools::noHtml($this->telephone_prefix);
+        $this->name = Tools::noHtml($this->name);
         return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
         if ('list' === $type && !empty($this->primaryColumnValue())) {
-            return $this->getCountry()->url() . '&activetab=List' . $this->modelClassName();
+            return $this->getCity()->url() . '&activetab=List' . $this->modelClassName();
         }
 
         return parent::url($type, $list);
-    }
-
-    protected function saveInsert(array $values = []): bool
-    {
-        if (empty($this->idprovincia)) {
-            // asignamos el nuevo ID así para evitar problemas con postgresql por haber importado el listado con ids incluidos
-            $this->idprovincia = $this->newCode();
-        }
-
-        return parent::saveInsert($values);
     }
 
     protected function saveUpdate(array $values = []): bool

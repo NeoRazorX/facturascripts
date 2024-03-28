@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view>
+    <columns>
+        <group name="data" numcolumns="12">
+            <column name="id" display="none" order="100">
+                <widget type="text" fieldname="id" readonly="true"/>
+            </column>
+            <column name="country" order="110">
+                <widget type="select" fieldname="codpais" required="true">
+                    <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
+                </widget>
+            </column>
+            <column name="province" order="120">
+                <widget type="select" fieldname="idprovincia" parent="codpais" required="true">
+                    <values source="provincias" fieldcode="idprovincia" fieldfilter="codpais" fieldtitle="provincia" />
+                </widget>
+            </column>
+            <column name="city" order="130">
+                <widget type="select" fieldname="idciudad" parent="idprovincia" required="true">
+                    <values source="ciudades" fieldcode="idciudad" fieldfilter="idprovincia" fieldtitle="ciudad" />
+                </widget>
+            </column>
+            <column name="number" order="140">
+                <widget type="number" fieldname="number" min="0" step="1" required="true"/>
+            </column>
+        </group>
+        <group name="logs" numcolumns="12">
+            <column name="creation-date" order="100">
+                <widget type="datetime" fieldname="creation_date" readonly="true"/>
+            </column>
+            <column name="user" order="110">
+                <widget type="select" fieldname="nick" readonly="true">
+                    <values source="users" fieldcode="nick" fieldtile="nick"/>
+                </widget>
+            </column>
+            <column name="last-update" order="120">
+                <widget type="datetime" fieldname="last_update"  readonly="true"/>
+            </column>
+            <column name="last-user" order="130">
+                <widget type="select" fieldname="last_nick"  readonly="true">
+                    <values source="users" fieldcode="nick" fieldtile="nick"/>
+                </widget>
+            </column>
+        </group>
+    </columns>
+</view>

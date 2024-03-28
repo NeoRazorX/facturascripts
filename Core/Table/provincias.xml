@@ -7,6 +7,10 @@
 -->
 <table>
     <column>
+        <name>alias</name>
+        <type>text</type>
+    </column>
+    <column>
         <name>codeid</name>
         <type>character varying(2)</type>
     </column>
@@ -20,14 +24,42 @@
         <null>NO</null>
     </column>
     <column>
+        <name>creation_date</name>
+        <type>timestamp</type>
+    </column>
+    <column>
         <name>idprovincia</name>
         <type>serial</type>
         <null>NO</null>
     </column>
     <column>
+        <name>last_nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
+        <name>last_update</name>
+        <type>timestamp</type>
+    </column>
+    <column>
+        <name>latitude</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>longitude</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
         <name>provincia</name>
         <type>character varying(100)</type>
         <null>NO</null>
+    </column>
+    <column>
+        <name>telephone_prefix</name>
+        <type>character varying(10)</type>
     </column>
     <constraint>
         <name>uniq_codpais_provincia</name>
@@ -40,5 +72,13 @@
     <constraint>
         <name>ca_provincias_paises</name>
         <type>FOREIGN KEY (codpais) REFERENCES paises (codpais) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_provincias_users_last_nick</name>
+        <type>FOREIGN KEY (last_nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_provincias_users_nick</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

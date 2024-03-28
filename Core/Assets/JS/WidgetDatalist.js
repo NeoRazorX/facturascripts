@@ -1,4 +1,4 @@
-let waitSelectCounter = 0;
+let waitDatalistCounter = 0;
 
 function getValueTypeParent(parent) {
     if (parent.is('select')) {
@@ -14,18 +14,19 @@ function getValueTypeParent(parent) {
     return '';
 }
 
-function widgetSelectGetData(select, parent) {
-    select.html('');
+function widgetSelectGetData(input, parent) {
+    let datalist = $('#' + input.attr('list'));
+    datalist.html('');
 
     let data = {
-        action: 'select',
-        activetab: select.closest('form').find('input[name="activetab"]').val(),
-        field: select.attr("data-field"),
-        fieldcode: select.attr("data-fieldcode"),
-        fieldfilter: select.attr("data-fieldfilter"),
-        fieldtitle: select.attr("data-fieldtitle"),
-        required: select.attr('required') === 'required' ? 1 : 0,
-        source: select.attr("data-source"),
+        action: 'datalist',
+        activetab: input.closest('form').find('input[name="activetab"]').val(),
+        field: input.attr("data-field"),
+        fieldcode: input.attr("data-fieldcode"),
+        fieldfilter: input.attr("data-fieldfilter"),
+        fieldtitle: input.attr("data-fieldtitle"),
+        required: input.attr('required') === 'required' ? 1 : 0,
+        source: input.attr("data-source"),
         term: getValueTypeParent(parent),
     };
 
@@ -35,13 +36,11 @@ function widgetSelectGetData(select, parent) {
         data: data,
         dataType: "json",
         success: function (results) {
-            select.html('');
+            datalist.html('');
             results.forEach(function (element) {
-                let selected = (element.key == select.attr('value')) ? 'selected' : '';
-                let key = (element.key == null) ? '' : element.key;
-                select.append('<option value="' + key + '" ' + selected + '>' + element.value + '</option>');
+                datalist.append('<option value="' + element.key + '">' + element.value + '</option>');
             });
-            select.change();
+            input.change();
         },
         error: function (msg) {
             alert(msg.status + " " + msg.responseText);
@@ -50,22 +49,22 @@ function widgetSelectGetData(select, parent) {
 }
 
 $(document).ready(function () {
-    $('.parentSelect').each(function () {
+    $('.parentDatalist').each(function () {
         let parentStr = $(this).attr('parent');
         if (parentStr === 'undefined' || parentStr === false || parentStr === '') {
             return;
         }
 
-        let select = $(this);
-        let parent = select.closest('form').find('[name="' + parentStr + '"]');
+        let input = $(this);
+        let parent = input.closest('form').find('[name="' + parentStr + '"]');
         if (parent.is('select') || ['color', 'datetime-local', 'date', 'time'].includes(parent.attr('type'))) {
             parent.change(function(){
-                widgetSelectGetData(select, parent);
+                widgetSelectGetData(input, parent);
             });
         } else if (parent.attr('type') === 'hidden') {
             var hiddenInput = document.querySelector("[name='" + parentStr + "']");
             hiddenInput.addEventListener('change', function () {
-                widgetSelectGetData(select, parent);
+                widgetSelectGetData(input, parent);
             });
 
             let previousValue = hiddenInput.value;
@@ -93,19 +92,19 @@ $(document).ready(function () {
         } else if (parent.is('input') || parent.is('textarea')) {
             parent.keyup(async function(){
                 // usamos un contador y un temporizador para solamente procesar la última llamada
-                waitSelectCounter++;
-                let waitNum = waitSelectCounter;
+                waitDatalistCounter++;
+                let waitNum = waitDatalistCounter;
                 await new Promise(r => setTimeout(r, 500));
-                if (waitNum < waitSelectCounter) {
+                if (waitNum < waitDatalistCounter) {
                     return false;
                 }
 
-                widgetSelectGetData(select, parent);
+                widgetSelectGetData(input, parent);
             });
         }
 
         if (parent.length > 0) {
-            widgetSelectGetData(select, parent);
+            widgetSelectGetData(input, parent);
         }
     });
 });

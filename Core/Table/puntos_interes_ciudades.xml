@@ -1,35 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    Document   : ciudades.xml
-    Author     : Frank Aguirre
-    Description:
-        Estructura de la tabla ciudades.
--->
 <table>
     <column>
         <name>alias</name>
         <type>text</type>
     </column>
     <column>
-        <name>ciudad</name>
-        <type>character varying(100)</type>
-        <null>NO</null>
-    </column>
-    <column>
         <name>creation_date</name>
         <type>timestamp</type>
     </column>
     <column>
-        <name>codeid</name>
-        <type>character varying(5)</type>
-    </column>
-    <column>
-        <name>idciudad</name>
+        <name>id</name>
         <type>serial</type>
         <null>NO</null>
     </column>
     <column>
-        <name>idprovincia</name>
+        <name>idciudad</name>
         <type>integer</type>
         <null>NO</null>
     </column>
@@ -50,27 +35,27 @@
         <type>double precision</type>
     </column>
     <column>
+        <name>name</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
         <name>nick</name>
         <type>character varying(50)</type>
     </column>
     <constraint>
-        <name>ciudades_pkey</name>
-        <type>PRIMARY KEY (idciudad)</type>
+        <name>puntos_interes_ciudades_pkey</name>
+        <type>PRIMARY KEY (id)</type>
     </constraint>
     <constraint>
-        <name>ca_ciudades_provincias</name>
-        <type>FOREIGN KEY (idprovincia) REFERENCES provincias (idprovincia) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>uniq_puntos_interes_ciudades</name>
+        <type>UNIQUE (idciudad, name)</type>
     </constraint>
     <constraint>
-        <name>uniq_ciudad_idprovincia</name>
-        <type>UNIQUE (ciudad, idprovincia)</type>
-    </constraint>
-    <constraint>
-        <name>ca_ciudades_users_last_nick</name>
+        <name>ca_puntos_interes_ciudades_users_last_nick</name>
         <type>FOREIGN KEY (last_nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_ciudades_users_nick</name>
+        <name>ca_puntos_interes_ciudades_users_nick</name>
         <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

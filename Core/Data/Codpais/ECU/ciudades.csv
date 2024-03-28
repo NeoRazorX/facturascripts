@@ -1,42 +1,42 @@
-idprovincia;ciudad
-1;Cuenca
-2;Guaranda
-3;Azogues
-4;Tulcán
-4;San Gabriel
-5;Riobamba
-5;Alausí
-6;Latacunga
-7;Machala
-7;Piñas
-8;Esmeraldas
-8;San Lorenzo de Esmeraldas
-8;Muisne
-8;Valdez
-9;Santa Cruz
-9;Puerto Baquerizo Moreno
-9;Puerto Villamil
-10;Guayaquil
-10;Milagro
-10;Salinas
-11;Ibarra
-12;Loja
-12;Macará
-13;Babahoyo
-14;Portoviejo
-14;Manta
-14;Chone
-14;Jipijapa
-15;Macas
-15;Yaupi
-16;Tena
-17;Puerto Francisco de Orellana
-18;Puyo
-19;Quito
-19;Sangolquí
-19;Cayambe
-20;Santa Elena
-21;Santo Domingo de los Colorados
-22;Nueva Loja
-23;Ambato
-24;Zamora
+"ciudad";"idprovincia";"codeid";"latitude";"longitude"
+"Cuenca";"540";"";"-2.9006";"-79.0045"
+"Guaranda";"541";"";"-1.5986";"-79.0030"
+"Azogues";"542";"";"-2.7357";"-78.8455"
+"Tulcán";"543";"";"0.8212";"-77.6695"
+"San Gabriel";"543";"";"0.6114";"-77.9391"
+"Riobamba";"544";"";"-1.6636";"-78.6546"
+"Alausí";"544";"";"-2.2207";"-78.8450"
+"Latacunga";"545";"";"-0.9291";"-78.6150"
+"Machala";"546";"";"-3.2586";"-79.9555"
+"Piñas";"546";"";"-3.6760";"-79.6518"
+"Esmeraldas";"547";"";"0.9595";"-79.6538"
+"San Lorenzo de Esmeraldas";"547";"";"1.2817";"-78.8230"
+"Muisne";"547";"";"0.6043";"-80.0202"
+"Valdez";"547";"";"1.2029";"-79.8736"
+"Santa Cruz";"548";"";"-0.6236";"-90.3556"
+"Puerto Baquerizo Moreno";"548";"";"-0.9001";"-89.6047"
+"Puerto Villamil";"548";"";"-0.9544";"-91.0125"
+"Guayaquil";"549";"";"-2.1709";"-79.9224"
+"Milagro";"549";"";"-2.1167";"-79.7333"
+"Salinas";"549";"";"-2.2064";"-80.9762"
+"Ibarra";"550";"";"0.3476";"-78.1220"
+"Loja";"551";"";"-3.9881";"-79.2045"
+"Macará";"551";"";"-4.3811";"-79.9456"
+"Babahoyo";"552";"";"-1.8012";"-79.5345"
+"Portoviejo";"553";"";"-1.0546";"-80.4543"
+"Manta";"553";"";"-0.9677";"-80.7089"
+"Chone";"553";"";"-0.6987";"-80.0996"
+"Jipijapa";"553";"";"-1.3526";"-80.5808"
+"Macas";"554";"";"-2.3102";"-78.1186"
+"Yaupi";"554";"";"-2.8542";"-77.9409"
+"Tena";"555";"";"-1.0021";"-77.8100"
+"Puerto Francisco de Orellana";"556";"";"-0.4667";"-76.9667"
+"Puyo";"557";"";"-1.4924";"-77.9960"
+"Quito";"558";"";"-0.1807";"-78.4678"
+"Sangolquí";"558";"";"-0.3314";"-78.3557"
+"Cayambe";"558";"";"0.0461";"-78.1410"
+"Santa Elena";"559";"";"-2.2268";"-80.8587"
+"Santo Domingo de los Colorados";"560";"";"-0.2531";"-79.1754"
+"Nueva Loja";"561";"";"0.0847";"-76.8828"
+"Ambato";"562";"";"-1.2491";"-78.6167"
+"Zamora";"563";"";"-4.0693";"-78.9567"

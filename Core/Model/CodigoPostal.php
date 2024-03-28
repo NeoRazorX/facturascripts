@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,30 +19,23 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Session;
 
-/**
- * Ciudad
- *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Frank Aguirre        <faguirre@soenac.com>
- */
-class Ciudad extends Base\ModelClass
+class CodigoPostal extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /** @var string */
-    public $alias;
+    public $codpais;
 
     /** @var string */
     public $creation_date;
 
-    /** @var string */
-    public $ciudad;
-
-    /** @var string */
-    public $codeid;
+    /** @var int */
+    public $id;
 
     /** @var int */
     public $idciudad;
@@ -56,55 +49,37 @@ class Ciudad extends Base\ModelClass
     /** @var string */
     public $last_update;
 
-    /** @var float */
-    public $latitude;
-
-    /** @var float */
-    public $longitude;
-
     /** @var string */
     public $nick;
 
-    public function getProvince(): Provincia
-    {
-        $province = new Provincia();
-        $province->loadFromCode($this->idprovincia);
-        return $province;
-    }
+    /** @var int */
+    public $number;
 
-    public function install(): string
+    public function clear()
     {
-        // needed dependency
-        new Provincia();
-
-        return parent::install();
+        parent::clear();
+        $this->codpais = Tools::settings('default', 'codpais', 'ESP');
     }
 
     public static function primaryColumn(): string
     {
-        return 'idciudad';
+        return "id";
     }
 
     public static function tableName(): string
     {
-        return 'ciudades';
+        return "codigos_postales";
     }
 
     public function test(): bool
     {
-        $this->creation_date = $this->creation_date ?? Tools::dateTime();
+        $this->creation_date = $this->creationdate ?? Tools::dateTime();
         $this->nick = $this->nick ?? Session::user()->nick;
-        $this->alias = Tools::noHtml($this->alias);
-        $this->ciudad = Tools::noHtml($this->ciudad);
         return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
-        if ('list' === $type && !empty($this->primaryColumnValue())) {
-            return $this->getProvince()->url() . '&activetab=List' . $this->modelClassName();
-        }
-
         return parent::url($type, $list);
     }
 

@@ -94,8 +94,8 @@
                 </widget>
             </column>
             <column name="province" numcolumns="4" order="140">
-                <widget type="datalist" fieldname="provincia">
-                    <values source="provincias" fieldcode="provincia" fieldtitle="provincia"/>
+                <widget type="datalist" fieldname="provincia" parent="codpais">
+                    <values source="provincias" fieldcode="provincia" fieldtitle="provincia" fieldfilter="codpais"/>
                 </widget>
             </column>
             <column name="country" titleurl="ListPais" numcolumns="4" order="150">

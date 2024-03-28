@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table>
+    <column>
+        <name>codpais</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>creation_date</name>
+        <type>timestamp</type>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idciudad</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idprovincia</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>last_nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
+        <name>last_update</name>
+        <type>timestamp</type>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
+        <name>number</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>codigos_postales_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>uniq_codigos_postales</name>
+        <type>UNIQUE (codpais, idprovincia, idciudad, number)</type>
+    </constraint>
+    <constraint>
+        <name>ca_codigos_postales_users_last_nick</name>
+        <type>FOREIGN KEY (last_nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_codigos_postales_users_nick</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_codigos_postales_paises</name>
+        <type>FOREIGN KEY (codpais) REFERENCES paises (codpais) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_codigos_postales_provincias</name>
+        <type>FOREIGN KEY (idprovincia) REFERENCES provincias (idprovincia) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_codigos_postales_ciudades</name>
+        <type>FOREIGN KEY (idciudad) REFERENCES ciudades (idciudad) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -310,6 +310,12 @@ abstract class PanelController extends BaseController
             case 'autocomplete':
                 $this->setTemplate(false);
                 $results = $this->autocompleteAction();
+                $this->response->setContent(json_encode($results));
+                return false;
+
+            case 'datalist':
+                $this->setTemplate(false);
+                $results = $this->datalistAction();
                 $this->response->setContent(json_encode($results));
                 return false;
 
