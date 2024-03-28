@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
@@ -37,6 +38,7 @@ use FacturaScripts\Dinamic\Model\Atributo;
  */
 class EditProducto extends EditController
 {
+    use DocFilesTrait;
     use ProductImagesTrait;
 
     public function getModelClassName(): string
@@ -65,6 +67,7 @@ class EditProducto extends EditController
         $this->createViewsPedidosClientes();
         $this->createViewsPedidosProveedores();
         $this->createViewsSuppliers();
+        $this->createViewDocFiles();
     }
 
     protected function createViewsPedidosClientes(string $viewName = 'ListLineaPedidoCliente'): void
@@ -152,11 +155,23 @@ class EditProducto extends EditController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'add-file':
+                return $this->addFileAction();
+
             case 'add-image':
                 return $this->addImageAction();
 
+            case 'delete-file':
+                return $this->deleteFileAction();
+
             case 'delete-image':
                 return $this->deleteImageAction();
+
+            case 'edit-file':
+                return $this->editFileAction();
+
+            case 'unlink-file':
+                return $this->unlinkFileAction();
         }
 
         return parent::execPreviousAction($action);
@@ -247,6 +262,10 @@ class EditProducto extends EditController
         $where = [new DataBaseWhere('idproducto', $id)];
 
         switch ($viewName) {
+            case 'docfiles':
+                $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->primaryColumnValue());
+                break;
+
             case $this->getMainViewName():
                 parent::loadData($viewName, $view);
                 $this->loadTypes($viewName);
