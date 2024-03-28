@@ -15,6 +15,7 @@ generateDoc.sh
 package-lock.json
 *.cache
 *.lock
+.env
 
 # Eclipse
 .buildpath
