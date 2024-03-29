@@ -410,6 +410,11 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
+        // guardamos el documento
+        if ($this->getModel()->editable && false === $this->saveDocAction()) {
+            return false;
+        }
+
         // si la factura es de 0 €, la marcamos como pagada
         $model = $this->getModel();
         if (empty($model->total) && property_exists($model, 'pagada')) {
