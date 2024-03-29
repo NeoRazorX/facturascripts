@@ -356,4 +356,49 @@ class User extends ModelClass
 
         return true;
     }
+
+    public function error($message)
+    {
+        $userMessage = new UserMessage($this->nick);
+        $userMessage->body = Tools::lang()->trans($message);
+        $userMessage->level = 'error';
+
+        return $userMessage;
+    }
+
+    public function warning($message)
+    {
+        $userMessage = new UserMessage($this->nick);
+        $userMessage->body = Tools::lang()->trans($message);
+        $userMessage->level = 'warning';
+
+        return $userMessage;
+    }
+
+    public function info($message)
+    {
+        $userMessage = new UserMessage($this->nick);
+        $userMessage->body = Tools::lang()->trans($message);
+        $userMessage->level = 'info';
+
+        return $userMessage;
+    }
+
+    public function notice($message)
+    {
+        $userMessage = new UserMessage($this->nick);
+        $userMessage->body = Tools::lang()->trans($message);
+        $userMessage->level = 'notice';
+
+        return $userMessage;
+    }
+
+    /**
+     * @return UserMessage[] array
+     */
+    public function getMessages(): array
+    {
+        $userMessage = new UserMessage($this->nick);
+        return $userMessage->allShowNow();
+    }
 }

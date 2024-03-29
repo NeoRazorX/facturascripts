@@ -158,6 +158,15 @@
                         {{ showMessage(log, ['warning'], 'warning') }}
                         {{ showMessage(log, ['notice'], 'success') }}
                         {{ showMessage(log, ['info'], 'info') }}
+
+                        {% for message in fsc.user.getMessages() %}
+                            <div class="alert alert-{{ message.level == 'error' ? 'danger' : '' }} alert-dismissible fade show" role="alert">
+                                {{ message.body }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
