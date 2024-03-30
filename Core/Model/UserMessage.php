@@ -45,7 +45,7 @@ class UserMessage
         }
     }
 
-    /** @return UserMessage $this */
+    /** @return UserMessage */
     public function showLater()
     {
         $this->showLater = true;
@@ -71,18 +71,15 @@ class UserMessage
         $this->storeMessagesToFile($messages);
     }
 
+
+    /** @return UserMessage[] */
     public function allShowNow()
     {
         $messages = $this->getMessagesFromFile();
 
         if(count($messages) === 0){
-            return $messages;
+            return [];
         }
-
-        // Filtramos los mensajes que hay que mostrar ahora.
-        $messagesShowNow = array_filter($messages, function ($message) {
-            return false === $message['showLater'];
-        });
 
         // Filtramos los mensajes que hay que mostrar en la proxima request.
         $messagesShowLater = array_filter($messages, function ($message) {
@@ -98,25 +95,26 @@ class UserMessage
         // Guardamos en archivo los mensajes que mostraremos en la siguiente request.
         $this->storeMessagesToFile($messagesShowLater);
 
-        return $messagesShowNow;
+        // Filtramos los mensajes que hay que mostrar ahora.
+        return array_filter($messages, function ($message) {
+            return false === $message['showLater'];
+        });
     }
 
-    /** @return UserMessage[] array */
+    /** @return UserMessage[] */
     protected function getMessagesFromFile(): array
     {
-        $messages = [];
-
         $fileContent = file_get_contents($this->filePath);
         if (false === $fileContent){
-            return $messages;
+            return [];
         }
 
-        $jsonContent = json_decode($fileContent, true);
-        if(false === is_array($jsonContent)){
-            return $messages;
+        $messages = json_decode($fileContent, true);
+        if(false === is_array($messages)){
+            return [];
         }
 
-        return $jsonContent;
+        return $messages;
     }
 
     /** @param UserMessage[] $messages */
