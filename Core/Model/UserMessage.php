@@ -72,13 +72,13 @@ class UserMessage
     }
 
 
-    /** @return UserMessage[] */
-    public function allShowNow()
+    /** @return UserMessage[]|null */
+    public function allShowNow(): ?array
     {
         $messages = $this->getMessagesFromFile();
 
-        if(count($messages) === 0){
-            return [];
+        if(is_null($messages) || count($messages) === 0){
+            return null;
         }
 
         // Filtramos los mensajes que hay que mostrar en la proxima request.
@@ -101,17 +101,17 @@ class UserMessage
         });
     }
 
-    /** @return UserMessage[] */
-    protected function getMessagesFromFile(): array
+    /** @return UserMessage[]|null */
+    protected function getMessagesFromFile(): ?array
     {
         $fileContent = file_get_contents($this->filePath);
         if (false === $fileContent){
-            return [];
+            return null;
         }
 
         $messages = json_decode($fileContent, true);
         if(false === is_array($messages)){
-            return [];
+            return null;
         }
 
         return $messages;
