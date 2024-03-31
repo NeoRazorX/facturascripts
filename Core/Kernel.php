@@ -24,6 +24,7 @@ use Exception;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
 use FacturaScripts\Core\Error\DefaultError;
+use FacturaScripts\Core\Lib\Incident;
 
 final class Kernel
 {
@@ -85,6 +86,12 @@ final class Kernel
 
     public static function init(): void
     {
+        // Si la ip está baneada, no continuamos.
+        $indicent = new Incident();
+        if($indicent->userHasManyIncidents(Session::getClientIp())){
+            throw new KernelException('DefaultError', 'IP Banned');
+        }
+
         self::startTimer('kernel::init');
 
         // cargamos algunas constantes para dar soporte a versiones antiguas
@@ -336,6 +343,11 @@ final class Kernel
                 return;
             }
         }
+
+        // Si no se encuentra la ruta, guardamos una incidencia
+        // para evitar ataques o bots.
+        $incident = new Incident();
+        $incident->saveIncident(Session::getClientIp());
 
         throw new KernelException('PageNotFound', $url);
     }
