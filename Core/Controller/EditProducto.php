@@ -63,23 +63,23 @@ class EditProducto extends EditController
         parent::createViews();
         $this->createViewsVariants();
         $this->createViewsProductImages();
+        $this->createViewDocFiles();
         $this->createViewsStock();
         $this->createViewsPedidosClientes();
         $this->createViewsPedidosProveedores();
         $this->createViewsSuppliers();
-        $this->createViewDocFiles();
     }
 
     protected function createViewsPedidosClientes(string $viewName = 'ListLineaPedidoCliente'): void
     {
-        $this->addListView($viewName, 'LineaPedidoCliente', 'reserved', 'fas fa-lock');
-        $this->views[$viewName]->addSearchFields(['referencia', 'descripcion']);
-        $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
-        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
-        $this->views[$viewName]->addOrderBy(['servido'], 'quantity-served');
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
-        $this->views[$viewName]->addOrderBy(['idlinea'], 'code', 2);
+        $this->addListView($viewName, 'LineaPedidoCliente', 'reserved', 'fas fa-lock')
+            ->addSearchFields(['referencia', 'descripcion'])
+            ->addOrderBy(['referencia'], 'reference')
+            ->addOrderBy(['cantidad'], 'quantity')
+            ->addOrderBy(['servido'], 'quantity-served')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['pvptotal'], 'amount')
+            ->addOrderBy(['idlinea'], 'code', 2);
 
         // ocultamos la columna product
         $this->views[$viewName]->disableColumn('product');
@@ -92,15 +92,14 @@ class EditProducto extends EditController
 
     protected function createViewsPedidosProveedores(string $viewName = 'ListLineaPedidoProveedor'): void
     {
-        $this->addListView($viewName, 'LineaPedidoProveedor', 'pending-reception', 'fas fa-ship');
-        $this->views[$viewName]->addSearchFields(['referencia', 'descripcion']);
-        $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
-        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
-        $this->views[$viewName]->addOrderBy(['servido'], 'quantity-served');
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
-        $this->views[$viewName]->addOrderBy(['idlinea'], 'code', 2);
-
+        $this->addListView($viewName, 'LineaPedidoProveedor', 'pending-reception', 'fas fa-ship')
+            ->addSearchFields(['referencia', 'descripcion'])
+            ->addOrderBy(['referencia'], 'reference')
+            ->addOrderBy(['cantidad'], 'quantity')
+            ->addOrderBy(['servido'], 'quantity-served')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['pvptotal'], 'amount')
+            ->addOrderBy(['idlinea'], 'code', 2);
 
         // ocultamos la columna product
         $this->views[$viewName]->disableColumn('product');
