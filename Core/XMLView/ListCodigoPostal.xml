@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view>
+    <columns>
+        <column name="id" display="none" order="100">
+            <widget type="text" fieldname="id" readonly="true"/>
+        </column>
+        <column name="country" order="110">
+            <widget type="select" fieldname="codpais">
+                <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
+            </widget>
+        </column>
+        <column name="province" order="120">
+            <widget type="select" fieldname="idprovincia">
+                <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia" />
+            </widget>
+        </column>
+        <column name="city" order="130">
+            <widget type="select" fieldname="idciudad">
+                <values source="ciudades" fieldcode="idciudad" fieldtitle="ciudad" />
+            </widget>
+        </column>
+        <column name="number" order="140">
+            <widget type="number" fieldname="number"/>
+        </column>
+    </columns>
+</view>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -41,5 +43,42 @@ class EditCiudad extends EditController
         $data['title'] = 'city';
         $data['icon'] = 'fas fa-city';
         return $data;
+    }
+
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->createPOIView();
+    }
+
+    protected function createPOIView(string $viewName = 'ListPuntoInteresCiudad')
+    {
+        $this->addListView($viewName, 'PuntoInteresCiudad', 'points-of-interest', 'fas fa-location-dot')
+            ->addOrderBy(['name'], 'name')
+            ->addOrderBy(['idciudad'], 'city')
+            ->addSearchFields(['name', 'alias'])
+            ->addFilterAutocomplete('idciudad', 'city', 'idciudad', 'ciudades', 'idciudad', 'ciudad')
+            ->disableColumn('city');
+    }
+
+    /**
+     * @param string $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListPuntoInteresCiudad':
+                $idciudad = $this->getViewModelValue($this->getMainViewName(), 'idciudad');
+                $where = [new DataBaseWhere('idciudad', $idciudad)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }

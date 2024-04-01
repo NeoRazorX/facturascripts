@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,9 +46,6 @@ class EditProvincia extends EditController
         return $data;
     }
 
-    /**
-     * Create tabs or views.
-     */
     protected function createViews()
     {
         parent::createViews();
@@ -59,12 +56,11 @@ class EditProvincia extends EditController
 
     protected function createCityView(string $viewName = 'ListCiudad')
     {
-        $this->addListView($viewName, 'Ciudad', 'cities');
-        $this->views[$viewName]->addOrderBy(['ciudad'], 'name', 1);
-        $this->views[$viewName]->searchFields = ['ciudad'];
-
-        // disable column
-        $this->views[$viewName]->disableColumn('province');
+        $this->addListView($viewName, 'Ciudad', 'cities', 'fas fa-city')
+            ->addOrderBy(['ciudad'], 'name')
+            ->addOrderBy(['idprovincia'], 'province')
+            ->addSearchFields(['ciudad', 'alias'])
+            ->disableColumn('province');
     }
 
     /**
