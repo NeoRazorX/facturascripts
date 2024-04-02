@@ -183,7 +183,10 @@ final class Kernel
 
     public static function startTimer(string $name): void
     {
-        self::$timers[$name] = ['start' => microtime(true)];
+        self::$timers[$name] = [
+            'start' => microtime(true),
+            'start_mem' => memory_get_usage(),
+        ];
     }
 
     public static function stopTimer(string $name): float
@@ -193,6 +196,7 @@ final class Kernel
         }
 
         self::$timers[$name]['stop'] = microtime(true);
+        self::$timers[$name]['stop_mem'] = memory_get_usage();
 
         return round(self::$timers[$name]['stop'] - self::$timers[$name]['start'], 5);
     }
