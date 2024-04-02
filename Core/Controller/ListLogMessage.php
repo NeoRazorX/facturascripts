@@ -124,10 +124,10 @@ class ListLogMessage extends ListController
     protected function createViewsWorkEvents(string $viewName = 'ListWorkEvent'): void
     {
         $this->addView($viewName, 'WorkEvent', 'work-events', 'fas fa-calendar-alt')
-            ->addSearchFields(['name', 'value'])
             ->addOrderBy(['creation_date'], 'creation-date')
             ->addOrderBy(['done_date'], 'date')
-            ->addOrderBy(['id'], 'id');
+            ->addOrderBy(['id'], 'id', 2)
+            ->addSearchFields(['name', 'value']);
 
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);

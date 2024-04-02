@@ -110,12 +110,9 @@ final class Kernel
         ToolBox::i18n()->setDefaultLang($lang);
 
         // workers
-        WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Insert', 100);
-        WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Update', 100);
-        WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Delete', 100);
-        WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Insert', 200);
-        WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Update', 200);
-        WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Delete', 200);
+        WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.*');
+        WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.*');
+        WorkQueue::addWorker('PartidaWorker', 'Model.Partida.*');
 
         self::stopTimer('kernel::init');
     }

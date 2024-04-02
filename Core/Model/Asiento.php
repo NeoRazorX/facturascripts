@@ -371,9 +371,9 @@ class Asiento extends Base\ModelOnChangeClass
         $this->documento = Tools::noHtml($this->documento);
 
         if (strlen($this->concepto) == 0 || strlen($this->concepto) > 255) {
-            Tools::log()->warning(
-                'invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']
-            );
+            Tools::log()->warning('invalid-column-lenght', [
+                '%column%' => 'concepto', '%min%' => '1', '%max%' => '255'
+            ]);
             return false;
         }
 

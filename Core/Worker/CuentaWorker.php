@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,32 +30,37 @@ class CuentaWorker extends WorkerClass
 {
     public function run(WorkEvent $event): bool
     {
-        $cuentaModel = new Cuenta();
-        if (false === $cuentaModel->loadFromCode($event['idcuenta'])) {
-            return $this->stopPropagation();
+        // cargamos la cuenta
+        $cuenta = new Cuenta();
+        if (false === $cuenta->loadFromCode($event->param('idcuenta'))) {
+            return $this->done();
         }
 
         // calculamos el debe y haber
-        $cuentaModel->debe = 0.0;
-        $cuentaModel->haber = 0.0;
+        $cuenta->debe = 0.0;
+        $cuenta->haber = 0.0;
 
         // obtenemos las cuentas hijas
-        foreach ($cuentaModel->getChildren() as $child) {
-            $cuentaModel->debe += $child->debe;
-            $cuentaModel->haber += $child->haber;
+        foreach ($cuenta->getChildren() as $child) {
+            $cuenta->debe += $child->debe;
+            $cuenta->haber += $child->haber;
         }
 
         // obtenemos las subcuentas
-        foreach ($cuentaModel->getSubcuentas() as $subcuenta) {
-            $cuentaModel->debe += $subcuenta->debe;
-            $cuentaModel->haber += $subcuenta->haber;
+        foreach ($cuenta->getSubcuentas() as $subcuenta) {
+            $cuenta->debe += $subcuenta->debe;
+            $cuenta->haber += $subcuenta->haber;
         }
 
-        // actualizamos la cuenta
-        $cuentaModel->debe = round($cuentaModel->debe, 2);
-        $cuentaModel->haber = round($cuentaModel->haber, 2);
-        $cuentaModel->saldo = round($cuentaModel->debe - $cuentaModel->haber, 2);
-        $cuentaModel->save();
+        // calculamos el saldo
+        $saldo = $cuenta->debe - $cuenta->haber;
+        if (abs($cuenta->saldo - $saldo) >= 0.01) {
+            // actualizamos la cuenta
+            $cuenta->debe = round($cuenta->debe, FS_NF0);
+            $cuenta->haber = round($cuenta->haber, FS_NF0);
+            $cuenta->saldo = round($cuenta->debe - $cuenta->haber, FS_NF0);
+            $cuenta->save();
+        }
 
         return $this->done();
     }
