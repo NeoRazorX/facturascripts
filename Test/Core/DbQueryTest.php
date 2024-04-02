@@ -36,6 +36,11 @@ final class DbQueryTest extends TestCase
 
     public function testTable(): void
     {
+        // si no existe la tabla series, saltamos el test
+        if (false === $this->db()->tableExists('series')) {
+            $this->markTestSkipped('Table series does not exist.');
+        }
+
         $query = DbQuery::table('series');
 
         $sql = 'SELECT * FROM ' . $this->db()->escapeColumn('series');
@@ -47,6 +52,11 @@ final class DbQueryTest extends TestCase
 
     public function testWhere(): void
     {
+        // si no existe la tabla clientes, saltamos el test
+        if (false === $this->db()->tableExists('clientes')) {
+            $this->markTestSkipped('Table clientes does not exist.');
+        }
+
         $query = DbQuery::table('clientes')
             ->select('codcliente, nombre')
             ->where([
@@ -64,6 +74,11 @@ final class DbQueryTest extends TestCase
 
     public function testWhereEq(): void
     {
+        // si no existe la tabla clientes, saltamos el test
+        if (false === $this->db()->tableExists('clientes')) {
+            $this->markTestSkipped('Table clientes does not exist.');
+        }
+
         $query = DbQuery::table('clientes')
             ->select('codcliente, nombre')
             ->whereEq('codcliente', 'test');
@@ -77,6 +92,11 @@ final class DbQueryTest extends TestCase
 
     public function testWhereDynamic(): void
     {
+        // si no existe la tabla clientes, saltamos el test
+        if (false === $this->db()->tableExists('clientes')) {
+            $this->markTestSkipped('Table clientes does not exist.');
+        }
+
         $query = DbQuery::table('clientes')
             ->select('codcliente, nombre')
             ->whereNombre('test');
@@ -90,6 +110,11 @@ final class DbQueryTest extends TestCase
 
     public function testOrderBy(): void
     {
+        // si no existe la tabla series, saltamos el test
+        if (false === $this->db()->tableExists('series')) {
+            $this->markTestSkipped('Table series does not exist.');
+        }
+
         $query = DbQuery::table('series')
             ->select('codserie, descripcion')
             ->orderBy('codserie', 'ASC');
@@ -103,6 +128,11 @@ final class DbQueryTest extends TestCase
 
     public function testCount(): void
     {
+        // si no existe la tabla países, saltamos el test
+        if (false === $this->db()->tableExists('paises')) {
+            $this->markTestSkipped('Table paises does not exist.');
+        }
+
         // obtenemos el número de registros en la tabla países
         $count = DbQuery::table('paises')->count();
 
@@ -145,6 +175,11 @@ final class DbQueryTest extends TestCase
 
     public function testInsert(): void
     {
+        // si no existe la tabla impuestos, saltamos el test
+        if (false === $this->db()->tableExists('impuestos')) {
+            $this->markTestSkipped('Table impuestos does not exist.');
+        }
+
         $data = [
             ['codimpuesto' => 'test1', 'descripcion' => 'test1', 'iva' => 29.99, 'recargo' => 0],
             ['codimpuesto' => 'test2', 'descripcion' => 'test2', 'iva' => 11.5, 'recargo' => 2.3],
