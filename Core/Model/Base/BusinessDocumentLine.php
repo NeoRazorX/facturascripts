@@ -407,12 +407,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         parent::onDelete();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return $this->updateStock() && parent::saveInsert($values);
     }

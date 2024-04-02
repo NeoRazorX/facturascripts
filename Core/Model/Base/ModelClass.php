@@ -127,7 +127,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (null === $this->primaryColumnValue()) {
             return true;
@@ -264,7 +264,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if ($this->pipeFalse('saveBefore') === false) {
             return false;
@@ -293,7 +293,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if ($this->pipeFalse('testBefore') === false) {
             return false;
@@ -360,7 +360,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if ($this->pipeFalse('saveInsertBefore') === false) {
             return false;
@@ -407,7 +407,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         if ($this->pipeFalse('saveUpdateBefore') === false) {
             return false;
