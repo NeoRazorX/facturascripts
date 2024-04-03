@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Model\Asiento;
@@ -47,7 +46,7 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addLockButton(string $viewName)
+    protected function addLockButton(string $viewName): void
     {
         $this->addButton($viewName, [
             'action' => 'lock-entries',
@@ -62,7 +61,7 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addRenumberButton(string $viewName)
+    protected function addRenumberButton(string $viewName): void
     {
         $this->addButton($viewName, [
             'action' => 'renumber',
@@ -259,7 +258,7 @@ class ListAsiento extends ListController
     {
         $companyFilter = $this->request->request->get('filteridempresa', 0);
         $exerciseFilter = $this->request->request->get('filtercodejercicio', '');
-        $where = empty($companyFilter) ? [] : [ new DataBaseWhere('idempresa', $companyFilter) ];
+        $where = empty($companyFilter) ? [] : [new DataBaseWhere('idempresa', $companyFilter)];
         $result = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre', true, $where);
         if (empty($exerciseFilter)) {
             return $result;
