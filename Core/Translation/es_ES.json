@@ -1146,6 +1146,8 @@
     "plugin-unsupported-version": "El plugin %pluginName% es para FacturaScripts 2017 o anteriores, pero estás usando FacturaScripts %version%",
     "plugin-update": "Actualización del plugin %pluginName% a la versión %version%",
     "plugins": "Plugins",
+    "plugins-disabled": "Plugins Desactivados",
+    "plugins-enabled": "Plugins Activos",
     "plugins-p": "Los plugins permiten añadir nuevas funciones. Activa los que necesites ahora, o bien hazlo cuando quieras desde el menú administrador.",
     "points": "Puntos",
     "port": "Puerto",
