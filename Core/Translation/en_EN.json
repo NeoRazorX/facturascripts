@@ -451,6 +451,7 @@
     "disable": "Disable",
     "disable-plugins": "Disable plugins",
     "disabled": "Disabled",
+    "disabled-plugins": "Plugins desactivados",
     "discharge-date": "Discharge date: %date%",
     "discount": "Discount",
     "display": "Display",
@@ -515,6 +516,7 @@
     "enable-api": "Enable API",
     "enable-updates-beta": "Enable beta updates",
     "enabled": "Enabled",
+    "enabled-plugins": "Plugins activos",
     "encrypt": "Encrypt",
     "end-date": "End date",
     "end-time": "End time",
@@ -1148,6 +1150,7 @@
     "plugins": "Plugins",
     "plugins-p": "Plugins allow adding new features. Add the ones you need now, or do it whenever you want from the admin menu.",
     "points": "Points",
+    "points-of-interest": "Puntos de interés",
     "port": "Port",
     "position": "Position",
     "positive-balance": "Positive balance",
@@ -1481,6 +1484,7 @@
     "tax-transport": "Tax transport",
     "taxes": "Taxes",
     "telemetry-data-to-send": "Registered installations periodically notify the version of FacturaScripts, PHP, country, language and list of plugins.",
+    "telephone-prefix": "Prefijo telefónico",
     "template": "Template",
     "template-error": "Template error",
     "template-not-found": "Template not found",
@@ -1647,5 +1651,6 @@
     "you-should-change-passwd": "You should change your password",
     "your": "Your",
     "zip-code": "Zip code",
+    "zip-codes": "Códigos postales",
     "zip-error-wrong-structure": "The zip structure is incorrect. It must contain the plugin folder and only one plugin."
 }

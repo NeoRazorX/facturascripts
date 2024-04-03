@@ -451,6 +451,7 @@
     "disable": "Désactiver",
     "disable-plugins": "Desactivar plugins",
     "disabled": "désactivé",
+    "disabled-plugins": "Plugins desactivados",
     "discharge-date": "Date de sortie: %date%",
     "discount": "Remise",
     "display": "Affichage",
@@ -515,6 +516,7 @@
     "enable-api": "Activer l'API",
     "enable-updates-beta": "Activar actualizaciones beta",
     "enabled": "Activée",
+    "enabled-plugins": "Plugins activos",
     "encrypt": "Chiffrement",
     "end-date": "Date de fin",
     "end-time": "Heure de fin",
@@ -1148,6 +1150,7 @@
     "plugins": "Modules",
     "plugins-p": "Les modules permettent d'ajouter de nouvelles fonctionnalités. Ajoutez ceux dont vous avez besoin maintenant. Vous pourrez toujours le faire quand vous le souhaitez depuis le menu Administration.",
     "points": "Points",
+    "points-of-interest": "Puntos de interés",
     "port": "Port",
     "position": "Position",
     "positive-balance": "Solde positif",
@@ -1481,6 +1484,7 @@
     "tax-transport": "Transport fiscal",
     "taxes": "Taxes",
     "telemetry-data-to-send": "Les installations enregistrées transmettent périodiquement la version de FacturaScripts et de PHP, le pays, la langue et la liste des modules externes.",
+    "telephone-prefix": "Prefijo telefónico",
     "template": "Modèle",
     "template-error": "Erreur du modèle",
     "template-not-found": "Modèle non trouvé",
@@ -1647,5 +1651,6 @@
     "you-should-change-passwd": "Vous devriez changer votre mot de passe",
     "your": "Votre",
     "zip-code": "Code postal",
+    "zip-codes": "Códigos postales",
     "zip-error-wrong-structure": "Erreur dans la structure du fichier ZIP. Il doit contenir le dossier du module externe, et un seul module."
 }

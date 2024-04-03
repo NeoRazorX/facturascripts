@@ -451,6 +451,7 @@
     "disable": "Desactivar",
     "disable-plugins": "Desactivar plugins",
     "disabled": "Desactivat",
+    "disabled-plugins": "Plugins desactivados",
     "discharge-date": "Data d'alta: %date%",
     "discount": "Desconte",
     "display": "Visualisació",
@@ -515,6 +516,7 @@
     "enable-api": "Activar el API",
     "enable-updates-beta": "Activar actualizaciones beta",
     "enabled": "Activat",
+    "enabled-plugins": "Plugins activos",
     "encrypt": "Sifrar",
     "end-date": "Data de fi",
     "end-time": "Hora de finalització",
@@ -1148,6 +1150,7 @@
     "plugins": "Complements",
     "plugins-p": "Los plugins permiten añadir nuevas funciones. Activa los que necesites ahora, o bien hazlo cuando quieras desde el menú administrador.",
     "points": "Punts",
+    "points-of-interest": "Puntos de interés",
     "port": "Port",
     "position": "Càrrec",
     "positive-balance": "positive-balance",
@@ -1481,6 +1484,7 @@
     "tax-transport": "Imposts del transport",
     "taxes": "Imposts",
     "telemetry-data-to-send": "telemetry-data-to-send",
+    "telephone-prefix": "Prefijo telefónico",
     "template": "Plantilla",
     "template-error": "Error en la plantilla",
     "template-not-found": "No s'ha trobat la plantilla",
@@ -1647,5 +1651,6 @@
     "you-should-change-passwd": "Deuries canviar la teua contrasenya",
     "your": "seu",
     "zip-code": "Codi postal",
+    "zip-codes": "Códigos postales",
     "zip-error-wrong-structure": "L'estructura del zip és incorrecta. Deu contindre la carpeta del complement i només un complement."
 }

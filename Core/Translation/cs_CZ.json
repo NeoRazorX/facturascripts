@@ -451,6 +451,7 @@
     "disable": "Desactivar",
     "disable-plugins": "Desactivar plugins",
     "disabled": "Desactivado",
+    "disabled-plugins": "Plugins desactivados",
     "discharge-date": "Fecha de alta: %date%",
     "discount": "Descuento",
     "display": "Visualización",
@@ -515,6 +516,7 @@
     "enable-api": "Activar API",
     "enable-updates-beta": "Activar actualizaciones beta",
     "enabled": "Activo",
+    "enabled-plugins": "Plugins activos",
     "encrypt": "Encriptación",
     "end-date": "Fecha de fin",
     "end-time": "Hora finalización",
@@ -1148,6 +1150,7 @@
     "plugins": "Plugins",
     "plugins-p": "Los plugins permiten añadir nuevas funciones. Activa los que necesites ahora, o bien hazlo cuando quieras desde el menú administrador.",
     "points": "Puntos",
+    "points-of-interest": "Puntos de interés",
     "port": "Puerto",
     "position": "Cargo",
     "positive-balance": "Saldo positivo",
@@ -1481,6 +1484,7 @@
     "tax-transport": "Impuestos del transporte",
     "taxes": "Impuestos",
     "telemetry-data-to-send": "Las instalaciones registradas notifican periódicamente la versión de FacturaScripts, PHP, país, idioma y listado de plugins.",
+    "telephone-prefix": "Prefijo telefónico",
     "template": "Plantilla",
     "template-error": "Error en la plantilla",
     "template-not-found": "Plantilla no encontrada",
@@ -1647,5 +1651,6 @@
     "you-should-change-passwd": "Debería cambiar su contraseña",
     "your": "Suyo",
     "zip-code": "Código Postal",
+    "zip-codes": "Códigos postales",
     "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin."
 }

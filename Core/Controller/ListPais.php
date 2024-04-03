@@ -40,15 +40,15 @@ class ListPais extends ListController
 
     protected function createViews()
     {
-        $this->createViewCountries();
-        $this->createViewProvinces();
-        $this->createViewCities();
-        $this->createViewPOIs();
-        $this->createViewZipCodes();
+        $this->createViewsCountries();
+        $this->createViewsProvinces();
+        $this->createViewsCities();
+        $this->createViewsPOIs();
+        $this->createViewsZipCodes();
         $this->createViewsDivisas();
     }
 
-    protected function createViewCities(string $viewName = 'ListCiudad'): void
+    protected function createViewsCities(string $viewName = 'ListCiudad'): void
     {
         $this->addView($viewName, 'Ciudad', 'cities', 'fas fa-city')
             ->addOrderBy(['ciudad'], 'name')
@@ -58,7 +58,7 @@ class ListPais extends ListController
             ->setSettings('btnNew', false);
     }
 
-    protected function createViewCountries(string $viewName = 'ListPais'): void
+    protected function createViewsCountries(string $viewName = 'ListPais'): void
     {
         $this->addView($viewName, 'Pais', 'countries', 'fas fa-globe-americas')
             ->addOrderBy(['codpais'], 'code')
@@ -76,7 +76,7 @@ class ListPais extends ListController
             ->addSearchFields(['descripcion', 'coddivisa']);
     }
 
-    protected function createViewPOIs(string $viewName = 'ListPuntoInteresCiudad'): void
+    protected function createViewsPOIs(string $viewName = 'ListPuntoInteresCiudad'): void
     {
         $this->addView($viewName, 'PuntoInteresCiudad', 'points-of-interest', 'fas fa-location-dot')
             ->addOrderBy(['name'], 'name')
@@ -86,7 +86,7 @@ class ListPais extends ListController
             ->setSettings('btnNew', false);
     }
 
-    protected function createViewProvinces(string $viewName = 'ListProvincia'): void
+    protected function createViewsProvinces(string $viewName = 'ListProvincia'): void
     {
         $this->addView($viewName, 'Provincia', 'provinces', 'fas fa-map-signs')
             ->addOrderBy(['provincia'], 'name')
@@ -96,11 +96,11 @@ class ListPais extends ListController
             ->setSettings('btnNew', false);
     }
 
-    protected function createViewZipCodes(string $viewName = 'ListCodigoPostal'): void
+    protected function createViewsZipCodes(string $viewName = 'ListCodigoPostal'): void
     {
         $this->addView($viewName, 'CodigoPostal', 'zip-codes', 'fas fa-map-pin')
             ->addOrderBy(['number'], 'number')
-            ->addOrderBy(['codpais'], 'contry')
+            ->addOrderBy(['codpais'], 'country')
             ->addOrderBy(['idprovincia'], 'province')
             ->addOrderBy(['idciudad'], 'city')
             ->addSearchFields(['number'])

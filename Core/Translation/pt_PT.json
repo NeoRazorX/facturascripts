@@ -451,6 +451,7 @@
     "disable": "Desativar",
     "disable-plugins": "Desactivar plugins",
     "disabled": "Desativado",
+    "disabled-plugins": "Plugins desactivados",
     "discharge-date": "Data de descarga: 0",
     "discount": "Desconto",
     "display": "Display",
@@ -515,6 +516,7 @@
     "enable-api": "Enable API",
     "enable-updates-beta": "Activar actualizaciones beta",
     "enabled": "ativado",
+    "enabled-plugins": "Plugins activos",
     "encrypt": "Encrypt",
     "end-date": "Data final",
     "end-time": "end-time",
@@ -1148,6 +1150,7 @@
     "plugins": "Plugins",
     "plugins-p": "Los plugins permiten añadir nuevas funciones. Activa los que necesites ahora, o bien hazlo cuando quieras desde el menú administrador.",
     "points": "points",
+    "points-of-interest": "Puntos de interés",
     "port": "Porta",
     "position": "Posição",
     "positive-balance": "Saldo positivo",
@@ -1481,6 +1484,7 @@
     "tax-transport": "Transporte fiscal",
     "taxes": "Impostos",
     "telemetry-data-to-send": "telemetry-data-to-send",
+    "telephone-prefix": "Prefijo telefónico",
     "template": "Modelo",
     "template-error": "template-error",
     "template-not-found": "Modelo não encontrado",
@@ -1647,5 +1651,6 @@
     "you-should-change-passwd": "you-should-change-passwd",
     "your": "your",
     "zip-code": "Código postal",
+    "zip-codes": "Códigos postales",
     "zip-error-wrong-structure": "zip-error-wrong-structure"
 }

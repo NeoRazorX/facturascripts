@@ -451,6 +451,7 @@
     "disable": "deaktivieren",
     "disable-plugins": "Desactivar plugins",
     "disabled": "Behindert",
+    "disabled-plugins": "Plugins desactivados",
     "discharge-date": "Entladedatum: 0",
     "discount": "Rabatt",
     "display": "Anzeige",
@@ -515,6 +516,7 @@
     "enable-api": "API aktivieren",
     "enable-updates-beta": "Activar actualizaciones beta",
     "enabled": "aktiviert",
+    "enabled-plugins": "Plugins activos",
     "encrypt": "Encrypt",
     "end-date": "Endtermin",
     "end-time": "Endzeit",
@@ -1148,6 +1150,7 @@
     "plugins": "Plugins",
     "plugins-p": "Los plugins permiten añadir nuevas funciones. Activa los que necesites ahora, o bien hazlo cuando quieras desde el menú administrador.",
     "points": "Punkte",
+    "points-of-interest": "Puntos de interés",
     "port": "Puerto",
     "position": "Position",
     "positive-balance": "positive-balance",
@@ -1481,6 +1484,7 @@
     "tax-transport": "Steuerverkehr",
     "taxes": "Steuern",
     "telemetry-data-to-send": "telemetry-data-to-send",
+    "telephone-prefix": "Prefijo telefónico",
     "template": "Vorlage",
     "template-error": "template-error",
     "template-not-found": "Vorlage nicht gefunden",
@@ -1647,5 +1651,6 @@
     "you-should-change-passwd": "Sie sollten Ihr Password ändern",
     "your": "Ihr",
     "zip-code": "Postleitzahl",
+    "zip-codes": "Códigos postales",
     "zip-error-wrong-structure": "zip Fehler falsche Struktur"
 }
