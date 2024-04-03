@@ -31,7 +31,6 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditProvincia extends EditController
 {
-
     public function getModelClassName(): string
     {
         return 'Provincia';
@@ -51,10 +50,10 @@ class EditProvincia extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->createCityView();
+        $this->createViewsCities();
     }
 
-    protected function createCityView(string $viewName = 'ListCiudad')
+    protected function createViewsCities(string $viewName = 'ListCiudad'): void
     {
         $this->addListView($viewName, 'Ciudad', 'cities', 'fas fa-city')
             ->addOrderBy(['ciudad'], 'name')
@@ -71,8 +70,8 @@ class EditProvincia extends EditController
     {
         switch ($viewName) {
             case 'ListCiudad':
-                $idprovincia = $this->getViewModelValue($this->getMainViewName(), 'idprovincia');
-                $where = [new DataBaseWhere('idprovincia', $idprovincia)];
+                $id_provincia = $this->getViewModelValue($this->getMainViewName(), 'idprovincia');
+                $where = [new DataBaseWhere('idprovincia', $id_provincia)];
                 $view->loadData('', $where);
                 break;
 

@@ -50,10 +50,10 @@ class EditCiudad extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->createPOIView();
+        $this->createViewsPOI();
     }
 
-    protected function createPOIView(string $viewName = 'ListPuntoInteresCiudad')
+    protected function createViewsPOI(string $viewName = 'ListPuntoInteresCiudad'): void
     {
         $this->addListView($viewName, 'PuntoInteresCiudad', 'points-of-interest', 'fas fa-location-dot')
             ->addOrderBy(['name'], 'name')
@@ -71,8 +71,8 @@ class EditCiudad extends EditController
     {
         switch ($viewName) {
             case 'ListPuntoInteresCiudad':
-                $idciudad = $this->getViewModelValue($this->getMainViewName(), 'idciudad');
-                $where = [new DataBaseWhere('idciudad', $idciudad)];
+                $id_ciudad = $this->getViewModelValue($this->getMainViewName(), 'idciudad');
+                $where = [new DataBaseWhere('idciudad', $id_ciudad)];
                 $view->loadData('', $where);
                 break;
 

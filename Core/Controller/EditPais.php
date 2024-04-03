@@ -45,21 +45,21 @@ class EditPais extends EditController
         return $data;
     }
 
-    protected function createProvinceView(string $viewName = 'ListProvincia')
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        $this->createViewsProvince();
+    }
+
+    protected function createViewsProvince(string $viewName = 'ListProvincia'): void
     {
         $this->addListView($viewName, 'Provincia', 'provinces', 'fas fa-map-signs')
             ->addOrderBy(['provincia'], 'name')
             ->addOrderBy(['codpais'], 'country')
             ->addSearchFields(['provincia', 'codisoprov', 'alias'])
             ->disableColumn('country');
-    }
-
-    protected function createViews()
-    {
-        parent::createViews();
-        $this->setTabsPosition('bottom');
-
-        $this->createProvinceView();
     }
 
     /**
