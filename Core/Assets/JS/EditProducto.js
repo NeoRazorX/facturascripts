@@ -34,4 +34,9 @@ $(document).ready(function () {
     $(".calc-price").change(function () {
         $(this.form.margen).val(0);
     });
+
+    $('#images-container').sortable({
+        cursor: "move",
+        tolerance: "pointer"
+    });
 });

@@ -288,7 +288,7 @@ class EditProducto extends EditController
                 break;
 
             case 'EditProductoImagen':
-                $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
+                $orderBy = ['orden' => 'ASC'];
                 $view->loadData('', $where, $orderBy);
                 break;
 

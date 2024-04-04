@@ -67,7 +67,7 @@
         </div>
     </div>
     {# -- Attached files -- #}
-    <div class="form-row row-cols-1 row-cols-md-5">
+    <div class="form-row row-cols-1 row-cols-md-5" id="images-container">
         {% for counter, image in currentView.cursor %}
             <div class="col mb-4">
                 {% set border = image.referencia ? '' : 'border-primary' %}
