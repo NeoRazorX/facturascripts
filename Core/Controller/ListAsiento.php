@@ -270,6 +270,7 @@ class ListAsiento extends ListController
                 return $result;
             }
         }
+
         // remove exercise filter if it is not in the list
         $this->request->request->set('filtercodejercicio', '');
         return $result;
