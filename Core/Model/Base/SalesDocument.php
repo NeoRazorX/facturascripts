@@ -26,9 +26,9 @@ use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
+use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
-use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Tarifa;
@@ -267,8 +267,8 @@ abstract class SalesDocument extends TransformerDocument
 
         // needed dependencies
         new AgenciaTransporte();
+        new Agente();
         new Cliente();
-        new FormaPago();
 
         return $result;
     }

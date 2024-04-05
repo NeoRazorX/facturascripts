@@ -28,6 +28,7 @@ use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\Serie;
 
 /**
@@ -316,6 +317,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         new Ejercicio();
         new Almacen();
         new Divisa();
+        new FormaPago();
 
         return parent::install();
     }

@@ -159,35 +159,35 @@
         <type>PRIMARY KEY (idpresupuesto)</type>
     </constraint>
     <constraint>
-        <name>ca_presupuestosprov_almacenes</name>
+        <name>ca_presupuestosprov_codalmacen</name>
         <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_presupuestosprov_divisas</name>
+        <name>ca_presupuestosprov_coddivisa</name>
         <type>FOREIGN KEY (coddivisa) REFERENCES divisas (coddivisa) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_presupuestosprov_ejercicios</name>
+        <name>ca_presupuestosprov_codejercicio</name>
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_presupuestosprov_empresas</name>
+        <name>ca_presupuestosprov_idempresa</name>
         <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_presupuestosprov_estados</name>
+        <name>ca_presupuestosprov_idestado</name>
         <type>FOREIGN KEY (idestado) REFERENCES estados_documentos (idestado) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_presupuestosprov_proveedores</name>
+        <name>ca_presupuestosprov_codproveedor</name>
         <type>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_presupuestosprov_series</name>
+        <name>ca_presupuestosprov_codserie</name>
         <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_presupuestosprov_users</name>
+        <name>ca_presupuestosprov_nick</name>
         <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
