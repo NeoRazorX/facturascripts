@@ -228,12 +228,4 @@ class ProductoImagen extends Base\ModelClass
         }
         return $path;
     }
-
-    public function __get($name)
-    {
-        if ($name == 'orden') {
-            dd($this->orden);
-            return $this->orden ?? $this->id;
-        }
-    }
 }
