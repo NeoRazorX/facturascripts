@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
+use FacturaScripts\Core\Base\Contract\SalesModalHTMLModInterface;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -63,6 +64,16 @@ class SalesModalHTML
     /** @var bool */
     protected static $vendido;
 
+    /** @var SalesModalHTMLModInterface[] */
+    private static $mods = [];
+
+    private static $fieldsMods = [];
+
+    public static function addMod(SalesModalHTMLModInterface $mod)
+    {
+        self::$mods[] = $mod;
+    }
+
     public static function apply(SalesDocument &$model, array $formData)
     {
         self::$codalmacen = $model->codalmacen;
@@ -73,14 +84,25 @@ class SalesModalHTML
         self::$vendido = (bool)($formData['fp_vendido'] ?? false);
         self::$query = isset($formData['fp_query']) ?
             Tools::noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
+
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->apply($model, $formData);
+        }
     }
 
-    public static function render(SalesDocument $model, string $url, User $user, ControllerPermissions $permissions): string
-    {
+    public static function render(
+        SalesDocument $model,
+        string $url,
+        User $user,
+        ControllerPermissions $permissions
+    ): string {
         self::$codalmacen = $model->codalmacen;
 
         $i18n = new Translator();
-        return $model->editable ? static::modalClientes($i18n, $url, $user, $permissions) . static::modalProductos($i18n) : '';
+        return $model->editable ? static::modalClientes($i18n, $url, $user, $permissions) . static::modalProductos(
+                $i18n
+            ) : '';
     }
 
     public static function renderProductList(): string
@@ -100,12 +122,21 @@ class SalesModalHTML
                 . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>';
 
             if (self::$vendido) {
-                $tbody .= '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['ultimo_precio'])) . '</td>';
+                $tbody .= '<td class="text-right">' . str_replace(
+                        ' ',
+                        '&nbsp;',
+                        Tools::money($row['ultimo_precio'])
+                    ) . '</td>';
             }
 
-            $tbody .= '<td class="text-right">' . $row['disponible'] . '</td>'
-                . '</tr>';
+            $tbody .= '<td class="text-right">' . $row['disponible'] . '</td>';
+
+            $tbody .= static::renderProductValuesColumnsTable($row);
+
+            $tbody .= '</tr>';
         }
+
+
 
         if (empty($tbody)) {
             $tbody .= '<tr class="table-warning"><td colspan="4">' . $i18n->trans('no-data') . '</td></tr>';
@@ -121,6 +152,7 @@ class SalesModalHTML
             . '<th class="text-right">' . $i18n->trans('price') . '</th>'
             . $extraTh
             . '<th class="text-right">' . $i18n->trans('stock') . '</th>'
+            . static::renderProductTitlesColumnsTable()
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -161,12 +193,24 @@ class SalesModalHTML
 
     protected static function getProducts(): array
     {
+
+
+
+        dd(static::fieldsMods());
+
+
+
+
+
         $dataBase = new DataBase();
         $sql = 'SELECT v.referencia, p.descripcion, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3,'
             . ' v.idatributovalor4, v.precio, COALESCE(s.disponible, 0) as disponible, p.nostock'
+            . ', ' . static::fieldsMods()
             . ' FROM variantes v'
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
-            . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
+            . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(
+                self::$codalmacen
+            )
             . ' WHERE p.sevende = true AND p.bloqueado = false';
 
         if (self::$codfabricante) {
@@ -251,8 +295,12 @@ class SalesModalHTML
         return ', ' . self::$idatributovalores[$id];
     }
 
-    protected static function modalClientes(Translator $i18n, string $url, User $user, ControllerPermissions $permissions): string
-    {
+    protected static function modalClientes(
+        Translator $i18n,
+        string $url,
+        User $user,
+        ControllerPermissions $permissions
+    ): string {
         $trs = '';
 
         // ¿El usuario tiene permiso para ver todos los clientes?
@@ -294,7 +342,9 @@ class SalesModalHTML
             . '<div class="modal-body p-0">'
             . '<div class="p-3">'
             . '<div class="input-group">'
-            . '<input type="text" id="findCustomerInput" class="form-control" placeholder="' . $i18n->trans('search') . '" />'
+            . '<input type="text" id="findCustomerInput" class="form-control" placeholder="' . $i18n->trans(
+                'search'
+            ) . '" />'
             . '<div class="input-group-apend">'
             . '<button type="button" class="btn btn-primary"><i class="fas fa-search"></i></button>'
             . '</div>'
@@ -326,7 +376,9 @@ class SalesModalHTML
             . '<div class="form-row">'
             . '<div class="col-sm mb-2">'
             . '<div class="input-group">'
-            . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
+            . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans(
+                'search'
+            )
             . '" onkeyup="return salesFormActionWait(\'find-product\', \'0\', event);"/>'
             . '<div class="input-group-append">'
             . '<button class="btn btn-primary btn-spin-action" type="button" onclick="return salesFormAction(\'find-product\', \'0\');">'
@@ -342,7 +394,9 @@ class SalesModalHTML
             . '<div class="col-sm">'
             . '<div class="form-check">'
             . '<input type="checkbox" name="fp_vendido" value="1" class="form-check-input" id="vendido" onchange="return salesFormAction(\'find-product\', \'0\');">'
-            . '<label class="form-check-label" for="vendido">' . $i18n->trans('previously-sold-to-customer') . '</label>'
+            . '<label class="form-check-label" for="vendido">' . $i18n->trans(
+                'previously-sold-to-customer'
+            ) . '</label>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -400,5 +454,87 @@ class SalesModalHTML
         }
 
         return $options;
+    }
+
+    protected static function renderProductTitlesColumnsTable()
+    {
+        $temp = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->addProductColumnsTable() as $v) {
+                $temp[$v['field'] . $v['title']] = $v;
+            }
+        }
+        $newFields = array_values($temp);
+
+        $html = '';
+
+        foreach (self::$mods as $mod) {
+            foreach ($newFields as $column) {
+                if (false === empty($column['title']) && false === empty($column['field'])) {
+                    $html .= '<th class="text-right">' . Tools::lang()->trans($column['title']) . '</th>';
+                }
+            }
+        }
+
+        return $html;
+    }
+
+    protected static function renderProductValuesColumnsTable($row)
+    {
+        $temp = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->addProductColumnsTable() as $v) {
+                $temp[$v['field'] . $v['title']] = $v;
+            }
+        }
+        $newFields = array_values($temp);
+
+        $html = '';
+
+        foreach (self::$mods as $mod) {
+            foreach ($newFields as $column) {
+                if (false === empty($column['title']) && false === empty($column['field'])) {
+                    $field = str_replace(['p.', 'v.'], '', $column['field']);
+                    $text = isset($column['isMoney']) && $column['isMoney'] == true ? Tools::money($row[$field]) : $row[$field];
+                    $html .= '<td class="text-right">' . $text . '</td>';
+                }
+            }
+        }
+
+        return $html;
+    }
+
+
+    /**
+     * Devuelve los campos para incluir en la consulta SQL
+     * ej.  "v.coste, v.precio"
+     *
+     * @return string
+     */
+    protected static function fieldsMods(): string
+    {
+        $newFields = self::getUniqueColumnsFromMods();
+        $newFields = array_column($newFields, 'field');
+        $newFields = array_unique($newFields);
+
+        return implode(', ', $newFields);
+    }
+
+    /**
+     * Devuelve un array con las columnas de los mods
+     * sin repetir para la tabla de productos.
+     *
+     * @return array
+     */
+    protected static function getUniqueColumnsFromMods(): array
+    {
+        $uniqueColumns = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->addProductColumnsTable() as $column) {
+                $uniqueColumns[$column['field'] . $column['title']] = $column;
+            }
+        }
+
+        return array_values($uniqueColumns);
     }
 }
