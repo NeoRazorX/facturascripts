@@ -1605,6 +1605,8 @@
     "vies-check-success": "El número '%vat-number%' está registrado en el sistema VIES",
     "view-api": "Ver API",
     "view-column-net-subtotal": "Ver columna subtotal o neto",
+    "view-estimation": "Ver presupuesto",
+    "view-order": "Ver pedido",
     "warehouse": "Almacén",
     "warehouse-cant-be-same": "El almacén de orígen y de destino no puede ser el mismo.",
     "warehouse-must-be-same-business": "Los almacenes de origen y destino deben ser de la misma empresa",

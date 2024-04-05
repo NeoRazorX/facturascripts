@@ -1605,6 +1605,8 @@
     "vies-check-success": "El número '%vat-*number%' està registrat en el sistema VIES",
     "view-api": "Veure API",
     "view-column-net-subtotal": "Veure columna subtotal o net",
+    "view-estimation": "Veure pressupost",
+    "view-order": "Veure comanda",
     "warehouse": "Magatzem",
     "warehouse-cant-be-same": "El magatzem d'origen i destí no pot ser el mateix.",
     "warehouse-must-be-same-business": "Els magatzems d'origen i destinació han de ser de la mateixa empresa",

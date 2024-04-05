@@ -1605,6 +1605,8 @@
     "vies-check-success": "O múmero '%vat-number%' está rexistrado no sistema VIES",
     "view-api": "Ver API",
     "view-column-net-subtotal": "Ver columna subtotal ou neto",
+    "view-estimation": "Ver presuposto",
+    "view-order": "Ver pedido",
     "warehouse": "Almacén",
     "warehouse-cant-be-same": "O almacén de orixe e destino non pode ser o mesmo.",
     "warehouse-must-be-same-business": "Os almacéns de orixe e de destino deben ser da mesma empresa",
