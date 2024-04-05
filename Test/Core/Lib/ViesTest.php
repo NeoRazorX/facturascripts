@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Test\Core\Lib;
 use FacturaScripts\Core\Lib\Vies;
 use PHPUnit\Framework\TestCase;
 
-class ViesTest extends TestCase
+final class ViesTest extends TestCase
 {
     public function testCheck(): void
     {
@@ -42,8 +42,9 @@ class ViesTest extends TestCase
 
         foreach ($data as $item) {
             $check = Vies::check($item['number'], $item['iso']);
-            if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
-                $this->markTestSkipped('Vies service is not available');
+
+            if ($check == -1 && $item['results'] != -1) {
+                $this->markTestSkipped('Vies service returns error: ' . Vies::getLastError());
             }
 
             $this->assertEquals($item['results'], $check);

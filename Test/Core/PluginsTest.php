@@ -196,7 +196,7 @@ final class PluginsTest extends TestCase
         $this->assertTrue(Plugins::add($zipPath));
 
         // comprobamos que el archivo se ha eliminado
-        $this->assertFileNotExists($filePath);
+        $this->assertFileDoesNotExist($filePath);
 
         // comprobamos que el archivo facturascripts.ini se ha restaurado
         $this->assertFileExists($iniPath);
@@ -239,7 +239,7 @@ final class PluginsTest extends TestCase
         $this->assertTrue(Plugins::add($zipPath));
 
         // comprobamos que el archivo se ha eliminado
-        $this->assertFileNotExists($filePath);
+        $this->assertFileDoesNotExist($filePath);
 
         // comprobamos que el archivo facturascripts.ini se ha restaurado
         $this->assertFileExists($iniPath);

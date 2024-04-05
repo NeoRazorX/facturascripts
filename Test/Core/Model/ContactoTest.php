@@ -202,18 +202,26 @@ final class ContactoTest extends TestCase
         $contact->nombre = 'Test';
 
         $check1 = $contact->checkVies();
-        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
-            $this->markTestSkipped('Vies service is not available');
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertFalse($check1);
 
         // asignamos un cif/nif incorrecto
         $contact->cifnif = '123456789';
-        $this->assertFalse($contact->checkVies());
+        $check2 = $contact->checkVies();
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
+        $this->assertFalse($check2);
 
         // asignamos un cif/nif correcto
         $contact->cifnif = 'ESB01563311';
-        $this->assertTrue($contact->checkVies());
+        $check3 = $contact->checkVies();
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
+        $this->assertTrue($check3);
     }
 
     public function testAlias(): void
