@@ -50,6 +50,18 @@ class ProductoImagen extends Base\ModelClass
     /** @var string */
     public $referencia;
 
+    /** @var int */
+    public $orden;
+
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+
+        // Inicialmente el orden es el id
+        // hasta que se asigne un orden en concreto.
+        $this->orden = $this->orden ?? $this->id;
+    }
+
     public function delete(): bool
     {
         if (false === parent::delete()) {

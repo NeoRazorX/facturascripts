@@ -26,8 +26,10 @@ use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
+use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to edit a single item from the EditProducto model
@@ -171,6 +173,9 @@ class EditProducto extends EditController
 
             case 'unlink-file':
                 return $this->unlinkFileAction();
+
+            case 'sort-images':
+                return $this->sortImagesAction();
         }
 
         return parent::execPreviousAction($action);
@@ -288,7 +293,7 @@ class EditProducto extends EditController
                 break;
 
             case 'EditProductoImagen':
-                $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
+                $orderBy = ['orden' => 'ASC'];
                 $view->loadData('', $where, $orderBy);
                 break;
 
@@ -333,5 +338,31 @@ class EditProducto extends EditController
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
+    }
+
+    protected function sortImagesAction(): bool
+    {
+        $idsOrdenadas = $this->request->request->get('orden');
+
+        if (empty($idsOrdenadas)){
+            return true;
+        }
+
+        $orden = 1;
+        foreach ($idsOrdenadas as $idImagen) {
+            $productoImagen = new ProductoImagen();
+            $productoImagen->loadFromCode($idImagen);
+            $productoImagen->orden = $orden;
+            if($productoImagen->save()){
+                $orden++;
+            }
+        }
+
+        $this->setTemplate(false);
+        $this->response->setStatusCode(Response::HTTP_OK);
+        $this->response->setContent(json_encode(['status' => 'ok']));
+        $this->response->headers->set('Content-Type', 'application/json');
+
+        return true;
     }
 }

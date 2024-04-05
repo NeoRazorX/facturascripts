@@ -255,7 +255,7 @@ class Variante extends Base\ModelClass
         // buscamos las imágenes propias de esta variante
         $image = new DinProductoImagen();
         $whereVar = [new DataBaseWhere('referencia', $this->referencia)];
-        $orderBy = ['id' => 'ASC'];
+        $orderBy = ['orden' => 'ASC'];
         $images = $image->all($whereVar, $orderBy, 0, 0);
 
         // si solo queremos las imágenes de la variante, terminamos
