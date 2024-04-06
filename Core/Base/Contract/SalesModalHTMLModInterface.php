@@ -1,8 +1,6 @@
-<?php
-
+<?php declare(strict_types=1);
 
 namespace FacturaScripts\Core\Base\Contract;
-
 
 use FacturaScripts\Core\Model\Base\SalesDocument;
 
@@ -34,4 +32,18 @@ interface SalesModalHTMLModInterface
      */
     public function addProductColumnsTable();
 
+    /**
+     * Retorna el html con los inputs selects de los filtros a agregar
+     *
+     * @return string
+     */
+    public function addProductFilters();
+
+    /**
+     * Procesar los resultados obtenidos en la busqueda de productos
+     *
+     * @param array $results
+     * @return array
+     */
+    public function applyResutls(array &$results);
 }

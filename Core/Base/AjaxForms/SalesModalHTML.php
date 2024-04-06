@@ -111,7 +111,7 @@ class SalesModalHTML
             $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return salesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
                 . '<td><b>' . $row['referencia'] . '</b> ' . $description . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>';
+                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money((float)$row['precio'])) . '</td>';
 
             if (self::$vendido) {
                 $tbody .= '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['ultimo_precio'])) . '</td>';
@@ -248,6 +248,13 @@ class SalesModalHTML
         }
 
         $results = $dataBase->selectLimit($sql);
+
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->applyResutls($results);
+        }
+
+
         if (self::$vendido) {
             static::setProductsLastPrice($dataBase, $results);
         }
@@ -355,6 +362,7 @@ class SalesModalHTML
             . '</div>'
             . '<div class="col-sm mb-2">' . static::fabricantes($i18n) . '</div>'
             . '<div class="col-sm mb-2">' . static::familias($i18n) . '</div>'
+            . static::filtrosMods()
             . '<div class="col-sm mb-2">' . static::orden($i18n) . '</div>'
             . '</div>'
             . '<div class="form-row">'
@@ -453,7 +461,7 @@ class SalesModalHTML
 
         foreach ($columns as $column) {
             $field = str_replace(['p.', 'v.'], '', $column['field']);
-            $text = false === empty($column['isMoney']) && true == $column['isMoney'] ? Tools::money($row[$field]) : $row[$field];
+            $text = false === empty($column['isMoney']) && true == $column['isMoney'] ? Tools::money((float)$row[$field]) : $row[$field];
             $html .= '<td class="text-right">' . $text . '</td>';
         }
 
@@ -496,5 +504,16 @@ class SalesModalHTML
         }
 
         return array_values($uniqueColumns);
+    }
+
+    protected static function filtrosMods()
+    {
+        $html = '';
+
+        foreach (self::$mods as $mod) {
+            $html .= $mod->addProductFilters();
+        }
+
+        return $html;
     }
 }
