@@ -124,7 +124,6 @@ class SalesModalHTML
             $tbody .= '</tr>';
         }
 
-
         if (empty($tbody)) {
             $tbody .= '<tr class="table-warning"><td colspan="4">' . $i18n->trans('no-data') . '</td></tr>';
         }
