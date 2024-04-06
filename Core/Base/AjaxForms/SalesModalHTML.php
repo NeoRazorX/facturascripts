@@ -96,7 +96,8 @@ class SalesModalHTML
         string $url,
         User $user,
         ControllerPermissions $permissions
-    ): string {
+    ):string
+    {
         self::$codalmacen = $model->codalmacen;
 
         $i18n = new Translator();
@@ -105,7 +106,7 @@ class SalesModalHTML
             ) : '';
     }
 
-    public static function renderProductList(): string
+    public static function renderProductList():string
     {
         $tbody = '';
         $i18n = new Translator();
@@ -137,7 +138,6 @@ class SalesModalHTML
         }
 
 
-
         if (empty($tbody)) {
             $tbody .= '<tr class="table-warning"><td colspan="4">' . $i18n->trans('no-data') . '</td></tr>';
         }
@@ -159,7 +159,7 @@ class SalesModalHTML
             . '</table>';
     }
 
-    protected static function fabricantes(Translator $i18n): string
+    protected static function fabricantes(Translator $i18n):string
     {
         $fabricante = new Fabricante();
         $options = '<option value="">' . $i18n->trans('manufacturer') . '</option>'
@@ -172,7 +172,7 @@ class SalesModalHTML
             . $options . '</select>';
     }
 
-    protected static function familias(Translator $i18n): string
+    protected static function familias(Translator $i18n):string
     {
         $options = '<option value="">' . $i18n->trans('family') . '</option>'
             . '<option value="">------</option>';
@@ -191,17 +191,8 @@ class SalesModalHTML
             . $options . '</select>';
     }
 
-    protected static function getProducts(): array
+    protected static function getProducts():array
     {
-
-
-
-        dd(static::fieldsMods());
-
-
-
-
-
         $dataBase = new DataBase();
         $sql = 'SELECT v.referencia, p.descripcion, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3,'
             . ' v.idatributovalor4, v.precio, COALESCE(s.disponible, 0) as disponible, p.nostock'
@@ -280,7 +271,7 @@ class SalesModalHTML
         return $results;
     }
 
-    protected static function idatributovalor(?int $id): string
+    protected static function idatributovalor(?int $id):string
     {
         if (empty($id)) {
             return '';
@@ -300,7 +291,8 @@ class SalesModalHTML
         string $url,
         User $user,
         ControllerPermissions $permissions
-    ): string {
+    ):string
+    {
         $trs = '';
 
         // ¿El usuario tiene permiso para ver todos los clientes?
@@ -361,7 +353,7 @@ class SalesModalHTML
             . '</div>';
     }
 
-    protected static function modalProductos(Translator $i18n): string
+    protected static function modalProductos(Translator $i18n):string
     {
         return '<div class="modal" id="findProductModal" tabindex="-1" aria-hidden="true">'
             . '<div class="modal-dialog modal-xl">'
@@ -407,7 +399,7 @@ class SalesModalHTML
             . '</div>';
     }
 
-    protected static function orden(Translator $i18n): string
+    protected static function orden(Translator $i18n):string
     {
         return '<div class="input-group">'
             . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span></div>'
@@ -422,7 +414,7 @@ class SalesModalHTML
             . '</div>';
     }
 
-    protected static function setProductsLastPrice(DataBase $db, array &$items): void
+    protected static function setProductsLastPrice(DataBase $db, array &$items):void
     {
         foreach ($items as $key => $item) {
             // obtenemos el último precio en facturas de este cliente
@@ -441,7 +433,7 @@ class SalesModalHTML
         }
     }
 
-    private static function subfamilias(Familia $family, Translator $i18n, int $level = 1): string
+    private static function subfamilias(Familia $family, Translator $i18n, int $level = 1):string
     {
         $options = '';
         foreach ($family->getSubfamilias() as $fam) {
@@ -456,49 +448,40 @@ class SalesModalHTML
         return $options;
     }
 
-    protected static function renderProductTitlesColumnsTable()
+    /**
+     * Renderiza los titulos de las columnas de los mods.
+     *
+     * @return string
+     */
+    protected static function renderProductTitlesColumnsTable():string
     {
-        $temp = [];
-        foreach (self::$mods as $mod) {
-            foreach ($mod->addProductColumnsTable() as $v) {
-                $temp[$v['field'] . $v['title']] = $v;
-            }
-        }
-        $newFields = array_values($temp);
+        $columns = self::getUniqueColumnsFromMods();
 
         $html = '';
 
-        foreach (self::$mods as $mod) {
-            foreach ($newFields as $column) {
-                if (false === empty($column['title']) && false === empty($column['field'])) {
-                    $html .= '<th class="text-right">' . Tools::lang()->trans($column['title']) . '</th>';
-                }
-            }
+        foreach ($columns as $column) {
+            $html .= '<th class="text-right">' . Tools::lang()->trans($column['title']) . '</th>';
         }
 
         return $html;
     }
 
-    protected static function renderProductValuesColumnsTable($row)
+    /**
+     * Renderiza los valores de las columnas de los mods.
+     *
+     * @param $row
+     * @return string
+     */
+    protected static function renderProductValuesColumnsTable($row):string
     {
-        $temp = [];
-        foreach (self::$mods as $mod) {
-            foreach ($mod->addProductColumnsTable() as $v) {
-                $temp[$v['field'] . $v['title']] = $v;
-            }
-        }
-        $newFields = array_values($temp);
+        $columns = self::getUniqueColumnsFromMods();
 
         $html = '';
 
-        foreach (self::$mods as $mod) {
-            foreach ($newFields as $column) {
-                if (false === empty($column['title']) && false === empty($column['field'])) {
-                    $field = str_replace(['p.', 'v.'], '', $column['field']);
-                    $text = isset($column['isMoney']) && $column['isMoney'] == true ? Tools::money($row[$field]) : $row[$field];
-                    $html .= '<td class="text-right">' . $text . '</td>';
-                }
-            }
+        foreach ($columns as $column) {
+            $field = str_replace(['p.', 'v.'], '', $column['field']);
+            $text = false === empty($column['isMoney']) && true == $column['isMoney'] ? Tools::money($row[$field]) : $row[$field];
+            $html .= '<td class="text-right">' . $text . '</td>';
         }
 
         return $html;
@@ -507,11 +490,13 @@ class SalesModalHTML
 
     /**
      * Devuelve los campos para incluir en la consulta SQL
-     * ej.  "v.coste, v.precio"
+     * ej.  "v.coste, v.precio, p.stockfis"
+     * se usuará "v." para los campos de las variantes
+     * y "p." para los campos del producto
      *
      * @return string
      */
-    protected static function fieldsMods(): string
+    protected static function fieldsMods():string
     {
         $newFields = self::getUniqueColumnsFromMods();
         $newFields = array_column($newFields, 'field');
@@ -526,12 +511,14 @@ class SalesModalHTML
      *
      * @return array
      */
-    protected static function getUniqueColumnsFromMods(): array
+    protected static function getUniqueColumnsFromMods():array
     {
         $uniqueColumns = [];
         foreach (self::$mods as $mod) {
             foreach ($mod->addProductColumnsTable() as $column) {
-                $uniqueColumns[$column['field'] . $column['title']] = $column;
+                if (false === empty($column['title']) && false === empty($column['field'])) {
+                    $uniqueColumns[$column['field'] . $column['title']] = $column;
+                }
             }
         }
 
