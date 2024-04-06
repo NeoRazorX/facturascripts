@@ -186,9 +186,7 @@ class SalesModalHTML
             . ', ' . static::fieldsMods()
             . ' FROM variantes v'
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
-            . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(
-                self::$codalmacen
-            )
+            . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
             . ' WHERE p.sevende = true AND p.bloqueado = false';
 
         if (self::$codfabricante) {
@@ -273,12 +271,7 @@ class SalesModalHTML
         return ', ' . self::$idatributovalores[$id];
     }
 
-    protected static function modalClientes(
-        Translator $i18n,
-        string $url,
-        User $user,
-        ControllerPermissions $permissions
-    ): string
+    protected static function modalClientes(Translator $i18n, string $url, User $user, ControllerPermissions $permissions): string
     {
         $trs = '';
 
@@ -321,9 +314,7 @@ class SalesModalHTML
             . '<div class="modal-body p-0">'
             . '<div class="p-3">'
             . '<div class="input-group">'
-            . '<input type="text" id="findCustomerInput" class="form-control" placeholder="' . $i18n->trans(
-                'search'
-            ) . '" />'
+            . '<input type="text" id="findCustomerInput" class="form-control" placeholder="' . $i18n->trans('search') . '" />'
             . '<div class="input-group-apend">'
             . '<button type="button" class="btn btn-primary"><i class="fas fa-search"></i></button>'
             . '</div>'
@@ -355,9 +346,7 @@ class SalesModalHTML
             . '<div class="form-row">'
             . '<div class="col-sm mb-2">'
             . '<div class="input-group">'
-            . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans(
-                'search'
-            )
+            . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
             . '" onkeyup="return salesFormActionWait(\'find-product\', \'0\', event);"/>'
             . '<div class="input-group-append">'
             . '<button class="btn btn-primary btn-spin-action" type="button" onclick="return salesFormAction(\'find-product\', \'0\');">'
@@ -373,9 +362,7 @@ class SalesModalHTML
             . '<div class="col-sm">'
             . '<div class="form-check">'
             . '<input type="checkbox" name="fp_vendido" value="1" class="form-check-input" id="vendido" onchange="return salesFormAction(\'find-product\', \'0\');">'
-            . '<label class="form-check-label" for="vendido">' . $i18n->trans(
-                'previously-sold-to-customer'
-            ) . '</label>'
+            . '<label class="form-check-label" for="vendido">' . $i18n->trans('previously-sold-to-customer') . '</label>'
             . '</div>'
             . '</div>'
             . '</div>'
