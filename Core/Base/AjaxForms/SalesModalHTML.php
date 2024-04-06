@@ -91,19 +91,12 @@ class SalesModalHTML
         }
     }
 
-    public static function render(
-        SalesDocument $model,
-        string $url,
-        User $user,
-        ControllerPermissions $permissions
-    ):string
+    public static function render(SalesDocument $model, string $url, User $user, ControllerPermissions $permissions): string
     {
         self::$codalmacen = $model->codalmacen;
 
         $i18n = new Translator();
-        return $model->editable ? static::modalClientes($i18n, $url, $user, $permissions) . static::modalProductos(
-                $i18n
-            ) : '';
+        return $model->editable ? static::modalClientes($i18n, $url, $user, $permissions) . static::modalProductos($i18n) : '';
     }
 
     public static function renderProductList():string
