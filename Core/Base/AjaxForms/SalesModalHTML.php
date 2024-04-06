@@ -67,8 +67,6 @@ class SalesModalHTML
     /** @var SalesModalHTMLModInterface[] */
     private static $mods = [];
 
-    private static $fieldsMods = [];
-
     public static function addMod(SalesModalHTMLModInterface $mod)
     {
         self::$mods[] = $mod;
@@ -99,7 +97,7 @@ class SalesModalHTML
         return $model->editable ? static::modalClientes($i18n, $url, $user, $permissions) . static::modalProductos($i18n) : '';
     }
 
-    public static function renderProductList():string
+    public static function renderProductList(): string
     {
         $tbody = '';
         $i18n = new Translator();
@@ -116,11 +114,7 @@ class SalesModalHTML
                 . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>';
 
             if (self::$vendido) {
-                $tbody .= '<td class="text-right">' . str_replace(
-                        ' ',
-                        '&nbsp;',
-                        Tools::money($row['ultimo_precio'])
-                    ) . '</td>';
+                $tbody .= '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['ultimo_precio'])) . '</td>';
             }
 
             $tbody .= '<td class="text-right">' . $row['disponible'] . '</td>';
