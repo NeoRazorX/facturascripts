@@ -254,7 +254,6 @@ class SalesModalHTML
             $mod->applyResutls($results);
         }
 
-
         if (self::$vendido) {
             static::setProductsLastPrice($dataBase, $results);
         }
