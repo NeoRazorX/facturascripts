@@ -92,7 +92,7 @@ class SalesModalHTML
         // asignamos dinamicamente los campos de los filtros de los mods al formdata
         self::$formData = $formData;
         foreach (self::getFiltersFromMods() as $filter) {
-            self::$formData[$filter['inputName']] = $formData[$filter['inputName']] ?? '';;
+            self::$formData[$filter['inputName']] = $formData[$filter['inputName']] ?? '';
         }
 
         // mods
