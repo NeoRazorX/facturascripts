@@ -130,8 +130,8 @@ class PurchasesModalHTML
             $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return purchasesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
                 . '<td>' . $label . ' ' . $description . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($cost)) . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>';
+                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money((float)$cost)) . '</td>'
+                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money((float)$row['precio'])) . '</td>';
 
             $tbody .= '<td class="text-right">' . $row['disponible'] . '</td>';
 

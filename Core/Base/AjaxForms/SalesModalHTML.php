@@ -126,7 +126,7 @@ class SalesModalHTML
                 . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money((float)$row['precio'])) . '</td>';
 
             if (self::$vendido) {
-                $tbody .= '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['ultimo_precio'])) . '</td>';
+                $tbody .= '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money((float)$row['ultimo_precio'])) . '</td>';
             }
 
             $tbody .= '<td class="text-right">' . $row['disponible'] . '</td>';
