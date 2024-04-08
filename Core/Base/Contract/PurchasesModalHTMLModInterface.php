@@ -2,11 +2,11 @@
 
 namespace FacturaScripts\Core\Base\Contract;
 
-use FacturaScripts\Core\Model\Base\SalesDocument;
+use FacturaScripts\Core\Model\Base\PurchaseDocument;
 
-interface SalesModalHTMLModInterface
+interface PurchasesModalHTMLModInterface
 {
-    public function apply(SalesDocument &$model, array $formData);
+    public function apply(PurchaseDocument &$model, array $formData);
 
     /**
      * Devolver un array con los campos que

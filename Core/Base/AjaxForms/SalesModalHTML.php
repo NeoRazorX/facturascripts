@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -27,6 +28,7 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AtributoValor;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Fabricante;
@@ -67,6 +69,10 @@ class SalesModalHTML
     /** @var SalesModalHTMLModInterface[] */
     private static $mods = [];
 
+    /** @var array */
+    private static $formData = [];
+
+    /** @param SalesModalHTMLModInterface $mod */
     public static function addMod(SalesModalHTMLModInterface $mod): void
     {
         self::$mods[] = $mod;
@@ -82,6 +88,12 @@ class SalesModalHTML
         self::$vendido = (bool)($formData['fp_vendido'] ?? false);
         self::$query = isset($formData['fp_query']) ?
             Tools::noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
+
+        // asignamos dinamicamente los campos de los filtros de los mods al formdata
+        self::$formData = $formData;
+        foreach (self::getFiltersFromMods() as $filter) {
+            self::$formData[$filter['inputName']] = $formData[$filter['inputName']] ?? '';;
+        }
 
         // mods
         foreach (self::$mods as $mod) {
@@ -125,7 +137,8 @@ class SalesModalHTML
         }
 
         if (empty($tbody)) {
-            $tbody .= '<tr class="table-warning"><td colspan="4">' . $i18n->trans('no-data') . '</td></tr>';
+            $colspan = 4 + count(static::getColumnsFromMods());
+            $tbody .= '<tr class="table-warning"><td colspan="' . $colspan . '">' . $i18n->trans('no-data') . '</td></tr>';
         }
 
         $extraTh = self::$vendido ?
@@ -182,7 +195,7 @@ class SalesModalHTML
         $dataBase = new DataBase();
         $sql = 'SELECT v.referencia, p.descripcion, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3,'
             . ' v.idatributovalor4, v.precio, COALESCE(s.disponible, 0) as disponible, p.nostock'
-            . ', ' . static::fieldsMods()
+            . ', ' . static::sqlFieldsMods()
             . ' FROM variantes v'
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
             . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
@@ -227,6 +240,10 @@ class SalesModalHTML
                 }
                 $sql .= "))";
             }
+        }
+
+        if (false === empty(static::sqlFiltersMods())){
+            $sql .= ' AND ' . static::sqlFiltersMods();
         }
 
         switch (self::$orden) {
@@ -435,7 +452,7 @@ class SalesModalHTML
      */
     protected static function renderProductTitlesColumnsTable(): string
     {
-        $columns = self::getUniqueColumnsFromMods();
+        $columns = self::getColumnsFromMods();
 
         $html = '';
 
@@ -454,11 +471,9 @@ class SalesModalHTML
      */
     protected static function renderProductValuesColumnsTable($row): string
     {
-        $columns = self::getUniqueColumnsFromMods();
-
         $html = '';
 
-        foreach ($columns as $column) {
+        foreach (self::getColumnsFromMods() as $column) {
             $field = str_replace(['p.', 'v.'], '', $column['field']);
             $text = false === empty($column['isMoney']) && true == $column['isMoney'] ? Tools::money((float)$row[$field]) : $row[$field];
             $html .= '<td class="text-right">' . $text . '</td>';
@@ -476,9 +491,9 @@ class SalesModalHTML
      *
      * @return string
      */
-    protected static function fieldsMods(): string
+    protected static function sqlFieldsMods(): string
     {
-        $newFields = self::getUniqueColumnsFromMods();
+        $newFields = self::getColumnsFromMods();
         $newFields = array_column($newFields, 'field');
         $newFields = array_unique($newFields);
 
@@ -491,28 +506,76 @@ class SalesModalHTML
      *
      * @return array
      */
-    protected static function getUniqueColumnsFromMods(): array
+    protected static function getColumnsFromMods(): array
     {
-        $uniqueColumns = [];
+        $columns = [];
         foreach (self::$mods as $mod) {
             foreach ($mod->addProductColumnsTable() as $column) {
                 if (false === empty($column['title']) && false === empty($column['field'])) {
-                    $uniqueColumns[$column['field'] . $column['title']] = $column;
+                    $columns[$column['title'] . $column['field']] = $column;
                 }
             }
         }
 
-        return array_values($uniqueColumns);
+        return array_values($columns);
     }
 
-    protected static function filtrosMods()
+    /**
+     * Devuelve un array con los filtros de los mods
+     * sin repetir.
+     *
+     * @return array
+     */
+    protected static function getFiltersFromMods(): array
+    {
+        $filters = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->addProductFilters() as $column) {
+                if (false === empty($column['inputName']) && false === empty($column['fieldName'])) {
+                    $filters[$column['inputName'] . $column['fieldName']] = $column;
+                }
+            }
+        }
+
+        return array_values($filters);
+    }
+
+    /**
+     * Retorna el html con los inputs selects de los filtros a agregar
+     *
+     * @return string
+     */
+    protected static function filtrosMods(): string
     {
         $html = '';
 
         foreach (self::$mods as $mod) {
-            $html .= $mod->addProductFilters();
+            $html .= $mod->addSelectsHtmlProductFilters();
         }
 
         return $html;
+    }
+
+    /**
+     * Devuelve los campos y valores de los filtros de los mods
+     * para incluir en la consulta sql
+     *
+     * @return string
+     */
+    protected static function sqlFiltersMods(): string
+    {
+        $where = [];
+
+        foreach (self::getFiltersFromMods() as $filter) {
+            if (false === empty(self::$formData[$filter['inputName']])) {
+                $where[] = Where::column($filter['fieldName'], self::$formData[$filter['inputName']]);
+            }
+        }
+
+        try {
+            return Where::multiSql($where);
+        } catch (\Exception $e) {
+            return '';
+        }
     }
 }
