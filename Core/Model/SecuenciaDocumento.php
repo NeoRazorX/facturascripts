@@ -57,6 +57,9 @@ class SecuenciaDocumento extends ModelClass
     /** @var string */
     public $patron;
 
+    /** @var bool */
+    private static $pattern_test = false;
+
     /** @var string */
     public $tipodoc;
 
@@ -71,6 +74,11 @@ class SecuenciaDocumento extends ModelClass
         $this->numero = 1;
         $this->patron = '{EJE}{SERIE}{0NUM}';
         $this->usarhuecos = false;
+    }
+
+    public function disablePatternTest(bool $disable): void
+    {
+        self::$pattern_test = !$disable;
     }
 
     public function install(): string
@@ -94,6 +102,9 @@ class SecuenciaDocumento extends ModelClass
 
     public function test(): bool
     {
+        // escapamos el html
+        $this->patron = Tools::noHtml($this->patron);
+
         if (empty($this->idempresa)) {
             $this->idempresa = Tools::settings('default', 'idempresa');
         }
@@ -104,6 +115,11 @@ class SecuenciaDocumento extends ModelClass
 
         if ($this->inicio > $this->numero) {
             $this->numero = $this->inicio;
+        }
+
+        // si usar huecos es false, tipodoc es FacturaCliente y el país predeterminado es España, mostramos aviso
+        if (!$this->usarhuecos && 'FacturaCliente' === $this->tipodoc && 'ESP' === Tools::settings('default', 'codpais')) {
+            Tools::log()->error('use-holes-invoices-esp');
         }
 
         return parent::test() && $this->testPatron();
@@ -123,7 +139,7 @@ class SecuenciaDocumento extends ModelClass
             '{ANYO}' => date('Y'),
             '{DIA}' => date('d'),
             '{EJE}' => $this->codejercicio,
-            '{EJE2}' => substr($this->codejercicio, -2),
+            '{EJE2}' => substr($this->codejercicio ?? '', -2),
             '{MES}' => date('m'),
             '{NUM}' => $this->numero,
             '{SERIE}' => $this->codserie,
@@ -135,7 +151,10 @@ class SecuenciaDocumento extends ModelClass
 
     protected function testPatron(): bool
     {
-        $this->patron = Tools::noHtml($this->patron);
+        if (false === self::$pattern_test) {
+            return true;
+        }
+
         if (empty($this->patron)) {
             Tools::log()->warning('empty-pattern');
             return false;
