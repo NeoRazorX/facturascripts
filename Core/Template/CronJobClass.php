@@ -69,6 +69,15 @@ abstract class CronJobClass
 
             self::$echo = substr(self::$echo, $max);
         }
+
+        // guardamos el resto
+        $log = new LogMessage();
+        $log->channel = static::JOB_NAME;
+        $log->level = 'info';
+        $log->message = self::$echo;
+        $log->save();
+
+        self::$echo = '';
     }
 
     protected static function sendToAdmins(string $subject, string $body): void
