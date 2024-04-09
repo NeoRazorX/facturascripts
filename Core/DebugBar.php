@@ -100,8 +100,6 @@ class DebugBar
     {
         $channels = [];
 
-        $timers = Kernel::getTimers();
-        $lastMicroTime = $timers['kernel::init']['start'] ?? microtime(true);
         foreach (MiniLog::read() as $log) {
             if (!isset($channels[$log['channel']])) {
                 $channels[$log['channel']] = [
@@ -110,12 +108,10 @@ class DebugBar
                 ];
             }
 
-            $diff = ($log['time'] - $lastMicroTime) * 1000;
-            $diffText = round($diff) > 0 ? '&#8593;+' . number_format($diff) . 'ms' : '&#8593;';
+            $diffText = number_format($log['time'], 2) . 'ms';
             $channels[$log['channel']]['data'][] = [
                 'level' => $log['level'], 'message' => $log['message'], 'time' => $diffText
             ];
-            $lastMicroTime = $log['time'];
         }
 
         foreach ($channels as $channel) {
