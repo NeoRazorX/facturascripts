@@ -108,7 +108,9 @@ class DebugBar
                 ];
             }
 
-            $diffText = number_format($log['time'], 2) . 'ms';
+            $duration = ($log['context']['duration'] ?? 0) * 1000;
+            $diffText = $duration >= 0.2 ? number_format($duration, 1) . 'ms' : '';
+
             $channels[$log['channel']]['data'][] = [
                 'level' => $log['level'], 'message' => $log['message'], 'time' => $diffText
             ];

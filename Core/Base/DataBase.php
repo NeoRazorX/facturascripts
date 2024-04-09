@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -218,10 +218,10 @@ final class DataBase
             // execute sql
             $start = microtime(true);
             $result = self::$engine->exec(self::$link, $sql);
-            $end = microtime(true);
+            $stop = microtime(true);
 
             // adds the sql query to the history
-            self::$miniLog->debug($sql, ['time' => (($end - $start)*1000)]);
+            self::$miniLog->debug($sql, ['duration' => $stop - $start]);
 
 
             if (!$result) {
@@ -405,10 +405,10 @@ final class DataBase
 
         $start = microtime(true);
         $result = self::$engine->select(self::$link, $sql);
-        $end = microtime(true);
+        $stop = microtime(true);
 
         // add the sql query to the history
-        self::$miniLog->debug($sql, ['time' => (($end - $start)*1000)]);
+        self::$miniLog->debug($sql, ['duration' => $stop - $start]);
 
         if (!empty($result)) {
             return $result;
