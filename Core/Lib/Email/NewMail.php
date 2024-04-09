@@ -524,7 +524,7 @@ class NewMail
 
             // si el adjunto está fuera de la carpeta temporal, lo copiamos
             $currentPath = FS_FOLDER . '/' . $attach[0];
-            if (file_exists($newPath)) {
+            if (file_exists($currentPath)) {
                 copy($currentPath, $newPath);
             }
         }
