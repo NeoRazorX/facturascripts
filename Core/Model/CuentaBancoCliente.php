@@ -77,9 +77,10 @@ class CuentaBancoCliente extends Base\BankAccount
         return parent::install();
     }
 
-    public function test()
+    public function test(): bool
     {
         $this->mandato = Tools::noHtml($this->mandato);
+
         return parent::test();
     }
 
@@ -98,7 +99,7 @@ class CuentaBancoCliente extends Base\BankAccount
         return 'cuentasbcocli';
     }
 
-    protected function updatePrimaryAccount()
+    protected function updatePrimaryAccount(): void
     {
         if ($this->principal) {
             // If this account is the main one, we demarcate the others
