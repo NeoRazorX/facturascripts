@@ -150,7 +150,7 @@ class Empresa extends Base\Contact
         // needed dependencies
         new AttachedFile();
 
-        $num = random(1, 9999);
+        $num = random_int(1, 9999);
         $name = defined('FS_INITIAL_EMPRESA') ? FS_INITIAL_EMPRESA : 'E-' . $num;
         $codpais = defined('FS_INITIAL_CODPAIS') ? FS_INITIAL_CODPAIS : 'ESP';
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,direccion,administrador,cifnif,nombre,'
