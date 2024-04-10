@@ -240,6 +240,10 @@ class Empresa extends Base\Contact
             $this->idempresa = $this->newCode();
         }
 
+        if(is_array($this->settings)){
+            $this->settings = json_encode($this->settings);
+        }
+
         return parent::saveInsert($values) && $this->createPaymentMethods() && $this->createWarehouse();
     }
 
@@ -247,5 +251,14 @@ class Empresa extends Base\Contact
     {
         parent::loadFromData($data, []);
         $this->settings = isset($data['settings']) ? json_decode($data['settings'], true) : [];
+    }
+
+    protected function saveUpdate(array $values = []): bool
+    {
+        if(is_array($this->settings)){
+            $this->settings = json_encode($this->settings);
+        }
+
+        return parent::saveUpdate($values);
     }
 }

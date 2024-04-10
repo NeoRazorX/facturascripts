@@ -101,6 +101,10 @@
         <name>web</name>
         <type>character varying(100)</type>
     </column>
+    <column>
+        <name>settings</name>
+        <type>text</type>
+    </column>
     <constraint>
         <name>empresas_pkey</name>
         <type>PRIMARY KEY (idempresa)</type>

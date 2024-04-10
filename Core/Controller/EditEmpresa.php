@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
@@ -109,16 +110,19 @@ class EditEmpresa extends EditController
 
             case 'insert':
                 if ($this->active === 'EditSettings') {
-                    $this->empresa->settings = json_encode([
+                    $empresa = new Empresa();
+                    $empresa->loadFromCode($this->request->query->get('code'));
+                    $empresa->settings = json_encode([
                         'codalmacen' => $this->request->request->get('codalmacen'),
                         'codserie' => $this->request->request->get('codserie'),
                         'coddivisa' => $this->request->request->get('coddivisa'),
                         'codpago' => $this->request->request->get('codpago'),
                     ]);
-                    $this->empresa->save();
-                    $this->redirect($this->empresa->url() . '&action=save-ok');
+                    $empresa->save();
+                    $this->redirect($empresa->url() . '&action=save-ok');
+                    return true;
                 }
-                return true;
+                return parent::execPreviousAction($action);
 
             default:
                 return parent::execPreviousAction($action);
@@ -145,7 +149,9 @@ class EditEmpresa extends EditController
                 $view->loadData('', $where);
                 break;
             case 'EditSettings':
-                $this->views[$viewName]->model = (object)$this->empresa->settings;
+                $empresa = new Empresa();
+                $empresa->loadFromCode($this->request->query->get('code'));
+                $this->views[$viewName]->model = (object)$empresa->settings;
                 break;
             case $mvn:
                 parent::loadData($viewName, $view);
