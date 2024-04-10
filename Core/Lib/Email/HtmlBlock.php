@@ -43,6 +43,6 @@ class HtmlBlock extends BaseBlock
     {
         $this->footer = $footer;
         $return = $this->pipe('render');
-        return $return ?? $this->html;
+        return $return ?? nl2br($this->html);
     }
 }
