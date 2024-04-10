@@ -246,14 +246,17 @@ abstract class BusinessDocument extends ModelOnChangeClass
     {
         parent::clear();
 
-        $this->codalmacen = Tools::settings('default', 'codalmacen');
-        $this->codpago = Tools::settings('default', 'codpago');
-        $this->codserie = Tools::settings('default', 'codserie');
+        $this->idempresa = Tools::settings('default', 'idempresa');
+        $company = $this->getCompany();
+
+        $this->codalmacen = $company->settings['codalmacen'] ?? Tools::settings('default', 'codalmacen');
+        $this->codpago = $company->settings['codpago'] ?? Tools::settings('default', 'codpago');
+        $this->codserie = $company->settings['codserie'] ?? Tools::settings('default', 'codserie');
+        $this->coddivisa = $company->settings['coddivisa'] ?? Tools::settings('default', 'coddivisa');
         $this->dtopor1 = 0.0;
         $this->dtopor2 = 0.0;
         $this->fecha = Tools::date();
         $this->hora = Tools::hour();
-        $this->idempresa = Tools::settings('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
         $this->netosindto = 0.0;

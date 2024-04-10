@@ -1,7 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -77,13 +77,16 @@ class Empresa extends Base\Contact
     /** @var string */
     public $web;
 
+    /** @var array */
+    public $settings;
+
     public function checkVies(): bool
     {
         $codiso = Paises::get($this->codpais)->codiso ?? '';
         return Vies::check($this->cifnif ?? '', $codiso) === 1;
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->codpais = Tools::settings('default', 'codpais');
@@ -147,7 +150,7 @@ class Empresa extends Base\Contact
         // needed dependencies
         new AttachedFile();
 
-        $num = mt_rand(1, 9999);
+        $num = random(1, 9999);
         $name = defined('FS_INITIAL_EMPRESA') ? FS_INITIAL_EMPRESA : 'E-' . $num;
         $codpais = defined('FS_INITIAL_CODPAIS') ? FS_INITIAL_CODPAIS : 'ESP';
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,direccion,administrador,cifnif,nombre,'
@@ -238,5 +241,11 @@ class Empresa extends Base\Contact
         }
 
         return parent::saveInsert($values) && $this->createPaymentMethods() && $this->createWarehouse();
+    }
+
+    public function loadFromData(array $data = [], array $exclude = []): void
+    {
+        parent::loadFromData($data, []);
+        $this->settings = isset($data['settings']) ? json_decode($data['settings'], true) : [];
     }
 }

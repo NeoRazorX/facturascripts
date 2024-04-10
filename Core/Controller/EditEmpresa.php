@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -62,13 +62,14 @@ class EditEmpresa extends EditController
         return true;
     }
 
-    protected function createViews()
+    protected function createViews(): void
     {
         parent::createViews();
         $this->createViewWarehouse();
         $this->createViewBankAccounts();
         $this->createViewPaymentMethods();
         $this->createViewExercises();
+        $this->createViewSettings();
     }
 
     protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco'): void
@@ -95,11 +96,29 @@ class EditEmpresa extends EditController
             ->disableColumn('company');
     }
 
+    protected function createViewSettings(string $viewName = 'EditSettings'): void
+    {
+        $this->addEditView($viewName, 'Empresa', 'settings', 'fas fa-screwdriver-wrench');
+    }
+
     protected function execPreviousAction($action): bool
     {
         switch ($action) {
             case 'check-vies':
                 return $this->checkViesAction();
+
+            case 'insert':
+                if ($this->active === 'EditSettings') {
+                    $this->empresa->settings = json_encode([
+                        'codalmacen' => $this->request->request->get('codalmacen'),
+                        'codserie' => $this->request->request->get('codserie'),
+                        'coddivisa' => $this->request->request->get('coddivisa'),
+                        'codpago' => $this->request->request->get('codpago'),
+                    ]);
+                    $this->empresa->save();
+                    $this->redirect($this->empresa->url() . '&action=save-ok');
+                }
+                return true;
 
             default:
                 return parent::execPreviousAction($action);
@@ -112,7 +131,7 @@ class EditEmpresa extends EditController
      * @param string $viewName
      * @param BaseView $view
      */
-    protected function loadData($viewName, $view)
+    protected function loadData($viewName, $view): void
     {
         $mvn = $this->getMainViewName();
 
@@ -125,7 +144,9 @@ class EditEmpresa extends EditController
                 $where = [new DataBaseWhere('idempresa', $id)];
                 $view->loadData('', $where);
                 break;
-
+            case 'EditSettings':
+                $this->views[$viewName]->model = (object)$this->empresa->settings;
+                break;
             case $mvn:
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($view);
@@ -134,7 +155,7 @@ class EditEmpresa extends EditController
                         'action' => 'check-vies',
                         'color' => 'info',
                         'icon' => 'fas fa-check-double',
-                        'label' => 'check-vies'
+                        'label' => 'check-vies',
                     ]);
                 }
                 break;
