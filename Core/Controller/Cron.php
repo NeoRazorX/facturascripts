@@ -61,9 +61,14 @@ END;
         // ejecutamos el cron de cada plugin
         $this->runPlugins();
 
-        // si se está ejecutando en modo cli, ejecutamos la cola de trabajos
+        // si se está ejecutando en modo cli, ejecutamos la cola de trabajos, máximo 100 trabajos
+        $max = 100;
         while (PHP_SAPI === 'cli') {
             if (false === WorkQueue::run()) {
+                break;
+            }
+
+            if (--$max <= 0) {
                 break;
             }
         }

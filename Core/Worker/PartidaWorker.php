@@ -33,7 +33,7 @@ class PartidaWorker extends WorkerClass
     public function run(WorkEvent $event): bool
     {
         // detenemos la generación de eventos
-        $this->preventNewEvents(['Model.Partida.Update']);
+        $this->preventNewEvents(['Model.Partida.Save']);
 
         // cargamos la subcuenta
         $subcuenta = new Subcuenta();

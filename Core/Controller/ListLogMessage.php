@@ -131,6 +131,18 @@ class ListLogMessage extends ListController
 
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
+
+        // filtros
+        $this->addFilterPeriod($viewName, 'creation_date', 'period', 'creation_date', true);
+
+        $events = $this->codeModel->all('work_events', 'name', 'name');
+        $this->addFilterSelect($viewName, 'name', 'name', 'name', $events);
+
+        $this->addFilterSelect($viewName, 'done', 'status', 'done', [
+            '' => '------',
+            '0' => Tools::lang()->trans('pending'),
+            '1' => Tools::lang()->trans('done'),
+        ]);
     }
 
     protected function deleteLogsAction(): void
