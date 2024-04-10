@@ -462,7 +462,7 @@ class NewMail
         // buscamos si en el texto hay algo de html
         $textWhitoutHtml = strip_tags($this->text);
         if ($textWhitoutHtml !== $this->text) {
-            return array_merge([new DinHtmlBlock($this->text)], $this->mainBlocks);
+            return array_merge([new DinHtmlBlock(nl2br($this->text))], $this->mainBlocks);
         }
 
         // si no hay html, devolvemos el texto como bloque de texto
