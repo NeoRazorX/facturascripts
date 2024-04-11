@@ -5,6 +5,7 @@
         "codserie": "A",
         "codserierec": "R",
         "tipoidfiscal": "DPI",
+        "updatesupplierprices": true,
         "validate_iban": false
     },
     "email": {

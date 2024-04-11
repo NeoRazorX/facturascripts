@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,10 +29,6 @@ use FacturaScripts\Core\Tools;
  */
 class CodePatterns
 {
-    const DATE_STYLE = 'd-m-Y';
-    const DATETIME_STYLE = 'd-m-Y H:i:s';
-    const HOUR_STYLE = 'H:i:s';
-
     /**
      * Transform a text according to patterns and indicated format.
      * The options parameter can contain the name of the field to use for each pattern.
@@ -56,8 +52,8 @@ class CodePatterns
 
         // valores
         $ejercicio = $model->{$colEjercicio} ?? '';
-        $fecha = $model->{$colFecha} ?? date(self::DATE_STYLE);
-        $hora = $model->{$colHora} ?? date(self::HOUR_STYLE);
+        $fecha = $model->{$colFecha} ?? Tools::date();
+        $hora = $model->{$colHora} ?? Tools::hour();
         $long = $options['long'] ?? 0;
         $numero = $model->{$colNumero} ?? 0;
         $serie = $model->{$colSerie} ?? '';
@@ -67,9 +63,9 @@ class CodePatterns
 
         // transformación
         $result = strtr($parts[0], [
-            '{FECHA}' => date(self::DATE_STYLE, strtotime($fecha)),
-            '{HORA}' => date(self::HOUR_STYLE, strtotime($hora)),
-            '{FECHAHORA}' => date(self::DATETIME_STYLE, strtotime($fecha . ' ' . $hora)),
+            '{FECHA}' => Tools::date($fecha),
+            '{HORA}' => Tools::hour($hora),
+            '{FECHAHORA}' => Tools::dateTime($fecha . ' ' . $hora),
             '{ANYO}' => date('Y', strtotime($fecha)),
             '{DIA}' => date('d', strtotime($fecha)),
             '{EJE}' => $ejercicio,

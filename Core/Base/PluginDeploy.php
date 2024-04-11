@@ -78,7 +78,7 @@ final class PluginDeploy
     /**
      * Initialize the controllers dynamically.
      */
-    public function initControllers()
+    public function initControllers(): void
     {
         $menuManager = new MenuManager();
         $menuManager->init();
@@ -90,8 +90,8 @@ final class PluginDeploy
                 continue;
             }
 
-            // excluimos Installer y ApiRoot
-            if (in_array(substr($fileName, 0, -4), ['Installer', 'ApiRoot'])) {
+            // excluimos Installer y los que comienzan por Api
+            if (substr($fileName, 0, -4) === 'Installer' || substr($fileName, 0, 3) === 'Api') {
                 continue;
             }
 

@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Model\Asiento;
@@ -47,7 +46,7 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addLockButton(string $viewName)
+    protected function addLockButton(string $viewName): void
     {
         $this->addButton($viewName, [
             'action' => 'lock-entries',
@@ -62,7 +61,7 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addRenumberButton(string $viewName)
+    protected function addRenumberButton(string $viewName): void
     {
         $this->addButton($viewName, [
             'action' => 'renumber',
@@ -111,7 +110,7 @@ class ListAsiento extends ListController
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $selectCompany);
         }
 
-        $selectExercise = Ejercicios::codeModel();
+        $selectExercise = $this->getSelectExercise();
         if (count($selectExercise) > 2) {
             $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
         }
@@ -253,5 +252,27 @@ class ListAsiento extends ListController
 
         $this->dataBase->rollback();
         Tools::log()->error('record-save-error');
+    }
+
+    private function getSelectExercise(): array
+    {
+        $companyFilter = $this->request->request->get('filteridempresa', 0);
+        $exerciseFilter = $this->request->request->get('filtercodejercicio', '');
+        $where = empty($companyFilter) ? [] : [new DataBaseWhere('idempresa', $companyFilter)];
+        $result = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre', true, $where);
+        if (empty($exerciseFilter)) {
+            return $result;
+        }
+
+        // check if the selected exercise is in the list
+        foreach ($result as $exercise) {
+            if ($exerciseFilter === $exercise->code) {
+                return $result;
+            }
+        }
+
+        // remove exercise filter if it is not in the list
+        $this->request->request->set('filtercodejercicio', '');
+        return $result;
     }
 }

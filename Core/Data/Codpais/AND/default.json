@@ -6,6 +6,7 @@
         "codserie": "A",
         "codserierec": "R",
         "tipoidfiscal": "NIF",
+        "updatesupplierprices": true,
         "validate_iban": true
     },
     "email": {

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,10 +39,7 @@ abstract class ModelOnChangeClass extends ModelClass
         $this->setPreviousData();
     }
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if (parent::delete()) {
             $this->onDelete();
@@ -119,7 +116,7 @@ abstract class ModelOnChangeClass extends ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (parent::saveInsert($values)) {
             $this->onInsert();
@@ -137,7 +134,7 @@ abstract class ModelOnChangeClass extends ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         foreach (array_keys($this->previousData) as $field) {
             if ($this->{$field} != $this->previousData[$field] && !$this->onChange($field)) {

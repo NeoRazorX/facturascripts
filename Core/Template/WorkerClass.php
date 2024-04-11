@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Template;
 
 use FacturaScripts\Core\Model\WorkEvent;
+use FacturaScripts\Core\WorkQueue;
 
 abstract class WorkerClass
 {
@@ -27,11 +28,20 @@ abstract class WorkerClass
 
     protected function done(): bool
     {
+        $this->preventNewEvents([]);
+
         return true;
     }
 
     protected function stopPropagation(): bool
     {
+        $this->preventNewEvents([]);
+
         return false;
+    }
+
+    protected function preventNewEvents(array $eventNames): void
+    {
+        WorkQueue::preventNewEvents($eventNames);
     }
 }

@@ -49,8 +49,7 @@
                 {% endif %}
                 <div class="btn-group">
                     <a href="{{ fsc.url() }}?action=rebuild&multireqtoken={{ formToken(false) }}"
-                       onclick="animateSpinner('add')"
-                       class="btn btn-spin-action btn-sm btn-warning">
+                       onclick="animateSpinner('add')" class="btn btn-spin-action btn-sm btn-warning">
                         <i class="fas fa-hammer fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ trans('rebuild') }}</span>
                     </a>
@@ -111,8 +110,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">{{ trans('add-new-plugin') }}</h5>
-                            <button type="button" class="close" data-dismiss="modal"
-                                    aria-label="{{ trans('close') }}">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('close') }}">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -132,10 +130,12 @@
                                 {% endif %}
                             </div>
                             <div class="text-right mt-5">
-                                <button type="button" class="btn btn-spin-action btn-secondary"
-                                        data-dismiss="modal">{{ trans('cancel') }}</button>
-                                <button type="submit"
-                                        class="btn btn-spin-action btn-primary">{{ trans('continue') }}</button>
+                                <button type="button" class="btn btn-spin-action btn-secondary" data-dismiss="modal">
+                                    {{ trans('cancel') }}
+                                </button>
+                                <button type="submit" class="btn btn-spin-action btn-primary">
+                                    {{ trans('continue') }}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -260,11 +260,24 @@
 {% endmacro %}
 
 {% macro showInstalledPlugins(fsc) %}
-    <div class="p-2">
-        <input type="text" class="form-control" id="querySearchInstalledPlugins" placeholder="{{ trans('search') }}"/>
+    <div class="m-2 mb-3">
+        <input type="text" class="form-control border-dark" id="querySearchInstalledPlugins" placeholder="{{ trans('search') }}"/>
     </div>
+
+    <div class="card border-success m-2 mb-3">
+        <div class="card-header border-success">{{ trans('enabled-plugins') }}</div>
+        {{ _self.tablePlugins(fsc.pluginList | filter(plugin => plugin.enabled)|sort((a, b) => a.order <=> b.order), fsc.url()) }}
+    </div>
+
+    <div class="card border-dark m-2">
+        <div class="card-header border-dark">{{ trans('disabled-plugins') }}</div>
+        {{ _self.tablePlugins(fsc.pluginList | filter(plugin => plugin.enabled == false), fsc.url()) }}
+    </div>
+{% endmacro %}
+
+{% macro tablePlugins(pluginList, url) %}
     <div class="table-responsive" id="installed-plugins">
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover mb-0">
             <thead>
             <tr>
                 <th>{{ trans('name') }}</th>
@@ -274,7 +287,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for plugin in fsc.pluginList %}
+            {% for plugin in pluginList %}
                 {% set trClass = 'table-danger' %}
                 {% if plugin.enabled %}
                     {% set trClass = 'table-success' %}
@@ -315,8 +328,8 @@
                         {% endif %}
                         {% if plugin.enabled %}
                             <a class="btn btn-sm btn-secondary btn-spin-action" onclick="animateSpinner('add');"
-                               href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
-                                <i class="fas fa-times" aria-hidden="true"></i>
+                               href="{{ url }}?action=disable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
+                                <i class="fas fa-times fa-fw mr-1" aria-hidden="true"></i>
                                 <span class="d-none d-sm-inline-block">{{ trans('disable') }}</span>
                             </a>
                             <br/>
@@ -341,7 +354,7 @@
                                         </a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item"
-                                           href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
+                                           href="{{ url }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
                                             <i class="fas fa-check fa-fw mr-1"
                                                aria-hidden="true"></i> {{ trans('enable') }}
                                         </a>
@@ -349,8 +362,8 @@
                                 </div>
                             {% else %}
                                 <a class="btn btn-sm btn-success btn-spin-action" onclick="animateSpinner('add');"
-                                   href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
-                                    <i class="fas fa-check" aria-hidden="true"></i>
+                                   href="{{ url }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
+                                    <i class="fas fa-check fa-fw mr-1" aria-hidden="true"></i>
                                     <span class="d-none d-sm-inline-block">{{ trans('enable') }}</span>
                                 </a>
                             {% endif %}

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -145,7 +145,6 @@ final class Migrations
         if (self::db()->tableExists($table)) {
             $sqlUpdate = "UPDATE " . $table . " SET aceptaprivacidad = false WHERE aceptaprivacidad IS NULL;"
                 . " UPDATE " . $table . " SET admitemarketing = false WHERE admitemarketing IS NULL;"
-                . " UPDATE " . $table . " SET habilitado = true WHERE habilitado IS NULL;"
                 . " UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;"
                 . " UPDATE " . $table . " SET verificado = false WHERE verificado IS NULL;";
             self::db()->exec($sqlUpdate);

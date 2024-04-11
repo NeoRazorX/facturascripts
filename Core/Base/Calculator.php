@@ -111,6 +111,12 @@ final class Calculator
 
         // acumulamos por cada línea
         foreach ($lines as $line) {
+            // coste
+            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
+            if (isset($line->coste)) {
+                $subtotals['totalcoste'] += $totalCoste;
+            }
+
             $pvpTotal = $line->pvptotal * (100 - $doc->dtopor1) / 100 * (100 - $doc->dtopor2) / 100;
             if (empty($pvpTotal)) {
                 continue;
@@ -138,12 +144,6 @@ final class Calculator
                     'totaliva' => 0.0,
                     'totalrecargo' => 0.0
                 ];
-            }
-
-            // coste
-            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
-            if (isset($line->coste)) {
-                $subtotals['totalcoste'] += $totalCoste;
             }
 
             // si es una venta de segunda mano, calculamos el beneficio y el IVA

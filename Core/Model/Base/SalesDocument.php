@@ -25,6 +25,8 @@ use FacturaScripts\Core\Model\Contacto as CoreContacto;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
+use FacturaScripts\Dinamic\Model\AgenciaTransporte;
+use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
@@ -264,6 +266,8 @@ abstract class SalesDocument extends TransformerDocument
         $result = parent::install();
 
         // needed dependencies
+        new AgenciaTransporte();
+        new Agente();
         new Cliente();
 
         return $result;

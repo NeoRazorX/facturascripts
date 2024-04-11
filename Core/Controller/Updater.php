@@ -63,9 +63,32 @@ class Updater extends Controller
         return $data;
     }
 
-    public function getCoreVersion(): float
+    public static function getCoreVersion(): float
     {
         return Kernel::version();
+    }
+
+    public static function getUpdateItems(): array
+    {
+        $items = [];
+
+        // comprobamos si se puede actualizar el core
+        if (Forja::canUpdateCore()) {
+            $item = self::getUpdateItemsCore();
+            if (!empty($item)) {
+                $items[] = $item;
+            }
+        }
+
+        // comprobamos si se puede actualizar algún plugin
+        foreach (Plugins::list() as $plugin) {
+            $item = self::getUpdateItemsPlugin($plugin);
+            if (!empty($item)) {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
     }
 
     /**
@@ -114,7 +137,7 @@ class Updater extends Controller
     private function downloadAction(): void
     {
         $idItem = $this->request->get('item', '');
-        $this->updaterItems = $this->getUpdateItems();
+        $this->updaterItems = self::getUpdateItems();
         foreach ($this->updaterItems as $key => $item) {
             if ($item['id'] != $idItem) {
                 continue;
@@ -187,38 +210,15 @@ class Updater extends Controller
                 return;
         }
 
-        $this->updaterItems = $this->getUpdateItems();
+        $this->updaterItems = self::getUpdateItems();
         $this->setCoreWarnings();
     }
 
-    private function getUpdateItems(): array
-    {
-        $items = [];
-
-        // comprobamos si se puede actualizar el core
-        if (Forja::canUpdateCore()) {
-            $item = $this->getUpdateItemsCore();
-            if (!empty($item)) {
-                $items[] = $item;
-            }
-        }
-
-        // comprobamos si se puede actualizar algún plugin
-        foreach (Plugins::list() as $plugin) {
-            $item = $this->getUpdateItemsPlugin($plugin);
-            if (!empty($item)) {
-                $items[] = $item;
-            }
-        }
-
-        return $items;
-    }
-
-    private function getUpdateItemsCore(): array
+    private static function getUpdateItemsCore(): array
     {
         $fileName = 'update-' . Forja::CORE_PROJECT_ID . '.zip';
         foreach (Forja::getBuilds(Forja::CORE_PROJECT_ID) as $build) {
-            if ($build['version'] <= $this->getCoreVersion()) {
+            if ($build['version'] <= self::getCoreVersion()) {
                 continue;
             }
 
@@ -247,7 +247,7 @@ class Updater extends Controller
         return [];
     }
 
-    private function getUpdateItemsPlugin(Plugin $plugin): array
+    private static function getUpdateItemsPlugin(Plugin $plugin): array
     {
         $id = $plugin->forja('idplugin', 0);
         $fileName = 'update-' . $id . '.zip';
@@ -354,7 +354,7 @@ class Updater extends Controller
 
         // get the name of the plugin to init after update (if the plugin is enabled)
         $init = '';
-        foreach ($this->getUpdateItems() as $item) {
+        foreach (self::getUpdateItems() as $item) {
             if ($idItem == Forja::CORE_PROJECT_ID) {
                 break;
             }

@@ -63,6 +63,11 @@ final class CrashReport
 
     public static function save(array $info): void
     {
+        // si no existe la carpeta MyFiles, no podemos guardar el archivo
+        if (!is_dir(Tools::folder('MyFiles'))) {
+            return;
+        }
+
         // guardamos los datos en un archivo en MyFiles
         $file_name = 'crash_' . $info['hash'] . '.json';
         $file_path = Tools::folder('MyFiles', $file_name);

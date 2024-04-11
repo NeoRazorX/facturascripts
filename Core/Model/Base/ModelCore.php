@@ -197,7 +197,7 @@ abstract class ModelCore
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         return CSVImport::importTableSQL(static::tableName());
     }

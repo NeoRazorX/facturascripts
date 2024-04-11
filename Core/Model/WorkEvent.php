@@ -68,6 +68,12 @@ class WorkEvent extends ModelClass
         $this->worker_list = '';
     }
 
+    public function param(string $key, $default = null)
+    {
+        $params = $this->params();
+        return $params[$key] ?? $default;
+    }
+
     public function params(): array
     {
         return empty($this->params) ? [] : json_decode($this->params, true);
@@ -88,6 +94,12 @@ class WorkEvent extends ModelClass
         $this->name = Tools::noHtml($this->name);
         $this->value = Tools::noHtml($this->value);
         $this->worker_list = Tools::noHtml($this->worker_list);
+
+        // si la lista de parámetros es muy larga, devolvemos false
+        if (strlen($this->params) > 5000) {
+            Tools::log()->error('The params field is too long: ' . strlen($this->params));
+            return false;
+        }
 
         return parent::test();
     }

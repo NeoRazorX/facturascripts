@@ -41,6 +41,7 @@ function widgetSelectGetData(select, parent) {
                 let key = (element.key == null) ? '' : element.key;
                 select.append('<option value="' + key + '" ' + selected + '>' + element.value + '</option>');
             });
+            select.change();
         },
         error: function (msg) {
             alert(msg.status + " " + msg.responseText);

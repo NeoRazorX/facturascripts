@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use DateTimeZone;
+use Exception;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
@@ -31,6 +32,21 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Installer implements ControllerInterface
 {
+    /** @var string */
+    public $db_host;
+
+    /** @var string */
+    public $db_name;
+
+    /** @var int */
+    public $db_port;
+
+    /** @var string */
+    public $db_type;
+
+    /** @var string */
+    public $db_user;
+
     /** @var Request */
     protected $request;
 
@@ -59,6 +75,12 @@ class Installer implements ControllerInterface
 
     public function run(): void
     {
+        $this->db_host = $this->request->get('fs_db_host', 'localhost');
+        $this->db_name = $this->request->get('fs_db_name', 'facturascripts');
+        $this->db_port = $this->request->get('fs_db_port', 3306);
+        $this->db_type = $this->request->get('fs_db_type', 'mysql');
+        $this->db_user = $this->request->get('fs_db_user', 'root');
+
         $installed = $this->searchErrors() &&
             $this->request->getMethod() === 'POST' &&
             $this->createDataBase() &&
@@ -83,6 +105,7 @@ class Installer implements ControllerInterface
         }
 
         echo Html::render('Installer/Install.html.twig', [
+            'fsc' => $this,
             'license' => file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
             'timezones' => DateTimeZone::listIdentifiers(),
             'version' => Kernel::version()
@@ -92,21 +115,20 @@ class Installer implements ControllerInterface
     private function createDataBase(): bool
     {
         $dbData = [
-            'host' => $this->request->request->get('fs_db_host'),
-            'port' => $this->request->request->get('fs_db_port'),
-            'user' => $this->request->request->get('fs_db_user'),
+            'host' => $this->db_host,
+            'port' => $this->db_port,
+            'user' => $this->db_user,
             'pass' => $this->request->request->get('fs_db_pass'),
-            'name' => $this->request->request->get('fs_db_name'),
+            'name' => $this->db_name,
             'socket' => $this->request->request->get('mysql_socket', '')
         ];
 
-        $dbType = $this->request->request->get('fs_db_type');
-        if ('postgresql' == $dbType && strtolower($dbData['name']) != $dbData['name']) {
+        if ('postgresql' == $this->db_type && strtolower($dbData['name']) != $dbData['name']) {
             Tools::log()->warning('database-name-must-be-lowercase');
             return false;
         }
 
-        switch ($dbType) {
+        switch ($this->db_type) {
             case 'mysql':
                 return $this->testMysql($dbData);
 
@@ -341,11 +363,17 @@ class Installer implements ControllerInterface
             ini_set('mysqli.default_socket', $dbData['socket']);
         }
 
-        // Omit the DB name because it will be checked on a later stage
-        $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
-        if ($connection->connect_error) {
+        try {
+            // Omit the DB name because it will be checked on a later stage
+            $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
+            if ($connection->connect_error) {
+                Tools::log()->critical('cant-connect-database');
+                Tools::log()->critical($connection->connect_errno . ': ' . $connection->connect_error);
+                return false;
+            }
+        } catch (Exception $e) {
             Tools::log()->critical('cant-connect-database');
-            Tools::log()->critical($connection->connect_errno . ': ' . $connection->connect_error);
+            Tools::log()->critical($e->getMessage());
             return false;
         }
 

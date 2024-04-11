@@ -67,9 +67,9 @@
         </div>
     </div>
     {# -- Attached files -- #}
-    <div class="form-row row-cols-1 row-cols-md-5">
+    <div class="form-row row-cols-1 row-cols-md-5" id="images-container">
         {% for counter, image in currentView.cursor %}
-            <div class="col mb-4">
+            <div class="col mb-4 images-item" data-image-id="{{ image.id }}" title="{{ trans('you-can-drag-and-drop-to-sort-the-images') }}">
                 {% set border = image.referencia ? '' : 'border-primary' %}
                 <div class="card {{ border }} shadow">
                     <img src="{{ asset(image.url('download')) }}" class="card-img-top"

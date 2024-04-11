@@ -254,7 +254,7 @@ class Producto extends ModelClass
             $where[] = new DataBaseWhere('referencia', null);
         }
 
-        $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
+        $orderBy = ['orden' => 'ASC'];
         return $image->all($where, $orderBy, 0, 0);
     }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,18 +26,48 @@
                 <widget type="text" fieldname="idprovincia" required="true" />
             </column>
             <column name="country" titleurl="ListPais" numcolumns="2" order="110">
-                <widget type="select" fieldname="codpais" icon="fas fa-globe-americas" onclick="EditPais" required="true">
+                <widget type="select" fieldname="codpais" readonly="true" onclick="EditPais" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
                 </widget>
             </column>
-            <column name="province" order="120">
+            <column name="province" numcolumns="6" order="120">
                 <widget type="text" fieldname="provincia" required="true" />
             </column>
             <column name="iso" numcolumns="2" order="130" titleurl="https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias">
                 <widget type="text" fieldname="codisoprov" maxlength="10" required="true" />
             </column>
-            <column name="code" numcolumns="2" description="optional" order="140">
+            <column name="code" numcolumns="2" order="140">
                 <widget type="text" maxlength="2" fieldname="codeid" icon="fas fa-hashtag"/>
+            </column>
+            <column name="latitude" order="150">
+                <widget type="number" fieldname="latitude"/>
+            </column>
+            <column name="longitude" order="160">
+                <widget type="number" fieldname="longitude"/>
+            </column>
+            <column name="telephone-prefix" order="170">
+                <widget type="text" maxlength="10" fieldname="telephone_prefix"/>
+            </column>
+            <column name="alias" numcolumns="12" order="180">
+                <widget type="textarea" fieldname="alias"/>
+            </column>
+        </group>
+        <group name="logs" numcolumns="12">
+            <column name="creation-date" order="100">
+                <widget type="datetime" fieldname="creation_date" readonly="true"/>
+            </column>
+            <column name="user" order="110">
+                <widget type="select" fieldname="nick" readonly="true">
+                    <values source="users" fieldcode="nick" fieldtile="nick"/>
+                </widget>
+            </column>
+            <column name="last-update" order="120">
+                <widget type="datetime" fieldname="last_update" readonly="true"/>
+            </column>
+            <column name="last-user" order="130">
+                <widget type="select" fieldname="last_nick" readonly="true">
+                    <values source="users" fieldcode="nick" fieldtile="nick"/>
+                </widget>
             </column>
         </group>
     </columns>
