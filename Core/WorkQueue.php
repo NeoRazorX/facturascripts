@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\WorkEvent;
 use Throwable;
@@ -119,11 +120,25 @@ final class WorkQueue
     private static function getWorkerClass(string $worker_name): string
     {
         $workerClass = '\\FacturaScripts\\Dinamic\\Worker\\' . $worker_name;
-        if (!class_exists($workerClass)) {
-            $workerClass = '\\FacturaScripts\\Core\\Worker\\' . $worker_name;
+        if (class_exists($workerClass)) {
+            return $workerClass;
         }
 
-        return $workerClass;
+        // buscamos en los plugins
+        foreach (Plugins::enabled() as $name) {
+            $pluginWorker = '\\FacturaScripts\\Plugins\\' . $name . '\\Worker\\' . $worker_name;
+            if (class_exists($pluginWorker)) {
+                return $pluginWorker;
+            }
+        }
+
+        // buscamos en el core
+        $coreWorker = '\\FacturaScripts\\Core\\Worker\\' . $worker_name;
+        if (class_exists($coreWorker)) {
+            return $coreWorker;
+        }
+
+        throw new Exception('Worker not found: ' . $worker_name);
     }
 
     private static function runEvent(WorkEvent &$event): bool
