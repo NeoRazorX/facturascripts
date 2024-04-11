@@ -80,14 +80,14 @@ class Tools
         return $default;
     }
 
-    public static function date(?string $date = null): string
+    public static function date(?string $date = null, string $format = self::DATE_STYLE): string
     {
-        return empty($date) ? date(self::DATE_STYLE) : date(self::DATE_STYLE, strtotime($date));
+        return empty($date) ? date($format) : date($format, strtotime($date));
     }
 
-    public static function dateTime(?string $date = null): string
+    public static function dateTime(?string $date = null, string $format = self::DATETIME_STYLE): string
     {
-        return empty($date) ? date(self::DATETIME_STYLE) : date(self::DATETIME_STYLE, strtotime($date));
+        return empty($date) ? date($format) : date($format, strtotime($date));
     }
 
     public static function fixHtml(?string $text = null): ?string
@@ -196,9 +196,9 @@ class Tools
         return $result;
     }
 
-    public static function hour(?string $date = null): string
+    public static function hour(?string $date = null, string $format = self::HOUR_STYLE): string
     {
-        return empty($date) ? date(self::HOUR_STYLE) : date(self::HOUR_STYLE, strtotime($date));
+        return empty($date) ? date($format) : date($format, strtotime($date));
     }
 
     public static function lang(?string $lang = ''): Translator
@@ -351,14 +351,14 @@ class Tools
         return $result;
     }
 
-    public static function timeToDate(int $time): string
+    public static function timeToDate(int $time, string $format = self::DATE_STYLE): string
     {
-        return date(self::DATE_STYLE, $time);
+        return date($format, $time);
     }
 
-    public static function timeToDateTime(int $time): string
+    public static function timeToDateTime(int $time, string $format = self::DATETIME_STYLE): string
     {
-        return date(self::DATETIME_STYLE, $time);
+        return date($format, $time);
     }
 
     private static function settingsLoad(): void
