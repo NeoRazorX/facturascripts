@@ -617,7 +617,7 @@
     "filters": "Filtros",
     "finalize": "Finalizar",
     "find-problems": "Encontrar problemas",
-    "finished-cron": "Terminada la ejecución del cron. Tiempo consumido: %timeNeeded% segundos, Memoria: %memoryUsed% MB.",
+    "finished-cron": "Terminada la ejecución del cron. Tiempo consumido: %timeNeeded% segundos, Memoria: %memoryUsed%",
     "first-quarter": "1º trimestre",
     "first-steps": "Primeros pasos",
     "first-trimester": "Primer trimestre",

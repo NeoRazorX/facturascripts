@@ -85,12 +85,18 @@ END;
             ob_flush();
         }
 
-        $executionTime = Kernel::getExecutionTime();
-        $memoryUsed = memory_get_peak_usage(true) / 1024 / 1024;
-        $context = ['%timeNeeded%' => $executionTime, '%memoryUsed%' => $memoryUsed];
-
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('finished-cron', $context) . PHP_EOL;
+        $context = [
+            '%timeNeeded%' => Kernel::getExecutionTime(3),
+            '%memoryUsed%' => $this->getMemorySize(memory_get_peak_usage())
+        ];
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('finished-cron', $context) . PHP_EOL . PHP_EOL;
         Tools::log()->notice('finished-cron', $context);
+    }
+
+    private function getMemorySize(int $size): string
+    {
+        $unit = ['b', 'kb', 'mb', 'gb', 'tb', 'pb'];
+        return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
     }
 
     protected function runPlugins(): void
