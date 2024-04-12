@@ -18,10 +18,10 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Request;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Request;
 use const FS_ITEM_LIMIT;
 
 /**

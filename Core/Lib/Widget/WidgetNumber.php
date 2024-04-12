@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\NumberTools;
-use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Request;
 
 /**
  * Description of WidgetNumber

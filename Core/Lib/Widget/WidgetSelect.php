@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\AssetManager;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Dinamic\Model\CodeModel;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetSelect

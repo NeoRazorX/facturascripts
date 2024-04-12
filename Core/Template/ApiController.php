@@ -23,12 +23,12 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 use FacturaScripts\Dinamic\Model\ApiKey;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 abstract class ApiController implements ControllerInterface
 {
@@ -99,8 +99,8 @@ abstract class ApiController implements ControllerInterface
 
     public function run(): void
     {
-        if ($this->request->server->get('REQUEST_METHOD') == 'OPTIONS') {
-            $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
+        if ($this->request->get('REQUEST_METHOD') == 'OPTIONS') {
+            $allowHeaders = $this->request->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
             $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
             return;
         }
@@ -162,7 +162,7 @@ abstract class ApiController implements ControllerInterface
             new DataBaseWhere('resource', $resource)
         ];
         if ($apiAccess->loadFromCode('', $where)) {
-            switch ($this->request->getMethod()) {
+            switch ($this->request->method()) {
                 case 'DELETE':
                     return $apiAccess->allowdelete;
 

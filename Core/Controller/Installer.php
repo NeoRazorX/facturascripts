@@ -25,9 +25,9 @@ use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use mysqli;
-use Symfony\Component\HttpFoundation\Request;
 
 class Installer implements ControllerInterface
 {
@@ -60,7 +60,7 @@ class Installer implements ControllerInterface
     public function run(): void
     {
         $installed = $this->searchErrors() &&
-            $this->request->getMethod() === 'POST' &&
+            $this->request->method() === 'POST' &&
             $this->createDataBase() &&
             $this->createFolders() &&
             $this->saveHtaccess() &&

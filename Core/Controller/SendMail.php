@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -32,7 +33,6 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\User;
 use PHPMailer\PHPMailer\Exception;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of SendMail
@@ -136,7 +136,7 @@ class SendMail extends Controller
         }
 
         $invoice = new FacturaCliente();
-        if ($invoice->loadFromCode($this->request->query->getAlnum('modelCode')) && $invoice->editable) {
+        if ($invoice->loadFromCode($this->request->query->get('modelCode')->toAlnum()) && $invoice->editable) {
             Tools::log()->warning('sketch-invoice-warning');
         }
     }

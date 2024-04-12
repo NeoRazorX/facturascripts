@@ -126,6 +126,12 @@ final class Request
         return $this->query->get($key, $default);
     }
 
+    public function getBasePath()
+    {
+        $url = $_SERVER['REQUEST_URI'];
+        return parse_url($url, PHP_URL_PATH);
+    }
+
     public function has(string ...$key): bool
     {
         $found = false;

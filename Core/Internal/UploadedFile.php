@@ -84,6 +84,14 @@ final class UploadedFile
         }
     }
 
+    public static function getMaxFilesize()
+    {
+        $sizePostMax = self::parseFilesize(\ini_get('post_max_size'));
+        $sizeUploadMax = self::parseFilesize(\ini_get('upload_max_filesize'));
+
+        return min($sizePostMax ?: \PHP_INT_MAX, $sizeUploadMax ?: \PHP_INT_MAX);
+    }
+
     public function getMimeType(): string
     {
         return mime_content_type($this->tmp_name);
@@ -107,5 +115,39 @@ final class UploadedFile
     public function moveTo(string $targetPath): bool
     {
         return move_uploaded_file($this->tmp_name, $targetPath);
+    }
+
+    private static function parseFilesize(string $size): int
+    {
+        if ('' === $size) {
+            return 0;
+        }
+
+        $size = strtolower($size);
+
+        $max = ltrim($size, '+');
+        if (str_starts_with($max, '0x')) {
+            $max = \intval($max, 16);
+        } elseif (str_starts_with($max, '0')) {
+            $max = \intval($max, 8);
+        } else {
+            $max = (int)$max;
+        }
+
+        switch (substr($size, -1)) {
+            case 't':
+                $max *= 1024;
+            // no break
+            case 'g':
+                $max *= 1024;
+            // no break
+            case 'm':
+                $max *= 1024;
+            // no break
+            case 'k':
+                $max *= 1024;
+        }
+
+        return $max;
     }
 }

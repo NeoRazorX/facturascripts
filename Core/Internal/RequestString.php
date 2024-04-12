@@ -54,6 +54,11 @@ final class RequestString
         return $this;
     }
 
+    public function toAlnum(): string
+    {
+        return preg_replace('/[^[:alnum:]]/', '', $this->value ?? '');
+    }
+
     public function toBool(bool $allowNull = true): ?bool
     {
         if ($allowNull && is_null($this->value)) {

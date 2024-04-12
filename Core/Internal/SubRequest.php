@@ -29,6 +29,13 @@ final class SubRequest
         $this->data = $data;
     }
 
+    public function add(array $parameters = [])
+    {
+        foreach ($parameters as $key => $value) {
+            $this->set($key, $value);
+        }
+    }
+
     /**
      * @param string ...$key
      * @return RequestString[]
