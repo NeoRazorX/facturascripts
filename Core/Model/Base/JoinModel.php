@@ -181,8 +181,8 @@ abstract class JoinModel
         }
 
         // buscamos en caché
+        $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-count';
         if (empty($where)) {
-            $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-count';
             $count = Cache::get($cacheKey);
             if (is_numeric($count)) {
                 return $count;
