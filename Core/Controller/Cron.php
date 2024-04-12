@@ -86,8 +86,11 @@ END;
         }
 
         $executionTime = Kernel::getExecutionTime();
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('finished-cron', ['%timeNeeded%' => $executionTime]) . PHP_EOL;
-        Tools::log()->notice('finished-cron', ['%timeNeeded%' => $executionTime]);
+        $memoryUsed = memory_get_peak_usage(true) / 1024 / 1024;
+        $context = ['%timeNeeded%' => $executionTime, '%memoryUsed%' => $memoryUsed];
+
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('finished-cron', $context) . PHP_EOL;
+        Tools::log()->notice('finished-cron', $context);
     }
 
     protected function runPlugins(): void
