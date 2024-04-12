@@ -113,26 +113,18 @@ abstract class AccountingClass extends AccountingAccounts
      */
     protected function addSurchargeLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool
     {
-        if (empty($values['totalrecargo'])) {
+        $amount = round($values['totalrecargo'], FS_NF0);
+        if (empty($amount)) {
             return true;
         }
 
         /// add basic data
-        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $values['totalrecargo']);
+        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
 
         /// counterpart?
         if (!empty($counterpart)) {
             $line->setCounterpart($counterpart);
         }
-
-        /// add tax register data
-        $line->baseimponible = (float)$values['neto'];
-        $line->iva = 0;
-        $line->recargo = (float)$values['recargo'];
-        $line->cifnif = $this->document->cifnif;
-        $line->codserie = $this->document->codserie;
-        $line->documento = $this->document->codigo;
-        $line->factura = $this->document->numero;
 
         /// save new line
         return $line->save();
@@ -153,7 +145,8 @@ abstract class AccountingClass extends AccountingAccounts
     protected function addTaxLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool
     {
         /// add basic data
-        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $values['totaliva']);
+        $amount = round($values['totaliva'], FS_NF0);
+        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
 
         /// counterpart?
         if (!empty($counterpart)) {
@@ -163,7 +156,7 @@ abstract class AccountingClass extends AccountingAccounts
         /// add tax register data
         $line->baseimponible = (float)$values['neto'];
         $line->iva = (float)$values['iva'];
-        $line->recargo = 0;
+        $line->recargo = (float)$values['recargo'];
         $line->cifnif = $this->document->cifnif;
         $line->codserie = $this->document->codserie;
         $line->documento = $this->document->codigo;
