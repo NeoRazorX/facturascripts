@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Cache;
 
 /**
  * The class from which all views of the model are inherited.
@@ -179,6 +180,15 @@ abstract class JoinModel
             $groupFields .= ', ';
         }
 
+        // buscamos en caché
+        if (empty($where)) {
+            $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-count';
+            $count = Cache::get($cacheKey);
+            if (is_numeric($count)) {
+                return $count;
+            }
+        }
+
         $sql = 'SELECT ' . $groupFields . 'COUNT(*) count_total'
             . ' FROM ' . $this->getSQLFrom()
             . DataBaseWhere::getSQLWhere($where)
@@ -186,7 +196,14 @@ abstract class JoinModel
 
         $data = self::$dataBase->select($sql);
         $count = count($data);
-        return ($count == 1) ? (int)$data[0]['count_total'] : $count;
+        $final = $count == 1 ? (int)$data[0]['count_total'] : $count;
+
+        // guardamos en caché
+        if (empty($where)) {
+            Cache::set($cacheKey, $final);
+        }
+
+        return $final;
     }
 
     /**
