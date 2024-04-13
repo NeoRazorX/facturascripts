@@ -298,14 +298,9 @@ class ListView extends BaseView
 
         // if there are no filters, then read from the cache
         $key = 'table-' . $tableName . '-' . $fieldName . '-total';
-        $sum = Cache::get($key);
-        if (is_null($sum)) {
-            // empty cache value? Then get the value from the database and store on the cache
-            $sum = TotalModel::sum($tableName, $fieldName, $where);
-            Cache::set($key, $sum);
-        }
-
-        return $sum;
+        return Cache::remember($key, function () use ($tableName, $fieldName, $where) {
+            return TotalModel::sum($tableName, $fieldName, $where);
+        });
     }
 
     private function loadTotalAmounts(): void
