@@ -60,6 +60,12 @@ final class Cache
         // buscamos los archivos que contengan el prefijo y los borramos
         $folder = FS_FOLDER . self::FILE_PATH;
         foreach (scandir($folder) as $fileName) {
+            // si no es un archivo, continuamos
+            if (!str_ends_with($fileName, '.cache')) {
+                continue;
+            }
+
+            // si el archivo empieza por el prefijo, lo borramos
             $len = strlen($prefix);
             if (substr($fileName, 0, $len) === $prefix) {
                 unlink($folder . '/' . $fileName);
