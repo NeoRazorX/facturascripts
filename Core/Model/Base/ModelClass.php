@@ -144,12 +144,16 @@ abstract class ModelClass extends ModelCore
             return false;
         }
 
-        Cache::delete('model-' . $this->modelClassName() . '-count');
+        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
+        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('table-' . static::tableName() . '-');
+
         WorkQueue::send(
             'Model.' . $this->modelClassName() . '.Delete',
             $this->primaryColumnValue(),
             $this->toArray()
         );
+
         return $this->pipeFalse('delete');
     }
 
@@ -284,6 +288,7 @@ abstract class ModelClass extends ModelCore
             $this->primaryColumnValue(),
             $this->toArray()
         );
+
         return $this->pipeFalse('save');
     }
 
@@ -390,7 +395,10 @@ abstract class ModelClass extends ModelCore
             self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
         }
 
-        Cache::delete('model-' . $this->modelClassName() . '-count');
+        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
+        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('table-' . static::tableName() . '-');
+
         WorkQueue::send(
             'Model.' . $this->modelClassName() . '.Insert',
             $this->primaryColumnValue(),
@@ -430,12 +438,16 @@ abstract class ModelClass extends ModelCore
             return false;
         }
 
-        Cache::delete('model-' . $this->modelClassName() . '-count');
+        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
+        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('table-' . static::tableName() . '-');
+
         WorkQueue::send(
             'Model.' . $this->modelClassName() . '.Update',
             $this->primaryColumnValue(),
             $this->toArray()
         );
+
         return $this->pipeFalse('saveUpdate');
     }
 

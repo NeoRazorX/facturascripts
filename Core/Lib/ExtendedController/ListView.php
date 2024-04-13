@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -297,13 +297,14 @@ class ListView extends BaseView
         }
 
         // if there are no filters, then read from the cache
-        $key = 'sum-' . $tableName . '-' . $fieldName;
+        $key = 'table-' . $tableName . '-' . $fieldName . '-total';
         $sum = Cache::get($key);
         if (is_null($sum)) {
             // empty cache value? Then get the value from the database and store on the cache
             $sum = TotalModel::sum($tableName, $fieldName, $where);
             Cache::set($key, $sum);
         }
+
         return $sum;
     }
 
