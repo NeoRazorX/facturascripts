@@ -135,7 +135,7 @@ abstract class ModelCore
             self::$dataBase = new DataBase();
             self::$dataBase->connect();
 
-            $tables = Cache::get('fs_checked_tables');
+            $tables = Cache::get('db-checked-tables');
             if (is_array($tables) && !empty($tables)) {
                 self::$checkedTables = $tables;
             }
@@ -144,7 +144,7 @@ abstract class ModelCore
         if (static::tableName() !== '' && false === in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
             Tools::log()->debug('table-checked', ['%tableName%' => static::tableName()]);
             self::$checkedTables[] = static::tableName();
-            Cache::set('fs_checked_tables', self::$checkedTables);
+            Cache::set('db-checked-tables', self::$checkedTables);
         }
 
         $this->loadModelFields(self::$dataBase, static::tableName());
