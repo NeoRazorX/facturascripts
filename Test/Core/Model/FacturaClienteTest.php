@@ -29,6 +29,7 @@ use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\Stock;
+use FacturaScripts\Test\Core\Lib\SoapClientMock;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -719,10 +720,7 @@ final class FacturaClienteTest extends TestCase
 
     public function testSetIntraCommunity(): void
     {
-        // comprobamos primero si el VIES funciona
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service is not available');
-        }
+         Vies::setClient(new SoapClientMock());
 
         // establecemos la empresa en España con un cif español
         $company = Empresas::default();

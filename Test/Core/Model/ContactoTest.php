@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Contacto;
+use FacturaScripts\Test\Core\Lib\SoapClientMock;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -197,6 +198,8 @@ final class ContactoTest extends TestCase
 
     public function testVies(): void
     {
+         Vies::setClient(new SoapClientMock());
+
         // creamos un contacto sin cif/nif
         $contact = new Contacto();
         $contact->nombre = 'Test';

@@ -24,6 +24,11 @@ use PHPUnit\Framework\TestCase;
 
 final class ViesTest extends TestCase
 {
+    protected function setUp(): void
+    {
+         Vies::setClient(new SoapClientMock());
+    }
+
     public function testCheck(): void
     {
         $data = [
@@ -48,9 +53,6 @@ final class ViesTest extends TestCase
             }
 
             $this->assertEquals($item['results'], $check);
-
-            // esperamos medio segundo para no saturar el servicio
-            usleep(500000);
         }
     }
 }

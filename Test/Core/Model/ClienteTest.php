@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Test\Core\Lib\SoapClientMock;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -180,6 +181,8 @@ final class ClienteTest extends TestCase
 
     public function testVies(): void
     {
+         Vies::setClient(new SoapClientMock());
+
         // creamos un cliente sin cifnif
         $cliente = new Cliente();
         $cliente->nombre = 'Test';
