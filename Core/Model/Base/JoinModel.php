@@ -241,8 +241,8 @@ abstract class JoinModel
                 'type' => ''
             ];
 
-            // si empieza por paréntesis, saltamos
-            if (0 === strpos($field, '(')) {
+            // si contiene paréntesis, saltamos
+            if (false !== strpos($field, '(')) {
                 continue;
             }
 
@@ -312,6 +312,36 @@ abstract class JoinModel
         }
 
         return null;
+    }
+
+    public function totalSum(string $field, array $where = []): float
+    {
+        // buscamos en caché
+        $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-' . $field . '-total-sum';
+        if (empty($where)) {
+            $count = Cache::get($cacheKey);
+            if (is_numeric($count)) {
+                return $count;
+            }
+        }
+
+        // obtenemos el nombre completo del campo
+        $fields = $this->getFields();
+        $field = $fields[$field] ?? $field;
+
+        $sql = false !== strpos($field, '(') ?
+            'SELECT ' . $field . ' AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where) :
+            'SELECT SUM(' . $field . ') AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where);
+
+        $data = self::$dataBase->select($sql);
+        $sum = count($data) == 1 ? (float)$data[0]['total_sum'] : 0.0;
+
+        // guardamos en caché
+        if (empty($where)) {
+            Cache::set($cacheKey, $sum);
+        }
+
+        return $sum;
     }
 
     /**

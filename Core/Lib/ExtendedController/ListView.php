@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Tools;
@@ -28,7 +27,6 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
 use FacturaScripts\Dinamic\Lib\Widget\RowStatus;
-use FacturaScripts\Dinamic\Model\TotalModel;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -283,30 +281,9 @@ class ListView extends BaseView
         AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/ListView.js?v=2');
     }
 
-    /**
-     * @param string $tableName
-     * @param string $fieldName
-     * @param array $where
-     *
-     * @return float
-     */
-    private function getTotalSum(string $tableName, string $fieldName, array $where): float
-    {
-        if ($where) {
-            return TotalModel::sum($tableName, $fieldName, $where);
-        }
-
-        // if there are no filters, then read from the cache
-        $key = 'table-' . $tableName . '-' . $fieldName . '-total';
-        return Cache::remember($key, function () use ($tableName, $fieldName, $where) {
-            return TotalModel::sum($tableName, $fieldName, $where);
-        });
-    }
-
     private function loadTotalAmounts(): void
     {
-        $tableName = count($this->cursor) > 1 && method_exists($this->model, 'tableName') ? $this->model->tableName() : '';
-        if (empty($tableName)) {
+        if (count($this->cursor) <= 1) {
             return;
         }
 
@@ -331,7 +308,7 @@ class ListView extends BaseView
             $this->totalAmounts[$col->widget->fieldname] = [
                 'title' => $col->title,
                 'page' => $pageTotalAmount,
-                'total' => $this->getTotalSum($tableName, $col->widget->fieldname, $this->where)
+                'total' => $this->model->totalSum($col->widget->fieldname, $this->where)
             ];
         }
     }

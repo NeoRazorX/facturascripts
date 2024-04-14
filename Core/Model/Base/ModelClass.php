@@ -106,19 +106,21 @@ abstract class ModelClass extends ModelCore
      */
     public function count(array $where = []): int
     {
+        $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName();
+
         if ($where) {
-            $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where);
-            $data = self::$dataBase->select($sql);
+            $data = self::$dataBase->select($sql . DataBaseWhere::getSQLWhere($where));
             return empty($data) ? 0 : (int)$data[0]['total'];
         }
 
         $key = 'model-' . $this->modelClassName() . '-count';
         $count = Cache::get($key);
         if (is_null($count)) {
-            $data = self::$dataBase->select('SELECT COUNT(1) AS total FROM ' . static::tableName());
+            $data = self::$dataBase->select($sql);
             $count = empty($data) ? 0 : (int)$data[0]['total'];
             Cache::set($key, $count);
         }
+
         return $count;
     }
 
@@ -323,6 +325,26 @@ abstract class ModelClass extends ModelCore
         }
 
         return $this->pipeFalse('test');
+    }
+
+    public function totalSum(string $field, array $where = []): float
+    {
+        $sql = 'SELECT SUM(' . self::$dataBase->escapeColumn($field) . ') AS total FROM ' . static::tableName();
+
+        if ($where) {
+            $data = self::$dataBase->select($sql . DataBaseWhere::getSQLWhere($where));
+            return empty($data) ? 0 : (int)$data[0]['total'];
+        }
+
+        $key = 'model-' . $this->modelClassName() . '-' . $field . '-total-sum';
+        $sum = Cache::get($key);
+        if (is_null($sum)) {
+            $data = self::$dataBase->select($sql);
+            $sum = empty($data) ? 0 : (float)$data[0]['total'];
+            Cache::set($key, $sum);
+        }
+
+        return $sum;
     }
 
     /**
