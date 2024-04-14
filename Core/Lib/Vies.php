@@ -39,6 +39,9 @@ class Vies
 
     private static $lastError = '';
 
+    /** @var SoapClient */
+    private static $client;
+
     public static function check(string $cifnif, string $codiso): int
     {
         // comprobamos si la extensión soap está instalada
@@ -86,7 +89,11 @@ class Vies
         self::$lastError = '';
 
         try {
-            $client = new SoapClient(self::VIES_URL, ['exceptions' => true]);
+            if (!self::$client instanceof SoapClient){
+                self::$client = new SoapClient(self::VIES_URL, ['exceptions' => true]);
+            }
+            $client = self::$client;
+
             $json = json_encode(
                 $client->checkVat([
                     'countryCode' => $codiso,
@@ -112,5 +119,17 @@ class Vies
         // se ha producido error al comprobar el VAT number con VIES
         Tools::log()->warning('error-checking-vat-number', ['%vat-number%' => $vatNumber]);
         return -1;
+    }
+
+    /**
+     * Permite asignar la clase del cliente Soap
+     * Esto lo usamos para realizar los tests
+     * usando una clase Mock
+     *
+     * @param SoapClient $soapClient
+     */
+    public static function setClient(SoapClient $soapClient)
+    {
+        self::$client = $soapClient;
     }
 }
