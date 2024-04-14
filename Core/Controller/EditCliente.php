@@ -25,6 +25,8 @@ use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\SettingsModel;
 
 /**
  * Controller to edit a single item from the Cliente model
@@ -143,6 +145,13 @@ class EditCliente extends ComercialContactController
         if ($this->user->can('EditReciboCliente')) {
             $this->createReceiptView('ListReciboCliente', 'ReciboCliente');
         }
+
+        $this->createViewSettings();
+    }
+
+    protected function createViewSettings(string $viewName = 'EditSettingsModel'): void
+    {
+        $this->addEditListView($viewName, 'SettingsModel', 'settings', 'fas fa-wrench');
     }
 
     /**
@@ -159,6 +168,36 @@ class EditCliente extends ComercialContactController
         }
 
         return $return;
+    }
+
+    protected function execPreviousAction($action)
+    {
+        if ($this->active === 'EditSettingsModel' && in_array($action, ['edit', 'insert'])){
+
+            /** @var Cliente $cliente */
+            $cliente = $this->getModel();
+            $cliente->loadFromCode($this->request->get('code'));
+
+            /** @var SettingsModel $settingsModel */
+            $settingsModel = $this->views[$this->active]->model;
+            $settingsModel->loadFromCode('', [
+                new DataBaseWhere('classnamemodel', get_class($cliente)),
+                new DataBaseWhere('idmodel', $cliente->primaryColumnValue()),
+                new DataBaseWhere('idempresa', $this->request->request->get('idempresa')),
+            ]);
+
+            $settingsModel->classnamemodel = get_class($cliente);
+            $settingsModel->idmodel = $cliente->primaryColumnValue();
+            $settingsModel->idempresa = $this->request->request->get('idempresa');
+            $settingsModel->settings = json_encode([
+                'codalmacen' => empty($this->request->request->get('codalmacen')) ? null : $this->request->request->get('codalmacen'),
+                'codserie' => empty($this->request->request->get('codserie')) ? null : $this->request->request->get('codalmacen'),
+                'coddivisa' => empty($this->request->request->get('coddivisa')) ? null : $this->request->request->get('codalmacen'),
+                'codpago' => empty($this->request->request->get('codpago')) ? null : $this->request->request->get('codalmacen'),
+            ]);
+        }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -217,6 +256,23 @@ class EditCliente extends ComercialContactController
                 $inSQL = 'SELECT idfactura FROM facturascli WHERE codcliente = ' . $this->dataBase->var2str($codcliente);
                 $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
                 $view->loadData('', $where);
+                break;
+
+            case 'EditSettingsModel':
+                $where = [
+                    new DataBaseWhere('classnamemodel', get_class($this->getModel())),
+                    new DataBaseWhere('idmodel', $codcliente),
+                ];
+                $view->loadData('', $where);
+
+                // agregamos al modelo las propiedades que hay dentro de settings
+                // para conservar la clase con todas las propiedades y que detecte si el modelo existe o no.
+                foreach($view->cursor as $model){
+                    foreach ($model->settings as $key => $value) {
+                        $model->{$key} = $value;
+                    }
+                }
+
                 break;
 
             case $mainViewName:
