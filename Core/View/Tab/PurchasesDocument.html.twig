@@ -212,10 +212,10 @@
             method: 'POST',
             body: data
         }).then(function (response) {
-            animateSpinner('remove', true);
             if (response.ok) {
                 return response.json();
             }
+            animateSpinner('remove', true);
             return Promise.reject(response);
         }).then(function (data) {
             console.log(data);
@@ -224,6 +224,8 @@
             }
             if (data.ok) {
                 window.location.replace(data.newurl);
+            } else {
+                animateSpinner('remove', true);
             }
         }).catch(function (error) {
             alert('error');

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,20 +25,32 @@ use FacturaScripts\Core\Tools;
 
 class ApiRoot extends ApiController
 {
+    /** @var array */
+    private static $custom_resources = ['crearFacturaCliente'];
+
+    public static function addCustomResource(string $name): void
+    {
+        self::$custom_resources[] = $name;
+    }
+
     protected function exposeResources(array &$map): void
     {
-        $json = ['resources' => []];
+        $json = ['resources' => self::$custom_resources];
         foreach (array_keys($map) as $key) {
             $json['resources'][] = $key;
         }
+
+        // ordenamos
+        sort($json['resources']);
 
         $this->response->setContent(json_encode($json));
     }
 
     protected function getResourcesMap(): array
     {
-        $resources = [[]];
-        // Loop all controllers in /Dinamic/Lib/API
+        $resources = [];
+
+        // recorremos todas las clases en /Dinamic/Lib/API
         $folder = Tools::folder('Dinamic', 'Lib', 'API');
         foreach (Tools::folderScan($folder, false) as $resource) {
             if (substr($resource, -4) !== '.php') {
@@ -60,10 +72,7 @@ class ApiRoot extends ApiController
             }
         }
 
-        // Returns an ordered array with all available resources.
-        $finalResources = array_merge(...$resources);
-        ksort($finalResources);
-        return $finalResources;
+        return array_merge(...$resources);
     }
 
     protected function runResource(): void

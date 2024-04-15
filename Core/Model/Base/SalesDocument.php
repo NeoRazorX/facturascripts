@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,8 @@ use FacturaScripts\Core\Model\Contacto as CoreContacto;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
+use FacturaScripts\Dinamic\Model\AgenciaTransporte;
+use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
@@ -176,7 +178,7 @@ abstract class SalesDocument extends TransformerDocument
         return $this->codpais ?? '';
     }
 
-    public function delete()
+    public function delete(): bool
     {
         if (empty($this->total)) {
             return parent::delete();
@@ -264,12 +266,14 @@ abstract class SalesDocument extends TransformerDocument
         $result = parent::install();
 
         // needed dependencies
+        new AgenciaTransporte();
+        new Agente();
         new Cliente();
 
         return $result;
     }
 
-    public function save()
+    public function save(): bool
     {
         if (empty($this->total)) {
             return parent::save();
@@ -355,7 +359,7 @@ abstract class SalesDocument extends TransformerDocument
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->apartado = Tools::noHtml($this->apartado);
         $this->ciudad = Tools::noHtml($this->ciudad);

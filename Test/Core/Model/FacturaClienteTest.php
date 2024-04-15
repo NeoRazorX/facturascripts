@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -720,7 +720,7 @@ final class FacturaClienteTest extends TestCase
     public function testSetIntraCommunity(): void
     {
         // comprobamos primero si el VIES funciona
-        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+        if (Vies::getLastError() != '') {
             $this->markTestSkipped('Vies service is not available');
         }
 
@@ -744,8 +744,8 @@ final class FacturaClienteTest extends TestCase
         $invoice->setSubject($customer);
 
         $check = $invoice->setIntracomunitaria();
-        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
-            $this->markTestSkipped('Vies service is not available');
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertTrue($check);
 

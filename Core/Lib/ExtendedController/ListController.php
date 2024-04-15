@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -171,11 +171,12 @@ abstract class ListController extends BaseController
      * @param string $key (Filter identifier)
      * @param string $label (Human reader description)
      * @param string $field (Field of the table to apply filter)
+     * @param bool $dateTime (True if the field is a date and time)
      * @return ListView
      */
-    protected function addFilterPeriod(string $viewName, string $key, string $label, string $field): ListView
+    protected function addFilterPeriod(string $viewName, string $key, string $label, string $field, bool $dateTime = false): ListView
     {
-        return $this->listView($viewName)->addFilterPeriod($key, $label, $field);
+        return $this->listView($viewName)->addFilterPeriod($key, $label, $field, $dateTime);
     }
 
     /**
@@ -258,7 +259,8 @@ abstract class ListController extends BaseController
         $this->addCustomView($viewName, $view)
             ->setSettings('btnPrint', true)
             ->setSettings('card', false)
-            ->setSettings('megasearch', true);
+            ->setSettings('megasearch', true)
+            ->setSettings('saveFilters', true);
 
         return $view;
     }

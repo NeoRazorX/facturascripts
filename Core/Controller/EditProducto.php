@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,9 +22,12 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
+use FacturaScripts\Core\Model\ProductoImagen;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
 
@@ -37,6 +40,7 @@ use FacturaScripts\Dinamic\Model\Atributo;
  */
 class EditProducto extends EditController
 {
+    use DocFilesTrait;
     use ProductImagesTrait;
 
     public function getModelClassName(): string
@@ -61,6 +65,7 @@ class EditProducto extends EditController
         parent::createViews();
         $this->createViewsVariants();
         $this->createViewsProductImages();
+        $this->createViewDocFiles();
         $this->createViewsStock();
         $this->createViewsPedidosClientes();
         $this->createViewsPedidosProveedores();
@@ -69,14 +74,14 @@ class EditProducto extends EditController
 
     protected function createViewsPedidosClientes(string $viewName = 'ListLineaPedidoCliente'): void
     {
-        $this->addListView($viewName, 'LineaPedidoCliente', 'reserved', 'fas fa-lock');
-        $this->views[$viewName]->addSearchFields(['referencia', 'descripcion']);
-        $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
-        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
-        $this->views[$viewName]->addOrderBy(['servido'], 'quantity-served');
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
-        $this->views[$viewName]->addOrderBy(['idlinea'], 'code', 2);
+        $this->addListView($viewName, 'LineaPedidoCliente', 'reserved', 'fas fa-lock')
+            ->addSearchFields(['referencia', 'descripcion'])
+            ->addOrderBy(['referencia'], 'reference')
+            ->addOrderBy(['cantidad'], 'quantity')
+            ->addOrderBy(['servido'], 'quantity-served')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['pvptotal'], 'amount')
+            ->addOrderBy(['idlinea'], 'code', 2);
 
         // ocultamos la columna product
         $this->views[$viewName]->disableColumn('product');
@@ -89,15 +94,14 @@ class EditProducto extends EditController
 
     protected function createViewsPedidosProveedores(string $viewName = 'ListLineaPedidoProveedor'): void
     {
-        $this->addListView($viewName, 'LineaPedidoProveedor', 'pending-reception', 'fas fa-ship');
-        $this->views[$viewName]->addSearchFields(['referencia', 'descripcion']);
-        $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
-        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
-        $this->views[$viewName]->addOrderBy(['servido'], 'quantity-served');
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
-        $this->views[$viewName]->addOrderBy(['idlinea'], 'code', 2);
-
+        $this->addListView($viewName, 'LineaPedidoProveedor', 'pending-reception', 'fas fa-ship')
+            ->addSearchFields(['referencia', 'descripcion'])
+            ->addOrderBy(['referencia'], 'reference')
+            ->addOrderBy(['cantidad'], 'quantity')
+            ->addOrderBy(['servido'], 'quantity-served')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['pvptotal'], 'amount')
+            ->addOrderBy(['idlinea'], 'code', 2);
 
         // ocultamos la columna product
         $this->views[$viewName]->disableColumn('product');
@@ -152,11 +156,26 @@ class EditProducto extends EditController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'add-file':
+                return $this->addFileAction();
+
             case 'add-image':
                 return $this->addImageAction();
 
+            case 'delete-file':
+                return $this->deleteFileAction();
+
             case 'delete-image':
                 return $this->deleteImageAction();
+
+            case 'edit-file':
+                return $this->editFileAction();
+
+            case 'unlink-file':
+                return $this->unlinkFileAction();
+
+            case 'sort-images':
+                return $this->sortImagesAction();
         }
 
         return parent::execPreviousAction($action);
@@ -247,6 +266,10 @@ class EditProducto extends EditController
         $where = [new DataBaseWhere('idproducto', $id)];
 
         switch ($viewName) {
+            case 'docfiles':
+                $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->primaryColumnValue());
+                break;
+
             case $this->getMainViewName():
                 parent::loadData($viewName, $view);
                 $this->loadTypes($viewName);
@@ -270,7 +293,7 @@ class EditProducto extends EditController
                 break;
 
             case 'EditProductoImagen':
-                $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
+                $orderBy = ['orden' => 'ASC'];
                 $view->loadData('', $where, $orderBy);
                 break;
 
@@ -315,5 +338,31 @@ class EditProducto extends EditController
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
+    }
+
+    protected function sortImagesAction(): bool
+    {
+        $idsOrdenadas = $this->request->request->get('orden');
+
+        if (empty($idsOrdenadas)){
+            return true;
+        }
+
+        $orden = 1;
+        foreach ($idsOrdenadas as $idImagen) {
+            $productoImagen = new ProductoImagen();
+            $productoImagen->loadFromCode($idImagen);
+            $productoImagen->orden = $orden;
+            if($productoImagen->save()){
+                $orden++;
+            }
+        }
+
+        $this->setTemplate(false);
+        $this->response->setHttpCode(Response::HTTP_OK);
+        $this->response->setContent(json_encode(['status' => 'ok']));
+        $this->response->headers->set('Content-Type', 'application/json');
+
+        return true;
     }
 }

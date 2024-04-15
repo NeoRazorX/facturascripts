@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -90,6 +90,7 @@ class AdminPlugins extends Controller
                 break;
 
             default:
+                $this->extractPluginsZipFiles();
                 if (FS_DEBUG) {
                     // On debug mode, always deploy the contents of Dinamic.
                     Plugins::deploy(true, true);
@@ -128,6 +129,29 @@ class AdminPlugins extends Controller
         $pluginName = $this->request->get('plugin', '');
         Plugins::enable($pluginName);
         Cache::clear();
+    }
+
+    private function extractPluginsZipFiles(): void
+    {
+        $ok = false;
+        foreach (Tools::folderScan(Plugins::folder()) as $zipFileName) {
+            // si el archivo no es un zip, lo ignoramos
+            if (pathinfo($zipFileName, PATHINFO_EXTENSION) !== 'zip') {
+                continue;
+            }
+
+            // instalamos el plugin
+            $zipPath = Plugins::folder() . DIRECTORY_SEPARATOR . $zipFileName;
+            if (Plugins::add($zipPath, $zipFileName)) {
+                $ok = true;
+                unlink($zipPath);
+            }
+        }
+
+        if ($ok) {
+            Tools::log()->notice('reloading');
+            $this->redirect($this->url(), 3);
+        }
     }
 
     private function loadRemotePluginList(): void
@@ -187,7 +211,7 @@ class AdminPlugins extends Controller
         }
 
         $ok = true;
-        $uploadFiles = $this->request->files->get('plugin', []);
+        $uploadFiles = $this->request->files->all('plugin');
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
                 Tools::log()->error($uploadFile->getErrorMessage());

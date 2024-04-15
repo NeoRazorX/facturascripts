@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,7 +34,6 @@ use FacturaScripts\Dinamic\Model\Variante;
  */
 abstract class PurchaseDocument extends TransformerDocument
 {
-
     /**
      * Supplier code for this document.
      *
@@ -178,10 +177,7 @@ abstract class PurchaseDocument extends TransformerDocument
         return true;
     }
 
-    /**
-     * @return string
-     */
-    public function subjectColumn()
+    public function subjectColumn(): string
     {
         return 'codproveedor';
     }
@@ -191,7 +187,7 @@ abstract class PurchaseDocument extends TransformerDocument
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->nombre = Tools::noHtml($this->nombre);
         $this->numproveedor = Tools::noHtml($this->numproveedor);

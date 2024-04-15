@@ -29,12 +29,30 @@ use SoapClient;
  */
 class Vies
 {
+    const EU_COUNTRIES = [
+        'AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'EL', 'ES',
+        'FI', 'FR', 'HR', 'HU', 'IE', 'IT', 'LT', 'LU', 'LV',
+        'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK',
+    ];
+
     const VIES_URL = "https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl";
 
     private static $lastError = '';
 
     public static function check(string $cifnif, string $codiso): int
     {
+        // comprobamos si la extensión soap está instalada
+        if (!extension_loaded('soap')) {
+            Tools::log()->warning('soap-extension-not-installed');
+            return -1;
+        }
+
+        // si el país no es de la unión europea, devolvemos error
+        if (!in_array($codiso, self::EU_COUNTRIES)) {
+            Tools::log()->warning('country-not-in-eu', ['%codiso%' => $codiso]);
+            return -1;
+        }
+
         // quitamos caracteres especiales del cifnif
         $cifnif = str_replace(['_', '-', '.', ',', '?', '¿', ' ', '/', '\\'], '', strtoupper(trim($cifnif)));
 

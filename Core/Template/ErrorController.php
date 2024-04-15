@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,12 +21,16 @@ namespace FacturaScripts\Core\Template;
 
 use Exception;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
-use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\CrashReport;
+use FacturaScripts\Core\Tools;
 
 abstract class ErrorController implements ErrorControllerInterface
 {
     /** @var Exception */
     protected $exception;
+
+    /** @var bool */
+    protected $save_crash = false;
 
     /** @var string */
     protected $url;
@@ -48,30 +52,34 @@ abstract class ErrorController implements ErrorControllerInterface
             . '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"'
             . ' integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">'
             . '</head>'
-            . '<body class="' . $bodyCss . '">'
-            . $bodyHtml
-            . '</body>'
+            . '<body class="' . $bodyCss . '">' . $bodyHtml . '</body>'
             . '</html>';
     }
 
-    protected function htmlCard(string $title, string $cardBody, string $bodyCss): string
+    protected function htmlCard(string $title, string $cardBody, string $bodyCss, string $table = ''): string
     {
-        $info = Kernel::getErrorInfo(
+        $info = CrashReport::getErrorInfo(
             $this->exception->getCode(),
-            $this->exception->getMessage(),
+            $this->exception->getMessage() . "\nStack trace:\n" . $this->exception->getTraceAsString(),
             $this->exception->getFile(),
             $this->exception->getLine()
         );
+
+        if ($this->save_crash) {
+            CrashReport::save($info);
+        }
 
         $body = '<div class="container">'
             . '<div class="row justify-content-center">'
             . '<div class="col-sm-6">'
             . '<div class="card shadow mt-5 mb-5">'
             . '<div class="card-body">'
-            . '<img src="' . $info['report_qr'] . '" class="float-end" alt="QR" />'
-            . $cardBody
+            . '<img src="' . $info['report_qr'] . '" class="float-end" alt="QR" />' . $cardBody
             . '</div>'
-            . '<div class="card-footer">'
+            . $table
+            . '<div class="card-footer p-2">'
+            . '<div class="row">'
+            . '<div class="col">'
             . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
             . '<input type="hidden" name="error_code" value="' . $info['code'] . '">'
             . '<input type="hidden" name="error_message" value="' . $info['message'] . '">'
@@ -83,8 +91,20 @@ abstract class ErrorController implements ErrorControllerInterface
             . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">'
             . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">'
             . '<input type="hidden" name="error_os" value="' . $info['os'] . '">'
-            . '<button type="submit" class="btn btn-secondary">Read more / Leer más</button>'
+            . '<button type="submit" class="btn btn-secondary">' . Tools::lang()->trans('to-report') . '</button>'
             . '</form>'
+            . '</div>';
+
+        if (false === Tools::config('disable_deploy_actions', false)) {
+            $body .= '<div class="col-auto">'
+                . '<a href="' . Tools::config('route') . '/deploy?action=disable-plugins&token=' . CrashReport::newToken()
+                . '" class="btn btn-light">' . Tools::lang()->trans('disable-plugins') . '</a> '
+                . '<a href="' . Tools::config('route') . '/deploy?action=rebuild&token=' . CrashReport::newToken()
+                . '" class="btn btn-light">' . Tools::lang()->trans('rebuild') . '</a> '
+                . '</div>';
+        }
+
+        $body .= '</div>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -92,5 +112,10 @@ abstract class ErrorController implements ErrorControllerInterface
             . '</div>';
 
         return $this->html($title, $body, $bodyCss);
+    }
+
+    protected function setSaveCrash(bool $save): void
+    {
+        $this->save_crash = $save;
     }
 }

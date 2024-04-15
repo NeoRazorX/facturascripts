@@ -26,6 +26,8 @@ class MyfilesTokenError extends ErrorController
 {
     public function run(): void
     {
+        $this->setSaveCrash(false);
+
         http_response_code(403);
 
         $title = Tools::lang()->trans('invalid-token');

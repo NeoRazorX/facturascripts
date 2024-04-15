@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -73,26 +73,26 @@ class EditEmpresa extends EditController
 
     protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco'): void
     {
-        $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank')
+            ->disableColumn('company');
     }
 
     protected function createViewExercises(string $viewName = 'ListEjercicio'): void
     {
-        $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt')
+            ->disableColumn('company');
     }
 
     protected function createViewPaymentMethods(string $viewName = 'ListFormaPago'): void
     {
-        $this->addListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card')
+            ->disableColumn('company');
     }
 
     protected function createViewWarehouse(string $viewName = 'EditAlmacen'): void
     {
-        $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse')
+            ->disableColumn('company');
     }
 
     protected function execPreviousAction($action): bool
@@ -155,14 +155,6 @@ class EditEmpresa extends EditController
         $columnVATException = $view->columnForName('vat-exception');
         if ($columnVATException && $columnVATException->widget->getType() === 'select') {
             $columnVATException->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
-        }
-
-        $columnLogo = $view->columnForName('logo');
-        if ($columnLogo && $columnLogo->widget->getType() === 'select') {
-            $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
-                new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
-            ]);
-            $columnLogo->widget->setValuesFromCodeModel($images);
         }
     }
 }

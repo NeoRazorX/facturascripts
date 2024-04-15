@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 
 class WorkEvent extends ModelClass
@@ -43,6 +44,9 @@ class WorkEvent extends ModelClass
     public $name;
 
     /** @var string */
+    public $nick;
+
+    /** @var string */
     public $params;
 
     /** @var string */
@@ -59,8 +63,15 @@ class WorkEvent extends ModelClass
         parent::clear();
         $this->creation_date = Tools::dateTime();
         $this->done = false;
+        $this->nick = Session::user()->nick;
         $this->workers = 0;
         $this->worker_list = '';
+    }
+
+    public function param(string $key, $default = null)
+    {
+        $params = $this->params();
+        return $params[$key] ?? $default;
     }
 
     public function params(): array
@@ -83,6 +94,12 @@ class WorkEvent extends ModelClass
         $this->name = Tools::noHtml($this->name);
         $this->value = Tools::noHtml($this->value);
         $this->worker_list = Tools::noHtml($this->worker_list);
+
+        // si la lista de parámetros es muy larga, devolvemos false
+        if (strlen($this->params) > 5000) {
+            Tools::log()->error('The params field is too long: ' . strlen($this->params));
+            return false;
+        }
 
         return parent::test();
     }

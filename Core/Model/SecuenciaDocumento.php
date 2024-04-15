@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,6 +57,9 @@ class SecuenciaDocumento extends ModelClass
     /** @var string */
     public $patron;
 
+    /** @var bool */
+    private static $pattern_test = false;
+
     /** @var string */
     public $tipodoc;
 
@@ -71,6 +74,11 @@ class SecuenciaDocumento extends ModelClass
         $this->numero = 1;
         $this->patron = '{EJE}{SERIE}{0NUM}';
         $this->usarhuecos = false;
+    }
+
+    public function disablePatternTest(bool $disable): void
+    {
+        self::$pattern_test = !$disable;
     }
 
     public function install(): string
@@ -94,6 +102,9 @@ class SecuenciaDocumento extends ModelClass
 
     public function test(): bool
     {
+        // escapamos el html
+        $this->patron = Tools::noHtml($this->patron);
+
         if (empty($this->idempresa)) {
             $this->idempresa = Tools::settings('default', 'idempresa');
         }
@@ -106,6 +117,11 @@ class SecuenciaDocumento extends ModelClass
             $this->numero = $this->inicio;
         }
 
+        // si usar huecos es false, tipodoc es FacturaCliente y el país predeterminado es España, mostramos aviso
+        if (!$this->usarhuecos && 'FacturaCliente' === $this->tipodoc && 'ESP' === Tools::settings('default', 'codpais')) {
+            Tools::log()->error('use-holes-invoices-esp');
+        }
+
         return parent::test() && $this->testPatron();
     }
 
@@ -114,9 +130,31 @@ class SecuenciaDocumento extends ModelClass
         return parent::url($type, $list);
     }
 
+    protected function generateCode(): string
+    {
+        return strtr($this->patron, [
+            '{FECHA}' => Tools::date(),
+            '{HORA}' => Tools::hour(),
+            '{FECHAHORA}' => Tools::dateTime(Tools::date() . ' ' . Tools::hour()),
+            '{ANYO}' => date('Y'),
+            '{DIA}' => date('d'),
+            '{EJE}' => $this->codejercicio,
+            '{EJE2}' => substr($this->codejercicio ?? '', -2),
+            '{MES}' => date('m'),
+            '{NUM}' => $this->numero,
+            '{SERIE}' => $this->codserie,
+            '{0NUM}' => str_pad($this->numero, $this->longnumero, '0', STR_PAD_LEFT),
+            '{0SERIE}' => str_pad($this->codserie, 2, '0', STR_PAD_LEFT),
+            '{NOMBREMES}' => Tools::lang()->trans('month-' . date('m'))
+        ]);
+    }
+
     protected function testPatron(): bool
     {
-        $this->patron = Tools::noHtml($this->patron);
+        if (false === self::$pattern_test) {
+            return true;
+        }
+
         if (empty($this->patron)) {
             Tools::log()->warning('empty-pattern');
             return false;
@@ -137,13 +175,19 @@ class SecuenciaDocumento extends ModelClass
                 break;
             }
         }
-        if (!$found) {
+        if (empty($this->codejercicio) && !$found) {
             Tools::log()->warning('pattern-without-year');
         }
 
         // si el patrón no tiene serie, mostramos un aviso
-        if (false === strpos($this->patron, '{SERIE}')) {
+        if (false === strpos($this->patron, '{SERIE}') && false === strpos($this->patron, '{0SERIE}')) {
             Tools::log()->warning('pattern-without-serie');
+        }
+
+        // si el patrón generado tiene más de 20 caracteres, no dejamos guardar
+        if (strlen($this->generateCode()) > 20) {
+            Tools::log()->warning('pattern-too-long');
+            return false;
         }
 
         return true;

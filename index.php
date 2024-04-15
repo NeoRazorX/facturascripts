@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\TelemetryManager;
+use FacturaScripts\Core\CrashReport;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
@@ -42,17 +43,23 @@ $timeZone = Tools::config('timezone', 'Europe/Madrid');
 date_default_timezone_set($timeZone);
 
 // cargamos el gestor de errores
-register_shutdown_function('FacturaScripts\Core\Kernel::shutdown');
+CrashReport::init();
 
-// iniciamos el kernel y los plugins
+// iniciamos el kernel
 Kernel::init();
-Plugins::init();
 
 // obtenemos la url y ejecutamos el controlador
 // si se le pasa el parámetro cron, entonces ejecutamos la url /cron
 $url = isset($argv[1]) && $argv[1] === '-cron' ?
     '/cron' :
-    parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+    parse_url($_SERVER["REQUEST_URI"] ?? '', PHP_URL_PATH) ?? '';
+
+// iniciamos los plugins, a menos que la ruta sea /deploy
+if ($url !== '/deploy') {
+    Plugins::init();
+}
+
+// ejecutamos el controlador
 Kernel::run($url);
 
 $db = new DataBase();

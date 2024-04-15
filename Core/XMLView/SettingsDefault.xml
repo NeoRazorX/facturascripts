@@ -161,9 +161,8 @@
                     <values title="small">small</values>
                 </widget>
             </column>
-            <column name="login-image" titleurl="ListAttachedFile" description="click-link-to-add" numcolumns="3"
-                    order="140">
-                <widget type="select" fieldname="idloginimage" onclick="EditAttachedFile"/>
+            <column name="login-image" numcolumns="3" order="140">
+                <widget type="library" fieldname="idloginimage" icon="fas fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.png"/>
             </column>
         </group>
         <group name="advanced2" numcolumns="12">

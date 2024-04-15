@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -60,37 +60,22 @@ final class Kernel
         self::$routesCallbacks[] = $closure;
     }
 
-    public static function getErrorInfo(int $code, string $message, string $file, int $line): array
-    {
-        // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
-        $errorUrl = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-        $errorMessage = self::cleanErrorMessage($file, $message);
-        $errorFile = str_replace(FS_FOLDER, '', $file);
-        $errorHash = md5($code . $errorFile . $line . $errorMessage . $errorUrl);
-        $reportUrl = 'https://facturascripts.com/errores/' . $errorHash;
-        $reportQr = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($reportUrl);
-
-        return [
-            'code' => $code,
-            'message' => $errorMessage,
-            'file' => $errorFile,
-            'line' => $line,
-            'hash' => $errorHash,
-            'url' => $errorUrl,
-            'report_url' => $reportUrl,
-            'report_qr' => $reportQr,
-            'core_version' => self::version(),
-            'php_version' => phpversion(),
-            'os' => PHP_OS,
-            'plugin_list' => implode(',', Plugins::enabled()),
-        ];
-    }
-
     public static function getExecutionTime(int $decimals = 5): float
     {
         $start = self::$timers['kernel::init']['start'] ?? microtime(true);
         $diff = microtime(true) - $start;
         return round($diff, $decimals);
+    }
+
+    public static function getTimer(string $name): float
+    {
+        if (!array_key_exists($name, self::$timers)) {
+            return 0.0;
+        }
+
+        $start = self::$timers[$name]['start'];
+        $stop = self::$timers[$name]['stop'] ?? microtime(true);
+        return round($stop - $start, 5);
     }
 
     public static function getTimers(): array
@@ -124,6 +109,14 @@ final class Kernel
         // inicializamos el antiguo traductor
         ToolBox::i18n()->setDefaultLang($lang);
 
+        // workers
+        WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Delete');
+        WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Update');
+        WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Delete');
+        WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Update');
+        WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Delete');
+        WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Save');
+
         self::stopTimer('kernel::init');
     }
 
@@ -133,7 +126,7 @@ final class Kernel
         self::loadDefaultRoutes();
 
         // cargamos la página por defecto
-        $homePage = Tools::settings('default', 'homepage', 'Dashboard');
+        $homePage = Tools::settings('default', 'homepage', 'Root');
 
         // recorremos toda la lista de archivos de la carpeta Dinamic/Controller
         $dir = Tools::folder('Dinamic', 'Controller');
@@ -169,8 +162,7 @@ final class Kernel
     {
         Kernel::startTimer('kernel::run');
 
-        $route = Tools::config('route', '');
-        $relativeUrl = substr($url, strlen($route));
+        $relativeUrl = self::getRelativeUrl($url);
 
         try {
             self::loadRoutes();
@@ -192,107 +184,29 @@ final class Kernel
         return false === file_put_contents($filePath, $content);
     }
 
-    public static function shutdown(): void
-    {
-        $error = error_get_last();
-        if (!isset($error)) {
-            return;
-        }
-
-        // limpiamos el buffer si es necesario
-        if (ob_get_length() > 0) {
-            ob_end_clean();
-        }
-
-        http_response_code(500);
-
-        $info = self::getErrorInfo($error['type'], $error['message'], $error['file'], $error['line']);
-
-        // comprobamos si el content-type es json
-        if (isset($_SERVER['CONTENT_TYPE']) && 'application/json' === $_SERVER['CONTENT_TYPE']) {
-            header('Content-Type: application/json');
-            echo json_encode(['error' => $error['message'], 'info' => $info]);
-            return;
-        }
-
-        echo '<!doctype html>'
-            . '<html lang="en">'
-            . '<head>'
-            . '<meta charset="utf-8">'
-            . '<meta name="viewport" content="width=device-width, initial-scale=1">'
-            . '<title>Fatal error #' . $info['code'] . '</title>'
-            . '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"'
-            . ' integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">'
-            . '</head>'
-            . '<body class="bg-danger">'
-            . '<div class="container mt-5 mb-5">'
-            . '<div class="row justify-content-center">'
-            . '<div class="col-sm-6">'
-            . '<div class="card shadow">'
-            . '<div class="card-body">'
-            . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-end">'
-            . '<h1 class="mt-0">Fatal error #' . $info['code'] . '</h1>'
-            . '<p>' . nl2br($info['message']) . '</p>'
-            . '<p class="mb-0">Url: ' . $info['url'] . '</p>';
-
-        if (Tools::config('debug', false)) {
-            echo '<p class="mb-0">File: ' . $info['file'] . ', line: ' . $info['line'] . '</p>';
-        }
-
-        echo '<p class="mb-0">Hash: ' . $info['hash'] . '</p>';
-
-        if (Tools::config('debug', false)) {
-            echo '<p class="mb-0">Core: ' . $info['core_version'] . ', plugins: ' . $info['plugin_list'] . '</p>'
-                . '<p class="mb-0">PHP: ' . $info['php_version'] . ', OS: ' . $info['os'] . '</p>';
-        }
-
-        echo '</div>'
-            . '<div class="card-footer">'
-            . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
-            . '<input type="hidden" name="error_code" value="' . $info['code'] . '">'
-            . '<input type="hidden" name="error_message" value="' . $info['message'] . '">'
-            . '<input type="hidden" name="error_file" value="' . $info['file'] . '">'
-            . '<input type="hidden" name="error_line" value="' . $info['line'] . '">'
-            . '<input type="hidden" name="error_hash" value="' . $info['hash'] . '">'
-            . '<input type="hidden" name="error_url" value="' . $info['url'] . '">'
-            . '<input type="hidden" name="error_core_version" value="' . $info['core_version'] . '">'
-            . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">'
-            . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">'
-            . '<input type="hidden" name="error_os" value="' . $info['os'] . '">'
-            . '<button type="submit" class="btn btn-secondary">Read more / Leer más</button>'
-            . '</form>'
-            . '</div>'
-            . '</div>'
-            . '</div>'
-            . '</div>'
-            . '</div>'
-            . '</body>'
-            . '</html>';
-    }
-
     public static function startTimer(string $name): void
     {
-        self::$timers[$name] = ['start' => microtime(true)];
+        self::$timers[$name] = [
+            'start' => microtime(true),
+            'start_mem' => memory_get_usage(),
+        ];
     }
 
-    public static function stopTimer(string $name): void
+    public static function stopTimer(string $name): float
     {
         if (!array_key_exists($name, self::$timers)) {
             self::startTimer($name);
         }
 
         self::$timers[$name]['stop'] = microtime(true);
+        self::$timers[$name]['stop_mem'] = memory_get_usage();
+
+        return round(self::$timers[$name]['stop'] - self::$timers[$name]['start'], 5);
     }
 
     public static function version(): float
     {
-        return 2023.1;
-    }
-
-    private static function cleanErrorMessage(string $file, string $message): string
-    {
-        $parts = explode(' in ' . $file, $message);
-        return $parts[0];
+        return 2024.5;
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
@@ -307,32 +221,79 @@ final class Kernel
             return new $mainClass($exception);
         }
 
+        $dynClass = '\\FacturaScripts\\Dinamic\\Error\\DefaultError';
+        if (class_exists($dynClass)) {
+            return new $dynClass($exception);
+        }
+
         return new DefaultError($exception);
+    }
+
+    private static function getRelativeUrl(string $url): string
+    {
+        // obtenemos la ruta base de la configuración
+        $route = Tools::config('route');
+        if ($route === null) {
+            // no tenemos el config.php, por lo que debemos averiguar la ruta base
+            $route = '';
+
+            // partimos la url y añadimos cada parte hasta encontrar una carpeta interna como Core
+            foreach (explode('/', $url) as $part) {
+                if (in_array($part, ['Core', 'node_modules'], true)) {
+                    break;
+                }
+
+                if ($part != '') {
+                    $route .= '/' . $part;
+                }
+            }
+        }
+
+        // calculamos la url relativa (sin la ruta base)
+        return substr($url, 0, strlen($route)) === $route ?
+            substr($url, strlen($route)) :
+            $url;
     }
 
     private static function loadDefaultRoutes(): void
     {
         // añadimos las rutas por defecto
-        self::addRoute('/', '\\FacturaScripts\\Core\\Controller\\Dashboard', 1);
-        self::addRoute('/AdminPlugins', '\\FacturaScripts\\Core\\Controller\\AdminPlugins', 1);
-        self::addRoute('/api', '\\FacturaScripts\\Core\\Controller\\ApiRoot', 1);
-        self::addRoute('/api/*', '\\FacturaScripts\\Core\\Controller\\ApiRoot', 1);
-        self::addRoute('/Core/Assets/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
-        self::addRoute('/cron', '\\FacturaScripts\\Core\\Controller\\Cron', 1);
-        self::addRoute('/deploy', '\\FacturaScripts\\Core\\Controller\\Deploy', 1);
-        self::addRoute('/Dinamic/Assets/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
-        self::addRoute('/login', '\\FacturaScripts\\Core\\Controller\\Login', 1);
-        self::addRoute('/MyFiles/*', '\\FacturaScripts\\Core\\Controller\\Myfiles', 1);
-        self::addRoute('/node_modules/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
-        self::addRoute('/Plugins/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
+        $routes = [
+            '/' => 'Root',
+            '/AdminPlugins' => 'AdminPlugins',
+            '/api' => 'ApiRoot',
+            '/api/3/crearFacturaCliente' => 'ApiCreateFacturaCliente',
+            '/api/*' => 'ApiRoot',
+            '/Core/Assets/*' => 'Files',
+            '/cron' => 'Cron',
+            '/deploy' => 'Deploy',
+            '/Dinamic/Assets/*' => 'Files',
+            '/login' => 'Login',
+            '/MyFiles/*' => 'Myfiles',
+            '/node_modules/*' => 'Files',
+            '/Plugins/*' => 'Files',
+            '/Updater' => 'Updater',
+        ];
+
+        foreach ($routes as $route => $controller) {
+            // si la ruta tiene *, la posición es 2, de lo contrario 1
+            $position = substr($route, -1) === '*' ? 2 : 1;
+
+            if (class_exists('\\FacturaScripts\\Dinamic\\Controller\\' . $controller)) {
+                self::addRoute($route, '\\FacturaScripts\\Dinamic\\Controller\\' . $controller, $position);
+                continue;
+            }
+
+            self::addRoute($route, '\\FacturaScripts\\Core\\Controller\\' . $controller, $position);
+        }
     }
 
     private static function loadRoutes(): void
     {
         if ('' === Tools::config('db_name', '')) {
             self::addRoute('/', '\\FacturaScripts\\Core\\Controller\\Installer', 1);
-            self::addRoute('/Core/Assets/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
-            self::addRoute('/node_modules/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
+            self::addRoute('/Core/Assets/*', '\\FacturaScripts\\Core\\Controller\\Files', 2);
+            self::addRoute('/node_modules/*', '\\FacturaScripts\\Core\\Controller\\Files', 2);
             return;
         }
 
@@ -350,7 +311,7 @@ final class Kernel
         }
 
         foreach ($routes as $route => $params) {
-            self::addRoute($route, $params['controller'], $params['position'], $params['customId']);
+            self::addRoute($route, $params['controller'], $params['position'] ?? 0, $params['customId'] ?? '');
         }
 
         // ordenamos colocando primero las que tienen una posición menor
@@ -364,6 +325,13 @@ final class Kernel
         foreach (self::$routes as $route => $info) {
             $controller = $info['controller'];
             $class = explode('\\', $controller);
+
+            // si la ruta no tiene namespace, lo añadimos
+            if (count($class) === 1) {
+                $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . $controller;
+                $class = explode('\\', $controller);
+            }
+
             $name = end($class);
 
             // coincidencia exacta

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,12 +25,11 @@ use FacturaScripts\Core\KernelException;
 /**
  * Class to connect with PostgreSQL.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class PostgresqlEngine extends DataBaseEngine
 {
-
     /**
      * Link to the SQL statements for the connected database
      *
@@ -57,6 +56,11 @@ class PostgresqlEngine extends DataBaseEngine
     public function beginTransaction($link)
     {
         return $this->exec($link, 'BEGIN TRANSACTION;');
+    }
+
+    public function castInteger($link, $column)
+    {
+        return 'CAST(' . $this->escapeColumn($link, $column) . ' AS unsigned)';
     }
 
     /**

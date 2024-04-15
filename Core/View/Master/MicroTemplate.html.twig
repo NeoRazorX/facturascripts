@@ -50,7 +50,9 @@
         {% for js in assetManager.get('js') %}
             <script src="{{ js }}"></script>
         {% endfor %}
-        {{ debugBarRender.renderHead() | raw }}
+        {% if debugBarRender %}
+            {{ debugBarRender.renderHead() | raw }}
+        {% endif %}
     </head>
     {% block fullBody %}
         <body>
@@ -64,7 +66,10 @@
             {% endblock %}
             {% block body %}
             {% endblock %}
-            {{ debugBarRender.render() | raw }}
+            {% if debugBarRender %}
+                {{ debugBarRender.render() | raw }}
+            {% endif %}
+            <!-- execution time: {{ executionTime() }} s -->
         </body>
     {% endblock %}
 </html>

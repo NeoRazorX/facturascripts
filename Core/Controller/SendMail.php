@@ -193,8 +193,8 @@ class SendMail extends Controller
             new DataBaseWhere('enabled', true)
         ];
         if ($notificationModel->loadFromCode('', $where)) {
-            $shortCodes = ['{code}', '{name}', '{date}', '{total}'];
-            $shortValues = [$model->codigo, $model->nombrecliente, $model->fecha, $model->total];
+            $shortCodes = ['{code}', '{name}', '{date}', '{total}', '{number2}'];
+            $shortValues = [$model->codigo, $model->nombrecliente, $model->fecha, $model->total, $model->numero2];
             $this->newMail->title = str_replace($shortCodes, $shortValues, $notificationModel->subject);
             $this->newMail->text = str_replace($shortCodes, $shortValues, $notificationModel->body);
             return;

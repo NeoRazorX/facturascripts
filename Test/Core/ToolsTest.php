@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,9 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Divisa;
 use PHPUnit\Framework\TestCase;
 
 final class ToolsTest extends TestCase
@@ -52,10 +52,10 @@ final class ToolsTest extends TestCase
         $dateTime = '01-01-2019 12:00:00';
         $time2 = strtotime($dateTime);
 
-        $date3 = '2020/10/07';
+        $date3 = '2020-10-07';
         $tim3 = strtotime($date3);
 
-        $dateTime2 = '2020/05/17 12:00:00';
+        $dateTime2 = '2020-05-17 12:00:00';
         $time4 = strtotime($dateTime2);
 
         $this->assertEquals($date, Tools::date($date));
@@ -117,10 +117,15 @@ final class ToolsTest extends TestCase
 
     public function testHtmlFunctions(): void
     {
+        // escapamos y des-escapamos el html
         $html = '<p class=\'test\'>Test</p><script>alert("test");</script>';
         $noHtml = '&lt;p class=&#39;test&#39;&gt;Test&lt;/p&gt;&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;';
         $this->assertEquals($noHtml, Tools::noHtml($html));
         $this->assertEquals($html, Tools::fixHtml($noHtml));
+
+        // comprobamos que podemos pasar un null a las funciones
+        $this->assertNull(Tools::noHtml(null));
+        $this->assertNull(Tools::fixHtml(null));
     }
 
     public function testRandomString(): void
@@ -164,6 +169,25 @@ final class ToolsTest extends TestCase
         $this->assertEquals($value, $settings->properties['codpais']);
     }
 
+    public function testSettingsClear(): void
+    {
+        // nos guardamos el valor actual
+        $value = Tools::settings('default', 'codpais');
+
+        // cambiamos el valor
+        Tools::settingsSet('default', 'codpais', '666');
+
+        // comprobamos que se ha cambiado
+        $this->assertEquals('666', Tools::settings('default', 'codpais'));
+        $this->assertNotEquals($value, Tools::settings('default', 'codpais'));
+
+        // limpiamos la cache
+        Tools::settingsClear();
+
+        // comprobamos que vuelve a ser el valor original
+        $this->assertEquals($value, Tools::settings('default', 'codpais'));
+    }
+
     public function testSlug(): void
     {
         $text = ' aeiou áéíóú--àèìòù  âêîôû ãõ çñ ';
@@ -174,6 +198,7 @@ final class ToolsTest extends TestCase
 
     public function testTextBreak(): void
     {
+        // acortamos el texto de varias formas
         $text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies aliquet, "
             . "nisl nisl aliquam nisl, nec aliquet nisl nisl nec nisl. Nullam auctor, nisl nec ultricies aliquet, "
             . "nisl nisl aliquam nisl, nec aliquet nisl nisl nec nisl. Nullam auctor, nisl nec ultricies aliquet, "
@@ -193,6 +218,9 @@ final class ToolsTest extends TestCase
         $this->assertEquals("Lorem ipsum dolor sit amet, consectetur...", Tools::textBreak($text, 44));
         $this->assertEquals("Lorem ipsum dolor sit amet,...", Tools::textBreak($text, 30));
         $this->assertEquals("Lorem ipsum dolor sit amet,(...)", Tools::textBreak($text, 32, '(...)'));
+
+        // comprobamos que podemos pasar un null a la función
+        $this->assertEquals('', Tools::textBreak(null));
     }
 
     public function testBytes(): void
@@ -203,41 +231,57 @@ final class ToolsTest extends TestCase
         $this->assertEquals('1.0 KB', Tools::bytes(1025, 1));
         $this->assertEquals('1 MB', Tools::bytes(1048577, 0));
         $this->assertEquals('1.00 GB', Tools::bytes(1073741825));
+
+        $this->assertEquals('0 bytes', Tools::bytes(null, 0));
     }
 
-    public function testNumberFunctions(): void
+    public function testMoney(): void
     {
+        // ponemos el número de decimales a 2 y la divisa EUR
         Tools::settingsSet('default', 'decimals', 2);
-        Tools::settingsSet('default', 'decimal_separator', ',');
-        Tools::settingsSet('default', 'thousands_separator', '_');
-        $this->assertEquals('1,00', Tools::number(1));
-        $this->assertEquals('1,00', Tools::number(1.00));
-        $this->assertEquals('12_345,67', Tools::number(12345.67));
-        $this->assertEquals('12_345,670', Tools::number(12345.67, 3));
-        $this->assertEquals('12_345,67', Tools::number(12345.67, 2));
-        $this->assertEquals('12_345,7', Tools::number(12345.67, 1));
-        $this->assertEquals('12_346', Tools::number(12345.67, 0));
-
-        Tools::settingsSet('default', 'decimals', 1);
+        Tools::settingsSet('default', 'coddivisa', 'EUR');
         Tools::settingsSet('default', 'decimal_separator', '.');
         Tools::settingsSet('default', 'thousands_separator', ' ');
-        $this->assertEquals('1.0', Tools::number(1));
-        $this->assertEquals('1 234.6', Tools::number(1234.56));
-        $this->assertEquals('1 234.5670', Tools::number(1234.567, 4));
-
-        Tools::settingsSet('default', 'coddivisa', 'EUR');
         Tools::settingsSet('default', 'currency_position', 'right');
-        $this->assertEquals('1.0 €', Tools::money(1));
-        $this->assertEquals('23 456.8 €', Tools::money(23456.78));
-        $this->assertEquals('23 456.8 ?', Tools::money(23456.78, '?'));
 
+        $this->assertEquals('0.00 €', Tools::money(0));
+        $this->assertEquals('1.00 €', Tools::money(1));
+        $this->assertEquals('1.23 €', Tools::money(1.23));
+        $this->assertEquals('1.23 €', Tools::money(1.234));
+        $this->assertEquals('1 234.56 €', Tools::money(1234.56));
+        $this->assertEquals('0.00 €', Tools::money(null));
+        $this->assertEquals('-1.00 €', Tools::money(-1));
+        $this->assertEquals('-1.23 €', Tools::money(-1.23));
+        $this->assertEquals('-1.23 €', Tools::money(-1.234));
+        $this->assertEquals('-1 234.56 €', Tools::money(-1234.56));
 
-        Tools::settingsSet('default', 'decimals', 2);
-        $symbol = Divisas::get('USD')->simbolo ?? '?';
-        Tools::settingsSet('default', 'coddivisa', 'USD');
-        Tools::settingsSet('default', 'currency_position', 'left');
-        $this->assertEquals($symbol . ' 1.00', Tools::money(1));
-        $this->assertEquals($symbol . ' 23 456.78', Tools::money(23456.78));
-        $this->assertEquals('€ 23 456.78', Tools::money(23456.78, 'EUR'));
+        // probamos con otra divisa
+        $this->assertEquals('1.23 ?', Tools::money(1.234, 'TES'));
+
+        // creamos una divisa nueva
+        $divisa = new Divisa();
+        $divisa->coddivisa = 'TES';
+        $divisa->descripcion = 'Test';
+        $divisa->simbolo = 'X';
+        $this->assertTrue($divisa->save());
+
+        // probamos con la divisa
+        $this->assertEquals('1.23 X', Tools::money(1.234, 'TES'));
+
+        // eliminamos la divisa
+        $this->assertTrue($divisa->delete());
+    }
+
+    public function testNumber(): void
+    {
+        $this->assertEquals('0.00', Tools::number(0, 2));
+        $this->assertEquals('1.00', Tools::number(1, 2));
+        $this->assertEquals('1.0', Tools::number(1.00, 1));
+        $this->assertEquals('1', Tools::number(1.00, 0));
+        $this->assertEquals('0.00', Tools::number(null, 2));
+
+        $this->assertEquals('1.23', Tools::number(1.234, 2));
+        $this->assertEquals('1.234', Tools::number(1.234, 3));
+        $this->assertEquals('1.23', Tools::number(1.234, 2));
     }
 }

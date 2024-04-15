@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,6 +28,7 @@ use FacturaScripts\Dinamic\Model\ProductoImagen;
 /**
  * Auxiliar Method for images of the product.
  *
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 trait ProductImagesTrait
@@ -68,13 +69,13 @@ trait ProductImagesTrait
                 $idfile = $this->createAttachedFile($uploadFile->getClientOriginalName());
                 if (empty($idfile)) {
                     Tools::log()->error('record-save-error');
-                    break;
+                    return true;
                 }
 
                 $idproduct = $this->createProductImage($idfile);
                 if (empty($idproduct)) {
                     Tools::log()->error('record-save-error');
-                    break;
+                    return true;
                 }
 
                 $this->createFileRelation($idproduct, $idfile);
@@ -94,7 +95,7 @@ trait ProductImagesTrait
      *
      * @param string $viewName
      */
-    protected function createViewsProductImages(string $viewName = 'EditProductoImagen')
+    protected function createViewsProductImages(string $viewName = 'EditProductoImagen'): void
     {
         $this->addHtmlView($viewName, 'Tab/ProductoImagen', 'ProductoImagen', 'images', 'fas fa-images');
     }
@@ -170,7 +171,7 @@ trait ProductImagesTrait
      * @param int $idproduct
      * @param int $idfile
      */
-    protected function createFileRelation(int $idproduct, int $idfile)
+    protected function createFileRelation(int $idproduct, int $idfile): void
     {
         $fileRelation = new AttachedFileRelation();
         $fileRelation->idfile = $idfile;

@@ -40,7 +40,8 @@ class EditRole extends EditController
         $i18n = Tools::lang();
         foreach ($this->getAllPages() as $page) {
             $rules[$page->name] = [
-                'menu' => $i18n->trans($page->menu) . ' » ' . $i18n->trans($page->title),
+                'menu' => $i18n->trans($page->menu),
+                'page' => $i18n->trans($page->title),
                 'show' => false,
                 'onlyOwner' => false,
                 'update' => false,

@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Internal;
 
 final class UploadedFile
 {
-    /** @var string */
+    /** @var int */
     public $error;
 
     /** @var string */
@@ -38,11 +38,14 @@ final class UploadedFile
 
     public function __construct(array $data = [])
     {
-        $this->error = $data['error'] ?? 0;
-        $this->name = $data['name'] ?? '';
-        $this->size = $data['size'] ?? 0;
-        $this->tmp_name = $data['tmp_name'] ?? '';
-        $this->type = $data['type'] ?? '';
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                if (is_array($value)) {
+                    $value = $value[0];
+                }
+                $this->$key = $value;
+            }
+        }
     }
 
     public function extension(): string
@@ -109,7 +112,7 @@ final class UploadedFile
 
     public function isValid(): bool
     {
-        return $this->error === UPLOAD_ERR_OK;
+        return $this->error === UPLOAD_ERR_OK && $this->isUploaded();
     }
 
     public function moveTo(string $targetPath): bool

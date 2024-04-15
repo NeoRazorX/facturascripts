@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -77,13 +77,16 @@ function setModalParentForm(modal, form) {
         $("#" + modal).parent().find('input[name="code"]').val(form.code.value);
     } else if (form.elements['code[]']) {
         let codes = [];
-        for (let num = 0; num < form.elements['code[]'].length; num++) {
-            if (form.elements['code[]'][num].checked) {
-                codes.push(form.elements['code[]'][num].value);
-            }
-        }
+
+        // recorremos los checkboxes del formulario donde sale el botón
+        let checkboxes = document.querySelectorAll('input[name="code[]"]:checked');
+        checkboxes.forEach((checkbox) => {
+            codes.push(checkbox.value);
+        });
+
         // asignamos al formulario del modal los checkboxes marcados del formulario donde sale el botón
         $("#" + modal).parent().find('input[name="code"]').val(codes.join());
+        console.log(codes);
     }
 }
 
@@ -111,7 +114,7 @@ $(document).ready(function () {
     $(document).on("click", "nav .dropdown-submenu", function (e) {
         e.stopPropagation();
     });
-    $(document).on('shown.bs.modal', '.modal', function() {
+    $(document).on('shown.bs.modal', '.modal', function () {
         $(this).find('[autofocus]').focus();
     });
 });

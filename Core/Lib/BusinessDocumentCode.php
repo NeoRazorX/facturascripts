@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -143,7 +143,10 @@ class BusinessDocumentCode
                     // hole found
                     $document->fecha = $preDate;
                     $document->hora = $preHour;
+                    $sequence->disablePatternTest(true);
                     $sequence->save();
+                    $sequence->disablePatternTest(false);
+
                     return (string)$expectedNumber;
                 }
 
@@ -162,7 +165,10 @@ class BusinessDocumentCode
                 // the gap is in the first positions of the range
                 $document->fecha = $preDate;
                 $document->hora = $preHour;
+                $sequence->disablePatternTest(true);
                 $sequence->save();
+                $sequence->disablePatternTest(false);
+
                 return (string)$expectedNumber;
             }
         }
@@ -171,7 +177,9 @@ class BusinessDocumentCode
 
         // update sequence
         $sequence->numero++;
+        $sequence->disablePatternTest(true);
         $sequence->save();
+        $sequence->disablePatternTest(false);
 
         return (string)$newNumber;
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Base;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Request;
@@ -31,6 +32,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Dinamic\Model\User as DinUser;
 
 /**
  * Class from which all FacturaScripts controllers must inherit.
@@ -291,12 +293,14 @@ class Controller implements ControllerInterface
 
         // renderizamos la plantilla
         if ($this->template) {
+            Kernel::startTimer('Controller::html-render');
             $response->setContent(Html::render($this->template, [
                 'controllerName' => $this->className,
                 'fsc' => $this,
                 'menuManager' => $menu,
                 'template' => $this->template,
             ]));
+            Kernel::stopTimer('Controller::html-render');
         }
         $response->send();
     }
@@ -340,7 +344,7 @@ class Controller implements ControllerInterface
             return false;
         }
 
-        $user = new User();
+        $user = new DinUser();
         if (false === $user->loadFromCode($cookieNick) && $user->enabled) {
             Tools::log()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
             return false;

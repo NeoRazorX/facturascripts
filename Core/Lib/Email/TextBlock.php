@@ -41,8 +41,9 @@ class TextBlock extends BaseBlock
         $this->text = $text;
     }
 
-    public function render(): string
+    public function render(bool $footer = false): string
     {
+        $this->footer = $footer;
         $return = $this->pipe('render');
         return $return ?? '<p class="' . (empty($this->css) ? 'text' : $this->css) . '">'
         . nl2br($this->text) . '</p>';

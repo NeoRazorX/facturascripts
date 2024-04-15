@@ -5,6 +5,7 @@
         "codserie": "A",
         "codpago": "CONT",
         "tipoidfiscal": "RFC",
+        "updatesupplierprices": true,
         "validate_iban": false
     },
     "email": {

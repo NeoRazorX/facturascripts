@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -157,11 +157,11 @@ class EditSettings extends PanelController
 
     protected function createViewsApiKeys(string $viewName = 'ListApiKey')
     {
-        $this->addListView($viewName, 'ApiKey', 'api-keys', 'fas fa-key');
-        $this->views[$viewName]->addOrderBy(['id'], 'id');
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addOrderBy(['creationdate', 'id'], 'date', 2);
-        $this->views[$viewName]->addSearchFields(['description', 'apikey', 'nick']);
+        $this->addListView($viewName, 'ApiKey', 'api-keys', 'fas fa-key')
+            ->addOrderBy(['id'], 'id')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['creationdate', 'id'], 'date', 2)
+            ->addSearchFields(['description', 'apikey', 'nick']);
     }
 
     protected function createViewsIdFiscal(string $viewName = 'EditIdentificadorFiscal')
@@ -172,10 +172,10 @@ class EditSettings extends PanelController
 
     protected function createViewFormats(string $viewName = 'ListFormatoDocumento')
     {
-        $this->addListView($viewName, 'FormatoDocumento', 'printing-formats', 'fas fa-print');
-        $this->views[$viewName]->addOrderBy(['nombre'], 'name');
-        $this->views[$viewName]->addOrderBy(['titulo'], 'title');
-        $this->views[$viewName]->addSearchFields(['nombre', 'titulo', 'texto']);
+        $this->addListView($viewName, 'FormatoDocumento', 'printing-formats', 'fas fa-print')
+            ->addOrderBy(['nombre'], 'name')
+            ->addOrderBy(['titulo'], 'title')
+            ->addSearchFields(['nombre', 'titulo', 'texto']);
 
         // Filters
         $this->createDocTypeFilter($viewName);
@@ -211,12 +211,12 @@ class EditSettings extends PanelController
 
     protected function createViewSequences(string $viewName = 'ListSecuenciaDocumento')
     {
-        $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
-        $this->views[$viewName]->addOrderBy(['codejercicio', 'codserie', 'tipodoc'], 'exercise');
-        $this->views[$viewName]->addOrderBy(['codserie'], 'serie');
-        $this->views[$viewName]->addOrderBy(['numero'], 'number');
-        $this->views[$viewName]->addOrderBy(['tipodoc', 'codejercicio', 'codserie'], 'doc-type', 1);
-        $this->views[$viewName]->addSearchFields(['patron', 'tipodoc']);
+        $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code')
+            ->addOrderBy(['codejercicio', 'codserie', 'tipodoc'], 'exercise')
+            ->addOrderBy(['codserie'], 'serie')
+            ->addOrderBy(['numero'], 'number')
+            ->addOrderBy(['tipodoc', 'codejercicio', 'codserie'], 'doc-type', 1)
+            ->addSearchFields(['patron', 'tipodoc']);
 
         // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
@@ -234,10 +234,10 @@ class EditSettings extends PanelController
 
     protected function createViewStates(string $viewName = 'ListEstadoDocumento')
     {
-        $this->addListView($viewName, 'EstadoDocumento', 'states', 'fas fa-tags');
-        $this->views[$viewName]->addOrderBy(['idestado'], 'id');
-        $this->views[$viewName]->addOrderBy(['nombre'], 'name');
-        $this->views[$viewName]->addSearchFields(['nombre']);
+        $this->addListView($viewName, 'EstadoDocumento', 'states', 'fas fa-tags')
+            ->addOrderBy(['idestado'], 'id')
+            ->addOrderBy(['nombre'], 'name')
+            ->addSearchFields(['nombre']);
 
         // Filters
         $this->createDocTypeFilter($viewName);
@@ -382,7 +382,7 @@ class EditSettings extends PanelController
     private function allSettingsXMLViews(): array
     {
         $names = [];
-        foreach ($this->toolBox()->files()->scanFolder(FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
+        foreach (Tools::folderScan(FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
             if (0 === strpos($fileName, self::KEY_SETTINGS)) {
                 $names[] = substr($fileName, 0, -4);
             }

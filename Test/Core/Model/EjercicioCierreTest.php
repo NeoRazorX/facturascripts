@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -95,8 +95,10 @@ final class EjercicioCierreTest extends TestCase
 
         // eliminamos las facturas
         $this->assertTrue($facturaVenta->delete());
+        $this->assertTrue($facturaVenta->getSubject()->getDefaultAddress()->delete());
         $this->assertTrue($facturaVenta->getSubject()->delete());
         $this->assertTrue($facturaCompra->delete());
+        $this->assertTrue($facturaCompra->getSubject()->getDefaultAddress()->delete());
         $this->assertTrue($facturaCompra->getSubject()->delete());
 
         // eliminamos los asientos del ejercicio

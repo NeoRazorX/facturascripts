@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Dinamic\Model\FacturaProveedor as DinFacturaProveedor;
 use FacturaScripts\Core\Model\Base\InvoiceLineTrait;
 use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
+use FacturaScripts\Dinamic\Model\FacturaProveedor as DinFacturaProveedor;
 
 /**
  * Line of a supplier invoice.
@@ -31,20 +31,16 @@ use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
  */
 class LineaFacturaProveedor extends PurchaseDocumentLine
 {
-
     use ModelTrait;
     use InvoiceLineTrait;
 
-    /**
-     * Invoice ID of this line.
-     *
-     * @var int
-     */
+    /** @var bool */
+    private $has_refunded_quantity = null;
+
+    /** @var int */
     public $idfactura;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $idlinearect;
 
     public function documentColumn(): string
@@ -57,6 +53,17 @@ class LineaFacturaProveedor extends PurchaseDocumentLine
         $factura = new DinFacturaProveedor();
         $factura->loadFromCode($this->idfactura);
         return $factura;
+    }
+
+    public function hasRefundedQuantity(): bool
+    {
+        // comprobamos si existe alguna factura rectificativa
+        if ($this->has_refunded_quantity === null) {
+            $refunds = $this->getDocument()->getRefunds();
+            $this->has_refunded_quantity = !empty($refunds);
+        }
+
+        return $this->has_refunded_quantity;
     }
 
     public function install(): string
