@@ -22,7 +22,6 @@ namespace FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
 use FacturaScripts\Core\Base\DataBase\MysqlEngine;
 use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
-use FacturaScripts\Core\Internal\RequestString;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Tools;
 
@@ -470,11 +469,6 @@ final class DataBase
         // If it's an array
         if (is_array($val)) {
             throw new KernelException('DatabaseError', 'Array not allowed in var2str function');
-        }
-
-        // comprobamos si es un objeto RequestString
-        if ($val instanceof RequestString) {
-            $val = $val->get();
         }
 
         // If it's an object

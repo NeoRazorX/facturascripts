@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,9 @@
  */
 
 namespace FacturaScripts\Core\Internal;
+
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 
 final class SubRequest
 {
@@ -38,7 +41,7 @@ final class SubRequest
 
     /**
      * @param string ...$key
-     * @return RequestString[]
+     * @return array
      */
     public function all(string ...$key): array
     {
@@ -53,9 +56,115 @@ final class SubRequest
         return $result;
     }
 
-    public function get(string $key, $default = null): RequestString
+    public function get(string $key, $default = null): ?string
     {
-        return RequestString::create($this->data[$key] ?? $default);
+        return $this->data[$key] ?? $default;
+    }
+
+    public function getAlnum(string $key): string
+    {
+        return preg_replace('/[^[:alnum:]]/', '', $this->get($key) ?? '');
+    }
+
+    public function getBool(string $key, bool $allowNull = true): ?bool
+    {
+        $value = $this->get($key);
+        if ($allowNull && is_null($value)) {
+            return null;
+        }
+
+        return (bool)$value;
+    }
+
+    public function getDate(string $key, bool $allowNull = true): ?string
+    {
+        $value = $this->get($key);
+        if (Validator::date($value ?? '')) {
+            return Tools::date($value);
+        }
+
+        return $allowNull ? null : '';
+    }
+
+    public function getDateTime(string $key, bool $allowNull = true): ?string
+    {
+        $value = $this->get($key);
+        if (Validator::datetime($value ?? '') || Validator::date($value ?? '')) {
+            return Tools::dateTime($value);
+        }
+
+        return $allowNull ? null : '';
+    }
+
+    public function getEmail(string $key, bool $allowNull = true): ?string
+    {
+        $value = $this->get($key);
+        if (Validator::email($value ?? '')) {
+            return $value;
+        }
+
+        return $allowNull ? null : '';
+    }
+
+    public function getFloat(string $key, bool $allowNull = true): ?float
+    {
+        $value = $this->get($key);
+        if ($allowNull && is_null($value)) {
+            return null;
+        }
+
+        // reemplazamos la coma decimal por el punto decimal
+        return (float)str_replace(',', '.', $value);
+    }
+
+    public function getHour(string $key, bool $allowNull = true): ?string
+    {
+        $value = $this->get($key);
+        if (Validator::hour($value ?? '')) {
+            return Tools::hour($value);
+        }
+
+        return $allowNull ? null : '';
+    }
+
+    public function getInt(string $key, bool $allowNull = true): ?int
+    {
+        $value = $this->get($key);
+        if ($allowNull && is_null($value)) {
+            return null;
+        }
+
+        return (int)$value;
+    }
+
+    public function getOnly(string $key, array $values): ?string
+    {
+        $value = $this->get($key);
+        if (in_array($value, $values)) {
+            return $value;
+        }
+
+        return null;
+    }
+
+    public function getString(string $key, bool $allowNull = true): ?string
+    {
+        $value = $this->get($key);
+        if ($allowNull && is_null($value)) {
+            return null;
+        }
+
+        return (string)$value;
+    }
+
+    public function getUrl(string $key, bool $allowNull = true): ?string
+    {
+        $value = $this->get($key);
+        if (Validator::url($value ?? '')) {
+            return $value;
+        }
+
+        return $allowNull ? null : '';
     }
 
     public function has(string ...$key): bool
@@ -85,6 +194,6 @@ final class SubRequest
 
     public function set(string $key, $value): void
     {
-        $this->data[$key] = RequestString::create($value);
+        $this->data[$key] = $value;
     }
 }
