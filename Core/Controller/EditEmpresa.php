@@ -125,9 +125,9 @@ class EditEmpresa extends EditController
             $settingsModel->idempresa = $empresa->primaryColumnValue();
             $settingsModel->settings = json_encode([
                 'codalmacen' => empty($this->request->request->get('codalmacen')) ? null : $this->request->request->get('codalmacen'),
-                'codserie' => empty($this->request->request->get('codserie')) ? null : $this->request->request->get('codalmacen'),
-                'coddivisa' => empty($this->request->request->get('coddivisa')) ? null : $this->request->request->get('codalmacen'),
-                'codpago' => empty($this->request->request->get('codpago')) ? null : $this->request->request->get('codalmacen'),
+                'codserie' => empty($this->request->request->get('codserie')) ? null : $this->request->request->get('codserie'),
+                'coddivisa' => empty($this->request->request->get('coddivisa')) ? null : $this->request->request->get('coddivisa'),
+                'codpago' => empty($this->request->request->get('codpago')) ? null : $this->request->request->get('codpago'),
             ]);
         }
 
