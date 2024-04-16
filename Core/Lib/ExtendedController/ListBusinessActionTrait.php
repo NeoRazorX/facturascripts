@@ -146,7 +146,7 @@ trait ListBusinessActionTrait
     /**
      * Approves selected documents.
      *
-     * @param mixed $codes
+     * @param array $codes
      * @param TransformerDocument $model
      * @param bool $allowUpdate
      * @param DataBase $dataBase
@@ -241,7 +241,7 @@ trait ListBusinessActionTrait
     /**
      * Group selected documents.
      *
-     * @param mixed $codes
+     * @param array $codes
      * @param TransformerDocument $model
      *
      * @return bool
@@ -262,7 +262,7 @@ trait ListBusinessActionTrait
     /**
      * Locks selected invoices.
      *
-     * @param mixed $codes
+     * @param array $codes
      * @param TransformerDocument $model
      * @param bool $allowUpdate
      * @param DataBase $dataBase
@@ -313,7 +313,7 @@ trait ListBusinessActionTrait
     /**
      * Sets selected receipts as paid.
      *
-     * @param mixed $codes
+     * @param array $codes
      * @param Receipt $model
      * @param bool $allowUpdate
      * @param DataBase $dataBase

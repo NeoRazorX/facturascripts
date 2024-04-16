@@ -35,7 +35,7 @@ class WidgetSelect extends BaseWidget
     protected static $codeModel;
 
     /** @var string */
-    protected $fieldcode;
+    protected $fieldcode = '';
 
     /** @var string */
     protected $fieldfilter;
@@ -50,7 +50,7 @@ class WidgetSelect extends BaseWidget
     protected $parent;
 
     /** @var string */
-    protected $source;
+    protected $source = '';
 
     /** @var bool */
     protected $translate;

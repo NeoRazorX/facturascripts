@@ -125,6 +125,15 @@ final class Request
         return $this->query->get($key, $default);
     }
 
+    public function getArray(string $key, bool $allowNull = true): ?array
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getArray($key, $allowNull);
+        }
+
+        return $this->query->getArray($key, $allowNull);
+    }
+
     public function getAlnum(string $key): string
     {
         if ($this->request->has($key)) {

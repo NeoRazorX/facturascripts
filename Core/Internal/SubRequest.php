@@ -58,7 +58,27 @@ final class SubRequest
 
     public function get(string $key, $default = null): ?string
     {
-        return $this->data[$key] ?? $default;
+        $value = $this->data[$key] ?? $default;
+
+        if (is_array($value)) {
+            return serialize($value);
+        }
+
+        return $value;
+    }
+
+    public function getArray(string $key, bool $allowNull = true): ?array
+    {
+        $value = $this->data[$key] ?? [];
+        if ($allowNull && empty($value)) {
+            return null;
+        }
+
+        if (is_array($value)) {
+            return $value;
+        }
+
+        return (array)$value;
     }
 
     public function getAlnum(string $key): string

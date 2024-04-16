@@ -26,8 +26,23 @@ final class RequestFiles
 
     public function __construct(array $data = [])
     {
+        $files = [];
         foreach ($data as $key => $value) {
-            $this->data[$key] = new UploadedFile($value);
+            if (is_array($value['size'])) {
+                $files[$key] = $this->reArrayFiles($value);
+            } elseif ($value['size'] > 0) {
+                $files[$key] = $value;
+            }
+        }
+
+        foreach ($files as $key => $value) {
+            if (isset($value[0]) && is_array($value[0])) {
+                foreach ($value as $file) {
+                    $this->data[$key][] = new UploadedFile($file);
+                }
+            } else {
+                $this->data[$key] = new UploadedFile($value);
+            }
         }
     }
 
@@ -50,11 +65,20 @@ final class RequestFiles
 
     public function get(string $key): ?UploadedFile
     {
-        if (isset($this->data[$key])) {
+        if ($this->has($key) && $this->data[$key] instanceof UploadedFile) {
             return $this->data[$key];
         }
 
         return null;
+    }
+
+    public function getArray(string $key): array
+    {
+        if ($this->has($key) && is_array($this->data[$key])) {
+            return $this->data[$key];
+        }
+
+        return [];
     }
 
     public function has(string $key): bool
@@ -75,5 +99,22 @@ final class RequestFiles
     public function set(string $key, UploadedFile $value): void
     {
         $this->data[$key] = $value;
+    }
+
+    private function reArrayFiles($file_post): array
+    {
+        $file_ary = array();
+        $file_count = count($file_post['name']);
+        $file_keys = array_keys($file_post);
+
+        for ($i = 0; $i < $file_count; $i++) {
+            foreach ($file_keys as $key) {
+                if ($file_post['size'][$i] > 0) {
+                    $file_ary[$i][$key] = $file_post[$key][$i];
+                }
+            }
+        }
+
+        return $file_ary;
     }
 }

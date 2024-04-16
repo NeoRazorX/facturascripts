@@ -52,7 +52,12 @@ trait ProductImagesTrait
         }
 
         $count = 0;
-        $uploadFiles = $this->request->files->get('newfiles', []);
+        $uploadFiles = $this->request->files->getArray('newfiles');
+        if (empty($uploadFiles)) {
+            Tools::log()->error('no-files-to-upload');
+            return true;
+        }
+
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
                 Tools::log()->error($uploadFile->getErrorMessage());
@@ -65,7 +70,7 @@ trait ProductImagesTrait
             }
 
             try {
-                $uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName());
+                $uploadFile->moveTo(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $uploadFile->getClientOriginalName());
                 $idfile = $this->createAttachedFile($uploadFile->getClientOriginalName());
                 if (empty($idfile)) {
                     Tools::log()->error('record-save-error');

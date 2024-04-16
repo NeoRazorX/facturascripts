@@ -43,9 +43,14 @@ trait DocFilesTrait
             return true;
         }
 
-        $uploadFiles = $this->request->files->get('new-files', []);
+        $uploadFiles = $this->request->files->getArray('new-files');
+        if (empty($uploadFiles)) {
+            Tools::log()->error('no-files-to-upload');
+            return true;
+        }
+
         foreach ($uploadFiles as $uploadFile) {
-            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
+            if ($uploadFile->moveTo(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $uploadFile->getClientOriginalName())) {
                 $newFile = new AttachedFile();
                 $newFile->path = $uploadFile->getClientOriginalName();
                 if (false === $newFile->save()) {

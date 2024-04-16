@@ -286,13 +286,13 @@ class DocumentStitcher extends Controller
      */
     protected function getCodes(): array
     {
-        $code = $this->request->request->get('code', []);
+        $code = $this->request->request->getArray('code');
         if ($code) {
-            return [$code];
+            return $code;
         }
 
         $codes = explode(',', $this->request->get('codes', ''));
-        $newcodes = $this->request->get('newcodes', []);
+        $newcodes = $this->request->getArray('newcodes');
         return empty($newcodes) ? $codes : array_merge($codes, $newcodes);
     }
 
