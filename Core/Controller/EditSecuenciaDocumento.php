@@ -72,10 +72,10 @@ class EditSecuenciaDocumento extends EditController
 
     protected function createViewsDocuments(string $viewName, string $model, string $title): void
     {
-        $this->addListView($viewName, $model, $title, 'fas fa-copy');
-        $this->views[$viewName]->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 1);
-        $this->views[$viewName]->addOrderBy(['numero'], 'number');
-        $this->views[$viewName]->addSearchFields(['cifnif', 'codigo', 'numero', 'observaciones']);
+        $this->addListView($viewName, $model, $title, 'fas fa-copy')
+            ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 1)
+            ->addOrderBy([$this->tableColToNumber('numero')], 'number')
+            ->addSearchFields(['cifnif', 'codigo', 'numero', 'observaciones']);
 
         // desactivamos los botones de nuevo y eliminar
         $this->setSettings($viewName, 'btnNew', false);
