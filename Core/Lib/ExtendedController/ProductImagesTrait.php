@@ -52,7 +52,7 @@ trait ProductImagesTrait
         }
 
         $count = 0;
-        $uploadFiles = $this->request->files->getArray('newfiles');
+        $uploadFiles = $this->request->files->getArray('new-files');
         if (empty($uploadFiles)) {
             Tools::log()->error('no-files-to-upload');
             return true;

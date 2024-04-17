@@ -48,7 +48,7 @@
                             </div>
                             <div class="col">
                                 {{ trans('images') }}
-                                <input type="file" name="newfiles[]" class="form-control-file" multiple=""
+                                <input type="file" name="new-files[]" class="form-control-file" multiple=""
                                        accept="image/png, image/jpeg, image/gif" required/>
                                 <p class="text-muted mb-2">
                                     {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}

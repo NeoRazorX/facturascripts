@@ -21,6 +21,8 @@ namespace FacturaScripts\Core\Internal;
 
 final class RequestFiles
 {
+    private const FILE_KEYS = ['error', 'name', 'size', 'tmp_name', 'type'];
+
     /** @return array */
     private $data = [];
 
