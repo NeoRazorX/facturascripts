@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
@@ -57,7 +57,7 @@ class EditFacturaProveedor extends PurchasesController
      *
      * @param string $viewName
      */
-    private function createViewsAccounting(string $viewName = self::VIEW_ACCOUNTS)
+    private function createViewsAccounting(string $viewName = self::VIEW_ACCOUNTS): void
     {
         $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
 
@@ -75,7 +75,7 @@ class EditFacturaProveedor extends PurchasesController
     /**
      * Add view for refund invoice.
      */
-    private function createViewsRefunds(string $viewName = 'refunds')
+    private function createViewsRefunds(string $viewName = 'refunds'): void
     {
         $this->addHtmlView($viewName, 'Tab/RefundFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
     }
@@ -85,10 +85,10 @@ class EditFacturaProveedor extends PurchasesController
      *
      * @param string $viewName
      */
-    private function createViewsReceipts(string $viewName = self::VIEW_RECEIPTS)
+    private function createViewsReceipts(string $viewName = self::VIEW_RECEIPTS): void
     {
-        $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
-        $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
+        $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign')
+            ->addOrderBy(['vencimiento'], 'expiration');
 
         // buttons
         $this->addButton($viewName, [
@@ -301,9 +301,8 @@ class EditFacturaProveedor extends PurchasesController
         }
 
         $newLines = $newRefund->getLines();
-        Calculator::calculate($newRefund, $newLines, false);
         $newRefund->idestado = $invoice->idestado;
-        if (false === $newRefund->save()) {
+        if (false === Calculator::calculate($newRefund, $newLines, true)) {
             Tools::log()->error('record-save-error');
             $this->dataBase->rollback();
             return true;
