@@ -289,7 +289,7 @@ class PostgresqlEngine extends DataBaseEngine
     {
         foreach ($fields as $colName => $field) {
             /// serial type
-            if (stripos($field['default'], 'nextval(') !== false) {
+            if (!empty($field['default']) && stripos($field['default'], 'nextval(') !== false) {
                 $sql = "SELECT setval('" . $tableName . "_" . $colName . "_seq', (SELECT MAX(" . $colName . ") from " . $tableName . "));";
                 $this->exec($link, $sql);
             }
