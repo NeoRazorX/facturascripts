@@ -85,15 +85,17 @@
                                 <div class="form-group">
                                     {{ trans('serie') }}
                                     <select name="codserie" class="form-control">
-                                        {% for serie in fsc.series() %}
-                                            {% if serie.tipo is same as('R') %}
-                                                {% if serie.codserie == settings('default','codserierec','R') %}
-                                                    <option value="{{ serie.codserie }}" selected>
-                                                        {{ serie.descripcion }}
-                                                    </option>
-                                                {% else %}
-                                                    <option value="{{ serie.codserie }}">{{ serie.descripcion }}</option>
-                                                {% endif %}
+                                        {% set series = fsc.series('R') %}
+                                        {% if series is empty %}
+                                            {% set series = fsc.series() %}
+                                        {% endif %}
+                                        {% for serie in series %}
+                                            {% if serie.codserie == settings('default','codserierec','R') %}
+                                                <option value="{{ serie.codserie }}" selected>
+                                                    {{ serie.descripcion }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ serie.codserie }}">{{ serie.descripcion }}</option>
                                             {% endif %}
                                         {% endfor %}
                                     </select>

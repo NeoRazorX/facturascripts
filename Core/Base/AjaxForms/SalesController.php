@@ -91,9 +91,20 @@ abstract class SalesController extends PanelController
             . SalesModalHTML::render($model, $this->url(), $this->user, $this->permissions);
     }
 
-    public function series(): array
+    public function series(string $type = ''): array
     {
-        return Series::all();
+        if (empty($type)) {
+            return Series::all();
+        }
+
+        $list = [];
+        foreach (Series::all() as $serie) {
+            if ($serie->tipo == $type) {
+                $list[] = $serie;
+            }
+        }
+
+        return $list;
     }
 
     protected function autocompleteProductAction(): bool
