@@ -27,7 +27,7 @@ class Root extends Controller
     {
         $data = parent::getPageData();
         $data['menu'] = 'reports';
-        $data['title'] = 'root';
+        $data['title'] = 'FacturaScripts: contabilidad y facturacion libre';
         $data['icon'] = 'fas fa-home';
         $data['showonmenu'] = false;
         return $data;
