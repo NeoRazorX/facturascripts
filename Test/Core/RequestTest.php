@@ -78,7 +78,7 @@ final class RequestTest extends TestCase
         $emptyRequest = new Request();
         $this->assertNull($emptyRequest->file('test'));
 
-        $data = ['files' => ['test' => ['name' => 'test.txt']]];
+        $data = ['files' => ['test' => ['name' => 'test.txt', 'size' => 100]]];
         $request = new Request($data);
         $this->assertEquals('test.txt', $request->file('test')->name);
         $this->assertNull($request->file('test2'));
