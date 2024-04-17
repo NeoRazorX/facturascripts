@@ -31,6 +31,7 @@ use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 
@@ -126,6 +127,13 @@ final class Html
             }
 
             return $default;
+        });
+    }
+
+    private static function executionTimeFunction(): TwigFunction
+    {
+        return new TwigFunction('executionTime', function () {
+            return Kernel::getExecutionTime();
         });
     }
 
@@ -349,11 +357,16 @@ final class Html
         }
         self::$twig = new Environment(self::$loader, $options);
 
+        if (FS_DEBUG) {
+            self::$twig->addExtension(new DebugExtension());
+        }
+
         // cargamos las funciones de twig
         self::$twig->addFunction(self::assetFunction());
         self::$twig->addFunction(self::attachedFileFunction());
         self::$twig->addFunction(self::cacheFunction());
         self::$twig->addFunction(self::configFunction());
+        self::$twig->addFunction(self::executionTimeFunction());
         self::$twig->addFunction(self::fixHtmlFunction());
         self::$twig->addFunction(self::formTokenFunction());
         self::$twig->addFunction(self::getIncludeViews());

@@ -28,8 +28,8 @@
             <column name="title" order="110">
                 <widget type="text" fieldname="titulo" maxlength="30"/>
             </column>
-            <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="120">
-                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile"/>
+            <column name="logo" order="120">
+                <widget type="library" fieldname="idlogo" icon="fas fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.png"/>
             </column>
             <column name="additional-text" numcolumns="12" order="130">
                 <widget type="textarea" fieldname="texto"/>

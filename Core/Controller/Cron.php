@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,22 +53,50 @@ class Cron implements ControllerInterface
                                                        |_|
 END;
 
-        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('starting-cron') . PHP_EOL;
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('starting-cron');
         Tools::log('cron')->notice('starting-cron');
+
+        ob_flush();
 
         // ejecutamos el cron de cada plugin
         $this->runPlugins();
 
-        // si se está ejecutando en modo cli, ejecutamos la cola de trabajos
+        // si se está ejecutando en modo cli, ejecutamos la cola de trabajos, máximo 100 trabajos
+        $max = 100;
         while (PHP_SAPI === 'cli') {
             if (false === WorkQueue::run()) {
                 break;
             }
+
+            if (--$max <= 0) {
+                break;
+            }
         }
 
-        $executionTime = Kernel::getExecutionTime();
-        echo Tools::lang()->trans('finished-cron', ['%timeNeeded%' => $executionTime]) . PHP_EOL;
-        Tools::log()->notice('finished-cron', ['%timeNeeded%' => $executionTime]);
+        // mostramos los mensajes del log
+        $levels = ['critical', 'error', 'info', 'notice', 'warning'];
+        foreach (Tools::log()::read('', $levels) as $message) {
+            // si el canal no es master o database, no lo mostramos
+            if (!in_array($message['channel'], ['master', 'database'])) {
+                continue;
+            }
+
+            echo PHP_EOL . $message['message'];
+            ob_flush();
+        }
+
+        $context = [
+            '%timeNeeded%' => Kernel::getExecutionTime(3),
+            '%memoryUsed%' => $this->getMemorySize(memory_get_peak_usage())
+        ];
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('finished-cron', $context) . PHP_EOL . PHP_EOL;
+        Tools::log()->notice('finished-cron', $context);
+    }
+
+    private function getMemorySize(int $size): string
+    {
+        $unit = ['b', 'kb', 'mb', 'gb', 'tb', 'pb'];
+        return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
     }
 
     protected function runPlugins(): void
@@ -79,15 +107,18 @@ END;
                 continue;
             }
 
-            echo Tools::lang()->trans('running-plugin-cron', ['%pluginName%' => $pluginName]);
+            echo PHP_EOL . Tools::lang()->trans('running-plugin-cron', ['%pluginName%' => $pluginName]) . ' ... ';
             Tools::log('cron')->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);
 
             try {
                 $cron = new $cronClass($pluginName);
                 $cron->run();
             } catch (Exception $ex) {
+                echo $ex->getMessage() . PHP_EOL;
                 Tools::log()->error($ex->getMessage());
             }
+
+            ob_flush();
 
             // si no se está ejecutando en modo cli y lleva más de 20 segundos, se detiene
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 20) {

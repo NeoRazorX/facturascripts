@@ -72,6 +72,14 @@
                 </div>
             </div>
         </form>
+
+        <script>
+            $(document).ready(function () {
+                $('#{{ formName }}Collapse').on('shown.bs.collapse', function () {
+                    $('#{{ formName }}Collapse input[type="text"]').first().focus();
+                });
+            });
+        </script>
     {% endif %}
 
     {# -- Forms -- #}

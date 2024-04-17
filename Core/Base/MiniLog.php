@@ -273,7 +273,7 @@ final class MiniLog
             'level' => $level,
             'message' => $transMessage,
             'original' => $message,
-            'time' => microtime(true)
+            'time' => $context['time'] ?? microtime(true),
         ];
         $this->reduce();
     }

@@ -3,80 +3,18 @@
 {% set currentView = fsc.getCurrentView() %}
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            {% for docfile in currentView.cursor %}
-                <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
-                      onsubmit="animateSpinner('add')">
-                    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-                    <input type="hidden" name="id" value="{{ docfile.id }}"/>
-                    <input type="hidden" name="action" value=""/>
-                    {{ formToken() }}
-                    <div class="card shadow mb-3">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <textarea name="observations" class="form-control"
-                                          placeholder="{{ trans('observations') }}">{{ docfile.observations | raw }}</textarea>
-                            </div>
-                            <div class="form-row align-items-end">
-                                <div class="col">
-                                    {% set file = docfile.getFile() %}
-                                    <a href="{{ asset(file.url()) }}" class="btn btn-sm btn-outline-primary">
-                                        <i class="far fa-file"></i> {{ file.filename | raw }}
-                                    </a>
-                                </div>
-                                <div class="col">
-                                    <p class="text-muted mb-0">
-                                        {% if docfile.nick %}
-                                            <i class="fas fa-user"></i> {{ docfile.nick }}
-                                        {% endif %}
-                                        <i class="fas fa-calendar-alt ml-2"></i> {{ docfile.creationdate }}
-                                    </p>
-                                </div>
-                                <div class="col text-right">
-                                    <button type="button" class="btn btn-sm btn-primary"
-                                            onclick="this.form.action.value='edit-file';this.form.onsubmit();this.form.submit();">
-                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
-                                    </button>
-                                    {% if fsc.permissions.allowDelete %}
-                                        <div class="btn-group ml-2">
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-danger dropdown-toggle" type="button"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <button type="button"
-                                                            onclick="this.form.action.value='delete-file';this.form.submit();"
-                                                            class="dropdown-item" href="#">
-                                                        <i class="far fa-trash-alt fa-fw"></i> {{ trans('delete-file') }}
-                                                    </button>
-                                                    <button type="button"
-                                                            onclick="this.form.action.value='unlink-file';this.form.onsubmit();this.form.submit();"
-                                                            class="dropdown-item" href="#">
-                                                        <i class="fas fa-unlink fa-fw"></i> {{ trans('unlink-file') }}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            {% endfor %}
+    <div class="form-row">
+        <div class="col-sm-12">
             {% if fsc.permissions.allowUpdate %}
                 <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
                       onsubmit="animateSpinner('add')">
                     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
                     <input type="hidden" name="action" value="add-file"/>
                     {{ formToken() }}
-                    <div class="card border-success shadow">
-                        <div class="card-body">
+                    <div class="card border-success shadow mb-3">
+                        <div class="card-body p-3">
                             <h5 class="card-title">
-                                <i class="far fa-file"></i> {{ trans('new') }}
+                                <i class="fas fa-folder-plus fa-fw"></i> {{ trans('add') }}
                             </h5>
                             <div class="form-group">
                                 <textarea name="observations" class="form-control"
@@ -84,10 +22,13 @@
                             </div>
                             <div class="form-row align-items-end">
                                 <div class="col">
-                                    <input type="file" name="new-file" class="form-control-file" required/>
+                                    <input type="file" name="new-files[]" class="form-control-file" multiple required/>
                                     <p class="text-muted mb-0">
                                         {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
                                     </p>
+                                    {% for item in getIncludeViews('DocFiles', 'formAddBody') %}
+                                        {% include item['path'] %}
+                                    {% endfor %}
                                 </div>
                                 <div class="col text-right">
                                     <button type="submit" class="btn btn-sm btn-success">
@@ -99,6 +40,90 @@
                     </div>
                 </form>
             {% endif %}
+
+            <div class="card-columns">
+                {% for docfile in currentView.cursor %}
+                    {% set file = docfile.getFile() %}
+                    <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
+                          onsubmit="animateSpinner('add')">
+                        <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+                        <input type="hidden" name="id" value="{{ docfile.id }}"/>
+                        <input type="hidden" name="action" value=""/>
+                        {{ formToken() }}
+                        <div class="card shadow mb-3">
+                            {% if file.isImage() %}
+                                <a href="{{ file.url('download-permanent') }}" target="_blank">
+                                    <img src="{{ file.url('download') }}" class="card-img-top"
+                                         alt="{{ file.filename }}">
+                                </a>
+                            {% else %}
+                                <div class="pl-3 pt-3 pr-3">
+                                    <a href="{{ file.url('download-permanent') }}" target="_blank"
+                                       class="btn btn-block btn-lg btn-secondary">
+                                        {% if file.isPdf() %}
+                                            <i class="far fa-file-pdf fa-fw"></i>
+                                        {% elseif file.isVideo() %}
+                                            <i class="far fa-file-video fa-fw"></i>
+                                        {% elseif file.isArchive() %}
+                                            <i class="far fa-file-archive fa-fw"></i>
+                                        {% else %}
+                                            <i class="far fa-file fa-fw"></i>
+                                        {% endif %}
+                                        {{ file.filename | raw }}
+                                    </a>
+                                </div>
+                            {% endif %}
+                            <div class="card-body p-3">
+                                <div class="form-group">
+                                <textarea name="observations" class="form-control"
+                                          placeholder="{{ trans('observations') }}">{{ docfile.observations | raw }}</textarea>
+                                </div>
+                                {% for item in getIncludeViews('DocFiles', 'formEditBody') %}
+                                    {% include item['path'] %}
+                                {% endfor %}
+                                <p class="card-text text-muted">
+                                    {% if docfile.nick %}
+                                        <i class="fas fa-user"></i> {{ docfile.nick }}
+                                    {% endif %}
+                                    <i class="fas fa-calendar-alt ml-3"></i> {{ docfile.creationdate }}
+                                </p>
+                            </div>
+                            <div class="card-footer p-2">
+                                {% if fsc.permissions.allowUpdate %}
+                                    <button type="button" class="btn btn-sm btn-primary float-right"
+                                            onclick="this.form.action.value='edit-file';this.form.onsubmit();this.form.submit();">
+                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
+                                    </button>
+                                {% endif %}
+                                {% if fsc.permissions.allowDelete %}
+                                    <div class="btn-group">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-danger dropdown-toggle" type="button"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <button type="button"
+                                                        onclick="this.form.action.value='unlink-file';this.form.onsubmit();this.form.submit();"
+                                                        class="dropdown-item">
+                                                    <i class="fas fa-unlink fa-fw"></i> {{ trans('unlink-file') }}
+                                                </button>
+                                                <div class="dropdown-divider"></div>
+                                                <button type="button"
+                                                        onclick="this.form.action.value='delete-file';this.form.submit();"
+                                                        class="dropdown-item">
+                                                    <i class="far fa-trash-alt fa-fw"></i> {{ trans('delete-file') }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>

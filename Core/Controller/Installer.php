@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,22 +20,38 @@
 namespace FacturaScripts\Core\Controller;
 
 use DateTimeZone;
+use Exception;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use mysqli;
-use Symfony\Component\HttpFoundation\Request;
 
 class Installer implements ControllerInterface
 {
-    /** @var bool */
-    protected $created_mysql_db = false;
+    /** @var string */
+    public $db_host;
+
+    /** @var string */
+    public $db_name;
+
+    /** @var int */
+    public $db_port;
+
+    /** @var string */
+    public $db_type;
+
+    /** @var string */
+    public $db_user;
 
     /** @var Request */
     protected $request;
+
+    /** @var bool */
+    protected $use_new_mysql = false;
 
     public function __construct(string $className, string $url = '')
     {
@@ -59,8 +75,14 @@ class Installer implements ControllerInterface
 
     public function run(): void
     {
+        $this->db_host = $this->request->get('fs_db_host', 'localhost');
+        $this->db_name = $this->request->get('fs_db_name', 'facturascripts');
+        $this->db_port = $this->request->get('fs_db_port', 3306);
+        $this->db_type = $this->request->get('fs_db_type', 'mysql');
+        $this->db_user = $this->request->get('fs_db_user', 'root');
+
         $installed = $this->searchErrors() &&
-            $this->request->getMethod() === 'POST' &&
+            $this->request->method() === 'POST' &&
             $this->createDataBase() &&
             $this->createFolders() &&
             $this->saveHtaccess() &&
@@ -83,6 +105,7 @@ class Installer implements ControllerInterface
         }
 
         echo Html::render('Installer/Install.html.twig', [
+            'fsc' => $this,
             'license' => file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
             'timezones' => DateTimeZone::listIdentifiers(),
             'version' => Kernel::version()
@@ -92,21 +115,20 @@ class Installer implements ControllerInterface
     private function createDataBase(): bool
     {
         $dbData = [
-            'host' => $this->request->request->get('fs_db_host'),
-            'port' => $this->request->request->get('fs_db_port'),
-            'user' => $this->request->request->get('fs_db_user'),
+            'host' => $this->db_host,
+            'port' => $this->db_port,
+            'user' => $this->db_user,
             'pass' => $this->request->request->get('fs_db_pass'),
-            'name' => $this->request->request->get('fs_db_name'),
+            'name' => $this->db_name,
             'socket' => $this->request->request->get('mysql_socket', '')
         ];
 
-        $dbType = $this->request->request->get('fs_db_type');
-        if ('postgresql' == $dbType && strtolower($dbData['name']) != $dbData['name']) {
+        if ('postgresql' == $this->db_type && strtolower($dbData['name']) != $dbData['name']) {
             Tools::log()->warning('database-name-must-be-lowercase');
             return false;
         }
 
-        switch ($dbType) {
+        switch ($this->db_type) {
             case 'mysql':
                 return $this->testMysql($dbData);
 
@@ -272,7 +294,7 @@ class Installer implements ControllerInterface
         fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
         fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
 
-        if ($this->created_mysql_db) {
+        if ($this->use_new_mysql) {
             // for new databases, we use utf8mb4
             fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8mb4');\n");
             fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8mb4_unicode_520_ci');\n");
@@ -341,21 +363,36 @@ class Installer implements ControllerInterface
             ini_set('mysqli.default_socket', $dbData['socket']);
         }
 
-        // Omit the DB name because it will be checked on a later stage
-        $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
-        if ($connection->connect_error) {
+        try {
+            // Omit the DB name because it will be checked on a later stage
+            $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
+            if ($connection->connect_error) {
+                Tools::log()->critical('cant-connect-database');
+                Tools::log()->critical($connection->connect_errno . ': ' . $connection->connect_error);
+                return false;
+            }
+        } catch (Exception $e) {
             Tools::log()->critical('cant-connect-database');
-            Tools::log()->critical($connection->connect_errno . ': ' . $connection->connect_error);
+            Tools::log()->critical($e->getMessage());
+            return false;
+        }
+
+        // if mysql version is too old, we can't continue
+        if ($connection->server_version < 50700) {
+            Tools::log()->critical('mysql-version-too-old');
             return false;
         }
 
         $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS `' . $dbData['name'] . '`;';
-        if ($connection->query($sqlCrearBD)) {
-            $this->created_mysql_db = true;
-            return true;
+        if (!$connection->query($sqlCrearBD)) {
+            return false;
         }
 
-        return false;
+        // for mysql >= 8 or mariadb >= 10.2, we use utf8mb4
+        $version = $connection->server_version;
+        $this->use_new_mysql = $version >= 100200 || ($version >= 80000 && $version < 100000);
+
+        return true;
     }
 
     private function testPostgresql(array $dbData): bool
@@ -368,6 +405,12 @@ class Installer implements ControllerInterface
         $connectionStr = 'host=' . $dbData['host'] . ' port=' . $dbData['port'];
         $connection = @pg_connect($connectionStr . ' dbname=postgres user=' . $dbData['user'] . ' password=' . $dbData['pass']);
         if (is_resource($connection)) {
+            // if postgresql version is too old, we can't continue
+            if ($this->versionPostgres($connection) < 10) {
+                Tools::log()->critical('postgresql-version-too-old');
+                return false;
+            }
+
             // Check that the DB exists, if it doesn't, we try to create a new one
             $sqlExistsBD = "SELECT 1 AS result FROM pg_database WHERE datname = '" . $dbData['name'] . "';";
             $result = pg_query($connection, $sqlExistsBD);
@@ -387,5 +430,12 @@ class Installer implements ControllerInterface
         }
 
         return false;
+    }
+
+    private function versionPostgres($connection): float
+    {
+        $version = pg_version($connection);
+        $parts = explode(' ', $version['server']);
+        return (float)$parts[0];
     }
 }

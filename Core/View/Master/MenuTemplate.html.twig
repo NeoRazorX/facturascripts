@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -71,7 +71,9 @@
     {% for item in getIncludeViews('MenuTemplate', 'JsHeadAfter') %}
         {% include item['path'] %}
     {% endfor %}
-    {{ debugBarRender.renderHead() | raw }}
+    {% if debugBarRender %}
+        {{ debugBarRender.renderHead() | raw }}
+    {% endif %}
     {% for item in getIncludeViews('MenuTemplate', 'HeadEnd') %}
         {% include item['path'] %}
     {% endfor %}
@@ -84,7 +86,7 @@
     {% block navbar %}
         <nav class="navbar navbar-expand navbar-dark bg-primary sticky-top d-print-none">
             {% block navbarContent %}
-                <a class="navbar-brand d-none d-sm-inline" href="{{ asset('') }}" title="{{ trans('homepage') }}">
+                <a class="navbar-brand d-none d-sm-inline" href="{{ asset(fsc.user.homepage) }}" title="{{ trans('homepage') }}">
                     <img src="{{ asset('Dinamic/Assets/Images/logo-white.png') }}" width="30" height="30"
                          class="d-inline-block align-top" alt="FacturaScripts"/>
                     <span class="d-none d-xl-inline-block">{{ fsc.empresa.nombrecorto | raw }}</span>
@@ -168,13 +170,16 @@
     {% for item in getIncludeViews('MenuTemplate', 'JsFooter') %}
         {% include item['path'] %}
     {% endfor %}
-    <br/>
-    <br/>
-    <br/>
-    {{ debugBarRender.render() | raw }}
     {% for item in getIncludeViews('MenuTemplate', 'BodyEnd') %}
         {% include item['path'] %}
     {% endfor %}
+    {% if debugBarRender %}
+        {{ debugBarRender.render() | raw }}
+    {% endif %}
+    <br/>
+    <br/>
+    <br/>
+    <!-- execution time: {{ executionTime() }} s -->
     </body>
 {% endblock %}
 </html>

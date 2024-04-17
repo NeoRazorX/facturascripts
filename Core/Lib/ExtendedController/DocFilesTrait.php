@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,31 +43,40 @@ trait DocFilesTrait
             return true;
         }
 
-        $uploadFile = $this->request->files->get('new-file');
-        if ($uploadFile && $uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
-            $newFile = new AttachedFile();
-            $newFile->path = $uploadFile->getClientOriginalName();
-            if (false === $newFile->save()) {
-                Tools::log()->error('fail');
-                return true;
-            }
+        $uploadFiles = $this->request->files->getArray('new-files');
+        if (empty($uploadFiles)) {
+            Tools::log()->error('no-files-to-upload');
+            return true;
+        }
 
-            $fileRelation = new AttachedFileRelation();
-            $fileRelation->idfile = $newFile->idfile;
-            $fileRelation->model = $this->getModelClassName();
-            $fileRelation->modelcode = $this->request->query->get('code');
-            $fileRelation->modelid = (int)$fileRelation->modelcode;
-            $fileRelation->nick = $this->user->nick;
-            $fileRelation->observations = $this->request->request->get('observations');
-            if (false === $fileRelation->save()) {
-                Tools::log()->error('fail-relation');
-                return true;
-            }
+        foreach ($uploadFiles as $uploadFile) {
+            if ($uploadFile->moveTo(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $uploadFile->getClientOriginalName())) {
+                $newFile = new AttachedFile();
+                $newFile->path = $uploadFile->getClientOriginalName();
+                if (false === $newFile->save()) {
+                    Tools::log()->error('fail');
+                    return true;
+                }
 
-            // Si se trata de un documento, actualizamos el número de documentos adjuntos.
-            if ($this->getModel() instanceof BusinessDocument) {
-                $this->updateNumDocs();
+                $fileRelation = new AttachedFileRelation();
+                $fileRelation->idfile = $newFile->idfile;
+                $fileRelation->model = $this->getModelClassName();
+                $fileRelation->modelcode = $this->request->query->get('code');
+                $fileRelation->modelid = (int)$fileRelation->modelcode;
+                $fileRelation->nick = $this->user->nick;
+                $fileRelation->observations = $this->request->request->get('observations');
+                $this->pipeFalse('addFileAction', $fileRelation, $this->request);
+
+                if (false === $fileRelation->save()) {
+                    Tools::log()->error('fail-relation');
+                    return true;
+                }
             }
+        }
+
+        // Si se trata de un documento, actualizamos el número de documentos adjuntos.
+        if ($this->getModel() instanceof BusinessDocument) {
+            $this->updateNumDocs();
         }
 
         Tools::log()->notice('record-updated-correctly');
@@ -90,11 +99,20 @@ trait DocFilesTrait
 
         $fileRelation = new AttachedFileRelation();
         $id = $this->request->request->get('id');
-        if ($fileRelation->loadFromCode($id)) {
-            $file = $fileRelation->getFile();
-            $fileRelation->delete();
-            $file->delete();
+        if (false === $fileRelation->loadFromCode($id)) {
+            Tools::log()->warning('record-not-found');
+            return true;
         }
+
+        if ($fileRelation->modelcode != $this->request->query->get('code') ||
+            $fileRelation->model !== $this->getModelClassName()) {
+            Tools::log()->warning('not-allowed-delete');
+            return true;
+        }
+
+        $file = $fileRelation->getFile();
+        $fileRelation->delete();
+        $file->delete();
 
         Tools::log()->notice('record-deleted-correctly');
 
@@ -117,9 +135,23 @@ trait DocFilesTrait
 
         $fileRelation = new AttachedFileRelation();
         $id = $this->request->request->get('id');
-        if ($fileRelation->loadFromCode($id)) {
-            $fileRelation->observations = $this->request->request->get('observations');
-            $fileRelation->save();
+        if (false === $fileRelation->loadFromCode($id)) {
+            Tools::log()->warning('record-not-found');
+            return true;
+        }
+
+        if ($fileRelation->modelcode != $this->request->query->get('code') ||
+            $fileRelation->model !== $this->getModelClassName()) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $fileRelation->observations = $this->request->request->get('observations');
+        $this->pipeFalse('editFileAction', $fileRelation, $this->request);
+
+        if (false === $fileRelation->save()) {
+            Tools::log()->error('record-save-error');
+            return true;
         }
 
         Tools::log()->notice('record-updated-correctly');

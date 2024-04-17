@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,11 +25,11 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of BaseController
@@ -311,6 +311,28 @@ abstract class BaseController extends Controller
     }
 
     /**
+     * Run the datalist action.
+     * Returns a JSON string for the searched values.
+     *
+     * @return array
+     */
+    protected function datalistAction(): array
+    {
+        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
+
+        $where = [];
+        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
+            $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
+        }
+
+        $results = [];
+        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $value) {
+            $results[] = ['key' => Tools::fixHtml($value->code), 'value' => Tools::fixHtml($value->description)];
+        }
+        return $results;
+    }
+
+    /**
      * Action to delete data.
      *
      * @return bool
@@ -326,13 +348,14 @@ abstract class BaseController extends Controller
         }
 
         $model = $this->views[$this->active]->model;
-        $codes = $this->request->request->get('code', '');
-        if (empty($codes)) {
+        $codes = $this->request->request->getArray('codes', '');
+        $code = $this->request->request->get('code', '');
+        if (empty($codes) && empty($code)) {
             Tools::log()->warning('no-selected-item');
             return false;
         }
 
-        if (is_array($codes)) {
+        if (false === empty($codes) && is_array($codes)) {
             $this->dataBase->beginTransaction();
 
             // deleting multiples rows
@@ -343,7 +366,7 @@ abstract class BaseController extends Controller
                     continue;
                 }
 
-                // error?
+                // ¿error?
                 $this->dataBase->rollback();
                 break;
             }
@@ -354,7 +377,7 @@ abstract class BaseController extends Controller
                 Tools::log()->notice('record-deleted-correctly');
                 return true;
             }
-        } elseif ($model->loadFromCode($codes) && $model->delete()) {
+        } elseif ($model->loadFromCode($code) && $model->delete()) {
             // deleting a single row
             Tools::log()->notice('record-deleted-correctly');
             $model->clear();
@@ -387,7 +410,7 @@ abstract class BaseController extends Controller
                 continue;
             }
 
-            $codes = $this->request->request->get('code');
+            $codes = $this->request->request->getArray('codes');
             if (false === $selectedView->export($this->exportManager, $codes)) {
                 break;
             }

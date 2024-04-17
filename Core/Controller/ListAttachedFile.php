@@ -76,7 +76,7 @@ class ListAttachedFile extends ListController
 
     protected function downloadAction(): bool
     {
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         if (empty($codes)) {
             Tools::log()->warning('no-selected-item');
             return true;

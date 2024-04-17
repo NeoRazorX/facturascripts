@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,8 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 use finfo;
 
@@ -31,9 +33,9 @@ use finfo;
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class AttachedFile extends Base\ModelOnChangeClass
+class AttachedFile extends ModelOnChangeClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     const MAX_FILENAME_LEN = 100;
     const STORAGE_USED_KEY = 'storage-used';
@@ -128,6 +130,26 @@ class AttachedFile extends Base\ModelOnChangeClass
         });
     }
 
+    public function isArchive(): bool
+    {
+        return in_array($this->mimetype, ['application/zip', 'application/x-rar-compressed']);
+    }
+
+    public function isImage(): bool
+    {
+        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif']);
+    }
+
+    public function isPdf(): bool
+    {
+        return $this->mimetype === 'application/pdf';
+    }
+
+    public function isVideo(): bool
+    {
+        return in_array($this->mimetype, ['video/mp4', 'video/ogg', 'video/webm']);
+    }
+
     public static function primaryColumn(): string
     {
         return 'idfile';
@@ -150,6 +172,18 @@ class AttachedFile extends Base\ModelOnChangeClass
         return true;
     }
 
+    public function shortFileName(int $length = 20): string
+    {
+        if (strlen($this->filename) <= $length) {
+            return $this->filename;
+        }
+
+        $parts = explode('.', $this->filename);
+        $extension = count($parts) > 1 ? end($parts) : '';
+        $name = substr($this->filename, 0, $length - strlen('...' . $extension));
+        return $name . '...' . $extension;
+    }
+
     public static function tableName(): string
     {
         return 'attached_files';
@@ -158,7 +192,7 @@ class AttachedFile extends Base\ModelOnChangeClass
     public function test(): bool
     {
         if (empty($this->idfile)) {
-            $this->idfile = $this->newCode();
+            $this->idfile = $this->getNextCode();
             return $this->setFile() && parent::test();
         }
 
@@ -194,6 +228,28 @@ class AttachedFile extends Base\ModelOnChangeClass
         $extension = count($parts) > 1 ? end($parts) : '';
         $name = substr($fixed, 0, static::MAX_FILENAME_LEN - strlen('.' . $extension));
         return $name . '.' . $extension;
+    }
+
+    protected function getNextCode(): int
+    {
+        switch (Tools::config('db_type')) {
+            case 'mysql':
+                $sql = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . Tools::config('db_name')
+                    . "' AND TABLE_NAME = '" . static::tableName() . "';";
+                foreach (static::$dataBase->select($sql) as $row) {
+                    return max($this->newCode(), $row['AUTO_INCREMENT']);
+                }
+                break;
+
+            case 'postgresql':
+                $sql = "SELECT nextval('" . static::tableName() . "_idfile_seq');";
+                foreach (static::$dataBase->select($sql) as $row) {
+                    return max($this->newCode(), $row['nextval']);
+                }
+                break;
+        }
+
+        return $this->newCode();
     }
 
     /**

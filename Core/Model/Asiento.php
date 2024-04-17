@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -58,6 +58,9 @@ class Asiento extends Base\ModelOnChangeClass
      */
     public $concepto;
 
+    /** @var float */
+    public $debe = 0.0;
+
     /**
      * Document associated with the accounting entry.
      *
@@ -78,6 +81,9 @@ class Asiento extends Base\ModelOnChangeClass
      * @var string
      */
     public $fecha;
+
+    /** @var float */
+    public $haber = 0.0;
 
     /**
      * Primary key.
@@ -365,9 +371,9 @@ class Asiento extends Base\ModelOnChangeClass
         $this->documento = Tools::noHtml($this->documento);
 
         if (strlen($this->concepto) == 0 || strlen($this->concepto) > 255) {
-            Tools::log()->warning(
-                'invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']
-            );
+            Tools::log()->warning('invalid-column-lenght', [
+                '%column%' => 'concepto', '%min%' => '1', '%max%' => '255'
+            ]);
             return false;
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\AssetManager;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Dinamic\Model\CodeModel;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetSelect
@@ -35,7 +35,7 @@ class WidgetSelect extends BaseWidget
     protected static $codeModel;
 
     /** @var string */
-    protected $fieldcode;
+    protected $fieldcode = '';
 
     /** @var string */
     protected $fieldfilter;
@@ -50,7 +50,7 @@ class WidgetSelect extends BaseWidget
     protected $parent;
 
     /** @var string */
-    protected $source;
+    protected $source = '';
 
     /** @var bool */
     protected $translate;
@@ -264,7 +264,7 @@ class WidgetSelect extends BaseWidget
         }
 
         // value not found?
-        if (!$found && !empty($this->value)) {
+        if (!$found && !empty($this->value) && !empty($this->source)) {
             $html .= '<option value="' . $this->value . '" selected>'
                 . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
                 . '</option>';

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,6 +28,7 @@ use FacturaScripts\Dinamic\Model\ProductoImagen;
 /**
  * Auxiliar Method for images of the product.
  *
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 trait ProductImagesTrait
@@ -51,7 +52,12 @@ trait ProductImagesTrait
         }
 
         $count = 0;
-        $uploadFiles = $this->request->files->get('newfiles', []);
+        $uploadFiles = $this->request->files->getArray('new-files');
+        if (empty($uploadFiles)) {
+            Tools::log()->error('no-files-to-upload');
+            return true;
+        }
+
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
                 Tools::log()->error($uploadFile->getErrorMessage());
@@ -64,17 +70,17 @@ trait ProductImagesTrait
             }
 
             try {
-                $uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName());
+                $uploadFile->moveTo(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $uploadFile->getClientOriginalName());
                 $idfile = $this->createAttachedFile($uploadFile->getClientOriginalName());
                 if (empty($idfile)) {
                     Tools::log()->error('record-save-error');
-                    break;
+                    return true;
                 }
 
                 $idproduct = $this->createProductImage($idfile);
                 if (empty($idproduct)) {
                     Tools::log()->error('record-save-error');
-                    break;
+                    return true;
                 }
 
                 $this->createFileRelation($idproduct, $idfile);
@@ -94,7 +100,7 @@ trait ProductImagesTrait
      *
      * @param string $viewName
      */
-    protected function createViewsProductImages(string $viewName = 'EditProductoImagen')
+    protected function createViewsProductImages(string $viewName = 'EditProductoImagen'): void
     {
         $this->addHtmlView($viewName, 'Tab/ProductoImagen', 'ProductoImagen', 'images', 'fas fa-images');
     }
@@ -170,7 +176,7 @@ trait ProductImagesTrait
      * @param int $idproduct
      * @param int $idfile
      */
-    protected function createFileRelation(int $idproduct, int $idfile)
+    protected function createFileRelation(int $idproduct, int $idfile): void
     {
         $fileRelation = new AttachedFileRelation();
         $fileRelation->idfile = $idfile;

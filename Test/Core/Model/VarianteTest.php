@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,9 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\ProductType;
+use FacturaScripts\Core\Model\Atributo;
 use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -94,6 +96,63 @@ final class VarianteTest extends TestCase
 
         // eliminamos el producto
         $this->assertTrue($producto->delete());
+    }
+
+    public function testWithAttributes(): void
+    {
+        // creamos un atributo
+        $attribute = new Atributo();
+        $attribute->nombre = 'Color';
+        $this->assertTrue($attribute->save());
+
+        // añadimos 2 valores
+        $attValue1 = $attribute->getNewValue('blanco');
+        $this->assertTrue($attValue1->save());
+
+        $attValue2 = $attribute->getNewValue('rojo');
+        $this->assertTrue($attValue2->save());
+
+        // creamos otro atributo
+        $attribute2 = new Atributo();
+        $attribute2->nombre = 'Talla';
+        $this->assertTrue($attribute2->save());
+
+        // añadimos otros 2 valores
+        $att2Value1 = $attribute2->getNewValue('S');
+        $this->assertTrue($att2Value1->save());
+
+        $att2Value2 = $attribute2->getNewValue('M');
+        $this->assertTrue($att2Value2->save());
+
+        // creamos un producto
+        $producto = new Producto();
+        $producto->descripcion = 'Producto con atributos';
+        $this->assertTrue($producto->save());
+
+        // añadimos una variante con 2 atributos
+        $variante = new Variante();
+        $variante->idproducto = $producto->idproducto;
+        $variante->referencia = $producto->referencia . '-1';
+        $variante->idatributovalor1 = $attValue1->id;
+        $variante->idatributovalor2 = $att2Value1->id;
+        $this->assertTrue($variante->save());
+
+        // comprobamos la descripción
+        $description = $producto->descripcion . "\n" . $attribute->nombre . ' ' . $attValue1->valor . ', ' . $attribute2->nombre . ' ' . $att2Value1->valor;
+        $this->assertEquals($description, $variante->description());
+
+        // cambiamos el orden de los atributos
+        $attribute2->num_selector = 1;
+        $this->assertTrue($attribute2->save());
+
+        // comprobamos la descripción
+        $description2 = $producto->descripcion . "\n" . $attribute2->nombre . ' ' . $att2Value1->valor . ', ' . $attribute->nombre . ' ' . $attValue1->valor;
+        $this->assertEquals($description2, $variante->description());
+
+        // eliminamos
+        $this->assertTrue($producto->delete());
+        $this->assertTrue($attribute->delete());
+        $this->assertTrue($attribute2->delete());
     }
 
     protected function tearDown(): void

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,13 +27,19 @@
         <column name="name" order="110">
             <widget type="text" fieldname="ciudad"/>
         </column>
-        <column name="province" display="right" order="120">
-            <widget type="autocomplete" fieldname="idprovincia" onclick="EditProvincia">
+        <column name="province" order="120">
+            <widget type="select" fieldname="idprovincia">
                 <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia" />
             </widget>
         </column>
-        <column name="code" display="right" order="130">
+        <column name="code" order="130">
             <widget type="text" maxlength="2" fieldname="codeid" icon="fas fa-hashtag"/>
+        </column>
+        <column name="latitude" order="140">
+            <widget type="number" fieldname="latitude"/>
+        </column>
+        <column name="longitude" order="150">
+            <widget type="number" fieldname="longitude"/>
         </column>
     </columns>
 </view>

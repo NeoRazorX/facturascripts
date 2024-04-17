@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -317,7 +317,9 @@ class Partida extends ModelOnChangeClass
         $this->documento = Tools::noHtml($this->documento);
 
         if (strlen($this->concepto) < 1 || strlen($this->concepto) > 255) {
-            Tools::log()->warning('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']);
+            Tools::log()->warning('invalid-column-lenght', [
+                '%column%' => 'concepto', '%min%' => '1', '%max%' => '255'
+            ]);
             return false;
         }
 
@@ -340,7 +342,7 @@ class Partida extends ModelOnChangeClass
     }
 
     /**
-     * This method is called before this record is save (update) in the database
+     * This method is called before this record is saved (update) in the database
      * when some field value is changed.
      *
      * @param string $field
@@ -362,62 +364,9 @@ class Partida extends ModelOnChangeClass
         return parent::onChange($field);
     }
 
-    /**
-     * This method is called after this record is deleted from database.
-     */
-    protected function onDelete()
-    {
-        // update account balance
-        $this->updateBalance($this->idsubcuenta);
-        parent::onDelete();
-    }
-
-    /**
-     * This method is called after this record is save (insert) in the database.
-     */
-    protected function onInsert()
-    {
-        // update account balance
-        $this->updateBalance($this->idsubcuenta);
-        parent::onInsert();
-    }
-
-    /**
-     * This method is called after a record is updated on the database.
-     */
-    protected function onUpdate()
-    {
-        // if the account has changed, we update the balances of the new and old
-        if ($this->previousData['idsubcuenta'] != $this->idsubcuenta) {
-            $this->updateBalance($this->idsubcuenta);
-            $this->updateBalance($this->previousData['idsubcuenta']);
-            parent::onUpdate();
-        }
-
-        // if debit or credit has changed, we recalculate the account balance
-        if ($this->previousData['debe'] != $this->debe || $this->previousData['haber'] != $this->haber) {
-            $this->updateBalance($this->idsubcuenta);
-        }
-
-        parent::onUpdate();
-    }
-
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codcontrapartida', 'codsubcuenta', 'debe', 'haber', 'idcontrapartida', 'idsubcuenta'];
         parent::setPreviousData(array_merge($more, $fields));
-    }
-
-    /**
-     * Update the subaccount balance.
-     *
-     * @param int $idsubcuenta
-     */
-    private function updateBalance(int $idsubcuenta): void
-    {
-        $subAccount = new DinSubcuenta();
-        if ($subAccount->loadFromCode($idsubcuenta)) {
-            $subAccount->updateBalance();
-        }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -75,8 +75,9 @@ trait ListBusinessActionTrait
         }
 
         $where = [
-            new DataBaseWhere('idasiento', null),
-            new DataBaseWhere('fecha', date('Y-m-d', strtotime('-1 year')), '>')
+            new DataBaseWhere('idasiento', null, 'IS'),
+            new DataBaseWhere('fecha', Tools::date('-1 year'), '>'),
+            new DataBaseWhere('total', 0, '!=')
         ];
 
         if (false === empty($code) && property_exists($model, 'codcliente')) {
@@ -145,7 +146,7 @@ trait ListBusinessActionTrait
     /**
      * Approves selected documents.
      *
-     * @param mixed $codes
+     * @param array $codes
      * @param TransformerDocument $model
      * @param bool $allowUpdate
      * @param DataBase $dataBase
@@ -206,13 +207,13 @@ trait ListBusinessActionTrait
             return true;
         }
 
-        $where = [
-            new DataBaseWhere('idasiento', null),
-            new DataBaseWhere('fecha', date('Y-m-d', strtotime('-1 year')), '>')
-        ];
-
         $dataBase->beginTransaction();
-        foreach ($model->all($where, ['idfactura' => 'ASC'], 0, 0) as $invoice) {
+        $where = [
+            new DataBaseWhere('idasiento', null, 'IS'),
+            new DataBaseWhere('fecha', Tools::date('-1 year'), '>'),
+            new DataBaseWhere('total', 0, '!=')
+        ];
+        foreach ($model->all($where, ['idfactura' => 'ASC'], 0, 300) as $invoice) {
             if (false === empty($invoice->idasiento)) {
                 continue;
             }
@@ -220,12 +221,14 @@ trait ListBusinessActionTrait
             $generator = new InvoiceToAccounting();
             $generator->generate($invoice);
             if (empty($invoice->idasiento)) {
-                Tools::log()->error('record-save-error');
+                Tools::log()->error('cannot-generate-accounting-entry', ['%invoice%' => $invoice->codigo]);
+                $dataBase->rollback();
                 return true;
             }
 
             if (false === $invoice->save()) {
-                Tools::log()->error('record-save-error');
+                Tools::log()->error('record-save-error', ['invoice' => $invoice->codigo]);
+                $dataBase->rollback();
                 return true;
             }
         }
@@ -238,7 +241,7 @@ trait ListBusinessActionTrait
     /**
      * Group selected documents.
      *
-     * @param mixed $codes
+     * @param array $codes
      * @param TransformerDocument $model
      *
      * @return bool
@@ -259,7 +262,7 @@ trait ListBusinessActionTrait
     /**
      * Locks selected invoices.
      *
-     * @param mixed $codes
+     * @param array $codes
      * @param TransformerDocument $model
      * @param bool $allowUpdate
      * @param DataBase $dataBase
@@ -310,7 +313,7 @@ trait ListBusinessActionTrait
     /**
      * Sets selected receipts as paid.
      *
-     * @param mixed $codes
+     * @param array $codes
      * @param Receipt $model
      * @param bool $allowUpdate
      * @param DataBase $dataBase

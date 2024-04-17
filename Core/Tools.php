@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -201,7 +201,7 @@ class Tools
         return empty($date) ? date(self::HOUR_STYLE) : date(self::HOUR_STYLE, strtotime($date));
     }
 
-    public static function lang(string $lang = ''): Translator
+    public static function lang(?string $lang = ''): Translator
     {
         return new Translator($lang);
     }
@@ -212,14 +212,14 @@ class Tools
         return new MiniLog($channel, $translator);
     }
 
-    public static function money(float $number, string $coddivisa = ''): string
+    public static function money(?float $number, string $coddivisa = ''): string
     {
         if (empty($coddivisa)) {
-            $coddivisa = self::settings('default', 'coddivisa');
+            $coddivisa = self::settings('default', 'coddivisa', '');
         }
 
         $symbol = Divisas::get($coddivisa)->simbolo;
-        $currencyPosition = self::settings('default', 'currency_position');
+        $currencyPosition = self::settings('default', 'currency_position', 'right');
         return $currencyPosition === 'right' ?
             self::number($number) . ' ' . $symbol :
             $symbol . ' ' . self::number($number);
@@ -232,17 +232,17 @@ class Tools
             str_replace(self::HTML_CHARS, self::HTML_REPLACEMENTS, trim($text));
     }
 
-    public static function number(float $number, ?int $decimals = null): string
+    public static function number(?float $number, ?int $decimals = null): string
     {
         if ($decimals === null) {
-            $decimals = self::settings('default', 'decimals');
+            $decimals = self::settings('default', 'decimals', 2);
         }
 
         // cargamos la configuración
-        $decimalSeparator = self::settings('default', 'decimal_separator');
-        $thousandsSeparator = self::settings('default', 'thousands_separator');
+        $decimalSeparator = self::settings('default', 'decimal_separator', '.');
+        $thousandsSeparator = self::settings('default', 'thousands_separator', ' ');
 
-        return number_format($number, $decimals, $decimalSeparator, $thousandsSeparator);
+        return number_format($number ?? 0, $decimals, $decimalSeparator, $thousandsSeparator);
     }
 
     public static function password(int $length = 10): string
@@ -274,6 +274,7 @@ class Tools
     public static function settingsClear(): void
     {
         Cache::delete('tools-settings');
+        self::$settings = null;
     }
 
     public static function settingsSave(): bool
@@ -324,8 +325,12 @@ class Tools
         return $randomString;
     }
 
-    public static function textBreak(string $text, int $length = 50, string $break = '...'): string
+    public static function textBreak(?string $text, int $length = 50, string $break = '...'): string
     {
+        if ($text === null) {
+            return '';
+        }
+
         if (strlen($text) <= $length) {
             return trim($text);
         }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,11 +42,17 @@ class Cuenta extends Base\ModelClass
     /** @var string */
     public $codcuentaesp;
 
+    /** @var float */
+    public $debe;
+
     /** @var string */
     public $descripcion;
 
     /** @var bool */
     private $disableAdditionalTest = false;
+
+    /** @var float */
+    public $haber;
 
     /** @var int */
     public $idcuenta;
@@ -56,6 +62,17 @@ class Cuenta extends Base\ModelClass
 
     /** @var int */
     public $parent_idcuenta;
+
+    /** @var float */
+    public $saldo;
+
+    public function clear()
+    {
+        parent::clear();
+        $this->debe = 0.0;
+        $this->haber = 0.0;
+        $this->saldo = 0.0;
+    }
 
     public function createSubcuenta(string $codsubcuenta, string $description): Subcuenta
     {

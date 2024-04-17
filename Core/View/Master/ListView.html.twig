@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -143,7 +143,7 @@
                         </th>
                     {% endif %}
                     {% for column in currentView.getColumns() %}
-                        {{ column.tableHeader() | raw }}
+                        {{ column.tableHeader(currentView) | raw }}
                     {% endfor %}
                 </tr>
                 </thead>
@@ -157,7 +157,7 @@
                             <td class="cancelClickable p-0 text-center align-middle">
                                 {% if currentView.settings.checkBoxes %}
                                     <div class="form-check form-check-inline m-0 toggle-ext-link">
-                                        <input class="form-check-input listAction" type="checkbox" name="code[]"
+                                        <input class="form-check-input listAction" type="checkbox" name="codes[]"
                                                value="{{ model.primaryColumnValue() }}"/>
                                     </div>
                                 {% endif %}
@@ -189,9 +189,7 @@
                     <tr>
                         <th></th>
                         {% for item in currentView.totalAmounts %}
-                            <th class="text-right text-capitalize">
-                                {{ trans(item.title) }}
-                            </th>
+                            <th class="text-right text-capitalize">{{ trans(item.title) }}</th>
                         {% endfor %}
                     </tr>
                     </thead>
@@ -199,17 +197,13 @@
                     <tr>
                         <td class="text-right">{{ trans('page-total-amount') }}</td>
                         {% for item in currentView.totalAmounts %}
-                            <td class="text-right">
-                                {{ number(item.page) }}
-                            </td>
+                            <td class="text-right">{{ number(item.page) }}</td>
                         {% endfor %}
                     </tr>
                     <tr>
                         <td class="text-right">{{ trans('total-amount') }}</td>
                         {% for item in currentView.totalAmounts %}
-                            <td class="text-right">
-                                {{ number(item.total) }}
-                            </td>
+                            <td class="text-right">{{ number(item.total) }}</td>
                         {% endfor %}
                     </tr>
                     </tbody>
@@ -262,11 +256,10 @@
             <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
                 <i class="fas fa-filter fa-fw"></i> {{ trans('filters') }}
             </button>
-            {% if currentView.showFilters %}
+            {% if currentView.showFilters and currentView.settings.saveFilters %}
                 {# -- Save user filters -- #}
                 <button type="button" class="btn btn-success" data-toggle="modal"
-                        data-target="#savefilter{{ viewName }}"
-                        title="{{ trans('save-filter') }}">
+                        data-target="#savefilter{{ viewName }}" title="{{ trans('save-filter') }}">
                     <i class="fas fa-save fa-fw"></i> {{ trans('save') }}
                 </button>
             {% endif %}
@@ -409,7 +402,7 @@
         <div class="btn-group">
             <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="true">
-                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fas fa-sort-amount-down-alt' : 'fas fa-sort-amount-down' %}
+                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fas fa-sort-amount-up' : 'fas fa-sort-amount-down' %}
                 <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
                 <span class="d-none d-lg-inline">{{ currentView.orderOptions[currentView.orderKey]['label'] }}</span>
                 <span class="caret"></span>
@@ -417,7 +410,7 @@
             <div class="dropdown-menu dropdown-menu-right">
                 {% for key, orderby in currentView.orderOptions %}
                     {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
-                    {% set icon = (orderby.type == 'ASC') ? 'fas fa-sort-amount-down-alt' : 'fas fa-sort-amount-down' %}
+                    {% set icon = (orderby.type == 'ASC') ? 'fa-solid fa-angles-up' : 'fa-solid fa-angles-down' %}
                     <a class="dropdown-item{{ activeClass }}" href="#"
                        onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}');">
                         <i class="{{ icon }} fa-fw" aria-hidden="true"></i> {{ orderby.label }}

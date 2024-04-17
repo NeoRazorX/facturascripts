@@ -351,7 +351,7 @@ class EditFacturaProveedor extends PurchasesController
             return true;
         }
 
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         $model = $this->views[$this->active]->model;
         if (false === is_array($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');

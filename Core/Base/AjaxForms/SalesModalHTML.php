@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
@@ -159,6 +160,38 @@ class SalesModalHTML
             . $options . '</select>';
     }
 
+    protected static function getClientes(User $user, ControllerPermissions $permissions): array
+    {
+        // buscamos en caché
+        $cacheKey = 'model-Cliente-sales-modal-' . $user->nick;
+        $clientes = Cache::get($cacheKey);
+        if (is_array($clientes)) {
+            return $clientes;
+        }
+
+        // ¿El usuario tiene permiso para ver todos los clientes?
+        $showAll = false;
+        foreach (RoleAccess::allFromUser($user->nick, 'EditCliente') as $access) {
+            if (false === $access->onlyownerdata) {
+                $showAll = true;
+            }
+        }
+
+        // consultamos la base de datos
+        $cliente = new Cliente();
+        $where = [new DataBaseWhere('fechabaja', null, 'IS')];
+        if ($permissions->onlyOwnerData && !$showAll) {
+            $where[] = new DataBaseWhere('codagente', $user->codagente);
+            $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
+        }
+        $clientes = $cliente->all($where, ['LOWER(nombre)' => 'ASC']);
+
+        // guardamos en caché
+        Cache::set($cacheKey, $clientes);
+
+        return $clientes;
+    }
+
     protected static function getProducts(): array
     {
         $dataBase = new DataBase();
@@ -255,21 +288,8 @@ class SalesModalHTML
     {
         $trs = '';
 
-        // ¿El usuario tiene permiso para ver todos los clientes?
-        $showAll = false;
-        foreach (RoleAccess::allFromUser($user->nick, 'EditCliente') as $access) {
-            if (false === $access->onlyownerdata) {
-                $showAll = true;
-            }
-        }
-        $where = [new DataBaseWhere('fechabaja', null, 'IS')];
-        if ($permissions->onlyOwnerData && !$showAll) {
-            $where[] = new DataBaseWhere('codagente', $user->codagente);
-            $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
-        }
 
-        $cliente = new Cliente();
-        foreach ($cliente->all($where, ['LOWER(nombre)' => 'ASC']) as $cli) {
+        foreach (static::getClientes($user, $permissions) as $cli) {
             $name = ($cli->nombre === $cli->razonsocial) ? $cli->nombre : $cli->nombre . ' <small>(' . $cli->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'salesForm\'][\'codcliente\'].value = \''
                 . $cli->codcliente . '\'; $(\'#findCustomerModal\').modal(\'hide\'); salesFormAction(\'set-customer\', \'0\'); return false;">'

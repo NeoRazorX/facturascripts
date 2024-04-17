@@ -24,12 +24,12 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class DocumentStitcher
@@ -286,13 +286,13 @@ class DocumentStitcher extends Controller
      */
     protected function getCodes(): array
     {
-        $code = $this->request->request->get('code', []);
+        $code = $this->request->request->getArray('code');
         if ($code) {
             return $code;
         }
 
         $codes = explode(',', $this->request->get('codes', ''));
-        $newcodes = $this->request->get('newcodes', []);
+        $newcodes = $this->request->getArray('newcodes');
         return empty($newcodes) ? $codes : array_merge($codes, $newcodes);
     }
 

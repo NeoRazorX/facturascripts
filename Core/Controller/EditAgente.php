@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -185,6 +185,7 @@ class EditAgente extends ComercialContactController
                 }
                 $where = [new DataBaseWhere('idcontacto', $idcontacto)];
                 $view->loadData('', $where);
+                $this->loadLanguageValues($viewName);
                 break;
 
             case 'ListAlbaranCliente':
@@ -223,6 +224,22 @@ class EditAgente extends ComercialContactController
                     $view->disableColumn('contact');
                 }
                 break;
+        }
+    }
+
+    /**
+     * Load the available language values from translator.
+     */
+    protected function loadLanguageValues(string $viewName)
+    {
+        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
+            $langs = [];
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
+                $langs[] = ['value' => $key, 'title' => $value];
+            }
+
+            $columnLangCode->widget->setValuesFromArray($langs, false, true);
         }
     }
 

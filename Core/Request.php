@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Internal\RequestFiles;
-use FacturaScripts\Core\Internal\RequestString;
 use FacturaScripts\Core\Internal\SubRequest;
 use FacturaScripts\Core\Internal\UploadedFile;
 
@@ -52,7 +51,7 @@ final class Request
 
     /**
      * @param string ...$key
-     * @return RequestString[]
+     * @return array
      */
     public function all(string ...$key): array
     {
@@ -91,7 +90,7 @@ final class Request
         return 'unknown';
     }
 
-    public function cookie(string $key, $default = null): RequestString
+    public function cookie(string $key, $default = null): ?string
     {
         return $this->cookies->get($key, $default);
     }
@@ -117,13 +116,127 @@ final class Request
         return $this->protocol() . '://' . $this->host() . $this->urlWithQuery();
     }
 
-    public function get(string $key, $default = null): RequestString
+    public function get(string $key, $default = null): ?string
     {
         if ($this->request->has($key)) {
             return $this->request->get($key);
         }
 
         return $this->query->get($key, $default);
+    }
+
+    public function getArray(string $key, bool $allowNull = true): ?array
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getArray($key, $allowNull);
+        }
+
+        return $this->query->getArray($key, $allowNull);
+    }
+
+    public function getAlnum(string $key): string
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getAlnum($key);
+        }
+
+        return $this->query->getAlnum($key);
+    }
+
+    public function getBool(string $key, bool $allowNull = true): ?bool
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getBool($key, $allowNull);
+        }
+
+        return $this->query->getBool($key, $allowNull);
+    }
+
+    public function getDate(string $key, bool $allowNull = true): ?string
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getDate($key, $allowNull);
+        }
+
+        return $this->query->getDate($key, $allowNull);
+    }
+
+    public function getDateTime(string $key, bool $allowNull = true): ?string
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getDateTime($key, $allowNull);
+        }
+
+        return $this->query->getDateTime($key, $allowNull);
+    }
+
+    public function getEmail(string $key, bool $allowNull = true): ?string
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getEmail($key, $allowNull);
+        }
+
+        return $this->query->getEmail($key, $allowNull);
+    }
+
+    public function getFloat(string $key, bool $allowNull = true): ?float
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getFloat($key, $allowNull);
+        }
+
+        return $this->query->getFloat($key, $allowNull);
+    }
+
+    public function getHour(string $key, bool $allowNull = true): ?string
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getHour($key, $allowNull);
+        }
+
+        return $this->query->getHour($key, $allowNull);
+    }
+
+    public function getInt(string $key, bool $allowNull = true): ?int
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getInt($key, $allowNull);
+        }
+
+        return $this->query->getInt($key, $allowNull);
+    }
+
+    public function getOnly(string $key, array $values): ?string
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getOnly($key, $values);
+        }
+
+        return $this->query->getOnly($key, $values);
+    }
+
+    public function getString(string $key, bool $allowNull = true): ?string
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getString($key, $allowNull);
+        }
+
+        return $this->query->getString($key, $allowNull);
+    }
+
+    public function getUrl(string $key, bool $allowNull = true): ?string
+    {
+        if ($this->request->has($key)) {
+            return $this->request->getUrl($key, $allowNull);
+        }
+
+        return $this->query->getUrl($key, $allowNull);
+    }
+
+    public function getBasePath()
+    {
+        $url = $_SERVER['REQUEST_URI'];
+        return parse_url($url, PHP_URL_PATH);
     }
 
     public function has(string ...$key): bool
@@ -141,7 +254,7 @@ final class Request
         return $found;
     }
 
-    public function header(string $key, $default = null): RequestString
+    public function header(string $key, $default = null): ?string
     {
         return $this->headers->get($key, $default);
     }
@@ -151,7 +264,7 @@ final class Request
         return $_SERVER['HTTP_HOST'] ?? '';
     }
 
-    public function input(string $key, $default = null): RequestString
+    public function input(string $key, $default = null): ?string
     {
         return $this->request->get($key, $default);
     }
@@ -206,7 +319,7 @@ final class Request
         return $_SERVER['SERVER_PROTOCOL'] ?? '';
     }
 
-    public function query(string $key, $default = null): RequestString
+    public function query(string $key, $default = null): ?string
     {
         return $this->query->get($key, $default);
     }

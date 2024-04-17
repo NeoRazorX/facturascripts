@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,8 +26,10 @@ use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
 trait CommonLineHTML
@@ -43,6 +45,12 @@ trait CommonLineHTML
 
     /** @var string */
     protected static $regimeniva;
+
+    /** @var array */
+    private static $variants = [];
+
+    /** @var array */
+    private static $stocks = [];
 
     private static function cantidadRestante(Translator $i18n, BusinessDocumentLine $line, TransformerDocument $model): string
     {
@@ -211,6 +219,38 @@ trait CommonLineHTML
             . '" class="form-control form-control-sm text-lg-right border-0"' . $onclickNeto . ' readonly/></div>';
     }
 
+    private static function loadProducts(array $lines, BusinessDocument $model): void
+    {
+        // cargamos las referencias
+        $references = [];
+        foreach ($lines as $line) {
+            if (!empty($line->referencia)) {
+                $references[] = $line->referencia;
+            }
+        }
+        if (empty($references)) {
+            return;
+        }
+
+        // cargamos las variantes
+        $variantModel = new Variante();
+        $sql_in = implode(',', array_unique($references));
+        $where = [new DataBaseWhere('referencia', $sql_in, 'IN')];
+        foreach ($variantModel->all($where, [], 0, 0) as $variante) {
+            self::$variants[$variante->referencia] = $variante;
+        }
+
+        // cargamos los stocks
+        $stockModel = new Stock();
+        $where = [
+            new DataBaseWhere('codalmacen', $model->codalmacen),
+            new DataBaseWhere('referencia', $sql_in, 'IN'),
+        ];
+        foreach ($stockModel->all($where, [], 0, 0) as $stock) {
+            self::$stocks[$stock->referencia] = $stock;
+        }
+    }
+
     private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         // comprobamos el régimen de IVA del cliente o proveedor
@@ -242,14 +282,12 @@ trait CommonLineHTML
             '';
         $numlinea = self::$numlines > 10 ? self::$num . '. ' : '';
 
-        $variante = new Variante();
-        $where = [new DataBaseWhere('referencia', $line->referencia)];
         if (empty($line->referencia)) {
             return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '<div class="small text-break">' . $numlinea . '</div></div>';
         }
 
-        $link = $variante->loadFromCode('', $where) ?
-            $numlinea . '<a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>' :
+        $link = isset(self::$variants[$line->referencia]) ?
+            $numlinea . '<a href="' . self::$variants[$line->referencia]->url() . '" target="_blank">' . $line->referencia . '</a>' :
             $line->referencia;
 
         return '<div class="col-sm-2 col-lg-1 order-1">'

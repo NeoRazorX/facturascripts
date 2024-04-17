@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Model\Asiento;
@@ -47,7 +46,7 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addLockButton(string $viewName)
+    protected function addLockButton(string $viewName): void
     {
         $this->addButton($viewName, [
             'action' => 'lock-entries',
@@ -62,7 +61,7 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addRenumberButton(string $viewName)
+    protected function addRenumberButton(string $viewName): void
     {
         $this->addButton($viewName, [
             'action' => 'renumber',
@@ -111,7 +110,7 @@ class ListAsiento extends ListController
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $selectCompany);
         }
 
-        $selectExercise = Ejercicios::codeModel();
+        $selectExercise = $this->getSelectExercise();
         if (count($selectExercise) > 2) {
             $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
         }
@@ -151,7 +150,7 @@ class ListAsiento extends ListController
     {
         $ids = [];
         $sql = 'SELECT partidas.idasiento, ABS(SUM(partidas.debe) - SUM(partidas.haber))'
-            . ' FROM partidas GROUP BY 1 HAVING ABS(SUM(partidas.debe) - SUM(partidas.haber)) >= 0.01';
+            . ' FROM partidas GROUP BY 1 HAVING ROUND(ABS(SUM(partidas.debe) - SUM(partidas.haber)), 2) >= 0.01';
         foreach ($this->dataBase->select($sql) as $row) {
             $ids[] = $row['idasiento'];
         }
@@ -205,7 +204,7 @@ class ListAsiento extends ListController
             return;
         }
 
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         $model = $this->views[$this->active]->model;
         if (false === is_array($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
@@ -253,5 +252,27 @@ class ListAsiento extends ListController
 
         $this->dataBase->rollback();
         Tools::log()->error('record-save-error');
+    }
+
+    private function getSelectExercise(): array
+    {
+        $companyFilter = $this->request->request->get('filteridempresa', 0);
+        $exerciseFilter = $this->request->request->get('filtercodejercicio', '');
+        $where = empty($companyFilter) ? [] : [new DataBaseWhere('idempresa', $companyFilter)];
+        $result = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre', true, $where);
+        if (empty($exerciseFilter)) {
+            return $result;
+        }
+
+        // check if the selected exercise is in the list
+        foreach ($result as $exercise) {
+            if ($exerciseFilter === $exercise->code) {
+                return $result;
+            }
+        }
+
+        // remove exercise filter if it is not in the list
+        $this->request->request->set('filtercodejercicio', '');
+        return $result;
     }
 }

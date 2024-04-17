@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,6 @@ use ReflectionMethod;
 
 trait ExtensionsTrait
 {
-
     /**
      * Stores class extensions.
      *
@@ -63,7 +62,7 @@ trait ExtensionsTrait
         $methods = (new ReflectionClass($extension))->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED);
         foreach ($methods as $method) {
             $method->setAccessible(true);
-            array_unshift(self::$extensions, ['name' => $method->name, 'function' => $method->invoke($extension)]);
+            self::$extensions[] = ['name' => $method->name, 'function' => $method->invoke($extension)];
         }
     }
 

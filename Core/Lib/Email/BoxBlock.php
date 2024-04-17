@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,8 +41,9 @@ class BoxBlock extends BaseBlock
         $this->blocks = $blocks;
     }
 
-    public function render(): string
+    public function render(bool $footer = false): string
     {
+        $this->footer = $footer;
         $return = $this->pipe('render');
         if ($return) {
             return $return;
@@ -51,7 +52,7 @@ class BoxBlock extends BaseBlock
         $html = '';
         foreach ($this->blocks as $block) {
             if ($block instanceof BaseBlock) {
-                $html .= $block->render();
+                $html .= $block->render($footer);
             }
         }
 

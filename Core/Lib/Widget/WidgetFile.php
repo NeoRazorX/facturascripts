@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\MiniLog;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Internal\UploadedFile;
+use FacturaScripts\Core\Request;
 
 /**
  * Description of WidgetFile
@@ -90,7 +90,7 @@ class WidgetFile extends BaseWidget
             }
 
             // exclude php files
-            if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
+            if (in_array($uploadFile->getMimeType(), ['application/x-php', 'text/x-php'])) {
                 $logger->error(static::$i18n->trans('php-files-blocked'));
                 continue;
             }
@@ -103,7 +103,7 @@ class WidgetFile extends BaseWidget
             }
 
             // move the file to the MyFiles folder
-            if ($uploadFile->move($destiny, $destinyName)) {
+            if ($uploadFile->moveTo($destiny . $destinyName)) {
                 $model->{$this->fieldname} = $destinyName;
                 break;
             }

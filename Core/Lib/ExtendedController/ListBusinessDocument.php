@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\DataSrc\GruposClientes;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\InvoiceOperation;
@@ -111,14 +112,14 @@ abstract class ListBusinessDocument extends ListController
 
     protected function createViewLines(string $viewName, string $modelName): void
     {
-        $this->addView($viewName, $modelName, 'lines', 'fas fa-list');
-        $this->addSearchFields($viewName, ['referencia', 'descripcion']);
-        $this->addOrderBy($viewName, ['referencia'], 'reference');
-        $this->addOrderBy($viewName, ['cantidad'], 'quantity');
-        $this->addOrderBy($viewName, ['servido'], 'quantity-served');
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
-        $this->addOrderBy($viewName, ['pvptotal'], 'amount');
-        $this->addOrderBy($viewName, ['idlinea'], 'code', 2);
+        $this->addView($viewName, $modelName, 'lines', 'fas fa-list')
+            ->addOrderBy(['referencia'], 'reference')
+            ->addOrderBy(['cantidad'], 'quantity')
+            ->addOrderBy(['servido'], 'quantity-served')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['pvptotal'], 'amount')
+            ->addOrderBy(['idlinea'], 'code', 2)
+            ->addSearchFields(['referencia', 'descripcion']);
 
         // filtros
         $this->addFilterAutocomplete($viewName, 'idproducto', 'product', 'idproducto', 'productos', 'idproducto', 'referencia');
@@ -164,14 +165,14 @@ abstract class ListBusinessDocument extends ListController
 
     protected function createViewPurchases(string $viewName, string $modelName, string $label)
     {
-        $this->addView($viewName, $modelName, $label, 'fas fa-copy');
-        $this->addSearchFields($viewName, ['cifnif', 'codigo', 'nombre', 'numproveedor', 'observaciones']);
-        $this->addOrderBy($viewName, ['codigo'], 'code');
-        $this->addOrderBy($viewName, ['fecha', $this->tableColToNumber('numero')], 'date', 2);
-        $this->addOrderBy($viewName, [$this->tableColToNumber('numero')], 'number');
-        $this->addOrderBy($viewName, ['numproveedor'], 'numsupplier');
-        $this->addOrderBy($viewName, ['codproveedor'], 'supplier-code');
-        $this->addOrderBy($viewName, ['total'], 'total');
+        $this->addView($viewName, $modelName, $label, 'fas fa-copy')
+            ->addOrderBy(['codigo'], 'code')
+            ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)
+            ->addOrderBy([$this->tableColToNumber('numero')], 'number')
+            ->addOrderBy(['numproveedor'], 'numsupplier')
+            ->addOrderBy(['codproveedor'], 'supplier-code')
+            ->addOrderBy(['total'], 'total')
+            ->addSearchFields(['cifnif', 'codigo', 'nombre', 'numproveedor', 'observaciones']);
 
         // filtros
         $this->addCommonViewFilters($viewName, $modelName);
@@ -184,17 +185,39 @@ abstract class ListBusinessDocument extends ListController
 
     protected function createViewSales(string $viewName, string $modelName, string $label)
     {
-        $this->addView($viewName, $modelName, $label, 'fas fa-copy');
-        $this->addSearchFields($viewName, ['cifnif', 'codigo', 'codigoenv', 'nombrecliente', 'numero2', 'observaciones']);
-        $this->addOrderBy($viewName, ['codigo'], 'code');
-        $this->addOrderBy($viewName, ['codcliente'], 'customer-code');
-        $this->addOrderBy($viewName, ['fecha', $this->tableColToNumber('numero')], 'date', 2);
-        $this->addOrderBy($viewName, [$this->tableColToNumber('numero')], 'number');
-        $this->addOrderBy($viewName, ['numero2'], 'number2');
-        $this->addOrderBy($viewName, ['total'], 'total');
+        $this->addView($viewName, $modelName, $label, 'fas fa-copy')
+            ->addOrderBy(['codigo'], 'code')
+            ->addOrderBy(['codcliente'], 'customer-code')
+            ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)
+            ->addOrderBy([$this->tableColToNumber('numero')], 'number')
+            ->addOrderBy(['numero2'], 'number2')
+            ->addOrderBy(['total'], 'total')
+            ->addSearchFields(['cifnif', 'codigo', 'codigoenv', 'nombrecliente', 'numero2', 'observaciones']);
 
         // filtros
         $this->addCommonViewFilters($viewName, $modelName);
+
+        // filtramos por grupos de clientes
+        $optionsGroup = [
+            ['label' => Tools::lang()->trans('any-group'), 'where' => []],
+            [
+                'label' => Tools::lang()->trans('without-groups'),
+                'where' => [new DataBaseWhere('codcliente', "SELECT DISTINCT codcliente FROM clientes WHERE codgrupo IS NULL", 'IN')]
+            ],
+            ['label' => '------', 'where' => []],
+        ];
+        foreach (GruposClientes::all() as $grupo) {
+            $sqlGrupo = 'SELECT DISTINCT codcliente FROM clientes WHERE codgrupo = ' . $this->dataBase->var2str($grupo->codgrupo);
+            $optionsGroup[] = [
+                'label' => $grupo->nombre,
+                'where' => [new DataBaseWhere('codcliente', $sqlGrupo, 'IN')]
+            ];
+        }
+        if (count($optionsGroup) > 3) {
+            $this->addFilterSelectWhere($viewName, 'codgrupo', $optionsGroup);
+        }
+
+        // filtramos por clientes y direcciones
         $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterAutocomplete($viewName, 'idcontactofact', 'billing-address', 'idcontactofact', 'contactos', 'idcontacto', 'direccion');
         $this->addFilterautocomplete($viewName, 'idcontactoenv', 'shipping-address', 'idcontactoenv', 'contactos', 'idcontacto', 'direccion');
@@ -224,7 +247,7 @@ abstract class ListBusinessDocument extends ListController
     protected function execPreviousAction($action)
     {
         $allowUpdate = $this->permissions->allowUpdate;
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         $model = $this->views[$this->active]->model;
 
         switch ($action) {

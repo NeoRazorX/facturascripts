@@ -23,8 +23,8 @@ use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\API\Base\APIResourceClass;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * APIModel is the class for any API Model Resource in Dinamic/Model folder.

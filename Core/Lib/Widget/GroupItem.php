@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Request;
 
 /**
  * Description of GroupItem
@@ -154,7 +154,8 @@ class GroupItem extends VisualItem
             . '<button type="button" class="btn btn-spin-action btn-secondary" data-dismiss="modal">'
             . static::$i18n->trans('cancel')
             . '</button>'
-            . '<button type="submit" name="action" value="' . $this->name . '" class="btn-spin-action  btn btn-primary">'
+            . '<input type="hidden" name="action" value="' . $this->name . '"/>'
+            . '<button type="submit" class="btn-spin-action btn btn-primary">'
             . static::$i18n->trans('accept')
             . '</button>'
             . '</div>'

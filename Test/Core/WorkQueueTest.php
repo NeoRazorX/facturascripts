@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,7 +43,19 @@ final class WorkQueueTest extends TestCase
         WorkQueue::removeAllWorkers();
     }
 
-    public function testAddEvent(): void
+    public function testMatchEvent(): void
+    {
+        $this->assertTrue(WorkQueue::matchEvent('Model.Producto.Save', 'Model.Producto.Save'));
+        $this->assertTrue(WorkQueue::matchEvent('Model.Producto.*', 'Model.Producto.Save'));
+        $this->assertTrue(WorkQueue::matchEvent('Model.*', 'Model.Producto.Save'));
+        $this->assertTrue(WorkQueue::matchEvent('*', 'Model.Producto.Save'));
+
+        $this->assertFalse(WorkQueue::matchEvent('Model.Producto.Save', 'Model.Producto.Delete'));
+        $this->assertFalse(WorkQueue::matchEvent('Model.Producto.*', 'Model.Asiento.Insert'));
+        $this->assertFalse(WorkQueue::matchEvent('Model.*', 'test-event'));
+    }
+
+    public function testSend(): void
     {
         // comprobamos que no podemos añadir el evento porque no existe el worker
         $this->assertFalse(WorkQueue::send('test-event', 'test-value'));
@@ -71,7 +83,7 @@ final class WorkQueueTest extends TestCase
         WorkQueue::removeAllWorkers();
     }
 
-    public function testAddEventWithParams(): void
+    public function testSendWithParams(): void
     {
         // añadimos el worker
         WorkQueue::addWorker('TestWorker', 'test-event');
@@ -95,6 +107,102 @@ final class WorkQueueTest extends TestCase
 
         // eliminamos el worker
         WorkQueue::removeAllWorkers();
+    }
+
+    public function testRemoveAllWorkers(): void
+    {
+        // contamos el número de workers
+        $count = count(WorkQueue::getWorkersList());
+
+        // añadimos un worker
+        WorkQueue::addWorker('TestWorker', 'test-event');
+
+        // comprobamos que se ha añadido el worker
+        $this->assertCount($count + 1, WorkQueue::getWorkersList());
+
+        // eliminamos todos los workers
+        WorkQueue::removeAllWorkers();
+
+        // comprobamos que se han eliminado todos los workers
+        $this->assertEmpty(WorkQueue::getWorkersList());
+    }
+
+    public function testMasterWorker(): void
+    {
+        // añadimos el worker
+        WorkQueue::addWorker('TestWorker');
+
+        // añadimos 2 eventos
+        $this->assertTrue(WorkQueue::send('test-event', 'test-value'));
+        $this->assertTrue(WorkQueue::send('test-event-2', 'test-value-2'));
+
+        // comprobamos que se han guardado los eventos
+        $model = new WorkEvent();
+        $events = $model->all([], [], 0, 0);
+        $this->assertCount(2, $events);
+        $this->assertEquals('test-event', $events[0]->name);
+        $this->assertEquals('test-event-2', $events[1]->name);
+
+        // eliminamos el worker
+        WorkQueue::removeAllWorkers();
+
+        // eliminamos los eventos
+        $this->assertTrue($events[0]->delete());
+        $this->assertTrue($events[1]->delete());
+    }
+
+    public function testModelAsientoAsterisk(): void
+    {
+        // añadimos el worker
+        WorkQueue::addWorker('TestWorker', 'Model.Asiento.*');
+
+        // añadimos 2 eventos de modelos
+        $this->assertTrue(WorkQueue::send('Model.Asiento.Save', 'test-value'));
+        $this->assertTrue(WorkQueue::send('Model.Asiento.Delete', 'test-value-2'));
+
+        // añadimos un evento no relacionado
+        $this->assertFalse(WorkQueue::send('Yolo.Save', 'test-value-3'));
+
+        // comprobamos que se han guardado los 2 eventos
+        $model = new WorkEvent();
+        $events = $model->all([], [], 0, 0);
+        $this->assertCount(2, $events);
+        $this->assertEquals('Model.Asiento.Save', $events[0]->name);
+        $this->assertEquals('Model.Asiento.Delete', $events[1]->name);
+
+        // eliminamos el worker
+        WorkQueue::removeAllWorkers();
+
+        // eliminamos los eventos
+        $this->assertTrue($events[0]->delete());
+        $this->assertTrue($events[1]->delete());
+    }
+
+    public function testModelAsterisk(): void
+    {
+        // añadimos el worker
+        WorkQueue::addWorker('TestWorker', 'Model.*');
+
+        // añadimos 2 eventos de modelos
+        $this->assertTrue(WorkQueue::send('Model.Asiento.Save', 'test-value'));
+        $this->assertTrue(WorkQueue::send('Model.Producto.Save', 'test-value-2'));
+
+        // añadimos un evento no relacionado
+        $this->assertFalse(WorkQueue::send('Otro.Save', 'test-value-3'));
+
+        // comprobamos que se han guardado los 2 eventos
+        $model = new WorkEvent();
+        $events = $model->all([], [], 0, 0);
+        $this->assertCount(2, $events);
+        $this->assertEquals('Model.Asiento.Save', $events[0]->name);
+        $this->assertEquals('Model.Producto.Save', $events[1]->name);
+
+        // eliminamos el worker
+        WorkQueue::removeAllWorkers();
+
+        // eliminamos los eventos
+        $this->assertTrue($events[0]->delete());
+        $this->assertTrue($events[1]->delete());
     }
 
     public function testRunEmptyQueue(): void

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -31,25 +32,45 @@ class Ciudad extends Base\ModelClass
 {
     use Base\ModelTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
+    public $alias;
+
+    /** @var string */
+    public $creation_date;
+
+    /** @var string */
     public $ciudad;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codeid;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $idciudad;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $idprovincia;
+
+    /** @var string */
+    public $last_nick;
+
+    /** @var string */
+    public $last_update;
+
+    /** @var float */
+    public $latitude;
+
+    /** @var float */
+    public $longitude;
+
+    /** @var string */
+    public $nick;
+
+    public function getProvince(): Provincia
+    {
+        $province = new Provincia();
+        $province->loadFromCode($this->idprovincia);
+        return $province;
+    }
 
     public function install(): string
     {
@@ -71,13 +92,26 @@ class Ciudad extends Base\ModelClass
 
     public function test(): bool
     {
+        $this->creation_date = $this->creation_date ?? Tools::dateTime();
+        $this->nick = $this->nick ?? Session::user()->nick;
+        $this->alias = Tools::noHtml($this->alias);
         $this->ciudad = Tools::noHtml($this->ciudad);
-
         return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
+        if ('list' === $type && !empty($this->primaryColumnValue())) {
+            return $this->getProvince()->url() . '&activetab=List' . $this->modelClassName();
+        }
+
         return parent::url($type, $list);
+    }
+
+    protected function saveUpdate(array $values = []): bool
+    {
+        $this->last_nick = Session::user()->nick;
+        $this->last_update = Tools::dateTime();
+        return parent::saveUpdate($values);
     }
 }
