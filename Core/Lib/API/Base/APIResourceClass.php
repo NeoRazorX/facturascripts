@@ -141,7 +141,7 @@ abstract class APIResourceClass
      */
     public function processResource(string $name): bool
     {
-        $this->method = $this->request->method();
+        $this->method = $this->request->server->getMethod();
 
         try {
             // http://www.restapitutorial.com/lessons/httpmethods.html

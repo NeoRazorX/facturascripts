@@ -53,6 +53,14 @@ final class UploadedFile
         return pathinfo($this->name, PATHINFO_EXTENSION);
     }
 
+    /**
+     * @deprecated
+     */
+    public function getClientMimeType(): string
+    {
+        return $this->getMimeType();
+    }
+
     public function getClientOriginalName(): string
     {
         return $this->name;
@@ -113,6 +121,14 @@ final class UploadedFile
     public function isValid(): bool
     {
         return $this->error === UPLOAD_ERR_OK && $this->isUploaded();
+    }
+
+    /**
+     * @deprecated
+     */
+    public function move(string $folder, string $filename): bool
+    {
+        return $this->moveTo($folder . $filename);
     }
 
     public function moveTo(string $targetPath): bool

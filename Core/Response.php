@@ -157,6 +157,15 @@ final class Response
         return $this;
     }
 
+    /**
+     * @deprecated
+     */
+    public function setStatusCode(int $http_code): Response
+    {
+        $this->setHttpCode($http_code);
+        return $this;
+    }
+
     public function view(string $view, array $data = []): void
     {
         $this->headers->set('Content-Type', 'text/html');

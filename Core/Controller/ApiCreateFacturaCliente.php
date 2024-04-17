@@ -31,7 +31,7 @@ class ApiCreateFacturaCliente extends ApiController
     protected function runResource(): void
     {
         // si el método no es POST o PUT, devolvemos un error
-        if (!in_array($this->request->method(), ['POST', 'PUT'])) {
+        if (!in_array($this->request->server->getMethod(), ['POST', 'PUT'])) {
             $this->response->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED);
             $this->response->setContent(json_encode([
                 'status' => 'error',

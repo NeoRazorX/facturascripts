@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -131,6 +131,7 @@ class GroupItem extends VisualItem
         $html = '<form id="formModal' . $this->getUniqueId() . '" method="post" enctype="multipart/form-data" onsubmit="animateSpinner(\'add\')">'
             . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
             . '<input type="hidden" name="code" value=""/>'
+            . '<input type="hidden" name="codes" value=""/>'
             . '<input type="hidden" name="multireqtoken" value="' . static::getToken() . '"/>'
             . '<div class="modal" id="modal' . $this->name . '" tabindex="-1" role="dialog">'
             . '<div class="modal-dialog ' . $this->class . '" role="document">'
