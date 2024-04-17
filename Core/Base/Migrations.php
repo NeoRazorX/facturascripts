@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\LogMessage;
 use FacturaScripts\Dinamic\Model\Serie;
@@ -39,6 +40,7 @@ final class Migrations
     {
         self::clearLogs();
         self::fixSeries();
+        self::fixAgenciasTransporte();
         self::fixFormasPago();
         self::fixRectifiedInvoices();
     }
@@ -64,6 +66,20 @@ final class Migrations
         }
 
         return self::$database;
+    }
+
+    private static function fixAgenciasTransporte(): void
+    {
+        // forzamos la comprobación de la tabla agenciastransporte
+        new AgenciaTransporte();
+
+        // desvinculamos las agencias de transporte que no existan
+        foreach (['albaranescli', 'facturascli', 'pedidoscli', 'presupuestoscli'] as $table) {
+            $sql = "UPDATE " . $table . " SET codtrans = NULL WHERE codtrans IS NOT NULL"
+                . " AND codtrans NOT IN (SELECT codtrans FROM agenciastrans);";
+
+            self::db()->exec($sql);
+        }
     }
 
     // versión 2024.5, fecha 15-04-2024
