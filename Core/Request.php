@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Internal\RequestFiles;
+use FacturaScripts\Core\Internal\RequestServer;
 use FacturaScripts\Core\Internal\SubRequest;
 use FacturaScripts\Core\Internal\UploadedFile;
 
@@ -40,6 +41,9 @@ final class Request
     /** @var SubRequest */
     public $request;
 
+    /** @var RequestServer */
+    public $server;
+
     public function __construct(array $data = [])
     {
         $this->cookies = new SubRequest($data['cookies'] ?? []);
@@ -47,6 +51,7 @@ final class Request
         $this->headers = new SubRequest($data['headers'] ?? []);
         $this->query = new SubRequest($data['query'] ?? []);
         $this->request = new SubRequest($data['request'] ?? []);
+        $this->server = new RequestServer($_SERVER);
     }
 
     /**
@@ -206,6 +211,14 @@ final class Request
         return $this->query->getInt($key, $allowNull);
     }
 
+    /**
+     * @deprecated
+     */
+    public function getMethod(): string
+    {
+        return $this->method();
+    }
+
     public function getOnly(string $key, array $values): ?string
     {
         if ($this->request->has($key)) {
@@ -280,14 +293,12 @@ final class Request
         return '::1';
     }
 
-    public function isMethod(string $method): bool
-    {
-        return $this->method() === $method;
-    }
-
+    /**
+     * @deprecated
+     */
     public function method(): string
     {
-        return $_SERVER['REQUEST_METHOD'];
+        return $this->server->getMethod();
     }
 
     public function os(): string
@@ -322,6 +333,11 @@ final class Request
     public function query(string $key, $default = null): ?string
     {
         return $this->query->get($key, $default);
+    }
+
+    public function getServer(string $key): ?string
+    {
+        return $_SERVER[$key] ?? null;
     }
 
     public function url(?int $position = null): string

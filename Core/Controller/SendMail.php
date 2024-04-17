@@ -136,7 +136,7 @@ class SendMail extends Controller
         }
 
         $invoice = new FacturaCliente();
-        if ($invoice->loadFromCode($this->request->query->get('modelCode')->toAlnum()) && $invoice->editable) {
+        if ($invoice->loadFromCode($this->request->query->getAlnum('modelCode')) && $invoice->editable) {
             Tools::log()->warning('sketch-invoice-warning');
         }
     }

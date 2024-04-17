@@ -232,7 +232,7 @@ class Controller implements ControllerInterface
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE);
+            $this->response->cookie('fsHomepage', $this->user->homepage);
             $this->user->save();
         } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;

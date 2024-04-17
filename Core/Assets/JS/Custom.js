@@ -79,13 +79,13 @@ function setModalParentForm(modal, form) {
         let codes = [];
 
         // recorremos los checkboxes del formulario donde sale el botón
-        let checkboxes = document.querySelectorAll('input[name="code[]"]:checked');
+        let checkboxes = document.querySelectorAll('input[name="codes[]"]:checked');
         checkboxes.forEach((checkbox) => {
             codes.push(checkbox.value);
         });
 
         // asignamos al formulario del modal los checkboxes marcados del formulario donde sale el botón
-        $("#" + modal).parent().find('input[name="code"]').val(codes.join());
+        $("#" + modal).parent().find('input[name="codes"]').val(codes.join());
         console.log(codes);
     }
 }

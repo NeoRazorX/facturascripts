@@ -82,7 +82,7 @@ class Installer implements ControllerInterface
         $this->db_user = $this->request->get('fs_db_user', 'root');
 
         $installed = $this->searchErrors() &&
-            $this->request->method() === 'POST' &&
+            $this->request->server->getMethod() === 'POST' &&
             $this->createDataBase() &&
             $this->createFolders() &&
             $this->saveHtaccess() &&

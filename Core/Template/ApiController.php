@@ -70,7 +70,7 @@ abstract class ApiController implements ControllerInterface
             throw new KernelException('DisabledApi', Tools::lang()->trans('api-disabled'));
         }
 
-        if ($this->request->server->get('REQUEST_METHOD') == 'OPTIONS') {
+        if ($this->request->server->getMethod() == 'OPTIONS') {
             $this->response->headers->set('Access-Control-Allow-Origin', '*');
             $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
             $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
@@ -108,6 +108,14 @@ abstract class ApiController implements ControllerInterface
         if ($version != self::API_VERSION) {
             throw new KernelException('InvalidApiVersion', Tools::lang()->trans('api-version-invalid'));
         }
+
+        $this->response->headers->set('Access-Control-Allow-Origin', '*');
+        $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+        $this->response->headers->set('Content-Type', 'application/json');
+
+        $this->runResource();
+
+        $this->response->send();
     }
 
     private function clientHasManyIncidents(): bool
@@ -158,7 +166,7 @@ abstract class ApiController implements ControllerInterface
             new DataBaseWhere('resource', $resource)
         ];
         if ($apiAccess->loadFromCode('', $where)) {
-            switch ($this->request->method()) {
+            switch ($this->request->server->getMethod()) {
                 case 'DELETE':
                     return $apiAccess->allowdelete;
 
