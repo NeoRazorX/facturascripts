@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,6 @@ namespace FacturaScripts\Core\Internal;
 
 final class RequestFiles
 {
-    private const FILE_KEYS = ['error', 'name', 'size', 'tmp_name', 'type'];
-
     /** @return array */
     private $data = [];
 
@@ -30,8 +28,10 @@ final class RequestFiles
     {
         $files = [];
         foreach ($data as $key => $value) {
-            if (is_array($value['size'])) {
-                $files[$key] = $this->reArrayFiles($value);
+            if (false === isset($value['size'])) {
+                continue;
+            } elseif (is_array($value['size'])) {
+                $files[$key] = $this->convertArrayFiles($value);
             } elseif ($value['size'] > 0) {
                 $files[$key] = $value;
             }
@@ -60,7 +60,10 @@ final class RequestFiles
 
         $result = [];
         foreach ($key as $k) {
-            $result[$k] = $this->get($k);
+            if (false === $this->has($k)) {
+                continue;
+            }
+            $result[$k] = $this->data[$k];
         }
         return $result;
     }
@@ -103,7 +106,7 @@ final class RequestFiles
         $this->data[$key] = $value;
     }
 
-    private function reArrayFiles($file_post): array
+    private function convertArrayFiles($file_post): array
     {
         $file_ary = array();
         $file_count = count($file_post['name']);
