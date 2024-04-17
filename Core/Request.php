@@ -97,10 +97,26 @@ final class Request
 
     public static function createFromGlobals(): self
     {
+        $headers = [];
+
+        if(!function_exists('getallheaders')){
+            foreach($_SERVER as $name => $value){
+                if(substr($name, 0, 5) == 'HTTP_'){
+                    $headers[str_replace(
+                        ' ',
+                        '-',
+                        ucwords(strtolower(str_replace('_', ' ', substr($name, 5))))
+                    )] = $value;
+                }
+            }
+        }else{
+            $headers = getallheaders();
+        }
+
         return new self([
             'cookies' => $_COOKIE,
             'files' => $_FILES,
-            'headers' => getallheaders(),
+            'headers' => $headers,
             'query' => $_GET,
             'request' => $_POST,
         ]);
