@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Serie;
@@ -218,7 +219,7 @@ class ReportTaxes extends Controller
         switch ($this->source) {
             case 'purchases':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor AS numero2, f.fecha, f.fechadevengo, f.nombre, f.cifnif, l.pvptotal,'
-                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total'
+                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion'
                     . ' FROM lineasfacturasprov AS l'
                     . ' LEFT JOIN facturasprov AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
@@ -230,7 +231,7 @@ class ReportTaxes extends Controller
 
             case 'sales':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numero2, f.fecha, f.fechadevengo, f.nombrecliente AS nombre, f.cifnif, l.pvptotal,'
-                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total'
+                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion'
                     . ' FROM lineasfacturascli AS l'
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
@@ -258,7 +259,7 @@ class ReportTaxes extends Controller
             $code = $row['codigo'] . '-' . $row['iva'] . '-' . $row['recargo'] . '-' . $row['irpf'] . '-' . $row['suplido'];
             if (isset($data[$code])) {
                 $data[$code]['neto'] += $row['suplido'] ? 0 : $pvpTotal;
-                $data[$code]['totaliva'] += $row['suplido'] ? 0 : (float)$row['iva'] * $pvpTotal / 100;
+                $data[$code]['totaliva'] += $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float)$row['iva'] * $pvpTotal / 100;
                 $data[$code]['totalrecargo'] += $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100;
                 $data[$code]['totalirpf'] += $row['suplido'] ? 0 : (float)$row['irpf'] * $pvpTotal / 100;
                 $data[$code]['suplidos'] += $row['suplido'] ? $pvpTotal : 0;
@@ -276,7 +277,7 @@ class ReportTaxes extends Controller
                 'cifnif' => $row['cifnif'],
                 'neto' => $row['suplido'] ? 0 : $pvpTotal,
                 'iva' => $row['suplido'] ? 0 : (float)$row['iva'],
-                'totaliva' => $row['suplido'] ? 0 : (float)$row['iva'] * $pvpTotal / 100,
+                'totaliva' => $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float)$row['iva'] * $pvpTotal / 100,
                 'recargo' => $row['suplido'] ? 0 : (float)$row['recargo'],
                 'totalrecargo' => $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100,
                 'irpf' => $row['suplido'] ? 0 : (float)$row['irpf'],
