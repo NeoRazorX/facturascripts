@@ -22,9 +22,11 @@ namespace FacturaScripts\Core\Controller;
 use Exception;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\Model\LogMessage;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\WorkQueue;
+use FacturaScripts\Dinamic\Model\WorkEvent;
 
 class Cron implements ControllerInterface
 {
@@ -60,6 +62,10 @@ END;
 
         // ejecutamos el cron de cada plugin
         $this->runPlugins();
+
+        // eliminamos los logs antiguos
+        $this->removeOldLogs();
+        $this->removeOldWorkEvents();
 
         // si se está ejecutando en modo cli, ejecutamos la cola de trabajos, máximo 100 trabajos
         $max = 100;
@@ -97,6 +103,49 @@ END;
     {
         $unit = ['b', 'kb', 'mb', 'gb', 'tb', 'pb'];
         return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
+    }
+
+    protected function removeOldLogs(): void
+    {
+        $maxDays = Tools::settings('default', 'days_log_retention', 90);
+        if ($maxDays <= 0) {
+            return;
+        }
+
+        $minDate = Tools::dateTime('-' . $maxDays . ' days');
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('removing-logs-until', ['%date%' => $minDate]) . ' ... ';
+
+        $query = LogMessage::table()
+            ->whereNotEq('channel', 'audit')
+            ->whereLt('time', $minDate);
+
+        if (false === $query->delete()) {
+            Tools::log('cron')->warning('old-logs-delete-error');
+            return;
+        }
+
+        Tools::log('cron')->notice('old-logs-delete-ok');
+    }
+
+    protected function removeOldWorkEvents(): void
+    {
+        $maxDays = Tools::settings('default', 'days_log_retention', 90);
+        if ($maxDays <= 0) {
+            return;
+        }
+
+        $minDate = Tools::dateTime('-' . $maxDays . ' days');
+
+        $query = WorkEvent::table()
+            ->whereEq('done', true)
+            ->whereLt('creation_date', $minDate);
+
+        if (false === $query->delete()) {
+            Tools::log('cron')->warning('old-work-events-delete-error');
+            return;
+        }
+
+        Tools::log('cron')->notice('old-work-events-delete-ok');
     }
 
     protected function runPlugins(): void

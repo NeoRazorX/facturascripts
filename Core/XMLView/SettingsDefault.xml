@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -163,6 +163,9 @@
             </column>
             <column name="login-image" numcolumns="3" order="140">
                 <widget type="library" fieldname="idloginimage" icon="fas fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.png"/>
+            </column>
+            <column name="days-log-retention" numcolumns="3" order="150">
+                <widget type="number" fieldname="days_log_retention" min="1" max="250" icon="fas fa-calendar" required="true"/>
             </column>
         </group>
         <group name="advanced2" numcolumns="12">
