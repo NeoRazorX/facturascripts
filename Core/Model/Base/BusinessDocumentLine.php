@@ -409,6 +409,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
     protected function saveInsert(array $values = []): bool
     {
+        $this->orden = $this->getOrder();
         return $this->updateStock() && parent::saveInsert($values);
     }
 
@@ -482,5 +483,26 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         }
 
         return false;
+    }
+
+    /**
+     * Devuelve el siguiente número de orden para una línea.
+     *
+     * Se hace en negativo porque desde siempre se ha estado
+     * asignando el orden descendentemente.
+     *
+     * Es decir el la primera línea tiene el orden 20 y la segunda el orden 10.
+     *
+     * @return int
+     */
+    public function getOrder(): int
+    {
+        $doc = $this->getDocument();
+
+        $ultimo = (int)$this::table()
+            ->whereEq($doc->primaryColumn(), $doc->primaryColumnValue())
+            ->min('orden');
+
+        return $ultimo - 10;
     }
 }
