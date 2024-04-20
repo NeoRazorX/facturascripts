@@ -412,7 +412,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
     protected function saveInsert(array $values = []): bool
     {
-//        $this->orden = $this->getOrder();
         return $this->updateStock() && parent::saveInsert($values);
     }
 
