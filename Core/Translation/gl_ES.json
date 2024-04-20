@@ -1576,6 +1576,7 @@
     "update-time": "hora de actualización",
     "updated-model": "Actualizado %model% (%key%) %desc%",
     "updater": "Actualizador",
+    "updating-attached-relations": "Actualizando contadores de archivos adjuntos",
     "upload-file": "Subir ficheiro",
     "uploaded-at": "Cargado en",
     "url": "Sitio web",
