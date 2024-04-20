@@ -155,6 +155,9 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     /** @var bool */
     public $suplido;
 
+    /** @var int|null */
+    private static $ultimo = null;
+
     /**
      * Returns the parent document of this line.
      */
@@ -409,7 +412,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
     protected function saveInsert(array $values = []): bool
     {
-        $this->orden = $this->getOrder();
+//        $this->orden = $this->getOrder();
         return $this->updateStock() && parent::saveInsert($values);
     }
 
@@ -497,12 +500,15 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public function getOrder(): int
     {
-        $doc = $this->getDocument();
+        if (is_null(self::$ultimo)){
+            $doc = $this->getDocument();
+            $ultimo = (int)$this::table()
+                ->whereEq($doc->primaryColumn(), $doc->primaryColumnValue())
+                ->min('orden');
+        }else{
+            $ultimo = self::$ultimo;
+        }
 
-        $ultimo = (int)$this::table()
-            ->whereEq($doc->primaryColumn(), $doc->primaryColumnValue())
-            ->min('orden');
-
-        return $ultimo - 10;
+        return self::$ultimo = $ultimo - 10;
     }
 }
