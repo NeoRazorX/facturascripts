@@ -61,11 +61,15 @@ final class CronJobTest extends TestCase
         $this->assertFalse($job->save());
     }
 
-    public function testCantCreateWithoutPlugin(): void
+    public function testCanCreateWithoutPlugin(): void
     {
+        // creamos un trabajo sin plugin
         $job = new CronJob();
         $job->jobname = 'TestName';
-        $this->assertFalse($job->save());
+        $this->assertTrue($job->save());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
     }
 
     public function testEveryFunction(): void
