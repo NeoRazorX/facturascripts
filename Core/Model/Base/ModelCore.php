@@ -164,8 +164,8 @@ abstract class ModelCore
      */
     public function changePrimaryColumnValue($newValue): bool
     {
-        if (empty($newValue) || $newValue == $this->primaryColumnValue()) {
-            return true;
+        if (empty($newValue) || $newValue === $this->primaryColumnValue()) {
+            return false;
         }
 
         $sql = "UPDATE " . $this->tableName() . " SET " . $this->primaryColumn() . " = " . self::$dataBase->var2str($newValue)
