@@ -49,7 +49,7 @@ class User extends ModelClass
     /** @var string */
     public $codagente;
 
-    /** @var string */
+    /** @var string|null */
     public $codalmacen;
 
     /** @var string */
@@ -157,10 +157,10 @@ class User extends ModelClass
     {
         parent::clear();
         $this->admin = false;
-        $this->codalmacen = Tools::settings('default', 'codalmacen');
+        $this->codalmacen = null;
         $this->creationdate = Tools::date();
         $this->enabled = true;
-        $this->idempresa = Tools::settings('default', 'idempresa', 1);
+        $this->idempresa = null;
         $this->langcode = FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
     }
@@ -268,7 +268,7 @@ class User extends ModelClass
             $this->level = 0;
         }
 
-        return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();
+        return $this->testPassword() && $this->testAgent() && parent::test();
     }
 
     public function updateActivity(string $ipAddress, string $browser = ''): void
@@ -335,23 +335,6 @@ class User extends ModelClass
         $agent = new Agente();
         if (false === $agent->loadFromCode($this->codagente)) {
             $this->codagente = null;
-        }
-
-        return true;
-    }
-
-    protected function testWarehouse(): bool
-    {
-        if (empty($this->codalmacen)) {
-            $this->codalmacen = Tools::settings('default', 'codalmacen');
-            $this->idempresa = Tools::settings('default', 'idempresa');
-            return true;
-        }
-
-        $warehouse = new Almacen();
-        if (false === $warehouse->loadFromCode($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
-            $this->codalmacen = Tools::settings('default', 'codalmacen');
-            $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
         return true;
