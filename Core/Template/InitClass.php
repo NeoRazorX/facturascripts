@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,8 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Template;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 
@@ -26,26 +27,23 @@ use FacturaScripts\Dinamic\Lib\Import\CSVImport;
  * Description of InitClass
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @deprecated since version 2024.5
  */
 abstract class InitClass
 {
     /**
      * Code to load every time FacturaScripts starts.
      */
-    abstract public function init();
-
-    /**
-     * Code to load every time the plugin is enabled or updated.
-     */
-    abstract public function update();
+    abstract public function init(): void;
 
     /**
      * Code that is executed when uninstalling a plugin.
      */
-    public function uninstall()
-    {
-    }
+    abstract public function uninstall(): void;
+
+    /**
+     * Code to load every time the plugin is enabled or updated.
+     */
+    abstract public function update(): void;
 
     protected function getNamespace(): string
     {
@@ -100,6 +98,30 @@ abstract class InitClass
                 return $this->loadBusinessDocumentExtension($extension, [
                     'LineaAlbaranCliente', 'LineaFacturaCliente', 'LineaPedidoCliente', 'LineaPresupuestoCliente'
                 ]);
+
+            case 'Controller\\EditController':
+                // recorremos todos los controlados que empiezan por Edit
+                $controllers = Tools::folderScan(FS_FOLDER . '/Dinamic/Controller/');
+                foreach ($controllers as $file) {
+                    $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . substr($file, 0, -4);
+
+                    if (str_starts_with($file, 'Edit') && str_ends_with($file, '.php') && class_exists($controller)) {
+                        $controller::addExtension($extension);
+                    }
+                }
+                return true;
+
+            case 'Controller\\ListController':
+                // recorremos todos los controlados que empiezan por List
+                $controllers = Tools::folderScan(FS_FOLDER . '/Dinamic/Controller/');
+                foreach ($controllers as $file) {
+                    $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . substr($file, 0, -4);
+
+                    if (str_starts_with($file, 'List') && str_ends_with($file, '.php') && class_exists($controller)) {
+                        $controller::addExtension($extension);
+                    }
+                }
+                return true;
         }
 
         $targetClass = '\\FacturaScripts\\Dinamic\\' . $className;
@@ -127,16 +149,7 @@ abstract class InitClass
         return true;
     }
 
-    /**
-     * @return ToolBox
-     * @deprecated since version 2023.1
-     */
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
-    }
-
-    protected function updateTableData(string $tableName)
+    protected function updateTableData(string $tableName): void
     {
         $sql = CSVImport::updateTableSQL($tableName);
         if ($sql) {
