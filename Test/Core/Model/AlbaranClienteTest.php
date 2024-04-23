@@ -298,6 +298,47 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
 
+    public function testInvoiceAddress()
+    {
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save());
+
+        // completamos los datos del contacto
+        $contact = $customer->getDefaultAddress();
+        $contact->apartado = '12345';
+        $contact->ciudad = 'Test-ciudad';
+        $contact->codpais = 'Test-codpais';
+        $contact->codpostal = '12345';
+        $contact->direccion = 'Test-direccion';
+        $contact->provincia = 'Test-provincia';
+        $this->assertTrue($contact->save());
+
+        // creamos un documento
+        $doc = new AlbaranCliente();
+        $doc->setSubject($customer);
+        $this->assertTrue($doc->save());
+
+        // obtenemos el documento de la base de datos
+        // para así comprobar que se estan guardando bien
+        // en la base de datos
+        $savedDoc = new AlbaranCliente();
+        $savedDoc->loadFromCode($doc->primaryColumnValue());
+
+        // comparamos que los datos del contacto/cliente se guardan en el documento
+        $this->assertEquals($contact->apartado, $savedDoc->apartado);
+        $this->assertEquals($contact->ciudad, $savedDoc->ciudad);
+        $this->assertEquals($contact->codpais, $savedDoc->codpais);
+        $this->assertEquals($contact->codpostal, $savedDoc->codpostal);
+        $this->assertEquals($contact->direccion, $savedDoc->direccion);
+        $this->assertEquals($contact->provincia, $savedDoc->provincia);
+
+        // eliminamos
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($customer->getDefaultAddress()->delete());
+        $this->assertTrue($customer->delete());
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
