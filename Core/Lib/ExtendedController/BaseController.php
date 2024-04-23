@@ -464,6 +464,11 @@ abstract class BaseController extends Controller
         $required = (bool)$this->request->get('required', false);
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
 
+        $return = $this->pipe('selectAction', $data, $required);
+        if ($return) {
+            return $return;
+        }
+
         $where = [];
         foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
             $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);

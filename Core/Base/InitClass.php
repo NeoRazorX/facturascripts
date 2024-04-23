@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -99,6 +99,44 @@ abstract class InitClass
                 return $this->loadBusinessDocumentExtension($extension, [
                     'LineaAlbaranCliente', 'LineaFacturaCliente', 'LineaPedidoCliente', 'LineaPresupuestoCliente'
                 ]);
+
+            case 'Controller\\EditController':
+                // recorremos todos los controlados que empiezan por Edit
+                $controllers = Tools::folderScan(FS_FOLDER . '/Dinamic/Controller/', false);
+
+                foreach ($controllers as $controller) {
+                    if (false === str_starts_with($controller, 'Edit')) {
+                        continue;
+                    }
+
+                    // obtenemos el nombre sin la extensión
+                    $name = str_replace('.php', '', $controller);
+
+                    $controllerClass = '\\FacturaScripts\\Dinamic\\Controller\\' . $name;
+                    if (class_exists($controllerClass)) {
+                        $controllerClass::addExtension($extension);
+                    }
+                }
+                break;
+
+            case 'Controller\\ListController':
+                // recorremos todos los controlados que empiezan por List
+                $controllers = Tools::folderScan(FS_FOLDER . '/Dinamic/Controller/', false);
+
+                foreach ($controllers as $controller) {
+                    if (false === str_starts_with($controller, 'List')) {
+                        continue;
+                    }
+
+                    // obtenemos el nombre sin la extensión
+                    $name = str_replace('.php', '', $controller);
+
+                    $controllerClass = '\\FacturaScripts\\Dinamic\\Controller\\' . $name;
+                    if (class_exists($controllerClass)) {
+                        $controllerClass::addExtension($extension);
+                    }
+                }
+                break;
         }
 
         $targetClass = '\\FacturaScripts\\Dinamic\\' . $className;
