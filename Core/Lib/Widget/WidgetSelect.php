@@ -313,11 +313,13 @@ class WidgetSelect extends BaseWidget
 
         if (null === $selected) {
             // value is not in $this->values
+            $selected = $this->source ?
+                static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle) :
+                $this->value;
+
             $this->values[] = [
                 'value' => $this->value,
-                'title' => $this->source ?
-                    static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle) :
-                    $this->value
+                'title' => $selected
             ];
         }
 
