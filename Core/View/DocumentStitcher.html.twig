@@ -219,6 +219,17 @@
             document.formDocStitcher.status.value = status;
             document.formDocStitcher.submit();
         }
+
+        function toggleServe(input) {
+            const celda = input.closest('td.table-success');
+            if(input.checked){
+                const toServe = celda.querySelector('input.to_serve').value;
+                celda.querySelector('input.to_be_served').value = toServe;
+            }else{
+                celda.querySelector('input.to_be_served').value = 0;
+            }
+        };
+
     </script>
 {% endblock %}
 
@@ -277,9 +288,16 @@
                         {% set newQuantity = line.cantidad - line.servido %}
                         <td class="{{ newQuantity == 0 ? 'table-warning' : 'table-success' }}">
                             <input type="hidden" class="to_serve" value="{{ newQuantity }}"/>
-                            <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}"
-                                   value="{{ newQuantity }}" step="any" min="0" max="{{ line.cantidad }}"
-                                   class="form-control text-right to_be_served" autocomplete="off"/>
+                            <div class="input-group">
+                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}"
+                                       value="{{ newQuantity }}" step="any" min="0" max="{{ line.cantidad }}"
+                                       class="form-control text-right to_be_served" autocomplete="off"/>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <input type="checkbox" onclick="toggleServe(this)">
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 {% else %}
