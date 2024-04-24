@@ -19,11 +19,13 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseTools;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Tools;
 
@@ -184,61 +186,60 @@ abstract class ModelCore
     public function clear()
     {
         foreach ($this->getModelFields() as $key => $value) {
-            // si es nullable, lo ponemos a null
-            // siempre que no sea boolean o tinyint
-            if ($value['is_nullable'] === 'YES'
-                && strpos($value['type'], 'boolean') === false
-                && strpos($value['type'], 'tinyint') === false) {
-                $this->{$key} = null;
-                continue;
+            try {
+                $this->{$key} = $this->getClearValue($value);
+            } catch (Exception $e) {
+                throw new Exception('Error clearing property' . $key . ' in model ' . $this->modelClassName(), 0, $e);
             }
-
-            // si el tipo contiene char o text, es de tipo texto
-            if (strpos($value['type'], 'char') !== false || strpos($value['type'], 'text') !== false) {
-                $this->{$key} = '';
-                continue;
-            }
-
-            // si el tipo contiene boolean o tinyint, es de tipo booleano
-            if (strpos($value['type'], 'boolean') !== false || strpos($value['type'], 'tinyint') !== false) {
-                $this->{$key} = false;
-                continue;
-            }
-
-            // si el tipo contiene int, es de tipo entero
-            if (strpos($value['type'], 'int') !== false) {
-                $this->{$key} = 0;
-                continue;
-            }
-
-            // si el tipo contiene decimal, double, double precision o float, es de tipo decimal
-            if (strpos($value['type'], 'decimal') !== false || strpos($value['type'], 'double') !== false || strpos($value['type'], 'float') !== false) {
-                $this->{$key} = 0.0;
-                continue;
-            }
-
-            // si el tipo contiene datetime o timestamp, es de tipo fecha y hora
-            if (strpos($value['type'], 'datetime') !== false || strpos($value['type'], 'timestamp') !== false) {
-                $this->{$key} = date(self::DATETIME_STYLE);
-                continue;
-            }
-
-            // si el tipo contiene time, es de tipo hora
-            if (strpos($value['type'], 'time') !== false) {
-                $this->{$key} = date(self::HOUR_STYLE);
-                continue;
-            }
-
-            // si el tipo contiene date, es de tipo fecha
-            if (strpos($value['type'], 'date') !== false) {
-                $this->{$key} = date(self::DATE_STYLE);
-                continue;
-            }
-
-            $this->{$key} = null;
         }
 
         $this->pipe('clear');
+    }
+
+    public function getClearValue(array $value)
+    {
+        // si la columna es la clave primaria, la ponemos a null
+        if ($value['name'] === static::primaryColumn()) {
+            return null;
+        }
+
+        // si es nullable, devolvemos null
+        if ($value['is_nullable'] === 'YES') {
+            return null;
+        }
+
+        $type = strpos($value['type'], '(') === false ?
+            $value['type'] :
+            substr($value['type'], 0, strpos($value['type'], '('));
+
+        switch ($type) {
+            case 'tinyint':
+            case 'boolean':
+                return false;
+
+            case 'integer':
+            case 'int':
+                return 0;
+
+            case 'decimal':
+            case 'double':
+            case 'double precision':
+            case 'float':
+                return 0.0;
+
+            case 'date':
+                return date(self::DATE_STYLE);
+
+            case 'datetime':
+            case 'timestamp':
+                return date(self::DATETIME_STYLE);
+
+            case 'time':
+                return date(self::HOUR_STYLE);
+
+            default:
+                return '';
+        }
     }
 
     /**

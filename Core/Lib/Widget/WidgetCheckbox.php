@@ -45,8 +45,9 @@ class WidgetCheckbox extends BaseWidget
         $class = $this->combineClasses($this->css('form-check-input'), $this->class);
         $readonly = $this->readonly() ? ' onclick="return false;"' : '';
         $tabindex = $this->tabindex ? ' tabindex="' . $this->tabindex . '"' : '';
+        $name = $this->readonly() ? '' : 'name="' . $this->fieldname . '"';
 
-        $inputHtml = '<input type="checkbox" name="' . $this->fieldname . '" value="TRUE" id="' . $id
+        $inputHtml = '<input type="checkbox" ' . $name . ' value="TRUE" id="' . $id
             . '" class="' . $class . '"' . $checked . $readonly . $tabindex . '/>';
         $labelHtml = '<label for="' . $id . '">' . static::$i18n->trans($title) . '</label>';
         $descriptionHtml = empty($description) ? '' :

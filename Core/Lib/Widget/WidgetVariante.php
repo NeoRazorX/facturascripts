@@ -63,7 +63,7 @@ class WidgetVariante extends WidgetText
 
         if ($this->readonly()) {
             return '<div class="form-group mb-2">'
-                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+                . '<input type="hidden" id="' . $this->id . '" value="' . $this->value . '">'
                 . $labelHtml
                 . '<a href="' . $variante->url() . '" class="btn btn-block btn-outline-secondary">'
                 . '<i class="' . $icon . ' fa-fw"></i> ' . ($variante->referencia ?? Tools::lang()->trans('select'))
