@@ -203,14 +203,14 @@ abstract class ModelCore
             return null;
         }
 
-        // si es nullable, devolvemos null
-        if ($value['is_nullable'] === 'YES') {
-            return null;
-        }
-
         $type = strpos($value['type'], '(') === false ?
             $value['type'] :
             substr($value['type'], 0, strpos($value['type'], '('));
+
+        // si es nullable y no es booleano, devolvemos null
+        if ($value['is_nullable'] === 'YES' && false === in_array($type, ['tinyint', 'boolean'])) {
+            return null;
+        }
 
         switch ($type) {
             case 'tinyint':
