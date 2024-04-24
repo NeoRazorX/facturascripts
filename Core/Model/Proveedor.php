@@ -49,9 +49,18 @@ class Proveedor extends Base\ComercialContact
     /** @var int */
     public $idcontacto;
 
+    /** @var string */
+    public $codpais;
+
+    /** @var string */
+    public $provincia;
+
+    /** @var string */
+    public $ciudad;
+
     public function checkVies(): bool
     {
-        $codiso = Paises::get($this->getDefaultAddress()->codpais)->codiso ?? '';
+        $codiso = Paises::get($this->codpais)->codiso ?? '';
         return Vies::check($this->cifnif ?? '', $codiso) === 1;
     }
 
@@ -239,6 +248,9 @@ class Proveedor extends Base\ComercialContact
             $contact->tipoidfiscal = $this->tipoidfiscal;
             if ($contact->save()) {
                 $this->idcontacto = $contact->idcontacto;
+                $this->codpais = $contact->codpais;
+                $this->provincia = $contact->provincia;
+                $this->ciudad = $contact->ciudad;
                 return $this->save();
             }
         }

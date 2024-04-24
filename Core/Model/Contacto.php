@@ -289,4 +289,31 @@ class Contacto extends Base\Contact
     {
         return parent::url($type, $list);
     }
+
+    protected function saveUpdate(array $values = []):bool
+    {
+        if(parent::saveUpdate($values)){
+            if (!empty($this->codcliente) && empty($this->codproveedor)){
+                $subject = new Cliente();
+                $subject->loadFromCode($this->codcliente);
+                $idContact = $subject->idcontactofact;
+            }else{
+                $subject = new Proveedor();
+                $subject->loadFromCode($this->codproveedor);
+                $idContact = $subject->idcontacto;
+            }
+
+            // solo actualizamos si el contacto a actualizar es el contacto por defecto.
+            if($idContact === $this->idcontacto){
+                $subject->codpais = $this->codpais;
+                $subject->provincia = $this->provincia;
+                $subject->ciudad = $this->ciudad;
+                $subject->save();
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }

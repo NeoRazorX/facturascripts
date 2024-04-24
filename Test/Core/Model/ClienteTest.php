@@ -192,10 +192,8 @@ final class ClienteTest extends TestCase
         }
         $this->assertFalse($check1);
 
-        // asignamos dirección de Portugal
-        $address = $cliente->getDefaultAddress();
-        $address->codpais = 'PRT';
-        $this->assertTrue($address->save());
+        $cliente->codpais = 'PRT';
+        $this->assertTrue($cliente->save());
 
         // asignamos un cifnif incorrecto
         $cliente->cifnif = '12345678A';
@@ -206,8 +204,41 @@ final class ClienteTest extends TestCase
         $this->assertTrue($cliente->checkVies());
 
         // eliminamos
-        $this->assertTrue($address->delete());
         $this->assertTrue($cliente->delete());
+    }
+
+    public function testAddressDefaultContactInModel()
+    {
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '12345678A';
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+
+        // comprobamos que el codpais, provincia y ciudad del contacto por defecto
+        // se encuentran replicados en el modelo
+        $defaultAddress = $cliente->getDefaultAddress();
+
+        $this->assertEquals($defaultAddress->codpais, $cliente->codpais);
+        $this->assertEquals($defaultAddress->provincia, $cliente->provincia);
+        $this->assertEquals($defaultAddress->ciudad, $cliente->ciudad);
+
+        // comprobamos que cuando se cambian los datos en el contacto
+        // se guardan en el modelo
+
+        $defaultAddress->codpais = 'COL';
+        $defaultAddress->provincia = 'Test-provincia';
+        $defaultAddress->ciudad = 'Test-ciudad';
+        $defaultAddress->save();
+
+        $cliente->loadFromCode($cliente->codcliente); // actualizamos desde la base de datos
+        $this->assertEquals($defaultAddress->codpais, $cliente->codpais);
+        $this->assertEquals($defaultAddress->provincia, $cliente->provincia);
+        $this->assertEquals($defaultAddress->ciudad, $cliente->ciudad);
+
+
+        // eliminamos
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
     protected function tearDown(): void

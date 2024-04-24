@@ -167,9 +167,8 @@ final class ProveedorTest extends TestCase
         $this->assertFalse($check1);
 
         // asignamos dirección de Italia
-        $address = $proveedor->getDefaultAddress();
-        $address->codpais = 'ITA';
-        $this->assertTrue($address->save());
+        $proveedor->codpais = 'ITA';
+        $this->assertTrue($proveedor->save());
 
         // asignamos un cif/nif incorrecto
         $proveedor->cifnif = '12345678A';
@@ -180,8 +179,41 @@ final class ProveedorTest extends TestCase
         $this->assertTrue($proveedor->checkVies());
 
         // eliminamos
-        $this->assertTrue($address->delete());
         $this->assertTrue($proveedor->delete());
+    }
+
+    public function testAddressDefaultContactInModel()
+    {
+        $supplier = new Proveedor();
+        $supplier->nombre = 'Test';
+        $supplier->cifnif = '12345678A';
+        $this->assertTrue($supplier->save(), 'cliente-cant-save');
+
+        // comprobamos que el codpais, provincia y ciudad del contacto por defecto
+        // se encuentran replicados en el modelo
+        $defaultAddress = $supplier->getDefaultAddress();
+
+        $this->assertEquals($defaultAddress->codpais, $supplier->codpais);
+        $this->assertEquals($defaultAddress->provincia, $supplier->provincia);
+        $this->assertEquals($defaultAddress->ciudad, $supplier->ciudad);
+
+        // comprobamos que cuando se cambian los datos en el contacto
+        // se guardan en el modelo
+
+        $defaultAddress->codpais = 'COL';
+        $defaultAddress->provincia = 'Test-provincia';
+        $defaultAddress->ciudad = 'Test-ciudad';
+        $defaultAddress->save();
+
+        $supplier->loadFromCode($supplier->codproveedor); // actualizamos desde la base de datos
+        $this->assertEquals($defaultAddress->codpais, $supplier->codpais);
+        $this->assertEquals($defaultAddress->provincia, $supplier->provincia);
+        $this->assertEquals($defaultAddress->ciudad, $supplier->ciudad);
+
+
+        // eliminamos
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($supplier->delete(), 'cliente-cant-delete');
     }
 
     protected function tearDown(): void

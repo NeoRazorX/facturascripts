@@ -51,7 +51,7 @@ trait IntracomunitariaTrait
         $subject = $this->getSubject();
         $country = property_exists($this, 'codpais')
             ? Paises::get($this->codpais)
-            : Paises::get($subject->getDefaultAddress()->codpais);
+            : Paises::get($subject->codpais);
         if (false === Paises::miembroUE($country->codpais)) {
             Tools::log()->warning('subject-not-in-eu');
             return false;
