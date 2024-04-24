@@ -183,8 +183,59 @@ abstract class ModelCore
      */
     public function clear()
     {
-        foreach (array_keys($this->getModelFields()) as $fieldName) {
-            $this->{$fieldName} = null;
+        foreach ($this->getModelFields() as $key => $value) {
+            // si el nullable, lo ponemos a null
+            // siempre que no sea boolean o tinyint
+            if ($value['is_nullable'] === 'YES'
+                && strpos($value['type'], 'boolean') === false
+                && strpos($value['type'], 'tinyint') === false) {
+                $this->{$key} = null;
+                continue;
+            }
+
+            // si el tipo contiene char o text, es de tipo texto
+            if (strpos($value['type'], 'char') !== false || strpos($value['type'], 'text') !== false) {
+                $this->{$key} = '';
+                continue;
+            }
+
+            // si el tipo contiene boolean o tinyint, es de tipo booleano
+            if (strpos($value['type'], 'boolean') !== false || strpos($value['type'], 'tinyint') !== false) {
+                $this->{$key} = false;
+                continue;
+            }
+
+            // si el tipo contiene int, es de tipo entero
+            if (strpos($value['type'], 'int') !== false) {
+                $this->{$key} = 0;
+                continue;
+            }
+
+            // si el tipo contiene decimal, double, double precision o float, es de tipo decimal
+            if (strpos($value['type'], 'decimal') !== false || strpos($value['type'], 'double') !== false || strpos($value['type'], 'float') !== false) {
+                $this->{$key} = 0.0;
+                continue;
+            }
+
+            // si el tipo contiene datetime o timestamp, es de tipo fecha y hora
+            if (strpos($value['type'], 'datetime') !== false || strpos($value['type'], 'timestamp') !== false) {
+                $this->{$key} = date(self::DATETIME_STYLE);
+                continue;
+            }
+
+            // si el tipo contiene time, es de tipo hora
+            if (strpos($value['type'], 'time') !== false) {
+                $this->{$key} = date(self::HOUR_STYLE);
+                continue;
+            }
+
+            // si el tipo contiene date, es de tipo fecha
+            if (strpos($value['type'], 'date') !== false) {
+                $this->{$key} = date(self::DATE_STYLE);
+                continue;
+            }
+
+            $this->{$key} = null;
         }
 
         $this->pipe('clear');
