@@ -228,7 +228,7 @@ class WidgetSelect extends BaseWidget
         }
 
         if ($this->readonly()) {
-            return '<input type="hidden" value="' . $this->value . '"/>'
+            return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
                 . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly/>';
         }
 
