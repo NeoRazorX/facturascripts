@@ -184,7 +184,7 @@ abstract class ModelCore
     public function clear()
     {
         foreach ($this->getModelFields() as $key => $value) {
-            // si el nullable, lo ponemos a null
+            // si es nullable, lo ponemos a null
             // siempre que no sea boolean o tinyint
             if ($value['is_nullable'] === 'YES'
                 && strpos($value['type'], 'boolean') === false
