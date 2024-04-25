@@ -199,6 +199,15 @@ class ListProducto extends ListController
         $this->addFilterNumber($viewName, 'min-stock', 'quantity', 'cantidad', '>=');
         $this->addFilterNumber($viewName, 'max-stock', 'quantity', 'cantidad', '<=');
 
+        $this->addFilterNumber($viewName, 'min-reserved', 'reserved', 'reservada', '>=');
+        $this->addFilterNumber($viewName, 'max-reserved', 'reserved', 'reservada', '<=');
+
+        $this->addFilterNumber($viewName, 'min-pterecibir', 'pending-reception', 'pterecibir', '>=');
+        $this->addFilterNumber($viewName, 'max-pterecibir', 'pending-reception', 'pterecibir', '<=');
+
+        $this->addFilterNumber($viewName, 'min-disponible', 'available', 'disponible', '>=');
+        $this->addFilterNumber($viewName, 'max-disponible', 'available', 'disponible', '<=');
+
         // desactivamos los botones de nuevo y eliminar
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
