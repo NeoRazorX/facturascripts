@@ -31,6 +31,7 @@ class EditCodigoPostal extends EditController
     public function getPageData(): array
     {
         $data = parent::getPageData();
+        $data["menu"] = "admin";
         $data["title"] = "zip-code";
         $data["icon"] = "fas fa-map-pin";
         return $data;
