@@ -451,8 +451,14 @@ abstract class SalesController extends PanelController
         }
 
         // marcamos los recibos como pagados, eso marca la factura como pagada
+        $formData = json_decode($this->request->request->get('data'), true);
         foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
+            // si no está pagado, actualizamos fechapago y codpago
+            if (false == $receipt->pagado){
+                $receipt->fechapago = $formData['fechapagorecibo'] ?? Tools::date();
+                $receipt->codpago = $model->codpago;
+            }
             $receipt->pagado = (bool)$this->request->request->get('selectedLine');
             if (false === $receipt->save()) {
                 $this->sendJsonWithLogs(['ok' => false]);
