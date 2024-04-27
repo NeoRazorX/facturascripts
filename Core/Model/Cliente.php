@@ -64,6 +64,12 @@ class Cliente extends Base\ComercialContact
     /** @var float */
     public $riesgomax;
 
+    /** @var float */
+    public $totalfacturado;
+
+    /** @var float */
+    public $pdtepago;
+
     public function checkVies(): bool
     {
         $codiso = Paises::get($this->getDefaultAddress()->codpais)->codiso ?? '';
@@ -73,6 +79,8 @@ class Cliente extends Base\ComercialContact
     public function clear()
     {
         parent::clear();
+        $this->totalfacturado = 0.0;
+        $this->pdtepago = 0.0;
         $this->codretencion = Tools::settings('default', 'codretencion');
     }
 
