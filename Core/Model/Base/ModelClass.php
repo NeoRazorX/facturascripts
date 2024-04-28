@@ -439,6 +439,10 @@ abstract class ModelClass extends ModelCore
      */
     protected function saveUpdate(array $values = []): bool
     {
+        // obtenemos los datos del modelo previos a la actualizacion
+        // para poder usarlos en los workers
+        $previous = $this->get($this->primaryColumnValue());
+
         if ($this->pipeFalse('saveUpdateBefore') === false) {
             return false;
         }
@@ -464,10 +468,13 @@ abstract class ModelClass extends ModelCore
         Cache::deleteMulti('join-model-');
         Cache::deleteMulti('table-' . static::tableName() . '-');
 
+        $data = $this->toArray();
+        $data['previous'] = $previous;
+
         WorkQueue::send(
             'Model.' . $this->modelClassName() . '.Update',
             $this->primaryColumnValue(),
-            $this->toArray()
+            $data
         );
 
         return $this->pipeFalse('saveUpdate');
