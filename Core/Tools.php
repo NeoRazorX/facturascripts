@@ -361,6 +361,22 @@ class Tools
         return date(self::DATETIME_STYLE, $time);
     }
 
+    public static function urlAddParams(string $url, array $params = []): string
+    {
+        $urlQuery = parse_url($url, PHP_URL_QUERY);
+        $urlPath = parse_url($url, PHP_URL_PATH);
+        $urlParams = [];
+
+        if ($urlQuery){
+            parse_str($urlQuery, $urlParams);
+        }
+
+        $urlParams = array_merge($urlParams, $params);
+        $paramsQuery = '?' . http_build_query($urlParams);
+
+        return $urlPath . $paramsQuery;
+    }
+
     private static function settingsLoad(): void
     {
         if ('' === Tools::config('db_name', '')) {

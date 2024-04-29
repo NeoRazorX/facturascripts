@@ -297,9 +297,8 @@ class SalesModalHTML
                 . '</tr>';
         }
 
-        $linkAgent = '';
-        if ($user->codagente) {
-            $linkAgent = '&codagente=' . $user->codagente;
+        if($user->codagente){
+            $url = Tools::urlAddParams($url, ['codagente' => $user->codagente]);
         }
 
         return '<div class="modal" id="findCustomerModal" tabindex="-1" aria-hidden="true">'
@@ -322,7 +321,7 @@ class SalesModalHTML
             . '</div>'
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
             . '<div class="modal-footer bg-light">'
-            . '<a href="EditCliente?return=' . urlencode($url) . $linkAgent . '" class="btn btn-block btn-success">'
+            . '<a href="EditCliente?return=' . urlencode($url) . '" class="btn btn-block btn-success">'
             . '<i class="fas fa-plus fa-fw"></i> ' . $i18n->trans('new')
             . '</a>'
             . '</div>'
