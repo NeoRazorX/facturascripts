@@ -20,8 +20,11 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Model\Role;
+use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleAccess;
@@ -168,6 +171,32 @@ class EditRole extends EditController
             $newRoleAccess->allowexport = is_array($export) && in_array($pageName, $export);
             $newRoleAccess->allowimport = is_array($import) && in_array($pageName, $import);
             $newRoleAccess->save();
+        }
+
+        // Eliminamos los permisos huerfanos
+        $pages = Page::all([], [], 0, 0);
+        $roleAccess = RoleAccess::all([], [], 0, 0);
+        $pageNames = array_column($pages, 'name');
+        $roleAccessPageNames = array_column($roleAccess, 'pagename');
+
+        $orphanPages = array_diff($roleAccessPageNames, $pageNames);
+
+        foreach ($orphanPages as $pageName){
+            $page = new RoleAccess();
+            $page->loadFromCode('', [new DataBaseWhere('pagename', $pageName)]);
+            $page->delete();
+
+            // si el rol ya no tiene permisos, lo eliminamos.
+            $rolesLength = DbQuery::table(RoleAccess::tableName())->whereEq('codrole', $page->codrole)->count();
+
+            if($rolesLength === 0){
+                $role = new Role();
+                $role->loadFromCode('', [new DataBaseWhere('codrole', $page->codrole)]);
+                $role->delete();
+
+                // redireccionamos al listado ya que el rol lo hemos borrado
+                $this->redirect((new User())->url() . '?activetab=ListRole');
+            }
         }
 
         Tools::log()->notice('record-updated-correctly');
