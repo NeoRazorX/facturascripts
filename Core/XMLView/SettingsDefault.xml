@@ -98,7 +98,8 @@
                 <widget type="select" fieldname="thousands_separator" icon="fas fa-calculator" required="true">
                     <values title=",">,</values>
                     <values title=".">.</values>
-                    <values title=" "></values>
+                    <values title=" "> </values>
+                    <values title="_">_</values>
                 </widget>
             </column>
             <column name="currency-position" numcolumns="3" order="130">
