@@ -668,6 +668,7 @@
     "generate-settlements": "Generar liquidaciones",
     "generate-test-data": "Generar datos de prueba",
     "generate-title": "Genera el informe",
+    "generate-variants": "Generar variantes",
     "generated-accounting-entries": "%quantity% asientos contables generados.",
     "generated-accounts": "%quantity% cuentas contables generadas.",
     "generated-agents": "%quantity% agentes generados.",
