@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\Contract\CalculatorModInterface;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
@@ -218,8 +219,10 @@ final class Calculator
      */
     private static function apply(BusinessDocument &$doc, array &$lines): void
     {
+        $subject = $doc->getSubject();
         $sinIva = $doc->getSerie()->siniva;
-        $regimen = $doc->getSubject()->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
+        $excepcionIva = $subject->excepcioniva;
+        $regimen = $subject->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
         $company = $doc->getCompany();
 
         // cargamos las zonas de impuestos
@@ -259,8 +262,9 @@ final class Calculator
 
             // ¿La serie es sin impuestos o el régimen exento?
             if ($sinIva || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
-                $line->codimpuesto = null;
+                $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
                 $line->iva = $line->recargo = 0.0;
+                $line->excepcioniva = $excepcionIva;
                 continue;
             }
 
