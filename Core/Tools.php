@@ -52,20 +52,18 @@ class Tools
     public static function bytes($size, int $decimals = 2): string
     {
         if ($size >= 1073741824) {
-            $size = number_format($size / 1073741824, $decimals) . ' GB';
+            return self::number($size / 1073741824, $decimals) . ' GB';
         } elseif ($size >= 1048576) {
-            $size = number_format($size / 1048576, $decimals) . ' MB';
+            return self::number($size / 1048576, $decimals) . ' MB';
         } elseif ($size >= 1024) {
-            $size = number_format($size / 1024, $decimals) . ' KB';
+            return self::number($size / 1024, $decimals) . ' KB';
         } elseif ($size > 1) {
-            $size = number_format($size, $decimals) . ' bytes';
+            return self::number($size, $decimals) . ' bytes';
         } elseif ($size == 1) {
-            $size = number_format(1, $decimals) . ' byte';
-        } else {
-            $size = number_format(0, $decimals) . ' bytes';
+            return self::number(1, $decimals) . ' byte';
         }
 
-        return $size;
+        return self::number(0, $decimals) . ' bytes';
     }
 
     public static function config(string $key, $default = null)
