@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -260,7 +260,7 @@ class Http
 
             default:
                 // GET
-                if (is_array($this->data)) {
+                if (is_array($this->data) && !empty($this->data)) {
                     curl_setopt($ch, CURLOPT_URL, $this->url . '?' . http_build_query($this->data));
                     break;
                 }
