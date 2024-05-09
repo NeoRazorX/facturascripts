@@ -91,6 +91,20 @@ class Dashboard extends Controller
 
         $this->title = Tools::lang()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
 
+        $this->loadSections();
+
+        $action = $this->request->request->get('action', $this->request->query->get('action', ''));
+
+        /** ACTION update-visibility-sections */
+        if ($action === 'update-visibility-sections') {
+            $this->updateVisibilitySections();
+        }
+
+        /** ACTION update-order-sections */
+        if ($action === 'update-order-sections') {
+            $this->updateOrderSections();
+        }
+
         $this->loadExtensions();
     }
 
@@ -164,14 +178,25 @@ class Dashboard extends Controller
      */
     private function loadExtensions(): void
     {
-        $this->loadCreateLinks();
-        $this->loadOpenLinks();
-        $this->loadStats();
-        $this->loadLowStockSection();
-        $this->loadReceiptSection();
-        $this->loadNews();
+        foreach ($this->sections as $sectionName => $section) {
+            // ejecutamos el metodo load de cada seccion si esta es visible
+            if ($section['visible']) {
+                $method = 'load' . $sectionName;
+                // ejecutamos el metodo, si existe, ya que habrá algunas vistas
+                // que no necesiten cargar/modificar ningun dato
+                if(method_exists($this, $method)){
+                    $this->$method();
+                }
+            }
+        }
 
         $this->pipe('loadExtensions');
+    }
+
+    private function loadLinks(): void
+    {
+        $this->loadCreateLinks();
+        $this->loadOpenLinks();
     }
 
     /**
@@ -183,15 +208,9 @@ class Dashboard extends Controller
             return;
         }
 
-        $found = false;
         $sql = 'SELECT * FROM stocks WHERE stockmin > 0 AND disponible < stockmin;';
         foreach ($this->dataBase->select($sql) as $row) {
             $this->lowStock[] = new Stock($row);
-            $found = true;
-        }
-
-        if ($found) {
-            $this->sections[] = 'low-stock';
         }
     }
 
@@ -268,10 +287,6 @@ class Dashboard extends Controller
             new DataBaseWhere('vencimiento', date('Y-m-d', strtotime('-1 year')), '>'),
         ];
         $this->receipts = $receiptModel->all($where, ['vencimiento' => 'DESC']);
-
-        if (count($this->receipts) > 0) {
-            $this->sections[] = 'receipts';
-        }
     }
 
     /**
@@ -332,5 +347,115 @@ class Dashboard extends Controller
                 'date' => $doc->fecha,
             ];
         }
+    }
+
+    private function loadSections()
+    {
+        $this->sections = Cache::remember('sectionsDashboard', function () {
+            return [
+                'Links' => [
+                    'title' => 'links',
+                    'order' => 1,
+                    'visible' => true,
+                    'readonly' => false,
+                ],
+                'BackupWarning' => [
+                    'title' => 'backup-warning',
+                    'order' => 2,
+                    'visible' => true,
+                    'readonly' => true,
+                ],
+                'Stats' => [
+                    'title' => 'stats',
+                    'order' => 3,
+                    'visible' => true,
+                    'readonly' => false,
+                ],
+                'ReceiptSection' => [
+                    'title' => 'receipts',
+                    'order' => 4,
+                    'visible' => true,
+                    'readonly' => false,
+                ],
+                'LowStockSection' => [
+                    'title' => 'minimum-stock',
+                    'order' => 5,
+                    'visible' => true,
+                    'readonly' => false,
+                ],
+                'News' => [
+                    'title' => 'news',
+                    'order' => 6,
+                    'visible' => true,
+                    'readonly' => false,
+                ],
+            ];
+        });
+
+        $this->sortSections();
+    }
+
+    private function sortSections()
+    {
+        uasort($this->sections, function ($a, $b) {
+            return $a["order"] - $b["order"];
+        });
+    }
+
+    protected function updateVisibilitySections()
+    {
+        // si el nombre de la seccion vienen por el FORM
+        // mantenemos visibles, si no, ocultamos la seccion
+
+        $sectionsToShow = $this->request->request->get('sections', []);
+
+        foreach ($this->sections as $sectionName => $section) {
+            // por seguridad, evitamos que algunos paneles se oculten(ej. backup)
+            if (false == $section['readonly']) {
+                if (in_array($sectionName, $sectionsToShow)) {
+                    $this->sections[$sectionName]['visible'] = true;
+                } else {
+                    $this->sections[$sectionName]['visible'] = false;
+                }
+            }
+        }
+
+        Cache::set('sectionsDashboard', $this->sections);
+        $this->loadSections();
+
+        // con este redirect a la misma pagina, evitamos que nos pida
+        // el reenvio del formulario si recargamos la pagina
+        $this->redirect($this->url());
+    }
+
+    protected function updateOrderSections()
+    {
+        $targetSectionName = $this->request->request->get('targetSection');
+        $targetOrder = $this->sections[$targetSectionName]['order'];
+
+        $originSectionName = $this->request->request->get('originSection');
+        $originOrder = $this->sections[$originSectionName]['order'];
+
+        $newOrder = 1;
+        foreach ($this->sections as $sectionName => $section) {
+            if ($section['order'] === $originOrder){
+                continue;
+            }
+            if ($newOrder === $targetOrder){
+                $newOrder++;
+            }
+            $this->sections[$sectionName]['order'] = $newOrder;
+            $newOrder++;
+        }
+
+        // asignamos el nuevo orden a la seccion anterior
+        $this->sections[$originSectionName]['order'] = $targetOrder;
+
+        Cache::set('sectionsDashboard', $this->sections);
+        $this->loadSections();
+
+        $this->setTemplate(false);
+        $this->response->headers->set('Content-Type', 'application/json');
+        $this->response->setContent(json_encode(['ok' => true]));
     }
 }

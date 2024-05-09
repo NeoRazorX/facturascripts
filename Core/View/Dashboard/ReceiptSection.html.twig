@@ -1,0 +1,33 @@
+{% if fsc.receipts %}
+<div class="card shadow mb-3">
+    <div class="p-3">
+        <span class="float-right badge badge-danger">{{ trans('unpaid') }}</span>
+        <h2 class="h4 mb-0">
+            <i class="fas fa-dollar-sign fa-fw"></i>
+            {{ trans('receipts') }}
+        </h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+            <thead>
+            <tr>
+                <th>{{ trans('customer') }}</th>
+                <th>{{ trans('observations') }}</th>
+                <th class="text-right">{{ trans('amount') }}</th>
+                <th class="text-right">{{ trans('expiration') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for receipt in fsc.receipts %}
+                <tr class="clickableRow table-danger" data-href="{{ receipt.url() }}">
+                    <td>{{ receipt.getSubject().nombre | raw }}</td>
+                    <td>{{ receipt.observaciones | raw }}</td>
+                    <td class="text-right text-nowrap">{{ money(receipt.importe) }}</td>
+                    <td class="text-right text-nowrap">{{ receipt.vencimiento }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}

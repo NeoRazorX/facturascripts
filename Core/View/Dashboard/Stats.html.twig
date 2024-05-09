@@ -1,0 +1,39 @@
+<div class="form-row">
+    <div class="col-sm-6 col-lg-3">
+        {{ _self.drawStatsBox(fsc, 'purchases', 'bg-danger', true) }}
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        {{ _self.drawStatsBox(fsc, 'sales', 'bg-success', true) }}
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        {{ _self.drawStatsBox(fsc, 'taxes', 'bg-warning', true) }}
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        {{ _self.drawStatsBox(fsc, 'new-customers', 'bg-info', false) }}
+    </div>
+</div>
+
+{% macro drawStatsBox(fsc, group, color, ismoney) %}
+    <div class="card shadow mb-3">
+        <div class="card-body p-2 text-white {{ color }}">
+            <h2 class="h5 text-center mb-0">
+                {{ trans(group) }}
+            </h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table mb-0">
+                {% for key, value in fsc.stats[group] %}
+                    <tr>
+                        <td>{{ trans(key) }}</td>
+                        {% set color = value < 0 ? ' text-danger' : '' %}
+                        {% if ismoney %}
+                            <td class="text-right{{ color }}">{{ money(value) }}</td>
+                        {% else %}
+                            <td class="text-right">{{ value }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endmacro %}

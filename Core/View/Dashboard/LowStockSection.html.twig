@@ -1,0 +1,31 @@
+{% if fsc.lowStock %}
+<div class="card shadow mb-3">
+    <div class="p-3">
+        <h2 class="h4 mb-0">
+            <i class="fas fa-pallet fa-fw"></i> {{ trans('minimum-stock') }}
+        </h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+            <thead>
+            <tr>
+                <th>{{ trans('reference') }}</th>
+                <th>{{ trans('warehouse') }}</th>
+                <th class="text-right">{{ trans('minimum-stock') }}</th>
+                <th class="text-right">{{ trans('available') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for stock in fsc.lowStock %}
+                <tr class="clickableRow table-danger" data-href="{{ stock.url() }}">
+                    <td>{{ stock.referencia }}</td>
+                    <td>{{ stock.codalmacen }}</td>
+                    <td class="text-right">{{ number(stock.stockmin) }}</td>
+                    <td class="text-right">{{ number(stock.disponible) }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
