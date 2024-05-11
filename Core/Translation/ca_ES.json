@@ -750,7 +750,7 @@
     "in-stock": "En estoc",
     "inactive": "Inactiu",
     "income-and-expenses": "income and expenses",
-    "incompatible-document": "Document incompatible: %code%. Diferent client, proveïdor o divisa.",
+    "incompatible-document": "Document incompatible: %code%. Per poder agrupar documents heu de tenir el mateix client o proveïdor, sèrie, magatzem, divisa i descomptes globals.",
     "incompatible-with-facturascripts": "Incompatible amb la versió %versio% de FacturaScripts",
     "incorrect-accounting-amount": "L'import del assentament és incorrecte.",
     "info": "Info",
