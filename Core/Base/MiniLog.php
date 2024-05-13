@@ -61,6 +61,12 @@ final class MiniLog
      */
     private $translator;
 
+    /** @var bool */
+    public static $saving = false;
+
+    /** @var array */
+    public static $tempData = [];
+
     public function __construct(string $channel = '', $translator = null)
     {
         $this->channel = empty($channel) ? self::DEFAULT_CHANNEL : $channel;
@@ -198,7 +204,8 @@ final class MiniLog
         }
 
         $data = empty($channel) ? self::$data : self::read($channel);
-        if (self::$storage->save($data)) {
+        if (self::$storage->save($data) && self::$storage->save(MiniLog::$tempData)) {
+            MiniLog::$tempData = [];
             self::clear($channel);
             return true;
         }
@@ -266,7 +273,7 @@ final class MiniLog
         }
 
         // add message
-        self::$data[] = [
+        $data = [
             'channel' => $this->channel,
             'context' => $finalContext,
             'count' => 1,
@@ -275,6 +282,18 @@ final class MiniLog
             'original' => $message,
             'time' => $context['time'] ?? microtime(true),
         ];
+
+        // si se estan guardando logs en la base de datos,
+        // evitamos que se guarden los "logs de debug"
+        // de la consulta en base de datos guardandolos
+        // en una variable temporal que mas tarde guardaremos
+        // asi evitamos bucle infinito
+        if (self::$saving){
+            self::$tempData[] = $data;
+            return;
+        }
+
+        self::$data[] = $data;
         $this->reduce();
     }
 

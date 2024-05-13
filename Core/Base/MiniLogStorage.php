@@ -40,6 +40,7 @@ final class MiniLogStorage implements MiniLogStorageInterface
             }
 
             // guardamos el resto
+            MiniLog::$saving = true;
             $logItem = new LogMessage();
             $logItem->channel = $item['channel'];
             $logItem->context = json_encode($item['context']);
@@ -55,6 +56,7 @@ final class MiniLogStorage implements MiniLogStorageInterface
             if (false === $logItem->save()) {
                 $done = false;
             }
+            MiniLog::$saving = false;
         }
 
         return $done;
