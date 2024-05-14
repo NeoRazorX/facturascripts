@@ -278,8 +278,15 @@ class Subcuenta extends Base\ModelClass
             . " WHERE idsubcuenta = " . self::$dataBase->var2str($this->idsubcuenta) . ";";
 
         foreach (self::$dataBase->select($sql) as $row) {
-            $this->debe = (float)$row['debe'];
-            $this->haber = (float)$row['haber'];
+            $debe = round($row['debe'], Tools::settings('default', 'decimals'));
+            $haber = round($row['haber'], Tools::settings('default', 'decimals'));
+
+            if ($this->debe === $debe && $this->haber === $haber) {
+                continue;
+            }
+
+            $this->debe = $debe;
+            $this->haber = $haber;
             $this->save();
         }
     }
