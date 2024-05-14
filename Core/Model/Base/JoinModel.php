@@ -252,6 +252,11 @@ abstract class JoinModel
                 continue;
             }
 
+            // comprobamos si existe la tabla
+            if (false === in_array($arrayField[0], $this->getTables())) {
+                continue;
+            }
+
             // consultamos la información de la tabla para obtener el tipo
             $columns = self::$dataBase->getColumns($arrayField[0]);
             if (isset($columns[$arrayField[1]])) {
