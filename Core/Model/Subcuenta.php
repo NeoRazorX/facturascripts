@@ -264,7 +264,7 @@ class Subcuenta extends Base\ModelClass
      */
     public function updateBalance(float $debit = 0.0, float $credit = 0.0): void
     {
-        // supplied debit and credit?
+        // Si nos proporcionan un importe, lo usamos para actualizar el saldo.
         if ($debit + $credit != 0.0) {
             $this->debe += $debit;
             $this->haber += $credit;
@@ -272,16 +272,18 @@ class Subcuenta extends Base\ModelClass
             return;
         }
 
-        // calculate account balance
+        // calculamos el saldo de la subcuenta
         $sql = "SELECT COALESCE(SUM(debe), 0) as debe, COALESCE(SUM(haber), 0) as haber"
             . " FROM " . DinPartida::tableName()
             . " WHERE idsubcuenta = " . self::$dataBase->var2str($this->idsubcuenta) . ";";
 
         foreach (self::$dataBase->select($sql) as $row) {
-            $debe = round($row['debe'], Tools::settings('default', 'decimals'));
-            $haber = round($row['haber'], Tools::settings('default', 'decimals'));
+            $decimals = Tools::settings('default', 'decimals');
+            $debe = round($row['debe'], $decimals);
+            $haber = round($row['haber'], $decimals);
 
-            if ($this->debe === $debe && $this->haber === $haber) {
+            // si no hay cambios, no actualizamos
+            if (abs($debe - $this->debe) < 0.01 && abs($haber - $this->haber) < 0.01) {
                 continue;
             }
 
