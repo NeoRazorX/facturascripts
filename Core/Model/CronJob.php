@@ -227,9 +227,13 @@ class CronJob extends ModelClass
             new DataBaseWhere('done', false),
             new DataBaseWhere('enabled', true),
         ];
+
         if (count($jobs) > 0) {
             $whereRunning[] = new DataBaseWhere('jobname', implode(',', $jobs), 'IN');
+        } else {
+            $whereRunning[] = new DataBaseWhere('jobname', $this->jobname, '!=');
         }
+
         $this->overlapping = $this->count($whereRunning) > 0;
 
         return $this;
