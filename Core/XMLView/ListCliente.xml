@@ -58,6 +58,12 @@
         <column name="observations" order="190">
             <widget type="textarea" fieldname="observaciones" />
         </column>
+        <column name="totalfacturado" order="191">
+            <widget type="money" fieldname="totalfacturado" />
+        </column>
+        <column name="pdtepago" order="192">
+            <widget type="money" fieldname="pdtepago" />
+        </column>
         <column name="current-risk" display="none" order="200">
             <widget type="money" fieldname="riesgoalcanzado" />
         </column>

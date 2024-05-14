@@ -131,6 +131,14 @@
         <name>web</name>
         <type>character varying(100)</type>
     </column>
+    <column>
+        <name>totalfacturado</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>pdtepago</name>
+        <type>double precision</type>
+    </column>
     <constraint>
         <name>clientes_pkey</name>
         <type>PRIMARY KEY (codcliente)</type>
