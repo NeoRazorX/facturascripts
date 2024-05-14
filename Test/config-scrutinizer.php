@@ -26,7 +26,7 @@ define('FS_DB_PORT', '5432');
 define('FS_DB_TYPE', 'postgresql');
 define('FS_DB_TYPE_CHECK', true);
 define('FS_DB_USER', 'scrutinizer');
-define('FS_DEBUG', true);
+define('FS_DEBUG', false);
 define('FS_DISABLE_ADD_PLUGINS', false);
 define('FS_DISABLE_RM_PLUGINS', false);
 define('FS_HIDDEN_PLUGINS', '');
