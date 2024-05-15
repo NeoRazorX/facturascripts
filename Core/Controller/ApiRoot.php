@@ -46,6 +46,11 @@ class ApiRoot extends ApiController
         $this->response->setContent(json_encode($json));
     }
 
+    public static function getCustomResources(): array
+    {
+        return self::$custom_resources;
+    }
+
     protected function getResourcesMap(): array
     {
         $resources = [];
