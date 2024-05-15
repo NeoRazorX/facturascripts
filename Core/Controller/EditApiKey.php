@@ -185,7 +185,7 @@ class EditApiKey extends EditController
         }
 
         // agregamos los recursos custom y de los plugins
-        $resources = array_merge($resources, ApiRoot::$custom_resources);
+        $resources = array_merge($resources, ApiRoot::getCustomResources());
 
         sort($resources);
         return $resources;
