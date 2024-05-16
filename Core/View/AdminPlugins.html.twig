@@ -109,7 +109,9 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">{{ trans('add-new-plugin') }}</h5>
+                            <h5 class="modal-title">
+                                <i class="fa-solid fa-file-zipper text-success mr-2"></i> {{ trans('add-new-plugin') }}
+                            </h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('close') }}">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -133,7 +135,7 @@
                                 <button type="button" class="btn btn-spin-action btn-secondary" data-dismiss="modal">
                                     {{ trans('cancel') }}
                                 </button>
-                                <button type="submit" class="btn btn-spin-action btn-primary">
+                                <button type="submit" class="btn btn-spin-action btn-success">
                                     {{ trans('continue') }}
                                 </button>
                             </div>
@@ -329,7 +331,7 @@
                         {% if plugin.enabled %}
                             <a class="btn btn-sm btn-secondary btn-spin-action" onclick="animateSpinner('add');"
                                href="{{ url }}?action=disable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
-                                <i class="fas fa-times fa-fw mr-1" aria-hidden="true"></i>
+                                <i class="fa-solid fa-toggle-off mr-1" aria-hidden="true"></i>
                                 <span class="d-none d-sm-inline-block">{{ trans('disable') }}</span>
                             </a>
                             <br/>
@@ -363,7 +365,7 @@
                             {% else %}
                                 <a class="btn btn-sm btn-success btn-spin-action" onclick="animateSpinner('add');"
                                    href="{{ url }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
-                                    <i class="fas fa-check fa-fw mr-1" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-toggle-on mr-1" aria-hidden="true"></i>
                                     <span class="d-none d-sm-inline-block">{{ trans('enable') }}</span>
                                 </a>
                             {% endif %}
