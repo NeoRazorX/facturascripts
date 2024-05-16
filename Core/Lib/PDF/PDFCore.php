@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,7 +34,6 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
  */
 abstract class PDFCore extends ExportBase
 {
-
     /**
      * X position to start writing.
      */
@@ -222,14 +221,13 @@ abstract class PDFCore extends ExportBase
         ];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return string
-     */
     protected function fixValue(string $value): string
     {
-        return str_replace(['€', '₡', '₲', '£'], ['EUR', 'SVC', 'PYG', 'GBP'], Utils::fixHtml($value));
+        return str_replace(
+            ['€', '₡', '₲', '£', '&nbsp;'],
+            ['EUR', 'SVC', 'PYG', 'GBP', ' '],
+            Utils::fixHtml($value)
+        );
     }
 
     /**
@@ -245,7 +243,7 @@ abstract class PDFCore extends ExportBase
     {
         $tableData = [];
 
-        /// Extracts the data from the cursos
+        // Extracts the data from the cursos
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
                 $value = $tableOptions['cols'][$col]['widget']->plainText($row);

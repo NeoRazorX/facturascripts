@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,7 +35,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PDFExport extends PDFDocument
 {
-
     const LIST_LIMIT = 500;
 
     /**
@@ -198,6 +197,12 @@ class PDFExport extends PDFDocument
             }
             if (in_array($key, ['debe', 'haber', 'saldo', 'saldoprev', 'total'])) {
                 $tableOptions['cols'][$key]['justification'] = 'right';
+            }
+        }
+
+        foreach ($rows as $key => $row) {
+            foreach ($row as $key2 => $value) {
+                $rows[$key][$key2] = $this->fixValue($value);
             }
         }
 
