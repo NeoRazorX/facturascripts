@@ -200,12 +200,6 @@ class PDFExport extends PDFDocument
             }
         }
 
-        foreach ($rows as $key => $row) {
-            foreach ($row as $key2 => $value) {
-                $rows[$key][$key2] = $this->fixValue($value);
-            }
-        }
-
         $this->insertHeader();
         $this->pdf->ezTable($rows, $headers, $title, $tableOptions);
         $this->insertFooter();
