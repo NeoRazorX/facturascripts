@@ -34,26 +34,28 @@
                 </widget>
             </column>
         </group>
-        <group name="advanced" numcolumns="12">
+        <group name="accounting" numcolumns="6">
             <column name="codsubcuentacom" title="subaccount-purchases" titleurl="ListCuenta" description="optional"
-                    numcolumns="2" order="100">
+                    order="100">
                 <widget type="autocomplete" fieldname="codsubcuentacom">
                     <values source="subcuentas" fieldcode="codsubcuenta"/>
                 </widget>
             </column>
             <column name="codsubcuentaven" title="subaccount-sales" titleurl="ListCuenta" description="optional"
-                    numcolumns="2" order="110">
+                    order="110">
                 <widget type="autocomplete" fieldname="codsubcuentaven">
                     <values source="subcuentas" fieldcode="codsubcuenta"/>
                 </widget>
             </column>
             <column name="codsubcuentairpcomf" title="subaccount-irpf" titleurl="ListCuenta" description="optional"
-                    numcolumns="3" order="120">
+                    numcolumns="5" order="120">
                 <widget type="autocomplete" fieldname="codsubcuentairpfcom">
                     <values source="subcuentas" fieldcode="codsubcuenta"/>
                 </widget>
             </column>
-            <column name="products" order="130">
+        </group>
+        <group name="advanced" numcolumns="6" valign="bottom">
+            <column name="products" numcolumns="4" order="100">
                 <widget type="number" fieldname="numproductos" readonly="true"/>
             </column>
         </group>

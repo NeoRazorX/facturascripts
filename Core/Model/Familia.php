@@ -84,6 +84,35 @@ class Familia extends ModelClass
      */
     public $numproductos;
 
+    public function changePrimaryColumnValue($newValue): bool
+    {
+        // nos guardamos las subfamilias
+        $subFamilias = $this->getSubFamilias();
+
+        // les quitamos la madre
+        foreach ($subFamilias as $subFamilia) {
+            $subFamilia->madre = null;
+            $subFamilia->save();
+        }
+
+        if (false === parent::changePrimaryColumnValue($newValue)) {
+            // les volvemos a poner la madre
+            foreach ($subFamilias as $subFamilia) {
+                $subFamilia->madre = $this->codfamilia;
+                $subFamilia->save();
+            }
+            return false;
+        }
+
+        // actualizamos las subfamilias
+        foreach ($subFamilias as $subFamilia) {
+            $subFamilia->madre = $newValue;
+            $subFamilia->save();
+        }
+
+        return true;
+    }
+
     public function clear()
     {
         parent::clear();

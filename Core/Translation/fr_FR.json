@@ -747,6 +747,7 @@
     "import-accounting-plan": "Import plan comptable",
     "import-accounting-plan-p": "Laissez ce champ vide pour utiliser le plan comptable par défaut, ou sélectionnez le fichier de votre plan comptable personnalisé.",
     "import-file": "Fichero de importación",
+    "in-progress": "En progreso",
     "in-stock": "En stock",
     "inactive": "Inactif",
     "income-and-expenses": "Recettes et dépenses",

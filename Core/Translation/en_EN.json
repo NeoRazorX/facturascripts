@@ -747,6 +747,7 @@
     "import-accounting-plan": "Import accounting plan",
     "import-accounting-plan-p": "Leave this field blank to use the default accounting plan. Or select a file with your personalized accounting plan.",
     "import-file": "Fichero de importación",
+    "in-progress": "En progreso",
     "in-stock": "In stock",
     "inactive": "Inactive",
     "income-and-expenses": "Income and Expenses",
