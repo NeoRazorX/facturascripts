@@ -151,6 +151,12 @@ class ListAsiento extends ListController
         $ids = [];
         $sql = 'SELECT partidas.idasiento, ABS(SUM(partidas.debe) - SUM(partidas.haber))'
             . ' FROM partidas GROUP BY 1 HAVING ROUND(ABS(SUM(partidas.debe) - SUM(partidas.haber)), 2) >= 0.01';
+
+        if (Tools::config('db_type') === 'postgresql') {
+            $sql = 'SELECT partidas.idasiento, ABS(SUM(partidas.debe) - SUM(partidas.haber))'
+                . ' FROM partidas GROUP BY 1 HAVING ABS(SUM(partidas.debe) - SUM(partidas.haber)) >= 0.01';
+        }
+
         foreach ($this->dataBase->select($sql) as $row) {
             $ids[] = $row['idasiento'];
         }
