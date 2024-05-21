@@ -2,10 +2,18 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 
-class UserMessage
+class UserMessage extends ModelClass
 {
+    use ModelTrait;
+
+    /** @var int */
+    public $id;
+
     /** @var string */
     public $body;
 
@@ -13,116 +21,100 @@ class UserMessage
     public $level;
 
     /** @var bool */
-    public $showLater;
+    public $showlater;
 
     /** @var string */
-    protected $userNick;
+    protected $nick;
 
-    /** @var string */
-    protected $path;
-
-    /** @var string */
-    protected $fileName;
-
-    /** @var string */
-    protected $filePath;
-
-    public function __construct(string $userNick)
+    public function clear()
     {
-        $this->userNick = $userNick;
-        $this->showLater = false;
+        parent::clear();
 
-        $this->path = Tools::folder('MyFiles', 'Tmp', 'UserMessages');
-        $this->fileName = $this->userNick . '-UserMessages.json';
-        $this->filePath = $this->path . DIRECTORY_SEPARATOR . $this->fileName;
-
-        if (false === is_dir($this->path)) {
-            mkdir($this->path, 0755, true);
-        }
-
-        if (false === is_file($this->filePath)) {
-            file_put_contents($this->filePath, json_encode([]));
-        }
+        $this->showlater = false;
     }
 
     /** @return UserMessage */
     public function showLater()
     {
-        $this->showLater = true;
+        $this->showlater = true;
         return $this;
     }
 
-    public function addLinkBtn($url, $texto): void
+    public function addLinkBtn($url, $texto)
     {
-
+        $this->body .= ' <a class="btn btn-primary btn-sm" href="' . $url . '">' . Tools::lang()->trans($texto) . '</a>';
+        return $this;
     }
 
-    public function addHelpLink(): void
+    public function addActionBtn($viewName, $texto, $accion)
     {
-
+        /** ESTO NO SE COMO HACERLO */
+        return $this;
     }
 
-    public function save(): void
+    public function addHelpLink()
     {
-        $messages = $this->getMessagesFromFile();
-
-        array_push($messages, $this);
-
-        $this->storeMessagesToFile($messages);
+        /** ESTE NO SE A QUE TE REFIERES */
+        return $this;
     }
 
-
-    /** @return UserMessage[]|null */
-    public function allShowNow(): ?array
+    /**
+     * @return UserMessage[]
+     */
+    public function allToShowNow(): array
     {
-        $messages = $this->getMessagesFromFile();
+        // obtenemos los mensajes a mostrar en la siguiente request
+        $where = [
+            new DataBaseWhere('nick', $this->nick),
+            new DataBaseWhere('showlater', true),
+        ];
+        $messagesShowLater = self::all($where, [], 0, 0);
 
-        if(is_null($messages) || count($messages) === 0){
-            return null;
+        // obtenemos los mensajes a mostrar ahora
+        $where = [
+            new DataBaseWhere('nick', $this->nick),
+            new DataBaseWhere('showlater', false),
+        ];
+        $messagesShowNow = self::all($where, [], 0, 0);
+
+        // eliminamos de la BBDD los mensajes que vamos a mostrar ahora
+        // para que no se vuelvan a mostrar
+        foreach ($messagesShowNow as $message){
+            $message->delete();
         }
 
-        // Filtramos los mensajes que hay que mostrar en la proxima request.
-        $messagesShowLater = array_filter($messages, function ($message) {
-            return $message['showLater'];
-        });
+        // cambiamos el showlater a false para que se muestren en la proxima request
+        foreach ($messagesShowLater as $message){
+            $message->showlater = false;
+            $message->save();
+        }
 
-        // Cambiamos showLater a false para que se borren en la proxima request.
-        $messagesShowLater = array_map(function ($message){
-            $message['showLater'] = false;
-            return $message;
-        }, $messagesShowLater);
 
-        // Guardamos en archivo los mensajes que mostraremos en la siguiente request.
-        $this->storeMessagesToFile($messagesShowLater);
-
-        // Filtramos los mensajes que hay que mostrar ahora.
-        return array_filter($messages, function ($message) {
-            return false === $message['showLater'];
-        });
+        return $messagesShowNow;
     }
 
-    /** @return UserMessage[]|null */
-    protected function getMessagesFromFile(): ?array
+    public function setUser(string $nick)
     {
-        $fileContent = file_get_contents($this->filePath);
-        if (false === $fileContent){
-            return null;
-        }
-
-        $messages = json_decode($fileContent, true);
-        if(false === is_array($messages)){
-            return null;
-        }
-
-        return $messages;
+        $this->nick = $nick;
     }
 
-    /** @param UserMessage[] $messages */
-    protected function storeMessagesToFile(array $messages): void
+    /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public static function primaryColumn(): string
     {
-        $jsonContent = json_encode($messages);
-        if ($jsonContent){
-            file_put_contents($this->filePath, $jsonContent);
-        }
+        return 'id';
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
+    public static function tableName(): string
+    {
+        return 'users_messages';
     }
 }

@@ -359,7 +359,8 @@ class User extends ModelClass
 
     public function error($message)
     {
-        $userMessage = new UserMessage($this->nick);
+        $userMessage = new UserMessage();
+        $userMessage->setUser($this->nick);
         $userMessage->body = Tools::lang()->trans($message);
         $userMessage->level = 'error';
 
@@ -368,7 +369,8 @@ class User extends ModelClass
 
     public function warning($message)
     {
-        $userMessage = new UserMessage($this->nick);
+        $userMessage = new UserMessage();
+        $userMessage->setUser($this->nick);
         $userMessage->body = Tools::lang()->trans($message);
         $userMessage->level = 'warning';
 
@@ -377,7 +379,8 @@ class User extends ModelClass
 
     public function info($message)
     {
-        $userMessage = new UserMessage($this->nick);
+        $userMessage = new UserMessage();
+        $userMessage->setUser($this->nick);
         $userMessage->body = Tools::lang()->trans($message);
         $userMessage->level = 'info';
 
@@ -386,7 +389,8 @@ class User extends ModelClass
 
     public function notice($message)
     {
-        $userMessage = new UserMessage($this->nick);
+        $userMessage = new UserMessage();
+        $userMessage->setUser($this->nick);
         $userMessage->body = Tools::lang()->trans($message);
         $userMessage->level = 'notice';
 
@@ -394,11 +398,12 @@ class User extends ModelClass
     }
 
     /**
-     * @return UserMessage[] array
+     * @return UserMessage[]|null
      */
-    public function getMessages(): array
+    public function getMessages(): ?array
     {
-        $userMessage = new UserMessage($this->nick);
-        return $userMessage->allShowNow();
+        $userMessage = new UserMessage();
+        $userMessage->setUser($this->nick);
+        return $userMessage->allToShowNow();
     }
 }

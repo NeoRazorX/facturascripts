@@ -159,11 +159,18 @@
                         {{ showMessage(log, ['notice'], 'success') }}
                         {{ showMessage(log, ['info'], 'info') }}
 
+                        {% set logsColors = {
+                            'error': 'danger',
+                            'critical': 'danger',
+                            'warning': 'warning',
+                            'notice': 'success',
+                            'info': 'info',
+                        } %}
                         {% set flashMessages = fsc.user.getMessages() %}
                         {% if flashMessages is not null %}
                             {% for message in flashMessages %}
-                                <div class="alert alert-{{ message.level == 'error' ? 'danger' : '' }} alert-dismissible fade show" role="alert">
-                                    {{ message.body }}
+                                <div class="alert alert-{{ logsColors[message.level] }} alert-dismissible fade show" role="alert">
+                                    {{ message.body|raw }}
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
