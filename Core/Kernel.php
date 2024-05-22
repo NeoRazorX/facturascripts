@@ -116,6 +116,7 @@ final class Kernel
         WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Update');
         WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Delete');
         WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Save');
+        WorkQueue::addWorker('AtributoWorker', 'Model.Atributo.Update');
 
         self::stopTimer('kernel::init');
     }
