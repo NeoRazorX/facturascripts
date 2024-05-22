@@ -247,14 +247,14 @@ class Http
             case 'POST':
                 curl_setopt($ch, CURLOPT_POST, 1);
                 curl_setopt($ch, CURLOPT_URL, $this->url);
-                $postFields = is_array($this->data) ? http_build_query($this->data) : $this->data;
+                $postFields = $this->getPostFields();
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
                 break;
 
             case 'PUT':
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
                 curl_setopt($ch, CURLOPT_URL, $this->url);
-                $postFields = is_array($this->data) ? http_build_query($this->data) : $this->data;
+                $postFields = $this->getPostFields();
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
                 break;
 
@@ -285,5 +285,24 @@ class Http
         curl_close($ch);
 
         $this->executed = true;
+    }
+
+    protected function getPostFields()
+    {
+        // si en el header existe "multipart/form-data"
+        // entonces no se codifica en json
+        if (array_key_exists('Content-Type', $this->headers)) {
+            $contentType = $this->headers['Content-Type'];
+            if (false !== strpos($contentType, 'multipart/form-data')) {
+                return $this->data;
+            }
+        }
+
+        // si data es un array, lo codificamos en json
+        if (is_array($this->data)) {
+            return http_build_query($this->data);
+        }
+
+        return $this->data;
     }
 }
