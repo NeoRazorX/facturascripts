@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,12 +27,11 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * View definition for its use in ExtendedControllers
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditListView extends BaseView
 {
-
     const DEFAULT_TEMPLATE = 'Master/EditListView.html.twig';
     const INLINE_TEMPLATE = 'Master/EditListViewInLine.html.twig';
 
@@ -118,10 +117,13 @@ class EditListView extends BaseView
      * Sets edit mode to single line.
      *
      * @param bool $value
+     * @return EditListView
      */
-    public function setInLine(bool $value)
+    public function setInLine(bool $value): EditListView
     {
         $this->template = $value ? static::INLINE_TEMPLATE : static::DEFAULT_TEMPLATE;
+
+        return $this;
     }
 
     /**
