@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
 
@@ -94,6 +95,8 @@ class ReceiptGenerator
             . ', vencida = ' . $dataBase->var2str($invoice->vencida)
             . ' WHERE ' . $invoice::primaryColumn() . ' = ' . $dataBase->var2str($invoice->primaryColumnValue()) . ';';
         $dataBase->exec($sql);
+
+        WorkQueue::send('Model.' . $invoice->modelClassName() . '.Paid', $invoice->primaryColumnValue(), $invoice->toArray());
     }
 
     /**
