@@ -117,7 +117,7 @@
                     {% endif %}
                     <tr class="d-none tr{{menu}}" >
                         <td>
-                            {{ ' » ' ~ rule.page }}
+                            {{ ((rule.submenu is not empty) ? ' » ' ~ rule.submenu : '') ~ ' » ' ~ rule.page }}
                             {% if 'List' in pageName %}
                                 <span class="badge badge-info ml-1">{{ trans('list') }}</span>
                             {% endif %}

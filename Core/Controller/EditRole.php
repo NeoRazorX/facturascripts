@@ -44,6 +44,7 @@ class EditRole extends EditController
         foreach ($this->getAllPages() as $page) {
             $rules[$page->name] = [
                 'menu' => $i18n->trans($page->menu),
+                'submenu' => $i18n->trans($page->submenu),
                 'page' => $i18n->trans($page->title),
                 'show' => false,
                 'onlyOwner' => false,
@@ -62,6 +63,14 @@ class EditRole extends EditController
             $rules[$roleAccess->pagename]['export'] = $roleAccess->allowexport;
             $rules[$roleAccess->pagename]['import'] = $roleAccess->allowimport;
         }
+
+        // ordenamos el array primero por nombre del menu,
+        // segundo por nombre del submenu
+        // y tercero por nombre de la pagina
+        $menuColumn = array_column($rules, 'menu');
+        $pageColumn = array_column($rules, 'page');
+        $submenuColumn = array_column($rules, 'submenu');
+        array_multisort($menuColumn, SORT_ASC, $submenuColumn, SORT_ASC, $pageColumn, SORT_ASC, $rules);
 
         return $rules;
     }
