@@ -287,12 +287,24 @@
                 setOrdenLines();
             }
         });
+        $("#salesFormLines").sortable("option", "items", "> .fs-line");
         $("#salesFormLines").sortable("option", "disabled", false);
+        $("#salesFormLines").sortable("option", "cursor", "move");
+        $("#salesFormLines").sortable("option", "cancel", "null");
+        $("#salesFormLines").sortable("option", "cancel", ".titles");
+        $("#salesFormLines").sortable("option", "axis", "y");
+
+        $("#salesFormLines .fs-line").css('cursor', 'grab');
+        $("#salesFormLines .fs-line :input").css('cursor', 'grab');
+
         $("#salesFormLines").disableSelection();
     }
 
     function sortableDisable() {
         $("#salesFormLines").sortable("disable");
+
+        $("#salesFormLines .fs-line").css('cursor', 'default');
+        $("#salesFormLines .fs-line :input").css('cursor', 'default');
     }
 
     // Muestra el modal para elegir la forma de pago y fecha de los recibos

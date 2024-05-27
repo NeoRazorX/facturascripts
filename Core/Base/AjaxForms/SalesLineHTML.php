@@ -178,7 +178,7 @@ class SalesLineHTML
     {
         self::$num++;
         $idlinea = $line->idlinea ?? 'n' . self::$num;
-        return '<div class="container-fluid"><div class="form-row align-items-center border-bottom pb-3 pb-lg-0">'
+        return '<div class="container-fluid fs-line"><div class="form-row align-items-center border-bottom pb-3 pb-lg-0">'
             . self::renderField($i18n, $idlinea, $line, $model, 'referencia')
             . self::renderField($i18n, $idlinea, $line, $model, 'descripcion')
             . self::renderField($i18n, $idlinea, $line, $model, 'cantidad')
@@ -555,7 +555,7 @@ class SalesLineHTML
 
     private static function renderTitles(Translator $i18n, SalesDocument $model): string
     {
-        return '<div class="container-fluid d-none d-lg-block"><div class="form-row border-bottom">'
+        return '<div class="container-fluid d-none d-lg-block titles"><div class="form-row border-bottom">'
             . self::renderTitle($i18n, $model, 'referencia')
             . self::renderTitle($i18n, $model, 'descripcion')
             . self::renderTitle($i18n, $model, 'cantidad')
