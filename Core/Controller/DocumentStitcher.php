@@ -385,6 +385,10 @@ class DocumentStitcher extends Controller
             new DataBaseWhere('editable', true),
             new DataBaseWhere('codalmacen', $this->documents[0]->codalmacen),
             new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa),
+            new DataBaseWhere('codserie', $this->documents[0]->codserie),
+            new DataBaseWhere('dtopor1', $this->documents[0]->dtopor1),
+            new DataBaseWhere('dtopor2', $this->documents[0]->dtopor2),
+            new DataBaseWhere('idempresa', $this->documents[0]->idempresa),
             new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
         ];
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
