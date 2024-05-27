@@ -247,15 +247,13 @@ class Http
             case 'POST':
                 curl_setopt($ch, CURLOPT_POST, 1);
                 curl_setopt($ch, CURLOPT_URL, $this->url);
-                $postFields = $this->getPostFields();
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
                 break;
 
             case 'PUT':
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
                 curl_setopt($ch, CURLOPT_URL, $this->url);
-                $postFields = $this->getPostFields();
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
                 break;
 
             default:
@@ -287,22 +285,14 @@ class Http
         $this->executed = true;
     }
 
-    protected function getPostFields()
+    protected function getPostFields(): string
     {
-        // si en el header existe "multipart/form-data"
-        // entonces no se codifica en json
-        if (array_key_exists('Content-Type', $this->headers)) {
-            $contentType = $this->headers['Content-Type'];
-            if (false !== strpos($contentType, 'multipart/form-data')) {
-                return $this->data;
-            }
+        // si el Content-Type es multipart/form-data, devolvemos los datos sin codificar
+        if ('multipart/form-data' === ($this->headers['Content-Type'] ?? '')) {
+            return $this->data;
         }
 
-        // si data es un array, lo codificamos en json
-        if (is_array($this->data)) {
-            return http_build_query($this->data);
-        }
-
-        return $this->data;
+        // si data es un array, lo codificamos
+        return is_array($this->data) ? http_build_query($this->data) : $this->data;
     }
 }

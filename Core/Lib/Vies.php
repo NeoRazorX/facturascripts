@@ -30,9 +30,8 @@ use SoapClient;
 class Vies
 {
     const EU_COUNTRIES = [
-        'AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'EL', 'ES',
-        'FI', 'FR', 'HR', 'HU', 'IE', 'IT', 'LT', 'LU', 'LV',
-        'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK',
+        'AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'EL', 'ES', 'FI', 'FR', 'HR', 'HU', 'IE', 'IT', 'LT', 'LU',
+        'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK',
     ];
 
     const VIES_URL = "https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl";

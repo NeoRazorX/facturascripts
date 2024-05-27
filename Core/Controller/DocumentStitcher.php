@@ -71,9 +71,9 @@ class DocumentStitcher extends Controller
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
-        $data['showonmenu'] = false;
         $data['title'] = 'group-or-split';
         $data['icon'] = 'fa-solid fa-wand-magic-sparkles';
+        $data['showonmenu'] = false;
         return $data;
     }
 
@@ -92,6 +92,7 @@ class DocumentStitcher extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
 
@@ -382,12 +383,12 @@ class DocumentStitcher extends Controller
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         $model = new $modelClass();
         $where = [
-            new DataBaseWhere('editable', true),
             new DataBaseWhere('codalmacen', $this->documents[0]->codalmacen),
             new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa),
             new DataBaseWhere('codserie', $this->documents[0]->codserie),
             new DataBaseWhere('dtopor1', $this->documents[0]->dtopor1),
             new DataBaseWhere('dtopor2', $this->documents[0]->dtopor2),
+            new DataBaseWhere('editable', true),
             new DataBaseWhere('idempresa', $this->documents[0]->idempresa),
             new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
         ];
