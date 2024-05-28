@@ -285,10 +285,10 @@ class Http
         $this->executed = true;
     }
 
-    protected function getPostFields(): string
+    protected function getPostFields()
     {
         // si el Content-Type es multipart/form-data, devolvemos los datos sin codificar
-        if ('multipart/form-data' === ($this->headers['Content-Type'] ?? '')) {
+        if (stripos($this->headers['Content-Type'] ?? '', 'multipart/form-data') !== false) {
             return $this->data;
         }
 
