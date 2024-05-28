@@ -29,12 +29,9 @@ class OpenAi
 {
     const AUDIO_SPEECH_URL = 'https://api.openai.com/v1/audio/speech';
     const CHAT_URL = 'https://api.openai.com/v1/chat/completions';
-    const IMAGES_URL = 'https://api.openai.com/v1/images/generations';
-
     const FILES_URL = 'https://api.openai.com/v1/files';
-
+    const IMAGES_URL = 'https://api.openai.com/v1/images/generations';
     const THREADS_URL = 'https://api.openai.com/v1/threads';
-
     const VECTOR_URL = 'https://api.openai.com/v1/vector_stores';
 
     /** @var string */
