@@ -40,36 +40,36 @@ class ApiExportFacturaCliente extends ApiController
             return;
         }
 
-        $code = $this->request->query->get('idfactura');
-        $requestLang = $this->request->query->get('langcode');
-
+        $code = $this->getUriParam(3);
         if (empty($code)) {
             $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
             $this->response->setContent(json_encode([
                 'status' => 'error',
-                'message' => 'idfactura field is required',
+                'message' => 'No invoice selected',
             ]));
             return;
         }
 
         $facturaCliente = new FacturaCliente();
-        $facturaCliente->loadFromCode($code);
+        if (false === $facturaCliente->loadFromCode($code)) {
+            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $this->response->setContent(json_encode([
+                'status' => 'error',
+                'message' => 'Invoice not found',
+            ]));
+            return;
+        }
 
-        $title = Tools::lang()->trans('invoice') . ' ' . $facturaCliente->primaryDescription();
-        $format = 0; // TODO COMENTAR CON CARLOS
-
-        $subjectLang = $facturaCliente->getSubject()->langcode;
-        $lang = $requestLang ?? $subjectLang ?? '';
+        $type = $this->request->query->get('type', 'PDF');
+        $format = $this->request->query->get('format', 0);
+        $lang = $this->request->query->get('lang', $facturaCliente->getSubject()->langcode) ?? '';
+        $title = Tools::lang($lang)->trans('invoice') . ' ' . $facturaCliente->primaryDescription();
 
         $exportManager = new ExportManager();
-        $exportManager->newDoc('PDF', $title, $format, $lang);
+        $exportManager->newDoc($type, $title, $format, $lang);
         $exportManager->addBusinessDocPage($facturaCliente);
 
-        $facturaClientePdfFile = $exportManager->getDoc();
-
         // devolvemos la respuesta
-        $this->response->headers->set('Content-Type', 'application/pdf');
-        $this->response->setStatusCode(Response::HTTP_OK);
-        $this->response->setContent($facturaClientePdfFile);
+        $exportManager->show($this->response);
     }
 }

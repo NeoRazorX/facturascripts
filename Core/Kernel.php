@@ -263,7 +263,7 @@ final class Kernel
             '/AdminPlugins' => 'AdminPlugins',
             '/api' => 'ApiRoot',
             '/api/3/crearFacturaCliente' => 'ApiCreateFacturaCliente',
-            '/api/3/ExportFacturaCliente' => 'ApiExportFacturaCliente',
+            '/api/3/exportarFacturaCliente/*' => 'ApiExportFacturaCliente',
             '/api/*' => 'ApiRoot',
             '/Core/Assets/*' => 'Files',
             '/cron' => 'Cron',
