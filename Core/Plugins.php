@@ -212,7 +212,7 @@ final class Plugins
 
     public static function folder(): string
     {
-        return FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins';
+        return Tools::folder('Plugins');
     }
 
     public static function get(string $pluginName): ?Plugin
@@ -335,7 +335,7 @@ final class Plugins
 
     private static function loadFromFile(): void
     {
-        $filePath = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . self::FILE_NAME;
+        $filePath = Tools::folder('MyFiles', self::FILE_NAME);
         if (false === file_exists($filePath)) {
             return;
         }
@@ -410,8 +410,11 @@ final class Plugins
             break;
         }
 
+        // si la carpeta MyFiles no existe, la creamos
+        Tools::folderCheckOrCreate(Tools::folder('MyFiles'));
+
         $json = json_encode(self::$plugins, JSON_PRETTY_PRINT);
-        file_put_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . self::FILE_NAME, $json);
+        file_put_contents(Tools::folder('MyFiles', self::FILE_NAME), $json);
     }
 
     private static function testZipFile(ZipArchive &$zipFile, string $zipPath, string $zipName): bool

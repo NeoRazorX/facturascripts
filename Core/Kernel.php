@@ -179,6 +179,9 @@ final class Kernel
 
     public static function saveRoutes(): bool
     {
+        // si la carpeta MyFiles no existe, la creamos
+        Tools::folderCheckOrCreate(Tools::folder('MyFiles'));
+
         $filePath = Tools::folder('MyFiles', 'routes.json');
         $content = json_encode(self::$routes, JSON_PRETTY_PRINT);
         return false === file_put_contents($filePath, $content);
@@ -206,7 +209,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2024.5;
+        return 2024.6;
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
