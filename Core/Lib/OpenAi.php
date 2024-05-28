@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use CURLFile;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Tools;
 use stdClass;
@@ -29,6 +30,12 @@ class OpenAi
     const AUDIO_SPEECH_URL = 'https://api.openai.com/v1/audio/speech';
     const CHAT_URL = 'https://api.openai.com/v1/chat/completions';
     const IMAGES_URL = 'https://api.openai.com/v1/images/generations';
+
+    const FILES_URL = 'https://api.openai.com/v1/files';
+
+    const THREADS_URL = 'https://api.openai.com/v1/threads';
+
+    const VECTOR_URL = 'https://api.openai.com/v1/vector_stores';
 
     /** @var string */
     protected $api_key;
@@ -135,6 +142,68 @@ class OpenAi
         return $this->image($prompt, $width, $height, $count, 'dall-e-3');
     }
 
+    public function fileDelete(string $id_file): bool
+    {
+        $response = Http::delete(self::FILES_URL . '/' . $id_file)
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT delete file error: ' . $response->status() . ' ' . $response->errorMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    public function fileList()
+    {
+        $response = Http::get(self::FILES_URL)
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT file list error: ' . $response->status() . ' ' . $response->errorMessage());
+            return [];
+        }
+
+        return $response->json();
+    }
+
+    public function fileRead(string $id_file): array
+    {
+        $response = Http::get(self::FILES_URL . '/' . $id_file)
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT read file error: ' . $response->status() . ' ' . $response->errorMessage());
+            return [];
+        }
+
+        return $response->json();
+    }
+
+    public function fileUpload(CURLFile $file, string $purpose = 'assistants'): array
+    {
+        $data = [
+            'purpose' => $purpose,
+            'file' => $file
+        ];
+
+        $response = Http::post(self::FILES_URL, $data)
+            ->setHeader('Content-Type', 'multipart/form-data')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT file upload error: ' . $response->status() . ' ' . $response->errorMessage());
+            return [];
+        }
+
+        return $response->json();
+    }
+
     public function getTotalTokens(): int
     {
         return $this->total_tokens;
@@ -209,6 +278,103 @@ class OpenAi
         $messages[] = ['role' => 'user', 'content' => $message];
 
         return $this;
+    }
+
+    public function threadCreate(): array
+    {
+        $response = Http::post(self::THREADS_URL)
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setHeader('Content-Type', 'application/json')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT thread create error: ' . $response->status() . ' ' . $response->errorMessage());
+            return [];
+        }
+
+        return $response->json();
+    }
+
+    public function threadMessages(string $id_thread, string $id_run = ''): array
+    {
+        $data = empty($id_run) ? [] : ['run_id' => $id_run];
+        $response = Http::get(self::THREADS_URL . '/' . $id_thread . '/messages', $data)
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT thread messages error: ' . $response->status() . ' ' . $response->errorMessage());
+            return [];
+        }
+
+        return $response->json();
+    }
+
+    public function threadMessageCreate(array $message, string $id_thread): array
+    {
+        $response = Http::post(self::THREADS_URL . '/' . $id_thread . '/messages', json_encode($message))
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setHeader('Content-Type', 'application/json')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT thread message create error: ' . $response->status() . ' ' . $response->errorMessage());
+            return [];
+        }
+
+        return $response->json();
+    }
+
+    public function threadRun(string $id_thread, string $id_assistant): array
+    {
+        $data = ['assistant_id' => $id_assistant];
+        $response = Http::post(self::THREADS_URL . '/' . $id_thread . '/runs', json_encode($data))
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setHeader('Content-Type', 'application/json')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT thread run error: ' . $response->status() . ' ' . $response->errorMessage());
+            return [];
+        }
+
+        return $response->json();
+    }
+
+    public function threadRunRead(string $id_thread, string $id_run): array
+    {
+        $response = Http::get(self::THREADS_URL . '/' . $id_thread . '/runs/' . $id_run)
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT thread run read error: ' . $response->status() . ' ' . $response->errorMessage());
+            return [];
+        }
+
+        return $response->json();
+    }
+
+    public function vectorFile(string $id_vector, string $id_file): array
+    {
+        $data = ['file_id' => $id_file];
+        $response = Http::post(self::VECTOR_URL . '/' . $id_vector . '/files', json_encode($data))
+            ->setHeader('Content-Type', 'application/json')
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('vector file error: ' . $response->status() . ' ' . $response->errorMessage());
+            return [];
+        }
+
+        return $response->json();
     }
 
     private function getDalleSize(bool &$resize, string $model, int $width, int $height): string
