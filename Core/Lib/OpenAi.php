@@ -124,9 +124,14 @@ class OpenAi
         return $this->chat($messages, $user, 'gpt-4');
     }
 
+    public function chatGpt4o(array $messages, string $user = ''): string
+    {
+        return $this->chat($messages, $user, 'gpt-4o');
+    }
+
     public function chatGpt4turbo(array $messages, string $user = ''): string
     {
-        return $this->chat($messages, $user, 'gpt-4-turbo-preview');
+        return $this->chat($messages, $user, 'gpt-4-turbo');
     }
 
     public function dalle2(string $prompt, int $width = 256, int $height = 256, $count = 1): string
