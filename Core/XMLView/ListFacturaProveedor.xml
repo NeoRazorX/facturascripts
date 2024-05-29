@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -144,7 +144,7 @@
             <option color="danger" fieldname="vencida" title="expired-receipt">1</option>
             <option color="warning" title="non-editable-document" fieldname="editable">0</option>
             <option color="info" title="email-sent" fieldname="femail">notnull:</option>
-            <option color="light" title="invoice-without-acc-entry" fieldname="idasiento">null:</option>
+            <option color="secondary" title="invoice-without-acc-entry" fieldname="idasiento">null:</option>
         </row>
     </rows>
 </view>
