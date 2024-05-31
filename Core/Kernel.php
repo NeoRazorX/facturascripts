@@ -131,7 +131,7 @@ final class Kernel
             return false;
         }
 
-        return false === file_put_contents($lockFile, $processName);
+        return false !== file_put_contents($lockFile, $processName);
     }
 
     public static function rebuildRoutes(): void
