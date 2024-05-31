@@ -74,12 +74,6 @@ final class WorkQueue
 
     public static function run(): bool
     {
-        // bloqueamos el proceso
-        $lock = Kernel::lock('WorkQueue::run');
-        if (!$lock) {
-            return false;
-        }
-
         // leemos la lista de trabajos pendientes
         $workEventModel = new WorkEvent();
         $where = [new DataBaseWhere('done', false)];
@@ -87,9 +81,6 @@ final class WorkQueue
         foreach ($workEventModel->all($where, $orderBy, 0, 1) as $event) {
             return self::runEvent($event);
         }
-
-        // liberamos el proceso
-        Kernel::unlock('WorkQueue::run');
 
         return false;
     }
@@ -152,6 +143,11 @@ final class WorkQueue
 
     private static function runEvent(WorkEvent &$event): bool
     {
+        // creamos un bloqueo para evitar que se ejecute el mismo evento varias veces
+        if (false === Kernel::lock('work-queue-' . $event->name)) {
+            return false;
+        }
+
         // ordenamos los workers por posición
         usort(self::$workers_list, function ($a, $b) {
             return $a['position'] <=> $b['position'];
@@ -201,6 +197,11 @@ final class WorkQueue
         $event->done_date = Tools::dateTime();
         $event->workers = count($worker_list);
         $event->worker_list = implode(',', $worker_list);
-        return $event->save();
+        $return = $event->save();
+
+        // liberamos el bloqueo
+        Kernel::unlock('work-queue-' . $event->name);
+
+        return $return;
     }
 }
