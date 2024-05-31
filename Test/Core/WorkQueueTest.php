@@ -210,7 +210,7 @@ final class WorkQueueTest extends TestCase
         $this->assertFalse(WorkQueue::run());
     }
 
-    public function testAddEventAndRun(): void
+    public function testSendEventAndRun(): void
     {
         // establecemos el valor inicial de caché
         Cache::set('test-worker-name', '-');
@@ -252,7 +252,7 @@ final class WorkQueueTest extends TestCase
         WorkQueue::removeAllWorkers();
     }
 
-    public function testModelEvents(): void
+    public function testModelEvent(): void
     {
         // eliminamos todos los eventos de la tabla
         $model = new WorkEvent();
@@ -303,6 +303,30 @@ final class WorkQueueTest extends TestCase
         // comprobamos que se ha actualizado la caché
         $this->assertEquals('Model.Producto.Delete', Cache::get('test-worker-name'));
         $this->assertEquals($producto->primaryColumnValue(), Cache::get('test-worker-value'));
+    }
+
+    public function testModelEventWithLongParams(): void
+    {
+        // creamos un evento con miles de parámetros
+        $params = [];
+        for ($i = 0; $i < 1000; ++$i) {
+            $params['param' . $i] = 'value' . $i;
+        }
+
+        $event = new WorkEvent();
+        $event->name = 'Model.Producto.Save';
+        $event->value = 'test-value';
+        $event->setParams($params);
+        $this->assertTrue($event->save());
+
+        // recargamos el evento
+        $this->assertTrue($event->loadFromCode($event->primaryColumnValue()));
+
+        // comprobamos que los parámetros son correctos
+        $this->assertEquals($params, $event->params());
+
+        // eliminamos el evento
+        $this->assertTrue($event->delete());
     }
 
     protected function tearDown(): void

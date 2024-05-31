@@ -109,8 +109,8 @@ final class WorkQueue
             // worker encontrado, guardamos el evento
             $work_event = new WorkEvent();
             $work_event->name = $event;
-            $work_event->params = json_encode($params, JSON_PRETTY_PRINT);
             $work_event->value = $value;
+            $work_event->setParams($params);
             return $work_event->save();
         }
 
