@@ -120,6 +120,20 @@ final class Kernel
         self::stopTimer('kernel::init');
     }
 
+    public static function lock(string $processName): bool
+    {
+        $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
+        if (file_exists($lockFile)) {
+            // si tiene más de 8 horas, lo eliminamos
+            if (filemtime($lockFile) < time() - 28800) {
+                unlink($lockFile);
+            }
+            return false;
+        }
+
+        return false === file_put_contents($lockFile, $processName);
+    }
+
     public static function rebuildRoutes(): void
     {
         self::$routes = [];
@@ -205,6 +219,12 @@ final class Kernel
         self::$timers[$name]['stop_mem'] = memory_get_usage();
 
         return round(self::$timers[$name]['stop'] - self::$timers[$name]['start'], 5);
+    }
+
+    public static function unlock(string $processName): bool
+    {
+        $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
+        return file_exists($lockFile) && unlink($lockFile);
     }
 
     public static function version(): float

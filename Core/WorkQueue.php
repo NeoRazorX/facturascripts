@@ -74,6 +74,12 @@ final class WorkQueue
 
     public static function run(): bool
     {
+        // bloqueamos el proceso
+        $lock = Kernel::lock('WorkQueue::run');
+        if (!$lock) {
+            return false;
+        }
+
         // leemos la lista de trabajos pendientes
         $workEventModel = new WorkEvent();
         $where = [new DataBaseWhere('done', false)];
@@ -81,6 +87,9 @@ final class WorkQueue
         foreach ($workEventModel->all($where, $orderBy, 0, 1) as $event) {
             return self::runEvent($event);
         }
+
+        // liberamos el proceso
+        Kernel::unlock('WorkQueue::run');
 
         return false;
     }
