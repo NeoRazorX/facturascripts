@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -66,6 +66,17 @@ class WorkEvent extends ModelClass
         $this->nick = Session::user()->nick;
         $this->workers = 0;
         $this->worker_list = '';
+    }
+
+    public function delete(): bool
+    {
+        // si existe un archivo con los parámetros, lo eliminamos
+        $filePath = Tools::folder('MyFiles', 'Tmp', 'work-event-' . $this->id . '-params.json');
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        return parent::delete();
     }
 
     public function param(string $key, $default = null)
