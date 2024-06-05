@@ -158,7 +158,7 @@ class OpenAi
         return true;
     }
 
-    public function fileList()
+    public function fileList(): array
     {
         $response = Http::get(self::FILES_URL)
             ->setBearerToken($this->api_key)
@@ -170,11 +170,7 @@ class OpenAi
         }
 
         $json = $response->json();
-        if (empty($json) || empty($json['data'])) {
-            return [];
-        }
-
-        return $json['data'];
+        return empty($json) || empty($json['data']) ? [] : $json['data'];
     }
 
     public function fileRead(string $id_file): array

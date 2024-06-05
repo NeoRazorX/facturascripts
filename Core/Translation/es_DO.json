@@ -474,6 +474,7 @@
     "document-type": "Tipo documento",
     "document-type-valid-length": "Tipo de documento no válido (debe tener entre 1 y 20 carácteres).",
     "document-wildcard-info": "Documento indicado en la cabecera del asiento contable",
+    "document-without-total": "Documento %document% sin totales o con el total a 0.",
     "documentation": "Documentación",
     "documents": "Documentos",
     "documents-generated": "Documentos generados",
