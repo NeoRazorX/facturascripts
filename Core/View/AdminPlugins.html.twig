@@ -246,8 +246,8 @@
                 </div>
                 <div class="card-footer p-2">
                     {% set extraBtnClass = plugin.health > 2 ? 'btn-outline-success' : plugin.health == 0 ? 'btn-outline-danger' : 'btn-outline-warning' %}
-                    <a href="{{ plugin.url }}" class="btn {{ extraBtnClass }}"
-                       target="_blank">{{ trans('add') }}</a>
+                    <a href="{{ plugin.url ~ ((plugin.price > 0) ? '' : '&multireqtoken=' ~ formToken(false)) }}" class="btn {{ extraBtnClass }}"
+                       target="{{ plugin.price > 0 ? '_blank' : '' }}">{{ trans('add') }}</a>
                     <span class="ml-2 text-danger" title="{{ trans('health') }}">
                         {{ _self.healthStatus(plugin.health) }}
                     </span>

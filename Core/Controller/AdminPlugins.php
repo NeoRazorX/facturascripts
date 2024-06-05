@@ -21,7 +21,9 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
@@ -75,6 +77,10 @@ class AdminPlugins extends Controller
 
             case 'enable':
                 $this->enablePluginAction();
+                break;
+
+            case 'install':
+                $this->installPluginAction();
                 break;
 
             case 'rebuild':
@@ -131,6 +137,40 @@ class AdminPlugins extends Controller
         Cache::clear();
     }
 
+    private function installPluginAction(): void
+    {
+        if (!$this->request->query->has('id')){
+            return;
+        }
+
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $pluginId = $this->request->get('id');
+        $urlPlugin = Forja::BUILDS_URL . '/' . $pluginId . '/stable';
+
+        $telemetryManager = new TelemetryManager();
+        $url = $telemetryManager->signUrl($urlPlugin);
+
+        $http = Http::get($url);
+
+        if($http->status() === 401){
+            Tools::log()->error('subscription-required');
+            return;
+        }
+
+        $pathPlugin = Plugins::folder() . DIRECTORY_SEPARATOR . 'plugin.zip';
+        if ($http->saveAs($pathPlugin)) {
+            Tools::log()->notice('download-completed');
+        }
+
+        $this->redirect($this->url());
+    }
+
     private function extractPluginsZipFiles(): void
     {
         $ok = false;
@@ -167,6 +207,13 @@ class AdminPlugins extends Controller
                 if ($plugin->name == $item['name']) {
                     continue 2;
                 }
+            }
+
+
+            // si es gratuito cambiamos la url
+            // para que se ejecute la accion instalar automaticamente
+            if ($item['price'] == 0){
+                $item['url'] = $this->url() . '?action=install&id=' . $item['idplugin'];
             }
 
             $this->remotePluginList[] = $item;
