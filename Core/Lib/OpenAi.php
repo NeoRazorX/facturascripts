@@ -169,7 +169,12 @@ class OpenAi
             return [];
         }
 
-        return $response->json();
+        $json = $response->json();
+        if (empty($json) || empty($json['data'])) {
+            return [];
+        }
+
+        return $json['data'];
     }
 
     public function fileRead(string $id_file): array
