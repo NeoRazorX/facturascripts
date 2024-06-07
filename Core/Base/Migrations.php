@@ -100,7 +100,15 @@ final class Migrations
                 $formaPago = new FormaPago();
                 $formaPago->codpago = $row['codpago'];
                 $formaPago->descripcion = Tools::lang()->trans('deleted');
-                $formaPago->save();
+                if ($formaPago->save()) {
+                    continue;
+                }
+
+                // no hemos podido guardar, la añadimos por sql
+                $sql = "INSERT INTO " . FormaPago::tableName() . " (codpago, descripcion) VALUES ("
+                    . self::db()->var2str($formaPago->codpago) . ", "
+                    . self::db()->var2str($formaPago->descripcion) . ");";
+                self::db()->exec($sql);
             }
         }
     }
