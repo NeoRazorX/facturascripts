@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -105,14 +105,20 @@ class DocumentStitcher extends Controller
         $this->loadDocuments();
         $this->loadMoreDocuments();
 
-        $status = (int)$this->request->request->get('status', '');
-        if ($status) {
+        $statusCode = $this->request->request->get('status', '');
+        if ($statusCode) {
             // validate form request?
             if (false === $this->validateFormToken()) {
                 return;
             }
 
-            $this->generateNewDocument($status);
+            // si el $statusCode empieza por close:, cerramos
+            if (0 === strpos($statusCode, 'close:')) {
+                $status = substr($statusCode, 6);
+                $this->closeDocuments((int)$status);
+            } else {
+                $this->generateNewDocument((int)$statusCode);
+            }
         }
     }
 
@@ -215,6 +221,24 @@ class DocumentStitcher extends Controller
                 return;
             }
         }
+    }
+
+    protected function closeDocuments(int $idestado): void
+    {
+        $this->dataBase->beginTransaction();
+
+        foreach ($this->documents as $doc) {
+            $doc->setDocumentGeneration(false);
+            $doc->idestado = $idestado;
+            if (false === $doc->save()) {
+                $this->dataBase->rollback();
+                Tools::log()->error('record-save-error');
+                return;
+            }
+        }
+
+        $this->dataBase->commit();
+        Tools::log()->notice('record-updated-correctly');
     }
 
     /**
