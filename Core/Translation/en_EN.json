@@ -1619,8 +1619,8 @@
     "vies-check-success": "Number '%vat-number%' is registered in VIES system",
     "view-api": "View API",
     "view-column-net-subtotal": "See subtotal or net column",
-    "view-estimation": "Ver presupuesto",
-    "view-order": "Ver pedido",
+    "view-estimation": "View estimate",
+    "view-order": "View order",
     "warehouse": "Warehouse",
     "warehouse-cant-be-same": "The origin and destination warehouse can not be the same.",
     "warehouse-must-be-same-business": "Warehouses must be from the same company",
@@ -1639,7 +1639,7 @@
     "wildcard-title": "Replaceable wildcards by value",
     "without-closure": "Without closure",
     "without-domicile": "Without domicile",
-    "without-groups": "Sin grupo",
+    "without-groups": "Without group",
     "without-regularization": "Without regularization",
     "without-tax": "Without TAX",
     "without-taxation": "Without taxation",
@@ -1667,6 +1667,6 @@
     "you-should-change-passwd": "You should change your password",
     "your": "Your",
     "zip-code": "Zip code",
-    "zip-codes": "Códigos postales",
+    "zip-codes": "Zip codes",
     "zip-error-wrong-structure": "The zip structure is incorrect. It must contain the plugin folder and only one plugin."
 }

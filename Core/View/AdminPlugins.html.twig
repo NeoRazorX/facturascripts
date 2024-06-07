@@ -110,7 +110,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">
-                                <i class="fa-solid fa-file-zipper text-success mr-2"></i> {{ trans('add-new-plugin') }}
+                                <i class="fa-solid fa-file-zipper mr-2"></i> {{ trans('add-new-plugin') }}
                             </h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('close') }}">
                                 <span aria-hidden="true">&times;</span>
@@ -123,8 +123,8 @@
                         {% endif %}
                         <div class="modal-body">
                             <div class="form-group">
-                                {{ trans('select-plugin-zip-file') }}
-                                <input type="file" name="plugin[]" multiple="" accept="application/zip" required/>
+                                {{ trans('select-plugin-zip-file') }}<br/>
+                                <input type="file" name="plugin[]" accept="application/zip" multiple required/>
                                 {% if fsc.getMaxFileUpload() >= 99 %}
                                     <small class="form-text text-muted">
                                         {{ trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}
