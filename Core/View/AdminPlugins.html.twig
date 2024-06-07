@@ -40,7 +40,7 @@
                         </a>
                     {% endif %}
                 </div>
-                {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
+                {% if config('disable_add_plugins', false) == false %}
                     <button class="btn btn-spin-action btn-sm btn-success" type="button" data-toggle="modal"
                             data-target="#modalAddPlugin">
                         <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
@@ -72,7 +72,7 @@
                 {% endif %}
             </a>
         </li>
-        {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
+        {% if config('disable_add_plugins', false) == false %}
             <li class="nav-item">
                 <a class="nav-link" id="allPluginsTab" data-toggle="tab" href="#all" role="tab">
                     <i class="fas fa-boxes fa-fw" aria-hidden="true"></i>
@@ -92,7 +92,7 @@
         <div class="tab-pane fade show active" id="installed" role="tabpanel">
             {{ _self.showInstalledPlugins(fsc) }}
         </div>
-        {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
+        {% if config('disable_add_plugins', false) == false %}
             <div class="tab-pane fade" id="all" role="tabpanel">
                 {{ _self.showAllPlugins(fsc) }}
             </div>
@@ -100,7 +100,7 @@
     </div>
 
     {# Modal for add new plugins #}
-    {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
+    {% if config('disable_add_plugins', false) == false %}
         <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data"
               onsubmit="animateSpinner('add')">
             {{ formToken() }}
@@ -149,7 +149,7 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {% if not constant('FS_DISABLE_RM_PLUGINS') %}
+    {% if config('disable_rm_plugins', false) == false %}
         <script>
             function deletePlugin(pluginName) {
                 bootbox.confirm({
@@ -246,8 +246,7 @@
                 </div>
                 <div class="card-footer p-2">
                     {% set extraBtnClass = plugin.health > 2 ? 'btn-outline-success' : plugin.health == 0 ? 'btn-outline-danger' : 'btn-outline-warning' %}
-                    <a href="{{ plugin.url }}" class="btn {{ extraBtnClass }}"
-                       target="_blank">{{ trans('add') }}</a>
+                    <a href="{{ plugin.url }}" class="btn {{ extraBtnClass }}" target="_blank">{{ trans('add') }}</a>
                     <span class="ml-2 text-danger" title="{{ trans('health') }}">
                         {{ _self.healthStatus(plugin.health) }}
                     </span>
@@ -337,12 +336,6 @@
                             <br/>
                             <small>{{ trans('plugin-order', {'%num%': plugin.order}) }}</small>
                         {% elseif plugin.compatible %}
-                            {% if not constant('FS_DISABLE_RM_PLUGINS') %}
-                                <a class="btn btn-sm btn-danger mr-1 btn-spin-action" href="#"
-                                   title="{{ trans('delete') }}" onclick="deletePlugin('{{ plugin.name }}');">
-                                    <i class="fas fa-trash-alt" aria-hidden="true"></i>
-                                </a>
-                            {% endif %}
                             {% if plugin.hasUpdate() %}
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-warning dropdown-toggle"
@@ -351,14 +344,14 @@
                                     </button>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="Updater">
-                                            <i class="fas fa-cloud-download-alt fa-fw mr-1"
-                                               aria-hidden="true"></i> {{ trans('update') }}
+                                            <i class="fas fa-cloud-download-alt fa-fw mr-1" aria-hidden="true"></i>
+                                            {{ trans('update') }}
                                         </a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item"
                                            href="{{ url }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
-                                            <i class="fas fa-check fa-fw mr-1"
-                                               aria-hidden="true"></i> {{ trans('enable') }}
+                                            <i class="fas fa-check fa-fw mr-1" aria-hidden="true"></i>
+                                            {{ trans('enable') }}
                                         </a>
                                     </div>
                                 </div>
@@ -371,6 +364,12 @@
                             {% endif %}
                         {% else %}
                             {{ plugin.compatibilityDescription() }}
+                        {% endif %}
+                        {% if plugin.enabled == false and config('disable_rm_plugins', false) == false %}
+                            <a class="btn btn-sm btn-danger ml-2 btn-spin-action" href="#"
+                               title="{{ trans('delete') }}" onclick="deletePlugin('{{ plugin.name }}');">
+                                <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                            </a>
                         {% endif %}
                     </td>
                 </tr>
