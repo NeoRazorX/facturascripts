@@ -101,8 +101,8 @@
 
     {# Modal for add new plugins #}
     {% if config('disable_add_plugins', false) == false %}
-        <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data"
-              onsubmit="animateSpinner('add')">
+        <form action="{{ fsc.url() }}" class="form" enctype="multipart/form-data" id="f_add_plugins" method="post"
+              name="upload-plugins" onsubmit="animateSpinner('add')">
             {{ formToken() }}
             <input type="hidden" name="action" value="upload"/>
             <div class="modal fade" id="modalAddPlugin" tabindex="-1" role="dialog" aria-hidden="true">
@@ -178,6 +178,21 @@
             $(document).ready(function () {
                 searchList('#querySearchPlugin', '#all-plugins .card', '.card-title');
                 searchList('#querySearchInstalledPlugins', '#installed-plugins .item-plugin', '.plugin-name');
+
+                // si los archivos son demasiado grandes, no se pueden subir
+                $("#f_add_plugins").submit(function (e) {
+                    let size = 0;
+                    let files = document.querySelector('input[type=file]').files;
+                    for (let i = 0; i < files.length; i++) {
+                        size += files[i].size;
+                    }
+
+                    if (size > {{ fsc.getMaxFileUpload() }} * 1024 * 1024) { // MB
+                        e.preventDefault();
+                        alert('{{ trans('plugin-file-too-big', {'%size%': fsc.getMaxFileUpload()}) }}');
+                        animateSpinner('remove');
+                    }
+                });
             });
 
             function searchList(querySelectorInput, querySelectorItem, querySelectorPluginName) {
@@ -262,7 +277,8 @@
 
 {% macro showInstalledPlugins(fsc) %}
     <div class="m-2 mb-3">
-        <input type="text" class="form-control border-dark" id="querySearchInstalledPlugins" placeholder="{{ trans('search') }}"/>
+        <input type="text" class="form-control border-dark" id="querySearchInstalledPlugins"
+               placeholder="{{ trans('search') }}"/>
     </div>
 
     <div class="card border-success m-2 mb-3">

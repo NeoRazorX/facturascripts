@@ -1144,6 +1144,7 @@
     "plugin-deleted": "O plugin 0 foi excluído com sucesso.",
     "plugin-disabled": "Plugin desativado com sucesso.",
     "plugin-enabled": "Plugin ativado com sucesso.",
+    "plugin-file-too-big": "Este servidor no permite subir archivos de más de %size% MB. Por favor, aumenta el tamaño máximo de subida de archivos en PHP o copia el archivo a la carpeta Plugins.",
     "plugin-installation-disabled": "plugin-installation-disabled",
     "plugin-installed": "Plugin instalado",
     "plugin-need-update": "El plugin %plugin% necesitará actualización para funcionar con la nueva versión de FacturaScripts.",

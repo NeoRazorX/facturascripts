@@ -158,30 +158,6 @@ class Installer implements ControllerInterface
         return true;
     }
 
-    private function extractFromMarkers(string $fileName, string $marker): array
-    {
-        $result = [];
-        if (!file_exists($fileName)) {
-            return $result;
-        }
-
-        $markerData = explode("\n", file_get_contents($fileName));
-        $state = false;
-        foreach ($markerData as $markerLine) {
-            if (false !== strpos($markerLine, '# END ' . $marker)) {
-                $state = false;
-            }
-            if ($state) {
-                $result[] = $markerLine;
-            }
-            if (false !== strpos($markerLine, '# BEGIN ' . $marker)) {
-                $state = true;
-            }
-        }
-
-        return $result;
-    }
-
     private function getUri(): string
     {
         $uri = $this->request->getBasePath();
@@ -195,89 +171,27 @@ class Installer implements ControllerInterface
         return file_exists(FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json') ? $userLanguage : 'en_EN';
     }
 
-    private function insertWithMarkers(array $insertion, string $fileName, string $marker): bool
-    {
-        if (!file_exists($fileName)) {
-            if (!is_writable(dirname($fileName))) {
-                return false;
-            }
-            if (!touch($fileName)) {
-                return false;
-            }
-        } elseif (!is_writable($fileName)) {
-            return false;
-        }
-
-        $startMarker = '# BEGIN ' . $marker;
-        $endMarker = '# END ' . $marker;
-        $fp = fopen($fileName, 'rb+');
-        if (!$fp) {
-            return false;
-        }
-
-        // Attempt to get a lock. If the filesystem supports locking, this will block until the lock is acquired.
-        flock($fp, LOCK_EX);
-        $lines = [];
-        while (!feof($fp)) {
-            $lines[] = rtrim(fgets($fp), "\r\n");
-        }
-
-        // Split out the existing file into the preceding lines, and those that appear after the marker
-        $preLines = $postLines = $existingLines = [];
-        $foundMarker = $foundEndMarker = false;
-        foreach ($lines as $line) {
-            if (!$foundMarker && false !== strpos($line, $startMarker)) {
-                $foundMarker = true;
-                continue;
-            }
-            if (!$foundEndMarker && false !== strpos($line, $endMarker)) {
-                $foundEndMarker = true;
-                continue;
-            }
-            if (!$foundMarker) {
-                $preLines[] = $line;
-            } elseif ($foundEndMarker) {
-                $postLines[] = $line;
-            } else {
-                $existingLines[] = $line;
-            }
-        }
-
-        // Check to see if there was a change
-        if ($existingLines === $insertion) {
-            flock($fp, LOCK_UN);
-            fclose($fp);
-            return true;
-        }
-
-        // If it's true, is the old content version without the tags marker, we can remove it
-        if (empty(array_diff($insertion, $preLines))) {
-            $preLines = [];
-        }
-
-        // Generate the new file data
-        $newFileData = implode(
-            PHP_EOL, array_merge(
-                $preLines, [$startMarker], $insertion, [$endMarker], $postLines
-            )
-        );
-
-        // Write to the start of the file, and truncate it to that length
-        fseek($fp, 0);
-        $bytes = fwrite($fp, $newFileData);
-        if ($bytes) {
-            ftruncate($fp, ftell($fp));
-        }
-        fflush($fp);
-        flock($fp, LOCK_UN);
-        fclose($fp);
-        return (bool)$bytes;
-    }
-
     private function saveHtaccess(): bool
     {
-        $contentFile = $this->extractFromMarkers(FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
-        return $this->insertWithMarkers($contentFile, FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
+        // guardamos el archivo .htaccess
+        $file = fopen(FS_FOLDER . '/.htaccess', 'wb');
+        if (false === is_resource($file)) {
+            Tools::log()->critical('cant-save-htaccess');
+            return false;
+        }
+
+        $samplePath = Tools::folder('htaccess-sample');
+        $contentFile = file_get_contents($samplePath);
+
+        // reemplazamos la ruta de la instalación
+        $route = $this->request->request->get('fs_route', $this->getUri());
+        if (!empty($route)) {
+            $contentFile = str_replace('RewriteBase /', 'RewriteBase ' . $route, $contentFile);
+        }
+
+        fwrite($file, $contentFile);
+        fclose($file);
+        return true;
     }
 
     private function saveInstall(): bool
