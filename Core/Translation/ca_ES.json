@@ -1144,7 +1144,7 @@
     "plugin-deleted": "Plugin <b>%pluginName%<\/b> eliminat correctament.",
     "plugin-disabled": "El Plugin %pluginName% ha estat desactivat correctament.",
     "plugin-enabled": "El plugin %pluginName% ha estat activat correctament.",
-    "plugin-file-too-big": "Este servidor no permite subir archivos de más de %size% MB. Por favor, aumenta el tamaño máximo de subida de archivos en PHP o copia el archivo a la carpeta Plugins.",
+    "plugin-file-too-big": "Aquest servidor no permet pujar arxius de més de %size% MB. Si us plau, augmenta la mida màxima de pujada d'arxius en PHP o copia l'arxiu a la carpeta Plugins.",
     "plugin-installation-disabled": "La instal·lació de plugins està desactivada en aquest servidor",
     "plugin-installed": "Plugin '%pluginName%' instal·lat",
     "plugin-need-update": "El plugin %plugin% necessitarà actualització per funcionar amb la nova versió de FacturaScripts.",

@@ -330,6 +330,9 @@ class EditEjercicio extends EditController
             case 'ListSubcuenta':
                 $where = [new DataBaseWhere('codejercicio', $codejercicio)];
                 $view->loadData('', $where);
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
                 break;
         }
     }

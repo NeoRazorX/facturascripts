@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -65,11 +65,11 @@ class EditSubcuenta extends EditController
         $this->createViewsLines();
     }
 
-    protected function createViewsLines(string $viewName = 'ListPartidaAsiento')
+    protected function createViewsLines(string $viewName = 'ListPartidaAsiento'): void
     {
-        $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->views[$viewName]->addOrderBy(['fecha', 'numero', 'idpartida'], 'date', 2);
-        $this->views[$viewName]->addSearchFields(['partidas.concepto']);
+        $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale')
+            ->addOrderBy(['fecha', 'numero', 'idpartida'], 'date', 2)
+            ->addSearchFields(['partidas.concepto']);
 
         // filtros
         $this->views[$viewName]->addFilterPeriod('date', 'date', 'fecha');
@@ -190,17 +190,23 @@ class EditSubcuenta extends EditController
                 $idsubcuenta = $this->getViewModelValue($mainViewName, 'idsubcuenta');
                 $where = [new DataBaseWhere('idsubcuenta', $idsubcuenta)];
                 $view->loadData('', $where);
-                if ($view->count > 0) {
-                    $this->addButton($mainViewName, [
-                        'action' => 'ledger',
-                        'color' => 'info',
-                        'icon' => 'fas fa-book fa-fw',
-                        'label' => 'ledger',
-                        'type' => 'modal'
-                    ]);
-                    $this->setLedgerReportExportOptions($mainViewName);
-                    $this->setLedgerReportValues($mainViewName);
+                if ($view->count == 0) {
+                    break;
                 }
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
+
+                // añadimos botón de informe de mayor
+                $this->addButton($mainViewName, [
+                    'action' => 'ledger',
+                    'color' => 'info',
+                    'icon' => 'fas fa-book fa-fw',
+                    'label' => 'ledger',
+                    'type' => 'modal'
+                ]);
+                $this->setLedgerReportExportOptions($mainViewName);
+                $this->setLedgerReportValues($mainViewName);
                 break;
 
             case $mainViewName:
@@ -212,7 +218,7 @@ class EditSubcuenta extends EditController
         }
     }
 
-    protected function prepareSubcuenta(BaseView $view)
+    protected function prepareSubcuenta(BaseView $view): void
     {
         $cuenta = new Cuenta();
         $idcuenta = $this->request->query->get('idcuenta', '');
@@ -248,7 +254,7 @@ class EditSubcuenta extends EditController
         return true;
     }
 
-    private function setLedgerReportExportOptions(string $viewName)
+    private function setLedgerReportExportOptions(string $viewName): void
     {
         $columnFormat = $this->views[$viewName]->columnModalForName('format');
         if ($columnFormat && $columnFormat->widget->getType() === 'select') {
@@ -260,7 +266,7 @@ class EditSubcuenta extends EditController
         }
     }
 
-    private function setLedgerReportValues(string $viewName)
+    private function setLedgerReportValues(string $viewName): void
     {
         $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();
