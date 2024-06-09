@@ -75,11 +75,11 @@ class Installer implements ControllerInterface
 
     public function run(): void
     {
-        $this->db_host = $this->request->get('fs_db_host', 'localhost');
-        $this->db_name = $this->request->get('fs_db_name', 'facturascripts');
-        $this->db_port = $this->request->get('fs_db_port', 3306);
+        $this->db_host = trim($this->request->get('fs_db_host', 'localhost'));
+        $this->db_name = trim($this->request->get('fs_db_name', 'facturascripts'));
+        $this->db_port = (int)$this->request->get('fs_db_port', 3306);
         $this->db_type = $this->request->get('fs_db_type', 'mysql');
-        $this->db_user = $this->request->get('fs_db_user', 'root');
+        $this->db_user = trim($this->request->get('fs_db_user', 'root'));
 
         $installed = $this->searchErrors() &&
             $this->request->getMethod() === 'POST' &&
@@ -279,7 +279,7 @@ class Installer implements ControllerInterface
 
         try {
             // Omit the DB name because it will be checked on a later stage
-            $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
+            $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', $dbData['port']);
             if ($connection->connect_error) {
                 Tools::log()->critical('cant-connect-database');
                 Tools::log()->critical($connection->connect_errno . ': ' . $connection->connect_error);
