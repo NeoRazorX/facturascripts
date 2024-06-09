@@ -218,7 +218,14 @@ class Installer implements ControllerInterface
             fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
         }
 
-        $fields = ['lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user', 'db_pass', 'hidden_plugins'];
+        fwrite($file, "define('FS_DB_TYPE', '" . $this->db_type . "');\n");
+        fwrite($file, "define('FS_DB_HOST', '" . $this->db_host . "');\n");
+        fwrite($file, "define('FS_DB_PORT', " . $this->db_port . ");\n");
+        fwrite($file, "define('FS_DB_NAME', '" . $this->db_name . "');\n");
+        fwrite($file, "define('FS_DB_USER', '" . $this->db_user . "');\n");
+        fwrite($file, "define('FS_DB_PASS', '" . $this->request->request->get('fs_db_pass') . "');\n");
+
+        $fields = ['lang', 'timezone', 'hidden_plugins'];
         foreach ($fields as $field) {
             fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, '') . "');\n");
         }
