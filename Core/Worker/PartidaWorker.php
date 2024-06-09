@@ -78,7 +78,10 @@ class PartidaWorker extends WorkerClass
         }
 
         // actualizamos la subcuenta
-        if (abs($subcuenta->saldo - $saldo) >= 0.01) {
+        $diffDebe = abs($subcuenta->debe - $debe);
+        $diffHaber = abs($subcuenta->haber - $haber);
+        $diffSaldo = abs($subcuenta->saldo - $saldo);
+        if ($diffDebe >= 0.01 || $diffHaber >= 0.01 || $diffSaldo >= 0.01) {
             $subcuenta->debe = round($debe, FS_NF0);
             $subcuenta->haber = round($haber, FS_NF0);
             $subcuenta->saldo = round($saldo, FS_NF0);
