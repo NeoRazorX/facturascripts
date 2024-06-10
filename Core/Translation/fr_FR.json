@@ -534,7 +534,7 @@
     "equivalent-account-not-found": "Impossible de trouver le compte équivalent à %accountCode% dans l'exercice %exerciseCode%. Avez-vous importé le plan comptable?",
     "equivalent-subaccount-not-found": "Aucun sous-compte équivalent à %subAccountCode% n'a été trouvé pour la copie.",
     "error": "ERREUR: %error%",
-    "error-checking-vat-number": "Error comprobando el número '%vat-number%' en el sistema VIES",
+    "error-checking-vat-number": "Erreur lors de la vérification du numéro de TVA '%vat-number%' dans le système VIES",
     "error-connecting-memcache": "Erreur lors de la connexion au serveur Memcache.",
     "error-deleting-lines": "Erreur lors de la suppression des lignes",
     "error-no-name-in-settings": "Erreur dans %viewName% view. Manquant d'informer le 'nom' dans une colonne du xml",
