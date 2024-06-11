@@ -24,6 +24,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\WorkEvent;
 use Throwable;
 
+/**
+ * La cola de trabajos en segundo plano. Permite añadir workers y lanzar eventos.
+ */
 final class WorkQueue
 {
     /** @var array */

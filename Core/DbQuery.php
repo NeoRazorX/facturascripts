@@ -23,6 +23,8 @@ use Exception;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
+ * Permite realizar consultas a la base de datos de forma sencilla.
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 final class DbQuery

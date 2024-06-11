@@ -25,6 +25,9 @@ use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
 use FacturaScripts\Core\Error\DefaultError;
 
+/**
+ * El corazón de FacturaScripts. Se encarga de gestionar las rutas y ejecutar los controladores.
+ */
 final class Kernel
 {
     /** @var array */

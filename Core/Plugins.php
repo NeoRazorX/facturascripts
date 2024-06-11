@@ -24,6 +24,9 @@ use FacturaScripts\Core\Base\PluginDeploy;
 use FacturaScripts\Core\Internal\Plugin;
 use ZipArchive;
 
+/**
+ * Permite gestionar los plugins de FacturaScripts: añadir, eliminar, activar, desactivar, etc.
+ */
 final class Plugins
 {
     const FILE_NAME = 'plugins.json';

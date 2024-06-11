@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core;
 
 /**
+ * Un sencillo cliente HTTP basado en cURL.
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Http

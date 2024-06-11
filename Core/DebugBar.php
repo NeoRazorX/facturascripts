@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
- * Description of DebugBar
+ * La barra de debug que se muestra en la parte inferior de la página cuando el modo debug está activado.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
