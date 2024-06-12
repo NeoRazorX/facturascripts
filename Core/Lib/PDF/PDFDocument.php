@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\PDF;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Tools;
@@ -47,6 +48,8 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
  */
 abstract class PDFDocument extends PDFCore
 {
+    use ExtensionsTrait;
+
     const INVOICE_TOTALS_Y = 200;
 
     /** @var FormatoDocumento */
@@ -161,7 +164,7 @@ abstract class PDFDocument extends PDFCore
 
     protected function getLineHeaders(): array
     {
-        return [
+        $lineHeaders = [
             'referencia' => ['type' => 'text', 'title' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description')],
             'cantidad' => ['type' => 'number', 'title' => $this->i18n->trans('quantity')],
             'pvpunitario' => ['type' => 'number', 'title' => $this->i18n->trans('price')],
@@ -172,6 +175,10 @@ abstract class PDFDocument extends PDFCore
             'recargo' => ['type' => 'percentage', 'title' => $this->i18n->trans('re')],
             'irpf' => ['type' => 'percentage', 'title' => $this->i18n->trans('irpf')]
         ];
+
+        $lineHeaders = $this->pipe('getLineHeaders', $lineHeaders) ?? $lineHeaders;
+
+        return $lineHeaders;
     }
 
     /**
