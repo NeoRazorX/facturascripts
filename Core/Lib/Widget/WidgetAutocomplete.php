@@ -65,9 +65,10 @@ class WidgetAutocomplete extends WidgetSelect
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
         $labelHtml = '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
+        $name = $this->readonly() ? '' : 'name="' . $this->fieldname . '"';
 
         if ('' === $this->value || null === $this->value) {
-            return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
+            return '<input type="hidden" ' . $name . ' value="' . $this->value . '"/>'
                 . '<div class="form-group mb-2">'
                 . $labelHtml
                 . '<div class="input-group">'
@@ -80,7 +81,7 @@ class WidgetAutocomplete extends WidgetSelect
                 . '</div>';
         }
 
-        return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
+        return '<input type="hidden" ' . $name . ' value="' . $this->value . '"/>'
             . '<div class="form-group mb-2">'
             . $labelHtml
             . '<div class="input-group">'

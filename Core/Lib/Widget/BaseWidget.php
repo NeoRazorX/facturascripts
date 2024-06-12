@@ -228,7 +228,8 @@ class BaseWidget extends VisualItem
     protected function inputHtml($type = 'text', $extraClass = '')
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
-        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
+        $name = $this->readonly() ? '' : 'name="' . $this->fieldname . '"';
+        return '<input type="' . $type . '" ' . $name . ' value="' . $this->value
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
 

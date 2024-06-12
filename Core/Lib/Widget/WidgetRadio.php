@@ -260,9 +260,10 @@ class WidgetRadio extends BaseWidget
                 $firstCss = $class != '' ? ' ml-3' : 'ml-3';
             }
 
+            $name = $this->readonly() ? '' : 'name="' . $this->fieldname . '"';
             $html .= '<div class="form-check ' . $class . $firstCss . '">'
-                . '<input type="radio" class="form-check-input" id="' . $this->fieldname . $cont . '" name="'
-                . $this->fieldname . '" value="' . $option['value'] . '" ' . $check . ' ' . $readOnly . '>'
+                . '<input type="radio" class="form-check-input" id="' . $this->fieldname . $cont . '" '
+                . $name . ' value="' . $option['value'] . '" ' . $check . ' ' . $readOnly . '>'
                 . '<label class="form-check-label" for="' . $this->fieldname . $cont . '">'
                 . $title
                 . '</label>'
@@ -289,9 +290,10 @@ class WidgetRadio extends BaseWidget
 
             $nameImg = str_replace(' ', '-', $title);
             $url = FS_ROUTE . DIRECTORY_SEPARATOR . $this->imagesPath . DIRECTORY_SEPARATOR . $nameImg . '.png';
+            $name = $this->readonly() ? '' : 'name="' . $this->fieldname . '"';
             $html .= '<div class="widget-radio d-inline-block p-2">'
-                . '<input type="radio" id="' . $nameImg . '" class="d-none imgbgchk" name="' . $this->fieldname
-                . '" value="' . $option['value'] . '" ' . $check . ' ' . $readOnly . '>'
+                . '<input type="radio" id="' . $nameImg . '" class="d-none imgbgchk" '
+                . $name . ' value="' . $option['value'] . '" ' . $check . ' ' . $readOnly . '>'
                 . '<label class="mb-0" for="' . $nameImg . '">'
                 . '<img src="' . $url . '" />'
                 . '<div class="tick_container">'

@@ -58,7 +58,7 @@ class WidgetLibrary extends BaseWidget
 
         if ($this->readonly()) {
             return '<div class="form-group mb-2">'
-                . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
+                . '<input type="hidden" id="' . $this->id . '" value="' . $this->value . '">'
                 . $labelHtml
                 . '<a href="' . $file->url() . '" class="btn btn-block btn-outline-secondary">'
                 . '<i class="' . $icon . ' fa-fw"></i> ' . ($file->filename ? $file->shortFileName() : Tools::lang()->trans('select'))

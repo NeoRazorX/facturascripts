@@ -94,7 +94,8 @@ class WidgetTextarea extends WidgetText
     protected function inputHtml($type = 'text', $extraClass = '')
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
-        return '<textarea rows="' . $this->rows . '" name="' . $this->fieldname . '" class="' . $class . '"'
+        $name = $this->readonly() ? '' : 'name="' . $this->fieldname . '"';
+        return '<textarea rows="' . $this->rows . '" ' . $name . ' class="' . $class . '"'
             . $this->inputHtmlExtraParams() . '>' . $this->value . '</textarea>';
     }
 }
