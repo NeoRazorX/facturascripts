@@ -31,8 +31,7 @@ use FacturaScripts\Core\Tools;
  */
 final class SubscriptionManager
 {
-    //const SUBSCRIPTION_URL = 'https://facturascripts.com/SubscriptionActivity';
-    const SUBSCRIPTION_URL = 'https://forja.danielfg.es/SubscriptionActivity';
+    const SUBSCRIPTION_URL = 'https://facturascripts.com/SubscriptionActivity';
 
     /** Weekly update*/
     const UPDATE_INTERVAL = 604800;
@@ -75,7 +74,10 @@ final class SubscriptionManager
         $params['action'] = 'update';
         $data = Http::get(self::SUBSCRIPTION_URL, $params)->setTimeout(3)->json();
 
-        $this->save();
+        if (empty($pluginName)) {
+            $this->save();
+        }
+
         return isset($data['ok']) && $data['ok'];
     }
 

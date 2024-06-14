@@ -32,8 +32,7 @@ use FacturaScripts\Core\Tools;
  */
 final class TelemetryManager
 {
-    //const TELEMETRY_URL = 'https://facturascripts.com/Telemetry';
-    const TELEMETRY_URL = 'https://forja.danielfg.es/Telemetry';
+    const TELEMETRY_URL = 'https://facturascripts.com/Telemetry';
 
     /** Weekly update*/
     const UPDATE_INTERVAL = 604800;

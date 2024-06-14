@@ -25,11 +25,9 @@ use FacturaScripts\Core\Tools;
 
 final class Forja
 {
-    //const BUILDS_URL = 'https://facturascripts.com/DownloadBuild';
-    const BUILDS_URL = 'https://forja.danielfg.es/DownloadBuild';
+    const BUILDS_URL = 'https://facturascripts.com/DownloadBuild';
     const CORE_PROJECT_ID = 1;
-    //const PLUGIN_LIST_URL = 'https://facturascripts.com/PluginInfoList';
-    const PLUGIN_LIST_URL = 'https://forja.danielfg.es/PluginInfoList';
+    const PLUGIN_LIST_URL = 'https://facturascripts.com/PluginInfoList';
 
     /** @var array */
     public static $builds;
