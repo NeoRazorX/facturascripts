@@ -121,8 +121,14 @@
             <column name="update-supplier-prices" numcolumns="3" order="110">
                 <widget type="checkbox" fieldname="updatesupplierprices"/>
             </column>
-            <column name="allow-sale-without-stock-n" numcolumns="6" order="120">
+            <column name="allow-sale-without-stock-n" numcolumns="3" order="120">
                 <widget type="checkbox" fieldname="ventasinstock"/>
+            </column>
+            <column name="price-calculation-method" numcolumns="3" order="130">
+                <widget type="radio" fieldname="price-calculation-method" translate="true">
+                    <values title="cost-margin">cost-margin</values>
+                    <values title="sales-margin">sales-margin</values>
+                </widget>
             </column>
         </group>
         <group name="documents" title="documents" icon="fas fa-copy" valign="bottom" numcolumns="12">
