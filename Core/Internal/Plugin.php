@@ -338,21 +338,4 @@ final class Plugin
             $this->loadIniData($iniData);
         }
     }
-
-    private function loadSubscription(array $iniData, ZipArchive $zip): void
-    {
-        if (false === empty($iniData['subscription'])) {
-            $this->subscription = $iniData['subscription'];
-            return;
-        }
-
-        $zipIndex = $zip->locateName('subscription.txt', ZipArchive::FL_NODIR);
-        if (false === $zipIndex) {
-            $this->subscription = 0;
-            return;
-        }
-
-        $subData = parse_ini_string($zip->getFromIndex($zipIndex));
-        $this->subscription = $subData['subscription'] ?? 0;
-    }
 }
