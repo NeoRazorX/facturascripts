@@ -43,7 +43,8 @@ use ZipArchive;
 class Updater extends Controller
 {
     const CORE_ZIP_FOLDER = 'facturascripts';
-    const UPDATE_CORE_URL = 'https://facturascripts.com/DownloadBuild';
+    //const UPDATE_CORE_URL = 'https://facturascripts.com/DownloadBuild';
+    const UPDATE_CORE_URL = 'https://forja.danielfg.es/DownloadBuild';
 
     /** @var array */
     public $coreUpdateWarnings = [];
@@ -266,7 +267,7 @@ class Updater extends Controller
                 'id' => $id,
                 'name' => $plugin->name,
                 'stable' => $build['stable'],
-                'url' => self::UPDATE_CORE_URL . '/' . $id . '/' . $build['version'],
+                'url' => self::UPDATE_CORE_URL . '/' . $id . '/' . $build['version'] . '?idsub=' . $plugin->subscription,
                 'version' => $build['version'],
                 'mincore' => $build['mincore'],
                 'maxcore' => $build['maxcore']

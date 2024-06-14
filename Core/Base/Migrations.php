@@ -38,6 +38,11 @@ final class Migrations
 
     public static function run(): void
     {
+        if (empty(Tools::settings('default', 'uuid_install'))) {
+            Tools::settingsSet('default', 'uuid_install', Tools::randomString(20));
+            Tools::settingsSave();
+        }
+
         self::clearLogs();
         self::fixSeries();
         self::fixAgenciasTransporte();
