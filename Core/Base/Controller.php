@@ -127,8 +127,10 @@ class Controller implements ControllerInterface
     public function __construct(string $className, string $uri = '')
     {
         $this->className = $className;
+
         Session::set('controllerName', $this->className);
         Session::set('pageName', $this->className);
+        Session::set('uri', $uri);
 
         $this->dataBase = new DataBase();
         $this->empresa = new Empresa();
