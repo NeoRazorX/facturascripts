@@ -291,6 +291,7 @@ class Login implements ControllerInterface
         }
 
         // update user data
+        Session::set('user', $user);
         $ip = Session::getClientIp();
         $browser = $request->headers->get('User-Agent');
         $user->newLogkey($ip, $browser);
