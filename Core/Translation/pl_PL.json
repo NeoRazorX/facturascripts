@@ -1249,7 +1249,7 @@
     "rectifying": "Korekta",
     "rectifying-serie": "Serie rectificativa",
     "redirect": "Redirección",
-    "reference": "Referencia",
+    "reference": "Referencja",
     "reference+description": "Referencia + Descripción",
     "refresh": "Recargar",
     "refresh-page": "Recargar página",
@@ -1668,6 +1668,6 @@
     "you-should-change-passwd": "Debería cambiar su contraseña",
     "your": "Suyo",
     "zip-code": "Código Postal",
-    "zip-codes": "Códigos postales",
+    "zip-codes": "Kody pocztowe",
     "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin."
 }
