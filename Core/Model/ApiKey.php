@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -75,6 +75,16 @@ class ApiKey extends Base\ModelClass
     public static function tableName(): string
     {
         return 'api_keys';
+    }
+
+    public function test(): bool
+    {
+        // escapamos el html
+        $this->apikey = Tools::noHtml($this->apikey);
+        $this->description = Tools::noHtml($this->description);
+        $this->nick = Tools::noHtml($this->nick);
+
+        return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
