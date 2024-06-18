@@ -45,13 +45,11 @@ class EditCuentaBanco extends EditController
         return $data;
     }
 
-    protected function createSubAccountingView($viewName = 'ListSubcuenta')
+    protected function createSubAccountingView($viewName = 'ListSubcuenta'): void
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book');
-        $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
-
-        // settings
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book')
+            ->addOrderBy(['codejercicio'], 'exercise', 2)
+            ->setSettings('btnNew', false);
     }
 
     /**
@@ -89,6 +87,9 @@ class EditCuentaBanco extends EditController
                     $where[] = new DataBaseWhere('codsubcuenta', $codsubcuenta2, '=', 'OR');
                 }
                 $view->loadData('', $where, ['codejercicio' => 'DESC']);
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
                 break;
 
             default:
@@ -99,14 +100,14 @@ class EditCuentaBanco extends EditController
 
     /**
      * Returns the list of exercises of the selected company.
-     * 
+     *
      * @return array
      */
     private function getExerciseOfCompany(): array
     {
         $result = [];
         $where = [
-            new DataBaseWhere('idempresa', $this->getViewModelValue($this->getMainViewName(),'idempresa'))
+            new DataBaseWhere('idempresa', $this->getViewModelValue($this->getMainViewName(), 'idempresa'))
         ];
         foreach ($this->codeModel->all('ejercicios', 'codejercicio', 'codejercicio', false, $where) as $row) {
             $result[] = $row->code;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,14 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
+use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to edit a single item from the EditProducto model
@@ -37,6 +40,7 @@ use FacturaScripts\Dinamic\Model\Atributo;
  */
 class EditProducto extends EditController
 {
+    use DocFilesTrait;
     use ProductImagesTrait;
 
     public function getModelClassName(): string
@@ -61,11 +65,54 @@ class EditProducto extends EditController
         parent::createViews();
         $this->createViewsVariants();
         $this->createViewsProductImages();
+        $this->createViewDocFiles();
         $this->createViewsStock();
+        $this->createViewsPedidosClientes();
+        $this->createViewsPedidosProveedores();
         $this->createViewsSuppliers();
     }
 
-    protected function createViewsStock(string $viewName = 'EditStock')
+    protected function createViewsPedidosClientes(string $viewName = 'ListLineaPedidoCliente'): void
+    {
+        $this->addListView($viewName, 'LineaPedidoCliente', 'reserved', 'fas fa-lock')
+            ->addSearchFields(['referencia', 'descripcion'])
+            ->addOrderBy(['referencia'], 'reference')
+            ->addOrderBy(['cantidad'], 'quantity')
+            ->addOrderBy(['servido'], 'quantity-served')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['pvptotal'], 'amount')
+            ->addOrderBy(['idlinea'], 'code', 2);
+
+        // ocultamos la columna product
+        $this->views[$viewName]->disableColumn('product');
+
+        // desactivamos los botones de nuevo, eliminar y checkbox
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'checkBoxes', false);
+    }
+
+    protected function createViewsPedidosProveedores(string $viewName = 'ListLineaPedidoProveedor'): void
+    {
+        $this->addListView($viewName, 'LineaPedidoProveedor', 'pending-reception', 'fas fa-ship')
+            ->addSearchFields(['referencia', 'descripcion'])
+            ->addOrderBy(['referencia'], 'reference')
+            ->addOrderBy(['cantidad'], 'quantity')
+            ->addOrderBy(['servido'], 'quantity-served')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['pvptotal'], 'amount')
+            ->addOrderBy(['idlinea'], 'code', 2);
+
+        // ocultamos la columna product
+        $this->views[$viewName]->disableColumn('product');
+
+        // desactivamos los botones de nuevo, eliminar y checkbox
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'checkBoxes', false);
+    }
+
+    protected function createViewsStock(string $viewName = 'EditStock'): void
     {
         $this->addEditListView($viewName, 'Stock', 'stock', 'fas fa-dolly');
 
@@ -75,12 +122,12 @@ class EditProducto extends EditController
         }
     }
 
-    protected function createViewsSuppliers(string $viewName = 'EditProductoProveedor')
+    protected function createViewsSuppliers(string $viewName = 'EditProductoProveedor'): void
     {
         $this->addEditListView($viewName, 'ProductoProveedor', 'suppliers', 'fas fa-users');
     }
 
-    protected function createViewsVariants(string $viewName = 'EditVariante')
+    protected function createViewsVariants(string $viewName = 'EditVariante'): void
     {
         $this->addEditListView($viewName, 'Variante', 'variants', 'fas fa-project-diagram');
 
@@ -109,11 +156,26 @@ class EditProducto extends EditController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'add-file':
+                return $this->addFileAction();
+
             case 'add-image':
                 return $this->addImageAction();
 
+            case 'delete-file':
+                return $this->deleteFileAction();
+
             case 'delete-image':
                 return $this->deleteImageAction();
+
+            case 'edit-file':
+                return $this->editFileAction();
+
+            case 'unlink-file':
+                return $this->unlinkFileAction();
+
+            case 'sort-images':
+                return $this->sortImagesAction();
         }
 
         return parent::execPreviousAction($action);
@@ -204,6 +266,10 @@ class EditProducto extends EditController
         $where = [new DataBaseWhere('idproducto', $id)];
 
         switch ($viewName) {
+            case 'docfiles':
+                $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->primaryColumnValue());
+                break;
+
             case $this->getMainViewName():
                 parent::loadData($viewName, $view);
                 $this->loadTypes($viewName);
@@ -227,8 +293,7 @@ class EditProducto extends EditController
                 break;
 
             case 'EditProductoImagen':
-                $where = [new DataBaseWhere('idproducto', $id)];
-                $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
+                $orderBy = ['orden' => 'ASC'];
                 $view->loadData('', $where, $orderBy);
                 break;
 
@@ -243,6 +308,18 @@ class EditProducto extends EditController
 
             case 'EditProductoProveedor':
                 $view->loadData('', $where, ['id' => 'DESC']);
+                break;
+
+            case 'ListLineaPedidoCliente':
+                $where[] = new DataBaseWhere('actualizastock', -2);
+                $view->loadData('', $where);
+                $this->setSettings($viewName, 'active', $view->model->count($where) > 0);
+                break;
+
+            case 'ListLineaPedidoProveedor':
+                $where[] = new DataBaseWhere('actualizastock', 2);
+                $view->loadData('', $where);
+                $this->setSettings($viewName, 'active', $view->model->count($where) > 0);
                 break;
         }
     }
@@ -261,5 +338,31 @@ class EditProducto extends EditController
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
+    }
+
+    protected function sortImagesAction(): bool
+    {
+        $idsOrdenadas = $this->request->request->get('orden');
+
+        if (empty($idsOrdenadas)){
+            return true;
+        }
+
+        $orden = 1;
+        foreach ($idsOrdenadas as $idImagen) {
+            $productoImagen = new ProductoImagen();
+            $productoImagen->loadFromCode($idImagen);
+            $productoImagen->orden = $orden;
+            if($productoImagen->save()){
+                $orden++;
+            }
+        }
+
+        $this->setTemplate(false);
+        $this->response->setStatusCode(Response::HTTP_OK);
+        $this->response->setContent(json_encode(['status' => 'ok']));
+        $this->response->headers->set('Content-Type', 'application/json');
+
+        return true;
     }
 }

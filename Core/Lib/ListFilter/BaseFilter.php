@@ -159,7 +159,7 @@ abstract class BaseFilter
      */
     protected function onChange(): string
     {
-        return $this->autosubmit ? ' onchange="this.form.submit();"' : '';
+        return $this->autosubmit ? ' onchange="this.form.onsubmit(); this.form.submit();"' : '';
     }
 
     /**

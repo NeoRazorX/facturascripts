@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -54,9 +54,9 @@
                 </widget>
             </column>
             <column name="warehouse" titleurl="ListAlmacen" level="99" order="130">
-                <widget type="select" fieldname="codalmacen" parent="idempresa" icon="fas fa-warehouse" onclick="EditAlmacen"
-                        required="true">
-                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"  fieldfilter="idempresa"/>
+                <widget type="select" fieldname="codalmacen" parent="idempresa" icon="fas fa-warehouse"
+                        onclick="EditAlmacen" required="true">
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" fieldfilter="idempresa"/>
                 </widget>
             </column>
             <column name="agent" titleurl="ListAgente" level="99" order="140">

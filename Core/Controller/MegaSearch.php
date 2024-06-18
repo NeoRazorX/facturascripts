@@ -58,6 +58,7 @@ class MegaSearch extends Controller
     public function getPageData(): array
     {
         $data = parent::getPageData();
+        $data['menu'] = 'reports';
         $data['title'] = 'mega-search';
         $data['showonmenu'] = false;
         return $data;
@@ -90,7 +91,7 @@ class MegaSearch extends Controller
     {
         $results = [];
         $pageModel = new Page();
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         foreach ($pageModel->all([], [], 0, 0) as $page) {
             if (!$page->showonmenu) {
                 continue;

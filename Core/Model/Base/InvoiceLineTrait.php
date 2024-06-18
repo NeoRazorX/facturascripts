@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,8 +24,16 @@ use FacturaScripts\Dinamic\Model\DocTransformation;
 
 trait InvoiceLineTrait
 {
+    abstract public function hasRefundedQuantity(): bool;
+
     public function refundedQuantity(): float
     {
+        // si no hay una rectificativa, devolvemos 0
+        if (false === $this->hasRefundedQuantity()) {
+            return 0.0;
+        }
+
+        // comprobamos líneas de facturas rectificativas
         $quantity = 0.0;
         $where = [new DataBaseWhere('idlinearect', $this->idlinea)];
         foreach (self::all($where, [], 0, 0) as $line) {
@@ -35,6 +43,7 @@ trait InvoiceLineTrait
             return $quantity;
         }
 
+        // comprobamos líneas relacionadas
         $docTransformation = new DocTransformation();
         $whereTrans = [
             new DataBaseWhere('model1', $this->getDocument()->modelClassName()),

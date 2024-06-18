@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleUser;
@@ -84,26 +85,61 @@ class EditUser extends EditController
         $this->setTabsPosition('top');
 
         // disable company column if there is only one company
+        $mvn = $this->getMainViewName();
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->views[$mvn]->disableColumn('company');
         }
 
         // disable warehouse column if there is only one company
         $almacen = new Almacen();
         if ($almacen->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('warehouse');
+            $this->views[$mvn]->disableColumn('warehouse');
         }
 
-        // disable print button
-        $this->setSettings($this->getMainViewName(), 'btnPrint', false);
+        // disable options and print buttons
+        $this->setSettings($mvn, 'btnOptions', false);
+        $this->setSettings($mvn, 'btnPrint', false);
 
         // add roles tab
         if ($this->user->admin) {
             $this->createViewsRole();
         }
+
+        // add page options tab
+        $this->createViewsPageOptions();
+
+        // add emails tab
+        $this->createViewsEmails();
     }
 
-    protected function createViewsRole(string $viewName = 'EditRoleUser')
+    protected function createViewsEmails(string $viewName = 'ListEmailSent'): void
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope')
+            ->addOrderBy(['date'], 'date', 2)
+            ->addSearchFields(['addressee', 'body', 'subject']);
+
+        // desactivamos la columna de destinatario
+        $this->views[$viewName]->disableColumn('user');
+
+        // desactivamos el botón nuevo
+        $this->setSettings($viewName, 'btnNew', false);
+
+        // filtros
+        $this->listView($viewName)->addFilterPeriod('period', 'date', 'date', true);
+    }
+
+    protected function createViewsPageOptions(string $viewName = 'ListPageOption'): void
+    {
+        $this->addListView($viewName, 'PageOption', 'options', 'fas fa-wrench')
+            ->addOrderBy(['name'], 'name', 1)
+            ->addOrderBy(['last_update'], 'last-update')
+            ->addSearchFields(['name']);
+
+        // desactivamos el botón nuevo
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    protected function createViewsRole(string $viewName = 'EditRoleUser'): void
     {
         $this->addEditListView($viewName, 'RoleUser', 'roles', 'fas fa-address-card');
         $this->views[$viewName]->setInLine('true');
@@ -137,11 +173,16 @@ class EditUser extends EditController
 
         // Are we changing user language?
         if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
-            $this->toolBox()->i18n()->setLang($this->views['EditUser']->model->langcode);
+            Tools::lang()->setLang($this->views['EditUser']->model->langcode);
 
             $expire = time() + FS_COOKIES_EXPIRE;
             $this->response->headers->setCookie(
-                new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire, \FS_ROUTE)
+                Cookie::create(
+                    'fsLang',
+                    $this->views['EditUser']->model->langcode,
+                    $expire,
+                    Tools::config('route', '/')
+                )
             );
         }
 
@@ -201,9 +242,11 @@ class EditUser extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+        $nick = $this->getViewModelValue($mvn, 'nick');
+
         switch ($viewName) {
             case 'EditRoleUser':
-                $nick = $this->getViewModelValue('EditUser', 'nick');
                 $where = [new DataBaseWhere('nick', $nick)];
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;
@@ -223,13 +266,26 @@ class EditUser extends EditController
                     $this->setSettings('EditRoleUser', 'active', false);
                 }
                 break;
+
+            case 'ListEmailSent':
+                $where = [new DataBaseWhere('nick', $nick)];
+                $view->loadData('', $where);
+                break;
+
+            case 'ListPageOption':
+                $where = [
+                    new DataBaseWhere('nick', $nick),
+                    new DataBaseWhere('nick', null, 'IS', 'OR'),
+                ];
+                $view->loadData('', $where);
+                break;
         }
     }
 
     /**
      * Load a list of pages where user has access that can be set as homepage.
      */
-    protected function loadHomepageValues()
+    protected function loadHomepageValues(): void
     {
         if (false === $this->views['EditUser']->model->exists()) {
             $this->views['EditUser']->disableColumn('homepage');
@@ -239,19 +295,19 @@ class EditUser extends EditController
         $columnHomepage = $this->views['EditUser']->columnForName('homepage');
         if ($columnHomepage && $columnHomepage->widget->getType() === 'select') {
             $userPages = $this->getUserPages($this->views['EditUser']->model);
-            $columnHomepage->widget->setValuesFromArray($userPages);
+            $columnHomepage->widget->setValuesFromArray($userPages, false, true);
         }
     }
 
     /**
      * Load the available language values from translator.
      */
-    protected function loadLanguageValues()
+    protected function loadLanguageValues(): void
     {
         $columnLangCode = $this->views['EditUser']->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
-            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
                 $langs[] = ['value' => $key, 'title' => $value];
             }
 

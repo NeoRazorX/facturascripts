@@ -6,6 +6,7 @@
         "codserierec": "R",
         "codpago": "CONT",
         "tipoidfiscal": "NIF",
+        "updatesupplierprices": true,
         "validate_iban": false
     },
     "email": {

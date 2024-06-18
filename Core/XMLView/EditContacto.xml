@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -74,11 +74,8 @@
             <column name="email" order="120">
                 <widget type="text" fieldname="email" maxlength="100" icon="fas fa-envelope"/>
             </column>
-            <column name="new-password" display="none" order="130">
-                <widget type="password" fieldname="newPassword" icon="fas fa-key"/>
-            </column>
-            <column name="repeat-new-password" display="none" order="140">
-                <widget type="password" fieldname="newPassword2" icon="fas fa-key"/>
+            <column name="website" display="none" order="130">
+                <widget type="link" fieldname="web" maxlength="100"/>
             </column>
         </group>
         <group name="address" title="address" numcolumns="12">
@@ -93,12 +90,12 @@
             </column>
             <column name="city" numcolumns="4" order="130">
                 <widget type="datalist" fieldname="ciudad">
-                    <values source="ciudades" fieldcode="idciudad" fieldtitle="ciudad"/>
+                    <values source="ciudades" fieldcode="ciudad" fieldtitle="ciudad" limit="9000"/>
                 </widget>
             </column>
             <column name="province" numcolumns="4" order="140">
-                <widget type="datalist" fieldname="provincia">
-                    <values source="provincias" fieldcode="provincia" fieldtitle="provincia"/>
+                <widget type="datalist" fieldname="provincia" parent="codpais">
+                    <values source="provincias" fieldcode="provincia" fieldtitle="provincia" fieldfilter="codpais"/>
                 </widget>
             </column>
             <column name="country" titleurl="ListPais" numcolumns="4" order="150">
@@ -108,31 +105,16 @@
             </column>
         </group>
         <group name="other" title="other-data" valign="bottom" numcolumns="12">
-            <column name="language" numcolumns="3" order="90">
+            <column name="creation-date" display="none" numcolumns="2" order="90">
+                <widget type="date" fieldname="fechaalta" readonly="true"/>
+            </column>
+            <column name="language" numcolumns="3" order="120">
                 <widget type="select" fieldname="langcode" icon="fas fa-language">
                     <values/>
                 </widget>
             </column>
-            <column name="creation-date" display="none" numcolumns="2" order="100">
-                <widget type="date" fieldname="fechaalta" readonly="true"/>
-            </column>
-            <column name="last-activity" display="none" numcolumns="3" order="110">
-                <widget type="date" fieldname="lastactivity" readonly="true"/>
-            </column>
-            <column name="last-ip" display="none" numcolumns="3" order="120">
-                <widget type="text" fieldname="lastip" readonly="true"/>
-            </column>
-            <column name="points" display="none" numcolumns="2" order="130">
-                <widget type="number" fieldname="puntos"/>
-            </column>
-            <column name="level" display="none" numcolumns="2" order="140">
-                <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision"/>
-            </column>
             <column name="is-person" order="150">
                 <widget type="checkbox" fieldname="personafisica"/>
-            </column>
-            <column name="enabled" display="none" order="160">
-                <widget type="checkbox" fieldname="habilitado"/>
             </column>
             <column name="verified" order="170">
                 <widget type="checkbox" fieldname="verificado"/>

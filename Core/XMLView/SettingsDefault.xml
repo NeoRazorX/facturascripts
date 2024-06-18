@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -98,7 +98,8 @@
                 <widget type="select" fieldname="thousands_separator" icon="fas fa-calculator" required="true">
                     <values title=",">,</values>
                     <values title=".">.</values>
-                    <values title=" "></values>
+                    <values title=" "> </values>
+                    <values title="_">_</values>
                 </widget>
             </column>
             <column name="currency-position" numcolumns="3" order="130">
@@ -161,9 +162,11 @@
                     <values title="small">small</values>
                 </widget>
             </column>
-            <column name="login-image" titleurl="ListAttachedFile" description="click-link-to-add" numcolumns="3"
-                    order="140">
-                <widget type="select" fieldname="idloginimage" onclick="EditAttachedFile"/>
+            <column name="login-image" numcolumns="3" order="140">
+                <widget type="library" fieldname="idloginimage" icon="fas fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.png"/>
+            </column>
+            <column name="days-log-retention" numcolumns="3" order="150">
+                <widget type="number" fieldname="days_log_retention" min="1" max="250" icon="fas fa-calendar" required="true"/>
             </column>
         </group>
         <group name="advanced2" numcolumns="12">

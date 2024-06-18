@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\PDF;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -400,7 +400,7 @@ abstract class PDFDocument extends PDFCore
         if ($model->modelClassName() === 'FacturaCliente') {
             $this->insertInvoiceReceipts($model);
         } elseif (isset($model->codcliente)) {
-            $this->insertInvoicePayMehtod($model);
+            $this->insertInvoicePayMethod($model);
         }
 
         if (!empty($this->format->texto)) {
@@ -566,7 +566,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         $this->insertedHeader = true;
-        $code = $idempresa ?? AppSettings::get('default', 'idempresa', '');
+        $code = $idempresa ?? Tools::settings('default', 'idempresa', '');
         $company = new Empresa();
         if (false === $company->loadFromCode($code)) {
             return;
@@ -596,7 +596,7 @@ abstract class PDFDocument extends PDFCore
     /**
      * @param FacturaCliente $invoice
      */
-    protected function insertInvoicePayMehtod($invoice)
+    protected function insertInvoicePayMethod($invoice)
     {
         $headers = [
             'method' => $this->i18n->trans('payment-method'),

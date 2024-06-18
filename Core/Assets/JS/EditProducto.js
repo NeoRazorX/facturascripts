@@ -34,4 +34,30 @@ $(document).ready(function () {
     $(".calc-price").change(function () {
         $(this.form.margen).val(0);
     });
+
+    $('#images-container').sortable({
+        cursor: "move",
+        tolerance: "pointer",
+        opacity: 0.65,
+        stop: (event, ui) => {
+
+            const orden = Array.from(event.target.children).map(image => image.dataset.imageId);
+
+            if (orden.length > 0) {
+
+                const url = new URL(window.location.href);
+                url.searchParams.append('action', 'sort-images');
+
+                $.ajax({
+                    method: "POST",
+                    url,
+                    data: {orden},
+                    dataType: "json",
+                    error: function (msg) {
+                        alert(msg.status + " " + msg.responseText);
+                    }
+                });
+            }
+        },
+    });
 });

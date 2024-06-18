@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -54,7 +54,7 @@ final class ProductoProveedorTest extends TestCase
     /**
      * Comprobamos que se puede crear un ProductoProveedor
      */
-    public function testItCanCreateProductoProveedor(): void
+    public function testCreate(): void
     {
         // creamos un proveedor
         $proveedor = $this->getRandomSupplier();
@@ -68,23 +68,42 @@ final class ProductoProveedorTest extends TestCase
         $this->assertNotNull($productoProveedor->id);
 
         // eliminamos
+        $this->assertTrue($productoProveedor->delete());
         $this->assertTrue($proveedor->getDefaultAddress()->delete());
         $this->assertTrue($proveedor->delete());
-        $this->assertTrue($productoProveedor->delete());
+    }
+
+    public function testCantCreateWithoutReference(): void
+    {
+        // creamos un proveedor
+        $proveedor = $this->getRandomSupplier();
+        $this->assertTrue($proveedor->save());
+
+        $productoProveedor = new ProductoProveedor();
+        $this->assertFalse($productoProveedor->save());
+
+        // asignamos una referencia que no existe
+        $productoProveedor->referencia = 'wrong-ref';
+        $this->assertFalse($productoProveedor->save());
+
+        // eliminamos
+        $this->assertTrue($proveedor->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor->delete());
     }
 
     /**
      * Comprobamos que NO se puede crear un ProductoProveedor
      * cuando el Proveedor no existe
      */
-    public function testItCanNotCreateProductoProveedorWhitOutSupplier(): void
+    public function testItCanNotCreateWithoutSupplier(): void
     {
         $productoProveedor = new ProductoProveedor();
         $productoProveedor->referencia = 'test';
-        $productoProveedor->codproveedor = 'wrong-cod';
-
         $this->assertFalse($productoProveedor->save());
-        $this->assertNull($productoProveedor->id);
+
+        // asignamos un proveedor que no existe
+        $productoProveedor->codproveedor = 'wrong-cod';
+        $this->assertFalse($productoProveedor->save());
     }
 
     /**
@@ -93,10 +112,11 @@ final class ProductoProveedorTest extends TestCase
      */
     public function testItDeleteProductosProveedorOnCascade(): void
     {
-        // Creamos un proveedor con dos productos
+        // Creamos un proveedor
         $proveedor = $this->getRandomSupplier();
         $this->assertTrue($proveedor->save());
 
+        // Creamos dos productos del proveedor
         $productoProveedor1 = new ProductoProveedor();
         $productoProveedor1->referencia = 'test-1';
         $productoProveedor1->codproveedor = $proveedor->codproveedor;
@@ -107,39 +127,37 @@ final class ProductoProveedorTest extends TestCase
         $productoProveedor2->codproveedor = $proveedor->codproveedor;
         $this->assertTrue($productoProveedor2->save());
 
-        // Comprobamos que los dos productos se encuentran en la BBDD
-        $productoProveedor = new ProductoProveedor();
-        $productoProveedor->loadFromCode($productoProveedor1->id);
-        $this->assertNotNull($productoProveedor->id);
-        $productoProveedor->loadFromCode($productoProveedor2->id);
-        $this->assertNotNull($productoProveedor->id);
-
-        // Borramos el proveedor
+        // eliminamos el proveedor
         $this->assertTrue($proveedor->getDefaultAddress()->delete());
         $this->assertTrue($proveedor->delete());
 
-        // Comprobamos que los dos productos ya NO se encuentran en la BBDD
-        $productoProveedor->loadFromCode($productoProveedor1->id);
-        $this->assertNull($productoProveedor->id);
-        $productoProveedor->loadFromCode($productoProveedor2->id);
-        $this->assertNull($productoProveedor->id);
+        // Comprobamos que los dos productos ya NO se encuentran en la base de datos
+        $this->assertFalse($productoProveedor1->exists());
+        $this->assertFalse($productoProveedor2->exists());
     }
 
     /**
      * Comprobamos que al crear una línea de Albarán se
      * crea un ProductoProveedor
      */
-    public function testItCanCreateProductoProveedorWhenCreatingAlbaran(): void
+    public function testItCreateWhenCreatingAlbaran(): void
     {
-        [$subject, $product, $doc, $pvpUnitario, $dtopor, $dtopor2] = $this->getAlbaranConLineaProducto();
+        Tools::settingsSet('default', 'updatesupplierprices', true);
 
-        $productoProveedor = new ProductoProveedor();
-        $productoProveedor = $productoProveedor->all(
-            [
-                new DataBaseWhere('referencia', $product->referencia),
-                new DataBaseWhere('codproveedor', $subject->codproveedor),
-            ]
-        )[0];
+        [$subject, $product, $doc, $pvpUnitario, $dtopor, $dtopor2] = $this->getAlbaranConLineaProducto();
+        $this->assertTrue($subject->exists());
+        $this->assertTrue($product->exists());
+        $this->assertTrue($doc->exists());
+        $this->assertCount(1, $doc->getLines());
+
+        $model = new ProductoProveedor();
+        $productosProveedor = $model->all([
+            new DataBaseWhere('referencia', $product->referencia),
+            new DataBaseWhere('codproveedor', $subject->codproveedor),
+        ]);
+
+        $this->assertCount(1, $productosProveedor);
+        $productoProveedor = $productosProveedor[0];
 
         $this->assertEquals($doc->coddivisa, $productoProveedor->coddivisa);
         $this->assertEquals($doc->codproveedor, $subject->codproveedor);
@@ -444,6 +462,7 @@ final class ProductoProveedorTest extends TestCase
         // creamos un albarán
         $doc = new AlbaranProveedor();
         $doc->setSubject($subject);
+        $doc->observaciones = 'test producto proveedor';
         $this->assertTrue($doc->save());
 
         // añadimos el producto

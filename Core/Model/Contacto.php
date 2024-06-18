@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Model\Agente as DinAgente;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 use FacturaScripts\Dinamic\Model\Pais as DinPais;
@@ -36,7 +37,6 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 class Contacto extends Base\Contact
 {
     use Base\ModelTrait;
-    use Base\PasswordTrait;
 
     /** @var bool */
     public $aceptaprivacidad;
@@ -80,32 +80,17 @@ class Contacto extends Base\Contact
     /** @var string */
     public $empresa;
 
-    /** @var bool */
-    public $habilitado;
-
     /** @var int */
     public $idcontacto;
 
     /** @var string */
-    public $lastactivity;
-
-    /** @var string */
-    public $lastip;
-
-    /** @var integer */
-    public $level;
-
-    /** @var string */
-    public $logkey;
-
-    /** @var string */
     public $provincia;
-
-    /** @var integer */
-    public $puntos;
 
     /** @var bool */
     public $verificado;
+
+    /** @var string */
+    public $web;
 
     public function alias(): string
     {
@@ -125,10 +110,10 @@ class Contacto extends Base\Contact
         }
     }
 
-    public function checkVies(): bool
+    public function checkVies(bool $msg = true): bool
     {
         $codiso = Paises::get($this->codpais)->codiso ?? '';
-        return Vies::check($this->cifnif ?? '', $codiso) === 1;
+        return Vies::check($this->cifnif ?? '', $codiso, $msg) === 1;
     }
 
     public function clear()
@@ -137,9 +122,6 @@ class Contacto extends Base\Contact
         $this->aceptaprivacidad = false;
         $this->admitemarketing = false;
         $this->codpais = Tools::settings('default', 'codpais');
-        $this->habilitado = true;
-        $this->level = 1;
-        $this->puntos = 0;
         $this->verificado = false;
     }
 
@@ -206,6 +188,7 @@ class Contacto extends Base\Contact
             $cliente->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
             $cliente->telefono1 = $this->telefono1;
             $cliente->telefono2 = $this->telefono2;
+            $cliente->web = $this->web;
             if ($cliente->save()) {
                 $this->codcliente = $cliente->codcliente;
                 $this->save();
@@ -236,6 +219,7 @@ class Contacto extends Base\Contact
             $proveedor->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
             $proveedor->telefono1 = $this->telefono1;
             $proveedor->telefono2 = $this->telefono2;
+            $proveedor->web = $this->web;
             if ($proveedor->save()) {
                 $this->codproveedor = $proveedor->codproveedor;
                 $this->save();
@@ -253,21 +237,6 @@ class Contacto extends Base\Contact
         new DinProveedor();
 
         return parent::install();
-    }
-
-    /**
-     * Generates a new login key for the user. It also updates last activity and last IP.
-     *
-     * @param string $ipAddress
-     *
-     * @return string
-     */
-    public function newLogkey($ipAddress): string
-    {
-        $this->lastactivity = date(self::DATETIME_STYLE);
-        $this->lastip = $ipAddress;
-        $this->logkey = Tools::randomString(99);
-        return $this->logkey;
     }
 
     public static function primaryColumn(): string
@@ -305,24 +274,19 @@ class Contacto extends Base\Contact
         $this->direccion = Tools::noHtml($this->direccion) ?? '';
         $this->empresa = Tools::noHtml($this->empresa) ?? '';
         $this->provincia = Tools::noHtml($this->provincia) ?? '';
+        $this->web = Tools::noHtml($this->web) ?? '';
 
-        return $this->testPassword() && parent::test();
+        // comprobamos si la web es una url válida
+        if (!empty($this->web) && false === Validator::url($this->web)) {
+            Tools::log()->warning('invalid-web', ['%web%' => $this->web]);
+            return false;
+        }
+
+        return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         return parent::url($type, $list);
-    }
-
-    /**
-     * Verifies the login key.
-     *
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function verifyLogkey(string $value): bool
-    {
-        return $this->logkey === $value;
     }
 }

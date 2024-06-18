@@ -5,10 +5,12 @@
     <div class="container">
         <div class="row justify-content-md-center">
             <div class="col-md-6">
-                <form action="{{ asset('') }}" method="post" class="form">
+                <form action="{{ asset('login') }}" method="post" class="form">
+                    {{ formToken() }}
+                    <input type="hidden" name="action" value="login">
                     <div class="card mt-4">
-                        <a href="{{ asset('') }}">
-                            {% set idfile = appSettings.get('default','idloginimage', 0) %}
+                        <a href="{{ asset('login') }}">
+                            {% set idfile = settings('default','idloginimage', 0) %}
                             {{ _self.loadLogo(idfile) }}
                         </a>
                         <div class="card-body">
@@ -21,8 +23,8 @@
                                         </span>
                                     </span>
                                     <input type="text" name="fsNick" class="form-control" maxlength="50"
-                                           placeholder="{{ trans('user') }}" required="" autocomplete="off"
-                                           autofocus=""/>
+                                           placeholder="{{ trans('user') }}" required autocomplete="off"
+                                           autofocus/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -33,7 +35,7 @@
                                         </span>
                                     </span>
                                     <input type="password" name="fsPassword" class="form-control" maxlength="50"
-                                           placeholder="{{ trans('password') }}" required="" autocomplete="off"/>
+                                           placeholder="{{ trans('password') }}" required autocomplete="off"/>
                                 </div>
                                 <a href="#" class="btn btn-block btn-link" data-toggle="modal"
                                    data-target="#newPasswordModal">
@@ -67,7 +69,9 @@
             </div>
         </div>
     </div>
-    <form action="{{ asset('') }}" method="post" class="form">
+    <form action="{{ asset('login') }}" method="post" class="form">
+        {{ formToken() }}
+        <input type="hidden" name="action" value="change-password">
         <div class="modal fade" id="newPasswordModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -92,7 +96,7 @@
                                     </span>
                                 </span>
                                 <input type="text" name="fsNewUserPasswd" class="form-control" maxlength="50"
-                                       placeholder="{{ trans('user') }}" required="" autocomplete="off"/>
+                                       placeholder="{{ trans('user') }}" required autocomplete="off"/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -103,7 +107,7 @@
                                     </span>
                                 </span>
                                 <input type="password" name="fsNewPasswd" class="form-control" maxlength="50"
-                                       placeholder="{{ trans('new-password') }}" required="" autocomplete="off"/>
+                                       placeholder="{{ trans('new-password') }}" required autocomplete="off"/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -115,7 +119,7 @@
                                 </span>
                                 <input type="password" name="fsNewPasswd2" class="form-control" maxlength="50"
                                        placeholder="{{ trans('repeat-new-password') }}"
-                                       required="" autocomplete="off"/>
+                                       required autocomplete="off"/>
                             </div>
                         </div>
                         <div class="form-group">

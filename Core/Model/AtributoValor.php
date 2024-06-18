@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Atributo as DinAtributo;
 
 /**
@@ -27,7 +29,6 @@ use FacturaScripts\Dinamic\Model\Atributo as DinAtributo;
  */
 class AtributoValor extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -85,6 +86,13 @@ class AtributoValor extends Base\ModelClass
         return $results;
     }
 
+    public function getAtributo(): Atributo
+    {
+        $atributo = new DinAtributo();
+        $atributo->loadFromCode($this->codatributo);
+        return $atributo;
+    }
+
     public function install(): string
     {
         // needed dependency
@@ -105,7 +113,7 @@ class AtributoValor extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->valor = $this->toolBox()->utils()->noHtml($this->valor);
+        $this->valor = Tools::noHtml($this->valor);
 
         // combine attribute name + value
         $attribute = new DinAtributo();

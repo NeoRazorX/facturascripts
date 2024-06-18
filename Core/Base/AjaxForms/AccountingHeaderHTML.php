@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\CodePatterns;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\ConceptoPartida;
@@ -78,7 +79,7 @@ class AccountingHeaderHTML
         $attributes = $model->editable ? 'name="concepto" autocomplete="off" required' : 'disabled';
         return '<div class="col-sm-6 col-md">'
             . '<div class="form-group">' . $i18n->trans('concept')
-            . '<input type="text" list="concept-items" ' . $attributes . ' value="' . $model->concepto . '" class="form-control"/>'
+            . '<input type="text" list="concept-items" ' . $attributes . ' value="' . Tools::noHtml($model->concepto) . '" class="form-control"/>'
             . '<datalist id="concept-items">' . static::getConceptItems($model) . '</datalist>'
             . '</div>'
             . '</div>';
@@ -112,7 +113,7 @@ class AccountingHeaderHTML
                 . '<div class="input-group-prepend">'
                 . '<a class="btn btn-outline-primary" href="' . $link . '"><i class="far fa-eye"></i></a>'
                 . '</div>'
-                . '<input type="text" value="' . $model->documento . '" class="form-control" readonly/>'
+                . '<input type="text" value="' . Tools::noHtml($model->documento) . '" class="form-control" readonly/>'
                 . '</div>'
                 . '</div>'
                 . '</div>';
@@ -120,7 +121,7 @@ class AccountingHeaderHTML
 
         return '<div class="col-sm-3 col-md-2 mb-2">'
             . '<div class="form-group">' . $i18n->trans('document')
-            . '<input type="text" value="' . $model->documento . '" class="form-control" readonly/>'
+            . '<input type="text" value="' . Tools::noHtml($model->documento) . '" class="form-control" readonly/>'
             . '</div></div>';
     }
 
@@ -188,9 +189,11 @@ class AccountingHeaderHTML
             return '<input type="hidden" name="idempresa" value=' . $model->idempresa . ' />';
         }
 
+        $attributes = $model->primaryColumnValue() ? 'readonly' : 'required';
+
         return '<div class="col-sm-3 col-md-2">'
             . '<div class="form-group">' . $i18n->trans('company')
-            . '<select name="idempresa" class="form-control" required>'
+            . '<select name="idempresa" class="form-control" ' . $attributes . '>'
             . static::getItems($companyList, 'idempresa', 'nombre', $model->idempresa)
             . '</select>'
             . '</div>'

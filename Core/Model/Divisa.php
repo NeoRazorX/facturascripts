@@ -20,16 +20,18 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
 
 /**
  * A currency with its symbol and its conversion rate with respect to the euro.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Divisa extends Base\ModelClass
+class Divisa extends ModelClass
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Primary key. Varchar (3).
@@ -85,7 +87,7 @@ class Divisa extends Base\ModelClass
     public function delete(): bool
     {
         if ($this->isDefault()) {
-            $this->toolBox()->i18nLog()->warning('cant-delete-default-currency');
+            Tools::log()->warning('cant-delete-default-currency');
             return false;
         }
 
@@ -105,7 +107,7 @@ class Divisa extends Base\ModelClass
      */
     public function isDefault(): bool
     {
-        return $this->coddivisa === $this->toolBox()->appSettings()->get('default', 'coddivisa');
+        return $this->coddivisa === Tools::settings('default', 'coddivisa');
     }
 
     public static function primaryColumn(): string
@@ -131,22 +133,21 @@ class Divisa extends Base\ModelClass
 
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->simbolo = $utils->noHtml($this->simbolo);
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->simbolo = Tools::noHtml($this->simbolo);
 
         if ($this->coddivisa && 1 !== preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->coddivisa, '%column%' => 'coddivisa', '%min%' => '1', '%max%' => '3']
             );
         } elseif ($this->codiso !== null && 1 !== preg_match('/^[A-Z0-9]{1,5}$/i', $this->codiso)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codiso, '%column%' => 'codiso', '%min%' => '1', '%max%' => '5']
             );
         } elseif ($this->tasaconv === 0.0 || $this->tasaconvcompra === 0.0) {
-            $this->toolBox()->i18nLog()->warning('conversion-rate-not-0');
+            Tools::log()->warning('conversion-rate-not-0');
         } else {
             return parent::test();
         }

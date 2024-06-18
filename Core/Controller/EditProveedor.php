@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
 
@@ -44,7 +45,7 @@ class EditProveedor extends ComercialContactController
     {
         $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
         $total = SupplierRiskTools::getDeliveryNotesRisk($code);
-        return $this->toolBox()->coins()->format($total);
+        return Tools::money($total);
     }
 
     public function getImageUrl(): string
@@ -62,7 +63,7 @@ class EditProveedor extends ComercialContactController
     {
         $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
         $total = SupplierRiskTools::getInvoicesRisk($code);
-        return $this->toolBox()->coins()->format($total);
+        return Tools::money($total);
     }
 
     public function getModelClassName(): string
@@ -79,7 +80,7 @@ class EditProveedor extends ComercialContactController
         return $data;
     }
 
-    protected function createDocumentView(string $viewName, string $model, string $label)
+    protected function createDocumentView(string $viewName, string $model, string $label): void
     {
         $this->createSupplierListView($viewName, $model, $label);
 
@@ -89,7 +90,7 @@ class EditProveedor extends ComercialContactController
         $this->addButtonApproveDocument($viewName);
     }
 
-    protected function createInvoiceView(string $viewName)
+    protected function createInvoiceView(string $viewName): void
     {
         $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices');
 
@@ -98,20 +99,22 @@ class EditProveedor extends ComercialContactController
         $this->addButtonLockInvoice($viewName);
     }
 
-    protected function createProductView(string $viewName = 'ListProductoProveedor')
+    protected function createProductView(string $viewName = 'ListProductoProveedor'): void
     {
-        $this->addListView($viewName, 'ProductoProveedor', 'products', 'fas fa-cubes');
-        $this->views[$viewName]->addOrderBy(['actualizado'], 'update-time', 2);
-        $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
-        $this->views[$viewName]->addOrderBy(['refproveedor'], 'supplier-reference');
-        $this->views[$viewName]->addOrderBy(['neto'], 'net');
-        $this->views[$viewName]->addSearchFields(['referencia', 'refproveedor']);
+        $this->addListView($viewName, 'ProductoProveedor', 'products', 'fas fa-cubes')
+            ->addOrderBy(['actualizado'], 'update-time', 2)
+            ->addOrderBy(['referencia'], 'reference')
+            ->addOrderBy(['refproveedor'], 'supplier-reference')
+            ->addOrderBy(['neto'], 'net')
+            ->addOrderBy(['stock'], 'stock')
+            ->addSearchFields(['referencia', 'refproveedor']);
 
-        // disable columns
+        // desactivamos la columna de proveedor
         $this->views[$viewName]->disableColumn('supplier');
 
-        // disable buttons
+        // botones
         $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnPrint', true);
     }
 
     /**
@@ -239,12 +242,12 @@ class EditProveedor extends ComercialContactController
     /**
      * Load the available language values from translator.
      */
-    protected function loadLanguageValues(string $viewName)
+    protected function loadLanguageValues(string $viewName): void
     {
         $columnLangCode = $this->views[$viewName]->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
-            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
                 $langs[] = ['value' => $key, 'title' => $value];
             }
 

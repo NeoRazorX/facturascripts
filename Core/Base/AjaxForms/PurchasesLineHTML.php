@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,13 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Contract\PurchasesLineModInterface;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
@@ -34,7 +33,7 @@ use FacturaScripts\Dinamic\Model\Variante;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez      <hola@danielfg.es>
  */
 class PurchasesLineHTML
 {
@@ -58,7 +57,7 @@ class PurchasesLineHTML
      */
     public static function apply(PurchaseDocument &$model, array &$lines, array $formData)
     {
-        self::$columnView = $formData['columnView'] ?? AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+        self::$columnView = $formData['columnView'] ?? Tools::settings('default', 'columnetosubtotal', 'subtotal');
 
         // update or remove lines
         $rmLineId = $formData['action'] === 'rm-line' ? $formData['selectedLine'] : 0;
@@ -131,7 +130,7 @@ class PurchasesLineHTML
             $map['iva_' . $idlinea] = $line->iva;
 
             // total
-            $map['linetotal_' . $idlinea] = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+            $map['linetotal_' . $idlinea] = self::subtotalValue($line, $model);
 
             // neto
             $map['lineneto_' . $idlinea] = $line->pvptotal;
@@ -156,10 +155,12 @@ class PurchasesLineHTML
     public static function render(array $lines, PurchaseDocument $model): string
     {
         if (empty(self::$columnView)) {
-            self::$columnView = AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+            self::$columnView = Tools::settings('default', 'columnetosubtotal', 'subtotal');
         }
 
         self::$numlines = count($lines);
+        self::loadProducts($lines, $model);
+
         $i18n = new Translator();
         $html = '';
         foreach ($lines as $line) {
@@ -263,7 +264,7 @@ class PurchasesLineHTML
             }
         }
 
-        ToolBox::i18nLog()->warning('product-not-found', ['%ref%' => $formData['fastli']]);
+        Tools::log()->warning('product-not-found', ['%ref%' => $formData['fastli']]);
         return null;
     }
 

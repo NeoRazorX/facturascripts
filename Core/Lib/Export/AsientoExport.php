@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Model\PageOption;
 use FacturaScripts\Core\Model\Partida;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 
 class AsientoExport
@@ -65,7 +65,7 @@ class AsientoExport
      */
     private static function addLines(Asiento $asiento, ExportManager $exportManager): void
     {
-        $i18n = ToolBox::i18n();
+        $i18n = Tools::lang();
         $header = [
             $i18n->trans('subaccount'),
             $i18n->trans('concept'),
@@ -89,9 +89,9 @@ class AsientoExport
             $data[] = [
                 $header[0] => $line->codsubcuenta,
                 $header[1] => $line->concepto,
-                $header[2] => ToolBox::coins()::format($line->debe) . ' ',
-                $header[3] => ToolBox::coins()::format($line->haber) . ' ',
-                $header[4] => ToolBox::coins()::format(self::$saldo, true) . ' ',
+                $header[2] => Tools::money($line->debe) . ' ',
+                $header[3] => Tools::money($line->haber) . ' ',
+                $header[4] => Tools::money(self::$saldo, true) . ' ',
                 $header[5] => $line->codcontrapartida,
             ];
             self::$debe += $line->debe;
@@ -104,7 +104,7 @@ class AsientoExport
 
     private static function addTaxData(Asiento $asiento, ExportManager $exportManager)
     {
-        $i18n = ToolBox::i18n();
+        $i18n = Tools::lang();
         $header = [
             $i18n->trans('serie'),
             $i18n->trans('invoice'),
@@ -127,11 +127,11 @@ class AsientoExport
                 $header[1] => $line->factura,
                 $header[2] => $line->documento,
                 $header[3] => $line->cifnif,
-                $header[4] => ToolBox::coins()::format($line->baseimponible),
+                $header[4] => Tools::money($line->baseimponible),
                 $header[5] => $line->iva,
-                $header[6] => ToolBox::coins()::format($line->baseimponible * ($line->iva / 100)) . ' ',
+                $header[6] => Tools::money($line->baseimponible * ($line->iva / 100)) . ' ',
                 $header[7] => $line->recargo,
-                $header[8] => ToolBox::coins()::format($line->baseimponible * ($line->recargo / 100)) . ' ',
+                $header[8] => Tools::money($line->baseimponible * ($line->recargo / 100)) . ' ',
             ];
         }
         if (empty($data)) {
@@ -152,16 +152,16 @@ class AsientoExport
 
     private static function addTotals(ExportManager &$exportManager)
     {
-        $i18n = ToolBox::i18n();
+        $i18n = Tools::lang();
         $header = [
             $i18n->trans('debit'),
             $i18n->trans('credit'),
             $i18n->trans('difference'),
         ];
         $data = [
-            $header[0] => ToolBox::coins()::format(self::$debe) . ' ',
-            $header[1] => ToolBox::coins()::format(self::$haber) . ' ',
-            $header[2] => ToolBox::coins()::format(self::$saldo) . ' '
+            $header[0] => Tools::money(self::$debe) . ' ',
+            $header[1] => Tools::money(self::$haber) . ' ',
+            $header[2] => Tools::money(self::$saldo) . ' '
         ];
         $options = [
             $header[0] => ['display' => 'center'],

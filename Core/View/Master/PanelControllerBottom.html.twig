@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,7 @@
 
 {% block body %}
     <div class="container-fluid">
-        <div class="row">
+        <div class="form-row">
             <div class="col">
                 {# -- First view -- #}
                 {% set firstView = fsc.views | first %}
@@ -31,7 +31,7 @@
             </div>
         </div>
         {% if fsc.views | length > 2 %}
-            <div class="row">
+            <div class="form-row">
                 <div class="col">
                     <ul class="nav nav-pills mb-3 d-print-none" id="mainTabs" role="tablist">
                         {% set contActiveTab = 0 %}
@@ -44,7 +44,7 @@
                                         <i class="{{ view.icon }}" aria-hidden="true"></i>
                                         <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
                                         {% if view.count > 0 %}
-                                            <span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>
+                                            <span class="badge badge-secondary">{{ number(view.count, 0) }}</span>
                                         {% endif %}
                                     </a>
                                 </li>

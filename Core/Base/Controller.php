@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,18 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
-use FacturaScripts\Dinamic\Model\User;
+use FacturaScripts\Dinamic\Model\User as DinUser;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +40,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Controller
+class Controller implements ControllerInterface
 {
     /**
      * Name of the class of the controller (although its in inheritance from this class,
@@ -120,6 +127,9 @@ class Controller
     public function __construct(string $className, string $uri = '')
     {
         $this->className = $className;
+        Session::set('controllerName', $this->className);
+        Session::set('pageName', $this->className);
+
         $this->dataBase = new DataBase();
         $this->empresa = new Empresa();
         $this->multiRequestProtection = new MultiRequestProtection();
@@ -128,12 +138,12 @@ class Controller
         $this->uri = $uri;
 
         $pageData = $this->getPageData();
-        $this->title = empty($pageData) ? $this->className : $this->toolBox()->i18n()->trans($pageData['title']);
+        $this->title = empty($pageData) ? $this->className : Tools::lang()->trans($pageData['title']);
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
 
-        $this->checkPHPversion(7.3);
+        $this->checkPhpVersion(7.3);
     }
 
     /**
@@ -141,7 +151,7 @@ class Controller
      */
     public static function addExtension($extension)
     {
-        static::toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
+        Tools::log()->error('no-extension-support', ['%className%' => static::class]);
     }
 
     /**
@@ -180,7 +190,7 @@ class Controller
      */
     public function pipe($name, ...$arguments)
     {
-        $this->toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
+        Tools::log()->error('no-extension-support', ['%className%' => static::class]);
         return null;
     }
 
@@ -192,7 +202,7 @@ class Controller
      */
     public function pipeFalse($name, ...$arguments): bool
     {
-        $this->toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
+        Tools::log()->error('no-extension-support', ['%className%' => static::class]);
         return true;
     }
 
@@ -209,6 +219,10 @@ class Controller
         $this->response = &$response;
         $this->user = $user;
 
+        if (false === $this->permissions->allowAccess) {
+            throw new KernelException('AccessDenied', Tools::lang()->trans('access-denied'));
+        }
+
         // Select the default company for the user
         $this->empresa = Empresas::get($this->user->idempresa);
 
@@ -219,11 +233,25 @@ class Controller
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE));
+            $this->response->headers->setCookie(
+                Cookie::create(
+                    'fsHomepage',
+                    $this->user->homepage,
+                    time() + FS_COOKIES_EXPIRE,
+                    Tools::config('route', '/')
+                ),
+            );
             $this->user->save();
         } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE));
+            $this->response->headers->setCookie(
+                Cookie::create(
+                    'fsHomepage',
+                    $this->user->homepage,
+                    time() - FS_COOKIES_EXPIRE,
+                    Tools::config('route', '/')
+                )
+            );
             $this->user->save();
         }
     }
@@ -239,8 +267,7 @@ class Controller
         $this->response = &$response;
         $this->template = 'Login/Login.html.twig';
 
-        $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
-        $this->empresa = Empresas::get($idempresa);
+        $this->empresa = Empresas::default();
     }
 
     /**
@@ -255,6 +282,42 @@ class Controller
         if ($delay === 0) {
             $this->setTemplate(false);
         }
+    }
+
+    public function run(): void
+    {
+        // creamos la respuesta
+        $response = new Response();
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+        $response->headers->set('X-XSS-Protection', '1; mode=block');
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('Strict-Transport-Security', 'max-age=31536000');
+
+        // ejecutamos la parte privada o pública del controlador
+        if ($this->auth()) {
+            $permissions = new ControllerPermissions(Session::user(), $this->className);
+            $this->privateCore($response, Session::user(), $permissions);
+        } else {
+            $this->publicCore($response);
+        }
+
+        // carga el menú
+        $menu = new MenuManager();
+        $menu->setUser(Session::user());
+        $menu->selectPage($this->getPageData());
+
+        // renderizamos la plantilla
+        if ($this->template) {
+            Kernel::startTimer('Controller::html-render');
+            $response->setContent(Html::render($this->template, [
+                'controllerName' => $this->className,
+                'fsc' => $this,
+                'menuManager' => $menu,
+                'template' => $this->template,
+            ]));
+            Kernel::stopTimer('Controller::html-render');
+        }
+        $response->send();
     }
 
     /**
@@ -272,6 +335,7 @@ class Controller
 
     /**
      * @return ToolBox
+     * @deprecated since version 2023.1
      */
     public static function toolBox(): ToolBox
     {
@@ -288,14 +352,44 @@ class Controller
         return $this->className;
     }
 
-    /**
-     * @param float $min
-     */
-    private function checkPHPversion(float $min)
+    private function auth(): bool
+    {
+        $cookieNick = $this->request->cookies->get('fsNick', '');
+        if (empty($cookieNick)) {
+            return false;
+        }
+
+        $user = new DinUser();
+        if (false === $user->loadFromCode($cookieNick) && $user->enabled) {
+            Tools::log()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
+            return false;
+        }
+
+        $logKey = $this->request->cookies->get('fsLogkey', '') ?? '';
+        if (false === $user->verifyLogkey($logKey)) {
+            Tools::log()->warning('login-cookie-fail');
+            // eliminamos la cookie
+            setcookie('fsNick', '', time() - FS_COOKIES_EXPIRE, '/');
+            return false;
+        }
+
+        // actualizamos la actividad del usuario
+        if (time() - strtotime($user->lastactivity) > User::UPDATE_ACTIVITY_PERIOD) {
+            $ip = Session::getClientIp();
+            $browser = $this->request->headers->get('User-Agent');
+            $user->updateActivity($ip, $browser);
+            $user->save();
+        }
+
+        Session::set('user', $user);
+        return true;
+    }
+
+    private function checkPhpVersion(float $min): void
     {
         $current = (float)substr(phpversion(), 0, 3);
         if ($current < $min) {
-            $this->toolBox()->i18nLog()->warning('php-support-end', ['%current%' => $current, '%min%' => $min]);
+            Tools::log()->warning('php-support-end', ['%current%' => $current, '%min%' => $min]);
         }
     }
 
@@ -323,13 +417,13 @@ class Controller
         $urlToken = $this->request->query->get('multireqtoken', '');
         $token = $this->request->request->get('multireqtoken', $urlToken);
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
-            $this->toolBox()->i18nLog()->warning('invalid-request');
+            Tools::log()->warning('invalid-request');
             return false;
         }
 
         // duplicated request?
         if ($this->multiRequestProtection->tokenExist($token)) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
+            Tools::log()->warning('duplicated-request');
             return false;
         }
 

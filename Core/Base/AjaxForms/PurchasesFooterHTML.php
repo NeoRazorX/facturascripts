@@ -19,18 +19,18 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of PurchasesFooterHTML
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez      <hola@danielfg.es>
  */
 class PurchasesFooterHTML
 {
@@ -51,7 +51,7 @@ class PurchasesFooterHTML
             $mod->applyBefore($model, $formData, $user);
         }
 
-        self::$columnView = $formData['columnView'] ?? AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+        self::$columnView = $formData['columnView'] ?? Tools::settings('default', 'columnetosubtotal', 'subtotal');
 
         $model->dtopor1 = isset($formData['dtopor1']) ? (float)$formData['dtopor1'] : $model->dtopor1;
         $model->dtopor2 = isset($formData['dtopor2']) ? (float)$formData['dtopor2'] : $model->dtopor2;
@@ -74,7 +74,7 @@ class PurchasesFooterHTML
     public static function render(PurchaseDocument $model): string
     {
         if (empty(self::$columnView)) {
-            self::$columnView = AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+            self::$columnView = Tools::settings('default', 'columnetosubtotal', 'subtotal');
         }
 
         if (empty($model->codproveedor)) {

@@ -37,9 +37,16 @@
     {% block body %}
         {{ parent() }}
     {% endblock %}
-    <br/>
-    <br/>
-    <br/>
+    {% for item in getIncludeViews('MenuTemplate', 'JsFooter') %}
+        {% include item['path'] %}
+    {% endfor %}
+    {% for item in getIncludeViews('MenuTemplate', 'BodyEnd') %}
+        {% include item['path'] %}
+    {% endfor %}
     {{ debugBarRender.render() | raw }}
+    <br/>
+    <br/>
+    <br/>
+    <!-- execution time: {{ executionTime() }} s -->
     </body>
 {% endblock %}

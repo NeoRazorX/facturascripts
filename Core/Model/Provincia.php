@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,22 +20,28 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Tools;
+
 /**
  * A province.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class Provincia extends Base\ModelClass
+class Provincia extends ModelClass
 {
+    use ModelTrait;
 
-    use Base\ModelTrait;
+    /** @var string */
+    public $alias;
 
-    /**
-     * Code id
-     *
-     * @var string
-     */
+    /** @var string */
+    public $creation_date;
+
+    /** @var string */
     public $codeid;
 
     /**
@@ -47,31 +53,44 @@ class Provincia extends Base\ModelClass
      */
     public $codisoprov;
 
-    /**
-     * Country code associated with the province.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codpais;
 
-    /**
-     * Identify the registry.
-     *
-     * @var string
-     */
+    /** @var string */
     public $idprovincia;
 
-    /**
-     * Name of the province.
-     *
-     * @var string
-     */
+    /** @var string */
+    public $last_nick;
+
+    /** @var string */
+    public $last_update;
+
+    /** @var float */
+    public $latitude;
+
+    /** @var float */
+    public $longitude;
+
+    /** @var string */
+    public $nick;
+
+    /** @var string */
     public $provincia;
+
+    /** @var string */
+    public $telephone_prefix;
 
     public function clear()
     {
         parent::clear();
-        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
+        $this->codpais = Tools::settings('default', 'codpais');
+    }
+
+    public function getCountry(): Pais
+    {
+        $country = new Pais();
+        $country->loadFromCode($this->codpais);
+        return $country;
     }
 
     public function install(): string
@@ -94,12 +113,20 @@ class Provincia extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->provincia = $this->toolBox()->utils()->noHtml($this->provincia);
+        $this->creation_date = $this->creation_date ?? Tools::dateTime();
+        $this->nick = $this->nick ?? Session::user()->nick;
+        $this->alias = Tools::noHtml($this->alias);
+        $this->provincia = Tools::noHtml($this->provincia);
+        $this->telephone_prefix = Tools::noHtml($this->telephone_prefix);
         return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
+        if ('list' === $type && !empty($this->primaryColumnValue())) {
+            return $this->getCountry()->url() . '&activetab=List' . $this->modelClassName();
+        }
+
         return parent::url($type, $list);
     }
 
@@ -111,5 +138,12 @@ class Provincia extends Base\ModelClass
         }
 
         return parent::saveInsert($values);
+    }
+
+    protected function saveUpdate(array $values = []): bool
+    {
+        $this->last_nick = Session::user()->nick;
+        $this->last_update = Tools::dateTime();
+        return parent::saveUpdate($values);
     }
 }

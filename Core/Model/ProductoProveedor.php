@@ -21,6 +21,9 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Model\Base\ProductRelationTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CostPriceTools;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
@@ -33,10 +36,10 @@ use FacturaScripts\Dinamic\Model\Variante as DinVariante;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class ProductoProveedor extends Base\ModelOnChangeClass
+class ProductoProveedor extends ModelOnChangeClass
 {
-    use Base\ModelTrait;
-    use Base\ProductRelationTrait;
+    use ModelTrait;
+    use ProductRelationTrait;
 
     /** @var string */
     public $actualizado;
@@ -74,11 +77,18 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     /** @var float */
     public $stock;
 
+    public function __get($name)
+    {
+        if ($name == 'descripcion') {
+            return $this->getVariant()->getProducto()->descripcion;
+        }
+    }
+
     public function clear()
     {
         parent::clear();
         $this->actualizado = Tools::dateTime();
-        $this->coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
+        $this->coddivisa = Tools::settings('default', 'coddivisa');
         $this->dtopor = 0.0;
         $this->dtopor2 = 0.0;
         $this->neto = 0.0;

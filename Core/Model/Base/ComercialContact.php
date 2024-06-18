@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\Retencion;
@@ -159,20 +161,19 @@ abstract class ComercialContact extends Contact
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->debaja = !empty($this->fechabaja);
 
-        $utils = $this->toolBox()->utils();
-        $this->razonsocial = $utils->noHtml($this->razonsocial);
+        $this->razonsocial = Tools::noHtml($this->razonsocial);
         if (empty($this->razonsocial)) {
             $this->razonsocial = $this->nombre;
         }
 
-        $this->web = $utils->noHtml($this->web);
+        $this->web = Tools::noHtml($this->web);
         // check if the web is a valid url
-        if (!empty($this->web) && false === self::toolBox()::utils()::isValidUrl($this->web)) {
-            self::toolBox()::i18nLog()->warning('invalid-web', ['%web%' => $this->web]);
+        if (!empty($this->web) && false === Validator::url($this->web)) {
+            Tools::log()->warning('invalid-web', ['%web%' => $this->web]);
             return false;
         }
 

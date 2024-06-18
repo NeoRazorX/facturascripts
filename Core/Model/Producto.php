@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Model\Base\TaxRelationTrait;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Fabricante as DinFabricante;
 use FacturaScripts\Dinamic\Model\Familia as DinFamilia;
 use FacturaScripts\Dinamic\Model\ProductoImagen as DinProductoImagen;
@@ -30,10 +34,10 @@ use FacturaScripts\Dinamic\Model\Variante as DinVariante;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Producto extends Base\ModelClass
+class Producto extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\TaxRelationTrait;
+    use ModelTrait;
+    use TaxRelationTrait;
 
     const ROUND_DECIMALS = 5;
 
@@ -80,7 +84,7 @@ class Producto extends Base\ModelClass
     public $codsubcuentairpfcom;
 
     /**
-     * Aaccount code for sales.
+     * Account code for sales.
      *
      * @var string
      */
@@ -189,24 +193,34 @@ class Producto extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->actualizado = date(self::DATETIME_STYLE);
+        $this->actualizado = Tools::dateTime();
         $this->bloqueado = false;
-        $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
-        $this->fechaalta = date(self::DATE_STYLE);
+        $this->codimpuesto = Tools::settings('default', 'codimpuesto');
+        $this->fechaalta = Tools::date();
         $this->nostock = false;
         $this->precio = 0.0;
         $this->publico = false;
         $this->secompra = true;
         $this->sevende = true;
         $this->stockfis = 0.0;
-        $this->ventasinstock = (bool)$this->toolBox()->appSettings()->get('default', 'ventasinstock', false);
+        $this->ventasinstock = (bool)Tools::settings('default', 'ventasinstock', false);
     }
 
     public function delete(): bool
     {
+        // comprobamos si podemos eliminar las variantes
+        foreach ($this->getVariants() as $variant) {
+            if ($variant->isInDocuments()) {
+                Tools::log()->warning('cant-delete-variant-with-documents', ['%reference%' => $variant->referencia]);
+                return false;
+            }
+        }
+
         // eliminamos las imágenes del producto
         foreach ($this->getImages() as $image) {
-            $image->delete();
+            if (false === $image->delete()) {
+                return false;
+            }
         }
 
         // eliminamos el resto de la base de datos
@@ -240,7 +254,7 @@ class Producto extends Base\ModelClass
             $where[] = new DataBaseWhere('referencia', null);
         }
 
-        $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
+        $orderBy = ['orden' => 'ASC'];
         return $image->all($where, $orderBy, 0, 0);
     }
 
@@ -301,10 +315,17 @@ class Producto extends Base\ModelClass
 
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->observaciones = $utils->noHtml($this->observaciones);
-        $this->referencia = $utils->noHtml($this->referencia);
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->observaciones = Tools::noHtml($this->observaciones);
+        $this->referencia = Tools::noHtml($this->referencia);
+
+        // descripción y observaciones no pueden ser null
+        if ($this->descripcion === null) {
+            $this->descripcion = '';
+        }
+        if ($this->observaciones === null) {
+            $this->observaciones = '';
+        }
 
         if (empty($this->referencia)) {
             // obtenemos una nueva referencia de variantes, en lugar del producto
@@ -312,7 +333,7 @@ class Producto extends Base\ModelClass
             $this->referencia = (string)$variant->newCode('referencia');
         }
         if (strlen($this->referencia) > 30) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'invalid-column-lenght',
                 ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
             );
@@ -337,25 +358,34 @@ class Producto extends Base\ModelClass
             $this->secompra = false;
         }
 
-        $this->actualizado = date(self::DATETIME_STYLE);
+        $this->actualizado = Tools::dateTime();
+
         return parent::test();
     }
 
     /**
      * Updated product price or reference if any change in variants.
      */
-    public function update()
+    public function update(): void
     {
         $newPrecio = 0.0;
         $newReferencia = null;
+
+        // recorremos las variantes y actualizamos el precio y la referencia
         foreach ($this->getVariants() as $variant) {
-            if ($variant->referencia == $this->referencia || is_null($newReferencia)) {
+            if ($variant->referencia === $this->referencia) {
                 $newPrecio = $variant->precio;
                 $newReferencia = $variant->referencia;
                 break;
             }
+
+            if (is_null($newReferencia)) {
+                $newPrecio = $variant->precio;
+                $newReferencia = $variant->referencia;
+            }
         }
 
+        // si hay cambios, actualizamos el producto
         if ($newPrecio != $this->precio || $newReferencia != $this->referencia) {
             $this->precio = $newPrecio;
             $this->referencia = $newReferencia;
@@ -365,6 +395,13 @@ class Producto extends Base\ModelClass
 
     protected function saveInsert(array $values = []): bool
     {
+        // comprobamos si la referencia ya existe
+        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        if ($this->count($where) > 0) {
+            Tools::log()->warning('duplicated-reference', ['%reference%' => $this->referencia]);
+            return false;
+        }
+
         if (false === parent::saveInsert($values)) {
             return false;
         }

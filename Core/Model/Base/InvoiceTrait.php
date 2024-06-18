@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -61,19 +61,22 @@ trait InvoiceTrait
     /** @return bool */
     public $vencida;
 
-    abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array;
+    abstract public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array;
 
     abstract public function getReceipts(): array;
 
     abstract public function testDate(): bool;
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if (false === $this->editable) {
-            ToolBox::i18nLog()->warning('non-editable-document');
+            Tools::log()->warning('non-editable-document');
+            return false;
+        }
+
+        // si tiene rectificativas, no se puede eliminar
+        if (!empty($this->getRefunds())) {
+            Tools::log()->warning('cant-remove-invoice-refund');
             return false;
         }
 
@@ -81,7 +84,7 @@ trait InvoiceTrait
         foreach ($this->getReceipts() as $receipt) {
             $receipt->disableInvoiceUpdate(true);
             if (false === $receipt->delete()) {
-                ToolBox::i18nLog()->warning('cant-remove-receipt');
+                Tools::log()->warning('cant-remove-receipt');
                 return false;
             }
         }
@@ -90,7 +93,7 @@ trait InvoiceTrait
         $acEntry = $this->getAccountingEntry();
         $acEntry->editable = true;
         if ($acEntry->exists() && false === $acEntry->delete()) {
-            ToolBox::i18nLog()->warning('cant-remove-accounting-entry');
+            Tools::log()->warning('cant-remove-accounting-entry');
             return false;
         }
 
@@ -184,7 +187,7 @@ trait InvoiceTrait
                 // prevent from removing paid receipts
                 foreach ($this->getReceipts() as $receipt) {
                     if ($receipt->pagado) {
-                        ToolBox::i18nLog()->warning('paid-receipts-prevent-action');
+                        Tools::log()->warning('paid-receipts-prevent-action');
                         return false;
                     }
                 }
@@ -193,7 +196,7 @@ trait InvoiceTrait
                 // remove unpaid receipts
                 foreach ($this->getReceipts() as $receipt) {
                     if (false === $receipt->pagado && false === $receipt->delete()) {
-                        ToolBox::i18nLog()->warning('cant-remove-receipt');
+                        Tools::log()->warning('cant-remove-receipt');
                         return false;
                     }
                 }
@@ -217,7 +220,7 @@ trait InvoiceTrait
         $asiento = $this->getAccountingEntry();
         $asiento->editable = true;
         if ($asiento->exists() && false === $asiento->delete()) {
-            ToolBox::i18nLog()->warning('cant-remove-account-entry');
+            Tools::log()->warning('cant-remove-account-entry');
             return false;
         }
 

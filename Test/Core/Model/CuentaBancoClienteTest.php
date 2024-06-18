@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\CuentaBancoCliente;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -61,8 +61,7 @@ final class CuentaBancoClienteTest extends TestCase
     public function testHtmlOnFields()
     {
         // desactivamos la validación de IBAN
-        $settings = new AppSettings();
-        $settings->set('default', 'validate_iban', '0');
+        Tools::settingsSet('default', 'validate_iban', '0');
 
         // creamos un cliente
         $cliente = $this->getRandomCustomer();
@@ -110,8 +109,7 @@ final class CuentaBancoClienteTest extends TestCase
     public function testValidateIban()
     {
         // activamos la validación de IBAN
-        $settings = new AppSettings();
-        $settings->set('default', 'validate_iban', '1');
+        Tools::settingsSet('default', 'validate_iban', '1');
 
         // creamos un cliente
         $cliente = $this->getRandomCustomer();

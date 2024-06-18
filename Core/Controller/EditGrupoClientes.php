@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -71,7 +72,7 @@ class EditGrupoClientes extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('items-added-correctly', ['%num%' => $num]);
+        Tools::log()->notice('items-added-correctly', ['%num%' => $num]);
     }
 
     /**
@@ -104,7 +105,7 @@ class EditGrupoClientes extends EditController
         $this->views[$viewName]->settings['btnDelete'] = false;
 
         // filters
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         $values = [
             ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
             ['label' => $i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
@@ -218,6 +219,6 @@ class EditGrupoClientes extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('items-removed-correctly', ['%num%' => $num]);
+        Tools::log()->notice('items-removed-correctly', ['%num%' => $num]);
     }
 }

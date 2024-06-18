@@ -4,11 +4,12 @@
     "codimpuesto": "ITBIS18",
     "codserie": "A",
     "codpago": "CONT",
-    "tipoidfiscal": "RNC",
-    "validate_iban": false,
+    "currency_position": "left",
     "decimal_separator": ".",
     "thousands_separator": ",",
-    "currency_position": "left"
+    "tipoidfiscal": "RNC",
+    "updatesupplierprices": true,
+    "validate_iban": false
   },
   "email": {
     "enc": "ssl",

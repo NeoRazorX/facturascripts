@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -211,7 +211,7 @@ class WidgetSelect extends BaseWidget
 
     protected function assets()
     {
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
+        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
     }
 
     /**
@@ -264,7 +264,7 @@ class WidgetSelect extends BaseWidget
         }
 
         // value not found?
-        if (!$found && !empty($this->value)) {
+        if (!$found && !empty($this->value) && !empty($this->source)) {
             $html .= '<option value="' . $this->value . '" selected>'
                 . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
                 . '</option>';
@@ -313,7 +313,10 @@ class WidgetSelect extends BaseWidget
 
         if (null === $selected) {
             // value is not in $this->values
-            $selected = static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle);
+            $selected = $this->source ?
+                static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle) :
+                $this->value;
+
             $this->values[] = [
                 'value' => $this->value,
                 'title' => $selected

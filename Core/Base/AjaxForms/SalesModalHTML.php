@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,10 +22,11 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AtributoValor;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Fabricante;
@@ -72,7 +73,7 @@ class SalesModalHTML
         self::$orden = $formData['fp_orden'] ?? 'ref_asc';
         self::$vendido = (bool)($formData['fp_vendido'] ?? false);
         self::$query = isset($formData['fp_query']) ?
-            ToolBox::utils()->noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
+            Tools::noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
     }
 
     public static function render(SalesDocument $model, string $url, User $user, ControllerPermissions $permissions): string
@@ -89,7 +90,7 @@ class SalesModalHTML
         $i18n = new Translator();
         foreach (static::getProducts() as $row) {
             $cssClass = $row['nostock'] ? 'table-info clickableRow' : ($row['disponible'] > 0 ? 'clickableRow' : 'table-warning clickableRow');
-            $description = ToolBox::utils()->trueTextBreak($row['descripcion'], 120)
+            $description = Tools::textBreak($row['descripcion'], 120)
                 . static::idatributovalor($row['idatributovalor1'])
                 . static::idatributovalor($row['idatributovalor2'])
                 . static::idatributovalor($row['idatributovalor3'])
@@ -97,10 +98,10 @@ class SalesModalHTML
             $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return salesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
                 . '<td><b>' . $row['referencia'] . '</b> ' . $description . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['precio'])) . '</td>';
+                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>';
 
             if (self::$vendido) {
-                $tbody .= '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['ultimo_precio'])) . '</td>';
+                $tbody .= '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['ultimo_precio'])) . '</td>';
             }
 
             $tbody .= '<td class="text-right">' . $row['disponible'] . '</td>'
@@ -142,15 +143,53 @@ class SalesModalHTML
 
     protected static function familias(Translator $i18n): string
     {
-        $familia = new Familia();
         $options = '<option value="">' . $i18n->trans('family') . '</option>'
             . '<option value="">------</option>';
-        foreach ($familia->all([], ['descripcion' => 'ASC'], 0, 0) as $fam) {
+
+        $familia = new Familia();
+        $where = [new DataBaseWhere('madre', null, 'IS')];
+        $orderBy = ['descripcion' => 'ASC'];
+        foreach ($familia->all($where, $orderBy, 0, 0) as $fam) {
             $options .= '<option value="' . $fam->codfamilia . '">' . $fam->descripcion . '</option>';
+
+            // añadimos las subfamilias de forma recursiva
+            $options .= static::subfamilias($fam, $i18n);
         }
 
         return '<select name="fp_codfamilia" class="form-control" onchange="return salesFormAction(\'find-product\', \'0\');">'
             . $options . '</select>';
+    }
+
+    protected static function getClientes(User $user, ControllerPermissions $permissions): array
+    {
+        // buscamos en caché
+        $cacheKey = 'model-Cliente-sales-modal-' . $user->nick;
+        $clientes = Cache::get($cacheKey);
+        if (is_array($clientes)) {
+            return $clientes;
+        }
+
+        // ¿El usuario tiene permiso para ver todos los clientes?
+        $showAll = false;
+        foreach (RoleAccess::allFromUser($user->nick, 'EditCliente') as $access) {
+            if (false === $access->onlyownerdata) {
+                $showAll = true;
+            }
+        }
+
+        // consultamos la base de datos
+        $cliente = new Cliente();
+        $where = [new DataBaseWhere('fechabaja', null, 'IS')];
+        if ($permissions->onlyOwnerData && !$showAll) {
+            $where[] = new DataBaseWhere('codagente', $user->codagente);
+            $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
+        }
+        $clientes = $cliente->all($where, ['LOWER(nombre)' => 'ASC']);
+
+        // guardamos en caché
+        Cache::set($cacheKey, $clientes);
+
+        return $clientes;
     }
 
     protected static function getProducts(): array
@@ -168,7 +207,17 @@ class SalesModalHTML
         }
 
         if (self::$codfamilia) {
-            $sql .= ' AND codfamilia = ' . $dataBase->var2str(self::$codfamilia);
+            $codFamilias = [$dataBase->var2str(self::$codfamilia)];
+
+            // buscamos las subfamilias
+            $familia = new Familia();
+            if ($familia->loadFromCode(self::$codfamilia)) {
+                foreach ($familia->getSubfamilias() as $fam) {
+                    $codFamilias[] = $dataBase->var2str($fam->codfamilia);
+                }
+            }
+
+            $sql .= ' AND codfamilia IN (' . implode(',', $codFamilias) . ')';
         }
 
         if (self::$vendido) {
@@ -239,21 +288,8 @@ class SalesModalHTML
     {
         $trs = '';
 
-        // ¿El usuario tiene permiso para ver todos los clientes?
-        $showAll = false;
-        foreach (RoleAccess::allFromUser($user->nick, 'EditCliente') as $access) {
-            if (false === $access->onlyownerdata) {
-                $showAll = true;
-            }
-        }
-        $where = [new DataBaseWhere('fechabaja', null, 'IS')];
-        if ($permissions->onlyOwnerData && !$showAll) {
-            $where[] = new DataBaseWhere('codagente', $user->codagente);
-            $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
-        }
 
-        $cliente = new Cliente();
-        foreach ($cliente->all($where, ['LOWER(nombre)' => 'ASC']) as $cli) {
+        foreach (static::getClientes($user, $permissions) as $cli) {
             $name = ($cli->nombre === $cli->razonsocial) ? $cli->nombre : $cli->nombre . ' <small>(' . $cli->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'salesForm\'][\'codcliente\'].value = \''
                 . $cli->codcliente . '\'; $(\'#findCustomerModal\').modal(\'hide\'); salesFormAction(\'set-customer\', \'0\'); return false;">'
@@ -369,5 +405,20 @@ class SalesModalHTML
             // no hay facturas, asignamos el último precio de venta
             $items[$key]['ultimo_precio'] = $item['precio'];
         }
+    }
+
+    private static function subfamilias(Familia $family, Translator $i18n, int $level = 1): string
+    {
+        $options = '';
+        foreach ($family->getSubfamilias() as $fam) {
+            $options .= '<option value="' . $fam->codfamilia . '">'
+                . str_repeat('-', $level) . ' ' . $fam->descripcion
+                . '</option>';
+
+            // añadimos las subfamilias de forma recursiva
+            $options .= static::subfamilias($fam, $i18n, $level + 1);
+        }
+
+        return $options;
     }
 }
