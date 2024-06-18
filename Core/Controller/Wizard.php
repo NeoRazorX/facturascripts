@@ -270,8 +270,8 @@ class Wizard extends Controller
         $this->saveAddress($codpais);
 
         // settings
-        $this->appSettings->set('default', 'google-tag-manager', (bool)$this->request->request->get('google-tag-manager', false));
-        $this->appSettings->save();
+        Tools::settings('default', 'google-tag-manager', (bool)$this->request->request->get('google-tag-manager', false));
+        Tools::settingsSave();
 
         // change password
         $pass = $this->request->request->get('password', '');
