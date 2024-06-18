@@ -21,7 +21,17 @@
 
 {% block bodyHeaderOptions %}
     {{ parent() }}
+
     <div class="container-fluid mb-2">
+        {% if fsc.showUpdateWarning() %}
+        <div class="alert gradiente-animado" role="alert">
+            Es necesario actualizar FacturaScripts.
+            <a href="{{ FS_ROUTE }}/Updater" rel="nofollow" class="btn btn-sm btn-success">
+                <i class="fas fa-rocket fa-fw" aria-hidden="true"></i>
+                {{ trans('update') }}
+            </a>
+        </div>
+        {% endif %}
         <div class="row">
             <div class="col-sm-6">
                 <div class="btn-group">
@@ -84,6 +94,18 @@
             </li>
         {% endif %}
     </ul>
+    <style>
+        .gradiente-animado {
+            background: linear-gradient(120deg, #ffc107, #dc3545);
+            background-size: 400% 400%;
+            animation: animationBackground 2s ease infinite;
+        }
+        @keyframes animationBackground {
+            0%{background-position:0% 4%}
+            50%{background-position:100% 97%}
+            100%{background-position:0% 4%}
+        }
+    </style>
 {% endblock %}
 
 {% block body %}

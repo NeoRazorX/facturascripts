@@ -235,4 +235,9 @@ class AdminPlugins extends Controller
             $this->redirect($this->url(), 3);
         }
     }
+
+    public function showUpdateWarning(): bool
+    {
+        return Forja::canUpdateCore();
+    }
 }
