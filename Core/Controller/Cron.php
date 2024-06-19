@@ -54,7 +54,8 @@ class Cron implements ControllerInterface
     {
         header('Content-Type: text/plain');
 
-        echo <<<END
+        if (PHP_SAPI === 'cli') {
+            echo <<<END
 
   ______         _                    _____           _       _       
  |  ____|       | |                  / ____|         (_)     | |      
@@ -65,6 +66,7 @@ class Cron implements ControllerInterface
                                                        | |            
                                                        |_|
 END;
+        }
 
         Tools::log('cron')->notice('starting-cron');
         echo PHP_EOL . PHP_EOL . Tools::lang()->trans('starting-cron');
@@ -151,13 +153,17 @@ END;
         }
 
         Tools::log('cron')->notice('old-logs-delete-ok');
-
-        // eliminamos los eventos de trabajo antiguos
-        $this->removeOldWorkEvents($minDate);
     }
 
-    protected function removeOldWorkEvents(string $minDate): void
+    protected function removeOldWorkEvents(): void
     {
+        $maxDays = Tools::settings('default', 'days_log_retention', 90);
+        if ($maxDays <= 0) {
+            return;
+        }
+
+        $minDate = Tools::dateTime('-' . $maxDays . ' days');
+
         $query = WorkEvent::table()
             ->whereEq('done', true)
             ->whereLt('creation_date', $minDate);
@@ -173,15 +179,16 @@ END;
     protected function runCoreJobs(): void
     {
         $this->job('update-attached-relations')
-            ->every('1 day')
+            ->everyDayAt(0)
             ->run(function () {
                 $this->updateAttachedRelations();
             });
 
         $this->job('remove-old-logs')
-            ->every('1 week')
+            ->everyDayAt(1)
             ->run(function () {
                 $this->removeOldLogs();
+                $this->removeOldWorkEvents();
             });
     }
 
