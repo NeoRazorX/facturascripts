@@ -269,10 +269,6 @@ class Wizard extends Controller
             'Impuesto', 'Retencion', 'Serie', 'Provincia']);
         $this->saveAddress($codpais);
 
-        // settings
-        Tools::settings('default', 'google-tag-manager', (bool)$this->request->request->get('google-tag-manager', false));
-        Tools::settingsSave();
-
         // change password
         $pass = $this->request->request->get('password', '');
         if ('' !== $pass && false === $this->saveNewPassword($pass)) {
@@ -305,6 +301,7 @@ class Wizard extends Controller
         }
         Tools::settingsSet('default', 'updatesupplierprices', (bool)$this->request->request->get('updatesupplierprices', '0'));
         Tools::settingsSet('default', 'ventasinstock', (bool)$this->request->request->get('ventasinstock', '0'));
+        Tools::settingsSet('default', 'google-tag-manager', (bool)$this->request->request->get('google-tag-manager', '0'));
         Tools::settingsSave();
 
         if ($this->request->request->get('defaultplan', '0')) {

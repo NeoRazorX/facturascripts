@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,8 +47,7 @@
                 <div class="card-body">
                     <h1 class="h3">
                         <i class="fas fa-magic" aria-hidden="true"></i> {{ trans('wizard') }}
-                        <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary"
-                           title="{{ trans('refresh') }}">
+                        <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary" title="{{ trans('refresh') }}">
                             <i class="fas fa-redo" aria-hidden="true"></i>
                         </a>
                     </h1>
@@ -176,15 +175,6 @@
                             </div>
                         </div>
                     {% endif %}
-                    <div class="text-right">
-                        <div class="custom-control custom-checkbox custom-checkbox-right mb-3">
-                            <input type="checkbox" class="custom-control-input" id="googleTagManagerCheck1"
-                                   name="google-tag-manager"
-                                   value="1" {{ settings('default', 'google-tag-manager') ? 'checked' : '' }}>
-                            <label class="custom-control-label"
-                                   for="googleTagManagerCheck1">{{ trans('send-anonymous-data') }}</label>
-                        </div>
-                    </div>
                 </div>
                 <div class="card-footer text-right">
                     <button type="submit" class="btn btn-primary" id="btnWizard">
@@ -200,22 +190,6 @@
 {% block css %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}"/>
-    <style>
-        .custom-checkbox-right {
-            padding-left: 0;
-        }
-
-        .custom-checkbox-right .custom-control-label {
-            position: relative;
-            padding-right: 1.5rem;
-        }
-
-        .custom-checkbox-right .custom-control-label::before,
-        .custom-checkbox-right .custom-control-label::after {
-            right: 0;
-            left: auto;
-        }
-    </style>
 {% endblock %}
 
 {% block javascripts %}
