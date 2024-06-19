@@ -85,7 +85,7 @@
                                 <div class="form-group">
                                     {{ trans('status') }}
                                     <select name="idestado" class="form-control">
-                                        {% for status in fsc.getDocumentStatus(firstView.model.modelClassName()) %}
+                                        {% for status in firstView.model.getAvailableStatus(firstView.model.modelClassName()) %}
                                             {% if status.idestado is same as(11) %}
                                                 <option value="{{ status.idestado }}" selected>
                                                     {{ status.nombre }}

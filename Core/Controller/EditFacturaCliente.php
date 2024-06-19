@@ -12,7 +12,6 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
-use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 
@@ -25,14 +24,6 @@ class EditFacturaCliente extends SalesController
 {
     private const VIEW_ACCOUNTS = 'ListAsiento';
     private const VIEW_RECEIPTS = 'ListReciboCliente';
-
-    public function getDocumentStatus(string $type): array
-    {
-        $model = new EstadoDocumento();
-        $order = ['nombre' => 'ASC'];
-        $where = [new DataBaseWhere('tipodoc', $type)];
-        return $model->all($where, $order, 0, 0);
-    }
 
     public function getModelClassName(): string
     {
