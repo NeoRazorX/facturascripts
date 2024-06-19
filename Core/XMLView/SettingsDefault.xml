@@ -175,7 +175,7 @@
                 <widget type="checkbox" fieldname="enableupdatesbeta"/>
             </column>
             <column name="google-tag-manager" title="send-anonymous-data" order="180">
-                <widget type="checkbox" fieldname="google-tag-manager"/>
+                <widget type="checkbox" fieldname="google_tag_manager"/>
             </column>
         </group>
     </columns>

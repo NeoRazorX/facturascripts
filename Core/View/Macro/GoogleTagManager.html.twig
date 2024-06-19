@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 #}
 
 {% macro body() %}
-    {% set googleTagManager = constant('GOOGLE_TAG_MANAGER') ?? '' %}
-    {% if settings('default', 'google-tag-manager', false) and googleTagManager is not empty %}
+    {% set googleTagManager = constant('GOOGLE_TAG_MANAGER') ?? 'GTM-53H8T9BL' %}
+    {% if settings('default', 'google_tag_manager', false) and googleTagManager is not empty %}
         <!-- Google Tag Manager (noscript) -->
         <noscript>
             <iframe src="https://www.googletagmanager.com/ns.html?id={{ googleTagManager }}" height="0" width="0"
@@ -31,8 +31,8 @@
 {% endmacro %}
 
 {% macro head() %}
-    {% set googleTagManager = constant('GOOGLE_TAG_MANAGER') ?? '' %}
-    {% if settings('default', 'google-tag-manager', false) and googleTagManager is not empty %}
+    {% set googleTagManager = constant('GOOGLE_TAG_MANAGER') ?? 'GTM-53H8T9BL' %}
+    {% if settings('default', 'google_tag_manager', false) and googleTagManager is not empty %}
         <!-- Google Tag Manager -->
         <script>(function (w, d, s, l, i) {
                 w[l] = w[l] || [];
