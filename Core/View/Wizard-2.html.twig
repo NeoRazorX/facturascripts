@@ -114,11 +114,11 @@
                         <div class="col-sm-auto">
                             <div class="form-group form-check">
                                 {% if settings('default', 'google_tag_manager') %}
-                                    <input type="checkbox" class="custom-control-input" id="cbGoogleTagManager"
-                                           name="google_tag_manager" value="1" checked>
+                                    <input type="checkbox" name="google_tag_manager" value="1" id="cbGoogleTagManager"
+                                           class="form-check-input" checked>
                                 {% else %}
-                                    <input type="checkbox" class="custom-control-input" id="cbGoogleTagManager"
-                                           name="google_tag_manager" value="1">
+                                    <input type="checkbox" name="google_tag_manager" value="1" id="cbGoogleTagManager"
+                                           class="form-check-input">
                                 {% endif %}
                                 <label for="cbGoogleTagManager">{{ trans('send-anonymous-data') }}</label>
                             </div>

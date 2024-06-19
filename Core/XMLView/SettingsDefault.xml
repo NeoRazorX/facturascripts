@@ -144,7 +144,7 @@
         </group>
         <group name="advanced" title="advanced" icon="fas fa-database" valign="bottom" numcolumns="12">
             <column name="url" numcolumns="3" order="100">
-                <widget type="link" fieldname="site_url" required="true"/>
+                <widget type="link" fieldname="site_url"/>
             </column>
             <column name="homepage" numcolumns="3" order="110">
                 <widget type="select" fieldname="homepage" icon="fas fa-home">
