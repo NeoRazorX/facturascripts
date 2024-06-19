@@ -303,6 +303,22 @@ class Tools
         self::$settings[$group][$key] = $value;
     }
 
+    public static function siteUrl(): string
+    {
+        $url = self::settings('default', 'site_url', '');
+        if (!empty($url)) {
+            return $url;
+        }
+
+        if (false === array_key_exists('HTTP_HOST', $_SERVER)) {
+            return 'http://localhost';
+        }
+
+        $url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+        $url .= '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        return substr($url, 0, strrpos($url, '/'));
+    }
+
     public static function slug(string $text, string $separator = '-', int $maxLength = 0): string
     {
         $text = self::ascii($text);
