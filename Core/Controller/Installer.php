@@ -225,9 +225,13 @@ class Installer implements ControllerInterface
         fwrite($file, "define('FS_DB_USER', '" . $this->db_user . "');\n");
         fwrite($file, "define('FS_DB_PASS', '" . $this->request->request->get('fs_db_pass') . "');\n");
 
-        $fields = ['lang', 'timezone', 'hidden_plugins'];
-        foreach ($fields as $field) {
-            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, '') . "');\n");
+        $fields = [
+            'lang' => 'es_ES',
+            'timezone' => 'Europe/Madrid',
+            'hidden_plugins' => ''
+        ];
+        foreach ($fields as $field => $default) {
+            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, $default) . "');\n");
         }
 
         $booleanFields = ['debug', 'disable_add_plugins', 'disable_rm_plugins'];
