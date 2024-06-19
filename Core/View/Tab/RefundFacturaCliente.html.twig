@@ -83,24 +83,6 @@
                         <div class="form-row align-items-end">
                             <div class="col-sm">
                                 <div class="form-group">
-                                    {{ trans('status') }}
-                                    <select name="idestado" class="form-control">
-                                        {% for status in firstView.model.getAvailableStatus() %}
-                                            {% if status.idestado is same as(11) %}
-                                                <option value="{{ status.idestado }}" selected>
-                                                    {{ status.nombre }}
-                                                </option>
-                                            {% else %}
-                                                <option value="{{ status.idestado }}">
-                                                    {{ status.nombre }}
-                                                </option>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="form-group">
                                     {{ trans('serie') }}
                                     <select name="codserie" class="form-control">
                                         {% set series = fsc.series('R') %}
@@ -124,6 +106,24 @@
                                     {{ trans('date') }}
                                     <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}"
                                            class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-group">
+                                    {{ trans('status') }}
+                                    <select name="idestado" class="form-control">
+                                        {% for status in firstView.model.getAvailableStatus() %}
+                                            {% if status.idestado is same as(11) %}
+                                                <option value="{{ status.idestado }}" selected>
+                                                    {{ status.nombre }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ status.idestado }}">
+                                                    {{ status.nombre }}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-sm text-right">
