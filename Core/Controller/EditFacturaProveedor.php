@@ -12,6 +12,7 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
+use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
 
@@ -25,6 +26,14 @@ class EditFacturaProveedor extends PurchasesController
 {
     private const VIEW_ACCOUNTS = 'ListAsiento';
     private const VIEW_RECEIPTS = 'ListReciboProveedor';
+
+    public function getDocumentStatus(string $type): array
+    {
+        $model = new EstadoDocumento();
+        $order = ['nombre' => 'ASC'];
+        $where = [new DataBaseWhere('tipodoc', $type)];
+        return $model->all($where, $order, 0, 0);
+    }
 
     public function getModelClassName(): string
     {
@@ -314,6 +323,14 @@ class EditFacturaProveedor extends PurchasesController
                 $receipt->pagado = true;
                 $receipt->save();
             }
+        }
+
+        // asignamos el estado de la factura
+        $newRefund->idestado = $this->request->request->get('idestado');
+        if (false === $newRefund->save()) {
+            Tools::log()->error('record-save-error');
+            $this->dataBase->rollback();
+            return true;
         }
 
         $this->dataBase->commit();
