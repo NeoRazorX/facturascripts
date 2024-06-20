@@ -120,29 +120,29 @@ class FacturaCliente extends Base\SalesDocument
         // Obtenemos la ultima factura
         $lastInvoice = $this->getLastInvoceByDatetime();
 
-        if (!empty($lastInvoice)) {
-            // obtenemos la fecha y hora de la ultima factura
-            $dateLastInvoice = $lastInvoice['fecha'];
-            $timeLastInvoice = $lastInvoice['hora'];
-            $lastInvoiceDateTime = new DateTime($dateLastInvoice . ' ' . $timeLastInvoice);
-
-            // Comparamos las fechas
-            $dateTime = new DateTime($date . ' ' . $time);
-            $isPrevious = $lastInvoiceDateTime < $dateTime;
-            if($isPrevious){
-                $this->fecha = $date;
-                $this->hora = $time;
-            }else{
-                $this->fecha = date('d-m-Y', strtotime($dateLastInvoice));
-                $this->hora = date('h:i', strtotime($timeLastInvoice));
-            }
-            return $isPrevious;
-        } else {
-            // si no hay facturas, devolvemos true
+        // Si no existen facturas, devolvemos true y asignamos la fecha a probar
+        if (empty($lastInvoice)) {
             $this->fecha = $date;
             $this->hora = $time;
             return true;
         }
+
+        // obtenemos la fecha y hora de la ultima factura
+        $dateLastInvoice = $lastInvoice['fecha'];
+        $timeLastInvoice = $lastInvoice['hora'];
+        $lastInvoiceDateTime = new DateTime($dateLastInvoice . ' ' . $timeLastInvoice);
+
+        // Comparamos las fechas
+        $dateTime = new DateTime($date . ' ' . $time);
+        $isPrevious = $lastInvoiceDateTime < $dateTime;
+        if($isPrevious){
+            $this->fecha = $date;
+            $this->hora = $time;
+        }else{
+            $this->fecha = date('d-m-Y', strtotime($dateLastInvoice));
+            $this->hora = date('h:i', strtotime($timeLastInvoice));
+        }
+        return $isPrevious;
     }
 
     /**
