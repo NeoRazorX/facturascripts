@@ -835,6 +835,57 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($company->delete());
     }
 
+    public function testTrySetDate()
+    {
+        // creamos cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save());
+
+        // creamos factura
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->setDate(date('10-02-Y'), '10:10');
+        $this->assertTrue($invoice->save());
+
+        $invoice2 = new FacturaCliente();
+        $invoice2->setSubject($customer);
+
+        // comprobamos que podemos usar la fecha ya que es posterior a la ultima factura
+        // se asigna la fecha a probar
+        $result = $invoice2->trySetDate(date('10-03-Y'), '10:10');
+        $this->assertEquals(date('10-03-Y'), $invoice2->fecha);
+        $this->assertEquals('10:10', $invoice2->hora);
+        $this->assertTrue($result);
+
+        // comprobamos que no podemos usar la fecha ya que es anterior a la ultima factura
+        // se asigna la fecha de la ultima factura
+        $result = $invoice2->trySetDate(date('10-01-Y'), '10:10');
+        $this->assertEquals(date('10-02-Y'), $invoice2->fecha);
+        $this->assertEquals('10:10', $invoice2->hora);
+        $this->assertFalse($result);
+
+
+        // COMPROBAMOS A NIVEL DE HORA
+        // comprobamos que podemos usar la fecha ya que es posterior a la ultima factura
+        // se asigna la fecha a probar
+        $result = $invoice2->trySetDate(date('10-02-Y'), '10:20');
+        $this->assertEquals(date('10-02-Y'), $invoice2->fecha);
+        $this->assertEquals('10:20', $invoice2->hora);
+        $this->assertTrue($result);
+
+        // comprobamos que no podemos usar la fecha ya que es anterior a la ultima factura
+        // se asigna la fecha de la ultima factura
+        $result = $invoice2->trySetDate(date('10-02-Y'), '10:00');
+        $this->assertEquals(date('10-02-Y'), $invoice2->fecha);
+        $this->assertEquals('10:10', $invoice2->hora);
+        $this->assertFalse($result);
+
+        // eliminamos
+        $this->assertTrue($invoice->delete());
+        $this->assertTrue($customer->getDefaultAddress()->delete());
+        $this->assertTrue($customer->delete());
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

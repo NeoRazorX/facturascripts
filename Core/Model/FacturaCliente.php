@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Core\Model;
 
+use DateTime;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as DinLineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
@@ -97,6 +99,66 @@ class FacturaCliente extends Base\SalesDocument
     public static function tableName(): string
     {
         return 'facturascli';
+    }
+
+    /**
+     * Si la fecha de la ultima factura es anterior a la fecha a probar
+     * devuelve true y asigna la fecha a probar a la nueva factura.
+     *
+     * Si la fecha de la ultima factura es posterior a la fecha a probar
+     * devuelve false y asigna la fecha de la ultima factura a la nueva factura.
+     *
+     * @param string $date
+     * @param string $time
+     *
+     * @return bool
+     *
+     * @throws \Exception
+     */
+    public function trySetDate(string $date, string $time): bool
+    {
+        // Obtenemos la ultima factura
+        $lastInvoice = $this->getLastInvoceByDatetime();
+
+        if (!empty($lastInvoice)) {
+            // obtenemos la fecha y hora de la ultima factura
+            $dateLastInvoice = $lastInvoice['fecha'];
+            $timeLastInvoice = $lastInvoice['hora'];
+            $lastInvoiceDateTime = new DateTime($dateLastInvoice . ' ' . $timeLastInvoice);
+
+            // Comparamos las fechas
+            $dateTime = new DateTime($date . ' ' . $time);
+            $isPrevious = $lastInvoiceDateTime < $dateTime;
+            if($isPrevious){
+                $this->fecha = $date;
+                $this->hora = $time;
+            }else{
+                $this->fecha = date('d-m-Y', strtotime($dateLastInvoice));
+                $this->hora = date('h:i', strtotime($timeLastInvoice));
+            }
+            return $isPrevious;
+        } else {
+            // si no hay facturas, devolvemos true
+            $this->fecha = $date;
+            $this->hora = $time;
+            return true;
+        }
+    }
+
+    /**
+     * Devuelve la ultima factura segun la fecha de factura
+     * teniendo en cuenta que sea de la misma empresa y misma serie
+     *
+     * @return array
+     */
+    public function getLastInvoceByDatetime()
+    {
+        return DbQuery::table(self::tableName())
+            ->whereEq('idempresa', $this->idempresa)
+            ->whereEq('codserie', $this->codserie)
+            ->orderBy('fecha', 'DESC')
+            ->orderBy('hora', 'DESC')
+            ->first();
     }
 
     protected function saveInsert(array $values = []): bool
