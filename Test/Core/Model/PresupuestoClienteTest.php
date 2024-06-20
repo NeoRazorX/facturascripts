@@ -265,6 +265,7 @@ final class PresupuestoClienteTest extends TestCase
 
         // creamos un presupuesto y le asignamos el cliente y el almacén
         $doc = new PresupuestoCliente();
+        $doc->codpago = $company2->getPaymentMethods()[0]->codpago;
         $doc->setSubject($subject);
         $doc->codalmacen = $warehouse->codalmacen;
         $this->assertTrue($doc->save(), 'presupuesto-cant-save');

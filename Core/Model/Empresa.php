@@ -28,6 +28,7 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Almacen as DinAlmacen;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
+use FacturaScripts\Dinamic\Model\FormaPago as DinFormaPago;
 
 /**
  * This class stores the main data of the company.
@@ -128,6 +129,18 @@ class Empresa extends Base\Contact
         $exercise = new DinEjercicio();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
         return $exercise->all($where, [], 0, 0);
+    }
+    
+    /**
+     * Devuelve los metodos de pago de la empresa.
+     *
+     * @return array
+     */
+    public function getPaymentMethods(): array
+    {
+        $payMethod = new DinFormaPago();
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
+        return $payMethod->all($where, [], 0, 0);
     }
 
     /**
