@@ -21,11 +21,11 @@
 {% macro showMenu(menuItem, parent) %}
     {% import _self as macros %}
     {% set active = menuItem.active ? ' active' : '' %}
-    {% set menuId = parent is empty ? 'menu-' ~ menuItem.title : parent ~ menuItem.name %}
+    {% set menuId = parent is empty ? 'menu_' ~ menuItem.name : parent ~ menuItem.name %}
 
     {% if parent is empty %}
         {# Main level menu/submenu #}
-        <li class="nav-item dropdown{{ active }}">
+        <li id="{{ menuId | lower }}" class="fs-menu-item nav-item dropdown{{ active }}">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {% set title = menuItem.title %}
                 <span class="d-md-none">{{ title | slice(0, 2) }}</span>
@@ -34,7 +34,7 @@
             <ul class="dropdown-menu" aria-labelledby="{{ menuId }}">
     {% else %}
         {# Child level submenu #}
-        <li class="dropdown-submenu">
+        <li id="{{ menuId | lower }}" class="fs-menu-item dropdown-submenu">
             <a class="dropdown-item{{ active }}" href="#">
                 <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
                 &nbsp;{{ menuItem.title }}
@@ -44,9 +44,10 @@
 
     {% for item in menuItem.menu %}
         {% set extraClass = item.active ? ' active' : '' %}
+        {% set childId = menuId ~ '_' ~ item.name %}
 
         {% if item.menu is empty %}
-            <li>
+            <li id="{{ childId | lower }}" class="fs-menu-item">
                 <a class="dropdown-item{{ extraClass }}" href="{{ item.url }}">
                     <i class="{{ item.icon }} fa-fw" aria-hidden="true"></i> &nbsp;{{ item.title }}
                 </a>
