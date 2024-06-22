@@ -122,6 +122,8 @@ final class Plugins
         Kernel::rebuildRoutes();
         Kernel::saveRoutes();
 
+        DbUpdater::rebuild();
+
         if ($initControllers) {
             $pluginDeploy->initControllers();
         }
