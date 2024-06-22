@@ -21,7 +21,6 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseQueries;
-use SimpleXMLElement;
 
 /**
  * Actualiza la estructura de la base de datos.
@@ -52,7 +51,8 @@ final class DbUpdater
         }
 
         if (empty($structure)) {
-            $structure = self::readTableXml($tableName);
+            $filePath = self::getTableXmlLocation($tableName);
+            $structure = self::readTableXml($filePath);
         }
 
         $sql = self::sqlTool()->sqlCreateTable($tableName, $structure['columns'], $structure['constraints']) . $sqlAfter;
@@ -64,6 +64,24 @@ final class DbUpdater
         }
 
         self::save($tableName);
+        return false;
+    }
+
+    public static function dropTable(string $tableName): bool
+    {
+        if (false === self::db()->tableExists($tableName)) {
+            return false;
+        }
+
+        $sql = self::sqlTool()->sqlDropTable($tableName);
+        if (self::db()->exec($sql)) {
+            self::rebuild();
+
+            Tools::log()->debug('table-deleted', ['%tableName%' => $tableName]);
+            return true;
+        }
+
+        self::rebuild();
         return false;
     }
 
@@ -94,29 +112,53 @@ final class DbUpdater
         return in_array($tableName, self::$checkedTables);
     }
 
-    public static function readTableXml(string $tableName): array
+    public static function readTableXml(string $filePath): array
     {
         $structure = [
             'columns' => [],
             'constraints' => []
         ];
 
-        $fileName = self::getTableXmlLocation($tableName);
-        if (false === file_exists($fileName)) {
-            Tools::log()->critical('file-not-found', ['%fileName%' => $fileName]);
+        if (false === file_exists($filePath)) {
+            Tools::log()->critical('file-not-found', ['%fileName%' => $filePath]);
             return $structure;
         }
 
-        $xml = simplexml_load_string(file_get_contents($fileName, true));
+        $xml = simplexml_load_string(file_get_contents($filePath, true));
         if (false === $xml) {
-            Tools::log()->critical('error-reading-file', ['%fileName%' => $fileName]);
+            Tools::log()->critical('error-reading-file', ['%fileName%' => $filePath]);
             return $structure;
         }
 
-        if ($xml->column) {
-            self::checkXmlColumns($structure['columns'], $xml);
-            if ($xml->constraint) {
-                self::checkXmlConstraints($structure['constraints'], $xml);
+        // if no column, return empty structure
+        if (false === isset($xml->column)) {
+            return $structure;
+        }
+
+        foreach ($xml->column as $col) {
+            $item = [
+                'name' => (string)$col->name,
+                'type' => (string)$col->type,
+                'null' => $col->null && strtolower($col->null) === 'no' ? 'NO' : 'YES',
+                'default' => $col->default === '' ? null : (string)$col->default
+            ];
+
+            if ($col->type == 'serial') {
+                $item['null'] = 'NO';
+                $item['default'] = null;
+            }
+
+            $structure['columns'][$item['name']] = $item;
+        }
+
+        if (isset($xml->constraint)) {
+            foreach ($xml->constraint as $col) {
+                $key = (string)$col->name;
+
+                $structure['constraints'][$key] = [
+                    'name' => $key,
+                    'constraint' => (string)$col->type
+                ];
             }
         }
 
@@ -141,7 +183,8 @@ final class DbUpdater
         }
 
         if (empty($structure)) {
-            $structure = self::readTableXml($tableName);
+            $filePath = self::getTableXmlLocation($tableName);
+            $structure = self::readTableXml($filePath);
         }
 
         // compare table columns and constraints against xml definition
@@ -170,37 +213,6 @@ final class DbUpdater
         }
 
         return self::$dataBase;
-    }
-
-    private static function checkXmlColumns(array &$columns, SimpleXMLElement $xml)
-    {
-        $key = 0;
-        foreach ($xml->column as $col) {
-            $columns[$key]['name'] = (string)$col->name;
-            $columns[$key]['type'] = (string)$col->type;
-
-            if ($col->type == 'serial') {
-                $columns[$key]['type'] = (string)$col->type;
-                $columns[$key]['null'] = 'NO';
-                $columns[$key]['default'] = null;
-                ++$key;
-                continue;
-            }
-
-            $columns[$key]['null'] = $col->null && strtolower($col->null) === 'no' ? 'NO' : 'YES';
-            $columns[$key]['default'] = $col->default === '' ? null : (string)$col->default;
-            ++$key;
-        }
-    }
-
-    private static function checkXmlConstraints(array &$constraints, SimpleXMLElement $xml)
-    {
-        $key = 0;
-        foreach ($xml->constraint as $col) {
-            $constraints[$key]['name'] = (string)$col->name;
-            $constraints[$key]['constraint'] = (string)$col->type;
-            ++$key;
-        }
     }
 
     private static function compareColumns(string $tableName, array $xmlCols, array $dbCols): string
