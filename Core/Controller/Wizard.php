@@ -301,7 +301,6 @@ class Wizard extends Controller
         }
         Tools::settingsSet('default', 'updatesupplierprices', (bool)$this->request->request->get('updatesupplierprices', '0'));
         Tools::settingsSet('default', 'ventasinstock', (bool)$this->request->request->get('ventasinstock', '0'));
-        Tools::settingsSet('default', 'google_tag_manager', (bool)$this->request->request->get('google_tag_manager', '0'));
         Tools::settingsSet('default', 'site_url', Tools::siteUrl());
         Tools::settingsSave();
 

@@ -36,8 +36,7 @@
 
             $('#fs_lang').on('change', function () {
                 let lang = $("#fs_lang option:selected").val();
-                let url = location.pathname + '?fs_lang=' + lang;
-                window.location.href = url;
+                window.location.href = location.pathname + '?fs_lang=' + lang;
             });
         });
     </script>
@@ -222,7 +221,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-auto">
                                 <div class="form-check mb-2 mb-sm-0">
                                     <label class="form-check-label">
                                         <input class="form-check-input" type="checkbox" name="fs_debug" value="true"/>
@@ -230,7 +229,15 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-sm-6 text-right">
+                            <div class="col-sm">
+                                <div class="form-check mb-2 mb-sm-0">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="fs_gtm" value="true"/>
+                                        {{ trans('send-anonymous-data') }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-auto">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-check" aria-hidden="true"></i> {{ trans('accept') }}
                                 </button>
@@ -246,27 +253,23 @@
             <br/>
             <div class="card-deck">
                 <div class="card shadow mb-3">
-                    <div class="card-body">
-                        <div class="mt-0 text-center">
-                            <i class="fa-solid fa-book fa-3x text-primary"></i>
-                            <h3 class="mt-2 mb-0">
-                                <a href="https://facturascripts.com/ayuda" rel="nofollow" target="_blank">
-                                    {{ trans('help') }}
-                                </a>
-                            </h3>
-                        </div>
+                    <div class="card-body text-center">
+                        <i class="fa-solid fa-book fa-3x text-primary"></i>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-block btn-lg btn-link" href="https://facturascripts.com/ayuda" rel="nofollow"
+                           target="_blank">{{ trans('help') }}
+                        </a>
                     </div>
                 </div>
                 <div class="card shadow mb-3">
-                    <div class="card-body">
-                        <div class="mt-0 text-center">
-                            <i class="fa-solid fa-comment-dots fa-3x text-info"></i>
-                            <h3 class="mt-2 mb-0">
-                                <a href="https://facturascripts.com/contacto" rel="nofollow" target="_blank">
-                                    {{ trans('support') }}
-                                </a>
-                            </h3>
-                        </div>
+                    <div class="card-body text-center">
+                        <i class="fa-solid fa-comment-dots fa-3x text-info"></i>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-block btn-lg btn-link" href="https://facturascripts.com/contacto"
+                           rel="nofollow" target="_blank">{{ trans('support') }}
+                        </a>
                     </div>
                 </div>
             </div>

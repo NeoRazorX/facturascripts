@@ -243,7 +243,10 @@ class Installer implements ControllerInterface
             fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
         }
 
-        fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
+        if ($this->request->request->get('fs_gtm', false)) {
+            fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
+        }
+
         fwrite($file, "\n");
         fclose($file);
         return true;

@@ -111,18 +111,6 @@
                                 <label for="cbUpdateSupplierPrices">{{ trans('update-supplier-prices') }}</label>
                             </div>
                         </div>
-                        <div class="col-sm-auto">
-                            <div class="form-group form-check">
-                                {% if settings('default', 'google_tag_manager') %}
-                                    <input type="checkbox" name="google_tag_manager" value="1" id="cbGoogleTagManager"
-                                           class="form-check-input" checked>
-                                {% else %}
-                                    <input type="checkbox" name="google_tag_manager" value="1" id="cbGoogleTagManager"
-                                           class="form-check-input">
-                                {% endif %}
-                                <label for="cbGoogleTagManager">{{ trans('send-anonymous-data') }}</label>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="card-footer text-right">

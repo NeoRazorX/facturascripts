@@ -534,7 +534,7 @@
     "equivalent-account-not-found": "No s'ha trobat un conte equivalent a %accountCode% en l'eixercici %exerciseCode%. ¿Has importat el pla contable?",
     "equivalent-subaccount-not-found": "No s'ha trobat cap subconte aquivalent a %subAccountCode% per a copiar.",
     "error": "ERRO: %error%",
-    "error-checking-vat-number": "Error comprobando el número '%vat-number%' en el sistema VIES",
+    "error-checking-vat-number": "Error comprovant el número '%vat-number%' en el sistema VIES",
     "error-connecting-memcache": "Ha hagut un erro conectant al servidor Memcaché.",
     "error-deleting-lines": "Erro borrant llínees",
     "error-no-name-in-settings": "Erro comprovant la vista %viewName%. No hi ha cap columna 'name' en el xml",
