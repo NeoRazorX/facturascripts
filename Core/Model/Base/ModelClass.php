@@ -334,7 +334,7 @@ abstract class ModelClass extends ModelCore
 
         if ($where) {
             $data = self::$dataBase->select($sql . DataBaseWhere::getSQLWhere($where));
-            return empty($data) ? 0 : (int)$data[0]['total'];
+            return empty($data) ? 0 : (float)$data[0]['total'];
         }
 
         $key = 'model-' . $this->modelClassName() . '-' . $field . '-total-sum';
