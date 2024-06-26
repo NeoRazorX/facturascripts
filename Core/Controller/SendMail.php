@@ -197,6 +197,7 @@ class SendMail extends Controller
             $shortValues = [$model->codigo, $model->nombrecliente, $model->fecha, $model->total, $model->numero2];
             $this->newMail->title = str_replace($shortCodes, $shortValues, $notificationModel->subject);
             $this->newMail->text = str_replace($shortCodes, $shortValues, $notificationModel->body);
+            $this->newMail->notification = $notificationModel->name;
             return;
         }
 
@@ -286,6 +287,7 @@ class SendMail extends Controller
 
         $this->newMail->title = $this->request->request->get('subject', '');
         $this->newMail->text = $this->request->request->get('body', '');
+        $this->newMail->notification = $this->request->request->get('notification', '');
         $this->newMail->setMailbox($this->request->request->get('email-from', ''));
 
         foreach ($this->getEmails('email') as $email) {
