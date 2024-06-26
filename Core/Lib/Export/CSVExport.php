@@ -275,7 +275,7 @@ class CSVExport extends ExportBase
     {
         $headers = [];
         foreach ($fields as $field) {
-            $headers[] = $this->getDelimiter() . $field . $this->getDelimiter();
+            $headers[] = $this->getDelimiter() . utf8_decode($field) . $this->getDelimiter();
         }
         $this->csv[] = implode($this->separator, $headers);
     }
