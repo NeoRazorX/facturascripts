@@ -110,13 +110,13 @@ trait CommonSalesPurchases
             if ($company->idempresa != $model->idempresa && $model->exists()) {
                 continue;
             }
-            $options[] = '<optgroup label="' . $company->nombrecorto . '">';
+            $option = '';
             foreach ($company->getWarehouses() as $row) {
-                $options[] = ($row->codalmacen === $model->codalmacen) ?
+                $option .= ($row->codalmacen === $model->codalmacen) ?
                     '<option value="' . $row->codalmacen . '" selected>' . $row->nombre . '</option>' :
                     '<option value="' . $row->codalmacen . '">' . $row->nombre . '</option>';
             }
-            $options[] = '</optgroup>';
+            $options[] = '<optgroup label="' . $company->nombrecorto . '">' . $option . '</optgroup>';
         }
         $attributes = $model->editable ?
             'name="codalmacen" onchange="return ' . $jsFunc . '(\'recalculate\', \'0\');" required' :
