@@ -55,4 +55,7 @@
             </directory>
         </testsuite>
     </testsuites>
+    <php>
+        <const name="FS_ENV" value="testing"/>
+    </php>
 </phpunit>
