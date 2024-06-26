@@ -57,6 +57,74 @@ class EditProducto extends EditController
         return $data;
     }
 
+    protected function autocompleteAction(): array
+    {
+        $activetab = $this->request->request->get('activetab');
+        $data = $this->requestGet(['field', 'term']);
+        if ($activetab !== 'EditVariante' ||
+            false === in_array($data['field'], ['idatributovalor1', 'idatributovalor2', 'idatributovalor3', 'idatributovalor4'])) {
+            return parent::autocompleteAction();
+        }
+
+        // creamos el selector indicado
+        $atributoModel = new Atributo();
+        switch ($data['field']) {
+            case 'idatributovalor1':
+                $selector = $atributoModel->count([new DataBaseWhere('num_selector', 1)]) > 0 ? 1 : 0;
+                break;
+
+            case 'idatributovalor2':
+                $selector = $atributoModel->count([new DataBaseWhere('num_selector', 2)]) > 0 ? 1 : 0;
+                break;
+
+            case 'idatributovalor3':
+                $selector = $atributoModel->count([new DataBaseWhere('num_selector', 3)]) > 0 ? 1 : 0;
+                break;
+
+            case 'idatributovalor4':
+                $selector = $atributoModel->count([new DataBaseWhere('num_selector', 4)]) > 0 ? 1 : 0;
+                break;
+
+            default:
+                $selector = 0;
+                break;
+        }
+
+        $term = strtolower($data['term']);
+        $sqlAttribute = 'SELECT codatributo, nombre'
+            . ' FROM atributos'
+            . ' WHERE num_selector = ' . $selector
+            . ' AND LOWER(nombre) LIKE "%' . $term . '%"'
+            . ' ORDER BY nombre ASC';
+
+        $attributeValues = [];
+        foreach ($this->dataBase->select($sqlAttribute) as $attribute) {
+            // si ya tenemos valores, añadimos un separador
+            if (count($attributeValues) > 0) {
+                $attributeValues[] = [
+                    'key' => '',
+                    'value' => '------',
+                ];
+            }
+
+            $sqlValues = 'SELECT valor, id'
+                . ' FROM atributos_valores'
+                . ' WHERE codatributo = "' . $attribute['codatributo'] . '"'
+                . ' AND LOWER(valor) LIKE "%' . $term . '%"'
+                . ' ORDER BY valor ASC';
+
+            // agregamos al array con los campos que se usaran en el select.
+            foreach ($this->dataBase->select($sqlValues) as $value) {
+                $attributeValues[] = [
+                    'key' => $value['id'],
+                    'value' => $attribute['nombre'] . ' ' . $value['valor'],
+                ];
+            }
+        }
+
+        return $attributeValues;
+    }
+
     /**
      * Load views
      */
@@ -194,50 +262,6 @@ class EditProducto extends EditController
         return false;
     }
 
-    protected function loadCustomAttributeWidgets(string $viewName): void
-    {
-        $columnsName = ['attribute-value-1', 'attribute-value-2', 'attribute-value-3', 'attribute-value-4'];
-        foreach ($columnsName as $key => $colName) {
-            $column = $this->views[$viewName]->columnForName($colName);
-            if ($column && $column->widget->getType() === 'select') {
-                // Obtenemos los atributos con número de selector ($key + 1)
-                $atributoModel = new Atributo();
-                $atributos = $atributoModel->all([
-                    new DataBaseWhere('num_selector', ($key + 1)),
-                ]);
-
-                // si no hay ninguno, obtenemos los que tienen número de selector 0
-                if (count($atributos) === 0) {
-                    $atributos = $atributoModel->all([
-                        new DataBaseWhere('num_selector', 0),
-                    ]);
-                }
-
-                $valoresAtributos = [];
-
-                foreach ($atributos as $atributo) {
-                    // si ya tenemos valore, añadimos un separador
-                    if (count($valoresAtributos) > 0) {
-                        $valoresAtributos[] = [
-                            'value' => '',
-                            'title' => '------',
-                        ];
-                    }
-
-                    // agregamos al array con los campos que se usaran en el select.
-                    foreach ($atributo->getValores() as $valor) {
-                        $valoresAtributos[] = [
-                            'value' => $valor->id,
-                            'title' => $valor->descripcion,
-                        ];
-                    }
-                }
-
-                $column->widget->setValuesFromArray($valoresAtributos, false, true);
-            }
-        }
-    }
-
     protected function loadCustomReferenceWidget(string $viewName): void
     {
         $references = [];
@@ -299,7 +323,6 @@ class EditProducto extends EditController
 
             case 'EditVariante':
                 $view->loadData('', $where, ['idvariante' => 'DESC']);
-                $this->loadCustomAttributeWidgets($viewName);
                 break;
 
             case 'EditStock':
@@ -344,7 +367,7 @@ class EditProducto extends EditController
     {
         $idsOrdenadas = $this->request->request->get('orden');
 
-        if (empty($idsOrdenadas)){
+        if (empty($idsOrdenadas)) {
             return true;
         }
 
@@ -353,7 +376,7 @@ class EditProducto extends EditController
             $productoImagen = new ProductoImagen();
             $productoImagen->loadFromCode($idImagen);
             $productoImagen->orden = $orden;
-            if($productoImagen->save()){
+            if ($productoImagen->save()) {
                 $orden++;
             }
         }
