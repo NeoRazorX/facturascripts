@@ -62,18 +62,15 @@ abstract class SalesController extends PanelController
             return $this->views[static::MAIN_VIEW_NAME]->model;
         }
 
-        // get the record identifier
-        $code = $this->request->get('code');
-        if (empty($code)) {
-            // empty identifier? Then sets initial parameters to the new record and return it
-            $formData = $this->request->query->all();
-            SalesHeaderHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData, $this->user);
-            SalesFooterHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData, $this->user);
+        // existing record
+        if ($this->views[static::MAIN_VIEW_NAME]->model->loadFromCode($this->request->get('code'))) {
             return $this->views[static::MAIN_VIEW_NAME]->model;
         }
 
-        // existing record
-        $this->views[static::MAIN_VIEW_NAME]->model->loadFromCode($code);
+        // empty identifier? Then sets initial parameters to the new record and return it
+        $formData = $this->request->query->all();
+        SalesHeaderHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData, $this->user);
+        SalesFooterHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData, $this->user);
         return $this->views[static::MAIN_VIEW_NAME]->model;
     }
 
