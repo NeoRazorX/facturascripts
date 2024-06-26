@@ -213,17 +213,20 @@ class Tools
         return new MiniLog($channel, $translator);
     }
 
-    public static function money(?float $number, string $coddivisa = ''): string
+    public static function money(?float $number, string $coddivisa = '', ?int $decimals = null): string
     {
         if (empty($coddivisa)) {
             $coddivisa = self::settings('default', 'coddivisa', '');
+        }
+        if ($decimals === null) {
+            $decimals = self::settings('default', 'decimals', 2);
         }
 
         $symbol = Divisas::get($coddivisa)->simbolo;
         $currencyPosition = self::settings('default', 'currency_position', 'right');
         return $currencyPosition === 'right' ?
-            self::number($number) . ' ' . $symbol :
-            $symbol . ' ' . self::number($number);
+            self::number($number, $decimals) . ' ' . $symbol :
+            $symbol . ' ' . self::number($number, $decimals);
     }
 
     public static function noHtml(?string $text): ?string

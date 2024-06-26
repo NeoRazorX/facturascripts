@@ -258,6 +258,8 @@ final class ToolsTest extends TestCase
         $this->assertEquals('-1.23 €', Tools::money(-1.23));
         $this->assertEquals('-1.23 €', Tools::money(-1.234));
         $this->assertEquals('-1 234.56 €', Tools::money(-1234.56));
+        $this->assertEquals('-1 234.4 €', Tools::money(-1234.40, '', 1));
+        $this->assertEquals('-1 234 €', Tools::money(-1234.40, '', 0));
 
         // probamos con otra divisa
         $this->assertEquals('1.23 ?', Tools::money(1.234, 'TES'));
