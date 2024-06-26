@@ -448,6 +448,7 @@ final class FacturaClienteTest extends TestCase
 
         // creamos la factura
         $invoice = new FacturaCliente();
+        $invoice->codpago = $company->getPaymentMethods()[0]->codpago;
         foreach ($company->getWarehouses() as $warehouse) {
             $invoice->setWarehouse($warehouse->codalmacen);
             break;
@@ -805,6 +806,7 @@ final class FacturaClienteTest extends TestCase
 
         // creamos una factura
         $invoice = new FacturaCliente();
+        $invoice->codpago = $company->getPaymentMethods()[0]->codpago;
         foreach ($company->getWarehouses() as $warehouse) {
             $invoice->setWarehouse($warehouse->codalmacen);
             break;

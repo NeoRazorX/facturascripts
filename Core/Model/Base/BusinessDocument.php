@@ -443,6 +443,14 @@ abstract class BusinessDocument extends ModelOnChangeClass
             return false;
         }
 
+        // check paymethod
+        $idCompanyPaymentMethod = $this->getPaymentMethod()->idempresa;
+        $idCompanyWhareHouse = (new Almacen())->get($this->codalmacen)->idempresa;
+        if($idCompanyPaymentMethod != $idCompanyWhareHouse){
+            Tools::log()->error('bad-paymentmethod-error');
+            return false;
+        }
+
         /**
          * We use the euro as a bridge currency when adding, compare
          * or convert amounts in several currencies. For this reason we need
