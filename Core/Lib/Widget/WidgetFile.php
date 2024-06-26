@@ -97,7 +97,11 @@ class WidgetFile extends BaseWidget
 
             // check if the file already exists
             $destiny = FS_FOLDER . '/MyFiles/';
-            $destinyName = $uploadFile->getClientOriginalName();
+
+            $filename = Tools::slug(pathinfo($uploadFile->getClientOriginalName(), PATHINFO_FILENAME), '_');
+            $extension = pathinfo($uploadFile->getClientOriginalName(), PATHINFO_EXTENSION);
+            $destinyName = $filename . '.' . $extension;
+
             if (file_exists($destiny . $destinyName)) {
                 $destinyName = mt_rand(1, 999999) . '_' . $destinyName;
             }
