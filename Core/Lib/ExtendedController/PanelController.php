@@ -294,6 +294,11 @@ abstract class PanelController extends BaseController
                 $results = $this->widgetVarianteSearchAction();
                 $this->response->setContent(json_encode($results));
                 break;
+            case 'widget-subcuenta-search':
+                $this->setTemplate(false);
+                $results = $this->widgetSubcuentaSearchAction();
+                $this->response->setContent($results);
+                break;
         }
     }
 
@@ -490,5 +495,32 @@ abstract class PanelController extends BaseController
             ];
         }
         return $results;
+    }
+
+    protected function widgetSubcuentaSearchAction(): string {
+        // localizamos la pestaña y el nombre de la columna
+        $activeTab = $this->request->request->get('active_tab', '');
+        $colName = $this->request->request->get('col_name', '');
+
+        // si está vacío, no hacemos nada
+        if (empty($activeTab) || empty($colName)) {
+            return [];
+        }
+
+        // buscamos la columna
+        $column = $this->tab($activeTab)->columnForField($colName);
+        $prueba = $column->widget->getType();
+        if (empty($column) || $column->widget->getType() !== 'Subcuenta') {
+            return [];
+        }
+
+        $subcuentasHtml = $column->widget->subcuentas(
+                $this->request->request->get('query', ''),
+                $this->request->request->get('codejercicio', ''),
+                $this->request->request->get('sort', '')
+        );
+
+        
+        return $subcuentasHtml;
     }
 }
