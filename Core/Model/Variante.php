@@ -339,8 +339,7 @@ class Variante extends Base\ModelClass
         $this->margen = $this->margen ?: 0.0;
 
         if ($this->margen > 0) {
-            $newPrice = $this->coste * (100 + $this->margen) / 100;
-            $this->precio = round($newPrice, DinProducto::ROUND_DECIMALS);
+            $this->precio = $this->getPriceAccordingCalculationMethod();
         }
 
         if (parent::save()) {
@@ -420,5 +419,22 @@ class Variante extends Base\ModelClass
         }
 
         return true;
+    }
+
+    private function getPriceAccordingCalculationMethod()
+    {
+        $calculationMethod = Tools::settings('default', 'price-calculation-method');
+
+        switch ($calculationMethod) {
+            case 'sales-margin':
+                $newPrice = $this->coste / (1 - $this->margen / 100);
+                break;
+            default:
+                // cost-margin
+                $newPrice = $this->coste * (100 + $this->margen) / 100;
+                break;
+        }
+
+        return round($newPrice, DinProducto::ROUND_DECIMALS);
     }
 }

@@ -307,6 +307,12 @@ class EditSettings extends PanelController
             case 'SettingsDefault':
                 $code = $this->getKeyFromViewName($viewName);
                 $view->loadData($code);
+                // si no esta guardado ningun metodo de calculo del margen, 
+                // aplicamos por defecto margen sobre coste.
+                // esto asegura la retrocompatibilidad
+                if(empty($view->model->properties['price-calculation-method'])){
+                    $view->model->properties['price-calculation-method'] = 'cost-margin';
+                }
                 if ($view->model instanceof Settings && empty($view->model->name)) {
                     $view->model->name = $code;
                 }

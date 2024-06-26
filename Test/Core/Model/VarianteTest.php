@@ -23,6 +23,7 @@ use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\Atributo;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Variante;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -153,6 +154,42 @@ final class VarianteTest extends TestCase
         $this->assertTrue($producto->delete());
         $this->assertTrue($attribute->delete());
         $this->assertTrue($attribute2->delete());
+    }
+
+    public function testPriceCalculationMethod()
+    {
+        // creamos un producto
+        $producto = new Producto();
+        $this->assertTrue($producto->save());
+
+        // obtenemos la primera variante y le ponemos un coste y un margen
+        $variante = $producto->getVariants()[0];
+
+        $variante->coste = 100;
+        $variante->margen = 20;
+        $variante->save();
+        $this->assertEquals(120, $variante->precio);
+
+        $variante->coste = 50;
+        $variante->margen = 10;
+        $variante->save();
+        $this->assertEquals(55, $variante->precio);
+
+        // cambiamos el metodo de calcular el precio
+        Tools::settingsSet('default', 'price-calculation-method', 'sales-margin');
+
+        $variante->coste = 100;
+        $variante->margen = 20;
+        $variante->save();
+        $this->assertEquals(125, $variante->precio);
+
+        $variante->coste = 50;
+        $variante->margen = 10;
+        $variante->save();
+        $this->assertEquals(55.55556, $variante->precio);
+
+        // eliminamos el producto
+        $this->assertTrue($producto->delete());
     }
 
     protected function tearDown(): void
