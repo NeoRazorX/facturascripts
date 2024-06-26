@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,10 +31,11 @@ use Symfony\Component\HttpFoundation\Request;
 class WidgetFile extends BaseWidget
 {
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $accept;
+
+    /** @var bool */
+    public $multiple;
 
     /**
      * @param array $data
@@ -43,6 +44,7 @@ class WidgetFile extends BaseWidget
     {
         parent::__construct($data);
         $this->accept = $data['accept'] ?? '';
+        $this->multiple =  isset($data['multiple']) && $data['multiple'] == true;
     }
 
     /**
@@ -131,6 +133,12 @@ class WidgetFile extends BaseWidget
     protected function inputHtml($type = 'file', $extraClass = '')
     {
         $class = empty($extraClass) ? $this->css('form-control-file') : $this->css('form-control-file') . ' ' . $extraClass;
+
+        if ($this->multiple) {
+            return '<input type="' . $type . '" name="' . $this->fieldname . '[]" value="' . $this->value
+                . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . ' multiple/>';
+        }
+
         return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
