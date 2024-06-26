@@ -78,8 +78,7 @@ class ListProducto extends ListController
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
         $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
 
-        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
-        $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
+        $this->addFilterTree($viewName, 'codfamilia', 'family', 'codfamilia', 'familias', 'madre', 'codfamilia', 'descripcion');
 
         $types = [['code' => '', 'description' => '------']];
         foreach (ProductType::all() as $key => $value) {
