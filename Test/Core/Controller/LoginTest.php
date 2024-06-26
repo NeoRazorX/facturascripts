@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -19,130 +19,126 @@
 
 namespace FacturaScripts\Test\Core\Controller;
 
-use FacturaScripts\Core\Controller\Login;
+use FacturaScripts\Core\Lib\Incident;
 use PHPUnit\Framework\TestCase;
 
 final class LoginTest extends TestCase
 {
+    /** @var Incident */
+    private $incident;
+
+    protected function setUp(): void
+    {
+        $this->incident = new Incident();
+    }
+
     public function testBlockIP(): void
     {
-        // inicializamos el controlador
-        $controller = new Login('Login', '/login');
-
         // bloqueamos la IP 5 veces y comprobamos que no se bloquea
         $ip = $this->getRandomIp();
         for ($i = 0; $i < 5; $i++) {
-            $controller->saveIncident($ip);
-            $this->assertFalse($controller->userHasManyIncidents($ip));
+            $this->incident->saveIncident($ip);
+            $this->assertFalse($this->incident->userHasManyIncidents($ip));
         }
 
         // bloqueamos la IP por sexta vez y comprobamos que se bloquea
-        $controller->saveIncident($ip);
-        $this->assertTrue($controller->userHasManyIncidents($ip));
+        $this->incident->saveIncident($ip);
+        $this->assertTrue($this->incident->userHasManyIncidents($ip));
 
         // bloqueamos la IP por séptima vez y comprobamos que se bloquea
-        $controller->saveIncident($ip);
-        $this->assertTrue($controller->userHasManyIncidents($ip));
+        $this->incident->saveIncident($ip);
+        $this->assertTrue($this->incident->userHasManyIncidents($ip));
 
         // limpiamos la lista de IP bloqueadas
-        $controller->clearIncidents();
+        $this->incident->clearIncidents();
 
         // comprobamos que la IP ya no está bloqueada
-        $this->assertFalse($controller->userHasManyIncidents($ip));
+        $this->assertFalse($this->incident->userHasManyIncidents($ip));
     }
 
     public function testBlockIPExpired(): void
     {
-        // inicializamos el controlador
-        $controller = new Login('Login', '/login');
-
         // bloqueamos la IP 10 veces cpn fecha de hace 2 horas y comprobamos que no se bloquea
         $ip = $this->getRandomIp();
         for ($i = 0; $i < 10; $i++) {
-            $controller->saveIncident($ip, '', strtotime('-2 hours'));
-            $this->assertFalse($controller->userHasManyIncidents($ip));
+            $this->incident->saveIncident($ip, '', strtotime('-2 hours'));
+            $this->assertFalse($this->incident->userHasManyIncidents($ip));
         }
 
         // bloqueamos la IP 5 veces más, con fecha actual, y comprobamos que no se bloquea
         for ($i = 0; $i < 5; $i++) {
-            $controller->saveIncident($ip);
-            $this->assertFalse($controller->userHasManyIncidents($ip));
+            $this->incident->saveIncident($ip);
+            $this->assertFalse($this->incident->userHasManyIncidents($ip));
         }
 
         // bloqueamos la IP una vez más, con fecha actual, y comprobamos que se bloquea
-        $controller->saveIncident($ip);
-        $this->assertTrue($controller->userHasManyIncidents($ip));
+        $this->incident->saveIncident($ip);
+        $this->assertTrue($this->incident->userHasManyIncidents($ip));
 
         // limpiamos la lista de IP bloqueadas
-        $controller->clearIncidents();
+        $this->incident->clearIncidents();
 
         // comprobamos que la IP ya no está bloqueada
-        $this->assertFalse($controller->userHasManyIncidents($ip));
+        $this->assertFalse($this->incident->userHasManyIncidents($ip));
     }
 
     public function testBlockUser(): void
     {
-        // inicializamos el controlador
-        $controller = new Login('Login', '/login');
-
         // bloqueamos el usuario 5 veces, con IPs distintas y comprobamos que no se bloquea
         $user = 'user1';
         for ($i = 0; $i < 5; $i++) {
             $ip = $this->getRandomIp();
-            $controller->saveIncident($ip, $user);
-            $this->assertFalse($controller->userHasManyIncidents($ip, $user));
+            $this->incident->saveIncident($ip, $user);
+            $this->assertFalse($this->incident->userHasManyIncidents($ip, $user));
         }
 
         // bloqueamos el usuario por sexta vez, con IPs distintas, y comprobamos que se bloquea
         $ip = $this->getRandomIp();
-        $controller->saveIncident($ip, $user);
-        $this->assertTrue($controller->userHasManyIncidents($ip, $user));
+        $this->incident->saveIncident($ip, $user);
+        $this->assertTrue($this->incident->userHasManyIncidents($ip, $user));
 
         // bloqueamos el usuario por séptima vez, con IPs distintas, y comprobamos que se bloquea
         $ip = $this->getRandomIp();
-        $controller->saveIncident($ip, $user);
+        $this->incident->saveIncident($ip, $user);
 
         // limpiamos la lista de IP bloqueadas
-        $controller->clearIncidents();
+        $this->incident->clearIncidents();
 
         // comprobamos que el usuario ya no está bloqueado
-        $this->assertFalse($controller->userHasManyIncidents($ip, $user));
+        $this->assertFalse($this->incident->userHasManyIncidents($ip, $user));
     }
 
     public function testBlockUserExpired(): void
     {
-        // inicializamos el controlador
-        $controller = new Login('Login', '/login');
-
         // bloqueamos el usuario 10 veces, con IPs distintas, con fecha de hace 2 horas y comprobamos que no se bloquea
         $user = 'user2';
         for ($i = 0; $i < 10; $i++) {
             $ip = $this->getRandomIp();
-            $controller->saveIncident($ip, $user, strtotime('-2 hours'));
-            $this->assertFalse($controller->userHasManyIncidents($ip, $user));
+            $this->incident->saveIncident($ip, $user, strtotime('-2 hours'));
+            $this->assertFalse($this->incident->userHasManyIncidents($ip, $user));
         }
 
         // bloqueamos el usuario 5 veces más, con IPs distintas, con fecha actual, y comprobamos que no se bloquea
         for ($i = 0; $i < 5; $i++) {
             $ip = $this->getRandomIp();
-            $controller->saveIncident($ip, $user);
-            $this->assertFalse($controller->userHasManyIncidents($ip, $user));
+            $this->incident->saveIncident($ip, $user);
+            $this->assertFalse($this->incident->userHasManyIncidents($ip, $user));
         }
 
         // bloqueamos el usuario una vez más, con IPs distintas, con fecha actual, y comprobamos que se bloquea
         $ip = $this->getRandomIp();
-        $controller->saveIncident($ip, $user);
-        $this->assertTrue($controller->userHasManyIncidents($ip, $user));
+        $this->incident->saveIncident($ip, $user);
+        $this->assertTrue($this->incident->userHasManyIncidents($ip, $user));
 
         // limpiamos la lista de IP bloqueadas
-        $controller->clearIncidents();
+        $this->incident->clearIncidents();
 
         // comprobamos que el usuario ya no está bloqueado
-        $this->assertFalse($controller->userHasManyIncidents($ip, $user));
+        $this->assertFalse($this->incident->userHasManyIncidents($ip, $user));
     }
 
     private function getRandomIp(): string
     {
-        return rand(1, 255) . '.' . rand(1, 255) . '.' . rand(1, 255) . '.' . rand(1, 255);
+        return random_int(1, 255) . '.' . random_int(1, 255) . '.' . random_int(1, 255) . '.' . random_int(1, 255);
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Lib\Incident;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
@@ -32,25 +32,18 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Login implements ControllerInterface
 {
-    const INCIDENT_EXPIRATION_TIME = 600;
-    const IP_LIST = 'login-ip-list';
-    const MAX_INCIDENT_COUNT = 6;
-    const USER_LIST = 'login-user-list';
-
     /** @var Empresa */
     public $empresa;
 
     /** @var string */
     public $title = 'Login';
 
+    /** @var Incident */
+    private $incident;
+
     public function __construct(string $className, string $url = '')
     {
-    }
-
-    public function clearIncidents(): void
-    {
-        Cache::delete(self::IP_LIST);
-        Cache::delete(self::USER_LIST);
+        $this->incident = new Incident();
     }
 
     public function getPageData(): array
@@ -88,57 +81,6 @@ class Login implements ControllerInterface
         ]);
     }
 
-    public function saveIncident(string $ip, string $user = '', ?int $time = null): void
-    {
-        // add the current IP to the list
-        $ipList = $this->getIpList();
-        $ipList[] = [
-            'ip' => $ip,
-            'time' => ($time ?? time())
-        ];
-
-        // save the list in cache
-        Cache::set(self::IP_LIST, $ipList);
-
-        // if the user is not empty, save the incident
-        if (empty($user)) {
-            return;
-        }
-
-        // add the current user to the list
-        $userList = $this->getUserList();
-        $userList[] = [
-            'user' => $user,
-            'time' => ($time ?? time())
-        ];
-
-        // save the list in cache
-        Cache::set(self::USER_LIST, $userList);
-    }
-
-    public function userHasManyIncidents(string $ip, string $username = ''): bool
-    {
-        // get ip count on the list
-        $ipCount = 0;
-        foreach ($this->getIpList() as $item) {
-            if ($item['ip'] === $ip) {
-                $ipCount++;
-            }
-        }
-        if ($ipCount >= self::MAX_INCIDENT_COUNT) {
-            return true;
-        }
-
-        // get user count on the list
-        $userCount = 0;
-        foreach ($this->getUserList() as $item) {
-            if ($item['user'] === $username) {
-                $userCount++;
-            }
-        }
-        return $userCount >= self::MAX_INCIDENT_COUNT;
-    }
-
     private function changePasswordAction(Request $request): void
     {
         if (false === $this->validateFormToken($request)) {
@@ -146,7 +88,7 @@ class Login implements ControllerInterface
         }
 
         $username = $request->request->get('fsNewUserPasswd');
-        if ($this->userHasManyIncidents(Session::getClientIp(), $username)) {
+        if ($this->incident->userHasManyIncidents(Session::getClientIp(), $username)) {
             Tools::log()->warning('ip-banned');
             return;
         }
@@ -154,7 +96,7 @@ class Login implements ControllerInterface
         $dbPassword = $request->request->get('fsDbPasswd');
         if ($dbPassword !== Tools::config('db_pass')) {
             Tools::log()->warning('login-invalid-db-password');
-            $this->saveIncident(Session::getClientIp(), $username);
+            $this->incident->saveIncident(Session::getClientIp(), $username);
             return;
         }
 
@@ -173,7 +115,7 @@ class Login implements ControllerInterface
         $user = new User();
         if (false === $user->loadFromCode($username)) {
             Tools::log()->warning('login-user-not-found');
-            $this->saveIncident(Session::getClientIp(), $username);
+            $this->incident->saveIncident(Session::getClientIp(), $username);
             return;
         }
 
@@ -185,7 +127,7 @@ class Login implements ControllerInterface
         $user->setPassword($password);
         if (false === $user->save()) {
             Tools::log()->warning('login-user-not-saved');
-            $this->saveIncident(Session::getClientIp(), $username);
+            $this->incident->saveIncident(Session::getClientIp(), $username);
             return;
         }
 
@@ -219,40 +161,6 @@ class Login implements ControllerInterface
         return true;
     }
 
-    private function getIpList(): array
-    {
-        $ipList = Cache::get(self::IP_LIST);
-        if (false === is_array($ipList)) {
-            return [];
-        }
-
-        // remove expired items
-        $newList = [];
-        foreach ($ipList as $item) {
-            if (time() - $item['time'] < self::INCIDENT_EXPIRATION_TIME) {
-                $newList[] = $item;
-            }
-        }
-        return $newList;
-    }
-
-    private function getUserList(): array
-    {
-        $userList = Cache::get(self::USER_LIST);
-        if (false === is_array($userList)) {
-            return [];
-        }
-
-        // remove expired items
-        $newList = [];
-        foreach ($userList as $item) {
-            if (time() - $item['time'] < self::INCIDENT_EXPIRATION_TIME) {
-                $newList[] = $item;
-            }
-        }
-        return $newList;
-    }
-
     private function loginAction(Request $request): void
     {
         if (false === $this->validateFormToken($request)) {
@@ -267,7 +175,7 @@ class Login implements ControllerInterface
         }
 
         // check if the user is in the incident list
-        if ($this->userHasManyIncidents(Session::getClientIp(), $userName)) {
+        if ($this->incident->userHasManyIncidents(Session::getClientIp(), $userName)) {
             Tools::log()->warning('ip-banned');
             return;
         }
@@ -275,7 +183,7 @@ class Login implements ControllerInterface
         $user = new User();
         if (false === $user->loadFromCode($userName)) {
             Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($userName)]);
-            $this->saveIncident(Session::getClientIp());
+            $this->incident->saveIncident(Session::getClientIp());
             return;
         }
 
@@ -286,7 +194,7 @@ class Login implements ControllerInterface
 
         if (false === $user->verifyPassword($password)) {
             Tools::log()->warning('login-password-fail');
-            $this->saveIncident(Session::getClientIp(), $userName);
+            $this->incident->saveIncident(Session::getClientIp(), $userName);
             return;
         }
 
