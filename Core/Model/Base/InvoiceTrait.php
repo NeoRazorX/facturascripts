@@ -201,6 +201,13 @@ trait InvoiceTrait
                     }
                 }
             // no break
+            case 'codserie':
+                // update receipts
+                foreach ($this->getReceipts() as $receipt) {
+                    $receipt->codigofactura = $this->codigo;
+                    $receipt->save();
+                }
+            // no break
             case 'fecha':
                 if (false === $this->testDate()) {
                     return false;
