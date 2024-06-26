@@ -640,6 +640,71 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 
+    public function testUpdateInvoiceOtherSerieWithInvoice()
+    {
+        // creamos unas series
+        $serie1 = $this->getRandomSerie();
+        $this->assertTrue($serie1->save(), 'cant-create-serie');
+        $serie2 = $this->getRandomSerie();
+        $this->assertTrue($serie2->save(), 'cant-create-serie');
+
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos una factura el 10 de enero
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->setDate(date('10-01-Y'), $invoice->hora);
+        $invoice->codserie = $serie1->codserie;
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // añadimos una línea
+        $firstLine = $invoice->getNewLine();
+        $firstLine->cantidad = 1;
+        $firstLine->pvpunitario = 200;
+        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // creamos una factura el 1 de enero
+        $invoice2 = new FacturaCliente();
+        $invoice2->setSubject($customer);
+        $invoice2->setDate(date('01-01-Y'), $invoice2->hora);
+        $invoice2->codserie = $serie2->codserie;
+        $this->assertTrue($invoice2->save(), 'cant-create-invoice');
+
+        // añadimos una línea
+        $firstLine = $invoice2->getNewLine();
+        $firstLine->cantidad = 1;
+        $firstLine->pvpunitario = 200;
+        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
+
+        // recalculamos
+        $lines = $invoice2->getLines();
+        $this->assertTrue(Calculator::calculate($invoice2, $lines, true), 'cant-update-invoice');
+
+        // cambiamos la serie de la factura 2 por la serie de la factura 1
+        $invoice2->codserie = $invoice->codserie;
+        $this->assertTrue($invoice2->save(), 'cant-update-invoice');
+
+        // recargamos la factura 2
+        $invoice2->loadFromCode($invoice2->idfactura);
+
+        // comprobamos que la fecha de la factura 2 es la misma que la de la factura 1
+        $this->assertEquals($invoice->fecha, $invoice2->fecha, 'bad-invoice-date');
+
+        // eliminamos
+        $this->assertTrue($invoice2->delete(), 'cant-delete-invoice');
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($serie1->delete(), 'cant-delete-serie');
+        $this->assertTrue($serie2->delete(), 'cant-delete-serie');
+    }
+
     public function testInvoiceWithDifferentAccountingDate(): void
     {
         // creamos un cliente
