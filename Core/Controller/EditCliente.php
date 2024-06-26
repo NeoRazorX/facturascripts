@@ -174,7 +174,7 @@ class EditCliente extends ComercialContactController
         $returnUrl = $this->request->query->get('return');
         if (!empty($returnUrl)) {
             $model = $this->views[$this->active]->model;
-            $this->redirect($returnUrl . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+            $this->redirect(Tools::urlAddParams($returnUrl, [$model::primaryColumn() => $model->primaryColumnValue()]));
         }
 
         return true;

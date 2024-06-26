@@ -85,10 +85,16 @@ abstract class SalesController extends PanelController
      */
     public function renderSalesForm(SalesDocument $model, array $lines): string
     {
+        $url = $this->url();
+
+        if($model->primaryColumnValue()){
+            $url = Tools::urlAddParams($url, ['code' => $model->primaryColumnValue()]);
+        }
+
         return '<div id="salesFormHeader">' . SalesHeaderHTML::render($model) . '</div>'
             . '<div id="salesFormLines">' . SalesLineHTML::render($lines, $model) . '</div>'
             . '<div id="salesFormFooter">' . SalesFooterHTML::render($model) . '</div>'
-            . SalesModalHTML::render($model, $this->url(), $this->user, $this->permissions);
+            . SalesModalHTML::render($model, $url, $this->user, $this->permissions);
     }
 
     public function series(string $type = ''): array
@@ -320,6 +326,12 @@ abstract class SalesController extends PanelController
 
                 // data not found?
                 $view->loadData($code);
+                if($this->request->query->has(Cliente::primaryColumn())){
+                    $cliente = new Cliente();
+                    $cliente->loadFromCode($this->request->query->get(Cliente::primaryColumn()));
+                    $view->model->setSubject($cliente);
+                    $view->model->save();
+                }
                 $action = $this->request->request->get('action', '');
                 if ('' === $action && empty($view->model->primaryColumnValue())) {
                     Tools::log()->warning('record-not-found');
