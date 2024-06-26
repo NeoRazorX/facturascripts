@@ -38,256 +38,88 @@
                         {% endif %}
                         <span class="ml-2">{{ fsc.title }}</span>
                     </h1>
+                    <div class="sections-select text-right">
+                        {% if fsc.sections is not empty %}
+                            <form action="{{ fsc.url }}" method="POST" onsubmit="animateSpinner('add')">
+                                <input type="hidden" name="action" value="update-visibility-sections">
+                                {% for sectionName, section in fsc.sections %}
+                                    {% if not section.readonly %}
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox{{ sectionName }}" name="sections[]" value="{{ sectionName }}" {{ section.visible ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="inlineCheckbox{{ sectionName }}">{{ trans(section.title) }}</label>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                                <button type="submit" class="btn btn-sm btn-success">{{ trans('save') }}</button>
+                            </form>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="container" style="margin-top: -40px;">
-        {% block sectionLinks %}
-            <div class="row">
-                <div class="col">
-                    {{ _self.sectionLinks(fsc) }}
-                </div>
-            </div>
-        {% endblock %}
-        {% if fsc.showBackupWarning() %}
-            <div class="row">
-                <div class="col">
-                    <div class="card bg-warning shadow mb-3">
-                        <div class="card-body">
-                            <h2 class="h3">
-                                <i class="fas fa-save"></i> {{ trans('dashboard-backup') }}
-                            </h2>
-                            <p class="card-text">{{ trans('dashboard-backup-p') }}</p>
-                            <ul class="mb-0">
-                                <li>{{ trans('dasboard-backup-li1') }}</li>
-                                <li>{{ trans('dasboard-backup-li2') }}</li>
-                                <li>{{ trans('dasboard-backup-li3') }}</li>
-                            </ul>
-                        </div>
-                        <div class="card-footer">
-                            <a href="https://facturascripts.com/plugins/backup" target="_blank" rel="nofollow"
-                               class="btn btn-secondary"> Backup
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-        {% block sectionStats %}
-            {{ _self.sectionStats(fsc) }}
-        {% endblock %}
-        {% block sections %}
-            <div class="row">
-                <div class="col">
-                    {% if 'receipts' in fsc.sections %}
-                        {{ _self.sectionReceipts(fsc) }}
+    <div class="container d-flex flex-column" style="margin-top: -40px;">
+
+        {% for sectionName, section in fsc.sections %}
+            {% if section.visible %}
+                <!-- start block {{ sectionName }} -->
+                <div class="order-{{ section.order }}">
+
+                    {% if fsc.sections|filter(v => v.visible == "true")|length > 1 %}
+                        {{ _self.selectOrder(fsc, sectionName, section) }}
                     {% endif %}
-                    {% if 'low-stock' in fsc.sections %}
-                        {{ _self.sectionLowStock(fsc) }}
+
+                    {% if block(sectionName) is defined %}
+                        {{ block(sectionName)|raw }}
+                    {% else %}
+                        {% include 'Dashboard/' ~ sectionName ~ '.html.twig' %}
                     {% endif %}
                 </div>
-            </div>
-            {{ _self.sectionNews(fsc) }}
-        {% endblock %}
+                <!-- end block {{ sectionName }} -->
+            {% endif %}
+        {% endfor %}
+
     </div>
 {% endblock %}
 
-{% macro drawStatsBox(fsc, group, color, ismoney) %}
-    <div class="card shadow mb-3">
-        <div class="card-body p-2 text-white {{ color }}">
-            <h2 class="h5 text-center mb-0">
-                {{ trans(group) }}
-            </h2>
-        </div>
-        <div class="table-responsive">
-            <table class="table mb-0">
-                {% for key, value in fsc.stats[group] %}
-                    <tr>
-                        <td>{{ trans(key) }}</td>
-                        {% set color = value < 0 ? ' text-danger' : '' %}
-                        {% if ismoney %}
-                            <td class="text-right{{ color }}">{{ money(value) }}</td>
-                        {% else %}
-                            <td class="text-right">{{ value }}</td>
-                        {% endif %}
-                    </tr>
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function changeOrder(element, prevSection){
+            const originSection = prevSection;
+            const targetSection = element.value;
+
+            const url = window.location.href;
+            $.ajax({
+                method: "POST",
+                url,
+                data: {
+                    'action': 'update-order-sections',
+                    targetSection,
+                    originSection
+                },
+                dataType: "json",
+                success: function () {
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
+{% endblock %}
+
+{% macro selectOrder(fsc, sectionName, section) %}
+    <div class="col-2 offset-10 pr-0">
+        <div class="form-group m-0">
+            <select class="form-control form-control-sm" name="order-select-input-{{ sectionName }}" id="order-select-input-{{ sectionName }}" onchange="changeOrder(this, '{{ sectionName }}')">
+                <option value="null">{{ trans('select') }}</option>
+                {% for sectionNameForOptions, sectionForOptions in fsc.sections %}
+                    {% if sectionForOptions.visible %}
+                        <option value="{{ sectionNameForOptions }}">
+                            {{ sectionForOptions.order }} .- {{ trans(sectionForOptions.title) }} {{ (sectionForOptions.order is same as section.order) ? "("~trans('current')~")" : '' }}
+                        </option>
+                    {% endif %}
                 {% endfor %}
-            </table>
-        </div>
-    </div>
-{% endmacro %}
-
-{% macro sectionLinks(fsc) %}
-    <div class="card shadow mb-3">
-        <div class="pl-3 pt-1 pr-3 pb-3">
-            <div class="form-row">
-                <div class="col-md">
-                    <h2 class="h4 mt-3 mb-1">
-                        <i class="fas fa-plus fa-fw"></i> {{ trans('create') }}
-                    </h2>
-                    <ul class="mb-1">
-                        {% for link, label in fsc.createLinks %}
-                            <li>
-                                <a href="{{ link }}">{{ trans(label) }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% if fsc.openLinks %}
-                    <div class="col-md">
-                        <h2 class="h4 mt-3 mb-1">
-                            <i class="fas fa-folder-open fa-fw"></i> {{ trans('open') }}
-                        </h2>
-                        <ul class="mb-1">
-                            {% for link in fsc.openLinks %}
-                                <li>
-                                    {{ trans(link.type) }}
-                                    <a href="{{ link.url }}">{{ link.name }}</a>
-                                    <span class="text-muted">{{ link.date }}</span>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-                <div class="col-md">
-                    <h2 class="h4 mt-3 mb-1">
-                        <i class="fas fa-question-circle fa-fw"></i> {{ trans('help') }}
-                    </h2>
-                    <ul class="mb-1">
-                        <li>
-                            <a href="https://facturascripts.com/publicaciones/configuracion-15" rel="nofollow"
-                               target="_blank">Configuración</a>
-                        </li>
-                        <li>
-                            <a href="https://facturascripts.com/publicaciones/primeros-pasos-303" rel="nofollow"
-                               target="_blank">Primeros pasos</a>
-                        </li>
-                        <li>
-                            <a href="https://facturascripts.com/publicaciones/problemas-frecuentes-469" rel="nofollow"
-                               target="_blank">Problemas frecuentes</a>
-                        </li>
-                        <li>
-                            <a href="https://forms.gle/WhGgWWB6EbWjBNna6" rel="nofollow"
-                               target="_blank">Encuesta de uso 2022/23
-                                <i class="fas fa-clipboard-check"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://facturascripts.com/contacto" rel="nofollow" target="_blank">Soporte
-                                <i class="far fa-comment-dots"></i></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endmacro %}
-
-{% macro sectionLowStock(fsc) %}
-    <div class="card shadow mb-3">
-        <div class="p-3">
-            <h2 class="h4 mb-0">
-                <i class="fas fa-pallet fa-fw"></i> {{ trans('minimum-stock') }}
-            </h2>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-sm table-hover mb-0">
-                <thead>
-                <tr>
-                    <th>{{ trans('reference') }}</th>
-                    <th>{{ trans('warehouse') }}</th>
-                    <th class="text-right">{{ trans('minimum-stock') }}</th>
-                    <th class="text-right">{{ trans('available') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for stock in fsc.lowStock %}
-                    <tr class="clickableRow table-danger" data-href="{{ stock.url() }}">
-                        <td>{{ stock.referencia }}</td>
-                        <td>{{ stock.codalmacen }}</td>
-                        <td class="text-right">{{ number(stock.stockmin) }}</td>
-                        <td class="text-right">{{ number(stock.disponible) }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-{% endmacro %}
-
-{% macro sectionNews(fsc) %}
-    {% for news in fsc.news %}
-        <div class="row">
-            <div class="col">
-                <div class="card shadow mb-3">
-                    <div class="card-header">
-                        <span class="float-right">{{ news.fecha }}</span>
-                        <a href="{{ news.url }}" target="_blank">{{ news.title | raw }}</a>
-                    </div>
-                    <div class="card-body p-3">
-                        <div class="form-row align-items-center">
-                            <div class="col-auto">
-                                <a href="{{ news.url }}" target="_blank" class="btn btn-outline-secondary">
-                                    <i class="far fa-newspaper fa-3x"></i>
-                                </a>
-                            </div>
-                            <div class="col">{{ news.body | raw }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-{% endmacro %}
-
-{% macro sectionReceipts(fsc) %}
-    <div class="card shadow mb-3">
-        <div class="p-3">
-            <span class="float-right badge badge-danger">{{ trans('unpaid') }}</span>
-            <h2 class="h4 mb-0">
-                <i class="fas fa-dollar-sign fa-fw"></i>
-                {{ trans('receipts') }}
-            </h2>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-sm table-hover mb-0">
-                <thead>
-                <tr>
-                    <th>{{ trans('customer') }}</th>
-                    <th>{{ trans('observations') }}</th>
-                    <th class="text-right">{{ trans('amount') }}</th>
-                    <th class="text-right">{{ trans('expiration') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for receipt in fsc.receipts %}
-                    <tr class="clickableRow table-danger" data-href="{{ receipt.url() }}">
-                        <td>{{ receipt.getSubject().nombre | raw }}</td>
-                        <td>{{ receipt.observaciones | raw }}</td>
-                        <td class="text-right text-nowrap">{{ money(receipt.importe) }}</td>
-                        <td class="text-right text-nowrap">{{ receipt.vencimiento }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-{% endmacro %}
-
-{% macro sectionStats(fsc) %}
-    <div class="form-row">
-        <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, 'purchases', 'bg-danger', true) }}
-        </div>
-        <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, 'sales', 'bg-success', true) }}
-        </div>
-        <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, 'taxes', 'bg-warning', true) }}
-        </div>
-        <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, 'new-customers', 'bg-info', false) }}
+            </select>
         </div>
     </div>
 {% endmacro %}
