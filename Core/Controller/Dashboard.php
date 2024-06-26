@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
+use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
@@ -106,6 +107,11 @@ class Dashboard extends Controller
         }
 
         return false;
+    }
+
+    public function showUpdateWarning(): bool
+    {
+        return Forja::canUpdateCore();
     }
 
     /**

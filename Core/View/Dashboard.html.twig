@@ -50,6 +50,30 @@
                 </div>
             </div>
         {% endblock %}
+        {% if fsc.showUpdateWarning() %}
+            <div class="row">
+                <div class="col">
+                    <div class="card gradiente-animado shadow mb-3">
+                        <div class="card-body">
+                            <h2 class="h3">
+                                <i class="fas fa-cloud-arrow-down"></i> {{ trans('dashboard-core-update') }}
+                            </h2>
+                            <p>Es esencial mantener la aplicación actualizada para asegurar un funcionamiento óptimo y seguro. Las últimas actualizaciones no solo incluyen nuevas funcionalidades y mejoras en el rendimiento, sino que también corrigen varias vulnerabilidades críticas.</p>
+                            <p>Si no actualiza la aplicación, su información puede estar en riesgo debido a vulnerabilidades no corregidas.</p>
+                            <p>Las actualizaciones proporcionan mejoras continuas y soporte técnico prioritario.</p>
+                            <p>Un entorno seguro depende de tener la aplicación actualizada regularmente.</p>
+                            <p>Le animamos a proceder con la actualización de la aplicación lo antes posible para proteger su información y mantener un entorno seguro y eficiente.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ FS_ROUTE }}/Updater" rel="nofollow" class="btn btn-success">
+                                <i class="fas fa-rocket fa-fw" aria-hidden="true"></i>
+                                {{ trans('update') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
         {% if fsc.showBackupWarning() %}
             <div class="row">
                 <div class="col">
@@ -91,6 +115,18 @@
             {{ _self.sectionNews(fsc) }}
         {% endblock %}
     </div>
+    <style>
+        .gradiente-animado {
+            background: linear-gradient(120deg, #ffc107, #dc3545);
+            background-size: 400% 400%;
+            animation: animationBackground 2s ease infinite;
+        }
+        @keyframes animationBackground {
+            0%{background-position:0% 4%}
+            50%{background-position:100% 97%}
+            100%{background-position:0% 4%}
+        }
+    </style>
 {% endblock %}
 
 {% macro drawStatsBox(fsc, group, color, ismoney) %}
