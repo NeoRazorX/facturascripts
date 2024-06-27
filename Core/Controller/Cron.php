@@ -37,6 +37,8 @@ use FacturaScripts\Dinamic\Model\PedidoCliente;
 use FacturaScripts\Dinamic\Model\PedidoProveedor;
 use FacturaScripts\Dinamic\Model\PresupuestoCliente;
 use FacturaScripts\Dinamic\Model\PresupuestoProveedor;
+use FacturaScripts\Dinamic\Model\ReciboCliente;
+use FacturaScripts\Dinamic\Model\ReciboProveedor;
 use FacturaScripts\Dinamic\Model\WorkEvent;
 
 class Cron implements ControllerInterface
@@ -190,6 +192,12 @@ END;
                 $this->removeOldLogs();
                 $this->removeOldWorkEvents();
             });
+
+        $this->job('update-receipts')
+            ->everyDayAt(2)
+            ->run(function () {
+                $this->updateReceipts();
+            });
     }
 
     protected function runPlugins(): void
@@ -269,6 +277,30 @@ END;
 
             $offset += $limit;
             $documents = $models[0]->all([], $orderBy, $offset, $limit);
+        }
+    }
+
+    protected function updateReceipts(): void
+    {
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('updating-receipts') . ' ... ';
+        ob_flush();
+
+        // recorremos todos los recibos de compra impagados con fecha anterior a hoy
+        $reciboProveedor = new ReciboProveedor();
+        $where = [
+            new DataBaseWhere('pagado', false),
+            new DataBaseWhere('vencimiento', Tools::date(), '<')
+        ];
+        foreach ($reciboProveedor->all($where, [], 0, 0) as $recibo) {
+            // guardamos para que se actualice
+            $recibo->save();
+        }
+
+        // recorremos todos los recibos de venta impagados con fecha anterior a hoy
+        $reciboCliente = new ReciboCliente();
+        foreach ($reciboCliente->all($where, [], 0, 0) as $recibo) {
+            // guardamos para que se actualice
+            $recibo->save();
         }
     }
 }
