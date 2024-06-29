@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,14 @@ use FacturaScripts\Dinamic\Model\User as DinUser;
  */
 final class Session
 {
+    const TOKEN_CACHE_KEY = 'session-tokens';
+    const TOKEN_MAX_AGE = 6;
+    const TOKEN_MAX_ITEMS = 500;
+
     private static $data = [];
+
+    /** @var string */
+    private static $seed = '';
 
     public static function get(string $key)
     {
@@ -52,6 +59,60 @@ final class Session
         self::$data[$key] = $value;
     }
 
+    public static function token(bool $anonymous = false): string
+    {
+        // something unique in each installation
+        $seed = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS;
+        $seed .= $anonymous ? 'anon' : self::$seed . self::getClientIp();
+
+        // something that changes every hour
+        $num = intval(date('YmdH'));
+
+        // combine and generate the token
+        $value = $seed . $num;
+        return sha1($value) . '|' . Tools::randomString(4);
+    }
+
+    public static function tokenExists(string $token): bool
+    {
+        $tokens = self::tokenUsed();
+        if (in_array($token, $tokens)) {
+            return true;
+        }
+
+        self::tokenSave($token);
+        return false;
+    }
+
+    public static function tokenValidate(string $token): bool
+    {
+        $tokenParts = explode('|', $token);
+        if (count($tokenParts) != 2) {
+            // invalid token format
+            // the random part can be incremented in javascript so there is no fixed length
+            return false;
+        }
+
+        // generate al possible valid tokens
+        $seed1 = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS . 'anon';
+        $seed2 = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS . self::$seed . self::getClientIp();
+        $num = intval(date('YmdH'));
+        $valid = [sha1($seed1 . $num), sha1($seed2 . $num)];
+        for ($hour = 1; $hour <= self::TOKEN_MAX_AGE; $hour++) {
+            $time = strtotime('-' . $hour . ' hours');
+            $altNum = intval(date('YmdH', $time));
+            $valid[] = sha1($seed1 . $altNum);
+            $valid[] = sha1($seed2 . $altNum);
+        }
+
+        return in_array($tokenParts[0], $valid);
+    }
+
+    public static function tokenSetSeed(string $seed): void
+    {
+        self::$seed = $seed;
+    }
+
     public static function user(): User
     {
         if (isset(self::$data['user']) && self::$data['user'] instanceof User) {
@@ -62,5 +123,26 @@ final class Session
         return class_exists('\\FacturaScripts\\Dinamic\\Model\\User') ?
             new DinUser() :
             new User();
+    }
+
+    private static function tokenUsed(): array
+    {
+        $values = Cache::get(self::TOKEN_CACHE_KEY);
+        $tokens = is_array($values) ? $values : [];
+        if (count($tokens) < self::TOKEN_MAX_ITEMS) {
+            return $tokens;
+        }
+
+        // reduce tokens
+        return array_slice($tokens, -10);
+    }
+
+    private static function tokenSave(string $token): void
+    {
+        $tokens = self::tokenUsed();
+
+        // save new token
+        $tokens[] = $token;
+        Cache::set(self::TOKEN_CACHE_KEY, $tokens);
     }
 }
