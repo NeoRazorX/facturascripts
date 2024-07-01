@@ -165,11 +165,16 @@ class ListProducto extends ListController
             ->addOrderBy(['stocks.reservada'], 'reserved')
             ->addOrderBy(['stocks.pterecibir'], 'pending-reception')
             ->addOrderBy(['productos.descripcion', 'stocks.referencia'], 'product')
-            ->addSearchFields(['stocks.referencia', 'productos.descripcion']);
+            ->addSearchFields(['stocks.referencia', 'stocks.ubicacion', 'productos.descripcion']);
 
         // filtros
-        $warehouses = Almacenes::codeModel();
-        $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
+        if (count(Almacenes::all()) > 1) {
+            $warehouses = Almacenes::codeModel();
+            $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
+        } else {
+            // ocultamos la columna de almacén si solo hay uno
+            $this->tab($viewName)->disableColumn('warehouse');
+        }
 
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
         $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'productos.codfabricante', $manufacturers);
