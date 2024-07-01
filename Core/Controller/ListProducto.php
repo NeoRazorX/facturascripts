@@ -72,6 +72,7 @@ class ListProducto extends ListController
             ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
             ['label' => $i18n->trans('blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
             ['label' => $i18n->trans('public'), 'where' => [new DataBaseWhere('publico', true)]],
+            ['label' => $i18n->trans('not-public'), 'where' => [new DataBaseWhere('publico', false)]],
             ['label' => $i18n->trans('all'), 'where' => []]
         ]);
 
@@ -112,7 +113,6 @@ class ListProducto extends ListController
         $this->addFilterCheckbox($viewName, 'ventasinstock', 'allow-sale-without-stock', 'ventasinstock');
         $this->addFilterCheckbox($viewName, 'secompra', 'for-purchase', 'secompra');
         $this->addFilterCheckbox($viewName, 'sevende', 'for-sale', 'sevende');
-        $this->addFilterCheckbox($viewName, 'publico', 'public', 'publico');
     }
 
     protected function createViewVariante(string $viewName = 'ListVariante'): void
