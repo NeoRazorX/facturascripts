@@ -33,6 +33,7 @@ use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 
 trait RandomDataTrait
 {
@@ -133,7 +134,7 @@ trait RandomDataTrait
     protected function getRandomSerie(): Serie
     {
         $serie = new Serie();
-        $serie->codserie = 'T';
+        $serie->codserie = 'T' . Tools::randomString(3);
         $serie->descripcion = 'Test Serie';
         return $serie;
     }

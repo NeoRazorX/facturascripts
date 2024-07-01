@@ -470,6 +470,32 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 break;
 
             case 'codserie':
+                // buscamos si hay documentos con la misma serie y con la misma fecha
+                $where = [
+                    new DataBaseWhere('codserie', $this->codserie),
+                    new DataBaseWhere('idempresa', $this->idempresa),
+                    new DataBaseWhere('fecha', $this->fecha, '>=')
+                ];
+
+                // obtenemos el último documento encontrado
+                $docs = $this->all($where, ['fecha' => 'DESC', 'hora' => 'DESC'], 0, 1);
+
+                // si no hay documentos, generamos un nuevo código y salimos
+                if (empty($docs)) {
+                    BusinessDocumentCode::setNewCode($this);
+                    break;
+                }
+
+                // si hay documentos, cambiamos la fecha y hora del documento actual
+                $this->fecha = $docs[0]->fecha;
+                $this->hora = date(self::HOUR_STYLE, strtotime($docs[0]->hora) + 1);
+
+                // establecemos la nueva fecha y hora
+                if (false === $this->setDate($this->fecha, $this->hora)) {
+                    return false;
+                }
+
+                // generamos un nuevo código
                 BusinessDocumentCode::setNewCode($this);
                 break;
 
