@@ -58,9 +58,9 @@ class CuentaWorker extends WorkerClass
         $diffSaldo = abs($cuenta->saldo - ($debe - $haber));
         if ($diffDebe >= 0.01 || $diffHaber >= 0.01 || $diffSaldo >= 0.01) {
             // actualizamos la cuenta
-            $cuenta->debe = round($cuenta->debe, FS_NF0);
-            $cuenta->haber = round($cuenta->haber, FS_NF0);
-            $cuenta->saldo = round($cuenta->debe - $cuenta->haber, FS_NF0);
+            $cuenta->debe = round($debe, FS_NF0);
+            $cuenta->haber = round($haber, FS_NF0);
+            $cuenta->saldo = round($debe - $haber, FS_NF0);
             $cuenta->save();
         }
 

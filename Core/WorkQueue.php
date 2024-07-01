@@ -30,6 +30,9 @@ use Throwable;
 final class WorkQueue
 {
     /** @var array */
+    private static $new_events = [];
+
+    /** @var array */
     private static $prevent_new_events = [];
 
     /** @var array */
@@ -43,6 +46,13 @@ final class WorkQueue
             'name' => $worker_name,
             'position' => $position,
         ];
+    }
+
+    public static function clear(): void
+    {
+        self::$new_events = [];
+        self::$prevent_new_events = [];
+        self::$workers_list = [];
     }
 
     public static function getWorkersList(): array
@@ -68,11 +78,6 @@ final class WorkQueue
     public static function preventNewEvents(array $event_names): void
     {
         self::$prevent_new_events = $event_names;
-    }
-
-    public static function removeAllWorkers(): void
-    {
-        self::$workers_list = [];
     }
 
     public static function run(): bool
@@ -109,12 +114,24 @@ final class WorkQueue
                 continue;
             }
 
+            // generamos un hash para evitar duplicados
+            $hash = md5($event . $value . json_encode($params));
+            if (isset(self::$new_events[$hash])) {
+                return true;
+            }
+
             // worker encontrado, guardamos el evento
             $work_event = new WorkEvent();
             $work_event->name = $event;
             $work_event->value = $value;
             $work_event->setParams($params);
-            return $work_event->save();
+            if (false === $work_event->save()) {
+                return false;
+            }
+
+            // marcamos el evento como enviado
+            self::$new_events[$hash] = true;
+            return true;
         }
 
         return false;
