@@ -87,6 +87,8 @@ final class WorkQueue
         $where = [new DataBaseWhere('done', false)];
         $orderBy = ['id' => 'ASC'];
         foreach ($workEventModel->all($where, $orderBy, 0, 1) as $event) {
+            self::preventDuplicated($event);
+
             return self::runEvent($event);
         }
 
@@ -114,23 +116,22 @@ final class WorkQueue
                 continue;
             }
 
-            // generamos un hash para evitar duplicados
-            $hash = md5($event . $value . json_encode($params));
-            if (isset(self::$new_events[$hash])) {
-                return true;
-            }
-
             // worker encontrado, guardamos el evento
             $work_event = new WorkEvent();
             $work_event->name = $event;
             $work_event->value = $value;
             $work_event->setParams($params);
+
+            if (self::isDuplicated($work_event)) {
+                // devolvemos true porque ya se había enviado el evento
+                return true;
+            }
+
             if (false === $work_event->save()) {
                 return false;
             }
 
-            // marcamos el evento como enviado
-            self::$new_events[$hash] = true;
+            self::preventDuplicated($work_event);
             return true;
         }
 
@@ -159,6 +160,18 @@ final class WorkQueue
         }
 
         throw new Exception('Worker not found: ' . $worker_name);
+    }
+
+    private static function isDuplicated(WorkEvent $event): bool
+    {
+        $hash = $event->getHash();
+        return isset(self::$new_events[$hash]);
+    }
+
+    private static function preventDuplicated(WorkEvent $event): void
+    {
+        $hash = $event->getHash();
+        self::$new_events[$hash] = true;
     }
 
     private static function runEvent(WorkEvent &$event): bool
