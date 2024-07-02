@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -55,4 +55,10 @@
             <widget type="money" fieldname="saldo"/>
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="danger" fieldname="saldo" title="negative-balance">lt:0</option>
+            <option color="success" fieldname="saldo" title="positive-balance">gt:0</option>
+        </row>
+    </rows>
 </view>

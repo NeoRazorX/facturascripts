@@ -32,7 +32,9 @@ class CuentaWorker extends WorkerClass
     {
         // cargamos la cuenta
         $cuenta = new Cuenta();
-        if (false === $cuenta->loadFromCode($event->param('idcuenta'))) {
+        // si es una subcuenta, su cuenta padre es idcuenta, para cuentas es parent_idcuenta
+        $id = $event->param('parent_idcuenta') ?? $event->param('idcuenta');
+        if (false === $cuenta->loadFromCode($id)) {
             return $this->done();
         }
 
