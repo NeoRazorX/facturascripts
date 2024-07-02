@@ -1029,6 +1029,7 @@
     "not-allowed-modify": "No tiene permiso para modificar",
     "not-enough-stock": "No hay suficiente stock de %reference%",
     "not-passed-integrity-check": "Algunos archivos no han pasado la verificación de integridad ... <br\/>Puedes <a class='alert-link' target='_blank' href='IntegritySystemCheck'>obtener más detalles aquí<\/a>.",
+    "not-public": "Nepublikováno",
     "not-stored-content": "Obsah není uložen",
     "not-valid-email": "Email %email% no válido",
     "not-valid-fiscal-number": "El %type% %number% no es válido",
