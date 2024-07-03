@@ -80,8 +80,8 @@ END;
         // ejecutamos los trabajos del core
         $this->runCoreJobs();
 
-        // si se está ejecutando en modo cli, ejecutamos la cola de trabajos, máximo 100 trabajos
-        $max = 100;
+        // si se está ejecutando en modo cli, ejecutamos la cola de trabajos, máximo 1000 trabajos
+        $max = 1000;
         while (PHP_SAPI === 'cli') {
             if (false === WorkQueue::run()) {
                 break;
