@@ -20,6 +20,7 @@
 {% extends "Master/MenuBghTemplate.html.twig" %}
 
 {% block body %}
+    {% import 'Macro/Utils.html.twig' as Utils %}
     <div class="bg-light pt-4 pb-5">
         <div class="container">
             <div class="row">
@@ -74,6 +75,7 @@
                 </div>
             </div>
         {% endif %}
+        {{ Utils.registerInstall() }}
         {% block sectionStats %}
             {{ _self.sectionStats(fsc) }}
         {% endblock %}

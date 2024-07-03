@@ -35,6 +35,7 @@
 {% endblock %}
 
 {% block body %}
+    {% import 'Macro/Utils.html.twig' as Utils %}
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
@@ -69,6 +70,7 @@
                 </h1>
             </div>
         </div>
+        {{ Utils.registerInstall(false) }}
     </div>
     <div class="table-responsive">
         <table class="table table-hover">

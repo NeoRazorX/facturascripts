@@ -51,3 +51,28 @@
 {% macro popoverTitle(msg, position = 'auto') %}
     {% if msg | length > 0 %}data-toggle="popover" data-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"{% endif %}
 {% endmacro %}
+
+{# Muestra un mensaje para registrar la instalación #}
+{% macro registerInstall(link = true) %}
+    <div class="alert alert-info">
+        <div class="row d-flex align-items-center">
+            <div class="col">
+                <div class="font-weight-bold">{{ trans('register-install-title') }}</div>
+                <ul class="pl-3 mb-0">
+                    <li>{{ trans('register-install-li-1') }}
+                        <a href="https://facturascripts.com/patrocinar" target="_blank">{{ trans('read-more') }}</a>
+                    </li>
+                    <li>{{ trans('register-install-li-2') }}</li>
+                    <li>{{ trans('register-install-li-3') }}</li>
+                </ul>
+            </div>
+            {% if link %}
+                <div class="col-auto">
+                    <a href="{{ asset('Updater') }}" class="btn btn-primary text-nowrap">
+                        <i class="fas fa-registered fa-fw mr-1"></i>{{ trans('register') }}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
