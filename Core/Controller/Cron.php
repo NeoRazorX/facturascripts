@@ -55,20 +55,7 @@ class Cron implements ControllerInterface
     public function run(): void
     {
         header('Content-Type: text/plain');
-
-        if (PHP_SAPI === 'cli') {
-            echo <<<END
-
-  ______         _                    _____           _       _       
- |  ____|       | |                  / ____|         (_)     | |      
- | |__ __ _  ___| |_ _   _ _ __ __ _| (___   ___ _ __ _ _ __ | |_ ___ 
- |  __/ _` |/ __| __| | | | '__/ _` |\___ \ / __| '__| | '_ \| __/ __|
- | | | (_| | (__| |_| |_| | | | (_| |____) | (__| |  | | |_) | |_\__ \
- |_|  \__,_|\___|\__|\__,_|_|  \__,_|_____/ \___|_|  |_| .__/ \__|___/
-                                                       | |            
-                                                       |_|
-END;
-        }
+        $this->echoLogo();
 
         Tools::log('cron')->notice('starting-cron');
         echo PHP_EOL . PHP_EOL . Tools::lang()->trans('starting-cron');
@@ -80,17 +67,8 @@ END;
         // ejecutamos los trabajos del core
         $this->runCoreJobs();
 
-        // si se está ejecutando en modo cli, ejecutamos la cola de trabajos, máximo 1000 trabajos
-        $max = 1000;
-        while (PHP_SAPI === 'cli') {
-            if (false === WorkQueue::run()) {
-                break;
-            }
-
-            if (--$max <= 0) {
-                break;
-            }
-        }
+        // ejecutamos la cola de trabajos
+        $this->runWorkQueue();
 
         // mostramos los mensajes del log
         $levels = ['critical', 'error', 'info', 'notice', 'warning'];
@@ -111,6 +89,23 @@ END;
         ];
         echo PHP_EOL . PHP_EOL . Tools::lang()->trans('finished-cron', $context) . PHP_EOL . PHP_EOL;
         Tools::log()->notice('finished-cron', $context);
+    }
+
+    private function echoLogo(): void
+    {
+        if (PHP_SAPI === 'cli') {
+            echo <<<END
+
+  ______         _                    _____           _       _       
+ |  ____|       | |                  / ____|         (_)     | |      
+ | |__ __ _  ___| |_ _   _ _ __ __ _| (___   ___ _ __ _ _ __ | |_ ___ 
+ |  __/ _` |/ __| __| | | | '__/ _` |\___ \ / __| '__| | '_ \| __/ __|
+ | | | (_| | (__| |_| |_| | | | (_| |____) | (__| |  | | |_) | |_\__ \
+ |_|  \__,_|\___|\__|\__,_|_|  \__,_|_____/ \___|_|  |_| .__/ \__|___/
+                                                       | |            
+                                                       |_|
+END;
+        }
     }
 
     private function getMemorySize(int $size): string
@@ -224,6 +219,23 @@ END;
             // si no se está ejecutando en modo cli y lleva más de 20 segundos, se detiene
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 20) {
                 break;
+            }
+        }
+    }
+
+    protected function runWorkQueue(): void
+    {
+        $max = 1000;
+        while ($max > 0) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+
+            --$max;
+
+            // si no se está ejecutando en modo cli y lleva más de 25 segundos, terminamos
+            if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 25) {
+                return;
             }
         }
     }
