@@ -218,6 +218,7 @@ END;
 
             // si no se está ejecutando en modo cli y lleva más de 20 segundos, se detiene
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 20) {
+                echo PHP_EOL . PHP_EOL . Tools::lang()->trans('cron-timeout');
                 break;
             }
         }
@@ -235,6 +236,7 @@ END;
 
             // si no se está ejecutando en modo cli y lleva más de 25 segundos, terminamos
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 25) {
+                echo PHP_EOL . PHP_EOL . Tools::lang()->trans('cron-timeout');
                 return;
             }
         }
