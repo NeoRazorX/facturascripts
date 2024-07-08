@@ -337,7 +337,7 @@
     "credit": "Crédit",
     "crm": "GRC",
     "cron-job": "Tâche programmée",
-    "cron-timeout": "El cron se ha detenido para no superar el tiempo máximo de ejecución de PHP. Por favor, ejecuta el cron desde terminal para evitar este límite.",
+    "cron-timeout": "Le cron s'est arrêté pour ne pas dépasser le temps d'exécution maximum de PHP. Veuillez exécuter le cron depuis le terminal pour éviter cette limite.",
     "crons": "Crons",
     "currency": "Devise",
     "currency-position": "Position du symbole de la devise",

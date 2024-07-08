@@ -337,7 +337,7 @@
     "credit": "Hartzekoa",
     "crm": "CRM",
     "cron-job": "Zeregin programatua",
-    "cron-timeout": "El cron se ha detenido para no superar el tiempo máximo de ejecución de PHP. Por favor, ejecuta el cron desde terminal para evitar este límite.",
+    "cron-timeout": "Kronoa gelditu da PHP-ren exekuzio denbora maksimoa gainditu ez dadin. Mesedez, exekutatu kronoa terminalatik, mugarik hau saihesteko.",
     "crons": "Krons",
     "currency": "Dibisa",
     "currency-position": "Moneta sinboloaren posizioa",

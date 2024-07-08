@@ -337,7 +337,7 @@
     "credit": "Haber",
     "crm": "CRM",
     "cron-job": "Tarea programada",
-    "cron-timeout": "El cron se ha detenido para no superar el tiempo máximo de ejecución de PHP. Por favor, ejecuta el cron desde terminal para evitar este límite.",
+    "cron-timeout": "Cron został zatrzymany, aby nie przekroczyć maksymalnego czasu wykonania PHP. Proszę, uruchom cron z terminala, aby uniknąć tego ograniczenia.",
     "crons": "Crony",
     "currency": "Divisa",
     "currency-position": "Posición símbolo de divisa",
