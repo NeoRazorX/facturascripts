@@ -25,7 +25,7 @@ use FacturaScripts\Core\Tools;
  * AppSettings manage the essential data settings of the app.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @deprecated since version 2023.02
+ * @deprecated since version 2023.02. Use Tools::settings() instead.
  */
 final class AppSettings
 {
