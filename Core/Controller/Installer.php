@@ -225,6 +225,9 @@ class Installer implements ControllerInterface
         fwrite($file, "define('FS_DB_USER', '" . $this->db_user . "');\n");
         fwrite($file, "define('FS_DB_PASS', '" . $this->request->request->get('fs_db_pass') . "');\n");
 
+        // generamos una clave de encriptación
+        fwrite($file, "define('FS_ENC_KEY', '" . Tools::encryptGenerateKey() . "');\n");
+
         $fields = [
             'lang' => 'es_ES',
             'timezone' => 'Europe/Madrid',

@@ -40,6 +40,7 @@ class Tools
     ];
     const DATE_STYLE = 'd-m-Y';
     const DATETIME_STYLE = 'd-m-Y H:i:s';
+    const ENC_CIPHER = 'AES-256-CBC';
     const HOUR_STYLE = 'H:i:s';
     const HTML_CHARS = ['<', '>', '"', "'"];
     const HTML_REPLACEMENTS = ['&lt;', '&gt;', '&quot;', '&#39;'];
@@ -89,6 +90,58 @@ class Tools
     public static function dateTime(?string $date = null): string
     {
         return empty($date) ? date(self::DATETIME_STYLE) : date(self::DATETIME_STYLE, strtotime($date));
+    }
+
+    public static function decrypt(string $string, string $key = ''): string
+    {
+        if (empty($key)) {
+            $key = self::config('enc_key', '');
+        }
+        if (empty($key)) {
+            return '';
+        }
+
+        $c = base64_decode($string);
+        $iv_len = openssl_cipher_iv_length($cipher = self::ENC_CIPHER);
+        $iv = substr($c, 0, $iv_len);
+        $hmac = substr($c, $iv_len, $sha2len = 32);
+        $ciphertext_raw = substr($c, $iv_len + $sha2len);
+        $original_plaintext = openssl_decrypt($ciphertext_raw, $cipher, $key, $options = OPENSSL_RAW_DATA, $iv);
+        $calc_mac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary = true);
+        if (!hash_equals($hmac, $calc_mac)) {
+            return '';
+        }
+
+        // si no empieza por enc: no se ha desencriptado bien
+        if (substr($original_plaintext, 0, 4) !== 'enc:') {
+            return '';
+        }
+
+        return substr($original_plaintext, 4);
+    }
+
+    public static function encrypt(string $string, string $key = ''): string
+    {
+        if (empty($key)) {
+            $key = self::config('enc_key', '');
+        }
+        if (empty($key)) {
+            return '';
+        }
+
+        // añadimos enc: al principio para saber que está encriptado
+        $string = 'enc:' . $string;
+
+        $iv_len = openssl_cipher_iv_length($cipher = self::ENC_CIPHER);
+        $iv = openssl_random_pseudo_bytes($iv_len);
+        $ciphertext_raw = openssl_encrypt($string, $cipher, $key, $options = OPENSSL_RAW_DATA, $iv);
+        $hmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary = true);
+        return base64_encode($iv . $hmac . $ciphertext_raw);
+    }
+
+    public static function encryptGenerateKey(): string
+    {
+        return bin2hex(random_bytes(32));
     }
 
     public static function fixHtml(?string $text = null): ?string

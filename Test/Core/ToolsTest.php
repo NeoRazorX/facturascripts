@@ -290,4 +290,19 @@ final class ToolsTest extends TestCase
         $this->assertEquals('1.234', Tools::number(1.234, 3));
         $this->assertEquals('1.23', Tools::number(1.234, 2));
     }
+
+    public function testEncryption(): void
+    {
+        // generamos una clave de encriptación
+        $key = Tools::encryptGenerateKey();
+
+        // encriptamos y desencriptamos un texto
+        $text = 'test-1234-áéíóú-àèìòù-âêîôû-ãõ-çñ';
+        $encrypted = Tools::encrypt($text, $key);
+        $decrypted = Tools::decrypt($encrypted, $key);
+        $this->assertNotEmpty($encrypted);
+        $this->assertNotEmpty($decrypted);
+        $this->assertNotEquals($text, $encrypted);
+        $this->assertEquals($text, $decrypted);
+    }
 }
