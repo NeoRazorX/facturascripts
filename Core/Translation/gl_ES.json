@@ -768,6 +768,7 @@
     "installer-requirements": "As seguintes extensións e funcións son necesarias en Facturascripts:",
     "integrity-check": "Verificación de integridade",
     "integrity-check-help": "Esta é unha verificación da integridade do sistema, descrita como",
+    "interest": "Interese",
     "international-identifier": "Identificador internacional",
     "intra-community": "Intracomunitaria",
     "invalid-alphanumeric-code": "O código introducido (%value%) non é válido. (%column%) debe ter entre %min% e %max% números ou letras, sin espazos, acentos, nin outros caracteres.",

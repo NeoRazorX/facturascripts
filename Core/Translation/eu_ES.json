@@ -768,6 +768,7 @@
     "installer-requirements": "Ondorengo gehigarriak eta funtzioak FacturaScriptsentzat beharrezkoak dira:",
     "integrity-check": "Integritate egiaztatzea",
     "integrity-check-help": "Hau sistemaren integritate egiaztatze bat da, honela deskribatua",
+    "interest": "Interesa",
     "international-identifier": "Nazioarteko identifikatzailea",
     "intra-community": "Dentro de la comunidad",
     "invalid-alphanumeric-code": "(%value%) sartutako kodea baliogabea da. (%column%) %min% eta %max% bitarteko zenbaki edo letra kopurua eduki behar du espazio, azentu edo beste karaktere gabe.",

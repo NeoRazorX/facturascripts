@@ -768,6 +768,7 @@
     "installer-requirements": "Les extensions et fonctions suivantes sont nécessaires pour FacturaScripts:",
     "integrity-check": "Test d'intégrité",
     "integrity-check-help": "Il s'agit d'un test d'intégrité système, comme décrit",
+    "interest": "Intérêts",
     "international-identifier": "Identifiant international",
     "intra-community": "Intra-communautaire",
     "invalid-alphanumeric-code": "Le code alphanumérique entré (%value%) est incorrect. (%column%) doit avoir entre %min% et %max% chiffres ou lettres, et ne pas comporter d'espaces, d'accents ou tout autre caractère.",
