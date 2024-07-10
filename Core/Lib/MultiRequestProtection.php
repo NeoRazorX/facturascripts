@@ -26,6 +26,7 @@ use FacturaScripts\Core\Cache;
  *
  * @author Juan José Prieto Dzul    <juanjoseprieto88@gmail.com>
  * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @deprecated since version 2024.9 and replaced by FacturaScripts\Core\Session
  */
 class MultiRequestProtection
 {

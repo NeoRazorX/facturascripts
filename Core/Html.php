@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,6 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\AssetManager;
-use FacturaScripts\Core\Lib\MultiRequestProtection;
 use FacturaScripts\Core\Model\AttachedFile;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -159,11 +158,11 @@ final class Html
     {
         return new TwigFunction(
             'formToken',
-            function (bool $input = true) {
-                $tokenClass = new MultiRequestProtection();
+            function (bool $input = true, bool $anonymous = false) {
+                $token = Session::token($anonymous);
                 return $input ?
-                    '<input type="hidden" name="multireqtoken" value="' . $tokenClass->newToken() . '"/>' :
-                    $tokenClass->newToken();
+                    '<input type="hidden" name="multireqtoken" value="' . $token . '"/>' :
+                    $token;
             },
             [
                 'is_safe' => ['html'],

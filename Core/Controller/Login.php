@@ -23,7 +23,6 @@ use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
-use FacturaScripts\Core\Lib\MultiRequestProtection;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa;
@@ -194,24 +193,16 @@ class Login implements ControllerInterface
 
     private function validateFormToken(Request $request): bool
     {
-        $multiRequestProtection = new MultiRequestProtection();
-
-        // si el usuario está autenticado, añadimos su nick a la semilla
-        $cookieNick = $request->cookies->get('fsNick', '');
-        if ($cookieNick) {
-            $multiRequestProtection->addSeed($cookieNick);
-        }
-
         // comprobamos el token
         $urlToken = $request->query->get('multireqtoken', '');
         $token = $request->request->get('multireqtoken', $urlToken);
-        if (empty($token) || false === $multiRequestProtection->validate($token)) {
+        if (empty($token) || false === Session::tokenValidate($token)) {
             Tools::log()->warning('invalid-request');
             return false;
         }
 
         // comprobamos que el token no se haya usado antes
-        if ($multiRequestProtection->tokenExist($token)) {
+        if (Session::tokenExists($token)) {
             Tools::log()->warning('duplicated-request');
             return false;
         }
@@ -323,10 +314,6 @@ class Login implements ControllerInterface
         setcookie('fsNick', '', time() - 3600, Tools::config('route', '/'));
         setcookie('fsLogkey', '', time() - 3600, Tools::config('route', '/'));
         setcookie('fsLang', '', time() - 3600, Tools::config('route', '/'));
-
-        // restart token
-        $multiRequestProtection = new MultiRequestProtection();
-        $multiRequestProtection->clearSeed();
 
         Tools::log()->notice('logout-ok');
     }

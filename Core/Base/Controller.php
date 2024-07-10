@@ -66,6 +66,7 @@ class Controller implements ControllerInterface
 
     /**
      * @var MultiRequestProtection
+     * @deprecated since version 2024.9 and replaced by FacturaScripts\Core\Session
      */
     public $multiRequestProtection;
 
@@ -230,6 +231,7 @@ class Controller implements ControllerInterface
 
         // add the user to the token generation seed
         $this->multiRequestProtection->addSeed($user->nick);
+        Session::tokenSetSeed($user->nick);
 
         // Have this user a default page?
         $defaultPage = $this->request->query->get('defaultPage', '');
@@ -418,13 +420,13 @@ class Controller implements ControllerInterface
         // valid request?
         $urlToken = $this->request->query->get('multireqtoken', '');
         $token = $this->request->request->get('multireqtoken', $urlToken);
-        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+        if (empty($token) || false === Session::tokenValidate($token)) {
             Tools::log()->warning('invalid-request');
             return false;
         }
 
         // duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
+        if (Session::tokenExists($token)) {
             Tools::log()->warning('duplicated-request');
             return false;
         }

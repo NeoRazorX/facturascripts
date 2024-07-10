@@ -136,7 +136,7 @@
                                         {% include item['path'] %}
                                     {% endfor %}
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{{ asset('login') }}?action=logout&multireqtoken={{ formToken(false) }}">
+                                    <a class="dropdown-item" href="{{ asset('login') }}?action=logout&multireqtoken={{ formToken(false, true) }}">
                                         <i class="fas fa-door-open fa-fw" aria-hidden="true"></i> {{ trans('logout') }}
                                     </a>
                                 </div>
