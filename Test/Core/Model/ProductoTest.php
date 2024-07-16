@@ -666,6 +666,9 @@ final class ProductoTest extends TestCase
 
         // comprobamos que se haya actualizado la referencia en el producto
         $this->assertEquals('01', $product->referencia);
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
     private function getTestProduct(): Producto
