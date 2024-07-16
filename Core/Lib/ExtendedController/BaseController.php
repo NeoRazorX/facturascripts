@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -209,7 +210,7 @@ abstract class BaseController extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-        VisualItem::setToken($this->multiRequestProtection->newToken());
+        VisualItem::setToken(Session::token());
 
         // Create the views to display
         $this->createViews();

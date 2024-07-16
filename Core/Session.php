@@ -30,7 +30,6 @@ use FacturaScripts\Dinamic\Model\User as DinUser;
 final class Session
 {
     const TOKEN_CACHE_KEY = 'session-tokens';
-    const TOKEN_MAX_AGE = 6;
     const TOKEN_MAX_ITEMS = 500;
 
     private static $data = [];
@@ -93,16 +92,18 @@ final class Session
             return false;
         }
 
-        // generate al possible valid tokens
+        $token_max_age = Tools::config('token_max_age', 72);
+
+        // generate all possible valid tokens
         $seed1 = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS . 'anon';
         $seed2 = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS . self::$seed . self::getClientIp();
         $num = intval(date('YmdH'));
         $valid = [sha1($seed1 . $num), sha1($seed2 . $num)];
-        for ($hour = 1; $hour <= self::TOKEN_MAX_AGE; $hour++) {
+        for ($hour = 1; $hour <= $token_max_age; $hour++) {
             $time = strtotime('-' . $hour . ' hours');
-            $altNum = intval(date('YmdH', $time));
-            $valid[] = sha1($seed1 . $altNum);
-            $valid[] = sha1($seed2 . $altNum);
+            $alt_num = intval(date('YmdH', $time));
+            $valid[] = sha1($seed1 . $alt_num);
+            $valid[] = sha1($seed2 . $alt_num);
         }
 
         return in_array($tokenParts[0], $valid);

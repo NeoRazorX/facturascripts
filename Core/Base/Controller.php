@@ -28,7 +28,6 @@ use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
-use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User as DinUser;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -63,12 +62,6 @@ class Controller implements ControllerInterface
      * @var Empresa
      */
     public $empresa;
-
-    /**
-     * @var MultiRequestProtection
-     * @deprecated since version 2024.9 and replaced by FacturaScripts\Core\Session
-     */
-    public $multiRequestProtection;
 
     /**
      * User permissions on this controller.
@@ -135,7 +128,6 @@ class Controller implements ControllerInterface
 
         $this->dataBase = new DataBase();
         $this->empresa = new Empresa();
-        $this->multiRequestProtection = new MultiRequestProtection();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';
         $this->uri = $uri;
@@ -230,7 +222,6 @@ class Controller implements ControllerInterface
         $this->empresa = Empresas::get($this->user->idempresa);
 
         // add the user to the token generation seed
-        $this->multiRequestProtection->addSeed($user->nick);
         Session::tokenSetSeed($user->nick);
 
         // Have this user a default page?

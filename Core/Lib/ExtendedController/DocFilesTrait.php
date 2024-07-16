@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\AttachedFileRelation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
@@ -219,13 +220,13 @@ trait DocFilesTrait
     {
         // valid request?
         $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+        if (empty($token) || false === Session::tokenValidate($token)) {
             Tools::log()->warning('invalid-request');
             return false;
         }
 
         // duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
+        if (Session::tokenExists($token)) {
             Tools::log()->warning('duplicated-request');
             return false;
         }

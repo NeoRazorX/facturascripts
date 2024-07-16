@@ -203,8 +203,15 @@ class Installer implements ControllerInterface
         }
 
         fwrite($file, "<?php\n");
-        fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 31536000) . ");\n");
         fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
+        fwrite($file, "define('FS_TOKEN_MAX_AGE', " . $this->request->request->get('fs_token_max_age', 72) . ");\n");
+        fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 31536000) . ");\n");
+        fwrite($file, "define('FS_DB_TYPE', '" . $this->db_type . "');\n");
+        fwrite($file, "define('FS_DB_HOST', '" . $this->db_host . "');\n");
+        fwrite($file, "define('FS_DB_PORT', " . $this->db_port . ");\n");
+        fwrite($file, "define('FS_DB_NAME', '" . $this->db_name . "');\n");
+        fwrite($file, "define('FS_DB_USER', '" . $this->db_user . "');\n");
+        fwrite($file, "define('FS_DB_PASS', '" . $this->request->request->get('fs_db_pass') . "');\n");
         fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
         fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
 
@@ -217,13 +224,6 @@ class Installer implements ControllerInterface
             fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8');\n");
             fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
         }
-
-        fwrite($file, "define('FS_DB_TYPE', '" . $this->db_type . "');\n");
-        fwrite($file, "define('FS_DB_HOST', '" . $this->db_host . "');\n");
-        fwrite($file, "define('FS_DB_PORT', " . $this->db_port . ");\n");
-        fwrite($file, "define('FS_DB_NAME', '" . $this->db_name . "');\n");
-        fwrite($file, "define('FS_DB_USER', '" . $this->db_user . "');\n");
-        fwrite($file, "define('FS_DB_PASS', '" . $this->request->request->get('fs_db_pass') . "');\n");
 
         // generamos una clave de encriptación
         fwrite($file, "define('FS_ENC_KEY', '" . Tools::encryptGenerateKey() . "');\n");
@@ -250,7 +250,6 @@ class Installer implements ControllerInterface
             fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
         }
 
-        fwrite($file, "\n");
         fclose($file);
         return true;
     }
