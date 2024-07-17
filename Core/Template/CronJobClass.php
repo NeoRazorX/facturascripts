@@ -27,6 +27,8 @@ use FacturaScripts\Dinamic\Model\LogMessage;
 
 abstract class CronJobClass
 {
+    const ECHO_MODE_FULL = 'full';
+    const ECHO_MODE_LOG = 'log';
     const JOB_NAME = 'cron';
 
     abstract public static function run(): void;
@@ -34,12 +36,22 @@ abstract class CronJobClass
     /** @var string */
     private static $echo = '';
 
+    /** @var string */
+    private static $echo_mode = self::ECHO_MODE_FULL;
+
     protected static function echo(string $text): void
     {
-        echo $text;
-        ob_flush();
+        if (self::$echo_mode === self::ECHO_MODE_FULL) {
+            echo $text;
+            ob_flush();
+        }
 
         self::$echo .= $text;
+    }
+
+    public static function echoMode(string $mode): void
+    {
+        self::$echo_mode = $mode;
     }
 
     protected static function getEcho(): string
