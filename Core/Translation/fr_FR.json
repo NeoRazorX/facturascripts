@@ -777,7 +777,7 @@
     "invalid-date-there-are-invoices-after": "Date incorrecte. Il y a déjà des factures datées après %date%.",
     "invalid-date-there-are-invoices-before": "Date incorrecte. La date %date% est postérieure à la date de la prochaine facture.",
     "invalid-iban": "IBAN incorrect : %iban%",
-    "invalid-iso-code": "Code ISO invalide ''%iso-code%''.",
+    "invalid-iso-code": "Code ISO invalide ''%iso-code%'.",
     "invalid-number": "Nombre incorrect : %number%",
     "invalid-request": "Requête incorrecte",
     "invalid-user-can-permission": "Permission non valide : %permission%. Les autorisations disponibles sont access, delete, export, import, update et only-owner-data.",
