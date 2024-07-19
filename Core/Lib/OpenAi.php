@@ -85,7 +85,7 @@ class OpenAi
         return $this->audio($input, $voice, $format, 'tts-1-hd');
     }
 
-    public function chat(array $messages, string $user = '', string $model = 'gpt-3.5-turbo'): string
+    public function chat(array $messages, string $user = '', string $model = 'gpt-4o-mini'): string
     {
         $params = new stdClass();
         $params->model = $model;
@@ -114,6 +114,7 @@ class OpenAi
         return $json['choices'][0]['message']['content'];
     }
 
+    /** @deprecated since 2024.9 and replaced with chat() */
     public function chatGpt35turbo(array $messages, string $user = ''): string
     {
         return $this->chat($messages, $user, 'gpt-3.5-turbo');
