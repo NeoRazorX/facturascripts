@@ -107,7 +107,8 @@ class RegularizacionImpuesto extends Base\ModelClass
     {
         return $this->loadFromCode('', [
             new DataBaseWhere('fechainicio', $fecha, '<='),
-            new DataBaseWhere('fechafin', $fecha, '>=')
+            new DataBaseWhere('fechafin', $fecha, '>='),
+            new DataBaseWhere('idempresa', $this->idempresa),
         ]);
     }
 
