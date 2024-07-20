@@ -86,9 +86,19 @@ class Tools
         return empty($date) ? date(self::DATE_STYLE) : date(self::DATE_STYLE, strtotime($date));
     }
 
+    public static function dateOperation(string $date, string $operation): string
+    {
+        return date(self::DATE_STYLE, strtotime($date . ' ' . $operation));
+    }
+
     public static function dateTime(?string $date = null): string
     {
         return empty($date) ? date(self::DATETIME_STYLE) : date(self::DATETIME_STYLE, strtotime($date));
+    }
+
+    public static function dateTimeOperation(string $date, string $operation): string
+    {
+        return date(self::DATETIME_STYLE, strtotime($date . ' ' . $operation));
     }
 
     public static function fixHtml(?string $text = null): ?string
