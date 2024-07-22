@@ -777,7 +777,7 @@
     "invalid-date-there-are-invoices-after": "Data non válida. Hai facturas con data posterior ao %date%",
     "invalid-date-there-are-invoices-before": "Data non válida. A data %date% é posterior a data da factura seguinte.",
     "invalid-iban": "IBAN non válido: %iban%",
-    "invalid-iso-code": "Código ISO ''%iso-code% non válido",
+    "invalid-iso-code": "Código ISO '%iso-code%' non válido",
     "invalid-number": "Número non válido: %number%",
     "invalid-request": "Petición non válida",
     "invalid-user-can-permission": "Permiso non válido: %permission%. Os permisos dispoñibles son access, delete, export, import, update e only-owner-data.",
