@@ -55,7 +55,7 @@ final class DbUpdater
             $structure = self::readTableXml($filePath);
         }
 
-        $sql = self::sqlTool()->sqlCreateTable($tableName, $structure['columns'], $structure['constraints']) . $sqlAfter;
+        $sql = self::sqlTool()->sqlCreateTable($tableName, $structure['columns'], $structure['constraints'], $structure['indexes']) . $sqlAfter;
         if (self::db()->exec($sql)) {
             self::save($tableName);
 
@@ -116,7 +116,8 @@ final class DbUpdater
     {
         $structure = [
             'columns' => [],
-            'constraints' => []
+            'constraints' => [],
+            'indexes' => [],
         ];
 
         if (false === file_exists($filePath)) {
@@ -162,6 +163,17 @@ final class DbUpdater
             }
         }
 
+        if (isset($xml->index)) {
+            foreach ($xml->index as $col) {
+                $key = (string)$col->name;
+
+                $structure['indexes'][$key] = [
+                    'name' => $key,
+                    'columns' => (string)$col->columns
+                ];
+            }
+        }
+
         return $structure;
     }
 
@@ -190,8 +202,10 @@ final class DbUpdater
         // compare table columns and constraints against xml definition
         $dbCols = self::db()->getColumns($tableName);
         $dbCons = self::db()->getConstraints($tableName);
+        $dbIndexes = self::db()->getIndexes($tableName);
         $sql = self::compareColumns($tableName, $structure['columns'], $dbCols) .
-            self::compareConstraints($tableName, $structure['constraints'], $dbCons);
+            self::compareConstraints($tableName, $structure['constraints'], $dbCons) .
+            self::compareIndexes($tableName, $structure['indexes'], $dbIndexes);
         if (!empty($sql) && self::db()->exec($sql)) {
             self::save($tableName);
 
@@ -287,6 +301,47 @@ final class DbUpdater
         return $deleteCons ?
             $sqlDeleteFK . $sqlDelete . $sql :
             $sql;
+    }
+
+    private static function compareIndexes(string $tableName, array $xmlIndexes, array $dbIndexes)
+    {
+        // Agregamos fs_ al inicio del 'name'
+        // Así la comparacion es correcta al buscar los indices
+        foreach ($xmlIndexes as $key => $value) {
+            if (isset($value['name'])) {
+                $xmlIndexes[$key]['name'] = 'fs_' . $value['name'];
+            }
+        }
+
+        $sql = '';
+
+        // si no existen indices en el xml, borramos todos lo que existan en la base de datos.
+        if (empty($xmlIndexes)) {
+            foreach ($dbIndexes as $dbIdx) {
+                $sql .= self::sqlTool()->sqlDropIndex($tableName, $dbIdx);
+            }
+            return $sql;
+        }
+
+        // remove new indexes
+        foreach ($dbIndexes as $dbIdx) {
+            // delete if not found
+            $column = self::searchInArray($xmlIndexes, 'name', $dbIdx['name']);
+            if (empty($column)) {
+                $sql .= self::sqlTool()->sqlDropIndex($tableName, $dbIdx);
+            }
+        }
+
+        // add new indexes
+        foreach ($xmlIndexes as $xmlIdx) {
+            // add if not found
+            $column = self::searchInArray($dbIndexes, 'name', $xmlIdx['name']);
+            if (empty($column)) {
+                $sql .= self::sqlTool()->sqlAddIndex($tableName, $xmlIdx['name'], $xmlIdx['columns']);
+            }
+        }
+
+        return $sql;
     }
 
     private static function compareDataTypes(string $dbType, string $xmlType): bool

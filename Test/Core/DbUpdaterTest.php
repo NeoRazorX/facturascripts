@@ -38,7 +38,7 @@ final class DbUpdaterTest extends TestCase
         $structure = DbUpdater::readTableXml($filePath);
         $this->assertNotEmpty($structure, 'empty-table-structure');
         $this->assertArrayHasKey('columns', $structure, 'columns-structure-not-found');
-        $this->assertCount(10, $structure['columns'], 'missing-columns');
+        $this->assertCount(11, $structure['columns'], 'missing-columns');
 
         // check first column
         $this->assertArrayHasKey('debaja', $structure['columns'], 'column-debaja-not-found');
@@ -54,6 +54,12 @@ final class DbUpdaterTest extends TestCase
         $this->assertArrayHasKey('constraints', $structure, 'constraints-structure-not-found');
         $this->assertCount(1, $structure['constraints'], 'missing-constraints');
         $this->assertArrayHasKey('test_table_pkey', $structure['constraints'], 'first-constraint-not-found');
+
+        // check indexes
+        $this->assertArrayHasKey('indexes', $structure, 'indexes-structure-not-found');
+        $this->assertCount(2, $structure['indexes'], 'missing-indexes');
+        $this->assertArrayHasKey('idx_email', $structure['indexes'], 'idx_email-index-not-found');
+        $this->assertArrayHasKey('idx_email_email2', $structure['indexes'], 'idx_email_email2-index-not-found');
     }
 
     public function testCanCreateAndDropTable(): void
@@ -87,11 +93,20 @@ final class DbUpdaterTest extends TestCase
         $this->assertArrayHasKey('numero', $columns, 'column-numero-not-found');
         $this->assertArrayHasKey('observaciones', $columns, 'column-observaciones-not-found');
 
+        // check indexes
+        $indexes = $this->db()->getIndexes($tableName);
+        $expected = [
+            ["name" => "fs_idx_email", "column" => "email"],
+            ["name" => "fs_idx_email_email2", "column" => "email"],
+            ["name" => "fs_idx_email_email2", "column" => "email2"],
+        ];
+        $this->assertEquals(json_encode($expected), json_encode($indexes));
+
         $dropped = DbUpdater::dropTable($tableName);
         $this->assertTrue($dropped, 'test-table-not-dropped');
     }
 
-    public function testCanAddColumnsAndConstraintsToTable(): void
+    public function testCanAddColumnsConstraintsAndIndexesToTable(): void
     {
         // create
         $tableName = 'test_table';
@@ -112,7 +127,10 @@ final class DbUpdaterTest extends TestCase
         $this->assertNotEmpty($columns, 'empty-columns');
         $this->assertCount(11, $columns, 'missing-columns');
         $this->assertArrayHasKey('email2', $columns, 'column-email2-not-found');
-        $this->assertTrue(in_array($columns['email2']['type'], ['varchar(130)', 'character varying(130)']), 'column-email2-bad-type');
+        $this->assertTrue(
+            in_array($columns['email2']['type'], ['varchar(130)', 'character varying(130)']),
+            'column-email2-bad-type'
+        );
         $this->assertEquals('NO', $columns['email2']['is_nullable'], 'column-email2-bad-nullable');
         $this->assertNull($columns['email2']['default'], 'column-email2-bad-default');
 
@@ -120,6 +138,16 @@ final class DbUpdaterTest extends TestCase
         $constraints = $this->db()->getConstraints($tableName);
         $this->assertNotEmpty($constraints, 'empty-constraints');
         $this->assertCount(2, $constraints, 'missing-constraints');
+
+        // check indexes
+        $indexes = $this->db()->getIndexes($tableName);
+        $expected = [
+            ["name" => "fs_idx_email", "column" => "email"],
+            ["name" => "fs_idx_email_email2", "column" => "email"],
+            ["name" => "fs_idx_email_email2", "column" => "email2"],
+            ["name" => "fs_idx_observaciones", "column" => "observaciones"],
+        ];
+        $this->assertEquals(json_encode($expected), json_encode($indexes));
 
         $dropped = DbUpdater::dropTable($tableName);
         $this->assertTrue($dropped, 'test-table-not-dropped');
@@ -144,7 +172,7 @@ final class DbUpdaterTest extends TestCase
         // check columns
         $columns = $this->db()->getColumns($tableName);
         $this->assertNotEmpty($columns, 'empty-columns');
-        $this->assertCount(10, $columns, 'missing-columns');
+        $this->assertCount(11, $columns, 'missing-columns');
 
         // hora column
         $this->assertArrayHasKey('hora', $columns, 'column-hora-not-found');
@@ -162,6 +190,89 @@ final class DbUpdaterTest extends TestCase
         $this->assertEquals(0, strpos($columns['numero']['type'], 'int'), 'column-numero-bad-type');
         $this->assertEquals('NO', $columns['numero']['is_nullable'], 'column-numero-bad-nullable');
         $this->assertEquals('7', $columns['numero']['default'], 'column-numero-bad-default');
+
+        $dropped = DbUpdater::dropTable($tableName);
+        $this->assertTrue($dropped, 'test-table-not-dropped');
+    }
+
+    /**
+     * Comprobamos que se eliminan todos los indices
+     * si en el xml no hay ninguno declarado
+     */
+    public function testCanRemoveAllIndexesFromTable(): void
+    {
+        // create
+        $tableName = 'test_table';
+        $filePath = Tools::folder('Test', '__files', $tableName . '_update_1.xml');
+        $structure = DbUpdater::readTableXml($filePath);
+        $created = DbUpdater::createTable($tableName, $structure);
+        $this->assertTrue($created, 'test-table-not-created');
+
+        // check indexes
+        $indexes = $this->db()->getIndexes($tableName);
+        $expected = [
+            ["name" => "fs_idx_email", "column" => "email"],
+            ["name" => "fs_idx_email_email2", "column" => "email"],
+            ["name" => "fs_idx_email_email2", "column" => "email2"],
+            ["name" => "fs_idx_observaciones", "column" => "observaciones"],
+        ];
+        $this->assertEquals(json_encode($expected), json_encode($indexes));
+        $this->assertCount(4, $indexes);
+
+        // update
+        DbUpdater::rebuild();
+        $newFilePath = Tools::folder('Test', '__files', $tableName . '_update_2.xml');
+        $newStructure = DbUpdater::readTableXml($newFilePath);
+        $updated = DbUpdater::updateTable($tableName, $newStructure);
+        $this->assertTrue($updated, 'test-table-not-updated');
+
+        $indexes = $this->db()->getIndexes($tableName);
+        $this->assertCount(0, $indexes);
+
+        $dropped = DbUpdater::dropTable($tableName);
+        $this->assertTrue($dropped, 'test-table-not-dropped');
+    }
+
+    /**
+     * Comprobamos que se elimina un indice si
+     * no se encuentra declarado en el xml
+     */
+    public function testCanRemoveOneIndexFromTable(): void
+    {
+        // create
+        $tableName = 'test_table';
+        $filePath = Tools::folder('Test', '__files', $tableName . '_update_1.xml');
+        $structure = DbUpdater::readTableXml($filePath);
+        $created = DbUpdater::createTable($tableName, $structure);
+        $this->assertTrue($created, 'test-table-not-created');
+
+        // check indexes
+        $indexes = $this->db()->getIndexes($tableName);
+        $expected = [
+            ["name" => "fs_idx_email", "column" => "email"],
+            ["name" => "fs_idx_email_email2", "column" => "email"],
+            ["name" => "fs_idx_email_email2", "column" => "email2"],
+            ["name" => "fs_idx_observaciones", "column" => "observaciones"],
+        ];
+        $this->assertEquals(json_encode($expected), json_encode($indexes));
+        $this->assertCount(4, $indexes);
+
+        // update
+        DbUpdater::rebuild();
+        $newFilePath = Tools::folder('Test', '__files', $tableName . '_update_3.xml');
+        $newStructure = DbUpdater::readTableXml($newFilePath);
+        $updated = DbUpdater::updateTable($tableName, $newStructure);
+        $this->assertTrue($updated, 'test-table-not-updated');
+
+        // check indexes
+        $indexes = $this->db()->getIndexes($tableName);
+        $expected = [
+            ["name" => "fs_idx_email", "column" => "email"],
+            ["name" => "fs_idx_email_email2", "column" => "email"],
+            ["name" => "fs_idx_email_email2", "column" => "email2"],
+        ];
+        $this->assertEquals(json_encode($expected), json_encode($indexes));
+        $this->assertCount(3, $indexes);
 
         $dropped = DbUpdater::dropTable($tableName);
         $this->assertTrue($dropped, 'test-table-not-dropped');
