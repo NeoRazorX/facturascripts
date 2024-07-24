@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,7 +41,7 @@ final class AlbaranClienteTest extends TestCase
         self::setDefaultSettings();
     }
 
-    public function testDefaultValues()
+    public function testDefaultValues(): void
     {
         // creamos un albarán
         $doc = new AlbaranCliente();
@@ -54,7 +54,7 @@ final class AlbaranClienteTest extends TestCase
         $this->assertNotEmpty($doc->hora, 'empty-time');
     }
 
-    public function testSetAuthor()
+    public function testSetAuthor(): void
     {
         // creamos un agente
         $agent = $this->getRandomAgent();
@@ -84,7 +84,7 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($agent->delete(), 'can-not-delete-agent');
     }
 
-    public function testCreateEmpty()
+    public function testCreateEmpty(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -118,13 +118,13 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-1');
     }
 
-    public function testCreateWithoutSubject()
+    public function testCreateWithoutSubject(): void
     {
         $doc = new AlbaranCliente();
         $this->assertFalse($doc->save(), 'can-create-albaran-cliente-without-subject');
     }
 
-    public function testCreateOneLine()
+    public function testCreateOneLine(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -162,7 +162,44 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-2');
     }
 
-    public function testCreateProductLine()
+    public function testCreatePriceWithTax(): void
+    {
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+
+        // creamos un albarán
+        $doc = new AlbaranCliente();
+        $doc->setSubject($subject);
+        $this->assertTrue($doc->save(), 'can-not-create-albaran-cliente-2');
+
+        // añadimos una línea con precio con IVA
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->codimpuesto = 'IVA21';
+        $line->setPriceWithTax(121);
+        $this->assertTrue($line->save(), 'can-not-save-line-2');
+
+        // actualizamos los totales
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-albaran-cliente-2');
+
+        // comprobamos
+        $this->assertEquals(100, $doc->neto, 'albaran-cliente-bad-neto-2');
+        $this->assertEquals(121, $doc->total, 'albaran-cliente-bad-total-2');
+        $this->assertEquals(21, $doc->totaliva, 'albaran-cliente-bad-totaliva-2');
+        $this->assertEquals(0, $doc->totalrecargo, 'albaran-cliente-bad-totalrecargo-2');
+        $this->assertEquals(0, $doc->totalirpf, 'albaran-cliente-bad-totalirpf-2');
+        $this->assertEquals(0, $doc->totalsuplidos, 'albaran-cliente-bad-totalsuplidos-2');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-albaran-cliente-2');
+        $this->assertFalse($line->exists(), 'linea-albaran-cliente-still-exists-2');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-cliente-2');
+    }
+
+    public function testCreateProductLine(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -237,7 +274,7 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
     }
 
-    public function testSecondCompany()
+    public function testSecondCompany(): void
     {
         // creamos la empresa 2
         $company2 = new Empresa();

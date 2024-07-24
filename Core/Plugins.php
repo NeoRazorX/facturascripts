@@ -124,6 +124,8 @@ final class Plugins
 
         DbUpdater::rebuild();
 
+        Tools::folderDelete(Tools::folder('MyFiles', 'Cache'));
+
         if ($initControllers) {
             $pluginDeploy->initControllers();
         }

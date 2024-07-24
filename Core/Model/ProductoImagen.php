@@ -152,7 +152,7 @@ class ProductoImagen extends Base\ModelClass
             switch ($ext) {
                 case 'jpg':
                 case 'jpeg':
-                    imagejpeg($thumb, FS_FOLDER . $thumbFile);
+                    imagejpeg($thumb, FS_FOLDER . $thumbFile, 90);
                     break;
 
                 case 'png':

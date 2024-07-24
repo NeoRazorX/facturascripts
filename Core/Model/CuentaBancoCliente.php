@@ -79,6 +79,10 @@ class CuentaBancoCliente extends Base\BankAccount
 
     public function test(): bool
     {
+        if (empty($this->mandato)) {
+            $this->mandato = $this->newCode('mandato');
+        }
+
         $this->mandato = Tools::noHtml($this->mandato);
 
         return parent::test();
@@ -86,12 +90,12 @@ class CuentaBancoCliente extends Base\BankAccount
 
     public function save(): bool
     {
-        if (parent::save()) {
-            $this->updatePrimaryAccount();
-            return true;
+        if (false === parent::save()) {
+            return false;
         }
 
-        return false;
+        $this->updatePrimaryAccount();
+        return true;
     }
 
     public static function tableName(): string

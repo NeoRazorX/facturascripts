@@ -30,6 +30,9 @@ use Throwable;
 final class WorkQueue
 {
     /** @var array */
+    private static $new_events = [];
+
+    /** @var array */
     private static $prevent_new_events = [];
 
     /** @var array */
@@ -43,6 +46,13 @@ final class WorkQueue
             'name' => $worker_name,
             'position' => $position,
         ];
+    }
+
+    public static function clear(): void
+    {
+        self::$new_events = [];
+        self::$prevent_new_events = [];
+        self::$workers_list = [];
     }
 
     public static function getWorkersList(): array
@@ -70,11 +80,6 @@ final class WorkQueue
         self::$prevent_new_events = $event_names;
     }
 
-    public static function removeAllWorkers(): void
-    {
-        self::$workers_list = [];
-    }
-
     public static function run(): bool
     {
         // leemos la lista de trabajos pendientes
@@ -82,6 +87,8 @@ final class WorkQueue
         $where = [new DataBaseWhere('done', false)];
         $orderBy = ['id' => 'ASC'];
         foreach ($workEventModel->all($where, $orderBy, 0, 1) as $event) {
+            self::preventDuplicated($event);
+
             return self::runEvent($event);
         }
 
@@ -114,7 +121,18 @@ final class WorkQueue
             $work_event->name = $event;
             $work_event->value = $value;
             $work_event->setParams($params);
-            return $work_event->save();
+
+            if (self::isDuplicated($work_event)) {
+                // devolvemos true porque ya se había enviado el evento
+                return true;
+            }
+
+            if (false === $work_event->save()) {
+                return false;
+            }
+
+            self::preventDuplicated($work_event);
+            return true;
         }
 
         return false;
@@ -142,6 +160,18 @@ final class WorkQueue
         }
 
         throw new Exception('Worker not found: ' . $worker_name);
+    }
+
+    private static function isDuplicated(WorkEvent $event): bool
+    {
+        $hash = $event->getHash();
+        return isset(self::$new_events[$hash]);
+    }
+
+    private static function preventDuplicated(WorkEvent $event): void
+    {
+        $hash = $event->getHash();
+        self::$new_events[$hash] = true;
     }
 
     private static function runEvent(WorkEvent &$event): bool

@@ -26,7 +26,7 @@ use FacturaScripts\Dinamic\Lib\Import\CSVImport;
  * Description of InitClass
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @deprecated since version 2024.5
+ * @deprecated since version 2024.5. Use FacturaScripts\Core\Template\InitClass instead.
  */
 abstract class InitClass
 {

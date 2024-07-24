@@ -404,7 +404,7 @@ abstract class PanelController extends BaseController
 
         // buscamos la columna
         $column = $this->tab($activeTab)->columnForField($colName);
-        if (empty($column) || $column->widget->getType() !== 'library') {
+        if (empty($column) || strtolower($column->widget->getType()) !== 'library') {
             return ['records' => 0, 'html' => ''];
         }
 
@@ -433,7 +433,7 @@ abstract class PanelController extends BaseController
 
         // buscamos la columna
         $column = $this->tab($activeTab)->columnForField($colName);
-        if (empty($column) || $column->widget->getType() !== 'library') {
+        if (empty($column) || strtolower($column->widget->getType()) !== 'library') {
             return [];
         }
 
@@ -464,7 +464,7 @@ abstract class PanelController extends BaseController
 
         // buscamos la columna
         $column = $this->tab($activeTab)->columnForField($colName);
-        if (empty($column) || $column->widget->getType() !== 'variante') {
+        if (empty($column) || strtolower($column->widget->getType()) !== 'variante') {
             return [];
         }
 

@@ -27,6 +27,7 @@ use FacturaScripts\Dinamic\Model\Divisa;
  * DivisaTools give us some basic and common methods for currency numbers.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @deprecated since 2024.8, use Tools::money() instead.
  */
 class DivisaTools extends NumberTools
 {

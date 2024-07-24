@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Lib\IPFilter;
  * Description of ToolBox
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * @deprecated since version 2024.5
+ * @deprecated since version 2024.5. Use Tools class instead.
  */
 class ToolBox
 {

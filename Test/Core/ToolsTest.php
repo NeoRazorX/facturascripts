@@ -64,11 +64,13 @@ final class ToolsTest extends TestCase
         $this->assertEquals($date, Tools::timeToDate($time2));
         $this->assertEquals('07-10-2020', Tools::date($date3));
         $this->assertEquals('07-10-2020', Tools::timeToDate($tim3));
+        $this->assertEquals('09-10-2020', Tools::dateOperation($date3, '+2 days'));
 
         $this->assertEquals($dateTime, Tools::dateTime($dateTime));
         $this->assertEquals($dateTime, Tools::timeToDateTime($time2));
         $this->assertEquals('17-05-2020 12:00:00', Tools::dateTime($dateTime2));
         $this->assertEquals('17-05-2020 12:00:00', Tools::timeToDateTime($time4));
+        $this->assertEquals('19-05-2020 13:00:00', Tools::dateTimeOperation($dateTime2, '+2 days +1 hour'));
     }
 
     public function testFolderFunctions(): void
@@ -258,6 +260,8 @@ final class ToolsTest extends TestCase
         $this->assertEquals('-1.23 €', Tools::money(-1.23));
         $this->assertEquals('-1.23 €', Tools::money(-1.234));
         $this->assertEquals('-1 234.56 €', Tools::money(-1234.56));
+        $this->assertEquals('-1 234.4 €', Tools::money(-1234.40, '', 1));
+        $this->assertEquals('-1 234 €', Tools::money(-1234.40, '', 0));
 
         // probamos con otra divisa
         $this->assertEquals('1.23 ?', Tools::money(1.234, 'TES'));
