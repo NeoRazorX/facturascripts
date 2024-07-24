@@ -261,6 +261,11 @@ class MysqlQueries implements DataBaseQueries
         return 'SELECT LAST_INSERT_ID() as num;';
     }
 
+    public function sqlRenameColumn(string $tableName, string $old_column, string $new_column): string
+    {
+        return 'ALTER TABLE ' . $tableName . ' RENAME COLUMN ' . $old_column . ' TO ' . $new_column . ';';
+    }
+
     /**
      * Generates the needed SQL to establish the given constraints
      *

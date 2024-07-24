@@ -69,4 +69,8 @@
         <name>idx_observaciones</name>
         <columns>observaciones</columns>
     </index>
+    <rename>
+        <old_column>numero</old_column>
+        <new_column>numero_test</new_column>
+    </rename>
 </table>

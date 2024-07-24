@@ -118,6 +118,7 @@ final class DbUpdater
             'columns' => [],
             'constraints' => [],
             'indexes' => [],
+            'rename' => [],
         ];
 
         if (false === file_exists($filePath)) {
@@ -174,6 +175,17 @@ final class DbUpdater
             }
         }
 
+        if (isset($xml->rename)) {
+            foreach ($xml->rename as $col) {
+                $key = (string)$col->old_column;
+
+                $structure['rename'][$key] = [
+                    'old_column' => $key,
+                    'new_column' => (string)$col->new_column
+                ];
+            }
+        }
+
         return $structure;
     }
 
@@ -205,7 +217,8 @@ final class DbUpdater
         $dbIndexes = self::db()->getIndexes($tableName);
         $sql = self::compareColumns($tableName, $structure['columns'], $dbCols) .
             self::compareConstraints($tableName, $structure['constraints'], $dbCons) .
-            self::compareIndexes($tableName, $structure['indexes'], $dbIndexes);
+            self::compareIndexes($tableName, $structure['indexes'], $dbIndexes) .
+            self::renameColums($tableName, $structure['rename'], $dbCols);
         if (!empty($sql) && self::db()->exec($sql)) {
             self::save($tableName);
 
@@ -347,6 +360,23 @@ final class DbUpdater
     private static function compareDataTypes(string $dbType, string $xmlType): bool
     {
         return self::db()->getEngine()->compareDataTypes($dbType, $xmlType);
+    }
+
+    private static function renameColums(string $tableName, array $xmlRenameColumns, array $dbCols)
+    {
+        if (empty($xmlRenameColumns)) {
+            return '';
+        }
+
+        $sql = '';
+        foreach ($xmlRenameColumns as $renameColumn) {
+            $column = self::searchInArray($dbCols, 'name', $renameColumn['old_column']);
+            if (!empty($column)) {
+                $sql .= self::sqlTool()->sqlRenameColumn($tableName, $renameColumn['old_column'], $renameColumn['new_column']);
+            }
+        }
+
+        return $sql;
     }
 
     private static function save(string $tableName): void

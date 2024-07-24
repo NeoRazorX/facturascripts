@@ -278,6 +278,38 @@ final class DbUpdaterTest extends TestCase
         $this->assertTrue($dropped, 'test-table-not-dropped');
     }
 
+    /**
+     * Comprobamos que puede renombrar una columna
+     */
+    public function testCanRenameColums(): void
+    {
+        // create
+        $tableName = 'test_table';
+        $filePath = Tools::folder('Test', '__files', $tableName . '.xml');
+        $structure = DbUpdater::readTableXml($filePath);
+        $created = DbUpdater::createTable($tableName, $structure);
+        $this->assertTrue($created, 'test-table-not-created');
+
+        // check table name
+        $columns = $this->db()->getColumns($tableName);
+        $this->assertTrue(isset($columns['numero']));
+
+        // update
+        DbUpdater::rebuild();
+        $newFilePath = Tools::folder('Test', '__files', $tableName . '_update_1.xml');
+        $newStructure = DbUpdater::readTableXml($newFilePath);
+        $updated = DbUpdater::updateTable($tableName, $newStructure);
+        $this->assertTrue($updated, 'test-table-not-updated');
+
+        // check table name
+        $columns = $this->db()->getColumns($tableName);
+        $this->assertFalse(isset($columns['numero']));
+        $this->assertTrue(isset($columns['numero_test']));
+
+        $dropped = DbUpdater::dropTable($tableName);
+        $this->assertTrue($dropped, 'test-table-not-dropped');
+    }
+
     private function db(): DataBase
     {
         if (null === $this->db) {
