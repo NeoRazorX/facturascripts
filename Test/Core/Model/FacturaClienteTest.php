@@ -688,6 +688,41 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 
+    public function testChangeInvoiceSerieWithOldDate(): void
+    {
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos una factura el 2 de febrero
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->setDate(date('02-02-Y'), $invoice->hora);
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // creamos una nueva serie
+        $serie = $this->getRandomSerie();
+        $this->assertTrue($serie->save(), 'cant-create-serie');
+
+        // creamos una factura el 3 de febrero
+        $invoice2 = new FacturaCliente();
+        $invoice2->setSubject($customer);
+        $invoice2->codserie = $serie->codserie;
+        $invoice2->setDate(date('03-02-Y'), $invoice2->hora);
+        $this->assertTrue($invoice2->save(), 'cant-create-invoice');
+
+        // ahora cambiamos la serie de la primera factura
+        $invoice->codserie = $serie->codserie;
+        $this->assertFalse($invoice->save(), 'can-change-invoice-serie-with-old-date: ' . $invoice->fecha);
+
+        // eliminamos
+        $this->assertTrue($invoice2->delete(), 'cant-delete-invoice');
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($serie->delete(), 'cant-delete-serie');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+    }
+
     public function testInvoiceWithDifferentAccountingDate(): void
     {
         // creamos un cliente
