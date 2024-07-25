@@ -100,7 +100,7 @@
     "apc-get-key-item": "APC-tik '%item%' elementua eskuratu da.",
     "apc-set-key-item": "APC-ri '%item%' elementua esleitu zaio.",
     "api": "API",
-    "api-disabled": "API desgaitua. Aplikazioaren hobespenetatik gaitu dezakezu.",
+    "api-disabled": "API desgaitua. Panelaren hobespenetatik gaitu dezakezu",
     "api-key": "API key",
     "api-keys": "API Keys",
     "api-version-not-found": "Ez da aurkitu API bertsioa",
