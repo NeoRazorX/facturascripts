@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Traits;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Model\LogAudit;
 
 trait LogErrorsTrait
 {
@@ -36,12 +37,9 @@ trait LogErrorsTrait
 
     protected function searchAuditLog(string $modelClass, string $modelCode): bool
     {
-        foreach (MiniLog::read('audit') as $log) {
-            if ($log['context']['model-class'] === $modelClass && $log['context']['model-code'] === $modelCode) {
-                return true;
-            }
-        }
-
-        return false;
+        return LogAudit::table()
+            ->whereEq('model', $modelClass)
+            ->whereEq('modelcode', $modelCode)
+            ->count() === 1;
     }
 }

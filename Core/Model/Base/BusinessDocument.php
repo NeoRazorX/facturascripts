@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\Model\LogAudit;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
@@ -506,7 +507,8 @@ abstract class BusinessDocument extends ModelOnChangeClass
         }
 
         // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->info('updated-model', [
+        $logAudit = new LogAudit();
+        $logAudit->info('updated-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
