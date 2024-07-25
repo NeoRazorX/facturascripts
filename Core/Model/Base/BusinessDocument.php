@@ -430,8 +430,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         }
 
         // check exercise and date
-        $exercise = $this->getExercise();
-        if (strtotime($this->fecha) < strtotime($exercise->fechainicio) || strtotime($this->fecha) > strtotime($exercise->fechafin)) {
+        if (false === $this->hasChanged('fecha') && false === $this->getExercise()->inRange($this->fecha)) {
             Tools::log()->error('date-out-of-exercise-range', ['%exerciseName%' => $this->codejercicio]);
             return false;
         }

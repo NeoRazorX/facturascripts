@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,7 @@ use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PresupuestoCliente;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -41,7 +42,7 @@ final class PresupuestoClienteTest extends TestCase
         self::setDefaultSettings();
     }
 
-    public function testDefaultValues()
+    public function testDefaultValues(): void
     {
         // creamos un presupuesto
         $doc = new PresupuestoCliente();
@@ -54,7 +55,7 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertNotEmpty($doc->hora, 'empty-time');
     }
 
-    public function testSetAuthor()
+    public function testSetAuthor(): void
     {
         // creamos un agente
         $agent = $this->getRandomAgent();
@@ -84,7 +85,7 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
     }
 
-    public function testCreateEmpty()
+    public function testCreateEmpty(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -118,14 +119,14 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-1');
     }
 
-    public function testCreateWithoutSubject()
+    public function testCreateWithoutSubject(): void
     {
         $doc = new PresupuestoCliente();
         $this->assertTrue($doc->save(), 'can-not-create-presupuesto-cliente-without-subject');
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-cliente');
     }
 
-    public function testCreateOneLine()
+    public function testCreateOneLine(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -163,7 +164,7 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-2');
     }
 
-    public function testCreateProductLine()
+    public function testCreateProductLine(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -213,7 +214,7 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
     }
 
-    public function testCreateProductNotFoundLine()
+    public function testCreateProductNotFoundLine(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -246,7 +247,7 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-3');
     }
 
-    public function testSecondCompany()
+    public function testSecondCompany(): void
     {
         // creamos la empresa 2
         $company2 = new Empresa();
@@ -307,7 +308,38 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
 
-    public function testSplitDocument()
+    public function testChangeExercise(): void
+    {
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+
+        // creamos un presupuesto y le asignamos el cliente
+        $doc = new PresupuestoCliente();
+        $doc->setSubject($subject);
+        $this->assertTrue($doc->save(), 'can-not-create-presupuesto-cliente-2');
+
+        // añadimos una línea
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save(), 'can-not-save-line-2');
+
+        // actualizamos los totales
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate-total');
+
+        // ponemos fecha de hace 2 años
+        $doc->fecha = Tools::date('-2 years');
+        $this->assertTrue($doc->save(), 'can-not-save-presupuesto-cliente-2');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-cliente-2');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
+    }
+
+    public function testSplitDocument(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
