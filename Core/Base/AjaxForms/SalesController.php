@@ -85,10 +85,12 @@ abstract class SalesController extends PanelController
      */
     public function renderSalesForm(SalesDocument $model, array $lines): string
     {
+        $url = empty($model->primaryColumnValue()) ? $this->url() : $model->url();
+
         return '<div id="salesFormHeader">' . SalesHeaderHTML::render($model) . '</div>'
             . '<div id="salesFormLines">' . SalesLineHTML::render($lines, $model) . '</div>'
             . '<div id="salesFormFooter">' . SalesFooterHTML::render($model) . '</div>'
-            . SalesModalHTML::render($model, $this->url(), $this->user, $this->permissions);
+            . SalesModalHTML::render($model, $url, $this->user, $this->permissions);
     }
 
     public function series(string $type = ''): array

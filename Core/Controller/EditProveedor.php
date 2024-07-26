@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -178,11 +178,17 @@ class EditProveedor extends ComercialContactController
             return false;
         }
 
-        // redirect to returnUrl if return is defined
-        $returnUrl = $this->request->query->get('return');
-        if (!empty($returnUrl)) {
-            $model = $this->views[$this->active]->model;
-            $this->redirect($returnUrl . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+        // redirect to return_url if return is defined
+        $return_url = $this->request->query->get('return');
+        if (empty($return_url)) {
+            return true;
+        }
+
+        $model = $this->views[$this->active]->model;
+        if (strpos($return_url, '?') === false) {
+            $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+        } else {
+            $this->redirect($return_url . '&' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
         }
 
         return true;

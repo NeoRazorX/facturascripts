@@ -84,10 +84,12 @@ abstract class PurchasesController extends PanelController
      */
     public function renderPurchasesForm(PurchaseDocument $model, array $lines): string
     {
+        $url = empty($model->primaryColumnValue()) ? $this->url() : $model->url();
+
         return '<div id="purchasesFormHeader">' . PurchasesHeaderHTML::render($model) . '</div>'
             . '<div id="purchasesFormLines">' . PurchasesLineHTML::render($lines, $model) . '</div>'
             . '<div id="purchasesFormFooter">' . PurchasesFooterHTML::render($model) . '</div>'
-            . PurchasesModalHTML::render($model, $this->url());
+            . PurchasesModalHTML::render($model, $url);
     }
 
     public function series(string $type = ''): array
@@ -440,7 +442,7 @@ abstract class PurchasesController extends PanelController
         foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
             // si no está pagado, actualizamos fechapago y codpago
-            if (false == $receipt->pagado){
+            if (false == $receipt->pagado) {
                 $receipt->fechapago = $formData['fechapagorecibo'] ?? Tools::date();
                 $receipt->codpago = $model->codpago;
             }
