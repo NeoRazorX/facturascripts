@@ -111,8 +111,14 @@ trait CommonSalesPurchases
             if ($company->idempresa != $model->idempresa && $model->exists()) {
                 continue;
             }
+
             $option = '';
             foreach ($company->getWarehouses() as $row) {
+                // si el almacén no está activo o seleccionado, no lo mostramos
+                if ($row->codalmacen != $model->codalmacen && !$row->activo) {
+                    continue;
+                }
+
                 $option .= ($row->codalmacen === $model->codalmacen) ?
                     '<option value="' . $row->codalmacen . '" selected>' . $row->nombre . '</option>' :
                     '<option value="' . $row->codalmacen . '">' . $row->nombre . '</option>';
@@ -120,9 +126,11 @@ trait CommonSalesPurchases
             }
             $options[] = '<optgroup label="' . $company->nombrecorto . '">' . $option . '</optgroup>';
         }
+
         $attributes = $model->editable ?
             'name="codalmacen" onchange="return ' . $jsFunc . '(\'recalculate\', \'0\');" required' :
             'disabled';
+
         return empty($model->subjectColumnValue()) || $warehouses <= 1 ? '' : '<div class="col-sm-2 col-lg">'
             . '<div class="form-group">'
             . '<a href="' . Almacenes::get($model->codalmacen)->url() . '">' . $i18n->trans('company-warehouse') . '</a>'
@@ -154,9 +162,16 @@ trait CommonSalesPurchases
     {
         $options = [];
         foreach (FormasPago::all() as $row) {
+            // saltamos las formas de pago de otras empresas
             if ($row->idempresa != $model->idempresa) {
                 continue;
             }
+
+            // si la forma de pago no está activa o seleccionada, la saltamos
+            if ($row->codpago != $model->codpago && !$row->activa) {
+                continue;
+            }
+
             $options[] = ($row->codpago === $model->codpago) ?
                 '<option value="' . $row->codpago . '" selected>' . $row->descripcion . '</option>' :
                 '<option value="' . $row->codpago . '">' . $row->descripcion . '</option>';
