@@ -300,19 +300,29 @@ END;
         ob_flush();
 
         // recorremos todos los recibos de compra impagados con fecha anterior a hoy
-        $reciboProveedor = new ReciboProveedor();
         $where = [
             new DataBaseWhere('pagado', false),
             new DataBaseWhere('vencimiento', Tools::date(), '<')
         ];
-        foreach ($reciboProveedor->all($where, [], 0, 0) as $recibo) {
+        foreach (ReciboProveedor::all($where, [], 0, 0) as $recibo) {
+            // si el código de factura ha cambiado, lo guardamos
+            $factura = $recibo->getInvoice();
+            if ($recibo->codigofactura != $factura->codigo) {
+                $recibo->codigofactura = $factura->codigo;
+            }
+
             // guardamos para que se actualice
             $recibo->save();
         }
 
         // recorremos todos los recibos de venta impagados con fecha anterior a hoy
-        $reciboCliente = new ReciboCliente();
-        foreach ($reciboCliente->all($where, [], 0, 0) as $recibo) {
+        foreach (ReciboCliente::all($where, [], 0, 0) as $recibo) {
+            // si el código de factura ha cambiado, lo guardamos
+            $factura = $recibo->getInvoice();
+            if ($recibo->codigofactura != $factura->codigo) {
+                $recibo->codigofactura = $factura->codigo;
+            }
+
             // guardamos para que se actualice
             $recibo->save();
         }
