@@ -57,7 +57,7 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="danger" fieldname="activa" title="active">0</option>
+            <option color="danger" fieldname="activa" title="inactive">0</option>
             <option color="success" fieldname="pagado" title="paid">1</option>
             <option color="info" fieldname="domiciliado" title="domiciled">1</option>
         </row>

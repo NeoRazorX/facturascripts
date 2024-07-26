@@ -50,7 +50,7 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="danger" fieldname="activo" title="active">0</option>
+            <option color="danger" fieldname="activo" title="inactive">0</option>
         </row>
     </rows>
 </view>
