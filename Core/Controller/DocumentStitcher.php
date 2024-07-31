@@ -56,9 +56,11 @@ class DocumentStitcher extends Controller
     public function getAvailableStatus(): array
     {
         $status = [];
-        $documentState = new EstadoDocumento();
-        $where = [new DataBaseWhere('tipodoc', $this->modelName)];
-        foreach ($documentState->all($where) as $docState) {
+        $where = [
+            new DataBaseWhere('activo', true),
+            new DataBaseWhere('tipodoc', $this->modelName)
+        ];
+        foreach (EstadoDocumento::all($where) as $docState) {
             if ($docState->generadoc) {
                 $status[] = $docState;
             }

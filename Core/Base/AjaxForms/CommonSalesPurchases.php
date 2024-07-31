@@ -393,7 +393,8 @@ trait CommonSalesPurchases
         // añadimos los estados posibles
         $options = [];
         foreach ($model->getAvailableStatus() as $sta) {
-            if ($sta->idestado === $model->idestado) {
+            // si está seleccionado o no activo, lo saltamos
+            if ($sta->idestado === $model->idestado || false === $sta->activo) {
                 continue;
             }
 
