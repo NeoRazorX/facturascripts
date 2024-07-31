@@ -261,7 +261,7 @@ class EditFacturaProveedor extends PurchasesController
 
         if ($invoice->editable) {
             foreach ($invoice->getAvailableStatus() as $status) {
-                if ($status->editable) {
+                if ($status->editable || !$status->activo) {
                     continue;
                 }
 
