@@ -1217,7 +1217,7 @@
     "purchases": "Käufe",
     "purchases-subaccount-not-found": "purchases-subaccount-not-found",
     "pvp": "Endverbraucherpreis",
-    "pvp-total": "Total retail price",
+    "pvp-total": "Gesamtpreis",
     "pvp-unit": "Unit retail price",
     "pvpsindto-line-error": "Fehler im Wert von pvpsindto der Zeile 0 des Dokuments. Richtiger Wert: 1",
     "pvptotal-line-error": "Fehler im pvptotal Wert der Zeile 0 des Dokuments. Richtiger Wert: 1",
