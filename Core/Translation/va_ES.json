@@ -777,7 +777,7 @@
     "invalid-date-there-are-invoices-after": "Data no vàlida: %date%. La factura %other% és posterior i tanmateix té data anterior: %other-date%. Tota factura ha de tindre una data anterior o igual a la següent.",
     "invalid-date-there-are-invoices-before": "Data no vàlida. La data %date% és posterior a la data de la factura següent.",
     "invalid-iban": "IBAN no vàlid: %iban%",
-    "invalid-iso-code": "Código ISO ''%iso-code% no válido",
+    "invalid-iso-code": "Código ISO '%iso-code%' no vàlid",
     "invalid-number": "invalid-number",
     "invalid-request": "Petició no vàlida",
     "invalid-user-can-permission": "Permís no vàlid: %permission%. Els permisos disponibles són access, delete, export, import, update i only-owner-data.",
