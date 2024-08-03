@@ -228,11 +228,20 @@ class EditCliente extends ComercialContactController
             case $mainViewName:
                 parent::loadData($viewName, $view);
                 $this->loadLanguageValues($viewName);
+                $this->loadExceptionVat($viewName);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
                 break;
+        }
+    }
+
+    protected function loadExceptionVat(string $viewName): void
+    {
+        $column = $this->views[$viewName]->columnForName('vat-exception');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
     }
 

@@ -52,6 +52,9 @@ class Cliente extends Base\ComercialContact
     /** @var string */
     public $diaspago;
 
+    /** @var string */
+    public $excepcioniva;
+
     /** @var integer */
     public $idcontactoenv;
 
