@@ -17,20 +17,8 @@
  */
 
 $(document).ready(function () {
-    $(".calc-cost").change(function () {
-        var coste = parseFloat($(this).val());
-        var margen = parseFloat($(this.form.margen).val());
-        if (margen > 0) {
-            $(this.form.precio).val(coste * (100 + margen) / 100);
-        }
-    });
-    $(".calc-margin").change(function () {
-        var coste = parseFloat($(this.form.coste).val());
-        var margen = parseFloat($(this).val());
-        if (margen > 0) {
-            $(this.form.precio).val(coste * (100 + margen) / 100);
-        }
-    });
+    $(".calc-cost, .calc-margin").on("change", calculatePrice);
+
     $(".calc-price").change(function () {
         $(this.form.margen).val(0);
     });
@@ -61,3 +49,30 @@ $(document).ready(function () {
         },
     });
 });
+
+function calculatePrice(){
+    var coste = parseFloat($(this.form.coste).val());
+    var margen = parseFloat($(this.form.margen).val());
+
+    // Validar valores de coste y margen
+    if (isNaN(coste) || isNaN(margen)) {
+        console.error("Los valores de coste y margen deben ser números válidos.");
+        return;
+    }
+
+    // Verificar que el margen sea positivo
+    if (margen <= 0) {
+        console.error("El margen debe ser mayor que 0.");
+        return;
+    }
+
+    switch (calculationMethodPrice) {
+        case 'sales-margin':
+            $(this.form.precio).val(coste / (1 - margen / 100));
+            break;
+        default:
+            // cost-margin
+            $(this.form.precio).val(coste * (100 + margen) / 100);
+            break;
+    }
+}
