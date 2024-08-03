@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\LogAudit;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\DocTransformation;
@@ -167,7 +168,8 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->warning('deleted-model', [
+        $logAudit = new LogAudit();
+        $logAudit->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),

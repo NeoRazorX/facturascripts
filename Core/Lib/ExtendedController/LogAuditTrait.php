@@ -25,7 +25,7 @@ trait LogAuditTrait
 {
     public function createViewLogAudit(string $viewName = 'ListLogMessage')
     {
-        $this->addListView($viewName, 'LogMessage', 'history', 'fas fa-history');
+        $this->addListView($viewName, 'LogAudit', 'history', 'fas fa-history');
         $this->views[$viewName]->addOrderBy(['time'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['context', 'message']);
 

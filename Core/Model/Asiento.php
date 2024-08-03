@@ -169,7 +169,8 @@ class Asiento extends Base\ModelOnChangeClass
         }
 
         // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->warning('deleted-model', [
+        $logAudit = new LogAudit();
+        $logAudit->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
@@ -337,7 +338,8 @@ class Asiento extends Base\ModelOnChangeClass
         }
 
         // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->info('updated-model', [
+        $logAudit = new LogAudit();
+        $logAudit->info('updated-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
