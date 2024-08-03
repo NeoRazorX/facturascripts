@@ -173,22 +173,19 @@ class Contacto extends Base\Contact
         }
 
         if ($create) {
-            // creates a new customer
+            // obtenemos los campos que no comparten los modelos para excluirlos.
+            $exclude = $this->obtenerCamposNoCoincidentes($this->getModelFields(), $cliente->getModelFields());
+
+            // incluimos los datos de los campos coincidentes en ambos modelos al nuevo modelo
+            $cliente->loadFromData($this->toArray(), $exclude);
+
+            // adaptamos algunos datos al nuevo modelo
             $cliente->cifnif = $this->cifnif ?? '';
-            $cliente->codagente = $this->codagente;
-            $cliente->codproveedor = $this->codproveedor;
-            $cliente->email = $this->email;
-            $cliente->fax = $this->fax;
             $cliente->idcontactoenv = $this->idcontacto;
             $cliente->idcontactofact = $this->idcontacto;
-            $cliente->langcode = $this->langcode;
             $cliente->nombre = $this->fullName();
-            $cliente->observaciones = $this->observaciones;
-            $cliente->personafisica = $this->personafisica;
             $cliente->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
-            $cliente->telefono1 = $this->telefono1;
-            $cliente->telefono2 = $this->telefono2;
-            $cliente->web = $this->web;
+
             if ($cliente->save()) {
                 $this->codcliente = $cliente->codcliente;
                 $this->save();
@@ -206,20 +203,17 @@ class Contacto extends Base\Contact
         }
 
         if ($create) {
-            // creates a new supplier
+            // obtenemos los campos que no comparten los modelos para excluirlos.
+            $exclude = $this->obtenerCamposNoCoincidentes($this->getModelFields(), $proveedor->getModelFields());
+
+            // incluimos los datos de los campos coincidentes en ambos modelos al nuevo modelo
+            $proveedor->loadFromData($this->toArray(), $exclude);
+
+            // adaptamos algunos datos al nuevo modelo
             $proveedor->cifnif = $this->cifnif ?? '';
-            $proveedor->codcliente = $this->codcliente;
-            $proveedor->email = $this->email;
-            $proveedor->fax = $this->fax;
-            $proveedor->idcontacto = $this->idcontacto;
-            $proveedor->langcode = $this->langcode;
             $proveedor->nombre = $this->fullName();
-            $proveedor->observaciones = $this->observaciones;
-            $proveedor->personafisica = $this->personafisica;
             $proveedor->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
-            $proveedor->telefono1 = $this->telefono1;
-            $proveedor->telefono2 = $this->telefono2;
-            $proveedor->web = $this->web;
+
             if ($proveedor->save()) {
                 $this->codproveedor = $proveedor->codproveedor;
                 $this->save();
@@ -288,5 +282,23 @@ class Contacto extends Base\Contact
     public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    private function obtenerCamposNoCoincidentes($arrayUno, $arrayDos)
+    {
+        // Obtener las claves de ambos arrays
+        $clavesUno = array_keys($arrayUno);
+        $clavesDos = array_keys($arrayDos);
+
+        // Obtener las claves que están en $arrayUno pero no en $arrayDos
+        $clavesSoloEnUno = array_diff($clavesUno, $clavesDos);
+
+        // Obtener las claves que están en $arrayDos pero no en $arrayUno
+        $clavesSoloEnDos = array_diff($clavesDos, $clavesUno);
+
+        // Combinar ambas listas de claves no coincidentes
+        $clavesNoCoincidentes = array_merge($clavesSoloEnUno, $clavesSoloEnDos);
+
+        return $clavesNoCoincidentes;
     }
 }
