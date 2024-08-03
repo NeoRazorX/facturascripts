@@ -21,10 +21,14 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Ciudad;
+use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Provincia;
 
 /**
  * Description of PurchasesHeaderHTML
@@ -83,6 +87,12 @@ class PurchasesHeaderHTML
         $model->numproveedor = $formData['numproveedor'] ?? $model->numproveedor;
         $model->operacion = $formData['operacion'] ?? $model->operacion;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
+        $model->apartado = $formData['apartado'] ?? $model->apartado;
+        $model->ciudad = $formData['ciudad'] ?? $model->ciudad;
+        $model->codpais = $formData['codpais'] ?? $model->codpais;
+        $model->codpostal = $formData['codpostal'] ?? $model->codpostal;
+        $model->direccion = $formData['direccion'] ?? $model->direccion;
+        $model->provincia = $formData['provincia'] ?? $model->provincia;
 
         foreach (['fechadevengo'] as $key) {
             if (isset($formData[$key])) {
@@ -102,6 +112,19 @@ class PurchasesHeaderHTML
         foreach (self::$mods as $mod) {
             $mod->assets();
         }
+    }
+
+    private static function addressField(Translator $i18n, PurchaseDocument $model, string $field, string $label, int $size, int $maxlength): string
+    {
+        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
+            'name="' . $field . '" maxlength="' . $maxlength . '" autocomplete="off"' :
+            'disabled=""';
+
+        return '<div class="col-sm-' . $size . '">'
+            . '<div class="form-group">' . $i18n->trans($label)
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->{$field}) . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
     }
 
     public static function render(PurchaseDocument $model): string
@@ -126,6 +149,55 @@ class PurchasesHeaderHTML
             . self::renderNewBtnFields($i18n, $model)
             . self::renderField($i18n, $model, '_paid')
             . self::renderField($i18n, $model, 'idestado')
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function ciudad(Translator $i18n, PurchaseDocument $model, int $size, int $maxlength): string
+    {
+        $list = '';
+        $dataList = '';
+        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
+            'name="ciudad" maxlength="' . $maxlength . '" autocomplete="off"' :
+            'disabled=""';
+
+        if ($model->editable) {
+            // pre-cargamos listado de ciudades
+            $list = 'list="ciudades"';
+            $dataList = '<datalist id="ciudades">';
+
+            $ciudadModel = new Ciudad();
+            foreach ($ciudadModel->all([], ['ciudad' => 'ASC'], 0, 0) as $ciudad) {
+                $dataList .= '<option value="' . $ciudad->ciudad . '">' . $ciudad->ciudad . '</option>';
+            }
+            $dataList .= '</datalist>';
+        }
+
+        return '<div class="col-sm-' . $size . '">'
+            . '<div class="form-group">' . $i18n->trans('city')
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->ciudad) . '" ' . $list . ' class="form-control"/>'
+            . $dataList
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function codpais(Translator $i18n, PurchaseDocument $model): string
+    {
+        $options = [];
+        foreach (Paises::all() as $pais) {
+            $options[] = ($pais->codpais === $model->codpais) ?
+                '<option value="' . $pais->codpais . '" selected>' . $pais->nombre . '</option>' :
+                '<option value="' . $pais->codpais . '">' . $pais->nombre . '</option>';
+        }
+
+        $pais = new Pais();
+        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
+            'name="codpais"' :
+            'disabled=""';
+        return '<div class="col-sm-6">'
+            . '<div class="form-group">'
+            . '<a href="' . $pais->url() . '">' . $i18n->trans('country') . '</a>'
+            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -200,6 +272,12 @@ class PurchasesHeaderHTML
             . '<div class="form-row">'
             . self::renderField($i18n, $model, 'nombre')
             . self::renderField($i18n, $model, 'cifnif')
+            . self::renderField($i18n, $model, 'direccion')
+            . self::renderField($i18n, $model, 'apartado')
+            . self::renderField($i18n, $model, 'codpostal')
+            . self::renderField($i18n, $model, 'ciudad')
+            . self::renderField($i18n, $model, 'provincia')
+            . self::renderField($i18n, $model, 'codpais')
             . self::renderField($i18n, $model, 'fechadevengo')
             . self::renderField($i18n, $model, 'hora')
             . self::renderField($i18n, $model, 'operacion')
@@ -240,6 +318,34 @@ class PurchasesHeaderHTML
             . '</div>';
     }
 
+    private static function provincia(Translator $i18n, PurchaseDocument $model, int $size, int $maxlength): string
+    {
+        $list = '';
+        $dataList = '';
+        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
+            'name="provincia" maxlength="' . $maxlength . '" autocomplete="off"' :
+            'disabled=""';
+
+        if ($model->editable) {
+            // pre-cargamos listado de provincias
+            $list = 'list="provincias"';
+            $dataList = '<datalist id="provincias">';
+
+            $provinciaModel = new Provincia();
+            foreach ($provinciaModel->all([], ['provincia' => 'ASC'], 0, 0) as $provincia) {
+                $dataList .= '<option value="' . $provincia->provincia . '">' . $provincia->provincia . '</option>';
+            }
+            $dataList .= '</datalist>';
+        }
+
+        return '<div class="col-sm-' . $size . '">'
+            . '<div class="form-group">' . $i18n->trans('province')
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->provincia) . '" ' . $list . ' class="form-control"/>'
+            . $dataList
+            . '</div>'
+            . '</div>';
+    }
+
     private static function renderField(Translator $i18n, PurchaseDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
@@ -268,8 +374,14 @@ class PurchasesHeaderHTML
             case '_parents':
                 return self::parents($i18n, $model);
 
+            case 'apartado':
+                return self::addressField($i18n, $model, 'apartado', 'post-office-box', 4, 10);
+
             case 'cifnif':
                 return self::cifnif($i18n, $model);
+
+            case 'ciudad':
+                return self::ciudad($i18n, $model, 4, 100);
 
             case 'codalmacen':
                 return self::codalmacen($i18n, $model, 'purchasesFormAction');
@@ -280,11 +392,20 @@ class PurchasesHeaderHTML
             case 'codpago':
                 return self::codpago($i18n, $model);
 
+            case 'codpais':
+                return self::codpais($i18n, $model);
+
+            case 'codpostal':
+                return self::addressField($i18n, $model, 'codpostal', 'zip-code', 4, 10);
+
             case 'codproveedor':
                 return self::codproveedor($i18n, $model);
 
             case 'codserie':
                 return self::codserie($i18n, $model, 'purchasesFormAction');
+
+            case 'direccion':
+                return self::addressField($i18n, $model, 'direccion', 'address', 12, 100);
 
             case 'fecha':
                 return self::fecha($i18n, $model);
@@ -309,6 +430,9 @@ class PurchasesHeaderHTML
 
             case 'operacion':
                 return self::operacion($i18n, $model);
+
+            case 'provincia':
+                return self::provincia($i18n, $model, 6, 100);
 
             case 'tasaconv':
                 return self::tasaconv($i18n, $model);
