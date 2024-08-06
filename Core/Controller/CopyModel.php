@@ -80,10 +80,15 @@ class CopyModel extends Controller
         if ($action === 'autocomplete') {
             $this->autocompleteAction();
             return;
+        } elseif (false === $this->pipeFalse('execAction', $action, $this->codeModel)) {
+            return;
         } elseif (false === $this->loadModel()) {
             Tools::log()->warning('record-not-found');
             return;
         }
+
+        // creamos el título de la página
+        $this->title .= ' ' . $this->model->primaryDescription();
 
         // si no es un documento de compra o venta, cargamos su plantilla
         switch ($this->modelClass) {
@@ -94,13 +99,12 @@ class CopyModel extends Controller
             case 'Producto':
                 $this->setTemplate(self::TEMPLATE_PRODUCTO);
                 break;
+
+            default:
+                $this->pipe('before', $this->model);
+                break;
         }
 
-        if (false === $this->pipeFalse('before', $this->model)) {
-            return;
-        }
-
-        $this->title .= ' ' . $this->model->primaryDescription();
         if ($action === 'save') {
             switch ($this->modelClass) {
                 case 'AlbaranCliente':
@@ -123,6 +127,10 @@ class CopyModel extends Controller
 
                 case 'Producto':
                     $this->saveProduct();
+                    break;
+
+                default:
+                    $this->pipe('saveAction', $this->model, $this->codeModel);
                     break;
             }
         }
