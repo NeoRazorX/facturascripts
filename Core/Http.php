@@ -156,6 +156,12 @@ class Http
         return new self('POST', $url, $data);
     }
 
+    public static function postJson(string $url, array $data = []): self
+    {
+        return self::post($url, json_encode($data))
+            ->setHeader('Content-Type', 'application/json');
+    }
+
     public static function put(string $url, $data = []): self
     {
         return new self('PUT', $url, $data);
