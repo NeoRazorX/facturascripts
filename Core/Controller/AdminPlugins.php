@@ -89,6 +89,14 @@ class AdminPlugins extends Controller
                 $this->uploadPluginAction();
                 break;
 
+            case 'mass-add-plugins':
+                $this->massAddPluginsAction();
+                break;
+
+            case 'disable-all-plugins':
+                $this->disableAllPluginsAction();
+                break;
+
             default:
                 $this->extractPluginsZipFiles();
                 if (FS_DEBUG) {
@@ -234,5 +242,45 @@ class AdminPlugins extends Controller
             Tools::log()->notice('reloading');
             $this->redirect($this->url(), 3);
         }
+    }
+
+    private function massAddPluginsAction()
+    {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $pluginsList = $this->request->request->get('plugins-list');
+        $pluginsList = explode(',', $pluginsList);
+
+        foreach ($pluginsList as $pluginName){
+            $pluginName = trim($pluginName);
+            if(false === Plugins::isEnabled($pluginName)){
+                Plugins::enable($pluginName);
+            }
+        }
+
+        Cache::clear();
+    }
+
+    private function disableAllPluginsAction()
+    {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
+        foreach (Plugins::list() as $plugin){
+            if($plugin->enabled){
+                Plugins::disable($plugin->name);
+            }
+        }
+
+        Cache::clear();
     }
 }
