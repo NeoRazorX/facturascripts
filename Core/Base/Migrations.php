@@ -98,6 +98,7 @@ final class Migrations
             $sql = "SELECT DISTINCT codpago FROM " . $table . " WHERE codpago NOT IN (SELECT codpago FROM formaspago);";
             foreach (self::db()->select($sql) as $row) {
                 $formaPago = new FormaPago();
+                $formaPago->activa = false;
                 $formaPago->codpago = $row['codpago'];
                 $formaPago->descripcion = Tools::lang()->trans('deleted');
                 if ($formaPago->save()) {
