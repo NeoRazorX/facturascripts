@@ -71,6 +71,14 @@ class SalesHeaderHTML
                     return;
                 }
             }
+
+            $contacto = new Contacto();
+            if (isset($formData['idcontactofact']) && $contacto->loadFromCode($formData['idcontactofact'])) {
+                $model->setSubject($contacto);
+                if (empty($formData['action'])) {
+                    return;
+                }
+            }
         } elseif (isset($formData['action'], $formData['codcliente']) &&
             $formData['action'] === 'set-customer' &&
             $cliente->loadFromCode($formData['codcliente'])) {
