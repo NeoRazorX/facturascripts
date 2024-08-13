@@ -327,9 +327,8 @@ class Login implements ControllerInterface
         }
 
         // remove cookies
-        $expiration = time() - 3600;
         $options = [
-            'expires' => $expiration,
+            'expires' => time() - 3600,
             'path' => Tools::config('route', '/'),
             'httponly' => true,
             'secure' => true,
