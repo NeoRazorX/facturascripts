@@ -302,9 +302,16 @@ class Login implements ControllerInterface
 
         // save cookies
         $expiration = time() + (int)Tools::config('cookies_expire', 31536000);
-        setcookie('fsNick', $user->nick, $expiration, Tools::config('route', '/'));
-        setcookie('fsLogkey', $user->logkey, $expiration, Tools::config('route', '/'));
-        setcookie('fsLang', $user->langcode, $expiration, Tools::config('route', '/'));
+        $options = [
+            'expires' => $expiration,
+            'path' => Tools::config('route', '/'),
+            'httponly' => true,
+            'secure' => true,
+            'samesite' => 'Strict'
+        ];
+        setcookie('fsNick', $user->nick, $options);
+        setcookie('fsLogkey', $user->logkey, $options);
+        setcookie('fsLang', $user->langcode, $options);
 
         // redirect to the user's main page
         if (empty($user->homepage)) {
@@ -320,9 +327,17 @@ class Login implements ControllerInterface
         }
 
         // remove cookies
-        setcookie('fsNick', '', time() - 3600, Tools::config('route', '/'));
-        setcookie('fsLogkey', '', time() - 3600, Tools::config('route', '/'));
-        setcookie('fsLang', '', time() - 3600, Tools::config('route', '/'));
+        $expiration = time() - 3600;
+        $options = [
+            'expires' => $expiration,
+            'path' => Tools::config('route', '/'),
+            'httponly' => true,
+            'secure' => true,
+            'samesite' => 'Strict'
+        ];
+        setcookie('fsNick', '', $options);
+        setcookie('fsLogkey', '', $options);
+        setcookie('fsLang', '', $options);
 
         // restart token
         $multiRequestProtection = new MultiRequestProtection();

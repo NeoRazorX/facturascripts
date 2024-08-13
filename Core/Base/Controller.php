@@ -371,7 +371,15 @@ class Controller implements ControllerInterface
         if (false === $user->verifyLogkey($logKey)) {
             Tools::log()->warning('login-cookie-fail');
             // eliminamos la cookie
-            setcookie('fsNick', '', time() - FS_COOKIES_EXPIRE, '/');
+            $expiration = time() - FS_COOKIES_EXPIRE;
+            $options = [
+                'expires' => $expiration,
+                'path' => Tools::config('route', '/'),
+                'httponly' => true,
+                'secure' => true,
+                'samesite' => 'Strict'
+            ];
+            setcookie('fsNick', '', $options);
             return false;
         }
 
