@@ -887,7 +887,7 @@
     "location": "Localización",
     "lock-accounting": "Bloquear contabilidade",
     "lock-entry": "Bloquear asento",
-    "lock-invoice": "Bloquear factura",
+    "lock-invoice": "Marcar emitida",
     "lock-unlock": "(Des)Bloquear",
     "lock-unlock-account-entry": "Bloquear\/Desbloquear o asento contable",
     "locked": "Bloqueado",
