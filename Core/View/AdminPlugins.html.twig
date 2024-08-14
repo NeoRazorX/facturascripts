@@ -21,6 +21,7 @@
 
 {% block bodyHeaderOptions %}
     {{ parent() }}
+    {% import 'Macro/Utils.html.twig' as Utils %}
     <div class="container-fluid mb-2">
         <div class="row">
             <div class="col-sm-6">
@@ -62,6 +63,7 @@
                 </h1>
             </div>
         </div>
+        {{ Utils.registerInstall() }}
     </div>
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
