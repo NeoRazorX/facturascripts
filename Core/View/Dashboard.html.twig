@@ -56,9 +56,9 @@
                 <div class="col">
                     <div class="card bg-warning shadow mb-3">
                         <div class="card-body">
-                            <h2 class="h3">
+                            <div class="h3">
                                 <i class="fas fa-save mr-1"></i> {{ trans('dashboard-backup') }}
-                            </h2>
+                            </div>
                             <p class="card-text">{{ trans('dashboard-backup-p') }}</p>
                             <ul class="mb-0">
                                 <li>{{ trans('dasboard-backup-li1') }}</li>
@@ -74,8 +74,11 @@
                     </div>
                 </div>
             </div>
-        {% endif %}
-        {% if fsc.registered == false %}
+        {% elseif fsc.updated == false %}
+            <div class="mb-3">
+                {{ Utils.updateInstall() }}
+            </div>
+        {% elseif fsc.registered == false %}
             <div class="mb-3">
                 {{ Utils.registerInstall() }}
             </div>
@@ -175,7 +178,7 @@
                         </li>
                         <li>
                             <a href="https://forms.gle/WhGgWWB6EbWjBNna6" rel="nofollow"
-                               target="_blank">Encuesta de uso 2022/23
+                               target="_blank">Encuesta de uso 2024/25
                                 <i class="fas fa-clipboard-check"></i>
                             </a>
                         </li>

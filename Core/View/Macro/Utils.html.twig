@@ -56,7 +56,7 @@
 {% macro registerInstall(link = true) %}
     <div class="card shadow-sm">
         <div class="card-body">
-            <div class="font-weight-bold">
+            <div class="h4">
                 <i class="fa-solid fa-registered mr-1"></i> {{ trans('register-install-ad') }}
             </div>
             <p class="card-text">{{ trans('register-install-ad-p') }}</p>
@@ -71,5 +71,22 @@
                 </a>
             </div>
         {% endif %}
+    </div>
+{% endmacro %}
+
+{# Muestra un mensaje para actualizar la instalación #}
+{% macro updateInstall() %}
+    <div class="card bg-warning shadow-sm">
+        <div class="card-body">
+            <div class="h3">
+                <i class="fa-solid fa-cloud-download fa-beat mr-1"></i> {{ trans('updates-available') }}
+            </div>
+            <p class="card-text">{{ trans('updates-available-p') }}</p>
+        </div>
+        <div class="card-footer p-2">
+            <a href="{{ asset('Updater') }}" class="btn btn-secondary">
+                {{ trans('update') }}
+            </a>
+        </div>
     </div>
 {% endmacro %}

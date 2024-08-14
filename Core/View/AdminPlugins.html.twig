@@ -92,7 +92,11 @@
     <div class="tab-content">
         <div class="tab-pane fade show active" id="installed" role="tabpanel">
             {{ _self.showInstalledPlugins(fsc) }}
-            {% if fsc.registered == false %}
+            {% if fsc.updated == false %}
+                <div class="ml-2 mt-3 mr-2 mb-3">
+                    {{ Utils.updateInstall() }}
+                </div>
+            {% elseif fsc.registered == false %}
                 <div class="ml-2 mt-3 mr-2 mb-3">
                     {{ Utils.registerInstall() }}
                 </div>

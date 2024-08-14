@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
+use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
@@ -73,6 +74,9 @@ class Dashboard extends Controller
     /** @var array */
     public $stats = [];
 
+    /** @var bool */
+    public $updated = false;
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -100,6 +104,9 @@ class Dashboard extends Controller
         // comprobamos si la instalación está registrada
         $telemetry = new TelemetryManager();
         $this->registered = $telemetry->ready();
+
+        // comprobamos si hay actualizaciones disponibles
+        $this->updated = Forja::canUpdateCore() === false;
     }
 
     public function showBackupWarning(): bool

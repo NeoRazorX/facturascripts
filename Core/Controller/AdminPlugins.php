@@ -46,6 +46,9 @@ class AdminPlugins extends Controller
     /** @var bool */
     public $registered = false;
 
+    /** @var bool */
+    public $updated = false;
+
     public function getMaxFileUpload(): float
     {
         return UploadedFile::getMaxFilesize() / 1024 / 1024;
@@ -110,6 +113,9 @@ class AdminPlugins extends Controller
         // comprobamos si la instalación está registrada
         $telemetry = new TelemetryManager();
         $this->registered = $telemetry->ready();
+
+        // comprobamos si hay actualizaciones disponibles
+        $this->updated = Forja::canUpdateCore() === false;
     }
 
     private function disablePluginAction(): void
