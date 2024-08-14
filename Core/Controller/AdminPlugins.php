@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Plugins;
@@ -41,6 +42,9 @@ class AdminPlugins extends Controller
 
     /** @var array */
     public $remotePluginList = [];
+
+    /** @var bool */
+    public $registered = false;
 
     public function getMaxFileUpload(): float
     {
@@ -99,8 +103,13 @@ class AdminPlugins extends Controller
                 break;
         }
 
+        // cargamos la lista de plugins
         $this->pluginList = Plugins::list();
         $this->loadRemotePluginList();
+
+        // comprobamos si la instalación está registrada
+        $telemetry = new TelemetryManager();
+        $this->registered = $telemetry->ready();
     }
 
     private function disablePluginAction(): void

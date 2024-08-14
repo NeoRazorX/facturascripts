@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,9 +18,9 @@
  */
 #}
 {% extends "Master/MenuBghTemplate.html.twig" %}
+{% import 'Macro/Utils.html.twig' as Utils %}
 
 {% block body %}
-    {% import 'Macro/Utils.html.twig' as Utils %}
     <div class="bg-light pt-4 pb-5">
         <div class="container">
             <div class="row">
@@ -57,7 +57,7 @@
                     <div class="card bg-warning shadow mb-3">
                         <div class="card-body">
                             <h2 class="h3">
-                                <i class="fas fa-save"></i> {{ trans('dashboard-backup') }}
+                                <i class="fas fa-save mr-1"></i> {{ trans('dashboard-backup') }}
                             </h2>
                             <p class="card-text">{{ trans('dashboard-backup-p') }}</p>
                             <ul class="mb-0">
@@ -66,7 +66,7 @@
                                 <li>{{ trans('dasboard-backup-li3') }}</li>
                             </ul>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer p-2">
                             <a href="https://facturascripts.com/plugins/backup" target="_blank" rel="nofollow"
                                class="btn btn-secondary"> Backup
                             </a>
@@ -75,7 +75,11 @@
                 </div>
             </div>
         {% endif %}
-        {{ Utils.registerInstall() }}
+        {% if fsc.registered == false %}
+            <div class="mb-3">
+                {{ Utils.registerInstall() }}
+            </div>
+        {% endif %}
         {% block sectionStats %}
             {{ _self.sectionStats(fsc) }}
         {% endblock %}

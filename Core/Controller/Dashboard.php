@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
@@ -63,6 +64,9 @@ class Dashboard extends Controller
     /** @var array */
     public $receipts = [];
 
+    /** @var bool */
+    public $registered = false;
+
     /** @var array */
     public $sections = [];
 
@@ -92,6 +96,10 @@ class Dashboard extends Controller
         $this->title = Tools::lang()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
 
         $this->loadExtensions();
+
+        // comprobamos si la instalación está registrada
+        $telemetry = new TelemetryManager();
+        $this->registered = $telemetry->ready();
     }
 
     public function showBackupWarning(): bool

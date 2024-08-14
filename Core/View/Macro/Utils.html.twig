@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -54,25 +54,22 @@
 
 {# Muestra un mensaje para registrar la instalación #}
 {% macro registerInstall(link = true) %}
-    <div class="alert alert-info">
-        <div class="row d-flex align-items-center">
-            <div class="col">
-                <div class="font-weight-bold">{{ trans('register-install-title') }}</div>
-                <ul class="pl-3 mb-0">
-                    <li>{{ trans('register-install-li-1') }}
-                        <a href="https://facturascripts.com/patrocinar" target="_blank">{{ trans('read-more') }}</a>
-                    </li>
-                    <li>{{ trans('register-install-li-2') }}</li>
-                    <li>{{ trans('register-install-li-3') }}</li>
-                </ul>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="font-weight-bold">
+                <i class="fa-solid fa-registered mr-1"></i> {{ trans('register-install-ad') }}
             </div>
-            {% if link %}
-                <div class="col-auto">
-                    <a href="{{ asset('Updater') }}" class="btn btn-primary text-nowrap">
-                        <i class="fas fa-registered fa-fw mr-1"></i>{{ trans('register') }}
-                    </a>
-                </div>
-            {% endif %}
+            <p class="card-text">{{ trans('register-install-ad-p') }}</p>
         </div>
+        {% if link %}
+            <div class="card-footer p-2">
+                <a href="{{ asset('Updater') }}" class="btn btn-secondary">
+                    {{ trans('register') }}
+                </a>
+                <a href="https://facturascripts.com/patrocinar" target="_blank" class="btn btn-outline-secondary">
+                    {{ trans('become-sponsor') }}
+                </a>
+            </div>
+        {% endif %}
     </div>
 {% endmacro %}
