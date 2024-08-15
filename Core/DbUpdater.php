@@ -106,7 +106,7 @@ final class DbUpdater
             }
 
             $fileData = file_get_contents(Tools::folder('MyFiles', self::FILE_NAME));
-            self::$checkedTables = json_decode($fileData, true);
+            self::$checkedTables = json_decode($fileData, true) ?? [];
         }
 
         return in_array($tableName, self::$checkedTables);
