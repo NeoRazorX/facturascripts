@@ -100,13 +100,16 @@ class OpenAi
             ->setTimeOut($this->timeout);
 
         if ($response->failed()) {
-            Tools::log()->error('chatGPT error: ' . $response->status() . ' ' . $response->errorMessage());
+            Tools::log()->error(
+                'chatGPT error: ' . $response->status() . ' ' . $response->errorMessage(),
+                $response->json()
+            );
             return '';
         }
 
         $json = $response->json();
         if (empty($json['choices'])) {
-            Tools::log()->error('chatGPT error: empty response');
+            Tools::log()->error('chatGPT error: empty response. ' . $response->body());
             return '';
         }
 

@@ -61,7 +61,7 @@ class ApiExportFacturaCliente extends ApiController
         }
 
         $type = $this->request->query->get('type', 'PDF');
-        $format = $this->request->query->get('format', 0);
+        $format = (int)$this->request->query->get('format', 0);
         $lang = $this->request->query->get('lang', $facturaCliente->getSubject()->langcode) ?? '';
         $title = Tools::lang($lang)->trans('invoice') . ' ' . $facturaCliente->primaryDescription();
 
