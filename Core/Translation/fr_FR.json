@@ -1262,7 +1262,7 @@
     "refund-payment-concept": "Remboursement du reçu %document%",
     "refunds": "Remboursements",
     "register": "S'enregistrer",
-    "register-install-ad": "Enregistrez l'installation de FacturaScripts",
+    "register-install-ad": "Enregistrer l'installation de FacturaScripts",
     "register-install-ad-p": "Si vous enregistrez l'installation de FacturaScripts, vous obtiendrez 1 mois de parrainage PRO, ce qui vous permet de télécharger l'un de nos plugins exclusifs. De plus, cela nous aide à obtenir des statistiques sur les versions du noyau et de PHP.",
     "register-installation": "Enregistrer cette installation",
     "register-installation-p": "Enregistrez votre installation pour pouvoir mettre à jour les modules externes payants ou privés.",
