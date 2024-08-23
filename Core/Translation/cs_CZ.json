@@ -388,7 +388,7 @@
     "dateentry-wildcard-info": "Fecha indicada en la cabecera del asiento contable",
     "day": "Día",
     "days": "Días",
-    "days-log-retention": "Počet dní udržení logů",
+    "days-log-retention": "Počet dní uchování protokolů",
     "days-until-expiration": "Días hasta vencimiento",
     "db-host": "Host base de datos",
     "db-name": "Nombre de base de datos",
