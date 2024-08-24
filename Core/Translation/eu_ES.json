@@ -888,7 +888,7 @@
     "location": "Kokapena",
     "lock-accounting": "Kontabilitatea blokeatu",
     "lock-entry": "Idazpena blokeatu",
-    "lock-invoice": "Faktura blokeatu",
+    "lock-invoice": "Faktura emittera markatu",
     "lock-unlock": "Desblokeatu",
     "lock-unlock-account-entry": "Blokeatu\/desblokeatu kontabilitate idazpena",
     "locked": "Blokeatuta",
