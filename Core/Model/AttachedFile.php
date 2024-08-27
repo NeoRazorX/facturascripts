@@ -137,7 +137,7 @@ class AttachedFile extends ModelOnChangeClass
 
     public function isImage(): bool
     {
-        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif']);
+        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
     }
 
     public function isPdf(): bool
