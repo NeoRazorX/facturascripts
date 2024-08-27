@@ -191,7 +191,7 @@
     "cant-connect-database": "Não foi possível conectar ao banco de dados!",
     "cant-convert-to-innodb": "Não é possível converter a tabela '%tableName%' para InnoDB. Essencial para o FacturaScripts.",
     "cant-create-customer-subaccount": "Impossível criar a subconta para o cliente %customerCode%",
-    "cant-create-folder": "Não é possível criar uma pasta.",
+    "cant-create-folder": "Não é possível criar uma pasta %folderName%.",
     "cant-create-subaccount-supplier": "Não é possível criar a subconta do provedor",
     "cant-delete-audit-log": "No se puede eliminar el registro de auditoría",
     "cant-delete-default-company": "Não é possível excluir a empresa padrão",
@@ -1229,7 +1229,7 @@
     "quantity-sold": "vendido-em-quantidade",
     "randomizer-generating-more-items": "Gerando mais itens...",
     "rate": "Tarifa",
-    "rates": "Preços",
+    "rates": "Tarifas",
     "re": "RE",
     "re-open": "Reabrir",
     "react": "Reagir",
@@ -1681,5 +1681,5 @@
     "your": "Seu",
     "zip-code": "Código Postal",
     "zip-codes": "Códigos postais",
-    "zip-error-wrong-structure": "zip-error-wrong-structure"
+    "zip-error-wrong-structure": "A estrutura do zip está incorreta. Deve conter a pasta do plugin e apenas um plugin."
 }

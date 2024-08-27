@@ -741,7 +741,7 @@
     "icon": "ícone",
     "id": "Identidade.",
     "idaccount": "Identidade. Conta",
-    "idem-wildcard-info": "Copy the value of the previous line",
+    "idem-wildcard-info": "Copiar o valor da linha anterior",
     "image": "Imagem",
     "images": "Imagens",
     "images-added-correctly": "%count% imagens adicionadas corretamente",
@@ -1095,7 +1095,7 @@
     "pagename": "Nome da página",
     "pages": "Páginas",
     "paid": "Pagado",
-    "paid-or-unpaid": "Pagado o impagado",
+    "paid-or-unpaid": "Pago ou não pago",
     "paid-receipts-prevent-action": "Não é possível executar esta ação com recibos pagos",
     "parent": "Pai",
     "parent-account": "Conta Pai",
@@ -1216,7 +1216,7 @@
     "purchase-rate": "Taxa de compra",
     "purchased-quantity": "q",
     "purchases": "Compras",
-    "purchases-subaccount-not-found": "purchases-subaccount-not-found",
+    "purchases-subaccount-not-found": "Subconta de compras não encontrada",
     "pvp": "Preço de varejo",
     "pvp-total": "Preço total de varejo",
     "pvp-unit": "Preço de venda ao público unitário",
@@ -1681,5 +1681,5 @@
     "your": "your",
     "zip-code": "Código postal",
     "zip-codes": "Códigos postais",
-    "zip-error-wrong-structure": "zip-error-wrong-structure"
+    "zip-error-wrong-structure": "A estrutura do zip está incorreta. Deve conter a pasta do plugin e apenas um plugin."
 }
