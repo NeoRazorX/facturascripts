@@ -1439,7 +1439,7 @@
     "subaccount": "Subconte",
     "subaccount-bad-codcuenta": "L",
     "subaccount-belongs-other-year": "El subcompte %subAccountCode% pertany a un altre eixercici.",
-    "subaccount-irpf": "Conte per a les retencions",
+    "subaccount-irpf": "Compte per a les retencions",
     "subaccount-irpf-creditor": "Subcompte de retencions per a compres",
     "subaccount-not-found": "No s'ha trobar el subconte %subAccountCode%.",
     "subaccount-purchases": "Conte per a les compres",

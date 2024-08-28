@@ -1263,7 +1263,7 @@
     "refunds": "Refunds",
     "register": "Register",
     "register-install-ad": "Register the installation of FacturaScripts.",
-    "register-install-ad-p": "If you register the installation of FacturaScripts, you will receive 1 month of PRO sponsorship, which allows you to download one of our exclusive plugins. It also helps us obtain statistics on versions of the core and PHP.",
+    "register-install-ad-p": "If you register the installation of FacturaScripts, you will receive 1 month of PRO sponsorship, which allows you to download one of our exclusive plugins. It also helps us obtain statistics on core and PHP versions.",
     "register-installation": "Register installation",
     "register-installation-p": "Register your installation to be able to update paid or private plugins.",
     "register-symbol": "#",

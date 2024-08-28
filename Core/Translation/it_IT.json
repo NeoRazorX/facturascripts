@@ -1592,7 +1592,7 @@
     "updated-model": "Aggiornato %model% (%key%) %desc%",
     "updater": "Updater",
     "updates-available": "Aggiornamenti disponibili",
-    "updates-available-p": "Hay actualizaciones disponibles de FacturaScripts. Por favor, haz clic en el actualizador y descarga la nueva versión. Las actualizaciones corrigen fallos y añaden nuevas funciones.",
+    "updates-available-p": "Sono disponibili aggiornamenti per FacturaScripts. Si prega di fare clic sull'aggiornatore e scaricare la nuova versione. Gli aggiornamenti correggono errori e aggiungono nuove funzionalità.",
     "updating-attached-relations": "Aggiornamento dei contatori dei file allegati",
     "upload-file": "Carica file",
     "uploaded-at": "Caricato alle",
