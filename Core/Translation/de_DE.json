@@ -1024,7 +1024,7 @@
     "no-selected-item": "Keine Elemente ausgewählt",
     "no-stock": "Kein Bestand",
     "non-editable-accounting-entry": "Nicht bearbeitbarer Buchungseintrag",
-    "non-editable-columns": "non-editable-columns",
+    "non-editable-columns": "Nicht bearbeitbare Spalten: %columns%",
     "non-editable-document": "Nicht bearbeitbares Dokument",
     "none": "Keine",
     "normal": "Normal",
