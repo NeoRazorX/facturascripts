@@ -331,31 +331,50 @@ class Installer implements ControllerInterface
             return false;
         }
 
-        $connectionStr = 'host=' . $dbData['host'] . ' port=' . $dbData['port'];
-        $connection = @pg_connect($connectionStr . ' dbname=postgres user=' . $dbData['user'] . ' password=' . $dbData['pass']);
-        if (is_resource($connection)) {
-            // if postgresql version is too old, we can't continue
-            if ($this->versionPostgres($connection) < 10) {
+        $connectionStr = 'host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass'];
+
+        // Intentar conectar a la base de datos postgres
+        $connection = @pg_connect($connectionStr . ' dbname=postgres');
+        if ($connection) {
+            // Verificar la versión de PostgreSQL
+            $version = $this->versionPostgres($connection);
+            if ($version < 10) {
                 Tools::log()->critical('postgresql-version-too-old');
+                pg_close($connection);
                 return false;
             }
 
-            // Check that the DB exists, if it doesn't, we try to create a new one
-            $sqlExistsBD = "SELECT 1 AS result FROM pg_database WHERE datname = '" . $dbData['name'] . "';";
-            $result = pg_query($connection, $sqlExistsBD);
-            if (is_resource($result) && pg_num_rows($result) > 0) {
+            // Verificar si la base de datos especificada existe
+            $sqlExistsBD = "SELECT 1 FROM pg_database WHERE datname = $1";
+            $result = pg_query_params($connection, $sqlExistsBD, [$dbData['name']]);
+
+            if ($result && pg_num_rows($result) > 0) {
+                pg_free_result($result);
+                pg_close($connection);
                 return true;
             }
 
-            $sqlCreateBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
-            if (false !== pg_query($connection, $sqlCreateBD)) {
+            // Intentar crear la base de datos si no existe
+            $sqlCreateBD = 'CREATE DATABASE "' . pg_escape_string($dbData['name']) . '";';
+            $createResult = pg_query($connection, $sqlCreateBD);
+            if ($createResult) {
+                pg_free_result($createResult);
+                pg_close($connection);
                 return true;
             }
+
+            Tools::log()->critical('cant-create-database');
+            pg_close($connection);
+        } else {
+            Tools::log()->critical('cant-connect-database');
         }
 
-        Tools::log()->critical('cant-connect-database');
-        if (is_resource($connection) && pg_last_error($connection) != false) {
-            Tools::log()->critical(pg_last_error($connection));
+        if ($connection) {
+            $error = pg_last_error($connection);
+            if ($error) {
+                Tools::log()->critical($error);
+            }
+            pg_close($connection);
         }
 
         return false;
