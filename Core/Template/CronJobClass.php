@@ -100,14 +100,16 @@ abstract class CronJobClass
             }
 
             try {
-                NewMail::create()
+                $mail = NewMail::create()
                     ->to($user->email, $user->nick)
                     ->subject($subject)
                     ->body(
                         '<p>Hola ' . $user->nick . ",<br><br>" . nl2br($body)
                         . '</p><br/><br/><p>Atentamente,<br/>el cron de FacturaSctipts</p>'
-                    )
-                    ->send();
+                    );
+                if (!$mail->send()) {
+                    Tools::log(static::JOB_NAME)->error($body);
+                }
             } catch (Exception $ex) {
                 Tools::log(static::JOB_NAME)->error($ex->getCode() . ' - ' . $ex->getMessage());
             }
