@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Template;
 
 use Exception;
 use FacturaScripts\Core\DataSrc\Users;
-use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\LogMessage;
 
@@ -108,10 +107,10 @@ abstract class CronJobClass
                         . '</p><br/><br/><p>Atentamente,<br/>el cron de FacturaSctipts</p>'
                     );
                 if (!$mail->send()) {
-                    Tools::log(static::JOB_NAME)->error($body);
+                    self::echo($body);
                 }
             } catch (Exception $ex) {
-                Tools::log(static::JOB_NAME)->error($ex->getCode() . ' - ' . $ex->getMessage());
+                self::echo($ex->getCode() . ' - ' . $ex->getMessage());
             }
         }
     }
