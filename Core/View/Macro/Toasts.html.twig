@@ -17,6 +17,8 @@
                 title = title !== '' ? title : '{{ trans('completed') }}';
                 break;
 
+            case 'critical':
+            case 'error':
             case 'danger':
                 role = 'alert';
                 live = 'assertive';
