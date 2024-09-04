@@ -171,7 +171,7 @@ class OpenAi
         }
 
         $this->total_tokens = $json['usage']['total_tokens'];
-        return json_decode($json['choices'][0]['message']['content'], true);
+        return json_decode($json['choices'][0]['message']['content'], true) ?? [];
     }
 
     public function dalle2(string $prompt, int $width = 256, int $height = 256, $count = 1): string
