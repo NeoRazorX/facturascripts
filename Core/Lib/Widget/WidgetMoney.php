@@ -41,7 +41,7 @@ class WidgetMoney extends WidgetNumber
     {
         parent::setValue($model);
 
-        $this->coddivisa = $model->coddivisa ?? Tools::settings('default', 'coddivisa');
+        $this->coddivisa = $model->coddivisa ?? Tools::settings('default', 'coddivisa') ?? 'EUR';
 
         if ('' === $this->icon) {
             $simbol = Divisas::get($this->coddivisa)->simbolo;
