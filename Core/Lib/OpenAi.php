@@ -123,19 +123,55 @@ class OpenAi
         return $this->chat($messages, $user, 'gpt-3.5-turbo');
     }
 
+    /** @deprecated since 2024.9 and replaced with chat() */
     public function chatGpt4(array $messages, string $user = ''): string
     {
         return $this->chat($messages, $user, 'gpt-4');
     }
 
+    /** @deprecated since 2024.9 and replaced with chat() */
     public function chatGpt4o(array $messages, string $user = ''): string
     {
         return $this->chat($messages, $user, 'gpt-4o');
     }
 
+    /** @deprecated since 2024.9 and replaced with chat() */
     public function chatGpt4turbo(array $messages, string $user = ''): string
     {
         return $this->chat($messages, $user, 'gpt-4-turbo');
+    }
+
+    public function chatJson(array $messages, array $response_format, string $user = '', string $model = 'gpt-4o-2024-08-06'): array
+    {
+        $params = new stdClass();
+        $params->model = $model;
+        $params->messages = $messages;
+        if ($user) {
+            $params->user = $user;
+        }
+        $params->response_format = $response_format;
+
+        $response = Http::post(self::CHAT_URL, json_encode($params))
+            ->setHeader('Content-Type', 'application/json')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error(
+                'chatGPT error: ' . $response->status() . ' ' . $response->errorMessage(),
+                $response->json()
+            );
+            return [];
+        }
+
+        $json = $response->json();
+        if (empty($json['choices'])) {
+            Tools::log()->error('chatGPT error: empty response. ' . $response->body());
+            return [];
+        }
+
+        $this->total_tokens = $json['usage']['total_tokens'];
+        return json_decode($json['choices'][0]['message']['content'], true);
     }
 
     public function dalle2(string $prompt, int $width = 256, int $height = 256, $count = 1): string
