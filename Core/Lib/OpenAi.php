@@ -159,7 +159,7 @@ class OpenAi
         if ($response->failed()) {
             Tools::log()->error(
                 'chatGPT error: ' . $response->status() . ' ' . $response->errorMessage(),
-                $response->json()
+                $response->json() ?? []
             );
             return [];
         }
