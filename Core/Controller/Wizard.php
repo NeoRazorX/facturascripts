@@ -173,15 +173,13 @@ class Wizard extends Controller
     private function preSetAppSettings(string $codpais): void
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/default.json';
-        if (false === file_exists($filePath)) {
-            return;
-        }
-
-        $fileContent = file_get_contents($filePath);
-        $defaultValues = json_decode($fileContent, true) ?? [];
-        foreach ($defaultValues as $group => $values) {
-            foreach ($values as $key => $value) {
-                Tools::settingsSet($group, $key, $value);
+        if (file_exists($filePath)) {
+            $fileContent = file_get_contents($filePath);
+            $defaultValues = json_decode($fileContent, true) ?? [];
+            foreach ($defaultValues as $group => $values) {
+                foreach ($values as $key => $value) {
+                    Tools::settingsSet($group, $key, $value);
+                }
             }
         }
 
