@@ -1,7 +1,7 @@
 {
     "default": {
         "coddivisa": "MXN",
-        "codimpuesto": "002",
+        "codimpuesto": "IVA16GEN",
         "codserie": "A",
         "codpago": "CONT",
         "tipoidfiscal": "RFC",
