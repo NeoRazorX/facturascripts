@@ -400,6 +400,13 @@ abstract class ModelClass extends ModelCore
             if (isset($this->{$field['name']})) {
                 $fieldName = $field['name'];
                 $fieldValue = $values[$fieldName] ?? $this->{$fieldName};
+                
+                if(strpos($field['type'], 'varchar') !== false){
+                    $patron = '/\(\s*(\d+)\s*\)/';
+                    preg_match($patron, $field['type'], $coincidencias);
+                    $longitudMaxima = $coincidencias[1];
+                    $fieldValue = Tools::truncarString($fieldValue, $longitudMaxima);
+                }
 
                 $insertFields[] = self::$dataBase->escapeColumn($fieldName);
                 $insertValues[] = self::$dataBase->var2str($fieldValue);
@@ -451,6 +458,14 @@ abstract class ModelClass extends ModelCore
             if ($field['name'] !== static::primaryColumn()) {
                 $fieldName = $field['name'];
                 $fieldValue = $values[$fieldName] ?? $this->{$fieldName};
+
+                if(strpos($field['type'], 'varchar') !== false){
+                    $patron = '/\(\s*(\d+)\s*\)/';
+                    preg_match($patron, $field['type'], $coincidencias);
+                    $longitudMaxima = $coincidencias[1];
+                    $fieldValue = Tools::truncarString($fieldValue, $longitudMaxima);
+                }
+
                 $sql .= $coma . ' ' . self::$dataBase->escapeColumn($fieldName) . ' = ' . self::$dataBase->var2str($fieldValue);
                 $coma = ', ';
             }
