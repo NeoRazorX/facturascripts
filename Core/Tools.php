@@ -680,26 +680,4 @@ class Tools
             return $settings;
         });
     }
-
-    /**
-     * Corta un texto a una longitud específica.
-     *
-     * @param string $string|null
-     * @param int $longitudMaxima
-     *
-     * @return string|null
-     */
-    public static function truncarString(?string $string, int $longitudMaxima): ?string
-    {
-        if (!is_string($string)){
-            return $string;
-        }
-
-        $longitudActual = mb_strlen($string);
-        if ($longitudActual > $longitudMaxima) {
-            $string = substr($string, 0, $longitudMaxima);
-        }
-
-        return $string;
-    }
 }
