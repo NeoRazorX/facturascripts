@@ -40,7 +40,7 @@
             <widget type="checkbox" fieldname="failed"/>
         </column>
         <column name="duration" display="right" order="160">
-            <widget type="number" fieldname="duration">
+            <widget type="seconds" fieldname="duration">
                 <option color="danger">gt:30</option>
             </widget>
         </column>

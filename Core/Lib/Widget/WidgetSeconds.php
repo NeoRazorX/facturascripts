@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,29 +21,30 @@ namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Tools;
 
-/**
- * WidgetPercentage
- *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Raúl Jiménez Jiménez <raljopa@gmail.com>
- */
-class WidgetPercentage extends WidgetNumber
+class WidgetSeconds extends WidgetNumber
 {
-
-    /**
-     * @param array $data
-     */
-    public function __construct($data)
-    {
-        parent::__construct($data);
-        $this->icon = $data['icon'] ?? 'fas fa-percentage';
-    }
-
-    /**
-     * @return string
-     */
     protected function show()
     {
-        return is_null($this->value) ? '-' : Tools::number($this->value, $this->decimal) . '%';
+        if (is_null($this->value)) {
+            return '-';
+        }
+
+        // por debajo de 60, mostramos los segundos
+        if ($this->value < 60) {
+            return Tools::number($this->value) . ' s';
+        }
+
+        // por debajo de 3600, mostramos los minutos
+        if ($this->value < 3600) {
+            return Tools::number($this->value / 60) . ' m';
+        }
+
+        // por debajo de 86400, mostramos las horas
+        if ($this->value < 86400) {
+            return Tools::number($this->value / 3600) . ' h';
+        }
+
+        // mostramos los días
+        return Tools::number($this->value / 86400) . ' d';
     }
 }
