@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,20 +21,20 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\EstadoDocumento;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class EstadoDocumentoTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testDataInstalled()
+    public function testDataInstalled(): void
     {
         $status = new EstadoDocumento();
         $this->assertNotEmpty($status->all(), 'estado-documento-data-not-installed-from-csv');
     }
 
-    public function testCreateNewStatus()
+    public function testCreateNewStatus(): void
     {
         $status = new EstadoDocumento();
         $status->nombre = 'Test';
@@ -45,7 +45,27 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
     }
 
-    public function testCreateDefaultStatus()
+    public function testHtmlOnFields(): void
+    {
+        // creamos un estado con html en los campos
+        $status = new EstadoDocumento();
+        $status->nombre = '<test>';
+        $status->tipodoc = '<test>';
+        $status->generadoc = '<test>';
+        $status->icon = '<test>';
+        $this->assertTrue($status->save(), 'estado-documento-cant-save');
+
+        // comprobamos que el html se ha escapado
+        $this->assertEquals('&lt;test&gt;', $status->nombre, 'estado-documento-html-not-escaped');
+        $this->assertEquals('&lt;test&gt;', $status->tipodoc, 'estado-documento-html-not-escaped');
+        $this->assertEquals('&lt;test&gt;', $status->generadoc, 'estado-documento-html-not-escaped');
+        $this->assertEquals('&lt;test&gt;', $status->icon, 'estado-documento-html-not-escaped');
+
+        // eliminamos
+        $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
+    }
+
+    public function testCreateDefaultStatus(): void
     {
         // get the initial default count
         $status = new EstadoDocumento();
@@ -80,7 +100,7 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertEquals($defaultsCount, $status->count($where), 'estado-documento-defaults-count-changed-2');
     }
 
-    public function testCreateLockedStatus()
+    public function testCreateLockedStatus(): void
     {
         $status = new EstadoDocumento();
         $status->bloquear = true;
@@ -101,7 +121,7 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
     }
 
-    public function testStatusCanNotHaveGenerationAndEditable()
+    public function testStatusCanNotHaveGenerationAndEditable(): void
     {
         $status = new EstadoDocumento();
         $status->editable = true;
@@ -128,7 +148,23 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertFalse($status->save(), 'invalid-estado-documento-for-purchase-invoice-can-save');
     }
 
-    protected function tearDown()
+    /**
+     * No permitir crear estados predeterminados y no editables.
+     */
+    public function testNonEditableDefaultNotAllowed(): void
+    {
+        // Crear nuevo estado predeterminado y no editable
+        $status = new EstadoDocumento();
+        $status->nombre = 'Test default';
+        $status->predeterminado = true;
+        $status->editable = false;
+        $status->tipodoc = 'PresupuestoProveedor';
+
+        // Comprobamos que no se pueda guardar un estado que sea predeterminado y no editable.
+        $this->assertFalse($status->save());
+    }
+
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

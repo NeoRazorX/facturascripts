@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,25 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to list the items in the Serie model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListSerie extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -48,11 +44,23 @@ class ListSerie extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListSerie', 'Serie', 'series', 'fas fa-layer-group');
-        $this->addSearchFields('ListSerie', ['descripcion', 'codserie']);
-        $this->addOrderBy('ListSerie', ['codserie'], 'code');
-        $this->addOrderBy('ListSerie', ['descripcion'], 'description');
+        $this->createViewsSeries();
+    }
 
-        $this->addFilterCheckbox('ListSerie', 'siniva', 'without-tax', 'siniva');
+    protected function createViewsSeries(string $viewName = 'ListSerie'): void
+    {
+        $this->addView($viewName, 'Serie', 'series', 'fas fa-layer-group')
+            ->addSearchFields(['descripcion', 'codserie'])
+            ->addOrderBy(['codserie'], 'code')
+            ->addOrderBy(['descripcion'], 'description');
+
+        // filtros
+        $this->addFilterCheckbox($viewName, 'siniva', 'without-tax', 'siniva');
+
+        $this->addFilterSelect($viewName, 'tipo', 'type', 'tipo', [
+            '' => '------',
+            'R' => Tools::lang()->trans('rectifying'),
+            'S' => Tools::lang()->trans('simplified'),
+        ]);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,27 +19,24 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 
 /**
  * Controller to list the items in the FacturaProveedor model
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
- * @author Raul Jimenez                 <raul.jimenez@nazcanetworks.com>
- * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Raul Jimenez                  <raul.jimenez@nazcanetworks.com>
+ * @author Cristo M. Estévez Hernández   <cristom.estevez@gmail.com>
  */
 class ListFacturaProveedor extends ListBusinessDocument
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
@@ -48,45 +45,67 @@ class ListFacturaProveedor extends ListBusinessDocument
         return $data;
     }
 
-    /**
-     * Load views
-     */
     protected function createViews()
     {
+        // listado de facturas de proveedor
         $this->createViewPurchases('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
-        if ($this->permissions->onlyOwnerData === false) {
-            $this->createViewLines('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
+
+        // si el usuario solamente tiene permiso para ver lo suyo, no añadimos el resto de pestañas
+        if ($this->permissions->onlyOwnerData) {
+            return;
         }
+
+        // líneas de facturas de proveedor
+        $this->createViewLines('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
+
+        // recibos de proveedor
         $this->createViewReceipts();
+
+        // facturas rectificativas
+        $this->createViewRefunds();
     }
 
-    /**
-     * @param string $viewName
-     * @param string $modelName
-     * @param string $label
-     */
     protected function createViewPurchases(string $viewName, string $modelName, string $label)
     {
         parent::createViewPurchases($viewName, $modelName, $label);
-        $this->addFilterCheckbox('ListFacturaProveedor', 'pagada', 'unpaid', 'pagada', '=', false);
-        $this->addFilterCheckbox('ListFacturaProveedor', 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
-        $this->addButtonLockInvoice('ListFacturaProveedor');
+        $this->addSearchFields($viewName, ['codigorect']);
+
+        // filtros
+        $i18n = Tools::lang();
+        $this->addFilterSelectWhere($viewName, 'status', [
+            ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
+            ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
+            ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
+            ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
+        ]);
+        $this->addFilterCheckbox($viewName, 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
+
+        // botones
+        $this->addButtonLockInvoice($viewName);
+        $this->addButtonGenerateAccountingInvoices($viewName);
+
+        if ($this->user->admin) {
+            $this->addButton($viewName, [
+                'action' => 'renumber-invoices',
+                'icon' => 'fas fa-sort-numeric-down',
+                'label' => 'renumber',
+                'type' => 'modal'
+            ]);
+        }
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewReceipts(string $viewName = 'ListReciboProveedor')
     {
         $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
-        $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date', 2);
+        $this->addOrderBy($viewName, ['codproveedor'], 'supplier-code');
+        $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date');
         $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
-        $this->addOrderBy($viewName, ['vencimiento'], 'expiration');
+        $this->addOrderBy($viewName, ['vencimiento'], 'expiration', 2);
         $this->addOrderBy($viewName, ['importe'], 'amount');
         $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
 
-        // filters
-        $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
+        // filtros
+        $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
@@ -96,17 +115,85 @@ class ListFacturaProveedor extends ListBusinessDocument
             $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
         }
 
-        $paymethods = FormasPago::codeModel();
-        if (count($paymethods) > 2) {
-            $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymethods);
+        $payMethods = FormasPago::codeModel();
+        if (count($payMethods) > 2) {
+            $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $payMethods);
         }
 
-        $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');
+        $i18n = Tools::lang();
+        $this->addFilterSelectWhere($viewName, 'status', [
+            ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
+            ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
+            ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
+            ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
+        ]);
+        $this->addFilterPeriod($viewName, 'payment-date', 'payment-date', 'fechapago');
 
-        // buttons
+        // botones
         $this->addButtonPayReceipt($viewName);
 
-        // settings
+        // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    protected function createViewRefunds(string $viewName = 'ListFacturaProveedor-rect')
+    {
+        $this->addView($viewName, 'FacturaProveedor', 'refunds', 'fas fa-share-square');
+        $this->addSearchFields($viewName, ['codigo', 'codigorect', 'numproveedor', 'observaciones']);
+        $this->addOrderBy($viewName, ['fecha', 'idfactura'], 'date', 2);
+        $this->addOrderBy($viewName, ['total'], 'total');
+
+        // filtro de fecha
+        $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
+
+        // añadimos un filtro select where para forzar las que tienen idfacturarect
+        $this->addFilterSelectWhere($viewName, 'idfacturarect', [
+            [
+                'label' => Tools::lang()->trans('rectified-invoices'),
+                'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
+            ]
+        ]);
+
+        // desactivamos el botón nuevo
+        $this->setSettings($viewName, 'btnNew', false);
+
+        // mostramos la columna original
+        $this->views[$viewName]->disableColumn('original', false);
+    }
+
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        if ($action == 'renumber-invoices') {
+            $this->renumberInvoicesAction();
+            return true;
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
+    protected function renumberInvoicesAction(): void
+    {
+        if (false === $this->user->admin) {
+            Tools::log()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $codejercicio = $this->request->request->get('exercise');
+        if (FacturaProveedorRenumber::run($codejercicio)) {
+            Tools::log('facturasprov')->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);
+            Tools::log()->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);
+            return;
+        }
+
+        Tools::log()->warning('record-save-error');
     }
 }

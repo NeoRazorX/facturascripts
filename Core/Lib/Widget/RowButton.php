@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,53 +26,34 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class RowButton extends VisualItem
 {
-
-    /**
-     * @var string
-     */
+    /** @var string */
     public $action;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $color;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $confirm;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $icon;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $label;
 
-    /**
-     * Indicates the security level of the button
-     *
-     * @var int
-     */
+    /** @var int */
     public $level;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $target;
 
-    /**
-     * @var string
-     */
+    /** @var string */
+    public $title;
+
+    /** @var string */
     public $type;
 
-    /**
-     * @param array $data
-     */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         parent::__construct($data);
         $this->action = $data['action'] ?? '';
@@ -82,112 +63,112 @@ class RowButton extends VisualItem
         $this->label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
         $this->level = isset($data['level']) ? (int)$data['level'] : 0;
         $this->target = $data['target'] ?? '';
+        $this->title = isset($data['title']) ? static::$i18n->trans($data['title']) : '';
         $this->type = $data['type'] ?? 'action';
     }
 
-    /**
-     * @param bool $small
-     * @param string $viewName
-     * @param string $jsFunction
-     *
-     * @return string
-     */
-    public function render($small = false, $viewName = '', $jsFunction = '')
+    public function render(bool $small = false, string $viewName = '', string $jsFunction = ''): string
     {
         if ($this->getLevel() < $this->level) {
             return '';
+        }
+
+        if (empty($this->icon) && empty($this->label)) {
+            $this->icon = 'far fa-question-circle';
         }
 
         $cssClass = $small ? 'btn mr-1 ' : 'btn btn-sm mr-1 ';
         $cssClass .= empty($this->color) ? 'btn-light' : $this->colorToClass($this->color, 'btn-');
-        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
-        $label = $small ? '' : $this->label;
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
+        $title = empty($this->title) ? $this->label : $this->title;
+
+        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         if ($small && empty($icon)) {
             $icon = $this->label;
         }
 
+        $label = $this->label;
+        if ($small && $this->label) {
+            $label = mb_strlen($this->label) < 8 ?
+                '<span class="d-none d-xl-inline-block">' . $this->label . '</span>' :
+                '<span class="d-none d-xl-inline-block">' . mb_substr($this->label, 0, 8) . '...</span>';
+        }
+
         switch ($this->type) {
             case 'js':
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
-                    . '" title="' . $this->label . '">' . $icon . $label . '</button>';
+                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" onclick="' . $this->action
+                    . '" title="' . $title . '">' . $icon . $label . '</button>';
 
             case 'link':
                 $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
-                return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
-                    . ' title="' . $this->label . '">' . $icon . $label . '</a>';
+                return '<a ' . $target . $divID . ' class="btn-spin-action ' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                    . ' title="' . $title . '">' . $icon . $label . '</a>';
 
             case 'modal':
                 $modal = 'modal' . $this->action;
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#'
-                    . $modal . '" title="' . $this->label . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
+                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" data-toggle="modal" data-target="#'
+                    . $modal . '" title="' . $title . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
                     . $icon . $label . '</button>';
 
             default:
                 $onclick = $this->getOnClickValue($viewName, $jsFunction);
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
-                    . '" title="' . $this->label . '">' . $icon . $label . '</button>';
+                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" onclick="' . $onclick
+                    . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
     }
 
-    /**
-     * @return string
-     */
-    public function renderTop()
+    public function renderTop(): string
     {
         if ($this->getLevel() < $this->level) {
             return '';
         }
 
+        if (empty($this->icon) && empty($this->label)) {
+            $this->icon = 'far fa-question-circle';
+        }
+
         $cssClass = 'btn btn-sm ';
         $cssClass .= empty($this->color) ? 'btn-secondary' : $this->colorToClass($this->color, 'btn-');
-        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
+        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i>';
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
+        $title = empty($this->title) ? $this->label : $this->title;
+
+        $label = '';
+        if ($this->label) {
+            $label = ' ' . $this->label;
+        }
 
         switch ($this->type) {
             case 'js':
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
-                    . '" title="' . $this->label . '">' . $icon . $this->label . '</button> ';
+                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" onclick="' . $this->action
+                    . '" title="' . $title . '">' . $icon . $label . '</button> ';
 
             case 'link':
                 $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
-                return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
-                    . ' title="' . $this->label . '">' . $icon . $this->label . '</a> ';
+                return '<a ' . $target . $divID . ' class="btn-spin-action ' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                    . ' title="' . $title . '">' . $icon . $label . '</a> ';
         }
 
         return '';
     }
 
-    /**
-     * Fix url.
-     *
-     * @param string $url
-     *
-     * @return string
-     */
-    protected function asset($url)
+    protected function asset(string $url): string
     {
-        $path = \FS_ROUTE . '/';
-        if (\substr($url, 0, \strlen($path)) == $path) {
+        $path = FS_ROUTE . '/';
+        if (substr($url, 0, strlen($path)) == $path) {
             return $url;
         }
 
-        /// external link?
-        $parts = \explode(':', $url);
-        if (\in_array($parts[0], ['http', 'https'])) {
+        // external link?
+        $parts = explode(':', $url);
+        if (in_array($parts[0], ['http', 'https'])) {
             return $url;
         }
 
-        return \str_replace('//', '/', $path . $url);
+        return str_replace('//', '/', $path . $url);
     }
 
-    /**
-     * @param string $viewName
-     * @param string $jsFunction
-     *
-     * @return string
-     */
-    protected function getOnClickValue($viewName, $jsFunction)
+    protected function getOnClickValue(string $viewName, string $jsFunction): string
     {
         if ($this->confirm) {
             return 'confirmAction(\'' . $viewName . '\',\'' . $this->action . '\',\''
@@ -196,7 +177,8 @@ class RowButton extends VisualItem
         }
 
         if (empty($jsFunction)) {
-            return 'this.form.action.value=\'' . $this->action . '\';this.form.submit();';
+            $onsubmit = $this->action  === 'download' ? '' : 'this.form.onsubmit();';
+            return 'this.form.action.value=\'' . $this->action . '\';' . $onsubmit . 'this.form.submit();';
         }
 
         return $jsFunction . '(\'' . $viewName . '\',\'' . $this->action . '\');';

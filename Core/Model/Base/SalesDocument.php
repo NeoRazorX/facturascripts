@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,8 +23,10 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Cliente as CoreCliente;
 use FacturaScripts\Core\Model\Contacto as CoreContacto;
 use FacturaScripts\Core\Model\User;
-use FacturaScripts\Dinamic\Lib\CommissionTools;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
+use FacturaScripts\Dinamic\Model\AgenciaTransporte;
+use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
@@ -39,7 +41,6 @@ use FacturaScripts\Dinamic\Model\Variante;
  */
 abstract class SalesDocument extends TransformerDocument
 {
-
     /**
      * Mailbox of the client.
      *
@@ -139,11 +140,18 @@ abstract class SalesDocument extends TransformerDocument
     public $provincia;
 
     /**
-     * % commission of the agent.
+     * sum total of the benefits of the lines.
      *
-     * @var float|int
+     * @var float
      */
-    public $totalcomision;
+    public $totalbeneficio;
+
+    /**
+     * total sum of the costs of the lines.
+     *
+     * @var float
+     */
+    public $totalcoste;
 
     /**
      * Reset the values of all model properties.
@@ -152,30 +160,25 @@ abstract class SalesDocument extends TransformerDocument
     {
         parent::clear();
         $this->direccion = '';
-        $this->totalcomision = 0.0;
+        $this->totalbeneficio = 0.0;
+        $this->totalcoste = 0.0;
 
         // select default currency
-        $coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
+        $coddivisa = Tools::settings('default', 'coddivisa');
         $this->setCurrency($coddivisa, false);
     }
 
-    /**
-     * @return string
-     */
     public function country(): string
     {
         $country = new Pais();
         if ($country->loadFromCode($this->codpais)) {
-            return $this->toolBox()->utils()->fixHtml($country->nombre);
+            return Tools::fixHtml($country->nombre) ?? '';
         }
 
-        return $this->codpais;
+        return $this->codpais ?? '';
     }
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if (empty($this->total)) {
             return parent::delete();
@@ -203,18 +206,20 @@ abstract class SalesDocument extends TransformerDocument
      */
     public function getNewProductLine($reference)
     {
-        $newLine = $this->getNewLine();
+        // pasamos la referencia como parámetro para poder distinguir en getNewLine cuando se llama desde aquí
+        $newLine = $this->getNewLine(['referencia' => $reference]);
         if (empty($reference)) {
             return $newLine;
         }
 
         $variant = new Variante();
-        $where1 = [new DataBaseWhere('referencia', $this->toolBox()->utils()->noHtml($reference))];
-        $where2 = [new DataBaseWhere('codbarras', $this->toolBox()->utils()->noHtml($reference))];
+        $where1 = [new DataBaseWhere('referencia', Tools::noHtml($reference))];
+        $where2 = [new DataBaseWhere('codbarras', Tools::noHtml($reference))];
         if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
             $product = $variant->getProducto();
 
             $newLine->codimpuesto = $product->getTax()->codimpuesto;
+            $newLine->coste = $variant->coste;
             $newLine->descripcion = $variant->description();
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $product->getTax()->iva;
@@ -229,10 +234,7 @@ abstract class SalesDocument extends TransformerDocument
         return $newLine;
     }
 
-    /**
-     * @return Tarifa
-     */
-    public function getRate()
+    public function getRate(): Tarifa
     {
         $rate = new Tarifa();
         $subject = $this->getSubject();
@@ -258,24 +260,20 @@ abstract class SalesDocument extends TransformerDocument
         return $cliente;
     }
 
-    /**
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // we need to call parent first
         $result = parent::install();
 
         // needed dependencies
+        new AgenciaTransporte();
+        new Agente();
         new Cliente();
 
         return $result;
     }
 
-    /**
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         if (empty($this->total)) {
             return parent::save();
@@ -284,7 +282,7 @@ abstract class SalesDocument extends TransformerDocument
         // check if the customer has exceeded the maximum risk
         $customer = $this->getSubject();
         if ($customer->riesgomax && $customer->riesgoalcanzado > $customer->riesgomax) {
-            $this->toolBox()->i18nLog()->warning('customer-reached-maximum-risk');
+            Tools::log()->warning('customer-reached-maximum-risk');
             return false;
         } elseif (empty($customer->primaryColumnValue())) {
             return parent::save();
@@ -351,10 +349,7 @@ abstract class SalesDocument extends TransformerDocument
         return $return;
     }
 
-    /**
-     * @return string
-     */
-    public function subjectColumn()
+    public function subjectColumn(): string
     {
         return 'codcliente';
     }
@@ -364,21 +359,16 @@ abstract class SalesDocument extends TransformerDocument
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->apartado = $utils->noHtml($this->apartado);
-        $this->ciudad = $utils->noHtml($this->ciudad);
-        $this->codigoenv = $utils->noHtml($this->codigoenv);
-        $this->codpostal = $utils->noHtml($this->codpostal);
-        $this->direccion = $utils->noHtml($this->direccion);
-        $this->nombrecliente = $utils->noHtml($this->nombrecliente);
-        $this->numero2 = $utils->noHtml($this->numero2);
-        $this->provincia = $utils->noHtml($this->provincia);
-
-        if (null === $this->codagente) {
-            $this->totalcomision = 0.0;
-        }
+        $this->apartado = Tools::noHtml($this->apartado);
+        $this->ciudad = Tools::noHtml($this->ciudad);
+        $this->codigoenv = Tools::noHtml($this->codigoenv);
+        $this->codpostal = Tools::noHtml($this->codpostal);
+        $this->direccion = Tools::noHtml($this->direccion);
+        $this->nombrecliente = Tools::noHtml($this->nombrecliente);
+        $this->numero2 = Tools::noHtml($this->numero2);
+        $this->provincia = Tools::noHtml($this->provincia);
 
         return parent::test();
     }
@@ -401,21 +391,20 @@ abstract class SalesDocument extends TransformerDocument
      */
     protected function onChange($field)
     {
-        // before parent checks
-        if ('codagente' === $field) {
-            return $this->onChangeAgent();
-        }
-
         if (false === parent::onChange($field)) {
             return false;
         }
 
+        if (empty($this->idcontactofact)) {
+            return true;
+        }
+
         // after parent checks
+        $contact = new Contacto();
         switch ($field) {
             case 'direccion':
-                $contact = new Contacto();
                 // if address is changed and customer billing address is empty, then save new values
-                if ($contact->loadFromCode($this->idcontactofact) && empty($contact->direccion)) {
+                if ($this->direccion && $contact->loadFromCode($this->idcontactofact) && empty($contact->direccion)) {
                     $contact->apartado = $this->apartado;
                     $contact->ciudad = $this->ciudad;
                     $contact->codpais = $this->codpais;
@@ -427,7 +416,6 @@ abstract class SalesDocument extends TransformerDocument
                 break;
 
             case 'idcontactofact':
-                $contact = new Contacto();
                 // if billing address is changed, then change all billing fields
                 if ($contact->loadFromCode($this->idcontactofact)) {
                     $this->apartado = $contact->apartado;
@@ -436,7 +424,7 @@ abstract class SalesDocument extends TransformerDocument
                     $this->codpostal = $contact->codpostal;
                     $this->direccion = $contact->direccion;
                     $this->provincia = $contact->provincia;
-                    return true;
+                    break;
                 }
                 return false;
         }
@@ -444,18 +432,21 @@ abstract class SalesDocument extends TransformerDocument
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    protected function onChangeAgent()
+    protected function onInsert()
     {
-        if (null !== $this->codagente && $this->total > 0) {
-            $lines = $this->getLines();
-            $commissions = new CommissionTools();
-            $commissions->recalculate($this, $lines);
+        // if billing address is empty, then save new values
+        $contact = new Contacto();
+        if ($this->direccion && $contact->loadFromCode($this->idcontactofact) && empty($contact->direccion)) {
+            $contact->apartado = $this->apartado;
+            $contact->ciudad = $this->ciudad;
+            $contact->codpais = $this->codpais;
+            $contact->codpostal = $this->codpostal;
+            $contact->direccion = $this->direccion;
+            $contact->provincia = $this->provincia;
+            $contact->save();
         }
 
-        return true;
+        parent::onInsert();
     }
 
     /**
@@ -528,9 +519,6 @@ abstract class SalesDocument extends TransformerDocument
         return true;
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codagente', 'codcliente', 'direccion', 'idcontactofact'];

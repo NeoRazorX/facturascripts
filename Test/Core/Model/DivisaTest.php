@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,20 +21,24 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Divisa;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class DivisaTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testDataInstalled()
+    public function testDataInstalled(): void
     {
+        // llamamos a la función para que se instalen los datos
+        $this->assertNotEmpty(Divisa::all(), 'currency-data-not-installed');
+
+        // llamamos de forma dinámica
         $currency = new Divisa();
         $this->assertNotEmpty($currency->all(), 'currency-data-not-installed-from-csv');
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $currency = new Divisa();
         $currency->coddivisa = 'Tes';
@@ -47,7 +51,7 @@ final class DivisaTest extends TestCase
         $this->assertTrue($currency->delete(), 'currency-cant-delete');
     }
 
-    public function testCreateHtml()
+    public function testCreateHtml(): void
     {
         // creamos una divisa con una descripción con html
         $currency = new Divisa();
@@ -63,7 +67,7 @@ final class DivisaTest extends TestCase
         $this->assertTrue($currency->delete(), 'currency-cant-delete');
     }
 
-    public function testCreateWithNewCode()
+    public function testCreateWithNewCode(): void
     {
         $currency = new Divisa();
         $currency->descripcion = 'Test Currency with new code';
@@ -74,7 +78,7 @@ final class DivisaTest extends TestCase
         $this->assertFalse($currency->save(), 'currency-can-save');
     }
 
-    public function testDeleteDefault()
+    public function testDeleteDefault(): void
     {
         $currency = new Divisa();
         foreach ($currency->all([], [], 0, 0) as $row) {
@@ -85,7 +89,7 @@ final class DivisaTest extends TestCase
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,40 +16,31 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 
 /**
  * Controller to edit a single item from the Tarifa model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
- * @author jhonsmall            <juancarloschico0@gmail.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author jhonsmall                     <juancarloschico0@gmail.com>
  */
 class EditTarifa extends EditController
 {
-
-    /**
-     * Returns the model name.
-     * 
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Tarifa';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -59,7 +50,7 @@ class EditTarifa extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createCustomerGroupView(string $viewName = 'ListGrupoClientes')
@@ -69,14 +60,14 @@ class EditTarifa extends EditController
         $this->views[$viewName]->addOrderBy(['codgrupo'], 'code');
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
 
-        /// disable column
+        // disable column
         $this->views[$viewName]->disableColumn('rate');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
 
-        /// add custom buttons
+        // add custom buttons
         $this->addButton($viewName, [
             'action' => 'setgrouprate',
             'color' => 'success',
@@ -93,10 +84,6 @@ class EditTarifa extends EditController
         ]);
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createCustomerView(string $viewName = 'ListCliente')
     {
         $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
@@ -105,7 +92,7 @@ class EditTarifa extends EditController
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
         $this->views[$viewName]->addOrderBy(['fechaalta', 'codcliente'], 'date');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
 
@@ -125,10 +112,6 @@ class EditTarifa extends EditController
         ]);
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createProductView(string $viewName = 'ListTarifaProducto')
     {
         $this->addListView($viewName, 'Join\TarifaProducto', 'products', 'fas fa-cubes');
@@ -138,7 +121,7 @@ class EditTarifa extends EditController
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
         $this->views[$viewName]->addSearchFields(['variantes.referencia', 'descripcion']);
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'checkBoxes', false);
@@ -158,8 +141,7 @@ class EditTarifa extends EditController
     }
 
     /**
-     * 
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -180,7 +162,6 @@ class EditTarifa extends EditController
     }
 
     /**
-     * 
      * @param string $action
      *
      * @return bool
@@ -212,7 +193,7 @@ class EditTarifa extends EditController
     {
         $codes = $this->request->request->get('code', '');
         if (empty($codes) || false === \is_array($codes)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return;
         }
 
@@ -224,14 +205,14 @@ class EditTarifa extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
     }
 
     protected function unsetGroupRate()
     {
         $codes = $this->request->request->get('code', '');
         if (empty($codes) || false === \is_array($codes)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return;
         }
 
@@ -243,7 +224,7 @@ class EditTarifa extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
     }
 
     protected function setCustomerRate()
@@ -251,17 +232,17 @@ class EditTarifa extends EditController
         $customer = new Cliente();
         $code = $this->request->request->get('setcustomerrate');
         if (empty($code) || false === $customer->loadFromCode($code)) {
-            $this->toolBox()->i18nLog()->warning('customer-not-found');
+            Tools::log()->warning('customer-not-found');
             return;
         }
 
         $customer->codtarifa = $this->request->get('code');
         if ($customer->save()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('record-save-error');
+        Tools::log()->warning('record-save-error');
     }
 
     protected function setGroupRate()
@@ -269,16 +250,16 @@ class EditTarifa extends EditController
         $group = new GrupoClientes();
         $code = $this->request->request->get('setgrouprate');
         if (empty($code) || false === $group->loadFromCode($code)) {
-            $this->toolBox()->i18nLog()->warning('group-not-found');
+            Tools::log()->warning('group-not-found');
             return;
         }
 
         $group->codtarifa = $this->request->get('code');
         if ($group->save()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('record-save-error');
+        Tools::log()->warning('record-save-error');
     }
 }

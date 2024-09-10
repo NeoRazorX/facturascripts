@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,9 +21,9 @@ namespace FacturaScripts\Test\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\LogMessage;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Core\Translator;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -254,7 +254,7 @@ final class MiniLogTest extends TestCase
 
     public function testSave()
     {
-        // crear data
+        // clear data
         MiniLog::clear();
         $logModel = new LogMessage();
         $where = [new DataBaseWhere('channel', self::CHANNEL)];
@@ -281,7 +281,7 @@ final class MiniLogTest extends TestCase
         $this->assertEquals('one', $context['more'], 'bad-db-context-key');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

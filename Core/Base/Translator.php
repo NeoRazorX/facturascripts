@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Tools;
 use Symfony\Component\Translation\Loader\JsonFileLoader;
 use Symfony\Component\Translation\Translator as SymfonyTranslator;
 
@@ -26,10 +28,10 @@ use Symfony\Component\Translation\Translator as SymfonyTranslator;
  * The Translator class manage all translations methods required for internationalization.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @deprecated since FacturaScripts 2023.06. Use FacturaScripts\Core\Translator instead.
  */
 class Translator
 {
-
     const FALLBACK_LANG = 'es_ES';
 
     /**
@@ -87,19 +89,6 @@ class Translator
     }
 
     /**
-     * Translate the text into the default language.
-     *
-     * @param string $txt
-     * @param array $parameters
-     *
-     * @return string
-     */
-    public function trans(string $txt, array $parameters = []): string
-    {
-        return empty($txt) ? '' : $this->customTrans($this->currentLang, $txt, $parameters);
-    }
-
-    /**
      * Translate the text into the selected language.
      *
      * @param string $langCode
@@ -136,14 +125,29 @@ class Translator
      */
     public function getAvailableLanguages(): array
     {
+        // obtenemos los directorios donde comprobar
+        $folders = [FS_FOLDER . '/Core/Translation', FS_FOLDER . '/MyFiles/Translation'];
+        foreach (Plugins::enabled() as $plugin) {
+            $folders[] = Plugins::folder() . '/' . $plugin . '/Translation';
+        }
+
+        // obtenemos los idiomas según los directorios
         $languages = [];
-        $dir = FS_FOLDER . '/Core/Translation';
-        foreach (scandir($dir, SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
-                $key = substr($fileName, 0, -5);
-                $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
+        foreach ($folders as $directory) {
+            if (false === file_exists($directory) || false === is_dir($directory)) {
+                continue;
+            }
+
+            foreach (scandir($directory, SCANDIR_SORT_ASCENDING) as $fileName) {
+                if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
+                    $key = substr($fileName, 0, -5);
+                    $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
+                }
             }
         }
+
+        // ordenamos preservando las claves
+        asort($languages);
 
         return $languages;
     }
@@ -153,7 +157,7 @@ class Translator
      */
     private function getDefaultLang(): string
     {
-        return self::$defaultLang ?? FS_LANG;
+        return self::$defaultLang ?? Tools::config('lang', self::FALLBACK_LANG);
     }
 
     /**
@@ -174,6 +178,28 @@ class Translator
     public function getMissingStrings(): array
     {
         return self::$missingStrings;
+    }
+
+    public static function reload(): void
+    {
+        if (self::$translator !== null) {
+            self::$languages = [];
+            self::$translator = new symfonyTranslator(self::$defaultLang);
+            self::$translator->addLoader('json', new JsonFileLoader());
+        }
+    }
+
+    /**
+     * Translate the text into the default language.
+     *
+     * @param ?string $txt
+     * @param array $parameters
+     *
+     * @return string
+     */
+    public function trans(?string $txt, array $parameters = []): string
+    {
+        return empty($txt) ? '' : $this->customTrans($this->currentLang, $txt, $parameters);
     }
 
     /**
@@ -276,8 +302,7 @@ class Translator
             self::$translator->addResource('json', $coreFile, $langCode);
         }
 
-        $pluginManager = new PluginManager();
-        foreach ($pluginManager->enabledPlugins() as $pluginName) {
+        foreach (Plugins::enabled() as $pluginName) {
             $file2 = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . $langCode . '.json';
             if (file_exists($file2)) {
                 self::$translator->addResource('json', $file2, $langCode);

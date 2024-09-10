@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
+use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
+use FacturaScripts\Dinamic\Model\FacturaCliente as DinFacturaCliente;
+use FacturaScripts\Dinamic\Model\PagoCliente as DinPagoCliente;
 
 /**
  * Description of ReciboCliente
@@ -28,17 +32,12 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class ReciboCliente extends Base\Receipt
 {
-
     use Base\ModelTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codcliente;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $gastos;
 
     public function clear()
@@ -47,12 +46,9 @@ class ReciboCliente extends Base\Receipt
         $this->gastos = 0.0;
     }
 
-    /**
-     * @return FacturaCliente
-     */
-    public function getInvoice()
+    public function getInvoice(): DinFacturaCliente
     {
-        $invoice = new FacturaCliente();
+        $invoice = new DinFacturaCliente();
         $invoice->loadFromCode($this->idfactura);
         return $invoice;
     }
@@ -60,29 +56,24 @@ class ReciboCliente extends Base\Receipt
     /**
      * Returns all payment history for this receipt
      *
-     * @return PagoCliente[]
+     * @return DinPagoCliente[]
      */
-    public function getPayments()
+    public function getPayments(): array
     {
-        $payModel = new PagoCliente();
+        $payModel = new DinPagoCliente();
         $where = [new DataBaseWhere('idrecibo', $this->idrecibo)];
-        return $payModel->all($where, [], 0, 0);
+        $orderBy = ['fecha' => 'DESC', 'hora' => 'DESC', 'idpago' => 'DESC'];
+        return $payModel->all($where, $orderBy, 0, 0);
     }
 
-    /**
-     * @return Cliente
-     */
-    public function getSubject()
+    public function getSubject(): DinCliente
     {
-        $cliente = new Cliente();
+        $cliente = new DinCliente();
         $cliente->loadFromCode($this->codcliente);
         return $cliente;
     }
 
-    /**
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Cliente();
@@ -90,19 +81,18 @@ class ReciboCliente extends Base\Receipt
         return parent::install();
     }
 
-    /**
-     * @param string $date
-     */
-    public function setExpiration($date)
+    public function setExpiration(string $date)
     {
         parent::setExpiration($date);
 
+        // obtenemos los días de pago del cliente
         $days = $this->getSubject()->getPaymentDays();
         if (empty($days)) {
+            // si no tiene ninguno, dejamos la fecha como está
             return;
         }
 
-        // try to select consumer defined days for expiration date
+        // si el cliente tiene días de pago, calculamos fechas con los días de pago
         $newDates = [];
         $maxDay = date('t', strtotime($this->vencimiento));
         foreach ($days as $numDay) {
@@ -118,24 +108,16 @@ class ReciboCliente extends Base\Receipt
             return;
         }
 
+        // asignamos la fecha más próxima a la fecha de vencimiento
         $this->vencimiento = date(self::DATE_STYLE, min($newDates));
     }
 
-    /**
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'recibospagoscli';
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListFacturaCliente?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListFacturaCliente?activetab=List'): string
     {
         if ('list' === $type && !empty($this->idfactura)) {
             return $this->getInvoice()->url() . '&activetab=List' . $this->modelClassName();
@@ -151,13 +133,13 @@ class ReciboCliente extends Base\Receipt
      *
      * @return bool
      */
-    protected function newPayment()
+    protected function newPayment(): bool
     {
         if ($this->disablePaymentGeneration) {
             return false;
         }
 
-        $pago = new PagoCliente();
+        $pago = new DinPagoCliente();
         $pago->codpago = $this->codpago;
         $pago->fecha = $this->fechapago ?? $pago->fecha;
         $pago->gastos = $this->gastos;
@@ -165,5 +147,37 @@ class ReciboCliente extends Base\Receipt
         $pago->importe = $this->pagado ? $this->importe : 0 - $this->importe;
         $pago->nick = $this->nick;
         return $pago->save();
+    }
+
+    protected function onDelete()
+    {
+        $this->updateCustomerRisk();
+        parent::onDelete();
+    }
+
+    protected function onInsert()
+    {
+        $this->updateCustomerRisk();
+        parent::onInsert();
+    }
+
+    protected function onUpdate()
+    {
+        $this->updateCustomerRisk();
+        parent::onUpdate();
+    }
+
+    /**
+     * Update customer risk when a receipt is created, updated or deleted.
+     *
+     * @return void
+     */
+    protected function updateCustomerRisk()
+    {
+        $customer = new DinCliente();
+        if ($customer->loadFromCode($this->codcliente)) {
+            $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
+            $customer->save();
+        }
     }
 }

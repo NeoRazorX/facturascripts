@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Model\Agente as DinAgente;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 use FacturaScripts\Dinamic\Model\Pais as DinPais;
@@ -32,174 +36,62 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
  */
 class Contacto extends Base\Contact
 {
-
     use Base\ModelTrait;
-    use Base\PasswordTrait;
 
-    /**
-     * True if contact accepts the privacy policy.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $aceptaprivacidad;
 
-    /**
-     * True if it supports marketing, but False.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $admitemarketing;
 
-    /**
-     * Post office box of the address.
-     *
-     * @var string
-     */
+    /** @var string */
     public $apartado;
 
-    /**
-     * Last name.
-     *
-     * @var string
-     */
+    /** @var string */
     public $apellidos;
 
-    /**
-     * Contact charge.
-     *
-     * @var string
-     */
+    /** @var string */
     public $cargo;
 
-    /**
-     * Contact city.
-     *
-     * @var string
-     */
+    /** @var string */
     public $ciudad;
 
-    /**
-     * Associated agente to this contact. Agent model.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codagente;
 
-    /**
-     * Associated customer to this contact. Customer model.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codcliente;
 
-    /**
-     * Contact country.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codpais;
 
-    /**
-     * Postal code of the contact.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codpostal;
 
-    /**
-     * Associated supplier to this contact. Supplier model.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codproveedor;
 
-    /**
-     * Description of the contact.
-     *
-     * @var string
-     */
+    /** @var string */
     public $descripcion;
 
-    /**
-     * Address of the contact.
-     *
-     * @var string
-     */
+    /** @var string */
     public $direccion;
 
-    /**
-     * Contact company.
-     *
-     * @var string
-     */
+    /** @var string */
     public $empresa;
 
-    /**
-     *
-     * @var bool
-     */
-    public $habilitado;
-
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idcontacto;
 
-    /**
-     * Last activity date.
-     *
-     * @var string
-     */
-    public $lastactivity;
-
-    /**
-     * Last IP used.
-     *
-     * @var string
-     */
-    public $lastip;
-
-    /**
-     * Indicates the level of security that the contact can access.
-     *
-     * @var integer
-     */
-    public $level;
-
-    /**
-     * Session key, saved also in cookie. Regenerated when user log in.
-     *
-     * @var string
-     */
-    public $logkey;
-
-    /**
-     * Contact province.
-     *
-     * @var string
-     */
+    /** @var string */
     public $provincia;
 
-    /**
-     *
-     * @var integer
-     */
-    public $puntos;
-
-    /**
-     * TRUE if contact is verified.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $verificado;
 
-    /**
-     * Returns an unique alias for this contact.
-     *
-     * @return string
-     */
+    /** @var string */
+    public $web;
+
     public function alias(): string
     {
         if (empty($this->email) || strpos($this->email, '@') === false) {
@@ -218,18 +110,18 @@ class Contacto extends Base\Contact
         }
     }
 
-    /**
-     * Reset the values of all model properties.
-     */
+    public function checkVies(bool $msg = true): bool
+    {
+        $codiso = Paises::get($this->codpais)->codiso ?? '';
+        return Vies::check($this->cifnif ?? '', $codiso, $msg) === 1;
+    }
+
     public function clear()
     {
         parent::clear();
         $this->aceptaprivacidad = false;
         $this->admitemarketing = false;
-        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
-        $this->habilitado = true;
-        $this->level = 1;
-        $this->puntos = 0;
+        $this->codpais = Tools::settings('default', 'codpais');
         $this->verificado = false;
     }
 
@@ -240,11 +132,11 @@ class Contacto extends Base\Contact
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $results = [];
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
-        $fields = 'apellidos|cifnif|descripcion|email|empresa|idcontacto|nombre|observaciones|telefono1|telefono2';
+        $fields = 'apellidos|cifnif|descripcion|email|empresa|nombre|observaciones|telefono1|telefono2';
         $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
         foreach ($this->all($where) as $item) {
             $results[] = new CodeModel(['code' => $item->{$field}, 'description' => $item->fullName()]);
@@ -252,18 +144,15 @@ class Contacto extends Base\Contact
         return $results;
     }
 
-    /**
-     * @return string
-     */
     public function country(): string
     {
         $country = new DinPais();
         $where = [new DataBaseWhere('codiso', $this->codpais)];
         if ($country->loadFromCode($this->codpais) || $country->loadFromCode('', $where)) {
-            return $this->toolBox()->utils()->fixHtml($country->nombre);
+            return Tools::fixHtml($country->nombre) ?? '';
         }
 
-        return $this->codpais;
+        return $this->codpais ?? '';
     }
 
     /**
@@ -276,12 +165,7 @@ class Contacto extends Base\Contact
         return $this->nombre . ' ' . $this->apellidos;
     }
 
-    /**
-     * @param bool $create
-     *
-     * @return DinCliente
-     */
-    public function getCustomer(bool $create = true)
+    public function getCustomer(bool $create = true): Cliente
     {
         $cliente = new DinCliente();
         if ($this->codcliente && $cliente->loadFromCode($this->codcliente)) {
@@ -291,17 +175,20 @@ class Contacto extends Base\Contact
         if ($create) {
             // creates a new customer
             $cliente->cifnif = $this->cifnif ?? '';
+            $cliente->codagente = $this->codagente;
             $cliente->codproveedor = $this->codproveedor;
             $cliente->email = $this->email;
             $cliente->fax = $this->fax;
             $cliente->idcontactoenv = $this->idcontacto;
             $cliente->idcontactofact = $this->idcontacto;
+            $cliente->langcode = $this->langcode;
             $cliente->nombre = $this->fullName();
             $cliente->observaciones = $this->observaciones;
             $cliente->personafisica = $this->personafisica;
             $cliente->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
             $cliente->telefono1 = $this->telefono1;
             $cliente->telefono2 = $this->telefono2;
+            $cliente->web = $this->web;
             if ($cliente->save()) {
                 $this->codcliente = $cliente->codcliente;
                 $this->save();
@@ -311,12 +198,7 @@ class Contacto extends Base\Contact
         return $cliente;
     }
 
-    /**
-     * @param bool $create
-     *
-     * @return DinProveedor
-     */
-    public function getSupplier(bool $create = true)
+    public function getSupplier(bool $create = true): Proveedor
     {
         $proveedor = new DinProveedor();
         if ($this->codproveedor && $proveedor->loadFromCode($this->codproveedor)) {
@@ -330,12 +212,14 @@ class Contacto extends Base\Contact
             $proveedor->email = $this->email;
             $proveedor->fax = $this->fax;
             $proveedor->idcontacto = $this->idcontacto;
+            $proveedor->langcode = $this->langcode;
             $proveedor->nombre = $this->fullName();
             $proveedor->observaciones = $this->observaciones;
             $proveedor->personafisica = $this->personafisica;
             $proveedor->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
             $proveedor->telefono1 = $this->telefono1;
             $proveedor->telefono2 = $this->telefono2;
+            $proveedor->web = $this->web;
             if ($proveedor->save()) {
                 $this->codproveedor = $proveedor->codproveedor;
                 $this->save();
@@ -345,14 +229,7 @@ class Contacto extends Base\Contact
         return $proveedor;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // we need this models to be checked before
         new DinAgente();
@@ -362,100 +239,54 @@ class Contacto extends Base\Contact
         return parent::install();
     }
 
-    /**
-     * Generates a new login key for the user. It also updates last activity and last IP.
-     *
-     * @param string $ipAddress
-     *
-     * @return string
-     */
-    public function newLogkey($ipAddress)
-    {
-        $this->lastactivity = date(self::DATETIME_STYLE);
-        $this->lastip = $ipAddress;
-        $this->logkey = $this->toolBox()->utils()->randomString(99);
-        return $this->logkey;
-    }
-
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idcontacto';
     }
 
-    /**
-     * Returns the name of the column used to describe this item.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'descripcion';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'contactos';
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
+        if (empty($this->nombre) && empty($this->email) && empty($this->direccion)) {
+            Tools::log()->warning('empty-contact-data');
+            return false;
+        }
+
         if (empty($this->descripcion)) {
-            $this->descripcion = empty($this->codcliente) ? $this->fullName() : $this->direccion;
+            $this->descripcion = empty($this->codcliente) && empty($this->codproveedor) ?
+                $this->fullName() :
+                $this->direccion;
         }
 
-        if (empty($this->nombre)) {
-            $this->nombre = $this->descripcion;
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->apellidos = Tools::noHtml($this->apellidos) ?? '';
+        $this->cargo = Tools::noHtml($this->cargo) ?? '';
+        $this->ciudad = Tools::noHtml($this->ciudad) ?? '';
+        $this->direccion = Tools::noHtml($this->direccion) ?? '';
+        $this->empresa = Tools::noHtml($this->empresa) ?? '';
+        $this->provincia = Tools::noHtml($this->provincia) ?? '';
+        $this->web = Tools::noHtml($this->web) ?? '';
+
+        // comprobamos si la web es una url válida
+        if (!empty($this->web) && false === Validator::url($this->web)) {
+            Tools::log()->warning('invalid-web', ['%web%' => $this->web]);
+            return false;
         }
 
-        $utils = $this->toolBox()->utils();
-        $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->apellidos = $utils->noHtml($this->apellidos);
-        $this->cargo = $utils->noHtml($this->cargo);
-        $this->ciudad = $utils->noHtml($this->ciudad);
-        $this->direccion = $utils->noHtml($this->direccion);
-        $this->empresa = $utils->noHtml($this->empresa);
-        $this->provincia = $utils->noHtml($this->provincia);
-
-        return $this->testPassword() && parent::test();
+        return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         return parent::url($type, $list);
-    }
-
-    /**
-     * Verifies the login key.
-     *
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function verifyLogkey($value)
-    {
-        return $this->logkey === $value;
     }
 }

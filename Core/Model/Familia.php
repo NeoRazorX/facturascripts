@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,18 +20,20 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
  * A family of products.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
-class Familia extends Base\ModelClass
+class Familia extends ModelClass
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Primary key.
@@ -41,21 +43,21 @@ class Familia extends Base\ModelClass
     public $codfamilia;
 
     /**
-     * Sub-account code for purchases.
+     * Account code for purchases.
      *
      * @var string
      */
     public $codsubcuentacom;
 
     /**
-     * Code for the shopping sub-account, but with IRPF.
+     * Code for the shopping account, but with IRPF.
      *
      * @var string
      */
     public $codsubcuentairpfcom;
 
     /**
-     * Sub-account code for sales.
+     * Account code for sales.
      *
      * @var string
      */
@@ -82,9 +84,35 @@ class Familia extends Base\ModelClass
      */
     public $numproductos;
 
-    /**
-     * Reset the values of all model properties.
-     */
+    public function changePrimaryColumnValue($newValue): bool
+    {
+        // nos guardamos las subfamilias
+        $subFamilias = $this->getSubFamilias();
+
+        // les quitamos la madre
+        foreach ($subFamilias as $subFamilia) {
+            $subFamilia->madre = null;
+            $subFamilia->save();
+        }
+
+        if (false === parent::changePrimaryColumnValue($newValue)) {
+            // les volvemos a poner la madre
+            foreach ($subFamilias as $subFamilia) {
+                $subFamilia->madre = $this->codfamilia;
+                $subFamilia->save();
+            }
+            return false;
+        }
+
+        // actualizamos las subfamilias
+        foreach ($subFamilias as $subFamilia) {
+            $subFamilia->madre = $newValue;
+            $subFamilia->save();
+        }
+
+        return true;
+    }
+
     public function clear()
     {
         parent::clear();
@@ -92,72 +120,67 @@ class Familia extends Base\ModelClass
     }
 
     /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
+     * @return static[]
      */
-    public static function primaryColumn()
+    public function getSubFamilias(): array
+    {
+        $where = [new DataBaseWhere('madre', $this->codfamilia)];
+        $orderBy = ['descripcion' => 'ASC'];
+        return $this->all($where, $orderBy, 0, 0);
+    }
+
+    public static function primaryColumn(): string
     {
         return 'codfamilia';
     }
 
     /**
-     * Get the accounting sub-account for irpf purchases.
+     * Get the accounting account for irpf purchases.
      *
      * @param string $code
      *
      * @return string
      */
-    public static function purchaseIrpfSubAccount($code)
+    public static function purchaseIrpfSubAccount(string $code): string
     {
         return self::getSubaccountFromFamily($code, 'codsubcuentairpfcom');
     }
 
     /**
-     * Get the accounting sub-account for purchases.
+     * Get the accounting account for purchases.
      *
      * @param string $code
      *
      * @return string
      */
-    public static function purchaseSubAccount($code)
+    public static function purchaseSubAccount(string $code): string
     {
         return static::getSubaccountFromFamily($code, 'codsubcuentacom');
     }
 
     /**
-     * Get the accounting sub-account for sales.
+     * Get the accounting account for sales.
      *
      * @param string $code
      *
      * @return string
      */
-    public static function saleSubAccount($code)
+    public static function saleSubAccount(string $code): string
     {
         return self::getSubaccountFromFamily($code, 'codsubcuentaven');
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'familias';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         // comprobamos codfamilia
-        $this->codfamilia = self::toolBox()::utils()::noHtml($this->codfamilia);
+        $this->codfamilia = Tools::noHtml($this->codfamilia);
         if ($this->codfamilia && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codfamilia, '%column%' => 'codfamilia', '%min%' => '1', '%max%' => '8']
             );
@@ -165,9 +188,9 @@ class Familia extends Base\ModelClass
         }
 
         // comprobamos descripción
-        $this->descripcion = self::toolBox()::utils()::noHtml($this->descripcion);
+        $this->descripcion = Tools::noHtml($this->descripcion);
         if (empty($this->descripcion) || strlen($this->descripcion) > 100) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'invalid-column-lenght',
                 ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '100']
             );
@@ -177,14 +200,7 @@ class Familia extends Base\ModelClass
         return parent::test() && $this->testLoops() && $this->testAccounting();
     }
 
-    /**
-     * @param string $code
-     * @param string $field
-     * @param Familia $model
-     *
-     * @return string
-     */
-    private static function getSubaccountFromFamily($code, $field, $model = null)
+    private static function getSubaccountFromFamily(?string $code, string $field, Familia $model = null): string
     {
         if (empty($code)) {
             return '';
@@ -200,15 +216,10 @@ class Familia extends Base\ModelClass
 
         return empty($model->{$field}) && $model->madre != $code ?
             self::getSubaccountFromFamily($model->madre, $field, $model) :
-            $model->{$field};
+            (string)$model->{$field};
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codfamilia)) {
             $this->codfamilia = $this->newCode();
@@ -220,25 +231,25 @@ class Familia extends Base\ModelClass
     protected function testAccounting(): bool
     {
         // comprobamos las subcuentas vinculadas
-        $subaccount = new DinSubcuenta();
+        $subAccount = new DinSubcuenta();
         if ($this->codsubcuentacom) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentacom)];
-            if (false === $subaccount->loadFromCode('', $where)) {
-                $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
+            if (false === $subAccount->loadFromCode('', $where)) {
+                Tools::log()->warning('purchases-subaccount-not-found');
                 return false;
             }
         }
         if (false === empty($this->codsubcuentairpfcom)) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentairpfcom)];
-            if (false === $subaccount->loadFromCode('', $where)) {
-                $this->toolBox()->i18nLog()->warning('irpf-subaccount-not-found');
+            if (false === $subAccount->loadFromCode('', $where)) {
+                Tools::log()->warning('irpf-subaccount-not-found');
                 return false;
             }
         }
         if (false === empty($this->codsubcuentaven)) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentaven)];
-            if (false === $subaccount->loadFromCode('', $where)) {
-                $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
+            if (false === $subAccount->loadFromCode('', $where)) {
+                Tools::log()->warning('sales-subaccount-not-found');
                 return false;
             }
         }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as DinLineaFactura;
-use FacturaScripts\Dinamic\Model\LiquidacionComision as DinLiquidacionComision;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
 
 /**
@@ -31,37 +31,20 @@ use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
  */
 class FacturaCliente extends Base\SalesDocument
 {
-
     use Base\ModelTrait;
     use Base\InvoiceTrait;
 
-    /**
-     * @var int
-     */
-    public $idliquidacion;
-
-    /**
-     * This function is called when creating the model's table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert
-     * default values.
-     *
-     * @return string
-     */
-    public function install()
+    public function __construct(array $data = [])
     {
-        // needed dependencies
-        new DinLiquidacionComision();
-
-        return parent::install();
+        parent::__construct($data);
+        self::$dont_copy_fields[] = 'fechadevengo';
     }
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->pagada = false;
+        $this->vencida = false;
     }
 
     /**
@@ -69,7 +52,7 @@ class FacturaCliente extends Base\SalesDocument
      *
      * @return DinLineaFactura[]
      */
-    public function getLines()
+    public function getLines(): array
     {
         $lineaModel = new DinLineaFactura();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
@@ -92,6 +75,10 @@ class FacturaCliente extends Base\SalesDocument
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
         $newLine->loadFromData($data, $exclude);
+
+        // allow extensions
+        $this->pipe('getNewLine', $newLine, $data, $exclude);
+
         return $newLine;
     }
 
@@ -100,37 +87,25 @@ class FacturaCliente extends Base\SalesDocument
      *
      * @return DinReciboCliente[]
      */
-    public function getReceipts()
+    public function getReceipts(): array
     {
         $receipt = new DinReciboCliente();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
         return $receipt->all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'facturascli';
     }
 
-    /**
-     * @return bool
-     */
-    public function test()
+    protected function saveInsert(array $values = []): bool
     {
-        if (false === parent::test()) {
-            return false;
-        }
+        return $this->testDate() && parent::saveInsert($values);
+    }
 
-        if ($this->codserie != $this->previousData['codserie']) {
-            // prevent check date if serie is changed
-            return true;
-        }
-
+    protected function testDate(): bool
+    {
         // prevent form using old dates
         $numColumn = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
         $whereOld = [
@@ -140,7 +115,10 @@ class FacturaCliente extends Base\SalesDocument
         ];
         foreach ($this->all($whereOld, ['fecha' => 'DESC'], 0, 1) as $old) {
             if (strtotime($old->fecha) > strtotime($this->fecha)) {
-                $this->toolBox()->i18nLog()->error('invalid-date-there-are-invoices-after', ['%date%' => $this->fecha]);
+                Tools::log()->error(
+                    'invalid-date-there-are-invoices-before',
+                    ['%date%' => $this->fecha, '%other-date%' => $old->fecha, '%other%' => $old->codigo]
+                );
                 return false;
             }
         }
@@ -153,24 +131,14 @@ class FacturaCliente extends Base\SalesDocument
         ];
         foreach ($this->all($whereNew, ['fecha' => 'ASC'], 0, 1) as $old) {
             if (strtotime($old->fecha) < strtotime($this->fecha)) {
-                $this->toolBox()->i18nLog()->error('invalid-date-there-are-invoices-before', ['%date%' => $this->fecha]);
+                Tools::log()->error(
+                    'invalid-date-there-are-invoices-after',
+                    ['%date%' => $this->fecha, '%other-date%' => $old->fecha, '%other%' => $old->codigo]
+                );
                 return false;
             }
         }
 
         return true;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function onChangeAgent()
-    {
-        if ($this->idliquidacion) {
-            $this->toolBox()->i18nLog()->warning('cant-change-agent-in-settlement');
-            return false;
-        }
-
-        return parent::onChangeAgent();
     }
 }

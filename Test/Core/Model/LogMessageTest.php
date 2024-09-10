@@ -21,7 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\LogMessage;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 class LogMessageTest extends TestCase
@@ -62,7 +62,7 @@ class LogMessageTest extends TestCase
         $this->assertFalse($item->save(), 'can-update-audit-log');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

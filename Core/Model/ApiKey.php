@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Tools;
 
 /**
  * ApiKey model to manage the connection tokens through the api
@@ -27,105 +30,63 @@ namespace FacturaScripts\Core\Model;
  */
 class ApiKey extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * API key.
-     *
-     * @var string
-     */
+    /** @var string */
     public $apikey;
 
-    /**
-     * Date of registration.
-     *
-     * @var string
-     */
+    /** @var string */
     public $creationdate;
 
-    /**
-     * Description.
-     *
-     * @var string
-     */
+    /** @var string */
     public $description;
 
-    /**
-     * Enabled/Disabled.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $enabled;
 
-    /**
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $fullaccess;
 
-    /**
-     * Primary key. Id autoincremental
-     *
-     * @var int
-     */
+    /** @var int */
     public $id;
 
-    /**
-     * Nick of the user.
-     *
-     * @var string
-     */
+    /** @var string */
     public $nick;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
-        $this->apikey = $this->toolBox()->utils()->randomString(20);
-        $this->creationdate = \date(self::DATE_STYLE);
+        $this->apikey = Tools::randomString(20);
+        $this->creationdate = Tools::date();
         $this->enabled = true;
         $this->fullaccess = false;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'description';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'api_keys';
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
+    public function test(): bool
+    {
+        // escapamos el html
+        $this->apikey = Tools::noHtml($this->apikey);
+        $this->description = Tools::noHtml($this->description);
+        $this->nick = Tools::noHtml($this->nick);
+
+        return parent::test();
+    }
+
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
     {
         return parent::url($type, $list);

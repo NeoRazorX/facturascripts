@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,19 +25,12 @@ use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
  * Controller to list the items in the PedidoCliente model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
  * @author Raul Jimenez                 <raul.jimenez@nazcanetworks.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 class ListPedidoCliente extends ListBusinessDocument
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -51,12 +44,19 @@ class ListPedidoCliente extends ListBusinessDocument
      */
     protected function createViews()
     {
-        $this->createViewSales('ListPedidoCliente', 'PedidoCliente', 'orders');
-        $this->addButtonGroupDocument('ListPedidoCliente');
-        $this->addButtonApproveDocument('ListPedidoCliente');
+        $this->createViewsPedidos();
 
         if ($this->permissions->onlyOwnerData === false) {
             $this->createViewLines('ListLineaPedidoCliente', 'LineaPedidoCliente');
         }
+    }
+
+    protected function createViewsPedidos(string $viewName = 'ListPedidoCliente')
+    {
+        $this->createViewSales($viewName, 'PedidoCliente', 'orders');
+
+        // añadimos botones
+        $this->addButtonGroupDocument($viewName);
+        $this->addButtonApproveDocument($viewName);
     }
 }

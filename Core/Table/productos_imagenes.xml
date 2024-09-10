@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : productos_imagenes.xml
+    Author     : Jose Antonio Cuello
+    Description:
+        Structure for the images of products table
+-->
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idfile</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idproducto</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(30)</type>
+    </column>
+    <column>
+        <name>orden</name>
+        <type>integer</type>
+    </column>
+
+    <!-- Constraints -->
+    <constraint>
+        <name>productos_imagenes_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_productos_imagenes_productos</name>
+        <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_productos_imagenes_variantes</name>
+        <type>FOREIGN KEY (referencia) REFERENCES variantes (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_productos_imagenes_attachedfiles</name>
+        <type>FOREIGN KEY (idfile) REFERENCES attached_files (idfile) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

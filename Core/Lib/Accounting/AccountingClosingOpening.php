@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,11 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cuenta;
-use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
@@ -34,7 +36,6 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 class AccountingClosingOpening extends AccountingClosingBase
 {
-
     /**
      * indicates whether the accounting account plan should be copied
      * to the new fiscal year.
@@ -105,10 +106,9 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     protected function getConcept(): string
     {
-        return $this->toolBox()->i18n()->trans(
-            'closing-opening-concept',
-            ['%exercise%' => $this->newExercise->nombre]
-        );
+        return Tools::lang()->trans('closing-opening-concept', [
+            '%exercise%' => $this->newExercise->nombre
+        ]);
     }
 
     /**
@@ -138,6 +138,23 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     protected function getSQL(): string
     {
+        if (FS_DB_TYPE == 'postgresql') {
+            return "SELECT COALESCE(t1.canal, 0) AS channel,"
+                . "t2.idsubcuenta AS id,"
+                . "t2.codsubcuenta AS code,"
+                . "t3.idsubcuenta AS id_new,"
+                . "ROUND(SUM(t2.debe)::numeric, 4) AS debit,"
+                . "ROUND(SUM(t2.haber)::numeric, 4) AS credit"
+                . " FROM asientos t1"
+                . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento AND t2.codsubcuenta BETWEEN '1' AND '599999999999999'"
+                . " LEFT JOIN subcuentas t3 ON t3.codsubcuenta = t2.codsubcuenta AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
+                . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
+                . " AND (t1.operacion IS NULL OR t1.operacion <> '" . Asiento::OPERATION_CLOSING . "')"
+                . " GROUP BY 1, 2, 3, 4"
+                . " HAVING ROUND(SUM(t2.debe)::numeric - SUM(t2.haber)::numeric, 4) <> 0.0000"
+                . " ORDER BY 1, 3";
+        }
+
         return "SELECT COALESCE(t1.canal, 0) AS channel,"
             . "t2.idsubcuenta AS id,"
             . "t2.codsubcuenta AS code,"
@@ -231,7 +248,6 @@ class AccountingClosingOpening extends AccountingClosingBase
 
         // copy subaccounts
         $subaccountModel = new Subcuenta();
-        $subaccountModel->clearExerciseCache();
         foreach ($subaccountModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subaccount) {
             $newSubaccount = $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
             if (!$newSubaccount->exists()) {
@@ -261,7 +277,7 @@ class AccountingClosingOpening extends AccountingClosingBase
     {
         $date = date('d-m-Y', strtotime($this->exercise->fechainicio . ' +1 year'));
 
-        $this->newExercise = new Ejercicio();
+        $this->newExercise = new DinEjercicio();
         $this->newExercise->idempresa = $this->exercise->idempresa;
         $this->newExercise->loadFromDate($date, true, true);
     }

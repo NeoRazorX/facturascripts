@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 
 /**
  * Defines the status and attributes of a purchase or sale document.
@@ -30,100 +31,61 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class EstadoDocumento extends Base\ModelOnChangeClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Mode in which the stock of purchased or sold products is updated.
-     *
-     * @var int
-     */
+    /** @var bool */
+    public $activo;
+
+    /** @var int */
     public $actualizastock;
 
-    /**
-     * True to prevent modification of this state.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $bloquear;
 
-    /**
-     * Indicates whether the document will be editable or not.
-     *
-     * @var bool
-     */
+    /** @var string */
+    public $color;
+
+    /** @var bool */
     public $editable;
 
-    /**
-     * Name of the document to generate when this state is selected.
-     *
-     * @var string
-     */
+    /** @var string */
     public $generadoc;
 
-    /**
-     * Icon of EstadoDocumento.
-     *
-     * @var string
-     */
+    /** @var string */
     public $icon;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idestado;
 
-    /**
-     * Name of the state to show the user.
-     *
-     * @var string
-     */
+    /** @var string */
     public $nombre;
 
-    /**
-     * Sets this state as default for tipodoc.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $predeterminado;
 
-    /**
-     * Document type: customer invoice, supplier order, etc...
-     *
-     * @var string
-     */
+    /** @var string */
     public $tipodoc;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
+        $this->activo = true;
         $this->actualizastock = 0;
         $this->bloquear = false;
         $this->editable = true;
         $this->predeterminado = false;
     }
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->bloquear) {
-            $this->toolBox()->i18nLog()->warning('locked');
+            Tools::log()->warning('locked');
             return false;
         }
 
         return parent::delete();
     }
 
-    /**
-     * @return string
-     */
     public function icon(): string
     {
         if (!empty($this->icon)) {
@@ -135,43 +97,47 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return $this->editable ? 'fas fa-pen' : 'fas fa-lock';
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idestado';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'estados_documentos';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
+        // escapamos el html
+        $this->color = Tools::noHtml($this->color);
+        $this->generadoc = Tools::noHtml($this->generadoc);
+        $this->icon = Tools::noHtml($this->icon);
+        $this->nombre = Tools::noHtml($this->nombre);
+        $this->tipodoc = Tools::noHtml($this->tipodoc);
+
+        // Comprobamos que el nombre no esté vacío
         if (empty($this->nombre) || empty($this->tipodoc)) {
             return false;
         }
 
+        // si no está activo, no puede ser predeterminado
+        if (!$this->activo) {
+            $this->predeterminado = false;
+        }
+
+        // No permitimos que un estado predeterminado sea no editable.
+        if ($this->predeterminado && false === $this->editable) {
+            Tools::log()->error('non-editable-default-not-allowed');
+            return false;
+        }
+
+        // No permitimos que un estado predeterminado sea bloqueado.
         if (!empty($this->generadoc)) {
             $this->editable = false;
 
             if (in_array($this->tipodoc, ['FacturaCliente', 'FacturaProveedor'])) {
-                self::toolBox()::i18nLog()->warning('invoices-cant-generate-new-docs');
+                Tools::log()->warning('invoices-cant-generate-new-docs');
                 return false;
             }
         }
@@ -179,12 +145,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
     {
         return parent::url($type, $list);
@@ -198,7 +158,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
     protected function onChange($field)
     {
         if ($this->bloquear && $this->previousData['bloquear']) {
-            $this->toolBox()->i18nLog()->warning('locked');
+            Tools::log()->warning('locked');
             return false;
         }
 
@@ -209,9 +169,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::onChange($field);
     }
 
-    /**
-     * @return bool
-     */
     protected function onChangePredeterminado(): bool
     {
         if ($this->predeterminado) {
@@ -222,7 +179,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
             return self::$dataBase->exec($sql);
         }
 
-        // set other status as default
+        // establecemos el primer estado como predeterminado
         $where = [
             new DataBaseWhere('editable', true),
             new DataBaseWhere('tipodoc', $this->tipodoc)
@@ -263,12 +220,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         }
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->idestado)) {
             /**
@@ -281,9 +233,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::saveInsert($values);
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['actualizastock', 'bloquear', 'editable', 'generadoc', 'predeterminado', 'tipodoc'];

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\Model\Base\Address;
+use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
 /**
@@ -27,53 +32,46 @@ use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Almacen extends Base\Address
+class Almacen extends Address
 {
+    use ModelTrait;
+    use CompanyRelationTrait;
 
-    use Base\ModelTrait;
-    use Base\CompanyRelationTrait;
+    /** @var bool */
+    public $activo;
 
-    /**
-     * Primary key. Varchar (4).
-     *
-     * @var string
-     */
+    /** @var string */
     public $codalmacen;
 
-    /**
-     * Store name.
-     *
-     * @var string
-     */
+    /** @var string */
     public $nombre;
 
-    /**
-     * Store phone number.
-     *
-     * @var string
-     */
+    /** @var string */
     public $telefono;
 
-    /**
-     * Removed warehouse from database.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function clear()
+    {
+        parent::clear();
+        $this->activo = true;
+    }
+
+    public function delete(): bool
     {
         if ($this->isDefault()) {
-            $this->toolBox()->i18nLog()->warning('cant-delete-default-warehouse');
+            Tools::log()->warning('cant-delete-default-warehouse');
             return false;
         }
 
-        return parent::delete();
+        if (false === parent::delete()) {
+            return false;
+        }
+
+        // limpiamos la caché
+        Almacenes::clear();
+        return true;
     }
 
-    /**
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new DinEmpresa();
@@ -82,54 +80,45 @@ class Almacen extends Base\Address
     }
 
     /**
-     * Returns True if this is the default wharehouse.
+     * Returns True if this is the default warehouse.
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
-        return $this->codalmacen === $this->toolBox()->appSettings()->get('default', 'codalmacen');
+        return $this->codalmacen === Tools::settings('default', 'codalmacen');
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codalmacen';
     }
 
-    /**
-     * Returns the description of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function save(): bool
+    {
+        if (false === parent::save()) {
+            return false;
+        }
+
+        // limpiamos la caché
+        Almacenes::clear();
+        return true;
+    }
+
+    public static function tableName(): string
     {
         return 'almacenes';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         if (!empty($this->codalmacen) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codalmacen, '%column%' => 'codalmacen', '%min%' => '1', '%max%' => '4']
             );
@@ -137,21 +126,16 @@ class Almacen extends Base\Address
         }
 
         if (empty($this->idempresa)) {
-            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+            $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
-        $utils = $this->toolBox()->utils();
-        $this->nombre = $utils->noHtml($this->nombre);
-        $this->telefono = $utils->noHtml($this->telefono);
+        $this->nombre = Tools::noHtml($this->nombre);
+        $this->telefono = Tools::noHtml($this->telefono);
+
         return parent::test();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codalmacen)) {
             $this->codalmacen = (string)$this->newCode();

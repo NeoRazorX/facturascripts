@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\Export;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Tools;
 use Symfony\Component\HttpFoundation\Response;
 use XLSXWriter;
 
@@ -32,19 +33,12 @@ use XLSXWriter;
  */
 class XLSExport extends ExportBase
 {
+    const LIST_LIMIT = 5000;
 
-    const LIST_LIMIT = 10000;
-
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $numSheets = 0;
 
-    /**
-     * XLSX object.
-     *
-     * @var XLSXWriter
-     */
+    /** @var XLSXWriter */
     protected $writer;
 
     /**
@@ -56,7 +50,7 @@ class XLSExport extends ExportBase
      */
     public function addBusinessDocPage($model): bool
     {
-        /// lines
+        // líneas
         $cursor = [];
         $lineHeaders = [];
         foreach ($model->getLines() as $line) {
@@ -68,14 +62,14 @@ class XLSExport extends ExportBase
         }
 
         $lineRows = $this->getCursorRawData($cursor);
-        $this->writer->writeSheet($lineRows, $this->toolBox()->i18n()->trans('lines'), $lineHeaders);
+        $this->writer->writeSheet($lineRows, Tools::lang()->trans('lines'), $lineHeaders);
 
-        /// model
+        // modelo
         $headers = $this->getModelHeaders($model);
         $rows = $this->getCursorRawData([$model]);
         $this->writer->writeSheet($rows, $model->primaryDescription(), $headers);
 
-        /// do not continue with export
+        // no continuamos con la exportación del resto de pestañas
         return false;
     }
 
@@ -94,17 +88,27 @@ class XLSExport extends ExportBase
     public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
         $this->setFileName($title);
+        $name = empty($title) ? 'sheet' . $this->numSheets : Tools::slug($title);
 
         $headers = $this->getModelHeaders($model);
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
-            $this->writer->writeSheet([], $title, $headers);
+            // no hay datos, añadimos solamente la cabecera
+            $this->writer->writeSheet([], $name, $headers);
+            return true;
         }
+
+        // hay datos, añadimos primero la cabecera
+        $this->writer->writeSheetHeader($name, $headers);
+
+        // añadimos los datos
         while (!empty($cursor)) {
             $rows = $this->getCursorRawData($cursor);
-            $this->writer->writeSheet($rows, $title, $headers);
+            foreach ($rows as $row) {
+                $this->writer->writeSheetRow($name, $row);
+            }
 
-            /// Advance within the results
+            // obtenemos el siguiente bloque de datos
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
@@ -134,10 +138,12 @@ class XLSExport extends ExportBase
      *
      * @param array $headers
      * @param array $rows
+     * @param array $options
+     * @param string $title
      *
      * @return bool
      */
-    public function addTablePage($headers, $rows): bool
+    public function addTablePage($headers, $rows, $options = [], $title = ''): bool
     {
         $this->numSheets++;
         $sheetName = 'sheet' . $this->numSheets;
@@ -170,6 +176,7 @@ class XLSExport extends ExportBase
     public function newDoc(string $title, int $idformat, string $langcode)
     {
         $this->setFileName($title);
+
         $this->writer = new XLSXWriter();
         $this->writer->setAuthor('FacturaScripts');
         $this->writer->setTitle($title);
@@ -180,7 +187,7 @@ class XLSExport extends ExportBase
      */
     public function setOrientation(string $orientation)
     {
-        /// Not implemented
+        // Not implemented
     }
 
     /**
@@ -221,7 +228,7 @@ class XLSExport extends ExportBase
         $data = parent::getCursorRawData($cursor, $fields);
         foreach ($data as $num => $row) {
             foreach ($row as $key => $value) {
-                $data[$num][$key] = $this->toolBox()->utils()->fixHtml($value);
+                $data[$num][$key] = Tools::fixHtml($value);
             }
         }
 

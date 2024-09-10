@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Lib;
  */
 class IPFilter
 {
-
     /**
      * The number of seconds the system blocks access.
      */
@@ -57,6 +56,12 @@ class IPFilter
     public function __construct()
     {
         $this->filePath = FS_FOLDER . '/MyFiles/Cache/ip.list';
+
+        // si no existe la carpeta, la creamos
+        if (false === file_exists(FS_FOLDER . '/MyFiles/Cache')) {
+            mkdir(FS_FOLDER . '/MyFiles/Cache', 0777, true);
+        }
+
         $this->ipList = [];
         $this->readFile();
     }
@@ -64,26 +69,10 @@ class IPFilter
     /**
      * Clean the list of IP addresses and save the data.
      */
-    public function clear()
+    public function clear(): void
     {
         $this->ipList = [];
         $this->save();
-    }
-
-    /**
-     * Returns true client IP address.
-     *
-     * @return string
-     */
-    public static function getClientIp(): string
-    {
-        foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $field) {
-            if (isset($_SERVER[$field])) {
-                return (string)$_SERVER[$field];
-            }
-        }
-
-        return '::1';
     }
 
     /**
@@ -109,7 +98,7 @@ class IPFilter
      *
      * @param string $ip
      */
-    public function setAttempt(string $ip)
+    public function setAttempt(string $ip): void
     {
         foreach ($this->ipList as $key => $line) {
             if ($line['ip'] === $ip) {
@@ -131,7 +120,7 @@ class IPFilter
     /**
      * Reads file and load IP addresses.
      */
-    private function readFile()
+    private function readFile(): void
     {
         if (false === file_exists($this->filePath)) {
             return;
@@ -154,7 +143,7 @@ class IPFilter
      *
      * @param array $line
      */
-    private function readIp(array $line)
+    private function readIp(array $line): void
     {
         // if row is not expired
         if (count($line) === 3 && (int)$line[2] > time()) {
@@ -169,7 +158,7 @@ class IPFilter
     /**
      * Stores the list of IP addresses in the file.
      */
-    private function save()
+    private function save(): void
     {
         $file = fopen($this->filePath, 'wb');
         if ($file) {

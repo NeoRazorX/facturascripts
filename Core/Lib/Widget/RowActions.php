@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 /**
@@ -27,19 +28,14 @@ class RowActions extends VisualItem
 {
 
     /**
-     *
      * @var array
      */
     protected $children;
 
-    /**
-     *
-     * @param array $data
-     */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         parent::__construct($data);
-        $this->children = isset($data['children']) ? $data['children'] : [];
+        $this->children = $data['children'] ?? [];
     }
 
     /**
@@ -47,7 +43,7 @@ class RowActions extends VisualItem
      *
      * @param array $btnArray
      */
-    public function addButton($btnArray)
+    public function addButton(array $btnArray)
     {
         if (!isset($btnArray['tag'])) {
             $btnArray['tag'] = 'button';
@@ -56,14 +52,7 @@ class RowActions extends VisualItem
         $this->children[] = $btnArray;
     }
 
-    /**
-     * 
-     * @param bool   $small
-     * @param string $viewName
-     *
-     * @return string
-     */
-    public function render($small = false, $viewName = '')
+    public function render(bool $small = false, string $viewName = ''): string
     {
         $html = '';
         foreach ($this->children as $child) {
@@ -78,11 +67,7 @@ class RowActions extends VisualItem
         return $html;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function renderTop()
+    public function renderTop(): string
     {
         $html = '';
         foreach ($this->children as $child) {

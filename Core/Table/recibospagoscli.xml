@@ -78,6 +78,11 @@
         <default>false</default>
     </column>
     <column>
+        <name>vencido</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>vencimiento</name>
         <type>date</type>
     </column>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,18 +25,12 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 /**
  * Controller to list the items in the FormaPago model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListFormaPago extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -54,37 +48,36 @@ class ListFormaPago extends ListController
         $this->createViewsBankAccounts();
     }
 
-    /**
-     * Add Bank Accounts view
-     *
-     * @param string $viewName
-     */
-    protected function createViewsBankAccounts($viewName = 'ListCuentaBanco')
+    protected function createViewsBankAccounts(string $viewName = 'ListCuentaBanco'): void
     {
-        $this->addView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
-        $this->addSearchFields($viewName, ['descripcion', 'codcuenta']);
-        $this->addOrderBy($viewName, ['codcuenta'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank')
+            ->addSearchFields(['descripcion', 'codcuenta'])
+            ->addOrderBy(['codcuenta'], 'code')
+            ->addOrderBy(['descripcion'], 'description');
 
-        // filters
-        $this->addFilterSelect('ListCuentaBanco', 'idempresa', 'company', 'idempresa', Empresas::codeModel());
+        // si solamente hay una empresa, ocultamos la columna de empresa, de lo contrario, añadimos el filtro
+        if (count(Empresas::all()) === 1) {
+            $this->listView($viewName)->disableColumn('company');
+        } else {
+            $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
+        }
     }
 
-    /**
-     * Add Payment Methods view
-     *
-     * @param string $viewName
-     */
-    protected function createViewsPaymentMethods($viewName = 'ListFormaPago')
+    protected function createViewsPaymentMethods(string $viewName = 'ListFormaPago'): void
     {
-        $this->addView($viewName, 'FormaPago', 'payment-methods', 'fas fa-credit-card');
-        $this->addSearchFields($viewName, ['descripcion', 'codpago']);
-        $this->addOrderBy($viewName, ['codpago', 'idempresa'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
-        $this->addOrderBy($viewName, ['idempresa', 'codpago'], 'company');
+        $this->addView($viewName, 'FormaPago', 'payment-methods', 'fas fa-credit-card')
+            ->addSearchFields(['descripcion', 'codpago'])
+            ->addOrderBy(['codpago', 'idempresa'], 'code')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['idempresa', 'codpago'], 'company');
 
-        // filters
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
+        // si solamente hay una empresa, ocultamos la columna de empresa, de lo contrario, añadimos el filtro
+        if (count(Empresas::all()) === 1) {
+            $this->listView($viewName)->disableColumn('company');
+        } else {
+            $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
+        }
+
         $this->addFilterCheckbox($viewName, 'pagado', 'paid', 'pagado');
         $this->addFilterCheckbox($viewName, 'domiciliado', 'domiciled', 'domiciliado');
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -25,28 +26,17 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 /**
  * Controller to edit a single item from the CuentaBanco model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jferrer@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditCuentaBanco extends EditController
 {
-
-    /**
-     * Returns the model name.
-     * 
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'CuentaBanco';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -55,17 +45,11 @@ class EditCuentaBanco extends EditController
         return $data;
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
-    protected function createSubAccountingView($viewName = 'ListSubcuenta')
+    protected function createSubAccountingView($viewName = 'ListSubcuenta'): void
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book');
-        $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
-
-        /// settings
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book')
+            ->addOrderBy(['codejercicio'], 'exercise', 2)
+            ->setSettings('btnNew', false);
     }
 
     /**
@@ -76,7 +60,7 @@ class EditCuentaBanco extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        /// disable company column if there is only one company
+        // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }
@@ -85,26 +69,49 @@ class EditCuentaBanco extends EditController
     }
 
     /**
-     * 
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
             case 'ListSubcuenta':
+                $codejercicios = implode(',', $this->getExerciseOfCompany());
                 $codsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'codsubcuenta');
-                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
+                $where = [
+                    new DataBaseWhere('codejercicio', $codejercicios, 'IN'),
+                    new DataBaseWhere('codsubcuenta', $codsubcuenta),
+                ];
                 $codsubcuenta2 = $this->getViewModelValue($this->getMainViewName(), 'codsubcuentagasto');
                 if ($codsubcuenta2 && $codsubcuenta2 != $codsubcuenta) {
                     $where[] = new DataBaseWhere('codsubcuenta', $codsubcuenta2, '=', 'OR');
                 }
                 $view->loadData('', $where, ['codejercicio' => 'DESC']);
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
                 break;
         }
+    }
+
+    /**
+     * Returns the list of exercises of the selected company.
+     *
+     * @return array
+     */
+    private function getExerciseOfCompany(): array
+    {
+        $result = [];
+        $where = [
+            new DataBaseWhere('idempresa', $this->getViewModelValue($this->getMainViewName(), 'idempresa'))
+        ];
+        foreach ($this->codeModel->all('ejercicios', 'codejercicio', 'codejercicio', false, $where) as $row) {
+            $result[] = $row->code;
+        }
+        return $result;
     }
 }

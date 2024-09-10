@@ -1,0 +1,110 @@
+{% extends 'Master/MenuBgTemplate.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h1 class="h3">
+                    <i class="fas fa-cut"></i> {{ fsc.title }}
+                </h1>
+                <p>{{ trans('copy-p') }}</p>
+                <form method="post" onsubmit="animateSpinner('add')">
+                    {{ formToken() }}
+                    <input type="hidden" name="action" value="save"/>
+                    <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
+                    <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <div class="form-row">
+                                {% if fsc.empresa.count() > 1 %}
+                                    <div class="col-sm-2">
+                                        {{ trans('company') }}
+                                        <div class="form-group">
+                                            <select name="idempresa" class="form-control" required>
+                                                {% for item in fsc.codeModel.all('empresas','idempresa','nombrecorto',false) %}
+                                                    {% if item.code == fsc.model.idempresa %}
+                                                        <option value="{{ item.code }}" selected>{{ item.description }}</option>
+                                                    {% else %}
+                                                        <option value="{{ item.code }}">{{ item.description }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="col-sm-2">
+                                    {{ trans('date') }}
+                                    <div class="form-group">
+                                        <input type="date" name="fecha" value="{{ "now" | date('Y-m-d') }}"
+                                               class="form-control" required/>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    {{ trans('concept') }}
+                                    <div class="form-group">
+                                        <input type="text" name="concepto" value="{{ fsc.model.concepto }}"
+                                               class="form-control" required/>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    {{ trans('daily') }}
+                                    <div class="form-group">
+                                        <select name="iddiario" class="form-control">
+                                            {% for item in fsc.codeModel.all('diarios','iddiario','descripcion') %}
+                                                {% if item.code == fsc.model.iddiario %}
+                                                    <option value="{{ item.code }}" selected>
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% else %}
+                                                    <option value="{{ item.code }}">{{ item.description }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    {{ trans('channel') }}
+                                    <div class="form-group">
+                                        <input type="number" name="canal" value="{{ fsc.model.canal }}"
+                                               class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>{{ trans('subaccount') }}</th>
+                                    <th>{{ trans('counterpart') }}</th>
+                                    <th>{{ trans('concept') }}</th>
+                                    <th class="text-right">{{ trans('debit') }}</th>
+                                    <th class="text-right">{{ trans('credit') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for line in fsc.model.getLines() %}
+                                    <tr>
+                                        <td>{{ line.codsubcuenta }}</td>
+                                        <td>{{ line.codcontrapartida }}</td>
+                                        <td>{{ line.concepto }}</td>
+                                        <td class="text-right">{{ money(line.debe) }}</td>
+                                        <td class="text-right">{{ money(line.haber) }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer">
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-spin-action btn-primary">
+                                    <i class="fas fa-save"></i> {{ trans('save') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

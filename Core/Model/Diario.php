@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,17 +16,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
+
 /**
- * A division of acounting entries in different journals
+ * A division of accounting entries in different journals
  *
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
  * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>
  */
 class Diario extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -43,63 +45,33 @@ class Diario extends Base\ModelClass
      */
     public $iddiario;
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'iddiario';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'diarios';
     }
 
-    /**
-     * Returns true if there are no errors in the values of the model properties.
-     * It runs inside the save method.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
-        if (\strlen($this->descripcion) < 1 || \strlen($this->descripcion) > 100) {
-            $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'description', '%min%' => '1', '%max%' => '100']);
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
+            Tools::log()->warning('invalid-column-lenght', ['%column%' => 'description', '%min%' => '1', '%max%' => '100']);
             return false;
         }
 
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListAsiento?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListAsiento?activetab=List'): string
     {
         return parent::url($type, $list);
     }
 
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->iddiario)) {
             $this->iddiario = $this->newCode();

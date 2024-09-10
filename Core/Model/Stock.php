@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Model\Base\ProductRelationTrait;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Almacen as DinAlmacen;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use FacturaScripts\Dinamic\Model\Variante as DinVariante;
@@ -29,11 +33,10 @@ use FacturaScripts\Dinamic\Model\Variante as DinVariante;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Stock extends Base\ModelClass
+class Stock extends ModelClass
 {
-
-    use Base\ModelTrait;
-    use Base\ProductRelationTrait;
+    use ModelTrait;
+    use ProductRelationTrait;
 
     const MAX_DECIMALS = 3;
 
@@ -105,14 +108,11 @@ class Stock extends Base\ModelClass
      */
     public $ubicacion;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->cantidad = 0.0;
-        $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
+        $this->codalmacen = Tools::settings('default', 'codalmacen');
         $this->disponible = 0.0;
         $this->pterecibir = 0.0;
         $this->reservada = 0.0;
@@ -120,10 +120,7 @@ class Stock extends Base\ModelClass
         $this->stockmin = 0.0;
     }
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if (parent::delete()) {
             $this->cantidad = 0.0;
@@ -134,14 +131,7 @@ class Stock extends Base\ModelClass
         return false;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new DinAlmacen();
@@ -151,20 +141,12 @@ class Stock extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idstock';
     }
 
-    /**
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         if (parent::save()) {
             $this->updateProductStock();
@@ -174,12 +156,7 @@ class Stock extends Base\ModelClass
         return false;
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'stocks';
     }
@@ -212,22 +189,16 @@ class Stock extends Base\ModelClass
         return $destination->save() && $this->save();
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $this->ubicacion = self::toolBox()::utils()::noHtml($this->ubicacion);
+        $this->ubicacion = Tools::noHtml($this->ubicacion);
 
-        // el stock no puede reflejar situaciones imposibles, como stock negativo
-        $this->cantidad = $this->cantidad < 0 ? 0 : round($this->cantidad, self::MAX_DECIMALS);
+        $this->cantidad = round($this->cantidad, self::MAX_DECIMALS);
         $this->reservada = round($this->reservada, self::MAX_DECIMALS);
         $this->pterecibir = round($this->pterecibir, self::MAX_DECIMALS);
         $this->disponible = max([0, $this->cantidad - $this->reservada]);
 
-        $this->referencia = $this->toolBox()->utils()->noHtml($this->referencia);
+        $this->referencia = Tools::noHtml($this->referencia);
         if (empty($this->idproducto)) {
             $variante = new DinVariante();
             $whereRef = [new DataBaseWhere('referencia', $this->referencia)];
@@ -260,27 +231,16 @@ class Stock extends Base\ModelClass
         return empty($data) ? 0.0 : round((float)$data[0]['total'], self::MAX_DECIMALS);
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getProducto()->url($type);
     }
 
-    /**
-     * @return bool
-     */
     protected function updateProductStock(): bool
     {
         $total = $this->totalFromProduct($this->idproducto);
         $sql = "UPDATE " . DinProducto::tableName() . " SET stockfis = " . self::$dataBase->var2str($total)
-            . ", actualizado = " . self::$dataBase->var2str(date(self::DATETIME_STYLE))
+            . ", actualizado = " . self::$dataBase->var2str(Tools::dateTime())
             . " WHERE idproducto = " . self::$dataBase->var2str($this->idproducto) . ';';
 
         $totalVariant = $this->totalFromProduct($this->idproducto, $this->referencia);

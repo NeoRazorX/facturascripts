@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,97 +16,148 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\BankAccount;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
+use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
  * A bank account of the company itself.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class CuentaBanco extends Base\BankAccount
+class CuentaBanco extends BankAccount
 {
+    use ModelTrait;
 
-    use Base\ModelTrait;
+    const SPECIAL_ACCOUNT = 'CAJA';
 
-    /**
-     *
-     * @var string
-     */
+    /** @var bool */
+    public $activa;
+
+    /** @var string */
     public $codsubcuenta;
 
-    /**
-     *
-     * @var string
-     */
+    /** @var string */
     public $codsubcuentagasto;
 
-    /**
-     * Foreign Key with Empresas table.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idempresa;
 
-    /**
-     *
-     * @var string
-     */
+    /** @var string */
     public $sufijosepa;
 
     public function clear()
     {
         parent::clear();
+        $this->activa = true;
         $this->sufijosepa = '000';
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function getSubcuenta(string $codejercicio, bool $create): Subcuenta
     {
-        /// needed dependencies
+        // si no hay una subcuenta definida, devolvemos la subcuenta especial de CAJA
+        if (empty($this->codsubcuenta)) {
+            $especial = new DinCuentaEspecial();
+            if ($especial->loadFromCode(static::SPECIAL_ACCOUNT)) {
+                return $especial->getSubcuenta($codejercicio);
+            }
+        }
+
+        // buscamos la subcuenta
+        $subcuenta = new DinSubcuenta();
+        $where = [
+            new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
+            new DataBaseWhere('codejercicio', $codejercicio),
+        ];
+        if ($subcuenta->loadFromCode('', $where)) {
+            return $subcuenta;
+        }
+
+        // no la hemos encontrado, ¿La creamos?
+        if ($create) {
+            // buscamos la cuenta especial
+            $especial = new DinCuentaEspecial();
+            if (false === $especial->loadFromCode(static::SPECIAL_ACCOUNT)) {
+                return new DinSubcuenta();
+            }
+
+            // creamos la subcuenta
+            return $especial->getCuenta($codejercicio)->createSubcuenta($this->codsubcuenta, $this->descripcion);
+        }
+
+        // devolvemos una vacía
+        return new DinSubcuenta();
+    }
+
+    public function getSubcuentaGastos(string $codejercicio, bool $create): Subcuenta
+    {
+        // si no hay una subcuenta definida, devolvemos la subcuenta especial de CAJA
+        if (empty($this->codsubcuentagasto)) {
+            $especial = new DinCuentaEspecial();
+            if ($especial->loadFromCode(static::SPECIAL_ACCOUNT)) {
+                return $especial->getSubcuenta($codejercicio);
+            }
+        }
+
+        // buscamos la subcuenta
+        $subcuenta = new DinSubcuenta();
+        $where = [
+            new DataBaseWhere('codsubcuenta', $this->codsubcuentagasto),
+            new DataBaseWhere('codejercicio', $codejercicio),
+        ];
+        if ($subcuenta->loadFromCode('', $where)) {
+            return $subcuenta;
+        }
+
+        // no la hemos encontrado, ¿La creamos?
+        if ($create) {
+            // buscamos la cuenta especial
+            $especial = new DinCuentaEspecial();
+            if (false === $especial->loadFromCode(static::SPECIAL_ACCOUNT)) {
+                return new DinSubcuenta();
+            }
+
+            // creamos la subcuenta
+            return $especial->getCuenta($codejercicio)->createSubcuenta($this->codsubcuentagasto, $this->descripcion);
+        }
+
+        // devolvemos una vacía
+        return new DinSubcuenta();
+    }
+
+    public function install(): string
+    {
+        // needed dependencies
         new Empresa();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'cuentasbanco';
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->idempresa)) {
-            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+            $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
-        $this->sufijosepa = $this->toolBox()->utils()->noHtml($this->sufijosepa);
+        $this->codsubcuenta = Tools::noHtml($this->codsubcuenta);
+        $this->codsubcuentagasto = Tools::noHtml($this->codsubcuentagasto);
+        $this->sufijosepa = Tools::noHtml($this->sufijosepa);
+
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListFormaPago?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListFormaPago?activetab=List'): string
     {
         return parent::url($type, $list);
     }

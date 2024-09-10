@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\JoinModel;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Familia;
@@ -78,15 +79,15 @@ class PurchasesDocLineAccount extends JoinModel
      */
     protected function checkTotals(array &$totals, $document, string $defaultSubacode): array
     {
-        /// round and add the totals
+        // round and add the totals
         $sum = 0.0;
         foreach ($totals as $key => $value) {
             $totals[$key] = round($value, FS_NF0);
             $sum += $totals[$key];
         }
 
-        /// fix occasional penny mismatch
-        if (!$this->toolBox()->utils()->floatcmp($document->neto, $sum, FS_NF0, true)) {
+        // fix occasional penny mismatch
+        if (!Utils::floatcmp($document->neto, $sum, FS_NF0, true)) {
             $diff = round($document->neto - $sum, FS_NF0);
             $totals[$defaultSubacode] = isset($totals[$defaultSubacode]) ? $totals[$defaultSubacode] + $diff : $diff;
         }

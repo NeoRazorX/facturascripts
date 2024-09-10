@@ -5,14 +5,16 @@
     <div class="container">
         <div class="row justify-content-md-center">
             <div class="col-md-6">
-                <form action="{{ asset('') }}" method="post" class="form">
+                <form action="{{ asset('login') }}" method="post" class="form">
+                    {{ formToken() }}
+                    <input type="hidden" name="action" value="login">
                     <div class="card mt-4">
-                        <a href="{{ asset('') }}">
-                            {% set idfile = appSettings.get('default','idloginimage', 0) %}
+                        <a href="{{ asset('login') }}">
+                            {% set idfile = settings('default','idloginimage', 0) %}
                             {{ _self.loadLogo(idfile) }}
                         </a>
                         <div class="card-body">
-                            <p class="card-text text-center">{{ i18n.trans('login-text') }}</p>
+                            <p class="card-text text-center">{{ trans('login-text') }}</p>
                             <div class="form-group">
                                 <div class="input-group">
                                     <span class="input-group-prepend">
@@ -21,8 +23,8 @@
                                         </span>
                                     </span>
                                     <input type="text" name="fsNick" class="form-control" maxlength="50"
-                                           placeholder="{{ i18n.trans('user') }}" required="" autocomplete="off"
-                                           autofocus=""/>
+                                           placeholder="{{ trans('user') }}" required autocomplete="off"
+                                           autofocus/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -33,15 +35,15 @@
                                         </span>
                                     </span>
                                     <input type="password" name="fsPassword" class="form-control" maxlength="50"
-                                           placeholder="{{ i18n.trans('password') }}" required="" autocomplete="off"/>
+                                           placeholder="{{ trans('password') }}" required autocomplete="off"/>
                                 </div>
                                 <a href="#" class="btn btn-block btn-link" data-toggle="modal"
                                    data-target="#newPasswordModal">
-                                    {{ i18n.trans('i-forgot-password') }}
+                                    {{ trans('i-forgot-password') }}
                                 </a>
                             </div>
                             <button type="submit" class="btn btn-block btn-primary mb-4">
-                                {{ i18n.trans('login') }}
+                                {{ trans('login') }}
                             </button>
                         </div>
                         <div class="card-footer text-center">
@@ -49,18 +51,17 @@
                                 FacturaScripts es un software libre de contabilidad, facturación y CRM.
                                 No dude en consultar la web oficial o las cuentas de facebook, twitter o youtube.
                             </p>
-                            <a href="https://facturascripts.com" class="btn btn-secondary">
+                            <a href="https://facturascripts.com" rel="nofollow" class="btn btn-secondary">
                                 <i class="fas fa-question-circle mr-1"></i> facturascripts.com
                             </a>
-                            <a href="https://www.facebook.com/facturascripts/" class="btn btn-primary" title="facebook">
-                                <i class="fab fa-facebook"></i>
+                            <a href="https://www.facebook.com/facturascripts/" rel="nofollow" class="btn btn-primary"
+                               title="facebook"> <i class="fab fa-facebook"></i>
                             </a>
-                            <a href="https://twitter.com/facturascripts" class="btn btn-info" title="twitter">
-                                <i class="fab fa-twitter"></i>
+                            <a href="https://twitter.com/facturascripts" rel="nofollow" class="btn btn-info"
+                               title="twitter"> <i class="fab fa-twitter"></i>
                             </a>
-                            <a href="https://www.youtube.com/channel/UCtsptMQYpW2wJZkvak6NYng" class="btn btn-danger"
-                               title="youtube">
-                                <i class="fab fa-youtube"></i>
+                            <a href="https://www.youtube.com/channel/UCtsptMQYpW2wJZkvak6NYng" rel="nofollow"
+                               class="btn btn-danger" title="youtube"> <i class="fab fa-youtube"></i>
                             </a>
                         </div>
                     </div>
@@ -68,22 +69,24 @@
             </div>
         </div>
     </div>
-    <form action="{{ asset('') }}" method="post" class="form">
+    <form action="{{ asset('login') }}" method="post" class="form">
+        {{ formToken() }}
+        <input type="hidden" name="action" value="change-password">
         <div class="modal fade" id="newPasswordModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fas fa-user-lock mr-2"></i> {{ i18n.trans('new-password') }}
+                            <i class="fas fa-user-lock mr-2"></i> {{ trans('new-password') }}
                         </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <a href="https://facturascripts.com/publicaciones/he-olvidado-mi-contrasena"
+                        <a href="https://facturascripts.com/publicaciones/he-olvidado-mi-contrasena" rel="nofollow"
                            target="_blank" class="btn btn-block btn-link mb-3">
-                            {{ i18n.trans('need-help-password') }}
+                            {{ trans('need-help-password') }}
                         </a>
                         <div class="form-group">
                             <div class="input-group">
@@ -93,7 +96,7 @@
                                     </span>
                                 </span>
                                 <input type="text" name="fsNewUserPasswd" class="form-control" maxlength="50"
-                                       placeholder="{{ i18n.trans('user') }}" required="" autocomplete="off"/>
+                                       placeholder="{{ trans('user') }}" required autocomplete="off"/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -104,7 +107,7 @@
                                     </span>
                                 </span>
                                 <input type="password" name="fsNewPasswd" class="form-control" maxlength="50"
-                                       placeholder="{{ i18n.trans('new-password') }}" required="" autocomplete="off"/>
+                                       placeholder="{{ trans('new-password') }}" required autocomplete="off"/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -115,12 +118,12 @@
                                     </span>
                                 </span>
                                 <input type="password" name="fsNewPasswd2" class="form-control" maxlength="50"
-                                       placeholder="{{ i18n.trans('repeat-new-password') }}"
-                                       required="" autocomplete="off"/>
+                                       placeholder="{{ trans('repeat-new-password') }}"
+                                       required autocomplete="off"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            {{ i18n.trans('database') }}
+                            {{ trans('database') }}
                             <div class="input-group">
                                 <span class="input-group-prepend">
                                     <span class="input-group-text">
@@ -128,12 +131,12 @@
                                     </span>
                                 </span>
                                 <input type="password" name="fsDbPasswd" class="form-control"
-                                       placeholder="{{ i18n.trans('db-password') }}" autocomplete="off"/>
+                                       placeholder="{{ trans('db-password') }}" autocomplete="off"/>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">{{ i18n.trans('save') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ trans('save') }}</button>
                     </div>
                 </div>
             </div>
@@ -155,7 +158,7 @@
     {% if idfile > 0 %}
         {% set attached = attachedFile(idfile) %}
         {% if attached.filename is not empty %}
-            {% set url = attached.url('download') %}
+            {% set url = attached.url('download-permanent') %}
         {% endif %}
     {% endif %}
     <img class="card-img-top" src="{{ asset(url) }}" alt="FacturaScripts"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,13 +21,13 @@
 -->
 <view>
     <columns>
-        <column name="company" display="none" order="90">
+        <column name="company" order="90">
             <widget type="select" fieldname="idempresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
             </widget>
         </column>
         <column name="code" order="100">
-            <widget type="text" fieldname="codcuenta" onclick="EditCuentaBanco" />
+            <widget type="text" fieldname="codcuenta" onclick="EditCuentaBanco"/>
         </column>
         <column name="description" order="110">
             <widget type="text" fieldname="descripcion"/>
@@ -36,7 +36,7 @@
             <widget type="text" fieldname="codsubcuenta"/>
         </column>
         <column name="expenses" order="130">
-            <widget type="text" fieldname="codsubcuentagastos"/>
+            <widget type="text" fieldname="codsubcuentagasto"/>
         </column>
         <column name="swift" order="140">
             <widget type="text" fieldname="swift"/>
@@ -45,4 +45,9 @@
             <widget type="text" fieldname="iban"/>
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="danger" fieldname="activa" title="inactive">0</option>
+        </row>
+    </rows>
 </view>

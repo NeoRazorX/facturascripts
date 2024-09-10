@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,10 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\DbUpdater;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
@@ -30,7 +34,6 @@ use FacturaScripts\Dinamic\Model\CodeModel;
  */
 abstract class ModelClass extends ModelCore
 {
-
     /**
      * Returns all models that correspond to the selected filters.
      *
@@ -41,10 +44,15 @@ abstract class ModelClass extends ModelCore
      *
      * @return static[]
      */
-    public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50)
+    public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
     {
+        // si todavía no se ha comprobado la tabla o conectado a la base de datos, inicializamos la clase
+        if (!DbUpdater::isTableChecked(static::tableName()) || is_null(self::$dataBase) || !self::$dataBase->connected()) {
+            new static();
+        }
+
         $modelList = [];
-        $sql = 'SELECT * FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where) . $this->getOrderBy($order);
+        $sql = 'SELECT * FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where) . self::getOrderBy($order);
         foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $row) {
             $modelList[] = new static($row);
         }
@@ -59,7 +67,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return CodeModel[]
      */
-    public function codeModelAll(string $fieldCode = '')
+    public function codeModelAll(string $fieldCode = ''): array
     {
         $results = [];
         $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
@@ -82,7 +90,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
         $fields = $field . '|' . $this->primaryDescriptionColumn();
@@ -99,19 +107,21 @@ abstract class ModelClass extends ModelCore
      */
     public function count(array $where = []): int
     {
+        $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName();
+
         if ($where) {
-            $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where);
-            $data = self::$dataBase->select($sql);
+            $data = self::$dataBase->select($sql . DataBaseWhere::getSQLWhere($where));
             return empty($data) ? 0 : (int)$data[0]['total'];
         }
 
         $key = 'model-' . $this->modelClassName() . '-count';
-        $count = self::toolBox()::cache()->get($key);
+        $count = Cache::get($key);
         if (is_null($count)) {
-            $data = self::$dataBase->select('SELECT COUNT(1) AS total FROM ' . static::tableName());
+            $data = self::$dataBase->select($sql);
             $count = empty($data) ? 0 : (int)$data[0]['total'];
-            self::toolBox()::cache()->set($key, $count);
+            Cache::set($key, $count);
         }
+
         return $count;
     }
 
@@ -120,22 +130,34 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
-        if ($this->pipe('deleteBefore') === false) {
+        if (null === $this->primaryColumnValue()) {
+            return true;
+        }
+
+        if ($this->pipeFalse('deleteBefore') === false) {
             return false;
         }
 
         $sql = 'DELETE FROM ' . static::tableName() . ' WHERE ' . static::primaryColumn()
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
-        if (self::$dataBase->exec($sql)) {
-            self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
-            $this->pipe('delete');
-            return true;
+        if (false === self::$dataBase->exec($sql)) {
+            return false;
         }
 
-        return false;
+        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
+        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('table-' . static::tableName() . '-');
+
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Delete',
+            $this->primaryColumnValue(),
+            $this->toArray()
+        );
+
+        return $this->pipeFalse('delete');
     }
 
     /**
@@ -143,7 +165,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function exists()
+    public function exists(): bool
     {
         $sql = 'SELECT 1 FROM ' . static::tableName() . ' WHERE ' . static::primaryColumn()
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
@@ -174,13 +196,13 @@ abstract class ModelClass extends ModelCore
      *
      * @param string $code
      * @param array $where
-     * @param array $orderby
+     * @param array $order
      *
      * @return bool
      */
-    public function loadFromCode($code, array $where = [], array $orderby = []): bool
+    public function loadFromCode($code, array $where = [], array $order = []): bool
     {
-        $data = $this->getRecord($code, $where, $orderby);
+        $data = $this->getRecord($code, $where, $order);
         if (empty($data)) {
             $this->clear();
             return false;
@@ -227,7 +249,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         $fields = $this->getModelFields();
         return isset($fields['descripcion']) ? 'descripcion' : static::primaryColumn();
@@ -249,23 +271,28 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
-        if ($this->pipe('saveBefore') === false) {
+        if ($this->pipeFalse('saveBefore') === false) {
             return false;
         }
 
-        $done = false;
-        if ($this->test()) {
-            $done = $this->exists() ? $this->saveUpdate() : $this->saveInsert();
+        if (false === $this->test()) {
+            return false;
         }
 
-        if ($done) {
-            self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
-            $this->pipe('save');
+        $done = $this->exists() ? $this->saveUpdate() : $this->saveInsert();
+        if (false === $done) {
+            return false;
         }
 
-        return $done;
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Save',
+            $this->primaryColumnValue(),
+            $this->toArray()
+        );
+
+        return $this->pipeFalse('save');
     }
 
     /**
@@ -274,9 +301,9 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
-        if ($this->pipe('testBefore') === false) {
+        if ($this->pipeFalse('testBefore') === false) {
             return false;
         }
 
@@ -290,16 +317,35 @@ abstract class ModelClass extends ModelCore
             if ($key == static::primaryColumn()) {
                 $this->{$key} = empty($this->{$key}) ? null : $this->{$key};
             } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
-                $this->toolBox()->i18nLog()->warning('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]);
+                Tools::log()->warning('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]);
                 $return = false;
             }
         }
-
-        if ($this->pipe('test') === false) {
+        if (false === $return) {
             return false;
         }
 
-        return $return;
+        return $this->pipeFalse('test');
+    }
+
+    public function totalSum(string $field, array $where = []): float
+    {
+        $sql = 'SELECT SUM(' . self::$dataBase->escapeColumn($field) . ') AS total FROM ' . static::tableName();
+
+        if ($where) {
+            $data = self::$dataBase->select($sql . DataBaseWhere::getSQLWhere($where));
+            return empty($data) ? 0 : (float)$data[0]['total'];
+        }
+
+        $key = 'model-' . $this->modelClassName() . '-' . $field . '-total-sum';
+        $sum = Cache::get($key);
+        if (is_null($sum)) {
+            $data = self::$dataBase->select($sql);
+            $sum = empty($data) ? 0 : (float)$data[0]['total'];
+            Cache::set($key, $sum);
+        }
+
+        return $sum;
     }
 
     /**
@@ -310,10 +356,16 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
+
+        $return = $this->pipe('url', $type, $list);
+        if ($return) {
+            return $return;
+        }
+
         switch ($type) {
             case 'edit':
                 return is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
@@ -336,9 +388,9 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
-        if ($this->pipe('saveInsertBefore') === false) {
+        if ($this->pipeFalse('saveInsertBefore') === false) {
             return false;
         }
 
@@ -354,19 +406,29 @@ abstract class ModelClass extends ModelCore
             }
         }
 
-        $sql = 'INSERT INTO ' . static::tableName() . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
-        if (self::$dataBase->exec($sql)) {
-            if ($this->primaryColumnValue() === null) {
-                $this->{static::primaryColumn()} = self::$dataBase->lastval();
-            } else {
-                self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
-            }
-
-            $this->pipe('saveInsert');
-            return true;
+        $sql = 'INSERT INTO ' . static::tableName() . ' (' . implode(',', $insertFields)
+            . ') VALUES (' . implode(',', $insertValues) . ');';
+        if (false === self::$dataBase->exec($sql)) {
+            return false;
         }
 
-        return false;
+        if ($this->primaryColumnValue() === null) {
+            $this->{static::primaryColumn()} = self::$dataBase->lastval();
+        } else {
+            self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
+        }
+
+        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
+        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('table-' . static::tableName() . '-');
+
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Insert',
+            $this->primaryColumnValue(),
+            $this->toArray()
+        );
+
+        return $this->pipeFalse('saveInsert');
     }
 
     /**
@@ -376,9 +438,9 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
-        if ($this->pipe('saveUpdateBefore') === false) {
+        if ($this->pipeFalse('saveUpdateBefore') === false) {
             return false;
         }
 
@@ -395,12 +457,21 @@ abstract class ModelClass extends ModelCore
         }
 
         $sql .= ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
-        if (self::$dataBase->exec($sql)) {
-            $this->pipe('saveUpdate');
-            return true;
+        if (false === self::$dataBase->exec($sql)) {
+            return false;
         }
 
-        return false;
+        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
+        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('table-' . static::tableName() . '-');
+
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Update',
+            $this->primaryColumnValue(),
+            $this->toArray()
+        );
+
+        return $this->pipeFalse('saveUpdate');
     }
 
     /**
@@ -410,7 +481,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    private function getOrderBy(array $order)
+    private static function getOrderBy(array $order): string
     {
         $result = '';
         $coma = ' ORDER BY ';
@@ -428,14 +499,16 @@ abstract class ModelClass extends ModelCore
      *
      * @param string $code
      * @param array $where
-     * @param array $orderby
+     * @param array $order
      *
      * @return array
      */
-    private function getRecord($code, array $where = [], array $orderby = [])
+    private function getRecord($code, array $where = [], array $order = []): array
     {
-        $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($code) : DataBaseWhere::getSQLWhere($where);
-        $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($orderby);
+        $sqlWhere = empty($where) ?
+            ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($code) :
+            DataBaseWhere::getSQLWhere($where);
+        $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . self::getOrderBy($order);
         return empty($code) && empty($where) ? [] : self::$dataBase->selectLimit($sql, 1);
     }
 }

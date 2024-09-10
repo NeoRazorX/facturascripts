@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,16 +19,19 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
+
 /**
  * Model to personalize the print format of sales and buy documents.
  *
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
-class FormatoDocumento extends Base\ModelClass
+class FormatoDocumento extends ModelClass
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * @var bool
@@ -87,14 +90,7 @@ class FormatoDocumento extends Base\ModelClass
         $this->autoaplicar = true;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Serie();
@@ -103,49 +99,29 @@ class FormatoDocumento extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'formatos_documentos';
     }
 
-    /**
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->nombre = empty($this->nombre) ? $utils->noHtml($this->titulo) : $utils->noHtml($this->nombre);
-        $this->texto = $utils->noHtml($this->texto);
-        $this->titulo = $utils->noHtml($this->titulo);
+        $this->nombre = empty($this->nombre) ? Tools::noHtml($this->titulo) : Tools::noHtml($this->nombre);
+        $this->texto = Tools::noHtml($this->texto);
+        $this->titulo = Tools::noHtml($this->titulo);
 
         if (empty($this->idempresa)) {
-            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+            $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
     {
         return parent::url($type, $list);

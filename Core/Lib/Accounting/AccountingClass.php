@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -33,10 +34,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 abstract class AccountingClass extends AccountingAccounts
 {
-
-    /**
-     * @var ModelClass
-     */
+    /** @var ModelClass */
     protected $document;
 
     /**
@@ -47,7 +45,7 @@ abstract class AccountingClass extends AccountingAccounts
     public function generate($model)
     {
         $this->document = $model;
-        $this->exercise->idempresa = $model->idempresa ?? $this->toolBox()->appSettings()->get('default', 'idempresa');
+        $this->exercise->idempresa = $model->idempresa ?? Tools::settings('default', 'idempresa');
     }
 
     /**
@@ -69,7 +67,7 @@ abstract class AccountingClass extends AccountingAccounts
      * Add a group of lines from array of subaccounts/amount.
      *
      * @param Asiento $accountEntry
-     * @param Array $totals
+     * @param array $totals
      * @param bool $isDebit
      * @param Subcuenta $counterpart
      * @param string $accountError
@@ -82,7 +80,7 @@ abstract class AccountingClass extends AccountingAccounts
         foreach ($totals as $code => $total) {
             $subaccount = $this->getSubAccount($code);
             if (empty($subaccount->codsubcuenta)) {
-                $this->toolBox()->i18nLog()->warning($accountError);
+                Tools::log()->warning($accountError);
                 return false;
             }
 
@@ -93,7 +91,7 @@ abstract class AccountingClass extends AccountingAccounts
             }
 
             if (false === $line->save()) {
-                $this->toolBox()->i18nLog()->warning($saveError);
+                Tools::log()->warning($saveError);
                 return false;
             }
         }
@@ -101,6 +99,44 @@ abstract class AccountingClass extends AccountingAccounts
         return true;
     }
 
+    /**
+     * Add a line of taxes to the accounting entry based on the sub-account
+     * and values reported
+     *
+     * @param Asiento $accountEntry
+     * @param Subcuenta $subaccount
+     * @param Subcuenta $counterpart
+     * @param bool $isDebit
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function addSurchargeLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool
+    {
+        if (empty($values['totalrecargo'])) {
+            return true;
+        }
+
+        // add basic data
+        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $values['totalrecargo']);
+
+        // counterpart?
+        if (!empty($counterpart)) {
+            $line->setCounterpart($counterpart);
+        }
+
+        // add tax register data
+        $line->baseimponible = (float)$values['neto'];
+        $line->iva = 0;
+        $line->recargo = (float)$values['recargo'];
+        $line->cifnif = $this->document->cifnif;
+        $line->codserie = $this->document->codserie;
+        $line->documento = $this->document->codigo;
+        $line->factura = $this->document->numero;
+
+        // save new line
+        return $line->save();
+    }
 
     /**
      * Add a line of taxes to the accounting entry based on the sub-account
@@ -116,25 +152,24 @@ abstract class AccountingClass extends AccountingAccounts
      */
     protected function addTaxLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool
     {
-        /// add basic data
-        $amount = (float)$values['totaliva'] + (float)$values['totalrecargo'];
-        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
+        // add basic data
+        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $values['totaliva']);
 
-        /// counterpart?
+        // counterpart?
         if (!empty($counterpart)) {
             $line->setCounterpart($counterpart);
         }
 
-        /// add tax register data
+        // add tax register data
         $line->baseimponible = (float)$values['neto'];
         $line->iva = (float)$values['iva'];
-        $line->recargo = (float)$values['recargo'];
+        $line->recargo = 0;
         $line->cifnif = $this->document->cifnif;
         $line->codserie = $this->document->codserie;
         $line->documento = $this->document->codigo;
         $line->factura = $this->document->numero;
 
-        /// save new line
+        // save new line
         return $line->save();
     }
 
@@ -155,15 +190,19 @@ abstract class AccountingClass extends AccountingAccounts
 
         $total = ($amount === null) ? $this->document->total : $amount;
         if ($isDebit) {
-            $line->debe = $total;
-        } else {
-            $line->haber = $total;
+            $line->debe = max($total, 0);
+            $line->haber = $total < 0 ? abs($total) : 0;
+            return $line;
         }
+
+        $line->debe = $total < 0 ? abs($total) : 0;
+        $line->haber = max($total, 0);
         return $line;
     }
 
     /**
      * @return ToolBox
+     * @deprecated since version 2023.1
      */
     protected function toolBox(): ToolBox
     {

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Model\Base;
  */
 abstract class ModelOnChangeClass extends ModelClass
 {
-
     /**
      * Previous data array.
      *
@@ -34,21 +33,13 @@ abstract class ModelOnChangeClass extends ModelClass
      */
     protected $previousData = [];
 
-    /**
-     * Class constructor.
-     *
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->setPreviousData();
     }
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if (parent::delete()) {
             $this->onDelete();
@@ -59,18 +50,27 @@ abstract class ModelOnChangeClass extends ModelClass
         return false;
     }
 
+    public function hasChanged(string $field): bool
+    {
+        if (empty($this->primaryColumnValue())) {
+            return false;
+        }
+
+        return array_key_exists($field, $this->previousData) && $this->{$field} != $this->previousData[$field];
+    }
+
     /**
      * Loads a record from database.
      *
      * @param string $code
      * @param array $where
-     * @param array $orderby
+     * @param array $order
      *
      * @return bool
      */
-    public function loadFromCode($code, array $where = [], array $orderby = []): bool
+    public function loadFromCode($code, array $where = [], array $order = []): bool
     {
-        if (parent::loadFromCode($code, $where, $orderby)) {
+        if (parent::loadFromCode($code, $where, $order)) {
             $this->setPreviousData();
             return true;
         }
@@ -125,7 +125,7 @@ abstract class ModelOnChangeClass extends ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (parent::saveInsert($values)) {
             $this->onInsert();
@@ -143,7 +143,7 @@ abstract class ModelOnChangeClass extends ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         foreach (array_keys($this->previousData) as $field) {
             if ($this->{$field} != $this->previousData[$field] && !$this->onChange($field)) {
@@ -167,12 +167,7 @@ abstract class ModelOnChangeClass extends ModelClass
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = $this->pipe('setPreviousDataMore');
-        if (is_array($more)) {
-            foreach ($more as $key) {
-                $fields[] = $key;
-            }
-        }
+        $this->pipeFalse('setPreviousData');
 
         foreach ($fields as $field) {
             $this->previousData[$field] = $this->{$field} ?? null;

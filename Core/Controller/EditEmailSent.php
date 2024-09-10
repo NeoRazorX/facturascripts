@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,37 +16,30 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Contacto;
 
 /**
- * Controller to edit a single registrer of EmailSent
+ * Controller to edit a single register of EmailSent
  *
- * @author Raul                 <raljopa@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Raul                     <raljopa@gmail.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class EditEmailSent extends EditController
 {
-
-    /**
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'EmailSent';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -68,7 +61,7 @@ class EditEmailSent extends EditController
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('record-not-found');
+        Tools::log()->warning('record-not-found');
     }
 
     /**
@@ -79,7 +72,10 @@ class EditEmailSent extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        /// buttons
+        $this->createViewHtml();
+        $this->createViewAttachments();
+
+        // buttons
         $mainView = $this->getMainViewName();
         $this->addButton($mainView, [
             'action' => 'contact',
@@ -89,29 +85,34 @@ class EditEmailSent extends EditController
             'type' => 'button'
         ]);
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($mainView, 'btnNew', false);
 
-        /// other view
+        // other view
         $this->createViewOtherEmails();
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
-    protected function createViewOtherEmails(string $viewName = 'ListEmailSent')
+    protected function createViewAttachments(string $viewName = 'EmailSentAttachment'): void
+    {
+        $this->addHtmlView($viewName, 'Tab\EmailSentAttachment', 'EmailSent', 'attached-files', 'fas fa-paperclip');
+    }
+
+    protected function createViewHtml(string $viewName = 'EmailSentHtml'): void
+    {
+        $this->addHtmlView($viewName, 'Tab\EmailSentHtml', 'EmailSent', 'html');
+    }
+
+    protected function createViewOtherEmails(string $viewName = 'ListEmailSent'): void
     {
         $this->addListView($viewName, 'EmailSent', 'emails', 'fas fa-paper-plane');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
         $this->views[$viewName]->searchFields = ['body', 'subject'];
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
-     * 
      * @param string $action
      */
     protected function execAfterAction($action)
@@ -126,18 +127,54 @@ class EditEmailSent extends EditController
         }
     }
 
+    protected function execPreviousAction($action)
+    {
+        if ($action === 'getHtml') {
+            $this->getHtmlAction();
+            return false;
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
+    protected function getHtmlAction(): void
+    {
+        $this->setTemplate(false);
+
+        // cargamos el modelo
+        $model = $this->getModel();
+        if (false === $model->loadFromCode($this->request->get('code', ''))) {
+            $this->response->setContent(json_encode(['getHtml' => false]));
+            return;
+        }
+
+        $this->response->setContent(json_encode([
+            'getHtml' => true,
+            'html' => empty($model->html) ?
+                '<h1 style="text-align: center">' . Tools::lang()->trans('not-stored-content') . '</h1>' :
+                Tools::fixHtml($model->html),
+        ]));
+    }
+
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+
         switch ($viewName) {
+            case 'EmailSentAttachment':
+                $view->cursor = $this->views[$mvn]->model->getAttachments();
+                $view->count = count($view->cursor);
+                break;
+
             case 'ListEmailSent':
-                $addressee = $this->getViewModelValue($this->getMainViewName(), 'addressee');
-                $id = $this->getViewModelValue($this->getMainViewName(), 'id');
+                $addressee = $this->getViewModelValue($mvn, 'addressee');
+                $id = $this->getViewModelValue($mvn, 'id');
                 $where = [
                     new DataBaseWhere('addressee', $addressee),
                     new DataBaseWhere('id', $id, '!=')
@@ -147,6 +184,11 @@ class EditEmailSent extends EditController
 
             default:
                 parent::loadData($viewName, $view);
+
+                // si no hay adjuntos ocultamos la pestaña
+                if (false === $view->model->attachment) {
+                    $this->setSettings('EmailSentAttachment', 'active', false);
+                }
                 break;
         }
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,19 +22,20 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
 
 /**
  * Controller to edit a single item from the Proveedor model
  *
- * @author Nazca Networks               <comercial@nazcanetworks.com>
- * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
- * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author       Nazca Networks             <comercial@nazcanetworks.com>
+ * @author       Fco. Antonio Moreno Pérez  <famphuelva@gmail.com>
+ * @author       Carlos García Gómez        <carlos@facturascripts.com>
+ * @collaborator Daniel Fernández Giménez   <hola@danielfg.es>
  */
 class EditProveedor extends ComercialContactController
 {
-
     /**
      * Returns the sum of the customer's total delivery notes.
      *
@@ -42,9 +43,15 @@ class EditProveedor extends ComercialContactController
      */
     public function getDeliveryNotesRisk(): string
     {
-        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
-        $total = SupplierRiskTools::getDeliveryNotesRisk($codproveedor);
-        return $this->toolBox()->coins()->format($total);
+        $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $total = SupplierRiskTools::getDeliveryNotesRisk($code);
+        return Tools::money($total);
+    }
+
+    public function getImageUrl(): string
+    {
+        $mvn = $this->getMainViewName();
+        return $this->views[$mvn]->model->gravatar();
     }
 
     /**
@@ -54,27 +61,17 @@ class EditProveedor extends ComercialContactController
      */
     public function getInvoicesRisk(): string
     {
-        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
-        $total = SupplierRiskTools::getInvoicesRisk($codproveedor);
-        return $this->toolBox()->coins()->format($total);
+        $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $total = SupplierRiskTools::getInvoicesRisk($code);
+        return Tools::money($total);
     }
 
-    /**
-     * Returns the class name of the model to use.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Proveedor';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
@@ -83,44 +80,41 @@ class EditProveedor extends ComercialContactController
         return $data;
     }
 
-    /**
-     * @param string $viewName
-     * @param string $model
-     * @param string $label
-     */
-    protected function createDocumentView(string $viewName, string $model, string $label)
+    protected function createDocumentView(string $viewName, string $model, string $label): void
     {
         $this->createSupplierListView($viewName, $model, $label);
+
+        // botones
+        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonGroupDocument($viewName);
         $this->addButtonApproveDocument($viewName);
     }
 
-    /**
-     * @param string $viewName
-     */
-    protected function createInvoiceView(string $viewName)
+    protected function createInvoiceView(string $viewName): void
     {
         $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices');
+
+        // botones
+        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonLockInvoice($viewName);
     }
 
-    /**
-     * @param string $viewName
-     */
-    protected function createProductView(string $viewName = 'ListProductoProveedor')
+    protected function createProductView(string $viewName = 'ListProductoProveedor'): void
     {
-        $this->addListView($viewName, 'ProductoProveedor', 'products', 'fas fa-cubes');
-        $this->views[$viewName]->addOrderBy(['actualizado'], 'update-time', 2);
-        $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
-        $this->views[$viewName]->addOrderBy(['refproveedor'], 'supplier-reference');
-        $this->views[$viewName]->addOrderBy(['neto'], 'net');
-        $this->views[$viewName]->addSearchFields(['referencia', 'refproveedor']);
+        $this->addListView($viewName, 'ProductoProveedor', 'products', 'fas fa-cubes')
+            ->addOrderBy(['actualizado'], 'update-time', 2)
+            ->addOrderBy(['referencia'], 'reference')
+            ->addOrderBy(['refproveedor'], 'supplier-reference')
+            ->addOrderBy(['neto'], 'net')
+            ->addOrderBy(['stock'], 'stock')
+            ->addSearchFields(['referencia', 'refproveedor']);
 
-        // disable columns
+        // desactivamos la columna de proveedor
         $this->views[$viewName]->disableColumn('supplier');
 
-        // disable buttons
+        // botones
         $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnPrint', true);
     }
 
     /**
@@ -131,16 +125,32 @@ class EditProveedor extends ComercialContactController
         parent::createViews();
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
-        $this->createSubaccountsView();
+
+        if ($this->user->can('EditSubcuenta')) {
+            $this->createSubaccountsView();
+        }
+
         $this->createEmailsView();
         $this->createViewDocFiles();
 
-        $this->createProductView();
-        $this->createInvoiceView('ListFacturaProveedor');
-        $this->createDocumentView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
-        $this->createDocumentView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
-        $this->createDocumentView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
-        $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor');
+        if ($this->user->can('EditProducto')) {
+            $this->createProductView();
+        }
+        if ($this->user->can('EditFacturaProveedor')) {
+            $this->createInvoiceView('ListFacturaProveedor');
+        }
+        if ($this->user->can('EditAlbaranProveedor')) {
+            $this->createDocumentView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
+        }
+        if ($this->user->can('EditPedidoProveedor')) {
+            $this->createDocumentView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
+        }
+        if ($this->user->can('EditPresupuestoProveedor')) {
+            $this->createDocumentView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
+        }
+        if ($this->user->can('EditReciboProveedor')) {
+            $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor');
+        }
     }
 
     /**
@@ -168,11 +178,17 @@ class EditProveedor extends ComercialContactController
             return false;
         }
 
-        // redirect to returnUrl if return is defined
-        $returnUrl = $this->request->query->get('return');
-        if (!empty($returnUrl)) {
-            $model = $this->views[$this->active]->model;
-            $this->redirect($returnUrl . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+        // redirect to return_url if return is defined
+        $return_url = $this->request->query->get('return');
+        if (empty($return_url)) {
+            return true;
+        }
+
+        $model = $this->views[$this->active]->model;
+        if (strpos($return_url, '?') === false) {
+            $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+        } else {
+            $this->redirect($return_url . '&' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
         }
 
         return true;
@@ -186,7 +202,8 @@ class EditProveedor extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
-        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $mainViewName = $this->getMainViewName();
+        $codproveedor = $this->getViewModelValue($mainViewName, 'codproveedor');
         $where = [new DataBaseWhere('codproveedor', $codproveedor)];
 
         switch ($viewName) {
@@ -198,8 +215,12 @@ class EditProveedor extends ComercialContactController
                 $view->loadData('', $where, ['idcontacto' => 'DESC']);
                 break;
 
-            case 'ListAlbaranProveedor':
             case 'ListFacturaProveedor':
+                $view->loadData('', $where);
+                $this->addButtonGenerateAccountingInvoices($viewName, $codproveedor);
+                break;
+
+            case 'ListAlbaranProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
             case 'ListProductoProveedor':
@@ -213,6 +234,11 @@ class EditProveedor extends ComercialContactController
                 $view->loadData('', $where);
                 break;
 
+            case $mainViewName:
+                parent::loadData($viewName, $view);
+                $this->loadLanguageValues($viewName);
+                break;
+
             default:
                 parent::loadData($viewName, $view);
                 break;
@@ -220,14 +246,27 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
-     * @param string $viewName
+     * Load the available language values from translator.
      */
+    protected function loadLanguageValues(string $viewName): void
+    {
+        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
+            $langs = [];
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
+                $langs[] = ['value' => $key, 'title' => $value];
+            }
+
+            $columnLangCode->widget->setValuesFromArray($langs, false, true);
+        }
+    }
+
     protected function setCustomWidgetValues(string $viewName)
     {
         // Load values option to VAT Type select input
         $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {
-            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all(), true);
         }
 
         // Model exists?

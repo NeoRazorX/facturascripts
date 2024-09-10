@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\Tools;
 
 /**
  * Class to manage the data of retenciones table
@@ -29,94 +32,77 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Retencion extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Primary key. varchar(10).
-     *
-     * @var string
-     */
+    /** @var bool */
+    public $activa;
+
+    /** @var string */
     public $codretencion;
 
-    /**
-     *
-     * @var string
-     */
+    /** @var string */
     public $codsubcuentaret;
 
-    /**
-     *
-     * @var string
-     */
+    /** @var string */
     public $codsubcuentaacr;
 
-    /**
-     * Description of the tax.
-     *
-     * @var string
-     */
+    /** @var string */
     public $descripcion;
 
-    /**
-     * Percent of the retention
-     *
-     * @var int
-     */
+    /** @var int */
     public $porcentaje;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
+        $this->activa = true;
         $this->porcentaje = 0.0;
     }
 
-    /**
-     *
-     * @param double $percentaje
-     *
-     * @return bool
-     */
-    public function loadFromPercentage($percentaje)
+    public function delete(): bool
+    {
+        if (false === parent::delete()) {
+            return false;
+        }
+
+        // limpiamos la caché
+        Retenciones::clear();
+        return true;
+    }
+
+    public function loadFromPercentage(float $percentaje): bool
     {
         $where = [new DataBaseWhere('porcentaje', $percentaje)];
         $order = ['codretencion' => 'ASC'];
         return $this->loadFromCode('', $where, $order);
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'codretencion';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
+    public function save(): bool
+    {
+        if (false === parent::save()) {
+            return false;
+        }
+
+        // limpiamos la caché
+        Retenciones::clear();
+        return true;
+    }
+
     public static function tableName(): string
     {
         return 'retenciones';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
     public function test(): bool
     {
-        $this->codretencion = \trim($this->codretencion);
-        if ($this->codretencion && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codretencion)) {
-            $this->toolBox()->i18nLog()->error(
+        $this->codretencion = trim($this->codretencion);
+        if ($this->codretencion && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codretencion)) {
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codretencion, '%column%' => 'codretencion', '%min%' => '1', '%max%' => '10']
             );
@@ -125,39 +111,25 @@ class Retencion extends Base\ModelClass
 
         $this->codsubcuentaret = empty($this->codsubcuentaret) ? null : $this->codsubcuentaret;
         $this->codsubcuentaacr = empty($this->codsubcuentaacr) ? null : $this->codsubcuentaacr;
-        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
+        $this->descripcion = Tools::noHtml($this->descripcion);
 
         if (empty($this->porcentaje) || intval($this->porcentaje) < 1) {
-            $this->toolBox()->i18nLog()->warning('not-valid-percentage-retention');
+            Tools::log()->warning('not-valid-percentage-retention');
             return false;
         }
 
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListImpuesto?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListImpuesto?activetab=List'): string
     {
         return parent::url($type, $list);
     }
 
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codretencion)) {
-            $this->codretencion = (string) $this->newCode();
+            $this->codretencion = (string)$this->newCode();
         }
 
         return parent::saveInsert($values);

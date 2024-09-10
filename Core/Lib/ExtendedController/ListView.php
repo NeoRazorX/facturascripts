@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,58 +19,61 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
-use FacturaScripts\Dinamic\Model\TotalModel;
+use FacturaScripts\Dinamic\Lib\Widget\RowStatus;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * View definition for its use in ListController
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListView extends BaseView
 {
-
     use ListViewFiltersTrait;
 
     const DEFAULT_TEMPLATE = 'Master/ListView.html.twig';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $orderKey = '';
 
-    /**
-     * List of fields available to order by.
-     *
-     * @var array
-     */
+    /** @var array */
     public $orderOptions = [];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $query = '';
 
-    /**
-     * List of fields where to search in when a search is made
-     *
-     * @var array
-     */
+    /** @var array */
     public $searchFields = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $totalAmounts = [];
+
+    public function addColor(string $fieldName, $value, string $color, string $title = ''): ListView
+    {
+        if (false === isset($this->rows['status'])) {
+            $this->rows['status'] = new RowStatus([]);
+        }
+
+        $this->rows['status']->options[] = [
+            'tag' => 'option',
+            'children' => [],
+            'color' => $color,
+            'fieldname' => $fieldName,
+            'text' => $value,
+            'title' => $title
+        ];
+
+        return $this;
+    }
 
     /**
      * Adds a field to the Order By list
@@ -78,20 +81,21 @@ class ListView extends BaseView
      * @param array $fields
      * @param string $label
      * @param int $default (0 = None, 1 = ASC, 2 = DESC)
+     * @return ListView
      */
-    public function addOrderBy(array $fields, string $label, int $default = 0)
+    public function addOrderBy(array $fields, string $label, int $default = 0): ListView
     {
         $key1 = count($this->orderOptions);
         $this->orderOptions[$key1] = [
             'fields' => $fields,
-            'label' => ToolBox::i18n()->trans($label),
+            'label' => Tools::lang()->trans($label),
             'type' => 'ASC'
         ];
 
         $key2 = count($this->orderOptions);
         $this->orderOptions[$key2] = [
             'fields' => $fields,
-            'label' => ToolBox::i18n()->trans($label),
+            'label' => Tools::lang()->trans($label),
             'type' => 'DESC'
         ];
 
@@ -100,6 +104,8 @@ class ListView extends BaseView
         } elseif ($default === 1 || empty($this->order)) {
             $this->setSelectedOrderBy($key1);
         }
+
+        return $this;
     }
 
     /**
@@ -107,17 +113,17 @@ class ListView extends BaseView
      * To use integer columns, use CAST(columnName AS CHAR(50)).
      *
      * @param array $fields
+     * @return ListView
      */
-    public function addSearchFields(array $fields)
+    public function addSearchFields(array $fields): ListView
     {
         foreach ($fields as $field) {
             $this->searchFields[] = $field;
         }
+
+        return $this;
     }
 
-    /**
-     * @return string
-     */
     public function btnNewUrl(): string
     {
         $url = empty($this->model) ? '' : $this->model->url('new');
@@ -147,7 +153,7 @@ class ListView extends BaseView
         }
 
         // selected items?
-        if (is_array($codes) && count($codes) > 0) {
+        if (is_array($codes) && count($codes) > 0 && $this->model instanceof ModelClass) {
             foreach ($this->cursor as $model) {
                 if (false === in_array($model->primaryColumnValue(), $codes)) {
                     continue;
@@ -201,7 +207,7 @@ class ListView extends BaseView
      * @param int $offset
      * @param int $limit
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = -1)
     {
         $this->offset = $offset < 0 ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
@@ -211,6 +217,13 @@ class ListView extends BaseView
         // avoid overflow
         if ($this->offset > $this->count) {
             $this->offset = 0;
+        }
+
+        // check limit
+        if ($limit < 0) {
+            $limit = $this->settings['itemLimit'];
+        } elseif ($limit != $this->settings['itemLimit']) {
+            $this->settings['itemLimit'] = $limit;
         }
 
         // needed when mega-search force data reload
@@ -272,46 +285,28 @@ class ListView extends BaseView
      */
     protected function assets()
     {
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListView.js');
+        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/ListView.js?v=2');
     }
 
-    /**
-     * @param string $tableName
-     * @param string $fieldName
-     * @param array $where
-     *
-     * @return float
-     */
-    private function getTotalSum(string $tableName, string $fieldName, array $where): float
+    private function loadTotalAmounts(): void
     {
-        if ($where) {
-            return TotalModel::sum($tableName, $fieldName, $where);
-        }
-
-        // if there are no filters, then read from the cache
-        $cache = new Cache();
-        $key = 'sum-' . $tableName . '-' . $fieldName;
-        $sum = $cache->get($key);
-        if (is_null($sum)) {
-            // empty cache value? Then get the value from the database and store on the cache
-            $sum = TotalModel::sum($tableName, $fieldName, $where);
-            $cache->set($key, $sum);
-        }
-        return $sum;
-    }
-
-    private function loadTotalAmounts()
-    {
-        $tableName = count($this->cursor) > 1 && method_exists($this->model, 'tableName') ? $this->model->tableName() : '';
-        if (empty($tableName)) {
+        if (count($this->cursor) <= 1) {
             return;
         }
 
+        $modelFields = $this->model->getModelFields();
         foreach ($this->getColumns() as $col) {
+            // si la columna está oculta o es de un tipo que no hay que mostrar totales, entonces no se procesa
             if ($col->hidden() || false === $col->widget->showTableTotals()) {
                 continue;
             }
 
+            // si la columna no pertenece al modelo, entonces no se procesa
+            if (false === array_key_exists($col->widget->fieldname, $modelFields)) {
+                continue;
+            }
+
+            // calculamos el total de la página
             $pageTotalAmount = 0;
             foreach ($this->cursor as $model) {
                 $pageTotalAmount += $model->{$col->widget->fieldname};
@@ -320,14 +315,11 @@ class ListView extends BaseView
             $this->totalAmounts[$col->widget->fieldname] = [
                 'title' => $col->title,
                 'page' => $pageTotalAmount,
-                'total' => $this->getTotalSum($tableName, $col->widget->fieldname, $this->where)
+                'total' => $this->model->totalSum($col->widget->fieldname, $this->where)
             ];
         }
     }
 
-    /**
-     * @param Request $request
-     */
     private function processFormDataLoad(Request $request)
     {
         $this->offset = (int)$request->request->get('offset', 0);
@@ -337,7 +329,7 @@ class ListView extends BaseView
         $this->query = $request->request->get('query', '');
         if ('' !== $this->query) {
             $fields = implode('|', $this->searchFields);
-            $this->where[] = new DataBaseWhere($fields, ToolBox::utils()::noHtml($this->query), 'XLIKE');
+            $this->where[] = new DataBaseWhere($fields, Tools::noHtml($this->query), 'XLIKE');
         }
 
         // filtro guardado seleccionado?
@@ -380,7 +372,7 @@ class ListView extends BaseView
      *
      * @param string $orderKey
      */
-    protected function setSelectedOrderBy(string $orderKey)
+    protected function setSelectedOrderBy(string $orderKey): void
     {
         if (isset($this->orderOptions[$orderKey])) {
             $this->order = [];

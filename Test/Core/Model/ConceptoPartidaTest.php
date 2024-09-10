@@ -20,7 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\ConceptoPartida;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ConceptoPartidaTest extends TestCase
@@ -47,7 +47,7 @@ final class ConceptoPartidaTest extends TestCase
         $this->assertTrue($concept->delete(), 'concept-cant-delete');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

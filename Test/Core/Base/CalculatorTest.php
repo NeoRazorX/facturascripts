@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,14 +27,14 @@ use FacturaScripts\Core\Model\ImpuestoZona;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Serie;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CalculatorTest extends TestCase
 {
     use RandomDataTrait;
 
-    public function testEmptyDoc()
+    public function testEmptyDoc(): void
     {
         $doc = new PresupuestoCliente();
         $lines = [];
@@ -48,9 +48,11 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
         $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+        $this->assertEquals(0.0, $doc->totalcoste, 'bad-totalcoste');
+        $this->assertEquals(0.0, $doc->totalbeneficio, 'bad-totalbeneficio');
     }
 
-    public function testEmptyLine()
+    public function testEmptyLine(): void
     {
         $doc = new PresupuestoCliente();
         $lines = [$doc->getNewLine()];
@@ -64,13 +66,15 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
         $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+        $this->assertEquals(0.0, $doc->totalcoste, 'bad-totalcoste');
+        $this->assertEquals(0.0, $doc->totalbeneficio, 'bad-totalbeneficio');
 
         // comprobamos la línea
         $this->assertEquals(0.0, $lines[0]->pvpsindto, 'bad-line-pvpsindto');
         $this->assertEquals(0.0, $lines[0]->pvptotal, 'bad-line-pvptotal');
     }
 
-    public function testLines()
+    public function testLines(): void
     {
         $doc = new PresupuestoCliente();
 
@@ -83,6 +87,7 @@ final class CalculatorTest extends TestCase
         // segunda línea
         $line2 = $doc->getNewLine();
         $line2->cantidad = 2;
+        $line2->coste = 3;
         $line2->pvpunitario = 10;
         $line2->iva = 4;
 
@@ -97,6 +102,8 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
         $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+        $this->assertEquals(6.0, $doc->totalcoste, 'bad-totalcoste');
+        $this->assertEquals(114.0, $doc->totalbeneficio, 'bad-totalbeneficio');
 
         // comprobamos la primera línea
         $this->assertEquals(100.0, $lines[0]->pvpsindto, 'bad-line1-pvpsindto');
@@ -107,7 +114,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(20.0, $lines[1]->pvptotal, 'bad-line2-pvptotal');
     }
 
-    public function testDiscounts()
+    public function testDiscounts(): void
     {
         $doc = new PresupuestoCliente();
         $doc->dtopor1 = 5;
@@ -148,7 +155,34 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(17.1, $lines[1]->pvptotal, 'bad-line2-pvptotal');
     }
 
-    public function testRetention()
+    public function testCostWithFullDiscount(): void
+    {
+        // creamos el documento
+        $doc = new PresupuestoCliente();
+
+        // primera línea
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 1;
+        $line1->pvpunitario = 100;
+        $line1->coste = 50;
+        $line1->iva = 21;
+        $line1->dtopor = 100;
+
+        $lines = [$line1];
+        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+
+        // comprobamos el documento
+        $this->assertEquals(0.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(0.0, $doc->netosindto, 'bad-netosindto');
+        $this->assertEquals(0.0, $doc->total, 'bad-total');
+        $this->assertEquals(0.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+        $this->assertEquals(50, $doc->totalcoste, 'bad-totalcoste');
+    }
+
+    public function testRetention(): void
     {
         $doc = new PresupuestoCliente();
 
@@ -185,7 +219,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
     }
 
-    public function testCustomerRe()
+    public function testCustomerRe(): void
     {
         // creamos un cliente con recargo de equivalencia
         $subject = $this->getRandomCustomer();
@@ -229,10 +263,11 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
 
         // eliminamos
-        $subject->delete();
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
     }
 
-    public function testSupplierRe()
+    public function testSupplierRe(): void
     {
         // creamos un proveedor con recargo de equivalencia
         $subject = $this->getRandomSupplier();
@@ -262,10 +297,11 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
 
         // eliminamos
-        $subject->delete();
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
     }
 
-    public function testSupplied()
+    public function testSupplied(): void
     {
         $doc = new PresupuestoCliente();
 
@@ -302,7 +338,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(50.0, $doc->totalsuplidos, 'bad-totalsuplidos');
     }
 
-    public function testNoTaxSerie()
+    public function testNoTaxSerie(): void
     {
         // creamos una serie sin impuestos
         $serie = new Serie();
@@ -348,7 +384,7 @@ final class CalculatorTest extends TestCase
         $serie->delete();
     }
 
-    public function testCustomerExempt()
+    public function testCustomerExempt(): void
     {
         // creamos un cliente exento
         $subject = $this->getRandomCustomer();
@@ -378,10 +414,11 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
 
         // eliminamos
-        $subject->delete();
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
     }
 
-    public function testSupplierExempt()
+    public function testSupplierExempt(): void
     {
         // creamos un proveedor exento
         $subject = $this->getRandomSupplier();
@@ -411,10 +448,11 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
 
         // eliminamos
-        $subject->delete();
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
     }
 
-    public function testTaxZone()
+    public function testTaxZone(): void
     {
         // creamos un impuesto del 20%
         $tax1 = new Impuesto();
@@ -480,7 +518,7 @@ final class CalculatorTest extends TestCase
         $tax2->delete();
     }
 
-    public function testNoTaxZone()
+    public function testNoTaxZone(): void
     {
         // creamos un impuesto del 20%
         $tax1 = new Impuesto();

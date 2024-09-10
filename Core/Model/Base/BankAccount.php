@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Tools;
 use PHP_IBAN\IBAN;
 
 /**
@@ -30,7 +31,6 @@ use PHP_IBAN\IBAN;
  */
 abstract class BankAccount extends ModelClass
 {
-
     const GROUP_LENGTH = 4;
 
     /**
@@ -78,13 +78,13 @@ abstract class BankAccount extends ModelClass
     {
         $iban = str_replace(' ', '', $this->iban);
 
-        /// split in groups
+        // split in groups
         $groups = [];
         for ($num = 0; $num < strlen($iban); $num += self::GROUP_LENGTH) {
             $groups[] = substr($iban, $num, self::GROUP_LENGTH);
         }
 
-        /// censor
+        // censor
         if ($censure) {
             $groups[1] = $groups[2] = $groups[3] = $groups[4] = 'XXXX';
         }
@@ -92,19 +92,11 @@ abstract class BankAccount extends ModelClass
         return $spaced ? implode(' ', $groups) : implode('', $groups);
     }
 
-    /**
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codcuenta';
     }
 
-    /**
-     *
-     * @param bool $value
-     */
     public function setDisableIbanTest(bool $value)
     {
         $this->disableIbanTest = $value;
@@ -115,17 +107,16 @@ abstract class BankAccount extends ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (!empty($this->codcuenta) && false === is_numeric($this->codcuenta)) {
-            $this->toolBox()->i18nLog()->error('invalid-number', ['%number%' => $this->codcuenta]);
+            Tools::log()->error('invalid-number', ['%number%' => $this->codcuenta]);
             return false;
         }
 
-        $utils = $this->toolBox()->utils();
-        $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->iban = $utils->noHtml($this->iban);
-        $this->swift = $utils->noHtml($this->swift);
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->iban = Tools::noHtml($this->iban);
+        $this->swift = Tools::noHtml($this->swift);
 
         return parent::test() && $this->testBankAccount();
     }
@@ -139,7 +130,7 @@ abstract class BankAccount extends ModelClass
      */
     public function verifyIBAN(string $iban): bool
     {
-        if ($this->toolBox()->appSettings()->get('default', 'validate_iban', false)) {
+        if (Tools::settings('default', 'validate_iban', false)) {
             $object = new IBAN($iban);
             return $object->Verify();
         }
@@ -148,12 +139,11 @@ abstract class BankAccount extends ModelClass
     }
 
     /**
-     *
      * @param array $values
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codcuenta)) {
             $this->codcuenta = $this->newCode();
@@ -173,7 +163,7 @@ abstract class BankAccount extends ModelClass
             return true;
         }
 
-        $this->toolBox()->i18nLog()->warning('invalid-iban', ['%iban%' => $this->iban]);
+        Tools::log()->warning('invalid-iban', ['%iban%' => $this->iban]);
         return false;
     }
 }

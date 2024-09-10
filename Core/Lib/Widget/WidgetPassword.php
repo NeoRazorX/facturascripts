@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,8 +34,8 @@ class WidgetPassword extends WidgetText
      */
     protected function assets()
     {
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetPassword.js', 2);
-        AssetManager::add('css', FS_ROUTE . '/Dinamic/Assets/CSS/WidgetPassword.css', 2);
+        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetPassword.js', 2);
+        AssetManager::addCss(FS_ROUTE . '/Dinamic/Assets/CSS/WidgetPassword.css', 2);
     }
 
     /**
@@ -50,9 +50,9 @@ class WidgetPassword extends WidgetText
     {
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
-        $labelHtml = '<label class="mb-1">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
+        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
-        return '<div class="form-group">'
+        return '<div class="form-group mb-2">'
             . $labelHtml
             . '<div class="input-group">'
             . '<div class="' . $this->css('input-group-prepend') . ' d-flex d-sm-none d-xl-flex">'

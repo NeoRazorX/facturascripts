@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Dinamic\Model\Base\JoinModel;
+use FacturaScripts\Core\Model\Base\JoinModel;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 
 /**
@@ -30,14 +31,13 @@ use FacturaScripts\Dinamic\Model\Producto as DinProducto;
  */
 class VarianteProducto extends JoinModel
 {
-
     /**
      * Class constructor.
      * Set master model for controller actions.
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->setMasterModel(new DinProducto());
@@ -45,7 +45,7 @@ class VarianteProducto extends JoinModel
 
     /**
      * List of fields or columns to select clausule.
-     * 
+     *
      * @return array
      */
     protected function getFields(): array
@@ -59,8 +59,10 @@ class VarianteProducto extends JoinModel
             'idatributovalor4' => 'variantes.idatributovalor4',
             'idproducto' => 'variantes.idproducto',
             'idvariante' => 'variantes.idvariante',
+            'iva' => 'impuestos.iva',
             'margen' => 'variantes.margen',
             'precio' => 'variantes.precio',
+            'precio_iva' => '(variantes.precio * (100 + impuestos.iva) / 100)',
             'referencia' => 'variantes.referencia',
             'stockfis' => 'variantes.stockfis',
             'descripcion' => 'productos.descripcion'
@@ -69,21 +71,23 @@ class VarianteProducto extends JoinModel
 
     /**
      * List of tables related to from clausule.
-     * 
+     *
      * @return string
      */
     protected function getSQLFrom(): string
     {
-        return 'variantes LEFT JOIN productos ON productos.idproducto = variantes.idproducto';
+        return 'variantes'
+            . ' LEFT JOIN productos ON productos.idproducto = variantes.idproducto'
+            . ' LEFT JOIN impuestos ON impuestos.codimpuesto = productos.codimpuesto';
     }
 
     /**
      * List of tables required for the execution of the view.
-     * 
+     *
      * @return array
      */
     protected function getTables(): array
     {
-        return ['productos', 'variantes'];
+        return ['productos', 'variantes', 'impuestos'];
     }
 }

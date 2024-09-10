@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,44 +16,50 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
  * Controller to edit a single item from the  Empresa model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Daniel Fernández Giménez      <hola@danielfg.es>
  */
 class EditEmpresa extends EditController
 {
-
-    /**
-     * Returns the model name.
-     * 
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Empresa';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'company';
         $data['icon'] = 'fas fa-building';
         return $data;
+    }
+
+    protected function checkViesAction(): bool
+    {
+        $model = $this->getModel();
+        if (false === $model->loadFromCode($this->request->get('code'))) {
+            return true;
+        }
+
+        if ($model->checkVies()) {
+            Tools::log()->notice('vies-check-success', ['%vat-number%' => $model->cifnif]);
+        }
+
+        return true;
     }
 
     protected function createViews()
@@ -65,34 +71,45 @@ class EditEmpresa extends EditController
         $this->createViewExercises();
     }
 
-    protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco')
+    protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco'): void
     {
-        $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank')
+            ->disableColumn('company');
     }
 
-    protected function createViewExercises(string $viewName = 'ListEjercicio')
+    protected function createViewExercises(string $viewName = 'ListEjercicio'): void
     {
-        $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt')
+            ->disableColumn('company');
     }
 
-    protected function createViewPaymentMethods(string $viewName = 'ListFormaPago')
+    protected function createViewPaymentMethods(string $viewName = 'ListFormaPago'): void
     {
-        $this->addListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card')
+            ->disableColumn('company');
     }
 
-    protected function createViewWarehouse(string $viewName = 'EditAlmacen')
+    protected function createViewWarehouse(string $viewName = 'EditAlmacen'): void
     {
-        $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse')
+            ->disableColumn('company');
+    }
+
+    protected function execPreviousAction($action): bool
+    {
+        switch ($action) {
+            case 'check-vies':
+                return $this->checkViesAction();
+
+            default:
+                return parent::execPreviousAction($action);
+        }
     }
 
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -104,14 +121,22 @@ class EditEmpresa extends EditController
             case 'ListCuentaBanco':
             case 'ListEjercicio':
             case 'ListFormaPago':
-                $idcompany = $this->getViewModelValue($this->getMainViewName(), 'idempresa');
-                $where = [new DataBaseWhere('idempresa', $idcompany)];
+                $id = $this->getViewModelValue($this->getMainViewName(), 'idempresa');
+                $where = [new DataBaseWhere('idempresa', $id)];
                 $view->loadData('', $where);
                 break;
 
             case $mvn:
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($view);
+                if ($view->model->exists() && $view->model->cifnif) {
+                    $this->addButton($viewName, [
+                        'action' => 'check-vies',
+                        'color' => 'info',
+                        'icon' => 'fas fa-check-double',
+                        'label' => 'check-vies'
+                    ]);
+                }
                 break;
 
             default:
@@ -120,22 +145,16 @@ class EditEmpresa extends EditController
         }
     }
 
-    /**
-     * @param BaseView $view
-     */
-    protected function setCustomWidgetValues(&$view)
+    protected function setCustomWidgetValues(BaseView &$view): void
     {
         $columnVATType = $view->columnForName('vat-regime');
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {
-            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all(), true);
         }
 
-        $columnLogo = $view->columnForName('logo');
-        if ($columnLogo && $columnLogo->widget->getType() === 'select') {
-            $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
-                new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
-            ]);
-            $columnLogo->widget->setValuesFromCodeModel($images);
+        $columnVATException = $view->columnForName('vat-exception');
+        if ($columnVATException && $columnVATException->widget->getType() === 'select') {
+            $columnVATException->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
     }
 }

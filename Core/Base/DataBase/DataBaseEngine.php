@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,19 +16,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Translator;
 
 /**
  * Interface for each of the compatible database engines
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class DataBaseEngine
 {
-
     /**
      * Contains the translator.
      *
@@ -49,6 +49,14 @@ abstract class DataBaseEngine
      * @param mixed $link
      */
     abstract public function beginTransaction($link);
+
+    /**
+     * Cast the column to a number
+     *
+     * @param mixed $link
+     * @param string $column
+     */
+    abstract public function castInteger($link, $column);
 
     /**
      * Closes the connection to the database
@@ -88,7 +96,7 @@ abstract class DataBaseEngine
     /**
      * Escape the given column name
      *
-     * @param mixed  $link
+     * @param mixed $link
      * @param string $name
      */
     abstract public function escapeColumn($link, $name);
@@ -96,7 +104,7 @@ abstract class DataBaseEngine
     /**
      * Escape the given string
      *
-     * @param mixed  $link
+     * @param mixed $link
      * @param string $str
      */
     abstract public function escapeString($link, $str);
@@ -105,7 +113,7 @@ abstract class DataBaseEngine
      * Runs a DDL statement on the connection.
      * If there is no open transaction, it will create one and end it after the DDL
      *
-     * @param mixed  $link
+     * @param mixed $link
      * @param string $sql
      *
      * @return bool
@@ -143,7 +151,7 @@ abstract class DataBaseEngine
     /**
      * Runs a database statement on the connection
      *
-     * @param mixed  $link
+     * @param mixed $link
      * @param string $sql
      *
      * @return array
@@ -200,10 +208,10 @@ abstract class DataBaseEngine
     }
 
     /**
-     * 
-     * @param mixed  $link
+     *
+     * @param mixed $link
      * @param string $tableName
-     * @param array  $fields
+     * @param array $fields
      */
     public function updateSequence($link, $tableName, $fields)
     {

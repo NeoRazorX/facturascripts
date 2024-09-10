@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -55,3 +55,10 @@ function editListViewSetOffset(viewName, value) {
     $("#form" + viewName + "Offset :input[name=\"offset\"]").val(value);
     $("#form" + viewName + "Offset").submit();
 }
+
+$(document).ready(function () {
+    var formSelected = document.getElementById('EditListViewSelected');
+    if (formSelected !== null) {
+        formSelected.scrollIntoView();
+    }
+});

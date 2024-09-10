@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023  Carlos García Gómez <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson          <joenilson@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,9 +17,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
 use FacturaScripts\Dinamic\Model\Role as DinRole;
 use FacturaScripts\Dinamic\Model\User as DinUser;
@@ -32,63 +34,44 @@ use FacturaScripts\Dinamic\Model\User as DinUser;
  */
 class RoleAccess extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Permission to delete.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $allowdelete;
 
-    /**
-     * Permission to update.
-     *
-     * @var bool
-     */
+    /** @var bool */
+    public $allowexport;
+
+    /** @var bool */
+    public $allowimport;
+
+    /** @var bool */
     public $allowupdate;
 
-    /**
-     * Role code.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codrole;
 
-    /**
-     * Identifier.
-     *
-     * @var int
-     */
+    /** @var int */
     public $id;
 
-    /**
-     * Permision for show all or owner data.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $onlyownerdata;
 
-    /**
-     * Name of the page.
-     *
-     * @var string
-     */
+    /** @var string */
     public $pagename;
 
     /**
      * Add the indicated page list to the Role group
      *
-     * @param string    $codrole
+     * @param string $codrole
      * @param DinPage[] $pages
      *
      * @return bool
      */
-    public static function addPagesToRole($codrole, $pages)
+    public static function addPagesToRole(string $codrole, array $pages): bool
     {
-        $roleAccess = new static();
         foreach ($pages as $page) {
+            $roleAccess = new static();
             $where = [
                 new DataBaseWhere('codrole', $codrole),
                 new DataBaseWhere('pagename', $page->name)
@@ -99,9 +82,6 @@ class RoleAccess extends Base\ModelClass
 
             $roleAccess->codrole = $codrole;
             $roleAccess->pagename = $page->name;
-            $roleAccess->allowdelete = true;
-            $roleAccess->allowupdate = true;
-            $roleAccess->onlyownerdata = false;
             if (false === $roleAccess->save()) {
                 return false;
             }
@@ -111,13 +91,11 @@ class RoleAccess extends Base\ModelClass
     }
 
     /**
-     *
      * @param string $nick
      * @param string $pageName
-     *
-     * @return static[]
+     * @return RoleAccess[]
      */
-    public static function allFromUser($nick, $pageName)
+    public static function allFromUser(string $nick, string $pageName): array
     {
         $sqlIn = 'SELECT codrole FROM ' . RoleUser::tableName() . ' WHERE nick = ' . self::$dataBase->var2str($nick);
         $where = [
@@ -128,46 +106,65 @@ class RoleAccess extends Base\ModelClass
         return $roleAccess->all($where, [], 0, 0);
     }
 
-    /**
-     *
-     * @return Page
-     */
-    public function getPage()
+    public function can(string $permission): bool
+    {
+        switch ($permission) {
+            case 'access':
+                return true;
+
+            case 'delete':
+                return $this->allowdelete;
+
+            case 'export':
+                return $this->allowexport;
+
+            case 'import':
+                return $this->allowimport;
+
+            case 'update':
+                return $this->allowupdate;
+
+            case 'only-owner-data':
+                return $this->onlyownerdata;
+
+            default:
+                Tools::log()->error('invalid-user-can-permission', ['%permission%' => $permission]);
+                return false;
+        }
+    }
+
+    public function clear()
+    {
+        parent::clear();
+        $this->allowdelete = true;
+        $this->allowexport = true;
+        $this->allowimport = true;
+        $this->allowupdate = true;
+        $this->onlyownerdata = false;
+    }
+
+    public function getPage(): DinPage
     {
         $page = new DinPage();
         $page->loadFromCode($this->pagename);
         return $page;
     }
 
-    /**
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new DinRole();
         new DinUser();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'roles_access';
     }

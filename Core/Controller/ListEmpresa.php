@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
@@ -23,18 +24,12 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 /**
  * Controller to list the items in the Empresa model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListEmpresa extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -48,9 +43,9 @@ class ListEmpresa extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListEmpresa', 'Empresa', 'companies', 'fas fa-building');
-        $this->addSearchFields('ListEmpresa', ['nombre', 'nombrecorto']);
-        $this->addOrderBy('ListEmpresa', ['idempresa'], 'code');
-        $this->addOrderBy('ListEmpresa', ['nombre'], 'name');
+        $this->addView('ListEmpresa', 'Empresa', 'companies', 'fas fa-building')
+            ->addSearchFields(['nombre', 'nombrecorto'])
+            ->addOrderBy(['idempresa'], 'code')
+            ->addOrderBy(['nombre'], 'name');
     }
 }

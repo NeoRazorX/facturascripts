@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinFile;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -28,53 +30,44 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class AttachedFileRelation extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
-     * 
      * @var string
      */
     public $creationdate;
 
     /**
-     * 
      * @var int
      */
     public $id;
 
     /**
-     * 
      * @var int
      */
     public $idfile;
 
     /**
-     * 
      * @var string
      */
     public $model;
 
     /**
-     * 
      * @var int
      */
     public $modelid;
 
     /**
-     * 
      * @var string
      */
     public $modelcode;
 
     /**
-     * 
      * @var string
      */
     public $nick;
 
     /**
-     * 
      * @var string
      */
     public $observations;
@@ -82,14 +75,10 @@ class AttachedFileRelation extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->creationdate = \date(self::DATETIME_STYLE);
+        $this->creationdate = Tools::dateTime();
     }
 
-    /**
-     * 
-     * @return DinFile
-     */
-    public function getFile()
+    public function getFile(): DinFile
     {
         $file = new DinFile();
         $file->loadFromCode($this->idfile);
@@ -106,61 +95,41 @@ class AttachedFileRelation extends Base\ModelClass
         return UploadedFile::getMaxFilesize() / 1024 / 1024;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new DinFile();
 
         return parent::install();
     }
 
-    /**
-     * 
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * 
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'attached_files_rel';
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $this->observations = $this->toolBox()->utils()->noHtml($this->observations);
+        $this->observations = Tools::noHtml($this->observations);
+
         return parent::test();
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         if ($this->model) {
             $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $this->model;
-            $model = new $modelClass();
-            $code = empty($this->modelcode) ? $this->modelid : $this->modelcode;
-            if ($model->loadFromCode($code)) {
-                return $model->url();
+            if (class_exists($modelClass)) {
+                $model = new $modelClass();
+                $code = empty($this->modelcode) ? $this->modelid : $this->modelcode;
+                if ($model->loadFromCode($code)) {
+                    return $model->url();
+                }
             }
         }
 

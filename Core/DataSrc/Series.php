@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\DataSrc;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Serie;
 
-class Series implements DataSrcInterface
+final class Series implements DataSrcInterface
 {
     private static $list;
 

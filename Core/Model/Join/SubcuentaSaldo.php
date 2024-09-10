@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Core\Model\Base\JoinModel;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\JoinModel;
 
 /**
  * Auxiliary model to load a sumary of subaccount
@@ -30,9 +31,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * @property double $debe
  * @property double $haber
  * @property double $saldo
- * @property int    $idsubcuenta
- * @property int    $mes
- * @property int    $canal
+ * @property int $idsubcuenta
+ * @property int $mes
+ * @property int $canal
  */
 class SubcuentaSaldo extends JoinModel
 {
@@ -52,7 +53,7 @@ class SubcuentaSaldo extends JoinModel
 
     /**
      * List of fields or columns to select clausule.
-     * 
+     *
      * @return array
      */
     protected function getFields(): array
@@ -84,7 +85,7 @@ class SubcuentaSaldo extends JoinModel
 
     /**
      * List of tables related to from clausule.
-     * 
+     *
      * @return string
      */
     protected function getSQLFrom(): string
@@ -95,7 +96,7 @@ class SubcuentaSaldo extends JoinModel
 
     /**
      * List of tables required for the execution of the view.
-     * 
+     *
      * @return array
      */
     protected function getTables(): array
@@ -111,7 +112,7 @@ class SubcuentaSaldo extends JoinModel
      *
      * @param array $data
      */
-    protected function loadFromData($data)
+    protected function loadFromData(array $data)
     {
         parent::loadFromData($data);
         $this->saldo = $this->debe - $this->haber;
@@ -121,8 +122,8 @@ class SubcuentaSaldo extends JoinModel
      * Load in an array "detail" the monthly and channel balances of a sub-account
      * and return the sum of them.
      *
-     * @param int   $idSubAccount
-     * @param int   $channel
+     * @param int $idSubAccount
+     * @param int $channel
      * @param array $detail
      *
      * @return float
@@ -135,10 +136,10 @@ class SubcuentaSaldo extends JoinModel
             new DataBaseWhere('asientos.canal', empty($channel) ? null : $channel)
         ];
         foreach ($this->all($where, ['mes' => 'ASC']) as $values) {
-            $detail[$values->mes - 1] = \round($values->saldo, (int) FS_NF0);
+            $detail[$values->mes - 1] = round($values->saldo, (int)FS_NF0);
             $result += $values->saldo;
         }
 
-        return \round($result, (int) FS_NF0);
+        return round($result, (int)FS_NF0);
     }
 }

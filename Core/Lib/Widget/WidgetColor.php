@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
+
+use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
  * Description of WidgetColor
@@ -25,26 +28,13 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class WidgetColor extends BaseWidget
 {
-
-    /**
-     * 
-     * @param array $data
-     */
-    public function __construct($data)
+    protected function inputHtmlExtraParams()
     {
-        $data['icon'] = $data['icon'] ?? 'fas fa-palette';
-        parent::__construct($data);
+        return parent::inputHtmlExtraParams() . ' data-jscolor=""';
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $extraClass
-     *
-     * @return string
-     */
-    protected function inputHtml($type = 'color', $extraClass = ''): string
+    protected function assets()
     {
-        return parent::inputHtml($type, $extraClass);
+        AssetManager::addJs(FS_ROUTE . '/node_modules/@eastdesire/jscolor/jscolor.min.js');
     }
 }

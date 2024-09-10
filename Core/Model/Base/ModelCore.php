@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,11 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseTools;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
@@ -32,18 +34,10 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  */
 abstract class ModelCore
 {
-
     const AUDIT_CHANNEL = 'audit';
     const DATE_STYLE = 'd-m-Y';
     const DATETIME_STYLE = 'd-m-Y H:i:s';
     const HOUR_STYLE = 'H:i:s';
-
-    /**
-     * List of already tested tables.
-     *
-     * @var array
-     */
-    private static $checkedTables = [];
 
     /**
      * It provides direct access to the database.
@@ -64,7 +58,7 @@ abstract class ModelCore
      *
      * @return array
      */
-    abstract public function getModelFields();
+    abstract public function getModelFields(): array;
 
     /**
      * Loads table fields if is necessary.
@@ -79,14 +73,14 @@ abstract class ModelCore
      *
      * @return string
      */
-    abstract public function modelClassName();
+    abstract public function modelClassName(): string;
 
     /**
      * Returns the name of the model.
      *
      * @return string
      */
-    abstract protected function modelName();
+    abstract protected function modelName(): string;
 
     /**
      * Executes all $name methods added from the extensions.
@@ -99,18 +93,28 @@ abstract class ModelCore
     abstract public function pipe($name, ...$arguments);
 
     /**
+     * Executes all $name methods added from the extensions until someone returns false.
+     *
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return bool
+     */
+    abstract public function pipeFalse($name, ...$arguments): bool;
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
-    abstract public static function primaryColumn();
+    abstract public static function primaryColumn(): string;
 
     /**
      * Returns the name of the table that uses this model.
      *
      * @return string
      */
-    abstract public static function tableName();
+    abstract public static function tableName(): string;
 
     /**
      * ModelClass constructor.
@@ -121,17 +125,19 @@ abstract class ModelCore
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
-
-            $tables = $this->toolBox()->cache()->get('fs_checked_tables');
-            if (is_array($tables) && !empty($tables)) {
-                self::$checkedTables = $tables;
-            }
+            self::$dataBase->connect();
         }
 
-        if (static::tableName() !== '' && false === in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
-            $this->toolBox()->i18nLog()->debug('table-checked', ['%tableName%' => static::tableName()]);
-            self::$checkedTables[] = static::tableName();
-            $this->toolBox()->cache()->set('fs_checked_tables', self::$checkedTables);
+        if (empty(static::tableName())) {
+            throw new Exception('The table name is not defined in the model ' . $this->modelClassName());
+        }
+
+        if (false === DbUpdater::isTableChecked(static::tableName())) {
+            if (self::$dataBase->tableExists(static::tableName())) {
+                DbUpdater::updateTable(static::tableName());
+            } else {
+                DbUpdater::createTable(static::tableName(), [], $this->install());
+            }
         }
 
         $this->loadModelFields(self::$dataBase, static::tableName());
@@ -149,10 +155,10 @@ abstract class ModelCore
      *
      * @return bool
      */
-    public function changePrimaryColumnValue($newValue)
+    public function changePrimaryColumnValue($newValue): bool
     {
-        if (empty($newValue) || $newValue == $this->primaryColumnValue()) {
-            return true;
+        if (empty($newValue) || $newValue === $this->primaryColumnValue()) {
+            return false;
         }
 
         $sql = "UPDATE " . $this->tableName() . " SET " . $this->primaryColumn() . " = " . self::$dataBase->var2str($newValue)
@@ -184,7 +190,7 @@ abstract class ModelCore
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         return CSVImport::importTableSQL(static::tableName());
     }
@@ -208,7 +214,9 @@ abstract class ModelCore
 
             // We check if it is a varchar (with established length) or another type of data
             $field = $fields[$key];
-            $type = strpos($field['type'], '(') === false ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
+            $type = strpos($field['type'], '(') === false ?
+                $field['type'] :
+                substr($field['type'], 0, strpos($field['type'], '('));
 
             switch ($type) {
                 case 'tinyint':
@@ -218,7 +226,7 @@ abstract class ModelCore
 
                 case 'integer':
                 case 'int':
-                    $this->{$key} = $this->getIntergerValueForField($field, $value);
+                    $this->{$key} = $this->getIntegerValueForField($field, $value);
                     break;
 
                 case 'decimal':
@@ -253,6 +261,11 @@ abstract class ModelCore
         return $this->{$this->primaryColumn()};
     }
 
+    public static function table(): DbQuery
+    {
+        return DbQuery::table(static::tableName());
+    }
+
     /**
      * Returns an array with the model fields values.
      *
@@ -262,56 +275,29 @@ abstract class ModelCore
     {
         $data = [];
         foreach (array_keys($this->getModelFields()) as $fieldName) {
-            $data[$fieldName] = $this->{$fieldName};
+            $data[$fieldName] = $this->{$fieldName} ?? null;
         }
 
         return $data;
     }
 
     /**
-     * Checks and updates the structure of the table if necessary.
-     *
-     * @return bool
-     */
-    private function checkTable(): bool
-    {
-        $xmlCols = [];
-        $xmlCons = [];
-        if (false === DataBaseTools::getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
-            $this->toolBox()->i18nLog()->critical('error-on-xml-file', ['%fileName%' => static::tableName() . '.xml']);
-            return false;
-        }
-
-        $sql = self::$dataBase->tableExists(static::tableName()) ?
-            DataBaseTools::checkTable(static::tableName(), $xmlCols, $xmlCons) :
-            DataBaseTools::generateTable(static::tableName(), $xmlCols, $xmlCons) . $this->install();
-
-        if ($sql !== '' && false === self::$dataBase->exec($sql)) {
-            $this->toolBox()->i18nLog()->critical('check-table', ['%tableName%' => static::tableName()]);
-            $this->toolBox()->cache()->clear();
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Returns the boolean value for the field.
      *
      * @param array $field
-     * @param string $value
+     * @param mixed $value
      *
      * @return bool|null
      */
-    private function getBoolValueForField($field, $value): ?bool
+    private function getBoolValueForField(array $field, $value): ?bool
     {
-        if (in_array(strtolower($value), ['true', 't', '1'], false)) {
-            return true;
-        } elseif (in_array(strtolower($value), ['false', 'f', '0'], false)) {
-            return false;
+        if ($value === null) {
+            return $field['is_nullable'] === 'NO' ? false : null;
+        } elseif (is_bool($value)) {
+            return $value;
         }
 
-        return $field['is_nullable'] === 'NO' ? false : null;
+        return in_array(strtolower($value), ['true', 't', '1'], false);
     }
 
     /**
@@ -339,7 +325,7 @@ abstract class ModelCore
      *
      * @return int|null
      */
-    private function getIntergerValueForField($field, $value): ?int
+    private function getIntegerValueForField($field, $value): ?int
     {
         if (is_numeric($value)) {
             return (int)$value;
@@ -353,9 +339,12 @@ abstract class ModelCore
     }
 
     /**
+     * Returns a new instance of the ToolBox class.
+     *
      * @return ToolBox
+     * @deprecated since version 2023.1
      */
-    protected static function toolBox()
+    protected static function toolBox(): ToolBox
     {
         return new ToolBox();
     }

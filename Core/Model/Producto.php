@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,17 +20,24 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Model\Base\TaxRelationTrait;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Fabricante as DinFabricante;
+use FacturaScripts\Dinamic\Model\Familia as DinFamilia;
+use FacturaScripts\Dinamic\Model\ProductoImagen as DinProductoImagen;
+use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
 /**
  * Stores the data of an article.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Producto extends Base\ModelClass
+class Producto extends ModelClass
 {
-
-    use Base\ModelTrait;
-    use Base\TaxRelationTrait;
+    use ModelTrait;
+    use TaxRelationTrait;
 
     const ROUND_DECIMALS = 5;
 
@@ -63,21 +70,21 @@ class Producto extends Base\ModelClass
     public $codfamilia;
 
     /**
-     * Sub-account code for purchases.
+     * Account code for purchases.
      *
      * @var string
      */
     public $codsubcuentacom;
 
     /**
-     * Code for the shopping sub-account, but with IRPF.
+     * Code for the shopping account, but with IRPF.
      *
      * @var string
      */
     public $codsubcuentairpfcom;
 
     /**
-     * Sub-account code for sales.
+     * Account code for sales.
      *
      * @var string
      */
@@ -89,6 +96,9 @@ class Producto extends Base\ModelClass
      * @var string
      */
     public $descripcion;
+
+    /** @var string */
+    public $excepcioniva;
 
     /**
      * Date on which the product was registered.
@@ -161,6 +171,9 @@ class Producto extends Base\ModelClass
      */
     public $stockfis;
 
+    /** @var string */
+    public $tipo;
+
     /**
      * True -> allow sales without stock.
      *
@@ -168,46 +181,97 @@ class Producto extends Base\ModelClass
      */
     public $ventasinstock;
 
-    /**
-     * Reset the values of all model properties.
-     */
+    public function __get($name)
+    {
+        if ($name === 'precio_iva') {
+            return $this->priceWithTax();
+        }
+
+        return null;
+    }
+
     public function clear()
     {
         parent::clear();
-        $this->actualizado = date(self::DATETIME_STYLE);
+        $this->actualizado = Tools::dateTime();
         $this->bloqueado = false;
-        $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
-        $this->fechaalta = date(self::DATE_STYLE);
+        $this->codimpuesto = Tools::settings('default', 'codimpuesto');
+        $this->fechaalta = Tools::date();
         $this->nostock = false;
         $this->precio = 0.0;
         $this->publico = false;
         $this->secompra = true;
         $this->sevende = true;
         $this->stockfis = 0.0;
-        $this->ventasinstock = (bool)$this->toolBox()->appSettings()->get('default', 'ventasinstock', false);
+        $this->ventasinstock = (bool)Tools::settings('default', 'ventasinstock', false);
+    }
+
+    public function delete(): bool
+    {
+        // comprobamos si podemos eliminar las variantes
+        foreach ($this->getVariants() as $variant) {
+            if ($variant->isInDocuments()) {
+                Tools::log()->warning('cant-delete-variant-with-documents', ['%reference%' => $variant->referencia]);
+                return false;
+            }
+        }
+
+        // eliminamos las imágenes del producto
+        foreach ($this->getImages() as $image) {
+            if (false === $image->delete()) {
+                return false;
+            }
+        }
+
+        // eliminamos el resto de la base de datos
+        return parent::delete();
+    }
+
+    public function getFabricante(): Fabricante
+    {
+        $fabricante = new DinFabricante();
+        $fabricante->loadFromCode($this->codfabricante);
+        return $fabricante;
+    }
+
+    public function getFamilia(): Familia
+    {
+        $familia = new DinFamilia();
+        $familia->loadFromCode($this->codfamilia);
+        return $familia;
+    }
+
+    /**
+     * @return ProductoImagen[]
+     */
+    public function getImages(bool $imgVariant = true): array
+    {
+        $image = new DinProductoImagen();
+        $where = [new DataBaseWhere('idproducto', $this->idproducto)];
+
+        // solo si queremos lás imágenes del producto y no de las variantes
+        if (false === $imgVariant) {
+            $where[] = new DataBaseWhere('referencia', null);
+        }
+
+        $orderBy = ['orden' => 'ASC'];
+        return $image->all($where, $orderBy, 0, 0);
     }
 
     /**
      * @return Variante[]
      */
-    public function getVariants()
+    public function getVariants(): array
     {
-        $variantModel = new Variante();
+        $variantModel = new DinVariante();
         $where = [new DataBaseWhere('idproducto', $this->idproducto)];
         return $variantModel->all($where, [], 0, 0);
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         /**
-         * The articles table has several foreign keys, so we must force the checking of those tables.
+         * products table has several foreign keys, so we must force the checking of those tables.
          */
         new Fabricante();
         new Familia();
@@ -216,36 +280,22 @@ class Producto extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * @return float
-     */
-    public function priceWithTax()
+    public function priceWithTax(): float
     {
         return $this->precio * (100 + $this->getTax()->iva) / 100;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idproducto';
     }
 
-    /**
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'referencia';
     }
 
-    /**
-     * @param float $price
-     */
-    public function setPriceWithTax($price)
+    public function setPriceWithTax(float $price)
     {
         $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
         foreach ($this->getVariants() as $variant) {
@@ -258,30 +308,32 @@ class Producto extends Base\ModelClass
         $this->precio = round($newPrice, self::ROUND_DECIMALS);
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'productos';
     }
 
-    /**
-     * Returns True if the article's data is correct.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->observaciones = $utils->noHtml($this->observaciones);
-        $this->referencia = $utils->noHtml($this->referencia);
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->observaciones = Tools::noHtml($this->observaciones);
+        $this->referencia = Tools::noHtml($this->referencia);
 
-        if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
-            $this->toolBox()->i18nLog()->warning(
+        // descripción y observaciones no pueden ser null
+        if ($this->descripcion === null) {
+            $this->descripcion = '';
+        }
+        if ($this->observaciones === null) {
+            $this->observaciones = '';
+        }
+
+        if (empty($this->referencia)) {
+            // obtenemos una nueva referencia de variantes, en lugar del producto
+            $variant = new DinVariante();
+            $this->referencia = (string)$variant->newCode('referencia');
+        }
+        if (strlen($this->referencia) > 30) {
+            Tools::log()->warning(
                 'invalid-column-lenght',
                 ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
             );
@@ -306,54 +358,64 @@ class Producto extends Base\ModelClass
             $this->secompra = false;
         }
 
-        $this->actualizado = date(self::DATETIME_STYLE);
+        $this->actualizado = Tools::dateTime();
+
         return parent::test();
     }
 
     /**
      * Updated product price or reference if any change in variants.
      */
-    public function update()
+    public function update(): void
     {
         $newPrecio = 0.0;
         $newReferencia = null;
 
+        // recorremos las variantes y actualizamos el precio y la referencia
         foreach ($this->getVariants() as $variant) {
-            if ($variant->referencia == $this->referencia || is_null($newReferencia)) {
+            if ($variant->referencia === $this->referencia) {
                 $newPrecio = $variant->precio;
                 $newReferencia = $variant->referencia;
                 break;
             }
+
+            if (is_null($newReferencia)) {
+                $newPrecio = $variant->precio;
+                $newReferencia = $variant->referencia;
+            }
         }
 
-        if ($newPrecio != $this->precio || $newReferencia != $this->referencia) {
+        // si hay cambios, actualizamos el producto
+        if ($newPrecio != $this->precio || $newReferencia !== $this->referencia) {
             $this->precio = $newPrecio;
             $this->referencia = $newReferencia;
             $this->save();
         }
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
-        if (parent::saveInsert($values)) {
-            $variant = new Variante();
-            $variant->idproducto = $this->idproducto;
-            $variant->precio = $this->precio;
-            $variant->referencia = $this->referencia;
-            $variant->stockfis = $this->stockfis;
-            if ($variant->save()) {
-                return true;
-            }
-
-            $this->delete();
+        // comprobamos si la referencia ya existe
+        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        if ($this->count($where) > 0) {
+            Tools::log()->warning('duplicated-reference', ['%reference%' => $this->referencia]);
             return false;
         }
 
+        if (false === parent::saveInsert($values)) {
+            return false;
+        }
+
+        $variant = new DinVariante();
+        $variant->idproducto = $this->idproducto;
+        $variant->precio = $this->precio;
+        $variant->referencia = $this->referencia;
+        $variant->stockfis = $this->stockfis;
+        if ($variant->save()) {
+            return true;
+        }
+
+        $this->delete();
         return false;
     }
 }

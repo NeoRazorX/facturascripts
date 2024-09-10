@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -31,30 +32,19 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Controller to edit a single item from the SubCuenta model
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author PC REDNET S.L.               <luismi@pcrednet.com>
- * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author PC REDNET S.L.                <luismi@pcrednet.com>
+ * @author Cristo M. Estévez Hernández   <cristom.estevez@gmail.com>
  */
 class EditSubcuenta extends EditController
 {
-
-    /**
-     * Returns the class name of the model to use in the editView.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Subcuenta';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -64,65 +54,52 @@ class EditSubcuenta extends EditController
     }
 
     /**
-     * Add subaccount ledger report and export.
-     * - Add button
-     * - Add export options
-     * - Set initial values to modal form
-     *
-     * @param string $viewName
+     * Load views
      */
-    protected function addLedgerReport(string $viewName)
+    protected function createViews()
     {
-        $this->addButton($viewName, Ledger::getButton('modal'));
-        $this->setLedgerReportExportOptions($viewName);
-        $this->setLedgerReportValues($viewName);
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        // añadimos las partidas de asientos
+        $this->createViewsLines();
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
-    protected function createDepartureView(string $viewName = 'ListPartidaAsiento')
+    protected function createViewsLines(string $viewName = 'ListPartidaAsiento'): void
     {
-        $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date', 2);
-        $this->views[$viewName]->addSearchFields(['partidas.concepto']);
+        $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale')
+            ->addOrderBy(['fecha', 'numero', 'idpartida'], 'date', 2)
+            ->addSearchFields(['partidas.concepto']);
 
+        // filtros
         $this->views[$viewName]->addFilterPeriod('date', 'date', 'fecha');
+
+        $iva = $this->codeModel->all('partidas', 'iva', 'iva');
+        $this->views[$viewName]->addFilterSelect('iva', 'vat', 'iva', $iva);
+        $this->views[$viewName]->addFilterCheckbox('no-iva', 'without-taxation', 'iva', 'IS', null);
+
         $this->views[$viewName]->addFilterNumber('debit-major', 'debit', 'debe');
         $this->views[$viewName]->addFilterNumber('debit-minor', 'debit', 'debe', '<=');
         $this->views[$viewName]->addFilterNumber('credit-major', 'credit', 'haber');
         $this->views[$viewName]->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
 
+        // disable column
+        $this->views[$viewName]->disableColumn('subaccount');
+
+        // botones
+        $this->setSettings($viewName, 'btnDelete', false);
         $this->addButton($viewName, [
             'action' => 'dot-accounting-on',
             'color' => 'info',
             'icon' => 'fas fa-check-double',
             'label' => 'checked'
         ]);
-
         $this->addButton($viewName, [
             'action' => 'dot-accounting-off',
             'color' => 'warning',
             'icon' => 'far fa-square',
             'label' => 'unchecked'
         ]);
-
-        // disable column
-        $this->views[$viewName]->disableColumn('subaccount');
-
-        // disable button
-        $this->setSettings($viewName, 'btnDelete', false);
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-        $this->createDepartureView();
-        $this->setTabsPosition('bottom');
     }
 
     /**
@@ -136,6 +113,11 @@ class EditSubcuenta extends EditController
     {
         switch ($action) {
             case 'ledger':
+                if (false === $this->permissions->allowExport) {
+                    Tools::log()->warning('no-print-permission');
+                    return true;
+                }
+
                 $code = (int)$this->request->query->get('code');
                 if (!empty($code)) {
                     $this->setTemplate(false);
@@ -153,43 +135,42 @@ class EditSubcuenta extends EditController
         return parent::execPreviousAction($action);
     }
 
-    /**
-     * Exec ledger report from post/get values
-     *
-     * @param int $idSubAccount
-     */
     protected function ledgerReport(int $idSubAccount)
     {
         $subAccount = new Subcuenta();
         $subAccount->loadFromCode($idSubAccount);
         $request = $this->request->request->all();
-        $params = [
-            'grouped' => false,
-            'channel' => $request['channel'],
-            'subaccount-from' => $subAccount->codsubcuenta
-        ];
 
         $ledger = new Ledger();
-        $ledger->setExercise($subAccount->codejercicio);
-        $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
-        $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $subAccount->codsubcuenta;
+        $pages = $ledger->generate($subAccount->getExercise()->idempresa, $request['dateFrom'], $request['dateTo'], [
+            'channel' => $request['channel'],
+            'format' => $request['format'],
+            'grouped' => $request['groupingtype'] ?? false,
+            'subaccount-from' => $subAccount->codsubcuenta
+        ]);
+        $title = Tools::lang()->trans('ledger') . ' ' . $subAccount->codsubcuenta;
         $this->exportManager->newDoc($request['format'], $title);
 
         // añadimos la tabla de cabecera con la info del informe
         if ($request['format'] === 'PDF') {
             $titles = [[
-                self::toolBox()::i18n()->trans('subaccount') => $subAccount->codsubcuenta,
-                self::toolBox()::i18n()->trans('exercise') => $subAccount->codejercicio,
-                self::toolBox()::i18n()->trans('from-date') => $request['dateFrom'],
-                self::toolBox()::i18n()->trans('until-date') => $request['dateTo']
+                Tools::lang()->trans('subaccount') => $subAccount->codsubcuenta,
+                Tools::lang()->trans('exercise') => $subAccount->codejercicio,
+                Tools::lang()->trans('from-date') => $request['dateFrom'],
+                Tools::lang()->trans('until-date') => $request['dateTo']
             ]];
             $this->exportManager->addTablePage(array_keys($titles[0]), $titles);
         }
 
         // tablas con los listados
+        $options = [
+            'debe' => ['display' => 'right', 'css' => 'nowrap'],
+            'haber' => ['display' => 'right', 'css' => 'nowrap'],
+            'saldo' => ['display' => 'right', 'css' => 'nowrap'],
+        ];
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);
-            $this->exportManager->addTablePage($headers, $data);
+            $this->exportManager->addTablePage($headers, $data, $options);
         }
         $this->exportManager->show($this->response);
     }
@@ -209,9 +190,23 @@ class EditSubcuenta extends EditController
                 $idsubcuenta = $this->getViewModelValue($mainViewName, 'idsubcuenta');
                 $where = [new DataBaseWhere('idsubcuenta', $idsubcuenta)];
                 $view->loadData('', $where);
-                if ($view->count > 0) {
-                    $this->addLedgerReport($mainViewName);
+                if ($view->count == 0) {
+                    break;
                 }
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
+
+                // añadimos botón de informe de mayor
+                $this->addButton($mainViewName, [
+                    'action' => 'ledger',
+                    'color' => 'info',
+                    'icon' => 'fas fa-book fa-fw',
+                    'label' => 'ledger',
+                    'type' => 'modal'
+                ]);
+                $this->setLedgerReportExportOptions($mainViewName);
+                $this->setLedgerReportValues($mainViewName);
                 break;
 
             case $mainViewName:
@@ -223,11 +218,7 @@ class EditSubcuenta extends EditController
         }
     }
 
-    /**
-     *
-     * @param BaseView $view
-     */
-    protected function prepareSubcuenta(BaseView $view)
+    protected function prepareSubcuenta(BaseView $view): void
     {
         $cuenta = new Cuenta();
         $idcuenta = $this->request->query->get('idcuenta', '');
@@ -249,7 +240,7 @@ class EditSubcuenta extends EditController
     {
         $ids = $this->request->request->get('code', []);
         if (empty($ids)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return false;
         }
 
@@ -259,16 +250,11 @@ class EditSubcuenta extends EditController
             $row->setDottedStatus($value);
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 
-    /**
-     * Set export options to widget of modal form
-     *
-     * @param string $viewName
-     */
-    private function setLedgerReportExportOptions(string $viewName)
+    private function setLedgerReportExportOptions(string $viewName): void
     {
         $columnFormat = $this->views[$viewName]->columnModalForName('format');
         if ($columnFormat && $columnFormat->widget->getType() === 'select') {
@@ -280,12 +266,7 @@ class EditSubcuenta extends EditController
         }
     }
 
-    /**
-     * Set initial values to modal fields
-     *
-     * @param string $viewName
-     */
-    private function setLedgerReportValues(string $viewName)
+    private function setLedgerReportValues(string $viewName): void
     {
         $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();

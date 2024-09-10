@@ -76,30 +76,13 @@
         <type>date</type>
     </column>
     <column>
-        <name>habilitado</name>
-        <type>boolean</type>
-        <default>true</default>
-    </column>
-    <column>
         <name>idcontacto</name>
         <type>serial</type>
         <null>NO</null>
     </column>
     <column>
-        <name>lastactivity</name>
-        <type>timestamp</type>
-    </column>
-    <column>
-        <name>lastip</name>
-        <type>character varying(40)</type>
-    </column>
-    <column>
-        <name>level</name>
-        <type>integer</type>
-    </column>
-    <column>
-        <name>logkey</name>
-        <type>character varying(100)</type>
+        <name>langcode</name>
+        <type>character varying(10)</type>
     </column>
     <column>
         <name>nombre</name>
@@ -110,10 +93,6 @@
         <type>text</type>
     </column>
     <column>
-        <name>password</name>
-        <type>character varying(255)</type>
-    </column>
-    <column>
         <name>personafisica</name>
         <type>boolean</type>
         <default>true</default>
@@ -121,10 +100,6 @@
     <column>
         <name>provincia</name>
         <type>character varying(100)</type>
-    </column>
-    <column>
-        <name>puntos</name>
-        <type>integer</type>
     </column>
     <column>
         <name>telefono1</name>
@@ -142,6 +117,10 @@
         <name>verificado</name>
         <type>boolean</type>
         <default>false</default>
+    </column>
+    <column>
+        <name>web</name>
+        <type>character varying(100)</type>
     </column>
     <constraint>
         <name>contactos_pkey</name>

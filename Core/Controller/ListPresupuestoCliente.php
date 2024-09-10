@@ -27,19 +27,12 @@ use FacturaScripts\Dinamic\Model\PresupuestoCliente;
  * Controller to list the items in the PresupuestoCliente model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
  * @author Raul Jimenez                 <raul.jimenez@nazcanetworks.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 class ListPresupuestoCliente extends ListBusinessDocument
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -53,17 +46,21 @@ class ListPresupuestoCliente extends ListBusinessDocument
      */
     protected function createViews()
     {
-        // main view/tab
-        $mainViewName = 'ListPresupuestoCliente';
-        $this->createViewSales($mainViewName, 'PresupuestoCliente', 'estimations');
-        $this->views[$mainViewName]->addOrderBy(['finoferta'], 'expiration');
-        $this->addButtonGroupDocument($mainViewName);
-        $this->addButtonApproveDocument($mainViewName);
+        $this->createViewsPresupuestos();
 
         if ($this->permissions->onlyOwnerData === false) {
-            // lines view/tab
             $this->createViewLines('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente');
         }
+    }
+
+    protected function createViewsPresupuestos(string $viewName = 'ListPresupuestoCliente')
+    {
+        $this->createViewSales($viewName, 'PresupuestoCliente', 'estimations');
+        $this->addOrderBy($viewName, ['finoferta'], 'expiration');
+
+        // añadimos botones
+        $this->addButtonGroupDocument($viewName);
+        $this->addButtonApproveDocument($viewName);
     }
 
     /**
@@ -86,7 +83,11 @@ class ListPresupuestoCliente extends ListBusinessDocument
 
         // select the available expired status
         $expiredStatus = null;
-        foreach ($model->getAvaliableStatus() as $status) {
+        foreach ($model->getAvailableStatus() as $status) {
+            if (!$status->activo) {
+                continue;
+            }
+
             if ($status->idestado == 23 && !$status->editable && empty($status->generadoc)) {
                 $expiredStatus = $status->idestado;
                 break;

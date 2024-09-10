@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
@@ -29,113 +30,82 @@ use FacturaScripts\Dinamic\Model\FormaPago;
  */
 abstract class Receipt extends ModelOnChangeClass
 {
-
     use CompanyRelationTrait;
     use PaymentRelationTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $coddivisa;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codigofactura;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $disableInvoiceUpdate = false;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $disablePaymentGeneration = false;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $fecha;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $fechapago;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $idfactura;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $idrecibo;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $importe;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $liquidado;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $nick;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $numero;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $observaciones;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $pagado;
 
-    /**
-     * @var string
-     */
+    /** @var bool */
+    public $vencido;
+
+    /** @var string */
     public $vencimiento;
 
     abstract public function getInvoice();
 
-    abstract public function getPayments();
+    abstract public function getPayments(): array;
 
-    abstract protected function newPayment();
+    abstract protected function newPayment(): bool;
 
     public function clear()
     {
         parent::clear();
-        $appSettings = $this->toolBox()->appSettings();
-        $this->coddivisa = $appSettings->get('default', 'coddivisa');
-        $this->codpago = $appSettings->get('default', 'codpago');
-        $this->fecha = date(self::DATE_STYLE);
-        $this->idempresa = $appSettings->get('default', 'idempresa');
+        $this->coddivisa = Tools::settings('default', 'coddivisa');
+        $this->codpago = Tools::settings('default', 'codpago');
+        $this->fecha = Tools::date();
+        $this->idempresa = Tools::settings('default', 'idempresa');
         $this->importe = 0.0;
         $this->liquidado = 0.0;
         $this->numero = 1;
         $this->pagado = false;
+        $this->vencido = false;
     }
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         foreach ($this->getPayments() as $pay) {
             if (false === $pay->delete()) {
-                $this->toolBox()->i18nLog()->warning('cant-remove-payment');
+                Tools::log()->warning('cant-remove-payment');
                 return false;
             }
         }
@@ -143,82 +113,67 @@ abstract class Receipt extends ModelOnChangeClass
         return parent::delete();
     }
 
-    /**
-     * @param bool $disable
-     */
     public function disableInvoiceUpdate(bool $disable = true)
     {
         $this->disableInvoiceUpdate = $disable;
     }
 
-    /**
-     * @param bool $disable
-     */
     public function disablePaymentGeneration(bool $disable = true)
     {
         $this->disablePaymentGeneration = $disable;
     }
 
-    /**
-     * @return string
-     */
     public function getCode(): string
     {
         return $this->getInvoice()->codigo . '-' . $this->numero;
     }
 
-    /**
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idrecibo';
     }
 
-    /**
-     * @param string $date
-     */
-    public function setExpiration($date)
+    public function setExpiration(string $date)
     {
         $this->vencimiento = $date;
     }
 
-    /**
-     * @param string $codpago
-     */
-    public function setPaymentMethod($codpago)
+    public function setPaymentMethod(string $codpago)
     {
         $formaPago = new FormaPago();
         if ($formaPago->loadFromCode($codpago)) {
             $this->codpago = $codpago;
             $this->pagado = $formaPago->pagado;
             $this->setExpiration($formaPago->getExpiration($this->fecha));
+            if ($formaPago->pagado && empty($this->fechapago)) {
+                $this->fechapago = $this->fecha;
+            }
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $this->observaciones = $this->toolBox()->utils()->noHtml($this->observaciones);
+        $this->observaciones = Tools::noHtml($this->observaciones);
 
-        // set invoice code
+        // asignamos el código de la factura
         if (empty($this->codigofactura)) {
             $this->codigofactura = $this->getInvoice()->codigo;
         }
 
-        // check payment date
+        // comprobamos la fecha de pago
         if ($this->pagado === false) {
             $this->fechapago = null;
         } elseif (empty($this->fechapago)) {
-            $this->fechapago = date(self::DATE_STYLE);
+            $this->fechapago = Tools::date();
         }
 
-        // check expiration date
-        if (strtotime($this->vencimiento) < \strtotime($this->fecha)) {
+        // comprobamos la fecha de vencimiento
+        if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
             $this->vencimiento = $this->fecha;
         }
+
+        // comprobamos el vencimiento
+        $this->vencido = !$this->pagado && strtotime($this->vencimiento) < time();
 
         return parent::test();
     }
@@ -230,6 +185,10 @@ abstract class Receipt extends ModelOnChangeClass
      */
     protected function onChange($field)
     {
+        if (false === parent::onChange($field)) {
+            return false;
+        }
+
         switch ($field) {
             case 'importe':
                 return !$this->previousData['pagado'];
@@ -239,7 +198,7 @@ abstract class Receipt extends ModelOnChangeClass
                 return true;
 
             default:
-                return parent::onChange($field);
+                return true;
         }
     }
 
@@ -249,12 +208,7 @@ abstract class Receipt extends ModelOnChangeClass
         parent::onDelete();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (false === parent::saveInsert($values)) {
             return false;
@@ -268,12 +222,7 @@ abstract class Receipt extends ModelOnChangeClass
         return true;
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         if (parent::saveUpdate($values)) {
             $this->updateInvoice();
@@ -283,9 +232,6 @@ abstract class Receipt extends ModelOnChangeClass
         return false;
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         parent::setPreviousData(array_merge(['importe', 'pagado'], $fields));

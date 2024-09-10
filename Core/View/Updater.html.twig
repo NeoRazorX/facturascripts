@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,9 +18,11 @@
  */
 #}
 {% extends "Master/MenuTemplate.html.twig" %}
+{% import 'Macro/Utils.html.twig' as Utils %}
+{% from 'Macro/Utils.html.twig' import messageCompat as showMessage %}
 
 {% block messages %}
-    {% from 'Macro/Utils.html.twig' import messageCompat as showMessage %}
+    {% include 'Macro/Toasts.html.twig' %}
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -38,11 +40,11 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="btn-group">
-                    <a href="AdminPlugins" class="btn btn-sm btn-secondary">
+                    <a href="{{ asset('AdminPlugins') }}" class="btn btn-sm btn-secondary">
                         <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">{{ i18n.trans('plugins') }} </span>
+                        <span class="d-none d-md-inline-block">{{ trans('plugins') }} </span>
                     </a>
-                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary" title="{{ i18n.trans('refresh') }}">
+                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary" title="{{ trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                 </div>
@@ -50,101 +52,127 @@
                     <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal"
                             data-target="#modalTelemetry">
                         <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">{{ i18n.trans('register-installation') }} </span>
+                        <span class="d-none d-md-inline-block">{{ trans('manage-installation') }} </span>
                     </button>
                 {% else %}
                     <button class="btn btn-sm btn-warning" type="button" data-toggle="modal"
                             data-target="#modalTelemetry">
                         <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">{{ i18n.trans('register-installation') }}</span>
+                        <span class="d-none d-md-inline-block">{{ trans('register-installation') }}</span>
                     </button>
                 {% endif %}
             </div>
             <div class="col-sm-6 text-right">
                 <h1 class="h3">
-                    {{ i18n.trans('updater') }}
+                    {{ trans('updater') }}
                     <small class="text-info">{{ fsc.getCoreVersion() }}</small>
                     <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
                 </h1>
             </div>
         </div>
-    </div>
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th scope="col">{{ i18n.trans('component') }}</th>
-                <th scope="col">{{ i18n.trans('description') }}</th>
-                <th scope="col" class="text-right">{{ i18n.trans('action') }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for item in fsc.updaterItems %}
-                <tr class="{{ item.stable ? 'table-success' : 'table-warning' }}">
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.description }}</td>
-                    <td class="text-right">
-                        {% if item.downloaded %}
-                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
-                                <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
-                            </a>
-                            <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}" class="btn btn-sm btn-warning">
-                                <i class="fas fa-times fa-fw" aria-hidden="true"></i> {{ i18n.trans('cancel') }}
-                            </a>
-                        {% elseif item.stable %}
-                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
-                               class="btn btn-sm btn-secondary">
-                                <i class="fas fa-cloud-download-alt fa-fw"
-                                   aria-hidden="true"></i> {{ i18n.trans('download') }}
-                            </a>
-                        {% else %}
-                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
-                               class="btn btn-sm btn-outline-warning">
-                                <i class="fas fa-flask fa-fw" aria-hidden="true"></i> {{ i18n.trans('beta') }}
-                            </a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% else %}
-                <tr class="table-warning">
-                    <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        <div class="row">
+            <div class="col-sm">
+                {% if fsc.telemetryManager.ready() == false %}
+                    <div class="mb-3">
+                        {{ Utils.registerInstall(false) }}
+                    </div>
+                {% endif %}
+                <div class="card shadow-sm mb-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                            <tr>
+                                <th scope="col">{{ trans('component') }}</th>
+                                <th scope="col">{{ trans('description') }}</th>
+                                <th scope="col" class="text-right">{{ trans('action') }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in fsc.updaterItems %}
+                                <tr class="{{ item.stable ? 'table-success' : 'table-warning' }}">
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.description }}</td>
+                                    <td class="text-right">
+                                        {% if item.mincore > fsc.getCoreVersion() %}
+                                            {{ trans('requires-core', {'%version%': item.mincore}) }}
+                                        {% elseif item.downloaded %}
+                                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-spin-action btn-sm btn-success" onclick="animateSpinner('add')">
+                                                <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ trans('update') }}
+                                            </a>
+                                            <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}" class="btn btn-spin-action btn-sm btn-warning" onclick="animateSpinner('add')">
+                                                <i class="fas fa-times fa-fw" aria-hidden="true"></i> {{ trans('cancel') }}
+                                            </a>
+                                        {% elseif item.name == 'CORE' and fsc.coreUpdateWarnings %}
+                                            <button type="button" class="btn btn-spin-action btn-warning" data-toggle="modal"
+                                                    data-target="#coreWarningModal">{{ trans('download') }}
+                                            </button>
+                                        {% elseif item.stable %}
+                                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                                               class="btn btn-spin-action btn-sm btn-secondary" onclick="animateSpinner('add')">{{ trans('download') }}
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                                               class="btn btn-spin-action btn-sm btn-outline-warning" onclick="animateSpinner('add')">{{ trans('beta') }}
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr class="table-warning">
+                                    <td colspan="3"><b>{{ trans('no-data') }}</b></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="modal fade" id="modalTelemetry" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 {% if fsc.telemetryManager.ready() %}
                     <div class="modal-header">
-                        <h5 class="modal-title">{{ i18n.trans('registered-installation', {'%number%': fsc.telemetryManager.id()}) }}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
+                        <h5 class="modal-title">
+                            <i class="fas fa-registered mr-1"></i>
+                            {{ trans('registered-installation', {'%number%': fsc.telemetryManager.id()}) }}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('close') }}">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>{{ i18n.trans('registered-installation-p') }}</p>
-                        <p>{{ i18n.trans('telemetry-data-to-send') }}</p>
-                        <a class="btn btn-primary" href="{{ fsc.url() }}?action=claim-install" target="_blank">
-                            {{ i18n.trans('manage') }}
+                        <p>{{ trans('registered-installation-p') }}</p>
+                        <p>{{ trans('telemetry-data-to-send') }}</p>
+                        <a class="btn btn-primary float-left" href="{{ fsc.url() }}?action=claim-install" target="_blank">
+                            {{ trans('manage') }}
                         </a>
+                        <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
+                            {{ formToken() }}
+                            <input type="hidden" name="action" value="unlink"/>
+                            <button type="submit" class="btn btn-danger btn-spin-action float-right">
+                                {{ trans('unlink') }}
+                            </button>
+                        </form>
                     </div>
                 {% else %}
-                    <form action="{{ fsc.url() }}" method="post">
+                    <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
+                        {{ formToken() }}
                         <input type="hidden" name="action" value="register"/>
                         <div class="modal-header">
-                            <h5 class="modal-title">{{ i18n.trans('register-installation') }}</h5>
-                            <button type="button" class="close" data-dismiss="modal"
-                                    aria-label="{{ i18n.trans('close') }}">
+                            <h5 class="modal-title">
+                                <i class="fas fa-registered mr-1"></i> {{ trans('register-installation') }}
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('close') }}">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <p>{{ i18n.trans('register-installation-p') }}</p>
-                            <p>{{ i18n.trans('telemetry-data-to-send') }}</p>
-                            <button type="submit" class="btn btn-primary">
-                                {{ i18n.trans('register-installation') }}
+                            <p>{{ trans('register-installation-p') }}</p>
+                            <p>{{ trans('telemetry-data-to-send') }}</p>
+                            <button type="submit" class="btn btn-primary btn-spin-action">
+                                {{ trans('register-installation') }}
                             </button>
                         </div>
                     </form>
@@ -152,4 +180,48 @@
             </div>
         </div>
     </div>
+    {% if fsc.coreUpdateWarnings %}
+        <div class="modal fade" id="coreWarningModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle mr-1" aria-hidden="true"></i>
+                            {{ trans('core-update-warning') }}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="mb-0">
+                            {% for message in fsc.coreUpdateWarnings %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        {% for item in fsc.updaterItems %}
+                            {% if item.name == 'CORE' and fsc.coreUpdateWarnings %}
+                                <div class="btn-group">
+                                    <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&disable={{ fsc.coreUpdateWarnings | keys | join(',') }}"
+                                       class="btn btn-spin-action btn-warning" onclick="animateSpinner('add')">{{ trans('download') }}
+                                    </a>
+                                    <button type="button" class="btn btn-spin-action btn-warning dropdown-toggle dropdown-toggle-split"
+                                            data-toggle="dropdown" aria-expanded="false">
+                                        <span class="sr-only">{{ trans('options') }}</span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                                           class="btn btn-warning" onclick="animateSpinner('add')">{{ trans('do-not-disable-plugins') }}
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

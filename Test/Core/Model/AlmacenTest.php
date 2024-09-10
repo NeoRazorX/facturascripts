@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,20 +20,24 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Almacen;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class AlmacenTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testDataInstalled()
+    public function testDataInstalled(): void
     {
+        // llamamos de forma estática
+        $this->assertNotEmpty(Almacen::all(), 'warehouse-data-not-installed');
+
+        // llamamos de forma dinámica
         $warehouse = new Almacen();
         $this->assertNotEmpty($warehouse->all(), 'warehouse-data-not-installed-from-csv');
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $warehouse = new Almacen();
         $warehouse->codalmacen = 'Test';
@@ -44,7 +48,7 @@ final class AlmacenTest extends TestCase
         $this->assertTrue($warehouse->delete(), 'warehouse-cant-delete');
     }
 
-    public function testCreateWithNewCode()
+    public function testCreateWithNewCode(): void
     {
         $warehouse = new Almacen();
         $warehouse->nombre = 'Test Warehouse with new code';
@@ -52,7 +56,7 @@ final class AlmacenTest extends TestCase
         $this->assertTrue($warehouse->delete(), 'warehouse-cant-delete');
     }
 
-    public function testDeleteDefault()
+    public function testDeleteDefault(): void
     {
         $warehouse = new Almacen();
         foreach ($warehouse->all([], [], 0, 0) as $row) {
@@ -63,7 +67,7 @@ final class AlmacenTest extends TestCase
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

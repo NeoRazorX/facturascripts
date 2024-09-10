@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -65,6 +65,11 @@ class BaseWidget extends VisualItem
     public $required;
 
     /**
+     * @var int
+     */
+    public $tabindex;
+
+    /**
      * @var string
      */
     private $type;
@@ -85,6 +90,7 @@ class BaseWidget extends VisualItem
         $this->icon = $data['icon'] ?? '';
         $this->onclick = $data['onclick'] ?? '';
         $this->readonly = $data['readonly'] ?? 'false';
+        $this->tabindex = intval($data['tabindex'] ?? '-1');
         $this->required = isset($data['required']) && strtolower($data['required']) === 'true';
         $this->type = $data['type'];
         $this->loadOptions($data['children']);
@@ -103,17 +109,17 @@ class BaseWidget extends VisualItem
     {
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
-        $labelHtml = '<label class="mb-1">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
+        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
         if (empty($this->icon)) {
-            return '<div class="form-group">'
+            return '<div class="form-group mb-2">'
                 . $labelHtml
                 . $this->inputHtml()
                 . $descriptionHtml
                 . '</div>';
         }
 
-        return '<div class="form-group">'
+        return '<div class="form-group mb-2">'
             . $labelHtml
             . '<div class="input-group">'
             . '<div class="' . $this->css('input-group-prepend') . ' d-flex d-sm-none d-xl-flex">'
@@ -234,6 +240,7 @@ class BaseWidget extends VisualItem
         $params = $this->required ? ' required=""' : '';
         $params .= $this->readonly() ? ' readonly=""' : '';
         $params .= $this->autocomplete ? '' : ' autocomplete="off"';
+        $params .= $this->tabindex >= 0 ? ' tabindex="' . $this->tabindex . '"' : '';
 
         return $params;
     }
@@ -263,7 +270,8 @@ class BaseWidget extends VisualItem
             return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
-        return '<a href="' . FS_ROUTE . '/' . $this->onclick . '?code=' . rawurlencode($this->value)
+        $params = strpos($this->onclick, '?') !== false ? '&' : '?';
+        return '<a href="' . FS_ROUTE . '/' . $this->onclick . $params . 'code=' . rawurlencode($this->value)
             . '" class="cancelClickable">' . $inside . '</a>';
     }
 
@@ -284,7 +292,7 @@ class BaseWidget extends VisualItem
      */
     protected function setValue($model)
     {
-        $this->value = @$model->{$this->fieldname};
+        $this->value = $model->{$this->fieldname} ?? null;
     }
 
     /**

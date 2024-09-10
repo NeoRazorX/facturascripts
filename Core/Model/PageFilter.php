@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Tools;
 
 /**
  * Visual filter configuration of the FacturaScripts views,
@@ -26,7 +29,6 @@ namespace FacturaScripts\Core\Model;
  */
 class PageFilter extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -64,23 +66,13 @@ class PageFilter extends Base\ModelClass
      */
     public $nick;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->filters = [];
     }
 
-    /**
-     * This function is called when creating the model table.
-     * Returns the SQL that will be executed after the creation of the table,
-     * useful to insert default values.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         new Page();
         new User();
@@ -102,31 +94,21 @@ class PageFilter extends Base\ModelClass
         $this->filters = isset($data['filters']) ? json_decode($data['filters'], true) : [];
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'pages_filters';
     }
 
-    public function test()
+    public function test(): bool
     {
-        $this->description = $this->toolBox()->utils()->noHtml($this->description);
+        $this->description = Tools::noHtml($this->description);
         if (empty($this->description)) {
-            $this->toolBox()->i18nLog()->warning('description-error');
+            Tools::log()->warning('description-error');
             return false;
         }
 
@@ -138,33 +120,19 @@ class PageFilter extends Base\ModelClass
      *
      * @return array
      */
-    private function getEncodeValues()
+    private function getEncodeValues(): array
     {
         return [
             'filters' => json_encode($this->filters)
         ];
     }
 
-    /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return parent::saveInsert($this->getEncodeValues());
     }
 
-    /**
-     * Update the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         return parent::saveUpdate($this->getEncodeValues());
     }

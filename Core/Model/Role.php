@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
+ * Copyright (C) 2017-2023  Carlos García Gómez    <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson             <joenilson at gmail.com>
- * Copyright (C) 2017-2019  Carlos García Gómez    <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,7 +17,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
+use FacturaScripts\Dinamic\Model\RoleUser as DinRoleUser;
 
 /**
  * Define a permission package to quickly assign users.
@@ -27,86 +32,66 @@ namespace FacturaScripts\Core\Model;
  */
 class Role extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Role code.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codrole;
 
-    /**
-     * Description of the role.
-     *
-     * @var string
-     */
+    /** @var string */
     public $descripcion;
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public function addPage(string $pageName): bool
+    {
+        $rolePage = new DinRoleAccess();
+        $rolePage->codrole = $this->codrole;
+        $rolePage->pagename = $pageName;
+        return $rolePage->save();
+    }
+
+    public function addUser(string $nick): bool
+    {
+        $roleUser = new DinRoleUser();
+        $roleUser->codrole = $this->codrole;
+        $roleUser->nick = $nick;
+        return $roleUser->save();
+    }
+
+    public static function primaryColumn(): string
     {
         return 'codrole';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'roles';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     * It runs inside the save method.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        if (!empty($this->codrole) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codrole)) {
-            $this->toolBox()->i18nLog()->warning(
+        $this->descripcion = Tools::noHtml($this->descripcion);
+
+        // comprobamos que el código sea correcto
+        if (!empty($this->codrole) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codrole)) {
+            Tools::log()->warning(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codrole, '%column%' => 'codrole', '%min%' => '1', '%max%' => '20']
             );
             return false;
         }
 
-        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListUser?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListUser?activetab=List'): string
     {
         return parent::url($type, $list);
     }
 
-    /**
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
+        // si no hay codrole, lo generamos
         if (empty($this->codrole)) {
-            $this->codrole = (string) $this->newCode();
+            $this->codrole = (string)$this->newCode();
         }
 
         return parent::saveInsert($values);

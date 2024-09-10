@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,31 +21,43 @@
 <view>
     <columns>
         <column name="id" display="none" order="100">
-            <widget type="text" fieldname="idpartida" />
+            <widget type="text" fieldname="idpartida"/>
         </column>
         <column name="accounting-entry" order="110">
             <widget type="autocomplete" fieldname="idasiento">
-                <values source="asientos" fieldcode="idasiento" fieldtitle="numero" />
+                <values source="asientos" fieldcode="idasiento" fieldtitle="numero"/>
             </widget>
         </column>
         <column name="subaccount" display="none" order="120">
-            <widget type="text" fieldname="codsubcuenta" />
+            <widget type="text" fieldname="codsubcuenta"/>
         </column>
         <column name="concept" order="130">
-            <widget type="text" fieldname="concepto" />
+            <widget type="text" fieldname="concepto"/>
         </column>
-        <column name="debit" display="right" order="140">
+        <column name="tax-base" display="none" order="140">
+            <widget type="money" fieldname="baseimponible"/>
+        </column>
+        <column name="tax" display="none" order="150">
+            <widget type="percentage" fieldname="iva"/>
+        </column>
+        <column name="channel" display="none" order="155">
+            <widget type="text" fieldname="canal"/>
+        </column>
+        <column name="debit" display="right" order="160">
             <widget type="money" fieldname="debe">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="credit" display="right" order="150">
+        <column name="credit" display="right" order="170">
             <widget type="money" fieldname="haber">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="date" display="right" order="160">
-            <widget type="date" fieldname="fecha" />
+        <column name="balance" display="right" order="175">
+            <widget type="money" fieldname="saldo"/>
+        </column>
+        <column name="date" display="right" order="180">
+            <widget type="date" fieldname="fecha"/>
         </column>
     </columns>
     <rows>

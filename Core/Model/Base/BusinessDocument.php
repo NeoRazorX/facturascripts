@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,16 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\Serie;
 
 /**
@@ -32,12 +38,12 @@ use FacturaScripts\Dinamic\Model\Serie;
  */
 abstract class BusinessDocument extends ModelOnChangeClass
 {
-
     use CompanyRelationTrait;
     use CurrencyRelationTrait;
     use ExerciseRelationTrait;
     use PaymentRelationTrait;
     use SerieRelationTrait;
+    use IntracomunitariaTrait;
 
     /**
      * VAT number of the customer or supplier.
@@ -59,6 +65,11 @@ abstract class BusinessDocument extends ModelOnChangeClass
      * @var string
      */
     public $codigo;
+
+    /** @var array */
+    protected static $dont_copy_fields = ['codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora',
+        'idasiento', 'idestado', 'idfacturarect', 'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf',
+        'totaliva', 'totalrecargo', 'totalsuplidos'];
 
     /**
      * Percentage of discount.
@@ -131,6 +142,13 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public $numero;
 
     /**
+     * Number of attached documents.
+     *
+     * @var int
+     */
+    public $numdocs;
+
+    /**
      * Notes of the document.
      *
      * @var string
@@ -184,7 +202,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     /**
      * Returns the lines associated with the document.
      */
-    abstract public function getLines();
+    abstract public function getLines(): array;
 
     /**
      * Returns a new line for this business document.
@@ -228,15 +246,14 @@ abstract class BusinessDocument extends ModelOnChangeClass
     {
         parent::clear();
 
-        $appSettings = $this->toolBox()->appSettings();
-        $this->codalmacen = $appSettings->get('default', 'codalmacen');
-        $this->codpago = $appSettings->get('default', 'codpago');
-        $this->codserie = $appSettings->get('default', 'codserie');
+        $this->codalmacen = Tools::settings('default', 'codalmacen');
+        $this->codpago = Tools::settings('default', 'codpago');
+        $this->codserie = Tools::settings('default', 'codserie');
         $this->dtopor1 = 0.0;
         $this->dtopor2 = 0.0;
-        $this->fecha = date(self::DATE_STYLE);
-        $this->hora = date(self::HOUR_STYLE);
-        $this->idempresa = $appSettings->get('default', 'idempresa');
+        $this->fecha = Tools::date();
+        $this->hora = Tools::hour();
+        $this->idempresa = Tools::settings('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
         $this->netosindto = 0.0;
@@ -247,6 +264,28 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
         $this->totalsuplidos = 0.0;
+        $this->numdocs = 0;
+    }
+
+    public static function dontCopyField(string $field): void
+    {
+        static::$dont_copy_fields[] = $field;
+    }
+
+    public static function dontCopyFields(): array
+    {
+        $more = [static::primaryColumn()];
+        return array_merge(static::$dont_copy_fields, $more);
+    }
+
+    public function getAttachedFiles(): array
+    {
+        $relationModel = new AttachedFileRelation();
+        $where = [new DataBaseWhere('model', $this->modelClassName())];
+        $where[] = is_numeric($this->primaryColumnValue()) ?
+            new DataBaseWhere('modelid|modelcode', $this->primaryColumnValue()) :
+            new DataBaseWhere('modelcode', $this->primaryColumnValue());
+        return $relationModel->all($where, ['creationdate' => 'DESC'], 0, 0);
     }
 
     /**
@@ -271,20 +310,18 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Serie();
         new Ejercicio();
         new Almacen();
         new Divisa();
+        new FormaPago();
 
         return parent::install();
     }
 
-    /**
-     * @return bool
-     */
     public function paid(): bool
     {
         return false;
@@ -295,7 +332,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'codigo';
     }
@@ -305,7 +342,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         // check accounting exercise
         if (empty($this->codejercicio)) {
@@ -314,7 +351,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         // empty code?
         if (empty($this->codigo)) {
-            BusinessDocumentCode::getNewCode($this);
+            BusinessDocumentCode::setNewCode($this);
         }
 
         return parent::save();
@@ -344,7 +381,28 @@ abstract class BusinessDocument extends ModelOnChangeClass
             return true;
         }
 
-        $this->toolBox()->i18nLog()->warning('accounting-exercise-not-found');
+        Tools::log()->warning('accounting-exercise-not-found');
+        return false;
+    }
+
+    /**
+     * Sets warehouse and company for this document.
+     *
+     * @param string $codalmacen
+     *
+     * @return bool
+     */
+    public function setWarehouse(string $codalmacen): bool
+    {
+        foreach (Almacenes::all() as $almacen) {
+            if ($almacen->codalmacen == $codalmacen) {
+                $this->codalmacen = $almacen->codalmacen;
+                $this->idempresa = $almacen->idempresa ?? $this->idempresa;
+                return true;
+            }
+        }
+
+        Tools::log()->warning('warehouse-not-found');
         return false;
     }
 
@@ -361,21 +419,26 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->observaciones = $utils->noHtml($this->observaciones);
+        $this->observaciones = Tools::noHtml($this->observaciones);
 
         // check number
         if ((int)$this->numero < 1) {
-            $this->toolBox()->i18nLog()->error('invalid-number', ['%number%' => $this->numero]);
+            Tools::log()->error('invalid-number', ['%number%' => $this->numero]);
+            return false;
+        }
+
+        // check exercise and date
+        if (false === $this->hasChanged('fecha') && false === $this->getExercise()->inRange($this->fecha)) {
+            Tools::log()->error('date-out-of-exercise-range', ['%exerciseName%' => $this->codejercicio]);
             return false;
         }
 
         // check total
         $total = $this->neto + $this->totalsuplidos + $this->totaliva - $this->totalirpf + $this->totalrecargo;
-        if (false === $utils->floatcmp($this->total, $total, FS_NF0, true)) {
-            $this->toolBox()->i18nLog()->error('bad-total-error');
+        if (false === Utils::floatcmp($this->total, $total, FS_NF0, true)) {
+            Tools::log()->error('bad-total-error');
             return false;
         }
 
@@ -390,7 +453,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * Check changed fields before updata the database.
+     * Check changed fields before update the database.
      *
      * @param string $field
      *
@@ -406,7 +469,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 break;
 
             case 'codserie':
-                BusinessDocumentCode::getNewCode($this);
+                BusinessDocumentCode::setNewCode($this);
                 break;
 
             case 'fecha':
@@ -414,16 +477,16 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 if (false === $this->setDate($this->fecha, $this->hora)) {
                     return false;
                 } elseif ($this->codejercicio != $oldCodejercicio) {
-                    BusinessDocumentCode::getNewCode($this);
+                    BusinessDocumentCode::setNewCode($this);
                 }
                 break;
 
             case 'idempresa':
-                $this->toolBox()->i18nLog()->warning('non-editable-columns', ['%columns%' => 'idempresa']);
+                Tools::log()->warning('non-editable-columns', ['%columns%' => 'idempresa']);
                 return false;
 
             case 'numero':
-                BusinessDocumentCode::getNewCode($this, false);
+                BusinessDocumentCode::setNewCode($this, false);
                 break;
         }
 
@@ -435,14 +498,14 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         if (false === parent::saveUpdate($values)) {
             return false;
         }
 
         // add audit log
-        self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->info('updated-model', [
+        Tools::log(self::AUDIT_CHANNEL)->info('updated-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
@@ -461,29 +524,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
     protected function setPreviousData(array $fields = [])
     {
         $more = [
-            'codalmacen', 'coddivisa', 'codpago', 'codserie',
-            'fecha', 'hora', 'idempresa', 'numero', 'total'
+            'codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'numero',
+            'operacion', 'total'
         ];
         parent::setPreviousData(array_merge($more, $fields));
-    }
-
-    /**
-     * Sets warehouse and company for this document.
-     *
-     * @param string $codalmacen
-     *
-     * @return bool
-     */
-    protected function setWarehouse(string $codalmacen): bool
-    {
-        $almacen = new Almacen();
-        if ($almacen->loadFromCode($codalmacen)) {
-            $this->codalmacen = $almacen->codalmacen;
-            $this->idempresa = $almacen->idempresa ?? $this->idempresa;
-            return true;
-        }
-
-        $this->toolBox()->i18nLog()->warning('warehouse-not-found');
-        return false;
     }
 }

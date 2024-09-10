@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Tools;
 
 /**
  * Visual configuration of the FacturaScripts views,
@@ -27,7 +30,6 @@ namespace FacturaScripts\Core\Model;
  */
 class PageOption extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -44,6 +46,13 @@ class PageOption extends Base\ModelClass
      * @var int
      */
     public $id;
+
+    /**
+     * Last update date
+     *
+     * @var string
+     */
+    public $last_update;
 
     /**
      * Definition of modal forms
@@ -73,25 +82,16 @@ class PageOption extends Base\ModelClass
      */
     public $rows;
 
-    /**
-     * Reset values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->columns = [];
+        $this->last_update = Tools::dateTime();
         $this->modals = [];
         $this->rows = [];
     }
 
-    /**
-     * This function is called when creating the model table.
-     * Returns the SQL that will be executed after the creation of the table,
-     * useful to insert default values.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         new Page();
         new User();
@@ -115,24 +115,21 @@ class PageOption extends Base\ModelClass
         $this->rows = json_decode($data['rows'], true);
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'pages_options';
+    }
+
+    public function url(string $type = 'auto', string $list = 'List'): string
+    {
+        return $type === 'list' ?
+            parent::url($type, $list) :
+            'EditPageOption?code=' . $this->name;
     }
 
     /**
@@ -140,7 +137,7 @@ class PageOption extends Base\ModelClass
      *
      * @return array
      */
-    private function getEncodeValues()
+    private function getEncodeValues(): array
     {
         return [
             'columns' => json_encode($this->columns),
@@ -149,27 +146,17 @@ class PageOption extends Base\ModelClass
         ];
     }
 
-    /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
+        $this->last_update = Tools::dateTime();
+
         return parent::saveInsert($this->getEncodeValues());
     }
 
-    /**
-     * Update the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
+        $this->last_update = Tools::dateTime();
+
         return parent::saveUpdate($this->getEncodeValues());
     }
 }

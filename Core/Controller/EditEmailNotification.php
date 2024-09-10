@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,11 +28,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditEmailNotification extends EditController
 {
-
-    /**
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $pageData = parent::getPageData();
         $pageData['title'] = 'email-notification';
@@ -41,11 +37,22 @@ class EditEmailNotification extends EditController
         return $pageData;
     }
 
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'EmailNotification';
+    }
+
+    /**
+     * Create the view to display.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+
+        // desactivamos los botones nuevo, opciones e imprimir
+        $viewName = $this->getMainViewName();
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnOptions', false);
+        $this->setSettings($viewName, 'btnPrint', false);
     }
 }

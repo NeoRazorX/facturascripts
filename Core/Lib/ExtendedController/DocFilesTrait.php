@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,9 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\AttachedFileRelation;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
 /**
@@ -31,41 +32,49 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
  */
 trait DocFilesTrait
 {
-
     abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5');
 
     private function addFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFileActionToken()) {
             return true;
         }
 
-        $uploadFile = $this->request->files->get('new-file');
-        if ($uploadFile && $uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
-            $newFile = new AttachedFile();
-            $newFile->path = $uploadFile->getClientOriginalName();
-            if (false === $newFile->save()) {
-                ToolBox::i18nLog()->error('fail');
-                return true;
-            }
+        $uploadFiles = $this->request->files->get('new-files', []);
+        foreach ($uploadFiles as $uploadFile) {
+            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
+                $newFile = new AttachedFile();
+                $newFile->path = $uploadFile->getClientOriginalName();
+                if (false === $newFile->save()) {
+                    Tools::log()->error('fail');
+                    return true;
+                }
 
-            $fileRelation = new AttachedFileRelation();
-            $fileRelation->idfile = $newFile->idfile;
-            $fileRelation->model = $this->getModelClassName();
-            $fileRelation->modelcode = $this->request->query->get('code');
-            $fileRelation->modelid = (int)$fileRelation->modelcode;
-            $fileRelation->nick = $this->user->nick;
-            $fileRelation->observations = $this->request->request->get('observations');
-            if (false === $fileRelation->save()) {
-                ToolBox::i18nLog()->error('fail-relation');
-                return true;
+                $fileRelation = new AttachedFileRelation();
+                $fileRelation->idfile = $newFile->idfile;
+                $fileRelation->model = $this->getModelClassName();
+                $fileRelation->modelcode = $this->request->query->get('code');
+                $fileRelation->modelid = (int)$fileRelation->modelcode;
+                $fileRelation->nick = $this->user->nick;
+                $fileRelation->observations = $this->request->request->get('observations');
+                $this->pipeFalse('addFileAction', $fileRelation, $this->request);
+
+                if (false === $fileRelation->save()) {
+                    Tools::log()->error('fail-relation');
+                    return true;
+                }
             }
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        // Si se trata de un documento, actualizamos el número de documentos adjuntos.
+        if ($this->getModel() instanceof BusinessDocument) {
+            $this->updateNumDocs();
+        }
+
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 
@@ -77,7 +86,7 @@ trait DocFilesTrait
     private function deleteFileAction(): bool
     {
         if (false === $this->permissions->allowDelete) {
-            ToolBox::i18nLog()->warning('not-allowed-delete');
+            Tools::log()->warning('not-allowed-delete');
             return true;
         } elseif (false === $this->validateFileActionToken()) {
             return true;
@@ -85,20 +94,35 @@ trait DocFilesTrait
 
         $fileRelation = new AttachedFileRelation();
         $id = $this->request->request->get('id');
-        if ($fileRelation->loadFromCode($id)) {
-            $file = $fileRelation->getFile();
-            $fileRelation->delete();
-            $file->delete();
+        if (false === $fileRelation->loadFromCode($id)) {
+            Tools::log()->warning('record-not-found');
+            return true;
         }
 
-        ToolBox::i18nLog()->notice('record-deleted-correctly');
+        if ($fileRelation->modelcode != $this->request->query->get('code') ||
+            $fileRelation->model !== $this->getModelClassName()) {
+            Tools::log()->warning('not-allowed-delete');
+            return true;
+        }
+
+        $file = $fileRelation->getFile();
+        $fileRelation->delete();
+        $file->delete();
+
+        Tools::log()->notice('record-deleted-correctly');
+
+        // Si se trata de un documento, actualizamos el número de documentos adjuntos.
+        if ($this->getModel() instanceof BusinessDocument) {
+            $this->updateNumDocs();
+        }
+
         return true;
     }
 
     private function editFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFileActionToken()) {
             return true;
@@ -106,12 +130,26 @@ trait DocFilesTrait
 
         $fileRelation = new AttachedFileRelation();
         $id = $this->request->request->get('id');
-        if ($fileRelation->loadFromCode($id)) {
-            $fileRelation->observations = $this->request->request->get('observations');
-            $fileRelation->save();
+        if (false === $fileRelation->loadFromCode($id)) {
+            Tools::log()->warning('record-not-found');
+            return true;
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        if ($fileRelation->modelcode != $this->request->query->get('code') ||
+            $fileRelation->model !== $this->getModelClassName()) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $fileRelation->observations = $this->request->request->get('observations');
+        $this->pipeFalse('editFileAction', $fileRelation, $this->request);
+
+        if (false === $fileRelation->save()) {
+            Tools::log()->error('record-save-error');
+            return true;
+        }
+
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 
@@ -132,7 +170,7 @@ trait DocFilesTrait
     private function unlinkFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFileActionToken()) {
             return true;
@@ -144,8 +182,37 @@ trait DocFilesTrait
             $fileRelation->delete();
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
+
+        // Si se trata de un documento, actualizamos el número de documentos adjuntos.
+        if ($this->getModel() instanceof BusinessDocument) {
+            $this->updateNumDocs();
+        }
+
         return true;
+    }
+
+    /**
+     * Actualiza el número de adjuntos del documento.
+     */
+    protected function updateNumDocs(): void
+    {
+        $attachedFileRelation = new AttachedFileRelation();
+        $where = [
+            new DataBaseWhere('model', $this->getModelClassName()),
+            new DataBaseWhere('modelid', $this->request->get('code'))
+        ];
+        $numDocs = count($attachedFileRelation->all($where, [], 0, 0));
+
+        $model = $this->getModel();
+        $model->numdocs = $numDocs;
+
+        if (false === $model->save()) {
+            $this->response->setContent(json_encode([
+                'ok' => false,
+                'messages' => Tools::log()::read('', $this->logLevels)
+            ]));
+        }
     }
 
     private function validateFileActionToken(): bool
@@ -153,13 +220,13 @@ trait DocFilesTrait
         // valid request?
         $token = $this->request->request->get('multireqtoken', '');
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
-            ToolBox::i18nLog()->warning('invalid-request');
+            Tools::log()->warning('invalid-request');
             return false;
         }
 
         // duplicated request?
         if ($this->multiRequestProtection->tokenExist($token)) {
-            ToolBox::i18nLog()->warning('duplicated-request');
+            Tools::log()->warning('duplicated-request');
             return false;
         }
 

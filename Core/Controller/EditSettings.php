@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,13 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\EditView;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Model\Settings;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
@@ -34,15 +37,9 @@ use FacturaScripts\Dinamic\Model\Impuesto;
  */
 class EditSettings extends PanelController
 {
-
     const KEY_SETTINGS = 'Settings';
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -53,13 +50,11 @@ class EditSettings extends PanelController
 
     protected function checkPaymentMethod(): bool
     {
-        $appSettings = $this->toolBox()->appSettings();
-
-        $idempresa = $appSettings->get('default', 'idempresa');
+        $idempresa = Tools::settings('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
         $values = $this->codeModel->all('formaspago', 'codpago', 'descripcion', false, $where);
         foreach ($values as $value) {
-            if ($value->code == $appSettings->get('default', 'codpago')) {
+            if ($value->code == Tools::settings('default', 'codpago')) {
                 // perfect
                 return true;
             }
@@ -67,26 +62,24 @@ class EditSettings extends PanelController
 
         // assign a new payment method
         foreach ($values as $value) {
-            $appSettings->set('default', 'codpago', $value->code);
-            $appSettings->save();
+            Tools::settingsSet('default', 'codpago', $value->code);
+            Tools::settingsSave();
             return true;
         }
 
         // assign no payment method
-        $appSettings->set('default', 'codpago', null);
-        $appSettings->save();
+        Tools::settingsSet('default', 'codpago', null);
+        Tools::settingsSave();
         return false;
     }
 
     protected function checkWarehouse(): bool
     {
-        $appSettings = $this->toolBox()->appSettings();
-
-        $idempresa = $appSettings->get('default', 'idempresa');
+        $idempresa = Tools::settings('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
         $values = $this->codeModel->all('almacenes', 'codalmacen', 'nombre', false, $where);
         foreach ($values as $value) {
-            if ($value->code == $appSettings->get('default', 'codalmacen')) {
+            if ($value->code == Tools::settings('default', 'codalmacen')) {
                 // perfect
                 return true;
             }
@@ -94,49 +87,44 @@ class EditSettings extends PanelController
 
         // assign a new warehouse
         foreach ($values as $value) {
-            $appSettings->set('default', 'codalmacen', $value->code);
-            $appSettings->save();
+            Tools::settingsSet('default', 'codalmacen', $value->code);
+            Tools::settingsSave();
             return true;
         }
 
         // assign no warehouse
-        $appSettings->set('default', 'codalmacen', null);
-        $appSettings->save();
+        Tools::settingsSet('default', 'codalmacen', null);
+        Tools::settingsSave();
         return false;
     }
 
     protected function checkTax(): bool
     {
-        $appSettings = $this->toolBox()->appSettings();
-
         // find current default tax
         $taxModel = new Impuesto();
-        $codimpuesto = $appSettings->get('default', 'codimpuesto');
+        $codimpuesto = Tools::settings('default', 'codimpuesto');
         if ($taxModel->loadFromCode($codimpuesto)) {
             return true;
         }
 
-        foreach ($taxModel->all() as $tax) {
-            $appSettings->set('default', 'codimpuesto', $tax->codimpuesto);
-            $appSettings->save();
-            break;
-        }
-
+        // assign no tax
+        Tools::settingsSet('default', 'codimpuesto', null);
+        Tools::settingsSave();
         return false;
     }
 
-    protected function createDocTypeFilter(string $viewName)
+    protected function createDocTypeFilter(string $viewName): void
     {
         $types = $this->codeModel->all('estados_documentos', 'tipodoc', 'tipodoc');
 
         // custom translation
         foreach ($types as $key => $value) {
             if (!empty($value->code)) {
-                $types[$key]->description = $this->toolBox()->i18n()->trans($value->code);
+                $value->description = Tools::lang()->trans($value->code);
             }
         }
 
-        $this->views[$viewName]->addFilterSelect('tipodoc', 'doc-type', 'tipodoc', $types);
+        $this->listView($viewName)->addFilterSelect('tipodoc', 'doc-type', 'tipodoc', $types);
     }
 
     /**
@@ -167,32 +155,33 @@ class EditSettings extends PanelController
         $this->createViewFormats();
     }
 
-    protected function createViewsApiKeys(string $viewName = 'ListApiKey')
+    protected function createViewsApiKeys(string $viewName = 'ListApiKey'): void
     {
-        $this->addListView($viewName, 'ApiKey', 'api-keys', 'fas fa-key');
-        $this->views[$viewName]->addOrderBy(['id'], 'id');
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addOrderBy(['creationdate', 'id'], 'date', 2);
-        $this->views[$viewName]->addSearchFields(['description', 'apikey', 'nick']);
+        $this->addListView($viewName, 'ApiKey', 'api-keys', 'fas fa-key')
+            ->addOrderBy(['id'], 'id')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['creationdate', 'id'], 'date', 2)
+            ->addSearchFields(['description', 'apikey', 'nick']);
     }
 
-    protected function createViewsIdFiscal(string $viewName = 'EditIdentificadorFiscal')
+    protected function createViewsIdFiscal(string $viewName = 'EditIdentificadorFiscal'): void
     {
-        $this->addEditListView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'far fa-id-card');
-        $this->views[$viewName]->setInLine(true);
+        $this->addEditListView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'far fa-id-card')
+            ->setInLine(true);
     }
 
-    protected function createViewFormats(string $viewName = 'ListFormatoDocumento')
+    protected function createViewFormats(string $viewName = 'ListFormatoDocumento'): void
     {
-        $this->addListView($viewName, 'FormatoDocumento', 'printing-formats', 'fas fa-print');
-        $this->views[$viewName]->addOrderBy(['nombre'], 'name');
-        $this->views[$viewName]->addOrderBy(['titulo'], 'title');
-        $this->views[$viewName]->addSearchFields(['nombre', 'titulo', 'texto']);
+        $this->addListView($viewName, 'FormatoDocumento', 'printing-formats', 'fas fa-print')
+            ->addOrderBy(['nombre'], 'name')
+            ->addOrderBy(['titulo'], 'title')
+            ->addSearchFields(['nombre', 'titulo', 'texto']);
 
         // Filters
         $this->createDocTypeFilter($viewName);
-        $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
-        $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
+        $this->listView($viewName)
+            ->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel())
+            ->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
     }
 
     /**
@@ -202,7 +191,7 @@ class EditSettings extends PanelController
      * @param string $model
      * @param string $icon
      */
-    protected function createViewsSettings(string $name, string $model, string $icon)
+    protected function createViewsSettings(string $name, string $model, string $icon): void
     {
         $title = $this->getKeyFromViewName($name);
         $this->addEditView($name, $model, $title, $icon);
@@ -221,74 +210,78 @@ class EditSettings extends PanelController
         $this->setSettings($name, 'btnNew', false);
     }
 
-    protected function createViewSequences(string $viewName = 'ListSecuenciaDocumento')
+    protected function createViewSequences(string $viewName = 'ListSecuenciaDocumento'): void
     {
-        $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
-        $this->views[$viewName]->addOrderBy(['codejercicio', 'codserie', 'tipodoc'], 'exercise', 2);
-        $this->views[$viewName]->addOrderBy(['codserie'], 'serie');
-        $this->views[$viewName]->addOrderBy(['numero'], 'number');
-        $this->views[$viewName]->addSearchFields(['patron', 'tipodoc']);
+        $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code')
+            ->addOrderBy(['codejercicio', 'codserie', 'tipodoc'], 'exercise')
+            ->addOrderBy(['codserie'], 'serie')
+            ->addOrderBy(['numero'], 'number')
+            ->addOrderBy(['tipodoc', 'codejercicio', 'codserie'], 'doc-type', 1)
+            ->addSearchFields(['patron', 'tipodoc']);
+
+        // disable company column if there is only one company
+        if ($this->empresa->count() < 2) {
+            $this->views[$viewName]->disableColumn('company');
+        } else {
+            // Filters with various companies
+            $this->listView($viewName)->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
+        }
+
+        // Filters
+        $this->listView($viewName)
+            ->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel())
+            ->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
+        $this->createDocTypeFilter($viewName);
+    }
+
+    protected function createViewStates(string $viewName = 'ListEstadoDocumento'): void
+    {
+        $this->addListView($viewName, 'EstadoDocumento', 'states', 'fas fa-tags')
+            ->addOrderBy(['idestado'], 'id')
+            ->addOrderBy(['nombre'], 'name')
+            ->addSearchFields(['nombre']);
 
         // Filters
         $this->createDocTypeFilter($viewName);
-        $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
-
-        $exercises = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
-        $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', $exercises);
-
-        $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
+        $this->listView($viewName)
+            ->addFilterSelect('actualizastock', 'update-stock', 'actualizastock', [
+                ['code' => null, 'description' => '------'],
+                ['code' => -2, 'description' => Tools::lang()->trans('book')],
+                ['code' => -1, 'description' => Tools::lang()->trans('subtract')],
+                ['code' => 0, 'description' => Tools::lang()->trans('do-nothing')],
+                ['code' => 1, 'description' => Tools::lang()->trans('add')],
+                ['code' => 2, 'description' => Tools::lang()->trans('foresee')],
+            ])
+            ->addFilterCheckbox('predeterminado', 'default', 'predeterminado')
+            ->addFilterCheckbox('editable', 'editable', 'editable');
     }
 
-    protected function createViewStates(string $viewName = 'ListEstadoDocumento')
-    {
-        $this->addListView($viewName, 'EstadoDocumento', 'states', 'fas fa-tags');
-        $this->views[$viewName]->addOrderBy(['idestado'], 'id');
-        $this->views[$viewName]->addOrderBy(['nombre'], 'name');
-        $this->views[$viewName]->addSearchFields(['nombre']);
-
-        // Filters
-        $this->createDocTypeFilter($viewName);
-        $this->views[$viewName]->addFilterSelect('actualizastock', 'update-stock', 'actualizastock', [
-            ['code' => null, 'description' => '------'],
-            ['code' => -2, 'description' => $this->toolBox()->i18n()->trans('book')],
-            ['code' => -1, 'description' => $this->toolBox()->i18n()->trans('subtract')],
-            ['code' => 0, 'description' => $this->toolBox()->i18n()->trans('do-nothing')],
-            ['code' => 1, 'description' => $this->toolBox()->i18n()->trans('add')],
-            ['code' => 2, 'description' => $this->toolBox()->i18n()->trans('foresee')],
-        ]);
-        $this->views[$viewName]->addFilterCheckbox('predeterminado', 'default', 'predeterminado');
-        $this->views[$viewName]->addFilterCheckbox('editable', 'editable', 'editable');
-    }
-
-    /**
-     * @return bool
-     */
-    protected function editAction()
+    protected function editAction(): bool
     {
         if (false === parent::editAction()) {
             return false;
         }
 
-        $this->toolBox()->appSettings()->reload();
+        Tools::settingsClear();
 
         // check relations
         $this->checkPaymentMethod();
         $this->checkWarehouse();
         $this->checkTax();
+
+        // check site_url
+        $siteUrl = Tools::settings('default', 'site_url');
+        if (empty($siteUrl)) {
+            Tools::settingsSet('default', 'site_url', Tools::siteUrl());
+            Tools::settingsSave();
+        }
+
         return true;
     }
 
-    /**
-     * Run the controller after actions
-     *
-     * @param string $action
-     */
-    protected function execAfterAction($action)
+    protected function exportAction()
     {
-        switch ($action) {
-            case 'export':
-                break;
-        }
+        // do nothing
     }
 
     /**
@@ -302,7 +295,7 @@ class EditSettings extends PanelController
         switch ($viewName) {
             case 'ListApiKey':
                 $view->loadData();
-                if (false === (bool)$this->toolBox()->appSettings()->get('default', 'enable_api', '0')) {
+                if (false === (bool)Tools::settings('default', 'enable_api', '0')) {
                     $this->setSettings($viewName, 'active', false);
                 }
                 break;
@@ -314,25 +307,27 @@ class EditSettings extends PanelController
             case 'SettingsDefault':
                 $code = $this->getKeyFromViewName($viewName);
                 $view->loadData($code);
-                if (empty($view->model->name)) {
+                if ($view->model instanceof Settings && empty($view->model->name)) {
                     $view->model->name = $code;
                 }
                 $this->loadPaymentMethodValues($viewName);
                 $this->loadWarehouseValues($viewName);
                 $this->loadLogoImageValues($viewName);
+                $this->loadSerie($viewName);
+                $this->loadSerieRectifying($viewName);
                 break;
 
             default:
                 $code = $this->getKeyFromViewName($viewName);
                 $view->loadData($code);
-                if (empty($view->model->name)) {
+                if ($view->model instanceof Settings && empty($view->model->name)) {
                     $view->model->name = $code;
                 }
                 break;
         }
     }
 
-    protected function loadLogoImageValues($viewName)
+    protected function loadLogoImageValues($viewName): void
     {
         $columnLogo = $this->views[$viewName]->columnForName('login-image');
         if ($columnLogo && $columnLogo->widget->getType() === 'select') {
@@ -343,9 +338,9 @@ class EditSettings extends PanelController
         }
     }
 
-    protected function loadPaymentMethodValues(string $viewName)
+    protected function loadPaymentMethodValues(string $viewName): void
     {
-        $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        $idempresa = Tools::settings('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
         $methods = $this->codeModel->all('formaspago', 'codpago', 'descripcion', false, $where);
 
@@ -355,9 +350,32 @@ class EditSettings extends PanelController
         }
     }
 
-    protected function loadWarehouseValues(string $viewName)
+    protected function loadSerie(string $viewName): void
     {
-        $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        $columnSerie = $this->views[$viewName]->columnForName('serie');
+        if ($columnSerie && $columnSerie->widget->getType() === 'select') {
+            $series = $this->codeModel->all('series', 'codserie', 'descripcion', false, [
+                new DataBaseWhere('tipo', 'R', '!='),
+                new DataBaseWhere('tipo', null, '=', 'OR')
+            ]);
+            $columnSerie->widget->setValuesFromCodeModel($series);
+        }
+    }
+
+    protected function loadSerieRectifying(string $viewName): void
+    {
+        $columnSerie = $this->views[$viewName]->columnForName('rectifying-serie');
+        if ($columnSerie && $columnSerie->widget->getType() === 'select') {
+            $series = $this->codeModel->all('series', 'codserie', 'descripcion', false, [
+                new DataBaseWhere('tipo', 'R')
+            ]);
+            $columnSerie->widget->setValuesFromCodeModel($series);
+        }
+    }
+
+    protected function loadWarehouseValues(string $viewName): void
+    {
+        $idempresa = Tools::settings('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
         $almacenes = $this->codeModel->all('almacenes', 'codalmacen', 'nombre', false, $where);
 
@@ -375,7 +393,7 @@ class EditSettings extends PanelController
     private function allSettingsXMLViews(): array
     {
         $names = [];
-        foreach ($this->toolBox()->files()->scanFolder(FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
+        foreach (Tools::folderScan(FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
             if (0 === strpos($fileName, self::KEY_SETTINGS)) {
                 $names[] = substr($fileName, 0, -4);
             }

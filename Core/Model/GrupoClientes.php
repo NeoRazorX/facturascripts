@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2019 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2023 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
+use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
+use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
  * A group of customers, which may be associated with a rate.
@@ -25,124 +32,99 @@ namespace FacturaScripts\Core\Model;
  */
 class GrupoClientes extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Primary key.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codgrupo;
 
-    /**
-     * Accounting code.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codsubcuenta;
 
-    /**
-     * Code of the associated rate, if any.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codtarifa;
 
-    /**
-     * Group name.
-     *
-     * @var string
-     */
+    /** @var string */
     public $nombre;
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function getSubcuenta(string $codejercicio, bool $crear): Subcuenta
     {
-        /// As there is a key outside of tariffs, we have to check that table before
+        // si no tiene una subcuenta asignada, devolvemos una vacía
+        if (empty($this->codsubcuenta)) {
+            return new DinSubcuenta();
+        }
+
+        // buscamos la subcuenta para el ejercicio
+        $subAccount = new DinSubcuenta();
+        $where = [
+            new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
+            new DataBaseWhere('codejercicio', $codejercicio),
+        ];
+        if ($subAccount->loadFromCode('', $where)) {
+            return $subAccount;
+        }
+
+        // no hemos encontrado la subcuenta
+        // si no queremos crearla, devolvemos una vacía
+        if (false === $crear) {
+            return new DinSubcuenta();
+        }
+
+        // buscamos la cuenta especial
+        $special = new DinCuentaEspecial();
+        if (false === $special->loadFromCode(DinCliente::SPECIAL_ACCOUNT)) {
+            return new DinSubcuenta();
+        }
+
+        // ahora creamos la subcuenta
+        return $special->getCuenta($codejercicio)->createSubcuenta($this->codsubcuenta, $this->nombre);
+    }
+
+    public function install(): string
+    {
+        // As there is a key outside of tariffs, we have to check that table before
         new Tarifa();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codgrupo';
     }
 
-    /**
-     * Returns the description of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'gruposclientes';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        if (!empty($this->codgrupo) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codgrupo)) {
-            $this->toolBox()->i18nLog()->warning(
+        if (!empty($this->codgrupo) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codgrupo)) {
+            Tools::log()->warning(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codgrupo, '%column%' => 'codgrupo', '%min%' => '1', '%max%' => '6']
             );
             return false;
         }
 
-        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
+        $this->nombre = Tools::noHtml($this->nombre);
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         return parent::url($type, $list);
     }
 
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codgrupo)) {
-            $this->codgrupo = (string) $this->newCode();
+            $this->codgrupo = (string)$this->newCode();
         }
 
         return parent::saveInsert($values);

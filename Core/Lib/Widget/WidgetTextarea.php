@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,9 +57,9 @@ class WidgetTextarea extends WidgetText
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
-        $labelHtml = '<label class="mb-1">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
+        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
-        return '<div class="form-group">'
+        return '<div class="form-group mb-2">'
             . $labelHtml
             . $inputHtml
             . $descriptionHtml
@@ -74,12 +74,15 @@ class WidgetTextarea extends WidgetText
      */
     public function tableCell($model, $display = 'left')
     {
+        $limit = 60;
         $this->setValue($model);
         $class = 'text-' . $display;
         $value = $this->show();
-        $final = mb_strlen($value) > 60 ? mb_substr($value, 0, 60) . '...' : $value;
+        $final = mb_strlen($value) > $limit ? mb_substr($value, 0, $limit) . '...' : $value;
 
-        return '<td class="' . $this->tableCellClass($class) . '">' . $this->onclickHtml($final) . '</td>';
+        return mb_strlen($value) > $limit ?
+            '<td class="' . $this->tableCellClass($class) . '" title="' . $value . '">' . $this->onclickHtml($final) . '</td>' :
+            '<td class="' . $this->tableCellClass($class) . '">' . $this->onclickHtml($final) . '</td>';
     }
 
     /**

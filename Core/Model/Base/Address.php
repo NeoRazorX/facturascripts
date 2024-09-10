@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
+
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of Address abstract class.
@@ -25,7 +28,6 @@ namespace FacturaScripts\Core\Model\Base;
  */
 abstract class Address extends ModelClass
 {
-
     /**
      * Post office box of the address.
      *
@@ -74,7 +76,7 @@ abstract class Address extends ModelClass
     public function clear()
     {
         parent::clear();
-        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
+        $this->codpais = Tools::settings('default', 'codpais');
     }
 
     /**
@@ -82,13 +84,12 @@ abstract class Address extends ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->apartado = $utils->noHtml($this->apartado);
-        $this->ciudad = $utils->noHtml($this->ciudad);
-        $this->direccion = $utils->noHtml($this->direccion);
-        $this->provincia = $utils->noHtml($this->provincia);
+        $this->apartado = Tools::noHtml($this->apartado);
+        $this->ciudad = Tools::noHtml($this->ciudad);
+        $this->direccion = Tools::noHtml($this->direccion);
+        $this->provincia = Tools::noHtml($this->provincia);
 
         return parent::test();
     }

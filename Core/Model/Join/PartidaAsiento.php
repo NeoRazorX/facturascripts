@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,19 +37,13 @@ class PartidaAsiento extends JoinModel
      */
     private $asiento;
 
-    /**
-     * @param array $data
-     */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->setMasterModel(new Partida());
         $this->asiento = new Asiento();
     }
 
-    /**
-     * @return Partida
-     */
     public function getPartida(): Partida
     {
         $partida = new Partida();
@@ -65,41 +59,35 @@ class PartidaAsiento extends JoinModel
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         $this->asiento->idasiento = $this->idasiento;
         return $this->asiento->url($type, $list);
     }
 
-    /**
-     * @return array
-     */
     protected function getFields(): array
     {
         return [
+            'baseimponible' => 'partidas.baseimponible',
+            'canal' => 'asientos.canal',
             'concepto' => 'partidas.concepto',
             'debe' => 'partidas.debe',
             'fecha' => 'asientos.fecha',
             'haber' => 'partidas.haber',
             'idasiento' => 'partidas.idasiento',
             'idpartida' => 'partidas.idpartida',
+            'iva' => 'partidas.iva',
             'numero' => 'asientos.numero',
             'punteada' => 'partidas.punteada',
             'saldo' => 'partidas.saldo'
         ];
     }
 
-    /**
-     * @return string
-     */
     protected function getSQLFrom(): string
     {
         return 'partidas LEFT JOIN asientos ON partidas.idasiento = asientos.idasiento';
     }
 
-    /**
-     * @return array
-     */
     protected function getTables(): array
     {
         return ['asientos', 'partidas'];

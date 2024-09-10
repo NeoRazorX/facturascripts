@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\CuentaEspecial;
-use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor;
  * Class that performs accounting closures
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ClosingToAcounting
 {
@@ -198,9 +198,9 @@ class ClosingToAcounting
      */
     protected function execCloseInvoices(): bool
     {
-        /// apply to customer invoices
+        // apply to customer invoices
         $customerInvoice = new FacturaCliente();
-        $status1 = $customerInvoice->getAvaliableStatus();
+        $status1 = $customerInvoice->getAvailableStatus();
         $where = [
             new DataBaseWhere('editable', true),
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio)
@@ -219,9 +219,9 @@ class ClosingToAcounting
             break;
         }
 
-        /// apply to supplier invoices
+        // apply to supplier invoices
         $supplierInvoice = new FacturaProveedor();
-        $status2 = $supplierInvoice->getAvaliableStatus();
+        $status2 = $supplierInvoice->getAvailableStatus();
         foreach ($status2 as $stat) {
             if ($stat->editable || $stat->generadoc) {
                 continue;

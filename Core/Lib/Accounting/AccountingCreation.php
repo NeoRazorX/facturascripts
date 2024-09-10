@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -217,23 +218,61 @@ class AccountingCreation
      */
     public function getFreeSubjectSubaccount($subject, $account)
     {
-        if (!$this->checkExercise($account->codejercicio)) {
+        if (false === $this->checkExercise($account->codejercicio)) {
             return '';
         }
 
+        // nos quedamos solamente con los números del código
         $code = preg_replace('/[^0-9]/', '', $subject->primaryColumnValue());
-        $numbers = array_merge([$code], range(1, 999));
+        if (strlen($code) === $this->exercise->longsubcuenta) {
+            // si el código ya tiene la longitud de una subcuenta, lo usamos como subcuenta
+            return $code;
+        }
+
+        // conformamos un array con el número del cliente, los 99 primeros números y un número aleatorio
+        $numbers = array_merge(
+            [$code],
+            range(1, 99),
+            [rand(100, 9999)]
+        );
+
+        // añadimos también los 100 siguientes números al total de subcuentas
+        $subcuenta = new Subcuenta();
+        $whereTotal = [
+            new DataBaseWhere('codcuenta', $account->codcuenta),
+            new DataBaseWhere('codejercicio', $account->codejercicio)
+        ];
+        $total = $subcuenta->count($whereTotal);
+        if ($total > 99) {
+            $numbers = array_merge($numbers, range($total, $total + 99));
+        }
+
+        // probamos los números para elegir el primer código de subcuenta que no exista
         foreach ($numbers as $num) {
             $newCode = $this->fillToLength($this->exercise->longsubcuenta, $num, $account->codcuenta);
+            if (empty($newCode)) {
+                continue;
+            }
 
-            /// is this code used in other customer or supplier?
+            // comprobamos que esta subcuenta no esté en uso en otro cliente o proveedor
             $where = [new DataBaseWhere('codsubcuenta', $newCode)];
             $count = $subject->count($where);
+            if ($count > 0) {
+                continue;
+            }
 
-            if (!empty($newCode) && !$this->getSubAccount($newCode)->exists() && $count == 0) {
+            // si la subcuenta no existe, la elegimos
+            $where = [
+                new DataBaseWhere('codejercicio', $account->codejercicio),
+                new DataBaseWhere('codsubcuenta', $newCode)
+            ];
+            if (false === $subcuenta->loadFromCode('', $where)) {
                 return $newCode;
             }
         }
+
+        // no hemos encontrado ninguna subcuenta libre
+        Tools::log()->error('no-empty-account-found');
 
         return '';
     }
@@ -252,24 +291,5 @@ class AccountingCreation
         }
 
         return $this->exercise->isOpened();
-    }
-
-    /**
-     * Get the indicated accounting sub-account.
-     *
-     * @param string $code
-     *
-     * @return Subcuenta
-     */
-    private function getSubAccount(string $code)
-    {
-        $where = [
-            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
-            new DataBaseWhere('codsubcuenta', $code)
-        ];
-
-        $subAccount = new Subcuenta();
-        $subAccount->loadFromCode('', $where);
-        return $subAccount;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,62 +19,74 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
+
 /**
  * Un atributo para artículos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Atributo extends Base\ModelClass
+class Atributo extends ModelClass
 {
+    use ModelTrait;
 
-    use Base\ModelTrait;
-
-    /**
-     * Primary key.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codatributo;
 
-    /**
-     * Name of the attribute.
-     *
-     * @var string
-     */
+    /** @var string */
     public $nombre;
 
+    /** @var int */
+    public $num_selector;
+
+    public function clear()
+    {
+        parent::clear();
+        $this->num_selector = 0;
+    }
+
+    public function getNewValue(string $value): AtributoValor
+    {
+        $attValue = new DinAtributoValor();
+        $attValue->codatributo = $this->codatributo;
+        $attValue->valor = $value;
+
+        return $attValue;
+    }
+
     /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
+     * @return AtributoValor[]
      */
-    public static function primaryColumn()
+    public function getValores(): array
+    {
+        $valor = new DinAtributoValor();
+        $where = [new DataBaseWhere('codatributo', $this->codatributo)];
+        $orderBy = ['orden' => 'ASC'];
+        return $valor->all($where, $orderBy, 0, 0);
+    }
+
+    public static function primaryColumn(): string
     {
         return 'codatributo';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'atributos';
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $this->codatributo = $this->toolBox()->utils()->noHtml($this->codatributo);
-        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
+        // escapamos el html
+        $this->codatributo = Tools::noHtml($this->codatributo);
+        $this->nombre = Tools::noHtml($this->nombre);
 
         if ($this->codatributo && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codatributo)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codatributo, '%column%' => 'codatributo', '%min%' => '1', '%max%' => '20']
             );
@@ -84,12 +96,7 @@ class Atributo extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codatributo)) {
             $this->codatributo = (string)$this->newCode();

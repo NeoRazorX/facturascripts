@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -24,7 +25,7 @@ use FacturaScripts\Dinamic\Model\LineaPresupuestoProveedor as LineaPresupuesto;
 
 /**
  * Supplier order.
- * 
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PresupuestoProveedor extends Base\PurchaseDocument
@@ -44,7 +45,7 @@ class PresupuestoProveedor extends Base\PurchaseDocument
      *
      * @return LineaPresupuesto[]
      */
-    public function getLines()
+    public function getLines(): array
     {
         $lineaModel = new LineaPresupuesto();
         $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
@@ -67,27 +68,20 @@ class PresupuestoProveedor extends Base\PurchaseDocument
         $newLine->idpresupuesto = $this->idpresupuesto;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
-
         $newLine->loadFromData($data, $exclude);
+
+        // allow extensions
+        $this->pipe('getNewLine', $newLine, $data, $exclude);
+
         return $newLine;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idpresupuesto';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'presupuestosprov';
     }

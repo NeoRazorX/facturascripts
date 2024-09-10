@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 
 /**
@@ -32,10 +33,6 @@ use FacturaScripts\Dinamic\Model\ApiAccess;
  */
 class EditApiKey extends EditController
 {
-
-    /**
-     * @return array
-     */
     public function getAccessRules(): array
     {
         $rules = [];
@@ -60,22 +57,12 @@ class EditApiKey extends EditController
         return $rules;
     }
 
-    /**
-     * Returns the model name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'ApiKey';
     }
 
-    /**
-     * Returns basic page attributes.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -90,35 +77,30 @@ class EditApiKey extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->createViewsAccess();
         $this->setTabsPosition('bottom');
+
+        $this->createViewsAccess();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsAccess(string $viewName = 'ApiAccess')
     {
         $this->addHtmlView($viewName, 'Tab/ApiAccess', 'ApiAccess', 'rules', 'fas fa-check-square');
     }
 
-    /**
-     * @return bool
-     */
     protected function editRulesAction(): bool
     {
         // check user permissions
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            Tools::log()->warning('not-allowed-update');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
         }
 
-        $allowGet = $this->request->request->get('allowget');
-        $allowPut = $this->request->request->get('allowput');
-        $allowPost = $this->request->request->get('allowpost');
-        $allowDelete = $this->request->request->get('allowdelete');
+        $allowGet = $this->request->request->get('allowget', []);
+        $allowPut = $this->request->request->get('allowput', []);
+        $allowPost = $this->request->request->get('allowpost', []);
+        $allowDelete = $this->request->request->get('allowdelete', []);
 
         // update current access rules
         $accessModel = new ApiAccess();
@@ -156,7 +138,7 @@ class EditApiKey extends EditController
             $newAccess->save();
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 
@@ -169,9 +151,8 @@ class EditApiKey extends EditController
      */
     protected function execPreviousAction($action)
     {
-        switch ($action) {
-            case 'edit-rules':
-                return $this->editRulesAction();
+        if ($action == 'edit-rules') {
+            return $this->editRulesAction();
         }
 
         return parent::execPreviousAction($action);
@@ -203,6 +184,9 @@ class EditApiKey extends EditController
             }
         }
 
+        // agregamos los recursos custom y de los plugins
+        $resources = array_merge($resources, ApiRoot::getCustomResources());
+
         sort($resources);
         return $resources;
     }
@@ -221,6 +205,9 @@ class EditApiKey extends EditController
                 parent::loadData($viewName, $view);
                 if (false === $view->model->exists()) {
                     $view->model->nick = $this->user->nick;
+                } elseif ($view->model->fullaccess) {
+                    // si la clave es de acceso total, no se muestran los permisos
+                    $this->setSettings('ApiAccess', 'active', false);
                 }
                 break;
         }

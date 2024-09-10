@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
 
 /**
  * Personalize the numeration and code of sale and purchase documents.
@@ -24,75 +29,47 @@ namespace FacturaScripts\Core\Model;
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class SecuenciaDocumento extends Base\ModelClass
+class SecuenciaDocumento extends ModelClass
 {
+    use ModelTrait;
 
-    use Base\ModelTrait;
-
-    /**
-     *
-     * @var string
-     */
+    /** @var string */
     public $codejercicio;
 
-    /**
-     *
-     * @var string
-     */
+    /** @var string */
     public $codserie;
 
-    /**
-     *
-     * @var int
-     */
+    /** @var int */
     public $idempresa;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idsecuencia;
 
-    /**
-     *
-     * @var int
-     */
+    /** @var int */
     public $inicio;
 
-    /**
-     *
-     * @var int
-     */
+    /** @var int */
     public $longnumero;
 
-    /**
-     *
-     * @var int
-     */
+    /** @var int */
     public $numero;
 
-    /**
-     *
-     * @var string
-     */
+    /** @var string */
     public $patron;
 
-    /**
-     *
-     * @var string
-     */
+    /** @var bool */
+    private static $pattern_test = false;
+
+    /** @var string */
     public $tipodoc;
 
-    /**
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $usarhuecos;
 
     public function clear()
     {
         parent::clear();
+        $this->idempresa = Tools::settings('default', 'idempresa');
         $this->inicio = 1;
         $this->longnumero = 6;
         $this->numero = 1;
@@ -100,47 +77,37 @@ class SecuenciaDocumento extends Base\ModelClass
         $this->usarhuecos = false;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function install()
+    public function disablePatternTest(bool $disable): void
     {
-        /// needed dependencies
+        self::$pattern_test = !$disable;
+    }
+
+    public function install(): string
+    {
+        // needed dependencies
         new Ejercicio();
         new Serie();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idsecuencia';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'secuencias_documentos';
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
+        // escapamos el html
+        $this->patron = Tools::noHtml($this->patron);
+
         if (empty($this->idempresa)) {
-            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+            $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
         if (empty($this->inicio) || $this->inicio < 1) {
@@ -151,19 +118,79 @@ class SecuenciaDocumento extends Base\ModelClass
             $this->numero = $this->inicio;
         }
 
-        $this->patron = $this->toolBox()->utils()->noHtml($this->patron);
-        return parent::test();
+        // si usar huecos es false, tipodoc es FacturaCliente y el país predeterminado es España, mostramos aviso
+        if (!$this->usarhuecos && 'FacturaCliente' === $this->tipodoc && 'ESP' === Tools::settings('default', 'codpais')) {
+            Tools::log()->error('use-holes-invoices-esp');
+        }
+
+        return parent::test() && $this->testPatron();
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    protected function generateCode(): string
+    {
+        return strtr($this->patron, [
+            '{FECHA}' => Tools::date(),
+            '{HORA}' => Tools::hour(),
+            '{FECHAHORA}' => Tools::dateTime(Tools::date() . ' ' . Tools::hour()),
+            '{ANYO}' => date('Y'),
+            '{DIA}' => date('d'),
+            '{EJE}' => $this->codejercicio,
+            '{EJE2}' => substr($this->codejercicio ?? '', -2),
+            '{MES}' => date('m'),
+            '{NUM}' => $this->numero,
+            '{SERIE}' => $this->codserie,
+            '{0NUM}' => str_pad($this->numero, $this->longnumero, '0', STR_PAD_LEFT),
+            '{0SERIE}' => str_pad($this->codserie, 2, '0', STR_PAD_LEFT),
+            '{NOMBREMES}' => Tools::lang()->trans('month-' . date('m'))
+        ]);
+    }
+
+    protected function testPatron(): bool
+    {
+        if (false === self::$pattern_test) {
+            return true;
+        }
+
+        if (empty($this->patron)) {
+            Tools::log()->warning('empty-pattern');
+            return false;
+        }
+
+        // si el patrón no tiene número, mostramos un aviso
+        if (false === strpos($this->patron, '{NUM}') && false === strpos($this->patron, '{0NUM}')) {
+            Tools::log()->warning('pattern-without-number');
+            return false;
+        }
+
+        // si el patrón no tiene ejercicio o fecha, mostramos un aviso
+        $codes = ['{EJE}', '{EJE2}', '{ANYO}', '{FECHA}', '{FECHAHORA}'];
+        $found = false;
+        foreach ($codes as $code) {
+            if (false !== strpos($this->patron, $code)) {
+                $found = true;
+                break;
+            }
+        }
+        if (empty($this->codejercicio) && !$found) {
+            Tools::log()->warning('pattern-without-year');
+        }
+
+        // si el patrón no tiene serie, mostramos un aviso
+        if (false === strpos($this->patron, '{SERIE}') && false === strpos($this->patron, '{0SERIE}')) {
+            Tools::log()->warning('pattern-without-serie');
+        }
+
+        // si el patrón generado tiene más de 20 caracteres, no dejamos guardar
+        if (strlen($this->generateCode()) > 20) {
+            Tools::log()->warning('pattern-too-long');
+            return false;
+        }
+
+        return true;
     }
 }

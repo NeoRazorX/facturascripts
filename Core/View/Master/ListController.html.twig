@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@
 {% block bodyHeaderOptions %}
     {{ parent() }}
     {% set pageData = fsc.getPageData() %}
+    {% set firstView = fsc.views | first %}
     <div class="container-fluid mb-3 d-print-none">
         <div class="row">
             <div class="col-md-7">
@@ -29,11 +30,11 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb d-md-none">
                         <li class="breadcrumb-item">
-                            <a href="#">{{ i18n.trans(pageData.menu) }}</a>
+                            <a href="#">{{ trans(pageData.menu) }}</a>
                         </li>
                         {% if pageData.submenu %}
                             <li class="breadcrumb-item">
-                                <a href="#">{{ i18n.trans(pageData.submenu) }}</a>
+                                <a href="#">{{ trans(pageData.submenu) }}</a>
                             </li>
                         {% endif %}
                         <li class="breadcrumb-item active" aria-current="page">{{ fsc.title }}</li>
@@ -41,38 +42,44 @@
                 </nav>
                 <div class="btn-group">
                     <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}"
-                       title="{{ i18n.trans('refresh') }}">
+                       title="{{ trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                     {% if pageData.name == fsc.user.homepage %}
                         <a class="btn btn-sm btn-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE"
-                           title="{{ i18n.trans('marked-as-homepage') }}">
+                           title="{{ trans('marked-as-homepage') }}">
                             <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
                         <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
-                           title="{{ i18n.trans('mark-as-homepage') }}">
+                           title="{{ trans('mark-as-homepage') }}">
                             <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
                 {# -- Options button -- #}
-                <div class="btn-group">
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ i18n.trans('options') }}
-                        </button>
-                        <div class="dropdown-menu">
-                            {% for viewName, view in fsc.views %}
-                                <a class="dropdown-item"
-                                   href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
-                                    <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
-                                </a>
-                            {% endfor %}
+                {% if firstView.settings.btnOptions %}
+                    <div class="btn-group">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ trans('options') }}
+                            </button>
+                            <div class="dropdown-menu">
+                                <h6 class="dropdown-header">{{ trans('options-button-header') }}</h6>
+                                {% for viewName, view in fsc.views %}
+                                    <a class="dropdown-item"
+                                       href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
+                                        <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                                        {% if view.settings.customized %}
+                                            <i class="fa-solid fa-user-pen ml-2" title="{{ trans('personalized') }}"></i>
+                                        {% endif %}
+                                    </a>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             </div>
             <div class="col-md-5 text-right">
                 <h1 class="h4 mb-0 d-none d-md-inline-block">
@@ -87,11 +94,15 @@
             <li class="nav-item">
                 {% set active = (viewName == fsc.active) ? ' active' : '' %}
                 <a href="#{{ viewName }}" class="nav-link{{ active }}" data-toggle="tab" role="tab"
-                   aria-controls="{{ viewName }}">
+                   aria-controls="{{ viewName }}" title="{{ view.title }}">
                     <i class="{{ view.icon }}" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">{{ view.title }}</span>
+                    {% if view.title | length > 15 %}
+                        <span class="d-none d-sm-inline-block">{{ view.title | slice(0, 15) }}...</span>
+                    {% else %}
+                        <span class="d-none d-sm-inline-block">{{ view.title }}</span>
+                    {% endif %}
                     {% if view.count > 0 %}
-                        <span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>
+                        <span class="badge badge-secondary">{{ number(view.count, 0) }}</span>
                     {% endif %}
                 </a>
             </li>

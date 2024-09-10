@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Join;
 
 /**
@@ -29,13 +30,9 @@ class AlbaranClienteProducto extends FacturaClienteProducto
     const DOC_TABLE = 'albaranescli';
     const MAIN_TABLE = 'lineasalbaranescli';
 
-    /**
-     * 
-     * @return string
-     */
     protected function getSQLFrom(): string
     {
-        return static::MAIN_TABLE . ''
+        return static::MAIN_TABLE
             . ' LEFT JOIN variantes ON ' . static::MAIN_TABLE . '.referencia = variantes.referencia'
             . ' LEFT JOIN productos ON variantes.idproducto = productos.idproducto'
             . ' LEFT JOIN albaranescli ON albaranescli.idalbaran = lineasalbaranescli.idalbaran';

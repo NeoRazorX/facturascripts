@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,63 +16,55 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Email;
+
+use FacturaScripts\Core\Base\ExtensionsTrait;
 
 /**
  * Description of TableBlock
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class TableBlock extends BaseBlock
 {
+    use ExtensionsTrait;
 
-    /**
-     *
-     * @var array
-     */
+    /** @var array */
     protected $header;
 
-    /**
-     *
-     * @var array
-     */
+    /** @var array */
     protected $rows;
 
-    /**
-     * 
-     * @param array $header
-     * @param array $rows
-     */
-    public function __construct(array $header, array $rows)
+    public function __construct(array $header, array $rows, string $css = '', string $style = '')
     {
+        $this->css = $css;
+        $this->style = $style;
         $this->header = $header;
         $this->rows = $rows;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function render(): string
+    public function render(bool $footer = false): string
     {
-        return '<table>'
+        $this->footer = $footer;
+        $return = $this->pipe('render');
+        return $return ??
+            '<table class="' . (empty($this->css) ? 'table mb-15 w-100' : $this->css) . '">'
             . '<thead>'
-            . '<tr>'
-            . $this->renderHeaders()
-            . '</tr>'
+            . '<tr>' . $this->renderHeaders() . '</tr>'
             . '</thead>'
-            . '<tbody>'
-            . $this->renderRows()
-            . '</tbody>'
+            . '<tbody>' . $this->renderRows() . '</tbody>'
             . '</table>';
     }
 
-    /**
-     * 
-     * @return string
-     */
     protected function renderHeaders(): string
     {
+        $return = $this->pipe('renderHeaders');
+        if ($return) {
+            return $return;
+        }
+
         $html = '';
         foreach ($this->header as $head) {
             $html .= '<th>' . $head . '</th>';
@@ -81,12 +73,13 @@ class TableBlock extends BaseBlock
         return $html;
     }
 
-    /**
-     * 
-     * @return string
-     */
     protected function renderRows(): string
     {
+        $return = $this->pipe('renderRows');
+        if ($return) {
+            return $return;
+        }
+
         $html = '';
         foreach ($this->rows as $row) {
             $html .= '<tr>';

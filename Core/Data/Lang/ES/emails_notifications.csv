@@ -1,0 +1,5 @@
+"name";"enabled";"subject";"body"
+"sendmail-AlbaranCliente";true;"Su albarán {code}";"Buenos días {name}, le adjunto su albarán {code} del día {date}. Saludos."
+"sendmail-FacturaCliente";true;"Su factura {code}";"Buenos días {name}, le adjunto su factura {code} del día {date}. Saludos."
+"sendmail-PedidoCliente";true;"Su pedido {code}";"Buenos días {name}, le adjunto su pedido {code} del día {date}. Saludos."
+"sendmail-PresupuestoCliente";true;"Su presupuesto {code}";"Buenos días {name}, le adjunto su presupuesto {code} del día {date}. Saludos."

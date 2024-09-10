@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,21 +16,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\PageOption;
-use FacturaScripts\Test\Core\CustomTest;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \PageOption
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- */
-final class PageOptionTest extends CustomTest
+final class PageOptionTest extends TestCase
 {
-
-    protected function setUp()
+    public function testCreate(): void
     {
-        $this->model = new PageOption();
+        // creamos
+        $pageOption = new PageOption();
+        $pageOption->name = 'test';
+        $this->assertTrue($pageOption->save(), 'Error saving PageOption');
+
+        // eliminamos
+        $this->assertTrue($pageOption->delete(), 'Error deleting PageOption');
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,11 +20,9 @@
 namespace FacturaScripts\Core\Lib\PDF;
 
 use Cezpdf;
-use FacturaScripts\Core\Base\DivisaTools;
-use FacturaScripts\Core\Base\NumberTools;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\Export\ExportBase;
+use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
 /**
@@ -34,7 +32,6 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
  */
 abstract class PDFCore extends ExportBase
 {
-
     /**
      * X position to start writing.
      */
@@ -56,11 +53,6 @@ abstract class PDFCore extends ExportBase
     const MAX_TITLE_LEN = 12;
 
     /**
-     * @var DivisaTools
-     */
-    protected $divisaTools;
-
-    /**
      * Translator object
      *
      * @var Translator
@@ -71,13 +63,6 @@ abstract class PDFCore extends ExportBase
      * @var bool
      */
     protected $insertedHeader = false;
-
-    /**
-     * Class with number tools (to format numbers)
-     *
-     * @var NumberTools
-     */
-    protected $numberTools;
 
     /**
      * PDF object.
@@ -98,9 +83,38 @@ abstract class PDFCore extends ExportBase
      */
     public function __construct()
     {
-        $this->divisaTools = new DivisaTools();
         $this->i18n = new Translator();
-        $this->numberTools = new NumberTools();
+    }
+
+    public function getOrientation()
+    {
+        return $this->pdf->ez['orientation'] ?? 'portrait';
+    }
+
+    /**
+     * Adds a new page.
+     *
+     * @param string $orientation
+     * @param bool $forceNewPage
+     */
+    public function newPage(string $orientation = 'portrait', bool $forceNewPage = false)
+    {
+        if ($this->pdf === null) {
+            $this->pdf = new Cezpdf('a4', $orientation);
+            $this->pdf->addInfo('Creator', 'FacturaScripts');
+            $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->pdf->addInfo('Title', $this->getFileName());
+            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
+
+            $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
+
+            $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
+        } elseif ($forceNewPage || $this->pdf->y < 200) {
+            $this->pdf->ezNewPage();
+            $this->insertedHeader = false;
+        } else {
+            $this->pdf->ezText("\n");
+        }
     }
 
     /**
@@ -191,14 +205,13 @@ abstract class PDFCore extends ExportBase
         ];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return string
-     */
     protected function fixValue(string $value): string
     {
-        return str_replace(['€', '₡', '₲', '£'], ['EUR', 'SVC', 'PYG', 'GBP'], Utils::fixHtml($value));
+        return str_replace(
+            ['€', '₡', '₲', '£', '&nbsp;'],
+            ['EUR', 'SVC', 'PYG', 'GBP', ' '],
+            Utils::fixHtml($value)
+        );
     }
 
     /**
@@ -214,7 +227,7 @@ abstract class PDFCore extends ExportBase
     {
         $tableData = [];
 
-        /// Extracts the data from the cursos
+        // Extracts the data from the cursos
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
                 $value = $tableOptions['cols'][$col]['widget']->plainText($row);
@@ -271,31 +284,6 @@ abstract class PDFCore extends ExportBase
 
         if ($txt !== '') {
             $this->pdf->ezText($txt);
-        }
-    }
-
-    /**
-     * Adds a new page.
-     *
-     * @param string $orientation
-     */
-    protected function newPage(string $orientation = 'portrait')
-    {
-        if ($this->pdf === null) {
-            $this->pdf = new Cezpdf('a4', $orientation);
-            $this->pdf->addInfo('Creator', 'FacturaScripts');
-            $this->pdf->addInfo('Producer', 'FacturaScripts');
-            $this->pdf->addInfo('Title', $this->getFileName());
-            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
-
-            $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
-
-            $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
-        } elseif ($this->pdf->y < 200) {
-            $this->pdf->ezNewPage();
-            $this->insertedHeader = false;
-        } else {
-            $this->pdf->ezText("\n");
         }
     }
 

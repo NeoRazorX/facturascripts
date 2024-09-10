@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Cache;
 
 /**
  * The class from which all views of the model are inherited.
@@ -38,7 +39,6 @@ use FacturaScripts\Core\Base\ToolBox;
  */
 abstract class JoinModel
 {
-
     /**
      * It provides direct access to the database.
      *
@@ -80,7 +80,7 @@ abstract class JoinModel
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
@@ -142,7 +142,7 @@ abstract class JoinModel
      *
      * @return static[]
      */
-    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
+    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0): array
     {
         $result = [];
         if ($this->checkTables()) {
@@ -173,11 +173,20 @@ abstract class JoinModel
      *
      * @return int
      */
-    public function count(array $where = [])
+    public function count(array $where = []): int
     {
         $groupFields = $this->getGroupFields();
         if (!empty($groupFields)) {
             $groupFields .= ', ';
+        }
+
+        // buscamos en caché
+        $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-count';
+        if (empty($where)) {
+            $count = Cache::get($cacheKey);
+            if (is_numeric($count)) {
+                return $count;
+            }
         }
 
         $sql = 'SELECT ' . $groupFields . 'COUNT(*) count_total'
@@ -187,7 +196,14 @@ abstract class JoinModel
 
         $data = self::$dataBase->select($sql);
         $count = count($data);
-        return ($count == 1) ? (int)$data[0]['count_total'] : $count;
+        $final = $count == 1 ? (int)$data[0]['count_total'] : $count;
+
+        // guardamos en caché
+        if (empty($where)) {
+            Cache::set($cacheKey, $final);
+        }
+
+        return $final;
     }
 
     /**
@@ -195,7 +211,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (isset($this->masterModel)) {
             $primaryColumn = $this->masterModel->primaryColumn();
@@ -211,15 +227,12 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function exists()
+    public function exists(): bool
     {
         return isset($this->masterModel) ? $this->masterModel->exists() : $this->count() > 0;
     }
 
-    /**
-     * @return array
-     */
-    public function getModelFields()
+    public function getModelFields(): array
     {
         $fields = [];
         foreach ($this->getFields() as $key => $field) {
@@ -227,6 +240,28 @@ abstract class JoinModel
                 'name' => $field,
                 'type' => ''
             ];
+
+            // si contiene paréntesis, saltamos
+            if (false !== strpos($field, '(')) {
+                continue;
+            }
+
+            // extraemos el nombre de la tabla
+            $arrayField = explode('.', $field);
+            if (false === is_array($arrayField) && false === isset($arrayField[0])) {
+                continue;
+            }
+
+            // comprobamos si existe la tabla
+            if (false === in_array($arrayField[0], $this->getTables())) {
+                continue;
+            }
+
+            // consultamos la información de la tabla para obtener el tipo
+            $columns = self::$dataBase->getColumns($arrayField[0]);
+            if (isset($columns[$arrayField[1]])) {
+                $fields[$key]['type'] = $columns[$arrayField[1]]['type'];
+            }
         }
 
         return $fields;
@@ -246,7 +281,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function loadFromCode($cod, array $where = [], array $orderby = [])
+    public function loadFromCode($cod, array $where = [], array $orderby = []): bool
     {
         if (!$this->loadFilterWhere($cod, $where)) {
             $this->clear();
@@ -284,6 +319,36 @@ abstract class JoinModel
         return null;
     }
 
+    public function totalSum(string $field, array $where = []): float
+    {
+        // buscamos en caché
+        $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-' . $field . '-total-sum';
+        if (empty($where)) {
+            $count = Cache::get($cacheKey);
+            if (is_numeric($count)) {
+                return $count;
+            }
+        }
+
+        // obtenemos el nombre completo del campo
+        $fields = $this->getFields();
+        $field = $fields[$field] ?? $field;
+
+        $sql = false !== strpos($field, '(') ?
+            'SELECT ' . $field . ' AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where) :
+            'SELECT SUM(' . $field . ') AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where);
+
+        $data = self::$dataBase->select($sql);
+        $sum = count($data) == 1 ? (float)$data[0]['total_sum'] : 0.0;
+
+        // guardamos en caché
+        if (empty($where)) {
+            Cache::set($cacheKey, $sum);
+        }
+
+        return $sum;
+    }
+
     /**
      * Returns the url where to see / modify the data.
      *
@@ -292,7 +357,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         if (isset($this->masterModel)) {
             $primaryColumn = $this->masterModel->primaryColumn();
@@ -383,7 +448,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    private function loadFilterWhere($cod, &$where): bool
+    private function loadFilterWhere($cod, array &$where): bool
     {
         // If there is no search by code we use the where informed
         if (empty($cod)) {
@@ -413,7 +478,7 @@ abstract class JoinModel
      *
      * @param array $data
      */
-    protected function loadFromData($data)
+    protected function loadFromData(array $data)
     {
         foreach ($data as $field => $value) {
             $this->values[$field] = $value;
@@ -432,8 +497,9 @@ abstract class JoinModel
 
     /**
      * @return ToolBox
+     * @deprecated since version 2023.1
      */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }

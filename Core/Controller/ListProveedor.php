@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to list the items in the Proveedor model
@@ -34,13 +35,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  */
 class ListProveedor extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
@@ -55,29 +50,30 @@ class ListProveedor extends ListController
     protected function createViews()
     {
         $this->createViewSuppliers();
-        $this->createViewAdresses();
+        $this->createViewAddresses();
     }
 
-    /**
-     * @param string $viewName
-     */
-    protected function createViewAdresses(string $viewName = 'ListContacto')
+    protected function createViewAddresses(string $viewName = 'ListContacto'): void
     {
-        $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
-        $this->addSearchFields($viewName, [
-            'apellidos', 'codpostal', 'descripcion', 'direccion', 'email', 'empresa',
-            'nombre', 'observaciones', 'telefono1', 'telefono2'
-        ]);
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
-        $this->addOrderBy($viewName, ['direccion'], 'address');
-        $this->addOrderBy($viewName, ['nombre'], 'name');
-        $this->addOrderBy($viewName, ['fechaalta'], 'creation-date', 2);
+        $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['direccion'], 'address')
+            ->addOrderBy(['nombre'], 'name')
+            ->addOrderBy(['fechaalta'], 'creation-date', 2)
+            ->addSearchFields([
+                'apartado', 'apellidos', 'codpostal', 'descripcion', 'direccion', 'email', 'empresa',
+                'nombre', 'observaciones', 'telefono1', 'telefono2'
+            ]);
 
-        // filters
+        // filtros
         $values = [
             [
-                'label' => $this->toolBox()->i18n()->trans('suppliers'),
+                'label' => Tools::lang()->trans('suppliers'),
                 'where' => [new DataBaseWhere('codproveedor', null, 'IS NOT')]
+            ],
+            [
+                'label' => Tools::lang()->trans('all'),
+                'where' => []
             ]
         ];
         $this->addFilterSelectWhere($viewName, 'type', $values);
@@ -93,38 +89,40 @@ class ListProveedor extends ListController
         $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
         $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);
 
-        $this->addFilterCheckbox($viewName, 'verificado', 'verified', 'verificado');
-        $this->addFilterCheckbox($viewName, 'admitemarketing', 'allow-marketing', 'admitemarketing');
+        $this->addFilterAutocomplete($viewName, 'codpostal', 'zip-code', 'codpostal', 'contactos', 'codpostal');
 
-        // disable mega-search
+        $this->addFilterCheckbox($viewName, 'verificado', 'verified', 'verificado');
+
+        // desactivamos el mega-search
         $this->setSettings($viewName, 'megasearch', false);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
-    protected function createViewSuppliers(string $viewName = 'ListProveedor')
+    protected function createViewSuppliers(string $viewName = 'ListProveedor'): void
     {
-        $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
-        $this->addSearchFields($viewName, ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
-        $this->addOrderBy($viewName, ['codproveedor'], 'code');
-        $this->addOrderBy($viewName, ['cifnif'], 'fiscal-number');
-        $this->addOrderBy($viewName, ['nombre'], 'name', 1);
-        $this->addOrderBy($viewName, ['fechaalta'], 'creation-date');
+        $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users')
+            ->addOrderBy(['codproveedor'], 'code')
+            ->addOrderBy(['cifnif'], 'fiscal-number')
+            ->addOrderBy(['LOWER(nombre)'], 'name', 1)
+            ->addOrderBy(['fechaalta'], 'creation-date')
+            ->addSearchFields([
+                'cifnif', 'codproveedor', 'codsubcuenta', 'email', 'nombre', 'observaciones', 'razonsocial',
+                'telefono1', 'telefono2'
+            ]);
 
-        // filters
-        $i18n = $this->toolBox()->i18n();
+        // filtros
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => $i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
-            ['label' => $i18n->trans('all'), 'where' => []]
+            ['label' => Tools::lang()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => Tools::lang()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => Tools::lang()->trans('all'), 'where' => []]
         ]);
         $this->addFilterSelectWhere($viewName, 'type', [
-            ['label' => $i18n->trans('all'), 'where' => []],
-            ['label' => $i18n->trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
-            ['label' => $i18n->trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
+            ['label' => Tools::lang()->trans('all'), 'where' => []],
+            ['label' => Tools::lang()->trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
+            ['label' => Tools::lang()->trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
         ]);
+
+        $fiscalIds = $this->codeModel->all('proveedores', 'tipoidfiscal', 'tipoidfiscal');
+        $this->addFilterSelect($viewName, 'tipoidfiscal', 'fiscal-id', 'tipoidfiscal', $fiscalIds);
 
         $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', Series::codeModel());
         $this->addFilterSelect($viewName, 'codretencion', 'retentions', 'codretencion', Retenciones::codeModel());

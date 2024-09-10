@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
  * Description of WidgetNumber
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  */
 class WidgetNumber extends BaseWidget
 {

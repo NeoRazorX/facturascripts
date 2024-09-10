@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,14 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Core\Session;
+use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
 /**
@@ -28,34 +34,16 @@ use FacturaScripts\Dinamic\Model\DocTransformation;
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
+ * @author Raúl Jiménez             <raljopa@gmail.com>
  */
 class BusinessDocumentGenerator
 {
+    use ExtensionsTrait;
 
-    /**
-     * Document fields to exclude.
-     *
-     * @var array
-     */
-    public $excludeFields = [
-        'codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora', 'idasiento', 'idestado', 'idfacturarect',
-        'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf', 'totaliva', 'totalrecargo', 'totalsuplidos'];
-
-    /**
-     * Line fields to exclude.
-     *
-     * @var array
-     */
-    public $excludeLineFields = ['idlinea', 'orden', 'servido'];
-
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $lastDocs = [];
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private static $sameDate = false;
 
     /**
@@ -69,22 +57,33 @@ class BusinessDocumentGenerator
      *
      * @return bool
      */
-    public function generate(BusinessDocument $prototype, string $newClass, $lines = [], $quantity = [], $properties = [])
+    public function generate(BusinessDocument $prototype, string $newClass, array $lines = [], array $quantity = [], array $properties = []): bool
     {
-        // Add primary column to exclude fields
-        $this->excludeFields[] = $prototype->primaryColumn();
-
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
+        $fields = array_keys($newDoc->getModelFields());
+
+        if (false === $this->pipeFalse('generateBefore', $prototype, $lines, $quantity, $properties, $newDoc)) {
+            return false;
+        }
+
         foreach (array_keys($prototype->getModelFields()) as $field) {
+            // exclude properties not in new line
+            if (false === in_array($field, $fields)) {
+                continue;
+            }
+
             // exclude some properties
-            if (in_array($field, $this->excludeFields)) {
+            if (in_array($field, $prototype::dontCopyFields())) {
                 continue;
             }
 
             // copy properties to new document
             $newDoc->{$field} = $prototype->{$field};
         }
+
+        // assign the user
+        $newDoc->nick = Session::user()->nick;
 
         if (self::$sameDate) {
             $newDoc->fecha = $prototype->fecha;
@@ -98,11 +97,12 @@ class BusinessDocumentGenerator
         $protoLines = empty($lines) ? $prototype->getLines() : $lines;
         if ($newDoc->save() && $this->cloneLines($prototype, $newDoc, $protoLines, $quantity)) {
             // recalculate totals on new document
-            $tool = new BusinessDocumentTools();
-            $tool->recalculate($newDoc);
-            if ($newDoc->save()) {
+            $newLines = $newDoc->getLines();
+            if (Calculator::calculate($newDoc, $newLines, true)) {
                 // add to last doc list
                 $this->lastDocs[] = $newDoc;
+
+                $this->pipeFalse('generateTrue', $prototype, $lines, $quantity, $properties, $newDoc, $newLines);
                 return true;
             }
         }
@@ -111,20 +111,18 @@ class BusinessDocumentGenerator
             $newDoc->delete();
         }
 
+        $this->pipeFalse('generateFalse', $prototype, $lines, $quantity, $properties, $newDoc);
         return false;
     }
 
     /**
      * @return BusinessDocument[]
      */
-    public function getLastDocs()
+    public function getLastDocs(): array
     {
         return $this->lastDocs;
     }
 
-    /**
-     * @param bool $value
-     */
     public static function setSameDate(bool $value)
     {
         self::$sameDate = $value;
@@ -140,16 +138,26 @@ class BusinessDocumentGenerator
      *
      * @return bool
      */
-    protected function cloneLines(BusinessDocument $prototype, BusinessDocument $newDoc, $lines, $quantity)
+    protected function cloneLines(BusinessDocument $prototype, BusinessDocument $newDoc, array $lines, array $quantity): bool
     {
         $docTrans = new DocTransformation();
+        $fields = array_keys($newDoc->getNewLine()->getModelFields());
+
         foreach ($lines as $line) {
             // copy line properties to new line
             $arrayLine = [];
             foreach (array_keys($line->getModelFields()) as $field) {
-                if (in_array($field, $this->excludeLineFields) === false) {
-                    $arrayLine[$field] = $line->{$field};
+                // exclude properties not in new line
+                if (false === in_array($field, $fields)) {
+                    continue;
                 }
+
+                // exclude some properties
+                if (in_array($field, $line::dontCopyFields())) {
+                    continue;
+                }
+
+                $arrayLine[$field] = $line->{$field};
             }
 
             if (isset($quantity[$line->primaryColumnValue()])) {
@@ -176,6 +184,44 @@ class BusinessDocumentGenerator
             $docTrans->idlinea2 = $newLine->primaryColumnValue();
             if (!empty($line->primaryColumnValue()) && !$docTrans->save()) {
                 return false;
+            }
+
+            if (false === $this->pipeFalse('cloneLine', $prototype, $line, $newLine->cantidad, $newDoc, $newLine)) {
+                return false;
+            }
+        }
+
+        // copy related files
+        if ($newDoc instanceof TransformerDocument) {
+            $this->copyRelatedFiles($newDoc);
+        }
+
+        if (false === $this->pipeFalse('cloneLines', $prototype, $newDoc, $lines, $quantity)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function copyRelatedFiles(TransformerDocument $newDoc): bool
+    {
+        $relationModel = new AttachedFileRelation();
+        foreach ($newDoc->parentDocuments() as $parent) {
+            $whereDocs = [
+                new DataBaseWhere('model', $parent->modelClassName()),
+                new DataBaseWhere('modelid', $parent->primaryColumnValue())
+            ];
+            foreach ($relationModel->all($whereDocs, ['id' => 'ASC']) as $relation) {
+                $newRelation = new AttachedFileRelation();
+                $newRelation->idfile = $relation->idfile;
+                $newRelation->model = $newDoc->modelClassName();
+                $newRelation->modelid = $newDoc->primaryColumnValue();
+                $newRelation->nick = $relation->nick;
+                $newRelation->observations = $relation->observations;
+                $newRelation->modelcode = $newDoc->codigo;
+                if (false === $newRelation->save()) {
+                    return false;
+                }
             }
         }
 

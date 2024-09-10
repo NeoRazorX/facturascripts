@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,33 +22,23 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to edit a single item from the Almacen model
  *
- * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Artex Trading sa         <jcuello@artextrading.com>
- * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Francesc Pineda Segarra       <francesc.pineda.segarra@gmail.com>
  */
 class EditAlmacen extends EditController
 {
-
-    /**
-     * Returns the model name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Almacen';
     }
 
-    /**
-     * Returns basic page attributes.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
@@ -57,26 +47,54 @@ class EditAlmacen extends EditController
         return $data;
     }
 
-    /**
-     * @param string $viewName
-     */
-    protected function createStockView(string $viewName = 'ListStock')
+    protected function createStockView(string $viewName = 'ListStock'): void
     {
-        $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly');
-        $this->views[$viewName]->addOrderBy(['stocks.referencia'], 'reference');
-        $this->views[$viewName]->addOrderBy(['stocks.cantidad'], 'quantity');
-        $this->views[$viewName]->addOrderBy(['stocks.disponible'], 'available');
-        $this->views[$viewName]->addOrderBy(['stocks.reservada'], 'reserved');
-        $this->views[$viewName]->addOrderBy(['stocks.pterecibir'], 'pending-reception');
-        $this->views[$viewName]->addOrderBy(['productos.descripcion', 'stocks.referencia'], 'product');
-        $this->views[$viewName]->addSearchFields(['stocks.referencia', 'productos.descripcion']);
+        $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly')
+            ->addSearchFields(['stocks.referencia', 'stocks.ubicacion', 'productos.descripcion'])
+            ->addOrderBy(['stocks.referencia'], 'reference')
+            ->addOrderBy(['stocks.cantidad'], 'quantity')
+            ->addOrderBy(['stocks.disponible'], 'available')
+            ->addOrderBy(['stocks.reservada'], 'reserved')
+            ->addOrderBy(['stocks.pterecibir'], 'pending-reception')
+            ->addOrderBy(['productos.descripcion', 'stocks.referencia'], 'product');
 
-        // disable column
-        $this->views[$viewName]->disableColumn('warehouse');
+        // filtros
+        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $this->listView($viewName)->addFilterSelect('manufacturer', 'manufacturer', 'productos.codfabricante', $manufacturers);
 
-        // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->listView($viewName)->addFilterSelect('family', 'family', 'productos.codfamilia', $families);
+
+        $this->listView($viewName)->addFilterSelectWhere('type', [
+            [
+                'label' => Tools::lang()->trans('all'),
+                'where' => []
+            ],
+            [
+                'label' => '------',
+                'where' => []
+            ],
+            [
+                'label' => Tools::lang()->trans('under-minimums'),
+                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmin', '<')]
+            ],
+            [
+                'label' => Tools::lang()->trans('excess'),
+                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmax', '>')]
+            ]
+        ]);
+
+        $this->listView($viewName)
+            ->addFilterNumber('max-stock', 'quantity', 'cantidad', '>=')
+            ->addFilterNumber('min-stock', 'quantity', 'cantidad', '<=');
+
+        // desactivamos la columna de almacén
+        $this->tab($viewName)->disableColumn('warehouse');
+
+        // desactivamos botones
+        $this->tab($viewName)
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false);
     }
 
     /**
@@ -87,7 +105,7 @@ class EditAlmacen extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        // disable company column if there is only one company
+        // desactivamos la columna de empresa, si solo hay una
         if ($this->empresa->count() < 2) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }

@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Lib;
  * Structure for each of the items in the FacturaScripts menu.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class MenuItem
 {

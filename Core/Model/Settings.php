@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of Settings
@@ -26,7 +29,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Settings extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -44,29 +46,43 @@ class Settings extends Base\ModelClass
     public $properties;
 
     /**
-     * 
      * @param string $name
      *
      * @return mixed
      */
     public function __get($name)
     {
-        return isset($this->properties[$name]) ? $this->properties[$name] : null;
+        if (!is_array($this->properties) || !array_key_exists($name, $this->properties)) {
+            return null;
+        }
+
+        // si contiene html, lo limpiamos
+        if (is_string($this->properties[$name]) && strpos($this->properties[$name], '<') !== false) {
+            return Tools::noHtml($this->properties[$name]);
+        }
+
+        return $this->properties[$name];
+    }
+
+    public function delete(): bool
+    {
+        if (false === parent::delete()) {
+            return false;
+        }
+
+        Tools::settingsClear();
+        return true;
     }
 
     /**
-     * 
      * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
      */
     public function __set($name, $value)
     {
         $this->properties[$name] = $value;
     }
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -85,58 +101,40 @@ class Settings extends Base\ModelClass
         $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'name';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function save(): bool
+    {
+        // escapamos el html
+        $this->name = Tools::noHtml($this->name);
+
+        if (false === parent::save()) {
+            return false;
+        }
+
+        Tools::settingsClear();
+        return true;
+    }
+
+    public static function tableName(): string
     {
         return 'settings';
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'Edit'): string
     {
         return parent::url($type, $list);
     }
 
-    /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return parent::saveInsert(['properties' => json_encode($this->properties)]);
     }
 
-    /**
-     * Update the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         return parent::saveUpdate(['properties' => json_encode($this->properties)]);
     }

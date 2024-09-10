@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
 use FacturaScripts\Dinamic\Lib\Widget\GroupItem;
 use FacturaScripts\Dinamic\Lib\Widget\VisualItemLoadEngine;
@@ -31,12 +32,11 @@ use FacturaScripts\Dinamic\Model\User;
 /**
  * Base definition for the views used in ExtendedControllers
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class BaseView
 {
-
     const DEFAULT_TEMPLATE = 'Master/BaseView.html.twig';
 
     /**
@@ -163,7 +163,7 @@ abstract class BaseView
         if (class_exists($modelName)) {
             $this->model = new $modelName();
         } else {
-            ToolBox::i18nLog()->critical('model-not-found', ['%model%' => $modelName]);
+            Tools::log()->critical('model-not-found', ['%model%' => $modelName]);
         }
 
         $this->icon = $icon;
@@ -176,13 +176,17 @@ abstract class BaseView
             'btnPrint' => false,
             'btnSave' => true,
             'btnUndo' => true,
+            'btnOptions' => true,
             'card' => true,
             'checkBoxes' => true,
             'clickable' => true,
-            'megasearch' => false
+            'customized' => false,
+            'itemLimit' => FS_ITEM_LIMIT,
+            'megasearch' => false,
+            'saveFilters' => false,
         ];
         $this->template = static::DEFAULT_TEMPLATE;
-        $this->title = ToolBox::i18n()->trans($title);
+        $this->title = Tools::lang()->trans($title);
         $this->assets();
     }
 
@@ -215,7 +219,7 @@ abstract class BaseView
      *
      * @param string $fieldName
      *
-     * @return ColumnItem
+     * @return ?ColumnItem
      */
     public function columnForField(string $fieldName)
     {
@@ -236,14 +240,17 @@ abstract class BaseView
      * @param string $columnName
      * @param bool $disabled
      * @param string $readOnly
+     * @return BaseView
      */
-    public function disableColumn(string $columnName, bool $disabled = true, string $readOnly = '')
+    public function disableColumn(string $columnName, bool $disabled = true, string $readOnly = ''): BaseView
     {
         $column = $this->columnForName($columnName);
         if ($column) {
             $column->display = $disabled ? 'none' : 'left';
             $column->widget->readonly = empty($readOnly) ? $column->widget->readonly : $readOnly;
         }
+
+        return $this;
     }
 
     /**
@@ -251,7 +258,7 @@ abstract class BaseView
      *
      * @return GroupItem[]
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
@@ -261,35 +268,33 @@ abstract class BaseView
      *
      * @return GroupItem[]
      */
-    public function getModals()
+    public function getModals(): array
     {
         return $this->modals;
     }
 
-    /**
-     * @return array
-     */
     public function getPagination(): array
     {
         $pages = [];
         $key1 = $key2 = 0;
         $current = 1;
+        $limit = (int)$this->settings['itemLimit'];
 
-        /// add all pages
+        // add all pages
         while ($key2 < $this->count) {
             $pages[$key1] = [
                 'active' => ($key2 == $this->offset),
                 'num' => $key1 + 1,
-                'offset' => $key1 * FS_ITEM_LIMIT,
+                'offset' => $key1 * $limit,
             ];
             if ($key2 == $this->offset) {
                 $current = $key1;
             }
             $key1++;
-            $key2 += FS_ITEM_LIMIT;
+            $key2 += $limit;
         }
 
-        /// now descarting pages
+        // now remove pages
         foreach (array_keys($pages) as $key2) {
             $middle = intval($key1 / 2);
 
@@ -297,7 +302,7 @@ abstract class BaseView
              * We discard everything except the first page, the last one, the middle one,
              * the current one, the 5 previous and 5 following ones.
              */
-            if (($key2 > 1 && $key2 < $current - 5 && $key2 != $middle) || ( $key2 > $current + 5 && $key2 < $key1 - 1 && $key2 != $middle)) {
+            if (($key2 > 1 && $key2 < $current - 5 && $key2 != $middle) || ($key2 > $current + 5 && $key2 < $key1 - 1 && $key2 != $middle)) {
                 unset($pages[$key2]);
             }
         }
@@ -344,24 +349,32 @@ abstract class BaseView
     }
 
     /**
-     *
      * @param User|false $user
      */
     public function loadPageOptions($user = false)
     {
         if (false === is_bool($user)) {
-            /// sets user security level for use in render
+            // sets user security level for use in render
             VisualItem::setLevel($user->level);
         }
 
-        $orderby = ['nick' => 'ASC'];
+        $orderBy = ['nick' => 'ASC'];
         $where = $this->getPageWhere($user);
-        if (false === $this->pageOption->loadFromCode('', $where, $orderby)) {
+        if ($this->pageOption->loadFromCode('', $where, $orderBy)) {
+            $this->settings['customized'] = true;
+        } else {
             $viewName = explode('-', $this->name)[0];
             VisualItemLoadEngine::installXML($viewName, $this->pageOption);
         }
 
         VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->pageOption);
+    }
+
+    public function setSettings(string $key, $value): BaseView
+    {
+        $this->settings[$key] = $value;
+
+        return $this;
     }
 
     /**
@@ -375,7 +388,7 @@ abstract class BaseView
      * Gets the column by the column name from source group
      *
      * @param string $columnName
-     * @param array  $source
+     * @param array $source
      *
      * @return ColumnItem
      */

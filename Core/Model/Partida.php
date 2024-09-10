@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,22 +20,25 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\AccEntryRelationTrait;
+use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
  * The line of an accounting entry.
- * It is related to an accounting entry and a sub-account.
+ * It is related to an accounting entry and account.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
-class Partida extends Base\ModelOnChangeClass
+class Partida extends ModelOnChangeClass
 {
-
-    use Base\ModelTrait;
-    use Base\AccEntryRelationTrait;
+    use ModelTrait;
+    use AccEntryRelationTrait;
 
     /**
      * Amount of the tax base.
@@ -73,7 +76,7 @@ class Partida extends Base\ModelOnChangeClass
     public $codserie;
 
     /**
-     * Code, not ID, of the related sub-account.
+     * Code, not ID, of the related account.
      *
      * @var string
      */
@@ -92,13 +95,6 @@ class Partida extends Base\ModelOnChangeClass
      * @var float|int
      */
     public $debe;
-
-    /**
-     * Debit of the accounting entry in secondary currency.
-     *
-     * @var float|int
-     */
-    public $debeme;
 
     /**
      * Document of departure.
@@ -122,13 +118,6 @@ class Partida extends Base\ModelOnChangeClass
     public $haber;
 
     /**
-     * Credit of the accounting entry in secondary currency.
-     *
-     * @var float|int
-     */
-    public $haberme;
-
-    /**
      * Identifier of the counterpart.
      *
      * @var int
@@ -143,7 +132,7 @@ class Partida extends Base\ModelOnChangeClass
     public $idpartida;
 
     /**
-     * Related sub-account ID.
+     * Related account ID.
      *
      * @var int
      */
@@ -189,19 +178,13 @@ class Partida extends Base\ModelOnChangeClass
      */
     public $tasaconv;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->baseimponible = 0.0;
-        $this->coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
+        $this->coddivisa = Tools::settings('default', 'coddivisa');
         $this->debe = 0.0;
-        $this->debeme = 0.0;
         $this->haber = 0.0;
-        $this->haberme = 0.0;
-        $this->iva = 0.0;
         $this->orden = 0;
         $this->punteada = false;
         $this->recargo = 0.0;
@@ -209,15 +192,31 @@ class Partida extends Base\ModelOnChangeClass
         $this->tasaconv = 1.0;
     }
 
+    public function delete(): bool
+    {
+        $entry = $this->getAccountingEntry();
+        if (false === $entry->editable) {
+            return false;
+        }
+
+        $exercise = $entry->getExercise();
+        if (false === $exercise->isOpened()) {
+            Tools::log()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
+            return false;
+        }
+
+        return parent::delete();
+    }
+
     /**
      * @param string $codsubcuenta
      *
      * @return DinSubcuenta
      */
-    public function getSubcuenta($codsubcuenta = '')
+    public function getSubcuenta(string $codsubcuenta = ''): Subcuenta
     {
         $accEntry = $this->getAccountingEntry();
-        $subcta = new DinSubcuenta();
+        $subCta = new DinSubcuenta();
 
         // get by parameter
         if (!empty($codsubcuenta)) {
@@ -225,16 +224,16 @@ class Partida extends Base\ModelOnChangeClass
                 new DataBaseWhere('codejercicio', $accEntry->codejercicio),
                 new DataBaseWhere('codsubcuenta', $codsubcuenta)
             ];
-            $subcta->loadFromCode('', $where);
-            return $subcta;
+            $subCta->loadFromCode('', $where);
+            return $subCta;
         }
 
         // get by id
         if (!empty($this->idsubcuenta) &&
-            $subcta->loadFromCode($this->idsubcuenta) &&
-            $subcta->codsubcuenta === $this->codsubcuenta &&
-            $subcta->codejercicio === $accEntry->codejercicio) {
-            return $subcta;
+            $subCta->loadFromCode($this->idsubcuenta) &&
+            $subCta->codsubcuenta === $this->codsubcuenta &&
+            $subCta->codejercicio === $accEntry->codejercicio) {
+            return $subCta;
         }
 
         // get by code and exercise
@@ -242,18 +241,11 @@ class Partida extends Base\ModelOnChangeClass
             new DataBaseWhere('codejercicio', $accEntry->codejercicio),
             new DataBaseWhere('codsubcuenta', $this->codsubcuenta)
         ];
-        $subcta->loadFromCode('', $where2);
-        return $subcta;
+        $subCta->loadFromCode('', $where2);
+        return $subCta;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         new DinDivisa();
         new DinAsiento();
@@ -262,40 +254,44 @@ class Partida extends Base\ModelOnChangeClass
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idpartida';
     }
 
-    /**
-     * @param Subcuenta $subaccount
-     */
-    public function setAccount($subaccount)
+    public function save(): bool
     {
-        $this->codsubcuenta = $subaccount->codsubcuenta;
-        $this->idsubcuenta = $subaccount->idsubcuenta;
+        $entry = $this->getAccountingEntry();
+        if (false === $entry->editable) {
+            return false;
+        }
+
+        $exercise = $entry->getExercise();
+        if (false === $exercise->isOpened()) {
+            Tools::log()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
+            return false;
+        }
+
+        return parent::save();
     }
 
-    /**
-     * @param Subcuenta $subaccount
-     */
-    public function setCounterpart($subaccount)
+    public function setAccount(Subcuenta $subAccount): Partida
     {
-        $this->codcontrapartida = $subaccount->codsubcuenta;
-        $this->idcontrapartida = $subaccount->idsubcuenta;
+        $this->codsubcuenta = $subAccount->codsubcuenta;
+        $this->idsubcuenta = $subAccount->idsubcuenta;
+
+        return $this;
     }
 
-    /**
-     * Set dotted status to indicated value.
-     *
-     * @param bool $value
-     */
-    public function setDottedStatus(bool $value)
+    public function setCounterpart(Subcuenta $subAccount): Partida
+    {
+        $this->codcontrapartida = $subAccount->codsubcuenta;
+        $this->idcontrapartida = $subAccount->idsubcuenta;
+
+        return $this;
+    }
+
+    public function setDottedStatus(bool $value): Partida
     {
         $sql = 'UPDATE ' . self::tableName() . ' SET punteada = ' . self::$dataBase->var2str($value)
             . ' WHERE ' . self::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue());
@@ -303,38 +299,31 @@ class Partida extends Base\ModelOnChangeClass
         if ($value !== $this->punteada && self::$dataBase->exec($sql)) {
             $this->punteada = $value;
         }
+
+        return $this;
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'partidas';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->cifnif = $utils->noHtml($this->cifnif);
-        $this->codsubcuenta = trim($this->codsubcuenta);
-        $this->codcontrapartida = trim($this->codcontrapartida);
-        $this->concepto = $utils->noHtml($this->concepto);
-        $this->documento = $utils->noHtml($this->documento);
+        $this->cifnif = Tools::noHtml($this->cifnif);
+        $this->codsubcuenta = Tools::noHtml($this->codsubcuenta);
+        $this->codcontrapartida = Tools::noHtml($this->codcontrapartida);
+        $this->concepto = Tools::noHtml($this->concepto);
+        $this->documento = Tools::noHtml($this->documento);
 
         if (strlen($this->concepto) < 1 || strlen($this->concepto) > 255) {
-            $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']);
+            Tools::log()->warning('invalid-column-lenght', [
+                '%column%' => 'concepto', '%min%' => '1', '%max%' => '255'
+            ]);
             return false;
         }
 
-        // set missing subaccount id
+        // set missing account id
         if (empty($this->idsubcuenta)) {
             $this->idsubcuenta = $this->getSubcuenta()->idsubcuenta;
         }
@@ -347,19 +336,13 @@ class Partida extends Base\ModelOnChangeClass
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getAccountingEntry()->url($type, $list);
     }
 
     /**
-     * This method is called before this record is save (update) in the database
+     * This method is called before this record is saved (update) in the database
      * when some field value is changed.
      *
      * @param string $field
@@ -381,65 +364,9 @@ class Partida extends Base\ModelOnChangeClass
         return parent::onChange($field);
     }
 
-    /**
-     * This method is called after this record is deleted from database.
-     */
-    protected function onDelete()
-    {
-        // update account balance
-        $this->updateBalance($this->idsubcuenta);
-        parent::onDelete();
-    }
-
-    /**
-     * This method is called after this record is save (insert) in the database.
-     */
-    protected function onInsert()
-    {
-        // update account balance
-        $this->updateBalance($this->idsubcuenta);
-        parent::onInsert();
-    }
-
-    /**
-     * This method is called after a record is updated on the database.
-     */
-    protected function onUpdate()
-    {
-        // if the subaccount has changed, we update the balances of the new and old
-        if ($this->previousData['idsubcuenta'] != $this->idsubcuenta) {
-            $this->updateBalance($this->idsubcuenta);
-            $this->updateBalance($this->previousData['idsubcuenta']);
-            parent::onUpdate();
-        }
-
-        // if debit or credit has changed, we recalculate the subaccount balance
-        if ($this->previousData['debe'] != $this->debe || $this->previousData['haber'] != $this->haber) {
-            $this->updateBalance($this->idsubcuenta);
-        }
-
-        parent::onUpdate();
-    }
-
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codcontrapartida', 'codsubcuenta', 'debe', 'haber', 'idcontrapartida', 'idsubcuenta'];
         parent::setPreviousData(array_merge($more, $fields));
-    }
-
-    /**
-     * Update the subaccount balance.
-     *
-     * @param int $idsubaccount
-     */
-    private function updateBalance($idsubaccount)
-    {
-        $subaccount = new DinSubcuenta();
-        if ($subaccount->loadFromCode($idsubaccount)) {
-            $subaccount->updateBalance();
-        }
     }
 }

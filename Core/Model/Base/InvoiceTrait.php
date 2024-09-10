@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -32,65 +32,51 @@ use FacturaScripts\Dinamic\Model\Asiento;
  */
 trait InvoiceTrait
 {
-
     use AccEntryRelationTrait;
 
-    /**
-     * Code of the invoice that rectifies.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codigorect;
 
-    /**
-     * Indicates whether the document can be modified
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $editable;
 
-    /**
-     * Date of the document.
-     *
-     * @var string
-     */
+    /** @var string */
     public $fecha;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var string */
+    public $fechadevengo;
+
+    /** @var int */
     public $idfactura;
 
-    /**
-     * ID of the invoice that you rectify.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idfacturarect;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $pagada;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $refunds;
 
-    abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50);
+    /** @return bool */
+    public $vencida;
 
-    abstract public function getReceipts();
+    abstract public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array;
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    abstract public function getReceipts(): array;
+
+    abstract public function testDate(): bool;
+
+    public function delete(): bool
     {
         if (false === $this->editable) {
-            ToolBox::i18nLog()->warning('non-editable-document');
+            Tools::log()->warning('non-editable-document');
+            return false;
+        }
+
+        // si tiene rectificativas, no se puede eliminar
+        if (!empty($this->getRefunds())) {
+            Tools::log()->warning('cant-remove-invoice-refund');
             return false;
         }
 
@@ -98,7 +84,7 @@ trait InvoiceTrait
         foreach ($this->getReceipts() as $receipt) {
             $receipt->disableInvoiceUpdate(true);
             if (false === $receipt->delete()) {
-                ToolBox::i18nLog()->warning('cant-remove-receipt');
+                Tools::log()->warning('cant-remove-receipt');
                 return false;
             }
         }
@@ -107,7 +93,7 @@ trait InvoiceTrait
         $acEntry = $this->getAccountingEntry();
         $acEntry->editable = true;
         if ($acEntry->exists() && false === $acEntry->delete()) {
-            ToolBox::i18nLog()->warning('cant-remove-accounting-entry');
+            Tools::log()->warning('cant-remove-accounting-entry');
             return false;
         }
 
@@ -117,7 +103,7 @@ trait InvoiceTrait
     /**
      * @return static[]
      */
-    public function getRefunds()
+    public function getRefunds(): array
     {
         if (empty($this->idfactura)) {
             return [];
@@ -138,7 +124,7 @@ trait InvoiceTrait
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         $sql = parent::install();
         new Asiento();
@@ -146,9 +132,6 @@ trait InvoiceTrait
         return $sql;
     }
 
-    /**
-     * @return bool
-     */
     public function paid(): bool
     {
         return $this->pagada;
@@ -159,7 +142,7 @@ trait InvoiceTrait
      *
      * @return TransformerDocument[]
      */
-    public function parentDocuments()
+    public function parentDocuments(): array
     {
         $parents = parent::parentDocuments();
         $where = [new DataBaseWhere('idfactura', $this->idfacturarect)];
@@ -182,7 +165,7 @@ trait InvoiceTrait
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idfactura';
     }
@@ -204,7 +187,7 @@ trait InvoiceTrait
                 // prevent from removing paid receipts
                 foreach ($this->getReceipts() as $receipt) {
                     if ($receipt->pagado) {
-                        ToolBox::i18nLog()->warning('paid-receipts-prevent-action');
+                        Tools::log()->warning('paid-receipts-prevent-action');
                         return false;
                     }
                 }
@@ -213,29 +196,37 @@ trait InvoiceTrait
                 // remove unpaid receipts
                 foreach ($this->getReceipts() as $receipt) {
                     if (false === $receipt->pagado && false === $receipt->delete()) {
-                        ToolBox::i18nLog()->warning('cant-remove-receipt');
+                        Tools::log()->warning('cant-remove-receipt');
                         return false;
                     }
                 }
             // no break
             case 'fecha':
+                if (false === $this->testDate()) {
+                    return false;
+                }
+            // no break
+            case 'fechadevengo':
             case 'total':
                 return $this->onChangeTotal();
+
+            case 'codserie':
+                if (false === $this->testDate()) {
+                    return false;
+                }
+                break;
         }
 
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    protected function onChangeTotal()
+    protected function onChangeTotal(): bool
     {
         // remove accounting entry
         $asiento = $this->getAccountingEntry();
         $asiento->editable = true;
         if ($asiento->exists() && false === $asiento->delete()) {
-            ToolBox::i18nLog()->warning('cant-remove-account-entry');
+            Tools::log()->warning('cant-remove-account-entry');
             return false;
         }
 
@@ -250,5 +241,11 @@ trait InvoiceTrait
         $generator->update($this);
 
         return true;
+    }
+
+    protected function setPreviousData(array $fields = [])
+    {
+        $more = ['fechadevengo'];
+        parent::setPreviousData(array_merge($more, $fields));
     }
 }

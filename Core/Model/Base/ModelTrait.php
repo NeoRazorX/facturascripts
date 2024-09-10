@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ExtensionsTrait;
+use FacturaScripts\Core\Cache;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -31,7 +31,6 @@ use FacturaScripts\Core\Base\ExtensionsTrait;
  */
 trait ModelTrait
 {
-
     use ExtensionsTrait;
 
     /**
@@ -46,7 +45,7 @@ trait ModelTrait
      *
      * @return array
      */
-    public function getModelFields()
+    public function getModelFields(): array
     {
         return static::$fields;
     }
@@ -56,7 +55,7 @@ trait ModelTrait
      *
      * @return string
      */
-    public function modelClassName()
+    public function modelClassName(): string
     {
         $result = explode('\\', $this->modelName());
         return end($result);
@@ -67,7 +66,7 @@ trait ModelTrait
      *
      * @return string
      */
-    protected function modelName()
+    protected function modelName(): string
     {
         return get_class($this);
     }
@@ -78,20 +77,27 @@ trait ModelTrait
      * @param DataBase $dataBase
      * @param string $tableName
      */
-    protected function loadModelFields(DataBase &$dataBase, string $tableName)
+    protected function loadModelFields(DataBase &$dataBase, string $tableName): void
     {
         if (static::$fields) {
             return;
         }
 
         // read from the cache
-        $cache = new Cache();
-        $key = 'model-fields-' . get_class($this);
-        static::$fields = $cache->get($key);
-        if (is_null(static::$fields)) {
-            // empty value? Then get from the database and store on the cache
-            static::$fields = $dataBase->tableExists($tableName) ? $dataBase->getColumns($tableName) : [];
-            $cache->set($key, static::$fields);
+        $key = 'model-fields-' . $this->modelClassName();
+        static::$fields = Cache::get($key);
+        if (is_array(static::$fields) && static::$fields) {
+            return;
         }
+
+        // table exists?
+        if (false === $dataBase->tableExists($tableName)) {
+            static::$fields = [];
+            return;
+        }
+
+        // get from the database and store on the cache
+        static::$fields = $dataBase->getColumns($tableName);
+        Cache::set($key, static::$fields);
     }
 }

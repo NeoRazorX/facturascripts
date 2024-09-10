@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\CuentaEspecial;
@@ -34,12 +34,12 @@ use SimpleXMLElement;
 /**
  * Description of AccountingPlanImport
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Raul Jimenez         <comercial@nazcanetworks.com>
+ * @author       Carlos García Gómez      <carlos@facturascripts.com>
+ * @author       Raul Jimenez             <comercial@nazcanetworks.com>
+ * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class AccountingPlanImport
 {
-
     /**
      * @var DataBase
      */
@@ -60,58 +60,44 @@ class AccountingPlanImport
 
     /**
      * Import data from CSV file.
-     *
-     * @param string $filePath
-     * @param string $codejercicio
-     *
-     * @return bool
      */
-    public function importCSV(string $filePath, string $codejercicio)
+    public function importCSV(string $filePath, string $codejercicio): bool
     {
         if (false === $this->exercise->loadFromCode($codejercicio)) {
-            $this->toolBox()->i18nLog()->error('exercise-not-found');
+            Tools::log()->error('exercise-not-found');
             return false;
         }
 
         if (false === file_exists($filePath)) {
-            $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => $filePath]);
+            Tools::log()->warning('file-not-found', ['%fileName%' => $filePath]);
             return false;
         }
 
-        // start transaction
-        $this->dataBase->beginTransaction();
-        $return = true;
-
         try {
+            $this->dataBase->beginTransaction();
+
             $this->updateSpecialAccounts();
-            $this->processCsvData($filePath);
-
-            // confirm data
-            $this->dataBase->commit();
-        } catch (Exception $exp) {
-            $this->toolBox()->log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
-            $return = false;
-        } finally {
-            if ($this->dataBase->inTransaction()) {
+            if (false === $this->processCsvData($filePath)) {
                 $this->dataBase->rollback();
+                return false;
             }
-        }
 
-        return $return;
+            $this->dataBase->commit();
+            return true;
+        } catch (Exception $exp) {
+            $this->dataBase->rollback();
+            Tools::log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
+            return false;
+        }
     }
 
     /**
      * Import data from XML file.
-     *
-     * @param string $filePath
-     * @param string $codejercicio
-     *
-     * @return bool
      */
-    public function importXML(string $filePath, string $codejercicio)
+    public function importXML(string $filePath, string $codejercicio): bool
     {
         if (false === $this->exercise->loadFromCode($codejercicio)) {
-            $this->toolBox()->i18nLog()->error('exercise-not-found');
+            Tools::log()->error('exercise-not-found');
             return false;
         }
 
@@ -120,46 +106,43 @@ class AccountingPlanImport
             return false;
         }
 
-        // start transaction
-        $this->dataBase->beginTransaction();
-        $return = true;
-
         try {
+            $this->dataBase->beginTransaction();
+
             $this->updateSpecialAccounts();
-            $this->importEpigrafeGroup($data->grupo_epigrafes);
-            $this->importEpigrafe($data->epigrafe);
-            $this->importCuenta($data->cuenta);
-            $this->importSubcuenta($data->subcuenta);
-
-            // confirm data
-            $this->dataBase->commit();
-        } catch (Exception $exp) {
-            $this->toolBox()->log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
-            $return = false;
-        } finally {
-            if ($this->dataBase->inTransaction()) {
+            if (false === $this->importEpigrafeGroup($data->grupo_epigrafes)) {
                 $this->dataBase->rollback();
+                return false;
             }
-        }
+            if (false === $this->importEpigrafe($data->epigrafes)) {
+                $this->dataBase->rollback();
+                return false;
+            }
+            if (false === $this->importCuenta($data->cuenta)) {
+                $this->dataBase->rollback();
+                return false;
+            }
+            if (false === $this->importSubcuenta($data->subcuenta)) {
+                $this->dataBase->rollback();
+                return false;
+            }
 
-        return $return;
+            $this->dataBase->commit();
+            return true;
+        } catch (Exception $exp) {
+            $this->dataBase->rollback();
+            Tools::log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
+            return false;
+        }
     }
 
     /**
      * Insert/update and account in accounting plan.
-     *
-     * @param string $code
-     * @param string $definition
-     * @param string $parentCode
-     * @param string $codcuentaesp
-     *
-     * @return bool
      */
-    protected function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = '')
+    protected function createAccount(string $code, string $definition, ?string $parentCode = '', ?string $codcuentaesp = ''): bool
     {
+        // the account exists?
         $account = new Cuenta();
-
-        /// the account exists?
         $where = [
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codcuenta', $code)
@@ -178,19 +161,11 @@ class AccountingPlanImport
 
     /**
      * Insert or update an account in accounting Plan.
-     *
-     * @param string $code
-     * @param string $description
-     * @param string $parentCode
-     * @param string $codcuentaesp
-     *
-     * @return bool
      */
-    protected function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = '')
+    protected function createSubaccount(string $code, string $description, string $parentCode, ?string $codcuentaesp = ''): bool
     {
+        // the subaccount exists?
         $subaccount = new Subcuenta();
-
-        /// the subaccount exists?
         $where = [
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codsubcuenta', $code)
@@ -199,11 +174,12 @@ class AccountingPlanImport
             return true;
         }
 
-        /// update exercise configuration
+        // update exercise configuration
         if ($this->exercise->longsubcuenta != strlen($code)) {
             $this->exercise->longsubcuenta = strlen($code);
-            $this->exercise->save();
-            $subaccount->clearExerciseCache();
+            if (false === $this->exercise->save()) {
+                return false;
+            }
         }
 
         $subaccount->codcuenta = $parentCode;
@@ -232,62 +208,64 @@ class AccountingPlanImport
 
     /**
      * insert Cuenta of accounting plan
-     *
-     * @param SimpleXMLElement $data
      */
-    protected function importCuenta($data)
+    protected function importCuenta(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlAccount) {
-            $accountElement = (array)$xmlAccount;
-            $this->createAccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe'], $accountElement['idcuentaesp']);
+            $item = (array)$xmlAccount;
+            if (false === $this->createAccount($item['codcuenta'], base64_decode($item['descripcion']), $item['codepigrafe'], $item['idcuentaesp'])) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * insert Epigrafe of accounting plan
-     *
-     * @param SimpleXMLElement $data
      */
-    protected function importEpigrafe($data)
+    protected function importEpigrafe(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlEpigrafeElement) {
-            $epigrafeElement = (array)$xmlEpigrafeElement;
-            $this->createAccount($epigrafeElement['codepigrafe'], base64_decode($epigrafeElement['descripcion']), $epigrafeElement['codgrupo']);
+            $item = (array)$xmlEpigrafeElement;
+            if (false === $this->createAccount($item['codepigrafe'], base64_decode($item['descripcion']), $item['codgrupo'])) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * Insert Groups of accounting plan
-     *
-     * @param SimpleXMLElement $data
      */
-    protected function importEpigrafeGroup($data)
+    protected function importEpigrafeGroup(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlEpigrafeGroup) {
-            $epigrafeGroupElement = (array)$xmlEpigrafeGroup;
-            $this->createAccount($epigrafeGroupElement['codgrupo'], base64_decode($epigrafeGroupElement['descripcion']));
+            $item = (array)$xmlEpigrafeGroup;
+            if (false === $this->createAccount($item['codgrupo'], base64_decode($item['descripcion']))) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * Import subaccounts of accounting plan
-     *
-     * @param SimpleXMLElement $data
      */
-    protected function importSubcuenta($data)
+    protected function importSubcuenta(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlSubaccountElement) {
-            $subaccountElement = (array)$xmlSubaccountElement;
-            $this->createSubaccount($subaccountElement['codsubcuenta'], base64_decode($subaccountElement['descripcion']), $subaccountElement['codcuenta']);
+            $item = (array)$xmlSubaccountElement;
+            if (false === $this->createSubaccount($item['codsubcuenta'], base64_decode($item['descripcion']), $item['codcuenta'])) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * Load accounting plan from CSV File and imports in accounting plan.
-     *
-     * @param string $filePath
      */
-    protected function processCsvData(string $filePath)
+    protected function processCsvData(string $filePath): bool
     {
         $csv = new Csv();
         $csv->auto($filePath);
@@ -315,29 +293,30 @@ class AccountingPlanImport
         foreach ($accountPlan as $key => $value) {
             switch (strlen($key)) {
                 case $minLength:
-                    $this->createAccount($key, $value['descripcion'], '', $value['codcuentaesp']);
+                    $ok = $this->createAccount($key, $value['descripcion'], '', $value['codcuentaesp']);
                     break;
 
                 case $maxLength:
                     $parentCode = $this->searchParent($keys, $key);
-                    $this->createSubaccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
+                    $ok = $this->createSubaccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
                     break;
 
                 default:
                     $parentCode = $this->searchParent($keys, $key);
-                    $this->createAccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
+                    $ok = $this->createAccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
                     break;
             }
+
+            if (false === $ok) {
+                return false;
+            }
         }
+
+        return true;
     }
 
     /**
-     * Search the parent of account in a accounting Plan.
-     *
-     * @param array $accountCodes
-     * @param string $account
-     *
-     * @return string
+     * Search the parent of account in accounting Plan.
      */
     protected function searchParent(array &$accountCodes, string $account): string
     {
@@ -352,14 +331,6 @@ class AccountingPlanImport
         }
 
         return $parentCode;
-    }
-
-    /**
-     * @return ToolBox
-     */
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 
     /**

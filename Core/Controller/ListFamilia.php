@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,18 +24,12 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 /**
  * Controller to list the items in the Familia model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListFamilia extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
@@ -50,12 +44,12 @@ class ListFamilia extends ListController
     protected function createViews()
     {
         $viewName = 'ListFamilia';
-        $this->addView($viewName, 'Familia', 'families', 'fas fa-sitemap');
-        $this->addSearchFields($viewName, ['descripcion', 'codfamilia', 'madre']);
-        $this->addOrderBy($viewName, ['codfamilia'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
-        $this->addOrderBy($viewName, ['madre'], 'parent');
-        $this->addOrderBy($viewName, ['numproductos'], 'products');
+        $this->addView($viewName, 'Familia', 'families', 'fas fa-sitemap')
+            ->addSearchFields(['descripcion', 'codfamilia', 'madre'])
+            ->addOrderBy(['codfamilia'], 'code')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['madre'], 'parent')
+            ->addOrderBy(['numproductos'], 'products');
 
         $selectValues = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $this->addFilterSelect($viewName, 'madre', 'parent', 'madre', $selectValues);

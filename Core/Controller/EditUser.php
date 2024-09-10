@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,11 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleUser;
@@ -30,27 +32,23 @@ use Symfony\Component\HttpFoundation\Cookie;
 /**
  * Controller to edit a single item from the User model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditUser extends EditController
 {
+    public function getImageUrl(): string
+    {
+        $mvn = $this->getMainViewName();
+        return $this->views[$mvn]->model->gravatar();
+    }
 
-    /**
-     * 
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'User';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -59,26 +57,23 @@ class EditUser extends EditController
         return $data;
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    private function allowUpdate()
+    private function allowUpdate(): bool
     {
-        if ($this->request->request->get('code', '') === $this->user->nick) {
-            /**
-             * Prevent the user from deactivating or becoming an administrator.
-             */
-            if ($this->user->admin != (bool) $this->request->request->get('admin')) {
-                return false;
-            } elseif ($this->user->enabled != (bool) $this->request->request->get('enabled')) {
-                return false;
-            }
+        // preload user data
+        $code = $this->request->request->get('code', $this->request->query->get('code'));
+        $user = new User();
+        if (false === $user->loadFromCode($code)) {
+            // user not found, maybe it is a new user, so only admin can create it
+            return $this->user->admin;
+        }
 
+        // admin can update all users
+        if ($this->user->admin) {
             return true;
         }
 
-        return $this->user->admin || $this->user->nick === $this->request->get('code', '');
+        // non-admin users can only update their own data
+        return $user->nick === $this->user->nick;
     }
 
     /**
@@ -89,76 +84,114 @@ class EditUser extends EditController
         parent::createViews();
         $this->setTabsPosition('top');
 
-        /// disable company column if there is only one company
+        // disable company column if there is only one company
+        $mvn = $this->getMainViewName();
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->views[$mvn]->disableColumn('company');
         }
 
-        /// disable warehouse column if there is only one company
+        // disable warehouse column if there is only one company
         $almacen = new Almacen();
         if ($almacen->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('warehouse');
+            $this->views[$mvn]->disableColumn('warehouse');
         }
 
+        // disable options and print buttons
+        $this->setSettings($mvn, 'btnOptions', false);
+        $this->setSettings($mvn, 'btnPrint', false);
+
+        // add roles tab
         if ($this->user->admin) {
             $this->createViewsRole();
         }
+
+        // add page options tab
+        $this->createViewsPageOptions();
+
+        // add emails tab
+        $this->createViewsEmails();
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
-    protected function createViewsRole(string $viewName = 'EditRoleUser')
+    protected function createViewsEmails(string $viewName = 'ListEmailSent'): void
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope')
+            ->addOrderBy(['date'], 'date', 2)
+            ->addSearchFields(['addressee', 'body', 'subject']);
+
+        // desactivamos la columna de destinatario
+        $this->views[$viewName]->disableColumn('user');
+
+        // desactivamos el botón nuevo
+        $this->setSettings($viewName, 'btnNew', false);
+
+        // filtros
+        $this->listView($viewName)->addFilterPeriod('period', 'date', 'date', true);
+    }
+
+    protected function createViewsPageOptions(string $viewName = 'ListPageOption'): void
+    {
+        $this->addListView($viewName, 'PageOption', 'options', 'fas fa-wrench')
+            ->addOrderBy(['name'], 'name', 1)
+            ->addOrderBy(['last_update'], 'last-update')
+            ->addSearchFields(['name']);
+
+        // desactivamos el botón nuevo
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    protected function createViewsRole(string $viewName = 'EditRoleUser'): void
     {
         $this->addEditListView($viewName, 'RoleUser', 'roles', 'fas fa-address-card');
         $this->views[$viewName]->setInLine('true');
 
-        /// Disable column
+        // Disable column
         $this->views[$viewName]->disableColumn('user', true);
     }
 
-    /**
-     * Action to delete data.
-     *
-     * @return bool
-     */
-    protected function deleteAction()
+    protected function deleteAction(): bool
     {
+        // only admin can delete users
         $this->permissions->allowDelete = $this->user->admin;
         return parent::deleteAction();
     }
 
-    /**
-     * Runs the data edit action.
-     *
-     * @return bool
-     */
-    protected function editAction()
+    protected function editAction(): bool
     {
         $this->permissions->allowUpdate = $this->allowUpdate();
+
+        // prevent some user changes
+        if ($this->request->request->get('code', '') === $this->user->nick) {
+            if ($this->user->admin != (bool)$this->request->request->get('admin')) {
+                // prevent user from becoming admin
+                $this->permissions->allowUpdate = false;
+            } elseif ($this->user->enabled != (bool)$this->request->request->get('enabled')) {
+                // prevent user from disabling himself
+                $this->permissions->allowUpdate = false;
+            }
+        }
         $result = parent::editAction();
 
         // Are we changing user language?
         if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
-            $this->toolBox()->i18n()->setLang($this->views['EditUser']->model->langcode);
+            Tools::lang()->setLang($this->views['EditUser']->model->langcode);
 
-            $expire = \time() + \FS_COOKIES_EXPIRE;
+            $expire = time() + FS_COOKIES_EXPIRE;
             $this->response->headers->setCookie(
-                new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire, \FS_ROUTE)
+                Cookie::create(
+                    'fsLang',
+                    $this->views['EditUser']->model->langcode,
+                    $expire,
+                    Tools::config('route', '/')
+                )
             );
         }
 
         return $result;
     }
 
-    /**
-     * Runs data insert action.
-     * 
-     * @return bool
-     */
-    protected function insertAction()
+    protected function insertAction(): bool
     {
+        // only admin can create users
         $this->permissions->allowUpdate = $this->user->admin;
         return parent::insertAction();
     }
@@ -170,7 +203,7 @@ class EditUser extends EditController
      *
      * @return array
      */
-    protected function getUserPages($user)
+    protected function getUserPages(User $user): array
     {
         $pageList = [];
         if ($user->admin) {
@@ -189,7 +222,8 @@ class EditUser extends EditController
         $roleUserModel = new RoleUser();
         foreach ($roleUserModel->all([new DataBaseWhere('nick', $user->nick)]) as $roleUser) {
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
-                if (false === $roleAccess->getPage()->showonmenu) {
+                $page = $roleAccess->getPage();
+                if (false === $page->exists() || false === $page->showonmenu) {
                     continue;
                 }
 
@@ -201,16 +235,18 @@ class EditUser extends EditController
     }
 
     /**
-     * Load view data proedure
+     * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+        $nick = $this->getViewModelValue($mvn, 'nick');
+
         switch ($viewName) {
             case 'EditRoleUser':
-                $nick = $this->getViewModelValue('EditUser', 'nick');
                 $where = [new DataBaseWhere('nick', $nick)];
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;
@@ -222,17 +258,34 @@ class EditUser extends EditController
                 if (false === $this->allowUpdate()) {
                     $this->setTemplate('Error/AccessDenied');
                 } elseif ($view->model->nick == $this->user->nick) {
-                    /// prevent user self-destruction
+                    // prevent user self-destruction
                     $this->setSettings($viewName, 'btnDelete', false);
                 }
+                // is the user is admin, hide the EditRoleUser tab
+                if ($view->model->admin && array_key_exists('EditRoleUser', $this->views)) {
+                    $this->setSettings('EditRoleUser', 'active', false);
+                }
+                break;
+
+            case 'ListEmailSent':
+                $where = [new DataBaseWhere('nick', $nick)];
+                $view->loadData('', $where);
+                break;
+
+            case 'ListPageOption':
+                $where = [
+                    new DataBaseWhere('nick', $nick),
+                    new DataBaseWhere('nick', null, 'IS', 'OR'),
+                ];
+                $view->loadData('', $where);
                 break;
         }
     }
 
     /**
-     * Load a list of pages where user has access that can be setted as homepage.
+     * Load a list of pages where user has access that can be set as homepage.
      */
-    protected function loadHomepageValues()
+    protected function loadHomepageValues(): void
     {
         if (false === $this->views['EditUser']->model->exists()) {
             $this->views['EditUser']->disableColumn('homepage');
@@ -240,28 +293,23 @@ class EditUser extends EditController
         }
 
         $columnHomepage = $this->views['EditUser']->columnForName('homepage');
-        if($columnHomepage && $columnHomepage->widget->getType() === 'select') {
+        if ($columnHomepage && $columnHomepage->widget->getType() === 'select') {
             $userPages = $this->getUserPages($this->views['EditUser']->model);
-            $columnHomepage->widget->setValuesFromArray($userPages);
+            $columnHomepage->widget->setValuesFromArray($userPages, false, true);
         }
     }
 
     /**
      * Load the available language values from translator.
      */
-    protected function loadLanguageValues()
+    protected function loadLanguageValues(): void
     {
         $columnLangCode = $this->views['EditUser']->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
-            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
                 $langs[] = ['value' => $key, 'title' => $value];
             }
-
-            /// sorting
-            \usort($langs, function ($objA, $objB) {
-                return \strcmp($objA['title'], $objB['title']);
-            });
 
             $columnLangCode->widget->setValuesFromArray($langs, false);
         }

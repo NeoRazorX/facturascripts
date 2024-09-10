@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 
 /**
@@ -27,7 +29,6 @@ use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
  */
 class CuentaBancoCliente extends Base\BankAccount
 {
-
     use Base\ModelTrait;
 
     /**
@@ -44,6 +45,9 @@ class CuentaBancoCliente extends Base\BankAccount
      */
     public $fmandato;
 
+    /** @var string */
+    public $mandato;
+
     /**
      * Is it the customer's main account?
      *
@@ -51,67 +55,58 @@ class CuentaBancoCliente extends Base\BankAccount
      */
     public $principal;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
-        $this->fmandato = \date(self::DATE_STYLE);
+        $this->fmandato = Tools::date();
         $this->principal = true;
     }
 
-    /**
-     * 
-     * @return DinCliente
-     */
-    public function getSubject()
+    public function getSubject(): DinCliente
     {
         $customer = new DinCliente();
         $customer->loadFromCode($this->codcliente);
         return $customer;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new DinCliente();
 
         return parent::install();
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function save()
+    public function test(): bool
     {
-        if (parent::save()) {
-            $this->updatePrimaryAccount();
-            return true;
+        if (empty($this->mandato)) {
+            $this->mandato = $this->newCode('mandato');
         }
 
-        return false;
+        $this->mandato = Tools::noHtml($this->mandato);
+
+        return parent::test();
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function save(): bool
+    {
+        if (false === parent::save()) {
+            return false;
+        }
+
+        $this->updatePrimaryAccount();
+        return true;
+    }
+
+    public static function tableName(): string
     {
         return 'cuentasbcocli';
     }
 
-    protected function updatePrimaryAccount()
+    protected function updatePrimaryAccount(): void
     {
         if ($this->principal) {
-            /// If this account is the main one, we demarcate the others
+            // If this account is the main one, we demarcate the others
             $sql = 'UPDATE ' . static::tableName()
                 . ' SET principal = false'
                 . ' WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente)
@@ -120,13 +115,6 @@ class CuentaBancoCliente extends Base\BankAccount
         }
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         return empty($this->codcliente) || $type == 'list' ? parent::url($type, $list) : $this->getSubject()->url();

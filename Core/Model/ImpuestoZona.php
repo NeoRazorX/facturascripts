@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
 
 /**
  * A tax (VAT) that can be associated to tax, country, province, and.
@@ -25,10 +30,9 @@ namespace FacturaScripts\Core\Model;
  * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
-class ImpuestoZona extends Base\ModelClass
+class ImpuestoZona extends ModelClass
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Foreign key with tax table. varchar(10).
@@ -78,32 +82,20 @@ class ImpuestoZona extends Base\ModelClass
      */
     protected $provincia;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
-        $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
-        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
+        $this->codimpuesto = Tools::settings('default', 'codimpuesto');
+        $this->codpais = Tools::settings('default', 'codpais');
         $this->prioridad = 1;
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function provincia()
+    public function provincia(): ?string
     {
         if (!isset($this->provincia)) {
             $provincia = new Provincia();
@@ -114,12 +106,7 @@ class ImpuestoZona extends Base\ModelClass
         return $this->provincia;
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'impuestoszonas';
     }

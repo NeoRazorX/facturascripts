@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
@@ -31,7 +32,6 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
  */
 abstract class TransformerDocument extends BusinessDocument
 {
-
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
@@ -63,7 +63,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return TransformerDocument[]
      */
-    public function childrenDocuments()
+    public function childrenDocuments(): array
     {
         $children = [];
         $keys = [];
@@ -103,7 +103,7 @@ abstract class TransformerDocument extends BusinessDocument
         $this->editable = true;
 
         // select default status
-        foreach ($this->getAvaliableStatus() as $status) {
+        foreach ($this->getAvailableStatus() as $status) {
             if ($status->predeterminado) {
                 $this->idestado = $status->idestado;
                 $this->editable = $status->editable;
@@ -117,22 +117,26 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
+        if (false === $this->exists()) {
+            return true;
+        }
+
         if (count($this->childrenDocuments()) > 0) {
-            $this->toolBox()->i18nLog()->warning('non-editable-document');
+            Tools::log()->warning('non-editable-document');
             return false;
         }
 
         // we check if there is already an open transaction so as not to break it
-        $newTransation = false === static::$dataBase->inTransaction() && self::$dataBase->beginTransaction();
+        $newTransaction = false === static::$dataBase->inTransaction() && self::$dataBase->beginTransaction();
 
         // remove lines to update stock
         foreach ($this->getLines() as $line) {
             if ($line->delete()) {
                 continue;
             }
-            if ($newTransation) {
+            if ($newTransaction) {
                 self::$dataBase->rollback();
             }
             return false;
@@ -140,7 +144,7 @@ abstract class TransformerDocument extends BusinessDocument
 
         // remove this model
         if (false === parent::delete()) {
-            if ($newTransation) {
+            if ($newTransaction) {
                 self::$dataBase->rollback();
             }
             return false;
@@ -153,7 +157,7 @@ abstract class TransformerDocument extends BusinessDocument
 
         // change parent doc status
         foreach ($parents as $parent) {
-            foreach ($parent->getAvaliableStatus() as $status) {
+            foreach ($parent->getAvailableStatus() as $status) {
                 if ($status->predeterminado) {
                     $parent->idestado = $status->idestado;
                     $parent->save();
@@ -163,7 +167,7 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         // add audit log
-        self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->warning('deleted-model', [
+        Tools::log(self::AUDIT_CHANNEL)->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
@@ -172,32 +176,32 @@ abstract class TransformerDocument extends BusinessDocument
             'model-data' => $this->toArray()
         ]);
 
-        if ($newTransation) {
+        if ($newTransaction) {
             self::$dataBase->commit();
         }
         return true;
     }
 
     /**
-     * Returns all avaliable status for this type of document.
+     * Returns all available status for this type of document.
      *
      * @return EstadoDocumento[]
      */
-    public function getAvaliableStatus()
+    public function getAvailableStatus(): array
     {
         if (null === self::$estados) {
             $statusModel = new EstadoDocumento();
             self::$estados = $statusModel->all([], ['idestado' => 'ASC'], 0, 0);
         }
 
-        $avaliables = [];
+        $available = [];
         foreach (self::$estados as $status) {
             if ($status->tipodoc === $this->modelClassName()) {
-                $avaliables[] = $status;
+                $available[] = $status;
             }
         }
 
-        return $avaliables;
+        return $available;
     }
 
     /**
@@ -205,21 +209,14 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return EstadoDocumento
      */
-    public function getStatus()
+    public function getStatus(): EstadoDocumento
     {
         $status = new EstadoDocumento();
         $status->loadFromCode($this->idestado);
         return $status;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new EstadoDocumento();
@@ -232,7 +229,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return TransformerDocument[]
      */
-    public function parentDocuments()
+    public function parentDocuments(): array
     {
         $parents = [];
         $keys = [];
@@ -268,23 +265,20 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         // match editable with status
         $this->editable = $this->getStatus()->editable;
         return parent::save();
     }
 
-    /**
-     * @param bool $value
-     */
     public function setDocumentGeneration(bool $value)
     {
         self::$documentGeneration = $value;
     }
 
     /**
-     * Check changed fields before updata the database.
+     * Check changed fields before update the database.
      *
      * @param string $field
      *
@@ -293,7 +287,7 @@ abstract class TransformerDocument extends BusinessDocument
     protected function onChange($field)
     {
         if (false === $this->editable && false === $this->previousData['editable'] && $field != 'idestado') {
-            $this->toolBox()->i18nLog()->warning('non-editable-document');
+            Tools::log()->warning('non-editable-document');
             return false;
         } elseif ($field !== 'idestado') {
             return parent::onChange($field);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -30,30 +31,19 @@ use FacturaScripts\Dinamic\Model\Cliente;
 /**
  * Controller to edit a single item from the GrupoClientes model
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
- * @author Nazca Networks               <comercial@nazcanetworks.com>
- * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Nazca Networks                <comercial@nazcanetworks.com>
+ * @author Cristo M. Estévez Hernández   <cristom.estevez@gmail.com>
  */
 class EditGrupoClientes extends EditController
 {
-
-    /**
-     * Returns the class name of the model to use in the editView.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'GrupoClientes';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -82,7 +72,7 @@ class EditGrupoClientes extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('items-added-correctly', ['%num%' => $num]);
+        Tools::log()->notice('items-added-correctly', ['%num%' => $num]);
     }
 
     /**
@@ -115,7 +105,7 @@ class EditGrupoClientes extends EditController
         $this->views[$viewName]->settings['btnDelete'] = false;
 
         // filters
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         $values = [
             ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
             ['label' => $i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
@@ -229,6 +219,6 @@ class EditGrupoClientes extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('items-removed-correctly', ['%num%' => $num]);
+        Tools::log()->notice('items-removed-correctly', ['%num%' => $num]);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of WidgetMoney
@@ -28,38 +29,22 @@ use FacturaScripts\Core\Base\DivisaTools;
  */
 class WidgetMoney extends WidgetNumber
 {
-    /**
-     * @var DivisaTools
-     */
-    protected static $divisaTools;
-
-    /**
-     * @param array $data
-     */
-    public function __construct($data)
-    {
-        if (!isset(static::$divisaTools)) {
-            static::$divisaTools = new DivisaTools();
-        }
-
-        parent::__construct($data);
-    }
+    protected $coddivisa;
 
     public function showTableTotals(): bool
     {
         return true;
     }
 
-    /**
-     * @param object $model
-     */
+    /** @param object $model */
     protected function setValue($model)
     {
         parent::setValue($model);
-        static::$divisaTools->findDivisa($model);
+
+        $this->coddivisa = $model->coddivisa ?? Tools::settings('default', 'coddivisa') ?? 'EUR';
 
         if ('' === $this->icon) {
-            $simbol = static::$divisaTools->getSymbol();
+            $simbol = Divisas::get($this->coddivisa)->simbolo;
             switch ($simbol) {
                 case '€':
                     $this->icon = 'fas fa-euro-sign';
@@ -76,11 +61,14 @@ class WidgetMoney extends WidgetNumber
         }
     }
 
-    /**
-     * @return string
-     */
-    protected function show()
+    protected function show(): string
     {
-        return is_null($this->value) ? '-' : static::$divisaTools->format($this->value, $this->decimal);
+        if (is_null($this->value)) {
+            return '-';
+        }
+
+        return (false !== stripos($this->fieldname, 'euros'))
+            ? Tools::money($this->value, 'EUR', $this->decimal)
+            : Tools::money($this->value, $this->coddivisa, $this->decimal);
     }
 }

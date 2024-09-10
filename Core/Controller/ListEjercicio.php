@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,22 +23,17 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to list the items in the Ejercicio model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListEjercicio extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -53,21 +48,29 @@ class ListEjercicio extends ListController
     protected function createViews()
     {
         $viewName = 'ListEjercicio';
-        $this->addView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
-        $this->addSearchFields($viewName, ['nombre', 'codejercicio']);
-        $this->addOrderBy($viewName, ['fechainicio'], 'start-date', 2);
-        $this->addOrderBy($viewName, ['codejercicio'], 'code');
-        $this->addOrderBy($viewName, ['nombre'], 'name');
-        $this->addOrderBy($viewName, ['idempresa, codejercicio'], 'company');
+        $this->addView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt')
+            ->addSearchFields(['nombre', 'codejercicio'])
+            ->addOrderBy(['fechainicio'], 'start-date', 2)
+            ->addOrderBy(['codejercicio'], 'code')
+            ->addOrderBy(['nombre'], 'name')
+            ->addOrderBy(['idempresa, codejercicio'], 'company');
 
         // filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
 
-        $values = [
-            ['label' => $this->toolBox()->i18n()->trans('all'), 'where' => []],
-            ['label' => $this->toolBox()->i18n()->trans('only-active'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN)]],
-            ['label' => $this->toolBox()->i18n()->trans('only-closed'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]],
-        ];
-        $this->addFilterSelectWhere($viewName, 'status', $values);
+        $this->addFilterSelectWhere($viewName, 'status', [
+            [
+                'label' => Tools::lang()->trans('all'),
+                'where' => []
+            ],
+            [
+                'label' => Tools::lang()->trans('only-active'),
+                'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN)]
+            ],
+            [
+                'label' => Tools::lang()->trans('only-closed'),
+                'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]
+            ],
+        ]);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,9 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
-use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Partida;
 
 /**
@@ -31,7 +32,6 @@ use FacturaScripts\Dinamic\Model\Partida;
  */
 class AccountingClosingRegularization extends AccountingClosingBase
 {
-
     /**
      * Execute main process.
      * Create a new account entry for channel with a one line by account balance.
@@ -44,7 +44,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
     public function exec($exercise, $idjournal): bool
     {
         if (!$this->loadSubAccount($exercise, AccountingAccounts::SPECIAL_PROFIT_LOSS_ACCOUNT)) {
-            $this->toolBox()->i18nLog()->error('subaccount-pyg-not-found');
+            Tools::log()->error('subaccount-pyg-not-found');
             return false;
         }
 
@@ -58,10 +58,9 @@ class AccountingClosingRegularization extends AccountingClosingBase
      */
     protected function getConcept(): string
     {
-        return $this->toolBox()->i18n()->trans(
-            'closing-regularization-concept',
-            ['%exercise%' => $this->exercise->nombre]
-        );
+        return Tools::lang()->trans('closing-regularization-concept', [
+            '%exercise%' => $this->exercise->nombre
+        ]);
     }
 
     /**
@@ -91,6 +90,21 @@ class AccountingClosingRegularization extends AccountingClosingBase
      */
     protected function getSQL(): string
     {
+        if (FS_DB_TYPE == 'postgresql') {
+            return "SELECT COALESCE(t1.canal, 0) AS channel,"
+                . "t2.idsubcuenta AS id,"
+                . "t2.codsubcuenta AS code,"
+                . "ROUND(SUM(t2.debe)::numeric, 4) AS debit,"
+                . "ROUND(SUM(t2.haber)::numeric, 4) AS credit"
+                . " FROM asientos t1"
+                . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento AND t2.codsubcuenta BETWEEN '6' AND '799999999999999'"
+                . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
+                . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperation() . "')"
+                . " GROUP BY 1, 2, 3"
+                . " HAVING ROUND(SUM(t2.debe)::numeric - SUM(t2.haber::numeric), 4) <> 0.0000"
+                . " ORDER BY 1, 3, 2";
+        }
+
         return "SELECT COALESCE(t1.canal, 0) AS channel,"
             . "t2.idsubcuenta AS id,"
             . "t2.codsubcuenta AS code,"

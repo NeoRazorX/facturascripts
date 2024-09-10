@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -23,28 +24,24 @@ use FacturaScripts\Core\Base\DataBase;
 /**
  * Set of tools for the management of customer payment risk
  *
- * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
+ * @author Carlos García Gómez              <carlos@facturascripts.com>
  */
 class CustomerRiskTools
 {
 
-    /**
-     * Provides direct access to the database.
-     *
-     * @var DataBase
-     */
+    /** @var DataBase */
     private static $dataBase;
 
     /**
      * Returns the current customer's risk.
      *
      * @param string $codcliente
-     * @param int    $idempresa
+     * @param ?int $idempresa
      *
      * @return float
      */
-    public static function getCurrent($codcliente, $idempresa = null): float
+    public static function getCurrent(string $codcliente, ?int $idempresa = null): float
     {
         return static::getInvoicesRisk($codcliente, $idempresa) +
             static::getDeliveryNotesRisk($codcliente, $idempresa) +
@@ -55,11 +52,11 @@ class CustomerRiskTools
      * Returns the sum of the customer's pending delivery notes.
      *
      * @param string $codcliente
-     * @param int    $idempresa
+     * @param ?int $idempresa
      *
      * @return float
      */
-    public static function getDeliveryNotesRisk($codcliente, $idempresa = null): float
+    public static function getDeliveryNotesRisk(string $codcliente, ?int $idempresa = null): float
     {
         $sql = "SELECT SUM(total) AS total FROM albaranescli"
             . " WHERE codcliente = " . static::database()->var2str($codcliente)
@@ -69,31 +66,69 @@ class CustomerRiskTools
         }
 
         foreach (static::dataBase()->select($sql) as $item) {
-            return (float) $item['total'];
+            return (float)$item['total'];
         }
 
         return 0.0;
     }
 
     /**
-     * Returns the sum of the customer's unpaid invoices receipts.
+     * Returns the customer's unpaid invoices minus the customer's paid invoices receipts of those unpaid invoices.
      *
      * @param string $codcliente
-     * @param int    $idempresa
+     * @param ?int $idempresa
      *
      * @return float
      */
-    public static function getInvoicesRisk($codcliente, $idempresa = null): float
+    public static function getInvoicesRisk(string $codcliente, ?int $idempresa = null): float
     {
-        $sql = "SELECT SUM(importe) AS total FROM recibospagoscli"
+        $unpaidInvoicesAmount = static::getUnpaidInvoices($codcliente, $idempresa);
+        if ($unpaidInvoicesAmount == 0.0) {
+            // If there are no unpaid invoices there is no need to calculate unpaid bills.
+            return 0.0;
+        }
+
+        $sqlInvoices = "SELECT idfactura FROM facturascli"
             . " WHERE codcliente = " . static::database()->var2str($codcliente)
-            . " AND pagado = false";
+            . " AND pagada = false";
+        if (null !== $idempresa) {
+            $sqlInvoices .= " AND idempresa = " . static::database()->var2str($idempresa);
+        }
+
+        $sqlReceipt = "SELECT SUM(importe) AS total FROM recibospagoscli"
+            . " WHERE codcliente = " . static::database()->var2str($codcliente)
+            . " AND idfactura in (" . $sqlInvoices . ")"
+            . " AND pagado = true";
+        if (null !== $idempresa) {
+            $sqlReceipt .= " AND idempresa = " . static::database()->var2str($idempresa);
+        }
+
+        foreach (static::dataBase()->select($sqlReceipt) as $item) {
+            return (float)($unpaidInvoicesAmount - $item['total']);
+        }
+
+        return 0.0;
+    }
+
+    /**
+     * Returns the sum of the customer's unpaid invoices.
+     *
+     * @param string $codcliente
+     * @param ?int $idempresa
+     *
+     * @return float
+     */
+    protected static function getUnpaidInvoices(string $codcliente, ?int $idempresa = null): float
+    {
+        $sql = "SELECT SUM(total) AS total FROM facturascli"
+            . " WHERE codcliente = " . static::database()->var2str($codcliente)
+            . " AND pagada = false";
         if (null !== $idempresa) {
             $sql .= " AND idempresa = " . static::database()->var2str($idempresa);
         }
 
         foreach (static::dataBase()->select($sql) as $item) {
-            return (float) $item['total'];
+            return (float)$item['total'];
         }
 
         return 0.0;
@@ -103,11 +138,11 @@ class CustomerRiskTools
      * Returns the sum of the customer's pending orders.
      *
      * @param string $codcliente
-     * @param int    $idempresa
+     * @param ?int $idempresa
      *
      * @return float
      */
-    public static function getOrdersRisk($codcliente, $idempresa = null): float
+    public static function getOrdersRisk(string $codcliente, int $idempresa = null): float
     {
         $sql = "SELECT SUM(total) AS total FROM pedidoscli"
             . " WHERE codcliente = " . static::database()->var2str($codcliente)
@@ -117,17 +152,13 @@ class CustomerRiskTools
         }
 
         foreach (static::dataBase()->select($sql) as $item) {
-            return (float) $item['total'];
+            return (float)$item['total'];
         }
 
         return 0.0;
     }
 
-    /**
-     *
-     * @return DataBase
-     */
-    protected static function database()
+    protected static function database(): DataBase
     {
         if (null === self::$dataBase) {
             self::$dataBase = new DataBase();

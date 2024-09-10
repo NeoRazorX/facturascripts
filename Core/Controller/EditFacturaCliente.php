@@ -1,77 +1,69 @@
 <?php
 /**
- * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\AjaxForms\SalesController;
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
-use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
-use FacturaScripts\Dinamic\Lib\ExtendedController\SalesDocumentController;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\ReciboCliente;
 
 /**
- * Controller to edit a single item from the FacturaCliente model
+ * Description of EditFacturaCliente
  *
- * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Luis Miguel Pérez        <luismi@pcrednet.com>
- * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class EditFacturaCliente extends SalesDocumentController
+class EditFacturaCliente extends SalesController
 {
+    private const VIEW_ACCOUNTS = 'ListAsiento';
+    private const VIEW_RECEIPTS = 'ListReciboCliente';
 
-    /**
-     * Return the document class name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'FacturaCliente';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'invoice';
         $data['icon'] = 'fas fa-file-invoice-dollar';
+        $data['showonmenu'] = false;
         return $data;
     }
 
     /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->createViewsReceipts();
+        $this->createViewsAccounting();
+        $this->createViewsRefunds();
+    }
+
+    /**
+     * Add view for account detail of the invoice.
+     *
      * @param string $viewName
      */
-    protected function createAccountsView(string $viewName = 'ListAsiento')
+    private function createViewsAccounting(string $viewName = self::VIEW_ACCOUNTS): void
     {
         $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
 
         // buttons
         $this->addButton($viewName, [
             'action' => 'generate-accounting',
-            'icon' => 'fas fa-magic',
+            'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entry'
         ]);
 
@@ -80,18 +72,28 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
+     * Add view for refund invoice.
+     */
+    private function createViewsRefunds(string $viewName = 'refunds'): void
+    {
+        $this->addHtmlView($viewName, 'Tab/RefundFacturaCliente', 'FacturaCliente', 'refunds', 'fas fa-share-square');
+    }
+
+    /**
+     * Add view for receipts of the invoice.
+     *
      * @param string $viewName
      */
-    protected function createReceiptsView(string $viewName = 'ListReciboCliente')
+    private function createViewsReceipts(string $viewName = self::VIEW_RECEIPTS): void
     {
-        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
-        $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
+        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign')
+            ->addOrderBy(['vencimiento'], 'expiration');
 
         // buttons
         $this->addButton($viewName, [
             'action' => 'generate-receipts',
             'confirm' => 'true',
-            'icon' => 'fas fa-magic',
+            'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-receipts'
         ]);
 
@@ -111,22 +113,8 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-
-        // prevent users to change readonly property of numero field
-        $editViewName = 'Edit' . $this->getModelClassName();
-        $this->views[$editViewName]->disableColumn('number', false, 'true');
-
-        $this->createReceiptsView();
-        $this->createAccountsView();
-        $this->addHtmlView('refunds', 'Tab/RefundFacturaCliente', 'FacturaCliente', 'refunds', 'fas fa-share-square');
-    }
-
-    /**
+     * Run the actions that alter data before reading it.
+     *
      * @param string $action
      *
      * @return bool
@@ -150,17 +138,14 @@ class EditFacturaCliente extends SalesDocumentController
         return parent::execPreviousAction($action);
     }
 
-    /**
-     * @return bool
-     */
-    protected function generateAccountingAction(): bool
+    private function generateAccountingAction(): bool
     {
         $invoice = new FacturaCliente();
         if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -169,30 +154,27 @@ class EditFacturaCliente extends SalesDocumentController
         $generator = new InvoiceToAccounting();
         $generator->generate($invoice);
         if (empty($invoice->idasiento)) {
-            $this->toolBox()->i18nLog()->error('record-save-error');
+            Tools::log()->error('record-save-error');
             return true;
         }
 
         if ($invoice->save()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             return true;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    protected function generateReceiptsAction(): bool
+    private function generateReceiptsAction(): bool
     {
         $invoice = new FacturaCliente();
         if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -202,11 +184,13 @@ class EditFacturaCliente extends SalesDocumentController
         $number = (int)$this->request->request->get('number', '0');
         if ($generator->generate($invoice, $number)) {
             $generator->update($invoice);
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            $invoice->save();
+
+            Tools::log()->notice('record-updated-correctly');
             return true;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
         return true;
     }
 
@@ -221,12 +205,13 @@ class EditFacturaCliente extends SalesDocumentController
         $mvn = $this->getMainViewName();
 
         switch ($viewName) {
-            case 'ListReciboCliente':
+            case self::VIEW_RECEIPTS:
                 $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($mvn, 'idfactura'))];
                 $view->loadData('', $where);
+                $this->checkReceiptsTotal($view->cursor);
                 break;
 
-            case 'ListAsiento':
+            case self::VIEW_ACCOUNTS:
                 $where = [new DataBaseWhere('idasiento', $this->getViewModelValue($mvn, 'idasiento'))];
                 $view->loadData('', $where);
                 break;
@@ -246,17 +231,14 @@ class EditFacturaCliente extends SalesDocumentController
         }
     }
 
-    /**
-     * @return bool
-     */
     protected function newRefundAction(): bool
     {
         $invoice = new FacturaCliente();
         if (false === $invoice->loadFromCode($this->request->request->get('idfactura'))) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -270,33 +252,29 @@ class EditFacturaCliente extends SalesDocumentController
             }
         }
         if (empty($lines)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return true;
         }
 
         $this->dataBase->beginTransaction();
 
         if ($invoice->editable) {
-            foreach ($invoice->getAvaliableStatus() as $status) {
-                if ($status->editable) {
+            foreach ($invoice->getAvailableStatus() as $status) {
+                if ($status->editable || !$status->activo) {
                     continue;
                 }
 
                 $invoice->idestado = $status->idestado;
                 if (false === $invoice->save()) {
-                    $this->toolBox()->i18nLog()->error('record-save-error');
+                    Tools::log()->error('record-save-error');
                     $this->dataBase->rollback();
                     return true;
                 }
             }
         }
 
-        $excludeFields = ['codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora', 'idasiento', 'idestado',
-            'idfacturarect', 'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf', 'totaliva', 'totalrecargo',
-            'totalsuplidos', $invoice->primaryColumn()];
-
         $newRefund = new FacturaCliente();
-        $newRefund->loadFromData($invoice->toArray(), $excludeFields);
+        $newRefund->loadFromData($invoice->toArray(), $invoice::dontCopyFields());
         $newRefund->codigorect = $invoice->codigo;
         $newRefund->codserie = $this->request->request->get('codserie');
         $newRefund->idfacturarect = $invoice->idfactura;
@@ -304,7 +282,7 @@ class EditFacturaCliente extends SalesDocumentController
         $newRefund->observaciones = $this->request->request->get('observaciones');
         $newRefund->setDate($this->request->request->get('fecha'), date(FacturaCliente::HOUR_STYLE));
         if (false === $newRefund->save()) {
-            $this->toolBox()->i18nLog()->error('record-save-error');
+            Tools::log()->error('record-save-error');
             $this->dataBase->rollback();
             return true;
         }
@@ -314,34 +292,65 @@ class EditFacturaCliente extends SalesDocumentController
             $newLine->cantidad = 0 - (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
             $newLine->idlinearect = $line->idlinea;
             if (false === $newLine->save()) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 $this->dataBase->rollback();
                 return true;
             }
         }
 
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($newRefund);
+        $newLines = $newRefund->getLines();
         $newRefund->idestado = $invoice->idestado;
+        if (false === Calculator::calculate($newRefund, $newLines, true)) {
+            Tools::log()->error('record-save-error');
+            $this->dataBase->rollback();
+            return true;
+        }
+
+        // si la factura estaba pagada, marcamos los recibos de la nueva como pagados
+        if ($invoice->pagada) {
+            foreach ($newRefund->getReceipts() as $receipt) {
+                $receipt->pagado = true;
+                $receipt->save();
+            }
+        }
+
+        // asignamos el estado de la factura
+        $newRefund->idestado = $this->request->request->get('idestado');
         if (false === $newRefund->save()) {
-            $this->toolBox()->i18nLog()->error('record-save-error');
+            Tools::log()->error('record-save-error');
             $this->dataBase->rollback();
             return true;
         }
 
         $this->dataBase->commit();
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $this->redirect($newRefund->url() . '&action=save-ok');
         return false;
     }
 
     /**
-     * @return bool
+     * Adds a warning message if the sum of the receipts is not equal
+     * to the total of the invoice.
+     *
+     * @param ReciboCliente[] $receipts
      */
-    protected function paidAction(): bool
+    private function checkReceiptsTotal(array &$receipts): void
+    {
+        $total = 0.00;
+        foreach ($receipts as $row) {
+            $total += $row->importe;
+        }
+
+        $diff = $this->getModel()->total - $total;
+        if (abs($diff) > 0.01) {
+            Tools::log()->warning('invoice-receipts-diff', ['%diff%' => $diff]);
+        }
+    }
+
+    private function paidAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -350,25 +359,25 @@ class EditFacturaCliente extends SalesDocumentController
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
         if (false === is_array($codes) || empty($model)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return true;
         }
 
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                $this->toolBox()->i18nLog()->error('record-not-found');
+                Tools::log()->error('record-not-found');
                 continue;
             }
 
             $model->nick = $this->user->nick;
             $model->pagado = true;
             if (false === $model->save()) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 return true;
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $model->clear();
         return true;
     }

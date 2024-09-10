@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,12 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\FileManager;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
 use finfo;
 
 /**
@@ -29,210 +33,223 @@ use finfo;
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class AttachedFile extends Base\ModelOnChangeClass
+class AttachedFile extends ModelOnChangeClass
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     const MAX_FILENAME_LEN = 100;
+    const STORAGE_USED_KEY = 'storage-used';
 
-    /**
-     * Date.
-     *
-     * @var string
-     */
+    /** @var string */
     public $date;
 
-    /**
-     * Contains the file name.
-     *
-     * @var string
-     */
+    /** @var string */
     public $filename;
 
-    /**
-     * Hour.
-     *
-     * @var string
-     */
+    /** @var string */
     public $hour;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idfile;
 
-    /**
-     * Content the mime content type.
-     *
-     * @var string
-     */
+    /** @var string */
     public $mimetype;
 
-    /**
-     * Contains the relative path to file.
-     *
-     * @var string
-     */
+    /** @var string */
     public $path;
 
-    /**
-     * The size of the file in bytes.
-     *
-     * @var int
-     */
+    /** @var int */
     public $size;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
-        $this->date = date(self::DATE_STYLE);
-        $this->hour = date(self::HOUR_STYLE);
+        $this->date = Tools::date();
+        $this->hour = Tools::hour();
         $this->size = 0;
     }
 
-    /**
-     * Remove the model data from the database.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
+        // eliminamos el archivo
         $fullPath = $this->getFullPath();
         if (file_exists($fullPath) && false === unlink($fullPath)) {
-            $this->toolBox()->i18nLog()->warning('cant-delete-file', ['%fileName%' => $this->path]);
+            Tools::log()->warning('cant-delete-file', ['%fileName%' => $this->path]);
             return false;
         }
 
-        return parent::delete();
+        // eliminamos las relaciones con los productos
+        $productoImageModel = new ProductoImagen();
+        $where = [new DataBaseWhere('idfile', $this->idfile)];
+        foreach ($productoImageModel->all($where, [], 0, 0) as $productoImage) {
+            $productoImage->delete();
+        }
+
+        // eliminamos el registro de la base de datos
+        if (false === parent::delete()) {
+            return false;
+        }
+
+        // eliminamos el registro de la caché
+        Cache::delete(self::STORAGE_USED_KEY);
+
+        return true;
     }
 
-    /**
-     * @return string
-     */
-    public function getExtension()
+    public function getExtension(): string
     {
         $parts = explode('.', strtolower($this->filename));
         return count($parts) > 1 ? end($parts) : '';
     }
 
-    /**
-     * @return string
-     */
-    public function getFullPath()
+    public function getFullPath(): string
     {
         return FS_FOLDER . '/' . $this->path;
     }
 
-    /**
-     * @return int
-     */
-    public function getStorageLimit(): int
+    public static function getStorageLimit(): int
     {
-        return defined('FS_STORAGE_LIMIT') ? (int)FS_STORAGE_LIMIT : 0;
+        return Tools::config('storage_limit', 0);
     }
 
-    /**
-     * @param array $exclude
-     *
-     * @return int
-     */
-    public function getStorageUsed(array $exclude = []): int
+    public static function getStorageUsed(array $exclude = []): int
     {
-        $sql = 'SELECT SUM(size) as size FROM ' . static::tableName();
-        if ($exclude) {
-            $sql .= ' WHERE idfile NOT IN (' . implode(',', $exclude) . ')';
-        }
-        foreach (static::$dataBase->select($sql) as $row) {
-            return (int)$row ['size'];
-        }
+        return Cache::remember(self::STORAGE_USED_KEY, function () use ($exclude) {
+            $size = 0;
+            $sql = 'SELECT SUM(size) as size FROM ' . static::tableName();
+            if ($exclude) {
+                $sql .= ' WHERE idfile NOT IN (' . implode(',', $exclude) . ')';
+            }
+            foreach (static::$dataBase->select($sql) as $row) {
+                $size = (int)$row['size'];
+                break;
+            }
 
-        return 0;
+            $folderSize = Tools::folderSize(Tools::folder('MyFiles'));
+            return max($size, $folderSize);
+        });
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public function isArchive(): bool
+    {
+        return in_array($this->mimetype, ['application/zip', 'application/x-rar-compressed']);
+    }
+
+    public function isImage(): bool
+    {
+        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
+    }
+
+    public function isPdf(): bool
+    {
+        return $this->mimetype === 'application/pdf';
+    }
+
+    public function isVideo(): bool
+    {
+        return in_array($this->mimetype, ['video/mp4', 'video/ogg', 'video/webm']);
+    }
+
+    public static function primaryColumn(): string
     {
         return 'idfile';
     }
 
-    /**
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'filename';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function save(): bool
+    {
+        if (false === parent::save()) {
+            return false;
+        }
+
+        // eliminamos el registro de la caché
+        Cache::delete(self::STORAGE_USED_KEY);
+
+        return true;
+    }
+
+    public function shortFileName(int $length = 20): string
+    {
+        if (strlen($this->filename) <= $length) {
+            return $this->filename ?? '';
+        }
+
+        $parts = explode('.', $this->filename);
+        $extension = count($parts) > 1 ? end($parts) : '';
+        $name = substr($this->filename, 0, $length - strlen('...' . $extension));
+        return $name . '...' . $extension;
+    }
+
+    public static function tableName(): string
     {
         return 'attached_files';
     }
 
-    /**
-     * Test model data.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->idfile)) {
-            $this->idfile = $this->newCode();
+            $this->idfile = $this->getNextCode();
             return $this->setFile() && parent::test();
         }
+
+        $this->filename = Tools::noHtml($this->filename);
+        $this->mimetype = Tools::noHtml($this->mimetype);
+        $this->path = Tools::noHtml($this->path);
 
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         switch ($type) {
             case 'download':
-                return $this->path . '?myft=' . MyFilesToken::get($this->path, false);
+                return $this->path . '?myft=' . MyFilesToken::get($this->path ?? '', false);
 
             case 'download-permanent':
-                return $this->path . '?myft=' . MyFilesToken::get($this->path, true);
+                return $this->path . '?myft=' . MyFilesToken::get($this->path ?? '', true);
 
             default:
                 return parent::url($type, $list);
         }
     }
 
-    /**
-     * @param string $orignal
-     *
-     * @return string
-     */
-    protected function fixFileName($orignal): string
+    protected function fixFileName(string $original): string
     {
-        if (strlen($orignal) <= static::MAX_FILENAME_LEN) {
-            return (string)$orignal;
+        $fixed = Tools::noHtml($original);
+        if (strlen($fixed) <= static::MAX_FILENAME_LEN) {
+            return empty($fixed) ? '' : strtolower($fixed);
         }
 
-        $parts = explode('.', strtolower($orignal));
+        $parts = explode('.', strtolower($fixed));
         $extension = count($parts) > 1 ? end($parts) : '';
-        $name = substr($orignal, 0, static::MAX_FILENAME_LEN - strlen('.' . $extension));
+        $name = substr($fixed, 0, static::MAX_FILENAME_LEN - strlen('.' . $extension));
         return $name . '.' . $extension;
+    }
+
+    protected function getNextCode(): int
+    {
+        switch (Tools::config('db_type')) {
+            case 'mysql':
+                $sql = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . Tools::config('db_name')
+                    . "' AND TABLE_NAME = '" . static::tableName() . "';";
+                foreach (static::$dataBase->select($sql) as $row) {
+                    return max($this->newCode(), $row['AUTO_INCREMENT']);
+                }
+                break;
+
+            case 'postgresql':
+                $sql = "SELECT nextval('" . static::tableName() . "_idfile_seq');";
+                foreach (static::$dataBase->select($sql) as $row) {
+                    return max($this->newCode(), $row['nextval']);
+                }
+                break;
+        }
+
+        return $this->newCode();
     }
 
     /**
@@ -246,7 +263,7 @@ class AttachedFile extends Base\ModelOnChangeClass
             case 'path':
                 if ($this->previousData['path']) {
                     // remove old file
-                    unlink(\FS_FOLDER . '/' . $this->previousData['path']);
+                    unlink(FS_FOLDER . '/' . $this->previousData['path']);
                 }
                 return $this->setFile();
 
@@ -256,24 +273,24 @@ class AttachedFile extends Base\ModelOnChangeClass
     }
 
     /**
-     * Examine and move new file setted.
+     * Examine and move new file set.
      *
      * @return bool
      */
-    protected function setFile()
+    protected function setFile(): bool
     {
         $this->filename = $this->fixFileName($this->path);
         $newFolder = 'MyFiles/' . date('Y/m', strtotime($this->date));
         $newFolderPath = FS_FOLDER . '/' . $newFolder;
-        if (false === FileManager::createFolder($newFolderPath, true)) {
-            $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => $newFolder]);
+        if (false === Tools::folderCheckOrCreate($newFolderPath)) {
+            Tools::log()->critical('cant-create-folder', ['%folderName%' => $newFolder]);
             return false;
         }
 
         $currentPath = FS_FOLDER . '/MyFiles/' . $this->path;
         if ($this->getStorageLimit() > 0 &&
-            filesize($currentPath) + $this->getStorageUsed([$this->idfile]) > $this->getStorageLimit()) {
-            $this->toolBox()->i18nLog()->critical('storage-limit-reached');
+            filesize($currentPath) + static::getStorageUsed([$this->idfile]) > $this->getStorageLimit()) {
+            Tools::log()->critical('storage-limit-reached');
             unlink($currentPath);
             return false;
         }
@@ -294,9 +311,6 @@ class AttachedFile extends Base\ModelOnChangeClass
         return true;
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['path'];

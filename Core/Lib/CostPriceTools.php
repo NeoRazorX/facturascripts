@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor;
 use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
 use FacturaScripts\Dinamic\Model\Producto;
@@ -34,14 +35,10 @@ use FacturaScripts\Dinamic\Model\Variante;
  */
 class CostPriceTools
 {
-
-    /**
-     *
-     * @param Variante $variant
-     */
-    public static function update($variant)
+    public static function update(Variante $variant): void
     {
-        $policy = static::toolBox()->appSettings()->get('default', 'costpricepolicy');
+        $policy = Tools::settings('default', 'costpricepolicy');
+
         switch ($policy) {
             case 'actual-price':
                 static::updateActualPrice($variant);
@@ -49,6 +46,10 @@ class CostPriceTools
 
             case 'average-price':
                 static::updateAveragePrice($variant);
+                break;
+
+            case 'high-price':
+                static::updateHighPrice($variant);
                 break;
 
             case 'last-price':
@@ -62,7 +63,7 @@ class CostPriceTools
      *
      * @param Variante $variant
      */
-    protected static function updateActualPrice($variant)
+    protected static function updateActualPrice(Variante $variant): void
     {
         if ($variant->stockfis < 1) {
             static::updateLastPrice($variant);
@@ -76,28 +77,28 @@ class CostPriceTools
         ];
         $order = ['idlinea' => 'DESC'];
 
-        /// we collect the latest delivery notes for this product
+        // we collect the latest delivery notes for this product
         $lineaAlbaran = new LineaAlbaranProveedor();
-        foreach ($lineaAlbaran->all($where, $order, 0, (int) $variant->stockfis) as $line) {
+        foreach ($lineaAlbaran->all($where, $order, 0, (int)$variant->stockfis) as $line) {
             $rows[] = [
-                'time' => \strtotime($line->getDocument()->fecha),
+                'time' => strtotime($line->getDocument()->fecha),
                 'quantity' => $line->cantidad,
                 'cost' => $line->pvptotal
             ];
         }
 
-        /// we collect the latest invoices for this product
+        // we collect the latest invoices for this product
         $lineaFactura = new LineaFacturaProveedor();
-        foreach ($lineaFactura->all($where, $order, 0, (int) $variant->stockfis) as $line) {
+        foreach ($lineaFactura->all($where, $order, 0, (int)$variant->stockfis) as $line) {
             $rows[] = [
-                'time' => \strtotime($line->getDocument()->fecha),
+                'time' => strtotime($line->getDocument()->fecha),
                 'quantity' => $line->cantidad,
                 'cost' => $line->pvptotal
             ];
         }
 
-        /// now we sort by date
-        \usort($rows, function ($item1, $item2) {
+        // now we sort by date
+        usort($rows, function ($item1, $item2) {
             if ($item1['time'] > $item2['time']) {
                 return -1;
             } elseif ($item1['time'] < $item2['time']) {
@@ -117,7 +118,7 @@ class CostPriceTools
         }
 
         $newCost = empty($buyedUnits) ? 0.0 : $totalCost / $buyedUnits;
-        $variant->coste = \round($newCost, Producto::ROUND_DECIMALS);
+        $variant->coste = round($newCost, Producto::ROUND_DECIMALS);
         $variant->save();
     }
 
@@ -126,7 +127,7 @@ class CostPriceTools
      *
      * @param Variante $variant
      */
-    protected static function updateAveragePrice($variant)
+    protected static function updateAveragePrice(Variante $variant): void
     {
         $prices = [];
         $supplierProduct = new ProductoProveedor();
@@ -135,8 +136,8 @@ class CostPriceTools
             $prices[] = $prod->neto;
         }
 
-        $newCost = empty($prices) ? 0.0 : \array_sum($prices) / \count($prices);
-        $variant->coste = \round($newCost, Producto::ROUND_DECIMALS);
+        $newCost = empty($prices) ? 0.0 : array_sum($prices) / count($prices);
+        $variant->coste = round($newCost, Producto::ROUND_DECIMALS);
         $variant->save();
     }
 
@@ -145,23 +146,30 @@ class CostPriceTools
      *
      * @param Variante $variant
      */
-    protected static function updateLastPrice($variant)
+    protected static function updateLastPrice(Variante $variant): void
     {
         $supplierProduct = new ProductoProveedor();
         $where = [new DataBaseWhere('referencia', $variant->referencia)];
         foreach ($supplierProduct->all($where, ['actualizado' => 'DESC'], 0, 1) as $prod) {
-            $variant->coste = \round($prod->neto, Producto::ROUND_DECIMALS);
+            $variant->coste = round($prod->neto, Producto::ROUND_DECIMALS);
             $variant->save();
             break;
         }
     }
 
     /**
+     * Returns the high price to buy this product.
      *
-     * @return ToolBox
+     * @param Variante $variant
      */
-    protected static function toolBox()
+    protected static function updateHighPrice(Variante $variant): void
     {
-        return new ToolBox();
+        $supplierProduct = new ProductoProveedor();
+        $where = [new DataBaseWhere('referencia', $variant->referencia)];
+        foreach ($supplierProduct->all($where, ['precio' => 'DESC'], 0, 1) as $prod) {
+            $variant->coste = round($prod->neto, Producto::ROUND_DECIMALS);
+            $variant->save();
+            break;
+        }
     }
 }

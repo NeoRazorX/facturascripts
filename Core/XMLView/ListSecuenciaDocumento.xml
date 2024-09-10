@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@
 <view>
     <columns>
         <column name="id" display="none" order="100">
-            <widget type="text" fieldname="idsecuencia" />
+            <widget type="text" fieldname="idsecuencia"/>
         </column>
         <column name="doc-type" order="110">
             <widget type="select" fieldname="tipodoc" translate="true">
@@ -36,27 +36,38 @@
                 <values title="supplier-invoice">FacturaProveedor</values>
             </widget>
         </column>
-        <column name="company" display="none" order="120">
+        <column name="company" order="120">
             <widget type="select" fieldname="idempresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
             </widget>
         </column>
         <column name="exercise" order="130">
-            <widget type="text" fieldname="codejercicio" />
+            <widget type="select" fieldname="codejercicio">
+                <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"/>
+            </widget>
         </column>
         <column name="serie" order="140">
             <widget type="select" fieldname="codserie">
-                <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
+                <values source="series" fieldcode="codserie" fieldtitle="descripcion"/>
             </widget>
         </column>
         <column name="number" display="right" order="150">
-            <widget type="number" fieldname="numero" decimal="0" />
+            <widget type="number" fieldname="numero" decimal="0"/>
         </column>
         <column name="number-length" display="right" order="160">
-            <widget type="number" fieldname="longnumero" decimal="0" />
+            <widget type="number" fieldname="longnumero" decimal="0"/>
         </column>
         <column name="pattern" order="170">
-            <widget type="text" fieldname="patron" />
+            <widget type="text" fieldname="patron"/>
+        </column>
+        <column name="use-gaps" display="right" order="180">
+            <widget type="checkbox" fieldname="usarhuecos"/>
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="warning" fieldname="tipodoc" title="customer-invoice">FacturaCliente</option>
+            <option color="info" fieldname="codejercicio" title="for-all-exercises">null:</option>
+        </row>
+    </rows>
 </view>

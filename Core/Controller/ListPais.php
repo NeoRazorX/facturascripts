@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
@@ -23,18 +24,12 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 /**
  * Controller to list the items in the Pais model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListPais extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -43,64 +38,74 @@ class ListPais extends ListController
         return $data;
     }
 
-    /**
-     * Load views
-     */
     protected function createViews()
     {
-        $this->createViewCountries();
+        $this->createViewsCountries();
+        $this->createViewsProvinces();
+        $this->createViewsCities();
+        $this->createViewsPOIs();
+        $this->createViewsZipCodes();
         $this->createViewsDivisas();
-        $this->createViewProvinces();
-        $this->createViewCities();
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
-    protected function createViewCities(string $viewName = 'ListCiudad')
+    protected function createViewsCities(string $viewName = 'ListCiudad'): void
     {
-        $this->addView($viewName, 'Ciudad', 'cities', 'fas fa-city');
-        $this->addOrderBy($viewName, ['ciudad'], 'name');
-        $this->addOrderBy($viewName, ['idprovincia'], 'province');
-        $this->addSearchFields($viewName, ['ciudad']);
+        $this->addView($viewName, 'Ciudad', 'cities', 'fas fa-city')
+            ->addOrderBy(['ciudad'], 'name')
+            ->addOrderBy(['idprovincia'], 'province')
+            ->addSearchFields(['ciudad', 'alias'])
+            ->addFilterAutocomplete('idprovincia', 'province', 'idprovincia', 'provincias', 'idprovincia', 'provincia')
+            ->setSettings('btnNew', false);
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
-    protected function createViewCountries(string $viewName = 'ListPais')
+    protected function createViewsCountries(string $viewName = 'ListPais'): void
     {
-        $this->addView($viewName, 'Pais', 'countries', 'fas fa-globe-americas');
-        $this->addOrderBy($viewName, ['codpais'], 'code');
-        $this->addOrderBy($viewName, ['nombre'], 'name', 1);
-        $this->addOrderBy($viewName, ['codiso'], 'codiso');
-        $this->addSearchFields($viewName, ['nombre', 'codiso', 'codpais']);
+        $this->addView($viewName, 'Pais', 'countries', 'fas fa-globe-americas')
+            ->addOrderBy(['codpais'], 'code')
+            ->addOrderBy(['nombre'], 'name', 1)
+            ->addOrderBy(['codiso'], 'codiso')
+            ->addSearchFields(['nombre', 'codiso', 'codpais', 'alias']);
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
-    protected function createViewsDivisas(string $viewName = 'ListDivisa')
+    protected function createViewsDivisas(string $viewName = 'ListDivisa'): void
     {
-        $this->addView($viewName, 'Divisa', 'currency', 'fas fa-money-bill-alt');
-        $this->addOrderBy($viewName, ['coddivisa'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description', 1);
-        $this->addOrderBy($viewName, ['codiso'], 'codiso');
-        $this->addSearchFields($viewName, ['descripcion', 'coddivisa']);
+        $this->addView($viewName, 'Divisa', 'currency', 'fas fa-money-bill-alt')
+            ->addOrderBy(['coddivisa'], 'code')
+            ->addOrderBy(['descripcion'], 'description', 1)
+            ->addOrderBy(['codiso'], 'codiso')
+            ->addSearchFields(['descripcion', 'coddivisa']);
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
-    protected function createViewProvinces(string $viewName = 'ListProvincia')
+    protected function createViewsPOIs(string $viewName = 'ListPuntoInteresCiudad'): void
     {
-        $this->addView($viewName, 'Provincia', 'province', 'fas fa-map-signs');
-        $this->addOrderBy($viewName, ['provincia'], 'name');
-        $this->addOrderBy($viewName, ['codpais'], 'country');
-        $this->addSearchFields($viewName, ['provincia', 'codisoprov']);
+        $this->addView($viewName, 'PuntoInteresCiudad', 'points-of-interest', 'fas fa-location-dot')
+            ->addOrderBy(['name'], 'name')
+            ->addOrderBy(['idciudad'], 'city')
+            ->addSearchFields(['name', 'alias'])
+            ->addFilterAutocomplete('idciudad', 'city', 'idciudad', 'ciudades', 'idciudad', 'ciudad')
+            ->setSettings('btnNew', false);
+    }
+
+    protected function createViewsProvinces(string $viewName = 'ListProvincia'): void
+    {
+        $this->addView($viewName, 'Provincia', 'provinces', 'fas fa-map-signs')
+            ->addOrderBy(['provincia'], 'name')
+            ->addOrderBy(['codpais'], 'country')
+            ->addSearchFields(['provincia', 'codisoprov', 'alias'])
+            ->addFilterAutocomplete('codpais', 'country', 'codpais', 'paises', 'codpais', 'nombre')
+            ->setSettings('btnNew', false);
+    }
+
+    protected function createViewsZipCodes(string $viewName = 'ListCodigoPostal'): void
+    {
+        $this->addView($viewName, 'CodigoPostal', 'zip-codes', 'fas fa-map-pin')
+            ->addOrderBy(['number'], 'number')
+            ->addOrderBy(['codpais'], 'country')
+            ->addOrderBy(['idprovincia'], 'province')
+            ->addOrderBy(['idciudad'], 'city')
+            ->addSearchFields(['number'])
+            ->addFilterAutocomplete('codpais', 'country', 'codpais', 'paises', 'codpais', 'nombre')
+            ->addFilterAutocomplete('idprovincia', 'province', 'idprovincia', 'provincias', 'idprovincia', 'provincia')
+            ->addFilterAutocomplete('idciudad', 'city', 'idciudad', 'ciudades', 'idciudad', 'ciudad');
     }
 }

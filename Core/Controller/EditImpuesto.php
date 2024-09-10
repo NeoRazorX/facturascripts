@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,23 +32,12 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditImpuesto extends EditController
 {
-
-    /**
-     * Returns the model name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Impuesto';
     }
 
-    /**
-     * Returns basic page attributes.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -62,16 +52,27 @@ class EditImpuesto extends EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->setTabsPosition('bottom');
+
         $this->createViewsZones();
         $this->createViewsProducts();
-        $this->setTabsPosition('bottom');
+        $this->createViewsAccounts();
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
-    protected function createViewsProducts(string $viewName = 'ListProducto')
+    protected function createViewsAccounts(string $viewName = 'ListSubcuenta'): void
+    {
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-folder-open');
+        $this->views[$viewName]->addOrderBy(['codejercicio', 'codsubcuenta'], 'code', 2);
+        $this->views[$viewName]->addOrderBy(['codejercicio', 'descripcion'], 'description');
+        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
+        $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
+
+        // desactivamos los botones de nuevo y eliminar
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
+    }
+
+    protected function createViewsProducts(string $viewName = 'ListProducto'): void
     {
         $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
@@ -79,16 +80,12 @@ class EditImpuesto extends EditController
         $this->views[$viewName]->addOrderBy(['stockfis'], 'stock');
         $this->views[$viewName]->addSearchFields(['referencia', 'descripcion', 'observaciones']);
 
-        /// disable buttons
+        // desactivamos los botones de nuevo y eliminar
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
-    protected function createViewsZones(string $viewName = 'EditImpuestoZona')
+    protected function createViewsZones(string $viewName = 'EditImpuestoZona'): void
     {
         $this->addEditListView($viewName, 'ImpuestoZona', 'exceptions', 'fas fa-globe-americas');
         $this->views[$viewName]->disableColumn('tax');
@@ -98,21 +95,45 @@ class EditImpuesto extends EditController
     /**
      * Loads the data to display.
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+        $code = $this->getViewModelValue($mvn, 'codimpuesto');
+
         switch ($viewName) {
             case 'EditImpuestoZona':
+                $where = [new DataBaseWhere('codimpuesto', $code)];
+                $view->loadData('', $where, ['prioridad' => 'DESC']);
+                break;
+
             case 'ListProducto':
-                $codimpuesto = $this->getViewModelValue('EditImpuesto', 'codimpuesto');
-                $where = [new DataBaseWhere('codimpuesto', $codimpuesto)];
+                $where = [new DataBaseWhere('codimpuesto', $code)];
+                $view->loadData('', $where);
+                break;
+
+            case 'ListSubcuenta':
+                // cargamos la lista de subcuentas del impuesto
+                $codes = [];
+                foreach (['codsubcuentarep', 'codsubcuentarepre', 'codsubcuentasop', 'codsubcuentasopre'] as $field) {
+                    if ($this->getViewModelValue($mvn, $field)) {
+                        $codes[] = $this->getViewModelValue($mvn, $field);
+                    }
+                }
+                if (empty($codes)) {
+                    // no hay ninguna cuenta, desactivamos la pestaña
+                    $view->settings['active'] = false;
+                    break;
+                }
+                $where = [new DataBaseWhere('codsubcuenta', implode(',', $codes), 'IN')];
                 $view->loadData('', $where);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
+                break;
         }
     }
 }

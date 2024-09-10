@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,14 +27,20 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * View definition for its use in ExtendedControllers
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditListView extends BaseView
 {
-
     const DEFAULT_TEMPLATE = 'Master/EditListView.html.twig';
     const INLINE_TEMPLATE = 'Master/EditListViewInLine.html.twig';
+
+    /**
+     * Indicates if the view has been selected by the user.
+     *
+     * @var bool
+     */
+    public $selected;
 
     /**
      * Method to export the view data.
@@ -50,7 +57,7 @@ class EditListView extends BaseView
         }
 
         return $exportManager->addListModelPage(
-                $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
+            $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
         );
     }
 
@@ -58,11 +65,11 @@ class EditListView extends BaseView
      * Load the data in the cursor property, according to the where filter specified.
      * Adds an empty row/model at the end of the loaded data.
      *
-     * @param string          $code
+     * @param string $code
      * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param int             $limit
+     * @param array $order
+     * @param int $offset
+     * @param int $limit
      */
     public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
     {
@@ -77,8 +84,10 @@ class EditListView extends BaseView
         }
 
         $this->where = $finalWhere;
-        foreach (DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
-            $this->model->{$field} = $value;
+        if ($this->model !== null) {
+            foreach (DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
+                $this->model->{$field} = $value;
+            }
         }
     }
 
@@ -86,7 +95,7 @@ class EditListView extends BaseView
      * Process form data needed.
      *
      * @param Request $request
-     * @param string  $case
+     * @param string $case
      */
     public function processFormData($request, $case)
     {
@@ -95,22 +104,26 @@ class EditListView extends BaseView
                 foreach ($this->getColumns() as $group) {
                     $group->processFormData($this->model, $request);
                 }
+                $this->selected = $request->request->get('code');
                 break;
 
             case 'load':
-                $this->offset = (int) $request->request->get('offset', 0);
+                $this->offset = (int)$request->request->get('offset', 0);
                 break;
         }
     }
 
     /**
      * Sets edit mode to single line.
-     * 
+     *
      * @param bool $value
+     * @return EditListView
      */
-    public function setInLine(bool $value)
+    public function setInLine(bool $value): EditListView
     {
         $this->template = $value ? static::INLINE_TEMPLATE : static::DEFAULT_TEMPLATE;
+
+        return $this;
     }
 
     /**
@@ -118,6 +131,6 @@ class EditListView extends BaseView
      */
     protected function assets()
     {
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/EditListView.js');
+        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/EditListView.js');
     }
 }

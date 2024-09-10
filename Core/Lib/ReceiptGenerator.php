@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,11 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
 
@@ -33,7 +36,6 @@ use FacturaScripts\Dinamic\Model\ReciboProveedor;
  */
 class ReceiptGenerator
 {
-
     const MAX_RECEIPTS = 100;
     const PARTIAL_AMOUNT_MULTIPLIER = 1.5;
 
@@ -53,10 +55,14 @@ class ReceiptGenerator
 
         switch ($invoice->modelClassName()) {
             case 'FacturaCliente':
-                return empty($number) ? $this->updateCustomerReceipts($invoice) : $this->generateCustomerReceipts($invoice, $number);
+                return empty($number) ?
+                    $this->updateCustomerReceipts($invoice) :
+                    $this->generateCustomerReceipts($invoice, $number);
 
             case 'FacturaProveedor':
-                return empty($number) ? $this->updateSupplierReceipts($invoice) : $this->generateSupplierReceipts($invoice, $number);
+                return empty($number) ?
+                    $this->updateSupplierReceipts($invoice) :
+                    $this->generateSupplierReceipts($invoice, $number);
         }
 
         return false;
@@ -67,23 +73,30 @@ class ReceiptGenerator
      */
     public function update(&$invoice)
     {
-        // check current invoice receipts
+        // obtenemos los recibos de la factura
         $receipts = $invoice->getReceipts();
 
-        // set invoice as pais or not
+        // sumamos los importes pagados
         $paidAmount = 0.0;
+        $invoice->vencida = false;
         foreach ($receipts as $receipt) {
             if ($receipt->pagado) {
                 $paidAmount += $receipt->importe;
+            } elseif ($receipt->vencido) {
+                $invoice->vencida = true;
             }
         }
-        $invoice->pagada = $this->isCero($invoice->total - $paidAmount);
+        // la factura está pagada si el importe pagado es igual o superior al importe total
+        $invoice->pagada = $this->isCero($invoice->total - $paidAmount) || ($invoice->total > 0 && $invoice->total <= $paidAmount);
 
-        // update by sql
+        // actualizamos la factura por sql
         $dataBase = new DataBase();
         $sql = 'UPDATE ' . $invoice::tableName() . ' SET pagada = ' . $dataBase->var2str($invoice->pagada)
+            . ', vencida = ' . $dataBase->var2str($invoice->vencida)
             . ' WHERE ' . $invoice::primaryColumn() . ' = ' . $dataBase->var2str($invoice->primaryColumnValue()) . ';';
         $dataBase->exec($sql);
+
+        WorkQueue::send('Model.' . $invoice->modelClassName() . '.Paid', $invoice->primaryColumnValue(), $invoice->toArray());
     }
 
     /**
@@ -100,7 +113,7 @@ class ReceiptGenerator
         // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
         if (empty($amount)) {
-            $this->toolBox()->i18nLog()->warning('no-outstanding-amount');
+            Tools::log()->warning('no-outstanding-amount');
             return false;
         }
 
@@ -141,7 +154,7 @@ class ReceiptGenerator
         // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
         if (empty($amount)) {
-            $this->toolBox()->i18nLog()->warning('no-outstanding-amount');
+            Tools::log()->warning('no-outstanding-amount');
             return false;
         }
 
@@ -193,7 +206,7 @@ class ReceiptGenerator
      */
     protected function isCero($amount): bool
     {
-        return $this->toolBox()->utils()->floatcmp($amount, 0.0, FS_NF0, true);
+        return Utils::floatcmp($amount, 0.0, FS_NF0, true);
     }
 
     /**
@@ -205,6 +218,10 @@ class ReceiptGenerator
      */
     protected function newCustomerReceipt($invoice, $number, $amount): bool
     {
+        if (empty($amount)) {
+            return true;
+        }
+
         $newReceipt = new ReciboCliente();
         $newReceipt->codcliente = $invoice->codcliente;
         $newReceipt->coddivisa = $invoice->coddivisa;
@@ -228,6 +245,10 @@ class ReceiptGenerator
      */
     protected function newSupplierReceipt($invoice, $number, $amount): bool
     {
+        if (empty($amount)) {
+            return true;
+        }
+
         $newReceipt = new ReciboProveedor();
         $newReceipt->codproveedor = $invoice->codproveedor;
         $newReceipt->coddivisa = $invoice->coddivisa;
@@ -262,6 +283,9 @@ class ReceiptGenerator
 
         // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
+        if (empty($amount)) {
+            return true;
+        }
 
         // calculate new receipt number
         $newNum = 1;
@@ -269,8 +293,7 @@ class ReceiptGenerator
             // try to update open receipts
             if ($receipt->pagado === false) {
                 $receipt->importe += $amount;
-                $receipt->save();
-                return true;
+                return $receipt->save();
             }
 
             if ($receipt->numero >= $newNum) {
@@ -294,6 +317,9 @@ class ReceiptGenerator
 
         // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
+        if (empty($amount)) {
+            return true;
+        }
 
         // calculate new receipt number
         $newNum = 1;
@@ -301,8 +327,7 @@ class ReceiptGenerator
             // try to update open receipts
             if ($receipt->pagado === false) {
                 $receipt->importe += $amount;
-                $receipt->save();
-                return true;
+                return $receipt->save();
             }
 
             if ($receipt->numero >= $newNum) {

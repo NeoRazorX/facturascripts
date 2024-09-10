@@ -21,18 +21,12 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Familia;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class FamiliaTest extends TestCase
 {
     use LogErrorsTrait;
-
-    public function testDataInstalled()
-    {
-        $family = new Familia();
-        $this->assertNotEmpty($family->all(), 'family-data-not-installed-from-csv');
-    }
 
     public function testCreate()
     {
@@ -126,7 +120,7 @@ final class FamiliaTest extends TestCase
         $this->assertFalse($family->save(), 'family-can-save');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

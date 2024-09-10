@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -55,10 +55,14 @@
                 <widget type="text" fieldname="codpostal" maxlength="10"/>
             </column>
             <column name="city" numcolumns="4" order="130">
-                <widget type="text" fieldname="ciudad"/>
+                <widget type="datalist" fieldname="ciudad">
+                    <values source="ciudades" fieldcode="idciudad" fieldtitle="ciudad"/>
+                </widget>
             </column>
             <column name="province" numcolumns="3" order="140">
-                <widget type="text" fieldname="provincia"/>
+                <widget type="datalist" fieldname="provincia">
+                    <values source="provincias" fieldcode="provincia" fieldtitle="provincia"/>
+                </widget>
             </column>
             <column name="country" titleurl="ListPais" numcolumns="3" order="150">
                 <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
@@ -95,10 +99,15 @@
                     <values/>
                 </widget>
             </column>
-            <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="120">
-                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile"/>
+            <column name="vat-exception" numcolumns="3" order="120">
+                <widget type="select" fieldname="excepcioniva">
+                    <values/>
+                </widget>
             </column>
-            <column name="observations" numcolumns="12" order="130">
+            <column name="logo" order="130">
+                <widget type="library" fieldname="idlogo" icon="fas fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.png"/>
+            </column>
+            <column name="observations" numcolumns="12" order="140">
                 <widget type="textarea" fieldname="observaciones"/>
             </column>
         </group>

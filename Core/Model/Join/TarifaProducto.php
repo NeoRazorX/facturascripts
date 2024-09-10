@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Join;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\JoinModel;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Tarifa;
@@ -27,41 +29,35 @@ use FacturaScripts\Dinamic\Model\Variante;
  * Description of TarifaProducto
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * 
+ *
  * @property string $codtarifa
- * @property float  $coste
+ * @property float $coste
  * @property string $descripcion
- * @property int    $idproducto
- * @property int    $idvariante
- * @property float  $margen
- * @property float  $precio
+ * @property int $idproducto
+ * @property int $idvariante
+ * @property float $margen
+ * @property float $precio
  * @property string $referencia
- * @property float  $stockfis
+ * @property float $stockfis
  */
 class TarifaProducto extends JoinModel
 {
 
     /**
-     *
      * @var Tarifa[]
      */
     private static $rates = [];
 
-    /**
-     * 
-     * @param array $data
-     */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->setMasterModel(new Producto());
 
-        /// needed dependency
+        // needed dependency
         new Variante();
     }
 
     /**
-     * 
      * @param string $name
      *
      * @return mixed
@@ -71,11 +67,7 @@ class TarifaProducto extends JoinModel
         return $name === 'preciotarifa' ? $this->priceInRate() : parent::__get($name);
     }
 
-    /**
-     * 
-     * @return Tarifa
-     */
-    public function getRate()
+    public function getRate(): Tarifa
     {
         if (isset(self::$rates[$this->codtarifa])) {
             return self::$rates[$this->codtarifa];
@@ -90,16 +82,22 @@ class TarifaProducto extends JoinModel
     }
 
     /**
-     * 
      * @return float
      */
     public function priceInRate()
     {
-        return $this->getRate()->apply((float) $this->coste, (float) $this->precio);
+        // intentamos obtener la variante para aplicar mejor la tarifa
+        $variant = new Variante();
+        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        if ($variant->loadFromCode('', $where)) {
+            $product = $variant->getProducto();
+            return $this->getRate()->applyTo($variant, $product);
+        }
+
+        return $this->getRate()->apply((float)$this->coste, (float)$this->precio);
     }
 
     /**
-     * 
      * @return mixed
      */
     public function primaryColumnValue()
@@ -107,10 +105,6 @@ class TarifaProducto extends JoinModel
         return $this->idproducto;
     }
 
-    /**
-     * 
-     * @return array
-     */
     protected function getFields(): array
     {
         return [
@@ -126,20 +120,12 @@ class TarifaProducto extends JoinModel
         ];
     }
 
-    /**
-     * 
-     * @return string
-     */
     protected function getSQLFrom(): string
     {
         return 'tarifas, variantes LEFT JOIN productos'
             . ' ON variantes.idproducto = productos.idproducto';
     }
 
-    /**
-     * 
-     * @return array
-     */
     protected function getTables(): array
     {
         return ['productos', 'tarifas', 'variantes'];

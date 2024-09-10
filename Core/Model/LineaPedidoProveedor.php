@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2020  Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2022  Carlos Garcia Gomez       <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Dinamic\Model\PedidoProveedor as DinPedidoProveedor;
 
 /**
  * Supplier order line.
@@ -36,56 +39,32 @@ class LineaPedidoProveedor extends Base\PurchaseDocumentLine
      */
     public $idpedido;
 
-    /**
-     * 
-     * @return string
-     */
-    public function documentColumn()
+    public function documentColumn(): string
     {
         return 'idpedido';
     }
 
-    /**
-     * 
-     * @return PedidoProveedor
-     */
-    public function getDocument()
+    public function getDocument(): DinPedidoProveedor
     {
-        $pedido = new PedidoProveedor();
+        $pedido = new DinPedidoProveedor();
         $pedido->loadFromCode($this->idpedido);
         return $pedido;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependency
+        // needed dependency
         new PedidoProveedor();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'lineaspedidosprov';
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         if (null !== $this->idpedido) {
             return 'EditPedidoProveedor?code=' . $this->idpedido;

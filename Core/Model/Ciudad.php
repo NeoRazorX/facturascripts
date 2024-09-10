@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Tools;
+
 /**
  * Ciudad
  *
@@ -27,33 +30,49 @@ namespace FacturaScripts\Core\Model;
  */
 class Ciudad extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
+    public $alias;
+
+    /** @var string */
+    public $creation_date;
+
+    /** @var string */
     public $ciudad;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codeid;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $idciudad;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $idprovincia;
 
-    /**
-     * @return string
-     */
-    public function install()
+    /** @var string */
+    public $last_nick;
+
+    /** @var string */
+    public $last_update;
+
+    /** @var float */
+    public $latitude;
+
+    /** @var float */
+    public $longitude;
+
+    /** @var string */
+    public $nick;
+
+    public function getProvince(): Provincia
+    {
+        $province = new Provincia();
+        $province->loadFromCode($this->idprovincia);
+        return $province;
+    }
+
+    public function install(): string
     {
         // needed dependency
         new Provincia();
@@ -61,41 +80,38 @@ class Ciudad extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idciudad';
     }
 
-    /**
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'ciudades';
     }
 
-    /**
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $this->ciudad = self::toolBox()::utils()::noHtml($this->ciudad);
+        $this->creation_date = $this->creation_date ?? Tools::dateTime();
+        $this->nick = $this->nick ?? Session::user()->nick;
+        $this->alias = Tools::noHtml($this->alias);
+        $this->ciudad = Tools::noHtml($this->ciudad);
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListPais?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
+        if ('list' === $type && !empty($this->primaryColumnValue())) {
+            return $this->getProvince()->url() . '&activetab=List' . $this->modelClassName();
+        }
+
         return parent::url($type, $list);
+    }
+
+    protected function saveUpdate(array $values = []): bool
+    {
+        $this->last_nick = Session::user()->nick;
+        $this->last_update = Tools::dateTime();
+        return parent::saveUpdate($values);
     }
 }

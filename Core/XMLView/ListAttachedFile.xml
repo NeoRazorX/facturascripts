@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,25 +22,25 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="idfile" onclick="EditAttachedFile" />
+            <widget type="text" fieldname="idfile" onclick="EditAttachedFile"/>
         </column>
         <column name="file-name" order="110">
-            <widget type="text" fieldname="filename" />
+            <widget type="text" fieldname="filename"/>
         </column>
         <column name="full-path" order="120">
-            <widget type="text" fieldname="path" />
+            <widget type="text" fieldname="path"/>
         </column>
         <column name="type" order="130">
-            <widget type="text" fieldname="mimetype" />
+            <widget type="text" fieldname="mimetype"/>
         </column>
         <column name="size" display="right" order="140">
-            <widget type="number" fieldname="size" decimal="0" />
+            <widget type="bytes" fieldname="size" decimal="0"/>
         </column>
         <column name="date" display="right" order="150">
-            <widget type="date" fieldname="date" />
+            <widget type="date" fieldname="date"/>
         </column>
         <column name="hour" display="right" order="160">
-            <widget type="text" fieldname="hour" />
+            <widget type="text" fieldname="hour"/>
         </column>
     </columns>
 </view>

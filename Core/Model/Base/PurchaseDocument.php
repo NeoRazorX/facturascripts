@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Proveedor as CoreProveedor;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Variante;
@@ -33,7 +34,6 @@ use FacturaScripts\Dinamic\Model\Variante;
  */
 abstract class PurchaseDocument extends TransformerDocument
 {
-
     /**
      * Supplier code for this document.
      *
@@ -61,7 +61,7 @@ abstract class PurchaseDocument extends TransformerDocument
         parent::clear();
 
         // select default currency
-        $coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
+        $coddivisa = Tools::settings('default', 'coddivisa');
         $this->setCurrency($coddivisa, true);
     }
 
@@ -75,14 +75,15 @@ abstract class PurchaseDocument extends TransformerDocument
      */
     public function getNewProductLine($reference)
     {
-        $newLine = $this->getNewLine();
+        // pasamos como parámetro la referencia para poder distinguir en getNewLine cuando se llama desde aquí
+        $newLine = $this->getNewLine(['referencia' => $reference]);
         if (empty($reference)) {
             return $newLine;
         }
 
         $variant = new Variante();
-        $where1 = [new DataBaseWhere('referencia', $this->toolBox()->utils()->noHtml($reference))];
-        $where2 = [new DataBaseWhere('codbarras', $this->toolBox()->utils()->noHtml($reference))];
+        $where1 = [new DataBaseWhere('referencia', Tools::noHtml($reference))];
+        $where2 = [new DataBaseWhere('codbarras', Tools::noHtml($reference))];
         if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
             $product = $variant->getProducto();
 
@@ -113,10 +114,7 @@ abstract class PurchaseDocument extends TransformerDocument
         return $proveedor;
     }
 
-    /**
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // we need to call parent first
         $result = parent::install();
@@ -179,10 +177,7 @@ abstract class PurchaseDocument extends TransformerDocument
         return true;
     }
 
-    /**
-     * @return string
-     */
-    public function subjectColumn()
+    public function subjectColumn(): string
     {
         return 'codproveedor';
     }
@@ -192,11 +187,10 @@ abstract class PurchaseDocument extends TransformerDocument
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->nombre = $utils->noHtml($this->nombre);
-        $this->numproveedor = $utils->noHtml($this->numproveedor);
+        $this->nombre = Tools::noHtml($this->nombre);
+        $this->numproveedor = Tools::noHtml($this->numproveedor);
 
         return parent::test();
     }
@@ -222,18 +216,20 @@ abstract class PurchaseDocument extends TransformerDocument
         $supplierProd = new ProductoProveedor();
         $where = [
             new DataBaseWhere('codproveedor', $this->codproveedor),
-            new DataBaseWhere('referencia', $newLine->referencia)
+            new DataBaseWhere('referencia', $newLine->referencia),
+            new DataBaseWhere('precio', 0, '>')
         ];
-        if ($supplierProd->loadFromCode('', $where) && $supplierProd->precio > 0) {
-            $newLine->dtopor = $supplierProd->dtopor;
-            $newLine->dtopor2 = $supplierProd->dtopor2;
-            $newLine->pvpunitario = $supplierProd->precio;
+        $orderBy = ['coddivisa' => 'DESC'];
+        foreach ($supplierProd->all($where, $orderBy) as $prod) {
+            if ($prod->coddivisa === $this->coddivisa || $prod->coddivisa === null) {
+                $newLine->dtopor = $prod->dtopor;
+                $newLine->dtopor2 = $prod->dtopor2;
+                $newLine->pvpunitario = $prod->precio;
+                return;
+            }
         }
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codproveedor'];

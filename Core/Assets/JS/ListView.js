@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,11 +35,12 @@ function listViewDelete(viewName) {
         closeButton: false,
         buttons: {
             cancel: {
-                label: '<i class="fas fa-times"></i> ' + listViewDeleteCancel
+                label: '<i class="fas fa-times"></i> ' + listViewDeleteCancel,
+                className: "btn-spin-action btn-secondary"
             },
             confirm: {
                 label: '<i class="fas fa-check"></i> ' + listViewDeleteConfirm,
-                className: "btn-danger"
+                className: "btn-spin-action btn-danger"
             }
         },
         callback: function (result) {
@@ -52,11 +53,27 @@ function listViewDelete(viewName) {
     return false;
 }
 
+function listViewOpenTab(viewName) {
+    // buscamos todos los elementos con la clase toggle-ext-link
+    $("#form" + viewName + " .toggle-ext-link").each(function () {
+        // si tiene la clase d-none, la quitamos
+        if ($(this).hasClass("d-none")) {
+            $(this).removeClass("d-none");
+        } else {
+            // si no la tiene, la añadimos
+            $(this).addClass("d-none");
+        }
+    });
+}
+
 function listViewPrintAction(viewName, option) {
+    $("#form" + viewName).attr("target", "_blank");
     $("#form" + viewName + " :input[name=\"action\"]").val('export');
     $("#form" + viewName).append('<input type="hidden" name="option" value="' + option + '"/>');
     $("#form" + viewName).submit();
     $("#form" + viewName + " :input[name=\"action\"]").val('');
+    $("#form" + viewName).attr("target", "");
+    animateSpinner('remove');
 }
 
 function listViewSetAction(viewName, value) {
@@ -86,6 +103,30 @@ function listViewShowFilters(viewName) {
 }
 
 $(document).ready(function () {
+    $(".clickableListRow").mousedown(function (event) {
+        if (event.which === 1 || event.which === 2) {
+            var href = $(this).attr("data-href");
+            var target = $(this).attr("data-target");
+            if (typeof href !== typeof undefined && href !== false) {
+                if (typeof target !== typeof undefined && target === "_blank") {
+                    window.open($(this).attr("data-href"));
+                } else if (event.which === 2) {
+                    // buscamos todos los elementos con la clase toggle-ext-link
+                    $(".toggle-ext-link").each(function () {
+                        // si tiene la clase d-none, la quitamos
+                        if ($(this).hasClass("d-none")) {
+                            $(this).removeClass("d-none");
+                        } else {
+                            // si no la tiene, la añadimos
+                            $(this).addClass("d-none");
+                        }
+                    });
+                } else {
+                    parent.document.location = $(this).attr("data-href");
+                }
+            }
+        }
+    });
     // disable enter key press
     $(".noEnterKey").keypress(function (e) {
         return !(e.which == 13 || e.keyCode == 13);

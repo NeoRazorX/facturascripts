@@ -26,6 +26,12 @@
     <column>
         <name>siniva</name>
         <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>tipo</name>
+        <type>character varying(4)</type>
     </column>
     <constraint>
         <name>series_pkey</name>

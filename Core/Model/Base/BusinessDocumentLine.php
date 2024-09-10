@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Stock;
@@ -32,7 +33,6 @@ use FacturaScripts\Dinamic\Model\Variante;
  */
 abstract class BusinessDocumentLine extends ModelOnChangeClass
 {
-
     use TaxRelationTrait;
 
     /**
@@ -56,15 +56,11 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public $descripcion;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $disableUpdateStock = false;
 
-    /**
-     * @var bool
-     */
-    private $disableUpdateTotals = false;
+    /** @var array */
+    protected static $dont_copy_fields = ['idlinea', 'orden', 'servido'];
 
     /**
      * Percentage of discount.
@@ -80,6 +76,9 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public $dtopor2;
 
+    /** @var string */
+    public $excepcioniva;
+
     /**
      * Primary key.
      *
@@ -87,9 +86,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public $idlinea;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $idproducto;
 
     /**
@@ -155,9 +152,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public $servido;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $suplido;
 
     /**
@@ -170,9 +165,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     abstract public function documentColumn();
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -190,19 +182,14 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->suplido = false;
 
         // default tax
-        $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
+        $this->codimpuesto = Tools::settings('default', 'codimpuesto');
         $this->iva = $this->getTax()->iva;
         $this->recargo = $this->getTax()->recargo;
     }
 
-    public function disableUpdateStock(bool $value)
+    public function disableUpdateStock(bool $value): void
     {
         $this->disableUpdateStock = $value;
-    }
-
-    public function disableUpdateTotals(bool $value)
-    {
-        $this->disableUpdateTotals = $value;
     }
 
     /**
@@ -213,6 +200,22 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public function documentColumnValue()
     {
         return $this->{$this->documentColumn()};
+    }
+
+    public static function dontCopyField(string $field): void
+    {
+        static::$dont_copy_fields[] = $field;
+    }
+
+    public static function dontCopyFields(): array
+    {
+        $more = [static::primaryColumn()];
+        return array_merge(static::$dont_copy_fields, $more);
+    }
+
+    public function getDisableUpdateStock(): bool
+    {
+        return $this->disableUpdateStock;
     }
 
     /**
@@ -230,11 +233,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $eud;
     }
 
-    /**
-     * Returns related product.
-     *
-     * @return Producto
-     */
     public function getProducto(): Producto
     {
         $producto = new Producto();
@@ -248,9 +246,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $producto;
     }
 
-    /**
-     * @return Variante
-     */
     public function getVariante(): Variante
     {
         $variante = new Variante();
@@ -259,10 +254,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $variante;
     }
 
-    /**
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Impuesto();
@@ -271,50 +263,22 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idlinea';
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        if (empty($this->codimpuesto)) {
-            $this->codimpuesto = null;
-        }
-
-        if ($this->servido < 0 && $this->cantidad >= 0) {
-            $this->servido = 0.0;
-        }
-
-        if (false === $this->disableUpdateTotals) {
-            $this->pvpsindto = $this->pvpunitario * $this->cantidad;
-            $this->pvptotal = $this->pvpsindto * $this->getEUDiscount();
-        }
-
-        $utils = $this->toolBox()->utils();
-        $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->referencia = $utils->noHtml($this->referencia);
-        return parent::test();
-    }
-
-    /**
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         $done = parent::save();
         $this->disableUpdateStock(false);
         return $done;
+    }
+
+    public function setPriceWithTax(float $price): void
+    {
+        $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
+        $this->pvpunitario = round($newPrice, Producto::ROUND_DECIMALS);
     }
 
     /**
@@ -363,14 +327,27 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     }
 
     /**
-     * Custom url method.
+     * Returns True if there is no errors on properties values.
      *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
+     * @return bool
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function test(): bool
+    {
+        if (empty($this->codimpuesto)) {
+            $this->codimpuesto = null;
+        }
+
+        if ($this->servido < 0 && $this->cantidad >= 0) {
+            $this->servido = 0.0;
+        }
+
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->referencia = Tools::noHtml($this->referencia);
+
+        return parent::test();
+    }
+
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         $name = str_replace('Linea', '', $this->modelClassName());
         return $type === 'new' ? 'Edit' . $name : parent::url($type, 'List' . $name . '?activetab=List');
@@ -420,7 +397,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             case 'actualizastock':
             case 'cantidad':
             case 'servido':
-                return $this->updateStock();
+                return $this->updateStock() && parent::onChange($field);
         }
 
         return parent::onChange($field);
@@ -436,19 +413,11 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         parent::onDelete();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return $this->updateStock() && parent::saveInsert($values);
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['actualizastock', 'cantidad', 'servido'];
@@ -508,7 +477,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
         // enough stock?
         if (false === $producto->ventasinstock && $this->actualizastock === -1 && $stock->cantidad < 0) {
-            $this->toolBox()->i18nLog()->warning('not-enough-stock', ['%reference%' => $this->referencia]);
+            Tools::log()->warning('not-enough-stock', ['%reference%' => $this->referencia]);
             return false;
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\DataSrc;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
-class Almacenes implements DataSrcInterface
+final class Almacenes implements DataSrcInterface
 {
     private static $list;
 
@@ -37,6 +37,11 @@ class Almacenes implements DataSrcInterface
         }
 
         return self::$list;
+    }
+
+    public static function clear(): void
+    {
+        self::$list = null;
     }
 
     /**

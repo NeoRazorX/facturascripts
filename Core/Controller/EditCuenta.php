@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -29,30 +30,19 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 /**
  * Controller to edit a single item from the Cuenta model
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
- * @author PC REDNET S.L.               <luismi@pcrednet.com>
- * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author PC REDNET S.L.                <luismi@pcrednet.com>
+ * @author Cristo M. Estévez Hernández   <cristom.estevez@gmail.com>
  */
 class EditCuenta extends EditController
 {
-
-    /**
-     * Returns the class name of the model to use in the editView.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Cuenta';
     }
 
-    /**
-     * Returns basic page attributes.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -62,57 +52,42 @@ class EditCuenta extends EditController
     }
 
     /**
-     * Add subaccount ledger report and export.
-     * - Add button
-     * - Add export options
-     * - Set initial values to modal form
-     *
-     * @param string $viewName
-     */
-    protected function addLedgerReport(string $viewName)
-    {
-        $this->addButton($viewName, Ledger::getButton('modal'));
-        $this->setLedgerReportExportOptions($viewName);
-        $this->setLedgerReportValues($viewName);
-    }
-
-    /**
-     * @param string $viewName
-     */
-    protected function createAccountingView(string $viewName = 'ListCuenta')
-    {
-        $this->addListView($viewName, 'Cuenta', 'children-accounts', 'fas fa-level-down-alt');
-        $this->views[$viewName]->addOrderBy(['codcuenta'], 'code', 1);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('fiscal-exercise');
-        $this->views[$viewName]->disableColumn('parent-account');
-    }
-
-    /**
-     * @param string $viewName
-     */
-    protected function createSubAccountingView(string $viewName = 'ListSubcuenta')
-    {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts');
-        $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code', 1);
-        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
-        $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('fiscal-exercise');
-    }
-
-    /**
      * Load views
      */
     protected function createViews()
     {
         parent::createViews();
+
+        // desactivamos el botón de imprimir
+        $mvn = $this->getMainViewName();
+        $this->tab($mvn)->setSettings('btnPrint', false);
+
+        // ponemos las pestañas en la parte inferior
         $this->setTabsPosition('bottom');
 
-        $this->createSubAccountingView();
-        $this->createAccountingView();
+        // añadimos las vistas
+        $this->createViewsSubAccounts();
+        $this->createViewsChildAccounts();
+    }
+
+    protected function createViewsChildAccounts(string $viewName = 'ListCuenta'): void
+    {
+        $this->addListView($viewName, 'Cuenta', 'children-accounts', 'fas fa-level-down-alt')
+            ->addOrderBy(['codcuenta'], 'code', 1)
+            ->disableColumn('fiscal-exercise')
+            ->disableColumn('parent-account');
+    }
+
+    protected function createViewsSubAccounts(string $viewName = 'ListSubcuenta'): void
+    {
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts')
+            ->addOrderBy(['codsubcuenta'], 'code', 1)
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['debe'], 'debit')
+            ->addOrderBy(['haber'], 'credit')
+            ->addOrderBy(['saldo'], 'balance')
+            ->addSearchFields(['codsubcuenta', 'descripcion'])
+            ->disableColumn('fiscal-exercise');
     }
 
     /**
@@ -124,56 +99,59 @@ class EditCuenta extends EditController
      */
     protected function execPreviousAction($action)
     {
-        switch ($action) {
-            case 'ledger':
-                $code = $this->request->query->get('code');
-                if (!empty($code)) {
-                    $this->setTemplate(false);
-                    $this->ledgerReport($code);
-                }
+        if ($action == 'ledger') {
+            if (false === $this->permissions->allowExport) {
+                Tools::log()->warning('no-print-permission');
                 return true;
+            }
+
+            $code = $this->request->query->get('code');
+            if (!empty($code)) {
+                $this->setTemplate(false);
+                $this->ledgerReport($code);
+            }
+            return true;
         }
 
         return parent::execPreviousAction($action);
     }
 
-    /**
-     * Exec ledger report from post/get values
-     *
-     * @param int $idAccount
-     */
-    protected function ledgerReport($idAccount)
+    protected function ledgerReport(int $idAccount): void
     {
         $account = new Cuenta();
         $account->loadFromCode($idAccount);
         $request = $this->request->request->all();
-        $params = [
-            'grouped' => $request['groupingtype'],
-            'channel' => $request['channel'],
-            'account-from' => $account->codcuenta
-        ];
 
         $ledger = new Ledger();
-        $ledger->setExercise($account->codejercicio);
-        $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
-        $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $account->codcuenta;
+        $pages = $ledger->generate($account->getExercise()->idempresa, $request['dateFrom'], $request['dateTo'], [
+            'channel' => $request['channel'],
+            'format' => $request['format'],
+            'grouped' => $request['groupingtype'],
+            'account-from' => $account->codcuenta
+        ]);
+        $title = Tools::lang()->trans('ledger') . ' ' . $account->codcuenta;
         $this->exportManager->newDoc($request['format'], $title);
 
         // añadimos la tabla de cabecera con la info del informe
         if ($request['format'] === 'PDF') {
             $titles = [[
-                self::toolBox()::i18n()->trans('account') => $account->codcuenta,
-                self::toolBox()::i18n()->trans('exercise') => $account->codejercicio,
-                self::toolBox()::i18n()->trans('from-date') => $request['dateFrom'],
-                self::toolBox()::i18n()->trans('until-date') => $request['dateTo']
+                Tools::lang()->trans('account') => $account->codcuenta,
+                Tools::lang()->trans('exercise') => $account->codejercicio,
+                Tools::lang()->trans('from-date') => $request['dateFrom'],
+                Tools::lang()->trans('until-date') => $request['dateTo']
             ]];
             $this->exportManager->addTablePage(array_keys($titles[0]), $titles);
         }
 
         // tablas con los listados
+        $options = [
+            'debe' => ['display' => 'right', 'css' => 'nowrap'],
+            'haber' => ['display' => 'right', 'css' => 'nowrap'],
+            'saldo' => ['display' => 'right', 'css' => 'nowrap'],
+        ];
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);
-            $this->exportManager->addTablePage($headers, $data);
+            $this->exportManager->addTablePage($headers, $data, $options);
         }
         $this->exportManager->show($this->response);
     }
@@ -193,14 +171,31 @@ class EditCuenta extends EditController
             case 'ListCuenta':
                 $where = [new DataBaseWhere('parent_idcuenta', $idcuenta)];
                 $view->loadData('', $where);
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
                 break;
 
             case 'ListSubcuenta':
                 $where = [new DataBaseWhere('idcuenta', $idcuenta)];
                 $view->loadData('', $where);
-                if ($view->count > 0) {
-                    $this->addLedgerReport($mainViewName);
+                if ($view->count == 0) {
+                    break;
                 }
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
+
+                // añadimos botón de imprimir mayor
+                $this->addButton($mainViewName, [
+                    'action' => 'ledger',
+                    'color' => 'info',
+                    'icon' => 'fas fa-print fa-fw',
+                    'label' => 'print',
+                    'type' => 'modal'
+                ]);
+                $this->setLedgerReportExportOptions($mainViewName);
+                $this->setLedgerReportValues($mainViewName);
                 break;
 
             case $mainViewName:
@@ -212,10 +207,7 @@ class EditCuenta extends EditController
         }
     }
 
-    /**
-     * @param BaseView $view
-     */
-    protected function prepareCuenta($view)
+    protected function prepareCuenta(BaseView $view): void
     {
         $cuenta = new Cuenta();
         $idcuenta = $this->request->query->get('parent_idcuenta', '');
@@ -224,12 +216,7 @@ class EditCuenta extends EditController
         }
     }
 
-    /**
-     * Set export options to widget of modal form
-     *
-     * @param string $viewName
-     */
-    private function setLedgerReportExportOptions(string $viewName)
+    private function setLedgerReportExportOptions(string $viewName): void
     {
         $columnFormat = $this->views[$viewName]->columnModalForName('format');
         if ($columnFormat && $columnFormat->widget->getType() === 'select') {
@@ -241,12 +228,7 @@ class EditCuenta extends EditController
         }
     }
 
-    /**
-     * Set initial values to modal fields
-     *
-     * @param string $viewName
-     */
-    private function setLedgerReportValues(string $viewName)
+    private function setLedgerReportValues(string $viewName): void
     {
         $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();
