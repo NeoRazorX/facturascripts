@@ -1595,7 +1595,7 @@
     "updated-model": "Actualizado %model% (%key%) %desc%",
     "updater": "Actualitzador",
     "updates-available": "Actualitzacions disponibles",
-    "updates-available-p": "Hi ha actualitzacions disponibles de FacturaScripts. Si us plau, feu clic a l'actualitzador i descarregueu la nova versió. Les actualitzacions corregeixen errors i afegeixen noves funcions.",
+    "updates-available-p": "Hi ha actualitzacions disponibles de FacturaScripts. Si us plau, feu clic a l'actualitzador i descarregueu la nova versió. Les actualitzacions corregeixen fallades i afegeixen noves funcions.",
     "updating-attached-relations": "Actualitzant comptadors d'arxius adjunts",
     "upload-file": "Pujar arxiu",
     "uploaded-at": "Pujat el",
