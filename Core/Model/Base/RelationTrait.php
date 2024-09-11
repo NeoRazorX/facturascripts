@@ -71,7 +71,7 @@ trait RelationTrait
         }
 
         $where = [new DataBaseWhere($id1, $model1->{$id1})];
-        foreach ($modelDest->all($where) as $md) {
+        foreach ($modelDest->all($where, [], 0, 0) as $md) {
             if ($md->delete() === false) {
                 $dataBase->rollback();
                 return false;

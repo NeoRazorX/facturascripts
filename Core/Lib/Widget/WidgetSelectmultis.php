@@ -27,7 +27,7 @@ use FacturaScripts\Core\Lib\AssetManager;
  *
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
-class WidgetSelectmulti extends WidgetSelect
+class WidgetSelectmultis extends WidgetSelect
 {
     /** @var string */
     protected $modelDest;
