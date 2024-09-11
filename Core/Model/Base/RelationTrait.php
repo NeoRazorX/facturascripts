@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,51 +29,48 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 trait RelationTrait
 {
-    /**
-     * @param array $fields
-     * @param object $model1
-     * @param string $model2
-     * @param string $modelDest
-     * @param string $id1
-     * @param string $id2
-     * @return bool
-     */
-    public static function hasMany(array $fields, object $model1, string $model2, string $modelDest, string $id1 = '', string $id2 = ''): bool
+    public static function hasMany(array $fields, ModelClass $model1, string $model2, string $modelDest, string $id1 = '', string $id2 = ''): bool
     {
         $modelClass2 = '\\FacturaScripts\\Dinamic\\Model\\' . $model2;
-        if (class_exists($modelClass2) === false) {
+        if (false === class_exists($modelClass2)) {
             return false;
         }
 
         $modelClassDest = '\\FacturaScripts\\Dinamic\\Model\\' . $modelDest;
-        if (class_exists($modelClassDest) === false) {
+        if (false === class_exists($modelClassDest)) {
             return false;
         }
 
         $dataBase = new DataBase();
-        $dataBase->beginTransaction();
+        $newTransaction = $dataBase->beginTransaction();
+        if (false === $newTransaction) {
+            $newTransaction = true;
+            $dataBase->beginTransaction();
+        }
 
         $model2 = new $modelClass2();
         $modelDest = new $modelClassDest();
 
-        $id1 = empty($id1) ? $model1->primaryColumn() : $id1;
-        $id2 = empty($id2) ? $model2->primaryColumn() : $id2;
+        $id1 = false === empty($id1) && property_exists($model1, $id1) ? $id1 : $model1->primaryColumn();
+        $id2 = false === empty($id2) && property_exists($model2, $id2) ? $id2 : $model2->primaryColumn();
 
         $found = true;
         foreach ($fields as $field) {
-            if (isset($model1->{$field}) === false) {
+            if (false === property_exists($model1, $field)) {
                 $found = false;
             }
         }
 
-        if ($found === false) {
+        if (false === $found) {
             return false;
         }
 
         $where = [new DataBaseWhere($id1, $model1->{$id1})];
         foreach ($modelDest->all($where, [], 0, 0) as $md) {
-            if ($md->delete() === false) {
-                $dataBase->rollback();
+            if (false === $md->delete()) {
+                if ($newTransaction) {
+                    $dataBase->rollback();
+                }
                 return false;
             }
         }
@@ -84,13 +81,18 @@ trait RelationTrait
                 $modelDest->{$id1} = $model1->{$id1};
                 $modelDest->{$id2} = $v;
                 if ($modelDest->save() === false) {
-                    $dataBase->rollback();
+                    if ($newTransaction) {
+                        $dataBase->rollback();
+                    }
                     return false;
                 }
             }
         }
 
-        $dataBase->commit();
+        if ($newTransaction) {
+            $dataBase->commit();
+        }
+
         return true;
     }
 }
