@@ -84,8 +84,8 @@ trait CommonSalesPurchases
 
             case 1:
                 return '<div class="col-sm-auto">'
-                    . '<div class="mb-3">'
-                    . '<a href="' . $children[0]->url() . '" class="btn btn-block btn-info">'
+                    . '<div class="mb-3 d-grid">'
+                    . '<a href="' . $children[0]->url() . '" class="btn btn-info">'
                     . '<i class="fas fa-forward fa-fw" aria-hidden="true"></i> ' . $children[0]->primaryDescription()
                     . '</a>'
                     . '</div>'
@@ -94,8 +94,8 @@ trait CommonSalesPurchases
 
         // more than one
         return '<div class="col-sm-auto">'
-            . '<div class="mb-3">'
-            . '<button class="btn btn-block btn-info" type="button" title="' . $i18n->trans('documents-generated')
+            . '<div class="mb-3 d-grid">'
+            . '<button class="btn btn-info" type="button" title="' . $i18n->trans('documents-generated')
             . '" data-bs-toggle="modal" data-bs-target="#childrenModal"><i class="fas fa-forward fa-fw" aria-hidden="true"></i> '
             . count($children) . ' </button>'
             . '</div>'
@@ -374,15 +374,15 @@ trait CommonSalesPurchases
         }
 
         $status = $model->getStatus();
-        $btnClass = 'btn btn-block btn-secondary btn-spin-action';
+        $btnClass = 'btn btn-secondary btn-spin-action';
         if (false === $status->editable && empty($status->generadoc) && empty($status->actualizastock)) {
-            $btnClass = 'btn btn-block btn-danger btn-spin-action';
+            $btnClass = 'btn btn-danger btn-spin-action';
         }
 
         // si el estado genera documento, no se puede cambiar, sin eliminar el nuevo documento
         if ($status->generadoc) {
             return '<div class="col-sm-auto">'
-                . '<div class="mb-3">'
+                . '<div class="mb-3 d-grid">'
                 . '<button type="button" class="' . $btnClass . '">'
                 . '<i class="' . static::idestadoIcon($status) . ' fa-fw"></i> ' . $status->nombre
                 . '</button>'
@@ -500,8 +500,8 @@ trait CommonSalesPurchases
 
     protected static function newLineBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
-        return $model->editable ? '<div class="col-3 col-md-auto">'
-            . '<a href="#" class="btn btn-success btn-block btn-spin-action mb-3" onclick="return ' . $jsName . '(\'new-line\', \'0\');">'
+        return $model->editable ? '<div class="col-3 col-md-auto d-grid">'
+            . '<a href="#" class="btn btn-success btn-spin-action mb-3" onclick="return ' . $jsName . '(\'new-line\', \'0\');">'
             . '<i class="fas fa-plus fa-fw"></i> ' . $i18n->trans('line') . '</a></div>' : '';
     }
 
@@ -576,8 +576,8 @@ trait CommonSalesPurchases
 
             case 1:
                 return '<div class="col-sm-auto">'
-                    . '<div class="mb-3">'
-                    . '<a href="' . $parents[0]->url() . '" class="btn btn-block btn-warning">'
+                    . '<div class="mb-3 d-grid">'
+                    . '<a href="' . $parents[0]->url() . '" class="btn btn-warning">'
                     . '<i class="fas fa-backward fa-fw" aria-hidden="true"></i> ' . $parents[0]->primaryDescription()
                     . '</a>'
                     . '</div>'
@@ -586,8 +586,8 @@ trait CommonSalesPurchases
 
         // more than one
         return '<div class="col-sm-auto">'
-            . '<div class="mb-3">'
-            . '<button class="btn btn-block btn-warning" type="button" title="' . $i18n->trans('previous-documents')
+            . '<div class="mb-3 d-grid">'
+            . '<button class="btn btn-warning" type="button" title="' . $i18n->trans('previous-documents')
             . '" data-bs-toggle="modal" data-bs-target="#parentsModal"><i class="fas fa-backward fa-fw" aria-hidden="true"></i> '
             . count($parents) . ' </button>'
             . '</div>'
@@ -616,8 +616,8 @@ trait CommonSalesPurchases
 
     protected static function sortableBtn(Translator $i18n, BusinessDocument $model): string
     {
-        return $model->editable ? '<div class="col-4 col-md-auto">'
-            . '<button type="button" class="btn btn-block btn-light mb-3" id="sortableBtn">'
+        return $model->editable ? '<div class="col-4 col-md-auto d-grid">'
+            . '<button type="button" class="btn btn-light mb-3" id="sortableBtn">'
             . '<i class="fas fa-arrows-alt-v fa-fw"></i> ' . $i18n->trans('move-lines')
             . '</button>'
             . '</div>' : '';
@@ -625,8 +625,8 @@ trait CommonSalesPurchases
 
     protected static function subtotalNetoBtn(Translator $i18n): string
     {
-        $html = '<div class="col-12 col-md-auto mb-3">'
-            . '<div id="columnView" class="btn-group btn-block" role="group">';
+        $html = '<div class="col-12 col-md-auto mb-3 d-grid">'
+            . '<div id="columnView" class="btn-group " role="group">';
 
         if ('subtotal' === self::$columnView) {
             $html .= '<button type="button" class="btn btn-light" data-column="neto" onclick="changeColumn(this)">'

@@ -61,14 +61,14 @@ class AccountingFooterHTML
 
         $lockBtn = '';
         if ($model->editable) {
-            $lockBtn .= '<div class="col-sm-3 col-md-2">'
-                . '<button type="button" class="btn btn-block btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
+            $lockBtn .= '<div class="col-sm-3 col-md-2 d-grid">'
+                . '<button type="button" class="btn btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
                 . '<i class="fas fa-lock fa-fw"></i> ' . $i18n->trans('lock-entry') . '</button>'
                 . '</div>';
         }
 
-        return '<div class="col-sm-3 col-md-2">'
-            . '<button type="button" class="btn btn-block btn-danger btn-spin-action mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
+        return '<div class="col-sm-3 col-md-2 d-grid">'
+            . '<button type="button" class="btn btn-danger btn-spin-action mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
             . '<i class="fas fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete') . '</button>'
             . '</div>'
             . $lockBtn
@@ -156,14 +156,14 @@ class AccountingFooterHTML
     protected static function saveBtn(Translator $i18n, Asiento $model): string
     {
         if (false === $model->editable) {
-            return '<div class="col-sm-3 col-md-2">'
-                . '<button type="button" class="btn btn-block btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\');">'
+            return '<div class="col-sm-3 col-md-2 d-grid">'
+                . '<button type="button" class="btn btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\');">'
                 . '<i class="fas fa-lock-open fa-fw"></i> ' . $i18n->trans('unlock-entry') . '</button>'
                 . '</div>';
         }
 
-        return '<div class="col-sm-3 col-md-2">'
-            . '<button type="button" class="btn btn-block btn-primary btn-spin-action mb-3" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
+        return '<div class="col-sm-3 col-md-2 d-grid">'
+            . '<button type="button" class="btn btn-primary btn-spin-action mb-3" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
             . '<i class="fas fa-save fa-fw"></i> ' . $i18n->trans('save') . '</button>'
             . '</div>';
     }

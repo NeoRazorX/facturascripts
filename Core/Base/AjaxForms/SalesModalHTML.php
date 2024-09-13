@@ -321,8 +321,8 @@ class SalesModalHTML
             . '</div>'
             . '</div>'
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
-            . '<div class="modal-footer bg-light">'
-            . '<a href="EditCliente?return=' . urlencode($url) . $linkAgent . '" class="btn btn-block btn-success">'
+            . '<div class="modal-footer bg-light d-grid">'
+            . '<a href="EditCliente?return=' . urlencode($url) . $linkAgent . '" class="btn btn-success">'
             . '<i class="fas fa-plus fa-fw"></i> ' . $i18n->trans('new')
             . '</a>'
             . '</div>'

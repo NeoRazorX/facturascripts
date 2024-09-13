@@ -262,9 +262,9 @@ class SalesHeaderHTML
         self::$cliente = new Cliente();
         if (empty($model->codcliente) || false === self::$cliente->loadFromCode($model->codcliente)) {
             return '<div class="col-sm-3">'
-                . '<div class="mb-3">' . $i18n->trans('customer')
+                . '<div class="mb-3 d-grid">' . $i18n->trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
-                . '<a href="#" id="btnFindCustomerModal" class="btn btn-block btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
+                . '<a href="#" id="btnFindCustomerModal" class="btn btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
                 . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
                 . $i18n->trans('select') . '</a>'
                 . '</div>'

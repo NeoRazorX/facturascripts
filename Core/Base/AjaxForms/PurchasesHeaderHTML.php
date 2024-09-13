@@ -135,9 +135,9 @@ class PurchasesHeaderHTML
         $proveedor = new Proveedor();
         if (empty($model->codproveedor) || false === $proveedor->loadFromCode($model->codproveedor)) {
             return '<div class="col-sm-3">'
-                . '<div class="mb-3">' . $i18n->trans('supplier')
+                . '<div class="mb-3 d-grid">' . $i18n->trans('supplier')
                 . '<input type="hidden" name="codproveedor" />'
-                . '<a href="#" id="btnFindSupplierModal" class="btn btn-block btn-primary" onclick="$(\'#findSupplierModal\').modal(\'show\');'
+                . '<a href="#" id="btnFindSupplierModal" class="btn btn-primary" onclick="$(\'#findSupplierModal\').modal(\'show\');'
                 . ' $(\'#findSupplierInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
                 . $i18n->trans('select') . '</a>'
                 . '</div>'
