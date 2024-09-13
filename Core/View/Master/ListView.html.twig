@@ -36,13 +36,13 @@
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
         <div class="{{ currentView.settings.card ? 'container-fluid pt-3' : 'container-fluid' }}">
-            <div class="form-row">
+            <div class="row">
                 {# -- Left buttons -- #}
                 <div class="col-md-auto mb-2">
                     {% if currentView.settings.btnNew %}
                         {% if currentView.settings.modalInsert %}
                             <button type="button" class="btn btn-success" title="{{ trans('new') }}"
-                                    data-toggle="modal" data-target="#modal{{ currentView.settings.modalInsert }}">
+                                    data-bs-toggle="modal" data-bs-target="#modal{{ currentView.settings.modalInsert }}">
                                 <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                                 {% if currentView.settings.card == false %}
                                     <span class="d-none d-xl-inline-block">{{ trans('new') }}</span>
@@ -85,7 +85,7 @@
                     {# -- Search field -- #}
                     {{ _self.searchControl(currentView) }}
                 </div>
-                <div class="col-sm-auto text-right mb-2">
+                <div class="col-sm-auto text-end mb-2">
                     {# -- Filters button -- #}
                     {{ _self.filterButton(currentView, fsc) }}
                     {# -- OrderBy button -- #}
@@ -96,7 +96,7 @@
             </div>
             {# -- Filters -- #}
             {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
-            <div id="form{{ currentView.getViewName() }}Filters" class="form-row align-items-center border-bottom mb-3"
+            <div id="form{{ currentView.getViewName() }}Filters" class="row align-items-center border-bottom mb-3"
                  style="{{ divFiltersStyle }}">
                 {% for filterName, filter in currentView.filters %}
                     {{ filter.render() | raw }}
@@ -189,21 +189,21 @@
                     <tr>
                         <th></th>
                         {% for item in currentView.totalAmounts %}
-                            <th class="text-right text-capitalize">{{ trans(item.title) }}</th>
+                            <th class="text-end text-capitalize">{{ trans(item.title) }}</th>
                         {% endfor %}
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <td class="text-right">{{ trans('page-total-amount') }}</td>
+                        <td class="text-end">{{ trans('page-total-amount') }}</td>
                         {% for item in currentView.totalAmounts %}
-                            <td class="text-right">{{ number(item.page) }}</td>
+                            <td class="text-end">{{ number(item.page) }}</td>
                         {% endfor %}
                     </tr>
                     <tr>
-                        <td class="text-right">{{ trans('total-amount') }}</td>
+                        <td class="text-end">{{ trans('total-amount') }}</td>
                         {% for item in currentView.totalAmounts %}
-                            <td class="text-right">{{ number(item.total) }}</td>
+                            <td class="text-end">{{ number(item.total) }}</td>
                         {% endfor %}
                     </tr>
                     </tbody>
@@ -258,8 +258,8 @@
             </button>
             {% if currentView.showFilters and currentView.settings.saveFilters %}
                 {# -- Save user filters -- #}
-                <button type="button" class="btn btn-success" data-toggle="modal"
-                        data-target="#savefilter{{ viewName }}" title="{{ trans('save-filter') }}">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                        data-bs-target="#savefilter{{ viewName }}" title="{{ trans('save-filter') }}">
                     <i class="fas fa-save fa-fw"></i> {{ trans('save') }}
                 </button>
             {% endif %}
@@ -304,14 +304,14 @@
                     <h5 class="modal-title">
                         <i class="fas fa-filter fa-fw"></i> {{ trans('save-filter') }}
                     </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>{{ trans('description') }}</label>
                                 <input type="text" name="filter-description" class="form-control noEnterKey"
                                        autofocus=""/>
@@ -320,7 +320,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         {{ trans('cancel') }}
                     </button>
                     <button type="button" class="btn btn-primary"
@@ -339,7 +339,7 @@
         {% set viewName = currentView.getViewName() %}
         <div class="btn-group">
             <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
                     <i class="fas fa-fill-drip fa-fw" aria-hidden="true"></i>
                 </button>
@@ -356,7 +356,7 @@
 
 {% macro printButton(fsc, currentView) %}
     <div class="dropdown">
-        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
             <i class="fas fa-print fa-fw" aria-hidden="true"></i>
         </button>
@@ -383,15 +383,13 @@
 
 {% macro searchControl(currentView) %}
     {% if currentView.searchFields is not empty %}
-        <div class="form-group">
+        <div class="mb-3">
             <div class="input-group">
                 <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off"
                        placeholder="{{ trans('search') }}"/>
-                <span class="input-group-append">
-                    <button type="submit" class="btn btn-secondary">
+                <button type="submit" class="btn btn-secondary">
                         <i class="fas fa-search" aria-hidden="true"></i>
                     </button>
-                </span>
             </div>
         </div>
     {% endif %}
@@ -400,7 +398,7 @@
 {% macro sortButton(currentView) %}
     {% if currentView.orderOptions is not empty %}
         <div class="btn-group">
-            <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+            <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="true">
                 {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fas fa-sort-amount-up' : 'fas fa-sort-amount-down' %}
                 <i class="{{ icon }} fa-fw" aria-hidden="true"></i>

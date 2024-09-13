@@ -257,7 +257,7 @@ class WidgetRadio extends BaseWidget
 
             $firstCss = '';
             if ($cont === 1 && strpos($class, 'form-check-inline') !== false) {
-                $firstCss = $class != '' ? ' ml-3' : 'ml-3';
+                $firstCss = $class != '' ? ' ms-3' : 'ms-3';
             }
 
             $html .= '<div class="form-check ' . $class . $firstCss . '">'

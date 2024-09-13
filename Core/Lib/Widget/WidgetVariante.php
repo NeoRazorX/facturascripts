@@ -62,7 +62,7 @@ class WidgetVariante extends WidgetText
         ]);
 
         if ($this->readonly()) {
-            return '<div class="form-group mb-2">'
+            return '<div class="mb-3 mb-2">'
                 . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
                 . $labelHtml
                 . '<a href="' . $variante->url() . '" class="btn btn-block btn-outline-secondary">'
@@ -72,10 +72,10 @@ class WidgetVariante extends WidgetText
                 . '</div>';
         }
 
-        return '<div class="form-group mb-2">'
+        return '<div class="mb-3 mb-2">'
             . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
-            . '<a href="#" class="btn btn-block btn-outline-secondary" data-toggle="modal" data-target="#modal_' . $this->id . '">'
+            . '<a href="#" class="btn btn-block btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
             . '<span id="modal_span_' . $this->id . '">' . ($variante->referencia ?? Tools::lang()->trans('select')) . '</span>'
             . '</a>'
@@ -176,7 +176,7 @@ class WidgetVariante extends WidgetText
             $options[] = '<option value="' . $item->codfamilia . '">' . $item->descripcion . '</option>';
         }
 
-        return '<select class="form-control mb-2" id="modal_' . $this->id . '_fam" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
+        return '<select class="form-select mb-2" id="modal_' . $this->id . '_fam" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
             . implode('', $options)
             . '</select>';
     }
@@ -193,7 +193,7 @@ class WidgetVariante extends WidgetText
             $options[] = '<option value="' . $item->codfabricante . '">' . $item->nombre . '</option>';
         }
 
-        return '<select class="form-control mb-2" id="modal_' . $this->id . '_fab" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
+        return '<select class="form-select mb-2" id="modal_' . $this->id . '_fab" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
             . implode('', $options)
             . '</select>';
     }
@@ -206,14 +206,14 @@ class WidgetVariante extends WidgetText
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title" id="modal_' . $this->id . '_label">'
-            . '<i class="' . $icon . ' mr-1"></i> ' . $label
+            . '<i class="' . $icon . ' me-1"></i> ' . $label
             . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col">' . $this->renderQueryFilter() . '</div>'
             . '<div class="col">' . $this->renderManufacturerFilter() . '</div>'
             . '<div class="col">' . $this->renderFamilyFilter() . '</div>'
@@ -232,11 +232,11 @@ class WidgetVariante extends WidgetText
         return '<div class="input-group mb-2">'
             . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
             . Tools::lang()->trans('search') . '" onkeydown="widgetVarianteSearchKp(\'' . $this->id . '\', event);" autofocus>'
-            . '<div class="input-group-append">'
+            . ''
             . '<button type="button" class="btn btn-primary" onclick="widgetVarianteSearch(\'' . $this->id . '\');">'
             . '<i class="fas fa-search"></i>'
             . '</button>'
-            . '</div>'
+            . ''
             . '</div>';
     }
 
@@ -247,13 +247,13 @@ class WidgetVariante extends WidgetText
         }
 
         return '<a href="#" class="btn btn-block btn-secondary" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'\');">'
-            . '<i class="fas fa-times mr-1"></i>' . Tools::lang()->trans('none')
+            . '<i class="fas fa-times me-1"></i>' . Tools::lang()->trans('none')
             . '</a>';
     }
 
     protected function renderSortFilter(): string
     {
-        return '<select class="form-control mb-2" id="modal_' . $this->id . '_s" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
+        return '<select class="form-select mb-2" id="modal_' . $this->id . '_s" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
             . '<option value="ref-asc" selected>' . Tools::lang()->trans('sort-by-ref-asc') . '</option>'
             . '<option value="ref-desc">' . Tools::lang()->trans('sort-by-ref-desc') . '</option>'
             . '</select>';
@@ -267,8 +267,8 @@ class WidgetVariante extends WidgetText
 
             $items[] = '<tr class="clickableRow" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'' . $match . '\');">'
                 . '<td><b>' . $item->referencia . '</b> ' . $item->description() . '</td>'
-                . '<td class="text-right text-nowrap">' . Tools::money($item->precio) . '</td>'
-                . '<td class="text-right text-nowrap">' . Tools::number($item->stockfis, 0) . '</td>'
+                . '<td class="text-end text-nowrap">' . Tools::money($item->precio) . '</td>'
+                . '<td class="text-end text-nowrap">' . Tools::number($item->stockfis, 0) . '</td>'
                 . '</tr>';
         }
 
@@ -277,8 +277,8 @@ class WidgetVariante extends WidgetText
             . '<thead>'
             . '<tr>'
             . '<th>' . Tools::lang()->trans('product') . '</th>'
-            . '<th class="text-right">' . Tools::lang()->trans('price') . '</th>'
-            . '<th class="text-right">' . Tools::lang()->trans('stock') . '</th>'
+            . '<th class="text-end">' . Tools::lang()->trans('price') . '</th>'
+            . '<th class="text-end">' . Tools::lang()->trans('stock') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody id="list_' . $this->id . '">' . implode('', $items) . '</tbody>'

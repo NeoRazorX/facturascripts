@@ -35,7 +35,7 @@
                     <i class="fas fa-redo" aria-hidden="true"></i>
                 </a>
             </div>
-            <div class="col text-right">
+            <div class="col text-end">
                 <h1 class="h4">
                     {{ fsc.title }} <i class="{{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
                 </h1>
@@ -56,17 +56,15 @@
                     <div class="card-body">
                         <form method="post">
                             <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
-                            <div class="form-row">
+                            <div class="row">
                                 <div class="col">
                                     <p>{{ trans('page-option-info') }}</p>
                                 </div>
                                 <div class="col-3">
                                     <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
+                                        <span class="input-group-text">
                                                 <i class="fas fa-users"></i>
                                             </span>
-                                        </div>
                                         {% set userList = {'': trans('all')} | merge(fsc.getUserList()) %}
                                         {{ simpleSelect(
                                             'nick',
@@ -96,7 +94,7 @@
                                     <th>{{ trans('readonly') }}</th>
                                     <th width="150">{{ trans('decimals') }}</th>
                                     <th>{{ trans('width') }}</th>
-                                    <th class="text-right" width="130">{{ trans('sort') }}</th>
+                                    <th class="text-end" width="130">{{ trans('sort') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -109,7 +107,7 @@
                             </table>
                         </div>
                         <div class="card-footer">
-                            <div class="form-row">
+                            <div class="row">
                                 {% if fsc.model.exists() %}
                                     <div class="col">
                                         <button class="btn btn-spin-action btn-sm btn btn-danger" type="button"
@@ -119,7 +117,7 @@
                                         </button>
                                     </div>
                                 {% endif %}
-                                <div class="col text-right">
+                                <div class="col text-end">
                                     <button class="btn btn-spin-action btn-sm btn btn-secondary" type="reset">
                                         <i class="fas fa-undo fa-fw" aria-hidden="true"></i> {{ trans('undo') }}
                                     </button>
@@ -214,13 +212,13 @@
                 {}) }}
         </td>
         <td title="{{ trans('sort') }}">
-            <input type="number" name="{{ col.name }}-order" value="{{ col.order }}" class="form-control text-right"/>
+            <input type="number" name="{{ col.name }}-order" value="{{ col.order }}" class="form-control text-end"/>
         </td>
     </tr>
 {% endmacro %}
 
 {% macro editGroupColumnDisplay(col) %}
-    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
         {% if col.display == 'left' %}
             <label class="btn btn-outline-secondary active" title="{{ trans('left') }}">
                 <input type="radio" name="{{ col.name }}-display" value="left" checked>

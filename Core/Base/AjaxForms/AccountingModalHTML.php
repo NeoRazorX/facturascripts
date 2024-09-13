@@ -66,7 +66,7 @@ class AccountingModalHTML
 
             $tbody .= '<tr class="' . $cssClass . '" onclick="' . $onclick . '">'
                 . '<td><b>' . $subaccount->codsubcuenta . '</b> ' . $subaccount->descripcion . '</td>'
-                . '<td class="text-right">' . Tools::money($subaccount->saldo) . '</td>'
+                . '<td class="text-end">' . Tools::money($subaccount->saldo) . '</td>'
                 . '</tr>';
         }
 
@@ -78,7 +78,7 @@ class AccountingModalHTML
             . '<thead>'
             . '<tr>'
             . '<th>' . $i18n->trans('subaccount') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('balance') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('balance') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -125,12 +125,12 @@ class AccountingModalHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"><i class="fas fa-book fa-fw"></i> ' . $i18n->trans('subaccounts') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-sm">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . $i18n->trans('search')
@@ -154,8 +154,8 @@ class AccountingModalHTML
     {
         return '<div class="col-sm">'
             . '<div class="input-group">'
-            . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span></div>'
-            . '<select name="fp_orden" class="form-control" onchange="return accEntryFormAction(\'find-subaccount\', \'0\');">'
+            . '<span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span>'
+            . '<select name="fp_orden" class="form-select" onchange="return accEntryFormAction(\'find-subaccount\', \'0\');">'
             . '<option value="code_asc">' . $i18n->trans('code') . '</option>'
             . '<option value="desc_asc">' . $i18n->trans('description') . '</option>'
             . '<option value="saldo_desc">' . $i18n->trans('balance') . '</option>'

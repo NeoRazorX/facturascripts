@@ -49,20 +49,20 @@
                     </a>
                 </div>
                 {% if fsc.telemetryManager.ready() %}
-                    <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal"
-                            data-target="#modalTelemetry">
+                    <button class="btn btn-sm btn-secondary" type="button" data-bs-toggle="modal"
+                            data-bs-target="#modalTelemetry">
                         <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">{{ trans('manage-installation') }} </span>
                     </button>
                 {% else %}
-                    <button class="btn btn-sm btn-warning" type="button" data-toggle="modal"
-                            data-target="#modalTelemetry">
+                    <button class="btn btn-sm btn-warning" type="button" data-bs-toggle="modal"
+                            data-bs-target="#modalTelemetry">
                         <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">{{ trans('register-installation') }}</span>
                     </button>
                 {% endif %}
             </div>
-            <div class="col-sm-6 text-right">
+            <div class="col-sm-6 text-end">
                 <h1 class="h3">
                     {{ trans('updater') }}
                     <small class="text-info">{{ fsc.getCoreVersion() }}</small>
@@ -84,7 +84,7 @@
                             <tr>
                                 <th scope="col">{{ trans('component') }}</th>
                                 <th scope="col">{{ trans('description') }}</th>
-                                <th scope="col" class="text-right">{{ trans('action') }}</th>
+                                <th scope="col" class="text-end">{{ trans('action') }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -92,7 +92,7 @@
                                 <tr class="{{ item.stable ? 'table-success' : 'table-warning' }}">
                                     <td>{{ item.name }}</td>
                                     <td>{{ item.description }}</td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         {% if item.mincore > fsc.getCoreVersion() %}
                                             {{ trans('requires-core', {'%version%': item.mincore}) }}
                                         {% elseif item.downloaded %}
@@ -103,8 +103,8 @@
                                                 <i class="fas fa-times fa-fw" aria-hidden="true"></i> {{ trans('cancel') }}
                                             </a>
                                         {% elseif item.name == 'CORE' and fsc.coreUpdateWarnings %}
-                                            <button type="button" class="btn btn-spin-action btn-warning" data-toggle="modal"
-                                                    data-target="#coreWarningModal">{{ trans('download') }}
+                                            <button type="button" class="btn btn-spin-action btn-warning" data-bs-toggle="modal"
+                                                    data-bs-target="#coreWarningModal">{{ trans('download') }}
                                             </button>
                                         {% elseif item.stable %}
                                             <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
@@ -135,23 +135,21 @@
                 {% if fsc.telemetryManager.ready() %}
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fas fa-registered mr-1"></i>
+                            <i class="fas fa-registered me-1"></i>
                             {{ trans('registered-installation', {'%number%': fsc.telemetryManager.id()}) }}
                         </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('close') }}">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('close') }}"></button>
                     </div>
                     <div class="modal-body">
                         <p>{{ trans('registered-installation-p') }}</p>
                         <p>{{ trans('telemetry-data-to-send') }}</p>
-                        <a class="btn btn-primary float-left" href="{{ fsc.url() }}?action=claim-install" target="_blank">
+                        <a class="btn btn-primary float-start" href="{{ fsc.url() }}?action=claim-install" target="_blank">
                             {{ trans('manage') }}
                         </a>
                         <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
                             {{ formToken() }}
                             <input type="hidden" name="action" value="unlink"/>
-                            <button type="submit" class="btn btn-danger btn-spin-action float-right">
+                            <button type="submit" class="btn btn-danger btn-spin-action float-end">
                                 {{ trans('unlink') }}
                             </button>
                         </form>
@@ -162,11 +160,9 @@
                         <input type="hidden" name="action" value="register"/>
                         <div class="modal-header">
                             <h5 class="modal-title">
-                                <i class="fas fa-registered mr-1"></i> {{ trans('register-installation') }}
+                                <i class="fas fa-registered me-1"></i> {{ trans('register-installation') }}
                             </h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('close') }}">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('close') }}"></button>
                         </div>
                         <div class="modal-body">
                             <p>{{ trans('register-installation-p') }}</p>
@@ -186,12 +182,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fas fa-exclamation-triangle mr-1" aria-hidden="true"></i>
+                            <i class="fas fa-exclamation-triangle me-1" aria-hidden="true"></i>
                             {{ trans('core-update-warning') }}
                         </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <ul class="mb-0">
@@ -208,7 +202,7 @@
                                        class="btn btn-spin-action btn-warning" onclick="animateSpinner('add')">{{ trans('download') }}
                                     </a>
                                     <button type="button" class="btn btn-spin-action btn-warning dropdown-toggle dropdown-toggle-split"
-                                            data-toggle="dropdown" aria-expanded="false">
+                                            data-bs-toggle="dropdown" aria-expanded="false">
                                         <span class="sr-only">{{ trans('options') }}</span>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right">

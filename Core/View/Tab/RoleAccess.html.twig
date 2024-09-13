@@ -119,7 +119,7 @@
                         <td>
                             {{ ((rule.submenu is not empty) ? ' » ' ~ rule.submenu : '') ~ ' » ' ~ rule.page }}
                             {% if 'List' in pageName %}
-                                <span class="badge badge-info ml-1">{{ trans('list') }}</span>
+                                <span class="badge bg-info ms-1">{{ trans('list') }}</span>
                             {% endif %}
                         </td>
                         <td class="text-center">
@@ -169,7 +169,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="card-footer text-right">
+        <div class="card-footer text-end">
             <button type="submit" class="btn btn-sm btn-primary btn-spin-action">
                 <i class="fas fa-save fa-fw"></i> {{ trans('save') }}
             </button>
@@ -196,7 +196,7 @@
             let cuenta = countChecked($(this).data('type'), $(this).data('menu'));
             let selector = "label[for='checkbox-all-menu-" + $(this).data('type') + "-" + $(this).data('menu') + "']";
             if ('' !== cuenta) {
-                $(selector).html('<span class="badge badge-info">' + cuenta + '</span>');
+                $(selector).html('<span class="badge bg-info">' + cuenta + '</span>');
                 if(cuenta === '{{ trans('all') }}') {
                     $(selector).parent().parent().parent().find('input.' + $(this).data('type') + '-menu-permission').prop('checked', true);
                 }
@@ -226,7 +226,7 @@
         $('label.label-contador').each(function () {
             let cuenta = countChecked($(this).data('type'), $(this).data('menu'));
             if ('' !== cuenta) {
-                $(this).html('<span class="badge badge-info">' + cuenta + '</span>');
+                $(this).html('<span class="badge bg-info">' + cuenta + '</span>');
                 if(cuenta === '{{ trans('all') }}') {
                     $(this).parent().parent().parent().find('input.' + $(this).data('type') + '-menu-permission').prop('checked', true);
                 }

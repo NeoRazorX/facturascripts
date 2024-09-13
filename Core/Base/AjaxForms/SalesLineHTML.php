@@ -168,7 +168,7 @@ class SalesLineHTML
             $html .= self::renderLine($i18n, $line, $model);
         }
         if (empty($html)) {
-            $html .= '<div class="container-fluid"><div class="form-row table-warning"><div class="col p-3 text-center">'
+            $html .= '<div class="container-fluid"><div class="row table-warning"><div class="col p-3 text-center">'
                 . $i18n->trans('new-invoice-line-p') . '</div></div></div>';
         }
         return empty($model->codcliente) ? '' : self::renderTitles($i18n, $model) . $html;
@@ -178,7 +178,7 @@ class SalesLineHTML
     {
         self::$num++;
         $idlinea = $line->idlinea ?? 'n' . self::$num;
-        return '<div class="container-fluid fs-line"><div class="form-row align-items-center border-bottom pb-3 pb-lg-0">'
+        return '<div class="container-fluid fs-line"><div class="row align-items-center border-bottom pb-3 pb-lg-0">'
             . self::renderField($i18n, $idlinea, $line, $model, 'referencia')
             . self::renderField($i18n, $idlinea, $line, $model, 'descripcion')
             . self::renderField($i18n, $idlinea, $line, $model, 'cantidad')
@@ -410,12 +410,12 @@ class SalesLineHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"><i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $line->referencia . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
             . self::renderField($i18n, $idlinea, $line, $model, 'recargo')
             . self::renderField($i18n, $idlinea, $line, $model, 'irpf')
@@ -429,8 +429,8 @@ class SalesLineHTML
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . $i18n->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -555,7 +555,7 @@ class SalesLineHTML
 
     private static function renderTitles(Translator $i18n, SalesDocument $model): string
     {
-        return '<div class="container-fluid d-none d-lg-block titles"><div class="form-row border-bottom">'
+        return '<div class="container-fluid d-none d-lg-block titles"><div class="row border-bottom">'
             . self::renderTitle($i18n, $model, 'referencia')
             . self::renderTitle($i18n, $model, 'descripcion')
             . self::renderTitle($i18n, $model, 'cantidad')

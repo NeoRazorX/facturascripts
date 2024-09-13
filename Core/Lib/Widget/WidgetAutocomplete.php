@@ -68,7 +68,7 @@ class WidgetAutocomplete extends WidgetSelect
 
         if ('' === $this->value || null === $this->value) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-                . '<div class="form-group mb-2">'
+                . '<div class="mb-3 mb-2">'
                 . $labelHtml
                 . '<div class="input-group">'
                 . '<div class="' . $this->css('input-group-prepend') . '">'
@@ -81,7 +81,7 @@ class WidgetAutocomplete extends WidgetSelect
         }
 
         return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-            . '<div class="form-group mb-2">'
+            . '<div class="mb-3 mb-2">'
             . $labelHtml
             . '<div class="input-group">'
             . $this->inputGroupClearBtn()

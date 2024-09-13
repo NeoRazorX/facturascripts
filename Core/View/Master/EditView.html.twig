@@ -65,7 +65,7 @@
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
         <div class="{{ currentView.settings.card ? 'card-body' : 'container-fluid' }}">
             <div class="row">
-                <div class="col-12 text-right">
+                <div class="col-12 text-end">
                     {# -- Row statistics -- #}
                     {% set row = currentView.getRow('statistics') %}
                     {{ row.render(fsc) | raw }}
@@ -77,14 +77,14 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 {% for group in currentView.getColumns() %}
                     {{ group.edit(currentView.model) | raw }}
                 {% endfor %}
             </div>
         </div>
         <div class="{{ currentView.settings.card ? 'card-footer p-2' : 'container-fluid' }}">
-            <div class="form-row">
+            <div class="row">
                 {% if fsc.hasData and currentView.settings.btnDelete %}
                     <div class="col-auto">
                         <button type="button" class="btn btn-sm btn-danger"

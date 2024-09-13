@@ -102,7 +102,7 @@ class GroupItem extends VisualItem
     {
         $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css('col');
         $divId = empty($this->id) ? '' : ' id="' . $this->id . '"';
-        $rowClass = $this->css('form-row') . ' ' . $this->valign();
+        $rowClass = $this->css('row') . ' ' . $this->valign();
 
         $html = '<div' . $divId . ' class="' . $divClass . '"><div class="' . $rowClass . '">';
         if ($this->title) {
@@ -137,8 +137,8 @@ class GroupItem extends VisualItem
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title">' . $icon . static::$i18n->trans($this->title) . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
@@ -151,7 +151,7 @@ class GroupItem extends VisualItem
         $html .= '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-spin-action btn-secondary" data-dismiss="modal">'
+            . '<button type="button" class="btn btn-spin-action btn-secondary" data-bs-dismiss="modal">'
             . static::$i18n->trans('cancel')
             . '</button>'
             . '<input type="hidden" name="action" value="' . $this->name . '"/>'

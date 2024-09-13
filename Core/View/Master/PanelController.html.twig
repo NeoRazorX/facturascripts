@@ -24,7 +24,7 @@
     {% set pageData = fsc.getPageData() %}
     {% set firstView = fsc.views | first %}
     <div class="container-fluid d-print-none">
-        <div class="form-row">
+        <div class="row">
             <div class="col-md-12">
                 {# -- Hidden alternative page info -- #}
                 <nav aria-label="breadcrumb">
@@ -51,7 +51,7 @@
                 </nav>
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             {# -- Top left buttons -- #}
             <div class="col-md-8 mb-2">
                 <div class="btn-group">
@@ -84,12 +84,12 @@
                 {% endfor %}
             </div>
             {# -- Top right text -- #}
-            <div class="col-md d-none d-md-inline-block text-right">
+            <div class="col-md d-none d-md-inline-block text-end">
                 {% set image = fsc.getImageUrl() %}
                 {% if image is empty %}
-                    <i class="{{ pageData.icon }} fa-3x pl-3 float-right" aria-hidden="true"></i>
+                    <i class="{{ pageData.icon }} fa-3x ps-3 float-end" aria-hidden="true"></i>
                 {% else %}
-                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail ml-3 mb-2 float-right"/>
+                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail ms-3 mb-2 float-end"/>
                 {% endif %}
                 <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
                 {% if fsc.hasData %}
@@ -105,7 +105,7 @@
 {% block body %}
     {% set firstView = fsc.views | first %}
     <div class="container-fluid">
-        <div class="form-row">
+        <div class="row">
             {# -- Left Panel -- #}
             {% if fsc.views | length > 1 %}
                 <div class="col-lg-2">
@@ -114,12 +114,12 @@
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-toggle="pill"
+                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-bs-toggle="pill"
                                href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
-                                <i class="{{ view.icon }} fa-fw mr-1 d-none d-xl-inline-block"
+                                <i class="{{ view.icon }} fa-fw me-1 d-none d-xl-inline-block"
                                    aria-hidden="true"></i>{{ view.title }}
                                 {% if view.count >= 1 and viewName != firstView.getViewName() %}
-                                    <span class='badge badge-secondary mt-lg-1 mb-lg-1 float-lg-right'>{{ view.count }}</span>
+                                    <span class='badge bg-secondary mt-lg-1 mb-lg-1 float-lg-right'>{{ view.count }}</span>
                                 {% endif %}
                             </a>
                         {% endfor %}
@@ -166,7 +166,7 @@
     {% if show and firstView.settings.btnOptions %}
         <div class="btn-group">
             <div class="dropdown">
-                <button class="btn btn-sm btn-secondary mr-3 dropdown-toggle" type="button" data-toggle="dropdown"
+                <button class="btn btn-sm btn-secondary me-3 dropdown-toggle" type="button" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-wrench fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-lg-inline-block">{{ trans('options') }}</span>
@@ -179,7 +179,7 @@
                                href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
                                 <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
                                 {% if view.settings.customized %}
-                                    <i class="fas fa-user-pen ml-2" title="{{ trans('personalized') }}"></i>
+                                    <i class="fas fa-user-pen ms-2" title="{{ trans('personalized') }}"></i>
                                 {% endif %}
                             </a>
                         {% endif %}
@@ -198,7 +198,7 @@
             <span class="d-none d-lg-inline-block">{{ trans('print') }}</span>
         </a>
         <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="sr-only">{{ trans('more') }}</span>
         </button>
         <div class="dropdown-menu dropdown-menu-right">
@@ -211,7 +211,7 @@
                 {% endif %}
             {% endfor %}
             <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#advancedExportModal">
+            <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#advancedExportModal">
                 <i class="fas fa-tools fa-fw" aria-hidden="true"></i>
                 {{ trans('advanced') }}
             </a>
@@ -227,7 +227,7 @@
             {% endif %}
         </div>
     </div>
-    <form action="{{ firstView.model.url() }}" method="post" class="float-left" target="_blank" onsubmit="animateSpinner('add')">
+    <form action="{{ firstView.model.url() }}" method="post" class="float-start" target="_blank" onsubmit="animateSpinner('add')">
         <input type="hidden" name="action" value="export"/>
         <div class="modal fade" id="advancedExportModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
@@ -237,21 +237,19 @@
                             <i class="fas fa-tools fa-fw" aria-hidden="true"></i>
                             {{ trans('advanced') }}
                         </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body text-left">
-                        <div class="form-group">
-                            <select name="option" class="form-control">
+                    <div class="modal-body text-start">
+                        <div class="mb-3">
+                            <select name="option" class="form-select">
                                 {% for key, option in fsc.exportManager.options() %}
                                     <option value="{{ key }}">{{ trans(option.description) }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             {{ trans('format') }}
-                            <select name="idformat" class="form-control">
+                            <select name="idformat" class="form-select">
                                 <option value="">{{ trans('default') }}</option>
                                 <option value="">------</option>
                                 {% for format in fsc.exportManager.getFormats(firstView.model) %}
@@ -259,9 +257,9 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             {{ trans('language') }}
-                            <select name="langcode" class="form-control">
+                            <select name="langcode" class="form-select">
                                 <option value="">{{ trans('default') }}</option>
                                 <option value="">------</option>
                                 {% for code, lang in i18n.getAvailableLanguages() %}
@@ -269,7 +267,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="text-right">
+                        <div class="text-end">
                             <button type="submit" class="btn btn-primary">
                                 {{ trans('accept') }}
                             </button>

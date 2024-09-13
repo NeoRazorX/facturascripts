@@ -112,14 +112,14 @@ class BaseWidget extends VisualItem
         $labelHtml = '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
         if (empty($this->icon)) {
-            return '<div class="form-group mb-2">'
+            return '<div class="mb-3 mb-2">'
                 . $labelHtml
                 . $this->inputHtml()
                 . $descriptionHtml
                 . '</div>';
         }
 
-        return '<div class="form-group mb-2">'
+        return '<div class="mb-3 mb-2">'
             . $labelHtml
             . '<div class="input-group">'
             . '<div class="' . $this->css('input-group-prepend') . ' d-flex d-sm-none d-xl-flex">'
