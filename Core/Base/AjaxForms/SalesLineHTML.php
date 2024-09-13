@@ -279,8 +279,7 @@ class SalesLineHTML
                 break;
         }
 
-        return empty($html) ? $html :
-            '<div class="input-group-prepend" title="' . $i18n->trans('stock') . '">' . $html . '</div>';
+        return $html;
     }
 
     private static function coste(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): string

@@ -55,9 +55,7 @@ class WidgetPassword extends WidgetText
         return '<div class="mb-3 mb-2">'
             . $labelHtml
             . '<div class="input-group">'
-            . '<div class="' . $this->css('input-group-prepend') . ' d-flex d-sm-none d-xl-flex">'
             . '<span class="input-group-text edit-psw"><i class="fas fa-eye fa-fw"></i></span>'
-            . '</div>'
             . $this->inputHtml()
             . '</div>'
             . $descriptionHtml

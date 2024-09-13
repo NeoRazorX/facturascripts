@@ -122,9 +122,7 @@ class BaseWidget extends VisualItem
         return '<div class="mb-3 mb-2">'
             . $labelHtml
             . '<div class="input-group">'
-            . '<div class="' . $this->css('input-group-prepend') . ' d-flex d-sm-none d-xl-flex">'
             . '<span class="input-group-text"><i class="' . $this->icon . ' fa-fw"></i></span>'
-            . '</div>'
             . $this->inputHtml()
             . '</div>'
             . $descriptionHtml

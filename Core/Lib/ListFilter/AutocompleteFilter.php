@@ -97,17 +97,13 @@ class AutocompleteFilter extends BaseFilter
             . '<div class="input-group">';
 
         if ('' === $this->value || null === $this->value) {
-            $html .= '<span class="input-group-prepend" title="' . $label . '">'
-                . '<span class="input-group-text">'
+            $html .= '<span class="input-group-text">'
                 . '<i class="fas fa-search fa-fw" aria-hidden="true"></i>'
-                . '</span>'
                 . '</span>';
         } else {
-            $html .= '<span class="input-group-prepend" title="' . $label . '">'
-                . '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->name() . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
+            $html .= '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->name() . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
                 . '<i class="fas fa-times fa-fw" aria-hidden="true"></i>'
-                . '</button>'
-                . '</span>';
+                . '</button>';
         }
 
         $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control filter-autocomplete"'
