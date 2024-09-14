@@ -417,7 +417,7 @@ trait CommonSalesPurchases
             . '<button class="' . $btnClass . ' dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
             . '<i class="' . static::idestadoIcon($status) . ' fa-fw"></i> ' . $status->nombre
             . '</button>'
-            . '<div class="dropdown-menu dropdown-menu-right">' . implode('', $options) . '</div>'
+            . '<div class="dropdown-menu dropdown-menu-end">' . implode('', $options) . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';

@@ -87,7 +87,17 @@ class ColumnItem extends VisualItem
     {
         parent::__construct($data);
         $this->description = $data['description'] ?? '';
-        $this->display = $data['display'] ?? 'left';
+
+        $this->display = $data['display'] ?? 'start';
+        switch ($this->display){
+            case 'left':
+                $this->display = 'start';
+                break;
+            case 'right':
+                $this->display = 'end';
+                break;
+        }
+
         $this->level = isset($data['level']) ? (int)$data['level'] : 0;
         $this->numcolumns = isset($data['numcolumns']) ? (int)$data['numcolumns'] : 0;
         $this->order = isset($data['order']) ? (int)$data['order'] : 0;

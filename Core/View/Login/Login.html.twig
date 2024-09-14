@@ -13,7 +13,7 @@
                             {% set idfile = settings('default','idloginimage', 0) %}
                             {{ _self.loadLogo(idfile) }}
                         </a>
-                        <div class="card-body">
+                        <div class="card-body d-grid">
                             <p class="card-text text-center">{{ trans('login-text') }}</p>
                             <div class="mb-3">
                                 <div class="input-group">
@@ -25,7 +25,7 @@
                                            autofocus/>
                                 </div>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 d-grid">
                                 <div class="input-group">
                                     <span class="input-group-text">
                                             <i class="fas fa-key fa-fw" aria-hidden="true"></i>
@@ -33,12 +33,12 @@
                                     <input type="password" name="fsPassword" class="form-control" maxlength="50"
                                            placeholder="{{ trans('password') }}" required autocomplete="off"/>
                                 </div>
-                                <a href="#" class="btn btn-block btn-link" data-bs-toggle="modal"
+                                <a href="#" class="btn btn-link" data-bs-toggle="modal"
                                    data-bs-target="#newPasswordModal">
                                     {{ trans('i-forgot-password') }}
                                 </a>
                             </div>
-                            <button type="submit" class="btn btn-block btn-primary mb-4">
+                            <button type="submit" class="btn btn-primary mb-4">
                                 {{ trans('login') }}
                             </button>
                         </div>

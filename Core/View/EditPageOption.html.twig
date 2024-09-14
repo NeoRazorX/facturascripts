@@ -27,7 +27,7 @@
         <div class="row">
             <div class="col-4 d-print-none">
                 <a href="{{ fsc.backPage }}" class="btn btn-sm btn-secondary">
-                    <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
+                    <i class="fas fa-arrow-start fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-md-inline-block">{{ trans('back') }}</span>
                 </a>
                 <a href="{{ fsc.url() ~ '?code=' ~ fsc.selectedViewName }}" class="btn btn-sm btn-secondary"
@@ -222,12 +222,12 @@
         {% if col.display == 'left' %}
             <label class="btn btn-outline-secondary active" title="{{ trans('left') }}">
                 <input type="radio" name="{{ col.name }}-display" value="left" checked>
-                <i class="fas fa-align-left"></i>
+                <i class="fas fa-align-start"></i>
             </label>
         {% else %}
             <label class="btn btn-outline-secondary" title="{{ trans('left') }}">
                 <input type="radio" name="{{ col.name }}-display" value="left">
-                <i class="fas fa-align-left"></i>
+                <i class="fas fa-align-start"></i>
             </label>
         {% endif %}
 
@@ -246,12 +246,12 @@
         {% if col.display == 'right' %}
             <label class="btn btn-outline-secondary active" title="{{ trans('right') }}">
                 <input type="radio" name="{{ col.name }}-display" value="right" checked>
-                <i class="fas fa-align-right"></i>
+                <i class="fas fa-align-end"></i>
             </label>
         {% else %}
             <label class="btn btn-outline-secondary" title="{{ trans('right') }}">
                 <input type="radio" name="{{ col.name }}-display" value="right">
-                <i class="fas fa-align-right"></i>
+                <i class="fas fa-align-end"></i>
             </label>
         {% endif %}
 
