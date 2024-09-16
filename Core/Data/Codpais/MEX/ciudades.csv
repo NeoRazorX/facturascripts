@@ -1,2462 +1,938 @@
-"ciudad";"idprovincia"
-"Aguascalientes";"1"
-"Asientos";"1"
-"Calvillo";"1"
-"Cosío";"1"
-"Jesús María";"1"
-"Pabellón de Arteaga";"1"
-"Rincón de Romos";"1"
-"San José de Gracia";"1"
-"Tepezalá";"1"
-"El Llano";"1"
-"San Francisco de los Romo";"1"
-"Ensenada";"2"
-"Mexicali";"2"
-"Tecate";"2"
-"Tijuana";"2"
-"Playas de Rosarito";"2"
-"Comondú";"3"
-"Mulegé";"3"
-"La Paz";"3"
-"Los Cabos";"3"
-"Loreto";"3"
-"Calkiní";"4"
-"Campeche";"4"
-"Carmen";"4"
-"Champotón";"4"
-"Hecelchakán";"4"
-"Hopelchén";"4"
-"Palizada";"4"
-"Tenabo";"4"
-"Escárcega";"4"
-"Calakmul";"4"
-"Candelaria";"4"
-"Abasolo";"5"
-"Acuña";"5"
-"Allende";"5"
-"Arteaga";"5"
-"Candela";"5"
-"Castaños";"5"
-"Cuatro Ciénegas";"5"
-"Escobedo";"5"
-"Francisco I. Madero";"5"
-"Frontera";"5"
-"General Cepeda";"5"
-"Guerrero";"5"
-"Hidalgo";"5"
-"Jiménez";"5"
-"Juárez";"5"
-"Lamadrid";"5"
-"Matamoros";"5"
-"Monclova";"5"
-"Morelos";"5"
-"Múzquiz";"5"
-"Nadadores";"5"
-"Nava";"5"
-"Ocampo";"5"
-"Parras";"5"
-"Piedras Negras";"5"
-"Progreso";"5"
-"Ramos Arizpe";"5"
-"Sabinas";"5"
-"Sacramento";"5"
-"Saltillo";"5"
-"San Buenaventura";"5"
-"San Juan de Sabinas";"5"
-"San Pedro";"5"
-"Sierra Mojada";"5"
-"Torreón";"5"
-"Viesca";"5"
-"Villa Unión";"5"
-"Zaragoza";"5"
-"Armería";"6"
-"Colima";"6"
-"Comala";"6"
-"Coquimatlán";"6"
-"Cuauhtémoc";"6"
-"Ixtlahuacán";"6"
-"Manzanillo";"6"
-"Minatitlán";"6"
-"Tecomán";"6"
-"Villa de Álvarez";"6"
-"Acacoyagua";"7"
-"Acala";"7"
-"Acapetahua";"7"
-"Altamirano";"7"
-"Amatán";"7"
-"Amatenango de la Frontera";"7"
-"Amatenango del Valle";"7"
-"Angel Albino Corzo";"7"
-"Arriaga";"7"
-"Bejucal de Ocampo";"7"
-"Bella Vista";"7"
-"Berriozábal";"7"
-"Bochil";"7"
-"El Bosque";"7"
-"Cacahoatán";"7"
-"Catazajá";"7"
-"Cintalapa";"7"
-"Coapilla";"7"
-"Comitán de Domínguez";"7"
-"La Concordia";"7"
-"Copainalá";"7"
-"Chalchihuitán";"7"
-"Chamula";"7"
-"Chanal";"7"
-"Chapultenango";"7"
-"Chenalhó";"7"
-"Chiapa de Corzo";"7"
-"Chiapilla";"7"
-"Chicoasén";"7"
-"Chicomuselo";"7"
-"Chilón";"7"
-"Escuintla";"7"
-"Francisco León";"7"
-"Frontera Comalapa";"7"
-"Frontera Hidalgo";"7"
-"La Grandeza";"7"
-"Huehuetán";"7"
-"Huixtán";"7"
-"Huitiupán";"7"
-"Huixtla";"7"
-"La Independencia";"7"
-"Ixhuatán";"7"
-"Ixtacomitán";"7"
-"Ixtapa";"7"
-"Ixtapangajoya";"7"
-"Jiquipilas";"7"
-"Jitotol";"7"
-"Juárez";"7"
-"Larráinzar";"7"
-"La Libertad";"7"
-"Mapastepec";"7"
-"Las Margaritas";"7"
-"Mazapa de Madero";"7"
-"Mazatán";"7"
-"Metapa";"7"
-"Mitontic";"7"
-"Motozintla";"7"
-"Nicolás Ruíz";"7"
-"Ocosingo";"7"
-"Ocotepec";"7"
-"Ocozocoautla de Espinosa";"7"
-"Ostuacán";"7"
-"Osumacinta";"7"
-"Oxchuc";"7"
-"Palenque";"7"
-"Pantelhó";"7"
-"Pantepec";"7"
-"Pichucalco";"7"
-"Pijijiapan";"7"
-"El Porvenir";"7"
-"Villa Comaltitlán";"7"
-"Pueblo Nuevo Solistahuacán";"7"
-"Rayón";"7"
-"Reforma";"7"
-"Las Rosas";"7"
-"Sabanilla";"7"
-"Salto de Agua";"7"
-"San Cristóbal de las Casas";"7"
-"San Fernando";"7"
-"Siltepec";"7"
-"Simojovel";"7"
-"Sitalá";"7"
-"Socoltenango";"7"
-"Solosuchiapa";"7"
-"Soyaló";"7"
-"Suchiapa";"7"
-"Suchiate";"7"
-"Sunuapa";"7"
-"Tapachula";"7"
-"Tapalapa";"7"
-"Tapilula";"7"
-"Tecpatán";"7"
-"Tenejapa";"7"
-"Teopisca";"7"
-"Tila";"7"
-"Tonalá";"7"
-"Totolapa";"7"
-"La Trinitaria";"7"
-"Tumbalá";"7"
-"Tuxtla Gutiérrez";"7"
-"Tuxtla Chico";"7"
-"Tuzantán";"7"
-"Tzimol";"7"
-"Unión Juárez";"7"
-"Venustiano Carranza";"7"
-"Villa Corzo";"7"
-"Villaflores";"7"
-"Yajalón";"7"
-"San Lucas";"7"
-"Zinacantán";"7"
-"San Juan Cancuc";"7"
-"Aldama";"7"
-"Benemérito de las Américas";"7"
-"Maravilla Tenejapa";"7"
-"Marqués de Comillas";"7"
-"Montecristo de Guerrero";"7"
-"San Andrés Duraznal";"7"
-"Santiago el Pinar";"7"
-"Capitán Luis Ángel Vidal";"7"
-"Rincón Chamula San Pedro";"7"
-"El Parral";"7"
-"Emiliano Zapata";"7"
-"Mezcalapa";"7"
-"Ahumada";"8"
-"Aldama";"8"
-"Allende";"8"
-"Aquiles Serdán";"8"
-"Ascensión";"8"
-"Bachíniva";"8"
-"Balleza";"8"
-"Batopilas de Manuel Gómez Morín";"8"
-"Bocoyna";"8"
-"Buenaventura";"8"
-"Camargo";"8"
-"Carichí";"8"
-"Casas Grandes";"8"
-"Coronado";"8"
-"Coyame del Sotol";"8"
-"La Cruz";"8"
-"Cuauhtémoc";"8"
-"Cusihuiriachi";"8"
-"Chihuahua";"8"
-"Chínipas";"8"
-"Delicias";"8"
-"Dr. Belisario Domínguez";"8"
-"Galeana";"8"
-"Santa Isabel";"8"
-"Gómez Farías";"8"
-"Gran Morelos";"8"
-"Guachochi";"8"
-"Guadalupe";"8"
-"Guadalupe y Calvo";"8"
-"Guazapares";"8"
-"Guerrero";"8"
-"Hidalgo del Parral";"8"
-"Huejotitán";"8"
-"Ignacio Zaragoza";"8"
-"Janos";"8"
-"Jiménez";"8"
-"Juárez";"8"
-"Julimes";"8"
-"López";"8"
-"Madera";"8"
-"Maguarichi";"8"
-"Manuel Benavides";"8"
-"Matachí";"8"
-"Matamoros";"8"
-"Meoqui";"8"
-"Morelos";"8"
-"Moris";"8"
-"Namiquipa";"8"
-"Nonoava";"8"
-"Nuevo Casas Grandes";"8"
-"Ocampo";"8"
-"Ojinaga";"8"
-"Praxedis G. Guerrero";"8"
-"Riva Palacio";"8"
-"Rosales";"8"
-"Rosario";"8"
-"San Francisco de Borja";"8"
-"San Francisco de Conchos";"8"
-"San Francisco del Oro";"8"
-"Santa Bárbara";"8"
-"Satevó";"8"
-"Saucillo";"8"
-"Temósachic";"8"
-"El Tule";"8"
-"Urique";"8"
-"Uruachi";"8"
-"Valle de Zaragoza";"8"
-"Azcapotzalco";"9"
-"Coyoacán";"9"
-"Cuajimalpa de Morelos";"9"
-"Gustavo A. Madero";"9"
-"Iztacalco";"9"
-"Iztapalapa";"9"
-"La Magdalena Contreras";"9"
-"Milpa Alta";"9"
-"Álvaro Obregón";"9"
-"Tláhuac";"9"
-"Tlalpan";"9"
-"Xochimilco";"9"
-"Benito Juárez";"9"
-"Cuauhtémoc";"9"
-"Miguel Hidalgo";"9"
-"Venustiano Carranza";"9"
-"Canatlán";"10"
-"Canelas";"10"
-"Coneto de Comonfort";"10"
-"Cuencamé";"10"
-"Durango";"10"
-"General Simón Bolívar";"10"
-"Gómez Palacio";"10"
-"Guadalupe Victoria";"10"
-"Guanaceví";"10"
-"Hidalgo";"10"
-"Indé";"10"
-"Lerdo";"10"
-"Mapimí";"10"
-"Mezquital";"10"
-"Nazas";"10"
-"Nombre de Dios";"10"
-"Ocampo";"10"
-"El Oro";"10"
-"Otáez";"10"
-"Pánuco de Coronado";"10"
-"Peñón Blanco";"10"
-"Poanas";"10"
-"Pueblo Nuevo";"10"
-"Rodeo";"10"
-"San Bernardo";"10"
-"San Dimas";"10"
-"San Juan de Guadalupe";"10"
-"San Juan del Río";"10"
-"San Luis del Cordero";"10"
-"San Pedro del Gallo";"10"
-"Santa Clara";"10"
-"Santiago Papasquiaro";"10"
-"Súchil";"10"
-"Tamazula";"10"
-"Tepehuanes";"10"
-"Tlahualilo";"10"
-"Topia";"10"
-"Vicente Guerrero";"10"
-"Nuevo Ideal";"10"
-"Abasolo";"11"
-"Acámbaro";"11"
-"San Miguel de Allende";"11"
-"Apaseo el Alto";"11"
-"Apaseo el Grande";"11"
-"Atarjea";"11"
-"Celaya";"11"
-"Manuel Doblado";"11"
-"Comonfort";"11"
-"Coroneo";"11"
-"Cortazar";"11"
-"Cuerámaro";"11"
-"Doctor Mora";"11"
-"Dolores Hidalgo Cuna de la Independencia Nacional";"11"
-"Guanajuato";"11"
-"Huanímaro";"11"
-"Irapuato";"11"
-"Jaral del Progreso";"11"
-"Jerécuaro";"11"
-"León";"11"
-"Moroleón";"11"
-"Ocampo";"11"
-"Pénjamo";"11"
-"Pueblo Nuevo";"11"
-"Purísima del Rincón";"11"
-"Romita";"11"
-"Salamanca";"11"
-"Salvatierra";"11"
-"San Diego de la Unión";"11"
-"San Felipe";"11"
-"San Francisco del Rincón";"11"
-"San José Iturbide";"11"
-"San Luis de la Paz";"11"
-"Santa Catarina";"11"
-"Santa Cruz de Juventino Rosas";"11"
-"Santiago Maravatío";"11"
-"Silao de la Victoria";"11"
-"Tarandacuao";"11"
-"Tarimoro";"11"
-"Tierra Blanca";"11"
-"Uriangato";"11"
-"Valle de Santiago";"11"
-"Victoria";"11"
-"Villagrán";"11"
-"Xichú";"11"
-"Yuriria";"11"
-"Acapulco de Juárez";"12"
-"Ahuacuotzingo";"12"
-"Ajuchitlán del Progreso";"12"
-"Alcozauca de Guerrero";"12"
-"Alpoyeca";"12"
-"Apaxtla";"12"
-"Arcelia";"12"
-"Atenango del Río";"12"
-"Atlamajalcingo del Monte";"12"
-"Atlixtac";"12"
-"Atoyac de Álvarez";"12"
-"Ayutla de los Libres";"12"
-"Azoyú";"12"
-"Benito Juárez";"12"
-"Buenavista de Cuéllar";"12"
-"Coahuayutla de José María Izazaga";"12"
-"Cocula";"12"
-"Copala";"12"
-"Copalillo";"12"
-"Copanatoyac";"12"
-"Coyuca de Benítez";"12"
-"Coyuca de Catalán";"12"
-"Cuajinicuilapa";"12"
-"Cualác";"12"
-"Cuautepec";"12"
-"Cuetzala del Progreso";"12"
-"Cutzamala de Pinzón";"12"
-"Chilapa de Álvarez";"12"
-"Chilpancingo de los Bravo";"12"
-"Florencio Villarreal";"12"
-"General Canuto A. Neri";"12"
-"General Heliodoro Castillo";"12"
-"Huamuxtitlán";"12"
-"Huitzuco de los Figueroa";"12"
-"Iguala de la Independencia";"12"
-"Igualapa";"12"
-"Ixcateopan de Cuauhtémoc";"12"
-"Zihuatanejo de Azueta";"12"
-"Juan R. Escudero";"12"
-"Leonardo Bravo";"12"
-"Malinaltepec";"12"
-"Mártir de Cuilapan";"12"
-"Metlatónoc";"12"
-"Mochitlán";"12"
-"Olinalá";"12"
-"Ometepec";"12"
-"Pedro Ascencio Alquisiras";"12"
-"Petatlán";"12"
-"Pilcaya";"12"
-"Pungarabato";"12"
-"Quechultenango";"12"
-"San Luis Acatlán";"12"
-"San Marcos";"12"
-"San Miguel Totolapan";"12"
-"Taxco de Alarcón";"12"
-"Tecoanapa";"12"
-"Técpan de Galeana";"12"
-"Teloloapan";"12"
-"Tepecoacuilco de Trujano";"12"
-"Tetipac";"12"
-"Tixtla de Guerrero";"12"
-"Tlacoachistlahuaca";"12"
-"Tlacoapa";"12"
-"Tlalchapa";"12"
-"Tlalixtaquilla de Maldonado";"12"
-"Tlapa de Comonfort";"12"
-"Tlapehuala";"12"
-"La Unión de Isidoro Montes de Oca";"12"
-"Xalpatláhuac";"12"
-"Xochihuehuetlán";"12"
-"Xochistlahuaca";"12"
-"Zapotitlán Tablas";"12"
-"Zirándaro";"12"
-"Zitlala";"12"
-"Eduardo Neri";"12"
-"Acatepec";"12"
-"Marquelia";"12"
-"Cochoapa el Grande";"12"
-"José Joaquín de Herrera";"12"
-"Juchitán";"12"
-"Iliatenco";"12"
-"Acatlán";"13"
-"Acaxochitlán";"13"
-"Actopan";"13"
-"Agua Blanca de Iturbide";"13"
-"Ajacuba";"13"
-"Alfajayucan";"13"
-"Almoloya";"13"
-"Apan";"13"
-"El Arenal";"13"
-"Atitalaquia";"13"
-"Atlapexco";"13"
-"Atotonilco el Grande";"13"
-"Atotonilco de Tula";"13"
-"Calnali";"13"
-"Cardonal";"13"
-"Cuautepec de Hinojosa";"13"
-"Chapantongo";"13"
-"Chapulhuacán";"13"
-"Chilcuautla";"13"
-"Eloxochitlán";"13"
-"Emiliano Zapata";"13"
-"Epazoyucan";"13"
-"Francisco I. Madero";"13"
-"Huasca de Ocampo";"13"
-"Huautla";"13"
-"Huazalingo";"13"
-"Huehuetla";"13"
-"Huejutla de Reyes";"13"
-"Huichapan";"13"
-"Ixmiquilpan";"13"
-"Jacala de Ledezma";"13"
-"Jaltocán";"13"
-"Juárez Hidalgo";"13"
-"Lolotla";"13"
-"Metepec";"13"
-"San Agustín Metzquititlán";"13"
-"Metztitlán";"13"
-"Mineral del Chico";"13"
-"Mineral del Monte";"13"
-"La Misión";"13"
-"Mixquiahuala de Juárez";"13"
-"Molango de Escamilla";"13"
-"Nicolás Flores";"13"
-"Nopala de Villagrán";"13"
-"Omitlán de Juárez";"13"
-"San Felipe Orizatlán";"13"
-"Pacula";"13"
-"Pachuca de Soto";"13"
-"Pisaflores";"13"
-"Progreso de Obregón";"13"
-"Mineral de la Reforma";"13"
-"San Agustín Tlaxiaca";"13"
-"San Bartolo Tutotepec";"13"
-"San Salvador";"13"
-"Santiago de Anaya";"13"
-"Santiago Tulantepec de Lugo Guerrero";"13"
-"Singuilucan";"13"
-"Tasquillo";"13"
-"Tecozautla";"13"
-"Tenango de Doria";"13"
-"Tepeapulco";"13"
-"Tepehuacán de Guerrero";"13"
-"Tepeji del Río de Ocampo";"13"
-"Tepetitlán";"13"
-"Tetepango";"13"
-"Villa de Tezontepec";"13"
-"Tezontepec de Aldama";"13"
-"Tianguistengo";"13"
-"Tizayuca";"13"
-"Tlahuelilpan";"13"
-"Tlahuiltepa";"13"
-"Tlanalapa";"13"
-"Tlanchinol";"13"
-"Tlaxcoapan";"13"
-"Tolcayuca";"13"
-"Tula de Allende";"13"
-"Tulancingo de Bravo";"13"
-"Xochiatipan";"13"
-"Xochicoatlán";"13"
-"Yahualica";"13"
-"Zacualtipán de Ángeles";"13"
-"Zapotlán de Juárez";"13"
-"Zempoala";"13"
-"Zimapán";"13"
-"Acatic";"14"
-"Acatlán de Juárez";"14"
-"Ahualulco de Mercado";"14"
-"Amacueca";"14"
-"Amatitán";"14"
-"Ameca";"14"
-"San Juanito de Escobedo";"14"
-"Arandas";"14"
-"El Arenal";"14"
-"Atemajac de Brizuela";"14"
-"Atengo";"14"
-"Atenguillo";"14"
-"Atotonilco el Alto";"14"
-"Atoyac";"14"
-"Autlán de Navarro";"14"
-"Ayotlán";"14"
-"Ayutla";"14"
-"La Barca";"14"
-"Bolaños";"14"
-"Cabo Corrientes";"14"
-"Casimiro Castillo";"14"
-"Cihuatlán";"14"
-"Zapotlán el Grande";"14"
-"Cocula";"14"
-"Colotlán";"14"
-"Concepción de Buenos Aires";"14"
-"Cuautitlán de García Barragán";"14"
-"Cuautla";"14"
-"Cuquío";"14"
-"Chapala";"14"
-"Chimaltitán";"14"
-"Chiquilistlán";"14"
-"Degollado";"14"
-"Ejutla";"14"
-"Encarnación de Díaz";"14"
-"Etzatlán";"14"
-"El Grullo";"14"
-"Guachinango";"14"
-"Guadalajara";"14"
-"Hostotipaquillo";"14"
-"Huejúcar";"14"
-"Huejuquilla el Alto";"14"
-"La Huerta";"14"
-"Ixtlahuacán de los Membrillos";"14"
-"Ixtlahuacán del Río";"14"
-"Jalostotitlán";"14"
-"Jamay";"14"
-"Jesús María";"14"
-"Jilotlán de los Dolores";"14"
-"Jocotepec";"14"
-"Juanacatlán";"14"
-"Juchitlán";"14"
-"Lagos de Moreno";"14"
-"El Limón";"14"
-"Magdalena";"14"
-"Santa María del Oro";"14"
-"La Manzanilla de la Paz";"14"
-"Mascota";"14"
-"Mazamitla";"14"
-"Mexticacán";"14"
-"Mezquitic";"14"
-"Mixtlán";"14"
-"Ocotlán";"14"
-"Ojuelos de Jalisco";"14"
-"Pihuamo";"14"
-"Poncitlán";"14"
-"Puerto Vallarta";"14"
-"Villa Purificación";"14"
-"Quitupan";"14"
-"El Salto";"14"
-"San Cristóbal de la Barranca";"14"
-"San Diego de Alejandría";"14"
-"San Juan de los Lagos";"14"
-"San Julián";"14"
-"San Marcos";"14"
-"San Martín de Bolaños";"14"
-"San Martín Hidalgo";"14"
-"San Miguel el Alto";"14"
-"Gómez Farías";"14"
-"San Sebastián del Oeste";"14"
-"Santa María de los Ángeles";"14"
-"Sayula";"14"
-"Tala";"14"
-"Talpa de Allende";"14"
-"Tamazula de Gordiano";"14"
-"Tapalpa";"14"
-"Tecalitlán";"14"
-"Tecolotlán";"14"
-"Techaluta de Montenegro";"14"
-"Tenamaxtlán";"14"
-"Teocaltiche";"14"
-"Teocuitatlán de Corona";"14"
-"Tepatitlán de Morelos";"14"
-"Tequila";"14"
-"Teuchitlán";"14"
-"Tizapán el Alto";"14"
-"Tlajomulco de Zúñiga";"14"
-"San Pedro Tlaquepaque";"14"
-"Tolimán";"14"
-"Tomatlán";"14"
-"Tonalá";"14"
-"Tonaya";"14"
-"Tonila";"14"
-"Totatiche";"14"
-"Tototlán";"14"
-"Tuxcacuesco";"14"
-"Tuxcueca";"14"
-"Tuxpan";"14"
-"Unión de San Antonio";"14"
-"Unión de Tula";"14"
-"Valle de Guadalupe";"14"
-"Valle de Juárez";"14"
-"San Gabriel";"14"
-"Villa Corona";"14"
-"Villa Guerrero";"14"
-"Villa Hidalgo";"14"
-"Cañadas de Obregón";"14"
-"Yahualica de González Gallo";"14"
-"Zacoalco de Torres";"14"
-"Zapopan";"14"
-"Zapotiltic";"14"
-"Zapotitlán de Vadillo";"14"
-"Zapotlán del Rey";"14"
-"Zapotlanejo";"14"
-"San Ignacio Cerro Gordo";"14"
-"Acambay de Ruíz Castañeda";"15"
-"Acolman";"15"
-"Aculco";"15"
-"Almoloya de Alquisiras";"15"
-"Almoloya de Juárez";"15"
-"Almoloya del Río";"15"
-"Amanalco";"15"
-"Amatepec";"15"
-"Amecameca";"15"
-"Apaxco";"15"
-"Atenco";"15"
-"Atizapán";"15"
-"Atizapán de Zaragoza";"15"
-"Atlacomulco";"15"
-"Atlautla";"15"
-"Axapusco";"15"
-"Ayapango";"15"
-"Calimaya";"15"
-"Capulhuac";"15"
-"Coacalco de Berriozábal";"15"
-"Coatepec Harinas";"15"
-"Cocotitlán";"15"
-"Coyotepec";"15"
-"Cuautitlán";"15"
-"Chalco";"15"
-"Chapa de Mota";"15"
-"Chapultepec";"15"
-"Chiautla";"15"
-"Chicoloapan";"15"
-"Chiconcuac";"15"
-"Chimalhuacán";"15"
-"Donato Guerra";"15"
-"Ecatepec de Morelos";"15"
-"Ecatzingo";"15"
-"Huehuetoca";"15"
-"Hueypoxtla";"15"
-"Huixquilucan";"15"
-"Isidro Fabela";"15"
-"Ixtapaluca";"15"
-"Ixtapan de la Sal";"15"
-"Ixtapan del Oro";"15"
-"Ixtlahuaca";"15"
-"Xalatlaco";"15"
-"Jaltenco";"15"
-"Jilotepec";"15"
-"Jilotzingo";"15"
-"Jiquipilco";"15"
-"Jocotitlán";"15"
-"Joquicingo";"15"
-"Juchitepec";"15"
-"Lerma";"15"
-"Malinalco";"15"
-"Melchor Ocampo";"15"
-"Metepec";"15"
-"Mexicaltzingo";"15"
-"Morelos";"15"
-"Naucalpan de Juárez";"15"
-"Nezahualcóyotl";"15"
-"Nextlalpan";"15"
-"Nicolás Romero";"15"
-"Nopaltepec";"15"
-"Ocoyoacac";"15"
-"Ocuilan";"15"
-"El Oro";"15"
-"Otumba";"15"
-"Otzoloapan";"15"
-"Otzolotepec";"15"
-"Ozumba";"15"
-"Papalotla";"15"
-"La Paz";"15"
-"Polotitlán";"15"
-"Rayón";"15"
-"San Antonio la Isla";"15"
-"San Felipe del Progreso";"15"
-"San Martín de las Pirámides";"15"
-"San Mateo Atenco";"15"
-"San Simón de Guerrero";"15"
-"Santo Tomás";"15"
-"Soyaniquilpan de Juárez";"15"
-"Sultepec";"15"
-"Tecámac";"15"
-"Tejupilco";"15"
-"Temamatla";"15"
-"Temascalapa";"15"
-"Temascalcingo";"15"
-"Temascaltepec";"15"
-"Temoaya";"15"
-"Tenancingo";"15"
-"Tenango del Aire";"15"
-"Tenango del Valle";"15"
-"Teoloyucan";"15"
-"Teotihuacán";"15"
-"Tepetlaoxtoc";"15"
-"Tepetlixpa";"15"
-"Tepotzotlán";"15"
-"Tequixquiac";"15"
-"Texcaltitlán";"15"
-"Texcalyacac";"15"
-"Texcoco";"15"
-"Tezoyuca";"15"
-"Tianguistenco";"15"
-"Timilpan";"15"
-"Tlalmanalco";"15"
-"Tlalnepantla de Baz";"15"
-"Tlatlaya";"15"
-"Toluca";"15"
-"Tonatico";"15"
-"Tultepec";"15"
-"Tultitlán";"15"
-"Valle de Bravo";"15"
-"Villa de Allende";"15"
-"Villa del Carbón";"15"
-"Villa Guerrero";"15"
-"Villa Victoria";"15"
-"Xonacatlán";"15"
-"Zacazonapan";"15"
-"Zacualpan";"15"
-"Zinacantepec";"15"
-"Zumpahuacán";"15"
-"Zumpango";"15"
-"Cuautitlán Izcalli";"15"
-"Valle de Chalco Solidaridad";"15"
-"Luvianos";"15"
-"San José del Rincón";"15"
-"Tonanitla";"15"
-"Acuitzio";"16"
-"Aguililla";"16"
-"Álvaro Obregón";"16"
-"Angamacutiro";"16"
-"Angangueo";"16"
-"Apatzingán";"16"
-"Aporo";"16"
-"Aquila";"16"
-"Ario";"16"
-"Arteaga";"16"
-"Briseñas";"16"
-"Buenavista";"16"
-"Carácuaro";"16"
-"Coahuayana";"16"
-"Coalcomán de Vázquez Pallares";"16"
-"Coeneo";"16"
-"Contepec";"16"
-"Copándaro";"16"
-"Cotija";"16"
-"Cuitzeo";"16"
-"Charapan";"16"
-"Charo";"16"
-"Chavinda";"16"
-"Cherán";"16"
-"Chilchota";"16"
-"Chinicuila";"16"
-"Chucándiro";"16"
-"Churintzio";"16"
-"Churumuco";"16"
-"Ecuandureo";"16"
-"Epitacio Huerta";"16"
-"Erongarícuaro";"16"
-"Gabriel Zamora";"16"
-"Hidalgo";"16"
-"La Huacana";"16"
-"Huandacareo";"16"
-"Huaniqueo";"16"
-"Huetamo";"16"
-"Huiramba";"16"
-"Indaparapeo";"16"
-"Irimbo";"16"
-"Ixtlán";"16"
-"Jacona";"16"
-"Jiménez";"16"
-"Jiquilpan";"16"
-"Juárez";"16"
-"Jungapeo";"16"
-"Lagunillas";"16"
-"Madero";"16"
-"Maravatío";"16"
-"Marcos Castellanos";"16"
-"Lázaro Cárdenas";"16"
-"Morelia";"16"
-"Morelos";"16"
-"Múgica";"16"
-"Nahuatzen";"16"
-"Nocupétaro";"16"
-"Nuevo Parangaricutiro";"16"
-"Nuevo Urecho";"16"
-"Numarán";"16"
-"Ocampo";"16"
-"Pajacuarán";"16"
-"Panindícuaro";"16"
-"Parácuaro";"16"
-"Paracho";"16"
-"Pátzcuaro";"16"
-"Penjamillo";"16"
-"Peribán";"16"
-"La Piedad";"16"
-"Purépero";"16"
-"Puruándiro";"16"
-"Queréndaro";"16"
-"Quiroga";"16"
-"Cojumatlán de Régules";"16"
-"Los Reyes";"16"
-"Sahuayo";"16"
-"San Lucas";"16"
-"Santa Ana Maya";"16"
-"Salvador Escalante";"16"
-"Senguio";"16"
-"Susupuato";"16"
-"Tacámbaro";"16"
-"Tancítaro";"16"
-"Tangamandapio";"16"
-"Tangancícuaro";"16"
-"Tanhuato";"16"
-"Taretan";"16"
-"Tarímbaro";"16"
-"Tepalcatepec";"16"
-"Tingambato";"16"
-"Tingüindín";"16"
-"Tiquicheo de Nicolás Romero";"16"
-"Tlalpujahua";"16"
-"Tlazazalca";"16"
-"Tocumbo";"16"
-"Tumbiscatío";"16"
-"Turicato";"16"
-"Tuxpan";"16"
-"Tuzantla";"16"
-"Tzintzuntzan";"16"
-"Tzitzio";"16"
-"Uruapan";"16"
-"Venustiano Carranza";"16"
-"Villamar";"16"
-"Vista Hermosa";"16"
-"Yurécuaro";"16"
-"Zacapu";"16"
-"Zamora";"16"
-"Zináparo";"16"
-"Zinapécuaro";"16"
-"Ziracuaretiro";"16"
-"Zitácuaro";"16"
-"José Sixto Verduzco";"16"
-"Amacuzac";"17"
-"Atlatlahucan";"17"
-"Axochiapan";"17"
-"Ayala";"17"
-"Coatlán del Río";"17"
-"Cuautla";"17"
-"Cuernavaca";"17"
-"Emiliano Zapata";"17"
-"Huitzilac";"17"
-"Jantetelco";"17"
-"Jiutepec";"17"
-"Jojutla";"17"
-"Jonacatepec de Leandro Valle";"17"
-"Mazatepec";"17"
-"Miacatlán";"17"
-"Ocuituco";"17"
-"Puente de Ixtla";"17"
-"Temixco";"17"
-"Tepalcingo";"17"
-"Tepoztlán";"17"
-"Tetecala";"17"
-"Tetela del Volcán";"17"
-"Tlalnepantla";"17"
-"Tlaltizapán de Zapata";"17"
-"Tlaquiltenango";"17"
-"Tlayacapan";"17"
-"Totolapan";"17"
-"Xochitepec";"17"
-"Yautepec";"17"
-"Yecapixtla";"17"
-"Zacatepec";"17"
-"Zacualpan de Amilpas";"17"
-"Temoac";"17"
-"Acaponeta";"18"
-"Ahuacatlán";"18"
-"Amatlán de Cañas";"18"
-"Compostela";"18"
-"Huajicori";"18"
-"Ixtlán del Río";"18"
-"Jala";"18"
-"Xalisco";"18"
-"Del Nayar";"18"
-"Rosamorada";"18"
-"Ruíz";"18"
-"San Blas";"18"
-"San Pedro Lagunillas";"18"
-"Santa María del Oro";"18"
-"Santiago Ixcuintla";"18"
-"Tecuala";"18"
-"Tepic";"18"
-"Tuxpan";"18"
-"La Yesca";"18"
-"Bahía de Banderas";"18"
-"Abasolo";"19"
-"Agualeguas";"19"
-"Los Aldamas";"19"
-"Allende";"19"
-"Anáhuac";"19"
-"Apodaca";"19"
-"Aramberri";"19"
-"Bustamante";"19"
-"Cadereyta Jiménez";"19"
-"El Carmen";"19"
-"Cerralvo";"19"
-"Ciénega de Flores";"19"
-"China";"19"
-"Doctor Arroyo";"19"
-"Doctor Coss";"19"
-"Doctor González";"19"
-"Galeana";"19"
-"García";"19"
-"San Pedro Garza García";"19"
-"General Bravo";"19"
-"General Escobedo";"19"
-"General Terán";"19"
-"General Treviño";"19"
-"General Zaragoza";"19"
-"General Zuazua";"19"
-"Guadalupe";"19"
-"Los Herreras";"19"
-"Higueras";"19"
-"Hualahuises";"19"
-"Iturbide";"19"
-"Juárez";"19"
-"Lampazos de Naranjo";"19"
-"Linares";"19"
-"Marín";"19"
-"Melchor Ocampo";"19"
-"Mier y Noriega";"19"
-"Mina";"19"
-"Montemorelos";"19"
-"Monterrey";"19"
-"Parás";"19"
-"Pesquería";"19"
-"Los Ramones";"19"
-"Rayones";"19"
-"Sabinas Hidalgo";"19"
-"Salinas Victoria";"19"
-"San Nicolás de los Garza";"19"
-"Hidalgo";"19"
-"Santa Catarina";"19"
-"Santiago";"19"
-"Vallecillo";"19"
-"Villaldama";"19"
-"Abejones";"20"
-"Acatlán de Pérez Figueroa";"20"
-"Asunción Cacalotepec";"20"
-"Asunción Cuyotepeji";"20"
-"Asunción Ixtaltepec";"20"
-"Asunción Nochixtlán";"20"
-"Asunción Ocotlán";"20"
-"Asunción Tlacolulita";"20"
-"Ayotzintepec";"20"
-"El Barrio de la Soledad";"20"
-"Calihualá";"20"
-"Candelaria Loxicha";"20"
-"Ciénega de Zimatlán";"20"
-"Ciudad Ixtepec";"20"
-"Coatecas Altas";"20"
-"Coicoyán de las Flores";"20"
-"La Compañía";"20"
-"Concepción Buenavista";"20"
-"Concepción Pápalo";"20"
-"Constancia del Rosario";"20"
-"Cosolapa";"20"
-"Cosoltepec";"20"
-"Cuilápam de Guerrero";"20"
-"Cuyamecalco Villa de Zaragoza";"20"
-"Chahuites";"20"
-"Chalcatongo de Hidalgo";"20"
-"Chiquihuitlán de Benito Juárez";"20"
-"Heroica Ciudad de Ejutla de Crespo";"20"
-"Eloxochitlán de Flores Magón";"20"
-"El Espinal";"20"
-"Tamazulápam del Espíritu Santo";"20"
-"Fresnillo de Trujano";"20"
-"Guadalupe Etla";"20"
-"Guadalupe de Ramírez";"20"
-"Guelatao de Juárez";"20"
-"Guevea de Humboldt";"20"
-"Mesones Hidalgo";"20"
-"Villa Hidalgo";"20"
-"Heroica Ciudad de Huajuapan de León";"20"
-"Huautepec";"20"
-"Huautla de Jiménez";"20"
-"Ixtlán de Juárez";"20"
-"Heroica Ciudad de Juchitán de Zaragoza";"20"
-"Loma Bonita";"20"
-"Magdalena Apasco";"20"
-"Magdalena Jaltepec";"20"
-"Santa Magdalena Jicotlán";"20"
-"Magdalena Mixtepec";"20"
-"Magdalena Ocotlán";"20"
-"Magdalena Peñasco";"20"
-"Magdalena Teitipac";"20"
-"Magdalena Tequisistlán";"20"
-"Magdalena Tlacotepec";"20"
-"Magdalena Zahuatlán";"20"
-"Mariscala de Juárez";"20"
-"Mártires de Tacubaya";"20"
-"Matías Romero Avendaño";"20"
-"Mazatlán Villa de Flores";"20"
-"Miahuatlán de Porfirio Díaz";"20"
-"Mixistlán de la Reforma";"20"
-"Monjas";"20"
-"Natividad";"20"
-"Nazareno Etla";"20"
-"Nejapa de Madero";"20"
-"Ixpantepec Nieves";"20"
-"Santiago Niltepec";"20"
-"Oaxaca de Juárez";"20"
-"Ocotlán de Morelos";"20"
-"La Pe";"20"
-"Pinotepa de Don Luis";"20"
-"Pluma Hidalgo";"20"
-"San José del Progreso";"20"
-"Putla Villa de Guerrero";"20"
-"Santa Catarina Quioquitani";"20"
-"Reforma de Pineda";"20"
-"La Reforma";"20"
-"Reyes Etla";"20"
-"Rojas de Cuauhtémoc";"20"
-"Salina Cruz";"20"
-"San Agustín Amatengo";"20"
-"San Agustín Atenango";"20"
-"San Agustín Chayuco";"20"
-"San Agustín de las Juntas";"20"
-"San Agustín Etla";"20"
-"San Agustín Loxicha";"20"
-"San Agustín Tlacotepec";"20"
-"San Agustín Yatareni";"20"
-"San Andrés Cabecera Nueva";"20"
-"San Andrés Dinicuiti";"20"
-"San Andrés Huaxpaltepec";"20"
-"San Andrés Huayápam";"20"
-"San Andrés Ixtlahuaca";"20"
-"San Andrés Lagunas";"20"
-"San Andrés Nuxiño";"20"
-"San Andrés Paxtlán";"20"
-"San Andrés Sinaxtla";"20"
-"San Andrés Solaga";"20"
-"San Andrés Teotilálpam";"20"
-"San Andrés Tepetlapa";"20"
-"San Andrés Yaá";"20"
-"San Andrés Zabache";"20"
-"San Andrés Zautla";"20"
-"San Antonino Castillo Velasco";"20"
-"San Antonino el Alto";"20"
-"San Antonino Monte Verde";"20"
-"San Antonio Acutla";"20"
-"San Antonio de la Cal";"20"
-"San Antonio Huitepec";"20"
-"San Antonio Nanahuatípam";"20"
-"San Antonio Sinicahua";"20"
-"San Antonio Tepetlapa";"20"
-"San Baltazar Chichicápam";"20"
-"San Baltazar Loxicha";"20"
-"San Baltazar Yatzachi el Bajo";"20"
-"San Bartolo Coyotepec";"20"
-"San Bartolomé Ayautla";"20"
-"San Bartolomé Loxicha";"20"
-"San Bartolomé Quialana";"20"
-"San Bartolomé Yucuañe";"20"
-"San Bartolomé Zoogocho";"20"
-"San Bartolo Soyaltepec";"20"
-"San Bartolo Yautepec";"20"
-"San Bernardo Mixtepec";"20"
-"San Blas Atempa";"20"
-"San Carlos Yautepec";"20"
-"San Cristóbal Amatlán";"20"
-"San Cristóbal Amoltepec";"20"
-"San Cristóbal Lachirioag";"20"
-"San Cristóbal Suchixtlahuaca";"20"
-"San Dionisio del Mar";"20"
-"San Dionisio Ocotepec";"20"
-"San Dionisio Ocotlán";"20"
-"San Esteban Atatlahuca";"20"
-"San Felipe Jalapa de Díaz";"20"
-"San Felipe Tejalápam";"20"
-"San Felipe Usila";"20"
-"San Francisco Cahuacuá";"20"
-"San Francisco Cajonos";"20"
-"San Francisco Chapulapa";"20"
-"San Francisco Chindúa";"20"
-"San Francisco del Mar";"20"
-"San Francisco Huehuetlán";"20"
-"San Francisco Ixhuatán";"20"
-"San Francisco Jaltepetongo";"20"
-"San Francisco Lachigoló";"20"
-"San Francisco Logueche";"20"
-"San Francisco Nuxaño";"20"
-"San Francisco Ozolotepec";"20"
-"San Francisco Sola";"20"
-"San Francisco Telixtlahuaca";"20"
-"San Francisco Teopan";"20"
-"San Francisco Tlapancingo";"20"
-"San Gabriel Mixtepec";"20"
-"San Ildefonso Amatlán";"20"
-"San Ildefonso Sola";"20"
-"San Ildefonso Villa Alta";"20"
-"San Jacinto Amilpas";"20"
-"San Jacinto Tlacotepec";"20"
-"San Jerónimo Coatlán";"20"
-"San Jerónimo Silacayoapilla";"20"
-"San Jerónimo Sosola";"20"
-"San Jerónimo Taviche";"20"
-"San Jerónimo Tecóatl";"20"
-"San Jorge Nuchita";"20"
-"San José Ayuquila";"20"
-"San José Chiltepec";"20"
-"San José del Peñasco";"20"
-"San José Estancia Grande";"20"
-"San José Independencia";"20"
-"San José Lachiguiri";"20"
-"San José Tenango";"20"
-"San Juan Achiutla";"20"
-"San Juan Atepec";"20"
-"Ánimas Trujano";"20"
-"San Juan Bautista Atatlahuca";"20"
-"San Juan Bautista Coixtlahuaca";"20"
-"San Juan Bautista Cuicatlán";"20"
-"San Juan Bautista Guelache";"20"
-"San Juan Bautista Jayacatlán";"20"
-"San Juan Bautista Lo de Soto";"20"
-"San Juan Bautista Suchitepec";"20"
-"San Juan Bautista Tlacoatzintepec";"20"
-"San Juan Bautista Tlachichilco";"20"
-"San Juan Bautista Tuxtepec";"20"
-"San Juan Cacahuatepec";"20"
-"San Juan Cieneguilla";"20"
-"San Juan Coatzóspam";"20"
-"San Juan Colorado";"20"
-"San Juan Comaltepec";"20"
-"San Juan Cotzocón";"20"
-"San Juan Chicomezúchil";"20"
-"San Juan Chilateca";"20"
-"San Juan del Estado";"20"
-"San Juan del Río";"20"
-"San Juan Diuxi";"20"
-"San Juan Evangelista Analco";"20"
-"San Juan Guelavía";"20"
-"San Juan Guichicovi";"20"
-"San Juan Ihualtepec";"20"
-"San Juan Juquila Mixes";"20"
-"San Juan Juquila Vijanos";"20"
-"San Juan Lachao";"20"
-"San Juan Lachigalla";"20"
-"San Juan Lajarcia";"20"
-"San Juan Lalana";"20"
-"San Juan de los Cués";"20"
-"San Juan Mazatlán";"20"
-"San Juan Mixtepec";"20"
-"San Juan Ñumí";"20"
-"San Juan Ozolotepec";"20"
-"San Juan Petlapa";"20"
-"San Juan Quiahije";"20"
-"San Juan Quiotepec";"20"
-"San Juan Sayultepec";"20"
-"San Juan Tabaá";"20"
-"San Juan Tamazola";"20"
-"San Juan Teita";"20"
-"San Juan Teitipac";"20"
-"San Juan Tepeuxila";"20"
-"San Juan Teposcolula";"20"
-"San Juan Yaeé";"20"
-"San Juan Yatzona";"20"
-"San Juan Yucuita";"20"
-"San Lorenzo";"20"
-"San Lorenzo Albarradas";"20"
-"San Lorenzo Cacaotepec";"20"
-"San Lorenzo Cuaunecuiltitla";"20"
-"San Lorenzo Texmelúcan";"20"
-"San Lorenzo Victoria";"20"
-"San Lucas Camotlán";"20"
-"San Lucas Ojitlán";"20"
-"San Lucas Quiaviní";"20"
-"San Lucas Zoquiápam";"20"
-"San Luis Amatlán";"20"
-"San Marcial Ozolotepec";"20"
-"San Marcos Arteaga";"20"
-"San Martín de los Cansecos";"20"
-"San Martín Huamelúlpam";"20"
-"San Martín Itunyoso";"20"
-"San Martín Lachilá";"20"
-"San Martín Peras";"20"
-"San Martín Tilcajete";"20"
-"San Martín Toxpalan";"20"
-"San Martín Zacatepec";"20"
-"San Mateo Cajonos";"20"
-"Capulálpam de Méndez";"20"
-"San Mateo del Mar";"20"
-"San Mateo Yoloxochitlán";"20"
-"San Mateo Etlatongo";"20"
-"San Mateo Nejápam";"20"
-"San Mateo Peñasco";"20"
-"San Mateo Piñas";"20"
-"San Mateo Río Hondo";"20"
-"San Mateo Sindihui";"20"
-"San Mateo Tlapiltepec";"20"
-"San Melchor Betaza";"20"
-"San Miguel Achiutla";"20"
-"San Miguel Ahuehuetitlán";"20"
-"San Miguel Aloápam";"20"
-"San Miguel Amatitlán";"20"
-"San Miguel Amatlán";"20"
-"San Miguel Coatlán";"20"
-"San Miguel Chicahua";"20"
-"San Miguel Chimalapa";"20"
-"San Miguel del Puerto";"20"
-"San Miguel del Río";"20"
-"San Miguel Ejutla";"20"
-"San Miguel el Grande";"20"
-"San Miguel Huautla";"20"
-"San Miguel Mixtepec";"20"
-"San Miguel Panixtlahuaca";"20"
-"San Miguel Peras";"20"
-"San Miguel Piedras";"20"
-"San Miguel Quetzaltepec";"20"
-"San Miguel Santa Flor";"20"
-"Villa Sola de Vega";"20"
-"San Miguel Soyaltepec";"20"
-"San Miguel Suchixtepec";"20"
-"Villa Talea de Castro";"20"
-"San Miguel Tecomatlán";"20"
-"San Miguel Tenango";"20"
-"San Miguel Tequixtepec";"20"
-"San Miguel Tilquiápam";"20"
-"San Miguel Tlacamama";"20"
-"San Miguel Tlacotepec";"20"
-"San Miguel Tulancingo";"20"
-"San Miguel Yotao";"20"
-"San Nicolás";"20"
-"San Nicolás Hidalgo";"20"
-"San Pablo Coatlán";"20"
-"San Pablo Cuatro Venados";"20"
-"San Pablo Etla";"20"
-"San Pablo Huitzo";"20"
-"San Pablo Huixtepec";"20"
-"San Pablo Macuiltianguis";"20"
-"San Pablo Tijaltepec";"20"
-"San Pablo Villa de Mitla";"20"
-"San Pablo Yaganiza";"20"
-"San Pedro Amuzgos";"20"
-"San Pedro Apóstol";"20"
-"San Pedro Atoyac";"20"
-"San Pedro Cajonos";"20"
-"San Pedro Coxcaltepec Cántaros";"20"
-"San Pedro Comitancillo";"20"
-"San Pedro el Alto";"20"
-"San Pedro Huamelula";"20"
-"San Pedro Huilotepec";"20"
-"San Pedro Ixcatlán";"20"
-"San Pedro Ixtlahuaca";"20"
-"San Pedro Jaltepetongo";"20"
-"San Pedro Jicayán";"20"
-"San Pedro Jocotipac";"20"
-"San Pedro Juchatengo";"20"
-"San Pedro Mártir";"20"
-"San Pedro Mártir Quiechapa";"20"
-"San Pedro Mártir Yucuxaco";"20"
-"San Pedro Mixtepec";"20"
-"San Pedro Molinos";"20"
-"San Pedro Nopala";"20"
-"San Pedro Ocopetatillo";"20"
-"San Pedro Ocotepec";"20"
-"San Pedro Pochutla";"20"
-"San Pedro Quiatoni";"20"
-"San Pedro Sochiápam";"20"
-"San Pedro Tapanatepec";"20"
-"San Pedro Taviche";"20"
-"San Pedro Teozacoalco";"20"
-"San Pedro Teutila";"20"
-"San Pedro Tidaá";"20"
-"San Pedro Topiltepec";"20"
-"San Pedro Totolápam";"20"
-"Villa de Tututepec";"20"
-"San Pedro Yaneri";"20"
-"San Pedro Yólox";"20"
-"San Pedro y San Pablo Ayutla";"20"
-"Villa de Etla";"20"
-"San Pedro y San Pablo Teposcolula";"20"
-"San Pedro y San Pablo Tequixtepec";"20"
-"San Pedro Yucunama";"20"
-"San Raymundo Jalpan";"20"
-"San Sebastián Abasolo";"20"
-"San Sebastián Coatlán";"20"
-"San Sebastián Ixcapa";"20"
-"San Sebastián Nicananduta";"20"
-"San Sebastián Río Hondo";"20"
-"San Sebastián Tecomaxtlahuaca";"20"
-"San Sebastián Teitipac";"20"
-"San Sebastián Tutla";"20"
-"San Simón Almolongas";"20"
-"San Simón Zahuatlán";"20"
-"Santa Ana";"20"
-"Santa Ana Ateixtlahuaca";"20"
-"Santa Ana Cuauhtémoc";"20"
-"Santa Ana del Valle";"20"
-"Santa Ana Tavela";"20"
-"Santa Ana Tlapacoyan";"20"
-"Santa Ana Yareni";"20"
-"Santa Ana Zegache";"20"
-"Santa Catalina Quierí";"20"
-"Santa Catarina Cuixtla";"20"
-"Santa Catarina Ixtepeji";"20"
-"Santa Catarina Juquila";"20"
-"Santa Catarina Lachatao";"20"
-"Santa Catarina Loxicha";"20"
-"Santa Catarina Mechoacán";"20"
-"Santa Catarina Minas";"20"
-"Santa Catarina Quiané";"20"
-"Santa Catarina Tayata";"20"
-"Santa Catarina Ticuá";"20"
-"Santa Catarina Yosonotú";"20"
-"Santa Catarina Zapoquila";"20"
-"Santa Cruz Acatepec";"20"
-"Santa Cruz Amilpas";"20"
-"Santa Cruz de Bravo";"20"
-"Santa Cruz Itundujia";"20"
-"Santa Cruz Mixtepec";"20"
-"Santa Cruz Nundaco";"20"
-"Santa Cruz Papalutla";"20"
-"Santa Cruz Tacache de Mina";"20"
-"Santa Cruz Tacahua";"20"
-"Santa Cruz Tayata";"20"
-"Santa Cruz Xitla";"20"
-"Santa Cruz Xoxocotlán";"20"
-"Santa Cruz Zenzontepec";"20"
-"Santa Gertrudis";"20"
-"Santa Inés del Monte";"20"
-"Santa Inés Yatzeche";"20"
-"Santa Lucía del Camino";"20"
-"Santa Lucía Miahuatlán";"20"
-"Santa Lucía Monteverde";"20"
-"Santa Lucía Ocotlán";"20"
-"Santa María Alotepec";"20"
-"Santa María Apazco";"20"
-"Santa María la Asunción";"20"
-"Heroica Ciudad de Tlaxiaco";"20"
-"Ayoquezco de Aldama";"20"
-"Santa María Atzompa";"20"
-"Santa María Camotlán";"20"
-"Santa María Colotepec";"20"
-"Santa María Cortijo";"20"
-"Santa María Coyotepec";"20"
-"Santa María Chachoápam";"20"
-"Villa de Chilapa de Díaz";"20"
-"Santa María Chilchotla";"20"
-"Santa María Chimalapa";"20"
-"Santa María del Rosario";"20"
-"Santa María del Tule";"20"
-"Santa María Ecatepec";"20"
-"Santa María Guelacé";"20"
-"Santa María Guienagati";"20"
-"Santa María Huatulco";"20"
-"Santa María Huazolotitlán";"20"
-"Santa María Ipalapa";"20"
-"Santa María Ixcatlán";"20"
-"Santa María Jacatepec";"20"
-"Santa María Jalapa del Marqués";"20"
-"Santa María Jaltianguis";"20"
-"Santa María Lachixío";"20"
-"Santa María Mixtequilla";"20"
-"Santa María Nativitas";"20"
-"Santa María Nduayaco";"20"
-"Santa María Ozolotepec";"20"
-"Santa María Pápalo";"20"
-"Santa María Peñoles";"20"
-"Santa María Petapa";"20"
-"Santa María Quiegolani";"20"
-"Santa María Sola";"20"
-"Santa María Tataltepec";"20"
-"Santa María Tecomavaca";"20"
-"Santa María Temaxcalapa";"20"
-"Santa María Temaxcaltepec";"20"
-"Santa María Teopoxco";"20"
-"Santa María Tepantlali";"20"
-"Santa María Texcatitlán";"20"
-"Santa María Tlahuitoltepec";"20"
-"Santa María Tlalixtac";"20"
-"Santa María Tonameca";"20"
-"Santa María Totolapilla";"20"
-"Santa María Xadani";"20"
-"Santa María Yalina";"20"
-"Santa María Yavesía";"20"
-"Santa María Yolotepec";"20"
-"Santa María Yosoyúa";"20"
-"Santa María Yucuhiti";"20"
-"Santa María Zacatepec";"20"
-"Santa María Zaniza";"20"
-"Santa María Zoquitlán";"20"
-"Santiago Amoltepec";"20"
-"Santiago Apoala";"20"
-"Santiago Apóstol";"20"
-"Santiago Astata";"20"
-"Santiago Atitlán";"20"
-"Santiago Ayuquililla";"20"
-"Santiago Cacaloxtepec";"20"
-"Santiago Camotlán";"20"
-"Santiago Comaltepec";"20"
-"Santiago Chazumba";"20"
-"Santiago Choápam";"20"
-"Santiago del Río";"20"
-"Santiago Huajolotitlán";"20"
-"Santiago Huauclilla";"20"
-"Santiago Ihuitlán Plumas";"20"
-"Santiago Ixcuintepec";"20"
-"Santiago Ixtayutla";"20"
-"Santiago Jamiltepec";"20"
-"Santiago Jocotepec";"20"
-"Santiago Juxtlahuaca";"20"
-"Santiago Lachiguiri";"20"
-"Santiago Lalopa";"20"
-"Santiago Laollaga";"20"
-"Santiago Laxopa";"20"
-"Santiago Llano Grande";"20"
-"Santiago Matatlán";"20"
-"Santiago Miltepec";"20"
-"Santiago Minas";"20"
-"Santiago Nacaltepec";"20"
-"Santiago Nejapilla";"20"
-"Santiago Nundiche";"20"
-"Santiago Nuyoó";"20"
-"Santiago Pinotepa Nacional";"20"
-"Santiago Suchilquitongo";"20"
-"Santiago Tamazola";"20"
-"Santiago Tapextla";"20"
-"Villa Tejúpam de la Unión";"20"
-"Santiago Tenango";"20"
-"Santiago Tepetlapa";"20"
-"Santiago Tetepec";"20"
-"Santiago Texcalcingo";"20"
-"Santiago Textitlán";"20"
-"Santiago Tilantongo";"20"
-"Santiago Tillo";"20"
-"Santiago Tlazoyaltepec";"20"
-"Santiago Xanica";"20"
-"Santiago Xiacuí";"20"
-"Santiago Yaitepec";"20"
-"Santiago Yaveo";"20"
-"Santiago Yolomécatl";"20"
-"Santiago Yosondúa";"20"
-"Santiago Yucuyachi";"20"
-"Santiago Zacatepec";"20"
-"Santiago Zoochila";"20"
-"Nuevo Zoquiápam";"20"
-"Santo Domingo Ingenio";"20"
-"Santo Domingo Albarradas";"20"
-"Santo Domingo Armenta";"20"
-"Santo Domingo Chihuitán";"20"
-"Santo Domingo de Morelos";"20"
-"Santo Domingo Ixcatlán";"20"
-"Santo Domingo Nuxaá";"20"
-"Santo Domingo Ozolotepec";"20"
-"Santo Domingo Petapa";"20"
-"Santo Domingo Roayaga";"20"
-"Santo Domingo Tehuantepec";"20"
-"Santo Domingo Teojomulco";"20"
-"Santo Domingo Tepuxtepec";"20"
-"Santo Domingo Tlatayápam";"20"
-"Santo Domingo Tomaltepec";"20"
-"Santo Domingo Tonalá";"20"
-"Santo Domingo Tonaltepec";"20"
-"Santo Domingo Xagacía";"20"
-"Santo Domingo Yanhuitlán";"20"
-"Santo Domingo Yodohino";"20"
-"Santo Domingo Zanatepec";"20"
-"Santos Reyes Nopala";"20"
-"Santos Reyes Pápalo";"20"
-"Santos Reyes Tepejillo";"20"
-"Santos Reyes Yucuná";"20"
-"Santo Tomás Jalieza";"20"
-"Santo Tomás Mazaltepec";"20"
-"Santo Tomás Ocotepec";"20"
-"Santo Tomás Tamazulapan";"20"
-"San Vicente Coatlán";"20"
-"San Vicente Lachixío";"20"
-"San Vicente Nuñú";"20"
-"Silacayoápam";"20"
-"Sitio de Xitlapehua";"20"
-"Soledad Etla";"20"
-"Villa de Tamazulápam del Progreso";"20"
-"Tanetze de Zaragoza";"20"
-"Taniche";"20"
-"Tataltepec de Valdés";"20"
-"Teococuilco de Marcos Pérez";"20"
-"Teotitlán de Flores Magón";"20"
-"Teotitlán del Valle";"20"
-"Teotongo";"20"
-"Tepelmeme Villa de Morelos";"20"
-"Heroica Villa Tezoatlán de Segura y Luna; Cuna de la Independencia de Oaxaca";"20"
-"San Jerónimo Tlacochahuaya";"20"
-"Tlacolula de Matamoros";"20"
-"Tlacotepec Plumas";"20"
-"Tlalixtac de Cabrera";"20"
-"Totontepec Villa de Morelos";"20"
-"Trinidad Zaachila";"20"
-"La Trinidad Vista Hermosa";"20"
-"Unión Hidalgo";"20"
-"Valerio Trujano";"20"
-"San Juan Bautista Valle Nacional";"20"
-"Villa Díaz Ordaz";"20"
-"Yaxe";"20"
-"Magdalena Yodocono de Porfirio Díaz";"20"
-"Yogana";"20"
-"Yutanduchi de Guerrero";"20"
-"Villa de Zaachila";"20"
-"San Mateo Yucutindoo";"20"
-"Zapotitlán Lagunas";"20"
-"Zapotitlán Palmas";"20"
-"Santa Inés de Zaragoza";"20"
-"Zimatlán de Álvarez";"20"
-"Acajete";"21"
-"Acateno";"21"
-"Acatlán";"21"
-"Acatzingo";"21"
-"Acteopan";"21"
-"Ahuacatlán";"21"
-"Ahuatlán";"21"
-"Ahuazotepec";"21"
-"Ahuehuetitla";"21"
-"Ajalpan";"21"
-"Albino Zertuche";"21"
-"Aljojuca";"21"
-"Altepexi";"21"
-"Amixtlán";"21"
-"Amozoc";"21"
-"Aquixtla";"21"
-"Atempan";"21"
-"Atexcal";"21"
-"Atlixco";"21"
-"Atoyatempan";"21"
-"Atzala";"21"
-"Atzitzihuacán";"21"
-"Atzitzintla";"21"
-"Axutla";"21"
-"Ayotoxco de Guerrero";"21"
-"Calpan";"21"
-"Caltepec";"21"
-"Camocuautla";"21"
-"Caxhuacan";"21"
-"Coatepec";"21"
-"Coatzingo";"21"
-"Cohetzala";"21"
-"Cohuecan";"21"
-"Coronango";"21"
-"Coxcatlán";"21"
-"Coyomeapan";"21"
-"Coyotepec";"21"
-"Cuapiaxtla de Madero";"21"
-"Cuautempan";"21"
-"Cuautinchán";"21"
-"Cuautlancingo";"21"
-"Cuayuca de Andrade";"21"
-"Cuetzalan del Progreso";"21"
-"Cuyoaco";"21"
-"Chalchicomula de Sesma";"21"
-"Chapulco";"21"
-"Chiautla";"21"
-"Chiautzingo";"21"
-"Chiconcuautla";"21"
-"Chichiquila";"21"
-"Chietla";"21"
-"Chigmecatitlán";"21"
-"Chignahuapan";"21"
-"Chignautla";"21"
-"Chila";"21"
-"Chila de la Sal";"21"
-"Honey";"21"
-"Chilchotla";"21"
-"Chinantla";"21"
-"Domingo Arenas";"21"
-"Eloxochitlán";"21"
-"Epatlán";"21"
-"Esperanza";"21"
-"Francisco Z. Mena";"21"
-"General Felipe Ángeles";"21"
-"Guadalupe";"21"
-"Guadalupe Victoria";"21"
-"Hermenegildo Galeana";"21"
-"Huaquechula";"21"
-"Huatlatlauca";"21"
-"Huauchinango";"21"
-"Huehuetla";"21"
-"Huehuetlán el Chico";"21"
-"Huejotzingo";"21"
-"Hueyapan";"21"
-"Hueytamalco";"21"
-"Hueytlalpan";"21"
-"Huitzilan de Serdán";"21"
-"Huitziltepec";"21"
-"Atlequizayan";"21"
-"Ixcamilpa de Guerrero";"21"
-"Ixcaquixtla";"21"
-"Ixtacamaxtitlán";"21"
-"Ixtepec";"21"
-"Izúcar de Matamoros";"21"
-"Jalpan";"21"
-"Jolalpan";"21"
-"Jonotla";"21"
-"Jopala";"21"
-"Juan C. Bonilla";"21"
-"Juan Galindo";"21"
-"Juan N. Méndez";"21"
-"Lafragua";"21"
-"Libres";"21"
-"La Magdalena Tlatlauquitepec";"21"
-"Mazapiltepec de Juárez";"21"
-"Mixtla";"21"
-"Molcaxac";"21"
-"Cañada Morelos";"21"
-"Naupan";"21"
-"Nauzontla";"21"
-"Nealtican";"21"
-"Nicolás Bravo";"21"
-"Nopalucan";"21"
-"Ocotepec";"21"
-"Ocoyucan";"21"
-"Olintla";"21"
-"Oriental";"21"
-"Pahuatlán";"21"
-"Palmar de Bravo";"21"
-"Pantepec";"21"
-"Petlalcingo";"21"
-"Piaxtla";"21"
-"Puebla";"21"
-"Quecholac";"21"
-"Quimixtlán";"21"
-"Rafael Lara Grajales";"21"
-"Los Reyes de Juárez";"21"
-"San Andrés Cholula";"21"
-"San Antonio Cañada";"21"
-"San Diego la Mesa Tochimiltzingo";"21"
-"San Felipe Teotlalcingo";"21"
-"San Felipe Tepatlán";"21"
-"San Gabriel Chilac";"21"
-"San Gregorio Atzompa";"21"
-"San Jerónimo Tecuanipan";"21"
-"San Jerónimo Xayacatlán";"21"
-"San José Chiapa";"21"
-"San José Miahuatlán";"21"
-"San Juan Atenco";"21"
-"San Juan Atzompa";"21"
-"San Martín Texmelucan";"21"
-"San Martín Totoltepec";"21"
-"San Matías Tlalancaleca";"21"
-"San Miguel Ixitlán";"21"
-"San Miguel Xoxtla";"21"
-"San Nicolás Buenos Aires";"21"
-"San Nicolás de los Ranchos";"21"
-"San Pablo Anicano";"21"
-"San Pedro Cholula";"21"
-"San Pedro Yeloixtlahuaca";"21"
-"San Salvador el Seco";"21"
-"San Salvador el Verde";"21"
-"San Salvador Huixcolotla";"21"
-"San Sebastián Tlacotepec";"21"
-"Santa Catarina Tlaltempan";"21"
-"Santa Inés Ahuatempan";"21"
-"Santa Isabel Cholula";"21"
-"Santiago Miahuatlán";"21"
-"Huehuetlán el Grande";"21"
-"Santo Tomás Hueyotlipan";"21"
-"Soltepec";"21"
-"Tecali de Herrera";"21"
-"Tecamachalco";"21"
-"Tecomatlán";"21"
-"Tehuacán";"21"
-"Tehuitzingo";"21"
-"Tenampulco";"21"
-"Teopantlán";"21"
-"Teotlalco";"21"
-"Tepanco de López";"21"
-"Tepango de Rodríguez";"21"
-"Tepatlaxco de Hidalgo";"21"
-"Tepeaca";"21"
-"Tepemaxalco";"21"
-"Tepeojuma";"21"
-"Tepetzintla";"21"
-"Tepexco";"21"
-"Tepexi de Rodríguez";"21"
-"Tepeyahualco";"21"
-"Tepeyahualco de Cuauhtémoc";"21"
-"Tetela de Ocampo";"21"
-"Teteles de Avila Castillo";"21"
-"Teziutlán";"21"
-"Tianguismanalco";"21"
-"Tilapa";"21"
-"Tlacotepec de Benito Juárez";"21"
-"Tlacuilotepec";"21"
-"Tlachichuca";"21"
-"Tlahuapan";"21"
-"Tlaltenango";"21"
-"Tlanepantla";"21"
-"Tlaola";"21"
-"Tlapacoya";"21"
-"Tlapanalá";"21"
-"Tlatlauquitepec";"21"
-"Tlaxco";"21"
-"Tochimilco";"21"
-"Tochtepec";"21"
-"Totoltepec de Guerrero";"21"
-"Tulcingo";"21"
-"Tuzamapan de Galeana";"21"
-"Tzicatlacoyan";"21"
-"Venustiano Carranza";"21"
-"Vicente Guerrero";"21"
-"Xayacatlán de Bravo";"21"
-"Xicotepec";"21"
-"Xicotlán";"21"
-"Xiutetelco";"21"
-"Xochiapulco";"21"
-"Xochiltepec";"21"
-"Xochitlán de Vicente Suárez";"21"
-"Xochitlán Todos Santos";"21"
-"Yaonáhuac";"21"
-"Yehualtepec";"21"
-"Zacapala";"21"
-"Zacapoaxtla";"21"
-"Zacatlán";"21"
-"Zapotitlán";"21"
-"Zapotitlán de Méndez";"21"
-"Zaragoza";"21"
-"Zautla";"21"
-"Zihuateutla";"21"
-"Zinacatepec";"21"
-"Zongozotla";"21"
-"Zoquiapan";"21"
-"Zoquitlán";"21"
-"Amealco de Bonfil";"22"
-"Pinal de Amoles";"22"
-"Arroyo Seco";"22"
-"Cadereyta de Montes";"22"
-"Colón";"22"
-"Corregidora";"22"
-"Ezequiel Montes";"22"
-"Huimilpan";"22"
-"Jalpan de Serra";"22"
-"Landa de Matamoros";"22"
-"El Marqués";"22"
-"Pedro Escobedo";"22"
-"Peñamiller";"22"
-"Querétaro";"22"
-"San Joaquín";"22"
-"San Juan del Río";"22"
-"Tequisquiapan";"22"
-"Tolimán";"22"
-"Cozumel";"23"
-"Felipe Carrillo Puerto";"23"
-"Isla Mujeres";"23"
-"Othón P. Blanco";"23"
-"Benito Juárez";"23"
-"José María Morelos";"23"
-"Lázaro Cárdenas";"23"
-"Solidaridad";"23"
-"Tulum";"23"
-"Bacalar";"23"
-"Puerto Morelos";"23"
-"Ahualulco";"24"
-"Alaquines";"24"
-"Aquismón";"24"
-"Armadillo de los Infante";"24"
-"Cárdenas";"24"
-"Catorce";"24"
-"Cedral";"24"
-"Cerritos";"24"
-"Cerro de San Pedro";"24"
-"Ciudad del Maíz";"24"
-"Ciudad Fernández";"24"
-"Tancanhuitz";"24"
-"Ciudad Valles";"24"
-"Coxcatlán";"24"
-"Charcas";"24"
-"Ebano";"24"
-"Guadalcázar";"24"
-"Huehuetlán";"24"
-"Lagunillas";"24"
-"Matehuala";"24"
-"Mexquitic de Carmona";"24"
-"Moctezuma";"24"
-"Rayón";"24"
-"Rioverde";"24"
-"Salinas";"24"
-"San Antonio";"24"
-"San Ciro de Acosta";"24"
-"San Luis Potosí";"24"
-"San Martín Chalchicuautla";"24"
-"San Nicolás Tolentino";"24"
-"Santa Catarina";"24"
-"Santa María del Río";"24"
-"Santo Domingo";"24"
-"San Vicente Tancuayalab";"24"
-"Soledad de Graciano Sánchez";"24"
-"Tamasopo";"24"
-"Tamazunchale";"24"
-"Tampacán";"24"
-"Tampamolón Corona";"24"
-"Tamuín";"24"
-"Tanlajás";"24"
-"Tanquián de Escobedo";"24"
-"Tierra Nueva";"24"
-"Vanegas";"24"
-"Venado";"24"
-"Villa de Arriaga";"24"
-"Villa de Guadalupe";"24"
-"Villa de la Paz";"24"
-"Villa de Ramos";"24"
-"Villa de Reyes";"24"
-"Villa Hidalgo";"24"
-"Villa Juárez";"24"
-"Axtla de Terrazas";"24"
-"Xilitla";"24"
-"Zaragoza";"24"
-"Villa de Arista";"24"
-"Matlapa";"24"
-"El Naranjo";"24"
-"Ahome";"25"
-"Angostura";"25"
-"Badiraguato";"25"
-"Concordia";"25"
-"Cosalá";"25"
-"Culiacán";"25"
-"Choix";"25"
-"Elota";"25"
-"Escuinapa";"25"
-"El Fuerte";"25"
-"Guasave";"25"
-"Mazatlán";"25"
-"Mocorito";"25"
-"Rosario";"25"
-"Salvador Alvarado";"25"
-"San Ignacio";"25"
-"Sinaloa";"25"
-"Navolato";"25"
-"Aconchi";"26"
-"Agua Prieta";"26"
-"Alamos";"26"
-"Altar";"26"
-"Arivechi";"26"
-"Arizpe";"26"
-"Atil";"26"
-"Bacadéhuachi";"26"
-"Bacanora";"26"
-"Bacerac";"26"
-"Bacoachi";"26"
-"Bácum";"26"
-"Banámichi";"26"
-"Baviácora";"26"
-"Bavispe";"26"
-"Benjamín Hill";"26"
-"Caborca";"26"
-"Cajeme";"26"
-"Cananea";"26"
-"Carbó";"26"
-"La Colorada";"26"
-"Cucurpe";"26"
-"Cumpas";"26"
-"Divisaderos";"26"
-"Empalme";"26"
-"Etchojoa";"26"
-"Fronteras";"26"
-"Granados";"26"
-"Guaymas";"26"
-"Hermosillo";"26"
-"Huachinera";"26"
-"Huásabas";"26"
-"Huatabampo";"26"
-"Huépac";"26"
-"Imuris";"26"
-"Magdalena";"26"
-"Mazatán";"26"
-"Moctezuma";"26"
-"Naco";"26"
-"Nácori Chico";"26"
-"Nacozari de García";"26"
-"Navojoa";"26"
-"Nogales";"26"
-"Onavas";"26"
-"Opodepe";"26"
-"Oquitoa";"26"
-"Pitiquito";"26"
-"Puerto Peñasco";"26"
-"Quiriego";"26"
-"Rayón";"26"
-"Rosario";"26"
-"Sahuaripa";"26"
-"San Felipe de Jesús";"26"
-"San Javier";"26"
-"San Luis Río Colorado";"26"
-"San Miguel de Horcasitas";"26"
-"San Pedro de la Cueva";"26"
-"Santa Ana";"26"
-"Santa Cruz";"26"
-"Sáric";"26"
-"Soyopa";"26"
-"Suaqui Grande";"26"
-"Tepache";"26"
-"Trincheras";"26"
-"Tubutama";"26"
-"Ures";"26"
-"Villa Hidalgo";"26"
-"Villa Pesqueira";"26"
-"Yécora";"26"
-"General Plutarco Elías Calles";"26"
-"Benito Juárez";"26"
-"San Ignacio Río Muerto";"26"
-"Balancán";"27"
-"Cárdenas";"27"
-"Centla";"27"
-"Centro";"27"
-"Comalcalco";"27"
-"Cunduacán";"27"
-"Emiliano Zapata";"27"
-"Huimanguillo";"27"
-"Jalapa";"27"
-"Jalpa de Méndez";"27"
-"Jonuta";"27"
-"Macuspana";"27"
-"Nacajuca";"27"
-"Paraíso";"27"
-"Tacotalpa";"27"
-"Teapa";"27"
-"Tenosique";"27"
-"Abasolo";"28"
-"Aldama";"28"
-"Altamira";"28"
-"Antiguo Morelos";"28"
-"Burgos";"28"
-"Bustamante";"28"
-"Camargo";"28"
-"Casas";"28"
-"Ciudad Madero";"28"
-"Cruillas";"28"
-"Gómez Farías";"28"
-"González";"28"
-"Güémez";"28"
-"Guerrero";"28"
-"Gustavo Díaz Ordaz";"28"
-"Hidalgo";"28"
-"Jaumave";"28"
-"Jiménez";"28"
-"Llera";"28"
-"Mainero";"28"
-"El Mante";"28"
-"Matamoros";"28"
-"Méndez";"28"
-"Mier";"28"
-"Miguel Alemán";"28"
-"Miquihuana";"28"
-"Nuevo Laredo";"28"
-"Nuevo Morelos";"28"
-"Ocampo";"28"
-"Padilla";"28"
-"Palmillas";"28"
-"Reynosa";"28"
-"Río Bravo";"28"
-"San Carlos";"28"
-"San Fernando";"28"
-"San Nicolás";"28"
-"Soto la Marina";"28"
-"Tampico";"28"
-"Tula";"28"
-"Valle Hermoso";"28"
-"Victoria";"28"
-"Villagrán";"28"
-"Xicoténcatl";"28"
-"Amaxac de Guerrero";"29"
-"Apetatitlán de Antonio Carvajal";"29"
-"Atlangatepec";"29"
-"Atltzayanca";"29"
-"Apizaco";"29"
-"Calpulalpan";"29"
-"El Carmen Tequexquitla";"29"
-"Cuapiaxtla";"29"
-"Cuaxomulco";"29"
-"Chiautempan";"29"
-"Muñoz de Domingo Arenas";"29"
-"Españita";"29"
-"Huamantla";"29"
-"Hueyotlipan";"29"
-"Ixtacuixtla de Mariano Matamoros";"29"
-"Ixtenco";"29"
-"Mazatecochco de José María Morelos";"29"
-"Contla de Juan Cuamatzi";"29"
-"Tepetitla de Lardizábal";"29"
-"Sanctórum de Lázaro Cárdenas";"29"
-"Nanacamilpa de Mariano Arista";"29"
-"Acuamanala de Miguel Hidalgo";"29"
-"Natívitas";"29"
-"Panotla";"29"
-"San Pablo del Monte";"29"
-"Santa Cruz Tlaxcala";"29"
-"Tenancingo";"29"
-"Teolocholco";"29"
-"Tepeyanco";"29"
-"Terrenate";"29"
-"Tetla de la Solidaridad";"29"
-"Tetlatlahuca";"29"
-"Tlaxcala";"29"
-"Tlaxco";"29"
-"Tocatlán";"29"
-"Totolac";"29"
-"Ziltlaltépec de Trinidad Sánchez Santos";"29"
-"Tzompantepec";"29"
-"Xaloztoc";"29"
-"Xaltocan";"29"
-"Papalotla de Xicohténcatl";"29"
-"Xicohtzinco";"29"
-"Yauhquemehcan";"29"
-"Zacatelco";"29"
-"Benito Juárez";"29"
-"Emiliano Zapata";"29"
-"Lázaro Cárdenas";"29"
-"La Magdalena Tlaltelulco";"29"
-"San Damián Texóloc";"29"
-"San Francisco Tetlanohcan";"29"
-"San Jerónimo Zacualpan";"29"
-"San José Teacalco";"29"
-"San Juan Huactzinco";"29"
-"San Lorenzo Axocomanitla";"29"
-"San Lucas Tecopilco";"29"
-"Santa Ana Nopalucan";"29"
-"Santa Apolonia Teacalco";"29"
-"Santa Catarina Ayometla";"29"
-"Santa Cruz Quilehtla";"29"
-"Santa Isabel Xiloxoxtla";"29"
-"Acajete";"30"
-"Acatlán";"30"
-"Acayucan";"30"
-"Actopan";"30"
-"Acula";"30"
-"Acultzingo";"30"
-"Camarón de Tejeda";"30"
-"Alpatláhuac";"30"
-"Alto Lucero de Gutiérrez Barrios";"30"
-"Altotonga";"30"
-"Alvarado";"30"
-"Amatitlán";"30"
-"Naranjos Amatlán";"30"
-"Amatlán de los Reyes";"30"
-"Angel R. Cabada";"30"
-"La Antigua";"30"
-"Apazapan";"30"
-"Aquila";"30"
-"Astacinga";"30"
-"Atlahuilco";"30"
-"Atoyac";"30"
-"Atzacan";"30"
-"Atzalan";"30"
-"Tlaltetela";"30"
-"Ayahualulco";"30"
-"Banderilla";"30"
-"Benito Juárez";"30"
-"Boca del Río";"30"
-"Calcahualco";"30"
-"Camerino Z. Mendoza";"30"
-"Carrillo Puerto";"30"
-"Catemaco";"30"
-"Cazones de Herrera";"30"
-"Cerro Azul";"30"
-"Citlaltépetl";"30"
-"Coacoatzintla";"30"
-"Coahuitlán";"30"
-"Coatepec";"30"
-"Coatzacoalcos";"30"
-"Coatzintla";"30"
-"Coetzala";"30"
-"Colipa";"30"
-"Comapa";"30"
-"Córdoba";"30"
-"Cosamaloapan de Carpio";"30"
-"Cosautlán de Carvajal";"30"
-"Coscomatepec";"30"
-"Cosoleacaque";"30"
-"Cotaxtla";"30"
-"Coxquihui";"30"
-"Coyutla";"30"
-"Cuichapa";"30"
-"Cuitláhuac";"30"
-"Chacaltianguis";"30"
-"Chalma";"30"
-"Chiconamel";"30"
-"Chiconquiaco";"30"
-"Chicontepec";"30"
-"Chinameca";"30"
-"Chinampa de Gorostiza";"30"
-"Las Choapas";"30"
-"Chocamán";"30"
-"Chontla";"30"
-"Chumatlán";"30"
-"Emiliano Zapata";"30"
-"Espinal";"30"
-"Filomeno Mata";"30"
-"Fortín";"30"
-"Gutiérrez Zamora";"30"
-"Hidalgotitlán";"30"
-"Huatusco";"30"
-"Huayacocotla";"30"
-"Hueyapan de Ocampo";"30"
-"Huiloapan de Cuauhtémoc";"30"
-"Ignacio de la Llave";"30"
-"Ilamatlán";"30"
-"Isla";"30"
-"Ixcatepec";"30"
-"Ixhuacán de los Reyes";"30"
-"Ixhuatlán del Café";"30"
-"Ixhuatlancillo";"30"
-"Ixhuatlán del Sureste";"30"
-"Ixhuatlán de Madero";"30"
-"Ixmatlahuacan";"30"
-"Ixtaczoquitlán";"30"
-"Jalacingo";"30"
-"Xalapa";"30"
-"Jalcomulco";"30"
-"Jáltipan";"30"
-"Jamapa";"30"
-"Jesús Carranza";"30"
-"Xico";"30"
-"Jilotepec";"30"
-"Juan Rodríguez Clara";"30"
-"Juchique de Ferrer";"30"
-"Landero y Coss";"30"
-"Lerdo de Tejada";"30"
-"Magdalena";"30"
-"Maltrata";"30"
-"Manlio Fabio Altamirano";"30"
-"Mariano Escobedo";"30"
-"Martínez de la Torre";"30"
-"Mecatlán";"30"
-"Mecayapan";"30"
-"Medellín de Bravo";"30"
-"Miahuatlán";"30"
-"Las Minas";"30"
-"Minatitlán";"30"
-"Misantla";"30"
-"Mixtla de Altamirano";"30"
-"Moloacán";"30"
-"Naolinco";"30"
-"Naranjal";"30"
-"Nautla";"30"
-"Nogales";"30"
-"Oluta";"30"
-"Omealca";"30"
-"Orizaba";"30"
-"Otatitlán";"30"
-"Oteapan";"30"
-"Ozuluama de Mascareñas";"30"
-"Pajapan";"30"
-"Pánuco";"30"
-"Papantla";"30"
-"Paso del Macho";"30"
-"Paso de Ovejas";"30"
-"La Perla";"30"
-"Perote";"30"
-"Platón Sánchez";"30"
-"Playa Vicente";"30"
-"Poza Rica de Hidalgo";"30"
-"Las Vigas de Ramírez";"30"
-"Pueblo Viejo";"30"
-"Puente Nacional";"30"
-"Rafael Delgado";"30"
-"Rafael Lucio";"30"
-"Los Reyes";"30"
-"Río Blanco";"30"
-"Saltabarranca";"30"
-"San Andrés Tenejapan";"30"
-"San Andrés Tuxtla";"30"
-"San Juan Evangelista";"30"
-"Santiago Tuxtla";"30"
-"Sayula de Alemán";"30"
-"Soconusco";"30"
-"Sochiapa";"30"
-"Soledad Atzompa";"30"
-"Soledad de Doblado";"30"
-"Soteapan";"30"
-"Tamalín";"30"
-"Tamiahua";"30"
-"Tampico Alto";"30"
-"Tancoco";"30"
-"Tantima";"30"
-"Tantoyuca";"30"
-"Tatatila";"30"
-"Castillo de Teayo";"30"
-"Tecolutla";"30"
-"Tehuipango";"30"
-"Álamo Temapache";"30"
-"Tempoal";"30"
-"Tenampa";"30"
-"Tenochtitlán";"30"
-"Teocelo";"30"
-"Tepatlaxco";"30"
-"Tepetlán";"30"
-"Tepetzintla";"30"
-"Tequila";"30"
-"José Azueta";"30"
-"Texcatepec";"30"
-"Texhuacán";"30"
-"Texistepec";"30"
-"Tezonapa";"30"
-"Tierra Blanca";"30"
-"Tihuatlán";"30"
-"Tlacojalpan";"30"
-"Tlacolulan";"30"
-"Tlacotalpan";"30"
-"Tlacotepec de Mejía";"30"
-"Tlachichilco";"30"
-"Tlalixcoyan";"30"
-"Tlalnelhuayocan";"30"
-"Tlapacoyan";"30"
-"Tlaquilpa";"30"
-"Tlilapan";"30"
-"Tomatlán";"30"
-"Tonayán";"30"
-"Totutla";"30"
-"Tuxpan";"30"
-"Tuxtilla";"30"
-"Ursulo Galván";"30"
-"Vega de Alatorre";"30"
-"Veracruz";"30"
-"Villa Aldama";"30"
-"Xoxocotla";"30"
-"Yanga";"30"
-"Yecuatla";"30"
-"Zacualpan";"30"
-"Zaragoza";"30"
-"Zentla";"30"
-"Zongolica";"30"
-"Zontecomatlán de López y Fuentes";"30"
-"Zozocolco de Hidalgo";"30"
-"Agua Dulce";"30"
-"El Higo";"30"
-"Nanchital de Lázaro Cárdenas del Río";"30"
-"Tres Valles";"30"
-"Carlos A. Carrillo";"30"
-"Tatahuicapan de Juárez";"30"
-"Uxpanapa";"30"
-"San Rafael";"30"
-"Santiago Sochiapan";"30"
-"Abalá";"31"
-"Acanceh";"31"
-"Akil";"31"
-"Baca";"31"
-"Bokobá";"31"
-"Buctzotz";"31"
-"Cacalchén";"31"
-"Calotmul";"31"
-"Cansahcab";"31"
-"Cantamayec";"31"
-"Celestún";"31"
-"Cenotillo";"31"
-"Conkal";"31"
-"Cuncunul";"31"
-"Cuzamá";"31"
-"Chacsinkín";"31"
-"Chankom";"31"
-"Chapab";"31"
-"Chemax";"31"
-"Chicxulub Pueblo";"31"
-"Chichimilá";"31"
-"Chikindzonot";"31"
-"Chocholá";"31"
-"Chumayel";"31"
-"Dzán";"31"
-"Dzemul";"31"
-"Dzidzantún";"31"
-"Dzilam de Bravo";"31"
-"Dzilam González";"31"
-"Dzitás";"31"
-"Dzoncauich";"31"
-"Espita";"31"
-"Halachó";"31"
-"Hocabá";"31"
-"Hoctún";"31"
-"Homún";"31"
-"Huhí";"31"
-"Hunucmá";"31"
-"Ixil";"31"
-"Izamal";"31"
-"Kanasín";"31"
-"Kantunil";"31"
-"Kaua";"31"
-"Kinchil";"31"
-"Kopomá";"31"
-"Mama";"31"
-"Maní";"31"
-"Maxcanú";"31"
-"Mayapán";"31"
-"Mérida";"31"
-"Mocochá";"31"
-"Motul";"31"
-"Muna";"31"
-"Muxupip";"31"
-"Opichén";"31"
-"Oxkutzcab";"31"
-"Panabá";"31"
-"Peto";"31"
-"Progreso";"31"
-"Quintana Roo";"31"
-"Río Lagartos";"31"
-"Sacalum";"31"
-"Samahil";"31"
-"Sanahcat";"31"
-"San Felipe";"31"
-"Santa Elena";"31"
-"Seyé";"31"
-"Sinanché";"31"
-"Sotuta";"31"
-"Sucilá";"31"
-"Sudzal";"31"
-"Suma";"31"
-"Tahdziú";"31"
-"Tahmek";"31"
-"Teabo";"31"
-"Tecoh";"31"
-"Tekal de Venegas";"31"
-"Tekantó";"31"
-"Tekax";"31"
-"Tekit";"31"
-"Tekom";"31"
-"Telchac Pueblo";"31"
-"Telchac Puerto";"31"
-"Temax";"31"
-"Temozón";"31"
-"Tepakán";"31"
-"Tetiz";"31"
-"Teya";"31"
-"Ticul";"31"
-"Timucuy";"31"
-"Tinum";"31"
-"Tixcacalcupul";"31"
-"Tixkokob";"31"
-"Tixmehuac";"31"
-"Tixpéhual";"31"
-"Tizimín";"31"
-"Tunkás";"31"
-"Tzucacab";"31"
-"Uayma";"31"
-"Ucú";"31"
-"Umán";"31"
-"Valladolid";"31"
-"Xocchel";"31"
-"Yaxcabá";"31"
-"Yaxkukul";"31"
-"Yobaín";"31"
-"Apozol";"32"
-"Apulco";"32"
-"Atolinga";"32"
-"Benito Juárez";"32"
-"Calera";"32"
-"Cañitas de Felipe Pescador";"32"
-"Concepción del Oro";"32"
-"Cuauhtémoc";"32"
-"Chalchihuites";"32"
-"Fresnillo";"32"
-"Trinidad García de la Cadena";"32"
-"Genaro Codina";"32"
-"General Enrique Estrada";"32"
-"General Francisco R. Murguía";"32"
-"El Plateado de Joaquín Amaro";"32"
-"General Pánfilo Natera";"32"
-"Guadalupe";"32"
-"Huanusco";"32"
-"Jalpa";"32"
-"Jerez";"32"
-"Jiménez del Teul";"32"
-"Juan Aldama";"32"
-"Juchipila";"32"
-"Loreto";"32"
-"Luis Moya";"32"
-"Mazapil";"32"
-"Melchor Ocampo";"32"
-"Mezquital del Oro";"32"
-"Miguel Auza";"32"
-"Momax";"32"
-"Monte Escobedo";"32"
-"Morelos";"32"
-"Moyahua de Estrada";"32"
-"Nochistlán de Mejía";"32"
-"Noria de Ángeles";"32"
-"Ojocaliente";"32"
-"Pánuco";"32"
-"Pinos";"32"
-"Río Grande";"32"
-"Sain Alto";"32"
-"El Salvador";"32"
-"Sombrerete";"32"
-"Susticacán";"32"
-"Tabasco";"32"
-"Tepechitlán";"32"
-"Tepetongo";"32"
-"Teúl de González Ortega";"32"
-"Tlaltenango de Sánchez Román";"32"
-"Valparaíso";"32"
-"Vetagrande";"32"
-"Villa de Cos";"32"
-"Villa García";"32"
-"Villa González Ortega";"32"
-"Villa Hidalgo";"32"
-"Villanueva";"32"
-"Zacatecas";"32"
-"Trancoso";"32"
-"Santa María de la Paz";"32"
+ciudad,idprovincia,codeid,latitude,longitude
+Abasolo,11,,20.5058,-101.53802
+"Abraham González International Airport",6,,31.63599,-106.42902
+"Acacoyagua Municipality",5,,15.41414,-92.68169
+"Acala Municipality",5,,16.55394,-92.81765
+Acámbaro,11,,20.05832,-100.74141
+"Acapetahua Municipality",5,,15.28333,-92.68333
+"Acapulco de Juárez",12,,16.84942,-99.90891
+"Acapulco de Juárez Municipality",12,,16.92662,-99.74494
+"Acatlán de Osorio",21,,18.2025,-98.04864
+Acatzingo,21,,18.98196,-97.78363
+Acayucan,30,,17.94979,-94.91386
+Acolman,15,,19.63976,-98.90777
+"Acolman de Nezahualcóyotl Municipality",15,,19.63911,-98.91721
+Actopan,13,,20.26961,-98.94377
+"Adolfo Ruíz Cortínes",25,,25.75,-108.75
+"Agua Prieta",26,,31.33071,-109.54876
+Aguascalientes,1,,21.88333,-102.3
+"Aguascalientes International Airport",1,,21.70556,-102.31786
+"Ahuacuotzingo Municipality",12,,17.74253,-98.91781
+"Ahumada Municipality",6,,30.48174,-106.48832
+Ajalpan,21,,18.37908,-97.25867
+Ajijic,14,,20.30325,-103.25476
+"Ajuchitlán del Progreso Municipality",12,,17.95113,-100.5916
+Álamo,30,,20.91154,-97.67554
+"Alcozauca de Guerrero Municipality",12,,17.37699,-98.37184
+"Aldama Municipality",6,,28.93636,-105.71098
+"Alfredo V. Bonfil",23,,21.08776,-86.84706
+Allende,6,,27.07787,-105.28789
+Almecatla,21,,19.14286,-98.23597
+"Alpoyeca Municipality",12,,17.646,-98.51004
+Altamira,28,,22.39215,-97.93867
+"Altamirano Municipality",5,,16.69868,-92.00981
+"Álvaro Obregón",9,,19.35867,-99.20329
+"Alvaro Obregon Borough",9,,19.37496,-99.21976
+"Amatán Municipality",5,,17.36667,-92.81667
+"Amatenango de la Frontera",5,,15.43333,-92.11667
+"Amatenango del Valle Municipality",5,,16.53333,-92.43333
+"Amecameca de Juárez",15,,19.12384,-98.76649
+"Amecameca Municipality",15,,19.11784,-98.76563
+"Amozoc de Mota",21,,19.04611,-98.045
+Anahuac,30,,22.20275,-97.85506
+Anenecuilco,17,,18.77738,-98.98907
+"Ángel Albino Corzo International Airport",5,,16.56182,-93.02608
+"Ángel Albino Corzo Municipality",5,,15.86624,-92.72324
+"Ángel R. Cabada",30,,18.59601,-95.4458
+"Apaseo el Alto",11,,20.42678,-100.56761
+"Apaseo el Grande",11,,20.54495,-100.68462
+"Apaseo el Grande Municipality",11,,20.55315,-100.63472
+Apatzingán,16,,19.08864,-102.35704
+"Apaxco Municipality",15,,19.97577,-99.16886
+"Apaxtla Municipality",12,,18.07628,-99.99562
+Apizaco,29,,19.41333,-98.14358
+Apodaca,19,,25.78195,-100.18839
+"Aquiles Serdán Municipality",6,,28.58454,-105.88108
+Arandas,14,,20.70519,-102.34635
+"Arcelia Municipality",12,,18.26627,-100.19066
+"Arriaga Municipality",5,,16.235,-93.89556
+"Ascensión Municipality",6,,31.27914,-107.73149
+Asientos,1,,22.23333,-102.08333
+"Atarjea Municipality",11,,21.24263,-99.80847
+"Atenango del Río Municipality",12,,18.18011,-99.11075
+"Atenco Municipality",15,,19.54442,-98.9118
+"Atizapán de Zaragoza Municipality",15,,19.55914,-99.26714
+"Atlacomulco de Fabela",15,,19.79919,-99.875
+"Atlamajalcingo del Monte Municipality",12,,17.30138,-98.57051
+"Atlautla Municipality",15,,19.02325,-98.77336
+Atlixco,21,,18.90815,-98.43613
+"Atlixtac Municipality",12,,17.51434,-98.90305
+"Atoyac de Álvarez",12,,17.20667,-100.43306
+"Atoyac de Álvarez Municipality",12,,17.27226,-100.34729
+"Autlán de Navarro",14,,19.76822,-104.36664
+"Axapusco Municipality",15,,19.73213,-98.74735
+"Ayapango  Municipality",15,,19.13009,-98.80975
+"Ayutla de los Libres Municipality",12,,16.95047,-99.06555
+Azcapotzalco,9,,19.48698,-99.18594
+"Azcapotzalco Borough",9,,19.48731,-99.18766
+"Azoyú Municipality",12,,16.64925,-98.57828
+Bacalar,23,,18.68109,-88.39333
+"Bachíniva Municipality",6,,28.85661,-107.28856
+"Bahías de Huatulco International Airport",20,,15.77532,-96.26257
+"Baja California",2,,30,-115
+"Baja California Sur",3,,25.83333,-111.83333
+"Balleza Municipality",6,,26.73537,-106.53591
+Batopilas,6,,26.95272,-107.71842
+"Bejucal de Ocampo Municipality",5,,15.45,-92.16667
+"Bella Vista Municipality",5,,15.58333,-92.21667
+"Benemérito de las Américas",5,,16.51722,-90.65306
+"Benito Juárez",9,,19.3727,-99.1564
+"Benito Juárez  Borough",9,,19.39812,-99.1571
+"Benito Juárez International Airport",9,,19.4363,-99.0721
+"Berriozábal Municipality",5,,16.8,-93.26667
+"Bochil Municipality",5,,16.98333,-92.91667
+Bocoyna,6,,27.78937,-107.61036
+"Bolaños Municipality",14,,21.84,-103.93
+Bucerías,18,,20.75626,-105.33438
+"Buenaventura Municipality",6,,30.02116,-107.19308
+Buenavista,15,,19.60833,-99.16944
+"Buenavista de Cuéllar  Municipality",12,,18.4692,-99.41193
+"Buenavista Tomatlán",16,,19.21281,-102.58735
+"Cabo San Lucas",3,,22.89088,-109.91238
+"Cabo San Lucas International Airport",3,,22.9477,-109.937
+"Cacahoatán Municipality",5,,15.06151,-92.15881
+"Cadereyta Jiménez",19,,25.58896,-100.00156
+Calakmul,4,,18,-89.75
+"Calkiní Municipality",4,,20.38583,-89.98764
+Calpulalpan,29,,19.58867,-98.56972
+Calvillo,1,,21.85,-102.71666
+Camargo,6,,27.67842,-105.17136
+"Camargo Municipality",6,,27.82905,-104.78012
+Campeche,4,,18.83333,-90.25
+"Campeche City",4,,19.81839,-90.53009
+"Campeche International Airport",4,,19.81679,-90.50031
+Cananea,26,,30.98699,-110.29062
+"Canatlán Municipality",10,,24.51759,-104.80283
+Cancún,23,,21.17429,-86.84656
+"Cancún International Airport",23,,21.03653,-86.87708
+"Candelaria Municipality",4,,18,-90.75
+"Canelas Municipality",10,,25.08546,-106.50499
+"Capilla de Guadalupe",14,,20.82739,-102.59185
+Cárdenas,27,,18.00135,-93.37559
+Carichí,6,,27.74601,-107.07795
+"Carmen Municipality",4,,18.63,-91.83
+"Casas Grandes",6,,30.33984,-108.07035
+"Catazajá Municipality",5,,17.73333,-92.01667
+Catemaco,30,,18.42131,-95.11398
+Celaya,11,,20.52353,-100.8157
+"Celaya Airport",11,,20.546,-100.887
+"Celaya Municipality",11,,20.53681,-100.80678
+"Cerro Cofre de Perote",30,,19.49435,-97.14807
+"Chalchihuitán Municipality",5,,16.96667,-92.65
+Chalco,15,,19.26174,-98.89775
+"Chalco Municipality",15,,19.26642,-98.89935
+Champotón,4,,19.34745,-90.72039
+"Champotón Municipality",4,,19.35042,-90.70991
+Chamula,5,,16.78333,-92.68333
+Chanal,5,,16.65395,-92.25014
+"Chapultenango Municipality",5,,17.33333,-93.13333
+Chemax,31,,20.65613,-87.9364
+"Chenalhó Municipality",5,,16.88333,-92.63333
+Chetumal,23,,18.51413,-88.30381
+"Chetumal International Airport",23,,18.50467,-88.32685
+"Chiapa de Corzo",5,,16.70197,-93.00854
+Chiapas,5,,16.5,-92.5
+"Chiapilla Municipality",5,,16.55397,-92.72594
+"Chiautla de Tapia",21,,18.30149,-98.60339
+"Chiautla Municipality",15,,19.55,-98.88064
+"Chichen Itza",31,,20.66667,-88.56667
+"Chichen Itza International Airport",31,,20.64129,-88.44622
+"Chicoasén Municipality",5,,16.96528,-93.10472
+Chicoloapan,15,,19.41687,-98.90202
+"Chicoloapan Municipality",15,,19.41674,-98.90262
+Chicomuselo,5,,15.76667,-92.26667
+Chiconcuac,15,,19.55939,-98.89884
+"Chiconcuac Municipality",15,,19.55951,-98.89657
+Chihuahua,6,,28.75,-106.25
+"Chihuahua City",6,,28.63528,-106.08889
+"Chihuahua Municipality",6,,28.82669,-106.19876
+"Chilapa de Álvarez",12,,17.59917,-99.17389
+"Chilapa de Álvarez Municipality",12,,17.51501,-99.11628
+"Chilón Municipality",5,,17.11667,-92.28333
+Chilpancingo,12,,17.5506,-99.50578
+"Chilpancingo de los Bravo Municipality",12,,17.39937,-99.59822
+"Chimalhuacán Municipality",15,,19.42123,-98.94939
+Chinautla,21,,19.81996,-97.38859
+Chínipas,6,,27.46852,-108.49727
+Cholula,21,,19.06406,-98.30352
+Cihuatlán,14,,19.2366,-104.56512
+"Cintalapa de Figueroa",5,,16.68393,-93.71814
+"Cintalapa Municipality",5,,16.68778,-93.71083
+"Ciudad Acuña",7,,29.32322,-100.95217
+"Ciudad Acuña International Airport",7,,29.3329,-101.099
+"Ciudad Altamirano",12,,18.3582,-100.66965
+"Ciudad Benito Juárez",19,,25.64724,-100.09582
+"Ciudad Constitución",3,,25.0321,-111.66256
+"Ciudad Constitución Airport",3,,25.0538,-111.615
+"Ciudad de Chiautla de Tapia",21,,18.3,-98.60389
+"Ciudad de Huajuapan de León",20,,17.80787,-97.77956
+"Ciudad de Villa de Álvarez",8,,19.26722,-103.73778
+"Ciudad del Carmen",4,,18.64592,-91.82991
+"Ciudad del Carmen International Airport",4,,18.65336,-91.80099
+"Ciudad Fernández",24,,21.94045,-100.01153
+"Ciudad Guzmán",14,,19.70466,-103.4617
+"Ciudad Hidalgo",16,,19.6927,-100.55445
+"Ciudad Juárez",6,,31.72024,-106.46084
+"Ciudad López Mateos",15,,19.55793,-99.25675
+"Ciudad Madero",28,,22.27228,-97.83623
+"Ciudad Mante",28,,22.74304,-98.9739
+"Ciudad Mante National Airport",28,,22.74318,-99.01737
+"Ciudad Melchor Múzquiz",7,,27.87933,-101.51615
+"Ciudad Mendoza",30,,18.80645,-97.1787
+"Ciudad Nezahualcoyotl",15,,19.40061,-99.01483
+"Ciudad Nicolás Romero",15,,19.64177,-99.3068
+"Ciudad Obregón",26,,27.48642,-109.94083
+"Ciudad Obregón International Airport",26,,27.39278,-109.83306
+"Ciudad Río Bravo",28,,25.98729,-98.09414
+"Ciudad Sabinas Hidalgo",19,,26.50358,-100.18187
+"Ciudad Sahagun",13,,19.77557,-98.57471
+"Ciudad Valles",24,,21.99631,-99.01093
+"Ciudad Victoria",28,,23.74174,-99.14599
+Coacalco,15,,19.62923,-99.10689
+"Coacalco de Berriozábal Municipality",15,,19.63325,-99.10895
+"Coahuayutla de José María Izazaga",12,,18.27847,-101.63863
+Coahuila,7,,27.33333,-102
+"Coalcomán de Vázquez Pallares",16,,18.7775,-103.16
+"Coapilla Municipality",5,,17.13333,-93.16667
+Coatzacoalcos,30,,18.14905,-94.4447
+"Cocotitlán Municipality",15,,19.23357,-98.8661
+Cocula,14,,20.36517,-103.82215
+"Cocula Municipality",12,,18.14296,-99.70452
+"Col. Bosques de las Lomas",9,,19.37893,-99.26587
+Colima,14,,19.51247,-103.61678
+"Colima Airport",8,,19.27701,-103.5774
+"Colonia del Valle",9,,19.38611,-99.16204
+"Colonia Lindavista",15,,19.49156,-99.12475
+"Colonia Nativitas",9,,19.38119,-99.13685
+Comalcalco,27,,18.26316,-93.22397
+Comitán,5,,16.2471,-92.13515
+"Comitán Copalar Airport",5,,16.1767,-92.0506
+"Comitán Municipality",5,,16.24105,-92.13203
+"Comondú Municipality",3,,26.06667,-111.81666
+Comonfort,11,,20.72811,-100.78585
+"Coneto de Comonfort Municipality",10,,25.03118,-104.73402
+Contla,29,,19.32932,-98.1664
+"Copainalá  Municipality",5,,17.08333,-93.2
+"Copala Municipality",12,,16.60674,-98.94094
+"Copalillo Municipality",12,,17.97003,-99.05436
+"Copanatoyac Municipality",12,,17.42911,-98.70006
+Córdoba,30,,18.8842,-96.92559
+Coronado,6,,26.6624,-105.12093
+"Coronado Islands",2,,32.42129,-117.26626
+Coronango,21,,19.1209,-98.30594
+Coroneo,11,,20.20993,-100.37631
+Cortazar,11,,20.46885,-100.96409
+Cosamaloapan,30,,18.36759,-95.79857
+Cosío,1,,22.36667,-102.3
+"Costa Rica",25,,24.59167,-107.38836
+"Coyame del Sotol",6,,29.68793,-105.13855
+Coyoacán,9,,19.3467,-99.16174
+"Coyoacán Borough",9,,19.34678,-99.15968
+"Coyotepec Municipality",15,,19.77615,-99.20586
+"Coyuca de Benítez Municipality",12,,17.07537,-100.09394
+"Coyuca de Catalán Municipality",12,,18.05867,-100.96171
+"Cozumel International Airport",23,,20.51643,-86.93207
+"Cuajimalpa de Morelos Borough",9,,19.35925,-99.28774
+"Cuajinicuilapa Municipality",12,,16.49359,-98.50753
+"Cualac Municipality",12,,17.72928,-98.67254
+Cuauhtémoc,9,,19.44506,-99.14612
+"Cuauhtémoc Borough",9,,19.4449,-99.14303
+"Cuauhtémoc Municipality",6,,28.57033,-106.89647
+"Cuautepec Municipality",12,,16.7052,-98.98471
+Cuautitlán,15,,19.67052,-99.17989
+"Cuautitlán Izcalli",15,,19.64388,-99.21598
+"Cuautitlán Izcalli Municipality",15,,19.64728,-99.2153
+"Cuautitlán Municipality",15,,19.67363,-99.18011
+Cuautla,17,,18.8106,-98.93525
+Cuautlancingo,21,,19.08995,-98.27319
+"Cuencamé Municipality",10,,24.64123,-103.73772
+Cuerámaro,11,,20.61902,-101.66106
+Cuernavaca,17,,18.9261,-99.23075
+"Cuernavaca Airport",17,,18.83476,-99.2613
+"Cuetzala del Progreso  Municipality",12,,18.11257,-99.8171
+Culiacán,25,,24.79032,-107.38782
+"Culiacán International Airport",25,,24.76455,-107.47472
+"Cupul National Airport",31,,21.15456,-88.17103
+Cusihuiriachi,6,,28.23242,-106.94148
+"Cutzamala de Pinzón Municipality",12,,18.66215,-100.59902
+"Del Bajío International Airport",11,,20.99346,-101.48085
+"Del Norte International Airport",19,,25.86557,-100.23724
+"Delegación Cuajimalpa de Morelos",9,,19.3692,-99.29089
+Delicias,6,,28.16948,-105.44913
+"Doctor Mora",11,,21.13849,-100.35952
+"Dolores Hidalgo",11,,21.15611,-100.9325
+"Dolores Hidalgo Cuna de la Independencia Nacional",11,,21.16234,-100.89688
+"Dr. Belisario Domínguez",6,,27.98462,-106.45234
+Durango,10,,24.02983,-104.67984
+"Durango International Airport",10,,24.12404,-104.53152
+Dzitbalché,4,,20.31857,-90.05611
+Ecatepec,15,,19.60492,-99.06064
+"Ecatepec de Morelos Municipality",15,,19.60378,-99.05514
+"Ecatzingo Municipality",15,,18.95792,-98.75181
+"El Bajío",22,,21,-101
+"El Bosque Municipality",5,,17.06667,-92.71667
+"El Dorado",25,,24.32283,-107.36298
+"El Lencero Airport",30,,19.47505,-96.79758
+"El Llano",1,,21.91667,-101.96666
+"El Norte",6,,30.32957,-108.37528
+"El Oro Municipality",10,,25.6922,-105.26725
+"El Porvenir Municipality",5,,15.43092,-92.26447
+"El Pueblito",22,,20.53996,-100.43817
+"El Tajín National Airport",30,,20.60025,-97.46079
+"El Tejar",30,,19.07433,-96.16097
+"El Tule Municipality",6,,27.07325,-106.31735
+"El Vizcaíno Biosphere Reserve",3,,27.50822,-113.57285
+Empalme,26,,27.96166,-110.81411
+"Empalme Escobedo",11,,20.6725,-100.74675
+"Encarnación de Díaz",14,,21.52705,-102.24013
+Ensenada,2,,31.87149,-116.60071
+"Ensenada Airport",2,,31.79399,-116.60176
+"Ensenada Municipality",2,,31.86667,-116.61666
+Escárcega,4,,18.61404,-90.7287
+Escuinapa,25,,22.83279,-105.77772
+"Escuintla Municipality",5,,15.33333,-92.63333
+Esperanza,26,,27.57916,-109.9298
+"Felipe Ángeles International Airport",15,,19.75653,-99.01514
+"Felipe Carrillo Puerto",23,,19.5775,-88.04529
+"Florencio Villarreal Municipality",12,,16.70143,-99.15247
+"Fortín de las Flores",30,,18.90806,-97
+"Francisco León Municipality",5,,17.31667,-93.25
+"Francisco Sarabia International Airport",7,,25.56828,-103.41058
+Fresnillo,32,,23.18126,-102.87136
+Frontera,27,,18.54326,-92.6453
+"Fuentes del Valle",15,,19.6325,-99.13861
+Galeana,6,,30.10916,-107.63167
+García,19,,25.81201,-100.59874
+"General Canuto A. Neri Municipality",12,,18.43072,-100.1011
+"General Escobedo",19,,25.79698,-100.31791
+"General Heliodoro Castillo",12,,17.74297,-100.02859
+"General Juan N. Álvarez International Airport",12,,16.75706,-99.75395
+"General Pedro J. Méndez International Airport",28,,23.70334,-98.95649
+"General Rafael Buelna International Airport",25,,23.16136,-106.26607
+"General Roberto Fierro Villalobos International Airport",6,,28.70287,-105.96457
+"General Simón Bolívar Municipality",10,,24.90204,-103.26387
+"Gómez Farías",6,,29.33836,-107.71106
+"Gómez Palacio",10,,25.56985,-103.49588
+"Gómez Palacio Municipality",10,,25.70685,-103.4766
+"Gran Morelos Municipality",6,,28.24841,-106.49357
+Guacamayas,16,,18.01932,-102.21225
+"Guachochi Municipality",6,,27.17004,-107.29404
+Guadalajara,14,,20.66682,-103.39182
+"Guadalajara International Airport",14,,20.5218,-103.31117
+"Guadalajara Metropolitan Area",14,,20.08689,-103.30994
+Guadalupe,32,,22.74753,-102.51874
+"Guadalupe Municipality",6,,30.82737,-105.64057
+"Guadalupe Victoria",10,,24.43403,-104.08911
+"Guadalupe y Calvo Municipality",6,,26.17612,-107.04507
+Guamúchil,25,,25.4587,-108.07732
+"Guanaceví Municipality",10,,25.9961,-106.10898
+Guanajuato,11,,21,-101
+"Guanajuato City",11,,21.01858,-101.2591
+"Guanajuato Municipality",11,,21.00481,-101.26484
+Guasave,25,,25.56745,-108.46756
+Guaymas,26,,27.91928,-110.89755
+"Guaymas International Airport",26,,27.96924,-110.92376
+"Guazapares Municipality",6,,27.44005,-108.23338
+Guerrero,12,,17.66667,-100
+"Guerrero Municipality",6,,28.42888,-107.50377
+"Guerrero Negro",3,,27.96005,-114.05589
+"Guerrero Negro Airport",2,,28.0261,-114.024
+"Gustavo A. Madero Borough",9,,19.48407,-99.11144
+"Gustavo Adolfo Madero",9,,19.49392,-99.11075
+"Gutiérrez Zamora",30,,20.45347,-97.08588
+"Hacienda Santa Fe",14,,20.51806,-103.38056
+"Hecelchakán Municipality",4,,20.16667,-90.13333
+"Hermanos Serdán International Airport",21,,19.15814,-98.37145
+Hermosillo,26,,29.1026,-110.97732
+"Hermosillo International Airport",26,,29.09586,-111.04786
+"Heroica Caborca",26,,30.71825,-112.15822
+"Heroica Matamoros",28,,25.87972,-97.50417
+"Heróica Zitácuaro",16,,19.43612,-100.35733
+Hidalgo,13,,20.5,-99
+"Hidalgo Municipality",10,,26.02409,-104.82823
+Huamantla,29,,19.31451,-97.9252
+"Huamuxtitlán Municipality",12,,17.78905,-98.55569
+Huanímaro,11,,20.35828,-101.50127
+Huatabampo,26,,26.8261,-109.6422
+Huatusco,30,,19.14,-96.88
+Huauchinango,21,,20.17376,-98.05491
+Huehuetoca,15,,19.82819,-99.2037
+"Huehuetoca Municipality",15,,19.83543,-99.2038
+Huejotzingo,21,,19.15892,-98.40824
+"Huejutla de Reyes",13,,21.14,-98.41944
+"Hueypoxtla Municipality",15,,19.91203,-99.07702
+"Huitzuco de los Figueroa Municipality",12,,18.29064,-99.26361
+Huixquilucan,15,,19.35985,-99.35016
+"Huixquilucan Municipality",15,,19.35998,-99.35074
+"Iguala de la Independencia",12,,18.34536,-99.5413
+"Iguala de la Independencia Municipality",12,,18.31233,-99.54577
+"Igualapa Municipality",12,,16.75528,-98.4837
+"Indé Municipality",10,,25.76777,-105.03631
+Irapuato,11,,20.67594,-101.37183
+"Isla Mujeres Airport",23,,21.245,-86.74
+"Isla Socorro",8,,18.79484,-110.97132
+Ixtaczoquitlán,30,,18.85364,-97.06229
+"Ixtapa-Zihuatanejo International Airport",12,,17.60157,-101.46054
+Ixtapaluca,15,,19.31556,-98.88284
+"Ixtapaluca Municipality",15,,19.31608,-98.88639
+Ixtepec,20,,16.56052,-95.10375
+"Ixtepec Airport",20,,16.44934,-95.0937
+Iztacalco,9,,19.39528,-99.09778
+"Iztacalco Borough",9,,19.39601,-99.08192
+Iztapalapa,9,,19.35529,-99.06224
+"Iztapalapa Borough",9,,19.35318,-99.05342
+"Izúcar de Matamoros",21,,18.60157,-98.46152
+"Jacona de Plancarte",16,,19.95232,-102.30781
+Jalisco,14,,20.33333,-103.66667
+"Jaltenco Municipality",15,,19.75095,-99.09376
+"Jaral del Progreso",11,,20.3552,-101.05224
+Jerécuaro,11,,20.19929,-100.50688
+"Jerez de García Salinas",32,,22.64971,-102.99032
+"Jesús María",1,,21.96667,-102.35
+"Jilotepec de Molina Enríquez",15,,19.95194,-99.53278
+Jiutepec,17,,18.88139,-99.17778
+"Juan José Ríos",25,,25.75781,-108.8242
+"Juchitán de Zaragoza",20,,16.43603,-95.01975
+"Juchitepec Municipality",15,,19.10223,-98.87914
+Juriquilla,22,,20.71277,-100.45568
+"Juventino Rosas",11,,20.64337,-100.99286
+Kanasín,31,,20.93482,-89.55871
+"La Boquilla",6,,27.53398,-105.55129
+"La Breña",10,,24.25,-104.33333
+"La Concordia Municipality",5,,16.11667,-92.68333
+"La Cruz",6,,27.88634,-105.13649
+"La Joya",2,,32.44619,-117.00103
+"La Paz",3,,24.14231,-110.31316
+"La Paz Municipality",3,,24.13333,-110.3
+"La Piedad",16,,20.34239,-102.0305
+"La Red",14,,20.72749,-102.81204
+"La Trinitaria",5,,16.01755,-91.93339
+"Lagos de Moreno",14,,21.35666,-101.93768
+"Laguna Catemaco",30,,18.40077,-95.06485
+"Laguna Cuitzeo",16,,19.91667,-100.85
+"Laguna de Cuitzeo",16,,19.93833,-101.16627
+"Laguna Salada",2,,32.39041,-115.6611
+"Laguna Zumpango",15,,19.78647,-99.13736
+"Lake Alchichica",21,,19.41445,-97.40387
+"Lake Bacalar",23,,18.70732,-88.37251
+"Lake Chapala",14,,20.26067,-103.02702
+"Lake Chichancanab",23,,19.88265,-88.76837
+"Lake Coba",23,,20.49202,-87.7384
+"Lake Pátzcuaro",16,,19.62553,-101.64017
+"Lake Xochimilco",9,,19.3,-99.11667
+"Lake Zirahuén",16,,19.43636,-101.7399
+"Las Choapas",30,,17.91177,-94.09646
+"Las Rosas",5,,16.35655,-92.37021
+"Las Varas",18,,21.18021,-105.13595
+"Lázaro Cárdenas",2,,30.52815,-115.92617
+"Lázaro Cárdenas Airport",16,,18.00173,-102.22052
+León,11,,21.09309,-101.64501
+Lerdo,10,,25.53718,-103.52456
+"Lerdo Municipality",10,,25.4848,-103.60272
+"Leyva Solano",25,,25.66163,-108.637
+"Lic. Gustavo Díaz Ordaz International Airport",14,,20.68008,-105.25417
+Linares,19,,24.85798,-99.56768
+"Loma Bonita",20,,18.10721,-95.87904
+Loreto,3,,25.95496,-111.45042
+"Loreto International Airport",3,,25.98919,-111.34836
+"Los Cabos",3,,23.27663,-109.75322
+"Los Cabos International Airport",3,,23.15185,-109.72104
+"Los Mochis",25,,25.79302,-108.99808
+"Los Reyes Acaquilpan",15,,19.36357,-98.97707
+"Los Reyes Acozac",15,,19.7755,-98.98079
+"Los Reyes de Salgado",16,,19.59042,-102.47242
+Macroplaza,19,,25.66861,-100.30972
+Macuspana,27,,17.76052,-92.59539
+"Magdalena Atlicpac",15,,19.36906,-98.94935
+"Magdalena Chichicaspa",15,,19.41237,-99.32555
+"Magdalena Contreras",9,,19.33212,-99.21118
+"Magdalena Contreras Borough",9,,19.31495,-99.2407
+"Magdalena de Kino",26,,30.62789,-110.96203
+"Manuel Crescencio Rejón International Airport",31,,20.93698,-89.65767
+"Manuel Doblado",11,,20.72085,-101.856
+"Manuel Márquez de León International Airport",3,,24.07269,-110.36248
+Manzanillo,8,,19.11695,-104.34214
+"Mapimí Municipality",10,,26.19095,-104.05463
+"Mar de Cortés International Airport",26,,31.34924,-113.30569
+"Maravilla Tenejapa Municipality",5,,16.20391,-91.26093
+Marfil,11,,20.99165,-101.28434
+"Marqués de Comillas Municipality",5,,16.21471,-90.75917
+"Martínez de la Torre",30,,20.07082,-97.06078
+"Matachí Municipality",6,,28.82058,-107.71233
+Matamoros,7,,25.52699,-103.2285
+"Matamoros Airport",28,,25.76989,-97.52531
+"Matamoros Municipality",6,,26.74974,-105.58923
+Matehuala,24,,23.64824,-100.64334
+"Matías Romero",20,,16.87902,-95.03939
+Mazatlán,25,,23.2329,-106.4062
+"Melchor Ocampo Municipality",15,,19.70353,-99.14286
+"Meoqui Municipality",6,,28.33926,-105.52765
+Mérida,31,,20.97537,-89.61696
+Metepec,15,,19.25934,-99.60175
+Mexicali,2,,32.62781,-115.45446
+"Mexicali International Airport",2,,32.62962,-115.24796
+"Mexicali Municipality",2,,32.50513,-115.14771
+México,15,,19.36667,-99.66667
+"Mexico City",9,,19.28333,-99.13333
+"Mezquital Municipality",10,,22.88401,-104.5535
+Michoacán,16,,19.16667,-101.83333
+"Miguel Alemán (La Doce)",26,,28.84028,-111.4775
+"Miguel Hidalgo",9,,19.43411,-99.20024
+"Miguel Hidalgo Borough",9,,19.40824,-99.19212
+"Milpa Alta Borough",9,,19.19405,-99.02149
+Minatitlán,30,,18.00011,-94.5569
+"Minatitlán/Coatzacoalcos International Airport",30,,18.10342,-94.58068
+Miramar,28,,22.36094,-97.89997
+Misantla,30,,19.92992,-96.85194
+"Mixquiahuala de Juarez",13,,20.23031,-99.21396
+Monclova,7,,26.90687,-101.42056
+"Montecristo de Guerrero Municipality",5,,15.67526,-92.64399
+Montemorelos,19,,25.18909,-99.82865
+Monterrey,19,,25.67507,-100.31847
+"Monterrey International Airport",19,,25.77849,-100.10688
+Morelia,16,,19.70078,-101.18443
+"Morelia International Airport",16,,19.84994,-101.0255
+Morelos,17,,18.75,-99.06667
+"Morelos Municipality",6,,26.60027,-107.71209
+"Moris Municipality",6,,28.13424,-108.72721
+Moroleón,11,,20.09634,-101.23084
+Motul,31,,21.09571,-89.28332
+Moyotzingo,21,,19.24811,-98.40486
+"Mulege Airport",3,,26.89731,-111.95755
+"Mulegé Municipality",3,,26.6,-112.33333
+Nacajuca,27,,18.16971,-93.01843
+Namiquipa,6,,29.15873,-107.32285
+Naucalpan,15,,19.47851,-99.23963
+"Naucalpan de Juárez Municipality",15,,19.47857,-99.23367
+Navojoa,26,,27.07028,-109.44372
+"Navojoa National Airport",26,,26.9922,-109.416
+Navolato,25,,24.7661,-107.70225
+Nayarit,18,,21.83333,-104.83333
+"Nazas Municipality",10,,25.24105,-104.08925
+"Nextlalpan Municipality",15,,19.73932,-99.07514
+"Nezahualcóyotl Municipality",15,,19.41123,-99.02475
+"Nicolás Romero Municipality",15,,19.62302,-99.31143
+Nogales,26,,31.30862,-110.94217
+"Nogales International Airport",26,,31.22701,-110.97708
+"Nombre de Dios Municipality",10,,23.83142,-104.16663
+"Nonoava Municipality",6,,27.43854,-106.73285
+"Nopaltepec Municipality",15,,19.77753,-98.7089
+"Nueva Italia de Ruiz",16,,19.02492,-102.09318
+"Nueva Rosita",7,,27.9373,-101.21755
+"Nuevo Casas Grandes",6,,30.48953,-107.84862
+"Nuevo Casas Grandes Municipal Airport",6,,30.3986,-107.87591
+"Nuevo Ideal",10,,24.87924,-105.02105
+"Nuevo Laredo",28,,27.47629,-99.51639
+"Nuevo León",19,,25.58333,-99.75
+"Nuevo México",14,,20.7565,-103.44297
+"Nuevo Progreso",28,,26.0553,-97.95217
+Oaxaca,20,,17,-96.5
+"Oaxaca City",20,,17.06542,-96.72365
+"Oaxaca International Airport",20,,17.00135,-96.72496
+Ocampo,11,,21.60049,-101.4681
+"Ocampo Municipality",10,,26.55251,-105.75999
+Ocosingo,5,,16.90639,-92.09374
+Ocotlán,14,,20.3553,-102.77358
+Ocoyoacac,15,,19.27127,-99.45787
+"Ocozocoautla de Espinosa",5,,16.76231,-93.37476
+Ojinaga,6,,29.31371,-104.4484
+"Ojo de Agua",15,,19.68028,-99.01
+Orizaba,30,,18.85195,-97.09957
+Osumacinta,5,,16.8878,-93.07006
+"Otáez Municipality",10,,24.70422,-106.00968
+"Otumba Municipality",15,,19.70013,-98.75559
+Oxchuc,5,,16.79884,-92.29757
+"Ozumba Municipality",15,,19.039,-98.79765
+"Pabellón de Arteaga",1,,22.15,-102.26666
+"Pablo L. Sidar Airport",16,,19.09306,-102.39601
+Pachuca,13,,20.11697,-98.73329
+"Pacula Municipality",13,,20.97058,-99.32162
+Palau,7,,27.89232,-101.42319
+Palenque,5,,17.50435,-91.89544
+"Palenque International Airport",5,,17.5334,-91.9845
+Palenque/Temp,5,,17.50953,-91.98248
+"Palizada Municipality",4,,18.25261,-92.07779
+Pantelhó,5,,17.0637,-92.4552
+Pantepec,5,,17.18721,-93.05422
+Pánuco,30,,22.05378,-98.18192
+"Pánuco de Coronado Municipality",10,,24.42727,-104.33402
+"Papalotla Municipality",15,,19.56351,-98.85678
+"Papantla de Olarte",30,,20.44655,-97.32494
+"Paracho de Verduzco",16,,19.64745,-102.04897
+Paraiso,27,,18.40116,-93.21406
+Parícutin,16,,19.49317,-102.2513
+"Parque Nacional Bosencheve",15,,19.41545,-100.10747
+"Parque Nacional Cañón del Sumidero",5,,16.85,-93.13333
+"Parque Nacional Constitución de Mil Ochocientos Cincuenta y Siete",2,,32.07038,-115.87825
+"Parque Nacional Cumbres de Majalca",6,,28.81235,-106.5178
+"Parque Nacional Desierto de los Leones",9,,19.30708,-99.30639
+"Parque Nacional Lago de Camécuaro",16,,19.91667,-102.28333
+"Parque Nacional Lagunas de Chacahua",20,,16.00028,-97.65611
+"Parque Nacional Lagunas de Montebello",5,,16.11859,-91.74341
+"Parque Nacional Lagunas de Zempuala",15,,19.05306,-99.3074
+"Parque Nacional Los Remedios",15,,19.46873,-99.2573
+Parral,6,,26.93022,-105.6664
+"Parras de la Fuente",7,,25.44185,-102.17808
+Pátzcuaro,16,,19.51594,-101.60887
+Pénjamo,11,,20.40418,-101.80696
+"Peñón Blanco Municipality",10,,24.757,-104.02031
+"Peribán de Ramos",16,,19.5201,-102.41397
+Perote,30,,19.56233,-97.24235
+Peto,31,,20.12776,-88.92282
+Pichucalco,5,,17.53928,-93.16116
+"Pico de Orizaba",30,,19.03084,-97.27082
+"Piedras Negras",7,,28.70007,-100.52353
+"Piedras Negras International Airport",7,,28.62958,-100.53777
+Pijijiapan,5,,15.68618,-93.20938
+"Pijijiapan Municipality",5,,15.64619,-93.20291
+"Pinotepa Nacional",20,,16.34014,-98.05297
+"Plan de Guadalupe International Airport",7,,25.5495,-100.92867
+"Playa de Oro International Airport",8,,19.14478,-104.55863
+"Playa del Carmen",23,,20.6274,-87.07987
+"Playa del Carmen Airport",23,,20.6225,-87.0822
+"Playas de Rosarito",2,,32.34342,-117.03186
+"Poanas Municipality",10,,23.98833,-104.05242
+Polanco,9,,19.43332,-99.19919
+"Ponciano Arriaga International Airport",24,,22.2543,-100.93081
+Popocatépetl,15,,19.02222,-98.62778
+"Pórticos de San Antonio",2,,32.4425,-117.03417
+"Poza Rica",30,,20.53315,-97.45946
+"Praxedis G. Guerrero",6,,31.30031,-105.94361
+Progreso,31,,21.28298,-89.66416
+"Progreso Municipality",31,,21.23521,-89.62047
+Puebla,21,,18.75,-97.91667
+"Puebla City",21,,19.03793,-98.20346
+"Pueblo Nuevo",11,,20.54589,-101.3642
+"Pueblo Nuevo Municipality",10,,23.41405,-105.34021
+"Pueblo Nuevo Solistahuacán Municipality",5,,17.21162,-92.85475
+"Puente de Ixtla Municipality",17,,18.61472,-99.31806
+"Puerto Escondido",20,,15.87037,-97.07726
+"Puerto Escondido International Airport",20,,15.87686,-97.08912
+"Puerto Juárez",23,,21.18352,-86.80709
+"Puerto Peñasco",26,,31.31716,-113.53799
+"Puerto Vallarta",14,,20.617,-105.23018
+"Punta Abreojos Airport",3,,26.7272,-113.559
+"Punta Chivato Airport",3,,27.0692,-111.962
+"Punta Colorada Airstrip",3,,23.57461,-109.53601
+"Purépero de Echáiz",16,,19.91039,-102.00625
+"Purísima de Bustos",11,,21.0315,-101.87833
+"Purísima del Rincón",11,,20.94704,-101.90939
+Querétaro,22,,20.85,-99.85
+"Querétaro City",22,,20.58806,-100.38806
+"Querétaro Intercontinental Airport",22,,20.61729,-100.18566
+"Quetzalcóatl International Airport",28,,27.44392,-99.57046
+"Quintana Roo",23,,19.66667,-88.25
+"Ramos Arizpe",7,,25.53928,-100.94742
+"Rayón Municipality",5,,17.20063,-92.99756
+"Reforma Municipality",5,,17.86876,-93.22673
+"Reserva de la Biósfera El Pinacate",26,,31.91172,-113.59422
+Reynosa,28,,26.08061,-98.28835
+"Reynosa International Airport",28,,26.00891,-98.22851
+"Reynosa Municipality",28,,26.07517,-98.30832
+"Rincón de Romos",1,,22.23333,-102.31666
+"Rincón de Tamayo",11,,20.42344,-100.7547
+Rioverde,24,,21.93115,-99.99488
+"Riva Palacio Municipality",6,,28.81462,-106.6499
+"Rodeo Municipality",10,,25.17484,-104.5656
+Romita,11,,20.84151,-101.56049
+"Rosales Municipality",6,,28.29782,-105.58288
+"Rosario Municipality",6,,27.25616,-106.29878
+Rosarito,2,,32.36044,-117.04645
+"Sabanilla Municipality",5,,17.30308,-92.58368
+Sabinas,7,,27.85591,-101.11738
+"Sahuayo de Morelos",16,,20.05859,-102.71575
+Salamanca,11,,20.58539,-101.17307
+"Salina Cruz",20,,16.17535,-95.19424
+"Salina Cruz Airport",20,,16.2126,-95.2016
+Saltillo,7,,25.42321,-101.0053
+"Salto de Agua Municipality",5,,17.42001,-92.2064
+Salvatierra,11,,20.21094,-100.9124
+"San Andrés Cholula",21,,19.05144,-98.29526
+"San Andrés Duraznal Municipality",5,,17.15653,-92.79606
+"San Andrés Mixquic",9,,19.22512,-98.96408
+"San Andrés Tuxtla",30,,18.4487,-95.21327
+"San Bernardino Tlaxcalancingo",21,,19.02867,-98.27698
+"San Bernardo Municipality",10,,26.16986,-105.66251
+"San Cristobal De Casas",5,,16.7,-92.6
+"San Cristóbal de las Casas",5,,16.73176,-92.64126
+"San Cristóbal de las Casas National Airport",5,,16.6903,-92.5301
+"San Diego de la Unión",11,,21.39973,-100.80779
+"San Dimas Municipality",10,,24.2,-105.75
+"San Felipe",11,,21.45976,-101.24397
+"San Felipe International Airport",2,,30.9302,-114.809
+"San Fernando",28,,24.84749,-98.14828
+"San Fernando Municipality",5,,16.904,-93.22282
+"San Francisco Acuautla",15,,19.34564,-98.86034
+"San Francisco de Borja",6,,27.89427,-106.72288
+"San Francisco de Conchos",6,,27.57356,-105.37779
+"San Francisco de los Romo",1,,22.03307,-102.22902
+"San Francisco del Oro",6,,26.89417,-105.90594
+"San Francisco del Rincón",11,,20.93547,-101.79061
+"San Francisco Ocotlán",21,,19.13411,-98.28345
+"San Francisco Tlalcilalcalpan",15,,19.29474,-99.76771
+"San Ignacio Airfield",3,,27.29705,-112.93868
+"San Jacinto Amilpas",20,,17.10188,-96.76228
+"San José de Gracia",1,,22.15,-102.41666
+"San José del Cabo",3,,23.05406,-109.70367
+"San José del Castillo",14,,20.51405,-103.23796
+"San José Iturbide",11,,21.03386,-100.41152
+"San Juan Bautista",20,,18.0883,-96.12535
+"San Juan Cancuc Municipality",5,,16.94034,-92.38839
+"San Juan de Guadalupe",10,,24.59504,-102.69914
+"San Juan del Río",10,,24.77387,-104.49893
+"San Juan y San Pedro Tezompa",15,,19.2068,-98.96073
+"San Juan Zitlaltepec",15,,19.81207,-99.14526
+"San Lucas Municipality",5,,16.60112,-92.69771
+"San Luis de la Loma",12,,17.27,-100.89369
+"San Luis de la Paz",11,,21.36295,-100.49726
+"San Luis del Cordero",10,,25.38359,-104.27883
+"San Luis Potosí",24,,22.5,-100.5
+"San Luis Potosí City",24,,22.14982,-100.97916
+"San Luis Río Colorado",26,,32.45612,-114.77186
+"San Luis Río Colorado Airport",26,,32.4453,-114.798
+"San Martín de las Pirámides Municipality",15,,19.70538,-98.83563
+"San Martin Texmelucan",21,,19.28431,-98.43885
+"San Mateo Atenco",15,,19.26757,-99.53214
+"San Matias Tlalancaleca",21,,19.32536,-98.49863
+"San Miguel Coatlinchán",15,,19.44999,-98.87274
+"San Miguel de Allende",11,,20.94214,-100.71072
+"San Miguel de Cozumel",23,,20.50038,-86.94272
+"San Miguel Topilejo",9,,19.20264,-99.14193
+"San Miguel Xoxtla",21,,19.16763,-98.30758
+"San Nicolás de los Garza",19,,25.74167,-100.30222
+"San Pablo Atlazalpan",15,,19.21742,-98.90763
+"San Pablo Autopan",15,,19.35638,-99.65724
+"San Pablo de las Salinas",15,,19.66658,-99.09477
+"San Pedro",7,,25.43333,-103.21667
+"San Pedro del Gallo",10,,25.59888,-104.3882
+"San Pedro Pochutla",20,,15.74587,-96.46601
+"San Pedro Totolápam",20,,16.66915,-96.30755
+"San Salvador Atenco",15,,19.5517,-98.91867
+"San Salvador El Seco",21,,19.13325,-97.64167
+"San Sebastián el Grande",14,,20.53274,-103.42804
+"Santa Ana Chiautempan",29,,19.30661,-98.18773
+"Santa Anita",14,,20.5509,-103.44396
+"Santa Bárbara",6,,26.82071,-105.77151
+"Santa Catarina",19,,25.67325,-100.45813
+"Santa Catarina Ayotzingo",15,,19.20948,-98.92985
+"Santa Catarina Municipality",11,,21.15134,-100.06954
+"Santa Clara Municipality",10,,24.49847,-103.40702
+"Santa Cruz de Juventino Rosas",11,,20.63658,-100.97956
+"Santa Cruz de las Flores",14,,20.48056,-103.50278
+"Santa Cruz Xoxocotlán",20,,17.02958,-96.73518
+"Santa Isabel",6,,28.34445,-106.34136
+"Santa María Chimalhuacán",15,,19.42155,-98.95038
+"Santa Rosa Jáuregui",22,,20.74122,-100.44843
+"Santa Rosalía",3,,27.34035,-112.26706
+"Santa Teresa",15,,19.845,-99.23333
+"Santiago el Pinar Municipality",5,,16.94838,-92.72074
+"Santiago Maravatío Municipality",11,,20.16328,-101.00091
+"Santiago Papasquiaro",10,,25.04389,-105.41917
+"Santiago Papasquiaro Municipality",10,,24.97069,-105.70752
+"Santiago Teyahualco",15,,19.65985,-99.12493
+"Santiago Tianguistenco de Galeana",15,,19.18024,-99.46644
+"Santiago Tílapa",15,,19.18953,-99.42089
+"Santiago Tlazoyaltepec",20,,17.03249,-96.98124
+"Santo Domingo Tehuantepec",20,,16.32463,-95.24104
+"Satevó Municipality",6,,27.78583,-106.19851
+"Saucillo Municipality",6,,28.05878,-105.31508
+"Sian Ka'an",23,,19.38333,-87.79167
+"Sierra Negra",21,,18.98571,-97.31462
+Silao,11,,20.94356,-101.42703
+"Silao de la Victoria",11,,20.93718,-101.44987
+"Siltepec Municipality",5,,15.55383,-92.43138
+"Simojovel Municipality",5,,17.14736,-92.67154
+Sinaloa,25,,25,-107.5
+"Sitalá Municipality",5,,17.03982,-92.35195
+"Socoltenango Municipality",5,,16.17412,-92.36658
+"Soledad de Graciano Sánchez",24,,22.18912,-100.93792
+"Solosuchiapa Municipality",5,,17.39364,-93.01301
+Sonora,26,,29.66667,-110.5
+"Soyaló Municipality",5,,16.91352,-92.96579
+"Suchiapa Municipality",5,,16.60775,-93.10003
+"Suchiate Municipality",5,,14.64138,-92.22252
+Súchil,10,,23.44259,-104.13859
+"Sunuapa Municipality",5,,17.48316,-93.24699
+Tabasco,27,,18,-92.66667
+Tala,14,,20.6536,-103.70092
+Tamaulipas,28,,24,-98.75
+"Tamazula Municipality",10,,25.05586,-106.76728
+"Tamazulapam Villa del Progreso",20,,17.6771,-97.57315
+Tamazunchale,24,,21.25993,-98.78935
+Tampico,28,,22.28519,-97.87777
+"Tampico International Airport",28,,22.29144,-97.8663
+"Tamuin Airport",24,,22.0383,-98.8065
+Tantoyuca,30,,21.35064,-98.2257
+Tapachula,5,,14.90385,-92.25749
+"Tapachula International Airport",5,,14.79434,-92.37002
+"Tapachula Municipality",5,,14.94755,-92.30211
+"Tapalapa Municipality",5,,17.22618,-93.11552
+"Tapilula Municipality",5,,17.25355,-93.00933
+"Tarandacuao Municipality",11,,20.00361,-100.53195
+"Tarimoro Municipality",11,,20.29924,-100.75753
+Taxco,12,,18.55462,-99.60592
+Tecámac,15,,19.71288,-98.96895
+"Tecámac Municipality",15,,19.71371,-98.96858
+Tecate,2,,32.55029,-116.63223
+Tecomán,8,,18.91678,-103.87786
+"Tecomán Municipality",8,,18.89473,-103.87345
+"Tecpatán Municipality",5,,17.18448,-93.47103
+Tehuacán,21,,18.46422,-97.39735
+"Tehuacán Airport",21,,18.4972,-97.4199
+"Tejupilco de Hidalgo",15,,18.90475,-100.15275
+Tekax,31,,20.2052,-89.28522
+"Temamatla Municipality",15,,19.20378,-98.86803
+"Temascalapa Municipality",15,,19.82719,-98.89875
+Temixco,17,,18.85254,-99.22537
+"Temósachic Municipality",6,,28.95,-107.83333
+"Tenabo Municipality",4,,19.83333,-90
+"Tenango del Aire Municipality",15,,19.15891,-98.8591
+"Tenejapa Municipality",5,,16.84359,-92.48134
+Tenosique,27,,17.4729,-91.4236
+Teolocholco,29,,19.24333,-98.19083
+"Teoloyucan Municipality",15,,19.74627,-99.18079
+"Teopisca Municipality",5,,16.55969,-92.51672
+"Teotihuacán Municipality",15,,19.68648,-98.86253
+Teotlaltzingo,21,,19.23088,-98.50077
+"Tepatitlán de Morelos",14,,20.81692,-102.76347
+"Tepatlaxco de Hidalgo",21,,19.08067,-97.97338
+"Tepehuanes Municipality",10,,25.47838,-106.20884
+"Tepeji del Río de Ocampo",13,,19.90481,-99.34379
+"Tepetlaoxtoc Municipality",15,,19.57495,-98.8191
+"Tepetlixpa Municipality",15,,19.03007,-98.82125
+Tepexpan,15,,19.61387,-98.9364
+Tepezalá,1,,22.21667,-102.16666
+Tepic,18,,21.50951,-104.89569
+"Tepic Airport",18,,21.41945,-104.84258
+"Tepotzotlán Municipality",15,,19.71492,-99.22234
+Tequila,14,,20.88205,-103.83599
+Tequisquiapan,22,,20.5225,-99.89167
+Tequixquiac,15,,19.90944,-99.14472
+"Tequixquiac Municipality",15,,19.90937,-99.14552
+"Terrazas del Valle",2,,32.4875,-116.82667
+Tesistán,14,,20.80051,-103.46993
+Texcoco,15,,19.51194,-98.88293
+"Texcoco Municipality",15,,19.517,-98.88056
+Teziutlán,21,,19.8173,-97.35992
+"Tezoyuca Municipality",15,,19.59238,-98.90828
+Ticul,31,,20.39833,-89.53541
+"Tierra Blanca",11,,21.03067,-100.15716
+Tijuana,2,,32.50223,-116.97212
+"Tijuana International Airport",3,,32.54334,-116.97375
+"Tila Municipality",5,,17.35066,-92.48176
+"Tixtla de Guerrero",12,,17.56732,-99.39799
+"Tizayuca Municipality",13,,19.83664,-98.97772
+Tizimín,31,,21.14268,-88.15101
+Tláhuac,9,,19.28689,-99.00507
+"Tláhuac Borough",9,,19.27436,-99.00278
+"Tlahualilo Municipality",10,,26.0533,-103.5246
+Tlalnepantla,15,,19.54005,-99.19538
+"Tlalnepantla de Baz Municipality",15,,19.54054,-99.19341
+Tlalpan,9,,19.29513,-99.16206
+"Tlalpan Borough",9,,19.27874,-99.16569
+"Tlapa de Comonfort",12,,17.54528,-98.57599
+Tlapacoyan,30,,19.96268,-97.21141
+Tlaquepaque,14,,20.64091,-103.29327
+Tlaxcala,29,,19.41667,-98.16667
+"Tlaxcala City",29,,19.31905,-98.19982
+Toluca,15,,19.28786,-99.65324
+"Toluca Airport",15,,19.33707,-99.56601
+Tonalá,5,,16.08977,-93.75489
+"Tonalá Municipality",5,,15.98275,-93.67062
+"Topia Municipality",10,,25.22958,-106.66616
+Torreón,7,,25.54389,-103.41898
+"Totolapa Municipality",5,,16.51695,-92.67359
+"Tula de Allende",13,,20.05161,-99.34397
+Tulancingo,13,,20.08355,-98.36288
+Tultepec,15,,19.685,-99.12806
+"Tultepec Municipality",15,,19.68785,-99.12655
+"Tultitlán de Mariano Escobedo",15,,19.64655,-99.16787
+"Tultitlán Municipality",15,,19.64812,-99.16865
+"Tulum Naval Air Station",23,,20.2273,-87.4382
+"Tumbalá Municipality",5,,17.3079,-92.27788
+"Túxpam de Rodríguez Cano",30,,20.95777,-97.40805
+Tuxpan,14,,19.55555,-103.37587
+"Tuxtla Gutiérrez",5,,16.75973,-93.11308
+"Tuxtla Gutiérrez Municipality",5,,16.70842,-93.13618
+"Tuzantán Municipality",5,,15.13561,-92.42137
+Tuzantla,16,,19.20289,-100.56679
+"Tzimol Municipality",5,,16.1212,-92.24463
+Umán,31,,20.88136,-89.74728
+"Unión Juárez Municipality",5,,15.06191,-92.09668
+Uriangato,11,,20.14085,-101.18251
+"Uriangato Municipality",11,,20.11311,-101.16036
+"Urique Municipality",6,,27.27037,-107.95461
+"Ursulo Galván",28,,22.72779,-98.32191
+"Uruachi Municipality",6,,27.84669,-108.36712
+Uruapan,16,,19.41116,-102.05644
+"Uruapan International Airport",16,,19.39669,-102.03906
+Valladolid,31,,20.68812,-88.19936
+"Valle de Bravo",15,,19.19501,-100.13132
+"Valle de Chalco Solidaridad Municipality",15,,19.29462,-98.93806
+"Valle de Santiago",11,,20.40994,-101.25288
+"Valle de Zaragoza",6,,27.48944,-105.84764
+"Valle del Fuerte Federal International Airport",25,,25.68519,-109.08081
+"Valle Hermoso",28,,25.67207,-97.81313
+Valtierrilla,11,,20.53244,-101.12761
+"Venustiano Carranza",9,,19.44361,-99.10499
+"Venustiano Carranza Borough",9,,19.43972,-99.1105
+"Venustiano Carranza International Airport",7,,26.95478,-101.46771
+Veracruz,30,,19.18095,-96.1429
+"Veracruz International Airport",30,,19.14593,-96.18727
+"Vicente Guerrero",10,,23.72173,-103.97796
+"Víctor Rosales",32,,22.94889,-102.70222
+"Victoria Municipality",11,,21.35448,-100.22294
+"Villa Comaltitlán",5,,15.18645,-92.59053
+"Villa Corzo Municipality",5,,16.11981,-93.20835
+"Villa del Campo",2,,32.5075,-116.73833
+"Villa del Carbón Municipality",15,,19.7255,-99.46009
+"Villa del Prado 2da Sección",2,,32.42389,-116.97167
+"Villa Unión",25,,23.18992,-106.21947
+"Villa Vicente Guerrero",29,,19.12123,-98.16572
+"Villaflores Municipality",5,,16.34149,-93.33191
+Villagrán,11,,20.51452,-100.99745
+"Villagrán Municipality",11,,20.53815,-100.98278
+Villahermosa,27,,17.98689,-92.93028
+"Villahermosa International Airport",27,,17.997,-92.81736
+"Volcán La Malinche",29,,19.2333,-98.0333
+"Volcán Nevado de Toluca",15,,19.10833,-99.75833
+Xalapa,30,,19.53124,-96.91589
+"Xichú Municipality",11,,21.34418,-99.9997
+Xico,15,,19.27032,-98.95088
+Xicohtzinco,29,,19.17371,-98.23377
+"Xicotepec de Juárez",21,,20.27605,-97.96111
+Xochimilco,9,,19.25465,-99.10356
+"Xochimilco Borough",9,,19.27761,-99.11591
+Xonacatlan,15,,19.4,-99.533
+Xoxocotla,17,,18.68415,-99.24577
+"Yajalón Municipality",5,,17.18519,-92.32715
+Yautepec,17,,18.88188,-99.06715
+Yecapixtla,17,,18.88333,-98.865
+Yucatán,31,,20.75,-88.83333
+Yuriria,11,,20.21081,-101.13212
+"Yuriria Municipality",11,,20.18317,-101.22573
+Zacapú,16,,19.81396,-101.79157
+Zacatecas,32,,23.25,-103
+"Zacatecas City",32,,22.76843,-102.58141
+"Zacatecas International Airport",32,,22.89711,-102.68689
+Zacatelco,29,,19.21583,-98.23972
+Zacatlán,21,,19.9355,-97.96125
+Zamora,16,,19.9855,-102.28387
+Zapopan,14,,20.72356,-103.38479
+Zaragoza,21,,19.77097,-97.55506
+Zihuatanejo,12,,17.64344,-101.55212
+"Zinacantán Municipality",5,,16.72425,-92.77572
+Zinacantepec,15,,19.28428,-99.73394
+Zumpango,15,,19.7967,-99.09946
+"Zumpango del Río",12,,17.65437,-99.52725
+"Zumpango Municipality",15,,19.79885,-99.09702

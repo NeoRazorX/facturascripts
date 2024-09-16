@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\PageOption;
@@ -38,7 +39,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EditPageOption extends Controller
 {
-
     /**
      * Contains the url to go back.
      *
@@ -86,9 +86,9 @@ class EditPageOption extends Controller
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
-        $data['showonmenu'] = false;
         $data['title'] = 'options';
         $data['icon'] = 'fas fa-wrench';
+        $data['showonmenu'] = false;
         return $data;
     }
 
@@ -144,17 +144,19 @@ class EditPageOption extends Controller
     protected function deleteAction()
     {
         if (false === $this->permissions->allowDelete) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-delete');
+            Tools::log()->warning('not-allowed-delete');
+            return;
+        } elseif (false === $this->validateFormToken()) {
             return;
         }
 
         if ($this->model->delete()) {
-            $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
+            Tools::log()->notice('record-deleted-correctly');
             $this->loadPageOptions();
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('default-not-deletable');
+        Tools::log()->warning('default-not-deletable');
     }
 
     /**
@@ -193,7 +195,9 @@ class EditPageOption extends Controller
     protected function saveAction()
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->validateFormToken()) {
             return;
         }
 
@@ -223,12 +227,12 @@ class EditPageOption extends Controller
         }
 
         if ($this->model->save()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             $this->loadPageOptions();
             return;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
     }
 
     /**
@@ -301,7 +305,7 @@ class EditPageOption extends Controller
      */
     private function setColumnOption(&$column, string $name, string $key, bool $isWidget, bool $allowEmpty)
     {
-        $newValue = self::toolBox()::utils()::noHtml($this->request->request->get($name . '-' . $key));
+        $newValue = Tools::noHtml($this->request->request->get($name . '-' . $key));
         if ($isWidget) {
             if (!empty($newValue) || $allowEmpty) {
                 $column['children'][0][$key] = $newValue;

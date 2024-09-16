@@ -49,8 +49,10 @@ class EditCronJob extends EditController
     {
         parent::createViews();
 
-        // desactivamos el botón nuevo de la primera pestaña
-        $this->setSettings($this->getMainViewName(), 'btnNew', false);
+        // desactivamos los botones nuevo y opciones
+        $mvn = $this->getMainViewName();
+        $this->setSettings($mvn, 'btnNew', false);
+        $this->setSettings($mvn, 'btnOptions', false);
 
         // añadimos la pestaña de logs
         $this->createViewsLogs();

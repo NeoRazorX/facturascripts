@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,11 +24,11 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\AgenciaTransporte;
-use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Provincia;
@@ -36,7 +36,7 @@ use FacturaScripts\Dinamic\Model\Provincia;
 /**
  * Description of SalesHeaderHTML
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class SalesHeaderHTML
@@ -71,6 +71,14 @@ class SalesHeaderHTML
                     return;
                 }
             }
+
+            $contacto = new Contacto();
+            if (isset($formData['idcontactofact']) && $contacto->loadFromCode($formData['idcontactofact'])) {
+                $model->setSubject($contacto);
+                if (empty($formData['action'])) {
+                    return;
+                }
+            }
         } elseif (isset($formData['action'], $formData['codcliente']) &&
             $formData['action'] === 'set-customer' &&
             $cliente->loadFromCode($formData['codcliente'])) {
@@ -86,7 +94,7 @@ class SalesHeaderHTML
         $model->coddivisa = $formData['coddivisa'] ?? $model->coddivisa;
         $model->codpago = $formData['codpago'] ?? $model->codpago;
         $model->codserie = $formData['codserie'] ?? $model->codserie;
-        $model->fecha = empty($formData['fecha']) ? $model->fecha : date(ModelCore::DATE_STYLE, strtotime($formData['fecha']));
+        $model->fecha = empty($formData['fecha']) ? $model->fecha : Tools::date($formData['fecha']);
         $model->femail = isset($formData['femail']) && !empty($formData['femail']) ? $formData['femail'] : $model->femail;
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombrecliente = $formData['nombrecliente'] ?? $model->nombrecliente;
@@ -188,7 +196,7 @@ class SalesHeaderHTML
 
         return '<div class="col-sm-' . $size . '">'
             . '<div class="form-group">' . $i18n->trans($label)
-            . '<input type="text" ' . $attributes . ' value="' . $model->{$field} . '" class="form-control"/>'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->{$field}) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -215,7 +223,7 @@ class SalesHeaderHTML
 
         return '<div class="col-sm-' . $size . '">'
             . '<div class="form-group">' . $i18n->trans('city')
-            . '<input type="text" ' . $attributes . ' value="' . $model->ciudad . '" ' . $list . ' class="form-control"/>'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->ciudad) . '" ' . $list . ' class="form-control"/>'
             . $dataList
             . '</div>'
             . '</div>';
@@ -230,12 +238,17 @@ class SalesHeaderHTML
 
         $options = ['<option value="">------</option>'];
         foreach ($agentes as $row) {
+            // si el agente no está activo o seleccionado, lo ignoramos
+            if ($row->debaja && $row->codagente != $model->codagente) {
+                continue;
+            }
+
             $options[] = ($row->codagente === $model->codagente) ?
-                '<option value="' . $row->codagente . '" selected="">' . $row->nombre . '</option>' :
+                '<option value="' . $row->codagente . '" selected>' . $row->nombre . '</option>' :
                 '<option value="' . $row->codagente . '">' . $row->nombre . '</option>';
         }
 
-        $attributes = $model->editable ? 'name="codagente"' : 'disabled=""';
+        $attributes = $model->editable ? 'name="codagente"' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="form-group">'
             . '<a href="' . Agentes::get($model->codagente)->url() . '">' . $i18n->trans('agent') . '</a>'
@@ -269,7 +282,7 @@ class SalesHeaderHTML
             . '<a href="' . self::$cliente->url() . '">' . $i18n->trans('customer') . '</a>'
             . '<input type="hidden" name="codcliente" value="' . $model->codcliente . '"/>'
             . '<div class="input-group">'
-            . '<input type="text" value="' . self::$cliente->nombre . '" class="form-control" readonly/>'
+            . '<input type="text" value="' . Tools::noHtml(self::$cliente->nombre) . '" class="form-control" readonly/>'
             . '<div class="input-group-append">' . $btnCliente . '</div>'
             . '</div>'
             . '</div>'
@@ -287,7 +300,7 @@ class SalesHeaderHTML
         $attributes = $model->editable ? 'name="codigoenv" maxlength="200" autocomplete="off"' : 'disabled=""';
         return '<div class="col-sm-4">'
             . '<div class="form-group">' . $i18n->trans('tracking-code')
-            . '<input type="text" ' . $attributes . ' value="' . $model->codigoenv . '" class="form-control"/>'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->codigoenv) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -297,7 +310,7 @@ class SalesHeaderHTML
         $options = [];
         foreach (Paises::all() as $pais) {
             $options[] = ($pais->codpais === $model->codpais) ?
-                '<option value="' . $pais->codpais . '" selected="">' . $pais->nombre . '</option>' :
+                '<option value="' . $pais->codpais . '" selected>' . $pais->nombre . '</option>' :
                 '<option value="' . $pais->codpais . '">' . $pais->nombre . '</option>';
         }
 
@@ -319,7 +332,7 @@ class SalesHeaderHTML
         $agenciaTransporte = new AgenciaTransporte();
         foreach ($agenciaTransporte->all() as $agencia) {
             $options[] = ($agencia->codtrans === $model->codtrans) ?
-                '<option value="' . $agencia->codtrans . '" selected="">' . $agencia->nombre . '</option>' :
+                '<option value="' . $agencia->codtrans . '" selected>' . $agencia->nombre . '</option>' :
                 '<option value="' . $agencia->codtrans . '">' . $agencia->nombre . '</option>';
         }
 
@@ -472,7 +485,7 @@ class SalesHeaderHTML
         return '<div class="col-sm-6">'
             . '<div class="form-group">'
             . $i18n->trans('business-name')
-            . '<input type="text" ' . $attributes . ' value="' . $model->nombrecliente . '" class="form-control"/>'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nombrecliente) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -483,7 +496,7 @@ class SalesHeaderHTML
         return empty($model->codcliente) ? '' : '<div class="col-sm">'
             . '<div class="form-group">'
             . $i18n->trans('number2')
-            . '<input type="text" ' . $attributes . ' value="' . $model->numero2 . '" class="form-control"/>'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->numero2) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -510,7 +523,7 @@ class SalesHeaderHTML
 
         return '<div class="col-sm-' . $size . '">'
             . '<div class="form-group">' . $i18n->trans('province')
-            . '<input type="text" ' . $attributes . ' value="' . $model->provincia . '" ' . $list . ' class="form-control"/>'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->provincia) . '" ' . $list . ' class="form-control"/>'
             . $dataList
             . '</div>'
             . '</div>';

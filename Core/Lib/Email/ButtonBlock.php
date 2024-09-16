@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,52 +16,43 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Email;
+
+use FacturaScripts\Core\Base\ExtensionsTrait;
 
 /**
  * Description of ButtonBlock
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class ButtonBlock extends BaseBlock
 {
+    use ExtensionsTrait;
 
-    /**
-     *
-     * @var string
-     */
+    /** @var string */
     protected $label;
 
-    /**
-     *
-     * @var string
-     */
+    /** @var string */
     protected $link;
 
-    /**
-     * 
-     * @param string $label
-     * @param string $link
-     */
-    public function __construct(string $label, string $link)
+    public function __construct(string $label, string $link, string $css = '', string $style = '')
     {
+        $this->css = $css;
+        $this->style = $style;
         $this->label = $label;
         $this->link = $link;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function render(): string
+    public function render(bool $footer = false): string
     {
-        return '<span class="btn"><a href="' . $this->link() . '">' . $this->label . '</a></span>';
+        $this->footer = $footer;
+        $return = $this->pipe('render');
+        return $return ?? '<span class="' . (empty($this->css) ? 'btn w-100' : $this->css) . '">'
+        . '<a href="' . $this->link() . '">' . $this->label . '</a></span>';
     }
 
-    /**
-     * 
-     * @return string
-     */
     protected function link(): string
     {
         $query = parse_url($this->link, PHP_URL_QUERY);

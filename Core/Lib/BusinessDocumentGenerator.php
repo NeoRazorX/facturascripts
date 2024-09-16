@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
@@ -62,6 +63,10 @@ class BusinessDocumentGenerator
         $newDoc = new $newDocClass();
         $fields = array_keys($newDoc->getModelFields());
 
+        if (false === $this->pipeFalse('generateBefore', $prototype, $lines, $quantity, $properties, $newDoc)) {
+            return false;
+        }
+
         foreach (array_keys($prototype->getModelFields()) as $field) {
             // exclude properties not in new line
             if (false === in_array($field, $fields)) {
@@ -76,6 +81,9 @@ class BusinessDocumentGenerator
             // copy properties to new document
             $newDoc->{$field} = $prototype->{$field};
         }
+
+        // assign the user
+        $newDoc->nick = Session::user()->nick;
 
         if (self::$sameDate) {
             $newDoc->fecha = $prototype->fecha;
@@ -93,6 +101,8 @@ class BusinessDocumentGenerator
             if (Calculator::calculate($newDoc, $newLines, true)) {
                 // add to last doc list
                 $this->lastDocs[] = $newDoc;
+
+                $this->pipeFalse('generateTrue', $prototype, $lines, $quantity, $properties, $newDoc, $newLines);
                 return true;
             }
         }
@@ -101,6 +111,7 @@ class BusinessDocumentGenerator
             $newDoc->delete();
         }
 
+        $this->pipeFalse('generateFalse', $prototype, $lines, $quantity, $properties, $newDoc);
         return false;
     }
 

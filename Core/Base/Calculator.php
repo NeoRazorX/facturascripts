@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -111,6 +111,12 @@ final class Calculator
 
         // acumulamos por cada línea
         foreach ($lines as $line) {
+            // coste
+            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
+            if (isset($line->coste)) {
+                $subtotals['totalcoste'] += $totalCoste;
+            }
+
             $pvpTotal = $line->pvptotal * (100 - $doc->dtopor1) / 100 * (100 - $doc->dtopor2) / 100;
             if (empty($pvpTotal)) {
                 continue;
@@ -138,12 +144,6 @@ final class Calculator
                     'totaliva' => 0.0,
                     'totalrecargo' => 0.0
                 ];
-            }
-
-            // coste
-            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
-            if (isset($line->coste)) {
-                $subtotals['totalcoste'] += $totalCoste;
             }
 
             // si es una venta de segunda mano, calculamos el beneficio y el IVA
@@ -300,9 +300,9 @@ final class Calculator
             $subtotals['iva'][$ivaKey0]['neto'] += $totalCoste;
             $subtotals['iva'][$ivaKey0]['netosindto'] += $totalCoste;
 
-            // si el beneficio es negativo, no hay IVA
+            // si el beneficio es negativo y la serie no es rectificativa, no hay IVA
             $beneficio = $pvpTotal - $totalCoste;
-            if ($beneficio <= 0) {
+            if ($beneficio <= 0 && $doc->getSerie()->tipo !== 'R') {
                 return true;
             }
 
@@ -322,9 +322,6 @@ final class Calculator
     {
         $line->pvpsindto = $line->cantidad * $line->pvpunitario;
         $line->pvptotal = $line->pvpsindto * (100 - $line->dtopor) / 100 * (100 - $line->dtopor2) / 100;
-
-        // desactivamos la función del modelo de recalcular pvpsindto y pvptotal
-        $line->disableUpdateTotals(true);
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {

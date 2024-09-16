@@ -84,6 +84,10 @@ class ListPresupuestoCliente extends ListBusinessDocument
         // select the available expired status
         $expiredStatus = null;
         foreach ($model->getAvailableStatus() as $status) {
+            if (!$status->activo) {
+                continue;
+            }
+
             if ($status->idestado == 23 && !$status->editable && empty($status->generadoc)) {
                 $expiredStatus = $status->idestado;
                 break;

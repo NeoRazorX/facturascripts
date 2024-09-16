@@ -17,6 +17,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>last_update</name>
+        <type>timestamp</type>
+    </column>
+    <column>
         <name>modals</name>
         <type>text</type>
     </column>

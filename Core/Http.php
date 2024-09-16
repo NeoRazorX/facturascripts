@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core;
 
 /**
+ * Un sencillo cliente HTTP basado en cURL.
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Http
@@ -154,6 +156,12 @@ class Http
         return new self('POST', $url, $data);
     }
 
+    public static function postJson(string $url, array $data = []): self
+    {
+        return self::post($url, json_encode($data))
+            ->setHeader('Content-Type', 'application/json');
+    }
+
     public static function put(string $url, $data = []): self
     {
         return new self('PUT', $url, $data);
@@ -247,20 +255,18 @@ class Http
             case 'POST':
                 curl_setopt($ch, CURLOPT_POST, 1);
                 curl_setopt($ch, CURLOPT_URL, $this->url);
-                $postFields = is_array($this->data) ? http_build_query($this->data) : $this->data;
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
                 break;
 
             case 'PUT':
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
                 curl_setopt($ch, CURLOPT_URL, $this->url);
-                $postFields = is_array($this->data) ? http_build_query($this->data) : $this->data;
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
                 break;
 
             default:
                 // GET
-                if (is_array($this->data)) {
+                if (is_array($this->data) && !empty($this->data)) {
                     curl_setopt($ch, CURLOPT_URL, $this->url . '?' . http_build_query($this->data));
                     break;
                 }
@@ -285,5 +291,16 @@ class Http
         curl_close($ch);
 
         $this->executed = true;
+    }
+
+    protected function getPostFields()
+    {
+        // si el Content-Type es multipart/form-data, devolvemos los datos sin codificar
+        if (stripos($this->headers['Content-Type'] ?? '', 'multipart/form-data') !== false) {
+            return $this->data;
+        }
+
+        // si data es un array, lo codificamos
+        return is_array($this->data) ? http_build_query($this->data) : $this->data;
     }
 }

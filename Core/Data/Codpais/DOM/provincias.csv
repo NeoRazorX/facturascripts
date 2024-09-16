@@ -1,33 +1,33 @@
-"idprovincia";"codpais";"provincia";"codisoprov"
-1;"DOM";"Azua";"DO-02"
-2;"DOM";"Bahoruco";"DO-03"
-3;"DOM";"Barahona";"DO-04"
-4;"DOM";"Dajabón";"DO-05"
-5;"DOM";"Distrito Nacional";"DO-01"
-6;"DOM";"Duarte";"DO-06"
-7;"DOM";"Elías Piña";"DO-07"
-8;"DOM";"El Seibo";"DO-08"
-9;"DOM";"Espaillat";"DO-09"
-10;"DOM";"Hato Mayor";"DO-30"
-11;"DOM";"Hermanas Mirabal";"DO-19"
-12;"DOM";"Independencia";"DO-10"
-13;"DOM";"La Altagracia";"DO-11"
-14;"DOM";"La Romana";"DO-12"
-15;"DOM";"La Vega";"DO-13"
-16;"DOM";"María Trinidad Sánchez";"DO-14"
-17;"DOM";"Monseñor Nouel";"DO-28"
-18;"DOM";"Monte Cristi";"DO-15"
-19;"DOM";"Monte Plata";"DO-29"
-20;"DOM";"Pedernales";"DO-16"
-21;"DOM";"Peravia";"DO-17"
-22;"DOM";"Puerto Plata";"DO-18"
-23;"DOM";"Samaná";"DO-20"
-24;"DOM";"Sánchez Ramírez";"DO-24"
-25;"DOM";"San Cristóbal";"DO-21"
-26;"DOM";"San José de Ocoa";"DO-31"
-27;"DOM";"San Juan";"DO-22"
-28;"DOM";"San Pedro de Macorís";"DO-23"
-29;"DOM";"Santiago";"DO-25"
-30;"DOM";"Santiago Rodríguez";"DO-26"
-31;"DOM";"Santo Domingo";"DO-32"
-32;"DOM";"Valverde";"DO-27"
+idprovincia,codpais,provincia,codisoprov,latitude,longitude
+1,DOM,"Azua Province",,18.58099,-70.70093
+2,DOM,"Baoruco Province",,18.58718,-71.4142
+3,DOM,"Barahona Province",,18.15589,-71.22524
+4,DOM,Dajabón,,19.25444,-71.62266
+6,DOM,"Duarte Province",,19.28092,-70.05557
+8,DOM,"Espaillat Province",,19.55,-70.23333
+9,DOM,Independencia,,18.42146,-71.7588
+10,DOM,"La Altagracia Province",,18.45,-68.43333
+11,DOM,"Elías Piña",,19.26337,-71.57505
+12,DOM,"La Romana",,18.13333,-68.58333
+14,DOM,"María Trinidad Sánchez",,19.39964,-69.88279
+15,DOM,"Monte Cristi Province",,19.86789,-71.42575
+16,DOM,"Pedernales Province",,17.71667,-71.38333
+18,DOM,"Puerto Plata",,18.31595,-70.38098
+19,DOM,"Hermanas Mirabal",,19.37439,-70.35087
+20,DOM,Samaná,,19.33333,-69.56667
+21,DOM,"Sánchez Ramírez",,19.12088,-70.26546
+23,DOM,"San Juan Province",,19.12984,-71.25706
+24,DOM,"San Pedro de Macorís",,18.43333,-69.18333
+25,DOM,"Santiago Province",,19.12219,-71.02452
+26,DOM,"Santiago Rodríguez",,19.28844,-71.43299
+27,DOM,"Valverde Province",,19.59779,-71.09881
+28,DOM,"El Seíbo",,18.86168,-68.86183
+29,DOM,"Hato Mayor Province",,18.99062,-69.24829
+30,DOM,"La Vega",,18.83496,-70.72198
+31,DOM,"Monseñor Nouel",,18.98012,-70.52715
+32,DOM,"Monte Plata Province",,18.81541,-69.50788
+33,DOM,"San Cristóbal",,18.36376,-70.17632
+34,DOM,Nacional,,18.45374,-69.52622
+35,DOM,Peravia,,18.46667,-70.4
+36,DOM,"San José de Ocoa",,18.65599,-70.479
+37,DOM,"Santo Domingo Province",,18.6032,-70.05108

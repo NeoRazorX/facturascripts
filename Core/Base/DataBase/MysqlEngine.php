@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
+use FacturaScripts\Core\KernelException;
 use mysqli;
 
 /**
@@ -76,6 +77,11 @@ class MysqlEngine extends DataBaseEngine
         }
 
         return $result;
+    }
+
+    public function castInteger($link, $column)
+    {
+        return 'CAST(' . $this->escapeColumn($link, $column) . ' AS unsigned)';
     }
 
     /**
@@ -164,14 +170,14 @@ class MysqlEngine extends DataBaseEngine
     {
         if (false === class_exists('mysqli')) {
             $error = $this->i18n->trans('php-mysql-not-found');
-            return null;
+            throw new KernelException('DatabaseError', $error);
         }
 
         $result = new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int)FS_DB_PORT);
         if ($result->connect_errno) {
             $error = $result->connect_error;
             $this->lastErrorMsg = $error;
-            return null;
+            throw new KernelException('DatabaseError', $error);
         }
 
         $charset = defined('FS_MYSQL_CHARSET') ? FS_MYSQL_CHARSET : 'utf8';

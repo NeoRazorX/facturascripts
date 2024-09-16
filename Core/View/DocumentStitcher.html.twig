@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,8 +29,7 @@
             <div class="row">
                 <div class="col">
                     <h1 class="h3">
-                        <i class="{{ pageData.icon }}" aria-hidden="true"></i>
-                        {{ trans(pageData.title) }}
+                        <i class="{{ pageData.icon }} mr-2" aria-hidden="true"></i> {{ trans(pageData.title) }}
                     </h1>
                     <p>{{ trans('group-or-split-p') }}</p>
                 </div>
@@ -61,16 +60,29 @@
                 </div>
                 <div class="col mb-2">
                     <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-spin-action btn-primary dropdown-toggle" type="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-magic fa-fw"></i> {{ trans('generate') }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            {% for status in fsc.getAvailableStatus() %}
+                            {% set availableStatus = fsc.getAvailableStatus() %}
+                            {% for status in availableStatus %}
                                 <button type="button" onclick="sendFormData('{{ status.primaryColumnValue() }}');"
                                         class="dropdown-item">
-                                    <i class="fas fa-file fa-fw" aria-hidden="true"></i>
+                                    <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i>
                                     {{ trans(status.generadoc) }}
+                                </button>
+                            {% endfor %}
+                            <div class="dropdown-divider"></div>
+                            {% for status in availableStatus %}
+                                <button type="button" onclick="sendFormData('close:{{ status.primaryColumnValue() }}');"
+                                        class="dropdown-item text-danger">
+                                    <i class="fas fa-lock fa-fw" aria-hidden="true"></i>
+                                    {% if availableStatus | length > 1 %}
+                                        {{ trans('close') }}: {{ trans(status.generadoc) }}
+                                    {% else %}
+                                        {{ trans('close') }}
+                                    {% endif %}
                                 </button>
                             {% endfor %}
                         </div>
@@ -78,8 +90,8 @@
                 </div>
                 <div class="col text-right mb-2">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-spin-action btn-secondary dropdown-toggle" type="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-check-square fa-fw"></i> {{ trans('selected-quantity') }}
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
@@ -99,9 +111,7 @@
                         <input type="hidden" name="code[]" value="{{ doc.primaryColumnValue() }}"/>
                         {{ _self.documentCard(doc, fsc) }}
                     {% else %}
-                        <div class="alert alert-warning" role="alert">
-                            {{ trans('no-data') }}
-                        </div>
+                        <div class="alert alert-warning" role="alert">{{ trans('no-data') }}</div>
                     {% endfor %}
                 </div>
             </div>
@@ -173,11 +183,18 @@
                                                 </td>
                                                 <td>
                                                     <a href="{{ doc.url() }}">{{ doc.codigo }}</a>
+                                                    {% if doc.numero2 %}
+                                                        {{ doc.numero2 }}
+                                                    {% elseif doc.numproveedor %}
+                                                        {{ doc.numproveedor }}
+                                                    {% endif %}
                                                 </td>
                                                 <td>{{ doc.observaciones | slice(0, 60) | raw }}</td>
                                                 <td>{{ doc.getPaymentMethod().descripcion }}</td>
-                                                <td class="text-right text-nowrap">{{ fsc.toolBox().coins().format(doc.total) }}</td>
-                                                <td class="text-right text-nowrap">{{ doc.fecha }}</td>
+                                                <td class="text-right text-nowrap">{{ money(doc.total) }}</td>
+                                                <td class="text-right text-nowrap">
+                                                    {{ doc.fecha }} <span class="small">{{ doc.hora }}</span>
+                                                </td>
                                             </tr>
                                         {% else %}
                                             <tr class="table-warning">
@@ -188,8 +205,8 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="card-body">
-                                    <button type="submit" class="btn btn-success">
+                                <div class="card-footer p-2">
+                                    <button type="submit" class="btn btn-spin-action btn-success">
                                         {{ trans('add') }}
                                     </button>
                                 </div>
@@ -242,6 +259,7 @@
         }
 
         function sendFormData(status) {
+            animateSpinner('add');
             document.formDocStitcher.status.value = status;
             document.formDocStitcher.submit();
         }
@@ -253,12 +271,17 @@
         <div class="p-2">
             <div class="row">
                 <div class="col-sm">
-                    <a href="{{ doc.url() }}" class="h5">
-                        <i class="fas fa-file fa-fw" aria-hidden="true"></i>
-                        {{ trans(fsc.modelName) }} {{ doc.codigo }}
-                    </a>
+                    <div class="h5 mb-1">
+                        <i class="fas fa-file mr-2" aria-hidden="true"></i> {{ trans(fsc.modelName) }}
+                        <a href="{{ doc.url() }}">{{ doc.codigo }}</a>
+                        {% if doc.numero2 %}
+                            {{ doc.numero2 }}
+                        {% elseif doc.numproveedor %}
+                            {{ doc.numproveedor }}
+                        {% endif %}
+                    </div>
                     {% if doc.observaciones %}
-                        <p>{{ doc.observaciones | raw }}</p>
+                        <p class="mb-2">{{ doc.observaciones | raw }}</p>
                     {% endif %}
                 </div>
                 <div class="col-sm-3 text-right">
@@ -267,11 +290,11 @@
                         &nbsp;
                         <i class="far fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
                         <br/>
-                        {{ trans('net') }}: {{ fsc.toolBox().coins().format(doc.neto) }}
+                        {{ trans('net') }}: {{ money(doc.neto) }}
                         &nbsp;
-                        {{ trans('taxes') }}: {{ fsc.toolBox().coins().format(doc.totaliva) }}
+                        {{ trans('taxes') }}: {{ money(doc.totaliva) }}
                         &nbsp;
-                        {{ trans('total') }}: {{ fsc.toolBox().coins().format(doc.total) }}
+                        {{ trans('total') }}: {{ money(doc.total) }}
                     </p>
                 </div>
             </div>

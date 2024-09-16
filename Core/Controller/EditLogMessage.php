@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,8 +52,10 @@ class EditLogMessage extends EditController
     {
         parent::createViews();
 
-        // desactivamos el botón nuevo
-        $this->setSettings($this->getMainViewName(), 'btnNew', false);
+        // desactivamos los botones nuevo y opciones
+        $mvn = $this->getMainViewName();
+        $this->setSettings($mvn, 'btnNew', false);
+        $this->setSettings($mvn, 'btnOptions', false);
 
         // añadimos la pestaña de logs
         $this->createViewsOtherLogs();

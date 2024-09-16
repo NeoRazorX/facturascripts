@@ -48,18 +48,18 @@ class ListAtributo extends ListController
 
     protected function createViewsAttributes(string $viewName = 'ListAtributo'): void
     {
-        $this->addView($viewName, 'Atributo', 'attributes', 'fas fa-tshirt');
-        $this->addSearchFields($viewName, ['nombre', 'codatributo']);
-        $this->addOrderBy($viewName, ['codatributo'], 'code');
-        $this->addOrderBy($viewName, ['nombre'], 'name');
+        $this->addView($viewName, 'Atributo', 'attributes', 'fas fa-tshirt')
+            ->addSearchFields(['nombre', 'codatributo'])
+            ->addOrderBy(['codatributo'], 'code')
+            ->addOrderBy(['nombre'], 'name');
     }
 
     protected function createViewsValues(string $viewName = 'ListAtributoValor'): void
     {
-        $this->addView($viewName, 'AtributoValor', 'values', 'fas fa-list');
-        $this->addSearchFields($viewName, ['valor', 'codatributo']);
-        $this->addOrderBy($viewName, ['codatributo', 'orden', 'valor'], 'sort', 2);
-        $this->addOrderBy($viewName, ['codatributo', 'valor'], 'value');
+        $this->addView($viewName, 'AtributoValor', 'values', 'fas fa-list')
+            ->addSearchFields(['valor', 'codatributo'])
+            ->addOrderBy(['codatributo', 'orden', 'valor'], 'sort', 2)
+            ->addOrderBy(['codatributo', 'valor'], 'value');
 
         // filtros
         $attributes = $this->codeModel->all('atributos', 'codatributo', 'nombre');

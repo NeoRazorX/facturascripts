@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\BankAccount;
+use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
@@ -29,11 +31,14 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class CuentaBanco extends Base\BankAccount
+class CuentaBanco extends BankAccount
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     const SPECIAL_ACCOUNT = 'CAJA';
+
+    /** @var bool */
+    public $activa;
 
     /** @var string */
     public $codsubcuenta;
@@ -50,6 +55,7 @@ class CuentaBanco extends Base\BankAccount
     public function clear()
     {
         parent::clear();
+        $this->activa = true;
         $this->sufijosepa = '000';
     }
 
@@ -141,12 +147,13 @@ class CuentaBanco extends Base\BankAccount
     public function test(): bool
     {
         if (empty($this->idempresa)) {
-            $this->idempresa = self::toolBox()::appSettings()::get('default', 'idempresa');
+            $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
         $this->codsubcuenta = Tools::noHtml($this->codsubcuenta);
         $this->codsubcuentagasto = Tools::noHtml($this->codsubcuentagasto);
         $this->sufijosepa = Tools::noHtml($this->sufijosepa);
+
         return parent::test();
     }
 

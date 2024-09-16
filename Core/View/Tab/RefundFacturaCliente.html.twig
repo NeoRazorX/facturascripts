@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,11 +44,11 @@
         <table class="table table-hover mb-5">
             <thead>
             <tr>
-                <th>{{ i18n.trans('rectified-invoice') }}</th>
-                <th>{{ i18n.trans('number2') }}</th>
-                <th>{{ i18n.trans('observations') }}</th>
-                <th class="text-right">{{ i18n.trans('total') }}</th>
-                <th class="text-right">{{ i18n.trans('date') }}</th>
+                <th>{{ trans('rectified-invoice') }}</th>
+                <th>{{ trans('number2') }}</th>
+                <th>{{ trans('observations') }}</th>
+                <th class="text-right">{{ trans('total') }}</th>
+                <th class="text-right">{{ trans('date') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -57,7 +57,7 @@
                     <td>{{ rectified.codigo }}</td>
                     <td>{{ rectified.numero2 | raw }}</td>
                     <td>{{ rectified.observaciones | raw }}</td>
-                    <td class="text-right">{{ fsc.toolBox().coins().format(rectified.total) }}</td>
+                    <td class="text-right">{{ money(rectified.total) }}</td>
                     <td class="text-right">{{ rectified.fecha }}</td>
                 </tr>
             {% endfor %}
@@ -66,34 +66,36 @@
     </div>
 {% endif %}
 
-<form action="{{ firstView.model.url() }}" method="post">
+<form action="{{ firstView.model.url() }}" method="post" onsubmit="animateSpinner('add')">
+    {{ formToken() }}
     <input type="hidden" name="action" value="new-refund"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="idfactura" value="{{ firstView.model.primaryColumnValue() }}"/>
-    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <div class="container-fluid">
         <div class="row">
             <div class="col">
                 <div class="card border-warning shadow mb-4">
                     <div class="card-header bg-warning">
-                        <i class="fas fa-share fa-fw" aria-hidden="true"></i> {{ i18n.trans('new-refund') }}
+                        <i class="fas fa-share fa-fw" aria-hidden="true"></i> {{ trans('new-refund') }}
                     </div>
                     <div class="card-body">
-                        <p>{{ i18n.trans('rectified-invoice-p') }}</p>
+                        <p>{{ trans('rectified-invoice-p') }}</p>
                         <div class="form-row align-items-end">
                             <div class="col-sm">
                                 <div class="form-group">
-                                    {{ i18n.trans('serie') }}
+                                    {{ trans('serie') }}
                                     <select name="codserie" class="form-control">
-                                        {% for serie in fsc.series() %}
-                                            {% if serie.tipo is same as('R') %}
-                                                {% if serie.codserie == appSettings.get('default','codserierec','R') %}
-                                                    <option value="{{ serie.codserie }}" selected>
-                                                        {{ serie.descripcion }}
-                                                    </option>
-                                                {% else %}
-                                                    <option value="{{ serie.codserie }}">{{ serie.descripcion }}</option>
-                                                {% endif %}
+                                        {% set series = fsc.series('R') %}
+                                        {% if series is empty %}
+                                            {% set series = fsc.series() %}
+                                        {% endif %}
+                                        {% for serie in series %}
+                                            {% if serie.codserie == settings('default','codserierec','R') %}
+                                                <option value="{{ serie.codserie }}" selected>
+                                                    {{ serie.descripcion }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ serie.codserie }}">{{ serie.descripcion }}</option>
                                             {% endif %}
                                         {% endfor %}
                                     </select>
@@ -101,9 +103,27 @@
                             </div>
                             <div class="col-sm">
                                 <div class="form-group">
-                                    {{ i18n.trans('date') }}
+                                    {{ trans('date') }}
                                     <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}"
                                            class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-group">
+                                    {{ trans('status') }}
+                                    <select name="idestado" class="form-control">
+                                        {% for status in firstView.model.getAvailableStatus() %}
+                                            {% if status.idestado is same as(11) %}
+                                                <option value="{{ status.idestado }}" selected>
+                                                    {{ status.nombre }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ status.idestado }}">
+                                                    {{ status.nombre }}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-sm text-right">
@@ -111,21 +131,21 @@
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-check-square fa-fw"></i> {{ i18n.trans('select') }}
+                                            <i class="fas fa-check-square fa-fw"></i> {{ trans('select') }}
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right">
                                             <a class="dropdown-item" href="#" onClick="return refundNone();">
-                                                <i class="far fa-square fa-fw"></i> {{ i18n.trans('select-none') }}
+                                                <i class="far fa-square fa-fw"></i> {{ trans('select-none') }}
                                             </a>
                                             <a class="dropdown-item" href="#" onClick="return refundAll();">
-                                                <i class="fas fa-square fa-fw"></i> {{ i18n.trans('select-all') }}
+                                                <i class="fas fa-square fa-fw"></i> {{ trans('select-all') }}
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="btn-group mb-3 ml-3">
-                                    <button type="submit" class="btn btn-warning">
-                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
+                                    <button type="submit" class="btn btn-spin-action btn-warning">
+                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
                                 </div>
                             </div>
@@ -135,10 +155,10 @@
                         <table class="table table-sm table-hover mb-0">
                             <thead>
                             <tr>
-                                <th>{{ i18n.trans('description') }}</th>
-                                <th class="text-right">{{ i18n.trans('quantity') }}</th>
-                                <th class="text-right">{{ i18n.trans('to-refund') }}</th>
-                                <th class="text-right">{{ i18n.trans('refund-amount') }}</th>
+                                <th>{{ trans('description') }}</th>
+                                <th class="text-right">{{ trans('quantity') }}</th>
+                                <th class="text-right">{{ trans('to-refund') }}</th>
+                                <th class="text-right">{{ trans('refund-amount') }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -150,7 +170,7 @@
                                         {{ line.descripcion | raw }}
                                     </td>
                                     <td class="align-middle text-right">
-                                        {{ fsc.toolBox().numbers().format(line.cantidad) }}
+                                        {{ number(line.cantidad) }}
                                     </td>
                                     <td class="table-warning">
                                         <input type="hidden" value="{{ line.cantidad }}" class="refundable">
@@ -168,7 +188,7 @@
                                         {% if refunded == 0 %}
                                             -
                                         {% else %}
-                                            {{ fsc.toolBox().numbers().format(refunded) }}
+                                            {{ number(refunded) }}
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -179,7 +199,7 @@
                     <div class="card-body">
                         <div class="form-group">
                             <textarea name="observaciones" class="form-control"
-                                      placeholder="{{ i18n.trans('observations') }}"></textarea>
+                                      placeholder="{{ trans('observations') }}"></textarea>
                         </div>
                     </div>
                 </div>

@@ -8,7 +8,7 @@
                     <i class="fas fa-cut"></i> {{ fsc.title }}
                 </h1>
                 <p>{{ trans('copy-p') }}</p>
-                <form method="post">
+                <form method="post" onsubmit="animateSpinner('add')">
                     {{ formToken() }}
                     <input type="hidden" name="action" value="save"/>
                     <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
@@ -60,13 +60,13 @@
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <input type="date" name="fecha" value="{{ "now" | date('Y-m-d') }}"
-                                               class="form-control" required=""/>
+                                               class="form-control" required/>
                                     </div>
                                 </div>
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <input type="time" name="hora" value="{{ "now" | date('H:i:s') }}"
-                                               class="form-control" required=""/>
+                                               class="form-control" required/>
                                     </div>
                                 </div>
                                 {% if fsc.model.codcliente %}
@@ -118,15 +118,9 @@
                                         <td>{{ line.referencia }}</td>
                                         <td>{{ line.descripcion | raw | nl2br }}</td>
                                         <td class="text-right">{{ line.cantidad }}</td>
-                                        <td class="text-right">
-                                            {{ fsc.toolBox().numbers().format(line.pvpunitario) }}
-                                        </td>
-                                        <td class="text-right">
-                                            {{ fsc.toolBox().numbers().format(line.dtopor) }}%
-                                        </td>
-                                        <td class="text-right">
-                                            {{ fsc.toolBox().numbers().format(line.dtopor2) }}%
-                                        </td>
+                                        <td class="text-right">{{ number(line.pvpunitario) }}</td>
+                                        <td class="text-right">{{ number(line.dtopor) }}%</td>
+                                        <td class="text-right">{{ number(line.dtopor2) }}%</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -137,10 +131,10 @@
                                 <div class="col-sm">
                                     <div class="form-group">
                                         {{ trans('warehouse') }}
-                                        <select name="codalmacen" class="form-control" required="">
+                                        <select name="codalmacen" class="form-control" required>
                                             {% for item in fsc.codeModel.all('almacenes', 'codalmacen', 'nombre', false) %}
                                                 {% if item.code == fsc.model.codalmacen %}
-                                                    <option value="{{ item.code }}" selected="">
+                                                    <option value="{{ item.code }}" selected>
                                                         {{ item.description }}
                                                     </option>
                                                 {% else %}
@@ -155,10 +149,10 @@
                                 <div class="col-sm">
                                     <div class="form-group">
                                         {{ trans('serie') }}
-                                        <select name="codserie" class="form-control" required="">
+                                        <select name="codserie" class="form-control" required>
                                             {% for item in fsc.codeModel.all('series', 'codserie', 'descripcion', false) %}
                                                 {% if item.code == fsc.model.codserie %}
-                                                    <option value="{{ item.code }}" selected="">
+                                                    <option value="{{ item.code }}" selected>
                                                         {{ item.description }}
                                                     </option>
                                                 {% else %}
@@ -173,10 +167,10 @@
                                 <div class="col-sm">
                                     <div class="form-group">
                                         {{ trans('payment-method') }}
-                                        <select name="codpago" class="form-control" required="">
+                                        <select name="codpago" class="form-control" required>
                                             {% for item in fsc.codeModel.all('formaspago', 'codpago', 'descripcion', false) %}
                                                 {% if item.code == fsc.model.codpago %}
-                                                    <option value="{{ item.code }}" selected="">
+                                                    <option value="{{ item.code }}" selected>
                                                         {{ item.description }}
                                                     </option>
                                                 {% else %}
@@ -225,7 +219,7 @@
                         </div>
                         <div class="card-footer">
                             <div class="text-right">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-spin-action btn-primary">
                                     <i class="fas fa-save"></i> {{ trans('save') }}
                                 </button>
                             </div>

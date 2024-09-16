@@ -43,11 +43,10 @@ class ListAgenciaTransporte extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAgenciaTransporte', 'AgenciaTransporte', 'carriers', 'fas fa-truck');
-        $this->addSearchFields('ListAgenciaTransporte', ['nombre', 'web', 'codtrans']);
-        $this->addOrderBy('ListAgenciaTransporte', ['codtrans'], 'code');
-        $this->addOrderBy('ListAgenciaTransporte', ['nombre'], 'name');
-
-        $this->addFilterCheckbox('ListAgenciaTransporte', 'activo', 'active', 'activo');
+        $this->addView('ListAgenciaTransporte', 'AgenciaTransporte', 'carriers', 'fas fa-truck')
+            ->addSearchFields(['nombre', 'web', 'codtrans'])
+            ->addOrderBy(['codtrans'], 'code')
+            ->addOrderBy(['nombre'], 'name')
+            ->addFilterCheckbox('activo', 'active', 'activo');
     }
 }

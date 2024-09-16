@@ -96,23 +96,23 @@ class RowButton extends VisualItem
 
         switch ($this->type) {
             case 'js':
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
+                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" onclick="' . $this->action
                     . '" title="' . $title . '">' . $icon . $label . '</button>';
 
             case 'link':
                 $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
-                return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                return '<a ' . $target . $divID . ' class="btn-spin-action ' . $cssClass . '" href="' . $this->asset($this->action) . '"'
                     . ' title="' . $title . '">' . $icon . $label . '</a>';
 
             case 'modal':
                 $modal = 'modal' . $this->action;
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#'
+                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" data-toggle="modal" data-target="#'
                     . $modal . '" title="' . $title . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
                     . $icon . $label . '</button>';
 
             default:
                 $onclick = $this->getOnClickValue($viewName, $jsFunction);
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
+                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" onclick="' . $onclick
                     . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
     }
@@ -140,12 +140,12 @@ class RowButton extends VisualItem
 
         switch ($this->type) {
             case 'js':
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
+                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" onclick="' . $this->action
                     . '" title="' . $title . '">' . $icon . $label . '</button> ';
 
             case 'link':
                 $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
-                return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                return '<a ' . $target . $divID . ' class="btn-spin-action ' . $cssClass . '" href="' . $this->asset($this->action) . '"'
                     . ' title="' . $title . '">' . $icon . $label . '</a> ';
         }
 
@@ -177,7 +177,8 @@ class RowButton extends VisualItem
         }
 
         if (empty($jsFunction)) {
-            return 'this.form.action.value=\'' . $this->action . '\';this.form.submit();';
+            $onsubmit = $this->action  === 'download' ? '' : 'this.form.onsubmit();';
+            return 'this.form.action.value=\'' . $this->action . '\';' . $onsubmit . 'this.form.submit();';
         }
 
         return $jsFunction . '(\'' . $viewName . '\',\'' . $this->action . '\');';

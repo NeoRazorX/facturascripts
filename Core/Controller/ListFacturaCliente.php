@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
@@ -69,13 +70,13 @@ class ListFacturaCliente extends ListBusinessDocument
 
     protected function createViewReceipts(string $viewName = 'ListReciboCliente')
     {
-        $this->addView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
-        $this->addOrderBy($viewName, ['codcliente'], 'customer-code');
-        $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date');
-        $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
-        $this->addOrderBy($viewName, ['vencimiento'], 'expiration', 2);
-        $this->addOrderBy($viewName, ['importe'], 'amount');
-        $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
+        $this->addView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign')
+            ->addOrderBy(['codcliente'], 'customer-code')
+            ->addOrderBy(['fecha', 'idrecibo'], 'date')
+            ->addOrderBy(['fechapago'], 'payment-date')
+            ->addOrderBy(['vencimiento'], 'expiration', 2)
+            ->addOrderBy(['importe'], 'amount')
+            ->addSearchFields(['codigofactura', 'observaciones']);
 
         // filtros
         $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
@@ -93,7 +94,7 @@ class ListFacturaCliente extends ListBusinessDocument
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $payMethods);
         }
 
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
             ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
@@ -111,10 +112,10 @@ class ListFacturaCliente extends ListBusinessDocument
 
     protected function createViewRefunds(string $viewName = 'ListFacturaCliente-rect')
     {
-        $this->addView($viewName, 'FacturaCliente', 'refunds', 'fas fa-share-square');
-        $this->addSearchFields($viewName, ['codigo', 'codigorect', 'numero2', 'observaciones']);
-        $this->addOrderBy($viewName, ['fecha', 'idfactura'], 'date', 2);
-        $this->addOrderBy($viewName, ['total'], 'total');
+        $this->addView($viewName, 'FacturaCliente', 'refunds', 'fas fa-share-square')
+            ->addSearchFields(['codigo', 'codigorect', 'numero2', 'observaciones'])
+            ->addOrderBy(['fecha', 'idfactura'], 'date', 2)
+            ->addOrderBy(['total'], 'total');
 
         // filtro de fecha
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
@@ -122,7 +123,7 @@ class ListFacturaCliente extends ListBusinessDocument
         // añadimos un filtro select where para forzar las que tienen idfacturarect
         $this->addFilterSelectWhere($viewName, 'idfacturarect', [
             [
-                'label' => self::toolBox()::i18n()->trans('rectified-invoices'),
+                'label' => Tools::lang()->trans('rectified-invoices'),
                 'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
             ]
         ]);
@@ -137,10 +138,11 @@ class ListFacturaCliente extends ListBusinessDocument
     protected function createViewSales(string $viewName, string $modelName, string $label)
     {
         parent::createViewSales($viewName, $modelName, $label);
+
         $this->addSearchFields($viewName, ['codigorect']);
 
         // filtros
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
             ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
@@ -232,13 +234,13 @@ class ListFacturaCliente extends ListBusinessDocument
 
         // si no hemos encontrado huecos, mostramos un mensaje
         if (empty($gaps)) {
-            $this->toolBox()->i18nLog()->notice('no-gaps-found');
+            Tools::log()->notice('no-gaps-found');
             return;
         }
 
         // si hemos encontrado huecos, los mostramos uno a uno
         foreach ($gaps as $gap) {
-            $this->toolBox()->i18nLog()->warning('gap-found', [
+            Tools::log()->warning('gap-found', [
                 '%codserie%' => Series::get($gap['codserie'])->descripcion,
                 '%numero%' => $gap['numero'],
                 '%fecha%' => $gap['fecha'],

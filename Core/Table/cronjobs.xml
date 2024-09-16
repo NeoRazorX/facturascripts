@@ -25,6 +25,11 @@
         <default>true</default>
     </column>
     <column>
+        <name>failed</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
@@ -37,7 +42,6 @@
     <column>
         <name>pluginname</name>
         <type>character varying(50)</type>
-        <null>NO</null>
     </column>
     <constraint>
         <name>cronjobs_pkey</name>

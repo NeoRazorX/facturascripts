@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,10 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Model\Asiento;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to list the items in the Asiento model
@@ -46,7 +46,7 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addLockButton(string $viewName)
+    protected function addLockButton(string $viewName): void
     {
         $this->addButton($viewName, [
             'action' => 'lock-entries',
@@ -61,7 +61,7 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addRenumberButton(string $viewName)
+    protected function addRenumberButton(string $viewName): void
     {
         $this->addButton($viewName, [
             'action' => 'renumber',
@@ -82,26 +82,26 @@ class ListAsiento extends ListController
         $this->createViewsJournals();
     }
 
-    protected function createViewsAccountEntries(string $viewName = 'ListAsiento')
+    protected function createViewsAccountEntries(string $viewName = 'ListAsiento'): void
     {
-        $this->addView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->addOrderBy($viewName, ['fecha', 'numero'], 'date', 2);
-        $this->addOrderBy($viewName, ['numero', 'idasiento'], 'number');
-        $this->addOrderBy($viewName, ['importe', 'idasiento'], 'amount');
-        $this->addSearchFields($viewName, ['concepto', 'documento', 'CAST(numero AS char(255))']);
+        $this->addView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale')
+            ->addSearchFields(['concepto', 'documento', 'CAST(numero AS char(255))'])
+            ->addOrderBy(['fecha', 'numero'], 'date', 2)
+            ->addOrderBy(['numero', 'idasiento'], 'number')
+            ->addOrderBy(['importe', 'idasiento'], 'amount');
 
         // filtros
-        $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
-        $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
-        $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
-        $this->addFilterCheckbox($viewName, 'editable');
+        $this->addFilterPeriod($viewName, 'date', 'period', 'fecha')
+            ->addFilterNumber('min-total', 'amount', 'importe', '>=')
+            ->addFilterNumber('max-total', 'amount', 'importe', '<=')
+            ->addFilterCheckbox('editable');
 
         // filtro de operación
         $operaciones = [
             '' => '------',
-            Asiento::OPERATION_OPENING => self::toolBox()::i18n()->trans('opening-operation'),
-            Asiento::OPERATION_CLOSING => self::toolBox()::i18n()->trans('closing-operation'),
-            Asiento::OPERATION_REGULARIZATION => self::toolBox()::i18n()->trans('regularization-operation')
+            Asiento::OPERATION_OPENING => Tools::lang()->trans('opening-operation'),
+            Asiento::OPERATION_CLOSING => Tools::lang()->trans('closing-operation'),
+            Asiento::OPERATION_REGULARIZATION => Tools::lang()->trans('regularization-operation')
         ];
         $this->addFilterSelect($viewName, 'operacion', 'operation', 'operacion', $operaciones);
 
@@ -110,7 +110,7 @@ class ListAsiento extends ListController
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $selectCompany);
         }
 
-        $selectExercise = Ejercicios::codeModel();
+        $selectExercise = $this->getSelectExercise();
         if (count($selectExercise) > 2) {
             $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
         }
@@ -130,46 +130,53 @@ class ListAsiento extends ListController
         }
     }
 
-    protected function createViewsConcepts(string $viewName = 'ListConceptoPartida')
+    protected function createViewsConcepts(string $viewName = 'ListConceptoPartida'): void
     {
-        $this->addView($viewName, 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
-        $this->addOrderBy($viewName, ['codconcepto'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description', 1);
-        $this->addSearchFields($viewName, ['codconcepto', 'descripcion']);
+        $this->addView($viewName, 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent')
+            ->addSearchFields(['codconcepto', 'descripcion'])
+            ->addOrderBy(['codconcepto'], 'code')
+            ->addOrderBy(['descripcion'], 'description', 1);
     }
 
-    protected function createViewsJournals(string $viewName = 'ListDiario')
+    protected function createViewsJournals(string $viewName = 'ListDiario'): void
     {
-        $this->addView($viewName, 'Diario', 'journals', 'fas fa-book');
-        $this->addOrderBy($viewName, ['iddiario'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description', 1);
-        $this->addSearchFields($viewName, ['descripcion']);
+        $this->addView($viewName, 'Diario', 'journals', 'fas fa-book')
+            ->addSearchFields(['descripcion'])
+            ->addOrderBy(['iddiario'], 'code')
+            ->addOrderBy(['descripcion'], 'description', 1);
     }
 
-    protected function createViewsNotBalanced(string $viewName = 'ListAsiento-not')
+    protected function createViewsNotBalanced(string $viewName = 'ListAsiento-not'): void
     {
-        $idasientos = [];
+        $ids = [];
         $sql = 'SELECT partidas.idasiento, ABS(SUM(partidas.debe) - SUM(partidas.haber))'
-            . ' FROM partidas GROUP BY 1 HAVING ABS(SUM(partidas.debe) - SUM(partidas.haber)) >= 0.01';
+            . ' FROM partidas GROUP BY 1 HAVING ROUND(ABS(SUM(partidas.debe) - SUM(partidas.haber)), 2) >= 0.01';
+
+        if (Tools::config('db_type') === 'postgresql') {
+            $sql = 'SELECT partidas.idasiento, ABS(SUM(partidas.debe) - SUM(partidas.haber))'
+                . ' FROM partidas GROUP BY 1 HAVING ABS(SUM(partidas.debe) - SUM(partidas.haber)) >= 0.01';
+        }
+
         foreach ($this->dataBase->select($sql) as $row) {
-            $idasientos[] = $row['idasiento'];
+            $ids[] = $row['idasiento'];
+        }
+        if (empty($ids)) {
+            return;
         }
 
-        if (count($idasientos) > 0) {
-            $this->addView($viewName, 'Asiento', 'unbalance', 'fas fa-exclamation-circle');
-            $this->addOrderBy($viewName, ['fecha', 'idasiento'], 'date', 2);
-            $this->addOrderBy($viewName, ['numero', 'idasiento'], 'number');
-            $this->addOrderBy($viewName, ['importe', 'idasiento'], 'amount');
-            $this->addSearchFields($viewName, ['concepto', 'documento', 'CAST(numero AS char(255))']);
+        $this->addView($viewName, 'Asiento', 'unbalance', 'fas fa-exclamation-circle')
+            ->addSearchFields(['concepto', 'documento', 'CAST(numero AS char(255))'])
+            ->addOrderBy(['fecha', 'idasiento'], 'date', 2)
+            ->addOrderBy(['numero', 'idasiento'], 'number')
+            ->addOrderBy(['importe', 'idasiento'], 'amount');
 
-            // filter
-            $this->addFilterSelectWhere($viewName, 'status', [
-                [
-                    'label' => $this->toolBox()->i18n()->trans('unbalance'),
-                    'where' => [new DataBaseWhere('idasiento', join(',', $idasientos), 'IN')]
-                ]
-            ]);
-        }
+        // filter
+        $this->addFilterSelectWhere($viewName, 'status', [
+            [
+                'label' => Tools::lang()->trans('unbalance'),
+                'where' => [new DataBaseWhere('idasiento', join(',', $ids), 'IN')]
+            ]
+        ]);
     }
 
     /**
@@ -197,7 +204,7 @@ class ListAsiento extends ListController
     protected function lockEntriesAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -206,14 +213,14 @@ class ListAsiento extends ListController
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
         if (false === is_array($codes) || empty($model)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return;
         }
 
         $this->dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                $this->toolBox()->i18nLog()->error('record-not-found');
+                Tools::log()->error('record-not-found');
                 continue;
             } elseif (false === $model->editable) {
                 continue;
@@ -221,13 +228,13 @@ class ListAsiento extends ListController
 
             $model->editable = false;
             if (false === $model->save()) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 $this->dataBase->rollback();
                 return;
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $this->dataBase->commit();
         $model->clear();
     }
@@ -235,7 +242,7 @@ class ListAsiento extends ListController
     protected function renumberAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -244,12 +251,34 @@ class ListAsiento extends ListController
         $this->dataBase->beginTransaction();
         $codejercicio = $this->request->request->get('exercise');
         if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
-            $this->toolBox()->i18nLog()->notice('renumber-accounting-ok');
+            Tools::log()->notice('renumber-accounting-ok');
             $this->dataBase->commit();
             return;
         }
 
         $this->dataBase->rollback();
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
+    }
+
+    private function getSelectExercise(): array
+    {
+        $companyFilter = $this->request->request->get('filteridempresa', 0);
+        $exerciseFilter = $this->request->request->get('filtercodejercicio', '');
+        $where = empty($companyFilter) ? [] : [new DataBaseWhere('idempresa', $companyFilter)];
+        $result = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre', true, $where);
+        if (empty($exerciseFilter)) {
+            return $result;
+        }
+
+        // check if the selected exercise is in the list
+        foreach ($result as $exercise) {
+            if ($exerciseFilter === $exercise->code) {
+                return $result;
+            }
+        }
+
+        // remove exercise filter if it is not in the list
+        $this->request->request->set('filtercodejercicio', '');
+        return $result;
     }
 }

@@ -44,10 +44,10 @@ class ListFabricante extends ListController
     protected function createViews()
     {
         $viewName = 'ListFabricante';
-        $this->addView($viewName, 'Fabricante', 'manufacturers', 'fas fa-industry');
-        $this->addSearchFields($viewName, ['nombre', 'codfabricante']);
-        $this->addOrderBy($viewName, ['codfabricante'], 'code');
-        $this->addOrderBy($viewName, ['nombre'], 'name');
-        $this->addOrderBy($viewName, ['numproductos'], 'products');
+        $this->addView($viewName, 'Fabricante', 'manufacturers', 'fas fa-industry')
+            ->addSearchFields(['nombre', 'codfabricante'])
+            ->addOrderBy(['codfabricante'], 'code')
+            ->addOrderBy(['nombre'], 'name')
+            ->addOrderBy(['numproductos'], 'products');
     }
 }

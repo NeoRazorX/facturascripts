@@ -104,8 +104,8 @@
                     <values/>
                 </widget>
             </column>
-            <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="130">
-                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile"/>
+            <column name="logo" order="130">
+                <widget type="library" fieldname="idlogo" icon="fas fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.png"/>
             </column>
             <column name="observations" numcolumns="12" order="140">
                 <widget type="textarea" fieldname="observaciones"/>

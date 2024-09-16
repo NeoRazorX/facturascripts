@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view>
+    <columns>
+        <group name="data" numcolumns="12" valign="bottom">
+            <column name="id" numcolumns="2" order="100">
+                <widget type="text" fieldname="id" readonly="true"/>
+            </column>
+            <column name="name" numcolumns="5" order="110">
+                <widget type="text" fieldname="name" maxlength="100" readonly="true"/>
+            </column>
+            <column name="value" numcolumns="5" order="120">
+                <widget type="text" fieldname="value" maxlength="100" readonly="true"/>
+            </column>
+            <column name="creation-date" order="130">
+                <widget type="datetime" fieldname="creation_date" readonly="true" required="true"/>
+            </column>
+            <column name="done" order="140">
+                <widget type="checkbox" fieldname="done" readonly="true"/>
+            </column>
+            <column name="done-date" order="150">
+                <widget type="datetime" fieldname="done_date" readonly="true"/>
+            </column>
+            <column name="workers" order="160">
+                <widget type="number" fieldname="workers" readonly="true"/>
+            </column>
+            <column name="worker-list" numcolumns="12" order="170">
+                <widget type="textarea" fieldname="worker_list" readonly="true"/>
+            </column>
+        </group>
+    </columns>
+</view>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Variante;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -41,6 +42,7 @@ class CopyModel extends Controller
 {
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
     const TEMPLATE_ASIENTO = 'CopyAsiento';
+    const TEMPLATE_PRODUCTO = 'CopyProducto';
 
     /** @var CodeModel */
     public $codeModel;
@@ -78,10 +80,15 @@ class CopyModel extends Controller
         if ($action === 'autocomplete') {
             $this->autocompleteAction();
             return;
+        } elseif (false === $this->pipeFalse('execAction', $action, $this->codeModel)) {
+            return;
         } elseif (false === $this->loadModel()) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return;
         }
+
+        // creamos el título de la página
+        $this->title .= ' ' . $this->model->primaryDescription();
 
         // si no es un documento de compra o venta, cargamos su plantilla
         switch ($this->modelClass) {
@@ -90,11 +97,14 @@ class CopyModel extends Controller
                 break;
 
             case 'Producto':
-                $this->setTemplate('CopyProducto');
+                $this->setTemplate(self::TEMPLATE_PRODUCTO);
+                break;
+
+            default:
+                $this->pipe('before', $this->model);
                 break;
         }
 
-        $this->title .= ' ' . $this->model->primaryDescription();
         if ($action === 'save') {
             switch ($this->modelClass) {
                 case 'AlbaranCliente':
@@ -118,6 +128,10 @@ class CopyModel extends Controller
                 case 'Producto':
                     $this->saveProduct();
                     break;
+
+                default:
+                    $this->pipe('saveAction', $this->model, $this->codeModel);
+                    break;
             }
         }
     }
@@ -126,10 +140,12 @@ class CopyModel extends Controller
     {
         $this->setTemplate(false);
         $results = [];
-        $utils = $this->toolBox()->utils();
         $data = $this->request->request->all();
         foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
-            $results[] = ['key' => $utils->fixHtml($value->code), 'value' => $utils->fixHtml($value->description)];
+            $results[] = [
+                'key' => Tools::fixHtml($value->code),
+                'value' => Tools::fixHtml($value->description)
+            ];
         }
 
         $this->response->setContent(json_encode($results));
@@ -152,13 +168,13 @@ class CopyModel extends Controller
     {
         $lines = $newDoc->getLines();
         if (false === Calculator::calculate($newDoc, $lines, true)) {
-            $this->toolBox()->i18nLog()->warning('record-save-error');
+            Tools::log()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
         }
 
         $this->dataBase->commit();
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $this->redirect($newDoc->url() . '&action=save-ok');
     }
 
@@ -183,8 +199,19 @@ class CopyModel extends Controller
         $newEntry->importe = $this->model->importe;
 
         $fecha = $this->request->request->get('fecha');
-        if (false === $newEntry->setDate($fecha) || false === $newEntry->save()) {
-            $this->toolBox()->i18nLog()->warning('record-save-error');
+        if (false === $newEntry->setDate($fecha)) {
+            Tools::log()->warning('error-set-date');
+            $this->dataBase->rollback();
+            return;
+        }
+
+        if (false === $this->pipeFalse('beforeSaveAccounting', $newEntry)) {
+            $this->dataBase->rollback();
+            return;
+        }
+
+        if (false === $newEntry->save()) {
+            Tools::log()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
         }
@@ -193,15 +220,21 @@ class CopyModel extends Controller
         foreach ($this->model->getLines() as $line) {
             $newLine = $newEntry->getNewLine();
             $newLine->loadFromData($line->toArray(), ['idasiento', 'idpartida', 'idsubcuenta']);
+
+            if (false === $this->pipeFalse('beforeSaveAccountingLine', $newLine)) {
+                $this->dataBase->rollback();
+                return;
+            }
+
             if (false === $newLine->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
+                Tools::log()->warning('record-save-error');
                 $this->dataBase->rollback();
                 return;
             }
         }
 
         $this->dataBase->commit();
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $this->redirect($newEntry->url() . '&action=save-ok');
     }
 
@@ -214,7 +247,7 @@ class CopyModel extends Controller
         // buscamos el proveedor
         $subject = new Proveedor();
         if (false === $subject->loadFromCode($this->request->request->get('codproveedor'))) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return;
         }
 
@@ -234,8 +267,14 @@ class CopyModel extends Controller
         $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->numproveedor = $this->request->request->get('numproveedor');
         $newDoc->observaciones = $this->request->request->get('observaciones');
+
+        if (false === $this->pipeFalse('beforeSavePurchase', $newDoc)) {
+            $this->dataBase->rollback();
+            return;
+        }
+
         if (false === $newDoc->save()) {
-            $this->toolBox()->i18nLog()->warning('record-save-error');
+            Tools::log()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
         }
@@ -243,8 +282,14 @@ class CopyModel extends Controller
         // copiamos las líneas del documento
         foreach ($this->model->getLines() as $line) {
             $newLine = $newDoc->getNewLine($line->toArray());
+
+            if (false === $this->pipeFalse('beforeSavePurchaseLine', $newLine)) {
+                $this->dataBase->rollback();
+                return;
+            }
+
             if (false === $newLine->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
+                Tools::log()->warning('record-save-error');
                 $this->dataBase->rollback();
                 return;
             }
@@ -262,7 +307,7 @@ class CopyModel extends Controller
         // buscamos el cliente
         $subject = new Cliente();
         if (false === $subject->loadFromCode($this->request->request->get('codcliente'))) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
+            Tools::log()->warning('record-not-found');
             return;
         }
 
@@ -282,8 +327,14 @@ class CopyModel extends Controller
         $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->numero2 = $this->request->request->get('numero2');
         $newDoc->observaciones = $this->request->request->get('observaciones');
+
+        if (false === $this->pipeFalse('beforeSaveSales', $newDoc)) {
+            $this->dataBase->rollback();
+            return;
+        }
+
         if (false === $newDoc->save()) {
-            $this->toolBox()->i18nLog()->warning('record-save-error');
+            Tools::log()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
         }
@@ -291,8 +342,14 @@ class CopyModel extends Controller
         // copiamos las líneas del documento
         foreach ($this->model->getLines() as $line) {
             $newLine = $newDoc->getNewLine($line->toArray());
+
+            if (false === $this->pipeFalse('beforeSaveSalesLine', $newLine)) {
+                $this->dataBase->rollback();
+                return;
+            }
+
             if (false === $newLine->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
+                Tools::log()->warning('record-save-error');
                 $this->dataBase->rollback();
                 return;
             }
@@ -331,8 +388,13 @@ class CopyModel extends Controller
         $productoDestino->descripcion = $this->request->request->get('descripcion');
         $productoDestino->referencia = $this->request->request->get('referencia');
 
+        if (false === $this->pipeFalse('beforeSaveProduct', $productoDestino)) {
+            $this->dataBase->rollback();
+            return;
+        }
+
         if (false === $productoDestino->save()) {
-            $this->toolBox()->i18nLog()->warning('record-save-error');
+            Tools::log()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
         }
@@ -345,7 +407,7 @@ class CopyModel extends Controller
             // Como al crear un producto siempre se crea
             // una variante principal aprovechamos esta
             // y la modificamos para que el producto destino
-            // no tenga una variante mas que el producto origen
+            // no tenga una variante más que el producto origen
             if ($variante === reset($variantesProductoOrigen)) {
                 // si es el primer elemento del array, modificamos la variante existente
                 $varianteDestino = $productoDestino->getVariants()[0];
@@ -361,15 +423,21 @@ class CopyModel extends Controller
 
             // asignamos variantes al producto nuevo
             $varianteDestino->idproducto = $productoDestino->idproducto;
+
+            if (false === $this->pipeFalse('beforeSaveVariant', $varianteDestino)) {
+                $this->dataBase->rollback();
+                return;
+            }
+
             if (false === $varianteDestino->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
+                Tools::log()->warning('record-save-error');
                 $this->dataBase->rollback();
                 return;
             }
         }
 
         $this->dataBase->commit();
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $this->redirect($productoDestino->url() . '&action=save-ok');
     }
 }

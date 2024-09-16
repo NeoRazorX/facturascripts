@@ -1,18 +1,26 @@
-<div class="col-12 text-secondary" style="font-size: smaller">
-    <div class="row text-info">
-        <div class="col-6"><h4>{{ i18n.trans('general-concepts') }}</h4></div>
-        <div class="col-6"><h4>{{ i18n.trans('wildcard-title') }}</h4></div>
-    </div>
-    <div class="row">
-        <div class="col-6">
-            <div class="row"><div class="col-3"><b>{{ i18n.trans('wildcard') }}</b></div><div class="col-9">{{ i18n.trans('wildcard-general-info') }}</div></div>
-        </div>
-        <div class="col-6">
-            <div class="row"><div class="col-3"><b>%document%</b></div><div class="col-9">{{ i18n.trans('document-wildcard-info') }}</div></div>
-            <div class="row"><div class="col-3"><b>%date%</b></div><div class="col-9">{{ i18n.trans('date-wildcard-info') }}</div></div>
-            <div class="row"><div class="col-3"><b>%date-entry%</b></div><div class="col-9">{{ i18n.trans('dateentry-wildcard-info') }}</div></div>
-            <div class="row"><div class="col-3"><b>%month%</b></div><div class="col-9">{{ i18n.trans('month-wildcard-info') }}</div></div>
-            <div class="row"><div class="col-3"><b>%year%</b></div><div class="col-9">{{ i18n.trans('year-wildcard-info') }}</div></div>
-        </div>
-    </div>
+<h4 class="text-info">{{ trans('general-concepts') }}</h4>
+<div class="form-row">
+    <div class="col-sm-3 font-weight-bold">{{ trans('wildcard') }}</div>
+    <div class="col-sm-9">{{ trans('wildcard-general-info') }}</div>
+</div>
+<h4 class="mt-4 text-info">{{ trans('wildcard-title') }}</h4>
+<div class="form-row">
+    <div class="col-sm-3 font-weight-bold">%document%</div>
+    <div class="col-sm-9">{{ trans('document-wildcard-info') }}</div>
+</div>
+<div class="form-row">
+    <div class="col-sm-3 font-weight-bold">%date%</div>
+    <div class="col-sm-9">{{ trans('date-wildcard-info') }}</div>
+</div>
+<div class="form-row">
+    <div class="col-sm-3 font-weight-bold">%date-entry%</div>
+    <div class="col-sm-9">{{ trans('dateentry-wildcard-info') }}</div>
+</div>
+<div class="form-row">
+    <div class="col-sm-3 font-weight-bold">%month%</div>
+    <div class="col-sm-9">{{ trans('month-wildcard-info') }}</div>
+</div>
+<div class="form-row">
+    <div class="col-sm-3 font-weight-bold">%year%</div>
+    <div class="col-sm-9">{{ trans('year-wildcard-info') }}</div>
 </div>

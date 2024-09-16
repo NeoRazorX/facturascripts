@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table>
+    <column>
+        <name>debaja</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
+        <name>email</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>fechaalta</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>fechabaja</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>hora</name>
+        <type>time</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+    </column>
+    <column>
+        <name>importe</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>lastactivity</name>
+        <type>timestamp</type>
+    </column>
+    <column>
+        <name>numero</name>
+        <type>integer</type>
+        <null>NO</null>
+        <default>7</default>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
+    </column>
+    <constraint>
+        <name>test_table_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+</table>

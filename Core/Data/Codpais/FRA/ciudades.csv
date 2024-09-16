@@ -1,0 +1,986 @@
+ciudad,idprovincia,codeid,latitude,longitude
+Abbeville,32,,50.10521,1.83547
+Agde,76,,43.31083,3.47583
+Agen,75,,44.20199,0.62055
+Aigueblanche,84,,45.50455,6.50184
+"Aiguille Verte",84,,45.9359,6.96915
+Aime,84,,45.55559,6.65042
+Aire-sur-la-Lys,32,,50.63871,2.39876
+Aix-en-Provence,93,,43.5283,5.44973
+Aix-les-Bains,84,,45.69173,5.90863
+Ajaccio,94,,41.91886,8.73812
+Albert,32,,50.00091,2.65096
+Albertville,84,,45.67452,6.39061
+Albi,76,,43.9298,2.148
+Alençon,28,,48.43476,0.09311
+Alès,76,,44.12489,4.08082
+Alfortville,11,,48.80575,2.4204
+Allonnes,52,,47.96744,0.16023
+Altkirch,44,,47.62417,7.23954
+Ambérieu-en-Bugey,84,,45.95932,5.3516
+Amboise,24,,47.41249,0.98266
+Amiens,32,,49.9,2.3
+Amnéville,44,,49.25671,6.13414
+Ancenis,52,,47.36667,-1.16667
+Andrézieux-Bouthéon,84,,45.52625,4.26021
+Angers,52,,47.47156,-0.55202
+Anglet,75,,43.48921,-1.51921
+Angoulême,75,,45.64997,0.15345
+Annecy,84,,45.90878,6.12565
+Annecy-le-Vieux,84,,45.91971,6.14393
+Annemasse,84,,46.19439,6.23775
+Annonay,84,,45.23992,4.6707
+Antibes,93,,43.58127,7.12487
+Antony,11,,48.75329,2.29668
+Aquitaine,97,,44.33333,-0.25
+Arbois,27,,46.90311,5.77454
+Arcachon,75,,44.66126,-1.17255
+Arcueil,11,,48.79993,2.33256
+Argeles,76,,42.54714,3.02253
+Argentan,28,,48.74441,-0.02023
+Argenteuil,11,,48.94788,2.24744
+Arles,93,,43.67681,4.63031
+Armentières,32,,50.68568,2.88214
+Arpajon,11,,48.58875,2.24672
+Arras,32,,50.29301,2.78186
+Asnières-sur-Seine,11,,48.91667,2.28333
+Athis-Mons,11,,48.70522,2.39147
+Aubagne,93,,43.29276,5.57067
+Aubenas,84,,44.61975,4.39033
+Aubergenville,11,,48.95996,1.85467
+Aubervilliers,11,,48.91667,2.38333
+Aubière,84,,45.75082,3.11078
+Auch,76,,43.64561,0.58856
+Audincourt,27,,47.48327,6.85341
+Aulnay-sous-Bois,11,,48.93814,2.49402
+Auray,53,,47.66692,-2.98421
+Aurillac,84,,44.92539,2.43983
+Autun,27,,46.95104,4.29869
+Auvergne-Rhône-Alpes,84,,45.482,5.37437
+Auxerre,27,,47.7996,3.57033
+Avallon,27,,47.49002,3.90832
+Avignon,93,,43.94834,4.80892
+Avon,11,,48.40219,2.72022
+Avranches,28,,48.68436,-1.35686
+Avrillé,52,,47.50663,-0.58955
+Aytré,75,,46.13417,-1.11826
+Bagnères-de-Bigorre,76,,43.06497,0.14876
+Bagneux,11,,48.79565,2.30796
+Bagnolet,11,,48.86667,2.41667
+Bagnols-sur-Cèze,76,,44.16259,4.61974
+Balma,76,,43.61111,1.49944
+Bapaume,32,,50.10379,2.84966
+Bar-le-Duc,44,,48.77275,5.16108
+Barr,44,,48.40755,7.44873
+Bastia,94,,42.70219,9.45123
+Baume-les-Dames,27,,47.35295,6.36117
+Bayeux,28,,49.27732,-0.7039
+Bayonne,75,,43.49316,-1.473
+Beaucaire,76,,43.80806,4.64417
+Beaumont-Hague,28,,49.66387,-1.83822
+Beaune,27,,47.02413,4.83887
+Beauvais,32,,49.43333,2.08333
+Bègles,75,,44.80759,-0.55144
+Belfort,27,,47.64218,6.85385
+Bellegarde-sur-Valserine,84,,46.10787,5.82421
+Belleville,84,,46.10867,4.7492
+Belley,84,,45.75917,5.68813
+Benfeld,44,,48.37062,7.5937
+Berck,32,,50.4,1.6
+Bergerac,75,,44.85157,0.48171
+Bernay,28,,49.08888,0.59858
+Berre-l'Étang,93,,43.47809,5.17044
+Besançon,27,,47.24878,6.01815
+Béthune,32,,50.52965,2.64003
+Béziers,76,,43.34122,3.21402
+Bezons,11,,48.92426,2.2128
+Biarritz,75,,43.48055,-1.55684
+Bièvres,11,,48.75772,2.21881
+Billère,75,,43.30264,-0.39733
+Biscarrosse,75,,44.39454,-1.16721
+Bischheim,44,,48.61612,7.75343
+Bischwiller,44,,48.76826,7.85406
+Bitche,44,,49.05232,7.42992
+Blagnac,76,,43.63675,1.38971
+Blanquefort,75,,44.91065,-0.63758
+Blaye,75,,45.12764,-0.66225
+Blois,24,,47.59432,1.32912
+Bobigny,11,,48.90982,2.45012
+Boé,75,,44.1602,0.6281
+Bois-Colombes,11,,48.91936,2.27485
+Bois-Guillaume,28,,49.4602,1.12219
+Boissy-Saint-Léger,11,,48.75149,2.51163
+Bollène,93,,44.28124,4.74891
+Bondoufle,11,,48.61294,2.37775
+Bondues,32,,50.70196,3.09497
+Bondy,11,,48.9018,2.48931
+Bonneuil-sur-Marne,11,,48.7695,2.4793
+Bonneville,84,,46.0802,6.40726
+Bordeaux,75,,44.84044,-0.5805
+Bormes-les-Mimosas,93,,43.15169,6.3422
+Bouguenais,52,,47.17941,-1.62468
+Boulogne-Billancourt,11,,48.83545,2.24128
+Boulogne-sur-Mer,32,,50.72485,1.61373
+Bourg-de-Péage,84,,45.03151,5.04993
+Bourg-en-Bresse,84,,46.20574,5.2258
+Bourg-lès-Valence,84,,44.94703,4.89463
+Bourg-Saint-Maurice,84,,45.61463,6.76845
+Bourges,24,,47.08333,2.4
+Bourgogne-Franche-Comté,27,,47.06981,5.04822
+Bourgoin-Jallieu,84,,45.58611,5.27361
+Bressuire,75,,46.84158,-0.49042
+Brest,53,,48.39029,-4.48628
+Brétigny-sur-Orge,11,,48.61135,2.30593
+Briançon,93,,44.89978,6.64201
+Brie-Comte-Robert,11,,48.69247,2.6109
+Brignoles,93,,43.4058,6.06172
+Brittany,53,,48.16667,-2.83333
+Brive-la-Gaillarde,75,,45.1589,1.53326
+Bron,84,,45.73865,4.91303
+Bruay-la-Buissière,32,,50.48333,2.55
+Bruges,75,,44.88287,-0.61222
+Brumath,44,,48.73398,7.71095
+Brunoy,11,,48.6942,2.49223
+Bruz,53,,48.02459,-1.74709
+Bry-sur-Marne,11,,48.83811,2.52488
+Cabestany,76,,42.68141,2.9409
+Cabriès,93,,43.44127,5.37884
+Cachan,11,,48.79632,2.33661
+Caen,28,,49.18585,-0.35912
+Cagnes-sur-Mer,93,,43.66352,7.1479
+Cahors,76,,44.4491,1.43663
+Calais,32,,50.95194,1.85635
+Caluire-et-Cuire,84,,45.79462,4.8464
+Cambrai,32,,50.17596,3.23472
+Canet-en-Roussillon,76,,42.7,3.01667
+Cannes,93,,43.55135,7.01275
+Carbon-Blanc,75,,44.89501,-0.50175
+Carcassonne,76,,43.21649,2.34863
+Carhaix-Plouguer,53,,48.27594,-3.57326
+Carnac,53,,47.58433,-3.07872
+Carpentras,93,,44.05507,5.04813
+Carpiquet,28,,49.18522,-0.44623
+Carquefou,52,,47.29722,-1.4921
+Carrières-sur-Seine,11,,48.90687,2.1792
+Carros,93,,43.79246,7.18745
+Carvin,32,,50.49235,2.95815
+Castanet-Tolosan,76,,43.5159,1.4986
+Castelnau-le-Lez,76,,43.63605,3.90137
+Castelnaudary,76,,43.31814,1.95339
+Castelsarrasin,76,,44.04042,1.10666
+Castres,76,,43.60527,2.24088
+Caudan,53,,47.80995,-3.34255
+Caudry,32,,50.1249,3.41186
+Cauterets,76,,42.8892,-0.11412
+Cavaillon,93,,43.83125,5.03586
+Cenon,75,,44.85614,-0.53355
+"Centre-Val de Loire",24,,47.5,1.75
+Ceret,76,,42.48533,2.74804
+Cergy,11,,49.03645,2.07613
+Cergy-Pontoise,11,,49.03889,2.07704
+Cerizay,75,,46.8215,-0.66492
+Cernay,44,,47.8097,7.17699
+Cesson,11,,48.56204,2.60816
+Cesson-Sévigné,53,,48.1212,-1.603
+Cestas,75,,44.74471,-0.68194
+Châlette-sur-Loing,24,,48.01337,2.73587
+Challans,52,,46.8458,-1.87942
+Challes-les-Eaux,84,,45.54685,5.98098
+Chalon-sur-Saône,27,,46.78112,4.85372
+Châlons-en-Champagne,44,,48.95393,4.36724
+Chamalières,84,,45.77364,3.06703
+Chambéry,84,,45.56628,5.92079
+Chambourcy,11,,48.90655,2.041
+Chambray-lès-Tours,24,,47.33537,0.70286
+Chamonix,84,,45.92375,6.86933
+Champagne,44,,49,4.5
+Champagne-au-Mont-d'Or,84,,45.79475,4.79079
+Champagnole,27,,46.74452,5.91354
+Champigny-sur-Marne,11,,48.81642,2.49366
+Chantepie,53,,48.08818,-1.61691
+Chantilly,32,,49.19461,2.47124
+Chantonnay,52,,46.68716,-1.05109
+Charenton-le-Pont,11,,48.82209,2.41217
+Charleville-Mézières,44,,49.7685,4.72487
+Charmes,44,,48.3722,6.29117
+Chartres,24,,48.44685,1.48925
+Chartres-de-Bretagne,53,,48.03975,-1.70543
+Chassieu,84,,45.74584,4.97088
+Château-Gontier,52,,47.82705,-0.70512
+Château-Thierry,32,,49.04636,3.40304
+Châteaubriant,52,,47.71675,-1.37643
+Châteaudun,24,,48.07086,1.33783
+Châteauneuf-du-Pape,93,,44.05638,4.83244
+Châteauneuf-les-Martigues,93,,43.38383,5.16403
+Châteaurenard,93,,43.88169,4.85493
+Châteauroux,24,,46.81248,1.69362
+Châtellerault,75,,46.81705,0.54518
+Châtenay-Malabry,11,,48.76507,2.26655
+Châtillon,11,,48.8024,2.29346
+Châtillon-sur-Seine,27,,47.85851,4.57375
+Chatou,11,,48.8898,2.15863
+Chaumont,44,,48.11121,5.14134
+Chauny,32,,49.61514,3.21857
+Chauray,75,,46.36066,-0.37753
+Chaville,11,,48.80565,2.18864
+Chécy,24,,47.89402,2.02304
+Chelles,11,,48.88109,2.59295
+Chennevières-sur-Marne,11,,48.79702,2.54046
+Chenôve,27,,47.29323,5.00457
+Cherbourg-Octeville,28,,49.63984,-1.61636
+Chevilly-Larue,11,,48.76476,2.3503
+Chilly-Mazarin,11,,48.71489,2.31638
+Chinon,24,,47.16701,0.24284
+Choisy-le-Roi,11,,48.76846,2.41874
+Cholet,52,,47.05893,-0.87974
+Clamart,11,,48.80299,2.26692
+Clamecy,27,,47.46017,3.5194
+Claye-Souilly,11,,48.94492,2.68566
+Clermont,32,,49.37897,2.41258
+Clermont-Ferrand,84,,45.77969,3.08682
+Clichy,11,,48.90018,2.30952
+Clichy-sous-Bois,11,,48.9102,2.55323
+Clisson,52,,47.0871,-1.28297
+Cluses,84,,46.06251,6.57497
+Cognac,75,,45.69581,-0.32867
+Cogolin,93,,43.25294,6.52981
+Colmar,44,,48.08078,7.35584
+Colombelles,28,,49.2049,-0.29571
+Colombes,11,,48.91882,2.25404
+Colomiers,76,,43.61058,1.33467
+Combs-la-Ville,11,,48.66497,2.56957
+Comines,32,,50.7615,3.01063
+Commercy,44,,48.76128,5.59067
+Compiègne,32,,49.41794,2.82606
+"Comtat Venaissin",93,,44,5
+Concarneau,53,,47.87536,-3.91896
+Conflans-Sainte-Honorine,11,,49.00158,2.09694
+Contrexéville,44,,48.18424,5.89572
+Coquelles,32,,50.93461,1.7988
+Corbas,84,,45.66798,4.90198
+Corbeil-Essonnes,11,,48.60603,2.48757
+Corse,94,,41.98859,8.99827
+Corsica,94,,42.06153,8.9542
+Cosne-Cours-sur-Loire,27,,47.41101,2.92528
+Côte-d'Or,27,,47.16667,4.83333
+Coudekerque-Branche,32,,51.02288,2.39359
+Coulommiers,11,,48.81451,3.08498
+Courbevoie,11,,48.89672,2.25666
+Courchevel,84,,45.41538,6.63643
+Cournon-d'Auvergne,84,,45.74123,3.19643
+Coutances,28,,49.04541,-1.44518
+Cran-Gevrier,84,,45.9,6.1
+Creil,32,,49.25672,2.48477
+Crépy-en-Valois,32,,49.23359,2.88807
+Créteil,11,,48.79266,2.46569
+Croissy-sur-Seine,11,,48.87925,2.13836
+Croix,32,,50.67846,3.1493
+Crolles,84,,45.27724,5.87837
+Cusset,84,,46.13452,3.45639
+Dammarie-les-Lys,11,,48.51667,2.65
+Dammartin-en-Goële,11,,49.05423,2.67777
+Dardilly,84,,45.80558,4.75319
+Darnétal,28,,49.44533,1.15144
+Dax,75,,43.71032,-1.05366
+Deauville,28,,49.357,0.06995
+Décines-Charpieu,84,,45.76873,4.95883
+Decize,27,,46.82852,3.46192
+Denain,32,,50.3293,3.3943
+Deuil-la-Barre,11,,48.97674,2.32722
+Dieppe,28,,49.9216,1.07772
+Digne-les-Bains,93,,44.09252,6.23199
+Dijon,27,,47.31667,5.01667
+Dinan,53,,48.45553,-2.05049
+Dinard,53,,48.63293,-2.06274
+Dives-sur-Mer,28,,49.28176,-0.10125
+Dole,27,,47.09225,5.48966
+Domont,11,,49.02782,2.32638
+Douai,32,,50.37069,3.07922
+Douarnenez,53,,48.09542,-4.32904
+Dourdan,11,,48.52772,2.01113
+Draguignan,93,,43.53692,6.46458
+Drancy,11,,48.92578,2.44533
+Draveil,11,,48.68466,2.41418
+Dreux,24,,48.73649,1.36566
+Dunkirk,32,,51.0344,2.37681
+Eaubonne,11,,48.99712,2.28249
+Échirolles,84,,45.14603,5.71441
+Élancourt,11,,48.78421,1.9552
+Elbeuf,28,,49.28669,1.00288
+Épernay,44,,49.04,3.95922
+Épinal,44,,48.18324,6.45304
+Épinay-sur-Seine,11,,48.9535,2.31514
+Ermont,11,,48.99004,2.25804
+Erstein,44,,48.42373,7.66262
+Essey-lès-Nancy,44,,48.705,6.22691
+Étampes,11,,48.43507,2.16233
+Évian-les-Bains,84,,46.40111,6.58793
+Évreux,28,,49.02414,1.15082
+Évry,11,,48.6328,2.44049
+Eybens,84,,45.14771,5.75014
+Faulquemont,44,,49.0491,6.59732
+Fécamp,28,,49.75787,0.37457
+Ferney-Voltaire,84,,46.25858,6.11063
+Figeac,76,,44.60894,2.03155
+Firminy,84,,45.38956,4.2886
+Flers,28,,48.73722,-0.57466
+Fleurance,76,,43.8494,0.66298
+Fleury-les-Aubrais,24,,47.93328,1.91811
+Floirac,75,,44.83061,-0.52675
+Foix,76,,42.96535,1.60705
+Fontaine,84,,45.19275,5.68821
+Fontainebleau,11,,48.40908,2.70177
+Fontenay-aux-Roses,11,,48.79325,2.29275
+Fontenay-le-Comte,52,,46.46671,-0.80624
+Fontenay-sous-Bois,11,,48.85442,2.48268
+Forbach,44,,49.18848,6.89255
+Fos-sur-Mer,93,,43.43774,4.94457
+Fosses,11,,49.09808,2.50957
+Fougères,53,,48.35157,-1.19961
+Franconville,11,,48.98333,2.23333
+Fréjus,93,,43.43325,6.73555
+Fresnes,11,,48.75568,2.32241
+Freyming-Merlebach,44,,49.15,6.78333
+Friville-Escarbotin,32,,50.08602,1.5456
+Frontignan,76,,43.44775,3.75524
+Gagny,11,,48.88333,2.53333
+Gaillac,76,,43.9016,1.89686
+Gap,93,,44.55858,6.07868
+Gardanne,93,,43.45491,5.46913
+Garges-lès-Gonesse,11,,48.96791,2.39781
+Gascony,76,,43.5,0
+Gémenos,93,,43.29751,5.62843
+Genas,84,,45.73131,5.00211
+Gennevilliers,11,,48.93333,2.3
+Gentilly,11,,48.81294,2.3417
+Gérardmer,44,,48.07346,6.87787
+Gien,24,,47.69332,2.63094
+Gif-sur-Yvette,11,,48.68333,2.13333
+Givors,84,,45.59063,4.76878
+Golbey,44,,48.19764,6.43966
+Gonesse,11,,48.98693,2.44892
+Goussainville,11,,49.01367,2.46595
+Gradignan,75,,44.77362,-0.61395
+"Grand Est",44,,48.69821,5.8667
+Granville,28,,48.83792,-1.59714
+Grasse,93,,43.65783,6.92537
+Graulhet,76,,43.76688,1.98938
+Grenoble,84,,45.17869,5.71479
+Grigny,11,,48.65412,2.39343
+Guebwiller,44,,47.91667,7.2
+Guérande,52,,47.32829,-2.42934
+Guéret,75,,46.17185,1.87166
+Guilherand-Granges,84,,44.93278,4.87372
+Guingamp,53,,48.56259,-3.15289
+Guyancourt,11,,48.77334,2.07393
+Hœrdt,44,,48.69763,7.78286
+Hagondange,44,,49.24879,6.16374
+Haguenau,44,,48.81557,7.79051
+Halluin,32,,50.78628,3.12611
+Hauts-de-France,32,,49.61232,2.65594
+Hayange,44,,49.32881,6.06278
+Hazebrouck,32,,50.72374,2.53729
+Hendaye,75,,43.35809,-1.7744
+Hénin-Beaumont,32,,50.41359,2.96485
+Hennebont,53,,47.80479,-3.27812
+Herblay,11,,48.98994,2.1699
+Hérouville-Saint-Clair,28,,49.21088,-0.30653
+Honfleur,28,,49.41985,0.23294
+Houilles,11,,48.92161,2.19263
+Hyères,93,,43.12038,6.12857
+Illkirch-Graffenstaden,44,,48.52894,7.71523
+Illzach,44,,47.7742,7.35175
+Issoire,84,,45.54422,3.24901
+Issoudun,24,,46.94848,1.99362
+Issy-les-Moulineaux,11,,48.82104,2.27718
+Istres,93,,43.51345,4.98747
+Ivry-sur-Seine,11,,48.81568,2.38487
+Jaunay-Clan,75,,46.68503,0.37179
+Joigny,27,,47.98288,3.40096
+Joinville-le-Pont,11,,48.82538,2.47458
+Joué-lès-Tours,24,,47.34907,0.66513
+Jouy-en-Josas,11,,48.75909,2.16966
+Juvisy-sur-Orge,11,,48.68333,2.38333
+Kingersheim,44,,47.791,7.32647
+L'Aigle,28,,48.76216,0.62746
+L'Haÿ-les-Roses,11,,48.77935,2.33729
+L'Isle-sur-la-Sorgue,93,,43.91971,5.05141
+L'Union,76,,43.66042,1.48264
+"La Baule-Escoublac",52,,47.29221,-2.36395
+"La Celle-Saint-Cloud",11,,48.85029,2.14523
+"La Chapelle-Saint-Luc",44,,48.31734,4.03988
+"La Chapelle-sur-Erdre",52,,47.29964,-1.55239
+"La Charité-sur-Loire",27,,47.18333,3.01667
+"La Ciotat",93,,43.17476,5.60449
+"La Courneuve",11,,48.92805,2.39627
+"La Defense",11,,48.89187,2.23898
+"La Ferté-Bernard",52,,48.18723,0.65247
+"La Ferté-sous-Jouarre",11,,48.9514,3.12724
+"La Flèche",52,,47.69815,-0.07553
+"La Gacilly",53,,47.76532,-2.13208
+"La Garde",93,,43.12468,6.01033
+"La Garenne-Colombes",11,,48.90472,2.2469
+"La Madeleine",32,,50.64603,3.07585
+"La Motte-Servolex",84,,45.59702,5.86724
+"La Plaine-Saint-Denis",11,,48.90851,2.36379
+"La Ravoire",84,,45.56266,5.95826
+"La Réole",75,,44.58239,-0.03857
+"La Roche-sur-Foron",84,,46.07111,6.3045
+"La Roche-sur-Yon",52,,46.66974,-1.42757
+"La Rochelle",75,,46.16308,-1.15222
+"La Seyne-sur-Mer",93,,43.10322,5.87816
+"La Talaudière",84,,45.47603,4.42607
+"La Teste-de-Buch",75,,44.63278,-1.14513
+"La Tour-du-Pin",84,,45.566,5.44487
+"La Trinité",93,,43.7405,7.314
+"La Tronche",84,,45.20507,5.74629
+"La Valette-du-Var",93,,43.13763,5.98317
+Labège,76,,43.52935,1.52999
+Lacroix-Saint-Ouen,32,,49.35685,2.78803
+Lagnieu,84,,45.90237,5.34399
+Lagny-sur-Marne,11,,48.86667,2.71667
+Lamballe,53,,48.46808,-2.51781
+Lambersart,32,,50.65,3.03333
+Landerneau,53,,48.4515,-4.25175
+Landivisiau,53,,48.50906,-4.06906
+Lanester,53,,47.76316,-3.3393
+Langon,75,,44.55277,-0.24986
+Langres,44,,47.86263,5.33308
+Languedoc-Roussillon,76,,43.66667,3.16667
+Lannemezan,76,,43.12517,0.38401
+Lannion,53,,48.73264,-3.45657
+Laon,32,,49.5631,3.62714
+LArbresle,84,,45.83556,4.61694
+Lattes,76,,43.56775,3.90279
+Laval,52,,48.07247,-0.77019
+Lavaur,76,,43.69886,1.81211
+Laxou,44,,48.68372,6.14929
+"Le Barcarès",76,,42.78773,3.03656
+"Le Blanc-Mesnil",11,,48.93872,2.46138
+"Le Bourget",11,,48.93405,2.43584
+"Le Bourget-du-Lac",84,,45.65362,5.8549
+"Le Bouscat",75,,44.86488,-0.59864
+"Le Cannet",93,,43.57662,7.01912
+"Le Chambon-Feugerolles",84,,45.39145,4.32149
+"Le Chesnay",11,,48.8222,2.12213
+"Le Coteau",84,,46.01919,4.0923
+"Le Creusot",27,,46.80714,4.41632
+"Le Grand-Quevilly",28,,49.40076,1.04582
+"Le Havre",28,,49.49346,0.10785
+"Le Kremlin-Bicêtre",11,,48.81471,2.36073
+"Le Mans",52,,48.0021,0.20251
+"Le Pecq",11,,48.89317,2.10371
+"Le Perreux-sur-Marne",11,,48.85,2.5
+"Le Petit-Quevilly",28,,49.41338,1.06155
+"Le Plessis-Robinson",11,,48.78889,2.27078
+"Le Pont-de-Claix",84,,45.12321,5.69782
+"Le Pontet",93,,43.96119,4.86008
+"Le Pré-Saint-Gervais",11,,48.88549,2.40422
+"Le Puy-en-Velay",84,,45.04366,3.88523
+"Le Raincy",11,,48.89916,2.52298
+"Le Rheu",53,,48.1019,-1.79565
+"Le Teil",84,,44.54531,4.68223
+"Le Thillot",44,,47.87941,6.76279
+"Le Vésinet",11,,48.89281,2.13308
+Lens,32,,50.43302,2.82791
+"Les Andelys",28,,49.24557,1.41168
+"Les Clayes-sous-Bois",11,,48.82206,1.98677
+"Les Herbiers",52,,46.87095,-1.0156
+"Les Lilas",11,,48.87992,2.42057
+"Les Mureaux",11,,48.99173,1.90972
+"Les Pennes-Mirabeau",93,,43.41012,5.30838
+"Les Ponts-de-Cé",52,,47.42315,-0.52477
+"Les Sables-d'Olonne",52,,46.49687,-1.7847
+Lescar,75,,43.33358,-0.43458
+Lesquin,32,,50.58232,3.119
+Lestrem,32,,50.61987,2.68646
+Levallois-Perret,11,,48.89389,2.28864
+Lézignan-Corbières,76,,43.20085,2.75745
+Libourne,75,,44.91449,-0.24186
+Liévin,32,,50.4198,2.78068
+Liffré,53,,48.21371,-1.50898
+Lille,32,,50.63297,3.05858
+Lillers,32,,50.56345,2.48042
+Limeil-Brévannes,11,,48.7448,2.48705
+Limoges,75,,45.83362,1.24759
+Lisieux,28,,49.1466,0.22925
+Livry-Gargan,11,,48.9193,2.54305
+Locminé,53,,47.887,-2.83575
+Lognes,11,,48.83541,2.62998
+Lomme,32,,50.64358,2.98715
+Longjumeau,11,,48.69307,2.29431
+Longueau,32,,49.87226,2.3588
+Longuenesse,32,,50.73395,2.2352
+Longvic,27,,47.28754,5.06341
+Longwy,44,,49.5217,5.76192
+Lons-le-Saunier,27,,46.67535,5.55575
+Lorient,53,,47.74817,-3.37177
+Lormont,75,,44.8765,-0.51919
+Loudéac,53,,48.1776,-2.7558
+Loudun,75,,47.00788,0.08296
+Lourdes,76,,43.09461,-0.04611
+Louviers,28,,49.21667,1.16667
+Lucé,24,,48.43689,1.46359
+Luçon,52,,46.45493,-1.16629
+Ludres,44,,48.62032,6.16747
+Lunel,76,,43.67778,4.13611
+Lunéville,44,,48.59273,6.49383
+Luxeuil-les-Bains,27,,47.8171,6.365
+Lyon,84,,45.74846,4.84671
+Lys-lez-Lannoy,32,,50.66667,3.21667
+Mâcon,27,,46.31407,4.82823
+Mainvilliers,24,,48.45003,1.45607
+Maisons-Alfort,11,,48.81171,2.43945
+Maisons-Laffitte,11,,48.95264,2.14521
+Maizières-lès-Metz,44,,49.21335,6.15956
+Malakoff,11,,48.81999,2.29998
+Manosque,93,,43.82883,5.78688
+Mantes-la-Jolie,11,,48.99048,1.7167
+Marcq-en-Barœul,32,,50.66667,3.08333
+Marignane,93,,43.41727,5.21462
+Marly,44,,49.06382,6.15427
+Marly-le-Roi,11,,48.86667,2.08333
+Marmande,75,,44.50361,0.16546
+Maromme,28,,49.47925,1.02375
+Marseille,93,,43.29695,5.38107
+Martigues,93,,43.40735,5.05526
+Massy,11,,48.72692,2.28301
+Maubeuge,32,,50.27875,3.97267
+Mauguio,76,,43.61692,4.00739
+Maurepas,11,,48.76486,1.92923
+Mazamet,76,,43.49275,2.3736
+Meaux,11,,48.96014,2.87885
+Melun,11,,48.5457,2.65356
+Mende,76,,44.52161,3.49978
+Menton,93,,43.77649,7.50435
+Mérignac,75,,44.84247,-0.64512
+Méru,32,,49.23333,2.13333
+Metz,44,,49.11911,6.17269
+Meudon,11,,48.81381,2.235
+Meylan,84,,45.20978,5.77762
+Meyzieu,84,,45.76637,5.00277
+Millau,76,,44.09973,3.07848
+Miramas,93,,43.58508,5.00268
+Mirecourt,44,,48.30089,6.13282
+Miribel,84,,45.8258,4.9544
+Mitry-Mory,11,,48.98333,2.61667
+Moissy-Cramayel,11,,48.62605,2.60125
+Molsheim,44,,48.54042,7.49199
+"Mont Blanc",84,,45.833,6.864
+"Mont Blanc du Tacul",84,,45.8573,6.8876
+Mont-de-Marsan,75,,43.89022,-0.49713
+Mont-Saint-Aignan,28,,49.46307,1.09364
+Montaigu,52,,46.97462,-1.31067
+Montargis,24,,47.99696,2.73261
+Montauban,76,,44.01759,1.3542
+Montbéliard,27,,47.50957,6.79823
+Montbrison,84,,45.60752,4.06525
+Montceau-les-Mines,27,,46.66667,4.36667
+Montélimar,84,,44.55468,4.75469
+Montereau-Fault-Yonne,11,,48.38333,2.95
+Montesson,11,,48.90924,2.13754
+Montfort-sur-Meu,53,,48.13762,-1.95585
+Montigny-lès-Metz,44,,49.0956,6.15271
+Montluçon,84,,46.34015,2.60254
+Montluel,84,,45.8519,5.0578
+Montmélian,84,,45.50509,6.05634
+Montmorency,11,,48.98826,2.3434
+Montpellier,76,,43.61093,3.87635
+Montreuil,11,,48.86415,2.44322
+Montrouge,11,,48.8162,2.31393
+Morangis,11,,48.70383,2.33908
+Moret-sur-Loing,11,,48.37239,2.81713
+Morez,27,,46.5254,6.02589
+Morlaix,53,,48.57784,-3.82792
+Mougins,93,,43.60068,6.99523
+Moulins,84,,46.56459,3.33243
+Moûtiers,84,,45.48459,6.53146
+Mulhouse,44,,47.75205,7.32866
+Mundolsheim,44,,48.64215,7.71378
+Muret,76,,43.45998,1.32541
+Nancy,44,,48.68439,6.18496
+Nanterre,11,,48.89198,2.20675
+Nantes,52,,47.21725,-1.55336
+Narbonne,76,,43.18396,3.00141
+Nemours,11,,48.27511,2.69078
+Neuilly-Plaisance,11,,48.86342,2.506
+Neuilly-sur-Marne,11,,48.85373,2.54903
+Neuilly-sur-Seine,11,,48.8846,2.26965
+Nevers,27,,46.98956,3.159
+Nice,93,,43.70313,7.26608
+Nîmes,76,,43.83665,4.35788
+Niort,75,,46.32313,-0.45877
+Nogent-le-Rotrou,24,,48.32157,0.82177
+Nogent-sur-Marne,11,,48.83669,2.48255
+Nogent-sur-Oise,32,,49.27158,2.47074
+Noisy-le-Grand,11,,48.84979,2.56266
+Noisy-le-Sec,11,,48.89148,2.46451
+Normandy,28,,49.19906,0.49988
+Nouvelle-Aquitaine,75,,46.09165,1.26892
+Noyal-sur-Vilaine,53,,48.11241,-1.52462
+Noyelles-sous-Lens,32,,50.43084,2.87221
+Noyon,32,,49.58333,3
+Nuits-Saint-Georges,27,,47.13683,4.949
+Obernai,44,,48.46313,7.481
+Occitanie,76,,44.02722,1.63559
+Olivet,24,,47.86219,1.8991
+Ollioules,93,,43.1399,5.84766
+Oloron-Sainte-Marie,75,,43.19441,-0.61069
+Orange,93,,44.13806,4.81025
+Orléans,24,,47.90289,1.90389
+Orly,11,,48.74792,2.39253
+Orsay,11,,48.69572,2.18727
+Orthez,75,,43.48834,-0.77266
+Orvault,52,,47.27117,-1.62361
+Oullins,84,,45.71404,4.80755
+Oyonnax,84,,46.25917,5.65727
+Ozoir-la-Ferrière,11,,48.76699,2.66871
+Paimpol,53,,48.77831,-3.0466
+Palaiseau,11,,48.71828,2.2498
+Pamiers,76,,43.1165,1.61079
+Pantin,11,,48.89437,2.40935
+Paray-le-Monial,27,,46.45457,4.11584
+Paris,11,,48.85341,2.3488
+"Paris 01 Louvre",11,,48.8592,2.3417
+"Paris 02 Bourse",11,,48.8655,2.3426
+"Paris 03 Temple",11,,48.8637,2.3615
+"Paris 04 Hôtel-de-Ville",11,,48.8601,2.3507
+"Paris 05 Panthéon",11,,48.8448,2.3471
+"Paris 06 Luxembourg",11,,48.8493,2.33
+"Paris 07 Palais-Bourbon",11,,48.8565,2.321
+"Paris 08 Élysée",11,,48.8763,2.3183
+"Paris 09 Opéra",11,,48.8718,2.3399
+"Paris 10 Entrepôt",11,,48.8709,2.3561
+"Paris 11 Popincourt",11,,48.8574,2.3795
+"Paris 12 Reuilly",11,,48.8412,2.3876
+"Paris 13 Gobelins",11,,48.8322,2.3561
+"Paris 14 Observatoire",11,,48.8331,2.3264
+"Paris 15 Vaugirard",11,,48.8412,2.3003
+"Paris 16 Passy",11,,48.8637,2.2769
+"Paris 17 Batignolles-Monceau",11,,48.8835,2.3219
+"Paris 18 Buttes-Montmartre",11,,48.8925,2.3444
+"Paris 19 Buttes-Chaumont",11,,48.8817,2.3822
+"Paris 20 Ménilmontant",11,,48.8646,2.3984
+"Paris Charles de Gaulle Airport",11,,49.01278,2.55
+Parthenay,75,,46.64832,-0.24672
+Pau,75,,43.31117,-0.35583
+"Pays de la Loire",52,,47.5,-0.83333
+Périgueux,75,,45.18691,0.71439
+Perpignan,76,,42.69764,2.89541
+Pessac,75,,44.80565,-0.6324
+Phalsbourg,44,,48.76771,7.2582
+Pierrefitte-sur-Seine,11,,48.96691,2.36104
+Pierrelatte,84,,44.37549,4.70314
+Pithiviers,24,,48.17185,2.25185
+Plaisir,11,,48.82319,1.9541
+Plérin,53,,48.53451,-2.76975
+Ploemeur,53,,47.73512,-3.42952
+Ploërmel,53,,47.93167,-2.39746
+Poissy,11,,48.92902,2.04952
+Poitiers,75,,46.58261,0.34348
+Poitou,75,,46.66667,-0.5
+Pont-à-Mousson,44,,48.90702,6.05635
+Pont-Audemer,28,,49.35,0.51667
+Pont-l'Abbé,53,,47.8669,-4.22416
+Pont-Sainte-Maxence,32,,49.30168,2.60467
+Pontarlier,27,,46.90347,6.35542
+Pontault-Combault,11,,48.79813,2.60676
+Pontivy,53,,48.06835,-2.96645
+Pornic,52,,47.11581,-2.10331
+Port-aux-Français,3,,-49.34916,70.21937
+Port-de-Bouc,93,,43.40657,4.9809
+Port-Saint-Louis-du-Rhône,93,,43.38734,4.82609
+Portet-sur-Garonne,76,,43.52317,1.40511
+Porto-Vecchio,94,,41.59101,9.27947
+Pouzauges,52,,46.78242,-0.83794
+Privas,84,,44.735,4.59918
+"Provence-Alpes-Côte d'Azur",93,,43.91667,6.08333
+Provins,11,,48.55897,3.29939
+Puget-sur-Argens,93,,43.45576,6.68519
+Puteaux,11,,48.88341,2.23894
+Quiberon,53,,47.48368,-3.11986
+Quimper,53,,47.99597,-4.09795
+Quimperlé,53,,47.87215,-3.54994
+Rambouillet,11,,48.64374,1.82992
+Ramonville-Saint-Agne,76,,43.54618,1.47491
+Reims,44,,49.26526,4.02853
+Remiremont,44,,48.01754,6.5882
+Rennes,53,,48.11198,-1.67429
+Rezé,52,,47.19058,-1.56885
+Ribeauvillé,44,,48.1951,7.31938
+Rillieux-la-Pape,84,,45.81667,4.9
+Riom,84,,45.89362,3.11264
+Ris-Orangis,11,,48.6511,2.41406
+Rive-de-Gier,84,,45.52755,4.61589
+Rivesaltes,76,,42.76929,2.87378
+Rixheim,44,,47.7497,7.40203
+Roanne,84,,46.03624,4.06802
+Rochefort,75,,45.94304,-0.96774
+Rodez,76,,44.35258,2.57338
+Romainville,11,,48.8854,2.43482
+Romans-sur-Isère,84,,45.0496,5.06602
+Romilly-sur-Seine,44,,48.51085,3.72634
+Romorantin-Lanthenay,24,,47.36667,1.75
+Roncq,32,,50.7533,3.12131
+Roscoff,53,,48.72381,-3.98709
+Rosny-sous-Bois,11,,48.87017,2.4991
+Roubaix,32,,50.69421,3.17456
+Rouen,28,,49.44313,1.09932
+Royan,75,,45.62811,-1.03153
+Rueil-Malmaison,11,,48.8765,2.18967
+Rumilly,84,,45.86116,5.94513
+Rungis,11,,48.74607,2.35275
+Sablé-sur-Sarthe,52,,47.83765,-0.33294
+Saint-Amand-les-Eaux,32,,50.44718,3.43076
+Saint-Amand-Montrond,24,,46.72284,2.50494
+Saint-André-lez-Lille,32,,50.66667,3.05
+Saint-Avé,53,,47.6865,-2.7349
+Saint-Avertin,24,,47.36357,0.73993
+Saint-Avold,44,,49.10465,6.70402
+Saint-Brieuc,53,,48.51513,-2.76838
+Saint-Chamond,84,,45.4759,4.51294
+Saint-Claude,27,,46.38679,5.86473
+Saint-Cloud,11,,48.84598,2.20289
+Saint-Cyr-l'École,11,,48.79865,2.06814
+Saint-Cyr-sur-Loire,24,,47.4,0.66667
+Saint-Denis,11,,48.93564,2.35387
+Saint-Dié,44,,48.28429,6.94921
+Saint-Dizier,44,,48.63773,4.94892
+Saint-Etienne,84,,45.43389,4.39
+Saint-Étienne-du-Rouvray,28,,49.37794,1.10467
+Saint-Fargeau-Ponthierry,11,,48.55713,2.5284
+Saint-Flour,84,,45.03374,3.09297
+Saint-Fons,84,,45.70875,4.85325
+Saint-Gaudens,76,,43.10813,0.72318
+Saint-Gély-du-Fesc,76,,43.69293,3.8058
+Saint-Genis-Laval,84,,45.69542,4.79316
+Saint-Genis-Pouilly,84,,46.24356,6.02119
+Saint-Germain-en-Laye,11,,48.89643,2.0904
+Saint-Gilles-Croix-de-Vie,52,,46.69967,-1.9465
+Saint-Gratien,11,,48.9735,2.28729
+Saint-Grégoire,53,,48.15101,-1.68579
+Saint-Herblain,52,,47.21154,-1.651
+Saint-Ismier,84,,45.25227,5.83073
+Saint-Jean-d'Angély,75,,45.94408,-0.52133
+Saint-Jean-de-Braye,24,,47.91303,1.97705
+Saint-Jean-de-la-Ruelle,24,,47.91127,1.86483
+Saint-Jean-de-Luz,75,,43.38871,-1.66267
+Saint-Jean-de-Maurienne,84,,45.27534,6.35293
+Saint-Jean-de-Monts,52,,46.79313,-2.06076
+Saint-Jean-de-Védas,76,,43.57759,3.82603
+Saint-Jouan-des-Guérets,53,,48.5989,-1.97361
+Saint-Julien-en-Genevois,84,,46.14434,6.08256
+Saint-Junien,75,,45.88746,0.90158
+Saint-Just-Saint-Rambert,84,,45.49973,4.24141
+Saint-Laurent-Blangy,32,,50.29446,2.80698
+Saint-Laurent-du-Var,93,,43.67323,7.19
+Saint-Leu-la-Forêt,11,,49.01667,2.25
+Saint-Lô,28,,49.11624,-1.09031
+Saint-Louis,44,,47.59206,7.55923
+Saint-Maixent-l'École,75,,46.4131,-0.20839
+Saint-Mandé,11,,48.83864,2.41579
+Saint-Marcellin,84,,45.14914,5.31673
+Saint-Martin-d'Hères,84,,45.1787,5.76281
+Saint-Martin-de-Crau,93,,43.63955,4.8127
+Saint-Maur-des-Fossés,11,,48.79395,2.49323
+Saint-Maurice,11,,48.82182,2.42716
+Saint-Maurice-l'Exil,84,,45.38514,4.78303
+Saint-Max,44,,48.70426,6.20686
+Saint-Maximin,32,,49.22182,2.45359
+Saint-Médard-en-Jalles,75,,44.8955,-0.71779
+Saint-Michel-sur-Orge,11,,48.63479,2.30831
+Saint-Nazaire,52,,47.27506,-2.2179
+Saint-Omer,32,,50.74834,2.26091
+Saint-Ouen,11,,48.90654,2.33339
+Saint-Paul-lès-Dax,75,,43.72566,-1.05283
+Saint-Paul-lès-Durance,93,,43.68504,5.70775
+Saint-Péray,84,,44.94866,4.8451
+Saint-Pierre-des-Corps,24,,47.38623,0.74849
+Saint-Pierre-Montlimart,52,,47.26976,-1.02738
+Saint-Pol-sur-Ternoise,32,,50.38113,2.33407
+Saint-Priest,84,,45.69651,4.94385
+Saint-Priest-en-Jarez,84,,45.4739,4.37678
+Saint-Quentin,32,,49.84889,3.28757
+Saint-Quentin-en-Yvelines,11,,48.77316,2.01908
+Saint-Quentin-Fallavier,84,,45.64335,5.11266
+Saint-Raphaël,93,,43.42332,6.7735
+Saint-Rémy-de-Provence,93,,43.78848,4.83167
+Saint-Rémy-lès-Chevreuse,11,,48.70708,2.07692
+Saint-Sébastien-sur-Loire,52,,47.20768,-1.50332
+Saint-Sever,75,,43.75726,-0.57181
+Saint-Tropez,93,,43.26764,6.64049
+Saint-Vallier,84,,45.17154,4.81758
+Saint-Vincent-de-Tyrosse,75,,43.66071,-1.30428
+Sainte-Foy-lès-Lyon,84,,45.73375,4.80259
+Sainte-Geneviève-des-Bois,11,,48.64682,2.31965
+Sainte-Luce-sur-Loire,52,,47.25508,-1.48269
+Saintes,75,,45.74742,-0.63489
+Saintes-Maries-de-la-Mer,93,,43.45214,4.42913
+Sallanches,84,,45.94423,6.63162
+Salon-de-Provence,93,,43.64229,5.09478
+Sannois,11,,48.96667,2.25
+Saran,24,,47.95013,1.87601
+Sarcelles,11,,48.99739,2.37821
+Sarlat-la-Canéda,75,,44.88902,1.21656
+Sarre-Union,44,,48.93818,7.09373
+Sarrebourg,44,,48.73558,7.0572
+Sarreguemines,44,,49.10995,7.06747
+Sartrouville,11,,48.9482,2.19169
+Saumur,52,,47.25931,-0.07808
+Sausheim,44,,47.78711,7.37267
+Saverne,44,,48.74164,7.36221
+Savigny-le-Temple,11,,48.57409,2.58287
+Savigny-sur-Orge,11,,48.67677,2.34835
+Sceaux,11,,48.77644,2.29026
+Schiltigheim,44,,48.60749,7.74931
+Schirmeck,44,,48.48313,7.22004
+Scionzier,84,,46.0601,6.55271
+Seclin,32,,50.54873,3.02731
+Sedan,44,,49.70187,4.94028
+Segré,52,,47.68672,-0.87268
+Sélestat,44,,48.26195,7.4489
+Senlis,32,,49.20724,2.58661
+Sens,27,,48.19738,3.28328
+Sète,76,,43.4028,3.69278
+Sevran,11,,48.94472,2.52746
+Sèvres,11,,48.82292,2.21757
+Seynod,84,,45.88549,6.08831
+Seyssinet-Pariset,84,,45.17675,5.69387
+Sisteron,93,,44.19002,5.94643
+Six-Fours-les-Plages,93,,43.09174,5.82465
+Sochaux,27,,47.50808,6.82748
+Soissons,32,,49.38167,3.32361
+Soisy-sous-Montmorency,11,,48.98813,2.30156
+Sommières,76,,43.78457,4.09
+"Sophia Antipolis",93,,43.62235,7.04721
+Sorgues,93,,44.01023,4.87381
+Sotteville-lès-Rouen,28,,49.40972,1.09005
+"St. Egreve",84,,45.23313,5.68154
+St-Malo,53,,48.64738,-2.00877
+Stains,11,,48.95,2.38333
+Stiring-Wendel,44,,49.20198,6.9317
+Strasbourg,44,,48.58392,7.74553
+Sucy-en-Brie,11,,48.76872,2.53474
+Suresnes,11,,48.87143,2.22929
+Tain-l'Hermitage,84,,45.06672,4.8559
+Talence,75,,44.80849,-0.58915
+Tarare,84,,45.89614,4.433
+Tarascon,93,,43.80583,4.66028
+Tarbes,76,,43.23407,0.07139
+Tassin-la-Demi-Lune,84,,45.75499,4.78812
+Taverny,11,,49.02542,2.21691
+Thaon-les-Vosges,44,,48.25,6.41667
+"The Landes",75,,44.25,-1
+Thiais,11,,48.76496,2.3961
+Thiers,84,,45.85654,3.54758
+Thionville,44,,49.35994,6.16044
+Thonon-les-Bains,84,,46.37049,6.47985
+Thouars,75,,46.9815,-0.21175
+Thourotte,32,,49.47591,2.8821
+Thuir,76,,42.6322,2.75577
+Tignes,84,,45.49604,6.92463
+Tinqueux,44,,49.25,3.98333
+Toul,44,,48.68075,5.89115
+Toulon,93,,43.12442,5.92836
+Toulouse,76,,43.60426,1.44367
+Tourcoing,32,,50.72391,3.16117
+Tournan-en-Brie,11,,48.74146,2.772
+Tournefeuille,76,,43.58872,1.31922
+Tournon-sur-Rhône,84,,45.06667,4.83333
+Tours,24,,47.39484,0.70398
+Trappes,11,,48.77413,2.01781
+Trélazé,52,,47.44629,-0.46652
+Trélissac,75,,45.19619,0.78256
+Tremblay-en-France,11,,48.94956,2.5684
+Trévoux,84,,45.94281,4.77143
+Troyes,44,,48.30073,4.08524
+Tulle,75,,45.26582,1.77233
+Ugine,84,,45.75571,6.41503
+Ussel,75,,45.54804,2.30917
+Uzès,76,,44.01251,4.41973
+Vagney,44,,48.00629,6.7174
+"Val d Isere",84,,45.45142,6.97455
+Val-de-Reuil,28,,49.27385,1.21021
+Valence,76,,44.10823,0.89101
+Valenciennes,32,,50.35909,3.52506
+Valentigney,27,,47.46388,6.83168
+Vallauris,93,,43.57803,7.05451
+Valréas,93,,44.3849,4.99125
+Vandœuvre-lès-Nancy,44,,48.66115,6.17114
+Vannes,53,,47.65688,-2.76205
+Vanves,11,,48.82345,2.29025
+Varces-Allières-et-Risset,84,,45.08333,5.68333
+Varennes-Vauzelles,27,,47.01678,3.14037
+Vaulx-en-Velin,84,,45.78693,4.9251
+Vedène,93,,43.97744,4.90428
+Vélizy-Villacoublay,11,,48.78198,2.19395
+Vence,93,,43.72254,7.11183
+Vendargues,76,,43.65833,3.97
+Vendin-le-Vieil,32,,50.47385,2.86674
+Vendôme,24,,47.79292,1.06556
+Venelles,93,,43.59859,5.47977
+Vénissieux,84,,45.69706,4.88593
+Verdun,44,,49.15964,5.3829
+Vern-sur-Seiche,53,,48.04585,-1.60242
+Verneuil-sur-Avre,28,,48.73949,0.92731
+Vernon,28,,49.09292,1.46332
+Verrières-le-Buisson,11,,48.74565,2.26796
+Versailles,11,,48.80359,2.13424
+Vertou,52,,47.16878,-1.4729
+Vesoul,27,,47.62604,6.14251
+Vic-en-Bigorre,76,,43.38682,0.05471
+Vichy,84,,46.12709,3.42577
+Vienne,84,,45.52569,4.87484
+Vierzon,24,,47.22186,2.0684
+Vigneux-sur-Seine,11,,48.70291,2.41357
+Villebon-sur-Yvette,11,,48.70594,2.24019
+Villefontaine,84,,45.61278,5.15058
+Villefranche-de-Rouergue,76,,44.35166,2.03702
+Villefranche-sur-Mer,93,,43.70392,7.31088
+Villefranche-sur-Saône,84,,45.98967,4.71961
+Villejuif,11,,48.7939,2.35992
+Villemandeur,24,,47.98701,2.71802
+Villemomble,11,,48.88333,2.5
+Villenave-d'Ornon,75,,44.77935,-0.56707
+Villeneuve-d'Ascq,32,,50.61669,3.16664
+Villeneuve-la-Garenne,11,,48.93935,2.31478
+Villeneuve-lès-Avignon,76,,43.96773,4.79258
+Villeneuve-lès-Maguelone,76,,43.53222,3.86047
+Villeneuve-Loubet,93,,43.6579,7.12233
+Villeneuve-Saint-Georges,11,,48.73219,2.44925
+Villeneuve-sur-Lot,75,,44.40854,0.70415
+Villepinte,11,,48.96203,2.53253
+Villers-Cotterêts,32,,49.25311,3.09003
+Villers-lès-Nancy,44,,48.67333,6.15283
+Villetaneuse,11,,48.95833,2.34167
+Villeurbanne,84,,45.76601,4.8795
+Villiers-le-Bel,11,,49.00875,2.39819
+Villiers-sur-Marne,11,,48.831,2.54844
+Vincennes,11,,48.8486,2.43769
+Vineuil,24,,47.5838,1.37601
+Vire,28,,48.83849,-0.88929
+Viriat,84,,46.25484,5.21567
+Viroflay,11,,48.80078,2.16181
+Viry-Châtillon,11,,48.67211,2.39318
+Vitré,53,,48.12279,-1.20983
+Vitrolles,93,,43.46,5.24861
+Vitry-le-François,44,,48.72472,4.58439
+Vitry-sur-Seine,11,,48.78716,2.40332
+Vittel,44,,48.20085,5.94843
+Voiron,84,,45.36471,5.5856
+Voreppe,84,,45.29484,5.63192
+Wambrechies,32,,50.68276,3.04784
+Wasquehal,32,,50.67043,3.13382
+Wasselonne,44,,48.63779,7.44506
+Wattignies,32,,50.58639,3.04394
+Wattrelos,32,,50.70118,3.21812
+Wintzenheim,44,,48.07269,7.29072
+Wissembourg,44,,49.03708,7.94548
+Wissous,11,,48.73352,2.32338
+Wittenheim,44,,47.8109,7.32756
+Woippy,44,,49.15111,6.15132
+Yerres,11,,48.71785,2.49338
+Yssingeaux,84,,45.14282,4.12372
+Yutz,44,,49.35571,6.1926
+Yvetot,28,,49.61744,0.75814
+Yzeure,84,,46.56596,3.35446

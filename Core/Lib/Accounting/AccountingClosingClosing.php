@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 
@@ -30,7 +31,6 @@ use FacturaScripts\Dinamic\Model\Partida;
  */
 class AccountingClosingClosing extends AccountingClosingBase
 {
-
     /**
      * Execute main process.
      * Create a new account entry for channel with a one line by account balance.
@@ -52,10 +52,9 @@ class AccountingClosingClosing extends AccountingClosingBase
      */
     protected function getConcept(): string
     {
-        return $this->toolBox()->i18n()->trans(
-            'closing-closing-concept',
-            ['%exercise%' => $this->exercise->nombre]
-        );
+        return Tools::lang()->trans('closing-closing-concept', [
+            '%exercise%' => $this->exercise->nombre
+        ]);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,11 +18,14 @@
  */
 
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
-
-define("FS_FOLDER", getcwd());
+use FacturaScripts\Core\Tools;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+
+// cargamos la configuración
+define("FS_FOLDER", getcwd());
 
 $config = FS_FOLDER . '/config.php';
 if (__DIR__ === '/home/scrutinizer/build/Test') {
@@ -37,15 +40,21 @@ echo "\n" . 'Using ' . $config . "\n";
 
 require_once $config;
 
-echo "\n" . 'Connection details:';
-echo "\n" . 'PHP: ' . phpversion();
+echo "\n" . '    PHP: ' . phpversion();
 echo "\n" . 'DB Host: ' . FS_DB_HOST;
 echo "\n" . 'DB User: ' . FS_DB_USER;
 echo "\n" . 'DB Pass: ' . FS_DB_PASS;
 echo "\n" . 'DB Name: ' . FS_DB_NAME . "\n\n";
 
+// establecemos la zona horaria
+$timeZone = Tools::config('timezone', 'Europe/Madrid');
+date_default_timezone_set($timeZone);
+
 // clean cache
 Cache::clear();
+
+// iniciamos el kernel
+Kernel::init();
 
 // deploy
 Plugins::deploy();

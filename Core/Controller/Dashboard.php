@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,13 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
+use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -63,11 +65,17 @@ class Dashboard extends Controller
     /** @var array */
     public $receipts = [];
 
+    /** @var bool */
+    public $registered = false;
+
     /** @var array */
     public $sections = [];
 
     /** @var array */
     public $stats = [];
+
+    /** @var bool */
+    public $updated = false;
 
     public function getPageData(): array
     {
@@ -85,11 +93,20 @@ class Dashboard extends Controller
      * @param User $user
      * @param ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user, $permissions)
+    public function privateCore(&$response, $user, $permissions): void
     {
         parent::privateCore($response, $user, $permissions);
-        $this->title = $this->toolBox()->i18n()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
+
+        $this->title = Tools::lang()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
+
         $this->loadExtensions();
+
+        // comprobamos si la instalación está registrada
+        $telemetry = new TelemetryManager();
+        $this->registered = $telemetry->ready();
+
+        // comprobamos si hay actualizaciones disponibles
+        $this->updated = Forja::canUpdateCore() === false;
     }
 
     public function showBackupWarning(): bool
@@ -136,7 +153,7 @@ class Dashboard extends Controller
 
         return [
             new DataBaseWhere($field, $fromDate, '>='),
-            new DataBaseWhere($field, $untilDate, '<')
+            new DataBaseWhere($field, $untilDate, '<'),
         ];
     }
 
@@ -144,7 +161,7 @@ class Dashboard extends Controller
      * Set the quick links for data creation.
      * Example: createLinks['EditControllerName'] = 'label'
      */
-    private function loadCreateLinks()
+    private function loadCreateLinks(): void
     {
         $this->createLinks['EditProducto'] = 'product';
         $this->createLinks['EditCliente'] = 'customer';
@@ -160,7 +177,7 @@ class Dashboard extends Controller
     /**
      * Establish the sections to be displayed on the dashboard.
      */
-    private function loadExtensions()
+    private function loadExtensions(): void
     {
         $this->loadCreateLinks();
         $this->loadOpenLinks();
@@ -175,7 +192,7 @@ class Dashboard extends Controller
     /**
      * Load the data regarding the stock under minimum.
      */
-    private function loadLowStockSection()
+    private function loadLowStockSection(): void
     {
         if (false === $this->dataBase->tableExists('stocks')) {
             return;
@@ -196,36 +213,27 @@ class Dashboard extends Controller
     /**
      * Load last news from facturascripts.com
      */
-    private function loadNews()
+    private function loadNews(): void
     {
-        // buscamos en la caché
-        $news = Cache::get('dashboard-news');
-        if($news !== null) {
-            $this->news = $news;
-            return;
-        }
-
-        // si no está en caché, consultamos a facturascripts.com
-        $this->news = Http::get('https://facturascripts.com/comm3/index.php?page=community_changelog&json=TRUE')
-            ->setTimeout(5)
-            ->json();
-
-        // guardamos en caché
-        Cache::set('dashboard-news', $this->news);
+        $this->news = Cache::remember('dashboard-news', function () {
+            return Http::get('https://facturascripts.com/comm3/index.php?page=community_changelog&json=TRUE')
+                ->setTimeout(5)
+                ->json();
+        });
     }
 
     /**
      * Loads the links to the latest data created by the user.
      */
-    private function loadOpenLinks()
+    private function loadOpenLinks(): void
     {
         $this->setOpenLinksForDocument(new FacturaCliente(), 'invoice');
         $this->setOpenLinksForDocument(new AlbaranCliente(), 'delivery-note');
         $this->setOpenLinksForDocument(new PedidoCliente(), 'order');
         $this->setOpenLinksForDocument(new PresupuestoCliente(), 'estimation');
 
-        $minDate = date(Producto::DATE_STYLE, strtotime('-2 days'));
-        $minDateTime = date(Producto::DATETIME_STYLE, strtotime('-2 days'));
+        $minDate = Tools::date('-2 days');
+        $minDateTime = Tools::dateTime('-2 days');
 
         $customerModel = new Cliente();
         $whereCustomer = [new DataBaseWhere('fechaalta', $minDate, '>=')];
@@ -234,7 +242,7 @@ class Dashboard extends Controller
                 'type' => 'customer',
                 'url' => $customer->url(),
                 'name' => $customer->nombre,
-                'date' => $customer->fechaalta
+                'date' => $customer->fechaalta,
             ];
         }
 
@@ -245,7 +253,7 @@ class Dashboard extends Controller
                 'type' => 'contact',
                 'url' => $contact->url(),
                 'name' => $contact->fullName(),
-                'date' => $contact->fechaalta
+                'date' => $contact->fechaalta,
             ];
         }
 
@@ -256,7 +264,7 @@ class Dashboard extends Controller
                 'type' => 'product',
                 'url' => $product->url(),
                 'name' => $product->referencia,
-                'date' => $product->actualizado
+                'date' => $product->actualizado,
             ];
         }
 
@@ -266,13 +274,13 @@ class Dashboard extends Controller
     /**
      * Load the receipts pending collection.
      */
-    private function loadReceiptSection()
+    private function loadReceiptSection(): void
     {
         $receiptModel = new ReciboCliente();
         $where = [
             new DataBaseWhere('pagado', false),
-            new DataBaseWhere('vencimiento', $this->toolBox()->today(), '<'),
-            new DataBaseWhere('vencimiento', date('Y-m-d', strtotime('-1 year')), '>')
+            new DataBaseWhere('vencimiento', Tools::date(), '<'),
+            new DataBaseWhere('vencimiento', date('Y-m-d', strtotime('-1 year')), '>'),
         ];
         $this->receipts = $receiptModel->all($where, ['vencimiento' => 'DESC']);
 
@@ -284,7 +292,7 @@ class Dashboard extends Controller
     /**
      * Load statistical data.
      */
-    private function loadStats()
+    private function loadStats(): void
     {
         $totalModel = new TotalModel();
 
@@ -324,19 +332,19 @@ class Dashboard extends Controller
      * @param BusinessDocument $model
      * @param string $label
      */
-    private function setOpenLinksForDocument($model, $label)
+    private function setOpenLinksForDocument($model, $label): void
     {
-        $minDate = date(ModelCore::DATE_STYLE, strtotime('-2 days'));
+        $minDate = Tools::date('-2 days');
         $where = [
             new DataBaseWhere('fecha', $minDate, '>='),
-            new DataBaseWhere('nick', $this->user->nick)
+            new DataBaseWhere('nick', $this->user->nick),
         ];
         foreach ($model->all($where, [$model->primaryColumn() => 'DESC'], 0, 3) as $doc) {
             $this->openLinks[] = [
                 'type' => $label,
                 'url' => $doc->url(),
                 'name' => $doc->codigo,
-                'date' => $doc->fecha
+                'date' => $doc->fecha,
             ];
         }
     }

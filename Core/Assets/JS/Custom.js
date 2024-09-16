@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,66 +16,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function animateSpinner(animation, result = '') {
-    $(".btn-spin-action").each(function () {
-        let btn = $(this);
-        if (animation === 'add') {
-            btn.prop('disabled', true);
-            let oldHtml = btn.children('.old-html');
-            if (!oldHtml.length) {
-                btn.html('<span class="old-html">' + btn.html() + '</span>');
-            }
-            if (!btn.children('.spinner').length) {
-                btn.append('<span class="spinner mx-auto" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i></span>');
-                btn.find('.old-html').fadeOut(100, function () {
-                    btn.find('.spinner').fadeIn();
-                });
-            }
+function animateSpinner(animation, result = null) {
+    if (animation === 'add') {
+        // añadimos la propiedad disabled al botón para evitar que se pueda pulsar varias veces
+        $("button.btn-spin-action").attr('disabled', true);
+        $("a.btn-spin-action").addClass('disabled').attr('aria-disabled', true);
+
+        setToast('', 'spinner', '', 0);
+        return;
+    }
+
+    if (animation === 'remove') {
+        // eliminamos la propiedad disabled al botón para que se pueda pulsar de nuevo
+        $("button.btn-spin-action").removeAttr('disabled');
+        $("a.btn-spin-action").removeClass('disabled').attr('aria-disabled', false);
+
+        // eliminamos el toast-spinner y toast-completed si existen
+        $('#messages-toasts .toast-spinner, #messages-toasts .toast-completed').remove();
+
+        // si result es null, terminamos
+        if (result === null) {
+            return;
         }
 
-        let spinner = btn.children('.spinner');
-
-        if (spinner.data('animating')) {
-            spinner.removeClass(spinner.data('animating')).data('animating', null);
-            spinner.data('animationTimeout') && clearTimeout(spinner.data('animationTimeout'));
+        if (result) {
+            setToast('', 'completed', '', 3000);
+            return;
         }
 
-        spinner.addClass('spinner-' + animation).data('animating', 'spinner-' + animation);
-        spinner.data('animationTimeout',
-            setTimeout(function () {
-                if (animation === 'remove') {
-                    btn.find('.spinner').fadeOut(100, function () {
-                        let attr = Boolean(btn.attr('load-after'));
-                        if (result !== '' && typeof attr !== 'undefined' && attr === true) {
-                            let icon = 'fas fa-times';
-                            if (result) {
-                                icon = 'fas fa-check';
-                            }
-                            btn.append('<div class="result mx-auto" style="display: none;"><i class="' + icon + '"></i></div>');
-                        }
-
-                        let checkResult = btn.children('.result');
-                        if (checkResult.length) {
-                            btn.find('.result').fadeIn();
-                            setTimeout(function () {
-                                btn.find('.result').fadeOut(200, function () {
-                                    btn.find('.old-html').fadeIn();
-                                    spinner.remove();
-                                    btn.find('.result').remove();
-                                    btn.prop('disabled', false);
-                                });
-                            }, 500);
-                        } else {
-                            btn.find('.old-html').fadeIn();
-                            spinner.remove();
-                            btn.prop('disabled', false);
-                        }
-                    });
-                }
-            },
-            parseFloat(spinner.css('animation-duration')) * 1000)
-        );
-    });
+        setToast('', 'danger', '', 0);
+    }
 }
 
 function confirmAction(viewName, action, title, message, cancel, confirm) {
@@ -107,13 +77,16 @@ function setModalParentForm(modal, form) {
         $("#" + modal).parent().find('input[name="code"]').val(form.code.value);
     } else if (form.elements['code[]']) {
         let codes = [];
-        for (let num = 0; num < form.elements['code[]'].length; num++) {
-            if (form.elements['code[]'][num].checked) {
-                codes.push(form.elements['code[]'][num].value);
-            }
-        }
+
+        // recorremos los checkboxes del formulario donde sale el botón
+        let checkboxes = document.querySelectorAll('input[name="code[]"]:checked');
+        checkboxes.forEach((checkbox) => {
+            codes.push(checkbox.value);
+        });
+
         // asignamos al formulario del modal los checkboxes marcados del formulario donde sale el botón
         $("#" + modal).parent().find('input[name="code"]').val(codes.join());
+        console.log(codes);
     }
 }
 
@@ -141,7 +114,7 @@ $(document).ready(function () {
     $(document).on("click", "nav .dropdown-submenu", function (e) {
         e.stopPropagation();
     });
-    $(document).on('shown.bs.modal', '.modal', function() {
+    $(document).on('shown.bs.modal', '.modal', function () {
         $(this).find('[autofocus]').focus();
     });
 });

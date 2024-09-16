@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,18 +28,18 @@
     <div class="row">
         <div class="col">
             <form id="{{ 'form' ~ currentView.getViewName() ~ '0' }}" action="{{ product.url() }}" method="post"
-                  enctype="multipart/form-data">
+                  enctype="multipart/form-data" onsubmit="animateSpinner('add')">
+                {{ formToken() }}
                 <input type="hidden" name="action" value="add-image"/>
                 <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
                 <input type="hidden" name="idproducto" value="{{ product.primaryColumnValue() }}">
-                <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
                 <div class="card border-success shadow mb-3">
                     <div class="card-body p-3">
                         <div class="form-row">
                             <div class="col-sm-2">
-                                {{ i18n.trans('variant') }}
+                                {{ trans('variant') }}
                                 <select name="referencia" class="form-control mb-2">
-                                    <option value="">{{ i18n.trans('all-variants') }}</option>
+                                    <option value="">{{ trans('all-variants') }}</option>
                                     <option value="">------</option>
                                     {% for variant in product.getVariants() %}
                                         <option value="{{ variant.referencia }}">{{ variant.referencia }}</option>
@@ -47,17 +47,17 @@
                                 </select>
                             </div>
                             <div class="col">
-                                {{ i18n.trans('images') }}
+                                {{ trans('images') }}
                                 <input type="file" name="newfiles[]" class="form-control-file" multiple=""
-                                       accept="image/png, image/jpeg, image/gif" required=""/>
+                                       accept="image/png, image/jpeg, image/gif" required/>
                                 <p class="text-muted mb-2">
-                                    {{ i18n.trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
+                                    {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
                                 </p>
                             </div>
                             <div class="col-auto">
                                 <br/>
                                 <button type="submit" class="btn btn-success mb-2">
-                                    <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('add') }}
+                                    <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('add') }}
                                 </button>
                             </div>
                         </div>
@@ -67,9 +67,9 @@
         </div>
     </div>
     {# -- Attached files -- #}
-    <div class="form-row row-cols-1 row-cols-md-5">
+    <div class="form-row row-cols-1 row-cols-md-5" id="images-container">
         {% for counter, image in currentView.cursor %}
-            <div class="col mb-4">
+            <div class="col mb-4 images-item" data-image-id="{{ image.id }}" title="{{ trans('you-can-drag-and-drop-to-sort-the-images') }}">
                 {% set border = image.referencia ? '' : 'border-primary' %}
                 <div class="card {{ border }} shadow">
                     <img src="{{ asset(image.url('download')) }}" class="card-img-top"
@@ -78,19 +78,18 @@
                     <div class="card-footer">
                         {% set formName = currentView.getViewName() ~ (counter + 1) %}
                         <form id="{{ 'form' ~ formName }}" action="{{ product.url() }}" method="post"
-                              enctype="multipart/form-data">
+                              enctype="multipart/form-data" onsubmit="animateSpinner('add')">
+                            {{ formToken() }}
                             <input type="hidden" name="action" value=""/>
                             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
                             <input type="hidden" name="idproducto" value="{{ image.idproducto }}"/>
                             <input type="hidden" name="idimage" value="{{ image.id }}"/>
-                            <input type="hidden" name="multireqtoken"
-                                   value="{{ fsc.multiRequestProtection.newToken() }}"/>
                             <div class="form-row align-items-center">
                                 <div class="col text-muted">
-                                    {{ image.referencia ? image.referencia : i18n.trans('all-variants') }}
+                                    {{ image.referencia ? image.referencia : trans('all-variants') }}
                                 </div>
                                 <div class="col-auto">
-                                    {{ _self.buttonDelete(formName, i18n) }}
+                                    {{ _self.buttonDelete(formName) }}
                                 </div>
                             </div>
                         </form>
@@ -101,11 +100,11 @@
     </div>
 </div>
 
-{% macro buttonDelete(formName, i18n) %}
-    {% set label = i18n.trans('delete-file') %}
-    {% set text = i18n.trans('are-you-sure') %}
-    {% set cancel = i18n.trans('cancel') %}
-    {% set confirm = i18n.trans('confirm') %}
+{% macro buttonDelete(formName) %}
+    {% set label = trans('delete-file') %}
+    {% set text = trans('are-you-sure') %}
+    {% set cancel = trans('cancel') %}
+    {% set confirm = trans('confirm') %}
     <button type="button" class="btn btn-sm btn-outline-danger p-1"
             onclick="confirmAction('{{ formName }}','delete-image','{{ label }}','{{ text }}','{{ cancel }}','{{ confirm }}');">
         <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>

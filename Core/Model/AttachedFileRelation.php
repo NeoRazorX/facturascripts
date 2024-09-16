@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinFile;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -29,7 +30,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class AttachedFileRelation extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -75,7 +75,7 @@ class AttachedFileRelation extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->creationdate = date(self::DATETIME_STYLE);
+        $this->creationdate = Tools::dateTime();
     }
 
     public function getFile(): DinFile
@@ -115,7 +115,8 @@ class AttachedFileRelation extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->observations = $this->toolBox()->utils()->noHtml($this->observations);
+        $this->observations = Tools::noHtml($this->observations);
+
         return parent::test();
     }
 
@@ -123,10 +124,12 @@ class AttachedFileRelation extends Base\ModelClass
     {
         if ($this->model) {
             $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $this->model;
-            $model = new $modelClass();
-            $code = empty($this->modelcode) ? $this->modelid : $this->modelcode;
-            if ($model->loadFromCode($code)) {
-                return $model->url();
+            if (class_exists($modelClass)) {
+                $model = new $modelClass();
+                $code = empty($this->modelcode) ? $this->modelid : $this->modelcode;
+                if ($model->loadFromCode($code)) {
+                    return $model->url();
+                }
             }
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,11 +25,10 @@ use Symfony\Component\HttpFoundation\Request;
  * Description of GroupItem
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  */
 class GroupItem extends VisualItem
 {
-
     /**
      * @var string
      */
@@ -129,10 +128,10 @@ class GroupItem extends VisualItem
     public function modal($model, string $viewName): string
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
-        $html = '<form id="formModal' . $this->getUniqueId() . '" method="post" enctype="multipart/form-data">'
+        $html = '<form id="formModal' . $this->getUniqueId() . '" method="post" enctype="multipart/form-data" onsubmit="animateSpinner(\'add\')">'
             . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
             . '<input type="hidden" name="code" value=""/>'
-            . '<input type="hidden" name="multireqtoken" value="' . self::getToken() . '"/>'
+            . '<input type="hidden" name="multireqtoken" value="' . static::getToken() . '"/>'
             . '<div class="modal" id="modal' . $this->name . '" tabindex="-1" role="dialog">'
             . '<div class="modal-dialog ' . $this->class . '" role="document">'
             . '<div class="modal-content">'
@@ -152,10 +151,11 @@ class GroupItem extends VisualItem
         $html .= '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
+            . '<button type="button" class="btn btn-spin-action btn-secondary" data-dismiss="modal">'
             . static::$i18n->trans('cancel')
             . '</button>'
-            . '<button type="submit" name="action" value="' . $this->name . '" class="btn btn-primary">'
+            . '<input type="hidden" name="action" value="' . $this->name . '"/>'
+            . '<button type="submit" class="btn-spin-action btn btn-primary">'
             . static::$i18n->trans('accept')
             . '</button>'
             . '</div>'
@@ -224,7 +224,7 @@ class GroupItem extends VisualItem
             $this->columns[$columnItem->name] = $columnItem;
         }
 
-        uasort($this->columns, ['self', 'sortColumns']);
+        uasort($this->columns, [$this, 'sortColumns']);
     }
 
     /**

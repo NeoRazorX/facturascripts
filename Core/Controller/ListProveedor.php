@@ -53,17 +53,17 @@ class ListProveedor extends ListController
         $this->createViewAddresses();
     }
 
-    protected function createViewAddresses(string $viewName = 'ListContacto')
+    protected function createViewAddresses(string $viewName = 'ListContacto'): void
     {
-        $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
-        $this->addSearchFields($viewName, [
-            'apartado', 'apellidos', 'codpostal', 'descripcion', 'direccion', 'email', 'empresa',
-            'nombre', 'observaciones', 'telefono1', 'telefono2'
-        ]);
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
-        $this->addOrderBy($viewName, ['direccion'], 'address');
-        $this->addOrderBy($viewName, ['nombre'], 'name');
-        $this->addOrderBy($viewName, ['fechaalta'], 'creation-date', 2);
+        $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['direccion'], 'address')
+            ->addOrderBy(['nombre'], 'name')
+            ->addOrderBy(['fechaalta'], 'creation-date', 2)
+            ->addSearchFields([
+                'apartado', 'apellidos', 'codpostal', 'descripcion', 'direccion', 'email', 'empresa',
+                'nombre', 'observaciones', 'telefono1', 'telefono2'
+            ]);
 
         // filtros
         $values = [
@@ -97,17 +97,17 @@ class ListProveedor extends ListController
         $this->setSettings($viewName, 'megasearch', false);
     }
 
-    protected function createViewSuppliers(string $viewName = 'ListProveedor')
+    protected function createViewSuppliers(string $viewName = 'ListProveedor'): void
     {
-        $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
-        $this->addOrderBy($viewName, ['codproveedor'], 'code');
-        $this->addOrderBy($viewName, ['cifnif'], 'fiscal-number');
-        $this->addOrderBy($viewName, ['LOWER(nombre)'], 'name', 1);
-        $this->addOrderBy($viewName, ['fechaalta'], 'creation-date');
-        $this->addSearchFields($viewName, [
-            'cifnif', 'codproveedor', 'codsubcuenta', 'email', 'nombre', 'observaciones', 'razonsocial',
-            'telefono1', 'telefono2'
-        ]);
+        $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users')
+            ->addOrderBy(['codproveedor'], 'code')
+            ->addOrderBy(['cifnif'], 'fiscal-number')
+            ->addOrderBy(['LOWER(nombre)'], 'name', 1)
+            ->addOrderBy(['fechaalta'], 'creation-date')
+            ->addSearchFields([
+                'cifnif', 'codproveedor', 'codsubcuenta', 'email', 'nombre', 'observaciones', 'razonsocial',
+                'telefono1', 'telefono2'
+            ]);
 
         // filtros
         $this->addFilterSelectWhere($viewName, 'status', [

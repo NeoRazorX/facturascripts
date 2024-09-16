@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -65,19 +65,21 @@ final class ContactoTest extends TestCase
 
     public function testCreateCustomerAddress(): void
     {
-        // creamos el cliente
-        $customer = $this->getRandomCustomer();
+        // creamos un cliente
+        $customer = $this->getRandomCustomer('ContactoTest');
         $this->assertTrue($customer->save(), 'customer-cant-save');
 
-        // creamos el contacto
+        // comprobamos que el cliente tiene 1 dirección asociada
+        $this->assertCount(1, $customer->getAddresses(), 'customer-address-cant-save');
+
+        // creamos un contacto y lo asociamos al cliente
         $contact = new Contacto();
         $contact->codcliente = $customer->codcliente;
         $contact->direccion = 'Test';
         $this->assertTrue($contact->save(), 'customer-address-cant-save');
 
-        // nombre y apellidos están vacíos
-        $this->assertEquals('', $contact->nombre);
-        $this->assertEquals('', $contact->apellidos);
+        // comprobamos que ahora el cliente tiene 2 direcciones asociadas
+        $this->assertCount(2, $customer->getAddresses(), 'customer-address-cant-save');
 
         // eliminamos
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
@@ -87,19 +89,21 @@ final class ContactoTest extends TestCase
 
     public function testCreateSupplierAddress(): void
     {
-        // creamos el proveedor
-        $supplier = $this->getRandomSupplier();
-        $supplier->save();
+        // creamos un proveedor
+        $supplier = $this->getRandomSupplier('ContactoTest');
+        $this->assertTrue($supplier->save(), 'supplier-cant-save');
 
-        // creamos el contacto
+        // comprobamos que el proveedor tiene 1 dirección asociada
+        $this->assertCount(1, $supplier->getAddresses(), 'supplier-address-cant-save');
+
+        // creamos un contacto y lo asociamos al proveedor
         $contact = new Contacto();
         $contact->codproveedor = $supplier->codproveedor;
         $contact->direccion = 'Test';
         $this->assertTrue($contact->save(), 'supplier-address-cant-save');
 
-        // nombre y apellidos están vacíos
-        $this->assertEquals('', $contact->nombre);
-        $this->assertEquals('', $contact->apellidos);
+        // comprobamos que ahora el proveedor tiene 2 direcciones asociadas
+        $this->assertCount(2, $supplier->getAddresses(), 'supplier-address-cant-save');
 
         // eliminamos
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
@@ -174,7 +178,7 @@ final class ContactoTest extends TestCase
         $contact->nombre = 'Test';
         $this->assertTrue($contact->save(), 'contact-cant-save');
 
-        // comprobamos que apellidos, cargo, direccion, teléfonos, fax, email y observaciones no sean nulos
+        // comprobamos que apellidos, cargo, dirección, teléfonos, fax, email y observaciones no sean nulos
         $this->assertNotNull($contact->apellidos, 'contact-apellidos-null');
         $this->assertNotNull($contact->cargo, 'contact-cargo-null');
         $this->assertNotNull($contact->empresa, 'contact-empresa-null');
@@ -198,36 +202,26 @@ final class ContactoTest extends TestCase
         $contact->nombre = 'Test';
 
         $check1 = $contact->checkVies();
-        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
-            $this->markTestSkipped('Vies service is not available');
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertFalse($check1);
 
         // asignamos un cif/nif incorrecto
         $contact->cifnif = '123456789';
-        $this->assertFalse($contact->checkVies());
+        $check2 = $contact->checkVies();
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
+        $this->assertFalse($check2);
 
         // asignamos un cif/nif correcto
         $contact->cifnif = 'ESB01563311';
-        $this->assertTrue($contact->checkVies());
-    }
-
-    public function testAlias()
-    {
-        $contacto = new Contacto();
-        $contacto->idcontacto = 999;
-
-        $result = $contacto->alias();
-
-        static::assertEquals('999', $result);
-
-        $contacto->email = 'noreply@example.com';
-        $result = $contacto->alias();
-        static::assertEquals('noreply_999', $result);
-
-        $contacto->email = 'info@example.com';
-        $result = $contacto->alias();
-        static::assertEquals('example_999', $result);
+        $check3 = $contact->checkVies();
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
+        $this->assertTrue($check3);
     }
 
     public function testCodeModelSearch(): void
@@ -238,150 +232,162 @@ final class ContactoTest extends TestCase
         $contact2 = $this->getRandomContact();
         $contact2->save();
 
-        // Sin pasar ningún parametro de busqueda debe devolver todos los registros
+        // Sin pasar ningún parámetro de búsqueda debe devolver todos los registros
         $query = '';
         $fieldCode = '';
         $results = (new Contacto())->codeModelSearch($query, $fieldCode, []);
-        static::assertCount(count((new Contacto())->all()), $results);
+        $this->assertCount(count((new Contacto())->all()), $results);
 
         // Pasando el nombre del primer contacto debe devolver solo un registro
         $query = $contact1->nombre;
         $fieldCode = '';
         $results = (new Contacto())->codeModelSearch($query, $fieldCode, []);
-        static::assertCount(1, $results);
-        static::assertEquals($contact1->descripcion, trim($results[0]->description));
+        $this->assertCount(1, $results);
+        $this->assertEquals($contact1->descripcion, trim($results[0]->description));
 
         // Pasando un valor que no existe no devuelve ningún contacto
         $query = 'dummy-text';
         $fieldCode = '';
         $results = (new Contacto())->codeModelSearch($query, $fieldCode, []);
-        static::assertCount(0, $results);
+        $this->assertCount(0, $results);
 
-        // Pasando una clausula where devuelve el resultado de la consulta
+        // Pasando una cláusula where devuelve el resultado de la consulta
         $query = '';
         $fieldCode = '';
         $where = [new DataBaseWhere('empresa', $contact2->empresa)];
         $results = (new Contacto())->codeModelSearch($query, $fieldCode, $where);
-        static::assertCount(1, $results);
-        static::assertEquals($contact2->descripcion, trim($results[0]->description));
+        $this->assertCount(1, $results);
+        $this->assertEquals($contact2->descripcion, trim($results[0]->description));
 
         $contact1->delete();
         $contact2->delete();
     }
 
-    public function testCountry()
+    public function testCountry(): void
     {
         $contacto = new Contacto();
         $contacto->codpais = 'ESP';
 
-        static::assertEquals('España', $contacto->country());
+        $this->assertEquals('España', $contacto->country());
 
         $contacto->codpais = 'ABW';
-        static::assertEquals('Aruba', $contacto->country());
+        $this->assertEquals('Aruba', $contacto->country());
 
         $contacto->codpais = 'WRONG-COD-PAIS';
-        static::assertEquals('WRONG-COD-PAIS', $contacto->country());
+        $this->assertEquals('WRONG-COD-PAIS', $contacto->country());
     }
 
-    public function testGetCustomer()
+    public function testGetCustomer(): void
     {
-        $contacto = $this->getRandomContact();
+        // creamos un contacto
+        $contacto = $this->getRandomContact('ContactoTest');
+        $this->assertTrue($contacto->save());
 
-        // Como no existe Cliente asociado al contacto devuelve un Cliente vacío(todos los campos a null)
-        // ya que indicamos por parametro que no cree ningún cliente
-        $result = $contacto->getCustomer(false);
-        static::assertNull($result->codcliente);
+        // obtenemos el cliente, en este caso uno vacío
+        $cliente0 = $contacto->getCustomer(false);
+        $this->assertNull($cliente0->codcliente);
+        $this->assertFalse($cliente0->exists());
 
-        // Crea un Cliente con los mismos campos del contacto ya que no tiene ningún Cliente asociado
-        // y hemos indicado por parametro que se cree un Cliente
-        $result = $contacto->getCustomer(true);
-        static::assertEquals($result->codcliente, $contacto->codcliente);
+        // obtenemos el cliente, en este caso uno nuevo
+        $cliente1 = $contacto->getCustomer(true);
+        $this->assertNotNull($cliente1->codcliente);
+        $this->assertTrue($cliente1->exists());
+        $this->assertEquals($cliente1->codcliente, $contacto->codcliente);
 
-        // Creamos un Cliente y lo asociamos al Contacto. Debe devolver el Cliente asociado
-        $cliente = $this->getRandomCustomer();
-        $cliente->save();
+        // llamamos a crear un nuevo cliente, pero no se crea porque ya existe uno
+        $cliente2 = $contacto->getCustomer(true);
+        $this->assertEquals($cliente1->codcliente, $cliente2->codcliente);
 
-        $contacto->codcliente = $cliente->codcliente;
-        $contacto->save();
+        // creamos otro contacto
+        $contacto2 = $this->getRandomContact('ContactoTest');
+        $this->assertTrue($contacto2->save());
 
-        $result = $contacto->getCustomer(true);
+        // creamos un cliente nuevo
+        $cliente3 = $this->getRandomCustomer('ContactoTest');
+        $this->assertTrue($cliente3->save());
 
-        static::assertEquals($cliente->codcliente, $result->codcliente);
+        // lo asociamos al contacto
+        $contacto2->codcliente = $cliente3->codcliente;
+
+        // obtenemos el cliente, en este caso el mismo
+        $cliente4 = $contacto2->getCustomer(true);
+        $this->assertEquals($cliente3->codcliente, $cliente4->codcliente);
+
+        // eliminamos
+        $this->assertTrue($contacto->delete());
+        $this->assertTrue($cliente1->delete());
+        $this->assertTrue($contacto2->delete());
+        $this->assertTrue($cliente3->getDefaultAddress()->delete());
+        $this->assertTrue($cliente3->delete());
     }
 
-    public function testGetSupplier()
+    public function testGetSupplier(): void
     {
-        $contacto = $this->getRandomContact();
+        // creamos un contacto
+        $contacto = $this->getRandomContact('ContactoTest');
+        $this->assertTrue($contacto->save());
 
-        // Como no existe Proveedor asociado al contacto devuelve un Proveedor vacío(todos los campos a null)
-        // ya que indicamos por parametro que no cree ningún cliente
-        $result = $contacto->getSupplier(false);
-        static::assertNull($result->codproveedor);
+        // obtenemos el proveedor, en este caso uno vacío
+        $proveedor0 = $contacto->getSupplier(false);
+        $this->assertNull($proveedor0->codproveedor);
+        $this->assertFalse($proveedor0->exists());
 
-        // Crea un Proveedor con los mismos campos del contacto ya que no tiene ningún Proveedor asociado
-        // y hemos indicado por parametro que se cree un Proveedor
-        $result = $contacto->getSupplier(true);
-        static::assertEquals($result->codproveedor, $contacto->codproveedor);
+        // obtenemos el proveedor, en este caso uno nuevo
+        $proveedor1 = $contacto->getSupplier(true);
+        $this->assertNotNull($proveedor1->codproveedor);
+        $this->assertTrue($proveedor1->exists());
+        $this->assertEquals($proveedor1->codproveedor, $contacto->codproveedor);
 
-        // Creamos un Proveedor y lo asociamos al Contacto. Debe devolver el Proveedor asociado
-        $cliente = $this->getRandomSupplier();
-        $cliente->save();
+        // llamamos a crear un nuevo proveedor, pero no se crea porque ya existe uno
+        $proveedor2 = $contacto->getSupplier(true);
+        $this->assertEquals($proveedor1->codproveedor, $proveedor2->codproveedor);
 
-        $contacto->codproveedor = $cliente->codproveedor;
-        $contacto->save();
+        // creamos otro contacto
+        $contacto2 = $this->getRandomContact('ContactoTest');
+        $this->assertTrue($contacto2->save());
 
-        $result = $contacto->getSupplier(true);
+        // creamos un proveedor nuevo
+        $proveedor3 = $this->getRandomSupplier('ContactoTest');
+        $this->assertTrue($proveedor3->save());
 
-        static::assertEquals($cliente->codproveedor, $result->codproveedor);
+        // lo asociamos al contacto
+        $contacto2->codproveedor = $proveedor3->codproveedor;
+
+        // obtenemos el proveedor, en este caso el mismo
+        $proveedor4 = $contacto2->getSupplier(true);
+        $this->assertEquals($proveedor3->codproveedor, $proveedor4->codproveedor);
+
+        // eliminamos
+        $this->assertTrue($contacto->delete());
+        $this->assertTrue($proveedor1->delete());
+        $this->assertTrue($contacto2->delete());
+        $this->assertTrue($proveedor3->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor3->delete());
     }
 
-    public function testInstall()
+    public function testInstall(): void
     {
         $contacto = new Contacto();
         $result = $contacto->install();
-        static::assertEquals('', $result);
+        $this->assertEquals('', $result);
     }
 
-    public function testNewLogkey()
-    {
-        $fakeIP = '192.192.192.192';
-
-        $contacto = new Contacto();
-
-        $result = $contacto->newLogkey($fakeIP);
-
-        static::assertEquals($fakeIP, $contacto->lastip);
-        static::assertEquals($contacto->logkey, $result);
-    }
-
-    public function testPrimaryDescriptionColumn()
+    public function testPrimaryDescriptionColumn(): void
     {
         $contacto = new Contacto();
 
         $result = $contacto->primaryDescriptionColumn();
 
-        static::assertEquals('descripcion', $result);
+        $this->assertEquals('descripcion', $result);
     }
 
-    public function testUrl()
+    public function testUrl(): void
     {
         $contacto = new Contacto();
 
         $result = $contacto->url();
 
-        static::assertEquals('ListCliente?activetab=ListContacto', $result);
-    }
-
-    public function testVerifyLogkey()
-    {
-        $contacto = new Contacto();
-        $contacto->logkey = 'fake-logkey';
-
-        $result = $contacto->verifyLogkey('fake-logkey');
-        static::assertTrue($result);
-
-        $result = $contacto->verifyLogkey('fake-logkey-2');
-        static::assertFalse($result);
+        $this->assertEquals('ListCliente?activetab=ListContacto', $result);
     }
 
     protected function tearDown(): void

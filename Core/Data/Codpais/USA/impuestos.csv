@@ -1,0 +1,5 @@
+codimpuesto,descripcion,iva,recargo
+STAX,"Impuesto estatal general",0,0
+CITYTAX,"Impuesto municipal",0,0
+LOCOPTAX,"Impuesto opcional local",0,0
+SPECPTAX,"Impuesto especial del condado",0,0

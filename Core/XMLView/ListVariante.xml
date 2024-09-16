@@ -50,7 +50,7 @@
                 <values source="atributos_valores" fieldcode="id" fieldtitle="descripcion"/>
             </widget>
         </column>
-        <column name="attribute-value-4" display="none" order="140">
+        <column name="attribute-value-4" display="none" order="141">
             <widget type="select" fieldname="idatributovalor4">
                 <values source="atributos_valores" fieldcode="id" fieldtitle="descripcion"/>
             </widget>

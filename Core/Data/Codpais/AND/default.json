@@ -1,11 +1,12 @@
 {
     "default": {
         "coddivisa": "EUR",
-        "codimpuesto": "IGI45",
+        "codimpuesto": "GENIVA",
         "codpago": "CONT",
         "codserie": "A",
         "codserierec": "R",
         "tipoidfiscal": "NIF",
+        "updatesupplierprices": true,
         "validate_iban": true
     },
     "email": {

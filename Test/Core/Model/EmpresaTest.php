@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,9 +24,9 @@ use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use PHPUnit\Framework\TestCase;
 
-class EmpresaTest extends TestCase
+final class EmpresaTest extends TestCase
 {
-    public function testCreate()
+    public function testCreate(): void
     {
         // creamos una empresa
         $company = new Empresa();

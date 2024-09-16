@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\Tools;
 
 /**
  * Class to manage the data of retenciones table
@@ -31,55 +32,42 @@ use FacturaScripts\Core\DataSrc\Retenciones;
  */
 class Retencion extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Primary key. varchar(10).
-     *
-     * @var string
-     */
+    /** @var bool */
+    public $activa;
+
+    /** @var string */
     public $codretencion;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codsubcuentaret;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codsubcuentaacr;
 
-    /**
-     * Description of the tax.
-     *
-     * @var string
-     */
+    /** @var string */
     public $descripcion;
 
-    /**
-     * Percent of the retention
-     *
-     * @var int
-     */
+    /** @var int */
     public $porcentaje;
 
     public function clear()
     {
         parent::clear();
+        $this->activa = true;
         $this->porcentaje = 0.0;
     }
 
     public function delete(): bool
     {
-        if (parent::delete()) {
-            // limpiamos la caché
-            Retenciones::clear();
-            return true;
+        if (false === parent::delete()) {
+            return false;
         }
 
-        return false;
+        // limpiamos la caché
+        Retenciones::clear();
+        return true;
     }
 
     public function loadFromPercentage(float $percentaje): bool
@@ -96,13 +84,13 @@ class Retencion extends Base\ModelClass
 
     public function save(): bool
     {
-        if (parent::save()) {
-            // limpiamos la caché
-            Retenciones::clear();
-            return true;
+        if (false === parent::save()) {
+            return false;
         }
 
-        return false;
+        // limpiamos la caché
+        Retenciones::clear();
+        return true;
     }
 
     public static function tableName(): string
@@ -114,7 +102,7 @@ class Retencion extends Base\ModelClass
     {
         $this->codretencion = trim($this->codretencion);
         if ($this->codretencion && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codretencion)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codretencion, '%column%' => 'codretencion', '%min%' => '1', '%max%' => '10']
             );
@@ -123,10 +111,10 @@ class Retencion extends Base\ModelClass
 
         $this->codsubcuentaret = empty($this->codsubcuentaret) ? null : $this->codsubcuentaret;
         $this->codsubcuentaacr = empty($this->codsubcuentaacr) ? null : $this->codsubcuentaacr;
-        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
+        $this->descripcion = Tools::noHtml($this->descripcion);
 
         if (empty($this->porcentaje) || intval($this->porcentaje) < 1) {
-            $this->toolBox()->i18nLog()->warning('not-valid-percentage-retention');
+            Tools::log()->warning('not-valid-percentage-retention');
             return false;
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,16 +20,22 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Tools;
 
 /**
  * A country, for example Spain.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Pais extends Base\ModelClass
+class Pais extends ModelClass
 {
+    use ModelTrait;
 
-    use Base\ModelTrait;
+    /** @var string */
+    public $alias;
 
     /**
      * Alpha-2 code of the country.
@@ -47,17 +53,34 @@ class Pais extends Base\ModelClass
      */
     public $codpais;
 
-    /**
-     * Country name.
-     *
-     * @var string
-     */
+    /** @var string */
+    public $creation_date;
+
+    /** @var string */
+    public $last_nick;
+
+    /** @var string */
+    public $last_update;
+
+    /** @var float */
+    public $latitude;
+
+    /** @var float */
+    public $longitude;
+
+    /** @var string */
+    public $nick;
+
+    /** @var string */
     public $nombre;
+
+    /** @var string */
+    public $telephone_prefix;
 
     public function delete(): bool
     {
         if ($this->isDefault()) {
-            $this->toolBox()->i18nLog()->warning('cant-delete-default-country');
+            Tools::log()->warning('cant-delete-default-country');
             return false;
         }
 
@@ -77,7 +100,7 @@ class Pais extends Base\ModelClass
      */
     public function isDefault(): bool
     {
-        return $this->codpais === $this->toolBox()->appSettings()->get('default', 'codpais');
+        return $this->codpais === Tools::settings('default', 'codpais');
     }
 
     public static function primaryColumn(): string
@@ -108,16 +131,27 @@ class Pais extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->codpais = self::toolBox()::utils()::noHtml($this->codpais);
+        $this->codpais = Tools::noHtml($this->codpais);
         if ($this->codpais && 1 !== preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codpais, '%column%' => 'codpais', '%min%' => '1', '%max%' => '20']
             );
             return false;
         }
 
-        $this->nombre = self::toolBox()::utils()::noHtml($this->nombre);
+        $this->creation_date = $this->creation_date ?? Tools::dateTime();
+        $this->nick = $this->nick ?? Session::user()->nick;
+        $this->alias = Tools::noHtml($this->alias);
+        $this->telephone_prefix = Tools::noHtml($this->telephone_prefix);
+        $this->nombre = Tools::noHtml($this->nombre);
         return parent::test();
+    }
+
+    protected function saveUpdate(array $values = []): bool
+    {
+        $this->last_nick = Session::user()->nick;
+        $this->last_update = Tools::dateTime();
+        return parent::saveUpdate($values);
     }
 }

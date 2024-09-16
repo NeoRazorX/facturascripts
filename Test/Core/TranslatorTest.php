@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator;
 use PHPUnit\Framework\TestCase;
 
@@ -40,12 +41,22 @@ final class TranslatorTest extends TestCase
         // comprobamos que el idioma está seleccionado
         $this->assertEquals('es_ES', $translator->getLang());
 
-        // comprobamos algunas traducciones
-        $this->assertEquals('Aceptar', $translator->trans('accept'));
-        $this->assertEquals('Aceptado', $translator->trans('accepted'));
+        // obtenemos algunas traducciones
+        $accept = $translator->trans('accept');
+        $accepted = $translator->trans('accepted');
+        $accountBadParent999 = $translator->trans('account-bad-parent', ['%codcuenta%' => '999']);
+
+        // leemos las traducciones del archivo de idioma
+        $file = Tools::folder('Core', 'Translation', 'es_ES.json');
+        $data = file_get_contents($file);
+        $json = json_decode($data, true);
+
+        // comprobamos que las traducciones son correctas
+        $this->assertEquals($json['accept'], $accept);
+        $this->assertEquals($json['accepted'], $accepted);
         $this->assertEquals(
-            'La cuenta 999 tiene asociada una cuenta padre equivocada.',
-            $translator->trans('account-bad-parent', ['%codcuenta%' => '999'])
+            str_replace('%codcuenta%', '999', $json['account-bad-parent']),
+            $accountBadParent999
         );
     }
 
@@ -59,12 +70,22 @@ final class TranslatorTest extends TestCase
         // comprobamos que el idioma está seleccionado
         $this->assertEquals('en_EN', $translator->getLang());
 
-        // comprobamos algunas traducciones
-        $this->assertEquals('Accept', $translator->trans('accept'));
-        $this->assertEquals('Accepted', $translator->trans('accepted'));
+        // obtenemos algunas traducciones
+        $accept = $translator->trans('accept');
+        $cancel = $translator->trans('cancel');
+        $accountBadParent777 = $translator->trans('account-bad-parent', ['%codcuenta%' => '777']);
+
+        // leemos las traducciones del archivo de idioma
+        $file = Tools::folder('Core', 'Translation', 'en_EN.json');
+        $data = file_get_contents($file);
+        $json = json_decode($data, true);
+
+        // comprobamos que las traducciones son correctas
+        $this->assertEquals($json['accept'], $accept);
+        $this->assertEquals($json['cancel'], $cancel);
         $this->assertEquals(
-            'The account 888 has the wrong parent account associated with it.',
-            $translator->trans('account-bad-parent', ['%codcuenta%' => '888'])
+            str_replace('%codcuenta%', '777', $json['account-bad-parent']),
+            $accountBadParent777
         );
     }
 
@@ -77,5 +98,57 @@ final class TranslatorTest extends TestCase
 
         // y se añade a la lista de cadenas no traducidas
         $this->assertContains('yolo-test-123', $translator->getMissingStrings());
+    }
+
+    public function testFolderDinamic(): void
+    {
+        // obtenemos la traducción de accounting
+        $translator = new Translator('es_ES');
+        $accounting = $translator->trans('accounting');
+
+        // reconstruimos las traducciones de dinamic
+        Translator::deploy();
+
+        // Cargamos el archivo de traducciones
+        $file = Tools::folder('Dinamic', 'Translation', 'es_ES.json');
+        $data = file_get_contents($file);
+        $json = json_decode($data, true);
+
+        // comprobamos que la traducción de accounting es la misma
+        $this->assertEquals($accounting, $json['accounting']);
+
+        // cambiamos la traducción de accounting
+        $json['accounting'] = 'Contabilidad - test dinamic';
+        file_put_contents($file, json_encode($json));
+
+        // recargamos las traducciones
+        Translator::reload();
+
+        // comprobamos que la traducción ha cambiado
+        $this->assertEquals('Contabilidad - test dinamic', $translator->trans('accounting'));
+
+        // reconstruimos las traducciones de dinamic
+        Translator::deploy();
+    }
+
+    public function testFolderMyFiles(): void
+    {
+        // creamos la carpeta MyFiles/Translation
+        Tools::folderCheckOrCreate('MyFiles/Translation');
+
+        // creamos el archivo de traducciones
+        $file = Tools::folder('MyFiles', 'Translation', 'es_ES.json');
+        $json = ['accounting' => 'Contabilidad - test myfiles'];
+        file_put_contents($file, json_encode($json));
+
+        // recargamos las traducciones
+        Translator::reload();
+
+        // comprobamos que la traducción ha cambiado
+        $translator = new Translator('es_ES');
+        $this->assertEquals('Contabilidad - test myfiles', $translator->trans('accounting'));
+
+        // eliminamos el archivo de traducciones
+        unlink($file);
     }
 }

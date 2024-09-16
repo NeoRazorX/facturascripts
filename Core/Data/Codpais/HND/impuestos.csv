@@ -1,0 +1,6 @@
+codimpuesto,descripcion,iva,recargo
+IVAGNRL1,"IVA General",15,0
+IVAREDUC,"IVA Productos Reducción",18,0
+IVARESOR,"IVA Especial Restaurantes",15,4
+IVAINFO,"IVA para Servicios Informáticos",18,0
+IVAEDUC,"IVA Servicios Educativos",0,0

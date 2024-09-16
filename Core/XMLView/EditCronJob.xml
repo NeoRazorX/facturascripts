@@ -42,6 +42,9 @@
             <column name="done" order="160">
                 <widget type="checkbox" fieldname="done" readonly="true"/>
             </column>
+            <column name="failed" order="170">
+                <widget type="checkbox" fieldname="failed" readonly="true"/>
+            </column>
         </group>
     </columns>
 </view>

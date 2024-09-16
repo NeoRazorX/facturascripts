@@ -19,8 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Lib\Email\NewMail;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Export\PDFExport as ParentClass;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -82,9 +84,10 @@ class MAILExport extends ParentClass
     public function show(Response &$response)
     {
         $fileName = $this->getFileName() . '_mail_' . time() . '.pdf';
-        $filePath = FS_FOLDER . '/MyFiles/' . $fileName;
-        if (false === file_put_contents($filePath, $this->getDoc())) {
-            $this->toolBox()->i18nLog()->error('folder-not-writable');
+        $filePath = FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName;
+        if (false === Tools::folderCheckOrCreate(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH) ||
+            false === file_put_contents($filePath, $this->getDoc())) {
+            Tools::log()->error('folder-not-writable');
             return;
         }
 

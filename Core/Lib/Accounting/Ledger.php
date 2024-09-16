@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -80,7 +80,8 @@ class Ledger
                 }
                 $ledger['totals'] = [[
                     'debe' => $this->formatMoney($debe, true),
-                    'haber' => $this->formatMoney($haber, true)
+                    'haber' => $this->formatMoney($haber, true),
+                    'saldo' => $this->formatMoney($debe - $haber, true)
                 ]];
                 break;
 
@@ -94,7 +95,8 @@ class Ledger
                 }
                 $ledger['totals'] = [[
                     'debe' => $this->formatMoney($debe, true),
-                    'haber' => $this->formatMoney($haber, true)
+                    'haber' => $this->formatMoney($haber, true),
+                    'saldo' => $this->formatMoney($debe - $haber, true)
                 ]];
                 break;
 
@@ -109,10 +111,10 @@ class Ledger
                 $ledger['lines'][] = [
                     'asiento' => '',
                     'fecha' => '',
-                    'cuenta' => '',
                     'concepto' => '',
                     'debe' => $this->formatMoney($debe, true),
-                    'haber' => $this->formatMoney($haber, true)
+                    'haber' => $this->formatMoney($haber, true),
+                    'saldo' => $this->formatMoney($debe - $haber, true)
                 ];
                 break;
         }
@@ -257,14 +259,12 @@ class Ledger
             'saldo' => $this->formatMoney($line['saldo'], false)
         ];
 
-        // si estamos filtrando por una cuenta, quitamos la columna de saldo
-        if (!empty($params['account-from'])) {
-            unset($line['saldo']);
-        }
-
         // si estamos filtrando por subcuenta, quitamos la columna de cuenta
         if (!empty($params['subaccount-from'])) {
             unset($line['cuenta']);
+        } else {
+            // si no estamos filtrando por subcuenta, quitamos la columna de saldo
+            unset($line['saldo']);
         }
 
         $ledger[] = $line;
