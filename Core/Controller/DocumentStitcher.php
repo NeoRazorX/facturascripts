@@ -23,11 +23,12 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\FormasPago;
-use FacturaScripts\Core\Lib\ExtendedController\ListViewFiltersTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Lib\ListFilter\PeriodFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\SelectFilter;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\User;
@@ -38,11 +39,10 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class DocumentStitcher extends Controller
 {
-    use ListViewFiltersTrait;
-
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /** @var array */
@@ -50,6 +50,9 @@ class DocumentStitcher extends Controller
 
     /** @var TransformerDocument[] */
     public $documents = [];
+
+    /** @var array */
+    public $filters = [];
 
     /** @var string */
     public $modelName;
@@ -84,11 +87,6 @@ class DocumentStitcher extends Controller
         $data['icon'] = 'fa-solid fa-wand-magic-sparkles';
         $data['showonmenu'] = false;
         return $data;
-    }
-
-    public function getViewName(): string
-    {
-        return 'DocumentSticker';
     }
 
     public function getSeries(): array
@@ -146,10 +144,10 @@ class DocumentStitcher extends Controller
     {
         $payMethods = FormasPago::codeModel(true, $this->documents[0]->idempresa);
         if (count($payMethods) > 2) {
-            $this->addFilterSelect('codpago', 'payment-method', 'codpago', $payMethods);
+            $this->filters['codpago'] = new SelectFilter('codpago', 'codpago', 'payment-method', $payMethods);
         }
 
-        $this->addFilterPeriod('fecha', 'date', 'fecha');
+        $this->filters['fecha'] = new PeriodFilter('fecha', 'fecha', 'date');
     }
 
     /**
