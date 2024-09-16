@@ -649,6 +649,28 @@ final class ProductoTest extends TestCase
         $this->assertTrue($model->delete(), 'can-not-delete-file');
     }
 
+    public function testDetectChangesWithLeadingZeroes(): void
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $product->referencia = "0001";
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // eliminamos dos ceros a la referencia de la variante
+        $variante = $product->getVariants()[0];
+        $variante->referencia = '01';
+        $variante->save();
+
+        // refrescamos los datos desde la base de datos
+        $product->loadFromCode($product->idproducto);
+
+        // comprobamos que se haya actualizado la referencia en el producto
+        $this->assertEquals('01', $product->referencia);
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+    }
+
     private function getTestProduct(): Producto
     {
         $product = new Producto();

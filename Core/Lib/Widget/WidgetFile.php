@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Tools;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -30,19 +31,18 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class WidgetFile extends BaseWidget
 {
-
-    /**
-     * @var string
-     */
+    /** @var string */
     public $accept;
 
-    /**
-     * @param array $data
-     */
+    /** @var bool */
+    public $multiple;
+
+    /** @param array $data */
     public function __construct($data)
     {
         parent::__construct($data);
         $this->accept = $data['accept'] ?? '';
+        $this->multiple = isset($data['multiple']) && strtolower($data['multiple']) === 'true';
     }
 
     /**
@@ -57,13 +57,13 @@ class WidgetFile extends BaseWidget
     {
         $this->setValue($model);
 
-        $additionalDesc = static::$i18n->trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]);
-        $finalDesc = empty($description) ? $additionalDesc : static::$i18n->trans($description) . ' ' . $additionalDesc;
+        $additionalDesc = Tools::lang()->trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]);
+        $finalDesc = empty($description) ? $additionalDesc : Tools::lang()->trans($description) . ' ' . $additionalDesc;
 
         if ($this->readonly()) {
             $class = $this->combineClasses($this->css('form-control'), $this->class);
             return '<div class="form-group mb-2">'
-                . '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>'
+                . '<label class="mb-0">' . $this->onclickHtml(Tools::lang()->trans($title), $titleurl) . '</label>'
                 . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
                 . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>'
                 . '</div>';
@@ -91,7 +91,7 @@ class WidgetFile extends BaseWidget
 
             // exclude php files
             if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-                $logger->error(static::$i18n->trans('php-files-blocked'));
+                $logger->error(Tools::lang()->trans('php-files-blocked'));
                 continue;
             }
 
@@ -131,14 +131,17 @@ class WidgetFile extends BaseWidget
     protected function inputHtml($type = 'file', $extraClass = '')
     {
         $class = empty($extraClass) ? $this->css('form-control-file') : $this->css('form-control-file') . ' ' . $extraClass;
+
+        if ($this->multiple) {
+            return '<input type="' . $type . '" name="' . $this->fieldname . '[]" value="' . $this->value
+                . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . ' multiple/>';
+        }
+
         return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
 
-    /**
-     * @return string
-     */
-    protected function inputHtmlExtraParams()
+    protected function inputHtmlExtraParams(): string
     {
         $html = parent::inputHtmlExtraParams();
         if (!empty($this->accept)) {

@@ -105,23 +105,33 @@ trait CommonSalesPurchases
 
     protected static function codalmacen(Translator $i18n, BusinessDocument $model, string $jsFunc): string
     {
+        $warehouses = 0;
         $options = [];
         foreach (Empresas::all() as $company) {
             if ($company->idempresa != $model->idempresa && $model->exists()) {
                 continue;
             }
-            $options[] = '<optgroup label="' . $company->nombrecorto . '">';
+
+            $option = '';
             foreach ($company->getWarehouses() as $row) {
-                $options[] = ($row->codalmacen === $model->codalmacen) ?
+                // si el almacén no está activo o seleccionado, no lo mostramos
+                if ($row->codalmacen != $model->codalmacen && !$row->activo) {
+                    continue;
+                }
+
+                $option .= ($row->codalmacen === $model->codalmacen) ?
                     '<option value="' . $row->codalmacen . '" selected>' . $row->nombre . '</option>' :
                     '<option value="' . $row->codalmacen . '">' . $row->nombre . '</option>';
+                $warehouses++;
             }
-            $options[] = '</optgroup>';
+            $options[] = '<optgroup label="' . $company->nombrecorto . '">' . $option . '</optgroup>';
         }
+
         $attributes = $model->editable ?
             'name="codalmacen" onchange="return ' . $jsFunc . '(\'recalculate\', \'0\');" required' :
             'disabled';
-        return empty($model->subjectColumnValue()) || count($options) <= 1 ? '' : '<div class="col-sm-2 col-lg">'
+
+        return empty($model->subjectColumnValue()) || $warehouses <= 1 ? '' : '<div class="col-sm-2 col-lg">'
             . '<div class="form-group">'
             . '<a href="' . Almacenes::get($model->codalmacen)->url() . '">' . $i18n->trans('company-warehouse') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
@@ -152,9 +162,16 @@ trait CommonSalesPurchases
     {
         $options = [];
         foreach (FormasPago::all() as $row) {
+            // saltamos las formas de pago de otras empresas
             if ($row->idempresa != $model->idempresa) {
                 continue;
             }
+
+            // si la forma de pago no está activa o seleccionada, la saltamos
+            if ($row->codpago != $model->codpago && !$row->activa) {
+                continue;
+            }
+
             $options[] = ($row->codpago === $model->codpago) ?
                 '<option value="' . $row->codpago . '" selected>' . $row->descripcion . '</option>' :
                 '<option value="' . $row->codpago . '">' . $row->descripcion . '</option>';
@@ -162,7 +179,7 @@ trait CommonSalesPurchases
 
         $attributes = $model->editable ? 'name="codpago" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
-            . '<div class="form-group">'
+            . '<div id="payment-methods" class="form-group">'
             . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . $i18n->trans('payment-method') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
@@ -303,7 +320,7 @@ trait CommonSalesPurchases
     {
         $attributes = $model->editable && $enabled ? 'name="fecha" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
-            . '<div class="form-group">' . $i18n->trans('date')
+            . '<div id="document-date" class="form-group">' . $i18n->trans('date')
             . '<input type="date" ' . $attributes . ' value="' . date('Y-m-d', strtotime($model->fecha)) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -376,7 +393,8 @@ trait CommonSalesPurchases
         // añadimos los estados posibles
         $options = [];
         foreach ($model->getAvailableStatus() as $sta) {
-            if ($sta->idestado === $model->idestado) {
+            // si está seleccionado o no activo, lo saltamos
+            if ($sta->idestado === $model->idestado || false === $sta->activo) {
                 continue;
             }
 
@@ -539,7 +557,7 @@ trait CommonSalesPurchases
             . '<div class="form-group">'
             . '<button class="btn btn-spin-action btn-outline-danger dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">'
             . '<i class="fas fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</button>'
-            . '<div class="dropdown-menu"><a class="dropdown-item text-success" href="#" onclick="return ' . $jsName . '(\'save-paid\', \'1\');">'
+            . '<div class="dropdown-menu"><a class="dropdown-item text-success" href="#" onclick="showModalPaymentConditions(' . $jsName . ')">'
             . '<i class="fas fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</a></div>'
             . '</div>'
             . '</div>';

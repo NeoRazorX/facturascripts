@@ -171,22 +171,31 @@ class EditCuenta extends EditController
             case 'ListCuenta':
                 $where = [new DataBaseWhere('parent_idcuenta', $idcuenta)];
                 $view->loadData('', $where);
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
                 break;
 
             case 'ListSubcuenta':
                 $where = [new DataBaseWhere('idcuenta', $idcuenta)];
                 $view->loadData('', $where);
-                if ($view->count > 0) {
-                    $this->addButton($mainViewName, [
-                        'action' => 'ledger',
-                        'color' => 'info',
-                        'icon' => 'fas fa-print fa-fw',
-                        'label' => 'print',
-                        'type' => 'modal'
-                    ]);
-                    $this->setLedgerReportExportOptions($mainViewName);
-                    $this->setLedgerReportValues($mainViewName);
+                if ($view->count == 0) {
+                    break;
                 }
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
+
+                // añadimos botón de imprimir mayor
+                $this->addButton($mainViewName, [
+                    'action' => 'ledger',
+                    'color' => 'info',
+                    'icon' => 'fas fa-print fa-fw',
+                    'label' => 'print',
+                    'type' => 'modal'
+                ]);
+                $this->setLedgerReportExportOptions($mainViewName);
+                $this->setLedgerReportValues($mainViewName);
                 break;
 
             case $mainViewName:

@@ -75,6 +75,10 @@ final class Migrations
 
         // desvinculamos las agencias de transporte que no existan
         foreach (['albaranescli', 'facturascli', 'pedidoscli', 'presupuestoscli'] as $table) {
+            if (false === self::db()->tableExists($table)) {
+                continue;
+            }
+
             $sql = "UPDATE " . $table . " SET codtrans = NULL WHERE codtrans IS NOT NULL"
                 . " AND codtrans NOT IN (SELECT codtrans FROM agenciastrans);";
 
@@ -94,13 +98,26 @@ final class Migrations
             'presupuestoscli', 'presupuestosprov'
         ];
         foreach ($tables as $table) {
+            if (false === self::db()->tableExists($table)) {
+                continue;
+            }
+
             // buscamos aquellos códigos de pago que no estén en la tabla formaspago
             $sql = "SELECT DISTINCT codpago FROM " . $table . " WHERE codpago NOT IN (SELECT codpago FROM formaspago);";
             foreach (self::db()->select($sql) as $row) {
                 $formaPago = new FormaPago();
+                $formaPago->activa = false;
                 $formaPago->codpago = $row['codpago'];
                 $formaPago->descripcion = Tools::lang()->trans('deleted');
-                $formaPago->save();
+                if ($formaPago->save()) {
+                    continue;
+                }
+
+                // no hemos podido guardar, la añadimos por sql
+                $sql = "INSERT INTO " . FormaPago::tableName() . " (codpago, descripcion) VALUES ("
+                    . self::db()->var2str($formaPago->codpago) . ", "
+                    . self::db()->var2str($formaPago->descripcion) . ");";
+                self::db()->exec($sql);
             }
         }
     }
@@ -110,6 +127,10 @@ final class Migrations
     {
         // ponemos a null el idfacturarect de las facturas que rectifiquen a una factura que no existe
         foreach (['facturascli', 'facturasprov'] as $table) {
+            if (false === self::db()->tableExists($table)) {
+                continue;
+            }
+
             $sql = "UPDATE " . $table . " SET idfacturarect = NULL"
                 . " WHERE idfacturarect IS NOT NULL"
                 . " AND idfacturarect NOT IN (SELECT idfactura FROM (SELECT idfactura FROM " . $table . ") AS subquery);";

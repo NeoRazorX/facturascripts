@@ -23,6 +23,8 @@ use FacturaScripts\Core\Model\User;
 use FacturaScripts\Dinamic\Model\User as DinUser;
 
 /**
+ * Permite gestionar la sesión del usuario.
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 final class Session

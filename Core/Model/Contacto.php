@@ -92,28 +92,10 @@ class Contacto extends Base\Contact
     /** @var string */
     public $web;
 
-    public function alias(): string
-    {
-        if (empty($this->email) || strpos($this->email, '@') === false) {
-            return (string)$this->idcontacto;
-        }
-
-        $aux = explode('@', $this->email);
-        switch ($aux[0]) {
-            case 'admin':
-            case 'info':
-                $domain = explode('.', $aux[1]);
-                return $domain[0] . '_' . $this->idcontacto;
-
-            default:
-                return $aux[0] . '_' . $this->idcontacto;
-        }
-    }
-
-    public function checkVies(): bool
+    public function checkVies(bool $msg = true): bool
     {
         $codiso = Paises::get($this->codpais)->codiso ?? '';
-        return Vies::check($this->cifnif ?? '', $codiso) === 1;
+        return Vies::check($this->cifnif ?? '', $codiso, $msg) === 1;
     }
 
     public function clear()

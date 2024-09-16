@@ -300,9 +300,9 @@ final class Calculator
             $subtotals['iva'][$ivaKey0]['neto'] += $totalCoste;
             $subtotals['iva'][$ivaKey0]['netosindto'] += $totalCoste;
 
-            // si el beneficio es negativo, no hay IVA
+            // si el beneficio es negativo y la serie no es rectificativa, no hay IVA
             $beneficio = $pvpTotal - $totalCoste;
-            if ($beneficio <= 0) {
+            if ($beneficio <= 0 && $doc->getSerie()->tipo !== 'R') {
                 return true;
             }
 

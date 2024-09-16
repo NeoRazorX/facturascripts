@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -50,7 +50,7 @@ class EditAlmacen extends EditController
     protected function createStockView(string $viewName = 'ListStock'): void
     {
         $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly')
-            ->addSearchFields(['stocks.referencia', 'productos.descripcion'])
+            ->addSearchFields(['stocks.referencia', 'stocks.ubicacion', 'productos.descripcion'])
             ->addOrderBy(['stocks.referencia'], 'reference')
             ->addOrderBy(['stocks.cantidad'], 'quantity')
             ->addOrderBy(['stocks.disponible'], 'available')

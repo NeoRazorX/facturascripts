@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\NumberTools;
+use FacturaScripts\Core\Tools;
 
 /**
  * WidgetPercentage
@@ -44,6 +44,6 @@ class WidgetPercentage extends WidgetNumber
      */
     protected function show()
     {
-        return is_null($this->value) ? '-' : NumberTools::format($this->value, $this->decimal) . '%';
+        return is_null($this->value) ? '-' : Tools::number($this->value, $this->decimal) . '%';
     }
 }

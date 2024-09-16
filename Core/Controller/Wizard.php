@@ -173,15 +173,13 @@ class Wizard extends Controller
     private function preSetAppSettings(string $codpais): void
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/default.json';
-        if (false === file_exists($filePath)) {
-            return;
-        }
-
-        $fileContent = file_get_contents($filePath);
-        $defaultValues = json_decode($fileContent, true) ?? [];
-        foreach ($defaultValues as $group => $values) {
-            foreach ($values as $key => $value) {
-                Tools::settingsSet($group, $key, $value);
+        if (file_exists($filePath)) {
+            $fileContent = file_get_contents($filePath);
+            $defaultValues = json_decode($fileContent, true) ?? [];
+            foreach ($defaultValues as $group => $values) {
+                foreach ($values as $key => $value) {
+                    Tools::settingsSet($group, $key, $value);
+                }
             }
         }
 
@@ -301,6 +299,7 @@ class Wizard extends Controller
         }
         Tools::settingsSet('default', 'updatesupplierprices', (bool)$this->request->request->get('updatesupplierprices', '0'));
         Tools::settingsSet('default', 'ventasinstock', (bool)$this->request->request->get('ventasinstock', '0'));
+        Tools::settingsSet('default', 'site_url', Tools::siteUrl());
         Tools::settingsSave();
 
         if ($this->request->request->get('defaultplan', '0')) {

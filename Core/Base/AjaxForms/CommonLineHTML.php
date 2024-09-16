@@ -75,6 +75,11 @@ trait CommonLineHTML
         // necesitamos una opción vacía para cuando el sujeto está exento de impuestos
         $options = ['<option value="">------</option>'];
         foreach (Impuestos::all() as $imp) {
+            // si el impuesto no está activo o seleccionado, lo saltamos
+            if (!$imp->activo && $line->codimpuesto != $imp->codimpuesto) {
+                continue;
+            }
+
             $options[] = $line->codimpuesto == $imp->codimpuesto ?
                 '<option value="' . $imp->codimpuesto . '" selected>' . $imp->descripcion . '</option>' :
                 '<option value="' . $imp->codimpuesto . '">' . $imp->descripcion . '</option>';
@@ -175,6 +180,11 @@ trait CommonLineHTML
     {
         $options = ['<option value="">------</option>'];
         foreach (Retenciones::all() as $ret) {
+            // si la retención no está activa o seleccionada, la saltamos
+            if (!$ret->activa && $line->irpf != $ret->porcentaje) {
+                continue;
+            }
+
             $options[] = $line->irpf === $ret->porcentaje ?
                 '<option value="' . $ret->porcentaje . '" selected>' . $ret->descripcion . '</option>' :
                 '<option value="' . $ret->porcentaje . '">' . $ret->descripcion . '</option>';

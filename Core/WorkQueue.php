@@ -24,8 +24,14 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\WorkEvent;
 use Throwable;
 
+/**
+ * La cola de trabajos en segundo plano. Permite añadir workers y lanzar eventos.
+ */
 final class WorkQueue
 {
+    /** @var array */
+    private static $new_events = [];
+
     /** @var array */
     private static $prevent_new_events = [];
 
@@ -40,6 +46,13 @@ final class WorkQueue
             'name' => $worker_name,
             'position' => $position,
         ];
+    }
+
+    public static function clear(): void
+    {
+        self::$new_events = [];
+        self::$prevent_new_events = [];
+        self::$workers_list = [];
     }
 
     public static function getWorkersList(): array
@@ -67,11 +80,6 @@ final class WorkQueue
         self::$prevent_new_events = $event_names;
     }
 
-    public static function removeAllWorkers(): void
-    {
-        self::$workers_list = [];
-    }
-
     public static function run(): bool
     {
         // leemos la lista de trabajos pendientes
@@ -79,6 +87,8 @@ final class WorkQueue
         $where = [new DataBaseWhere('done', false)];
         $orderBy = ['id' => 'ASC'];
         foreach ($workEventModel->all($where, $orderBy, 0, 1) as $event) {
+            self::preventDuplicated($event);
+
             return self::runEvent($event);
         }
 
@@ -109,9 +119,20 @@ final class WorkQueue
             // worker encontrado, guardamos el evento
             $work_event = new WorkEvent();
             $work_event->name = $event;
-            $work_event->params = json_encode($params, JSON_PRETTY_PRINT);
             $work_event->value = $value;
-            return $work_event->save();
+            $work_event->setParams($params);
+
+            if (self::isDuplicated($work_event)) {
+                // devolvemos true porque ya se había enviado el evento
+                return true;
+            }
+
+            if (false === $work_event->save()) {
+                return false;
+            }
+
+            self::preventDuplicated($work_event);
+            return true;
         }
 
         return false;
@@ -141,8 +162,25 @@ final class WorkQueue
         throw new Exception('Worker not found: ' . $worker_name);
     }
 
+    private static function isDuplicated(WorkEvent $event): bool
+    {
+        $hash = $event->getHash();
+        return isset(self::$new_events[$hash]);
+    }
+
+    private static function preventDuplicated(WorkEvent $event): void
+    {
+        $hash = $event->getHash();
+        self::$new_events[$hash] = true;
+    }
+
     private static function runEvent(WorkEvent &$event): bool
     {
+        // creamos un bloqueo para evitar que se ejecute el mismo evento varias veces
+        if (false === Kernel::lock('work-queue-' . $event->name)) {
+            return false;
+        }
+
         // ordenamos los workers por posición
         usort(self::$workers_list, function ($a, $b) {
             return $a['position'] <=> $b['position'];
@@ -192,6 +230,11 @@ final class WorkQueue
         $event->done_date = Tools::dateTime();
         $event->workers = count($worker_list);
         $event->worker_list = implode(',', $worker_list);
-        return $event->save();
+        $return = $event->save();
+
+        // liberamos el bloqueo
+        Kernel::unlock('work-queue-' . $event->name);
+
+        return $return;
     }
 }

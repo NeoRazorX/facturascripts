@@ -142,19 +142,17 @@
                 <widget type="number" fieldname="levelbenefitsales" min="0" max="99" decimal="0" step="1" required="true"/>
             </column>
         </group>
-        <group name="advanced" title="advanced" icon="fas fa-database" numcolumns="12">
-            <column name="default-role" titleurl="ListUser?activetab=ListRole" numcolumns="3" order="100">
-                <widget type="select" fieldname="codrole" onclick="EditRole" required="true" icon="fas fa-users">
-                    <values source="roles" fieldcode="codrole" fieldtitle="descripcion"/>
-                </widget>
+        <group name="advanced" title="advanced" icon="fas fa-database" valign="bottom" numcolumns="12">
+            <column name="url" numcolumns="3" order="100">
+                <widget type="link" fieldname="site_url"/>
             </column>
             <column name="homepage" numcolumns="3" order="110">
                 <widget type="select" fieldname="homepage" icon="fas fa-home">
                     <values source="pages" fieldcode="name" fieldtitle="name"/>
                 </widget>
             </column>
-            <column name="item-limit" numcolumns="3" order="120">
-                <widget type="number" fieldname="item_limit" min="10" max="250" icon="fas fa-list" required="true"/>
+            <column name="login-image" numcolumns="3" order="120">
+                <widget type="library" fieldname="idloginimage" icon="fas fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.png"/>
             </column>
             <column name="table-size" numcolumns="3" order="130">
                 <widget type="select" fieldname="tablesize" icon="fas fa-table" required="true" translate="true">
@@ -162,18 +160,21 @@
                     <values title="small">small</values>
                 </widget>
             </column>
-            <column name="login-image" numcolumns="3" order="140">
-                <widget type="library" fieldname="idloginimage" icon="fas fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.png"/>
+            <column name="item-limit" numcolumns="3" order="140">
+                <widget type="number" fieldname="item_limit" min="10" max="250" icon="fas fa-list" required="true"/>
             </column>
-            <column name="days-log-retention" numcolumns="3" order="150">
+            <column name="default-role" titleurl="ListUser?activetab=ListRole" numcolumns="3" order="150">
+                <widget type="select" fieldname="codrole" onclick="EditRole" required="true" icon="fas fa-users">
+                    <values source="roles" fieldcode="codrole" fieldtitle="descripcion"/>
+                </widget>
+            </column>
+            <column name="days-log-retention" numcolumns="3" order="160">
                 <widget type="number" fieldname="days_log_retention" min="1" max="250" icon="fas fa-calendar" required="true"/>
             </column>
-        </group>
-        <group name="advanced2" numcolumns="12">
-            <column name="enable-api" order="100">
+            <column name="enable-api" order="170">
                 <widget type="checkbox" fieldname="enable_api"/>
             </column>
-            <column name="enable-updates-beta" order="120">
+            <column name="enable-updates-beta" order="180">
                 <widget type="checkbox" fieldname="enableupdatesbeta"/>
             </column>
         </group>

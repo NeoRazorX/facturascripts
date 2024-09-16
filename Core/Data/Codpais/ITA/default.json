@@ -1,0 +1,18 @@
+{
+    "default": {
+        "coddivisa": "EUR",
+        "codimpuesto": "IVA22",
+        "codpago": "CONT",
+        "codserie": "A",
+        "codserierec": "R",
+        "tipoidfiscal": "CF",
+        "updatesupplierprices": true,
+        "validate_iban": true
+    },
+    "email": {
+        "enc": "ssl",
+        "host": "smtp.gmail.com",
+        "mailer": "smtp",
+        "port": "465"
+    }
+}

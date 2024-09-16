@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -106,6 +106,24 @@
                                     {{ trans('date') }}
                                     <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}"
                                            class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-group">
+                                    {{ trans('status') }}
+                                    <select name="idestado" class="form-control">
+                                        {% for status in firstView.model.getAvailableStatus() %}
+                                            {% if status.idestado is same as(11) %}
+                                                <option value="{{ status.idestado }}" selected>
+                                                    {{ status.nombre }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ status.idestado }}">
+                                                    {{ status.nombre }}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-sm text-right">

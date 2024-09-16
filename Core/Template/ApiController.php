@@ -56,6 +56,8 @@ abstract class ApiController implements ControllerInterface
         $this->request = Request::createFromGlobals();
         $this->response = new Response();
         $this->url = $url;
+
+        Session::set('uri', $url);
     }
 
     public function getPageData(): array

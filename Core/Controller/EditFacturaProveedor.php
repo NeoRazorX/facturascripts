@@ -261,7 +261,7 @@ class EditFacturaProveedor extends PurchasesController
 
         if ($invoice->editable) {
             foreach ($invoice->getAvailableStatus() as $status) {
-                if ($status->editable) {
+                if ($status->editable || !$status->activo) {
                     continue;
                 }
 
@@ -314,6 +314,14 @@ class EditFacturaProveedor extends PurchasesController
                 $receipt->pagado = true;
                 $receipt->save();
             }
+        }
+
+        // asignamos el estado de la factura
+        $newRefund->idestado = $this->request->request->get('idestado');
+        if (false === $newRefund->save()) {
+            Tools::log()->error('record-save-error');
+            $this->dataBase->rollback();
+            return true;
         }
 
         $this->dataBase->commit();

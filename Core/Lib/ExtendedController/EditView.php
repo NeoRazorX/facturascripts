@@ -99,9 +99,12 @@ class EditView extends BaseView
      * Allows you to set the view as read only
      *
      * @param bool $value
+     * @return EditView
      */
-    public function setReadOnly(bool $value)
+    public function setReadOnly(bool $value): EditView
     {
         $this->template = $value ? static::READONLY_TEMPLATE : static::DEFAULT_TEMPLATE;
+
+        return $this;
     }
 }

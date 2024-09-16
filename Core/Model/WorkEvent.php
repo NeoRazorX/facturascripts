@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,7 +47,7 @@ class WorkEvent extends ModelClass
     public $nick;
 
     /** @var string */
-    public $params;
+    protected $params;
 
     /** @var string */
     public $value;
@@ -68,6 +68,22 @@ class WorkEvent extends ModelClass
         $this->worker_list = '';
     }
 
+    public function delete(): bool
+    {
+        // si existe un archivo con los parámetros, lo eliminamos
+        $filePath = Tools::folder('MyFiles', 'Tmp', 'work-event-' . $this->id . '-params.json');
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        return parent::delete();
+    }
+
+    public function getHash(): string
+    {
+        return md5($this->name . $this->value . json_encode($this->params()));
+    }
+
     public function param(string $key, $default = null)
     {
         $params = $this->params();
@@ -76,12 +92,39 @@ class WorkEvent extends ModelClass
 
     public function params(): array
     {
+        // si los parámetros están guardados en un archivo, los leemos
+        if (strpos($this->params, 'file:') === 0) {
+            $filePath = substr($this->params, 5);
+            if (file_exists($filePath)) {
+                $this->params = file_get_contents($filePath);
+            } else {
+                Tools::log()->error('Error reading params from file');
+                return [];
+            }
+        }
+
         return empty($this->params) ? [] : json_decode($this->params, true);
     }
 
     public static function primaryColumn(): string
     {
         return 'id';
+    }
+
+    public function save(): bool
+    {
+        // si los parámetros son muy grandes, los guardamos en un archivo
+        if (strlen($this->params) > 5000 && !$this->saveParamsToFile()) {
+            Tools::log()->error('Error saving params on file');
+            return false;
+        }
+
+        return parent::save();
+    }
+
+    public function setParams(array $params): void
+    {
+        $this->params = json_encode($params);
     }
 
     public static function tableName(): string
@@ -95,9 +138,8 @@ class WorkEvent extends ModelClass
         $this->value = Tools::noHtml($this->value);
         $this->worker_list = Tools::noHtml($this->worker_list);
 
-        // si la lista de parámetros es muy larga, devolvemos false
-        if (strlen($this->params) > 5000) {
-            Tools::log()->error('The params field is too long: ' . strlen($this->params));
+        // si los parámetros no son un string, devolvemos false
+        if (!is_string($this->params)) {
             return false;
         }
 
@@ -107,5 +149,16 @@ class WorkEvent extends ModelClass
     public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    private function saveParamsToFile(): bool
+    {
+        $filePath = Tools::folder('MyFiles', 'Tmp', 'work-event-' . $this->id . '-params.json');
+        if (file_put_contents($filePath, $this->params) === false) {
+            return false;
+        }
+
+        $this->params = 'file:' . $filePath;
+        return true;
     }
 }

@@ -37,6 +37,8 @@ use FacturaScripts\Dinamic\Model\PedidoCliente;
 use FacturaScripts\Dinamic\Model\PedidoProveedor;
 use FacturaScripts\Dinamic\Model\PresupuestoCliente;
 use FacturaScripts\Dinamic\Model\PresupuestoProveedor;
+use FacturaScripts\Dinamic\Model\ReciboCliente;
+use FacturaScripts\Dinamic\Model\ReciboProveedor;
 use FacturaScripts\Dinamic\Model\WorkEvent;
 
 class Cron implements ControllerInterface
@@ -53,18 +55,7 @@ class Cron implements ControllerInterface
     public function run(): void
     {
         header('Content-Type: text/plain');
-
-        echo <<<END
-
-  ______         _                    _____           _       _       
- |  ____|       | |                  / ____|         (_)     | |      
- | |__ __ _  ___| |_ _   _ _ __ __ _| (___   ___ _ __ _ _ __ | |_ ___ 
- |  __/ _` |/ __| __| | | | '__/ _` |\___ \ / __| '__| | '_ \| __/ __|
- | | | (_| | (__| |_| |_| | | | (_| |____) | (__| |  | | |_) | |_\__ \
- |_|  \__,_|\___|\__|\__,_|_|  \__,_|_____/ \___|_|  |_| .__/ \__|___/
-                                                       | |            
-                                                       |_|
-END;
+        $this->echoLogo();
 
         Tools::log('cron')->notice('starting-cron');
         echo PHP_EOL . PHP_EOL . Tools::lang()->trans('starting-cron');
@@ -76,17 +67,8 @@ END;
         // ejecutamos los trabajos del core
         $this->runCoreJobs();
 
-        // si se está ejecutando en modo cli, ejecutamos la cola de trabajos, máximo 100 trabajos
-        $max = 100;
-        while (PHP_SAPI === 'cli') {
-            if (false === WorkQueue::run()) {
-                break;
-            }
-
-            if (--$max <= 0) {
-                break;
-            }
-        }
+        // ejecutamos la cola de trabajos
+        $this->runWorkQueue();
 
         // mostramos los mensajes del log
         $levels = ['critical', 'error', 'info', 'notice', 'warning'];
@@ -107,6 +89,23 @@ END;
         ];
         echo PHP_EOL . PHP_EOL . Tools::lang()->trans('finished-cron', $context) . PHP_EOL . PHP_EOL;
         Tools::log()->notice('finished-cron', $context);
+    }
+
+    private function echoLogo(): void
+    {
+        if (PHP_SAPI === 'cli') {
+            echo <<<END
+
+  ______         _                    _____           _       _       
+ |  ____|       | |                  / ____|         (_)     | |      
+ | |__ __ _  ___| |_ _   _ _ __ __ _| (___   ___ _ __ _ _ __ | |_ ___ 
+ |  __/ _` |/ __| __| | | | '__/ _` |\___ \ / __| '__| | '_ \| __/ __|
+ | | | (_| | (__| |_| |_| | | | (_| |____) | (__| |  | | |_) | |_\__ \
+ |_|  \__,_|\___|\__|\__,_|_|  \__,_|_____/ \___|_|  |_| .__/ \__|___/
+                                                       | |            
+                                                       |_|
+END;
+        }
     }
 
     private function getMemorySize(int $size): string
@@ -151,13 +150,17 @@ END;
         }
 
         Tools::log('cron')->notice('old-logs-delete-ok');
-
-        // eliminamos los eventos de trabajo antiguos
-        $this->removeOldWorkEvents($minDate);
     }
 
-    protected function removeOldWorkEvents(string $minDate): void
+    protected function removeOldWorkEvents(): void
     {
+        $maxDays = Tools::settings('default', 'days_log_retention', 90);
+        if ($maxDays <= 0) {
+            return;
+        }
+
+        $minDate = Tools::dateTime('-' . $maxDays . ' days');
+
         $query = WorkEvent::table()
             ->whereEq('done', true)
             ->whereLt('creation_date', $minDate);
@@ -173,15 +176,22 @@ END;
     protected function runCoreJobs(): void
     {
         $this->job('update-attached-relations')
-            ->every('1 day')
+            ->everyDayAt(0)
             ->run(function () {
                 $this->updateAttachedRelations();
             });
 
         $this->job('remove-old-logs')
-            ->every('1 week')
+            ->everyDayAt(1)
             ->run(function () {
                 $this->removeOldLogs();
+                $this->removeOldWorkEvents();
+            });
+
+        $this->job('update-receipts')
+            ->everyDayAt(2)
+            ->run(function () {
+                $this->updateReceipts();
             });
     }
 
@@ -208,7 +218,26 @@ END;
 
             // si no se está ejecutando en modo cli y lleva más de 20 segundos, se detiene
             if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 20) {
+                echo PHP_EOL . PHP_EOL . Tools::lang()->trans('cron-timeout');
                 break;
+            }
+        }
+    }
+
+    protected function runWorkQueue(): void
+    {
+        $max = 1000;
+        while ($max > 0) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+
+            --$max;
+
+            // si no se está ejecutando en modo cli y lleva más de 25 segundos, terminamos
+            if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 25) {
+                echo PHP_EOL . PHP_EOL . Tools::lang()->trans('cron-timeout');
+                return;
             }
         }
     }
@@ -262,6 +291,40 @@ END;
 
             $offset += $limit;
             $documents = $models[0]->all([], $orderBy, $offset, $limit);
+        }
+    }
+
+    protected function updateReceipts(): void
+    {
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('updating-receipts') . ' ... ';
+        ob_flush();
+
+        // recorremos todos los recibos de compra impagados con fecha anterior a hoy
+        $where = [
+            new DataBaseWhere('pagado', false),
+            new DataBaseWhere('vencimiento', Tools::date(), '<')
+        ];
+        foreach (ReciboProveedor::all($where, [], 0, 0) as $recibo) {
+            // si el código de factura ha cambiado, lo guardamos
+            $factura = $recibo->getInvoice();
+            if ($recibo->codigofactura != $factura->codigo) {
+                $recibo->codigofactura = $factura->codigo;
+            }
+
+            // guardamos para que se actualice
+            $recibo->save();
+        }
+
+        // recorremos todos los recibos de venta impagados con fecha anterior a hoy
+        foreach (ReciboCliente::all($where, [], 0, 0) as $recibo) {
+            // si el código de factura ha cambiado, lo guardamos
+            $factura = $recibo->getInvoice();
+            if ($recibo->codigofactura != $factura->codigo) {
+                $recibo->codigofactura = $factura->codigo;
+            }
+
+            // guardamos para que se actualice
+            $recibo->save();
         }
     }
 }

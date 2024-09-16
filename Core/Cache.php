@@ -23,6 +23,8 @@ use Closure;
 use Throwable;
 
 /**
+ * Permite leer y escribir de forma sencilla información que se almacena en la carpeta /MyFiles/Tmp/FileCache.
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 final class Cache

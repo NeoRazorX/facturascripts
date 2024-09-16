@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -50,4 +50,43 @@
 {# Muestra los parámetros necesarios para el popover #}
 {% macro popoverTitle(msg, position = 'auto') %}
     {% if msg | length > 0 %}data-toggle="popover" data-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"{% endif %}
+{% endmacro %}
+
+{# Muestra un mensaje para registrar la instalación #}
+{% macro registerInstall(link = true) %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="h4">
+                <i class="fa-solid fa-registered mr-1"></i> {{ trans('register-install-ad') }}
+            </div>
+            <p class="card-text">{{ trans('register-install-ad-p') }}</p>
+        </div>
+        {% if link %}
+            <div class="card-footer p-2">
+                <a href="{{ asset('Updater') }}" class="btn btn-secondary">
+                    {{ trans('register') }}
+                </a>
+                <a href="https://facturascripts.com/patrocinar" target="_blank" class="btn btn-outline-secondary">
+                    {{ trans('become-sponsor') }}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{# Muestra un mensaje para actualizar la instalación #}
+{% macro updateInstall() %}
+    <div class="card bg-warning shadow-sm">
+        <div class="card-body">
+            <div class="h3">
+                <i class="fa-solid fa-cloud-download fa-beat mr-1"></i> {{ trans('updates-available') }}
+            </div>
+            <p class="card-text">{{ trans('updates-available-p') }}</p>
+        </div>
+        <div class="card-footer p-2">
+            <a href="{{ asset('Updater') }}" class="btn btn-secondary">
+                {{ trans('update') }}
+            </a>
+        </div>
+    </div>
 {% endmacro %}

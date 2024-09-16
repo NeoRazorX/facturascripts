@@ -1,3 +1,4 @@
-codimpuesto;descripcion;iva;recargo
-ITBMS;"ITBMS 7%";7;0
-ITBI;"ITBI 2%";2;0
+codimpuesto,descripcion,iva,recargo
+IVA_001,"Impuesto General a las Ventas",0.07,0
+IVA_002,"Impuesto Reducido - Alimentos",0.03,0
+IVA_003,"IVA Exento - Medicamentos",0,0

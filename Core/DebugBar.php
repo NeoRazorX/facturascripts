@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
- * Description of DebugBar
+ * La barra de debug que se muestra en la parte inferior de la página cuando el modo debug está activado.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -172,7 +172,8 @@ class DebugBar
     private function getSize(int $size): string
     {
         $unit = ['b', 'kb', 'mb', 'gb', 'tb', 'pb'];
-        return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
+        $i = (int)floor(log($size, 1024));
+        return round($size / pow(1024, $i), 2) . $unit[$i];
     }
 
     private function renderItems(array $items): string

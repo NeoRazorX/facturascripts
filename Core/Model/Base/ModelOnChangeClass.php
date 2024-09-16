@@ -50,6 +50,15 @@ abstract class ModelOnChangeClass extends ModelClass
         return false;
     }
 
+    public function hasChanged(string $field): bool
+    {
+        if (empty($this->primaryColumnValue())) {
+            return false;
+        }
+
+        return array_key_exists($field, $this->previousData) && $this->{$field} != $this->previousData[$field];
+    }
+
     /**
      * Loads a record from database.
      *

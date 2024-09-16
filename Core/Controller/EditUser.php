@@ -262,7 +262,7 @@ class EditUser extends EditController
                     $this->setSettings($viewName, 'btnDelete', false);
                 }
                 // is the user is admin, hide the EditRoleUser tab
-                if ($view->model->admin) {
+                if ($view->model->admin && array_key_exists('EditRoleUser', $this->views)) {
                     $this->setSettings('EditRoleUser', 'active', false);
                 }
                 break;

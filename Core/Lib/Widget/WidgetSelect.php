@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Daniel Fernández Giménez     <hola@danielfg.es>
  */
 class WidgetSelect extends BaseWidget
 {
@@ -45,6 +46,9 @@ class WidgetSelect extends BaseWidget
 
     /** @var int */
     protected $limit;
+
+    /** @var bool */
+    public $multiple;
 
     /** @var string */
     protected $parent;
@@ -67,6 +71,7 @@ class WidgetSelect extends BaseWidget
         parent::__construct($data);
         $this->parent = $data['parent'] ?? '';
         $this->translate = isset($data['translate']);
+        $this->multiple = isset($data['multiple']) && strtolower($data['multiple']) === 'true';
 
         foreach ($data['children'] as $child) {
             if ($child['tag'] !== 'values') {
@@ -109,7 +114,14 @@ class WidgetSelect extends BaseWidget
     public function processFormData(&$model, $request)
     {
         $value = $request->request->get($this->fieldname, '');
-        $model->{$this->fieldname} = ('' === $value) ? null : $value;
+
+        if ('' === $value) {
+            $model->{$this->fieldname} = null;
+        } elseif ($this->multiple && false === $this->readonly()) {
+            $model->{$this->fieldname} = implode(',', $value);
+        } else {
+            $model->{$this->fieldname} = $value;
+        }
     }
 
     /**
@@ -126,7 +138,10 @@ class WidgetSelect extends BaseWidget
      */
     public function setValuesFromArray(array $items, bool $translate = false, bool $addEmpty = false, string $col1 = 'value', string $col2 = 'title')
     {
-        $this->values = $addEmpty ? [['value' => null, 'title' => '------']] : [];
+        if ($addEmpty && false === $this->multiple) {
+            $this->values = [['value' => null, 'title' => '------']];
+        }
+
         foreach ($items as $item) {
             if (false === is_array($item)) {
                 $this->values[] = ['value' => $item, 'title' => $item];
@@ -150,7 +165,10 @@ class WidgetSelect extends BaseWidget
 
     public function setValuesFromArrayKeys(array $values, bool $translate = false, bool $addEmpty = false)
     {
-        $this->values = $addEmpty ? [['value' => null, 'title' => '------']] : [];
+        if ($addEmpty && false === $this->multiple) {
+            $this->values = [['value' => null, 'title' => '------']];
+        }
+
         foreach ($values as $key => $value) {
             $this->values[] = [
                 'value' => $key,
@@ -196,6 +214,21 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
+     * @param object $model
+     * @param string $display
+     *
+     * @return string
+     */
+    public function tableCell($model, $display = 'left')
+    {
+        $this->setValue($model);
+        $class = $this->combineClasses($this->tableCellClass('text-' . $display), $this->class);
+        return $this->multiple
+            ? '<td class="' . $class . '">' . $this->show() . '</td>'
+            : '<td class="' . $class . '">' . $this->onclickHtml($this->show()) . '</td>';
+    }
+
+    /**
      *  Translate the fixed titles, if they exist
      */
     private function applyTranslations()
@@ -211,7 +244,10 @@ class WidgetSelect extends BaseWidget
 
     protected function assets()
     {
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
+        AssetManager::add('css', FS_ROUTE . '/node_modules/select2/dist/css/select2.min.css');
+        AssetManager::add('css', FS_ROUTE . '/node_modules/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css');
+        AssetManager::add('js', FS_ROUTE . '/node_modules/select2/dist/js/select2.min.js', 2);
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
     }
 
     /**
@@ -222,18 +258,23 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
+        $class = $this->combineClasses($this->css('form-control select2'), $this->class, $extraClass);
         if ($this->parent) {
-            $class = $class . ' parentSelect';
+            $class .= ' parentSelect';
         }
 
-        if ($this->readonly()) {
-            return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-                . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly/>';
+        $html = '';
+        $name = '';
+        if ($this->multiple && $this->readonly()) {
+            $html .= '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '">';
+        } elseif ($this->multiple && false === $this->readonly()) {
+            $name = ' name="' . $this->fieldname . '[]"';
+        } elseif (false === $this->readonly()) {
+            $name = ' name="' . $this->fieldname . '"';
         }
 
-        $html = '<select'
-            . ' name="' . $this->fieldname . '"'
+        $html .= '<select'
+            . $name
             . ' id="' . $this->id . '"'
             . ' class="' . $class . '"'
             . $this->inputHtmlExtraParams()
@@ -248,15 +289,13 @@ class WidgetSelect extends BaseWidget
             . '>';
 
         $found = false;
-        $selected = false;
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
             // don't use strict comparison (===)
-            if ($option['value'] == $this->value && !$selected) {
+            if (!empty($this->value) && in_array($option['value'], explode(',', $this->value))) {
                 $found = true;
                 $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
-                $selected = true;
                 continue;
             }
 
@@ -272,6 +311,17 @@ class WidgetSelect extends BaseWidget
 
         $html .= '</select>';
         return $html;
+    }
+
+    /**
+     * @return string
+     */
+    protected function inputHtmlExtraParams()
+    {
+        $params = parent::inputHtmlExtraParams();
+        $params .= $this->multiple ? ' multiple' : '';
+        $params .= $this->readonly() ? ' disabled' : '';
+        return $params;
     }
 
     /**
@@ -301,6 +351,26 @@ class WidgetSelect extends BaseWidget
     {
         if (null === $this->value) {
             return '-';
+        }
+
+        if ($this->multiple) {
+            $array = [];
+            foreach ($this->values as $option) {
+                $title = empty($option['title']) ? $option['value'] : $option['title'];
+
+                // don't use strict comparison (===)
+                if (!empty($this->value) && in_array($option['value'], explode(',', $this->value))) {
+                    $array[] = $title;
+                }
+            }
+
+            $txt = implode(', ', $array);
+            if (strlen($txt) < 20) {
+                return $txt;
+            }
+
+            $txtBreak = substr($txt, 0, 20);
+            return '<span data-toggle="tooltip" data-html="true" title="' . $txt . '">' . $txtBreak . '...</span>';
         }
 
         $selected = null;

@@ -7,7 +7,7 @@
         "codpago": "CONT",
         "tipoidfiscal": "NIF",
         "updatesupplierprices": true,
-        "validate_iban": false
+        "validate_iban": true
     },
     "email": {
         "enc": "ssl",

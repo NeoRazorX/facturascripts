@@ -1,0 +1,4 @@
+codimpuesto,descripcion,iva,recargo
+IVA_GRAL,"IVA General",15,0
+IVA5,"IVA Productos Reducidos",5,0
+IVA_EXPORT,"IVA Exportaciones",0,0

@@ -1,7 +1,7 @@
 {
     "default": {
         "coddivisa": "CLP",
-        "codimpuesto": "IVA19",
+        "codimpuesto": "IVA_NORMAL",
         "codserie": "A",
         "codpago": "CONT",
         "tipoidfiscal": "RUT",

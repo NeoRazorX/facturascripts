@@ -38,11 +38,15 @@ class FiscalNumberValidator
      *
      * @return bool
      */
-    public static function validate(?string $type, ?string $number): bool
+    public static function validate(?string $type, ?string $number, bool $force = false): bool
     {
         // does this fiscal identifier need validation?
         $fiscalId = new IdentificadorFiscal();
-        if (empty($type) || false === $fiscalId->loadFromCode($type) || false === $fiscalId->validar) {
+        if (empty($type) || false === $fiscalId->loadFromCode($type)) {
+            return true;
+        }
+
+        if (false === $fiscalId->validar && false === $force) {
             return true;
         }
 

@@ -137,7 +137,7 @@ class AttachedFile extends ModelOnChangeClass
 
     public function isImage(): bool
     {
-        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif']);
+        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
     }
 
     public function isPdf(): bool
@@ -175,7 +175,7 @@ class AttachedFile extends ModelOnChangeClass
     public function shortFileName(int $length = 20): string
     {
         if (strlen($this->filename) <= $length) {
-            return $this->filename;
+            return $this->filename ?? '';
         }
 
         $parts = explode('.', $this->filename);

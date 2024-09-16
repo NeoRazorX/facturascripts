@@ -1,0 +1,4 @@
+codimpuesto,descripcion,iva,recargo
+IVA_GEN,"IVA General",12,0
+IVA_ESPEC,"IVA Especial Importaciones",5,0
+IVA_EXPORT,"IVA Cero para Exportaciones",0,0

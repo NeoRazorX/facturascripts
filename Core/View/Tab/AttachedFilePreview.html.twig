@@ -17,9 +17,9 @@
             </div>
         </div>
     </div>
-    {% if file.mimetype in ['image/gif','image/jpeg','image/png'] %}
+    {% if file.isImage() %}
         <img src="{{ asset(file.url('download')) }}" class="card-img-top" alt="{{ file.filename }}" />
-    {% elseif file.getExtension() == 'mp4' %}
+    {% elseif file.isVideo() %}
         <div class="embed-responsive embed-responsive-16by9">
             <video width="320" height="240" controls>
                 <source src="{{ asset(file.url('download-permanent')) }}" type="video/mp4" />

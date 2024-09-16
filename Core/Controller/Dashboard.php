@@ -22,8 +22,10 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
+use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
@@ -63,11 +65,17 @@ class Dashboard extends Controller
     /** @var array */
     public $receipts = [];
 
+    /** @var bool */
+    public $registered = false;
+
     /** @var array */
     public $sections = [];
 
     /** @var array */
     public $stats = [];
+
+    /** @var bool */
+    public $updated = false;
 
     public function getPageData(): array
     {
@@ -92,6 +100,13 @@ class Dashboard extends Controller
         $this->title = Tools::lang()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
 
         $this->loadExtensions();
+
+        // comprobamos si la instalación está registrada
+        $telemetry = new TelemetryManager();
+        $this->registered = $telemetry->ready();
+
+        // comprobamos si hay actualizaciones disponibles
+        $this->updated = Forja::canUpdateCore() === false;
     }
 
     public function showBackupWarning(): bool
