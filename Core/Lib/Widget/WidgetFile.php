@@ -130,7 +130,7 @@ class WidgetFile extends BaseWidget
      */
     protected function inputHtml($type = 'file', $extraClass = '')
     {
-        $class = empty($extraClass) ? $this->css('form-control-file') : $this->css('form-control-file') . ' ' . $extraClass;
+        $class = empty($extraClass) ? $this->css('form-control') : $this->css('form-control') . ' ' . $extraClass;
 
         if ($this->multiple) {
             return '<input type="' . $type . '" name="' . $this->fieldname . '[]" value="' . $this->value

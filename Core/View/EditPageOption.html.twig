@@ -27,7 +27,7 @@
         <div class="row">
             <div class="col-4 d-print-none">
                 <a href="{{ fsc.backPage }}" class="btn btn-sm btn-secondary">
-                    <i class="fas fa-arrow-start fa-fw" aria-hidden="true"></i>
+                    <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-md-inline-block">{{ trans('back') }}</span>
                 </a>
                 <a href="{{ fsc.url() ~ '?code=' ~ fsc.selectedViewName }}" class="btn btn-sm btn-secondary"
@@ -218,51 +218,51 @@
 {% endmacro %}
 
 {% macro editGroupColumnDisplay(col) %}
-    <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
-        {% if col.display == 'left' %}
-            <label class="btn btn-outline-secondary active" title="{{ trans('left') }}">
-                <input type="radio" name="{{ col.name }}-display" value="left" checked>
-                <i class="fas fa-align-start"></i>
+    <div class="btn-group" role="group">
+        {% if col.display == 'start' %}
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-left-display" value="start" autocomplete="off" checked>
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-left-display" title="{{ trans('left') }}">
+                <i class="fas fa-align-left"></i>
             </label>
         {% else %}
-            <label class="btn btn-outline-secondary" title="{{ trans('left') }}">
-                <input type="radio" name="{{ col.name }}-display" value="left">
-                <i class="fas fa-align-start"></i>
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-left-display" value="start" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-left-display" title="{{ trans('left') }}">
+                <i class="fas fa-align-left"></i>
             </label>
         {% endif %}
 
         {% if col.display == 'center' %}
-            <label class="btn btn-outline-secondary active" title="{{ trans('center') }}">
-                <input type="radio" name="{{ col.name }}-display" value="center" checked>
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-center-display" value="center" autocomplete="off" checked>
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-center-display" title="{{ trans('center') }}">
                 <i class="fas fa-align-center"></i>
             </label>
         {% else %}
-            <label class="btn btn-outline-secondary" title="{{ trans('center') }}">
-                <input type="radio" name="{{ col.name }}-display" value="center">
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-center-display" value="center" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-center-display" title="{{ trans('center') }}">
                 <i class="fas fa-align-center"></i>
             </label>
         {% endif %}
 
-        {% if col.display == 'right' %}
-            <label class="btn btn-outline-secondary active" title="{{ trans('right') }}">
-                <input type="radio" name="{{ col.name }}-display" value="right" checked>
-                <i class="fas fa-align-end"></i>
+        {% if col.display == 'end' %}
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-right-display" value="end" autocomplete="off" checked>
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-right-display" title="{{ trans('right') }}">
+                <i class="fas fa-align-right"></i>
             </label>
         {% else %}
-            <label class="btn btn-outline-secondary" title="{{ trans('right') }}">
-                <input type="radio" name="{{ col.name }}-display" value="right">
-                <i class="fas fa-align-end"></i>
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-right-display" value="end" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-right-display" title="{{ trans('right') }}">
+                <i class="fas fa-align-right"></i>
             </label>
         {% endif %}
 
         {% if col.display == 'none' %}
-            <label class="btn btn-outline-secondary active" title="{{ trans('hide') }}">
-                <input type="radio" name="{{ col.name }}-display" value="none" checked>
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-none-display" value="none" autocomplete="off" checked>
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-none-display" title="{{ trans('hide') }}">
                 <i class="fas fa-eye-slash"></i>
             </label>
         {% else %}
-            <label class="btn btn-outline-secondary" title="{{ trans('hide') }}">
-                <input type="radio" name="{{ col.name }}-display" value="none">
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-none-display" value="none" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-none-display" title="{{ trans('hide') }}">
                 <i class="fas fa-eye-slash"></i>
             </label>
         {% endif %}

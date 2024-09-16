@@ -259,20 +259,22 @@
     <div class="p-2">
         <input type="text" class="form-control shadow-sm" id="querySearchPlugin" placeholder="{{ trans('search') }}"/>
     </div>
-    <div class="card-columns ps-2 pe-2" id="all-plugins">
+    <div class="row row-cols-3 ps-2 pe-2" id="all-plugins">
         {% for plugin in fsc.remotePluginList %}
             {% set extraClass = plugin.health > 2 ? 'border-success' : plugin.health == 0 ? 'border-danger' : 'border-warning' %}
-            <div class="card {{ extraClass }} shadow-sm" id="{{ plugin.idplugin }}">
-                <div class="card-body p-2">
-                    <h5 class="card-title">{{ plugin.name }} v{{ plugin.version }}</h5>
-                    <p class="card-text">{{ plugin.description | slice(0, 300) | nl2br }}</p>
-                </div>
-                <div class="card-footer p-2">
-                    {% set extraBtnClass = plugin.health > 2 ? 'btn-outline-success' : plugin.health == 0 ? 'btn-outline-danger' : 'btn-outline-warning' %}
-                    <a href="{{ plugin.url }}" class="btn {{ extraBtnClass }}" target="_blank">{{ trans('add') }}</a>
-                    <span class="ms-2 text-danger" title="{{ trans('health') }}">
-                        {{ _self.healthStatus(plugin.health) }}
-                    </span>
+            <div class="col mb-2">
+                <div class="card {{ extraClass }} shadow-sm h-100" id="{{ plugin.idplugin }}">
+                    <div class="card-body p-2">
+                        <h5 class="card-title">{{ plugin.name }} v{{ plugin.version }}</h5>
+                        <p class="card-text">{{ plugin.description | slice(0, 300) | nl2br }}</p>
+                    </div>
+                    <div class="card-footer p-2">
+                        {% set extraBtnClass = plugin.health > 2 ? 'btn-outline-success' : plugin.health == 0 ? 'btn-outline-danger' : 'btn-outline-warning' %}
+                        <a href="{{ plugin.url }}" class="btn {{ extraBtnClass }}" target="_blank">{{ trans('add') }}</a>
+                        <span class="ms-2 text-danger" title="{{ trans('health') }}">
+                            {{ _self.healthStatus(plugin.health) }}
+                        </span>
+                    </div>
                 </div>
             </div>
         {% else %}
