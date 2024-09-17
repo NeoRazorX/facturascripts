@@ -32,6 +32,7 @@
     "chart.js": "2.*",
     "jquery": "^3.6.4",
     "jquery-ui-dist": "1.12.*",
-    "pace-js": "1.*"
+    "pace-js": "1.*",
+    "select2": "^4.0.13"
   }
 }

@@ -403,6 +403,22 @@ class OpenAi
         return $response->json();
     }
 
+    public function vectorRead(string $idVector): array
+    {
+        $response = Http::get(self::VECTOR_URL . '/' . $idVector)
+            ->setHeader('Content-Type', 'application/json')
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('vector read error: ' . $response->status() . ' ' . $response->errorMessage());
+            return [];
+        }
+
+        return $response->json();
+    }
+
     public function vectorFile(string $id_vector, string $id_file): array
     {
         $data = ['file_id' => $id_file];
