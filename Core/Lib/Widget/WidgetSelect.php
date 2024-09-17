@@ -44,11 +44,17 @@ class WidgetSelect extends BaseWidget
     /** @var string */
     protected $fieldtitle;
 
+    /** @var bool */
+    protected $jsList = false;
+
+    /** @var array */
+    protected static $jsListSelect = [];
+
     /** @var int */
     protected $limit;
 
     /** @var bool */
-    public $multiple;
+    protected $multiple;
 
     /** @var string */
     protected $parent;
@@ -72,6 +78,7 @@ class WidgetSelect extends BaseWidget
         $this->parent = $data['parent'] ?? '';
         $this->translate = isset($data['translate']);
         $this->multiple = isset($data['multiple']) && strtolower($data['multiple']) === 'true';
+        $this->jsList = isset($data['jslist']) && strtolower($data['jslist']) === 'true';
 
         foreach ($data['children'] as $child) {
             if ($child['tag'] !== 'values') {
@@ -248,6 +255,12 @@ class WidgetSelect extends BaseWidget
         AssetManager::add('css', FS_ROUTE . '/node_modules/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css');
         AssetManager::add('js', FS_ROUTE . '/node_modules/select2/dist/js/select2.min.js', 2);
         AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
+
+        /*var_dump(static::$jsListSelect);
+        if (false === empty($this->jsListSelect)) {
+            $script = '<script>var jsListSelect = ' . json_encode($this->jsListSelect) . ';</script>';
+            AssetManager::addCustom('js', $script);
+        }*/
     }
 
     /**
@@ -286,27 +299,45 @@ class WidgetSelect extends BaseWidget
             . ' data-fieldtitle="' . $this->fieldtitle . '"'
             . ' data-fieldfilter="' . $this->fieldfilter . '"'
             . ' data-limit="' . $this->limit . '"'
+            . ' data-fieldname="' . $this->fieldname . '"'
+            . ' data-jslist="' . ($this->jsList ? 'true' : false) . '"'
             . '>';
 
-        $found = false;
-        foreach ($this->values as $option) {
-            $title = empty($option['title']) ? $option['value'] : $option['title'];
+        if ($this->jsList) {
+            if (empty(static::$jsListSelect[$this->fieldname])) {
+                foreach ($this->values as $option) {
+                    $title = empty($option['title']) ? $option['value'] : $option['title'];
+                    static::$jsListSelect[$this->fieldname][] = [
+                        'id' => empty($option['value']) ? 0 : $option['value'],
+                        'text' => $title,
+                    ];
+                }
 
-            // don't use strict comparison (===)
-            if (!empty($this->value) && in_array($option['value'], explode(',', $this->value))) {
-                $found = true;
-                $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
-                continue;
+                $listName = 'js' . $this->fieldname . 'List';
+                $html = '<script>window.' . $listName . ' = ' . json_encode(static::$jsListSelect[$this->fieldname]) . ';</script>'
+                    . $html;
+            }
+        } else {
+            $found = false;
+            foreach ($this->values as $option) {
+                $title = empty($option['title']) ? $option['value'] : $option['title'];
+
+                // don't use strict comparison (===)
+                if (!empty($this->value) && in_array($option['value'], explode(',', $this->value))) {
+                    $found = true;
+                    $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
+                    continue;
+                }
+
+                $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
             }
 
-            $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
-        }
-
-        // value not found?
-        if (!$found && !empty($this->value) && !empty($this->source)) {
-            $html .= '<option value="' . $this->value . '" selected>'
-                . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
-                . '</option>';
+            // value not found?
+            if (!$found && !empty($this->value) && !empty($this->source)) {
+                $html .= '<option value="' . $this->value . '" selected>'
+                    . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
+                    . '</option>';
+            }
         }
 
         $html .= '</select>';
