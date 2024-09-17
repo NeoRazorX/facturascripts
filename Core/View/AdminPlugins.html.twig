@@ -184,7 +184,7 @@
             }
 
             $(document).ready(function () {
-                searchList('#querySearchPlugin', '#all-plugins .card', '.card-title');
+                searchList('#querySearchPlugin', '#all-plugins .wrapper-card', '.card-title');
                 searchList('#querySearchInstalledPlugins', '#installed-plugins .item-plugin', '.plugin-name');
 
                 // si los archivos son demasiado grandes, no se pueden subir
@@ -262,7 +262,7 @@
     <div class="row row-cols-3 ps-2 pe-2" id="all-plugins">
         {% for plugin in fsc.remotePluginList %}
             {% set extraClass = plugin.health > 2 ? 'border-success' : plugin.health == 0 ? 'border-danger' : 'border-warning' %}
-            <div class="col mb-2">
+            <div class="col mb-2 wrapper-card">
                 <div class="card {{ extraClass }} shadow-sm h-100" id="{{ plugin.idplugin }}">
                     <div class="card-body p-2">
                         <h5 class="card-title">{{ plugin.name }} v{{ plugin.version }}</h5>
