@@ -76,6 +76,10 @@
         <type>character varying(255)</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>secretkey</name>
+        <type>character varying(32)</type>
+    </column>
     <constraint>
         <name>users_pkey</name>
         <type>PRIMARY KEY (nick)</type>

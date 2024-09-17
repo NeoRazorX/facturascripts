@@ -34,7 +34,9 @@
     "ext-mysqli": "*",
     "ext-bcmath": "*",
     "ext-gd": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "pragmarx/google2fa": "^8.0",
+    "bacon/bacon-qr-code": "^2.0"
   },
   "require-dev": {
     "phpunit/phpunit": "9.*",

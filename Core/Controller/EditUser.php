@@ -28,6 +28,7 @@ use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleUser;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
+use FacturaScripts\Core\Lib\TwoFactorManager;
 
 /**
  * Controller to edit a single item from the User model
@@ -110,6 +111,8 @@ class EditUser extends EditController
 
         // add emails tab
         $this->createViewsEmails();
+
+
     }
 
     protected function createViewsEmails(string $viewName = 'ListEmailSent'): void
@@ -265,6 +268,10 @@ class EditUser extends EditController
                 if ($view->model->admin && array_key_exists('EditRoleUser', $this->views)) {
                     $this->setSettings('EditRoleUser', 'active', false);
                 }
+
+                // Generate QR URL for two factor authentication
+                $qr_column = $view->columnModalForName('urlqr');
+                $qr_column->widget->setCustomValue("URLTEST");
                 break;
 
             case 'ListEmailSent':

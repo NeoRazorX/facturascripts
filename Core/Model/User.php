@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
+use FacturaScripts\Core\Lib\TwoFactorManager;
 
 /**
  * Usuario de FacturaScripts.
@@ -93,6 +94,9 @@ class User extends ModelClass
 
     /** @var string */
     public $password;
+
+    /** @var string */
+    public $secretkey;
 
     public function addRole(?string $code): bool
     {
@@ -355,5 +359,14 @@ class User extends ModelClass
         }
 
         return true;
+    }
+
+    // Magic functions to get properties
+    public function __get($name)
+    {
+        if($name == 'urlqr')
+        {
+         return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, TwoFactorManager::getSecretyKey());
+        }
     }
 }
