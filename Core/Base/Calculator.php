@@ -35,9 +35,7 @@ use FacturaScripts\Core\Model\ImpuestoZona;
  */
 final class Calculator
 {
-    /**
-     * @var CalculatorModInterface[]
-     */
+    /** @var CalculatorModInterface[] */
     public static $mods = [];
 
     public static function addMod(CalculatorModInterface $mod): void
@@ -220,8 +218,8 @@ final class Calculator
     private static function apply(BusinessDocument &$doc, array &$lines): void
     {
         $subject = $doc->getSubject();
-        $sinIva = $doc->getSerie()->siniva;
-        $excepcionIva = $subject->excepcioniva;
+        $noTax = $doc->getSerie()->siniva;
+        $taxException = $subject->excepcioniva ?? null;
         $regimen = $subject->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
         $company = $doc->getCompany();
 
@@ -242,9 +240,9 @@ final class Calculator
 
         foreach ($lines as $line) {
             // Si es una compra de bienes usados, no aplicamos impuestos
-            if ($doc->subjectColumn() === 'codproveedor'
-                && $company->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
-                && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+            if ($doc->subjectColumn() === 'codproveedor' &&
+                $company->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS &&
+                $line->getProducto()->tipo === ProductType::SECOND_HAND) {
                 $line->codimpuesto = null;
                 $line->iva = $line->recargo = 0.0;
                 continue;
@@ -261,10 +259,10 @@ final class Calculator
             }
 
             // ¿La serie es sin impuestos o el régimen exento?
-            if ($sinIva || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
+            if ($noTax || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
                 $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
                 $line->iva = $line->recargo = 0.0;
-                $line->excepcioniva = $excepcionIva;
+                $line->excepcioniva = $taxException;
                 continue;
             }
 
@@ -285,9 +283,9 @@ final class Calculator
 
     private static function applyUsedGoods(array &$subtotals, BusinessDocument $doc, BusinessDocumentLine $line, string $ivaKey, float $pvpTotal, float $totalCoste): bool
     {
-        if ($doc->subjectColumn() === 'codcliente'
-            && $doc->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
-            && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+        if ($doc->subjectColumn() === 'codcliente' &&
+            $doc->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS &&
+            $line->getProducto()->tipo === ProductType::SECOND_HAND) {
             // IVA 0%
             $ivaKey0 = '0|0';
             if (false === array_key_exists($ivaKey0, $subtotals['iva'])) {
