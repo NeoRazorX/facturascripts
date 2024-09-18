@@ -89,7 +89,7 @@
     <modals>
         <group name="modal2fa" title="other-data" icon="fas fa-users">
             <column name="urlqr" numcolumns="12">
-                <widget type="text" fieldname="urlqr" readonly="true"/>
+                <widget type="link" fieldname="urlqr" readonly="true"/>
             </column>
             <column name="code" numcolumns="12">
                 <widget type="text" fieldname="codetime" required="true" />

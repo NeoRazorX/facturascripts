@@ -22,13 +22,13 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleUser;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
-use FacturaScripts\Core\Lib\TwoFactorManager;
 
 /**
  * Controller to edit a single item from the User model
@@ -237,6 +237,29 @@ class EditUser extends EditController
         return $pageList;
     }
 
+    protected function execAfterAction($action)
+    {
+        if($action == 'modal2fa'){
+            $codeTime = $this->request->request->get('codetime');
+            if(empty($codeTime))
+            {
+                Tools::log()->error('No se ha recibido el código de TOTP');
+            }else
+            {
+                if(TwoFactorManager::verifyCode($this->views['EditUser']->model->secretkey, $codeTime))
+                {
+                    Tools::log()->info('Código de TOTP correcto');
+                }else
+                {
+                   Tools::log()->error('Código de TOTP incorrecto');
+                }
+            }
+        }
+
+        return parent::execAfterAction($action);
+
+    }
+
     /**
      * Load view data procedure
      *
@@ -268,10 +291,6 @@ class EditUser extends EditController
                 if ($view->model->admin && array_key_exists('EditRoleUser', $this->views)) {
                     $this->setSettings('EditRoleUser', 'active', false);
                 }
-
-                // Generate QR URL for two factor authentication
-                $qr_column = $view->columnModalForName('urlqr');
-                $qr_column->widget->setCustomValue("URLTEST");
                 break;
 
             case 'ListEmailSent':

@@ -366,7 +366,12 @@ class User extends ModelClass
     {
         if($name == 'urlqr')
         {
-         return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, TwoFactorManager::getSecretyKey());
+         if($this->secretkey == null)
+         {
+             $this->secretkey = TwoFactorManager::getSecretyKey();
+             $this->save();
+         }
+         return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->secretkey);
         }
     }
 }
