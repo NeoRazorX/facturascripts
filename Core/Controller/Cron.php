@@ -30,13 +30,16 @@ use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\AlbaranProveedor;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\CronJob;
+use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
+use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\LogMessage;
 use FacturaScripts\Dinamic\Model\PedidoCliente;
 use FacturaScripts\Dinamic\Model\PedidoProveedor;
 use FacturaScripts\Dinamic\Model\PresupuestoCliente;
 use FacturaScripts\Dinamic\Model\PresupuestoProveedor;
+use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
 use FacturaScripts\Dinamic\Model\WorkEvent;
@@ -181,15 +184,27 @@ END;
                 $this->updateAttachedRelations();
             });
 
-        $this->job('remove-old-logs')
+        $this->job('update-families')
             ->everyDayAt(1)
+            ->run(function () {
+                $this->updateFamilies();
+            });
+
+        $this->job('update-manufacturers')
+            ->everyDayAt(2)
+            ->run(function () {
+                $this->updateManufacturers();
+            });
+
+        $this->job('remove-old-logs')
+            ->everyDayAt(3)
             ->run(function () {
                 $this->removeOldLogs();
                 $this->removeOldWorkEvents();
             });
 
         $this->job('update-receipts')
-            ->everyDayAt(2)
+            ->everyDayAt(4)
             ->run(function () {
                 $this->updateReceipts();
             });
@@ -291,6 +306,44 @@ END;
 
             $offset += $limit;
             $documents = $models[0]->all([], $orderBy, $offset, $limit);
+        }
+    }
+
+    protected function updateFamilies(): void
+    {
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('updating-families') . ' ... ';
+        ob_flush();
+
+        $producto = new Producto();
+
+        // recorremos todas las familias para actualizar su contador de productos
+        foreach (Familia::all([], [], 0, 0) as $familia) {
+            $count = $producto->count([new DataBaseWhere('codfamilia', $familia->codfamilia)]);
+            if ($familia->numproductos == $count) {
+                continue;
+            }
+
+            $familia->numproductos = $count;
+            $familia->save();
+        }
+    }
+
+    protected function updateManufacturers(): void
+    {
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('updating-manufacturers') . ' ... ';
+        ob_flush();
+
+        $producto = new Producto();
+
+        // recorremos todos los fabricantes para actualizar su contador de productos
+        foreach (Fabricante::all([], [], 0, 0) as $fabricante) {
+            $count = $producto->count([new DataBaseWhere('codfabricante', $fabricante->codfabricante)]);
+            if ($fabricante->numproductos == $count) {
+                continue;
+            }
+
+            $fabricante->numproductos = $count;
+            $fabricante->save();
         }
     }
 
