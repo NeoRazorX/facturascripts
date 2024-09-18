@@ -64,6 +64,7 @@ if (file_exists($listPath)) {
         }
 
         echo 'Plugin ' . $plugin . ' not found.' . PHP_EOL . PHP_EOL;
+        exit(2);
     }
     unlink($listPath);
 }

@@ -1,10 +1,11 @@
 {
     "default": {
         "coddivisa": "PEN",
-        "codimpuesto": "IGV",
+        "codimpuesto": "IVA_GEN",
         "codserie": "A",
         "codpago": "CONT",
         "tipoidfiscal": "RUC",
+        "updatesupplierprices": true,
         "validate_iban": false
     },
     "email": {

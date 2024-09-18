@@ -29,6 +29,8 @@ class DefaultError extends ErrorController
 {
     public function run(): void
     {
+        $this->setSaveCrash(true);
+
         http_response_code(500);
 
         if ($this->exception instanceof SyntaxError) {

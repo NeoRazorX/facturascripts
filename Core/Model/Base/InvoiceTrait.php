@@ -74,6 +74,12 @@ trait InvoiceTrait
             return false;
         }
 
+        // si tiene rectificativas, no se puede eliminar
+        if (!empty($this->getRefunds())) {
+            Tools::log()->warning('cant-remove-invoice-refund');
+            return false;
+        }
+
         // remove receipts
         foreach ($this->getReceipts() as $receipt) {
             $receipt->disableInvoiceUpdate(true);
@@ -203,6 +209,12 @@ trait InvoiceTrait
             case 'fechadevengo':
             case 'total':
                 return $this->onChangeTotal();
+
+            case 'codserie':
+                if (false === $this->testDate()) {
+                    return false;
+                }
+                break;
         }
 
         return true;

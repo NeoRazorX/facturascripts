@@ -25,6 +25,10 @@
         <name>referencia</name>
         <type>character varying(30)</type>
     </column>
+    <column>
+        <name>orden</name>
+        <type>integer</type>
+    </column>
 
     <!-- Constraints -->
     <constraint>

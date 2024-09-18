@@ -1,0 +1,17 @@
+{
+    "default": {
+        "coddivisa": "VEF",
+        "codimpuesto": "IVA01",
+        "codserie": "A",
+        "codpago": "CONT",
+        "tipoidfiscal": "NIT",
+        "updatesupplierprices": true,
+        "validate_iban": false
+    },
+    "email": {
+        "enc": "ssl",
+        "host": "smtp.gmail.com",
+        "mailer": "smtp",
+        "port": "465"
+    }
+}

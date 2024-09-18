@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,6 +36,8 @@ use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 
 /**
+ * Una clase para renderizar plantillas HTML con Twig.
+ *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
@@ -93,6 +95,10 @@ final class Html
     private static function assetFunction(): TwigFunction
     {
         return new TwigFunction('asset', function ($string) {
+            if (null === $string) {
+                return '';
+            }
+
             $path = FS_ROUTE . '/';
             return substr($string, 0, strlen($path)) == $path ?
                 $string :

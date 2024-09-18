@@ -13,6 +13,20 @@
 </div>
 
 <script>
+    function limpiarJS(html) {
+        // Eliminar cualquier script incrustado
+        html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+
+        // Eliminar cualquier atributo de evento en línea (onclick, onload, etc.)
+        // eliminamos con comillas simples
+        html = html.replace(/on\w+='[^']*'/gi, '');
+        // eliminamos con comillas dobles
+        html = html.replace(/on\w+="[^"]*"/gi, '');
+        // eliminamos sin comillas
+        html = html.replace(/on\w+=[^"'\s]*/gi, '');
+        return html;
+    }
+
     let formData = new FormData();
     formData.append('action', 'getHtml');
     formData.append('code', '{{ model.primaryColumnValue() }}');
@@ -42,7 +56,7 @@
 
             // creamos un elemento html
             let html = document.createElement('html');
-            html.innerHTML = data.html;
+            html.innerHTML = limpiarJS(data.html);
 
             // añadimos el html al shadow
             shadow.appendChild(html);

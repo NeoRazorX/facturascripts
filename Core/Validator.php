@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core;
 
+/**
+ * Permite validar distintos tipos de datos.
+ */
 class Validator
 {
     /**

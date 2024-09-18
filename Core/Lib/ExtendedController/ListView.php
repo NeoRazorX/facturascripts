@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Tools;
@@ -28,7 +27,6 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
 use FacturaScripts\Dinamic\Lib\Widget\RowStatus;
-use FacturaScripts\Dinamic\Model\TotalModel;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -209,7 +207,7 @@ class ListView extends BaseView
      * @param int $offset
      * @param int $limit
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = -1)
     {
         $this->offset = $offset < 0 ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
@@ -219,6 +217,13 @@ class ListView extends BaseView
         // avoid overflow
         if ($this->offset > $this->count) {
             $this->offset = 0;
+        }
+
+        // check limit
+        if ($limit < 0) {
+            $limit = $this->settings['itemLimit'];
+        } elseif ($limit != $this->settings['itemLimit']) {
+            $this->settings['itemLimit'] = $limit;
         }
 
         // needed when mega-search force data reload
@@ -283,34 +288,9 @@ class ListView extends BaseView
         AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/ListView.js?v=2');
     }
 
-    /**
-     * @param string $tableName
-     * @param string $fieldName
-     * @param array $where
-     *
-     * @return float
-     */
-    private function getTotalSum(string $tableName, string $fieldName, array $where): float
-    {
-        if ($where) {
-            return TotalModel::sum($tableName, $fieldName, $where);
-        }
-
-        // if there are no filters, then read from the cache
-        $key = 'sum-' . $tableName . '-' . $fieldName;
-        $sum = Cache::get($key);
-        if (is_null($sum)) {
-            // empty cache value? Then get the value from the database and store on the cache
-            $sum = TotalModel::sum($tableName, $fieldName, $where);
-            Cache::set($key, $sum);
-        }
-        return $sum;
-    }
-
     private function loadTotalAmounts(): void
     {
-        $tableName = count($this->cursor) > 1 && method_exists($this->model, 'tableName') ? $this->model->tableName() : '';
-        if (empty($tableName)) {
+        if (count($this->cursor) <= 1) {
             return;
         }
 
@@ -335,7 +315,7 @@ class ListView extends BaseView
             $this->totalAmounts[$col->widget->fieldname] = [
                 'title' => $col->title,
                 'page' => $pageTotalAmount,
-                'total' => $this->getTotalSum($tableName, $col->widget->fieldname, $this->where)
+                'total' => $this->model->totalSum($col->widget->fieldname, $this->where)
             ];
         }
     }

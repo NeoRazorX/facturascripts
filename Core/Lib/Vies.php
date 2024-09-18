@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,26 +30,25 @@ use SoapClient;
 class Vies
 {
     const EU_COUNTRIES = [
-        'AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'EL', 'ES',
-        'FI', 'FR', 'HR', 'HU', 'IE', 'IT', 'LT', 'LU', 'LV',
-        'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK',
+        'AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'EL', 'ES', 'FI', 'FR', 'HR', 'HU', 'IE', 'IT', 'LT', 'LU',
+        'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK',
     ];
 
     const VIES_URL = "https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl";
 
     private static $lastError = '';
 
-    public static function check(string $cifnif, string $codiso): int
+    public static function check(string $cifnif, string $codiso, bool $msg = true): int
     {
         // comprobamos si la extensión soap está instalada
-        if (!extension_loaded('soap')) {
-            Tools::log()->warning('soap-extension-not-installed');
+        if (false === extension_loaded('soap')) {
+            static::setMessage($msg, 'soap-extension-not-installed');
             return -1;
         }
 
         // si el país no es de la unión europea, devolvemos error
         if (!in_array($codiso, self::EU_COUNTRIES)) {
-            Tools::log()->warning('country-not-in-eu', ['%codiso%' => $codiso]);
+            static::setMessage($msg, 'country-not-in-eu', ['%codiso%' => $codiso]);
             return -1;
         }
 
@@ -58,13 +57,13 @@ class Vies
 
         // si el cifnif tiene menos de 5 caracteres, devolvemos error
         if (strlen($cifnif) < 5) {
-            Tools::log()->warning('vat-number-is-short', ['%vat-number%' => $cifnif]);
+            static::setMessage($msg, 'vat-number-is-short', ['%vat-number%' => $cifnif]);
             return -1;
         }
 
         // si codiso está vacío o es diferente de 2 caracteres, devolvemos error
         if (empty($codiso) || strlen($codiso) !== 2) {
-            Tools::log()->warning('invalid-iso-code', ['%iso-code%' => $codiso]);
+            static::setMessage($msg, 'invalid-iso-code', ['%iso-code%' => $codiso]);
             return -1;
         }
 
@@ -73,7 +72,7 @@ class Vies
             $cifnif = substr($cifnif, 2);
         }
 
-        return static::getViesInfo($cifnif, $codiso);
+        return static::getViesInfo($cifnif, $codiso, $msg);
     }
 
     public static function getLastError(): string
@@ -81,7 +80,7 @@ class Vies
         return self::$lastError;
     }
 
-    private static function getViesInfo(string $vatNumber, string $codiso): int
+    private static function getViesInfo(string $vatNumber, string $codiso, bool $msg): int
     {
         self::$lastError = '';
 
@@ -99,7 +98,7 @@ class Vies
                 return 1;
             }
 
-            Tools::log()->warning('vat-number-not-vies', ['%vat-number%' => $vatNumber]);
+            static::setMessage($msg, 'vat-number-not-valid', ['%vat-number%' => $vatNumber]);
             return 0;
         } catch (Exception $ex) {
             Tools::log('VatInfoFinder')->error($ex->getCode() . ' - ' . $ex->getMessage());
@@ -110,7 +109,14 @@ class Vies
         }
 
         // se ha producido error al comprobar el VAT number con VIES
-        Tools::log()->warning('error-checking-vat-number', ['%vat-number%' => $vatNumber]);
+        static::setMessage($msg, 'error-checking-vat-number', ['%vat-number%' => $vatNumber]);
         return -1;
+    }
+
+    private static function setMessage(bool $msg, string $txt, array $context = []): void
+    {
+        if ($msg) {
+            Tools::log()->warning($txt, $context);
+        }
     }
 }

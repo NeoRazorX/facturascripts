@@ -37,7 +37,6 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 class Contacto extends Base\Contact
 {
     use Base\ModelTrait;
-    use Base\PasswordTrait;
 
     /** @var bool */
     public $aceptaprivacidad;
@@ -81,29 +80,11 @@ class Contacto extends Base\Contact
     /** @var string */
     public $empresa;
 
-    /** @var bool */
-    public $habilitado;
-
     /** @var int */
     public $idcontacto;
 
     /** @var string */
-    public $lastactivity;
-
-    /** @var string */
-    public $lastip;
-
-    /** @var integer */
-    public $level;
-
-    /** @var string */
-    public $logkey;
-
-    /** @var string */
     public $provincia;
-
-    /** @var integer */
-    public $puntos;
 
     /** @var bool */
     public $verificado;
@@ -111,28 +92,10 @@ class Contacto extends Base\Contact
     /** @var string */
     public $web;
 
-    public function alias(): string
-    {
-        if (empty($this->email) || strpos($this->email, '@') === false) {
-            return (string)$this->idcontacto;
-        }
-
-        $aux = explode('@', $this->email);
-        switch ($aux[0]) {
-            case 'admin':
-            case 'info':
-                $domain = explode('.', $aux[1]);
-                return $domain[0] . '_' . $this->idcontacto;
-
-            default:
-                return $aux[0] . '_' . $this->idcontacto;
-        }
-    }
-
-    public function checkVies(): bool
+    public function checkVies(bool $msg = true): bool
     {
         $codiso = Paises::get($this->codpais)->codiso ?? '';
-        return Vies::check($this->cifnif ?? '', $codiso) === 1;
+        return Vies::check($this->cifnif ?? '', $codiso, $msg) === 1;
     }
 
     public function clear()
@@ -141,9 +104,6 @@ class Contacto extends Base\Contact
         $this->aceptaprivacidad = false;
         $this->admitemarketing = false;
         $this->codpais = Tools::settings('default', 'codpais');
-        $this->habilitado = true;
-        $this->level = 1;
-        $this->puntos = 0;
         $this->verificado = false;
     }
 
@@ -261,21 +221,6 @@ class Contacto extends Base\Contact
         return parent::install();
     }
 
-    /**
-     * Generates a new login key for the user. It also updates last activity and last IP.
-     *
-     * @param string $ipAddress
-     *
-     * @return string
-     */
-    public function newLogkey($ipAddress): string
-    {
-        $this->lastactivity = Tools::dateTime();
-        $this->lastip = $ipAddress;
-        $this->logkey = Tools::randomString(99);
-        return $this->logkey;
-    }
-
     public static function primaryColumn(): string
     {
         return 'idcontacto';
@@ -319,23 +264,11 @@ class Contacto extends Base\Contact
             return false;
         }
 
-        return $this->testPassword() && parent::test();
+        return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         return parent::url($type, $list);
-    }
-
-    /**
-     * Verifies the login key.
-     *
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function verifyLogkey(string $value): bool
-    {
-        return $this->logkey === $value;
     }
 }

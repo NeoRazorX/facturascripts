@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -87,15 +87,28 @@ abstract class SalesController extends PanelController
      */
     public function renderSalesForm(SalesDocument $model, array $lines): string
     {
+        $url = empty($model->primaryColumnValue()) ? $this->url() : $model->url();
+
         return '<div id="salesFormHeader">' . SalesHeaderHTML::render($model) . '</div>'
             . '<div id="salesFormLines">' . SalesLineHTML::render($lines, $model) . '</div>'
             . '<div id="salesFormFooter">' . SalesFooterHTML::render($model) . '</div>'
-            . SalesModalHTML::render($model, $this->url(), $this->user, $this->permissions);
+            . SalesModalHTML::render($model, $url, $this->user, $this->permissions);
     }
 
-    public function series(): array
+    public function series(string $type = ''): array
     {
-        return Series::all();
+        if (empty($type)) {
+            return Series::all();
+        }
+
+        $list = [];
+        foreach (Series::all() as $serie) {
+            if ($serie->tipo == $type) {
+                $list[] = $serie;
+            }
+        }
+
+        return $list;
     }
 
     protected function autocompleteProductAction(): bool
@@ -150,21 +163,17 @@ abstract class SalesController extends PanelController
         // comprobamos los permisos
         if (false === $this->permissions->allowDelete) {
             Tools::log()->warning('not-allowed-delete');
-            $this->response->setContent(
-                json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)])
-            );
+            $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
 
         $model = $this->getModel();
         if (false === $model->delete()) {
-            $this->response->setContent(
-                json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)])
-            );
+            $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
 
-        $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url('list')]));
+        $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url('list')]);
         return false;
     }
 
@@ -290,10 +299,9 @@ abstract class SalesController extends PanelController
             'lines' => '',
             'linesMap' => [],
             'footer' => '',
-            'products' => SalesModalHTML::renderProductList(),
-            'messages' => Tools::log()::read('', $this->logLevels)
+            'products' => SalesModalHTML::renderProductList()
         ];
-        $this->response->setContent(json_encode($content));
+        $this->sendJsonWithLogs($content);
         return false;
     }
 
@@ -357,9 +365,8 @@ abstract class SalesController extends PanelController
             'linesMap' => $renderLines ? [] : SalesLineHTML::map($lines, $model),
             'footer' => SalesFooterHTML::render($model),
             'products' => '',
-            'messages' => Tools::log()::read('', $this->logLevels)
         ];
-        $this->response->setContent(json_encode($content));
+        $this->sendJsonWithLogs($content);
         return false;
     }
 
@@ -370,9 +377,7 @@ abstract class SalesController extends PanelController
         // comprobamos los permisos
         if (false === $this->permissions->allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
-            $this->response->setContent(
-                json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)])
-            );
+            $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
 
@@ -384,7 +389,7 @@ abstract class SalesController extends PanelController
         SalesFooterHTML::apply($model, $formData, $this->user);
 
         if (false === $model->save()) {
-            $this->response->setContent(json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]));
+            $this->sendJsonWithLogs(['ok' => false]);
             $this->dataBase->rollback();
             return false;
         }
@@ -395,7 +400,7 @@ abstract class SalesController extends PanelController
 
         foreach ($lines as $line) {
             if (false === $line->save()) {
-                $this->response->setContent(json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]));
+                $this->sendJsonWithLogs(['ok' => false]);
                 $this->dataBase->rollback();
                 return false;
             }
@@ -404,19 +409,20 @@ abstract class SalesController extends PanelController
         // remove missing lines
         foreach ($model->getLines() as $oldLine) {
             if (in_array($oldLine->idlinea, SalesLineHTML::getDeletedLines()) && false === $oldLine->delete()) {
-                $this->response->setContent(json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]));
+                $this->sendJsonWithLogs(['ok' => false]);
                 $this->dataBase->rollback();
                 return false;
             }
         }
 
-        if (false === $model->save()) {
-            $this->response->setContent(json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]));
+        $lines = $model->getLines();
+        if (false === Calculator::calculate($model, $lines, true)) {
+            $this->sendJsonWithLogs(['ok' => false]);
             $this->dataBase->rollback();
             return false;
         }
 
-        $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']));
+        $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         $this->dataBase->commit();
         return true;
     }
@@ -428,9 +434,12 @@ abstract class SalesController extends PanelController
         // comprobamos los permisos
         if (false === $this->permissions->allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
-            $this->response->setContent(
-                json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)])
-            );
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
+        // guardamos el documento
+        if ($this->getModel()->editable && false === $this->saveDocAction()) {
             return false;
         }
 
@@ -439,7 +448,7 @@ abstract class SalesController extends PanelController
         if (empty($model->total) && property_exists($model, 'pagada')) {
             $model->pagada = (bool)$this->request->request->get('selectedLine');
             $model->save();
-            $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']));
+            $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
             return false;
         }
 
@@ -447,21 +456,27 @@ abstract class SalesController extends PanelController
         $receipts = $model->getReceipts();
         if (empty($receipts)) {
             Tools::log()->warning('invoice-has-no-receipts');
-            $this->response->setContent(json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]));
+            $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
 
         // marcamos los recibos como pagados, eso marca la factura como pagada
+        $formData = json_decode($this->request->request->get('data'), true);
         foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
+            // si no está pagado, actualizamos fechapago y codpago
+            if (false == $receipt->pagado){
+                $receipt->fechapago = $formData['fechapagorecibo'] ?? Tools::date();
+                $receipt->codpago = $model->codpago;
+            }
             $receipt->pagado = (bool)$this->request->request->get('selectedLine');
             if (false === $receipt->save()) {
-                $this->response->setContent(json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]));
+                $this->sendJsonWithLogs(['ok' => false]);
                 return false;
             }
         }
 
-        $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']));
+        $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
     }
 
@@ -472,9 +487,7 @@ abstract class SalesController extends PanelController
         // comprobamos los permisos
         if (false === $this->permissions->allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
-            $this->response->setContent(
-                json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)])
-            );
+            $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
 
@@ -485,11 +498,11 @@ abstract class SalesController extends PanelController
         $model = $this->getModel();
         $model->idestado = (int)$this->request->request->get('selectedLine');
         if (false === $model->save()) {
-            $this->response->setContent(json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]));
+            $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
 
-        $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']));
+        $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
     }
 
@@ -536,5 +549,16 @@ abstract class SalesController extends PanelController
         ]));
 
         return false;
+
+    private function sendJsonWithLogs(array $data): void
+    {
+        $data['messages'] = [];
+        foreach (Tools::log()::read('', $this->logLevels) as $message) {
+            if ($message['channel'] != 'audit') {
+                $data['messages'][] = $message;
+            }
+        }
+
+        $this->response->setContent(json_encode($data));
     }
 }

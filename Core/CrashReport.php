@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core;
 
+/**
+ * La clase que se encarga de gestionar los errores fatales.
+ */
 final class CrashReport
 {
     public static function getErrorInfo(int $code, string $message, string $file, int $line): array
@@ -63,6 +66,11 @@ final class CrashReport
 
     public static function save(array $info): void
     {
+        // si no existe la carpeta MyFiles, no podemos guardar el archivo
+        if (!is_dir(Tools::folder('MyFiles'))) {
+            return;
+        }
+
         // guardamos los datos en un archivo en MyFiles
         $file_name = 'crash_' . $info['hash'] . '.json';
         $file_path = Tools::folder('MyFiles', $file_name);
@@ -76,7 +84,7 @@ final class CrashReport
     public static function shutdown(): void
     {
         $error = error_get_last();
-        if (!isset($error) || in_array($error['type'], [E_WARNING, E_NOTICE, E_DEPRECATED])) {
+        if (!isset($error) || in_array($error['type'], [E_WARNING, E_NOTICE, E_DEPRECATED, E_CORE_ERROR, E_CORE_WARNING])) {
             return;
         }
 

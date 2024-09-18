@@ -50,6 +50,18 @@ class ProductoImagen extends Base\ModelClass
     /** @var string */
     public $referencia;
 
+    /** @var int */
+    public $orden;
+
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+
+        // Inicialmente el orden es el id
+        // hasta que se asigne un orden en concreto.
+        $this->orden = $this->orden ?? $this->id;
+    }
+
     public function delete(): bool
     {
         if (false === parent::delete()) {
@@ -98,7 +110,7 @@ class ProductoImagen extends Base\ModelClass
     {
         // comprobamos si no existe la imagen
         $file = $this->getFile();
-        if (false === $file->exists()) {
+        if (false === $file->exists() || false === file_exists($file->getFullPath())) {
             return '';
         }
 
@@ -140,7 +152,7 @@ class ProductoImagen extends Base\ModelClass
             switch ($ext) {
                 case 'jpg':
                 case 'jpeg':
-                    imagejpeg($thumb, FS_FOLDER . $thumbFile);
+                    imagejpeg($thumb, FS_FOLDER . $thumbFile, 90);
                     break;
 
                 case 'png':

@@ -23,6 +23,8 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\Email\HtmlBlock as DinHtmlBlock;
+use FacturaScripts\Dinamic\Lib\Email\TextBlock as DinTextBlock;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
@@ -452,9 +454,19 @@ class NewMail
      */
     protected function getMainBlocks(): array
     {
-        return empty($this->text)
-            ? $this->mainBlocks
-            : array_merge([new TextBlock($this->text, 'pb-15')], $this->mainBlocks);
+        // si no hay texto, devolvemos los bloques principales
+        if (empty($this->text)) {
+            return $this->mainBlocks;
+        }
+
+        // buscamos si en el texto hay algo de html
+        $textWhitoutHtml = strip_tags($this->text);
+        if ($textWhitoutHtml !== $this->text) {
+            return array_merge([new DinHtmlBlock(nl2br($this->text))], $this->mainBlocks);
+        }
+
+        // si no hay html, devolvemos el texto como bloque de texto
+        return array_merge([new DinTextBlock($this->text, 'pb-15')], $this->mainBlocks);
     }
 
     /**
@@ -524,7 +536,7 @@ class NewMail
 
             // si el adjunto está fuera de la carpeta temporal, lo copiamos
             $currentPath = FS_FOLDER . '/' . $attach[0];
-            if (file_exists($newPath)) {
+            if (file_exists($currentPath)) {
                 copy($currentPath, $newPath);
             }
         }

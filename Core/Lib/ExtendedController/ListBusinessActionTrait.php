@@ -173,7 +173,7 @@ trait ListBusinessActionTrait
             }
 
             foreach ($model->getAvailableStatus() as $status) {
-                if (empty($status->generadoc)) {
+                if (empty($status->generadoc) || !$status->activo) {
                     continue;
                 }
 
@@ -289,7 +289,7 @@ trait ListBusinessActionTrait
             }
 
             foreach ($model->getAvailableStatus() as $status) {
-                if ($status->editable) {
+                if ($status->editable || !$status->activo) {
                     continue;
                 }
 

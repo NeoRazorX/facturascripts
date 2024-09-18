@@ -64,7 +64,9 @@ class Login implements ControllerInterface
         $this->title = $this->empresa->nombrecorto;
 
         $request = Request::createFromGlobals();
-        switch ($request->get('action')) {
+        $action = $request->request->get('action', $request->query->get('action', ''));
+
+        switch ($action) {
             case 'change-password':
                 $this->changePasswordAction($request);
                 break;
@@ -289,6 +291,7 @@ class Login implements ControllerInterface
         }
 
         // update user data
+        Session::set('user', $user);
         $ip = Session::getClientIp();
         $browser = $request->headers->get('User-Agent');
         $user->newLogkey($ip, $browser);
@@ -320,6 +323,10 @@ class Login implements ControllerInterface
         setcookie('fsNick', '', time() - 3600, Tools::config('route', '/'));
         setcookie('fsLogkey', '', time() - 3600, Tools::config('route', '/'));
         setcookie('fsLang', '', time() - 3600, Tools::config('route', '/'));
+
+        // restart token
+        $multiRequestProtection = new MultiRequestProtection();
+        $multiRequestProtection->clearSeed();
 
         Tools::log()->notice('logout-ok');
     }

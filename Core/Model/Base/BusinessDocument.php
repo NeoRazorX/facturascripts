@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,13 +19,16 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\Serie;
 
 /**
@@ -275,6 +278,16 @@ abstract class BusinessDocument extends ModelOnChangeClass
         return array_merge(static::$dont_copy_fields, $more);
     }
 
+    public function getAttachedFiles(): array
+    {
+        $relationModel = new AttachedFileRelation();
+        $where = [new DataBaseWhere('model', $this->modelClassName())];
+        $where[] = is_numeric($this->primaryColumnValue()) ?
+            new DataBaseWhere('modelid|modelcode', $this->primaryColumnValue()) :
+            new DataBaseWhere('modelcode', $this->primaryColumnValue());
+        return $relationModel->all($where, ['creationdate' => 'DESC'], 0, 0);
+    }
+
     /**
      * Returns the Equivalent Unified Discount.
      *
@@ -304,6 +317,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         new Ejercicio();
         new Almacen();
         new Divisa();
+        new FormaPago();
 
         return parent::install();
     }
@@ -328,7 +342,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         // check accounting exercise
         if (empty($this->codejercicio)) {
@@ -405,7 +419,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->observaciones = Tools::noHtml($this->observaciones);
 
@@ -416,8 +430,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         }
 
         // check exercise and date
-        $exercise = $this->getExercise();
-        if (strtotime($this->fecha) < strtotime($exercise->fechainicio) || strtotime($this->fecha) > strtotime($exercise->fechafin)) {
+        if (false === $this->hasChanged('fecha') && false === $this->getExercise()->inRange($this->fecha)) {
             Tools::log()->error('date-out-of-exercise-range', ['%exerciseName%' => $this->codejercicio]);
             return false;
         }
@@ -440,7 +453,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * Check changed fields before updata the database.
+     * Check changed fields before update the database.
      *
      * @param string $field
      *
@@ -485,7 +498,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         if (false === parent::saveUpdate($values)) {
             return false;

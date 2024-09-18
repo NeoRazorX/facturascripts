@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\Contract\CalculatorModInterface;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
@@ -111,6 +112,12 @@ final class Calculator
 
         // acumulamos por cada línea
         foreach ($lines as $line) {
+            // coste
+            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
+            if (isset($line->coste)) {
+                $subtotals['totalcoste'] += $totalCoste;
+            }
+
             $pvpTotal = $line->pvptotal * (100 - $doc->dtopor1) / 100 * (100 - $doc->dtopor2) / 100;
             if (empty($pvpTotal)) {
                 continue;
@@ -138,12 +145,6 @@ final class Calculator
                     'totaliva' => 0.0,
                     'totalrecargo' => 0.0
                 ];
-            }
-
-            // coste
-            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
-            if (isset($line->coste)) {
-                $subtotals['totalcoste'] += $totalCoste;
             }
 
             // si es una venta de segunda mano, calculamos el beneficio y el IVA
@@ -218,8 +219,10 @@ final class Calculator
      */
     private static function apply(BusinessDocument &$doc, array &$lines): void
     {
+        $subject = $doc->getSubject();
         $sinIva = $doc->getSerie()->siniva;
-        $regimen = $doc->getSubject()->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
+        $excepcionIva = $subject->excepcioniva;
+        $regimen = $subject->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
         $company = $doc->getCompany();
 
         // cargamos las zonas de impuestos
@@ -259,8 +262,9 @@ final class Calculator
 
             // ¿La serie es sin impuestos o el régimen exento?
             if ($sinIva || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
-                $line->codimpuesto = null;
+                $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
                 $line->iva = $line->recargo = 0.0;
+                $line->excepcioniva = $excepcionIva;
                 continue;
             }
 
@@ -300,9 +304,9 @@ final class Calculator
             $subtotals['iva'][$ivaKey0]['neto'] += $totalCoste;
             $subtotals['iva'][$ivaKey0]['netosindto'] += $totalCoste;
 
-            // si el beneficio es negativo, no hay IVA
+            // si el beneficio es negativo y la serie no es rectificativa, no hay IVA
             $beneficio = $pvpTotal - $totalCoste;
-            if ($beneficio <= 0) {
+            if ($beneficio <= 0 && $doc->getSerie()->tipo !== 'R') {
                 return true;
             }
 

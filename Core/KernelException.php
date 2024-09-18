@@ -22,6 +22,9 @@ namespace FacturaScripts\Core;
 use Exception;
 use Throwable;
 
+/**
+ * Excepciones para redirigir a un controlador de errores.
+ */
 class KernelException extends Exception
 {
     /** @var string */

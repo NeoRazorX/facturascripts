@@ -25,6 +25,9 @@ use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
 use FacturaScripts\Core\Error\DefaultError;
 
+/**
+ * El corazón de FacturaScripts. Se encarga de gestionar las rutas y ejecutar los controladores.
+ */
 final class Kernel
 {
     /** @var array */
@@ -109,7 +112,33 @@ final class Kernel
         // inicializamos el antiguo traductor
         ToolBox::i18n()->setDefaultLang($lang);
 
+        // workers
+        WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Delete');
+        WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Update');
+        WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Delete');
+        WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Update');
+        WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Delete');
+        WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Save');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.AlbaranProveedor.Update');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.FacturaProveedor.Update');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.PedidoProveedor.Update');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.PresupuestoProveedor.Update');
+
         self::stopTimer('kernel::init');
+    }
+
+    public static function lock(string $processName): bool
+    {
+        $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
+        if (file_exists($lockFile)) {
+            // si tiene más de 8 horas, lo eliminamos
+            if (filemtime($lockFile) < time() - 28800) {
+                unlink($lockFile);
+            }
+            return false;
+        }
+
+        return false !== file_put_contents($lockFile, $processName);
     }
 
     public static function rebuildRoutes(): void
@@ -171,6 +200,9 @@ final class Kernel
 
     public static function saveRoutes(): bool
     {
+        // si la carpeta MyFiles no existe, la creamos
+        Tools::folderCheckOrCreate(Tools::folder('MyFiles'));
+
         $filePath = Tools::folder('MyFiles', 'routes.json');
         $content = json_encode(self::$routes, JSON_PRETTY_PRINT);
         return false === file_put_contents($filePath, $content);
@@ -178,7 +210,10 @@ final class Kernel
 
     public static function startTimer(string $name): void
     {
-        self::$timers[$name] = ['start' => microtime(true)];
+        self::$timers[$name] = [
+            'start' => microtime(true),
+            'start_mem' => memory_get_usage(),
+        ];
     }
 
     public static function stopTimer(string $name): float
@@ -188,13 +223,20 @@ final class Kernel
         }
 
         self::$timers[$name]['stop'] = microtime(true);
+        self::$timers[$name]['stop_mem'] = memory_get_usage();
 
         return round(self::$timers[$name]['stop'] - self::$timers[$name]['start'], 5);
     }
 
+    public static function unlock(string $processName): bool
+    {
+        $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
+        return file_exists($lockFile) && unlink($lockFile);
+    }
+
     public static function version(): float
     {
-        return 2024.1;
+        return 2024.92;
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
@@ -250,6 +292,8 @@ final class Kernel
             '/' => 'Root',
             '/AdminPlugins' => 'AdminPlugins',
             '/api' => 'ApiRoot',
+            '/api/3/crearFacturaCliente' => 'ApiCreateFacturaCliente',
+            '/api/3/exportarFacturaCliente/*' => 'ApiExportFacturaCliente',
             '/api/*' => 'ApiRoot',
             '/Core/Assets/*' => 'Files',
             '/cron' => 'Cron',
@@ -263,12 +307,15 @@ final class Kernel
         ];
 
         foreach ($routes as $route => $controller) {
+            // si la ruta tiene *, la posición es 2, de lo contrario 1
+            $position = substr($route, -1) === '*' ? 2 : 1;
+
             if (class_exists('\\FacturaScripts\\Dinamic\\Controller\\' . $controller)) {
-                self::addRoute($route, '\\FacturaScripts\\Dinamic\\Controller\\' . $controller, 1);
+                self::addRoute($route, '\\FacturaScripts\\Dinamic\\Controller\\' . $controller, $position);
                 continue;
             }
 
-            self::addRoute($route, '\\FacturaScripts\\Core\\Controller\\' . $controller, 1);
+            self::addRoute($route, '\\FacturaScripts\\Core\\Controller\\' . $controller, $position);
         }
     }
 
@@ -276,8 +323,8 @@ final class Kernel
     {
         if ('' === Tools::config('db_name', '')) {
             self::addRoute('/', '\\FacturaScripts\\Core\\Controller\\Installer', 1);
-            self::addRoute('/Core/Assets/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
-            self::addRoute('/node_modules/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
+            self::addRoute('/Core/Assets/*', '\\FacturaScripts\\Core\\Controller\\Files', 2);
+            self::addRoute('/node_modules/*', '\\FacturaScripts\\Core\\Controller\\Files', 2);
             return;
         }
 

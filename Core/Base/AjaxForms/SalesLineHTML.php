@@ -178,7 +178,7 @@ class SalesLineHTML
     {
         self::$num++;
         $idlinea = $line->idlinea ?? 'n' . self::$num;
-        return '<div class="container-fluid"><div class="form-row align-items-center border-bottom pb-3 pb-lg-0">'
+        return '<div class="container-fluid fs-line"><div class="form-row align-items-center border-bottom pb-3 pb-lg-0">'
             . self::renderField($i18n, $idlinea, $line, $model, 'referencia')
             . self::renderField($i18n, $idlinea, $line, $model, 'descripcion')
             . self::renderField($i18n, $idlinea, $line, $model, 'cantidad')
@@ -196,6 +196,7 @@ class SalesLineHTML
     {
         $line->orden = (int)$formData['orden_' . $id];
         $line->cantidad = (float)$formData['cantidad_' . $id];
+        $line->coste = floatval($formData['coste_' . $id] ?? $line->coste);
         $line->dtopor = (float)$formData['dtopor_' . $id];
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];
@@ -282,6 +283,23 @@ class SalesLineHTML
             '<div class="input-group-prepend" title="' . $i18n->trans('stock') . '">' . $html . '</div>';
     }
 
+    private static function coste(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): string
+    {
+        if (false === SalesHeaderHTML::checkLevel(Tools::settings('default', 'levelcostsales', 0))) {
+            return '';
+        }
+
+        $attributes = $model->editable ?
+            'name="' . $field . '_' . $idlinea . '" min="0" step="any"' :
+            'disabled=""';
+
+        return '<div class="col-6">'
+            . '<div class="mb-2">' . $i18n->trans('cost')
+            . '<input type="number" ' . $attributes . ' value="' . $line->{$field} . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
     private static function getFastLine(SalesDocument $model, array $formData): ?SalesDocumentLine
     {
         if (empty($formData['fastli'])) {
@@ -342,6 +360,9 @@ class SalesLineHTML
             case 'codimpuesto':
                 return self::codimpuesto($i18n, $idlinea, $line, $model, 'salesFormAction');
 
+            case 'coste':
+                return self::coste($i18n, $idlinea, $line, $model, 'coste');
+
             case 'descripcion':
                 return self::descripcion($i18n, $idlinea, $line, $model);
 
@@ -400,6 +421,7 @@ class SalesLineHTML
             . self::renderField($i18n, $idlinea, $line, $model, 'irpf')
             . self::renderField($i18n, $idlinea, $line, $model, 'excepcioniva')
             . self::renderField($i18n, $idlinea, $line, $model, 'suplido')
+            . self::renderField($i18n, $idlinea, $line, $model, 'coste')
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_cantidad')
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_precio')
             . self::renderField($i18n, $idlinea, $line, $model, 'salto_pagina')
@@ -533,7 +555,7 @@ class SalesLineHTML
 
     private static function renderTitles(Translator $i18n, SalesDocument $model): string
     {
-        return '<div class="container-fluid d-none d-lg-block"><div class="form-row border-bottom">'
+        return '<div class="container-fluid d-none d-lg-block titles"><div class="form-row border-bottom">'
             . self::renderTitle($i18n, $model, 'referencia')
             . self::renderTitle($i18n, $model, 'descripcion')
             . self::renderTitle($i18n, $model, 'cantidad')

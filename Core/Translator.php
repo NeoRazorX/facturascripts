@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core;
 
+/**
+ * Permite la traducción de cadenas de texto a diferentes idiomas. Con posibilidad de usar parámetros.
+ */
 final class Translator
 {
     private static $defaultLang = 'es_ES';
@@ -215,7 +218,7 @@ final class Translator
             'PresupuestoProveedor-min' => 'estimation',
         ];
 
-        return $specialKeys[$txt] ?? $txt;
+        return $specialKeys[$txt] ?? $txt ?? '';
     }
 
     private function load(string $lang): void

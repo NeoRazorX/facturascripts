@@ -28,7 +28,7 @@ use FacturaScripts\Core\Tools;
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Rafael San José Tovar
- * @deprecated since version 2023
+ * @deprecated since version 2023. Use FacturaScripts\Core\Template\CronClass instead.
  */
 abstract class CronClass
 {

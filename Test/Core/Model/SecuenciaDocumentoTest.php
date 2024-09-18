@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -574,6 +574,26 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertTrue($exercise->delete(), 'exercise-cant-delete');
         $this->assertTrue($customer->getDefaultAddress()->delete(), 'address-cant-delete');
         $this->assertTrue($customer->delete(), 'customer-cant-delete');
+    }
+
+    public function testCodeTooLong(): void
+    {
+        // eliminamos todas las secuencias de PresupuestoCliente
+        $sequence = new SecuenciaDocumento();
+        $this->deleteSequences($sequence);
+
+        // creamos una secuencia muy larga
+        $sequence->codserie = 'A';
+        $sequence->idempresa = 1;
+        $sequence->inicio = 1;
+        $sequence->longnumero = 20;
+        $sequence->numero = 1;
+        $sequence->patron = 'PRESUPUESTO-{EJE}-{SERIE}-{0NUM}-{FECHA}';
+        $sequence->tipodoc = 'PresupuestoCliente';
+        $sequence->usarhuecos = false;
+
+        // comprobar que no se puede guardar
+        $this->assertFalse($sequence->save());
     }
 
     private function deleteSequences(SecuenciaDocumento $sequence): void

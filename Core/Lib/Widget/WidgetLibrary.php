@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,16 +35,17 @@ class WidgetLibrary extends BaseWidget
     public function __construct($data)
     {
         parent::__construct($data);
-        $this->accept = $data['accept'] ?? '';
 
-        if (empty($this->id)) {
-            $this->id = $this->getUniqueId();
-        }
+        $this->accept = $data['accept'] ?? '';
     }
 
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
+
+        // obtenemos un nuevo ID cada vez
+        $this->id = $this->getUniqueId();
+
         $descriptionHtml = empty($description) ?
             '' :
             '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';

@@ -24,6 +24,8 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
+ * Permite crear cláusulas WHERE para consultas SQL.
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 final class Where

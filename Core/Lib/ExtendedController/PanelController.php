@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -241,7 +241,7 @@ abstract class PanelController extends BaseController
 
         // has PK value been changed?
         $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
-        if ($code != $this->views[$this->active]->newCode && $this->views[$this->active]->model->test()) {
+        if ($code !== $this->views[$this->active]->newCode && $this->views[$this->active]->model->test()) {
             $pkColumn = $this->views[$this->active]->model->primaryColumn();
             $this->views[$this->active]->model->{$pkColumn} = $code;
             // change in database
@@ -310,6 +310,12 @@ abstract class PanelController extends BaseController
             case 'autocomplete':
                 $this->setTemplate(false);
                 $results = $this->autocompleteAction();
+                $this->response->setContent(json_encode($results));
+                return false;
+
+            case 'datalist':
+                $this->setTemplate(false);
+                $results = $this->datalistAction();
                 $this->response->setContent(json_encode($results));
                 return false;
 
@@ -398,7 +404,7 @@ abstract class PanelController extends BaseController
 
         // buscamos la columna
         $column = $this->tab($activeTab)->columnForField($colName);
-        if (empty($column) || $column->widget->getType() !== 'library') {
+        if (empty($column) || strtolower($column->widget->getType()) !== 'library') {
             return ['records' => 0, 'html' => ''];
         }
 
@@ -427,7 +433,7 @@ abstract class PanelController extends BaseController
 
         // buscamos la columna
         $column = $this->tab($activeTab)->columnForField($colName);
-        if (empty($column) || $column->widget->getType() !== 'library') {
+        if (empty($column) || strtolower($column->widget->getType()) !== 'library') {
             return [];
         }
 
@@ -458,7 +464,7 @@ abstract class PanelController extends BaseController
 
         // buscamos la columna
         $column = $this->tab($activeTab)->columnForField($colName);
-        if (empty($column) || $column->widget->getType() !== 'variante') {
+        if (empty($column) || strtolower($column->widget->getType()) !== 'variante') {
             return [];
         }
 

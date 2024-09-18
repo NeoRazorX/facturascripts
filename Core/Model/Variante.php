@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ProductType;
 use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
@@ -166,6 +167,11 @@ class Variante extends Base\ModelClass
 
     public function description(bool $onlyAttributes = false): string
     {
+        $pipeReturn = $this->pipe('description', $onlyAttributes);
+        if ($pipeReturn) {
+            return $pipeReturn;
+        }
+
         $description = $onlyAttributes ? '' : $this->getProducto()->descripcion;
         return $this->getAttributeDescription(
             $this->idatributovalor1,
@@ -181,6 +187,12 @@ class Variante extends Base\ModelClass
         // no se puede eliminar la variante principal
         if ($this->referencia === $this->getProducto()->referencia) {
             Tools::log()->warning('you-cant-delete-primary-variant');
+            return false;
+        }
+
+        // no podemos eliminar la variante si hay documentos relacionados
+        if ($this->isInDocuments()) {
+            Tools::log()->warning('cant-delete-variant-with-documents', ['%reference%' => $this->referencia]);
             return false;
         }
 
@@ -206,6 +218,11 @@ class Variante extends Base\ModelClass
      */
     protected function getAttributeDescription($idAttVal1, $idAttVal2, $idAttVal3, $idAttVal4, $description = '', $separator1 = "\n", $separator2 = ', '): string
     {
+        $pipeReturn = $this->pipe('getAttributeDescription', $idAttVal1, $idAttVal2, $idAttVal3, $idAttVal4, $description, $separator1, $separator2);
+        if ($pipeReturn) {
+            return $pipeReturn;
+        }
+
         // obtenemos las descripciones de los atributos
         $attributeValue = new DinAtributoValor();
         $attDesc = [];
@@ -248,7 +265,7 @@ class Variante extends Base\ModelClass
         // buscamos las imágenes propias de esta variante
         $image = new DinProductoImagen();
         $whereVar = [new DataBaseWhere('referencia', $this->referencia)];
-        $orderBy = ['id' => 'ASC'];
+        $orderBy = ['orden' => 'ASC'];
         $images = $image->all($whereVar, $orderBy, 0, 0);
 
         // si solo queremos las imágenes de la variante, terminamos
@@ -270,6 +287,25 @@ class Variante extends Base\ModelClass
         new DinAtributoValor();
 
         return parent::install();
+    }
+
+    public function isInDocuments(): bool
+    {
+        $tables = [
+            'lineasalbaranescli', 'lineasalbaranesprov', 'lineasfacturascli', 'lineasfacturasprov',
+            'lineaspedidoscli', 'lineaspedidosprov', 'lineaspresupuestoscli', 'lineaspresupuestosprov'
+        ];
+        foreach ($tables as $table) {
+            $count = DbQuery::table($table)
+                ->whereEq('referencia', $this->referencia)
+                ->count();
+
+            if ($count > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function priceWithTax(): float

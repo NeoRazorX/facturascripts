@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\DataSrc\Empresas;
 
 class Root extends Controller
 {
@@ -27,7 +28,7 @@ class Root extends Controller
     {
         $data = parent::getPageData();
         $data['menu'] = 'reports';
-        $data['title'] = 'root';
+        $data['title'] = Empresas::default()->nombrecorto ?? 'FacturaScripts';
         $data['icon'] = 'fas fa-home';
         $data['showonmenu'] = false;
         return $data;

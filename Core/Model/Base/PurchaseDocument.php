@@ -177,10 +177,7 @@ abstract class PurchaseDocument extends TransformerDocument
         return true;
     }
 
-    /**
-     * @return string
-     */
-    public function subjectColumn()
+    public function subjectColumn(): string
     {
         return 'codproveedor';
     }

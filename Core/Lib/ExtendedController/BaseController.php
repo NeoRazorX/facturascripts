@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -311,6 +311,28 @@ abstract class BaseController extends Controller
     }
 
     /**
+     * Run the datalist action.
+     * Returns a JSON string for the searched values.
+     *
+     * @return array
+     */
+    protected function datalistAction(): array
+    {
+        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
+
+        $where = [];
+        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
+            $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
+        }
+
+        $results = [];
+        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $value) {
+            $results[] = ['key' => $value->code, 'value' => $value->description];
+        }
+        return $results;
+    }
+
+    /**
      * Action to delete data.
      *
      * @return bool
@@ -442,6 +464,11 @@ abstract class BaseController extends Controller
         $required = (bool)$this->request->get('required', false);
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
 
+        $return = $this->pipe('selectAction', $data, $required);
+        if ($return) {
+            return $return;
+        }
+
         $where = [];
         foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
             $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
@@ -449,7 +476,8 @@ abstract class BaseController extends Controller
 
         $results = [];
         foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], !$required, $where) as $value) {
-            $results[] = ['key' => Tools::fixHtml($value->code), 'value' => Tools::fixHtml($value->description)];
+            // no usar fixHtml() aquí porque compromete la seguridad
+            $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;
     }

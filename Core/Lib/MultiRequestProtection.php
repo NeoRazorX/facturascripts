@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,13 +41,18 @@ class MultiRequestProtection
     {
         // something unique in each installation
         if (false === isset(self::$seed)) {
-            self::$seed = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS;
+            $this->clearSeed();
         }
     }
 
     public function addSeed(string $seed)
     {
         self::$seed .= $seed;
+    }
+
+    public function clearSeed(): void
+    {
+        self::$seed = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS;
     }
 
     /**

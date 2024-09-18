@@ -79,6 +79,9 @@
                 {% if fsc.hasData and firstView.settings.btnPrint %}
                     {{ _self.printButton(fsc, firstView, i18n) }}
                 {% endif %}
+                {% for item in getIncludeViews('PanelController', 'topButtons') %}
+                    {% include item['path'] %}
+                {% endfor %}
             </div>
             {# -- Top right text -- #}
             <div class="col-md d-none d-md-inline-block text-right">
@@ -224,7 +227,7 @@
             {% endif %}
         </div>
     </div>
-    <form action="{{ firstView.model.url() }}" method="post" target="_blank" onsubmit="animateSpinner('add')">
+    <form action="{{ firstView.model.url() }}" method="post" class="float-left" target="_blank" onsubmit="animateSpinner('add')">
         <input type="hidden" name="action" value="export"/>
         <div class="modal fade" id="advancedExportModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">

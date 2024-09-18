@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -102,7 +102,7 @@ class ConfigEmail extends PanelController
         $this->listView($viewName)->addFilterSelect('from', 'from', 'email_from', $from);
 
         $this->listView($viewName)
-            ->addFilterPeriod('date', 'period', 'date')
+            ->addFilterPeriod('date', 'period', 'date', true)
             ->addFilterCheckbox('opened')
             ->addFilterCheckbox('attachment', 'has-attachments');
 

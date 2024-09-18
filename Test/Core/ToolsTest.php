@@ -64,11 +64,13 @@ final class ToolsTest extends TestCase
         $this->assertEquals($date, Tools::timeToDate($time2));
         $this->assertEquals('07-10-2020', Tools::date($date3));
         $this->assertEquals('07-10-2020', Tools::timeToDate($tim3));
+        $this->assertEquals('09-10-2020', Tools::dateOperation($date3, '+2 days'));
 
         $this->assertEquals($dateTime, Tools::dateTime($dateTime));
         $this->assertEquals($dateTime, Tools::timeToDateTime($time2));
         $this->assertEquals('17-05-2020 12:00:00', Tools::dateTime($dateTime2));
         $this->assertEquals('17-05-2020 12:00:00', Tools::timeToDateTime($time4));
+        $this->assertEquals('19-05-2020 13:00:00', Tools::dateTimeOperation($dateTime2, '+2 days +1 hour'));
     }
 
     public function testFolderFunctions(): void
@@ -117,10 +119,15 @@ final class ToolsTest extends TestCase
 
     public function testHtmlFunctions(): void
     {
+        // escapamos y des-escapamos el html
         $html = '<p class=\'test\'>Test</p><script>alert("test");</script>';
         $noHtml = '&lt;p class=&#39;test&#39;&gt;Test&lt;/p&gt;&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;';
         $this->assertEquals($noHtml, Tools::noHtml($html));
         $this->assertEquals($html, Tools::fixHtml($noHtml));
+
+        // comprobamos que podemos pasar un null a las funciones
+        $this->assertNull(Tools::noHtml(null));
+        $this->assertNull(Tools::fixHtml(null));
     }
 
     public function testRandomString(): void
@@ -193,6 +200,7 @@ final class ToolsTest extends TestCase
 
     public function testTextBreak(): void
     {
+        // acortamos el texto de varias formas
         $text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies aliquet, "
             . "nisl nisl aliquam nisl, nec aliquet nisl nisl nec nisl. Nullam auctor, nisl nec ultricies aliquet, "
             . "nisl nisl aliquam nisl, nec aliquet nisl nisl nec nisl. Nullam auctor, nisl nec ultricies aliquet, "
@@ -212,16 +220,23 @@ final class ToolsTest extends TestCase
         $this->assertEquals("Lorem ipsum dolor sit amet, consectetur...", Tools::textBreak($text, 44));
         $this->assertEquals("Lorem ipsum dolor sit amet,...", Tools::textBreak($text, 30));
         $this->assertEquals("Lorem ipsum dolor sit amet,(...)", Tools::textBreak($text, 32, '(...)'));
+
+        // comprobamos que podemos pasar un null a la función
+        $this->assertEquals('', Tools::textBreak(null));
     }
 
     public function testBytes(): void
     {
+        Tools::settingsSet('default', 'decimal_separator', '.');
+        Tools::settingsSet('default', 'thousands_separator', '_');
+
         $this->assertEquals('0 bytes', Tools::bytes(0, 0));
         $this->assertEquals('1.0 byte', Tools::bytes(1, 1));
-        $this->assertEquals('2.00 bytes', Tools::bytes(2, 2));
+        $this->assertEquals('2.00 bytes', Tools::bytes(2));
         $this->assertEquals('1.0 KB', Tools::bytes(1025, 1));
         $this->assertEquals('1 MB', Tools::bytes(1048577, 0));
         $this->assertEquals('1.00 GB', Tools::bytes(1073741825));
+        $this->assertEquals('1_024.00 GB', Tools::bytes(1099511627776));
 
         $this->assertEquals('0 bytes', Tools::bytes(null, 0));
     }
@@ -245,6 +260,8 @@ final class ToolsTest extends TestCase
         $this->assertEquals('-1.23 €', Tools::money(-1.23));
         $this->assertEquals('-1.23 €', Tools::money(-1.234));
         $this->assertEquals('-1 234.56 €', Tools::money(-1234.56));
+        $this->assertEquals('-1 234.4 €', Tools::money(-1234.40, '', 1));
+        $this->assertEquals('-1 234 €', Tools::money(-1234.40, '', 0));
 
         // probamos con otra divisa
         $this->assertEquals('1.23 ?', Tools::money(1.234, 'TES'));

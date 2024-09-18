@@ -1,10 +1,11 @@
 {
     "default": {
         "coddivisa": "MXN",
-        "codimpuesto": "002",
+        "codimpuesto": "IVA16GEN",
         "codserie": "A",
         "codpago": "CONT",
         "tipoidfiscal": "RFC",
+        "updatesupplierprices": true,
         "validate_iban": false
     },
     "email": {

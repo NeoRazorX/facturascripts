@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -55,7 +55,7 @@
                 </widget>
             </column>
         </group>
-        <group name="payment" numcolumns="12">
+        <group name="payment" valign="bottom" numcolumns="12">
             <column name="amount" order="100">
                 <widget type="money" fieldname="importe"/>
             </column>
@@ -69,11 +69,11 @@
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" fieldfilter="idempresa"/>
                 </widget>
             </column>
-            <column name="payment-date" order="130">
-                <widget type="date" fieldname="fechapago" readonly="dinamic"/>
-            </column>
-            <column name="paid" numcolumns="12" order="140">
+            <column name="paid" order="130">
                 <widget type="checkbox" fieldname="pagado"/>
+            </column>
+            <column name="payment-date" order="140">
+                <widget type="date" fieldname="fechapago" readonly="dinamic"/>
             </column>
             <column name="observations" numcolumns="12" order="150">
                 <widget type="textarea" fieldname="observaciones"/>

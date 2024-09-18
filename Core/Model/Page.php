@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * Element of the menu of InvoiceScripts, each corresponds to a controller.
  *
@@ -100,6 +102,18 @@ class Page extends Base\ModelClass
     public static function tableName(): string
     {
         return 'pages';
+    }
+
+    public function test(): bool
+    {
+        // escapamos el html
+        $this->icon = Tools::noHtml($this->icon);
+        $this->menu = Tools::noHtml($this->menu);
+        $this->name = Tools::noHtml($this->name);
+        $this->submenu = Tools::noHtml($this->submenu);
+        $this->title = Tools::noHtml($this->title);
+
+        return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'List'): string

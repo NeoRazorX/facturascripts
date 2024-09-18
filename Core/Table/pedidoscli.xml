@@ -215,39 +215,47 @@
         <type>PRIMARY KEY (idpedido)</type>
     </constraint>
     <constraint>
-        <name>ca_pedidoscli_agentes</name>
+        <name>ca_pedidoscli_codagente</name>
         <type>FOREIGN KEY (codagente) REFERENCES agentes (codagente) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_pedidoscli_almacenes</name>
+        <name>ca_pedidoscli_codalmacen</name>
         <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_pedidoscli_clientes</name>
+        <name>ca_pedidoscli_codcliente</name>
         <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_pedidoscli_divisas</name>
+        <name>ca_pedidoscli_coddivisa</name>
         <type>FOREIGN KEY (coddivisa) REFERENCES divisas (coddivisa) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_pedidoscli_ejercicios</name>
+        <name>ca_pedidoscli_codejercicio</name>
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_pedidoscli_empresas</name>
-        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <name>ca_pedidoscli_codpago</name>
+        <type>FOREIGN KEY (codpago) REFERENCES formaspago (codpago) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_pedidoscli_estados</name>
-        <type>FOREIGN KEY (idestado) REFERENCES estados_documentos (idestado) ON DELETE RESTRICT ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_pedidoscli_series</name>
+        <name>ca_pedidoscli_codserie</name>
         <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_pedidoscli_users</name>
+        <name>ca_pedidoscli_codtrans</name>
+        <type>FOREIGN KEY (codtrans) REFERENCES agenciastrans (codtrans) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_pedidoscli_idempresa</name>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_pedidoscli_idestado</name>
+        <type>FOREIGN KEY (idestado) REFERENCES estados_documentos (idestado) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_pedidoscli_nick</name>
         <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>

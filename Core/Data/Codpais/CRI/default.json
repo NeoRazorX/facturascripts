@@ -1,10 +1,11 @@
 {
     "default": {
         "coddivisa": "CRC",
-        "codimpuesto": "002",
+        "codimpuesto": "CR_IVA_GEN",
         "codserie": "A",
         "codpago": "CONT",
         "tipoidfiscal": "RFC",
+        "updatesupplierprices": true,
         "validate_iban": false
     },
     "email": {

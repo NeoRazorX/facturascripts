@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,7 +51,7 @@ final class MiniLogStorage implements MiniLogStorageInterface
             $logItem->modelcode = $item['context']['model-code'] ?? null;
             $logItem->nick = $item['context']['nick'] ?? Session::user()->nick;
             $logItem->time = date('d-m-Y H:i:s', (int)$item['time']);
-            $logItem->uri = $item['context']['uri'] ?? null;
+            $logItem->uri = $item['context']['uri'] ?? Session::get('uri');
             if (false === $logItem->save()) {
                 $done = false;
             }

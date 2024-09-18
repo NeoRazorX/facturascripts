@@ -20,6 +20,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\ToolBox;
@@ -31,6 +32,7 @@ use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -189,9 +191,11 @@ final class ProductoProveedorTest extends TestCase
         $doc2->setSubject($subject);
         $this->assertTrue($doc2->save());
 
+        // Añadimos el producto
         $line = $doc2->getNewProductLine($product->referencia);
         $this->assertTrue($line->save());
 
+        // comprobamos que el precio del producto es el del albarán previo
         $this->assertEquals($pvpUnitario, $line->pvpunitario);
         $this->assertEquals($dtopor, $line->dtopor);
         $this->assertEquals($dtopor2, $line->dtopor2);
@@ -217,31 +221,42 @@ final class ProductoProveedorTest extends TestCase
 
         // Creamos otra divisa
         $divisa = new Divisa();
-        $divisa->coddivisa = 'USD';
+        $divisa->coddivisa = 'XXX';
         $this->assertTrue($divisa->save());
 
         // Creamos otro albarán
         $doc2 = new AlbaranProveedor();
         $doc2->setSubject($subject);
-        $doc2->setCurrency('USD');
+        $doc2->setCurrency('XXX');
         $this->assertTrue($doc2->save());
 
+        // Añadimos el producto
         $line = $doc2->getNewProductLine($product->referencia);
         $line->pvpunitario = 1000;
         $this->assertTrue($line->save());
 
-        $productosProveedor = new ProductoProveedor();
-        $productosProveedor = $productosProveedor->all(
-            [
-                new DataBaseWhere('referencia', $product->referencia),
-                new DataBaseWhere('codproveedor', $subject->codproveedor),
-            ]
-        );
+        // actualizamos los totales
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc2, $lines, true));
 
+        // procesamos la cola de trabajos
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+
+        // buscamos el producto del proveedor
+        $productosProveedor = ProductoProveedor::all([
+            new DataBaseWhere('referencia', $product->referencia),
+            new DataBaseWhere('codproveedor', $subject->codproveedor),
+        ]);
+
+        // comprobamos que se han creado dos productos proveedor
         $this->assertCount(2, $productosProveedor);
         $this->assertEquals($productosProveedor[0]->referencia, $productosProveedor[1]->referencia);
         $this->assertEquals('EUR', $productosProveedor[0]->coddivisa);
-        $this->assertEquals('USD', $productosProveedor[1]->coddivisa);
+        $this->assertEquals('XXX', $productosProveedor[1]->coddivisa);
 
         // eliminamos
         $this->assertTrue($doc->delete());
@@ -474,6 +489,17 @@ final class ProductoProveedorTest extends TestCase
         $line->dtopor = $dtopor;
         $line->dtopor2 = $dtopor2;
         $this->assertTrue($line->save());
+
+        // actualizamos los totales
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+
+        // procesamos la cola de trabajos
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
 
         return [
             $subject,

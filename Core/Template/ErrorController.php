@@ -30,7 +30,7 @@ abstract class ErrorController implements ErrorControllerInterface
     protected $exception;
 
     /** @var bool */
-    protected $save_crash = true;
+    protected $save_crash = false;
 
     /** @var string */
     protected $url;
