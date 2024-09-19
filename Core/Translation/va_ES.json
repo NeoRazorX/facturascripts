@@ -606,7 +606,7 @@
     "field-required": "Camp requerit: %field%",
     "fields": "Camps",
     "file": "Fitxer",
-    "file-audio-codec-not-accepted": "Error al enviar el archivo de audio %fileName% porque su códec %codec% no está permitido. Los códecs permitidos son: %supported%",
+    "file-audio-codec-not-accepted": "Error al enviar l'arxiu d'àudio %fileName% perquè el seu còdec %codec% no està permès. Els còdecs permesos són: %supported%",
     "file-extension-not-accepted": "Error al enviar l'arxiu %fileName% perquè la seua extensió no està permesa. Les extensions permeses són: %accepted%",
     "file-name": "Nom de l'archiu",
     "file-not-exists": "L'archiu %fileName% no existix",
