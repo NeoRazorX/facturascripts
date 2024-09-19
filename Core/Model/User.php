@@ -101,6 +101,7 @@ class User extends ModelClass
     /** @var bool */
     public $two_factor_enabled;
 
+
     public function addRole(?string $code): bool
     {
         if (empty($code)) {
@@ -364,17 +365,23 @@ class User extends ModelClass
         return true;
     }
 
-    // Magic functions to get properties
+// Magic function to get dynamic properties
     public function __get($name)
     {
-        if($name == 'urlqr')
-        {
-         if($this->secret_key == null)
-         {
-             $this->secret_key = TwoFactorManager::getSecretyKey();
-             $this->save();
-         }
-         return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->secret_key);
+        try {
+            switch ($name) {
+                case 'urlqr':
+                    if ($this->secret_key === null) {
+                        $this->secret_key = TwoFactorManager::getSecretKey();
+                        $this->save();
+                    }
+                    // Return the QR code URL for the user to scan
+                    return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->secret_key);
+            }
+        } catch (\Exception $e) {
+            Tools::log()->error("Error generating URL QR or secret key: " . $e->getMessage());
+            return null;
         }
     }
+
 }

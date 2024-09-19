@@ -45,7 +45,9 @@ class Login implements ControllerInterface
     /** @var string */
     public $title = 'Login';
 
+    /** @var boolean */
     private $two_factor_view = false;
+
 
     public function __construct(string $className, string $url = '')
     {
