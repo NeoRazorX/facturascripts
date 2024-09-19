@@ -246,9 +246,12 @@ class EditUser extends EditController
                 Tools::log()->error('No se ha recibido el código de TOTP');
             }else
             {
-                if(TwoFactorManager::verifyCode($this->views['EditUser']->model->secretkey, $codeTime))
+                $model = $this->views['EditUser']->model;
+                if(TwoFactorManager::verifyCode($model->secret_key, $codeTime))
                 {
-                    Tools::log()->info('Código de TOTP correcto');
+                    $model->two_factor_enabled = true;
+                    $model->save();
+                    Tools::log()->info('Código de TOTP correcto y se ha activado la autenticación en dos pasos');
                 }else
                 {
                    Tools::log()->error('Código de TOTP incorrecto');

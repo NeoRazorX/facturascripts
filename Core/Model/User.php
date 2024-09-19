@@ -96,7 +96,10 @@ class User extends ModelClass
     public $password;
 
     /** @var string */
-    public $secretkey;
+    public $secret_key;
+
+    /** @var bool */
+    public $two_factor_enabled;
 
     public function addRole(?string $code): bool
     {
@@ -366,12 +369,12 @@ class User extends ModelClass
     {
         if($name == 'urlqr')
         {
-         if($this->secretkey == null)
+         if($this->secret_key == null)
          {
-             $this->secretkey = TwoFactorManager::getSecretyKey();
+             $this->secret_key = TwoFactorManager::getSecretyKey();
              $this->save();
          }
-         return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->secretkey);
+         return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->secret_key);
         }
     }
 }

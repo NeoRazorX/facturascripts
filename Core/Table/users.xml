@@ -77,8 +77,14 @@
         <null>NO</null>
     </column>
     <column>
-        <name>secretkey</name>
+        <name>secret_key</name>
         <type>character varying(32)</type>
+    </column>
+    <column>
+        <name>two_factor_enabled</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
     </column>
     <constraint>
         <name>users_pkey</name>
