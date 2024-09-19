@@ -69,8 +69,11 @@
             <column name="is-admin" level="99" numcolumns="3" order="100">
                 <widget type="checkbox" fieldname="admin"/>
             </column>
-            <column name="enabled" level="99" numcolumns="9" order="110">
+            <column name="enabled" level="99" numcolumns="3" order="110">
                 <widget type="checkbox" fieldname="enabled"/>
+            </column>
+            <column name="two-factor-enabled" level="99" numcolumns="6" order="110">
+                <widget type="checkbox" fieldname="two_factor_enabled"/>
             </column>
             <column name="level" level="99" order="120">
                 <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision"/>
