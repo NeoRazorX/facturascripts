@@ -53,6 +53,11 @@ $(document).ready(function () {
     $('select.select2').select2({
         width: 'style',
         theme: 'bootstrap4'
+    }).on('select2:select', function (e) {
+        const saveonchange = $(this).data('saveonchange');
+        if(saveonchange == true){
+            $(this).closest("form").submit();
+        }
     });
 
     $('.parentSelect').each(function () {

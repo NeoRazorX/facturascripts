@@ -59,6 +59,9 @@ class WidgetSelect extends BaseWidget
     /** @var bool */
     protected $translate;
 
+    /** @var bool */
+    public $saveonchange;
+
     /** @var array */
     public $values = [];
 
@@ -72,6 +75,7 @@ class WidgetSelect extends BaseWidget
         $this->parent = $data['parent'] ?? '';
         $this->translate = isset($data['translate']);
         $this->multiple = isset($data['multiple']) && strtolower($data['multiple']) === 'true';
+        $this->saveonchange = $data['saveonchange'] ?? 'false';
 
         foreach ($data['children'] as $child) {
             if ($child['tag'] !== 'values') {
@@ -286,6 +290,7 @@ class WidgetSelect extends BaseWidget
             . ' data-fieldtitle="' . $this->fieldtitle . '"'
             . ' data-fieldfilter="' . $this->fieldfilter . '"'
             . ' data-limit="' . $this->limit . '"'
+            . ' data-saveonchange="' . $this->saveonchange . '"'
             . '>';
 
         $found = false;
