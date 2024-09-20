@@ -145,20 +145,24 @@ class Wizard extends Controller
      */
     private function loadDefaultAccountingPlan(string $codpais): void
     {
-        // Is there a default accounting plan?
+        // ¿Hay un plan contable para ese país?
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
             return;
         }
 
-        // Does an accounting plan already exist?
-        $cuenta = new Cuenta();
-        if ($cuenta->count() > 0 || $this->dataBase->tableExists('co_cuentas')) {
+        // ¿La base de datos es de 2017 o anterior?
+        if ($this->dataBase->tableExists('co_cuentas')) {
             return;
         }
 
-        $exerciseModel = new Ejercicio();
-        foreach ($exerciseModel->all() as $exercise) {
+        // ¿Ya existe el plan contable?
+        $cuenta = new Cuenta();
+        if ($cuenta->count() > 0) {
+            return;
+        }
+
+        foreach (Ejercicio::all() as $exercise) {
             $planImport = new AccountingPlanImport();
             $planImport->importCSV($filePath, $exercise->codejercicio);
             return;

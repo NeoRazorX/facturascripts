@@ -940,7 +940,7 @@
     "maximum-amount-without-cifnif": "Màxim import sense CIF\/NIF",
     "maximum-stock": "Estoc màxim",
     "may": "Maig",
-    "media-whatsapp-not-upload": "Error al pujar el fitxer multimèdia al servidor de WhatsApp: %file%",
+    "media-whatsapp-not-upload": "Error en pujar el fitxer multimèdia al servidor de WhatsApp: %file%",
     "mega-search": "MegaCercador",
     "memcache": "Memcache",
     "memcache-clear": "S'ha netejat la Memcache.",
