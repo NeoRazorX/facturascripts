@@ -381,7 +381,7 @@ class Installer implements ControllerInterface
             }
 
             // create the database
-            $sqlCreateBD = 'CREATE DATABASE ' . pg_escape_string($dbData['name']) . ';';
+            $sqlCreateBD = 'CREATE DATABASE ' . pg_escape_string($connection, $dbData['name']) . ';';
             if (false !== @pg_query($connection, $sqlCreateBD)) {
                 return true;
             }
