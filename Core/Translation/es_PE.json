@@ -1138,6 +1138,8 @@
     "percentage-vat": "% Impuesto",
     "period": "Periodo",
     "personalized": "Personalizado",
+    "pgsql-endpoint": "Endpoint PostgreSQL",
+    "pgsql-ssl-mode": "Modo SSL PostgreSQL",
     "phase": "Fase",
     "phone": "Teléfono",
     "phone2": "Teléfono 2",
