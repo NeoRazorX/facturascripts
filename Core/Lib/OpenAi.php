@@ -332,7 +332,8 @@ class OpenAi
             ->setTimeOut($this->timeout);
 
         if ($response->failed()) {
-            Tools::log()->error('chatGPT thread create error: ' . $response->status() . ' ' . $response->errorMessage());
+            Tools::log()->error('chatGPT thread create error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
             return [];
         }
 
@@ -348,7 +349,8 @@ class OpenAi
             ->setTimeOut($this->timeout);
 
         if ($response->failed()) {
-            Tools::log()->error('chatGPT thread messages error: ' . $response->status() . ' ' . $response->errorMessage());
+            Tools::log()->error('chatGPT thread messages error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
             return [];
         }
 
@@ -364,7 +366,8 @@ class OpenAi
             ->setTimeOut($this->timeout);
 
         if ($response->failed()) {
-            Tools::log()->error('chatGPT thread message create error: ' . $response->status() . ' ' . $response->errorMessage());
+            Tools::log()->error('chatGPT thread message create error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
             return [];
         }
 
@@ -381,7 +384,8 @@ class OpenAi
             ->setTimeOut($this->timeout);
 
         if ($response->failed()) {
-            Tools::log()->error('chatGPT thread run error: ' . $response->status() . ' ' . $response->errorMessage());
+            Tools::log()->error('chatGPT thread run error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
             return [];
         }
 
@@ -396,7 +400,8 @@ class OpenAi
             ->setTimeOut($this->timeout);
 
         if ($response->failed()) {
-            Tools::log()->error('chatGPT thread run read error: ' . $response->status() . ' ' . $response->errorMessage());
+            Tools::log()->error('chatGPT thread run read error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
             return [];
         }
 
@@ -412,7 +417,8 @@ class OpenAi
             ->setTimeOut($this->timeout);
 
         if ($response->failed()) {
-            Tools::log()->error('vector read error: ' . $response->status() . ' ' . $response->errorMessage());
+            Tools::log()->error('vector read error: ' . $response->status() . ' ' . $response->errorMessage()
+                . ' ' . $response->body());
             return [];
         }
 
@@ -429,7 +435,8 @@ class OpenAi
             ->setTimeOut($this->timeout);
 
         if ($response->failed()) {
-            Tools::log()->error('vector file error: ' . $response->status() . ' ' . $response->errorMessage());
+            Tools::log()->error('vector file error: ' . $response->status() . ' ' . $response->errorMessage()
+                . ' ' . $response->body());
             return [];
         }
 
