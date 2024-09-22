@@ -773,7 +773,7 @@
     "integrity-check": "Verificação de integridade",
     "integrity-check-help": "Esta é uma verificação da integridade do sistema, descrita como",
     "interest": "Interesse",
-    "international-identifier": "Identificador internacional",
+    "international-identifier": "Identificação internacional",
     "intra-community": "Intra-comunitária",
     "invalid-alphanumeric-code": "O código inserido (%value%) não é válido. (%column%) deve ter entre %min% e %max% números ou letras, sem espaços, acentos ou outros caracteres.",
     "invalid-column-lenght": "%column% deve ter entre %min% e %max% caracteres.",

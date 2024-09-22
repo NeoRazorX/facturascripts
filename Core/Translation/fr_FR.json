@@ -1139,7 +1139,7 @@
     "period": "Période",
     "personalized": "Personnalisé",
     "pgsql-endpoint": "Endpoint PostgreSQL",
-    "pgsql-ssl-mode": "Modo SSL",
+    "pgsql-ssl-mode": "Mode SSL PostgreSQL",
     "phase": "Phase",
     "phone": "téléphone",
     "phone2": "Téléphone 2",
