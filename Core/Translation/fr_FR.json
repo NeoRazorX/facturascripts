@@ -1138,7 +1138,7 @@
     "percentage-vat": "% TVA",
     "period": "Période",
     "personalized": "Personnalisé",
-    "pgsql-endpoint": "Endpoint PostgreSQL",
+    "pgsql-endpoint": "Point de terminaison PostgreSQL",
     "pgsql-ssl-mode": "Mode SSL PostgreSQL",
     "phase": "Phase",
     "phone": "téléphone",

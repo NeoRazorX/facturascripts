@@ -940,7 +940,7 @@
     "maximum-amount-without-cifnif": "Valor máximo sem CIF\/NIF",
     "maximum-stock": "Estoque máximo",
     "may": "Maio",
-    "media-whatsapp-not-upload": "Error al subir el archivo multimedia al servidor de WhatsApp: %file%",
+    "media-whatsapp-not-upload": "Erro ao enviar o ficheiro multimédia para o servidor do WhatsApp: %file%",
     "mega-search": "MegaBuscador",
     "memcache": "Memcache 0",
     "memcache-clear": "Memcache foi limpo.",
