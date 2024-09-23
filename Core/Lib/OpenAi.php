@@ -240,7 +240,8 @@ class OpenAi
             ->setTimeOut($this->timeout);
 
         if ($response->failed()) {
-            Tools::log()->error('chatGPT file upload error: ' . $response->status() . ' ' . $response->errorMessage());
+            Tools::log()->error('chatGPT file upload error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
             return [];
         }
 
