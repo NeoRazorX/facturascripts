@@ -237,6 +237,13 @@ abstract class ModelClass extends ModelCore
             $field = self::$dataBase->getEngine()->getSQL()->sql2Int($field);
         }
 
+        // Limpiamos la caché de consultas de MySQL para asegurarnos
+        // de obtener los datos más recientes.
+        if(strtolower(FS_DB_TYPE) === 'mysql') {
+            $sql = 'RESET QUERY CACHE;';
+            self::$dataBase->exec($sql);
+        }
+
         // Search for new code value
         $sqlWhere = DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . static::tableName() . $sqlWhere . ';';
