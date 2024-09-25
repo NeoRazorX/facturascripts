@@ -265,12 +265,12 @@ class WidgetSelect extends BaseWidget
 
         $html = '';
         $name = '';
-        if ($this->multiple && $this->readonly()) {
+        if ($this->readonly()) {
             $html .= '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '">';
-        } elseif ($this->multiple && false === $this->readonly()) {
-            $name = ' name="' . $this->fieldname . '[]"';
-        } elseif (false === $this->readonly()) {
-            $name = ' name="' . $this->fieldname . '"';
+        } else {
+            $name = $this->multiple
+                ? ' name="' . $this->fieldname . '[]"'
+                : ' name="' . $this->fieldname . '"';
         }
 
         $html .= '<select'
