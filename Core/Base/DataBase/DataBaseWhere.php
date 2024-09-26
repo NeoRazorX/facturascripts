@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -369,7 +369,7 @@ class DataBaseWhere
             return $this->getValueFromOperator($value);
         }
 
-        if ($value !== null && strpos($value, 'field:') === 0) {
+        if ($value !== null && strpos($value, 'field:') === 0 && strlen($value) > 6) {
             return $this->dataBase->escapeColumn(substr($value, 6));
         }
 
