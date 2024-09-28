@@ -185,7 +185,7 @@ class WidgetLibrary extends BaseWidget
 
             if ($file->isImage()) {
                 $html .= '<div class="media">'
-                    . '<img src="' . $file->url('download-permanent') . '" class="mr-3" alt="' . $file->filename
+                    . '<img loading="lazy" src="' . $file->url('download-permanent') . '" class="mr-3" alt="' . $file->filename
                     . '" width="64" type="button" onclick="' . $js . '" title="' . Tools::lang()->trans('select') . '">'
                     . '<div class="media-body">'
                     . '<h5 class="text-break mt-0">' . $file->filename . '</h5>'
