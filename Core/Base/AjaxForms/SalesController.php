@@ -26,6 +26,8 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Model\AttachedFile;
+use FacturaScripts\Core\Model\AttachedFileRelation;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Core\Tools;
@@ -213,8 +215,14 @@ abstract class SalesController extends PanelController
             case 'find-product':
                 return $this->findProductAction();
 
+            case 'find-related-file':
+                return $this->findRelatedFileAction();
+
             case 'recalculate-line':
                 return $this->recalculateAction(false);
+
+            case 'relate-file':
+                return $this->relateFileAction();
 
             case 'save-doc':
                 $this->saveDocAction();
@@ -497,6 +505,50 @@ abstract class SalesController extends PanelController
         $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
     }
+
+    protected function findRelatedFileAction()
+    {
+        $this->setTemplate(false);
+
+        if(false ===  $this->request->request->has('term')){
+            return false;
+        }
+
+        // Buscamos los archivos relacionados con el documento
+        // para no mostrarlos
+        $code = $this->request->request->get('code');
+        $where = [
+            new DataBaseWhere('modelid', $code)
+        ];
+        $attachedFiles = AttachedFileRelation::all($where, [], 0, 0);
+        $attachedFiles = array_map(function($attachedFile){
+            return $attachedFile->idfile;
+        }, $attachedFiles);
+        $attachedFilesList = implode(', ', $attachedFiles);
+
+        // Mostramos los archivos que contengan el termino buscado
+        // y que además no se encuentren ya relacionados con el modelo
+        $term = $this->request->request->get('term');
+        $where = [
+            new DataBaseWhere('filename', $term, 'LIKE'),
+            new DataBaseWhere('idfile', $attachedFilesList, 'NOT IN'),
+        ];
+        $filesFound = AttachedFile::all($where, [], 0, 0);
+        $filesFound = array_map(function($attachedFile){
+            return [
+                'idfile' => $attachedFile->idfile,
+                'filename' => $attachedFile->filename,
+                'path' => $attachedFile->path,
+                'mimetype' => $attachedFile->mimetype,
+            ];
+        }, $filesFound);
+
+        $this->response->setContent(json_encode([
+            'ok' => true,
+            'attachedFiles' => $filesFound,
+        ]));
+
+        return false;
 
     private function sendJsonWithLogs(array $data): void
     {
