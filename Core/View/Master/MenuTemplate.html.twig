@@ -23,8 +23,8 @@
       xml:lang="{{ constant('FS_LANG') | slice(0, 2) }}">
 <head>
     {{ GoogleTagManager.head() }}
-    {% for item in getIncludeViews('MenuTemplate', 'HeadFirst') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'HeadFirst') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% block meta %}
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -39,8 +39,8 @@
         <link rel="apple-touch-icon" sizes="180x180"
               href="{{ asset('Dinamic/Assets/Images/apple-icon-180x180.png') }}"/>
     {% endblock %}
-    {% for item in getIncludeViews('MenuTemplate', 'CssBefore') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'CssBefore') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% block css %}
         <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}"/>
@@ -51,11 +51,11 @@
     {% for css in assetManager.get('css') %}
         <link rel="stylesheet" href="{{ css }}"/>
     {% endfor %}
-    {% for item in getIncludeViews('MenuTemplate', 'CssAfter') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'CssAfter') %}
+        {% include includeView['path'] %}
     {% endfor %}
-    {% for item in getIncludeViews('MenuTemplate', 'JsHeadBefore') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'JsHeadBefore') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% block javascripts %}
         <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
@@ -70,21 +70,21 @@
     {% for js in assetManager.get('js') %}
         <script src="{{ js }}"></script>
     {% endfor %}
-    {% for item in getIncludeViews('MenuTemplate', 'JsHeadAfter') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'JsHeadAfter') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% if debugBarRender %}
         {{ debugBarRender.renderHead() | raw }}
     {% endif %}
-    {% for item in getIncludeViews('MenuTemplate', 'HeadEnd') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'HeadEnd') %}
+        {% include includeView['path'] %}
     {% endfor %}
 </head>
 {% block fullBody %}
     <body>
     {{ GoogleTagManager.body() }}
-    {% for item in getIncludeViews('MenuTemplate', 'BodyFirst') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'BodyFirst') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% block navbar %}
         <nav class="navbar navbar-expand navbar-dark bg-primary sticky-top d-print-none">
@@ -103,8 +103,8 @@
                     </ul>
                     <ul class="navbar-nav flex-row ml-auto">
                         {% block navbarMenuIcon %}
-                            {% for item in getIncludeViews('MenuTemplate', 'MenuIconBefore') %}
-                                {% include item['path'] %}
+                            {% for includeView in getIncludeViews('MenuTemplate', 'MenuIconBefore') %}
+                                {% include includeView['path'] %}
                             {% endfor %}
                             <li class="nav-item{{ template == 'MegaSearch.html.twig' ? ' active' : '' }}"
                                 title="{{ trans('search') }}">
@@ -132,8 +132,8 @@
                                         <i class="fas fa-envelope fa-fw" aria-hidden="true"></i>
                                         {{ trans('send-mail') }}
                                     </a>
-                                    {% for item in getIncludeViews('MenuTemplate', 'MenuIconUser') %}
-                                        {% include item['path'] %}
+                                    {% for includeView in getIncludeViews('MenuTemplate', 'MenuIconUser') %}
+                                        {% include includeView['path'] %}
                                     {% endfor %}
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ asset('login') }}?action=logout&multireqtoken={{ formToken(false) }}">
@@ -141,8 +141,8 @@
                                     </a>
                                 </div>
                             </li>
-                            {% for item in getIncludeViews('MenuTemplate', 'MenuIconAfter') %}
-                                {% include item['path'] %}
+                            {% for includeView in getIncludeViews('MenuTemplate', 'MenuIconAfter') %}
+                                {% include includeView['path'] %}
                             {% endfor %}
                         {% endblock %}
                     </ul>
@@ -170,11 +170,11 @@
     </div>
     {% block body %}
     {% endblock %}
-    {% for item in getIncludeViews('MenuTemplate', 'JsFooter') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'JsFooter') %}
+        {% include includeView['path'] %}
     {% endfor %}
-    {% for item in getIncludeViews('MenuTemplate', 'BodyEnd') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'BodyEnd') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% if debugBarRender %}
         {{ debugBarRender.render() | raw }}

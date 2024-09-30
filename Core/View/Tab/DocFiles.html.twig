@@ -26,8 +26,8 @@
                                     <p class="text-muted mb-0">
                                         {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
                                     </p>
-                                    {% for item in getIncludeViews('DocFiles', 'formAddBody') %}
-                                        {% include item['path'] %}
+                                    {% for includeView in getIncludeViews('DocFiles', 'formAddBody') %}
+                                        {% include includeView['path'] %}
                                     {% endfor %}
                                 </div>
                                 <div class="col text-right">
@@ -78,8 +78,8 @@
                                 <textarea name="observations" class="form-control"
                                           placeholder="{{ trans('observations') }}">{{ docfile.observations | raw }}</textarea>
                                 </div>
-                                {% for item in getIncludeViews('DocFiles', 'formEditBody') %}
-                                    {% include item['path'] %}
+                                {% for includeView in getIncludeViews('DocFiles', 'formEditBody') %}
+                                    {% include includeView['path'] %}
                                 {% endfor %}
                                 <p class="card-text text-muted">
                                     {% if docfile.nick %}
