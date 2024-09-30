@@ -300,10 +300,23 @@ class DataBaseWhere
      */
     private function getValueFromOperatorIn($values): string
     {
+        // es un array
+        if (is_array($values)) {
+            $result = '';
+            $comma = '';
+            foreach ($values as $value) {
+                $result .= $comma . $this->dataBase->var2str($value);
+                $comma = ',';
+            }
+            return $result;
+        }
+
+        // es una subconsulta
         if (0 === stripos($values, 'select ')) {
             return $values;
         }
 
+        // es un string con comas
         $result = '';
         $comma = '';
         foreach (explode(',', $values) as $value) {
