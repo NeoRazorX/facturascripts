@@ -940,7 +940,7 @@
     "maximum-amount-without-cifnif": "Máximo importe sin CIF\/NIF",
     "maximum-stock": "Stock máximo",
     "may": "Květen",
-    "media-whatsapp-not-upload": "Error al subir el archivo multimedia al servidor de WhatsApp: %file%",
+    "media-whatsapp-not-upload": "Chyba při nahrávání multimediálního souboru na server WhatsApp: %file%",
     "mega-search": "MegaHledání",
     "memcache": "Memcache",
     "memcache-clear": "Memcache limpiada.",
