@@ -189,6 +189,7 @@ class Wizard extends Controller
 
         Tools::settingsSet('default', 'codpais', $codpais);
         Tools::settingsSet('default', 'homepage', 'AdminPlugins');
+        Tools::settingsSet('default', 'price-calculation-method', 'cost-margin');
         Tools::settingsSave();
     }
 
