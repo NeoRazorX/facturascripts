@@ -233,7 +233,7 @@ class AccountingCreation
         $numbers = array_merge(
             [$code],
             range(1, 99),
-            [rand(100, 9999)]
+            [rand(100, 999999)]
         );
 
         // añadimos también los 100 siguientes números al total de subcuentas
