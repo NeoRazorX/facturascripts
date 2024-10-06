@@ -87,11 +87,11 @@
             <div class="col-md d-none d-md-inline-block text-right">
                 {% set image = fsc.getImageUrl() %}
                 {% if image is empty %}
-                    <i class="{{ pageData.icon }} fa-3x pl-3 float-right" aria-hidden="true"></i>
+                    <i class="{{ pageData.icon }} fa-3x pl-3 float-right {{ fsc.isRectified ? 'text-danger' : '' }}" aria-hidden="true"></i>
                 {% else %}
                     <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail ml-3 mb-2 float-right"/>
                 {% endif %}
-                <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
+                <h1 class="h5 mb-0 {{ fsc.isRectified ? 'text-danger font-weight-bold' : '' }}">{{ trans(pageData.title) }}</h1>
                 {% if fsc.hasData %}
                     <p class="text-info mb-3">{{ firstView.model.primaryDescription() | raw }}</p>
                 {% else %}
