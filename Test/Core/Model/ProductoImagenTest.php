@@ -21,7 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use Exception;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Core\Tools;

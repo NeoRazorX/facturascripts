@@ -20,75 +20,13 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Description of MyFilesToken
+ * Esta clase ha sido marcada como obsoleta y será eliminada en versiones futuras.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * @deprecated desde la versión XXXXX Se recomienda usar Core/Lib/MyFilesToken en su lugar.
  */
-class MyFilesToken
+class MyFilesToken extends \FacturaScripts\Core\Lib\MyFilesToken
 {
-    /** @var string */
-    private static $date;
-
-    public static function get(string $path, bool $permanent, string $expiration = ''): string
-    {
-        self::checkPath($path);
-
-        $init = FS_DB_NAME . FS_DB_PASS;
-        if ($expiration && $permanent === false) {
-            // si se especifica una fecha de expiración, la añadimos también al final para poder validarla
-            return sha1($init . $path . $expiration) . '|' . $expiration;
-        }
-
-        $date = self::getCurrentDate();
-        return $permanent ? sha1($init . $path) : sha1($init . $path . $date);
-    }
-
-    public static function getCurrentDate(): string
-    {
-        if (self::$date === null) {
-            self::$date = date('d-m-Y');
-        }
-
-        return self::$date;
-    }
-
-    public static function setCurrentDate(string $date): void
-    {
-        self::$date = $date;
-    }
-
-    public static function validate(string $path, string $token): bool
-    {
-        self::checkPath($path);
-
-        // ¿El token contiene "|"?
-        if (strpos($token, '|') !== false) {
-            $expiration = explode('|', $token)[1];
-
-            // ¿La fecha de expiración es válida?
-            if (strtotime($expiration) < strtotime(self::getCurrentDate())) {
-                return false;
-            }
-
-            // ¿El token es válido?
-            if ($token === self::get($path, false, $expiration)) {
-                return true;
-            }
-        }
-
-        return $token === static::get($path, true) || $token === static::get($path, false);
-    }
-
-    private static function checkPath(string &$path): void
-    {
-        // comprobamos si el path empieza por / y lo eliminamos
-        if (strpos($path, '/') === 0) {
-            $path = substr($path, 1);
-        }
-
-        // comprobamos si el path empieza por \ y lo eliminamos
-        if (strpos($path, '\\') === 0) {
-            $path = substr($path, 1);
-        }
-    }
+    //
 }
