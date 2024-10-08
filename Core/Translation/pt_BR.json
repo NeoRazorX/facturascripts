@@ -1431,7 +1431,7 @@
     "starting-cron": "Iniciando cron para FacturaScripts...",
     "state": "Estado",
     "states": "Estados",
-    "status": "Status",
+    "status": "Estado",
     "status-document": "Status do documento",
     "status-name-valid-length": "Nome de status inválido. Deve ter entre 1 e 20 caracteres.",
     "status-value-is-number": "O campo estado deve ser numérico.",
