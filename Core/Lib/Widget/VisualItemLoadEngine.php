@@ -19,9 +19,12 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Translator;
+use FacturaScripts\Dinamic\Model\PageOption;
+use FacturaScripts\Dinamic\Model\User;
 use SimpleXMLElement;
 
 /**
@@ -228,5 +231,74 @@ class VisualItemLoadEngine
         }
 
         return '';
+    }
+
+    /**
+     * @param string $viewName
+     * @param PageOption $model
+     * @param array $columns
+     * @param array $modals
+     * @param array $rows
+     * @param User|false $user
+     * @param bool $isCustomized
+     *
+     * @return void
+     */
+    public static function loadPageOptions(string $viewName, PageOption &$model, array &$columns, array &$modals, array &$rows, $user = false, bool &$isCustomized = false)
+    {
+        if (false === is_bool($user)) {
+            // sets user security level for use in render
+            VisualItem::setLevel($user->level);
+            $model->nick = $user->nick;
+        }
+
+        // Cargamos las opciones desde los xml
+        self::installXML($viewName, $model);
+
+        // Cargamos los opciones personalizadas desde la base de datos
+        $customPageOptions = new PageOption();
+        $orderBy = ['nick' => 'ASC'];
+        $where = self::getPageWhere($viewName, $user);
+
+        // Si existen opciones personalizadas guardadas, sobreescribimos las opciones del XML
+        if ($customPageOptions->loadFromCode('', $where, $orderBy)) {
+            $model->id = $customPageOptions->id;
+            $model->nick = $customPageOptions->nick;
+            self::updateOptions($model->columns, $customPageOptions->columns);
+            self::updateOptions($model->rows, $customPageOptions->rows);
+            self::updateOptions($model->modals, $customPageOptions->modals);
+
+            $isCustomized = true;
+        }
+
+        self::loadArray($columns, $modals, $rows, $model);
+    }
+
+    /**
+     * Returns DataBaseWhere[] for locate a pageOption model.
+     *
+     * @param User|false $user
+     */
+    protected static function getPageWhere($viewName, $user = false)
+    {
+        return is_bool($user) ? [new DataBaseWhere('name', $viewName)] : [
+            new DataBaseWhere('name', $viewName),
+            new DataBaseWhere('nick', $user->nick)
+        ];
+    }
+
+    /**
+     * Actualiza las opciones de columnas o filas con los valores personalizados.
+     *
+     * @param array $target Las opciones de destino (columnas o filas).
+     * @param array $source Las opciones personalizadas.
+     */
+    private static function updateOptions(array &$target, array $source)
+    {
+        foreach ($source as $key => $value) {
+            if (!empty($value)) {
+                $target[$key] = $value;
+            }
+        }
     }
 }
