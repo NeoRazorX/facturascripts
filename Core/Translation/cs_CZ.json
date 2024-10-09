@@ -1138,7 +1138,7 @@
     "percentage-vat": "% Impuesto",
     "period": "Periodo",
     "personalized": "Personalizované",
-    "pgsql-endpoint": "Endpoint PostgreSQL",
+    "pgsql-endpoint": "Bezpečnostní brána PostgreSQL",
     "pgsql-ssl-mode": "Režim SSL PostgreSQL",
     "phase": "Fase",
     "phone": "Teléfono",
