@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -229,11 +229,11 @@ class AccountingCreation
             return $code;
         }
 
-        // conformamos un array con el número del cliente, los 99 primeros números y un número aleatorio
+        // conformamos un array con el número del cliente, los 49 primeros números y varios números aleatorios
         $numbers = array_merge(
             [$code],
-            range(1, 99),
-            [rand(100, 999), rand(100, 9999), rand(100, 99999)]
+            range(1, 49),
+            [rand(50, 99), rand(50, 999), rand(50, 9999), rand(50, 99999)]
         );
 
         // añadimos también los 100 siguientes números al total de subcuentas
