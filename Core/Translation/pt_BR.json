@@ -206,7 +206,7 @@
     "cant-load-controller": "Não é possível carregar o controlador '%controllerName%'.",
     "cant-modify-reference": "Impossível modificar a referência.",
     "cant-remove-accounting-entry": "No se puede eliminar la entrada contable",
-    "cant-remove-invoice-refund": "Não é possível remover uma fatura que já possui devolução",
+    "cant-remove-invoice-refund": "Não é possível remover uma fatura que já possui retificação (devolução)",
     "cant-remove-receipt": "No se puede eliminar el recibo",
     "cant-update-audit-log": "No se puede modificar el registro de auditoría",
     "card": "Cartão",
