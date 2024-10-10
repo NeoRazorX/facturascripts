@@ -167,6 +167,7 @@ class Contacto extends Base\Contact
             $cliente->nombre = $this->fullName();
             $cliente->observaciones = $this->observaciones;
             $cliente->personafisica = $this->personafisica;
+            $cliente->tipoidfiscal = $this->tipoidfiscal;
             $cliente->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
             $cliente->telefono1 = $this->telefono1;
             $cliente->telefono2 = $this->telefono2;
@@ -198,6 +199,7 @@ class Contacto extends Base\Contact
             $proveedor->nombre = $this->fullName();
             $proveedor->observaciones = $this->observaciones;
             $proveedor->personafisica = $this->personafisica;
+            $proveedor->tipoidfiscal = $this->tipoidfiscal;
             $proveedor->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
             $proveedor->telefono1 = $this->telefono1;
             $proveedor->telefono2 = $this->telefono2;
