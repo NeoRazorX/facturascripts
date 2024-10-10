@@ -1619,7 +1619,7 @@
     "valid-for-day": "Valid for one day",
     "validate": "Validate",
     "validate-iban": "Validate IBAN",
-    "validate-whatsapp-not-connection": "Error validating the WhatsApp number, could not establish a connection with the WhatsApp server.",
+    "validate-whatsapp-not-connection": "Error validating WhatsApp number; could not establish connection to the WhatsApp server.",
     "valuation-type": "Valuation type",
     "value": "Value",
     "value-x": "Value X",
