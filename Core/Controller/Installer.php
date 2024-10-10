@@ -38,6 +38,9 @@ class Installer implements ControllerInterface
     /** @var string */
     public $db_name;
 
+    /** @var string */
+    public $db_pass;
+
     /** @var int */
     public $db_port;
 
@@ -75,11 +78,12 @@ class Installer implements ControllerInterface
 
     public function run(): void
     {
-        $this->db_host = trim($this->request->get('fs_db_host', 'localhost'));
-        $this->db_name = trim($this->request->get('fs_db_name', 'facturascripts'));
+        $this->db_host = strtolower(trim($this->request->get('fs_db_host', 'localhost')));
+        $this->db_name = strtolower(trim($this->request->get('fs_db_name', 'facturascripts')));
+        $this->db_pass = $this->request->get('fs_db_pass', '');
         $this->db_port = (int)$this->request->get('fs_db_port', 3306);
         $this->db_type = $this->request->get('fs_db_type', 'mysql');
-        $this->db_user = trim($this->request->get('fs_db_user', 'root'));
+        $this->db_user = strtolower(trim($this->request->get('fs_db_user', 'root')));
 
         $installed = $this->searchErrors() &&
             $this->request->getMethod() === 'POST' &&
@@ -118,7 +122,7 @@ class Installer implements ControllerInterface
             'host' => $this->db_host,
             'port' => $this->db_port,
             'user' => $this->db_user,
-            'pass' => $this->request->request->get('fs_db_pass'),
+            'pass' => $this->db_pass,
             'name' => $this->db_name,
             'socket' => $this->request->request->get('mysql_socket', ''),
             'pgsql-ssl' => $this->request->request->get('pgsql_ssl_mode', ''),
@@ -212,7 +216,7 @@ class Installer implements ControllerInterface
         fwrite($file, "define('FS_DB_PORT', " . $this->db_port . ");\n");
         fwrite($file, "define('FS_DB_NAME', '" . $this->db_name . "');\n");
         fwrite($file, "define('FS_DB_USER', '" . $this->db_user . "');\n");
-        fwrite($file, "define('FS_DB_PASS', '" . $this->request->request->get('fs_db_pass') . "');\n");
+        fwrite($file, "define('FS_DB_PASS', '" . $this->db_pass . "');\n");
         fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
         fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
 
@@ -251,7 +255,6 @@ class Installer implements ControllerInterface
             fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
         }
 
-        fwrite($file, "\n");
         fclose($file);
         return true;
     }
