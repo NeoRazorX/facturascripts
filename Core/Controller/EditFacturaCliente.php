@@ -25,6 +25,9 @@ class EditFacturaCliente extends SalesController
     private const VIEW_ACCOUNTS = 'ListAsiento';
     private const VIEW_RECEIPTS = 'ListReciboCliente';
 
+    /** @var bool */
+    public $isRectified;
+
     public function getModelClassName(): string
     {
         return 'FacturaCliente';
@@ -32,9 +35,26 @@ class EditFacturaCliente extends SalesController
 
     public function getPageData(): array
     {
+        $title = 'invoice';
+
+        if(!empty($this->views)){
+            $mvn = $this->getMainViewName();
+
+            // es una factura rectificativa?
+            /** @var FacturaCliente $model */
+            $model = $this->getModel();
+            $this->isRectified = property_exists($model, 'idfacturarect') && $model->idfacturarect;
+
+            if ($this->isRectified){
+                // cambiamos el titulo para que sea mas facil identificar la factura rectificativa
+                $title = $this->views[$mvn]->title = Tools::lang()->trans('rectified-invoice');
+                $this->title = $title . ' ' . $model->codigorect;
+            }
+        }
+
         $data = parent::getPageData();
         $data['menu'] = 'sales';
-        $data['title'] = 'invoice';
+        $data['title'] = $title;
         $data['icon'] = 'fas fa-file-invoice-dollar';
         $data['showonmenu'] = false;
         return $data;
