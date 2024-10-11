@@ -34,7 +34,10 @@
     "ext-mysqli": "*",
     "ext-bcmath": "*",
     "ext-gd": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "league/oauth2-client": "^2.7",
+    "league/oauth2-google": "^4.0",
+    "thenetworg/oauth2-azure": "^2.2"
   },
   "require-dev": {
     "phpunit/phpunit": "9.*",
