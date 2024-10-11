@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Translator;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of BaseFilter
@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class BaseFilter
 {
-
     /**
      * Submit form on every filter change.
      *

@@ -43,7 +43,7 @@ trait DocFilesTrait
             return true;
         }
 
-        $uploadFiles = $this->request->files->get('new-files', []);
+        $uploadFiles = $this->request->files->getArray('new-files');
         foreach ($uploadFiles as $uploadFile) {
             if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
                 $newFile = new AttachedFile();

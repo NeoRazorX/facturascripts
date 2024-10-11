@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Lib\Export\ExportBase;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of ExportManager
