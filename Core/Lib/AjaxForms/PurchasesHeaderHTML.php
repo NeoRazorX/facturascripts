@@ -20,10 +20,10 @@
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**

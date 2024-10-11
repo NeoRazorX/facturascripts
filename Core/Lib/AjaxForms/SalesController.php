@@ -38,7 +38,8 @@ use FacturaScripts\Dinamic\Model\Variante;
  * Description of SalesController
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/LibAccountingFooterHTMLTrait*/abstract class SalesController extends PanelController
+ */
+abstract class SalesController extends PanelController
 {
     use DocFilesTrait;
     use LogAuditTrait;
