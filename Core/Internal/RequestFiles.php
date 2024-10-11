@@ -68,9 +68,18 @@ final class RequestFiles
         return $result;
     }
 
-    public function get(string $key): ?UploadedFile
+
+    /**
+     * Obtiene un valor almacenado en el array $data si la clave existe y su valor
+     * es una instancia de UploadedFile o un array.
+     *
+     * @param string $key La clave del dato a obtener.
+     * @return UploadedFile|UploadedFile[]|null Retorna el valor asociado a la clave si existe y es un UploadedFile o un array.
+     *                                          Retorna null si no cumple las condiciones.
+     */
+    public function get(string $key)
     {
-        if ($this->has($key) && $this->data[$key] instanceof UploadedFile) {
+        if ($this->has($key) && ($this->data[$key] instanceof UploadedFile || is_array($this->data[$key]))) {
             return $this->data[$key];
         }
 
