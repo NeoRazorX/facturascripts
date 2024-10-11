@@ -17,46 +17,46 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\AjaxForms;
+namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\Contract\PurchasesLineModInterface;
+use FacturaScripts\Core\Base\Contract\SalesLineModInterface;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
-use FacturaScripts\Core\Model\Base\PurchaseDocument;
-use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
+use FacturaScripts\Core\Model\Base\SalesDocument;
+use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Translator;
+use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
- * Description of PurchasesLineHTML
+ * Description of SalesLineHTML
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Daniel Fernández Giménez      <hola@danielfg.es>
- * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/PurchasesLineHTML
  */
-class PurchasesLineHTML
+class SalesLineHTML
 {
     use CommonLineHTML;
 
     /** @var array */
     private static $deletedLines = [];
 
-    /** @var PurchasesLineModInterface[] */
+    /** @var SalesLineModInterface[] */
     private static $mods = [];
 
-    public static function addMod(PurchasesLineModInterface $mod)
+    public static function addMod(SalesLineModInterface $mod)
     {
         self::$mods[] = $mod;
     }
 
     /**
-     * @param PurchaseDocument $model
-     * @param PurchaseDocumentLine[] $lines
+     * @param SalesDocument $model
+     * @param SalesDocumentLine[] $lines
      * @param array $formData
      */
-    public static function apply(PurchaseDocument &$model, array &$lines, array $formData)
+    public static function apply(SalesDocument &$model, array &$lines, array $formData)
     {
         self::$columnView = $formData['columnView'] ?? Tools::settings('default', 'columnetosubtotal', 'subtotal');
 
@@ -87,7 +87,7 @@ class PurchasesLineHTML
         if ($formData['action'] === 'add-product' || $formData['action'] === 'fast-product') {
             $lines[] = $model->getNewProductLine($formData['selectedLine']);
         } elseif ($formData['action'] === 'fast-line') {
-            $newLine = static::getFastLine($model, $formData);
+            $newLine = self::getFastLine($model, $formData);
             if ($newLine) {
                 $lines[] = $newLine;
             }
@@ -115,12 +115,12 @@ class PurchasesLineHTML
     }
 
     /**
-     * @param PurchaseDocumentLine[] $lines
-     * @param PurchaseDocument $model
+     * @param SalesDocumentLine[] $lines
+     * @param SalesDocument $model
      *
      * @return array
      */
-    public static function map(array $lines, PurchaseDocument $model): array
+    public static function map(array $lines, SalesDocument $model): array
     {
         $map = [];
         foreach ($lines as $line) {
@@ -148,12 +148,12 @@ class PurchasesLineHTML
     }
 
     /**
-     * @param PurchaseDocumentLine[] $lines
-     * @param PurchaseDocument $model
+     * @param SalesDocumentLine[] $lines
+     * @param SalesDocument $model
      *
      * @return string
      */
-    public static function render(array $lines, PurchaseDocument $model): string
+    public static function render(array $lines, SalesDocument $model): string
     {
         if (empty(self::$columnView)) {
             self::$columnView = Tools::settings('default', 'columnetosubtotal', 'subtotal');
@@ -171,14 +171,14 @@ class PurchasesLineHTML
             $html .= '<div class="container-fluid"><div class="form-row table-warning"><div class="col p-3 text-center">'
                 . $i18n->trans('new-invoice-line-p') . '</div></div></div>';
         }
-        return empty($model->codproveedor) ? '' : self::renderTitles($i18n, $model) . $html;
+        return empty($model->codcliente) ? '' : self::renderTitles($i18n, $model) . $html;
     }
 
-    public static function renderLine(Translator $i18n, PurchaseDocumentLine $line, PurchaseDocument $model): string
+    public static function renderLine(Translator $i18n, SalesDocumentLine $line, SalesDocument $model): string
     {
         self::$num++;
         $idlinea = $line->idlinea ?? 'n' . self::$num;
-        return '<div class="container-fluid"><div class="form-row align-items-center border-bottom pb-3 pb-lg-0">'
+        return '<div class="container-fluid fs-line"><div class="form-row align-items-center border-bottom pb-3 pb-lg-0">'
             . self::renderField($i18n, $idlinea, $line, $model, 'referencia')
             . self::renderField($i18n, $idlinea, $line, $model, 'descripcion')
             . self::renderField($i18n, $idlinea, $line, $model, 'cantidad')
@@ -187,19 +187,24 @@ class PurchasesLineHTML
             . self::renderField($i18n, $idlinea, $line, $model, 'dtopor')
             . self::renderField($i18n, $idlinea, $line, $model, 'codimpuesto')
             . self::renderField($i18n, $idlinea, $line, $model, '_total')
-            . self::renderExpandButton($i18n, $idlinea, $model, 'purchasesFormAction')
-            . '</div>' . self::renderLineModal($i18n, $line, $idlinea, $model) . '</div>';
+            . self::renderExpandButton($i18n, $idlinea, $model, 'salesFormAction')
+            . '</div>'
+            . self::renderLineModal($i18n, $line, $idlinea, $model) . '</div>';
     }
 
-    private static function applyToLine(array $formData, PurchaseDocumentLine &$line, string $id)
+    private static function applyToLine(array $formData, SalesDocumentLine &$line, string $id)
     {
         $line->orden = (int)$formData['orden_' . $id];
         $line->cantidad = (float)$formData['cantidad_' . $id];
+        $line->coste = floatval($formData['coste_' . $id] ?? $line->coste);
         $line->dtopor = (float)$formData['dtopor_' . $id];
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];
         $line->excepcioniva = $formData['excepcioniva_' . $id] ?? null;
         $line->irpf = (float)($formData['irpf_' . $id] ?? '0');
+        $line->mostrar_cantidad = (bool)($formData['mostrar_cantidad_' . $id] ?? '0');
+        $line->mostrar_precio = (bool)($formData['mostrar_precio_' . $id] ?? '0');
+        $line->salto_pagina = (bool)($formData['salto_pagina_' . $id] ?? '0');
         $line->suplido = (bool)($formData['suplido_' . $id] ?? '0');
         $line->pvpunitario = (float)$formData['pvpunitario_' . $id];
 
@@ -222,14 +227,14 @@ class PurchasesLineHTML
         }
     }
 
-    private static function cantidad(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $jsFunc): string
+    private static function cantidad(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
             return '<div class="col-sm-2 col-lg-1 order-3">'
                 . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
                 . '<div class="input-group input-group-sm">'
                 . self::cantidadRestante($i18n, $line, $model)
-                . '<input type="number" class="form-control form-control-sm text-lg-right border-0" value="' . $line->cantidad . '" disabled=""/>'
+                . '<input type="number" class="form-control text-lg-right border-0" value="' . $line->cantidad . '" disabled=""/>'
                 . '</div>'
                 . '</div>';
         }
@@ -239,12 +244,63 @@ class PurchasesLineHTML
             . '<div class="input-group input-group-sm">'
             . self::cantidadRestante($i18n, $line, $model)
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
-            . '" class="form-control form-control-sm text-lg-right border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"/>'
+            . '" class="form-control text-lg-right border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"/>'
+            . self::cantidadStock($i18n, $line, $model)
             . '</div>'
             . '</div>';
     }
 
-    private static function getFastLine(PurchaseDocument $model, array $formData): ?PurchaseDocumentLine
+    private static function cantidadStock(Translator $i18n, SalesDocumentLine $line, SalesDocument $model): string
+    {
+        $html = '';
+        if (empty($line->referencia) || $line->modelClassName() === 'LineaFacturaCliente' || false === $model->editable) {
+            return $html;
+        }
+
+        $product = $line->getProducto();
+        if ($product->nostock) {
+            return $html;
+        }
+
+        // buscamos el stock de este producto en este almacén
+        $stock = self::$stocks[$line->referencia] ?? new Stock();
+        switch ($line->actualizastock) {
+            case -1:
+            case -2:
+                $html = $stock->disponible > 0 ?
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-success">' . $stock->disponible . '</a>' :
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-danger">' . $stock->disponible . '</a>';
+                break;
+
+            default:
+                $html = $line->cantidad <= $stock->cantidad ?
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-success">' . $stock->cantidad . '</a>' :
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-danger">' . $stock->cantidad . '</a>';
+                break;
+        }
+
+        return empty($html) ? $html :
+            '<div class="input-group-prepend" title="' . $i18n->trans('stock') . '">' . $html . '</div>';
+    }
+
+    private static function coste(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): string
+    {
+        if (false === SalesHeaderHTML::checkLevel(Tools::settings('default', 'levelcostsales', 0))) {
+            return '';
+        }
+
+        $attributes = $model->editable ?
+            'name="' . $field . '_' . $idlinea . '" min="0" step="any"' :
+            'disabled=""';
+
+        return '<div class="col-6">'
+            . '<div class="mb-2">' . $i18n->trans('cost')
+            . '<input type="number" ' . $attributes . ' value="' . $line->{$field} . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function getFastLine(SalesDocument $model, array $formData): ?SalesDocumentLine
     {
         if (empty($formData['fastli'])) {
             return $model->getNewLine();
@@ -269,23 +325,23 @@ class PurchasesLineHTML
         return null;
     }
 
-    private static function precio(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $jsFunc): string
+    private static function precio(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
             return '<div class="col-sm col-lg-1 order-4">'
-                . '<div class="d-lg-none mt-2 small">' . $i18n->trans('price') . '</div>'
-                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-right border-0" disabled=""/>'
+                . '<span class="d-lg-none small">' . $i18n->trans('price') . '</span>'
+                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-right border-0" disabled/>'
                 . '</div>';
         }
 
         $attributes = 'name="pvpunitario_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"';
         return '<div class="col-sm col-lg-1 order-4">'
-            . '<div class="d-lg-none mt-2 small">' . $i18n->trans('price') . '</div>'
+            . '<span class="d-lg-none small">' . $i18n->trans('price') . '</span>'
             . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-right border-0"/>'
             . '</div>';
     }
 
-    private static function renderField(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $field): ?string
+    private static function renderField(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
             $html = $mod->renderField($i18n, $idlinea, $line, $model, $field);
@@ -296,46 +352,58 @@ class PurchasesLineHTML
 
         switch ($field) {
             case '_total':
-                return self::lineTotal($i18n, $idlinea, $line, $model, 'purchasesLineTotalWithTaxes', 'purchasesLineTotalWithoutTaxes');
+                return self::lineTotal($i18n, $idlinea, $line, $model, 'salesLineTotalWithTaxes', 'salesLineTotalWithoutTaxes');
 
             case 'cantidad':
-                return self::cantidad($i18n, $idlinea, $line, $model, 'purchasesFormActionWait');
+                return self::cantidad($i18n, $idlinea, $line, $model, 'salesFormActionWait');
 
             case 'codimpuesto':
-                return self::codimpuesto($i18n, $idlinea, $line, $model, 'purchasesFormAction');
+                return self::codimpuesto($i18n, $idlinea, $line, $model, 'salesFormAction');
+
+            case 'coste':
+                return self::coste($i18n, $idlinea, $line, $model, 'coste');
 
             case 'descripcion':
                 return self::descripcion($i18n, $idlinea, $line, $model);
 
             case 'dtopor':
-                return self::dtopor($i18n, $idlinea, $line, $model, 'purchasesFormActionWait');
+                return self::dtopor($i18n, $idlinea, $line, $model, 'salesFormActionWait');
 
             case 'dtopor2':
-                return self::dtopor2($i18n, $idlinea, $line, $model, 'dtopor2', 'purchasesFormActionWait');
+                return self::dtopor2($i18n, $idlinea, $line, $model, 'dtopor2', 'salesFormActionWait');
 
             case 'excepcioniva':
-                return self::excepcioniva($i18n, $idlinea, $line, $model, 'excepcioniva', 'purchasesFormActionWait');
+                return self::excepcioniva($i18n, $idlinea, $line, $model, 'excepcioniva', 'salesFormActionWait');
 
             case 'irpf':
-                return self::irpf($i18n, $idlinea, $line, $model, 'purchasesFormAction');
+                return self::irpf($i18n, $idlinea, $line, $model, 'salesFormAction');
+
+            case 'mostrar_cantidad':
+                return self::genericBool($i18n, $idlinea, $line, $model, 'mostrar_cantidad', 'print-quantity');
+
+            case 'mostrar_precio':
+                return self::genericBool($i18n, $idlinea, $line, $model, 'mostrar_precio', 'print-price');
 
             case 'pvpunitario':
-                return self::precio($i18n, $idlinea, $line, $model, 'purchasesFormActionWait');
+                return self::precio($i18n, $idlinea, $line, $model, 'salesFormActionWait');
 
             case 'recargo':
-                return self::recargo($i18n, $idlinea, $line, $model, 'purchasesFormActionWait');
+                return self::recargo($i18n, $idlinea, $line, $model, 'salesFormActionWait');
 
             case 'referencia':
                 return self::referencia($i18n, $idlinea, $line, $model);
 
+            case 'salto_pagina':
+                return self::genericBool($i18n, $idlinea, $line, $model, 'salto_pagina', 'page-break');
+
             case 'suplido':
-                return self::suplido($i18n, $idlinea, $line, $model, 'purchasesFormAction');
+                return self::suplido($i18n, $idlinea, $line, $model, 'salesFormAction');
         }
 
         return null;
     }
 
-    private static function renderLineModal(Translator $i18n, PurchaseDocumentLine $line, string $idlinea, PurchaseDocument $model): string
+    private static function renderLineModal(Translator $i18n, SalesDocumentLine $line, string $idlinea, SalesDocument $model): string
     {
         return '<div class="modal fade" id="lineModal-' . $idlinea . '" tabindex="-1" aria-labelledby="lineModal-' . $idlinea . 'Label" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-centered">'
@@ -353,25 +421,23 @@ class PurchasesLineHTML
             . self::renderField($i18n, $idlinea, $line, $model, 'irpf')
             . self::renderField($i18n, $idlinea, $line, $model, 'excepcioniva')
             . self::renderField($i18n, $idlinea, $line, $model, 'suplido')
-            . '</div>'
-            . '<div class="form-row">'
+            . self::renderField($i18n, $idlinea, $line, $model, 'coste')
+            . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_cantidad')
+            . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_precio')
+            . self::renderField($i18n, $idlinea, $line, $model, 'salto_pagina')
             . self::renderNewModalFields($i18n, $idlinea, $line, $model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
-            . $i18n->trans('close')
-            . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">'
-            . $i18n->trans('accept')
-            . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
     }
 
-    private static function renderNewModalFields(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model): string
+    private static function renderNewModalFields(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -397,7 +463,7 @@ class PurchasesLineHTML
         return $html;
     }
 
-    private static function renderNewFields(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model): string
+    private static function renderNewFields(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -423,7 +489,7 @@ class PurchasesLineHTML
         return $html;
     }
 
-    private static function renderNewTitles(Translator $i18n, PurchaseDocument $model): string
+    private static function renderNewTitles(Translator $i18n, SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -449,7 +515,7 @@ class PurchasesLineHTML
         return $html;
     }
 
-    private static function renderTitle(Translator $i18n, PurchaseDocument $model, string $field): ?string
+    private static function renderTitle(Translator $i18n, SalesDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
             $html = $mod->renderTitle($i18n, $model, $field);
@@ -487,9 +553,9 @@ class PurchasesLineHTML
         return null;
     }
 
-    private static function renderTitles(Translator $i18n, PurchaseDocument $model): string
+    private static function renderTitles(Translator $i18n, SalesDocument $model): string
     {
-        return '<div class="container-fluid d-none d-lg-block"><div class="form-row border-bottom">'
+        return '<div class="container-fluid d-none d-lg-block titles"><div class="form-row border-bottom">'
             . self::renderTitle($i18n, $model, 'referencia')
             . self::renderTitle($i18n, $model, 'descripcion')
             . self::renderTitle($i18n, $model, 'cantidad')

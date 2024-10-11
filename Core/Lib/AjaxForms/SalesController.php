@@ -17,42 +17,41 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\AjaxForms;
+namespace FacturaScripts\Core\Lib\AjaxForms;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Series;
-use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
-use FacturaScripts\Core\Model\Base\PurchaseDocument;
-use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
+use FacturaScripts\Core\Model\Base\SalesDocument;
+use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
-use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\RoleAccess;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
- * Description of PurchasesController
+ * Description of SalesController
  *
- * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
- * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/PurchasesController
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-abstract class PurchasesController extends PanelController
+abstract class SalesController extends PanelController
 {
     use DocFilesTrait;
     use LogAuditTrait;
 
     const MAIN_VIEW_NAME = 'main';
-    const MAIN_VIEW_TEMPLATE = 'Tab/PurchasesDocument';
+    const MAIN_VIEW_TEMPLATE = 'Tab/SalesDocument';
 
     private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
 
     abstract public function getModelClassName();
 
-    public function getModel(bool $reload = false): PurchaseDocument
+    public function getModel(bool $reload = false): SalesDocument
     {
         if ($reload) {
             $this->views[static::MAIN_VIEW_NAME]->model->clear();
@@ -68,7 +67,8 @@ abstract class PurchasesController extends PanelController
         if (empty($code)) {
             // empty identifier? Then sets initial parameters to the new record and return it
             $formData = $this->request->query->all();
-            PurchasesHeaderHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData, $this->user);
+            SalesHeaderHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData, $this->user);
+            SalesFooterHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData, $this->user);
             return $this->views[static::MAIN_VIEW_NAME]->model;
         }
 
@@ -78,19 +78,19 @@ abstract class PurchasesController extends PanelController
     }
 
     /**
-     * @param PurchaseDocument $model
-     * @param PurchaseDocumentLine[] $lines
+     * @param SalesDocument $model
+     * @param SalesDocumentLine[] $lines
      *
      * @return string
      */
-    public function renderPurchasesForm(PurchaseDocument $model, array $lines): string
+    public function renderSalesForm(SalesDocument $model, array $lines): string
     {
         $url = empty($model->primaryColumnValue()) ? $this->url() : $model->url();
 
-        return '<div id="purchasesFormHeader">' . PurchasesHeaderHTML::render($model) . '</div>'
-            . '<div id="purchasesFormLines">' . PurchasesLineHTML::render($lines, $model) . '</div>'
-            . '<div id="purchasesFormFooter">' . PurchasesFooterHTML::render($model) . '</div>'
-            . PurchasesModalHTML::render($model, $url);
+        return '<div id="salesFormHeader">' . SalesHeaderHTML::render($model) . '</div>'
+            . '<div id="salesFormLines">' . SalesLineHTML::render($lines, $model) . '</div>'
+            . '<div id="salesFormFooter">' . SalesFooterHTML::render($model) . '</div>'
+            . SalesModalHTML::render($model, $url, $this->user, $this->permissions);
     }
 
     public function series(string $type = ''): array
@@ -118,7 +118,7 @@ abstract class PurchasesController extends PanelController
         $query = (string)$this->request->get('term');
         $where = [
             new DataBaseWhere('p.bloqueado', 0),
-            new DataBaseWhere('p.secompra', 1)
+            new DataBaseWhere('p.sevende', 1)
         ];
         foreach ($variante->codeModelSearch($query, 'referencia', $where) as $value) {
             $list[] = [
@@ -149,9 +149,9 @@ abstract class PurchasesController extends PanelController
         $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fas fa-file');
         AssetManager::addCss(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::addJs(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
-        PurchasesHeaderHTML::assets();
-        PurchasesLineHTML::assets();
-        PurchasesFooterHTML::assets();
+        SalesHeaderHTML::assets();
+        SalesLineHTML::assets();
+        SalesFooterHTML::assets();
     }
 
     protected function deleteDocAction(): bool
@@ -195,7 +195,7 @@ abstract class PurchasesController extends PanelController
             case 'new-line':
             case 'recalculate':
             case 'rm-line':
-            case 'set-supplier':
+            case 'set-customer':
                 return $this->recalculateAction(true);
 
             case 'delete-doc':
@@ -207,8 +207,8 @@ abstract class PurchasesController extends PanelController
             case 'edit-file':
                 return $this->editFileAction();
 
-            case 'find-supplier':
-                return $this->findSupplierAction();
+            case 'find-customer':
+                return $this->findCustomerAction();
 
             case 'find-product':
                 return $this->findProductAction();
@@ -251,13 +251,27 @@ abstract class PurchasesController extends PanelController
         $this->exportManager->show($this->response);
     }
 
-    protected function findSupplierAction(): bool
+    protected function findCustomerAction(): bool
     {
         $this->setTemplate(false);
-        $supplier = new Proveedor();
+
+        // ¿El usuario tiene permiso para ver todos los clientes?
+        $showAll = false;
+        foreach (RoleAccess::allFromUser($this->user->nick, 'EditCliente') as $access) {
+            if (false === $access->onlyownerdata) {
+                $showAll = true;
+            }
+        }
+        $where = [];
+        if ($this->permissions->onlyOwnerData && !$showAll) {
+            $where[] = new DataBaseWhere('codagente', $this->user->codagente);
+            $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
+        }
+
         $list = [];
+        $customer = new Cliente();
         $term = $this->request->get('term');
-        foreach ($supplier->codeModelSearch($term) as $item) {
+        foreach ($customer->codeModelSearch($term, '', $where) as $item) {
             $list[$item->code] = $item->code . ' | ' . Tools::fixHtml($item->description);
         }
         $this->response->setContent(json_encode($list));
@@ -269,15 +283,15 @@ abstract class PurchasesController extends PanelController
         $this->setTemplate(false);
         $model = $this->getModel();
         $formData = json_decode($this->request->request->get('data'), true);
-        PurchasesHeaderHTML::apply($model, $formData, $this->user);
-        PurchasesFooterHTML::apply($model, $formData, $this->user);
-        PurchasesModalHTML::apply($model, $formData);
+        SalesHeaderHTML::apply($model, $formData, $this->user);
+        SalesFooterHTML::apply($model, $formData, $this->user);
+        SalesModalHTML::apply($model, $formData);
         $content = [
             'header' => '',
             'lines' => '',
             'linesMap' => [],
             'footer' => '',
-            'products' => PurchasesModalHTML::renderProductList()
+            'products' => SalesModalHTML::renderProductList()
         ];
         $this->sendJsonWithLogs($content);
         return false;
@@ -332,17 +346,17 @@ abstract class PurchasesController extends PanelController
         $model = $this->getModel();
         $lines = $model->getLines();
         $formData = json_decode($this->request->request->get('data'), true);
-        PurchasesHeaderHTML::apply($model, $formData, $this->user);
-        PurchasesFooterHTML::apply($model, $formData, $this->user);
-        PurchasesLineHTML::apply($model, $lines, $formData);
+        SalesHeaderHTML::apply($model, $formData, $this->user);
+        SalesFooterHTML::apply($model, $formData, $this->user);
+        SalesLineHTML::apply($model, $lines, $formData);
         Calculator::calculate($model, $lines, false);
 
         $content = [
-            'header' => PurchasesHeaderHTML::render($model),
-            'lines' => $renderLines ? PurchasesLineHTML::render($lines, $model) : '',
-            'linesMap' => $renderLines ? [] : PurchasesLineHTML::map($lines, $model),
-            'footer' => PurchasesFooterHTML::render($model),
-            'products' => ''
+            'header' => SalesHeaderHTML::render($model),
+            'lines' => $renderLines ? SalesLineHTML::render($lines, $model) : '',
+            'linesMap' => $renderLines ? [] : SalesLineHTML::map($lines, $model),
+            'footer' => SalesFooterHTML::render($model),
+            'products' => '',
         ];
         $this->sendJsonWithLogs($content);
         return false;
@@ -363,8 +377,8 @@ abstract class PurchasesController extends PanelController
 
         $model = $this->getModel();
         $formData = json_decode($this->request->request->get('data'), true);
-        PurchasesHeaderHTML::apply($model, $formData, $this->user);
-        PurchasesFooterHTML::apply($model, $formData, $this->user);
+        SalesHeaderHTML::apply($model, $formData, $this->user);
+        SalesFooterHTML::apply($model, $formData, $this->user);
 
         if (false === $model->save()) {
             $this->sendJsonWithLogs(['ok' => false]);
@@ -373,7 +387,7 @@ abstract class PurchasesController extends PanelController
         }
 
         $lines = $model->getLines();
-        PurchasesLineHTML::apply($model, $lines, $formData);
+        SalesLineHTML::apply($model, $lines, $formData);
         Calculator::calculate($model, $lines, false);
 
         foreach ($lines as $line) {
@@ -386,7 +400,7 @@ abstract class PurchasesController extends PanelController
 
         // remove missing lines
         foreach ($model->getLines() as $oldLine) {
-            if (in_array($oldLine->idlinea, PurchasesLineHTML::getDeletedLines()) && false === $oldLine->delete()) {
+            if (in_array($oldLine->idlinea, SalesLineHTML::getDeletedLines()) && false === $oldLine->delete()) {
                 $this->sendJsonWithLogs(['ok' => false]);
                 $this->dataBase->rollback();
                 return false;
@@ -438,12 +452,12 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
-        // marcamos los recibos como pagados, eso marcará la factura como pagada
+        // marcamos los recibos como pagados, eso marca la factura como pagada
         $formData = json_decode($this->request->request->get('data'), true);
         foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
             // si no está pagado, actualizamos fechapago y codpago
-            if (false == $receipt->pagado) {
+            if (false == $receipt->pagado){
                 $receipt->fechapago = $formData['fechapagorecibo'] ?? Tools::date();
                 $receipt->codpago = $model->codpago;
             }

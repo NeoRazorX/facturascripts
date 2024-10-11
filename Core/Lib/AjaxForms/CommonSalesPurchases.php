@@ -17,9 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\AjaxForms;
+namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
@@ -37,7 +37,6 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
- * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/CommonSalesPurchases
  */
 trait CommonSalesPurchases
 {

@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\AjaxForms;
+namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
@@ -30,7 +30,6 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/AccountingModalHTML
  */
 class AccountingModalHTML
 {

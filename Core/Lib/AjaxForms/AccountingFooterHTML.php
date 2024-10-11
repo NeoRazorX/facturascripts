@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\AjaxForms;
+namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -27,7 +27,6 @@ use FacturaScripts\Dinamic\Model\Asiento;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/LibAccountingFooterHTMLTrait
  */
 class AccountingFooterHTML
 {

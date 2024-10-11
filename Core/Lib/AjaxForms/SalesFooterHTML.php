@@ -17,20 +17,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\AjaxForms;
+namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Contract\SalesModInterface;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Translator;
 
 /**
  * Description of SalesFooterHTML
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
- * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/SalesFooterHTML
  */
 class SalesFooterHTML
 {
