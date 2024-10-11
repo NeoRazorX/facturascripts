@@ -26,7 +26,9 @@ use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
+use FacturaScripts\Core\Model\AtributoValor;
 use FacturaScripts\Core\Model\ProductoImagen;
+use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,6 +66,7 @@ class EditProducto extends EditController
     {
         parent::createViews();
         $this->createViewsVariants();
+        $this->createViewCreateVariants();
         $this->createViewsProductImages();
         $this->createViewDocFiles();
         $this->createViewsStock();
@@ -176,6 +179,9 @@ class EditProducto extends EditController
 
             case 'sort-images':
                 return $this->sortImagesAction();
+
+            case 'create-variants':
+                $this->createVariants();
         }
 
         return parent::execPreviousAction($action);
@@ -321,6 +327,10 @@ class EditProducto extends EditController
                 $view->loadData('', $where);
                 $this->setSettings($viewName, 'active', $view->model->count($where) > 0);
                 break;
+            case 'ViewCreateVariants':
+                $view->loadData('');
+                $this->setSettings($viewName, 'active', $view->model->count() > 0);
+                break;
         }
     }
 
@@ -364,5 +374,99 @@ class EditProducto extends EditController
         $this->response->headers->set('Content-Type', 'application/json');
 
         return true;
+    }
+
+    protected function createViewCreateVariants()
+    {
+        $this->addHtmlView('ViewCreateVariants', 'ViewCreateVariants', 'Atributo', 'generate-variants', 'fa-solid fa-wand-magic-sparkles');
+    }
+
+    protected function createVariants()
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        if (false === $this->request->request->has('attributes')) {
+            return;
+        }
+
+        // obtenemos los valores de los atributos elegidos
+        $attributeValues = new AtributoValor();
+        $attributeValues = $attributeValues::all([
+            new DataBaseWhere('codatributo', implode(',', $this->request->request->get('attributes')), 'IN')
+        ]);
+
+
+        // agrupamos los valores por atributos para poder combinarlos
+        $groupedAttributeValues = [];
+        foreach ($attributeValues as $value){
+            $groupedAttributeValues[$value->codatributo][] = $value;
+        }
+        $groupedAttributeValues = array_values($groupedAttributeValues);
+
+
+        // si solo se ha seleccionado un atributo
+        // adaptamos el array para que tenga el mismo
+        // formado que el que devuelve combineVariants()
+        // y poder reutilizar el codigo de mas abajo
+        if(count($groupedAttributeValues) === 1){
+            $adaptedArray = [];
+            foreach ($groupedAttributeValues as $attributes){
+                foreach($attributes as $values){
+                    $adaptedArray[] = [$values];
+                }
+            }
+            $groupedAttributeValues = $adaptedArray;
+        }else{
+            // si se seleccionan varios atributos los combinamos
+            $groupedAttributeValues  = $this->combineVariants($groupedAttributeValues);
+        }
+
+        // creamos las variantes con los atributos combinados
+        foreach($groupedAttributeValues as $attributesForVariant){
+            $variant = new Variante();
+            $variant->idproducto = $this->request->request->get('code');
+            $variant->precio = $this->request->request->get('price');
+            foreach ($attributesForVariant as $attributeForVariant){
+                // obtenemos el numero de selector del atributo
+                $value = new Atributo();
+                $value->loadFromCode($attributeForVariant->codatributo);
+                // asignamos el valor del atributo segun el numero del selector
+                $stringField = 'idatributovalor' . $value->num_selector;
+                $variant->{$stringField} = $attributeForVariant->id;
+            }
+            $variant->save();
+        }
+    }
+
+    /**
+     * Combina arrays recursivamente
+     * [["a", "b"], ["1", "2"]]
+     * [["a", "1"], ["a","2"], ["b", "1"], ["b", "2"]]
+     *
+     * @param array $arrays
+     * @param int $i
+     * @return array
+     */
+    protected function combineVariants(array $arrays, int $i = 0): array
+    {
+        if (!isset($arrays[$i])) {
+            return [];
+        }
+        if ($i == count($arrays) - 1) {
+            return $arrays[$i];
+        }
+
+        $tmp = $this->combineVariants($arrays, $i + 1);
+
+        $result = [];
+        foreach ($arrays[$i] as $v) {
+            foreach ($tmp as $t) {
+                $result[] = is_array($t) ? array_merge([$v], $t) : [$v, $t];
+            }
+        }
+
+        return $result;
     }
 }
