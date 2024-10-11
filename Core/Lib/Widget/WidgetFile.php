@@ -105,7 +105,7 @@ class WidgetFile extends BaseWidget
             // move the file to the MyFiles folder
             if ($uploadFile->move($destiny, $destinyName)) {
                 $model->{$this->fieldname} = $destinyName;
-                break;
+                continue;
             }
 
             $logger->error('file-not-found');

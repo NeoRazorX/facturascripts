@@ -159,7 +159,8 @@ final class UploadedFile
         return $max;
     }
 
-    public function move(string $destiny, string $destinyName)
+    public function move(string $destiny, string $destinyName): bool
     {
+        return move_uploaded_file($this->tmp_name, $destiny . $destinyName);
     }
 }
