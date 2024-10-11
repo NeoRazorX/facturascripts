@@ -21,6 +21,7 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\Lib\Encrypter;
 use FacturaScripts\Core\Model\Settings;
 
 /**
@@ -679,5 +680,29 @@ class Tools
 
             return $settings;
         });
+    }
+
+    /**
+     * @param $value
+     * @return string
+     *
+     * @throws KernelException
+     */
+    public static function encriptar($value): string
+    {
+        $key = base64_decode($_ENV['APP_KEY']);
+        return (new Encrypter($key))->encryptString($value);
+    }
+
+    /**
+     * @param $value
+     * @return string
+     *
+     * @throws KernelException
+     */
+    public static function desencriptar($value): string
+    {
+        $key = base64_decode($_ENV['APP_KEY']);
+        return (new Encrypter($key))->decryptString($value);
     }
 }
