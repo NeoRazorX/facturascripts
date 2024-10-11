@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\ListFilter;
 
-use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Request;
 
 /**
  * Description of PeriodFilter
