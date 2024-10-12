@@ -152,7 +152,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return EditListView
      */
-    protected function addEditListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-bars'): EditListView
+    protected function addEditListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fa-solid fa-bars'): EditListView
     {
         $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -170,7 +170,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return EditView
      */
-    protected function addEditView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-edit'): EditView
+    protected function addEditView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fa-solid fa-edit'): EditView
     {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -189,7 +189,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return HtmlView
      */
-    protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5'): HtmlView
+    protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fa-brands fa-html5'): HtmlView
     {
         $view = new HtmlView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
         $this->addCustomView($viewName, $view);
@@ -206,7 +206,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return ListView
      */
-    protected function addListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-list'): ListView
+    protected function addListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fa-solid fa-list'): ListView
     {
         $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';

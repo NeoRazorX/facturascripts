@@ -41,7 +41,7 @@ class EditPais extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'country';
-        $data['icon'] = 'fas fa-globe-americas';
+        $data['icon'] = 'fa-solid fa-globe-americas';
         return $data;
     }
 
@@ -55,7 +55,7 @@ class EditPais extends EditController
 
     protected function createViewsProvince(string $viewName = 'ListProvincia'): void
     {
-        $this->addListView($viewName, 'Provincia', 'provinces', 'fas fa-map-signs')
+        $this->addListView($viewName, 'Provincia', 'provinces', 'fa-solid fa-map-signs')
             ->addOrderBy(['provincia'], 'name')
             ->addOrderBy(['codpais'], 'country')
             ->addSearchFields(['provincia', 'codisoprov', 'alias'])

@@ -77,7 +77,7 @@ class EditRole extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'role';
-        $data['icon'] = 'fas fa-id-card';
+        $data['icon'] = 'fa-solid fa-id-card';
         return $data;
     }
 
@@ -100,12 +100,12 @@ class EditRole extends EditController
 
     protected function createViewsAccess(string $viewName = 'RoleAccess'): void
     {
-        $this->addHtmlView($viewName, 'Tab/RoleAccess', 'RoleAccess', 'rules', 'fas fa-check-square');
+        $this->addHtmlView($viewName, 'Tab/RoleAccess', 'RoleAccess', 'rules', 'fa-solid fa-check-square');
     }
 
     protected function createViewsUsers(string $viewName = 'EditRoleUser'): void
     {
-        $this->addEditListView($viewName, 'RoleUser', 'users', 'fas fa-address-card')
+        $this->addEditListView($viewName, 'RoleUser', 'users', 'fa-solid fa-address-card')
             ->disableColumn('role', true)
             ->setInLine(true);
     }

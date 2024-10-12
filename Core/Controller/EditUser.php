@@ -53,7 +53,7 @@ class EditUser extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'user';
-        $data['icon'] = 'fas fa-user-circle';
+        $data['icon'] = 'fa-solid fa-user-circle';
         return $data;
     }
 
@@ -122,7 +122,7 @@ class EditUser extends EditController
 
     protected function createViewsEmails(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope')
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
             ->addOrderBy(['date'], 'date', 2)
             ->addSearchFields(['addressee', 'body', 'subject']);
 
@@ -138,7 +138,7 @@ class EditUser extends EditController
 
     protected function createViewsPageOptions(string $viewName = 'ListPageOption'): void
     {
-        $this->addListView($viewName, 'PageOption', 'options', 'fas fa-wrench')
+        $this->addListView($viewName, 'PageOption', 'options', 'fa-solid fa-wrench')
             ->addOrderBy(['name'], 'name', 1)
             ->addOrderBy(['last_update'], 'last-update')
             ->addSearchFields(['name']);
@@ -149,7 +149,7 @@ class EditUser extends EditController
 
     protected function createViewsRole(string $viewName = 'EditRoleUser'): void
     {
-        $this->addEditListView($viewName, 'RoleUser', 'roles', 'fas fa-address-card');
+        $this->addEditListView($viewName, 'RoleUser', 'roles', 'fa-solid fa-address-card');
         $this->views[$viewName]->setInLine('true');
 
         // Disable column

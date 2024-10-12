@@ -66,7 +66,7 @@
     <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
         <li class="nav-item">
             <a class="nav-link" href="?phpinfo=TRUE">
-                <i class="fas fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
+                <i class="fa-solid fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
             </a>
         </li>
     </ul>
@@ -100,7 +100,7 @@
                             <li role="presentation" class="nav-item">
                                 <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab"
                                    data-bs-toggle="tab">
-                                    <i class="fas fa-cogs" aria-hidden="true"></i>&nbsp; {{ trans('preferences') }}
+                                    <i class="fa-solid fa-cogs" aria-hidden="true"></i>&nbsp; {{ trans('preferences') }}
                                 </a>
                             </li>
                             <li role="presentation" class="nav-item">
@@ -120,7 +120,7 @@
                                             {{ trans('language') }}:
                                             <div class="input-group">
                                                 <span class="input-group-text">
-                                                        <i class="fas fa-language"></i>
+                                                        <i class="fa-solid fa-language"></i>
                                                 </span>
                                                 <select id="fs_lang" name="fs_lang" class="form-select">
                                                     {% for langCode, langName in i18n.getAvailableLanguages() %}
@@ -184,7 +184,7 @@
                                             {{ trans('db-name') }}:
                                             <div class="input-group">
                                                 <span class="input-group-text">
-                                                        <i class="fas fa-database"></i>
+                                                        <i class="fa-solid fa-database"></i>
                                                 </span>
                                                 <input type="text" name="fs_db_name" value="{{ fsc.db_name }}"
                                                        class="form-control" required/>
@@ -203,7 +203,7 @@
                                             {{ trans('db-password') }}:
                                             <div class="input-group">
                                                 <span class="input-group-text">
-                                                        <i class="fas fa-key"></i>
+                                                        <i class="fa-solid fa-key"></i>
                                                 </span>
                                                 <input type="password" name="fs_db_pass" value="{{ fsc.db_pass }}"
                                                        class="form-control"/>
@@ -278,7 +278,7 @@
                             </div>
                             <div class="col-sm-auto">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-check me-1" aria-hidden="true"></i> {{ trans('accept') }}
+                                    <i class="fa-solid fa-check me-1" aria-hidden="true"></i> {{ trans('accept') }}
                                 </button>
                             </div>
                         </div>

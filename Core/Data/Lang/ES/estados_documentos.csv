@@ -2,7 +2,7 @@ idestado;tipodoc;nombre;predeterminado;bloquear;editable;actualizastock;generado
 1;PresupuestoCliente;Abierto;true;true;true;0;;
 2;PresupuestoCliente;Pedido;false;true;false;0;PedidoCliente;
 3;PresupuestoCliente;Rechazado;false;true;false;0;;
-23;PresupuestoCliente;Caducado;false;true;false;0;;fas fa-hourglass-end
+23;PresupuestoCliente;Caducado;false;true;false;0;;fa-solid fa-hourglass-end
 24;PresupuestoCliente;Facturar;false;true;false;0;FacturaCliente;
 4;PedidoCliente;Abierto;true;true;true;-2;;
 5;PedidoCliente;Albarán;false;true;false;0;AlbaranCliente;

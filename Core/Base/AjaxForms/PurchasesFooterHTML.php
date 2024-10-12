@@ -126,7 +126,7 @@ class PurchasesFooterHTML
         }
 
         return '<button class="btn btn-outline-secondary me-2" type="button" data-bs-toggle="modal" data-bs-target="#footerModal">'
-            . '<i class="fas fa-plus fa-fw" aria-hidden="true"></i></button>'
+            . '<i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i></button>'
             . self::modalFooterHtml($i18n, $htmlModal);
     }
 

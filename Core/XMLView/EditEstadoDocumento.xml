@@ -76,7 +76,7 @@
                 </widget>
             </column>
             <column name="icon" titleurl="https://fontawesome.com/icons?d=gallery" numcolumns="3" order="110">
-                <widget type="text" fieldname="icon" icon="fas fa-icons" maxlength="50"/>
+                <widget type="text" fieldname="icon" icon="fa-solid fa-icons" maxlength="50"/>
             </column>
             <column name="active" order="120">
                 <widget type="checkbox" fieldname="activo"/>

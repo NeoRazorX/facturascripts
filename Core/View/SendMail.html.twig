@@ -36,7 +36,7 @@
                     <div class="card shadow">
                         <div class="card-body">
                             <h1 class="h3 mb-3">
-                                <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send-mail') }}
+                                <i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send-mail') }}
                             </h1>
                             <div class="mb-3">
                                 <div class="input-group">
@@ -98,7 +98,7 @@
                             {% endif %}
                             {% for name in fsc.newMail.getAttachmentNames() %}
                                 <p>
-                                    <i class="fas fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}
+                                    <i class="fa-solid fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}
                                 </p>
                             {% endfor %}
                             <div id="email-attachments"></div>
@@ -117,7 +117,7 @@
                                 </div>
                                 <div class="col-sm-6 text-end">
                                     <button type="submit" class="btn btn-primary btn-spin-action">
-                                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send') }}
+                                        <i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send') }}
                                     </button>
                                 </div>
                             </div>

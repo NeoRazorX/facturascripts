@@ -28,10 +28,10 @@ function editListViewDelete(viewName) {
         closeButton: false,
         buttons: {
             cancel: {
-                label: '<i class="fas fa-times"></i> ' + editListViewDeleteCancel
+                label: '<i class="fa-solid fa-times"></i> ' + editListViewDeleteCancel
             },
             confirm: {
-                label: '<i class="fas fa-check"></i> ' + editListViewDeleteConfirm,
+                label: '<i class="fa-solid fa-check"></i> ' + editListViewDeleteConfirm,
                 className: "btn-danger"
             }
         },

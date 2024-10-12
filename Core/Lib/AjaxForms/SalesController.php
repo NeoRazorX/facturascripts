@@ -146,7 +146,7 @@ abstract class SalesController extends PanelController
     protected function createViewsDoc()
     {
         $pageData = $this->getPageData();
-        $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fas fa-file');
+        $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fa-solid fa-file');
         AssetManager::addCss(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::addJs(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
         SalesHeaderHTML::assets();
@@ -332,7 +332,7 @@ abstract class SalesController extends PanelController
                 $view->settings['btnPrint'] = true;
                 $this->addButton($viewName, [
                     'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
-                    'icon' => 'fas fa-cut',
+                    'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',
                     'type' => 'link'
                 ]);

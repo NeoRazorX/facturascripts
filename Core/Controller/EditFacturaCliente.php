@@ -35,7 +35,7 @@ class EditFacturaCliente extends SalesController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'invoice';
-        $data['icon'] = 'fas fa-file-invoice-dollar';
+        $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         $data['showonmenu'] = false;
         return $data;
     }
@@ -58,7 +58,7 @@ class EditFacturaCliente extends SalesController
      */
     private function createViewsAccounting(string $viewName = self::VIEW_ACCOUNTS): void
     {
-        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fa-solid fa-balance-scale');
 
         // buttons
         $this->addButton($viewName, [
@@ -76,7 +76,7 @@ class EditFacturaCliente extends SalesController
      */
     private function createViewsRefunds(string $viewName = 'refunds'): void
     {
-        $this->addHtmlView($viewName, 'Tab/RefundFacturaCliente', 'FacturaCliente', 'refunds', 'fas fa-share-square');
+        $this->addHtmlView($viewName, 'Tab/RefundFacturaCliente', 'FacturaCliente', 'refunds', 'fa-solid fa-share-square');
     }
 
     /**
@@ -86,7 +86,7 @@ class EditFacturaCliente extends SalesController
      */
     private function createViewsReceipts(string $viewName = self::VIEW_RECEIPTS): void
     {
-        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign')
+        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fa-solid fa-dollar-sign')
             ->addOrderBy(['vencimiento'], 'expiration');
 
         // buttons
@@ -100,7 +100,7 @@ class EditFacturaCliente extends SalesController
         $this->addButton($viewName, [
             'action' => 'paid',
             'confirm' => 'true',
-            'icon' => 'fas fa-check',
+            'icon' => 'fa-solid fa-check',
             'label' => 'paid'
         ]);
 

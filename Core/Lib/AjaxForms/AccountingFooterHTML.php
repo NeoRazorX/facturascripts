@@ -63,13 +63,13 @@ class AccountingFooterHTML
         if ($model->editable) {
             $lockBtn .= '<div class="col-sm-3 col-md-2">'
                 . '<button type="button" class="btn btn-block btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
-                . '<i class="fas fa-lock fa-fw"></i> ' . $i18n->trans('lock-entry') . '</button>'
+                . '<i class="fa-solid fa-lock fa-fw"></i> ' . $i18n->trans('lock-entry') . '</button>'
                 . '</div>';
         }
 
         return '<div class="col-sm-3 col-md-2">'
             . '<button type="button" class="btn btn-block btn-danger btn-spin-action mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
-            . '<i class="fas fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete') . '</button>'
+            . '<i class="fa-solid fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete') . '</button>'
             . '</div>'
             . $lockBtn
             . '<div class="modal fade" id="deleteDocModal" tabindex="-1" aria-hidden="true">'
@@ -82,7 +82,7 @@ class AccountingFooterHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body text-center">'
-            . '<i class="fas fa-trash-alt fa-3x"></i>'
+            . '<i class="fa-solid fa-trash-alt fa-3x"></i>'
             . '<h5 class="mt-3 mb-1">' . $i18n->trans('confirm-delete') . '</h5>'
             . '<p class="mb-0">' . $i18n->trans('are-you-sure') . '</p>'
             . '</div>'
@@ -145,7 +145,7 @@ class AccountingFooterHTML
             . '<input type="text" class="form-control" maxlength="15" autocomplete="off" placeholder="' . $i18n->trans('subaccount')
             . '" id="new_subaccount" name="new_subaccount" onchange="return newLineAction(this.value);"/>'
             . '<button class="btn btn-info" type="button" title="' . $i18n->trans('subaccounts') . '"'
-            . ' onclick="$(\'#findSubaccountModal\').modal(\'show\'); $(\'#findSubaccountInput\').focus();"><i class="fas fa-book"></i></button>'
+            . ' onclick="$(\'#findSubaccountModal\').modal(\'show\'); $(\'#findSubaccountInput\').focus();"><i class="fa-solid fa-book"></i></button>'
             . '</div>'
             . '</div>'
             . '<div class="col-sm">'
@@ -158,13 +158,13 @@ class AccountingFooterHTML
         if (false === $model->editable) {
             return '<div class="col-sm-3 col-md-2">'
                 . '<button type="button" class="btn btn-block btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\');">'
-                . '<i class="fas fa-lock-open fa-fw"></i> ' . $i18n->trans('unlock-entry') . '</button>'
+                . '<i class="fa-solid fa-lock-open fa-fw"></i> ' . $i18n->trans('unlock-entry') . '</button>'
                 . '</div>';
         }
 
         return '<div class="col-sm-3 col-md-2">'
             . '<button type="button" class="btn btn-block btn-primary btn-spin-action mb-3" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
-            . '<i class="fas fa-save fa-fw"></i> ' . $i18n->trans('save') . '</button>'
+            . '<i class="fa-solid fa-save fa-fw"></i> ' . $i18n->trans('save') . '</button>'
             . '</div>';
     }
 
@@ -176,7 +176,7 @@ class AccountingFooterHTML
 
         return '<div class="col-sm-auto">'
             . '<button type="button" class="btn btn-light mb-3" id="sortableBtn">'
-            . '<i class="fas fa-arrows-alt-v fa-fw"></i> ' . $i18n->trans('move-lines')
+            . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . $i18n->trans('move-lines')
             . '</button>'
             . '</div>';
     }

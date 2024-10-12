@@ -82,7 +82,7 @@ class Dashboard extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'reports';
         $data['title'] = 'dashboard';
-        $data['icon'] = 'fas fa-chalkboard-teacher';
+        $data['icon'] = 'fa-solid fa-chalkboard-teacher';
         return $data;
     }
 

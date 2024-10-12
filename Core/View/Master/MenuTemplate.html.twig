@@ -110,27 +110,27 @@
                             <li class="nav-item{{ template == 'MegaSearch.html.twig' ? ' active' : '' }}"
                                 title="{{ trans('search') }}">
                                 <a class="nav-link" href="MegaSearch" id="menuIconSearch">
-                                    <i class="fas fa-search" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-search" aria-hidden="true"></i>
                                 </a>
                             </li>
                             <li class="nav-item" title="{{ trans('help') }}">
                                 <a class="nav-link" href="https://facturascripts.com/ayuda" rel="nofollow"
                                    target="_blank" id="menuIconHelp">
-                                    <i class="fas fa-question-circle" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-question-circle" aria-hidden="true"></i>
                                 </a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle mr-md-2" href="#" data-bs-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false" id="menuIconUser"
                                    title="{{ trans('user') }}">
-                                    <i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-user-circle fa-fw" aria-hidden="true"></i>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="user-list">
                                     <a class="dropdown-item" href="{{ fsc.user.url() }}">
-                                        <i class="fas fa-user-circle fa-fw" aria-hidden="true"></i> {{ fsc.user.nick }}
+                                        <i class="fa-solid fa-user-circle fa-fw" aria-hidden="true"></i> {{ fsc.user.nick }}
                                     </a>
                                     <a class="dropdown-item send-email" href="SendMail">
-                                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i>
+                                        <i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i>
                                         {{ trans('send-mail') }}
                                     </a>
                                     {% for includeView in getIncludeViews('MenuTemplate', 'MenuIconUser') %}
@@ -138,7 +138,7 @@
                                     {% endfor %}
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ asset('login') }}?action=logout&multireqtoken={{ formToken(false) }}">
-                                        <i class="fas fa-door-open fa-fw" aria-hidden="true"></i> {{ trans('logout') }}
+                                        <i class="fa-solid fa-door-open fa-fw" aria-hidden="true"></i> {{ trans('logout') }}
                                     </a>
                                 </div>
                             </li>

@@ -37,7 +37,7 @@ class ListAsiento extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'accounting-entries';
-        $data['icon'] = 'fas fa-balance-scale';
+        $data['icon'] = 'fa-solid fa-balance-scale';
         return $data;
     }
 
@@ -51,7 +51,7 @@ class ListAsiento extends ListController
         $this->addButton($viewName, [
             'action' => 'lock-entries',
             'confirm' => true,
-            'icon' => 'fas fa-lock',
+            'icon' => 'fa-solid fa-lock',
             'label' => 'lock-entry'
         ]);
     }
@@ -65,7 +65,7 @@ class ListAsiento extends ListController
     {
         $this->addButton($viewName, [
             'action' => 'renumber',
-            'icon' => 'fas fa-sort-numeric-down',
+            'icon' => 'fa-solid fa-sort-numeric-down',
             'label' => 'renumber',
             'type' => 'modal'
         ]);
@@ -84,7 +84,7 @@ class ListAsiento extends ListController
 
     protected function createViewsAccountEntries(string $viewName = 'ListAsiento'): void
     {
-        $this->addView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale')
+        $this->addView($viewName, 'Asiento', 'accounting-entries', 'fa-solid fa-balance-scale')
             ->addSearchFields(['concepto', 'documento', 'CAST(numero AS char(255))'])
             ->addOrderBy(['fecha', 'numero'], 'date', 2)
             ->addOrderBy(['numero', 'idasiento'], 'number')
@@ -132,7 +132,7 @@ class ListAsiento extends ListController
 
     protected function createViewsConcepts(string $viewName = 'ListConceptoPartida'): void
     {
-        $this->addView($viewName, 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent')
+        $this->addView($viewName, 'ConceptoPartida', 'predefined-concepts', 'fa-solid fa-indent')
             ->addSearchFields(['codconcepto', 'descripcion'])
             ->addOrderBy(['codconcepto'], 'code')
             ->addOrderBy(['descripcion'], 'description', 1);
@@ -140,7 +140,7 @@ class ListAsiento extends ListController
 
     protected function createViewsJournals(string $viewName = 'ListDiario'): void
     {
-        $this->addView($viewName, 'Diario', 'journals', 'fas fa-book')
+        $this->addView($viewName, 'Diario', 'journals', 'fa-solid fa-book')
             ->addSearchFields(['descripcion'])
             ->addOrderBy(['iddiario'], 'code')
             ->addOrderBy(['descripcion'], 'description', 1);
@@ -164,7 +164,7 @@ class ListAsiento extends ListController
             return;
         }
 
-        $this->addView($viewName, 'Asiento', 'unbalance', 'fas fa-exclamation-circle')
+        $this->addView($viewName, 'Asiento', 'unbalance', 'fa-solid fa-exclamation-circle')
             ->addSearchFields(['concepto', 'documento', 'CAST(numero AS char(255))'])
             ->addOrderBy(['fecha', 'idasiento'], 'date', 2)
             ->addOrderBy(['numero', 'idasiento'], 'number')

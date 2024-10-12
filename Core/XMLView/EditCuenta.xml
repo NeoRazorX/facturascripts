@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="idcuenta"/>
             </column>
             <column name="account" numcolumns="3" order="110">
-                <widget type="text" fieldname="codcuenta" icon="fas fa-hashtag" maxlength="10" readonly="dinamic"
+                <widget type="text" fieldname="codcuenta" icon="fa-solid fa-hashtag" maxlength="10" readonly="dinamic"
                         required="true"/>
             </column>
             <column name="description" order="120">
@@ -35,7 +35,7 @@
         </group>
         <group name="seccondary-data" numcolumns="12">
             <column name="parent-account" numcolumns="3" order="100">
-                <widget type="autocomplete" fieldname="parent_idcuenta" onclick="EditCuenta" icon="fas fa-book"
+                <widget type="autocomplete" fieldname="parent_idcuenta" onclick="EditCuenta" icon="fa-solid fa-book"
                         readonly="dinamic">
                     <values source="cuentas" fieldcode="idcuenta" fieldtitle="codcuenta" fieldfilter="codejercicio"/>
                 </widget>
@@ -63,7 +63,7 @@
         </group>
     </columns>
     <modals>
-        <group name="ledger" title="ledger" icon="fas fa-book fa-fw">
+        <group name="ledger" title="ledger" icon="fa-solid fa-book fa-fw">
             <column name="date-from" title="from-date" numcolumns="12">
                 <widget type="date" fieldname="dateFrom" required="true"/>
             </column>

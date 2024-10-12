@@ -3,7 +3,7 @@
     Document   : tarifas.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the tarifas table.
+        Structure for the tarifa-solid table.
 -->
 <table>
     <column>

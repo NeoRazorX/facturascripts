@@ -33,7 +33,7 @@
             </widget>
         </column>
         <column name="code" order="130">
-            <widget type="text" maxlength="2" fieldname="codeid" icon="fas fa-hashtag"/>
+            <widget type="text" maxlength="2" fieldname="codeid" icon="fa-solid fa-hashtag"/>
         </column>
         <column name="latitude" order="140">
             <widget type="number" fieldname="latitude"/>

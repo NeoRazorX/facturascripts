@@ -87,7 +87,7 @@ trait CommonSalesPurchases
                 return '<div class="col-sm-auto">'
                     . '<div class="mb-3 d-grid">'
                     . '<a href="' . $children[0]->url() . '" class="btn btn-info">'
-                    . '<i class="fas fa-forward fa-fw" aria-hidden="true"></i> ' . $children[0]->primaryDescription()
+                    . '<i class="fa-solid fa-forward fa-fw" aria-hidden="true"></i> ' . $children[0]->primaryDescription()
                     . '</a>'
                     . '</div>'
                     . '</div>';
@@ -97,7 +97,7 @@ trait CommonSalesPurchases
         return '<div class="col-sm-auto">'
             . '<div class="mb-3 d-grid">'
             . '<button class="btn btn-info" type="button" title="' . $i18n->trans('documents-generated')
-            . '" data-bs-toggle="modal" data-bs-target="#childrenModal"><i class="fas fa-forward fa-fw" aria-hidden="true"></i> '
+            . '" data-bs-toggle="modal" data-bs-target="#childrenModal"><i class="fa-solid fa-forward fa-fw" aria-hidden="true"></i> '
             . count($children) . ' </button>'
             . '</div>'
             . '</div>'
@@ -238,7 +238,7 @@ trait CommonSalesPurchases
     {
         return $model->primaryColumnValue() && $model->editable ?
             '<button type="button" class="btn btn-spin-action btn-danger mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
-            . '<i class="fas fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete')
+            . '<i class="fa-solid fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete')
             . '</button>'
             . '<div class="modal fade" id="deleteDocModal" tabindex="-1" aria-hidden="true">'
             . '<div class="modal-dialog">'
@@ -250,7 +250,7 @@ trait CommonSalesPurchases
             . '</button>'
             . '</div>'
             . '<div class="modal-body text-center">'
-            . '<i class="fas fa-trash-alt fa-3x"></i>'
+            . '<i class="fa-solid fa-trash-alt fa-3x"></i>'
             . '<h5 class="mt-3 mb-1">' . $i18n->trans('confirm-delete') . '</h5>'
             . '<p class="mb-0">' . $i18n->trans('are-you-sure') . '</p>'
             . '</div>'
@@ -275,7 +275,7 @@ trait CommonSalesPurchases
             'disabled';
         return '<div class="col-sm"><div class="mb-3">' . $i18n->trans('global-dto')
             . '<div class="input-group">'
-            . '<span class="input-group-text"><i class="fas fa-percentage"></i></span>'
+            . '<span class="input-group-text"><i class="fa-solid fa-percentage"></i></span>'
             . '<input type="number" ' . $attributes . ' value="' . floatval($model->dtopor1) . '" class="form-control"/>'
             . '</div></div></div>';
     }
@@ -292,7 +292,7 @@ trait CommonSalesPurchases
         return '<div class="col-sm-2 col-md"><div class="mb-3">' . $i18n->trans('global-dto-2')
             . '<div class="input-group">'
             . ''
-            . '<span class="input-group-text"><i class="fas fa-percentage"></i></span>'
+            . '<span class="input-group-text"><i class="fa-solid fa-percentage"></i></span>'
             . ''
             . '<input type="number" ' . $attributes . ' value="' . floatval($model->dtopor2) . '" class="form-control"/>'
             . '</div></div></div>';
@@ -303,7 +303,7 @@ trait CommonSalesPurchases
         return empty($model->femail) ? '' : '<div class="col-sm-auto">'
             . '<div class="mb-3">'
             . '<button class="btn btn-outline-info" type="button" title="' . $i18n->trans('email-sent')
-            . '" data-bs-toggle="modal" data-bs-target="#headerModal"><i class="fas fa-envelope fa-fw" aria-hidden="true"></i> '
+            . '" data-bs-toggle="modal" data-bs-target="#headerModal"><i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i> '
             . $model->femail . ' </button></div></div>';
     }
 
@@ -311,7 +311,7 @@ trait CommonSalesPurchases
     {
         return $model->editable ? '<div class="col-8 col-md">'
             . '<div class="input-group mb-3">'
-            . '<span class="input-group-text"><i class="fas fa-barcode"></i></span>'
+            . '<span class="input-group-text"><i class="fa-solid fa-barcode"></i></span>'
             . '<input type="text" name="fastli" class="form-control" placeholder="' . $i18n->trans('barcode')
             . '" onkeyup="' . $jsName . '(event)"/>'
             . '</div></div>' : '<div class="col"></div>';
@@ -408,7 +408,7 @@ trait CommonSalesPurchases
         if ($model->editable && false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
             $options[] = '<div class="dropdown-divider"></div>'
                 . '<a class="dropdown-item" href="DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $model->primaryColumnValue() . '">'
-                . '<i class="fas fa-magic fa-fw" aria-hidden="true"></i> ' . $i18n->trans('group-or-split')
+                . '<i class="fa-solid fa-magic fa-fw" aria-hidden="true"></i> ' . $i18n->trans('group-or-split')
                 . '</a>';
         }
 
@@ -429,10 +429,10 @@ trait CommonSalesPurchases
         if ($status->icon) {
             return $status->icon;
         } elseif ($status->generadoc && $alternative) {
-            return 'fas fa-forward';
+            return 'fa-solid fa-forward';
         }
 
-        return $status->editable ? 'fas fa-pen' : 'fas fa-lock';
+        return $status->editable ? 'fa-solid fa-pen' : 'fa-solid fa-lock';
     }
 
     protected static function idestadoTextColor(EstadoDocumento $status): string
@@ -469,7 +469,7 @@ trait CommonSalesPurchases
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fas fa-copy fa-fw" aria-hidden="true"></i> ' . $i18n->trans($title) . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-copy fa-fw" aria-hidden="true"></i> ' . $i18n->trans($title) . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' . $i18n->trans('close') . '">'
             . ''
             . '</button>'
@@ -503,7 +503,7 @@ trait CommonSalesPurchases
     {
         return $model->editable ? '<div class="col-3 col-md-auto d-grid">'
             . '<a href="#" class="btn btn-success btn-spin-action mb-3" onclick="return ' . $jsName . '(\'new-line\', \'0\');">'
-            . '<i class="fas fa-plus fa-fw"></i> ' . $i18n->trans('line') . '</a></div>' : '';
+            . '<i class="fa-solid fa-plus fa-fw"></i> ' . $i18n->trans('line') . '</a></div>' : '';
     }
 
     protected static function observaciones(Translator $i18n, BusinessDocument $model): string
@@ -547,9 +547,9 @@ trait CommonSalesPurchases
             return '<div class="col-sm-auto">'
                 . '<div class="mb-3">'
                 . '<button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
-                . '<i class="fas fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</button>'
+                . '<i class="fa-solid fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</button>'
                 . '<div class="dropdown-menu"><a class="dropdown-item text-danger" href="#" onclick="return ' . $jsName . '(\'save-paid\', \'0\');">'
-                . '<i class="fas fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</a></div>'
+                . '<i class="fa-solid fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</a></div>'
                 . '</div>'
                 . '</div>';
         }
@@ -557,9 +557,9 @@ trait CommonSalesPurchases
         return '<div class="col-sm-auto">'
             . '<div class="mb-3">'
             . '<button class="btn btn-spin-action btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
-            . '<i class="fas fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</button>'
+            . '<i class="fa-solid fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</button>'
             . '<div class="dropdown-menu"><a class="dropdown-item text-success" href="#" onclick="showModalPaymentConditions(' . $jsName . ')">'
-            . '<i class="fas fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</a></div>'
+            . '<i class="fa-solid fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</a></div>'
             . '</div>'
             . '</div>';
     }
@@ -579,7 +579,7 @@ trait CommonSalesPurchases
                 return '<div class="col-sm-auto">'
                     . '<div class="mb-3 d-grid">'
                     . '<a href="' . $parents[0]->url() . '" class="btn btn-warning">'
-                    . '<i class="fas fa-backward fa-fw" aria-hidden="true"></i> ' . $parents[0]->primaryDescription()
+                    . '<i class="fa-solid fa-backward fa-fw" aria-hidden="true"></i> ' . $parents[0]->primaryDescription()
                     . '</a>'
                     . '</div>'
                     . '</div>';
@@ -589,7 +589,7 @@ trait CommonSalesPurchases
         return '<div class="col-sm-auto">'
             . '<div class="mb-3 d-grid">'
             . '<button class="btn btn-warning" type="button" title="' . $i18n->trans('previous-documents')
-            . '" data-bs-toggle="modal" data-bs-target="#parentsModal"><i class="fas fa-backward fa-fw" aria-hidden="true"></i> '
+            . '" data-bs-toggle="modal" data-bs-target="#parentsModal"><i class="fa-solid fa-backward fa-fw" aria-hidden="true"></i> '
             . count($parents) . ' </button>'
             . '</div>'
             . '</div>'
@@ -602,7 +602,7 @@ trait CommonSalesPurchases
             . '<div class="input-group mb-3">'
             . '<input type="text" id="findProductInput" class="form-control" placeholder="' . $i18n->trans('reference') . '"/>'
             . '<button class="btn btn-info" type="button" onclick="$(\'#findProductModal\').modal(\'show\');'
-            . ' $(\'#productModalInput\').select();"><i class="fas fa-book fa-fw"></i></button>'
+            . ' $(\'#productModalInput\').select();"><i class="fa-solid fa-book fa-fw"></i></button>'
             . '</div>'
             . '</div>' : '';
     }
@@ -611,7 +611,7 @@ trait CommonSalesPurchases
     {
         return $model->subjectColumnValue() && $model->editable ? '<button type="button" class="btn btn-primary btn-spin-action"'
             . ' load-after="true" onclick="return ' . $jsName . '(\'save-doc\', \'0\');">'
-            . '<i class="fas fa-save fa-fw"></i> ' . $i18n->trans('save')
+            . '<i class="fa-solid fa-save fa-fw"></i> ' . $i18n->trans('save')
             . '</button>' : '';
     }
 
@@ -619,7 +619,7 @@ trait CommonSalesPurchases
     {
         return $model->editable ? '<div class="col-4 col-md-auto d-grid">'
             . '<button type="button" class="btn btn-light mb-3" id="sortableBtn">'
-            . '<i class="fas fa-arrows-alt-v fa-fw"></i> ' . $i18n->trans('move-lines')
+            . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . $i18n->trans('move-lines')
             . '</button>'
             . '</div>' : '';
     }
@@ -663,14 +663,14 @@ trait CommonSalesPurchases
             . '" class="form-control" disabled/>'
             . '<button class="btn btn-primary btn-spin-action" onclick="return ' . $jsName
             . '(\'save-doc\', \'0\');" title="' . $i18n->trans('save') . '" type="button">'
-            . '<i class="fas fa-save fa-fw"></i></button>'
+            . '<i class="fa-solid fa-save fa-fw"></i></button>'
             . '</div></div></div>';
     }
 
     protected static function undoBtn(Translator $i18n, BusinessDocument $model): string
     {
         return $model->subjectColumnValue() && $model->editable ? '<a href="' . $model->url() . '" class="btn btn-secondary me-2">'
-            . '<i class="fas fa-undo fa-fw"></i> ' . $i18n->trans('undo')
+            . '<i class="fa-solid fa-undo fa-fw"></i> ' . $i18n->trans('undo')
             . '</a>' : '';
     }
 

@@ -55,10 +55,10 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
         closeButton: false,
         buttons: {
             cancel: {
-                label: '<i class="fas fa-times"></i> ' + cancel
+                label: '<i class="fa-solid fa-times"></i> ' + cancel
             },
             confirm: {
-                label: '<i class="fas fa-check"></i> ' + confirm,
+                label: '<i class="fa-solid fa-check"></i> ' + confirm,
                 className: "btn-warning"
             }
         },

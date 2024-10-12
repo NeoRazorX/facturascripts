@@ -59,7 +59,7 @@ class AdminPlugins extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'plugins';
-        $data['icon'] = 'fas fa-plug';
+        $data['icon'] = 'fa-solid fa-plug';
         return $data;
     }
 

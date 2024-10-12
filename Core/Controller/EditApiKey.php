@@ -67,7 +67,7 @@ class EditApiKey extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'api-key';
-        $data['icon'] = 'fas fa-key';
+        $data['icon'] = 'fa-solid fa-key';
         return $data;
     }
 
@@ -84,7 +84,7 @@ class EditApiKey extends EditController
 
     protected function createViewsAccess(string $viewName = 'ApiAccess')
     {
-        $this->addHtmlView($viewName, 'Tab/ApiAccess', 'ApiAccess', 'rules', 'fas fa-check-square');
+        $this->addHtmlView($viewName, 'Tab/ApiAccess', 'ApiAccess', 'rules', 'fa-solid fa-check-square');
     }
 
     protected function editRulesAction(): bool

@@ -53,7 +53,7 @@ class WidgetVariante extends WidgetText
             '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
         $label = Tools::lang()->trans($title);
         $labelHtml = $this->onclickHtml($label, $titleurl);
-        $icon = empty($this->icon) ? 'fas fa-cubes' : $this->icon;
+        $icon = empty($this->icon) ? 'fa-solid fa-cubes' : $this->icon;
 
         // hay que cargar el producto para mostrar su referencia
         $variante = new Variante();
@@ -234,7 +234,7 @@ class WidgetVariante extends WidgetText
             . Tools::lang()->trans('search') . '" onkeydown="widgetVarianteSearchKp(\'' . $this->id . '\', event);" autofocus>'
             . ''
             . '<button type="button" class="btn btn-primary" onclick="widgetVarianteSearch(\'' . $this->id . '\');">'
-            . '<i class="fas fa-search"></i>'
+            . '<i class="fa-solid fa-search"></i>'
             . '</button>'
             . ''
             . '</div>';
@@ -247,7 +247,7 @@ class WidgetVariante extends WidgetText
         }
 
         return '<a href="#" class="btn btn-secondary" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'\');">'
-            . '<i class="fas fa-times me-1"></i>' . Tools::lang()->trans('none')
+            . '<i class="fa-solid fa-times me-1"></i>' . Tools::lang()->trans('none')
             . '</a>';
     }
 

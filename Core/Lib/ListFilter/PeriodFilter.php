@@ -47,7 +47,7 @@ class PeriodFilter extends BaseFilter
         parent::__construct($key, $field, $label);
         $values = PeriodTools::getFilterOptions(static::$i18n);
         $this->select = new SelectFilter($key, '', $label, $values);
-        $this->select->icon = 'fas fa-calendar-alt';
+        $this->select->icon = 'fa-solid fa-calendar-alt';
         $this->startDate = new DateFilter(self::START_DATE_ID . $key, $field, 'from-date', '>=', $dateTime);
         $this->endDate = new DateFilter(self::END_DATE_ID . $key, $field, 'until-date', '<=', $dateTime);
     }

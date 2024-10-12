@@ -44,7 +44,7 @@ class ListFacturaCliente extends ListBusinessDocument
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'invoices';
-        $data['icon'] = 'fas fa-file-invoice-dollar';
+        $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         return $data;
     }
 
@@ -70,7 +70,7 @@ class ListFacturaCliente extends ListBusinessDocument
 
     protected function createViewReceipts(string $viewName = 'ListReciboCliente')
     {
-        $this->addView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign')
+        $this->addView($viewName, 'ReciboCliente', 'receipts', 'fa-solid fa-dollar-sign')
             ->addOrderBy(['codcliente'], 'customer-code')
             ->addOrderBy(['fecha', 'idrecibo'], 'date')
             ->addOrderBy(['fechapago'], 'payment-date')
@@ -112,7 +112,7 @@ class ListFacturaCliente extends ListBusinessDocument
 
     protected function createViewRefunds(string $viewName = 'ListFacturaCliente-rect')
     {
-        $this->addView($viewName, 'FacturaCliente', 'refunds', 'fas fa-share-square')
+        $this->addView($viewName, 'FacturaCliente', 'refunds', 'fa-solid fa-share-square')
             ->addSearchFields(['codigo', 'codigorect', 'numero2', 'observaciones'])
             ->addOrderBy(['fecha', 'idfactura'], 'date', 2)
             ->addOrderBy(['total'], 'total');
@@ -159,7 +159,7 @@ class ListFacturaCliente extends ListBusinessDocument
         if (false === $this->permissions->onlyOwnerData) {
             $this->addButton($viewName, [
                 'action' => 'look-for-gaps',
-                'icon' => 'fas fa-exclamation-triangle',
+                'icon' => 'fa-solid fa-exclamation-triangle',
                 'label' => 'look-for-gaps'
             ]);
         }

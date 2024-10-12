@@ -41,23 +41,23 @@
             <div class="col-sm-6">
                 <div class="btn-group">
                     <a href="{{ asset('AdminPlugins') }}" class="btn btn-sm btn-secondary">
-                        <i class="fas fa-arrow-start fa-fw" aria-hidden="true"></i>
+                        <i class="fa-solid fa-arrow-start fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">{{ trans('plugins') }} </span>
                     </a>
                     <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary" title="{{ trans('refresh') }}">
-                        <i class="fas fa-redo" aria-hidden="true"></i>
+                        <i class="fa-solid fa-redo" aria-hidden="true"></i>
                     </a>
                 </div>
                 {% if fsc.telemetryManager.ready() %}
                     <button class="btn btn-sm btn-secondary" type="button" data-bs-toggle="modal"
                             data-bs-target="#modalTelemetry">
-                        <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
+                        <i class="fa-solid fa-registered fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">{{ trans('manage-installation') }} </span>
                     </button>
                 {% else %}
                     <button class="btn btn-sm btn-warning" type="button" data-bs-toggle="modal"
                             data-bs-target="#modalTelemetry">
-                        <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
+                        <i class="fa-solid fa-registered fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">{{ trans('register-installation') }}</span>
                     </button>
                 {% endif %}
@@ -66,7 +66,7 @@
                 <h1 class="h3">
                     {{ trans('updater') }}
                     <small class="text-info">{{ fsc.getCoreVersion() }}</small>
-                    <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
+                    <i class="fa-solid fa-cloud-download-alt" aria-hidden="true"></i>
                 </h1>
             </div>
         </div>
@@ -97,10 +97,10 @@
                                             {{ trans('requires-core', {'%version%': item.mincore}) }}
                                         {% elseif item.downloaded %}
                                             <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-spin-action btn-sm btn-success" onclick="animateSpinner('add')">
-                                                <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ trans('update') }}
+                                                <i class="fa-solid fa-rocket fa-fw" aria-hidden="true"></i> {{ trans('update') }}
                                             </a>
                                             <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}" class="btn btn-spin-action btn-sm btn-warning" onclick="animateSpinner('add')">
-                                                <i class="fas fa-times fa-fw" aria-hidden="true"></i> {{ trans('cancel') }}
+                                                <i class="fa-solid fa-times fa-fw" aria-hidden="true"></i> {{ trans('cancel') }}
                                             </a>
                                         {% elseif item.name == 'CORE' and fsc.coreUpdateWarnings %}
                                             <button type="button" class="btn btn-spin-action btn-warning" data-bs-toggle="modal"
@@ -135,7 +135,7 @@
                 {% if fsc.telemetryManager.ready() %}
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fas fa-registered me-1"></i>
+                            <i class="fa-solid fa-registered me-1"></i>
                             {{ trans('registered-installation', {'%number%': fsc.telemetryManager.id()}) }}
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('close') }}"></button>
@@ -160,7 +160,7 @@
                         <input type="hidden" name="action" value="register"/>
                         <div class="modal-header">
                             <h5 class="modal-title">
-                                <i class="fas fa-registered me-1"></i> {{ trans('register-installation') }}
+                                <i class="fa-solid fa-registered me-1"></i> {{ trans('register-installation') }}
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('close') }}"></button>
                         </div>
@@ -182,7 +182,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fas fa-exclamation-triangle me-1" aria-hidden="true"></i>
+                            <i class="fa-solid fa-exclamation-triangle me-1" aria-hidden="true"></i>
                             {{ trans('core-update-warning') }}
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

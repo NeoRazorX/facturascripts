@@ -35,11 +35,11 @@ function listViewDelete(viewName) {
         closeButton: false,
         buttons: {
             cancel: {
-                label: '<i class="fas fa-times"></i> ' + listViewDeleteCancel,
+                label: '<i class="fa-solid fa-times"></i> ' + listViewDeleteCancel,
                 className: "btn-spin-action btn-secondary"
             },
             confirm: {
-                label: '<i class="fas fa-check"></i> ' + listViewDeleteConfirm,
+                label: '<i class="fa-solid fa-check"></i> ' + listViewDeleteConfirm,
                 className: "btn-spin-action btn-danger"
             }
         },

@@ -81,7 +81,7 @@ class ReportTaxes extends Controller
         $data = parent::getPageData();
         $data['title'] = 'taxes';
         $data['menu'] = 'reports';
-        $data['icon'] = 'fas fa-wallet';
+        $data['icon'] = 'fa-solid fa-wallet';
         return $data;
     }
 

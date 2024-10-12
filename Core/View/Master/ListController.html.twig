@@ -43,12 +43,12 @@
                 <div class="btn-group">
                     <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}"
                        title="{{ trans('refresh') }}">
-                        <i class="fas fa-redo" aria-hidden="true"></i>
+                        <i class="fa-solid fa-redo" aria-hidden="true"></i>
                     </a>
                     {% if pageData.name == fsc.user.homepage %}
                         <a class="btn btn-sm btn-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE"
                            title="{{ trans('marked-as-homepage') }}">
-                            <i class="fas fa-bookmark" aria-hidden="true"></i>
+                            <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
                         <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
@@ -63,7 +63,7 @@
                         <div class="dropdown">
                             <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ trans('options') }}
+                                <i class="fa-solid fa-wrench fa-fw" aria-hidden="true"></i> {{ trans('options') }}
                             </button>
                             <div class="dropdown-menu">
                                 <h6 class="dropdown-header">{{ trans('options-button-header') }}</h6>

@@ -438,15 +438,15 @@ class AccountingLineHTML
         if ($model->editable) {
             return '<div class="col-sm-auto pb-1">'
                 . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
-                . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button>'
+                . $i18n->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button>'
                 . '<button class="btn btn-outline-danger btn-spin-action ms-2 mb-1" type="button" title="' . $i18n->trans('delete') . '"'
                 . ' onclick="return accEntryFormAction(\'rm-line\', \'' . $idlinea . '\');">'
-                . '<i class="fas fa-trash-alt"></i></button></div>';
+                . '<i class="fa-solid fa-trash-alt"></i></button></div>';
         }
 
         return '<div class="col-sm-auto pb-1">'
             . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
-            . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
+            . $i18n->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button></div>';
     }
 
     /**

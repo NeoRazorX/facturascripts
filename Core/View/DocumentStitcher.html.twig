@@ -62,7 +62,7 @@
                     <div class="dropdown">
                         <button class="btn btn-spin-action btn-primary dropdown-toggle" type="button"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-magic fa-fw"></i> {{ trans('generate') }}
+                            <i class="fa-solid fa-magic fa-fw"></i> {{ trans('generate') }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             {% set availableStatus = fsc.getAvailableStatus() %}
@@ -77,7 +77,7 @@
                             {% for status in availableStatus %}
                                 <button type="button" onclick="sendFormData('close:{{ status.primaryColumnValue() }}');"
                                         class="dropdown-item text-danger">
-                                    <i class="fas fa-lock fa-fw" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-lock fa-fw" aria-hidden="true"></i>
                                     {% if availableStatus | length > 1 %}
                                         {{ trans('close') }}: {{ trans(status.generadoc) }}
                                     {% else %}
@@ -92,14 +92,14 @@
                     <div class="dropdown">
                         <button class="btn btn-spin-action btn-secondary dropdown-toggle" type="button"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-check-square fa-fw"></i> {{ trans('selected-quantity') }}
+                            <i class="fa-solid fa-check-square fa-fw"></i> {{ trans('selected-quantity') }}
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <a class="dropdown-item" href="#" onClick="return selectNone();">
                                 <i class="far fa-square fa-fw"></i> {{ trans('select-none') }}
                             </a>
                             <a class="dropdown-item" href="#" onClick="return selectAll();">
-                                <i class="fas fa-square fa-fw"></i> {{ trans('select-all') }}
+                                <i class="fa-solid fa-square fa-fw"></i> {{ trans('select-all') }}
                             </a>
                         </div>
                     </div>
@@ -130,7 +130,7 @@
                             <div class="card-body p-2">
                                 <button class="btn btn-spin-action btn-sm btn-outline-success" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#moreDocsCollapse" aria-expanded="false">
-                                    <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-plus-square fa-fw" aria-hidden="true"></i>
                                     {{ trans('more') }}
                                 </button>
                                 &nbsp; {{ trans('group-more-docs-p') }}
@@ -248,7 +248,7 @@
             <div class="row">
                 <div class="col-sm">
                     <div class="h5 mb-1">
-                        <i class="fas fa-file me-2" aria-hidden="true"></i> {{ trans(fsc.modelName) }}
+                        <i class="fa-solid fa-file me-2" aria-hidden="true"></i> {{ trans(fsc.modelName) }}
                         <a href="{{ doc.url() }}">{{ doc.codigo }}</a>
                         {% if doc.numero2 %}
                             {{ doc.numero2 }}

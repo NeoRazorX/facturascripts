@@ -25,7 +25,7 @@ class EditAlbaranProveedor extends PurchasesController
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'delivery-note';
-        $data['icon'] = 'fas fa-dolly-flatbed';
+        $data['icon'] = 'fa-solid fa-dolly-flatbed';
         $data['showonmenu'] = false;
         return $data;
     }

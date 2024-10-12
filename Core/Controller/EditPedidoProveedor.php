@@ -25,7 +25,7 @@ class EditPedidoProveedor extends PurchasesController
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'order';
-        $data['icon'] = 'fas fa-file-powerpoint';
+        $data['icon'] = 'fa-solid fa-file-powerpoint';
         $data['showonmenu'] = false;
         return $data;
     }

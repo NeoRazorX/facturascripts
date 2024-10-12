@@ -27,12 +27,12 @@
         <div class="row">
             <div class="col-4 d-print-none">
                 <a href="{{ fsc.backPage }}" class="btn btn-sm btn-secondary">
-                    <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
+                    <i class="fa-solid fa-arrow-left fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-md-inline-block">{{ trans('back') }}</span>
                 </a>
                 <a href="{{ fsc.url() ~ '?code=' ~ fsc.selectedViewName }}" class="btn btn-sm btn-secondary"
                    title="{{ trans('refresh') }}">
-                    <i class="fas fa-redo" aria-hidden="true"></i>
+                    <i class="fa-solid fa-redo" aria-hidden="true"></i>
                 </a>
             </div>
             <div class="col text-end">
@@ -63,7 +63,7 @@
                                 <div class="col-3">
                                     <div class="input-group mb-3">
                                         <span class="input-group-text">
-                                                <i class="fas fa-users"></i>
+                                                <i class="fa-solid fa-users"></i>
                                             </span>
                                         {% set userList = {'': trans('all')} | merge(fsc.getUserList()) %}
                                         {{ simpleSelect(
@@ -112,17 +112,17 @@
                                     <div class="col">
                                         <button class="btn btn-spin-action btn-sm btn btn-danger" type="button"
                                                 onclick="deleteOptions();">
-                                            <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                                            <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
                                             {{ trans('delete') }}
                                         </button>
                                     </div>
                                 {% endif %}
                                 <div class="col text-end">
                                     <button class="btn btn-spin-action btn-sm btn btn-secondary" type="reset">
-                                        <i class="fas fa-undo fa-fw" aria-hidden="true"></i> {{ trans('undo') }}
+                                        <i class="fa-solid fa-undo fa-fw" aria-hidden="true"></i> {{ trans('undo') }}
                                     </button>
                                     <button class="btn btn-spin-action btn-sm btn-primary" type="submit">
-                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
+                                        <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
                                 </div>
                             </div>
@@ -153,10 +153,10 @@
                 closeButton: false,
                 buttons: {
                     cancel: {
-                        label: "<i class='fas fa-times'></i> {{ trans('cancel') }}"
+                        label: "<i class='fa-solid fa-times'></i> {{ trans('cancel') }}"
                     },
                     confirm: {
-                        label: "<i class='fas fa-check'></i> {{ trans('delete') }}",
+                        label: "<i class='fa-solid fa-check'></i> {{ trans('delete') }}",
                         className: 'btn-danger'
                     }
                 },
@@ -222,48 +222,48 @@
         {% if col.display == 'start' %}
             <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-start-display" value="start" autocomplete="off" checked>
             <label class="btn btn-outline-secondary" for="{{ col.name }}-start-display" title="{{ trans('left') }}">
-                <i class="fas fa-align-left"></i>
+                <i class="fa-solid fa-align-left"></i>
             </label>
         {% else %}
             <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-start-display" value="start" autocomplete="off">
             <label class="btn btn-outline-secondary" for="{{ col.name }}-start-display" title="{{ trans('left') }}">
-                <i class="fas fa-align-left"></i>
+                <i class="fa-solid fa-align-left"></i>
             </label>
         {% endif %}
 
         {% if col.display == 'center' %}
             <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-center-display" value="center" autocomplete="off" checked>
             <label class="btn btn-outline-secondary" for="{{ col.name }}-center-display" title="{{ trans('center') }}">
-                <i class="fas fa-align-center"></i>
+                <i class="fa-solid fa-align-center"></i>
             </label>
         {% else %}
             <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-center-display" value="center" autocomplete="off">
             <label class="btn btn-outline-secondary" for="{{ col.name }}-center-display" title="{{ trans('center') }}">
-                <i class="fas fa-align-center"></i>
+                <i class="fa-solid fa-align-center"></i>
             </label>
         {% endif %}
 
         {% if col.display == 'end' %}
             <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-end-display" value="end" autocomplete="off" checked>
             <label class="btn btn-outline-secondary" for="{{ col.name }}-end-display" title="{{ trans('right') }}">
-                <i class="fas fa-align-right"></i>
+                <i class="fa-solid fa-align-right"></i>
             </label>
         {% else %}
             <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-end-display" value="end" autocomplete="off">
             <label class="btn btn-outline-secondary" for="{{ col.name }}-end-display" title="{{ trans('right') }}">
-                <i class="fas fa-align-right"></i>
+                <i class="fa-solid fa-align-right"></i>
             </label>
         {% endif %}
 
         {% if col.display == 'none' %}
             <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-none-display" value="none" autocomplete="off" checked>
             <label class="btn btn-outline-secondary" for="{{ col.name }}-none-display" title="{{ trans('hide') }}">
-                <i class="fas fa-eye-slash"></i>
+                <i class="fa-solid fa-eye-slash"></i>
             </label>
         {% else %}
             <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-none-display" value="none" autocomplete="off">
             <label class="btn btn-outline-secondary" for="{{ col.name }}-none-display" title="{{ trans('hide') }}">
-                <i class="fas fa-eye-slash"></i>
+                <i class="fa-solid fa-eye-slash"></i>
             </label>
         {% endif %}
     </div>
