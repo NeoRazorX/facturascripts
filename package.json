@@ -26,9 +26,10 @@
   "homepage": "https://facturascripts.com",
   "dependencies": {
     "@eastdesire/jscolor": "^2.5.2",
-    "@fortawesome/fontawesome-free": "6.*",
-    "bootbox": "6.*",
-    "bootstrap": "5.*",
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "@ttskch/select2-bootstrap4-theme": "^1.5.2",
+    "bootbox": "5.*",
+    "bootstrap": "4.*",
     "chart.js": "2.*",
     "jquery": "^3.6.4",
     "jquery-ui-dist": "1.12.*",
