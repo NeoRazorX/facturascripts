@@ -20,26 +20,26 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col">{{ trans('order') }}</th>
                     <th scope="col">{{ trans('name') }}</th>
                     <th scope="col">{{ trans('enabled') }}</th>
                     <th scope="col">{{ trans('min-php-version') }}</th>
                     <th scope="col">{{ trans('min-fs-version') }}</th>
                     <th scope="col">{{ trans('plugins-required') }}</th>
                     <th scope="col">{{ trans('php-extensions-required') }}</th>
+                    <th scope="col">{{ trans('priority') }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for plugin in fsc.data.plugins %}
-                <tr>
-                    <td>{{ plugin.order }}</td>
-                    <td>{{ plugin.name }} - v{{ plugin.version }}</td>
-                    <td>{{ plugin.enabled ? trans('yes') : trans('no') }}</td>
-                    <td>{{ plugin.min_php }}</td>
-                    <td>{{ plugin.min_version }}</td>
-                    <td>{{ plugin.require | join(', ') }}</td>
-                    <td>{{ plugin.require_php | join(', ') }}</td>
-                </tr>
+                    <tr>
+                        <td>{{ plugin.name }} - v{{ plugin.version }}</td>
+                        <td>{{ plugin.enabled ? trans('yes') : trans('no') }}</td>
+                        <td>{{ plugin.min_php }}</td>
+                        <td>{{ plugin.min_version }}</td>
+                        <td>{{ plugin.require | join(', ') }}</td>
+                        <td>{{ plugin.require_php | join(', ') }}</td>
+                        <td>{{ plugin.order }}</td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
