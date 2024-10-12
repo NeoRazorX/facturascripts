@@ -102,7 +102,7 @@ class GroupItem extends VisualItem
     {
         $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css('col');
         $divId = empty($this->id) ? '' : ' id="' . $this->id . '"';
-        $rowClass = $this->css('row') . ' ' . $this->valign();
+        $rowClass = $this->css('row g-3') . ' ' . $this->valign();
 
         $html = '<div' . $divId . ' class="' . $divClass . '"><div class="' . $rowClass . '">';
         if ($this->title) {

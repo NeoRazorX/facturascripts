@@ -62,7 +62,7 @@ class WidgetVariante extends WidgetText
         ]);
 
         if ($this->readonly()) {
-            return '<div class="mb-3 mb-2 d-grid">'
+            return '<div class="mb-3 d-grid">'
                 . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
                 . $labelHtml
                 . '<a href="' . $variante->url() . '" class="btn btn-outline-secondary">'
@@ -72,7 +72,7 @@ class WidgetVariante extends WidgetText
                 . '</div>';
         }
 
-        return '<div class="mb-3 mb-2 d-grid">'
+        return '<div class="mb-3 d-grid">'
             . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
             . '<a href="#" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
@@ -213,7 +213,7 @@ class WidgetVariante extends WidgetText
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . '<div class="col">' . $this->renderQueryFilter() . '</div>'
             . '<div class="col">' . $this->renderManufacturerFilter() . '</div>'
             . '<div class="col">' . $this->renderFamilyFilter() . '</div>'

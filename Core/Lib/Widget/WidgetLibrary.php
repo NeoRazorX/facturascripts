@@ -57,7 +57,7 @@ class WidgetLibrary extends BaseWidget
         $file->loadFromCode($this->value);
 
         if ($this->readonly()) {
-            return '<div class="mb-3 mb-2">'
+            return '<div class="mb-3">'
                 . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
                 . $labelHtml
                 . '<a href="' . $file->url() . '" class="btn btn-block btn-outline-secondary">'
@@ -67,7 +67,7 @@ class WidgetLibrary extends BaseWidget
                 . '</div>';
         }
 
-        return '<div class="mb-3 mb-2" id="' . $this->id . '">'
+        return '<div class="mb-3" id="' . $this->id . '">'
             . '<input type="hidden" class="input-hidden" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
             . '<a href="#" class="btn btn-block btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
@@ -263,11 +263,11 @@ class WidgetLibrary extends BaseWidget
             . '</button>'
             . '</div>'
             . '<div class="modal-body bg-light">'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . '<div class="col-6">' . $this->renderQueryFilter() . '</div>'
             . '<div class="col-6">' . $this->renderSortFilter() . '</div>'
             . '</div>'
-            . '<div id="list_' . $this->id . '" class="row pt-3">'
+            . '<div id="list_' . $this->id . '" class="row g-3 pt-3">'
             . $this->renderFileList([], $this->value, $this->id)
             . '</div>'
             . '</div>'
