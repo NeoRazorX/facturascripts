@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Page;
@@ -109,6 +110,8 @@ class EditUser extends EditController
 
         // add emails tab
         $this->createViewsEmails();
+
+
     }
 
     protected function createViewsEmails(string $viewName = 'ListEmailSent'): void
@@ -226,7 +229,57 @@ class EditUser extends EditController
         return $pageList;
     }
 
+    protected function execAfterAction($action)
+    {
+        if ($action === 'modal2fa') {
+            // Obtener el código TOTP enviado en la solicitud
+            $totpCode = $this->request->request->get('codetime');
+
+            // Validar que el código no esté vacío
+            if (empty($totpCode)) {
+                Tools::log()->error('No se ha recibido el código de TOTP.');
+                return parent::execAfterAction($action);
+            }
+
+            // Obtener el modelo de usuario para validar el TOTP
+            $userModel = $this->views['EditUser']->model;
+
+            // Validar el código TOTP
+            if ($this->validateTotpCode($userModel, $totpCode)) {
+                // Activar la autenticación de dos factores y guardar el estado
+                $userModel->two_factor_enabled = true;
+                if ($userModel->save()) {
+                    Tools::log()->info("Código de TOTP correcto. La autenticación en dos pasos ha sido activada para el usuario {$userModel->nick}.");
+                } else {
+                    Tools::log()->error("Error al guardar el estado de dos factores para el usuario {$userModel->nick}.");
+                }
+            } else {
+                Tools::log()->error('Código de TOTP incorrecto.');
+            }
+        }
+
+        return parent::execAfterAction($action);
+    }
+
     /**
+     * Valida el código TOTP proporcionado por el usuario.
+     *
+     * @param Model $userModel El modelo del usuario.
+     * @param string $totpCode El código TOTP introducido.
+     * @return bool Verdadero si el código es válido, falso en caso contrario.
+     */
+    private function validateTotpCode($userModel, string $totpCode): bool
+    {
+        if (empty($userModel->secret_key)) {
+            Tools::log()->error("El usuario con ID {$userModel->id} no tiene una clave secreta de TOTP configurada.");
+            return false;
+        }
+
+        return TwoFactorManager::verifyCode($userModel->secret_key, $totpCode);
+    }
+
+    /**
+     *
      * Load view data procedure
      *
      * @param string $viewName
