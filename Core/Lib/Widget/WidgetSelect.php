@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
@@ -238,7 +239,7 @@ class WidgetSelect extends BaseWidget
                 continue;
             }
 
-            $this->values[$key]['title'] = static::$i18n->trans($value['title']);
+            $this->values[$key]['title'] = Tools::lang()->trans($value['title']);
         }
     }
 
