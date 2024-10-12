@@ -130,7 +130,7 @@ class AccountingModalHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . '<div class="col-sm">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . $i18n->trans('search')

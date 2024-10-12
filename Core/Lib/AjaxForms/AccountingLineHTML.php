@@ -136,7 +136,7 @@ class AccountingLineHTML
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $cssClass = static::$num % 2 == 0 ? 'bg-white border-top' : 'bg-light border-top';
         return '<div class="' . $cssClass . ' line ps-2 pe-2">'
-            . '<div class="row align-items-end">'
+            . '<div class="row g-3 align-items-end">'
             . static::subcuenta($i18n, $line, $model)
             . static::debe($i18n, $line, $model)
             . static::haber($i18n, $line, $model)
@@ -158,15 +158,15 @@ class AccountingLineHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . static::iva($i18n, $line, $model)
             . static::recargo($i18n, $line, $model)
             . '</div>'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . static::baseimponible($i18n, $line, $model)
             . static::cifnif($i18n, $line, $model)
             . '</div>'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . static::documento($i18n, $line, $model)
             . '</div>'
             . '</div>'
