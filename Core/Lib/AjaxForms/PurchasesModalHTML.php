@@ -137,7 +137,7 @@ class PurchasesModalHTML
             $options .= '<option value="' . $man->codfabricante . '">' . $man->nombre . '</option>';
         }
 
-        return '<select name="fp_codfabricante" class="form-control" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
+        return '<select name="fp_codfabricante" class="form-select" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
             . $options . '</select>';
     }
 
@@ -156,7 +156,7 @@ class PurchasesModalHTML
             $options .= static::subfamilias($fam, $i18n);
         }
 
-        return '<select name="fp_codfamilia" class="form-control" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
+        return '<select name="fp_codfamilia" class="form-select" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
             . $options . '</select>';
     }
 
@@ -258,8 +258,8 @@ class PurchasesModalHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"><i class="fas fa-cubes fa-fw"></i> ' . $i18n->trans('products') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
@@ -268,10 +268,10 @@ class PurchasesModalHTML
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
             . '" onkeyup="return purchasesFormActionWait(\'find-product\', \'0\', event);"/>'
-            . '<div class="input-group-append">'
+            . ''
             . '<button class="btn btn-primary btn-spin-action" type="button" onclick="return purchasesFormAction(\'find-product\', \'0\');">'
             . '<i class="fas fa-search"></i></button>'
-            . '</div>'
+            . ''
             . '</div>'
             . '</div>'
             . '<div class="col-sm mb-2">' . static::fabricantes($i18n) . '</div>'
@@ -311,8 +311,8 @@ class PurchasesModalHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"><i class="fas fa-users fa-fw"></i> ' . $i18n->trans('suppliers') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body p-0">'
@@ -338,8 +338,8 @@ class PurchasesModalHTML
     protected static function orden(Translator $i18n): string
     {
         return '<div class="input-group">'
-            . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span></div>'
-            . '<select name="fp_orden" class="form-control" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
+            . '<span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span>'
+            . '<select name="fp_orden" class="form-select" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
             . '<option value="">' . $i18n->trans('sort') . '</option>'
             . '<option value="">------</option>'
             . '<option value="ref_asc">' . $i18n->trans('reference') . '</option>'

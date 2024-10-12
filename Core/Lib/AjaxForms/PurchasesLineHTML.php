@@ -228,7 +228,7 @@ class PurchasesLineHTML
                 . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
                 . '<div class="input-group input-group-sm">'
                 . self::cantidadRestante($i18n, $line, $model)
-                . '<input type="number" class="form-control form-control-sm text-lg-right border-0" value="' . $line->cantidad . '" disabled=""/>'
+                . '<input type="number" class="form-control form-control-sm text-lg-end border-0" value="' . $line->cantidad . '" disabled=""/>'
                 . '</div>'
                 . '</div>';
         }
@@ -238,7 +238,7 @@ class PurchasesLineHTML
             . '<div class="input-group input-group-sm">'
             . self::cantidadRestante($i18n, $line, $model)
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
-            . '" class="form-control form-control-sm text-lg-right border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"/>'
+            . '" class="form-control form-control-sm text-lg-end border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"/>'
             . '</div>'
             . '</div>';
     }
@@ -273,14 +273,14 @@ class PurchasesLineHTML
         if (false === $model->editable) {
             return '<div class="col-sm col-lg-1 order-4">'
                 . '<div class="d-lg-none mt-2 small">' . $i18n->trans('price') . '</div>'
-                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-right border-0" disabled=""/>'
+                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-end border-0" disabled=""/>'
                 . '</div>';
         }
 
         $attributes = 'name="pvpunitario_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"';
         return '<div class="col-sm col-lg-1 order-4">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('price') . '</div>'
-            . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-right border-0"/>'
+            . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-end border-0"/>'
             . '</div>';
     }
 
@@ -341,8 +341,8 @@ class PurchasesLineHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"><i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $line->referencia . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
@@ -358,10 +358,10 @@ class PurchasesLineHTML
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
             . $i18n->trans('close')
             . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">'
             . $i18n->trans('accept')
             . '</button>'
             . '</div>'

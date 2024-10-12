@@ -70,7 +70,7 @@ class WidgetLibrary extends BaseWidget
         return '<div class="mb-3 mb-2" id="' . $this->id . '">'
             . '<input type="hidden" class="input-hidden" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
-            . '<a href="#" class="btn btn-block btn-outline-secondary" data-bs-toggle="modal" data-target="#modal_' . $this->id . '">'
+            . '<a href="#" class="btn btn-block btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
             . '<span class="file-name">'
             . ($file->filename ? $file->shortFileName() : Tools::lang()->trans('select'))
@@ -240,11 +240,11 @@ class WidgetLibrary extends BaseWidget
         return '<div class="input-group mb-2">'
             . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
             . Tools::lang()->trans('search') . '" onkeydown="widgetLibrarySearchKp(\'' . $this->id . '\', event);">'
-            . '<div class="input-group-append">'
+            . ''
             . '<button type="button" class="btn btn-primary" onclick="widgetLibrarySearch(\'' . $this->id . '\');">'
             . '<i class="fas fa-search"></i>'
             . '</button>'
-            . '</div>'
+            . ''
             . '</div>';
     }
 
@@ -258,8 +258,8 @@ class WidgetLibrary extends BaseWidget
             . '<h5 class="modal-title" id="modal_' . $this->id . '_label">'
             . '<i class="' . $icon . ' me-1"></i> ' . $label
             . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body bg-light">'
@@ -302,7 +302,7 @@ class WidgetLibrary extends BaseWidget
 
     protected function renderSortFilter(): string
     {
-        return '<select class="form-control mb-2" id="modal_' . $this->id . '_s" onchange="widgetLibrarySearch(\'' . $this->id . '\');">'
+        return '<select class="form-select mb-2" id="modal_' . $this->id . '_s" onchange="widgetLibrarySearch(\'' . $this->id . '\');">'
             . '<option value="date-asc">' . Tools::lang()->trans('sort-by-date-asc') . '</option>'
             . '<option value="date-desc" selected>' . Tools::lang()->trans('sort-by-date-desc') . '</option>'
             . '</select>';

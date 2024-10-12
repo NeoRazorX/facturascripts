@@ -153,8 +153,8 @@ class AccountingLineHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title">' . $line->codsubcuenta . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
@@ -171,10 +171,10 @@ class AccountingLineHTML
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
             . $i18n->trans('close')
             . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">'
             . $i18n->trans('accept')
             . '</button>'
             . '</div>'
@@ -404,7 +404,7 @@ class AccountingLineHTML
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="iva_' . $idlinea . '"' : 'disabled';
         return '<div class="col pb-2 small"><a href="ListImpuesto">' . $i18n->trans('vat') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>';
     }
 
@@ -436,7 +436,7 @@ class AccountingLineHTML
     {
         if ($model->editable) {
             return '<div class="col-sm-auto pb-1">'
-                . '<button type="button" data-bs-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
+                . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
                 . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button>'
                 . '<button class="btn btn-outline-danger btn-spin-action ms-2 mb-1" type="button" title="' . $i18n->trans('delete') . '"'
                 . ' onclick="return accEntryFormAction(\'rm-line\', \'' . $idlinea . '\');">'
@@ -444,7 +444,7 @@ class AccountingLineHTML
         }
 
         return '<div class="col-sm-auto pb-1">'
-            . '<button type="button" data-bs-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
+            . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
             . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
     }
 
@@ -476,8 +476,8 @@ class AccountingLineHTML
             return '<div class="col pb-2 small">' . $subcuenta->descripcion
                 . '<div class="input-group">'
                 . '<input type="text" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
-                . '<div class="input-group-append"><a href="' . $subcuenta->url() . '" target="_blank" class="btn btn-outline-primary">'
-                . '<i class="far fa-eye"></i></a></div>'
+                . '<a href="' . $subcuenta->url() . '" target="_blank" class="btn btn-outline-primary">'
+                . '<i class="far fa-eye"></i></a>'
                 . '</div>'
                 . '</div>'
                 . static::contrapartida($i18n, $line, $model)
@@ -488,8 +488,8 @@ class AccountingLineHTML
             . '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' . $subcuenta->descripcion
             . '<div class="input-group">'
             . '<input type="text" name="codsubcuenta_' . $idlinea . '" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
-            . '<div class="input-group-append"><a href="' . $subcuenta->url() . '" target="_blank" class="btn btn-outline-primary">'
-            . '<i class="far fa-eye"></i></a></div>'
+            . '<a href="' . $subcuenta->url() . '" target="_blank" class="btn btn-outline-primary">'
+            . '<i class="far fa-eye"></i></a>'
             . '</div>'
             . '</div>'
             . static::contrapartida($i18n, $line, $model)

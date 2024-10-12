@@ -110,9 +110,9 @@ class AccountingHeaderHTML
             return '<div class="col-sm-3 col-md-2">'
                 . '<div class="mb-3">' . $i18n->trans('document')
                 . '<div class="input-group">'
-                . '<div class="input-group-prepend">'
+                . ''
                 . '<a class="btn btn-outline-primary" href="' . $link . '"><i class="far fa-eye"></i></a>'
-                . '</div>'
+                . ''
                 . '<input type="text" value="' . Tools::noHtml($model->documento) . '" class="form-control" readonly/>'
                 . '</div>'
                 . '</div>'
@@ -137,7 +137,7 @@ class AccountingHeaderHTML
         $attributes = $model->editable ? 'name="iddiario"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
             . '<div class="mb-3">' . $i18n->trans('daily')
-            . '<select ' . $attributes . ' class="form-control">' . $options . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . $options . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -193,7 +193,7 @@ class AccountingHeaderHTML
 
         return '<div class="col-sm-3 col-md-2">'
             . '<div class="mb-3">' . $i18n->trans('company')
-            . '<select name="idempresa" class="form-control" ' . $attributes . '>'
+            . '<select name="idempresa" class="form-select" ' . $attributes . '>'
             . static::getItems($companyList, 'idempresa', 'nombre', $model->idempresa)
             . '</select>'
             . '</div>'
@@ -205,7 +205,7 @@ class AccountingHeaderHTML
         $attributes = $model->editable ? 'name="operacion"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
             . '<div class="mb-3">' . $i18n->trans('operation')
-            . '<select ' . $attributes . ' class="form-control">'
+            . '<select ' . $attributes . ' class="form-select">'
             . '<option value="">------</option>'
             . '<option value="A" ' . ($model->operacion === 'A' ? 'selected' : '') . '>' . $i18n->trans('opening-operation') . '</option>'
             . '<option value="C" ' . ($model->operacion === 'C' ? 'selected' : '') . '>' . $i18n->trans('closing-operation') . '</option>'

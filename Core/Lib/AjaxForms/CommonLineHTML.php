@@ -96,7 +96,7 @@ trait CommonLineHTML
             'disabled=""';
         return '<div class="col-sm col-lg-1 order-6">'
             . '<div class="d-lg-none mt-3 small">' . $i18n->trans('tax') . '</div>'
-            . '<select ' . $attributes . ' class="form-control form-control-sm border-0">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select form-select-sm border-0">' . implode('', $options) . '</select>'
             . '<input type="hidden" name="iva_' . $idlinea . '" value="' . $line->iva . '"/>'
             . '</div>';
     }
@@ -158,7 +158,7 @@ trait CommonLineHTML
 
         return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans('vat-exception')
-            . '<select ' . $attributes . ' class="form-control">' . $options . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . $options . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -171,7 +171,7 @@ trait CommonLineHTML
             ['<option value="0" selected>' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
         return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans($label)
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -195,7 +195,7 @@ trait CommonLineHTML
             'disabled=""';
         return '<div class="col-6">'
             . '<div class="mb-2"><a href="ListImpuesto?activetab=ListRetencion">' . $i18n->trans('retention') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -222,11 +222,11 @@ trait CommonLineHTML
         return '<div class="col col-lg-1 order-7 columSubtotal ' . $cssSubtotal . '">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
             . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($subtotal, FS_NF0, '.', '')
-            . '" class="form-control form-control-sm text-lg-right border-0"' . $onclickSubtotal . ' readonly/></div>'
+            . '" class="form-control form-control-sm text-lg-end border-0"' . $onclickSubtotal . ' readonly/></div>'
             . '<div class="col col-lg-1 order-7 columNeto ' . $cssNeto . '">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('net') . '</div>'
             . '<input type="number" name="lineneto_' . $idlinea . '"  value="' . number_format($line->pvptotal, FS_NF0, '.', '')
-            . '" class="form-control form-control-sm text-lg-right border-0"' . $onclickNeto . ' readonly/></div>';
+            . '" class="form-control form-control-sm text-lg-end border-0"' . $onclickNeto . ' readonly/></div>';
     }
 
     private static function loadProducts(array $lines, BusinessDocument $model): void
@@ -310,7 +310,7 @@ trait CommonLineHTML
     {
         if ($model->editable) {
             return '<div class="col-auto order-9">'
-                . '<button type="button" data-bs-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-light me-2" title="'
+                . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-light me-2" title="'
                 . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button>'
                 . '<button class="btn btn-sm btn-danger btn-spin-action" type="button" title="' . $i18n->trans('delete') . '"'
                 . ' onclick="return ' . $jsName . '(\'rm-line\', \'' . $idlinea . '\');">'
@@ -318,7 +318,7 @@ trait CommonLineHTML
                 . '</div>';
         }
 
-        return '<div class="col-auto order-9"><button type="button" data-bs-toggle="modal" data-target="#lineModal-'
+        return '<div class="col-auto order-9"><button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-'
             . $idlinea . '" class="btn btn-sm btn-outline-secondary" title="'
             . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
     }
@@ -346,7 +346,7 @@ trait CommonLineHTML
             ['<option value="0" selected>' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
         return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans('supplied')
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }

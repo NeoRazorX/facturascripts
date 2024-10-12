@@ -137,7 +137,7 @@ class PurchasesHeaderHTML
             return '<div class="col-sm-3">'
                 . '<div class="mb-3">' . $i18n->trans('supplier')
                 . '<input type="hidden" name="codproveedor" />'
-                . '<a href="#" id="btnFindSupplierModal" class="btn btn-block btn-primary" onclick="$(\'#findSupplierModal\').modal();'
+                . '<a href="#" id="btnFindSupplierModal" class="btn btn-block btn-primary" onclick="$(\'#findSupplierModal\').modal(\'show\');'
                 . ' $(\'#findSupplierInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
                 . $i18n->trans('select') . '</a>'
                 . '</div>'
@@ -146,7 +146,7 @@ class PurchasesHeaderHTML
         }
 
         $btnProveedor = $model->editable ?
-            '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findSupplierModal\').modal();'
+            '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findSupplierModal\').modal(\'show\');'
             . ' $(\'#findSupplierInput\').focus(); return false;"><i class="fas fa-pen"></i></button>' :
             '<button class="btn btn-outline-secondary" type="button"><i class="fas fa-lock"></i></button>';
 
@@ -156,7 +156,7 @@ class PurchasesHeaderHTML
             . '<input type="hidden" name="codproveedor" value="' . $model->codproveedor . '" />'
             . '<div class="input-group">'
             . '<input type="text" value="' . Tools::noHtml($proveedor->nombre) . '" class="form-control" readonly />'
-            . '<div class="input-group-append">' . $btnProveedor . '</div>'
+            . '' . $btnProveedor . ''
             . '</div>'
             . '</div>'
             . '</div>';
@@ -178,7 +178,7 @@ class PurchasesHeaderHTML
         $css = $new ? 'col-sm-auto' : 'col-sm';
         return '<div class="' . $css . '">'
             . '<div class="mb-3">'
-            . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-target="#headerModal">'
+            . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#headerModal">'
             . '<i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . ' </button>'
             . '</div>'
             . '</div>'
@@ -192,8 +192,8 @@ class PurchasesHeaderHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title">' . $i18n->trans('detail') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
@@ -211,8 +211,8 @@ class PurchasesHeaderHTML
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . $i18n->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
