@@ -30,6 +30,6 @@
     </constraint>
     <constraint>
         <name>ca_gruposclientes_tarifas</name>
-        <type>FOREIGN KEY (codtarifa) REFERENCES tarifa-solid (codtarifa) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codtarifa) REFERENCES tarifas (codtarifa) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>
