@@ -27,6 +27,8 @@ use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Core\WorkQueue;
+use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
  * Main class for managing data models
@@ -34,7 +36,7 @@ use FacturaScripts\Core\Where;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
-abstract class ModelClass
+abstract class ModelClass extends ModelCore
 {
     /**
      * It provides direct access to the database.
@@ -44,18 +46,11 @@ abstract class ModelClass
     protected static $dataBase;
 
     /**
-     * List of fields and his values in the table.
+     * Adds an extension to this model.
      *
-     * @var array
+     * @param mixed $extension
      */
-    private $model_properties = [];
-
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    abstract public static function tableName(): string;
+    abstract public static function addExtension($extension);
 
     /**
      * Returns the list of fields in the table.
@@ -63,21 +58,6 @@ abstract class ModelClass
      * @return array
      */
     abstract public function getModelFields(): array;
-
-    /**
-     * Loads table fields if is necessary.
-     *
-     * @param DataBase $dataBase
-     * @param string $tableName
-     */
-    abstract protected function loadModelFields(DataBase $dataBase, string $tableName);
-
-    /**
-     * Returns the name of the class of the model.
-     *
-     * @return string
-     */
-    abstract public function modelClassName(): string;
 
     /**
      * Executes all $name methods added from the extensions.
@@ -90,11 +70,29 @@ abstract class ModelClass
     abstract public function pipe(string $name, ...$arguments);
 
     /**
-     * Returns the name of the column that is the model's primary key.
+     * Executes all $name methods added from the extensions until someone returns false.
+     *
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return bool
+     */
+    abstract public function pipeFalse($name, ...$arguments): bool;
+
+    /**
+     * Loads table fields if is necessary.
+     *
+     * @param DataBase $dataBase
+     * @param string $tableName
+     */
+    abstract protected function loadModelFields(DataBase $dataBase, string $tableName);
+
+    /**
+     * Returns the name of the model.
      *
      * @return string
      */
-    abstract public static function primaryColumn(): string;
+    abstract protected function modelName(): string;
 
     /**
      * Model constructor.
@@ -127,45 +125,6 @@ abstract class ModelClass
         } else {
             $this->loadFromData($data);
         }
-    }
-
-    /**
-     * Return model view field value
-     *
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function __get(string $name)
-    {
-        if (!isset($this->model_properties[$name])) {
-            $this->model_properties[$name] = null;
-        }
-
-        return $this->model_properties[$name];
-    }
-
-    /**
-     * Check if exits value to property
-     *
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function __isset(string $name): bool
-    {
-        return array_key_exists($name, $this->model_properties);
-    }
-
-    /**
-     * Set value to model view field
-     *
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set(string $name, $value): void
-    {
-        $this->model_properties[$name] = $value;
     }
 
     /**
@@ -213,6 +172,114 @@ abstract class ModelClass
         }
 
         $this->pipe('clear');
+    }
+
+    /**
+     * Allows to use this model as source in CodeModel special model.
+     *
+     * @param string $fieldCode
+     *
+     * @return CodeModel[]
+     */
+    public function codeModelAll(string $fieldCode = ''): array
+    {
+        $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
+        $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $this->primaryDescriptionColumn() . ' AS description '
+            . 'FROM ' . static::tableName() . ' ORDER BY 2 ASC';
+
+        $results = [];
+        foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $d) {
+            $results[] = new CodeModel($d);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Allows to use this model as source in CodeModel special model.
+     * TODO: Correct the DataBaseWhere calls
+     * FIXME: Old version of the function use DataBaseWhere in the call to all method
+     *
+     * @param string $query
+     * @param string $fieldCode
+     * @param Where[] $where
+     *
+     * @return CodeModel[]
+     */
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
+    {
+        $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
+        $fields = $field . '|' . $this->primaryDescriptionColumn();
+        $where[] = Where::like($fields, mb_strtolower($query, 'UTF8'));
+        return CodeModel::all(static::tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
+    }
+
+    /**
+     * Returns the number of records in the model that meet the condition.
+     *
+     * @param Where[] $where filters to apply to model records.
+     *
+     * @return int
+     */
+    public static function count(array $where = []): int
+    {
+        $key = 'model-' . static::modelClassName() . '-count';
+        return Cache::remember($key, function () use ($where) {
+            return static::table()
+                ->where($where)
+                ->count();
+        });
+    }
+
+    /**
+     * Remove the model data from the database.
+     *
+     * @return bool
+     * @throws KernelException
+     */
+    public function delete(): bool
+    {
+        if (null === $this->primaryColumnValue()) {
+            return true;
+        }
+
+        if ($this->pipeFalse('deleteBefore') === false) {
+            return false;
+        }
+
+        $pkValue = self::$dataBase->var2str($this->primaryColumnValue());
+        if (false === $this->table()
+            ->whereEq(static::primaryColumn(), $pkValue)
+            ->delete()
+        ) {
+            return false;
+        }
+
+        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
+        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('table-' . static::tableName() . '-');
+
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Delete',
+            $this->primaryColumnValue(),
+            $this->toArray()
+        );
+
+        return $this->pipeFalse('delete');
+    }
+
+    /**
+     * Delete records from the model table which meet the conditions.
+     *
+     * @param Where[] $where
+     * @return bool
+     * @throws Exception
+     */
+    public static function deleteAll(array $where): bool
+    {
+        return static::table()
+            ->where($where)
+            ->delete();
     }
 
     /**
@@ -368,6 +435,32 @@ abstract class ModelClass
     }
 
     /**
+     * Returns the following code for the reported field or the primary key of the model.
+     *
+     * @param string $field
+     * @param array $where
+     *
+     * @return int
+     * @throws KernelException
+     */
+    public function newCode(string $field = '', array $where = []): int
+    {
+        // TODO: Call to new Class to get the next code
+        $field = empty($field) ? static::primaryColumn() : $field;
+        throw new KernelException('DeveloperException', 'Method not implemented');
+    }
+
+    /**
+     * Returns the current value of the main column of the model.
+     *
+     * @return mixed
+     */
+    public function primaryColumnValue()
+    {
+        return $this->{$this->primaryColumn()};
+    }
+
+    /**
      * Return the DbQuery object for the model table.
      *
      * @return DbQuery
@@ -376,6 +469,21 @@ abstract class ModelClass
     public static function table(): DbQuery
     {
         return DbQuery::table(static::tableName());
+    }
+
+    /**
+     * Returns an array with the model fields values.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $data = [];
+        foreach (array_keys($this->getModelFields()) as $fieldName) {
+            $data[$fieldName] = $this->{$fieldName} ?? null;
+        }
+
+        return $data;
     }
 
     /**
