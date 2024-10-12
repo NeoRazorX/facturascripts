@@ -191,8 +191,8 @@ class EditTarifa extends EditController
 
     protected function unsetCustomerRate()
     {
-        $codes = $this->request->request->get('code', '');
-        if (empty($codes) || false === \is_array($codes)) {
+        $codes = $this->request->request->getArray('codes');
+        if (empty($codes) || false === is_array($codes)) {
             Tools::log()->warning('no-selected-item');
             return;
         }
@@ -210,8 +210,8 @@ class EditTarifa extends EditController
 
     protected function unsetGroupRate()
     {
-        $codes = $this->request->request->get('code', '');
-        if (empty($codes) || false === \is_array($codes)) {
+        $codes = $this->request->request->getArray('codes');
+        if (empty($codes) || false === is_array($codes)) {
             Tools::log()->warning('no-selected-item');
             return;
         }

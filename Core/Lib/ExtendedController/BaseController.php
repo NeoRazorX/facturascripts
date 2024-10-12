@@ -348,13 +348,14 @@ abstract class BaseController extends Controller
         }
 
         $model = $this->views[$this->active]->model;
-        $codes = $this->request->request->get('code', '');
-        if (empty($codes)) {
+        $codes = $this->request->request->getArray('codes');
+        $code = $this->request->request->get('code');
+        if (empty($codes) && empty($code)) {
             Tools::log()->warning('no-selected-item');
             return false;
         }
 
-        if (is_array($codes)) {
+        if (false === empty($codes) && is_array($codes)) {
             $this->dataBase->beginTransaction();
 
             // deleting multiples rows
@@ -365,7 +366,7 @@ abstract class BaseController extends Controller
                     continue;
                 }
 
-                // error?
+                // ¿error?
                 $this->dataBase->rollback();
                 break;
             }
@@ -376,7 +377,7 @@ abstract class BaseController extends Controller
                 Tools::log()->notice('record-deleted-correctly');
                 return true;
             }
-        } elseif ($model->loadFromCode($codes) && $model->delete()) {
+        } elseif ($model->loadFromCode($code) && $model->delete()) {
             // deleting a single row
             Tools::log()->notice('record-deleted-correctly');
             $model->clear();
@@ -409,7 +410,7 @@ abstract class BaseController extends Controller
                 continue;
             }
 
-            $codes = $this->request->request->get('code');
+            $codes = $this->request->request->getArray('codes');
             if (false === $selectedView->export($this->exportManager, $codes)) {
                 break;
             }

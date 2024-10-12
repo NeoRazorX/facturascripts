@@ -96,7 +96,7 @@ abstract class EditController extends PanelController
             }
 
             // mandamos imprimir
-            $codes = $this->request->request->get('code');
+            $codes = $this->request->request->getArray('codes');
             if (false === $selectedView->export($this->exportManager, $codes)) {
                 break;
             }

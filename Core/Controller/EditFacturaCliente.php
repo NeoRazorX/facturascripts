@@ -356,7 +356,7 @@ class EditFacturaCliente extends SalesController
             return true;
         }
 
-        $codes = $this->request->request->getArray('code');
+        $codes = $this->request->request->getArray('codes');
         $model = $this->views[$this->active]->model;
         if (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');

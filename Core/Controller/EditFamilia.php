@@ -51,7 +51,7 @@ class EditFamilia extends EditController
 
     protected function addProductAction(): void
     {
-        $codes = $this->request->request->get('code', []);
+        $codes = $this->request->request->getArray('codes');
         if (false === is_array($codes)) {
             return;
         }
@@ -220,7 +220,7 @@ class EditFamilia extends EditController
 
     protected function removeProductAction(): void
     {
-        $codes = $this->request->request->get('code', []);
+        $codes = $this->request->request->getArray('codes');
         if (false === is_array($codes)) {
             return;
         }
