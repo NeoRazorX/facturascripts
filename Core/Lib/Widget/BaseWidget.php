@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of BaseWidget
@@ -107,8 +108,8 @@ class BaseWidget extends VisualItem
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
-        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
-        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
+        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
+        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(Tools::lang()->trans($title), $titleurl) . '</label>';
 
         if (empty($this->icon)) {
             return '<div class="mb-3">'

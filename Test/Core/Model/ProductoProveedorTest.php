@@ -22,7 +22,6 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\AlbaranProveedor;
@@ -329,7 +328,7 @@ final class ProductoProveedorTest extends TestCase
         $productoProveedor->clear();
 
         $this->assertNotNull($productoProveedor->actualizado);
-        $this->assertEquals(ToolBox::appSettings()::get('default', 'coddivisa'), $productoProveedor->coddivisa);
+        $this->assertEquals(Tools::settings('default', 'coddivisa'), $productoProveedor->coddivisa);
         $this->assertEquals(0, $productoProveedor->dtopor);
         $this->assertEquals(0, $productoProveedor->dtopor2);
         $this->assertEquals(0, $productoProveedor->neto);

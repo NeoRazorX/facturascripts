@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
@@ -206,7 +207,7 @@ class WidgetRadio extends BaseWidget
                 continue;
             }
 
-            $this->values[$key]['title'] = static::$i18n->trans($value['title']);
+            $this->values[$key]['title'] = Tools::lang()->trans($value['title']);
         }
     }
 

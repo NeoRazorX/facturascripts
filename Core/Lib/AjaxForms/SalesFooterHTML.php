@@ -82,14 +82,14 @@ class SalesFooterHTML
 
         $i18n = new Translator();
         return '<div class="container-fluid mt-3">'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . self::renderField($i18n, $model, '_productBtn')
             . self::renderField($i18n, $model, '_newLineBtn')
             . self::renderField($i18n, $model, '_sortableBtn')
             . self::renderField($i18n, $model, '_fastLineInput')
             . self::renderField($i18n, $model, '_subtotalNetoBtn')
             . '</div>'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . self::renderField($i18n, $model, 'observaciones')
             . self::renderNewFields($i18n, $model)
             . self::renderField($i18n, $model, 'netosindto')
@@ -104,7 +104,7 @@ class SalesFooterHTML
             . self::renderField($i18n, $model, 'totalbeneficio')
             . self::renderField($i18n, $model, 'total')
             . '</div>'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . '<div class="col-auto">'
             . self::renderField($i18n, $model, '_deleteBtn')
             . '</div>'
@@ -143,7 +143,7 @@ class SalesFooterHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . $htmlModal
             . '</div>'
             . '</div>'
