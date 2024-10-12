@@ -3,7 +3,7 @@
 {% set currentView = fsc.getCurrentView() %}
 
 <div class="container-fluid">
-    <div class="form-row">
+    <div class="row">
         <div class="col-sm-12">
             {% if fsc.permissions.allowUpdate %}
                 <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
@@ -16,11 +16,11 @@
                             <h5 class="card-title">
                                 <i class="fas fa-folder-plus fa-fw"></i> {{ trans('add') }}
                             </h5>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <textarea name="observations" class="form-control"
                                           placeholder="{{ trans('observations') }}"></textarea>
                             </div>
-                            <div class="form-row align-items-end">
+                            <div class="row align-items-end">
                                 <div class="col">
                                     <input type="file" name="new-files[]" class="form-control-file" multiple required/>
                                     <p class="text-muted mb-0">
@@ -30,7 +30,7 @@
                                         {% include includeView['path'] %}
                                     {% endfor %}
                                 </div>
-                                <div class="col text-right">
+                                <div class="col text-end">
                                     <button type="submit" class="btn btn-sm btn-success">
                                         <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
@@ -57,7 +57,7 @@
                                          alt="{{ file.filename }}">
                                 </a>
                             {% else %}
-                                <div class="pl-3 pt-3 pr-3">
+                                <div class="ps-3 pt-3 pe-3">
                                     <a href="{{ file.url('download-permanent') }}" target="_blank"
                                        class="btn btn-block btn-lg btn-secondary">
                                         {% if file.isPdf() %}
@@ -74,7 +74,7 @@
                                 </div>
                             {% endif %}
                             <div class="card-body p-3">
-                                <div class="form-group">
+                                <div class="mb-3">
                                 <textarea name="observations" class="form-control"
                                           placeholder="{{ trans('observations') }}">{{ docfile.observations | raw }}</textarea>
                                 </div>
@@ -85,12 +85,12 @@
                                     {% if docfile.nick %}
                                         <i class="fas fa-user"></i> {{ docfile.nick }}
                                     {% endif %}
-                                    <i class="fas fa-calendar-alt ml-3"></i> {{ docfile.creationdate }}
+                                    <i class="fas fa-calendar-alt ms-3"></i> {{ docfile.creationdate }}
                                 </p>
                             </div>
                             <div class="card-footer p-2">
                                 {% if fsc.permissions.allowUpdate %}
-                                    <button type="button" class="btn btn-sm btn-primary float-right"
+                                    <button type="button" class="btn btn-sm btn-primary float-end"
                                             onclick="this.form.action.value='edit-file';this.form.onsubmit();this.form.submit();">
                                         <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
@@ -99,7 +99,7 @@
                                     <div class="btn-group">
                                         <div class="dropdown">
                                             <button class="btn btn-sm btn-outline-danger dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    data-bs-toggle="dropdown" aria-haspopup="true"
                                                     aria-expanded="false">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>

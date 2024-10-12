@@ -53,17 +53,17 @@
                     </h1>
                     <p>{{ trans('wizard-p') }}</p>
                     <hr/>
-                    <div class="form-row">
+                    <div class="row">
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombre, 'text',
                                     trans('company-name'), '', {'autofocus': '', 'maxlength': '100', 'required': ''}) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="mb-1">{{ trans('type') }}</label>
-                                <select name="personafisica" class="form-control">
+                                <select name="personafisica" class="form-select">
                                     {% if fsc.empresa.personafisica %}
                                         <option value="1" selected>{{ trans('is-person') }}</option>
                                         <option value="0">{{ trans('company') }}</option>
@@ -75,49 +75,49 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleSelect('tipoidfiscal', 'tipoidfiscal', fsc.empresa.tipoidfiscal,
                                     fsc.getSelectValues('IdentificadorFiscal', true), trans('fiscal-id')) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('cifnif', 'cifnif', fsc.empresa.cifnif, 'text', trans('fiscal-number'),
                                     '', {'maxlength': '30'}) }}
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', trans('address'),
                                     'fas fa-map-marked', {'maxlength': '100'}) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('apartado', 'apartado', fsc.empresa.apartado, 'text', trans('post-office-box'),
                                     NULL, {'maxlength': '10', 'placeholder': trans('optional')}) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', trans('zip-code'),
                                     NULL, {'maxlength': '10'}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', trans('city'), '',
                                     {'maxlength': '100'}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('provincia', 'provincia', provincia, 'text', trans('province'),
                                     '', {'maxlength': '100'}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {% if constant('FS_INITIAL_CODPAIS') is defined %}
                                     {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
                                         trans('country'), 'fas fa-globe-americas', {'disabled': ''}) }}
@@ -129,27 +129,27 @@
                         </div>
                         {% if fsc.empresa.email is empty or fsc.user.email is empty %}
                             <div class="col-sm-4">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ forms.simpleInput('email', 'email', fsc.empresa.email, 'email', trans('email'),
                                         'fas fa-envelope', {'required': '', 'class': 'form-control'}) }}
                                 </div>
                             </div>
                         {% endif %}
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('telefono1', 'telefono1', fsc.empresa.telefono1, 'text', trans('phone'),
                                     'fas fa-phone', {'maxlength': '30'}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('telefono2', 'telefono2', fsc.empresa.telefono2, 'text', trans('phone2'),
                                     'fas fa-mobile-alt', {'maxlength': '30'}) }}
                             </div>
                         </div>
                     </div>
                     {% if fsc.user.verifyPassword('admin') %}
-                        <div class="form-row">
+                        <div class="row">
                             <div class="col mt-3">
                                 <h3 class="h4 text-info">
                                     <i class="fas fa-key" aria-hidden="true"></i>
@@ -157,18 +157,18 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="form-row">
+                        <div class="row">
                             <div class="col-sm-4">
                                 {{ forms.simpleInput('user', 'user', fsc.user.nick, 'text', trans('user'), 'fas fa-user', {'readonly': ''}) }}
                             </div>
                             <div class="col-sm-4">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ forms.simpleInput('password', 'password', '', 'password', trans('new-password'), 'fas fa-key',
                                         {'class': 'form-control', 'placeholder': trans('optional')}) }}
                                 </div>
                             </div>
                             <div class="col-sm-4">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ forms.simpleInput('repassword', 'repassword', '', 'password', trans('repeat-new-password'),
                                         'fas fa-key', {'class': 'form-control', 'placeholder': trans('optional')}) }}
                                 </div>
@@ -176,7 +176,7 @@
                         </div>
                     {% endif %}
                 </div>
-                <div class="card-footer text-right">
+                <div class="card-footer text-end">
                     <button type="submit" class="btn btn-primary" id="btnWizard">
                         {{ trans('continue') }}
                     </button>

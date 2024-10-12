@@ -258,7 +258,8 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $class = $this->combineClasses($this->css('form-control select2'), $this->class, $extraClass);
+        $class = $this->combineClasses($this->css('form-select select2'), $this->class, $extraClass);
+
         if ($this->parent) {
             $class .= ' parentSelect';
         }
@@ -370,7 +371,7 @@ class WidgetSelect extends BaseWidget
             }
 
             $txtBreak = substr($txt, 0, 20);
-            return '<span data-toggle="tooltip" data-html="true" title="' . $txt . '">' . $txtBreak . '...</span>';
+            return '<span data-bs-toggle="tooltip" data-html="true" title="' . $txt . '">' . $txtBreak . '...</span>';
         }
 
         $selected = null;

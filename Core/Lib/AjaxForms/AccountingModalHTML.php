@@ -66,7 +66,7 @@ class AccountingModalHTML
 
             $tbody .= '<tr class="' . $cssClass . '" onclick="' . $onclick . '">'
                 . '<td><b>' . $subaccount->codsubcuenta . '</b> ' . $subaccount->descripcion . '</td>'
-                . '<td class="text-right">' . Tools::money($subaccount->saldo) . '</td>'
+                . '<td class="text-end">' . Tools::money($subaccount->saldo) . '</td>'
                 . '</tr>';
         }
 
@@ -78,7 +78,7 @@ class AccountingModalHTML
             . '<thead>'
             . '<tr>'
             . '<th>' . $i18n->trans('subaccount') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('balance') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('balance') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -130,7 +130,7 @@ class AccountingModalHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-sm">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . $i18n->trans('search')

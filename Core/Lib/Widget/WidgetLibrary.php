@@ -57,7 +57,7 @@ class WidgetLibrary extends BaseWidget
         $file->loadFromCode($this->value);
 
         if ($this->readonly()) {
-            return '<div class="form-group mb-2">'
+            return '<div class="mb-3 mb-2">'
                 . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
                 . $labelHtml
                 . '<a href="' . $file->url() . '" class="btn btn-block btn-outline-secondary">'
@@ -67,10 +67,10 @@ class WidgetLibrary extends BaseWidget
                 . '</div>';
         }
 
-        return '<div class="form-group mb-2" id="' . $this->id . '">'
+        return '<div class="mb-3 mb-2" id="' . $this->id . '">'
             . '<input type="hidden" class="input-hidden" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
-            . '<a href="#" class="btn btn-block btn-outline-secondary" data-toggle="modal" data-target="#modal_' . $this->id . '">'
+            . '<a href="#" class="btn btn-block btn-outline-secondary" data-bs-toggle="modal" data-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
             . '<span class="file-name">'
             . ($file->filename ? $file->shortFileName() : Tools::lang()->trans('select'))
@@ -176,8 +176,8 @@ class WidgetLibrary extends BaseWidget
 
             $info = '<p class="card-text small">'
                 . Tools::bytes($file->size) . ', ' . $file->date . ' ' . $file->hour
-                . '<a href="' . $file->url() . '" target="_blank" class="ml-2">'
-                . '<i class="fa-solid fa-up-right-from-square"></i>'
+                . '<a href="' . $file->url() . '" target="_blank" class="ms-2">'
+                . '<i class="fa-solid fa-up-end-from-square"></i>'
                 . '</a>'
                 . '</p>';
 
@@ -185,7 +185,7 @@ class WidgetLibrary extends BaseWidget
 
             if ($file->isImage()) {
                 $html .= '<div class="media">'
-                    . '<img loading="lazy" src="' . $file->url('download-permanent') . '" class="mr-3" alt="' . $file->filename
+                    . '<img loading="lazy" src="' . $file->url('download-permanent') . '" class="me-3" alt="' . $file->filename
                     . '" width="64" type="button" onclick="' . $js . '" title="' . Tools::lang()->trans('select') . '">'
                     . '<div class="media-body">'
                     . '<h5 class="text-break mt-0">' . $file->filename . '</h5>'
@@ -256,18 +256,18 @@ class WidgetLibrary extends BaseWidget
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title" id="modal_' . $this->id . '_label">'
-            . '<i class="' . $icon . ' mr-1"></i> ' . $label
+            . '<i class="' . $icon . ' me-1"></i> ' . $label
             . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
             . '<div class="modal-body bg-light">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-6">' . $this->renderQueryFilter() . '</div>'
             . '<div class="col-6">' . $this->renderSortFilter() . '</div>'
             . '</div>'
-            . '<div id="list_' . $this->id . '" class="form-row pt-3">'
+            . '<div id="list_' . $this->id . '" class="row pt-3">'
             . $this->renderFileList([], $this->value, $this->id)
             . '</div>'
             . '</div>'
@@ -296,7 +296,7 @@ class WidgetLibrary extends BaseWidget
         }
 
         return '<a href="#" class="btn btn-block btn-secondary" onclick="widgetLibrarySelect(\'' . $this->id . '\', \'\', \'' . Tools::lang()->trans('select') . '\');">'
-            . '<i class="fas fa-times mr-1"></i>' . Tools::lang()->trans('none')
+            . '<i class="fas fa-times me-1"></i>' . Tools::lang()->trans('none')
             . '</a>';
     }
 

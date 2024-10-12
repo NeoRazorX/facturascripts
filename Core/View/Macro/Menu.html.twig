@@ -25,8 +25,8 @@
 
     {% if parent is empty %}
         {# Main level menu/submenu #}
-        <li class="nav-item dropdown{{ active }}">
-            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle{{ active }}" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {% set title = menuItem.title %}
                 <span class="d-md-none">{{ title | slice(0, 2) }}</span>
                 <span class="d-none d-md-inline-block">{{ title }}</span>

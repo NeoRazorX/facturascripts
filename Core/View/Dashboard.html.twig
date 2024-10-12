@@ -37,7 +37,7 @@
                                 <i class="far fa-bookmark" aria-hidden="true"></i>
                             </a>
                         {% endif %}
-                        <span class="ml-2">{{ fsc.title }}</span>
+                        <span class="ms-2">{{ fsc.title }}</span>
                     </h1>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                     <div class="card bg-warning shadow mb-3">
                         <div class="card-body">
                             <div class="h3">
-                                <i class="fas fa-save mr-1"></i> {{ trans('dashboard-backup') }}
+                                <i class="fas fa-save me-1"></i> {{ trans('dashboard-backup') }}
                             </div>
                             <p class="card-text">{{ trans('dashboard-backup-p') }}</p>
                             <ul class="mb-0">
@@ -116,9 +116,9 @@
                         <td>{{ trans(key) }}</td>
                         {% set color = value < 0 ? ' text-danger' : '' %}
                         {% if ismoney %}
-                            <td class="text-right{{ color }}">{{ money(value) }}</td>
+                            <td class="text-end{{ color }}">{{ money(value) }}</td>
                         {% else %}
-                            <td class="text-right">{{ value }}</td>
+                            <td class="text-end">{{ value }}</td>
                         {% endif %}
                     </tr>
                 {% endfor %}
@@ -129,8 +129,8 @@
 
 {% macro sectionLinks(fsc) %}
     <div class="card shadow mb-3">
-        <div class="pl-3 pt-1 pr-3 pb-3">
-            <div class="form-row">
+        <div class="ps-3 pt-1 pe-3 pb-3">
+            <div class="row">
                 <div class="col-md">
                     <h2 class="h4 mt-3 mb-1">
                         <i class="fas fa-plus fa-fw"></i> {{ trans('create') }}
@@ -206,8 +206,8 @@
                 <tr>
                     <th>{{ trans('reference') }}</th>
                     <th>{{ trans('warehouse') }}</th>
-                    <th class="text-right">{{ trans('minimum-stock') }}</th>
-                    <th class="text-right">{{ trans('available') }}</th>
+                    <th class="text-end">{{ trans('minimum-stock') }}</th>
+                    <th class="text-end">{{ trans('available') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -215,8 +215,8 @@
                     <tr class="clickableRow table-danger" data-href="{{ stock.url() }}">
                         <td>{{ stock.referencia }}</td>
                         <td>{{ stock.codalmacen }}</td>
-                        <td class="text-right">{{ number(stock.stockmin) }}</td>
-                        <td class="text-right">{{ number(stock.disponible) }}</td>
+                        <td class="text-end">{{ number(stock.stockmin) }}</td>
+                        <td class="text-end">{{ number(stock.disponible) }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -231,11 +231,11 @@
             <div class="col">
                 <div class="card shadow mb-3">
                     <div class="card-header">
-                        <span class="float-right">{{ news.fecha }}</span>
+                        <span class="float-end">{{ news.fecha }}</span>
                         <a href="{{ news.url }}" target="_blank">{{ news.title | raw }}</a>
                     </div>
                     <div class="card-body p-3">
-                        <div class="form-row align-items-center">
+                        <div class="row align-items-center">
                             <div class="col-auto">
                                 <a href="{{ news.url }}" target="_blank" class="btn btn-outline-secondary">
                                     <i class="far fa-newspaper fa-3x"></i>
@@ -253,7 +253,7 @@
 {% macro sectionReceipts(fsc) %}
     <div class="card shadow mb-3">
         <div class="p-3">
-            <span class="float-right badge badge-danger">{{ trans('unpaid') }}</span>
+            <span class="float-end badge bg-danger">{{ trans('unpaid') }}</span>
             <h2 class="h4 mb-0">
                 <i class="fas fa-dollar-sign fa-fw"></i>
                 {{ trans('receipts') }}
@@ -265,8 +265,8 @@
                 <tr>
                     <th>{{ trans('customer') }}</th>
                     <th>{{ trans('observations') }}</th>
-                    <th class="text-right">{{ trans('amount') }}</th>
-                    <th class="text-right">{{ trans('expiration') }}</th>
+                    <th class="text-end">{{ trans('amount') }}</th>
+                    <th class="text-end">{{ trans('expiration') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -274,8 +274,8 @@
                     <tr class="clickableRow table-danger" data-href="{{ receipt.url() }}">
                         <td>{{ receipt.getSubject().nombre | raw }}</td>
                         <td>{{ receipt.observaciones | raw }}</td>
-                        <td class="text-right text-nowrap">{{ money(receipt.importe) }}</td>
-                        <td class="text-right text-nowrap">{{ receipt.vencimiento }}</td>
+                        <td class="text-end text-nowrap">{{ money(receipt.importe) }}</td>
+                        <td class="text-end text-nowrap">{{ receipt.vencimiento }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -285,7 +285,7 @@
 {% endmacro %}
 
 {% macro sectionStats(fsc) %}
-    <div class="form-row">
+    <div class="row">
         <div class="col-sm-6 col-lg-3">
             {{ _self.drawStatsBox(fsc, 'purchases', 'bg-danger', true) }}
         </div>
