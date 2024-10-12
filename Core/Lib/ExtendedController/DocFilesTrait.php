@@ -44,29 +44,54 @@ trait DocFilesTrait
         }
 
         $uploadFiles = $this->request->files->getArray('new-files');
-        foreach ($uploadFiles as $uploadFile) {
-            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
-                $newFile = new AttachedFile();
-                $newFile->path = $uploadFile->getClientOriginalName();
-                if (false === $newFile->save()) {
-                    Tools::log()->error('fail');
-                    return true;
-                }
-
-                $fileRelation = new AttachedFileRelation();
-                $fileRelation->idfile = $newFile->idfile;
-                $fileRelation->model = $this->getModelClassName();
-                $fileRelation->modelcode = $this->request->query->get('code');
-                $fileRelation->modelid = (int)$fileRelation->modelcode;
-                $fileRelation->nick = $this->user->nick;
-                $fileRelation->observations = $this->request->request->get('observations');
-                $this->pipeFalse('addFileAction', $fileRelation, $this->request);
-
-                if (false === $fileRelation->save()) {
-                    Tools::log()->error('fail-relation');
-                    return true;
-                }
+        foreach ($uploadFiles as $key => $uploadFile) {
+            if (is_null($uploadFile)) {
+                continue;
+            } elseif (false === $uploadFile->isValid()) {
+                Tools::log()->error($uploadFile->getErrorMessage());
+                continue;
             }
+
+            // exclude php files
+            if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
+                Tools::log()->error(Tools::lang()->trans('php-files-blocked'));
+                continue;
+            }
+
+            // check if the file already exists
+            $destiny = FS_FOLDER . '/MyFiles/';
+            $destinyName = $uploadFile->getClientOriginalName();
+            if (file_exists($destiny . $destinyName)) {
+                $destinyName = mt_rand(1, 999999) . '_' . $destinyName;
+            }
+
+            // move the file to the MyFiles folder
+            if (false === $uploadFile->move($destiny, $destinyName)) {
+                Tools::log()->error(Tools::lang()->trans('file-not-found'));
+                continue;
+            }
+
+            $newFile = new AttachedFile();
+            $newFile->path = $uploadFile->getClientOriginalName();
+            if (false === $newFile->save()) {
+                Tools::log()->error('fail');
+                return true;
+            }
+
+            $fileRelation = new AttachedFileRelation();
+            $fileRelation->idfile = $newFile->idfile;
+            $fileRelation->model = $this->getModelClassName();
+            $fileRelation->modelcode = $this->request->query->get('code');
+            $fileRelation->modelid = (int)$fileRelation->modelcode;
+            $fileRelation->nick = $this->user->nick;
+            $fileRelation->observations = $this->request->request->get('observations');
+            $this->pipeFalse('addFileAction', $fileRelation, $this->request);
+
+            if (false === $fileRelation->save()) {
+                Tools::log()->error('fail-relation');
+                return true;
+            }
+
         }
 
         // Si se trata de un documento, actualizamos el número de documentos adjuntos.
