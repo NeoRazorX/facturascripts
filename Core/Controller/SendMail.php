@@ -312,7 +312,7 @@ class SendMail extends Controller
         Tools::folderCheckOrCreate(NewMail::ATTACHMENTS_TMP_PATH);
         $this->newMail->addAttachment(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName, $fileName);
 
-        foreach ($this->request->files->get('uploads', []) as $file) {
+        foreach ($this->request->files->get('uploads') ?? [] as $file) {
             // guardamos el adjunto en una carpeta temporal
             if ($file->move(NewMail::ATTACHMENTS_TMP_PATH, $file->getClientOriginalName())) {
                 // añadimos el adjunto al email
