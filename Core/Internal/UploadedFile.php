@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -92,12 +92,12 @@ final class UploadedFile
         }
     }
 
-    public static function getMaxFilesize()
+    public static function getMaxFilesize(): int
     {
-        $sizePostMax = self::parseFilesize(\ini_get('post_max_size'));
-        $sizeUploadMax = self::parseFilesize(\ini_get('upload_max_filesize'));
+        $sizePostMax = self::parseFilesize(ini_get('post_max_size'));
+        $sizeUploadMax = self::parseFilesize(ini_get('upload_max_filesize'));
 
-        return min($sizePostMax ?: \PHP_INT_MAX, $sizeUploadMax ?: \PHP_INT_MAX);
+        return min($sizePostMax ?: PHP_INT_MAX, $sizeUploadMax ?: PHP_INT_MAX);
     }
 
     public function getMimeType(): string
@@ -118,6 +118,11 @@ final class UploadedFile
     public function isValid(): bool
     {
         return $this->error === UPLOAD_ERR_OK && $this->isUploaded();
+    }
+
+    public function move(string $destiny, string $destinyName): bool
+    {
+        return move_uploaded_file($this->tmp_name, $destiny . $destinyName);
     }
 
     public function moveTo(string $targetPath): bool
@@ -157,10 +162,5 @@ final class UploadedFile
         }
 
         return $max;
-    }
-
-    public function move(string $destiny, string $destinyName): bool
-    {
-        return move_uploaded_file($this->tmp_name, $destiny . $destinyName);
     }
 }

@@ -94,7 +94,7 @@ $(document).ready(function () {
     $(".clickableRow").mousedown(function (event) {
         if (event.which === 1 || event.which === 2) {
             var href = $(this).attr("data-href");
-            var target = $(this).attr("data-target");
+            var target = $(this).attr("data-bs-target");
             if (typeof href !== typeof undefined && href !== false) {
                 if (typeof target !== typeof undefined && target === "_blank") {
                     window.open($(this).attr("data-href"));

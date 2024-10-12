@@ -52,7 +52,7 @@ function reloadClickableRow() {
     $(".clickableRow").mousedown(function (event) {
         if (event.which === 1) {
             var href = $(this).attr("data-href");
-            var target = $(this).attr("data-target");
+            var target = $(this).attr("data-bs-target");
             if (typeof href !== typeof undefined && href !== false) {
                 if (typeof target !== typeof undefined && target === "_blank") {
                     window.open($(this).attr("data-href"));
@@ -70,9 +70,9 @@ function searchOnSection(url) {
             var items = json2tr(val.results);
 
             if (items.length > 0) {
-                $("#v-pills-tab").append("<a class='nav-link' id='v-pills-" + key + "-tab' data-toggle='pill' href='#v-pills-"
+                $("#v-pills-tab").append("<a class='nav-link' id='v-pills-" + key + "-tab' data-bs-toggle='pill' href='#v-pills-"
                         + key + "' role='tab' aria-controls='v-pills-" + key + "' aria-expanded='true'>\n\
-                    <span class='badge badge-secondary float-right'>" + items.length + "</span>\n\
+                    <span class='badge bg-secondary float-end'>" + items.length + "</span>\n\
                     <i class='" + val.icon + " fa-fw'></i>\n\
                     " + val.title + "\n\
                 </a>");

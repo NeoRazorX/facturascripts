@@ -5,7 +5,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\AjaxForms\SalesController;
+use FacturaScripts\Core\Lib\AjaxForms\SalesController;
 
 /**
  * Description of EditPedidoCliente
@@ -14,11 +14,7 @@ use FacturaScripts\Core\Base\AjaxForms\SalesController;
  */
 class EditPedidoCliente extends SalesController
 {
-
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'PedidoCliente';
     }

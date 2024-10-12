@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
-use FacturaScripts\Core\Base\Contract\SalesModInterface;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Contract\SalesModInterface;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
@@ -30,6 +30,7 @@ use FacturaScripts\Core\Tools;
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/SalesFooterHTML
  */
 class SalesFooterHTML
 {
@@ -82,14 +83,14 @@ class SalesFooterHTML
 
         $i18n = new Translator();
         return '<div class="container-fluid mt-3">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . self::renderField($i18n, $model, '_productBtn')
             . self::renderField($i18n, $model, '_newLineBtn')
             . self::renderField($i18n, $model, '_sortableBtn')
             . self::renderField($i18n, $model, '_fastLineInput')
             . self::renderField($i18n, $model, '_subtotalNetoBtn')
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . self::renderField($i18n, $model, 'observaciones')
             . self::renderNewFields($i18n, $model)
             . self::renderField($i18n, $model, 'netosindto')
@@ -104,11 +105,11 @@ class SalesFooterHTML
             . self::renderField($i18n, $model, 'totalbeneficio')
             . self::renderField($i18n, $model, 'total')
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-auto">'
             . self::renderField($i18n, $model, '_deleteBtn')
             . '</div>'
-            . '<div class="col text-right">'
+            . '<div class="col text-end">'
             . self::renderNewBtnFields($i18n, $model)
             . self::renderField($i18n, $model, '_modalFooter')
             . self::renderField($i18n, $model, '_undoBtn')
@@ -126,7 +127,7 @@ class SalesFooterHTML
             return '';
         }
 
-        return '<button class="btn btn-outline-secondary mr-2" type="button" data-toggle="modal" data-target="#footerModal">'
+        return '<button class="btn btn-outline-secondary me-2" type="button" data-bs-toggle="modal" data-bs-target="#footerModal">'
             . '<i class="fas fa-plus fa-fw" aria-hidden="true"></i></button>'
             . self::modalFooterHtml($i18n, $htmlModal);
     }
@@ -138,18 +139,18 @@ class SalesFooterHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title">' . $i18n->trans('detail') . ' ' . $i18n->trans('footer') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . $htmlModal
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . $i18n->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'

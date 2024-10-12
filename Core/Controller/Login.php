@@ -19,11 +19,13 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
+use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
@@ -42,6 +44,10 @@ class Login implements ControllerInterface
 
     /** @var string */
     public $title = 'Login';
+
+    /** @var boolean */
+    private $two_factor_view = false;
+
 
     public function __construct(string $className, string $url = '')
     {
@@ -78,6 +84,20 @@ class Login implements ControllerInterface
             case 'logout':
                 $this->logoutAction($request);
                 break;
+
+            case 'valid-totp':
+                $this->validCodeAction($request);
+                break;
+        }
+
+        if ($this->two_factor_view) {
+            echo Html::render('Login/TwoFactor.html.twig', [
+                'controllerName' => 'Login',
+                'debugBarRender' => false,
+                'fsc' => $this,
+                'template' => 'Login/TwoFactor.html.twig',
+            ]);
+            return;
         }
 
         echo Html::render('Login/Login.html.twig', [
@@ -290,10 +310,32 @@ class Login implements ControllerInterface
             return;
         }
 
+        if($user->two_factor_enabled){
+            $this->two_factor_view = true;
+            $this->user = $user;
+            return;
+        }
+
+        $this->updateUserAndRedirect($user, Session::getClientIp(), $request->headers->get('User-Agent'));
+    }
+
+    private function validCodeAction(Request $request): void
+    {
+        $user = new User();
+        $user->loadFromCode($request->request->get('fsNick'));
+
+        if(!TwoFactorManager::verifyCode($user->two_factor_secret_key, $request->request->get('fsCode'))){
+            Tools::log()->warning('login-2fa-fail');
+            return;
+        }
+
+        $this->updateUserAndRedirect($user, Session::getClientIp(), $request->headers->get('User-Agent'));
+    }
+
+    private function updateUserAndRedirect(User $user, string $ip, string $browser): void
+    {
         // update user data
         Session::set('user', $user);
-        $ip = Session::getClientIp();
-        $browser = $request->headers->get('User-Agent');
         $user->newLogkey($ip, $browser);
         if (false === $user->save()) {
             Tools::log()->warning('login-user-not-saved');

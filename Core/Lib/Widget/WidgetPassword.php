@@ -52,12 +52,10 @@ class WidgetPassword extends WidgetText
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
         $labelHtml = '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
-        return '<div class="form-group mb-2">'
+        return '<div class="mb-3 mb-2">'
             . $labelHtml
             . '<div class="input-group">'
-            . '<div class="' . $this->css('input-group-prepend') . ' d-flex d-sm-none d-xl-flex">'
             . '<span class="input-group-text edit-psw"><i class="fas fa-eye fa-fw"></i></span>'
-            . '</div>'
             . $this->inputHtml()
             . '</div>'
             . $descriptionHtml

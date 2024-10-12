@@ -103,7 +103,7 @@ final class Request
         return new self([
             'cookies' => $_COOKIE,
             'files' => $_FILES,
-            'headers' => getallheaders(),
+            'headers' => $_SERVER,
             'query' => $_GET,
             'request' => $_POST,
         ]);

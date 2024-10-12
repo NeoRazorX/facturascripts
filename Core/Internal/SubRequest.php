@@ -58,6 +58,10 @@ final class SubRequest
 
     public function get(string $key, $default = null): ?string
     {
+        if ($key === 'User-Agent') {
+            return $this->data['HTTP_USER_AGENT'] ?? $default;
+        }
+
         $value = $this->data[$key] ?? $default;
 
         if (is_array($value)) {
