@@ -18,6 +18,17 @@
         $(document).ready(function () {
             document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+            let db_type = document.fs_install.fs_db_type.value;
+            if (db_type === 'mysql') {
+                $("#mysql_socket_div").show();
+                $("#pgsql_ssl_div").hide();
+                $("#pgsql_endpoint").hide();
+            } else if (db_type === 'postgresql') {
+                $("#mysql_socket_div").hide();
+                $("#pgsql_ssl_div").show();
+                $("#pgsql_endpoint").show();
+            }
+
             $('#db_type').on('change', function () {
                 let str = '';
                 $('#db_type option:selected').each(function () {
@@ -27,10 +38,14 @@
                     $('#db_port').val(3306);
                     $('#db_user').val('root');
                     $("#mysql_socket_div").show();
+                    $("#pgsql_ssl_div").hide();
+                    $("#pgsql_endpoint").hide();
                 } else if (str === 'postgresql') {
                     $('#db_port').val(5432);
                     $('#db_user').val('postgres');
                     $("#mysql_socket_div").hide();
+                    $("#pgsql_ssl_div").show();
+                    $("#pgsql_endpoint").show();
                 }
             });
 
@@ -78,24 +93,25 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <div class="card shadow mb-5">
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                        <li role="presentation" class="nav-item">
-                            <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab"
-                               data-toggle="tab">
-                                <i class="fas fa-cogs" aria-hidden="true"></i>&nbsp; {{ trans('preferences') }}
-                            </a>
-                        </li>
-                        <li role="presentation" class="nav-item">
-                            <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
-                                <i class="far fa-file-alt"></i>&nbsp; {{ trans('license') }}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-body">
-                    <form name="fs_install" method="post" class="form">
+            <form name="fs_install" method="post" class="form">
+                <div class="card shadow mb-5">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            <li role="presentation" class="nav-item">
+                                <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab"
+                                   data-toggle="tab">
+                                    <i class="fas fa-cogs" aria-hidden="true"></i>&nbsp; {{ trans('preferences') }}
+                                </a>
+                            </li>
+                            <li role="presentation" class="nav-item">
+                                <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab"
+                                   data-toggle="tab">
+                                    <i class="far fa-file-alt"></i>&nbsp; {{ trans('license') }}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" id="preferencias">
                                 <div class="row">
@@ -111,8 +127,9 @@
                                                 <select id="fs_lang" name="fs_lang" class="form-control">
                                                     {% for langCode, langName in i18n.getAvailableLanguages() %}
                                                         {% if langCode == i18n.getLang() %}
-                                                            <option value="{{ langCode }}"
-                                                                    selected>{{ langName }}</option>
+                                                            <option value="{{ langCode }}" selected>
+                                                                {{ langName }}
+                                                            </option>
                                                         {% else %}
                                                             <option value="{{ langCode }}">{{ langName }}</option>
                                                         {% endif %}
@@ -196,7 +213,8 @@
                                                         <i class="fas fa-key"></i>
                                                     </span>
                                                 </span>
-                                                <input type="password" name="fs_db_pass" class="form-control"/>
+                                                <input type="password" name="fs_db_pass" value="{{ fsc.db_pass }}"
+                                                       class="form-control"/>
                                             </div>
                                         </div>
                                     </div>
@@ -206,6 +224,45 @@
                                             <input type="text" name="mysql_socket" class="form-control"
                                                    placeholder="{{ trans('optional') }}"/>
                                             <small class="form-text text-muted">{{ trans('mysql-socket-p') }}</small>
+                                        </div>
+                                    </div>
+                                    <div id="pgsql_ssl_div" class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ trans('pgsql-ssl-mode') }}:
+                                            <select name="pgsql_ssl_mode" class="form-control">
+                                                <option value="" selected>------</option>
+                                                <option value="disable">disable</option>
+                                                <option value="allow">allow</option>
+                                                <option value="prefer">prefer</option>
+                                                <option value="require">require</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center">
+                                    <div id="pgsql_endpoint" class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ trans('pgsql-endpoint') }}:
+                                            <input type="text" name="pgsql_endpoint" class="form-control"
+                                                   placeholder="{{ trans('optional') }}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-auto">
+                                        <div class="form-check mb-2 mb-sm-0">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" name="fs_debug"
+                                                       value="true"/>
+                                                {{ trans('debug-mode') }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm">
+                                        <div class="form-check mb-2 mb-sm-0">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" name="fs_gtm"
+                                                       value="true"/>
+                                                {{ trans('send-anonymous-data') }}
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
@@ -220,36 +277,22 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="card-footer">
                         <div class="row">
-                            <div class="col-sm-auto">
-                                <div class="form-check mb-2 mb-sm-0">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="fs_debug" value="true"/>
-                                        {{ trans('debug-mode') }}
-                                    </label>
-                                </div>
-                            </div>
                             <div class="col-sm">
-                                <div class="form-check mb-2 mb-sm-0">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="fs_gtm" value="true"/>
-                                        {{ trans('send-anonymous-data') }}
-                                    </label>
-                                </div>
+                                &COPY; 2013-{{ 'now' | date('Y') }}
+                                <a href="https://facturascripts.com" rel="nofollow" target="_blank">FacturaScripts</a>
                             </div>
                             <div class="col-sm-auto">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-check" aria-hidden="true"></i> {{ trans('accept') }}
+                                    <i class="fas fa-check mr-1" aria-hidden="true"></i> {{ trans('accept') }}
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
-                <div class="card-footer">
-                    &COPY; 2013-{{ 'now' | date('Y') }}
-                    <a href="https://facturascripts.com" rel="nofollow" target="_blank">FacturaScripts</a>
-                </div>
-            </div>
+            </form>
             <br/>
             <div class="card-deck">
                 <div class="card shadow mb-3">

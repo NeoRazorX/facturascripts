@@ -28,7 +28,6 @@ use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleUser;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Cookie;
 
 /**
  * Controller to edit a single item from the User model
@@ -179,14 +178,7 @@ class EditUser extends EditController
             Tools::lang()->setLang($this->views['EditUser']->model->langcode);
 
             $expire = time() + FS_COOKIES_EXPIRE;
-            $this->response->headers->setCookie(
-                Cookie::create(
-                    'fsLang',
-                    $this->views['EditUser']->model->langcode,
-                    $expire,
-                    Tools::config('route', '/')
-                )
-            );
+            $this->response->cookie('fsLang', $this->views['EditUser']->model->langcode, $expire);
         }
 
         return $result;

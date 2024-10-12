@@ -5,9 +5,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\AjaxForms\SalesController;
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\AjaxForms\SalesController;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
@@ -356,9 +356,9 @@ class EditFacturaCliente extends SalesController
             return true;
         }
 
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('code');
         $model = $this->views[$this->active]->model;
-        if (false === is_array($codes) || empty($model)) {
+        if (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         }

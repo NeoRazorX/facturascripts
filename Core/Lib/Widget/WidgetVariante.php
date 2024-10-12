@@ -20,13 +20,13 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\Join\VarianteProducto;
 use FacturaScripts\Dinamic\Model\Variante;
-use Symfony\Component\HttpFoundation\Request;
 
 class WidgetVariante extends WidgetText
 {

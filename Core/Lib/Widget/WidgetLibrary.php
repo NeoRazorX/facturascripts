@@ -20,11 +20,11 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Internal\UploadedFile;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\AttachedFile;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
 
 class WidgetLibrary extends BaseWidget
 {
@@ -160,7 +160,7 @@ class WidgetLibrary extends BaseWidget
         return $list;
     }
 
-    public function renderFileList(array $files = [], ?int $selected_value = null): string
+    public function renderFileList(array $files = [], ?int $selected_value = null, ?string $id = null): string
     {
         $html = '';
 
@@ -181,11 +181,11 @@ class WidgetLibrary extends BaseWidget
                 . '</a>'
                 . '</p>';
 
-            $js = "widgetLibrarySelect('" . $this->id . "', '" . $file->idfile . "', '" . $file->shortFileName() . "');";
+            $js = "widgetLibrarySelect('" . $id . "', '" . $file->idfile . "', '" . $file->shortFileName() . "');";
 
             if ($file->isImage()) {
                 $html .= '<div class="media">'
-                    . '<img src="' . $file->url('download-permanent') . '" class="mr-3" alt="' . $file->filename
+                    . '<img loading="lazy" src="' . $file->url('download-permanent') . '" class="mr-3" alt="' . $file->filename
                     . '" width="64" type="button" onclick="' . $js . '" title="' . Tools::lang()->trans('select') . '">'
                     . '<div class="media-body">'
                     . '<h5 class="text-break mt-0">' . $file->filename . '</h5>'
@@ -264,22 +264,26 @@ class WidgetLibrary extends BaseWidget
             . '</div>'
             . '<div class="modal-body bg-light">'
             . '<div class="form-row">'
-            . '<div class="col-12">'
-            . '<div class="custom-file mb-2">'
+            . '<div class="col-6">' . $this->renderQueryFilter() . '</div>'
+            . '<div class="col-6">' . $this->renderSortFilter() . '</div>'
+            . '</div>'
+            . '<div id="list_' . $this->id . '" class="form-row pt-3">'
+            . $this->renderFileList([], $this->value, $this->id)
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer p-2">'
+            . '<div class="col">'
+            . '<div class="custom-file">'
             . '<input type="file" class="custom-file-input" id="modal_' . $this->id . '_f" accept="' . $this->accept
             . '" onchange="widgetLibraryUpload(\'' . $this->id . '\', this.files[0]);">'
             . '<label class="custom-file-label" for="modal_' . $this->id . '_f" data-browse="' . Tools::lang()->trans('select')
             . '">' . Tools::lang()->trans('add-file') . '</label>'
             . '</div>'
             . '</div>'
-            . '<div class="col-6">' . $this->renderQueryFilter() . '</div>'
-            . '<div class="col-6">' . $this->renderSortFilter() . '</div>'
-            . '</div>'
-            . '<div id="list_' . $this->id . '" class="form-row pt-3">'
-            . $this->renderFileList()
+            . '<div class="col">'
+            . $this->renderSelectNoneBtn()
             . '</div>'
             . '</div>'
-            . '<div class="modal-footer p-2">' . $this->renderSelectNoneBtn() . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';

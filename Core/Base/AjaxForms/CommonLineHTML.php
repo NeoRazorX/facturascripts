@@ -32,6 +32,9 @@ use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
+/**
+* @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/CommonLineHTML
+*/
 trait CommonLineHTML
 {
     /** @var string */
@@ -244,8 +247,7 @@ trait CommonLineHTML
 
         // cargamos las variantes
         $variantModel = new Variante();
-        $sql_in = implode(',', array_unique($references));
-        $where = [new DataBaseWhere('referencia', $sql_in, 'IN')];
+        $where = [new DataBaseWhere('referencia', $references, 'IN')];
         foreach ($variantModel->all($where, [], 0, 0) as $variante) {
             self::$variants[$variante->referencia] = $variante;
         }
@@ -254,7 +256,7 @@ trait CommonLineHTML
         $stockModel = new Stock();
         $where = [
             new DataBaseWhere('codalmacen', $model->codalmacen),
-            new DataBaseWhere('referencia', $sql_in, 'IN'),
+            new DataBaseWhere('referencia', $references, 'IN'),
         ];
         foreach ($stockModel->all($where, [], 0, 0) as $stock) {
             self::$stocks[$stock->referencia] = $stock;

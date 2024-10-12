@@ -25,15 +25,14 @@ use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User as DinUser;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class from which all FacturaScripts controllers must inherit.
@@ -235,25 +234,11 @@ class Controller implements ControllerInterface
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->headers->setCookie(
-                Cookie::create(
-                    'fsHomepage',
-                    $this->user->homepage,
-                    time() + FS_COOKIES_EXPIRE,
-                    Tools::config('route', '/')
-                ),
-            );
+            $this->response->cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE);
             $this->user->save();
         } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;
-            $this->response->headers->setCookie(
-                Cookie::create(
-                    'fsHomepage',
-                    $this->user->homepage,
-                    time() - FS_COOKIES_EXPIRE,
-                    Tools::config('route', '/')
-                )
-            );
+            $this->response->cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE);
             $this->user->save();
         }
     }

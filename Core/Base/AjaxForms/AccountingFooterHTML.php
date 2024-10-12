@@ -27,6 +27,7 @@ use FacturaScripts\Dinamic\Model\Asiento;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/LibAccountingFooterHTMLTrait
  */
 class AccountingFooterHTML
 {

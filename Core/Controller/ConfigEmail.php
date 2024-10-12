@@ -119,7 +119,7 @@ class ConfigEmail extends PanelController
             return;
         }
 
-        $codes = $this->request->request->get('code', []);
+        $codes = $this->request->request->getArray('code');
         if (false === is_array($codes)) {
             return;
         }
