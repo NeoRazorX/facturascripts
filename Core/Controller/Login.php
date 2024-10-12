@@ -324,7 +324,7 @@ class Login implements ControllerInterface
         $user = new User();
         $user->loadFromCode($request->request->get('fsNick'));
 
-        if(!TwoFactorManager::verifyCode($user->secret_key, $request->request->get('fsCode'))){
+        if(!TwoFactorManager::verifyCode($user->two_factor_secret_key, $request->request->get('fsCode'))){
             Tools::log()->warning('login-2fa-fail');
             return;
         }

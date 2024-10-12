@@ -95,12 +95,11 @@ class User extends ModelClass
     /** @var string */
     public $password;
 
-    /** @var string */
-    public $secret_key;
-
     /** @var bool */
     public $two_factor_enabled;
 
+    /** @var string */
+    public $two_factor_secret_key;
 
     public function addRole(?string $code): bool
     {
@@ -197,6 +196,20 @@ class User extends ModelClass
         return $roles;
     }
 
+    public function getTwoFactorUrl(): string
+    {
+        if (empty($this->two_factor_secret_key)) {
+            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
+        }
+
+        return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->two_factor_secret_key);
+    }
+
+    public function getTwoFactorQR(): string
+    {
+        return TwoFactorManager::getQRCodeImage($this->getTwoFactorUrl());
+    }
+
     public function install(): string
     {
         // we need this models to be checked before
@@ -274,6 +287,10 @@ class User extends ModelClass
             $this->level = 99;
         } elseif ($this->level === null) {
             $this->level = 0;
+        }
+
+        if (empty($this->two_factor_secret_key)) {
+            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
         }
 
         return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();
@@ -364,24 +381,4 @@ class User extends ModelClass
 
         return true;
     }
-
-// Magic function to get dynamic properties
-    public function __get($name)
-    {
-        try {
-            switch ($name) {
-                case 'urlqr':
-                    if ($this->secret_key === null) {
-                        $this->secret_key = TwoFactorManager::getSecretKey();
-                        $this->save();
-                    }
-                    // Return the QR code URL for the user to scan
-                    return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->secret_key);
-            }
-        } catch (\Exception $e) {
-            Tools::log()->error("Error generating URL QR or secret key: " . $e->getMessage());
-            return null;
-        }
-    }
-
 }
