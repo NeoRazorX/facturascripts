@@ -33,7 +33,7 @@ use FacturaScripts\Core\Model\ImpuestoZona;
 class Calculator
 {
     /** @var CalculatorModInterface[] */
-    public static array $mods = [];
+    public static $mods = [];
 
     public static function addMod(CalculatorModInterface $mod): void
     {

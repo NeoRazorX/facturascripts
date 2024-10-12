@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Test\Core\Base;
+namespace FacturaScripts\Test\Core\Lib;
 
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
