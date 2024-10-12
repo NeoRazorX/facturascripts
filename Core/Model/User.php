@@ -170,6 +170,7 @@ class User extends ModelClass
         $this->idempresa = Tools::settings('default', 'idempresa', 1);
         $this->langcode = FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
+        $this->two_factor_enabled = false;
     }
 
     public function delete(): bool
