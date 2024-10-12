@@ -100,6 +100,9 @@ class EditUser extends EditController
         $this->setSettings($mvn, 'btnOptions', false);
         $this->setSettings($mvn, 'btnPrint', false);
 
+        // add two factor authentication tab
+        $this->createViewsTwofactor();
+
         // add roles tab
         if ($this->user->admin) {
             $this->createViewsRole();
@@ -110,8 +113,11 @@ class EditUser extends EditController
 
         // add emails tab
         $this->createViewsEmails();
+    }
 
-
+    protected function createViewsTwofactor(string $viewName = 'UserTwoFactor'): void
+    {
+        $this->addHtmlView($viewName, 'Tab\UserTwoFactor', 'User', 'two-factor', 'fa-solid fa-key');
     }
 
     protected function createViewsEmails(string $viewName = 'ListEmailSent'): void
@@ -237,7 +243,7 @@ class EditUser extends EditController
 
             // Validar que el código no esté vacío
             if (empty($totpCode)) {
-                Tools::log()->error('No se ha recibido el código de TOTP.');
+                Tools::log()->error('totp-code-not-received');
                 return parent::execAfterAction($action);
             }
 
@@ -249,12 +255,12 @@ class EditUser extends EditController
                 // Activar la autenticación de dos factores y guardar el estado
                 $userModel->two_factor_enabled = true;
                 if ($userModel->save()) {
-                    Tools::log()->info("Código de TOTP correcto. La autenticación en dos pasos ha sido activada para el usuario {$userModel->nick}.");
+                    Tools::log()->info("totp-code-correct-two-step-authentication-has-been-activated-for-the-user", ['%nick%' => $userModel->nick]);
                 } else {
-                    Tools::log()->error("Error al guardar el estado de dos factores para el usuario {$userModel->nick}.");
+                    Tools::log()->error("error-saving two-factor-status-for-user", ['%nick%' => $userModel->nick]);
                 }
             } else {
-                Tools::log()->error('Código de TOTP incorrecto.');
+                Tools::log()->error('incorrect-totp-code.');
             }
         }
 
@@ -270,12 +276,12 @@ class EditUser extends EditController
      */
     private function validateTotpCode($userModel, string $totpCode): bool
     {
-        if (empty($userModel->secret_key)) {
+        if (empty($userModel->two_factor_secret_key)) {
             Tools::log()->error("El usuario con ID {$userModel->id} no tiene una clave secreta de TOTP configurada.");
             return false;
         }
 
-        return TwoFactorManager::verifyCode($userModel->secret_key, $totpCode);
+        return TwoFactorManager::verifyCode($userModel->two_factor_secret_key, $totpCode);
     }
 
     /**
@@ -300,6 +306,12 @@ class EditUser extends EditController
                 parent::loadData($viewName, $view);
                 $this->loadHomepageValues();
                 $this->loadLanguageValues();
+
+                // guarda el usuario si no tiene clave secreta de dos factores
+                if (empty($view->model->two_factor_secret_key)) {
+                    $view->model->save();
+                }
+
                 if (false === $this->allowUpdate()) {
                     $this->setTemplate('Error/AccessDenied');
                 } elseif ($view->model->nick == $this->user->nick) {

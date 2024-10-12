@@ -89,19 +89,4 @@
             </column>
         </group>
     </columns>
-    <modals>
-        <group name="modal2fa" title="other-data" icon="fas fa-users">
-            <column name="urlqr" numcolumns="12">
-                <widget type="link" fieldname="urlqr" readonly="true"/>
-            </column>
-            <column name="code" numcolumns="12">
-                <widget type="text" fieldname="codetime" required="true" />
-            </column>
-        </group>
-    </modals>
-    <rows>
-        <row type="actions">
-            <button type="modal" label="Activar 2FA" color="warning" action="modal2fa" />
-        </row>
-    </rows>
 </view>
