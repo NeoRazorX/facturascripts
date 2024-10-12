@@ -98,13 +98,13 @@ class SalesModalHTML
             $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return salesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
                 . '<td><b>' . $row['referencia'] . '</b> ' . $description . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>';
+                . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>';
 
             if (self::$vendido) {
-                $tbody .= '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['ultimo_precio'])) . '</td>';
+                $tbody .= '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['ultimo_precio'])) . '</td>';
             }
 
-            $tbody .= '<td class="text-right">' . $row['disponible'] . '</td>'
+            $tbody .= '<td class="text-end">' . $row['disponible'] . '</td>'
                 . '</tr>';
         }
 
@@ -113,15 +113,15 @@ class SalesModalHTML
         }
 
         $extraTh = self::$vendido ?
-            '<th class="text-right">' . $i18n->trans('last-price-sale') . '</th>' :
+            '<th class="text-end">' . $i18n->trans('last-price-sale') . '</th>' :
             '';
         return '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
             . '<th>' . $i18n->trans('product') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('price') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('price') . '</th>'
             . $extraTh
-            . '<th class="text-right">' . $i18n->trans('stock') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('stock') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -343,7 +343,7 @@ class SalesModalHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-sm mb-2">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
@@ -358,7 +358,7 @@ class SalesModalHTML
             . '<div class="col-sm mb-2">' . static::familias($i18n) . '</div>'
             . '<div class="col-sm mb-2">' . static::orden($i18n) . '</div>'
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-sm">'
             . '<div class="form-check">'
             . '<input type="checkbox" name="fp_vendido" value="1" class="form-check-input" id="vendido" onchange="return salesFormAction(\'find-product\', \'0\');">'

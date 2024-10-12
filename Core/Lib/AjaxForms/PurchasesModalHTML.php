@@ -96,7 +96,7 @@ class PurchasesModalHTML
             $cost = $row['neto'] ?? $row['coste'];
             $label = empty($row['refproveedor']) || $row['refproveedor'] === $row['referencia'] ?
                 '<b>' . $row['referencia'] . '</b>' :
-                '<b>' . $row['referencia'] . '</b> <span class="badge badge-light">' . $row['refproveedor'] . '</span>';
+                '<b>' . $row['referencia'] . '</b> <span class="badge bg-light">' . $row['refproveedor'] . '</span>';
             $description = Tools::textBreak($row['descripcion'], 120)
                 . static::idatributovalor($row['idatributovalor1'])
                 . static::idatributovalor($row['idatributovalor2'])
@@ -105,9 +105,9 @@ class PurchasesModalHTML
             $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return purchasesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
                 . '<td>' . $label . ' ' . $description . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($cost)) . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>'
-                . '<td class="text-right">' . $row['disponible'] . '</td>'
+                . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($cost)) . '</td>'
+                . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>'
+                . '<td class="text-end">' . $row['disponible'] . '</td>'
                 . '</tr>';
         }
 
@@ -119,9 +119,9 @@ class PurchasesModalHTML
             . '<thead>'
             . '<tr>'
             . '<th>' . $i18n->trans('product') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('cost-price') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('price') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('stock') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('cost-price') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('price') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('stock') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -263,7 +263,7 @@ class PurchasesModalHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-sm mb-2">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
@@ -278,7 +278,7 @@ class PurchasesModalHTML
             . '<div class="col-sm mb-2">' . static::familias($i18n) . '</div>'
             . '<div class="col-sm mb-2">' . static::orden($i18n) . '</div>'
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-sm">'
             . '<div class="form-check">'
             . '<input type="checkbox" name="fp_comprado" value="1" class="form-check-input" id="comprado" onchange="return purchasesFormAction(\'find-product\', \'0\');">'

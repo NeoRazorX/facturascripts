@@ -39,13 +39,13 @@ class AccountingFooterHTML
     {
         $i18n = new Translator();
         return '<div class="container-fluid">'
-            . '<div class="form-row align-items-center mt-3">'
+            . '<div class="row align-items-center mt-3">'
             . static::newSubaccount($i18n, $model)
             . static::moveBtn($i18n, $model)
             . static::importe($i18n, $model)
             . static::descuadre($i18n, $model)
             . '</div>'
-            . '<div class="form-row mt-3">'
+            . '<div class="row mt-3">'
             . static::deleteBtn($i18n, $model)
             . '<div class="col-sm"></div>'
             . static::saveBtn($i18n, $model)
@@ -68,7 +68,7 @@ class AccountingFooterHTML
         }
 
         return '<div class="col-sm-3 col-md-2">'
-            . '<button type="button" class="btn btn-block btn-danger btn-spin-action mb-3" data-toggle="modal" data-target="#deleteDocModal">'
+            . '<button type="button" class="btn btn-block btn-danger btn-spin-action mb-3" data-bs-toggle="modal" data-target="#deleteDocModal">'
             . '<i class="fas fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete') . '</button>'
             . '</div>'
             . $lockBtn

@@ -108,7 +108,7 @@ class PurchasesHeaderHTML
     {
         $i18n = new Translator();
         return '<div class="container-fluid">'
-            . '<div class="form-row align-items-end">'
+            . '<div class="row align-items-end">'
             . self::renderField($i18n, $model, 'codproveedor')
             . self::renderField($i18n, $model, 'codalmacen')
             . self::renderField($i18n, $model, 'codserie')
@@ -118,7 +118,7 @@ class PurchasesHeaderHTML
             . self::renderField($i18n, $model, 'codpago')
             . self::renderField($i18n, $model, 'total')
             . '</div>'
-            . '<div class="form-row align-items-end">'
+            . '<div class="row align-items-end">'
             . self::renderField($i18n, $model, '_detail')
             . self::renderField($i18n, $model, '_parents')
             . self::renderField($i18n, $model, '_children')
@@ -135,7 +135,7 @@ class PurchasesHeaderHTML
         $proveedor = new Proveedor();
         if (empty($model->codproveedor) || false === $proveedor->loadFromCode($model->codproveedor)) {
             return '<div class="col-sm-3">'
-                . '<div class="form-group">' . $i18n->trans('supplier')
+                . '<div class="mb-3">' . $i18n->trans('supplier')
                 . '<input type="hidden" name="codproveedor" />'
                 . '<a href="#" id="btnFindSupplierModal" class="btn btn-block btn-primary" onclick="$(\'#findSupplierModal\').modal();'
                 . ' $(\'#findSupplierInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
@@ -151,7 +151,7 @@ class PurchasesHeaderHTML
             '<button class="btn btn-outline-secondary" type="button"><i class="fas fa-lock"></i></button>';
 
         $html = '<div class="col-sm-3 col-lg">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<a href="' . $proveedor->url() . '">' . $i18n->trans('supplier') . '</a>'
             . '<input type="hidden" name="codproveedor" value="' . $model->codproveedor . '" />'
             . '<div class="input-group">'
@@ -177,8 +177,8 @@ class PurchasesHeaderHTML
 
         $css = $new ? 'col-sm-auto' : 'col-sm';
         return '<div class="' . $css . '">'
-            . '<div class="form-group">'
-            . '<button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#headerModal">'
+            . '<div class="mb-3">'
+            . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-target="#headerModal">'
             . '<i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . ' </button>'
             . '</div>'
             . '</div>'
@@ -197,7 +197,7 @@ class PurchasesHeaderHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . self::renderField($i18n, $model, 'nombre')
             . self::renderField($i18n, $model, 'cifnif')
             . self::renderField($i18n, $model, 'fechadevengo')
@@ -223,7 +223,7 @@ class PurchasesHeaderHTML
     {
         $attributes = $model->editable ? 'name="nombre" required=""' : 'disabled=""';
         return '<div class="col-sm-6">'
-            . '<div class="form-group">' . $i18n->trans('business-name')
+            . '<div class="mb-3">' . $i18n->trans('business-name')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nombre) . '" class="form-control" maxlength="100" autocomplete="off" />'
             . '</div>'
             . '</div>';
@@ -233,7 +233,7 @@ class PurchasesHeaderHTML
     {
         $attributes = $model->editable ? 'name="numproveedor"' : 'disabled=""';
         return empty($model->codproveedor) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
-            . '<div class="form-group">' . $i18n->trans('numsupplier')
+            . '<div class="mb-3">' . $i18n->trans('numsupplier')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->numproveedor) . '" class="form-control" maxlength="50"'
             . ' placeholder="' . $i18n->trans('optional') . '" />'
             . '</div>'

@@ -83,14 +83,14 @@ class PurchasesFooterHTML
 
         $i18n = new Translator();
         return '<div class="container-fluid mt-3">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . self::renderField($i18n, $model, '_productBtn')
             . self::renderField($i18n, $model, '_newLineBtn')
             . self::renderField($i18n, $model, '_sortableBtn')
             . self::renderField($i18n, $model, '_fastLineInput')
             . self::renderField($i18n, $model, '_subtotalNetoBtn')
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . self::renderField($i18n, $model, 'observaciones')
             . self::renderNewFields($i18n, $model)
             . self::renderField($i18n, $model, 'netosindto')
@@ -102,11 +102,11 @@ class PurchasesFooterHTML
             . self::renderField($i18n, $model, 'totalirpf')
             . self::renderField($i18n, $model, 'total')
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-auto">'
             . self::renderField($i18n, $model, '_deleteBtn')
             . '</div>'
-            . '<div class="col text-right">'
+            . '<div class="col text-end">'
             . self::renderNewBtnFields($i18n, $model)
             . self::renderField($i18n, $model, '_modalFooter')
             . self::renderField($i18n, $model, '_undoBtn')
@@ -124,7 +124,7 @@ class PurchasesFooterHTML
             return '';
         }
 
-        return '<button class="btn btn-outline-secondary mr-2" type="button" data-toggle="modal" data-target="#footerModal">'
+        return '<button class="btn btn-outline-secondary me-2" type="button" data-bs-toggle="modal" data-target="#footerModal">'
             . '<i class="fas fa-plus fa-fw" aria-hidden="true"></i></button>'
             . self::modalFooterHtml($i18n, $htmlModal);
     }
@@ -141,7 +141,7 @@ class PurchasesFooterHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . $htmlModal
             . '</div>'
             . '</div>'

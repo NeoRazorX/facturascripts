@@ -220,13 +220,13 @@
 {% macro editGroupColumnDisplay(col) %}
     <div class="btn-group" role="group">
         {% if col.display == 'start' %}
-            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-left-display" value="start" autocomplete="off" checked>
-            <label class="btn btn-outline-secondary" for="{{ col.name }}-left-display" title="{{ trans('left') }}">
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-start-display" value="start" autocomplete="off" checked>
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-start-display" title="{{ trans('left') }}">
                 <i class="fas fa-align-left"></i>
             </label>
         {% else %}
-            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-left-display" value="start" autocomplete="off">
-            <label class="btn btn-outline-secondary" for="{{ col.name }}-left-display" title="{{ trans('left') }}">
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-start-display" value="start" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-start-display" title="{{ trans('left') }}">
                 <i class="fas fa-align-left"></i>
             </label>
         {% endif %}
@@ -244,13 +244,13 @@
         {% endif %}
 
         {% if col.display == 'end' %}
-            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-right-display" value="end" autocomplete="off" checked>
-            <label class="btn btn-outline-secondary" for="{{ col.name }}-right-display" title="{{ trans('right') }}">
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-end-display" value="end" autocomplete="off" checked>
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-end-display" title="{{ trans('right') }}">
                 <i class="fas fa-align-right"></i>
             </label>
         {% else %}
-            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-right-display" value="end" autocomplete="off">
-            <label class="btn btn-outline-secondary" for="{{ col.name }}-right-display" title="{{ trans('right') }}">
+            <input type="radio" class="btn-check" name="{{ col.name }}-display" id="{{ col.name }}-end-display" value="end" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="{{ col.name }}-end-display" title="{{ trans('right') }}">
                 <i class="fas fa-align-right"></i>
             </label>
         {% endif %}

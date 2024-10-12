@@ -371,7 +371,7 @@ class WidgetSelect extends BaseWidget
             }
 
             $txtBreak = substr($txt, 0, 20);
-            return '<span data-toggle="tooltip" data-html="true" title="' . $txt . '">' . $txtBreak . '...</span>';
+            return '<span data-bs-toggle="tooltip" data-html="true" title="' . $txt . '">' . $txtBreak . '...</span>';
         }
 
         $selected = null;
