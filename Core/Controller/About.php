@@ -3,10 +3,10 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Internal\UploadedFile;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use mysqli;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class About extends Controller
 {
