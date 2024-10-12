@@ -119,12 +119,10 @@
                                         <div class="mb-3">
                                             {{ trans('language') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                <span class="input-group-text">
                                                         <i class="fas fa-language"></i>
-                                                    </span>
                                                 </span>
-                                                <select id="fs_lang" name="fs_lang" class="form-control">
+                                                <select id="fs_lang" name="fs_lang" class="form-select">
                                                     {% for langCode, langName in i18n.getAvailableLanguages() %}
                                                         {% if langCode == i18n.getLang() %}
                                                             <option value="{{ langCode }}" selected>
@@ -142,12 +140,10 @@
                                         <div class="mb-3">
                                             {{ trans('timezone') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                <span class="input-group-text">
                                                         <i class="far fa-clock"></i>
-                                                    </span>
                                                 </span>
-                                                <select name="fs_timezone" class="form-control">
+                                                <select name="fs_timezone" class="form-select">
                                                     {% for tz in timezones %}
                                                         <option value="{{ tz }}">{{ tz }}</option>
                                                     {% endfor %}
@@ -158,7 +154,7 @@
                                     <div class="col-sm-4">
                                         <div class="mb-3">
                                             {{ trans('db-type') }}:
-                                            <select id="db_type" name="fs_db_type" class="form-control">
+                                            <select id="db_type" name="fs_db_type" class="form-select">
                                                 {% if fsc.db_type == 'mysql' %}
                                                     <option value="mysql" selected>MySQL</option>
                                                     <option value="postgresql">PostgreSQL</option>
@@ -187,10 +183,8 @@
                                         <div class="mb-3">
                                             {{ trans('db-name') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                <span class="input-group-text">
                                                         <i class="fas fa-database"></i>
-                                                    </span>
                                                 </span>
                                                 <input type="text" name="fs_db_name" value="{{ fsc.db_name }}"
                                                        class="form-control" required/>
@@ -208,10 +202,8 @@
                                         <div class="mb-3">
                                             {{ trans('db-password') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                <span class="input-group-text">
                                                         <i class="fas fa-key"></i>
-                                                    </span>
                                                 </span>
                                                 <input type="password" name="fs_db_pass" value="{{ fsc.db_pass }}"
                                                        class="form-control"/>
@@ -229,7 +221,7 @@
                                     <div id="pgsql_ssl_div" class="col-sm-4">
                                         <div class="mb-3">
                                             {{ trans('pgsql-ssl-mode') }}:
-                                            <select name="pgsql_ssl_mode" class="form-control">
+                                            <select name="pgsql_ssl_mode" class="form-select">
                                                 <option value="" selected>------</option>
                                                 <option value="disable">disable</option>
                                                 <option value="allow">allow</option>

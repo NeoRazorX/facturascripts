@@ -252,7 +252,7 @@ class SalesHeaderHTML
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="mb-3">'
             . '<a href="' . Agentes::get($model->codagente)->url() . '">' . $i18n->trans('agent') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -264,7 +264,7 @@ class SalesHeaderHTML
             return '<div class="col-sm-3">'
                 . '<div class="mb-3">' . $i18n->trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
-                . '<a href="#" id="btnFindCustomerModal" class="btn btn-block btn-primary" onclick="$(\'#findCustomerModal\').modal();'
+                . '<a href="#" id="btnFindCustomerModal" class="btn btn-block btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
                 . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
                 . $i18n->trans('select') . '</a>'
                 . '</div>'
@@ -273,7 +273,7 @@ class SalesHeaderHTML
         }
 
         $btnCliente = $model->editable ?
-            '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findCustomerModal\').modal();'
+            '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findCustomerModal\').modal(\'show\');'
             . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-pen"></i></button>' :
             '<button class="btn btn-outline-secondary" type="button"><i class="fas fa-lock"></i></button>';
 
@@ -283,7 +283,7 @@ class SalesHeaderHTML
             . '<input type="hidden" name="codcliente" value="' . $model->codcliente . '"/>'
             . '<div class="input-group">'
             . '<input type="text" value="' . Tools::noHtml(self::$cliente->nombre) . '" class="form-control" readonly/>'
-            . '<div class="input-group-append">' . $btnCliente . '</div>'
+            . '' . $btnCliente . ''
             . '</div>'
             . '</div>'
             . '</div>';
@@ -321,7 +321,7 @@ class SalesHeaderHTML
         return '<div class="col-sm-6">'
             . '<div class="mb-3">'
             . '<a href="' . $pais->url() . '">' . $i18n->trans('country') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -340,7 +340,7 @@ class SalesHeaderHTML
         return '<div class="col-sm-4">'
             . '<div class="mb-3">'
             . '<a href="' . $agenciaTransporte->url() . '">' . $i18n->trans('carrier') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -355,7 +355,7 @@ class SalesHeaderHTML
         $css = $new ? 'col-sm-auto' : 'col-sm';
         return '<div class="' . $css . '">'
             . '<div class="mb-3">'
-            . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-target="#headerModal">'
+            . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#headerModal">'
             . '<i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . ' </button>'
             . '</div>'
             . '</div>'
@@ -369,8 +369,8 @@ class SalesHeaderHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"><i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
@@ -399,8 +399,8 @@ class SalesHeaderHTML
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . $i18n->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -458,7 +458,7 @@ class SalesHeaderHTML
             . '<div class="mb-3">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">'
             . $i18n->trans('shipping-address') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -474,7 +474,7 @@ class SalesHeaderHTML
         return '<div class="col-sm-6">'
             . '<div class="mb-3">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">' . $i18n->trans('billing-address') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
