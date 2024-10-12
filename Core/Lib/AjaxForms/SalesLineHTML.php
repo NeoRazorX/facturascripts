@@ -168,7 +168,7 @@ class SalesLineHTML
             $html .= self::renderLine($i18n, $line, $model);
         }
         if (empty($html)) {
-            $html .= '<div class="container-fluid"><div class="row table-warning"><div class="col p-3 text-center">'
+            $html .= '<div class="container-fluid"><div class="row g-3 table-warning"><div class="col p-3 text-center">'
                 . $i18n->trans('new-invoice-line-p') . '</div></div></div>';
         }
         return empty($model->codcliente) ? '' : self::renderTitles($i18n, $model) . $html;
@@ -178,7 +178,7 @@ class SalesLineHTML
     {
         self::$num++;
         $idlinea = $line->idlinea ?? 'n' . self::$num;
-        return '<div class="container-fluid fs-line"><div class="row align-items-center border-bottom pb-3 pb-lg-0">'
+        return '<div class="container-fluid fs-line"><div class="row g-3 align-items-center border-bottom pb-3 pb-lg-0">'
             . self::renderField($i18n, $idlinea, $line, $model, 'referencia')
             . self::renderField($i18n, $idlinea, $line, $model, 'descripcion')
             . self::renderField($i18n, $idlinea, $line, $model, 'cantidad')
@@ -415,7 +415,7 @@ class SalesLineHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
             . self::renderField($i18n, $idlinea, $line, $model, 'recargo')
             . self::renderField($i18n, $idlinea, $line, $model, 'irpf')
@@ -555,7 +555,7 @@ class SalesLineHTML
 
     private static function renderTitles(Translator $i18n, SalesDocument $model): string
     {
-        return '<div class="container-fluid d-none d-lg-block titles"><div class="row border-bottom">'
+        return '<div class="container-fluid d-none d-lg-block titles"><div class="row g-3 border-bottom">'
             . self::renderTitle($i18n, $model, 'referencia')
             . self::renderTitle($i18n, $model, 'descripcion')
             . self::renderTitle($i18n, $model, 'cantidad')
