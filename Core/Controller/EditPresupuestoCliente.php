@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\AjaxForms\SalesController;
+use FacturaScripts\Core\Lib\AjaxForms\SalesController;
 
 /**
  * Description of EditPresupuestoCliente
@@ -14,11 +14,7 @@ use FacturaScripts\Core\Base\AjaxForms\SalesController;
  */
 class EditPresupuestoCliente extends SalesController
 {
-
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'PresupuestoCliente';
     }
