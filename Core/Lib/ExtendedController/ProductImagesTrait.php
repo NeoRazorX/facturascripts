@@ -52,7 +52,7 @@ trait ProductImagesTrait
         }
 
         $count = 0;
-        $uploadFiles = $this->request->files->get('newfiles') ?? [];
+        $uploadFiles = $this->request->files->getArray('newfiles');
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
                 Tools::log()->error($uploadFile->getErrorMessage());

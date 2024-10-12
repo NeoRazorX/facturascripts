@@ -226,7 +226,7 @@ class AdminPlugins extends Controller
         }
 
         $ok = true;
-        $uploadFiles = $this->request->files->get('plugin') ?? [];
+        $uploadFiles = $this->request->files->getArray('plugin');
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
                 Tools::log()->error($uploadFile->getErrorMessage());
