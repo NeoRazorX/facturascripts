@@ -27,9 +27,9 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\ProductoImagen;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to edit a single item from the EditProducto model
@@ -359,7 +359,7 @@ class EditProducto extends EditController
         }
 
         $this->setTemplate(false);
-        $this->response->setStatusCode(Response::HTTP_OK);
+        $this->response->setHttpCode(Response::HTTP_OK);
         $this->response->setContent(json_encode(['status' => 'ok']));
         $this->response->headers->set('Content-Type', 'application/json');
 

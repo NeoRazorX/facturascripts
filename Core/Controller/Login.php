@@ -24,11 +24,11 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Request;
 
 class Login implements ControllerInterface
 {

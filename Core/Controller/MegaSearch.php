@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to perform searches on the page

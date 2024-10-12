@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Test\Traits;
 
-use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cliente;

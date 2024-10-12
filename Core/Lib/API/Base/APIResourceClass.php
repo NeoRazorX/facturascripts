@@ -21,9 +21,8 @@ namespace FacturaScripts\Core\Lib\API\Base;
 
 use Exception;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * APIResource is an abstract class for any API Resource.
@@ -186,7 +185,7 @@ abstract class APIResourceClass
     protected function returnResult(array $data)
     {
         $this->response->setContent(json_encode($data));
-        $this->response->setStatusCode(Response::HTTP_OK);
+        $this->response->setHttpCode(Response::HTTP_OK);
     }
 
     /**
@@ -206,7 +205,7 @@ abstract class APIResourceClass
         }
 
         $this->response->setContent(json_encode($res));
-        $this->response->setStatusCode(Response::HTTP_OK);
+        $this->response->setHttpCode(Response::HTTP_OK);
     }
 
     /**
@@ -227,7 +226,7 @@ abstract class APIResourceClass
         }
 
         $this->response->setContent(json_encode($res));
-        $this->response->setStatusCode($status);
+        $this->response->setHttpCode($status);
     }
 
     /**

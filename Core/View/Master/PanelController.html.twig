@@ -79,8 +79,8 @@
                 {% if fsc.hasData and firstView.settings.btnPrint %}
                     {{ _self.printButton(fsc, firstView, i18n) }}
                 {% endif %}
-                {% for item in getIncludeViews('PanelController', 'topButtons') %}
-                    {% include item['path'] %}
+                {% for includeView in getIncludeViews('PanelController', 'topButtons') %}
+                    {% include includeView['path'] %}
                 {% endfor %}
             </div>
             {# -- Top right text -- #}

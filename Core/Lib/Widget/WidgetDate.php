@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Request;
 
 /**
  * Description of WidgetDate
@@ -28,7 +28,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class WidgetDate extends BaseWidget
 {
-
     /**
      * @param object $model
      * @param Request $request

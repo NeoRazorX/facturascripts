@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
@@ -38,6 +38,7 @@ use FacturaScripts\Dinamic\Model\Variante;
  * Description of SalesController
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/SalesController
  */
 abstract class SalesController extends PanelController
 {

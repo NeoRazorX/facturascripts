@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\AjaxForms\AccountingFooterHTML;
-use FacturaScripts\Core\Base\AjaxForms\AccountingHeaderHTML;
-use FacturaScripts\Core\Base\AjaxForms\AccountingLineHTML;
-use FacturaScripts\Core\Base\AjaxForms\AccountingModalHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingFooterHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingHeaderHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingLineHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingModalHTML;
 use FacturaScripts\Core\Lib\Export\AsientoExport;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
@@ -229,8 +229,7 @@ class EditAsiento extends PanelController
 
     protected function exportAction()
     {
-        if (false === $this->views[$this->active]->settings['btnPrint']
-            || false === $this->permissions->allowExport) {
+        if (false === $this->views[$this->active]->settings['btnPrint'] || false === $this->permissions->allowExport) {
             Tools::log()->warning('no-print-permission');
             return;
         }

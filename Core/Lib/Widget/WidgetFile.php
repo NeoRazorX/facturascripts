@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Internal\UploadedFile;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetFile

@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListView;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of ColumnItem

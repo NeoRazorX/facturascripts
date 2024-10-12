@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Request;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Daniel Fernández Giménez <hola@danielfg.es>

@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;

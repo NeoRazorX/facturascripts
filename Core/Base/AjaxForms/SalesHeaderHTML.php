@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
-use FacturaScripts\Core\Base\Contract\SalesModInterface;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Contract\SalesModInterface;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\AgenciaTransporte;
@@ -38,6 +38,7 @@ use FacturaScripts\Dinamic\Model\Provincia;
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/SalesHeaderHTML
  */
 class SalesHeaderHTML
 {
