@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\API\Base;
 
 use Exception;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 
@@ -134,7 +135,6 @@ abstract class APIResourceClass
      * Process the resource, allowing POST/PUT/DELETE/GET ALL actions
      *
      * @param string $name of resource, used only if are several.
-     * @param array $params are URI segments. Can be an empty array, not null.
      *
      * @return bool
      */
