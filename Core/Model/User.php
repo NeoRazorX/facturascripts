@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
+use FacturaScripts\Core\Lib\TwoFactorManager;
 
 /**
  * Usuario de FacturaScripts.
@@ -93,6 +94,13 @@ class User extends ModelClass
 
     /** @var string */
     public $password;
+
+    /** @var string */
+    public $secret_key;
+
+    /** @var bool */
+    public $two_factor_enabled;
+
 
     public function addRole(?string $code): bool
     {
@@ -356,4 +364,24 @@ class User extends ModelClass
 
         return true;
     }
+
+// Magic function to get dynamic properties
+    public function __get($name)
+    {
+        try {
+            switch ($name) {
+                case 'urlqr':
+                    if ($this->secret_key === null) {
+                        $this->secret_key = TwoFactorManager::getSecretKey();
+                        $this->save();
+                    }
+                    // Return the QR code URL for the user to scan
+                    return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->secret_key);
+            }
+        } catch (\Exception $e) {
+            Tools::log()->error("Error generating URL QR or secret key: " . $e->getMessage());
+            return null;
+        }
+    }
+
 }
