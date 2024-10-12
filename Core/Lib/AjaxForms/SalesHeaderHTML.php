@@ -165,7 +165,7 @@ class SalesHeaderHTML
     {
         $i18n = new Translator();
         return '<div class="container-fluid">'
-            . '<div class="row align-items-end">'
+            . '<div class="row g-3 align-items-end">'
             . self::renderField($i18n, $model, 'codcliente')
             . self::renderField($i18n, $model, 'codalmacen')
             . self::renderField($i18n, $model, 'codserie')
@@ -176,7 +176,7 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'finoferta')
             . self::renderField($i18n, $model, 'total')
             . '</div>'
-            . '<div class="row align-items-end">'
+            . '<div class="row g-3 align-items-end">'
             . self::renderField($i18n, $model, '_detail')
             . self::renderField($i18n, $model, '_parents')
             . self::renderField($i18n, $model, '_children')
@@ -374,7 +374,7 @@ class SalesHeaderHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . self::renderField($i18n, $model, 'nombrecliente')
             . self::renderField($i18n, $model, 'cifnif')
             . self::renderField($i18n, $model, 'idcontactofact')

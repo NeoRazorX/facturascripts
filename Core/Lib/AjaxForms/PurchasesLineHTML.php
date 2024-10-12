@@ -167,7 +167,7 @@ class PurchasesLineHTML
             $html .= self::renderLine($i18n, $line, $model);
         }
         if (empty($html)) {
-            $html .= '<div class="container-fluid"><div class="row table-warning"><div class="col p-3 text-center">'
+            $html .= '<div class="container-fluid"><div class="row g-3 table-warning"><div class="col p-3 text-center">'
                 . $i18n->trans('new-invoice-line-p') . '</div></div></div>';
         }
         return empty($model->codproveedor) ? '' : self::renderTitles($i18n, $model) . $html;
@@ -177,7 +177,7 @@ class PurchasesLineHTML
     {
         self::$num++;
         $idlinea = $line->idlinea ?? 'n' . self::$num;
-        return '<div class="container-fluid"><div class="row align-items-center border-bottom pb-3 pb-lg-0">'
+        return '<div class="container-fluid"><div class="row g-3 align-items-center border-bottom pb-3 pb-lg-0">'
             . self::renderField($i18n, $idlinea, $line, $model, 'referencia')
             . self::renderField($i18n, $idlinea, $line, $model, 'descripcion')
             . self::renderField($i18n, $idlinea, $line, $model, 'cantidad')
@@ -346,14 +346,14 @@ class PurchasesLineHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
             . self::renderField($i18n, $idlinea, $line, $model, 'recargo')
             . self::renderField($i18n, $idlinea, $line, $model, 'irpf')
             . self::renderField($i18n, $idlinea, $line, $model, 'excepcioniva')
             . self::renderField($i18n, $idlinea, $line, $model, 'suplido')
             . '</div>'
-            . '<div class="row">'
+            . '<div class="row g-3">'
             . self::renderNewModalFields($i18n, $idlinea, $line, $model)
             . '</div>'
             . '</div>'
@@ -488,7 +488,7 @@ class PurchasesLineHTML
 
     private static function renderTitles(Translator $i18n, PurchaseDocument $model): string
     {
-        return '<div class="container-fluid d-none d-lg-block"><div class="row border-bottom">'
+        return '<div class="container-fluid d-none d-lg-block"><div class="row g-3 border-bottom">'
             . self::renderTitle($i18n, $model, 'referencia')
             . self::renderTitle($i18n, $model, 'descripcion')
             . self::renderTitle($i18n, $model, 'cantidad')
