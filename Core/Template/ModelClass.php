@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Template;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\KernelException;
@@ -215,6 +216,41 @@ abstract class ModelClass
     }
 
     /**
+     * Return the model whose primary column corresponds to the value $code
+     * If not found, it throws an exception.
+     *
+     * @param $code
+     * @return static|null
+     * @throws KernelException|Exception
+     */
+    public static function find($code)
+    {
+        $cacheKey = 'model-' . static::modelClassName() . '-' . $code;
+        return Cache::remember($cacheKey, function () use ($code) {
+            $where = [ Where::eq(static::primaryColumn(), $code) ];
+            $data = self::getRecord($where);
+            return empty($data) ? null : $data[0];
+        });
+    }
+
+    /**
+     * Return the model whose primary column corresponds to the value $code
+     * If not found, it throws an exception.
+     *
+     * @param $code
+     * @return static
+     * @throws KernelException
+     */
+    public static function findOrFail($code)
+    {
+        $result = self::find($code);
+        if (empty($result)) {
+            throw new KernelException('RecordNotFound', 'Record not found');
+        }
+        return $result;
+    }
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -236,15 +272,18 @@ abstract class ModelClass
      */
     public function load($code): bool
     {
-        $where = [ Where::eq(static::primaryColumn(), $code) ];
-        $data = $this->getRecord($where);
-        if (empty($data)) {
-            $this->clear();
-            return false;
-        }
+        $cacheKey = 'model-' . $this->modelClassName() . '-' . $code;
+        return Cache::remember($cacheKey, function () use ($code) {
+            $where = [ Where::eq(static::primaryColumn(), $code) ];
+            $data = $this->getRecord($where);
+            if (empty($data)) {
+                $this->clear();
+                return false;
+            }
 
-        $this->loadFromData($data[0]);
-        return true;
+            $this->loadFromData($data[0]);
+            return true;
+        });
     }
 
     /**
@@ -448,9 +487,9 @@ abstract class ModelClass
      * @return array
      * @throws Exception
      */
-    private function getRecord(array $where, array $order = []): array
+    private static function getRecord(array $where, array $order = []): array
     {
-        return $this->table()
+        return static::table()
             ->where($where)
             ->orderMulti($order)
             ->first();
