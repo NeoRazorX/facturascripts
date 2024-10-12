@@ -71,7 +71,7 @@ class WidgetAutocomplete extends WidgetSelect
                 . '<div class="mb-3 mb-2">'
                 . $labelHtml
                 . '<div class="input-group">'
-                . '<span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>'
+                . '<span class="input-group-text"><i class="fa-solid fa-search fa-fw"></i></span>'
                 . $inputHtml
                 . '</div>'
                 . $descriptionHtml
@@ -125,11 +125,11 @@ class WidgetAutocomplete extends WidgetSelect
     protected function inputGroupClearBtn()
     {
         if ($this->readonly()) {
-            return '<span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>';
+            return '<span class="input-group-text"><i class="fa-solid fa-search fa-fw"></i></span>';
         }
 
         return '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
-            . '<i class="fas fa-times" aria-hidden="true"></i>'
+            . '<i class="fa-solid fa-times" aria-hidden="true"></i>'
             . '</button>';
     }
 

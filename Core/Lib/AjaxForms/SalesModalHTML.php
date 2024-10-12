@@ -293,7 +293,7 @@ class SalesModalHTML
             $name = ($cli->nombre === $cli->razonsocial) ? $cli->nombre : $cli->nombre . ' <small>(' . $cli->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'salesForm\'][\'codcliente\'].value = \''
                 . $cli->codcliente . '\'; $(\'#findCustomerModal\').modal(\'hide\'); salesFormAction(\'set-customer\', \'0\'); return false;">'
-                . '<td><i class="fas fa-user fa-fw"></i> ' . $name . '</td>'
+                . '<td><i class="fa-solid fa-user fa-fw"></i> ' . $name . '</td>'
                 . '</tr>';
         }
 
@@ -306,7 +306,7 @@ class SalesModalHTML
             . '<div class="modal-dialog modal-dialog-scrollable">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fas fa-users fa-fw"></i> ' . $i18n->trans('customers') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-users fa-fw"></i> ' . $i18n->trans('customers') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . ''
             . '</button>'
@@ -316,14 +316,14 @@ class SalesModalHTML
             . '<div class="input-group">'
             . '<input type="text" id="findCustomerInput" class="form-control" placeholder="' . $i18n->trans('search') . '" />'
             . '<div class="input-group-apend">'
-            . '<button type="button" class="btn btn-primary"><i class="fas fa-search"></i></button>'
+            . '<button type="button" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>'
             . '</div>'
             . '</div>'
             . '</div>'
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
             . '<div class="modal-footer bg-light">'
             . '<a href="EditCliente?return=' . urlencode($url) . $linkAgent . '" class="btn btn-block btn-success">'
-            . '<i class="fas fa-plus fa-fw"></i> ' . $i18n->trans('new')
+            . '<i class="fa-solid fa-plus fa-fw"></i> ' . $i18n->trans('new')
             . '</a>'
             . '</div>'
             . '</div>'
@@ -337,7 +337,7 @@ class SalesModalHTML
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fas fa-cubes fa-fw"></i> ' . $i18n->trans('products') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-cubes fa-fw"></i> ' . $i18n->trans('products') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . ''
             . '</button>'
@@ -350,7 +350,7 @@ class SalesModalHTML
             . '" onkeyup="return salesFormActionWait(\'find-product\', \'0\', event);"/>'
             . ''
             . '<button class="btn btn-primary btn-spin-action" type="button" onclick="return salesFormAction(\'find-product\', \'0\');">'
-            . '<i class="fas fa-search"></i></button>'
+            . '<i class="fa-solid fa-search"></i></button>'
             . ''
             . '</div>'
             . '</div>'
@@ -376,7 +376,7 @@ class SalesModalHTML
     protected static function orden(Translator $i18n): string
     {
         return '<div class="input-group">'
-            . '<span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span>'
+            . '<span class="input-group-text"><i class="fa-solid fa-sort-amount-down-alt"></i></span>'
             . '<select name="fp_orden" class="form-select" onchange="return salesFormAction(\'find-product\', \'0\');">'
             . '<option value="">' . $i18n->trans('sort') . '</option>'
             . '<option value="">------</option>'

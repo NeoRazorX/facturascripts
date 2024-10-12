@@ -29,7 +29,7 @@
                         {% if fsc.getPageData().name == fsc.user.homepage %}
                             <a class="btn btn-sm btn-secondary align-bottom active"
                                href="{{ fsc.url() }}?defaultPage=FALSE" title="{{ trans('marked-as-homepage') }}">
-                                <i class="fas fa-bookmark" aria-hidden="true"></i>
+                                <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
                             </a>
                         {% else %}
                             <a class="btn btn-sm btn-secondary align-bottom" href="{{ fsc.url() }}?defaultPage=TRUE"
@@ -57,7 +57,7 @@
                     <div class="card bg-warning shadow mb-3">
                         <div class="card-body">
                             <div class="h3">
-                                <i class="fas fa-save me-1"></i> {{ trans('dashboard-backup') }}
+                                <i class="fa-solid fa-save me-1"></i> {{ trans('dashboard-backup') }}
                             </div>
                             <p class="card-text">{{ trans('dashboard-backup-p') }}</p>
                             <ul class="mb-0">
@@ -133,7 +133,7 @@
             <div class="row">
                 <div class="col-md">
                     <h2 class="h4 mt-3 mb-1">
-                        <i class="fas fa-plus fa-fw"></i> {{ trans('create') }}
+                        <i class="fa-solid fa-plus fa-fw"></i> {{ trans('create') }}
                     </h2>
                     <ul class="mb-1">
                         {% for link, label in fsc.createLinks %}
@@ -146,7 +146,7 @@
                 {% if fsc.openLinks %}
                     <div class="col-md">
                         <h2 class="h4 mt-3 mb-1">
-                            <i class="fas fa-folder-open fa-fw"></i> {{ trans('open') }}
+                            <i class="fa-solid fa-folder-open fa-fw"></i> {{ trans('open') }}
                         </h2>
                         <ul class="mb-1">
                             {% for link in fsc.openLinks %}
@@ -161,7 +161,7 @@
                 {% endif %}
                 <div class="col-md">
                     <h2 class="h4 mt-3 mb-1">
-                        <i class="fas fa-question-circle fa-fw"></i> {{ trans('help') }}
+                        <i class="fa-solid fa-question-circle fa-fw"></i> {{ trans('help') }}
                     </h2>
                     <ul class="mb-1">
                         <li>
@@ -179,7 +179,7 @@
                         <li>
                             <a href="https://forms.gle/WhGgWWB6EbWjBNna6" rel="nofollow"
                                target="_blank">Encuesta de uso 2024/25
-                                <i class="fas fa-clipboard-check"></i>
+                                <i class="fa-solid fa-clipboard-check"></i>
                             </a>
                         </li>
                         <li>
@@ -197,7 +197,7 @@
     <div class="card shadow mb-3">
         <div class="p-3">
             <h2 class="h4 mb-0">
-                <i class="fas fa-pallet fa-fw"></i> {{ trans('minimum-stock') }}
+                <i class="fa-solid fa-pallet fa-fw"></i> {{ trans('minimum-stock') }}
             </h2>
         </div>
         <div class="table-responsive">
@@ -255,7 +255,7 @@
         <div class="p-3">
             <span class="float-end badge bg-danger">{{ trans('unpaid') }}</span>
             <h2 class="h4 mb-0">
-                <i class="fas fa-dollar-sign fa-fw"></i>
+                <i class="fa-solid fa-dollar-sign fa-fw"></i>
                 {{ trans('receipts') }}
             </h2>
         </div>

@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col">
                 <h1 class="h3">
-                    <i class="fas fa-cut"></i> {{ fsc.title }}
+                    <i class="fa-solid fa-cut"></i> {{ fsc.title }}
                 </h1>
                 <p>{{ trans('copy-p') }}</p>
                 <form method="post" onsubmit="animateSpinner('add')">
@@ -21,7 +21,7 @@
                                         <div class="mb-3">
                                             <div class="input-group">
                                                 <span class="input-group-text">
-                                                    <i class="fas fa-search"></i>
+                                                    <i class="fa-solid fa-search"></i>
                                                 </span>
                                                 <input type="hidden" id="codclienteAutocomplete" name="codcliente"
                                                        value="{{ fsc.model.codcliente }}"/>
@@ -39,7 +39,7 @@
                                         <div class="mb-3">
                                             <div class="input-group">
                                                 <span class="input-group-text">
-                                                    <i class="fas fa-search"></i>
+                                                    <i class="fa-solid fa-search"></i>
                                                 </span>
                                                 <input type="hidden" id="codproveedorAutocomplete" name="codproveedor"
                                                        value="{{ fsc.model.codproveedor }}"/>
@@ -70,7 +70,7 @@
                                         <div class="mb-3">
                                             <div class="input-group">
                                                 <span class="input-group-text">
-                                                    <i class="fas fa-hashtag"></i>
+                                                    <i class="fa-solid fa-hashtag"></i>
                                                 </span>
                                                 <input type="text" name="numero2" class="form-control"
                                                        placeholder="{{ trans('number2') }}"/>
@@ -82,7 +82,7 @@
                                         <div class="mb-3">
                                             <div class="input-group">
                                                 <span class="input-group-text">
-                                                    <i class="fas fa-hashtag"></i>
+                                                    <i class="fa-solid fa-hashtag"></i>
                                                 </span>
                                                 <input type="text" name="numproveedor" class="form-control"
                                                        placeholder="{{ trans('numsupplier') }}"/>
@@ -179,7 +179,7 @@
                                         {{ trans('global-dto') }}
                                         <div class="input-group">
                                             <span class="input-group-text">
-                                                    <i class="fas fa-percentage"></i>
+                                                    <i class="fa-solid fa-percentage"></i>
                                                 </span>
                                             <input type="number" max="100" min="0" step="any" name="dtopor1"
                                                    class="form-control" value="{{ fsc.model.dtopor1 }}"/>
@@ -191,7 +191,7 @@
                                         {{ trans('global-dto-2') }}
                                         <div class="input-group">
                                             <span class="input-group-text">
-                                                    <i class="fas fa-percentage"></i>
+                                                    <i class="fa-solid fa-percentage"></i>
                                                 </span>
                                             <input type="number" max="100" min="0" step="any" name="dtopor2"
                                                    class="form-control" value="{{ fsc.model.dtopor2 }}"/>
@@ -208,7 +208,7 @@
                         <div class="card-footer">
                             <div class="text-end">
                                 <button type="submit" class="btn btn-spin-action btn-primary">
-                                    <i class="fas fa-save"></i> {{ trans('save') }}
+                                    <i class="fa-solid fa-save"></i> {{ trans('save') }}
                                 </button>
                             </div>
                         </div>

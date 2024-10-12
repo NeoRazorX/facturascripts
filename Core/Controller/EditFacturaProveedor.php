@@ -36,7 +36,7 @@ class EditFacturaProveedor extends PurchasesController
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'invoice';
-        $data['icon'] = 'fas fa-file-invoice-dollar';
+        $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         $data['showonmenu'] = false;
         return $data;
     }
@@ -59,7 +59,7 @@ class EditFacturaProveedor extends PurchasesController
      */
     private function createViewsAccounting(string $viewName = self::VIEW_ACCOUNTS): void
     {
-        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fa-solid fa-balance-scale');
 
         // buttons
         $this->addButton($viewName, [
@@ -77,7 +77,7 @@ class EditFacturaProveedor extends PurchasesController
      */
     private function createViewsRefunds(string $viewName = 'refunds'): void
     {
-        $this->addHtmlView($viewName, 'Tab/RefundFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
+        $this->addHtmlView($viewName, 'Tab/RefundFacturaProveedor', 'FacturaProveedor', 'refunds', 'fa-solid fa-share-square');
     }
 
     /**
@@ -87,7 +87,7 @@ class EditFacturaProveedor extends PurchasesController
      */
     private function createViewsReceipts(string $viewName = self::VIEW_RECEIPTS): void
     {
-        $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign')
+        $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fa-solid fa-dollar-sign')
             ->addOrderBy(['vencimiento'], 'expiration');
 
         // buttons
@@ -101,7 +101,7 @@ class EditFacturaProveedor extends PurchasesController
         $this->addButton($viewName, [
             'action' => 'paid',
             'confirm' => 'true',
-            'icon' => 'fas fa-check',
+            'icon' => 'fa-solid fa-check',
             'label' => 'paid'
         ]);
 

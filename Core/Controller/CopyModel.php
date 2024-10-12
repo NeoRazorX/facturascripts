@@ -61,7 +61,7 @@ class CopyModel extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'copy';
-        $data['icon'] = 'fas fa-cut';
+        $data['icon'] = 'fa-solid fa-cut';
         $data['showonmenu'] = false;
         return $data;
     }

@@ -266,7 +266,7 @@ class SalesHeaderHTML
                 . '<div class="mb-3 d-grid">' . $i18n->trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
                 . '<a href="#" id="btnFindCustomerModal" class="btn btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
-                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
+                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw"></i> '
                 . $i18n->trans('select') . '</a>'
                 . '</div>'
                 . '</div>'
@@ -275,8 +275,8 @@ class SalesHeaderHTML
 
         $btnCliente = $model->editable ?
             '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findCustomerModal\').modal(\'show\');'
-            . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-pen"></i></button>' :
-            '<button class="btn btn-outline-secondary" type="button"><i class="fas fa-lock"></i></button>';
+            . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-pen"></i></button>' :
+            '<button class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-lock"></i></button>';
 
         $html = '<div class="col-sm-3 col-lg">'
             . '<div class="mb-3">'
@@ -357,7 +357,7 @@ class SalesHeaderHTML
         return '<div class="' . $css . '">'
             . '<div class="mb-3">'
             . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#headerModal">'
-            . '<i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . ' </button>'
+            . '<i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . ' </button>'
             . '</div>'
             . '</div>'
             . self::detailModal($i18n, $model);
@@ -369,7 +369,7 @@ class SalesHeaderHTML
             . '<div class="modal-dialog modal-dialog-centered modal-lg">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . ''
             . '</button>'

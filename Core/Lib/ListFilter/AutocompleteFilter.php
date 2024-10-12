@@ -98,11 +98,11 @@ class AutocompleteFilter extends BaseFilter
 
         if ('' === $this->value || null === $this->value) {
             $html .= '<span class="input-group-text">'
-                . '<i class="fas fa-search fa-fw" aria-hidden="true"></i>'
+                . '<i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>'
                 . '</span>';
         } else {
             $html .= '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->name() . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
-                . '<i class="fas fa-times fa-fw" aria-hidden="true"></i>'
+                . '<i class="fa-solid fa-times fa-fw" aria-hidden="true"></i>'
                 . '</button>';
         }
 

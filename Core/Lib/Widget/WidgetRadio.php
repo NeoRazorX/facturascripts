@@ -295,7 +295,7 @@ class WidgetRadio extends BaseWidget
                 . '<label class="mb-0" for="' . $nameImg . '">'
                 . '<img src="' . $url . '" />'
                 . '<div class="tick_container">'
-                . '<div class="tick"><i class="fas fa-check"></i></div>'
+                . '<div class="tick"><i class="fa-solid fa-check"></i></div>'
                 . '</div>'
                 . '</label>'
                 . '</div>';

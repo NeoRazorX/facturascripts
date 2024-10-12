@@ -165,7 +165,7 @@ class Controller implements ControllerInterface
         return [
             'name' => $this->className,
             'title' => $this->className,
-            'icon' => 'fas fa-circle',
+            'icon' => 'fa-solid fa-circle',
             'menu' => 'new',
             'submenu' => null,
             'showonmenu' => true,

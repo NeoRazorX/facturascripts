@@ -45,7 +45,7 @@ class EditReciboCliente extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'receipt';
-        $data['icon'] = 'fas fa-piggy-bank';
+        $data['icon'] = 'fa-solid fa-piggy-bank';
         return $data;
     }
 

@@ -43,7 +43,7 @@ class EditAtributo extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'attribute';
-        $data['icon'] = 'fas fa-tshirt';
+        $data['icon'] = 'fa-solid fa-tshirt';
         return $data;
     }
 

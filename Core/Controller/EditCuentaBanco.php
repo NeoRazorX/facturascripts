@@ -41,13 +41,13 @@ class EditCuentaBanco extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'bank-account';
-        $data['icon'] = 'fas fa-piggy-bank';
+        $data['icon'] = 'fa-solid fa-piggy-bank';
         return $data;
     }
 
     protected function createSubAccountingView($viewName = 'ListSubcuenta'): void
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book')
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-book')
             ->addOrderBy(['codejercicio'], 'exercise', 2)
             ->setSettings('btnNew', false);
     }

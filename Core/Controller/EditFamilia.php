@@ -45,7 +45,7 @@ class EditFamilia extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'family';
-        $data['icon'] = 'fas fa-sitemap';
+        $data['icon'] = 'fa-solid fa-sitemap';
         return $data;
     }
 
@@ -88,7 +88,7 @@ class EditFamilia extends EditController
 
     protected function createViewFamilies(string $viewName = 'ListFamilia'): void
     {
-        $this->addListView($viewName, 'Familia', 'subfamilies', 'fas fa-sitemap');
+        $this->addListView($viewName, 'Familia', 'subfamilies', 'fa-solid fa-sitemap');
         $this->views[$viewName]->addOrderBy(['codfamilia'], 'code');
 
         // desactivamos la columna de familia padre
@@ -100,21 +100,21 @@ class EditFamilia extends EditController
 
     protected function createViewNewProducts(string $viewName = 'ListProducto-new'): void
     {
-        $this->addListView($viewName, 'Producto', 'add', 'fas fa-folder-plus');
+        $this->addListView($viewName, 'Producto', 'add', 'fa-solid fa-folder-plus');
         $this->createViewProductsCommon($viewName);
 
         // botón añadir producto
         $this->addButton($viewName, [
             'action' => 'add-product',
             'color' => 'success',
-            'icon' => 'fas fa-folder-plus',
+            'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add'
         ]);
     }
 
     protected function createViewProducts(string $viewName = 'ListProducto'): void
     {
-        $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
+        $this->addListView($viewName, 'Producto', 'products', 'fa-solid fa-cubes');
         $this->createViewProductsCommon($viewName);
 
         // botón quitar producto
@@ -122,7 +122,7 @@ class EditFamilia extends EditController
             'action' => 'remove-product',
             'color' => 'danger',
             'confirm' => true,
-            'icon' => 'fas fa-folder-minus',
+            'icon' => 'fa-solid fa-folder-minus',
             'label' => 'remove-from-list'
         ]);
     }

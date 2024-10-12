@@ -84,7 +84,7 @@ class EditAsiento extends PanelController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'accounting-entry';
-        $data['icon'] = 'fas fa-balance-scale';
+        $data['icon'] = 'fa-solid fa-balance-scale';
         $data['showonmenu'] = false;
         return $data;
     }
@@ -145,7 +145,7 @@ class EditAsiento extends PanelController
             static::MAIN_VIEW_TEMPLATE,
             $this->getModelClassName(),
             'accounting-entry',
-            'fas fa-balance-scale'
+            'fa-solid fa-balance-scale'
         );
 
         // activamos el botón de imprimir
@@ -310,7 +310,7 @@ class EditAsiento extends PanelController
                 $this->title .= ' ' . $view->model->primaryDescription();
                 $this->addButton($viewName, [
                     'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
-                    'icon' => 'fas fa-cut',
+                    'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',
                     'type' => 'link'
                 ]);

@@ -55,7 +55,7 @@ class WidgetPassword extends WidgetText
         return '<div class="mb-3 mb-2">'
             . $labelHtml
             . '<div class="input-group">'
-            . '<span class="input-group-text edit-psw"><i class="fas fa-eye fa-fw"></i></span>'
+            . '<span class="input-group-text edit-psw"><i class="fa-solid fa-eye fa-fw"></i></span>'
             . $this->inputHtml()
             . '</div>'
             . $descriptionHtml
@@ -80,6 +80,6 @@ class WidgetPassword extends WidgetText
      */
     protected function show()
     {
-        return is_null($this->value) ? '' : '<span><span class="fs-psw pass">' . $this->value . '</span> <i class="list-psw fas fa-eye"></i></span>';
+        return is_null($this->value) ? '' : '<span><span class="fs-psw pass">' . $this->value . '</span> <i class="list-psw fa-solid fa-eye"></i></span>';
     }
 }

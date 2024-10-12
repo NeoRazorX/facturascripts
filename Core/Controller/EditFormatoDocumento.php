@@ -40,7 +40,7 @@ class EditFormatoDocumento extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'printing-format';
-        $data['icon'] = 'fas fa-print';
+        $data['icon'] = 'fa-solid fa-print';
         return $data;
     }
 

@@ -57,7 +57,7 @@
                             <div class="col-auto">
                                 <br/>
                                 <button type="submit" class="btn btn-success mb-2">
-                                    <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('add') }}
+                                    <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('add') }}
                                 </button>
                             </div>
                         </div>
@@ -107,6 +107,6 @@
     {% set confirm = trans('confirm') %}
     <button type="button" class="btn btn-sm btn-outline-danger p-1"
             onclick="confirmAction('{{ formName }}','delete-image','{{ label }}','{{ text }}','{{ cancel }}','{{ confirm }}');">
-        <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+        <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
     </button>
 {% endmacro %}

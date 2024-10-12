@@ -87,7 +87,7 @@ class EditPageOption extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'options';
-        $data['icon'] = 'fas fa-wrench';
+        $data['icon'] = 'fa-solid fa-wrench';
         $data['showonmenu'] = false;
         return $data;
     }

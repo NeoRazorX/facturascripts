@@ -49,7 +49,7 @@ class EditSubcuenta extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'subaccount';
-        $data['icon'] = 'fas fa-th-list';
+        $data['icon'] = 'fa-solid fa-th-list';
         return $data;
     }
 
@@ -67,7 +67,7 @@ class EditSubcuenta extends EditController
 
     protected function createViewsLines(string $viewName = 'ListPartidaAsiento'): void
     {
-        $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale')
+        $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fa-solid fa-balance-scale')
             ->addOrderBy(['fecha', 'numero', 'idpartida'], 'date', 2)
             ->addSearchFields(['partidas.concepto']);
 
@@ -91,7 +91,7 @@ class EditSubcuenta extends EditController
         $this->addButton($viewName, [
             'action' => 'dot-accounting-on',
             'color' => 'info',
-            'icon' => 'fas fa-check-double',
+            'icon' => 'fa-solid fa-check-double',
             'label' => 'checked'
         ]);
         $this->addButton($viewName, [
@@ -201,7 +201,7 @@ class EditSubcuenta extends EditController
                 $this->addButton($mainViewName, [
                     'action' => 'ledger',
                     'color' => 'info',
-                    'icon' => 'fas fa-book fa-fw',
+                    'icon' => 'fa-solid fa-book fa-fw',
                     'label' => 'ledger',
                     'type' => 'modal'
                 ]);

@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
  */
 trait DocFilesTrait
 {
-    abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5');
+    abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fa-brands fa-html5');
 
     private function addFileAction(): bool
     {
@@ -105,7 +105,7 @@ trait DocFilesTrait
 
     protected function createViewDocFiles(string $viewName = 'docfiles', string $template = 'Tab/DocFiles')
     {
-        $this->addHtmlView($viewName, $template, 'AttachedFileRelation', 'files', 'fas fa-paperclip');
+        $this->addHtmlView($viewName, $template, 'AttachedFileRelation', 'files', 'fa-solid fa-paperclip');
     }
 
     private function deleteFileAction(): bool

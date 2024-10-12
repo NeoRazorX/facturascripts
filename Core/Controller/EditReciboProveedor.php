@@ -45,7 +45,7 @@ class EditReciboProveedor extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'receipt';
-        $data['icon'] = 'fas fa-piggy-bank';
+        $data['icon'] = 'fa-solid fa-piggy-bank';
         return $data;
     }
 

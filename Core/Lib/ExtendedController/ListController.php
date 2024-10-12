@@ -252,7 +252,7 @@ abstract class ListController extends BaseController
      * @param string $icon
      * @return ListView
      */
-    protected function addView(string $viewName, string $modelName, string $viewTitle = '', string $icon = 'fas fa-search'): ListView
+    protected function addView(string $viewName, string $modelName, string $viewTitle = '', string $icon = 'fa-solid fa-search'): ListView
     {
         $title = empty($viewTitle) ? $this->title : $viewTitle;
         $view = new ListView($viewName, $title, self::MODEL_NAMESPACE . $modelName, $icon);

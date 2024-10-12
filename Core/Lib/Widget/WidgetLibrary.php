@@ -51,7 +51,7 @@ class WidgetLibrary extends BaseWidget
             '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
         $label = Tools::lang()->trans($title);
         $labelHtml = $this->onclickHtml($label, $titleurl);
-        $icon = empty($this->icon) ? 'fas fa-file-upload' : $this->icon;
+        $icon = empty($this->icon) ? 'fa-solid fa-file-upload' : $this->icon;
 
         $file = new AttachedFile();
         $file->loadFromCode($this->value);
@@ -242,7 +242,7 @@ class WidgetLibrary extends BaseWidget
             . Tools::lang()->trans('search') . '" onkeydown="widgetLibrarySearchKp(\'' . $this->id . '\', event);">'
             . ''
             . '<button type="button" class="btn btn-primary" onclick="widgetLibrarySearch(\'' . $this->id . '\');">'
-            . '<i class="fas fa-search"></i>'
+            . '<i class="fa-solid fa-search"></i>'
             . '</button>'
             . ''
             . '</div>';
@@ -296,7 +296,7 @@ class WidgetLibrary extends BaseWidget
         }
 
         return '<a href="#" class="btn btn-block btn-secondary" onclick="widgetLibrarySelect(\'' . $this->id . '\', \'\', \'' . Tools::lang()->trans('select') . '\');">'
-            . '<i class="fas fa-times me-1"></i>' . Tools::lang()->trans('none')
+            . '<i class="fa-solid fa-times me-1"></i>' . Tools::lang()->trans('none')
             . '</a>';
     }
 

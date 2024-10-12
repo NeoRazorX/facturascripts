@@ -118,7 +118,7 @@ class MegaSearch extends Controller
         if (!empty($results)) {
             $this->results['pages'] = [
                 'columns' => ['icon' => 'icon', 'menu' => 'menu', 'submenu' => 'submenu', 'title' => 'title'],
-                'icon' => 'fas fa-mouse-pointer',
+                'icon' => 'fa-solid fa-mouse-pointer',
                 'title' => 'pages',
                 'results' => $results
             ];

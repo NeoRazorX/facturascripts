@@ -41,7 +41,7 @@ class EditLogMessage extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'log';
-        $data['icon'] = 'fas fa-file-medical-alt';
+        $data['icon'] = 'fa-solid fa-file-medical-alt';
         return $data;
     }
 
@@ -66,7 +66,7 @@ class EditLogMessage extends EditController
 
     protected function createViewsOtherLogs(string $viewName = 'ListLogMessage')
     {
-        $this->addListView($viewName, 'LogMessage', 'related', 'fas fa-file-medical-alt');
+        $this->addListView($viewName, 'LogMessage', 'related', 'fa-solid fa-file-medical-alt');
         $this->views[$viewName]->addSearchFields(['ip', 'message', 'uri']);
         $this->views[$viewName]->addOrderBy(['time', 'id'], 'date', 2);
         $this->views[$viewName]->addOrderBy(['level'], 'level');

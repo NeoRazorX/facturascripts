@@ -57,7 +57,7 @@ class SendMail extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'send-mail';
-        $data['icon'] = 'fas fa-envelope';
+        $data['icon'] = 'fa-solid fa-envelope';
         $data['showonmenu'] = false;
         return $data;
     }

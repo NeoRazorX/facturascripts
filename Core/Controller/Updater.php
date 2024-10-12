@@ -59,7 +59,7 @@ class Updater extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'updater';
-        $data['icon'] = 'fas fa-cloud-download-alt';
+        $data['icon'] = 'fa-solid fa-cloud-download-alt';
         return $data;
     }
 

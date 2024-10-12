@@ -49,7 +49,7 @@
             <div class="card border-success shadow mb-2">
                 <div class="card-body p-2">
                     <button class="btn btn-spin-action btn-sm btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#{{ formName }}Collapse" aria-expanded="false">
-                        <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
+                        <i class="fa-solid fa-plus-square fa-fw" aria-hidden="true"></i>
                         {{ trans('add') }}
                     </button>
                     &nbsp;
@@ -65,7 +65,7 @@
                             </div>
                             <div class="col-sm-2 text-end">
                                 <button class="btn btn-spin-action btn-sm btn-success" type="submit">
-                                    <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i>
                                     <span class="d-none d-sm-inline-block">{{ trans('save') }}</span>
                                 </button>
                             </div>
@@ -95,7 +95,7 @@
                         {% if currentView.settings.btnDelete %}
                             <button type="button" class="btn btn-spin-action btn-sm btn-danger" title="{{ trans('delete') }}"
                                     onclick="editListViewDelete('{{ currentView.getViewName() ~ counter }}');">
-                                <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                                <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
                             </button>
                         {% endif %}
                         {# -- Row actions -- #}
@@ -103,12 +103,12 @@
                         {{ row.render(false, currentView.getViewName() ~ counter) | raw }}
                         {% if currentView.settings.btnUndo %}
                             <button class="btn btn-spin-action btn-sm btn-secondary" type="reset" title="{{ trans('undo') }}">
-                                <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
+                                <i class="fa-solid fa-undo fa-fw" aria-hidden="true"></i>
                             </button>
                         {% endif %}
                         {% if currentView.settings.btnSave %}
                             <button class="btn btn-spin-action btn-sm btn-primary" type="submit" title="{{ trans('save') }}">
-                                <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                                <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i>
                             </button>
                         {% endif %}
                     </div>

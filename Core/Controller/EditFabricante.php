@@ -44,7 +44,7 @@ class EditFabricante extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'manufacturer';
-        $data['icon'] = 'fas fa-industry';
+        $data['icon'] = 'fa-solid fa-industry';
         return $data;
     }
 
@@ -81,21 +81,21 @@ class EditFabricante extends EditController
 
     protected function createViewNewProducts(string $viewName = 'ListProducto-new'): void
     {
-        $this->addListView($viewName, 'Producto', 'add', 'fas fa-folder-plus');
+        $this->addListView($viewName, 'Producto', 'add', 'fa-solid fa-folder-plus');
         $this->createViewProductsCommon($viewName);
 
         // botón añadir producto
         $this->addButton($viewName, [
             'action' => 'add-product',
             'color' => 'success',
-            'icon' => 'fas fa-folder-plus',
+            'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add'
         ]);
     }
 
     protected function createViewProducts(string $viewName = 'ListProducto'): void
     {
-        $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
+        $this->addListView($viewName, 'Producto', 'products', 'fa-solid fa-cubes');
         $this->createViewProductsCommon($viewName);
 
         // botón quitar producto
@@ -103,7 +103,7 @@ class EditFabricante extends EditController
             'action' => 'remove-product',
             'color' => 'danger',
             'confirm' => true,
-            'icon' => 'fas fa-folder-minus',
+            'icon' => 'fa-solid fa-folder-minus',
             'label' => 'remove-from-list'
         ]);
     }

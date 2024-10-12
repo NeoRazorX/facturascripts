@@ -56,12 +56,12 @@
             <div class="col-md-8 mb-2">
                 <div class="btn-group">
                     <a href="{{ firstView.model.url('list') }}" class="btn btn-sm btn-secondary">
-                        <i class="fas fa-list fa-fw" aria-hidden="true"></i>
+                        <i class="fa-solid fa-list fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-lg-inline-block">{{ trans('all') }}</span>
                     </a>
                     <a href="{{ firstView.model.url('edit') }}" class="btn btn-sm btn-secondary"
                        title="{{ trans('refresh') }}">
-                        <i class="fas fa-redo" aria-hidden="true"></i>
+                        <i class="fa-solid fa-redo" aria-hidden="true"></i>
                     </a>
                 </div>
                 {# -- Options button -- #}
@@ -69,7 +69,7 @@
                 {# -- New button -- #}
                 {% if fsc.hasData and firstView.settings.btnNew %}
                     <a href="{{ firstView.model.url('new') }}" class="btn btn-sm btn-success">
-                        <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                        <i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-lg-inline-block">{{ trans('new') }}</span>
                     </a>
                 {% endif %}
@@ -168,7 +168,7 @@
             <div class="dropdown">
                 <button class="btn btn-sm btn-secondary me-3 dropdown-toggle" type="button" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-wrench fa-fw" aria-hidden="true"></i>
+                    <i class="fa-solid fa-wrench fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-lg-inline-block">{{ trans('options') }}</span>
                 </button>
                 <div class="dropdown-menu">
@@ -179,7 +179,7 @@
                                href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
                                 <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
                                 {% if view.settings.customized %}
-                                    <i class="fas fa-user-pen ms-2" title="{{ trans('personalized') }}"></i>
+                                    <i class="fa-solid fa-user-pen ms-2" title="{{ trans('personalized') }}"></i>
                                 {% endif %}
                             </a>
                         {% endif %}
@@ -194,7 +194,7 @@
     <div class="btn-group">
         <a href="{{ firstView.model.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}"
            target="_blank" class="btn btn-sm btn-secondary">
-            <i class="fas fa-print fa-fw" aria-hidden="true"></i>
+            <i class="fa-solid fa-print fa-fw" aria-hidden="true"></i>
             <span class="d-none d-lg-inline-block">{{ trans('print') }}</span>
         </a>
         <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split"
@@ -212,7 +212,7 @@
             {% endfor %}
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#advancedExportModal">
-                <i class="fas fa-tools fa-fw" aria-hidden="true"></i>
+                <i class="fa-solid fa-tools fa-fw" aria-hidden="true"></i>
                 {{ trans('advanced') }}
             </a>
             {% set tools = fsc.exportManager.tools() %}
@@ -234,7 +234,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fas fa-tools fa-fw" aria-hidden="true"></i>
+                            <i class="fa-solid fa-tools fa-fw" aria-hidden="true"></i>
                             {{ trans('advanced') }}
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

@@ -351,10 +351,10 @@ class ExportManager
     {
         if (empty(static::$options)) {
             static::$options = [
-                'PDF' => ['description' => 'print', 'icon' => 'fas fa-print'],
-                'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fas fa-file-excel'],
-                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fas fa-file-csv'],
-                'MAIL' => ['description' => 'email', 'icon' => 'fas fa-envelope']
+                'PDF' => ['description' => 'print', 'icon' => 'fa-solid fa-print'],
+                'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-solid fa-file-excel'],
+                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-solid fa-file-csv'],
+                'MAIL' => ['description' => 'email', 'icon' => 'fa-solid fa-envelope']
             ];
         }
 
@@ -363,7 +363,7 @@ class ExportManager
                 'main' => [
                     'link' => 'EditSettings?activetab=ListFormatoDocumento',
                     'description' => 'printing-formats',
-                    'icon' => 'fas fa-cog'
+                    'icon' => 'fa-solid fa-cog'
                 ],
             ];
         }

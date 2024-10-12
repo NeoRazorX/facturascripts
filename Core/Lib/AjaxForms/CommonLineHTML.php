@@ -311,16 +311,16 @@ trait CommonLineHTML
         if ($model->editable) {
             return '<div class="col-auto order-9">'
                 . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-light me-2" title="'
-                . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button>'
+                . $i18n->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button>'
                 . '<button class="btn btn-sm btn-danger btn-spin-action" type="button" title="' . $i18n->trans('delete') . '"'
                 . ' onclick="return ' . $jsName . '(\'rm-line\', \'' . $idlinea . '\');">'
-                . '<i class="fas fa-trash-alt"></i></button>'
+                . '<i class="fa-solid fa-trash-alt"></i></button>'
                 . '</div>';
         }
 
         return '<div class="col-auto order-9"><button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-'
             . $idlinea . '" class="btn btn-sm btn-outline-secondary" title="'
-            . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
+            . $i18n->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button></div>';
     }
 
     private static function subtotalValue(BusinessDocumentLine $line, TransformerDocument $model): float
