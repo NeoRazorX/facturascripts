@@ -195,7 +195,7 @@ class ListLogMessage extends ListController
             return;
         }
 
-        $codes = $this->request->request->get('code', []);
+        $codes = $this->request->request->getArray('codes');
         if (false === is_array($codes)) {
             return;
         }

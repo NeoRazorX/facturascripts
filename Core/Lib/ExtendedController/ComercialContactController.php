@@ -239,7 +239,7 @@ abstract class ComercialContactController extends EditController
     protected function execPreviousAction($action)
     {
         $allowUpdate = $this->permissions->allowUpdate;
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         $model = $this->views[$this->active]->model;
 
         switch ($action) {

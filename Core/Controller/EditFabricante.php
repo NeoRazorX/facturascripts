@@ -51,7 +51,7 @@ class EditFabricante extends EditController
     protected function addProductAction(): void
     {
         $num = 0;
-        $codes = $this->request->request->getArray('code');
+        $codes = $this->request->request->getArray('codes', false);
         foreach ($codes as $code) {
             $product = new Producto();
             if (false === $product->loadFromCode($code)) {
@@ -196,7 +196,7 @@ class EditFabricante extends EditController
     protected function removeProductAction(): void
     {
         $num = 0;
-        $codes = $this->request->request->getArray('code');
+        $codes = $this->request->request->getArray('codes', false);
         foreach ($codes as $code) {
             $product = new Producto();
             if (false === $product->loadFromCode($code)) {

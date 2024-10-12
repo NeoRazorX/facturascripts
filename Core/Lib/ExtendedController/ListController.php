@@ -343,7 +343,7 @@ abstract class ListController extends BaseController
         }
 
         $this->setTemplate(false);
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         $option = $this->request->get('option', '');
         $this->exportManager->newDoc($option);
         $this->views[$this->active]->export($this->exportManager, $codes);
