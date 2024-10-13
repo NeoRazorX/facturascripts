@@ -211,6 +211,11 @@ class Tools
             return self::config('folder') ?? '';
         }
 
+        // eliminamos barras al incio y al final
+        $folders = array_map(function($folder) {
+            return ltrim(rtrim($folder, '/\\'), '/\\');
+        }, $folders);
+
         array_unshift($folders, self::config('folder'));
         return implode(DIRECTORY_SEPARATOR, $folders);
     }
