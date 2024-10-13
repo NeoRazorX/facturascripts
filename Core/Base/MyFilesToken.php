@@ -19,14 +19,16 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Lib\MyFilesToken as MyFilesTokenCore;
+
 /**
  * Esta clase ha sido marcada como obsoleta y será eliminada en versiones futuras.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  *
- * @deprecated desde la versión XXXXX Se recomienda usar Core/Lib/MyFilesToken en su lugar.
+ * @deprecated reemplazado por Core/Lib/MyFilesToken
  */
-class MyFilesToken extends \FacturaScripts\Core\Lib\MyFilesToken
+class MyFilesToken extends MyFilesTokenCore
 {
     //
 }
