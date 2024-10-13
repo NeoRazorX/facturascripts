@@ -175,6 +175,18 @@ abstract class ModelClass extends ModelCore
     }
 
     /**
+     * Remove data from cache model.
+     *
+     * @return void
+     */
+    public static function clearCache(): void
+    {
+        Cache::deleteMulti('model-' . static::modelClassName() . '-');
+        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('table-' . static::tableName() . '-');
+    }
+
+    /**
      * Allows to use this model as source in CodeModel special model.
      *
      * @param string $fieldCode
@@ -255,9 +267,7 @@ abstract class ModelClass extends ModelCore
             return false;
         }
 
-        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
-        Cache::deleteMulti('join-model-');
-        Cache::deleteMulti('table-' . static::tableName() . '-');
+        $this->clearCache();
 
         WorkQueue::send(
             'Model.' . $this->modelClassName() . '.Delete',
@@ -277,9 +287,27 @@ abstract class ModelClass extends ModelCore
      */
     public static function deleteAll(array $where): bool
     {
-        return static::table()
+        if (false === static::table()
             ->where($where)
-            ->delete();
+            ->delete()
+        ) {
+            return false;
+        }
+        static::clearCache();
+        return true;
+    }
+
+    /**
+     * Returns true if the model data is stored in the database.
+     * // TODO: Check if the method is necessary
+     *
+     * @return bool
+     * @throws KernelException
+     */
+    public function exists(): bool
+    {
+        return !empty($this->primaryColumnValue())
+            && self::find($this->primaryColumnValue()) !== null;
     }
 
     /**
@@ -315,6 +343,21 @@ abstract class ModelClass extends ModelCore
             throw new KernelException('RecordNotFound', 'Record not found');
         }
         return $result;
+    }
+
+    /**
+     * Returns the model whose primary column corresponds to the value $cod
+     * // TODO: Check if the method is necessary
+     *
+     * @param string $code
+     *
+     * @return static|false
+     * @throws KernelException
+     */
+    public function get($code)
+    {
+        $data = self::find($code);
+        return empty($data) ? false : $data;
     }
 
     /**
@@ -461,6 +504,58 @@ abstract class ModelClass extends ModelCore
     }
 
     /**
+     * Returns the name of the column that describes the model, such as name, description...
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn(): string
+    {
+        $fields = $this->getModelFields();
+        return isset($fields['descripcion']) ? 'descripcion' : static::primaryColumn();
+    }
+
+    /**
+     * Descriptive identifier for humans of the data record
+     *
+     * @return string
+     */
+    public function primaryDescription(): string
+    {
+        $field = $this->primaryDescriptionColumn();
+        return $this->{$field} ?? (string)$this->primaryColumnValue();
+    }
+
+    /**
+     * Stores the model data in the database.
+     *
+     * @return bool
+     * @throws KernelException
+     */
+    public function save(): bool
+    {
+        if ($this->pipeFalse('saveBefore') === false) {
+            return false;
+        }
+
+        if (false === $this->test()) {
+            return false;
+        }
+
+        $done = $this->exists() ? $this->saveUpdate() : $this->saveInsert();
+        if (false === $done) {
+            return false;
+        }
+
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Save',
+            $this->primaryColumnValue(),
+            $this->toArray()
+        );
+
+        return $this->pipeFalse('save');
+    }
+
+    /**
      * Return the DbQuery object for the model table.
      *
      * @return DbQuery
@@ -469,6 +564,39 @@ abstract class ModelClass extends ModelCore
     public static function table(): DbQuery
     {
         return DbQuery::table(static::tableName());
+    }
+
+    /**
+     * Returns true if there are no errors in the values of the model properties.
+     * It runs inside the save method.
+     *
+     * @return bool
+     */
+    public function test(): bool
+    {
+        if ($this->pipeFalse('testBefore') === false) {
+            return false;
+        }
+
+        // check if the required fields are not empty
+        $fields = $this->getModelFields();
+        if (empty($fields)) {
+            return false;
+        }
+        $return = true;
+        foreach ($fields as $key => $value) {
+            if ($key == static::primaryColumn()) {
+                $this->{$key} = empty($this->{$key}) ? null : $this->{$key};
+            } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
+                Tools::log()->warning('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]);
+                $return = false;
+            }
+        }
+        if (false === $return) {
+            return false;
+        }
+
+        return $this->pipeFalse('test');
     }
 
     /**
@@ -484,6 +612,142 @@ abstract class ModelClass extends ModelCore
         }
 
         return $data;
+    }
+
+    /**
+     * Returns the sum of the values of the field in the model table.
+     *
+     * @param string $field
+     * @param Where[] $where
+     * @throws Exception
+     */
+    public function totalSum(string $field, array $where = []): float
+    {
+        if (false === empty($where)) {
+            return $this->table()
+                ->where($where)
+                ->sum($field);
+        }
+
+        // No where, update the cache
+        $key = 'model-' . $this->modelClassName() . '-' . $field . '-total-sum';
+        return Cache::remember($key, function () use ($field) {
+            return $this->table()->sum($field);
+        });
+    }
+
+    /**
+     * Update the model data in the database.
+     *
+     * @param array $newValues
+     * @return bool
+     * @throws KernelException|Exception
+     */
+    public function update(array $newValues): bool
+    {
+        if (false === $this->table()
+            ->whereEq($this->primaryColumn(), $this->primaryColumnValue())
+            ->update($newValues)
+        ) {
+            return false;
+        }
+
+        $this->loadFromData($newValues);
+        $this->clearCache();
+        return true;
+    }
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List'): string
+    {
+        $value = $this->primaryColumnValue();
+        $model = $this->modelClassName();
+
+        $return = $this->pipe('url', $type, $list);
+        if ($return) {
+            return $return;
+        }
+
+        switch ($type) {
+            case 'edit':
+                return is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
+
+            case 'list':
+                return $list . $model;
+
+            case 'new':
+                return 'Edit' . $model;
+        }
+
+        // default
+        return empty($value) ? $list . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
+    }
+
+    /**
+     * Insert the model data in the database.
+     *
+     * @return bool
+     * @throws KernelException
+     */
+    protected function saveInsert(): bool
+    {
+        if ($this->pipeFalse('saveInsertBefore') === false) {
+            return false;
+        }
+
+        $data = $this->toArray();
+        if (false === $this->table()->insert($data)) {
+            return false;
+        }
+
+        if ($this->primaryColumnValue() === null) {
+            $this->{static::primaryColumn()} = self::$dataBase->lastval();
+        } else {
+            // update sequence, is necessary for PostgreSQL
+            self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
+        }
+
+        $this->clearCache();
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Insert',
+            $this->primaryColumnValue(),
+            $data
+        );
+
+        return $this->pipeFalse('saveInsert');
+    }
+
+    /**
+     * Update the model data in the database.
+     *
+     * @return bool
+     */
+    protected function saveUpdate(): bool
+    {
+        if ($this->pipeFalse('saveUpdateBefore') === false) {
+            return false;
+        }
+
+        $data = $this->toArray();
+        if (false === $this->update($data)) {
+            return false;
+        }
+
+        $this->clearCache();
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Update',
+            $this->primaryColumnValue(),
+            $data
+        );
+
+        return $this->pipeFalse('saveUpdate');
     }
 
     /**
