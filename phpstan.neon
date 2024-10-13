@@ -1,0 +1,9 @@
+parameters:
+  bootstrapFiles:
+    - .ci/code-analysers-autoload.php
+  phpVersion: 70300
+  level: 0
+  paths:
+    - Core
+  ignoreErrors:
+    - '#Unsafe usage of new static#'
