@@ -21,8 +21,24 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 
-class NextCode
+final class NextCode
 {
+    public static function clearOld(): void
+    {
+        // eliminamos archivos .lock de hace más de 1 hora
+        $folder = Tools::folder('MyFiles', 'Tmp');
+        foreach (Tools::folderScan($folder) as $file) {
+            if (false === strpos($file, '.lock')) {
+                continue;
+            }
+
+            $file_path = $folder . $file;
+            if (filemtime($file_path) < time() - 3600) {
+                unlink($file_path);
+            }
+        }
+    }
+
     public static function get(string $table, string $column, string $type = 'int'): ?int
     {
         $db = new DataBase();
@@ -57,6 +73,12 @@ class NextCode
 
             return $value;
         }
+
+        Tools::log()->error('cant-lock-next-code', [
+            '%table%' => $table,
+            '%column%' => $column,
+            '%value%' => $value
+        ]);
 
         return null;
     }
