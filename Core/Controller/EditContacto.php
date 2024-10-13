@@ -52,7 +52,7 @@ class EditContacto extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'contact';
-        $data['icon'] = 'fas fa-address-book';
+        $data['icon'] = 'fa-solid fa-address-book';
         return $data;
     }
 
@@ -63,7 +63,7 @@ class EditContacto extends EditController
             $this->addButton($viewName, [
                 'action' => 'convert-into-customer',
                 'color' => 'success',
-                'icon' => 'fas fa-user-check',
+                'icon' => 'fa-solid fa-user-check',
                 'label' => 'convert-into-customer'
             ]);
         }
@@ -73,7 +73,7 @@ class EditContacto extends EditController
             $this->addButton($viewName, [
                 'action' => 'convert-into-supplier',
                 'color' => 'success',
-                'icon' => 'fas fa-user-cog',
+                'icon' => 'fa-solid fa-user-cog',
                 'label' => 'convert-into-supplier'
             ]);
         }
@@ -111,7 +111,7 @@ class EditContacto extends EditController
 
     protected function createEmailsView(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope')
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
             ->addOrderBy(['date'], 'date', 2)
             ->addSearchFields(['addressee', 'body', 'subject'])
             ->disableColumn('to')
@@ -120,7 +120,7 @@ class EditContacto extends EditController
 
     protected function createEstimationsView(string $viewName = 'ListPresupuestoCliente'): void
     {
-        $this->addListView($viewName, 'PresupuestoCliente', 'estimations', 'fas fa-copy')
+        $this->addListView($viewName, 'PresupuestoCliente', 'estimations', 'fa-solid fa-copy')
             ->addOrderBy(['fecha'], 'date', 2)
             ->addSearchFields(['codigo', 'numero2', 'observaciones']);
     }
@@ -267,7 +267,7 @@ class EditContacto extends EditController
                 $this->addButton($viewName, [
                     'action' => 'SendMail?email=' . $email,
                     'color' => 'success',
-                    'icon' => 'fas fa-envelope',
+                    'icon' => 'fa-solid fa-envelope',
                     'label' => 'send',
                     'type' => 'link'
                 ]);
@@ -291,7 +291,7 @@ class EditContacto extends EditController
                 $this->addButton($viewName, [
                     'action' => 'check-vies',
                     'color' => 'info',
-                    'icon' => 'fas fa-check-double',
+                    'icon' => 'fa-solid fa-check-double',
                     'label' => 'check-vies'
                 ]);
                 break;

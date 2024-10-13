@@ -41,7 +41,7 @@ class EditCiudad extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'city';
-        $data['icon'] = 'fas fa-city';
+        $data['icon'] = 'fa-solid fa-city';
         return $data;
     }
 
@@ -55,7 +55,7 @@ class EditCiudad extends EditController
 
     protected function createViewsPOI(string $viewName = 'ListPuntoInteresCiudad'): void
     {
-        $this->addListView($viewName, 'PuntoInteresCiudad', 'points-of-interest', 'fas fa-location-dot')
+        $this->addListView($viewName, 'PuntoInteresCiudad', 'points-of-interest', 'fa-solid fa-location-dot')
             ->addOrderBy(['name'], 'name')
             ->addOrderBy(['idciudad'], 'city')
             ->addSearchFields(['name', 'alias'])

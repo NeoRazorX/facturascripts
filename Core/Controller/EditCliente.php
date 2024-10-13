@@ -88,7 +88,7 @@ class EditCliente extends ComercialContactController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'customer';
-        $data['icon'] = 'fas fa-users';
+        $data['icon'] = 'fa-solid fa-users';
         return $data;
     }
 
@@ -118,7 +118,7 @@ class EditCliente extends ComercialContactController
     {
         parent::createViews();
         $this->createContactsView();
-        $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
+        $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-solid fa-piggy-bank');
 
         if ($this->user->can('EditSubcuenta')) {
             $this->createSubaccountsView();

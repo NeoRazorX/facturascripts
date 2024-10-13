@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Internal\UploadedFile;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetFile
@@ -62,7 +62,7 @@ class WidgetFile extends BaseWidget
 
         if ($this->readonly()) {
             $class = $this->combineClasses($this->css('form-control'), $this->class);
-            return '<div class="form-group mb-2">'
+            return '<div class="mb-3">'
                 . '<label class="mb-0">' . $this->onclickHtml(Tools::lang()->trans($title), $titleurl) . '</label>'
                 . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
                 . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>'
@@ -105,7 +105,7 @@ class WidgetFile extends BaseWidget
             // move the file to the MyFiles folder
             if ($uploadFile->move($destiny, $destinyName)) {
                 $model->{$this->fieldname} = $destinyName;
-                break;
+                continue;
             }
 
             $logger->error('file-not-found');
@@ -130,7 +130,7 @@ class WidgetFile extends BaseWidget
      */
     protected function inputHtml($type = 'file', $extraClass = '')
     {
-        $class = empty($extraClass) ? $this->css('form-control-file') : $this->css('form-control-file') . ' ' . $extraClass;
+        $class = empty($extraClass) ? $this->css('form-control') : $this->css('form-control') . ' ' . $extraClass;
 
         if ($this->multiple) {
             return '<input type="' . $type . '" name="' . $this->fieldname . '[]" value="' . $this->value

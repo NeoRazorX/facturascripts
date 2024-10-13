@@ -36,13 +36,11 @@
                     <div class="card shadow">
                         <div class="card-body">
                             <h1 class="h3 mb-3">
-                                <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send-mail') }}
+                                <i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send-mail') }}
                             </h1>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ trans('from') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ trans('from') }}</span>
                                     <select class="custom-select" name="email-from">
                                         {% for emailFrom in fsc.newMail.getAvailableMailboxes() %}
                                             <option value="{{ emailFrom }}">{{ emailFrom }}</option>
@@ -50,16 +48,13 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ trans('to') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ trans('to') }}</span>
                                     {% set emails = fsc.newMail.getToAddresses() is empty ? '' : fsc.newMail.getToAddresses() | join(',') ~ ', ' %}
                                     <input type="text" id="email" name="email" value="{{ emails }}" class="form-control"
                                            placeholder="{{ trans('email-to') }}" required/>
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-outline-secondary"
+                                    <button type="button" class="btn btn-outline-secondary"
                                                 title="{{ trans('email-cc') }}" onclick="$('#fgCC').show();
                                                 $(this).hide();">{{ trans('cc') }}
                                         </button>
@@ -67,42 +62,35 @@
                                                 title="{{ trans('email-bcc') }}" onclick="$('#fgBCC').show();
                                                 $(this).hide();">{{ trans('bcc') }}
                                         </button>
-                                    </div>
                                 </div>
                             </div>
-                            <div id="fgCC" class="form-group" style="display: none;">
+                            <div id="fgCC" class="mb-3" style="display: none;">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ trans('cc') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ trans('cc') }}</span>
                                     <input type="text" id="email-cc" name="email-cc" class="form-control"
                                            placeholder="{{ trans('email-cc') }}"/>
                                 </div>
                             </div>
-                            <div id="fgBCC" class="form-group" style="display: none;">
+                            <div id="fgBCC" class="mb-3" style="display: none;">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ trans('bcc') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ trans('bcc') }}</span>
                                     <input type="text" id="email-bcc" name="email-bcc" class="form-control"
                                            placeholder="{{ trans('email-bcc') }}"/>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ trans('subject') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ trans('subject') }}</span>
                                     <input type="text" name="subject" value="{{ fsc.newMail.title }}"
                                            class="form-control" placeholder="{{ trans('subject') }}" required/>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <textarea name="body" rows="5"
                                           class="form-control">{{ fsc.newMail.text | raw }}</textarea>
                             </div>
                             {% if fsc.newMail.signature %}
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ trans('email-signature') }}
                                     <textarea rows="3" class="form-control"
                                               readonly>{{ fsc.newMail.signature }}</textarea>
@@ -110,7 +98,7 @@
                             {% endif %}
                             {% for name in fsc.newMail.getAttachmentNames() %}
                                 <p>
-                                    <i class="fas fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}
+                                    <i class="fa-solid fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}
                                 </p>
                             {% endfor %}
                             <div id="email-attachments"></div>
@@ -127,9 +115,9 @@
                                         </div>
                                     {% endif %}
                                 </div>
-                                <div class="col-sm-6 text-right">
+                                <div class="col-sm-6 text-end">
                                     <button type="submit" class="btn btn-primary btn-spin-action">
-                                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send') }}
+                                        <i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send') }}
                                     </button>
                                 </div>
                             </div>
@@ -165,7 +153,7 @@
             }
 
             let div = document.createElement('div');
-            div.className = 'form-group';
+            div.className = 'mb-3';
 
             let file = document.createElement('input');
             file.type = 'file';

@@ -41,7 +41,7 @@ class EditSecuenciaDocumento extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'document-sequence';
-        $data['icon'] = 'fas fa-code';
+        $data['icon'] = 'fa-solid fa-code';
         return $data;
     }
 
@@ -72,7 +72,7 @@ class EditSecuenciaDocumento extends EditController
 
     protected function createViewsDocuments(string $viewName, string $model, string $title): void
     {
-        $this->addListView($viewName, $model, $title, 'fas fa-copy')
+        $this->addListView($viewName, $model, $title, 'fa-solid fa-copy')
             ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 1)
             ->addOrderBy([$this->tableColToNumber('numero')], 'number')
             ->addSearchFields(['cifnif', 'codigo', 'numero', 'observaciones']);

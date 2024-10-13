@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\AjaxForms\PurchasesController;
+use FacturaScripts\Core\Lib\AjaxForms\PurchasesController;
 
 /**
  * Description of EditAlbaranProveedor
@@ -25,7 +25,7 @@ class EditAlbaranProveedor extends PurchasesController
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'delivery-note';
-        $data['icon'] = 'fas fa-dolly-flatbed';
+        $data['icon'] = 'fa-solid fa-dolly-flatbed';
         $data['showonmenu'] = false;
         return $data;
     }

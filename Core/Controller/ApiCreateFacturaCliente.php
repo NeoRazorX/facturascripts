@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
-use Symfony\Component\HttpFoundation\Response;
 
 class ApiCreateFacturaCliente extends ApiController
 {

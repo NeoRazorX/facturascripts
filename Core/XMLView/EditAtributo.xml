@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
             </column>
             <column name="code" description="optional" numcolumns="2" order="110">
-                <widget type="text" fieldname="codatributo" icon="fas fa-hashtag" maxlength="20" readonly="dinamic"/>
+                <widget type="text" fieldname="codatributo" icon="fa-solid fa-hashtag" maxlength="20" readonly="dinamic"/>
             </column>
             <column name="selector-number" numcolumns="2" order="120">
                 <widget type="number" fieldname="num_selector" min="0" icon="fa-solid fa-folder-tree"/>

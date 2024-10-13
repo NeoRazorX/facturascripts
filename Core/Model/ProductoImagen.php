@@ -20,10 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Lib\MyFilesToken;
+use FacturaScripts\Core\Internal\UploadedFile;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinAttachedFile;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
 
 /**

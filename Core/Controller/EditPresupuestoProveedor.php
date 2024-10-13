@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\AjaxForms\PurchasesController;
+use FacturaScripts\Core\Lib\AjaxForms\PurchasesController;
 
 /**
  * Description of EditPresupuestoProveedor
@@ -15,11 +15,7 @@ use FacturaScripts\Core\Base\AjaxForms\PurchasesController;
  */
 class EditPresupuestoProveedor extends PurchasesController
 {
-
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'PresupuestoProveedor';
     }

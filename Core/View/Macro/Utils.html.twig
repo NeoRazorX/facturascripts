@@ -22,10 +22,8 @@
 {% macro message(log, levels, style) %}
     {% set messages = log.read('master', levels) | merge(log.read('database', levels)) %}
     {% if messages | length > 0 %}
-        <div class="alert alert-{{ style }}" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div class="alert alert-dismissible alert-{{ style }}" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             {% for item in messages %}
                 <div>{{ item.message | raw }}</div>
             {% endfor %}
@@ -37,10 +35,8 @@
 {% macro messageCompat(log, levels, style) %}
     {% for item in log.read() %}
         {% if item.level in levels and item.channel == 'master' %}
-            <div class="alert alert-{{ style }}" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="alert alert-dismissible alert-{{ style }}" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 <div>{{ item.message | raw }}</div>
             </div>
         {% endif %}
@@ -49,7 +45,7 @@
 
 {# Muestra los parámetros necesarios para el popover #}
 {% macro popoverTitle(msg, position = 'auto') %}
-    {% if msg | length > 0 %}data-toggle="popover" data-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"{% endif %}
+    {% if msg | length > 0 %}data-bs-toggle="popover" data-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"{% endif %}
 {% endmacro %}
 
 {# Muestra un mensaje para registrar la instalación #}
@@ -57,7 +53,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="h4">
-                <i class="fa-solid fa-registered mr-1"></i> {{ trans('register-install-ad') }}
+                <i class="fa-solid fa-registered me-1"></i> {{ trans('register-install-ad') }}
             </div>
             <p class="card-text">{{ trans('register-install-ad-p') }}</p>
         </div>
@@ -79,7 +75,7 @@
     <div class="card bg-warning shadow-sm">
         <div class="card-body">
             <div class="h3">
-                <i class="fa-solid fa-cloud-download fa-beat mr-1"></i> {{ trans('updates-available') }}
+                <i class="fa-solid fa-cloud-download fa-beat me-1"></i> {{ trans('updates-available') }}
             </div>
             <p class="card-text">{{ trans('updates-available-p') }}</p>
         </div>

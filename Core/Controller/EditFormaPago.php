@@ -40,7 +40,7 @@ class EditFormaPago extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'payment-method';
-        $data['icon'] = 'fas fa-credit-card';
+        $data['icon'] = 'fa-solid fa-credit-card';
         return $data;
     }
 

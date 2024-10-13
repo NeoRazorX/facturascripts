@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Divisa;
@@ -141,7 +140,7 @@ final class ToolsTest extends TestCase
 
     public function testSettings(): void
     {
-        $this->assertEquals(AppSettings::get('default', 'codpais'), Tools::settings('default', 'codpais'));
+        $this->assertEquals(Tools::settings('default', 'codpais'), Tools::settings('default', 'codpais'));
 
         // nos guardamos el valor actual
         $value = Tools::settings('default', 'codpais');

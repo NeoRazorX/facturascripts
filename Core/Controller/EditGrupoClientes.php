@@ -48,13 +48,13 @@ class EditGrupoClientes extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'customer-group';
-        $data['icon'] = 'fas fa-users-cog';
+        $data['icon'] = 'fa-solid fa-users-cog';
         return $data;
     }
 
     protected function addCustomerAction()
     {
-        $codes = $this->request->request->get('code', []);
+        $codes = $this->request->request->getArray('codes');
         if (false === is_array($codes)) {
             return;
         }
@@ -123,7 +123,7 @@ class EditGrupoClientes extends EditController
      */
     protected function createViewCustomers(string $viewName = 'ListCliente')
     {
-        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
+        $this->addListView($viewName, 'Cliente', 'customers', 'fa-solid fa-users');
         $this->createViewCommon($viewName);
 
         // add action button
@@ -131,7 +131,7 @@ class EditGrupoClientes extends EditController
             'action' => 'remove-customer',
             'color' => 'danger',
             'confirm' => true,
-            'icon' => 'fas fa-folder-minus',
+            'icon' => 'fa-solid fa-folder-minus',
             'label' => 'remove-from-list'
         ]);
     }
@@ -141,14 +141,14 @@ class EditGrupoClientes extends EditController
      */
     protected function createViewNewCustomers(string $viewName = 'ListCliente-new')
     {
-        $this->addListView($viewName, 'Cliente', 'add', 'fas fa-user-plus');
+        $this->addListView($viewName, 'Cliente', 'add', 'fa-solid fa-user-plus');
         $this->createViewCommon($viewName);
 
         // add action button
         $this->addButton($viewName, [
             'action' => 'add-customer',
             'color' => 'success',
-            'icon' => 'fas fa-folder-plus',
+            'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add'
         ]);
     }
@@ -201,7 +201,7 @@ class EditGrupoClientes extends EditController
 
     protected function removeCustomerAction()
     {
-        $codes = $this->request->request->get('code', []);
+        $codes = $this->request->request->getArray('codes');
         if (false === is_array($codes)) {
             return;
         }
