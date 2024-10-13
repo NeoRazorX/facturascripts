@@ -232,6 +232,7 @@ abstract class ModelClass extends ModelCore
      * @param Where[] $where filters to apply to model records.
      *
      * @return int
+     * @throws Exception
      */
     public static function count(array $where = []): int
     {
@@ -578,17 +579,32 @@ abstract class ModelClass extends ModelCore
             return false;
         }
 
-        // check if the required fields are not empty
         $fields = $this->getModelFields();
         if (empty($fields)) {
             return false;
         }
+
         $return = true;
         foreach ($fields as $key => $value) {
+            // set null to primary key if it is empty (new records)
             if ($key == static::primaryColumn()) {
-                $this->{$key} = empty($this->{$key}) ? null : $this->{$key};
-            } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
-                Tools::log()->warning('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]);
+                if (empty($this->{$key})) {
+                    $this->{$key} = null;
+                    continue;
+                }
+            }
+
+            // check if the required fields are not empty
+            if ($this->{$key} === null) {
+                if (null === $value['default'] && $value['is_nullable'] === 'NO') {
+                    Tools::log()->warning('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]);
+                    $return = false;
+                }
+                continue;
+            }
+
+            // check if the value is correct for the field type
+            if (false === $this->checkValueType($key, $value)) {
                 $return = false;
             }
         }
@@ -619,6 +635,7 @@ abstract class ModelClass extends ModelCore
      *
      * @param string $field
      * @param Where[] $where
+     * @return float
      * @throws Exception
      */
     public function totalSum(string $field, array $where = []): float
@@ -694,7 +711,7 @@ abstract class ModelClass extends ModelCore
      * Insert the model data in the database.
      *
      * @return bool
-     * @throws KernelException
+     * @throws Exception
      */
     protected function saveInsert(): bool
     {
@@ -728,6 +745,7 @@ abstract class ModelClass extends ModelCore
      * Update the model data in the database.
      *
      * @return bool
+     * @throws KernelException
      */
     protected function saveUpdate(): bool
     {
@@ -748,6 +766,82 @@ abstract class ModelClass extends ModelCore
         );
 
         return $this->pipeFalse('saveUpdate');
+    }
+
+    /**
+     * Check the value of the field according to its type.
+     *
+     * @param string $field
+     * @param array $fieldData
+     * @return bool
+     */
+    private function checkValueType(string $field, array $fieldData): bool
+    {
+        switch ($this->fieldType($fieldData['type'])) {
+            case 'tinyint':
+            case 'boolean':
+                if (is_bool($this->{$field})) {
+                    return true;
+                }
+                if (in_array(strtolower($this->{$field}), ['true', 't', '1'])) {
+                    $this->{$field} = true;
+                    return true;
+                }
+                if (in_array(strtolower($this->{$field}), ['false', 'f', '0'])) {
+                    $this->{$field} = false;
+                    return true;
+                }
+                Tools::log()->warning('field-must-be-boolean', ['%fieldName%' => $field]);
+                return false;
+
+            case 'integer':
+            case 'int':
+                if (is_numeric($this->{$field})) {
+                    return true;
+                }
+                Tools::log()->warning('field-must-be-integer', ['%fieldName%' => $field]);
+                return false;
+
+            case 'decimal':
+            case 'double':
+            case 'double precision':
+            case 'float':
+                if (is_numeric($this->{$field})) {
+                    return true;
+                }
+                Tools::log()->warning('field-must-be-float', ['%fieldName%' => $field]);
+                return false;
+
+            case 'date':
+                if (Tools::date($this->{$field})) {
+                    return true;
+                }
+                Tools::log()->warning('field-must-be-date', ['%fieldName%' => $field]);
+                return false;
+
+            case 'datetime':
+            case 'timestamp':
+                if (Tools::dateTime($this->{$field})) {
+                    return true;
+                }
+                Tools::log()->warning('field-must-be-datetime', ['%fieldName%' => $field]);
+                return false;
+
+            default:
+                if (false === is_string($this->{$field})) {
+                    Tools::log()->warning('field-must-be-string', ['%fieldName%' => $field]);
+                    return false;
+                }
+
+                // Check the max length of the field
+                if (preg_match('/\((\d+)\)/', $fieldData['type'], $matches)) {
+                    if ((int)$matches[1] < strlen($this->{$field})) {
+                        Tools::log()->warning('field-length-exceeded', ['%fieldName%' => $field]);
+                        return false;
+                    }
+                }
+                return true;
+        }
     }
 
     /**
