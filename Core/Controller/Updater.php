@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,6 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\Migrations;
-use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 use ZipArchive;
@@ -48,7 +48,7 @@ class Updater extends Controller
     /** @var array */
     public $coreUpdateWarnings = [];
 
-    /** @var TelemetryManager */
+    /** @var Telemetry */
     public $telemetryManager;
 
     /** @var array */
@@ -100,7 +100,7 @@ class Updater extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-        $this->telemetryManager = new TelemetryManager();
+        $this->telemetryManager = new Telemetry();
 
         // Folders writable?
         $folders = FileManager::notWritableFolders();
@@ -198,7 +198,7 @@ class Updater extends Controller
 
             case 'unlink':
                 if ($this->telemetryManager->unlink()) {
-                    $this->telemetryManager = new TelemetryManager();
+                    $this->telemetryManager = new Telemetry();
                     Tools::log()->notice('unlink-install-ok');
                     break;
                 }

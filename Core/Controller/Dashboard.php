@@ -22,13 +22,13 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -102,7 +102,7 @@ class Dashboard extends Controller
         $this->loadExtensions();
 
         // comprobamos si la instalación está registrada
-        $telemetry = new TelemetryManager();
+        $telemetry = new Telemetry();
         $this->registered = $telemetry->ready();
 
         // comprobamos si hay actualizaciones disponibles
