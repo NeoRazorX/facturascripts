@@ -23,12 +23,12 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 use FacturaScripts\Dinamic\Model\ApiKey;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 abstract class ApiController implements ControllerInterface
 {
@@ -56,6 +56,8 @@ abstract class ApiController implements ControllerInterface
         $this->request = Request::createFromGlobals();
         $this->response = new Response();
         $this->url = $url;
+
+        Session::set('uri', $url);
     }
 
     public function getPageData(): array

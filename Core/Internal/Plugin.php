@@ -223,11 +223,13 @@ final class Plugin
 
         // ejecutamos los procesos de la clase Init del plugin
         $init = new $className();
-        if ($this->enabled && $this->post_enable) {
+        if ($this->enabled && $this->post_enable && Kernel::lock('plugin-init-update')) {
             $init->update();
+            Kernel::unlock('plugin-init-update');
         }
-        if ($this->disabled() && $this->post_disable) {
+        if ($this->disabled() && $this->post_disable && Kernel::lock('plugin-init-uninstall')) {
             $init->uninstall();
+            Kernel::unlock('plugin-init-uninstall');
         }
         if ($this->enabled) {
             $init->init();

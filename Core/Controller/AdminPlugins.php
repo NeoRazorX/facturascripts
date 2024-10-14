@@ -25,11 +25,12 @@ use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
+use FacturaScripts\Core\Internal\UploadedFile;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * AdminPlugins.
@@ -44,6 +45,12 @@ class AdminPlugins extends Controller
     /** @var array */
     public $remotePluginList = [];
 
+    /** @var bool */
+    public $registered = false;
+
+    /** @var bool */
+    public $updated = false;
+
     public function getMaxFileUpload(): float
     {
         return UploadedFile::getMaxFilesize() / 1024 / 1024;
@@ -54,7 +61,7 @@ class AdminPlugins extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'plugins';
-        $data['icon'] = 'fas fa-plug';
+        $data['icon'] = 'fa-solid fa-plug';
         return $data;
     }
 
@@ -105,8 +112,16 @@ class AdminPlugins extends Controller
                 break;
         }
 
+        // cargamos la lista de plugins
         $this->pluginList = Plugins::list();
         $this->loadRemotePluginList();
+
+        // comprobamos si la instalación está registrada
+        $telemetry = new Telemetry();
+        $this->registered = $telemetry->ready();
+
+        // comprobamos si hay actualizaciones disponibles
+        $this->updated = Forja::canUpdateCore() === false;
     }
 
     private function disablePluginAction(): void
@@ -258,7 +273,7 @@ class AdminPlugins extends Controller
         }
 
         $ok = true;
-        $uploadFiles = $this->request->files->get('plugin', []);
+        $uploadFiles = $this->request->files->getArray('plugin');
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
                 Tools::log()->error($uploadFile->getErrorMessage());

@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
             </column>
             <column name="code" numcolumns="3" order="110">
-                <widget type="text" fieldname="codejercicio" icon="fas fa-hashtag" maxlength="4" readonly="dinamic"
+                <widget type="text" fieldname="codejercicio" icon="fa-solid fa-hashtag" maxlength="4" readonly="dinamic"
                         required="true"/>
             </column>
             <column name="status" numcolumns="3" order="120">
@@ -45,7 +45,7 @@
                 <widget type="number" fieldname="longsubcuenta" decimal="0" max="15" min="4" required="true"/>
             </column>
             <column name="company" order="160">
-                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true"
+                <widget type="select" fieldname="idempresa" icon="fa-solid fa-building" onclick="EditEmpresa" required="true"
                         readonly="dinamic">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
                 </widget>
@@ -55,12 +55,12 @@
     <rows>
         <row type="footer">
             <group name="footer-actions" footer="specials-actions">
-                <button type="action" label="export" color="info" action="export-accounting" icon="fas fa-file-export"/>
+                <button type="action" label="export" color="info" action="export-accounting" icon="fa-solid fa-file-export"/>
             </group>
         </row>
     </rows>
     <modals>
-        <group name="import-accounting" title="import-accounting-plan" icon="fas fa-file-import">
+        <group name="import-accounting" title="import-accounting-plan" icon="fa-solid fa-file-import">
             <column name="exercise" display="none" order="100">
                 <widget type="text" fieldname="codejercicio" readonly="true"/>
             </column>
@@ -69,7 +69,7 @@
                 <widget type="file" fieldname="accountingfile" accept=".csv,.xml"/>
             </column>
         </group>
-        <group name="close-exercise" title="close-exercise" icon="fas fa-calendar-check">
+        <group name="close-exercise" title="close-exercise" icon="fa-solid fa-calendar-check">
             <column name="code" display="none">
                 <widget type="text" fieldname="codejercicio" readonly="true"/>
             </column>
@@ -87,7 +87,7 @@
                 <widget type="checkbox" fieldname="copysubaccounts"/>
             </column>
         </group>
-        <group name="open-exercise" title="open-exercise" icon="fas fa-calendar-plus">
+        <group name="open-exercise" title="open-exercise" icon="fa-solid fa-calendar-plus">
             <column name="code" display="none">
                 <widget type="text" fieldname="codejercicio" readonly="true"/>
             </column>

@@ -34,7 +34,7 @@ class ListFamilia extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'families';
-        $data['icon'] = 'fas fa-sitemap';
+        $data['icon'] = 'fa-solid fa-sitemap';
         return $data;
     }
 
@@ -44,7 +44,7 @@ class ListFamilia extends ListController
     protected function createViews()
     {
         $viewName = 'ListFamilia';
-        $this->addView($viewName, 'Familia', 'families', 'fas fa-sitemap')
+        $this->addView($viewName, 'Familia', 'families', 'fa-solid fa-sitemap')
             ->addSearchFields(['descripcion', 'codfamilia', 'madre'])
             ->addOrderBy(['codfamilia'], 'code')
             ->addOrderBy(['descripcion'], 'description')

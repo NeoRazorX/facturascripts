@@ -37,7 +37,7 @@ class ListAttachedFile extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'library';
-        $data['icon'] = 'fas fa-book-open';
+        $data['icon'] = 'fa-solid fa-book-open';
         return $data;
     }
 
@@ -53,7 +53,7 @@ class ListAttachedFile extends ListController
 
     protected function createViewsFiles(string $viewName = 'ListAttachedFile'): void
     {
-        $this->addView($viewName, 'AttachedFile', 'attached-files', 'fas fa-paperclip')
+        $this->addView($viewName, 'AttachedFile', 'attached-files', 'fa-solid fa-paperclip')
             ->addSearchFields(['filename', 'mimetype'])
             ->addOrderBy(['idfile'], 'code')
             ->addOrderBy(['date', 'hour'], 'date', 2)
@@ -69,14 +69,14 @@ class ListAttachedFile extends ListController
         // buttons
         $this->addButton($viewName, [
             'action' => 'download',
-            'icon' => 'fas fa-download',
+            'icon' => 'fa-solid fa-download',
             'label' => 'download'
         ]);
     }
 
     protected function downloadAction(): bool
     {
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         if (empty($codes)) {
             Tools::log()->warning('no-selected-item');
             return true;

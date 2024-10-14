@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
@@ -29,7 +30,6 @@ use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of ReportTaxes
@@ -81,7 +81,7 @@ class ReportTaxes extends Controller
         $data = parent::getPageData();
         $data['title'] = 'taxes';
         $data['menu'] = 'reports';
-        $data['icon'] = 'fas fa-wallet';
+        $data['icon'] = 'fa-solid fa-wallet';
         return $data;
     }
 

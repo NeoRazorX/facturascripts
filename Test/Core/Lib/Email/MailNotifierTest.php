@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,9 @@
 namespace FacturaScripts\Test\Core\Lib\Email;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Lib\Email\MailNotifier;
 use FacturaScripts\Core\Model\EmailNotification;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
 class MailNotifierTest extends TestCase
@@ -44,15 +44,14 @@ class MailNotifierTest extends TestCase
         self::$notification->enabled = true;
         self::$notification->save();
 
-        $appSettings = ToolBox::appSettings();
-        $appSettings->set('email', 'email', 'test@test.com');
-        $appSettings->set('email', 'mailer', 'smtp');
-        $appSettings->set('email', 'host', 'localhost');
-        $appSettings->set('email', 'port', '1025');
-        $appSettings->set('email', 'user', 'facturascripts');
-        $appSettings->set('email', 'password', 'password');
-        $appSettings->set('email', 'lowsecure', 'true');
-        $appSettings->save();
+        Tools::settingsSet('email', 'email', 'test@test.com');
+        Tools::settingsSet('email', 'mailer', 'smtp');
+        Tools::settingsSet('email', 'host', 'localhost');
+        Tools::settingsSet('email', 'port', '1025');
+        Tools::settingsSet('email', 'user', 'facturascripts');
+        Tools::settingsSet('email', 'password', 'password');
+        Tools::settingsSet('email', 'lowsecure', 'true');
+        Tools::settingsSave();
     }
 
     public function testNoPuedeEnviarEmailSiNoExisteNotificacion()
@@ -83,15 +82,14 @@ class MailNotifierTest extends TestCase
 
     public function testNoPuedeEnviarEmailSiNoEstaConfigurado()
     {
-        $appSettings = ToolBox::appSettings();
-        $appSettings->set('email', 'email', null);
-        $appSettings->set('email', 'mailer', null);
-        $appSettings->set('email', 'host', null);
-        $appSettings->set('email', 'port', null);
-        $appSettings->set('email', 'user', null);
-        $appSettings->set('email', 'password', null);
-        $appSettings->set('email', 'lowsecure', null);
-        $appSettings->save();
+        Tools::settingsSet('email', 'email', null);
+        Tools::settingsSet('email', 'mailer', null);
+        Tools::settingsSet('email', 'host', null);
+        Tools::settingsSet('email', 'port', null);
+        Tools::settingsSet('email', 'user', null);
+        Tools::settingsSet('email', 'password', null);
+        Tools::settingsSet('email', 'lowsecure', null);
+        Tools::settingsSave();
 
         $response = MailNotifier::send(
             'sendmail-EmailTest',

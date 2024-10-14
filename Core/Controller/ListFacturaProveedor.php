@@ -41,7 +41,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'invoices';
-        $data['icon'] = 'fas fa-file-invoice-dollar';
+        $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         return $data;
     }
 
@@ -87,7 +87,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         if ($this->user->admin) {
             $this->addButton($viewName, [
                 'action' => 'renumber-invoices',
-                'icon' => 'fas fa-sort-numeric-down',
+                'icon' => 'fa-solid fa-sort-numeric-down',
                 'label' => 'renumber',
                 'type' => 'modal'
             ]);
@@ -96,7 +96,7 @@ class ListFacturaProveedor extends ListBusinessDocument
 
     protected function createViewReceipts(string $viewName = 'ListReciboProveedor')
     {
-        $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
+        $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fa-solid fa-dollar-sign');
         $this->addOrderBy($viewName, ['codproveedor'], 'supplier-code');
         $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date');
         $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
@@ -138,7 +138,7 @@ class ListFacturaProveedor extends ListBusinessDocument
 
     protected function createViewRefunds(string $viewName = 'ListFacturaProveedor-rect')
     {
-        $this->addView($viewName, 'FacturaProveedor', 'refunds', 'fas fa-share-square');
+        $this->addView($viewName, 'FacturaProveedor', 'refunds', 'fa-solid fa-share-square');
         $this->addSearchFields($viewName, ['codigo', 'codigorect', 'numproveedor', 'observaciones']);
         $this->addOrderBy($viewName, ['fecha', 'idfactura'], 'date', 2);
         $this->addOrderBy($viewName, ['total'], 'total');

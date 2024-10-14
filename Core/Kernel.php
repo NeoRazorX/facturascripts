@@ -25,6 +25,9 @@ use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
 use FacturaScripts\Core\Error\DefaultError;
 
+/**
+ * El corazón de FacturaScripts. Se encarga de gestionar las rutas y ejecutar los controladores.
+ */
 final class Kernel
 {
     /** @var array */
@@ -116,8 +119,26 @@ final class Kernel
         WorkQueue::addWorker('CuentaWorker', 'Model.Subcuenta.Update');
         WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Delete');
         WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Save');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.AlbaranProveedor.Update');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.FacturaProveedor.Update');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.PedidoProveedor.Update');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.PresupuestoProveedor.Update');
 
         self::stopTimer('kernel::init');
+    }
+
+    public static function lock(string $processName): bool
+    {
+        $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
+        if (file_exists($lockFile)) {
+            // si tiene más de 8 horas, lo eliminamos
+            if (filemtime($lockFile) < time() - 28800) {
+                unlink($lockFile);
+            }
+            return false;
+        }
+
+        return false !== file_put_contents($lockFile, $processName);
     }
 
     public static function rebuildRoutes(): void
@@ -179,6 +200,9 @@ final class Kernel
 
     public static function saveRoutes(): bool
     {
+        // si la carpeta MyFiles no existe, la creamos
+        Tools::folderCheckOrCreate(Tools::folder('MyFiles'));
+
         $filePath = Tools::folder('MyFiles', 'routes.json');
         $content = json_encode(self::$routes, JSON_PRETTY_PRINT);
         return false === file_put_contents($filePath, $content);
@@ -204,9 +228,15 @@ final class Kernel
         return round(self::$timers[$name]['stop'] - self::$timers[$name]['start'], 5);
     }
 
+    public static function unlock(string $processName): bool
+    {
+        $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
+        return file_exists($lockFile) && unlink($lockFile);
+    }
+
     public static function version(): float
     {
-        return 2024.5;
+        return 2024.92;
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
@@ -263,6 +293,7 @@ final class Kernel
             '/AdminPlugins' => 'AdminPlugins',
             '/api' => 'ApiRoot',
             '/api/3/crearFacturaCliente' => 'ApiCreateFacturaCliente',
+            '/api/3/exportarFacturaCliente/*' => 'ApiExportFacturaCliente',
             '/api/*' => 'ApiRoot',
             '/Core/Assets/*' => 'Files',
             '/cron' => 'Cron',

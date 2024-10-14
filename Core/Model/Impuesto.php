@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,6 +41,9 @@ class Impuesto extends ModelClass
     const SPECIAL_TAX_SUPPORTED_ACCOUNT = 'IVASOP';
     const TYPE_PERCENTAGE = 1;
     const TYPE_FIXED_VALUE = 2;
+
+    /** @var bool */
+    public $activo;
 
     /** @var string */
     public $codimpuesto;
@@ -84,9 +87,10 @@ class Impuesto extends ModelClass
     public function clear()
     {
         parent::clear();
-        $this->tipo = self::TYPE_PERCENTAGE;
+        $this->activo = true;
         $this->iva = 0.0;
         $this->recargo = 0.0;
+        $this->tipo = self::TYPE_PERCENTAGE;
     }
 
     public function delete(): bool

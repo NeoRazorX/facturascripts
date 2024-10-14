@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Tools;
 
 /**
  * Class to connect with PostgreSQL.
@@ -119,15 +120,24 @@ class PostgresqlEngine extends DataBaseEngine
             throw new KernelException('DatabaseError', $error);
         }
 
-        $string = 'host=' . \FS_DB_HOST . ' dbname=' . \FS_DB_NAME . ' port=' . \FS_DB_PORT
-            . ' user=' . \FS_DB_USER . ' password=' . \FS_DB_PASS;
+        $string = 'host=' . Tools::config('db_host') . ' dbname=' . Tools::config('db_name') . ' port=' . Tools::config('db_port')
+            . ' user=' . Tools::config('db_user') . ' password=' . Tools::config('db_pass');
+
+        if (Tools::config('pgsql_ssl')) {
+            $string .= ' sslmode=' . Tools::config('pgsql_ssl');
+        }
+
+        if (Tools::config('pgsql_endpoint')) {
+            $string .= " options='endpoint=" . Tools::config('pgsql_endpoint') . "'";
+        }
+
         $result = pg_connect($string);
         if (!$result) {
             $error = pg_last_error();
             throw new KernelException('DatabaseError', $error);
         }
 
-        /// set datestyle
+        // set datestyle
         $this->exec($result, 'SET DATESTYLE TO ISO, YMD;');
         return $result;
     }

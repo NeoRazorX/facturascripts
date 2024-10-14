@@ -35,6 +35,7 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/AccountingHeaderHTML
  */
 class AccountingHeaderHTML
 {
@@ -53,7 +54,7 @@ class AccountingHeaderHTML
     {
         $i18n = new Translator();
         return '<div class="container-fluid">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . static::idempresa($i18n, $model)
             . static::fecha($i18n, $model)
             . static::concepto($i18n, $model)
@@ -68,7 +69,7 @@ class AccountingHeaderHTML
     {
         $attributes = $model->editable ? 'name="canal"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
-            . '<div class="form-group">' . $i18n->trans('channel')
+            . '<div class="mb-3">' . $i18n->trans('channel')
             . '<input type="number" ' . $attributes . ' value="' . $model->canal . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -78,7 +79,7 @@ class AccountingHeaderHTML
     {
         $attributes = $model->editable ? 'name="concepto" autocomplete="off" required' : 'disabled';
         return '<div class="col-sm-6 col-md">'
-            . '<div class="form-group">' . $i18n->trans('concept')
+            . '<div class="mb-3">' . $i18n->trans('concept')
             . '<input type="text" list="concept-items" ' . $attributes . ' value="' . Tools::noHtml($model->concepto) . '" class="form-control"/>'
             . '<datalist id="concept-items">' . static::getConceptItems($model) . '</datalist>'
             . '</div>'
@@ -108,11 +109,11 @@ class AccountingHeaderHTML
 
         if ($link) {
             return '<div class="col-sm-3 col-md-2">'
-                . '<div class="form-group">' . $i18n->trans('document')
+                . '<div class="mb-3">' . $i18n->trans('document')
                 . '<div class="input-group">'
-                . '<div class="input-group-prepend">'
+                . ''
                 . '<a class="btn btn-outline-primary" href="' . $link . '"><i class="far fa-eye"></i></a>'
-                . '</div>'
+                . ''
                 . '<input type="text" value="' . Tools::noHtml($model->documento) . '" class="form-control" readonly/>'
                 . '</div>'
                 . '</div>'
@@ -120,7 +121,7 @@ class AccountingHeaderHTML
         }
 
         return '<div class="col-sm-3 col-md-2 mb-2">'
-            . '<div class="form-group">' . $i18n->trans('document')
+            . '<div class="mb-3">' . $i18n->trans('document')
             . '<input type="text" value="' . Tools::noHtml($model->documento) . '" class="form-control" readonly/>'
             . '</div></div>';
     }
@@ -136,8 +137,8 @@ class AccountingHeaderHTML
 
         $attributes = $model->editable ? 'name="iddiario"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
-            . '<div class="form-group">' . $i18n->trans('daily')
-            . '<select ' . $attributes . ' class="form-control">' . $options . '</select>'
+            . '<div class="mb-3">' . $i18n->trans('daily')
+            . '<select ' . $attributes . ' class="form-select">' . $options . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -146,7 +147,7 @@ class AccountingHeaderHTML
     {
         $attributes = $model->editable ? 'name="fecha" required' : 'disabled';
         return '<div class="col-sm-3 col-md-2">'
-            . '<div class="form-group">' . $i18n->trans('date')
+            . '<div class="mb-3">' . $i18n->trans('date')
             . '<input type="date" ' . $attributes . ' value="' . date('Y-m-d', strtotime($model->fecha)) . '" class="form-control" />'
             . '</div>'
             . '</div>';
@@ -192,8 +193,8 @@ class AccountingHeaderHTML
         $attributes = $model->primaryColumnValue() ? 'readonly' : 'required';
 
         return '<div class="col-sm-3 col-md-2">'
-            . '<div class="form-group">' . $i18n->trans('company')
-            . '<select name="idempresa" class="form-control" ' . $attributes . '>'
+            . '<div class="mb-3">' . $i18n->trans('company')
+            . '<select name="idempresa" class="form-select" ' . $attributes . '>'
             . static::getItems($companyList, 'idempresa', 'nombre', $model->idempresa)
             . '</select>'
             . '</div>'
@@ -204,8 +205,8 @@ class AccountingHeaderHTML
     {
         $attributes = $model->editable ? 'name="operacion"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
-            . '<div class="form-group">' . $i18n->trans('operation')
-            . '<select ' . $attributes . ' class="form-control">'
+            . '<div class="mb-3">' . $i18n->trans('operation')
+            . '<select ' . $attributes . ' class="form-select">'
             . '<option value="">------</option>'
             . '<option value="A" ' . ($model->operacion === 'A' ? 'selected' : '') . '>' . $i18n->trans('opening-operation') . '</option>'
             . '<option value="C" ' . ($model->operacion === 'C' ? 'selected' : '') . '>' . $i18n->trans('closing-operation') . '</option>'

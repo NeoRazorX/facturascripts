@@ -20,11 +20,11 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Internal\UploadedFile;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\AttachedFile;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
 
 class WidgetLibrary extends BaseWidget
 {
@@ -51,13 +51,13 @@ class WidgetLibrary extends BaseWidget
             '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
         $label = Tools::lang()->trans($title);
         $labelHtml = $this->onclickHtml($label, $titleurl);
-        $icon = empty($this->icon) ? 'fas fa-file-upload' : $this->icon;
+        $icon = empty($this->icon) ? 'fa-solid fa-file-upload' : $this->icon;
 
         $file = new AttachedFile();
         $file->loadFromCode($this->value);
 
         if ($this->readonly()) {
-            return '<div class="form-group mb-2">'
+            return '<div class="mb-3">'
                 . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
                 . $labelHtml
                 . '<a href="' . $file->url() . '" class="btn btn-block btn-outline-secondary">'
@@ -67,10 +67,10 @@ class WidgetLibrary extends BaseWidget
                 . '</div>';
         }
 
-        return '<div class="form-group mb-2" id="' . $this->id . '">'
+        return '<div class="mb-3" id="' . $this->id . '">'
             . '<input type="hidden" class="input-hidden" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
-            . '<a href="#" class="btn btn-block btn-outline-secondary" data-toggle="modal" data-target="#modal_' . $this->id . '">'
+            . '<a href="#" class="btn btn-block btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
             . '<span class="file-name">'
             . ($file->filename ? $file->shortFileName() : Tools::lang()->trans('select'))
@@ -160,7 +160,7 @@ class WidgetLibrary extends BaseWidget
         return $list;
     }
 
-    public function renderFileList(array $files = [], ?int $selected_value = null): string
+    public function renderFileList(array $files = [], ?int $selected_value = null, ?string $id = null): string
     {
         $html = '';
 
@@ -176,16 +176,16 @@ class WidgetLibrary extends BaseWidget
 
             $info = '<p class="card-text small">'
                 . Tools::bytes($file->size) . ', ' . $file->date . ' ' . $file->hour
-                . '<a href="' . $file->url() . '" target="_blank" class="ml-2">'
-                . '<i class="fa-solid fa-up-right-from-square"></i>'
+                . '<a href="' . $file->url() . '" target="_blank" class="ms-2">'
+                . '<i class="fa-solid fa-up-end-from-square"></i>'
                 . '</a>'
                 . '</p>';
 
-            $js = "widgetLibrarySelect('" . $this->id . "', '" . $file->idfile . "', '" . $file->shortFileName() . "');";
+            $js = "widgetLibrarySelect('" . $id . "', '" . $file->idfile . "', '" . $file->shortFileName() . "');";
 
             if ($file->isImage()) {
                 $html .= '<div class="media">'
-                    . '<img src="' . $file->url('download-permanent') . '" class="mr-3" alt="' . $file->filename
+                    . '<img loading="lazy" src="' . $file->url('download-permanent') . '" class="me-3" alt="' . $file->filename
                     . '" width="64" type="button" onclick="' . $js . '" title="' . Tools::lang()->trans('select') . '">'
                     . '<div class="media-body">'
                     . '<h5 class="text-break mt-0">' . $file->filename . '</h5>'
@@ -240,11 +240,11 @@ class WidgetLibrary extends BaseWidget
         return '<div class="input-group mb-2">'
             . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
             . Tools::lang()->trans('search') . '" onkeydown="widgetLibrarySearchKp(\'' . $this->id . '\', event);">'
-            . '<div class="input-group-append">'
+            . ''
             . '<button type="button" class="btn btn-primary" onclick="widgetLibrarySearch(\'' . $this->id . '\');">'
-            . '<i class="fas fa-search"></i>'
+            . '<i class="fa-solid fa-search"></i>'
             . '</button>'
-            . '</div>'
+            . ''
             . '</div>';
     }
 
@@ -256,30 +256,34 @@ class WidgetLibrary extends BaseWidget
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title" id="modal_' . $this->id . '_label">'
-            . '<i class="' . $icon . ' mr-1"></i> ' . $label
+            . '<i class="' . $icon . ' me-1"></i> ' . $label
             . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body bg-light">'
-            . '<div class="form-row">'
-            . '<div class="col-12">'
-            . '<div class="custom-file mb-2">'
+            . '<div class="row g-3">'
+            . '<div class="col-6">' . $this->renderQueryFilter() . '</div>'
+            . '<div class="col-6">' . $this->renderSortFilter() . '</div>'
+            . '</div>'
+            . '<div id="list_' . $this->id . '" class="row g-3 pt-3">'
+            . $this->renderFileList([], $this->value, $this->id)
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer p-2">'
+            . '<div class="col">'
+            . '<div class="custom-file">'
             . '<input type="file" class="custom-file-input" id="modal_' . $this->id . '_f" accept="' . $this->accept
             . '" onchange="widgetLibraryUpload(\'' . $this->id . '\', this.files[0]);">'
             . '<label class="custom-file-label" for="modal_' . $this->id . '_f" data-browse="' . Tools::lang()->trans('select')
             . '">' . Tools::lang()->trans('add-file') . '</label>'
             . '</div>'
             . '</div>'
-            . '<div class="col-6">' . $this->renderQueryFilter() . '</div>'
-            . '<div class="col-6">' . $this->renderSortFilter() . '</div>'
-            . '</div>'
-            . '<div id="list_' . $this->id . '" class="form-row pt-3">'
-            . $this->renderFileList()
+            . '<div class="col">'
+            . $this->renderSelectNoneBtn()
             . '</div>'
             . '</div>'
-            . '<div class="modal-footer p-2">' . $this->renderSelectNoneBtn() . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
@@ -292,13 +296,13 @@ class WidgetLibrary extends BaseWidget
         }
 
         return '<a href="#" class="btn btn-block btn-secondary" onclick="widgetLibrarySelect(\'' . $this->id . '\', \'\', \'' . Tools::lang()->trans('select') . '\');">'
-            . '<i class="fas fa-times mr-1"></i>' . Tools::lang()->trans('none')
+            . '<i class="fa-solid fa-times me-1"></i>' . Tools::lang()->trans('none')
             . '</a>';
     }
 
     protected function renderSortFilter(): string
     {
-        return '<select class="form-control mb-2" id="modal_' . $this->id . '_s" onchange="widgetLibrarySearch(\'' . $this->id . '\');">'
+        return '<select class="form-select mb-2" id="modal_' . $this->id . '_s" onchange="widgetLibrarySearch(\'' . $this->id . '\');">'
             . '<option value="date-asc">' . Tools::lang()->trans('sort-by-date-asc') . '</option>'
             . '<option value="date-desc" selected>' . Tools::lang()->trans('sort-by-date-desc') . '</option>'
             . '</select>';

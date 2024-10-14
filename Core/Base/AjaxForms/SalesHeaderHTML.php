@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
-use FacturaScripts\Core\Base\Contract\SalesModInterface;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Contract\SalesModInterface;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\AgenciaTransporte;
@@ -38,6 +38,7 @@ use FacturaScripts\Dinamic\Model\Provincia;
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/SalesHeaderHTML
  */
 class SalesHeaderHTML
 {
@@ -68,6 +69,14 @@ class SalesHeaderHTML
             if (isset($formData['codcliente']) && $formData['codcliente'] && $cliente->loadFromCode($formData['codcliente'])) {
                 $model->setSubject($cliente);
                 if (empty($formData['action']) || $formData['action'] === 'set-customer') {
+                    return;
+                }
+            }
+
+            $contacto = new Contacto();
+            if (isset($formData['idcontactofact']) && $contacto->loadFromCode($formData['idcontactofact'])) {
+                $model->setSubject($contacto);
+                if (empty($formData['action'])) {
                     return;
                 }
             }
@@ -157,7 +166,7 @@ class SalesHeaderHTML
     {
         $i18n = new Translator();
         return '<div class="container-fluid">'
-            . '<div class="form-row align-items-end">'
+            . '<div class="row align-items-end">'
             . self::renderField($i18n, $model, 'codcliente')
             . self::renderField($i18n, $model, 'codalmacen')
             . self::renderField($i18n, $model, 'codserie')
@@ -168,7 +177,7 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'finoferta')
             . self::renderField($i18n, $model, 'total')
             . '</div>'
-            . '<div class="form-row align-items-end">'
+            . '<div class="row align-items-end">'
             . self::renderField($i18n, $model, '_detail')
             . self::renderField($i18n, $model, '_parents')
             . self::renderField($i18n, $model, '_children')
@@ -187,7 +196,7 @@ class SalesHeaderHTML
             'disabled=""';
 
         return '<div class="col-sm-' . $size . '">'
-            . '<div class="form-group">' . $i18n->trans($label)
+            . '<div class="mb-3">' . $i18n->trans($label)
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->{$field}) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -214,7 +223,7 @@ class SalesHeaderHTML
         }
 
         return '<div class="col-sm-' . $size . '">'
-            . '<div class="form-group">' . $i18n->trans('city')
+            . '<div class="mb-3">' . $i18n->trans('city')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->ciudad) . '" ' . $list . ' class="form-control"/>'
             . $dataList
             . '</div>'
@@ -230,16 +239,21 @@ class SalesHeaderHTML
 
         $options = ['<option value="">------</option>'];
         foreach ($agentes as $row) {
+            // si el agente no está activo o seleccionado, lo ignoramos
+            if ($row->debaja && $row->codagente != $model->codagente) {
+                continue;
+            }
+
             $options[] = ($row->codagente === $model->codagente) ?
                 '<option value="' . $row->codagente . '" selected>' . $row->nombre . '</option>' :
                 '<option value="' . $row->codagente . '">' . $row->nombre . '</option>';
         }
 
-        $attributes = $model->editable ? 'name="codagente"' : 'disabled=""';
+        $attributes = $model->editable ? 'name="codagente"' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<a href="' . Agentes::get($model->codagente)->url() . '">' . $i18n->trans('agent') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -249,10 +263,10 @@ class SalesHeaderHTML
         self::$cliente = new Cliente();
         if (empty($model->codcliente) || false === self::$cliente->loadFromCode($model->codcliente)) {
             return '<div class="col-sm-3">'
-                . '<div class="form-group">' . $i18n->trans('customer')
+                . '<div class="mb-3 d-grid">' . $i18n->trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
-                . '<a href="#" id="btnFindCustomerModal" class="btn btn-block btn-primary" onclick="$(\'#findCustomerModal\').modal();'
-                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
+                . '<a href="#" id="btnFindCustomerModal" class="btn btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
+                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw"></i> '
                 . $i18n->trans('select') . '</a>'
                 . '</div>'
                 . '</div>'
@@ -260,17 +274,17 @@ class SalesHeaderHTML
         }
 
         $btnCliente = $model->editable ?
-            '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findCustomerModal\').modal();'
-            . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-pen"></i></button>' :
-            '<button class="btn btn-outline-secondary" type="button"><i class="fas fa-lock"></i></button>';
+            '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findCustomerModal\').modal(\'show\');'
+            . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-pen"></i></button>' :
+            '<button class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-lock"></i></button>';
 
         $html = '<div class="col-sm-3 col-lg">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<a href="' . self::$cliente->url() . '">' . $i18n->trans('customer') . '</a>'
             . '<input type="hidden" name="codcliente" value="' . $model->codcliente . '"/>'
             . '<div class="input-group">'
             . '<input type="text" value="' . Tools::noHtml(self::$cliente->nombre) . '" class="form-control" readonly/>'
-            . '<div class="input-group-append">' . $btnCliente . '</div>'
+            . '' . $btnCliente . ''
             . '</div>'
             . '</div>'
             . '</div>';
@@ -286,7 +300,7 @@ class SalesHeaderHTML
     {
         $attributes = $model->editable ? 'name="codigoenv" maxlength="200" autocomplete="off"' : 'disabled=""';
         return '<div class="col-sm-4">'
-            . '<div class="form-group">' . $i18n->trans('tracking-code')
+            . '<div class="mb-3">' . $i18n->trans('tracking-code')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->codigoenv) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -306,9 +320,9 @@ class SalesHeaderHTML
             'name="codpais"' :
             'disabled=""';
         return '<div class="col-sm-6">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<a href="' . $pais->url() . '">' . $i18n->trans('country') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -325,9 +339,9 @@ class SalesHeaderHTML
 
         $attributes = $model->editable ? 'name="codtrans"' : 'disabled=""';
         return '<div class="col-sm-4">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<a href="' . $agenciaTransporte->url() . '">' . $i18n->trans('carrier') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -341,9 +355,9 @@ class SalesHeaderHTML
 
         $css = $new ? 'col-sm-auto' : 'col-sm';
         return '<div class="' . $css . '">'
-            . '<div class="form-group">'
-            . '<button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#headerModal">'
-            . '<i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . ' </button>'
+            . '<div class="mb-3">'
+            . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#headerModal">'
+            . '<i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . ' </button>'
             . '</div>'
             . '</div>'
             . self::detailModal($i18n, $model);
@@ -355,13 +369,13 @@ class SalesHeaderHTML
             . '<div class="modal-dialog modal-dialog-centered modal-lg">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . self::renderField($i18n, $model, 'nombrecliente')
             . self::renderField($i18n, $model, 'cifnif')
             . self::renderField($i18n, $model, 'idcontactofact')
@@ -386,8 +400,8 @@ class SalesHeaderHTML
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . $i18n->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -407,7 +421,7 @@ class SalesHeaderHTML
         $attributes = $model->editable ? 'name="finoferta"' : 'disabled=""';
         $value = empty($model->finoferta) ? '' : 'value="' . date('Y-m-d', strtotime($model->finoferta)) . '"';
         return '<div class="col-sm">'
-            . '<div class="form-group">' . $label
+            . '<div class="mb-3">' . $label
             . '<input type="date" ' . $attributes . ' ' . $value . ' class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -442,10 +456,10 @@ class SalesHeaderHTML
         $attributes = $model->editable ? 'name="idcontactoenv"' : 'disabled=""';
         $options = self::getAddressOptions($i18n, $model->idcontactoenv, true);
         return '<div class="col-sm-4">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">'
             . $i18n->trans('shipping-address') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -459,9 +473,9 @@ class SalesHeaderHTML
         $attributes = $model->editable ? 'name="idcontactofact" onchange="return salesFormActionWait(\'recalculate-line\', \'0\', event);"' : 'disabled=""';
         $options = self::getAddressOptions($i18n, $model->idcontactofact, true);
         return '<div class="col-sm-6">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">' . $i18n->trans('billing-address') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -470,7 +484,7 @@ class SalesHeaderHTML
     {
         $attributes = $model->editable ? 'name="nombrecliente" required="" maxlength="100" autocomplete="off"' : 'disabled=""';
         return '<div class="col-sm-6">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . $i18n->trans('business-name')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nombrecliente) . '" class="form-control"/>'
             . '</div>'
@@ -481,7 +495,7 @@ class SalesHeaderHTML
     {
         $attributes = $model->editable ? 'name="numero2" maxlength="50" placeholder="' . $i18n->trans('optional') . '"' : 'disabled=""';
         return empty($model->codcliente) ? '' : '<div class="col-sm">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . $i18n->trans('number2')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->numero2) . '" class="form-control"/>'
             . '</div>'
@@ -509,7 +523,7 @@ class SalesHeaderHTML
         }
 
         return '<div class="col-sm-' . $size . '">'
-            . '<div class="form-group">' . $i18n->trans('province')
+            . '<div class="mb-3">' . $i18n->trans('province')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->provincia) . '" ' . $list . ' class="form-control"/>'
             . $dataList
             . '</div>'

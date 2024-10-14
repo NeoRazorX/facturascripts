@@ -27,9 +27,9 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\ProductoImagen;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to edit a single item from the EditProducto model
@@ -53,7 +53,7 @@ class EditProducto extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'product';
-        $data['icon'] = 'fas fa-cube';
+        $data['icon'] = 'fa-solid fa-cube';
         return $data;
     }
 
@@ -74,7 +74,7 @@ class EditProducto extends EditController
 
     protected function createViewsPedidosClientes(string $viewName = 'ListLineaPedidoCliente'): void
     {
-        $this->addListView($viewName, 'LineaPedidoCliente', 'reserved', 'fas fa-lock')
+        $this->addListView($viewName, 'LineaPedidoCliente', 'reserved', 'fa-solid fa-lock')
             ->addSearchFields(['referencia', 'descripcion'])
             ->addOrderBy(['referencia'], 'reference')
             ->addOrderBy(['cantidad'], 'quantity')
@@ -94,7 +94,7 @@ class EditProducto extends EditController
 
     protected function createViewsPedidosProveedores(string $viewName = 'ListLineaPedidoProveedor'): void
     {
-        $this->addListView($viewName, 'LineaPedidoProveedor', 'pending-reception', 'fas fa-ship')
+        $this->addListView($viewName, 'LineaPedidoProveedor', 'pending-reception', 'fa-solid fa-ship')
             ->addSearchFields(['referencia', 'descripcion'])
             ->addOrderBy(['referencia'], 'reference')
             ->addOrderBy(['cantidad'], 'quantity')
@@ -114,7 +114,7 @@ class EditProducto extends EditController
 
     protected function createViewsStock(string $viewName = 'EditStock'): void
     {
-        $this->addEditListView($viewName, 'Stock', 'stock', 'fas fa-dolly');
+        $this->addEditListView($viewName, 'Stock', 'stock', 'fa-solid fa-dolly');
 
         // si solamente hay un almacén, ocultamos la columna
         if (count(Almacenes::all()) <= 1) {
@@ -124,12 +124,12 @@ class EditProducto extends EditController
 
     protected function createViewsSuppliers(string $viewName = 'EditProductoProveedor'): void
     {
-        $this->addEditListView($viewName, 'ProductoProveedor', 'suppliers', 'fas fa-users');
+        $this->addEditListView($viewName, 'ProductoProveedor', 'suppliers', 'fa-solid fa-users');
     }
 
     protected function createViewsVariants(string $viewName = 'EditVariante'): void
     {
-        $this->addEditListView($viewName, 'Variante', 'variants', 'fas fa-project-diagram');
+        $this->addEditListView($viewName, 'Variante', 'variants', 'fa-solid fa-project-diagram');
 
         $attribute = new Atributo();
         $attCount = $attribute->count();
@@ -285,7 +285,7 @@ class EditProducto extends EditController
                 if (false === empty($view->model->primaryColumnValue())) {
                     $this->addButton($viewName, [
                         'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
-                        'icon' => 'fas fa-cut',
+                        'icon' => 'fa-solid fa-cut',
                         'label' => 'copy',
                         'type' => 'link'
                     ]);
@@ -359,7 +359,7 @@ class EditProducto extends EditController
         }
 
         $this->setTemplate(false);
-        $this->response->setStatusCode(Response::HTTP_OK);
+        $this->response->setHttpCode(Response::HTTP_OK);
         $this->response->setContent(json_encode(['status' => 'ok']));
         $this->response->headers->set('Content-Type', 'application/json');
 

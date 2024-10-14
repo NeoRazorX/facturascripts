@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,7 +52,7 @@ class EditContacto extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'contact';
-        $data['icon'] = 'fas fa-address-book';
+        $data['icon'] = 'fa-solid fa-address-book';
         return $data;
     }
 
@@ -63,7 +63,7 @@ class EditContacto extends EditController
             $this->addButton($viewName, [
                 'action' => 'convert-into-customer',
                 'color' => 'success',
-                'icon' => 'fas fa-user-check',
+                'icon' => 'fa-solid fa-user-check',
                 'label' => 'convert-into-customer'
             ]);
         }
@@ -73,7 +73,7 @@ class EditContacto extends EditController
             $this->addButton($viewName, [
                 'action' => 'convert-into-supplier',
                 'color' => 'success',
-                'icon' => 'fas fa-user-cog',
+                'icon' => 'fa-solid fa-user-cog',
                 'label' => 'convert-into-supplier'
             ]);
         }
@@ -109,17 +109,20 @@ class EditContacto extends EditController
         Tools::log()->error('record-save-error');
     }
 
-    protected function createEmailsView(string $viewName = 'ListEmailSent')
+    protected function createEmailsView(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
-        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
-        $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
+            ->addOrderBy(['date'], 'date', 2)
+            ->addSearchFields(['addressee', 'body', 'subject'])
+            ->disableColumn('to')
+            ->setSettings('btnNew', false);
+    }
 
-        // desactivamos la columna de destinatario
-        $this->views[$viewName]->disableColumn('to');
-
-        // desactivamos el botón de nuevo
-        $this->setSettings($viewName, 'btnNew', false);
+    protected function createEstimationsView(string $viewName = 'ListPresupuestoCliente'): void
+    {
+        $this->addListView($viewName, 'PresupuestoCliente', 'estimations', 'fa-solid fa-copy')
+            ->addOrderBy(['fecha'], 'date', 2)
+            ->addSearchFields(['codigo', 'numero2', 'observaciones']);
     }
 
     protected function createSupplierAction()
@@ -149,6 +152,10 @@ class EditContacto extends EditController
         parent::createViews();
         $this->createEmailsView();
         $this->createViewDocFiles();
+
+        if ($this->user->can('EditPresupuestoCliente')) {
+            $this->createEstimationsView();
+        }
     }
 
     /**
@@ -260,10 +267,16 @@ class EditContacto extends EditController
                 $this->addButton($viewName, [
                     'action' => 'SendMail?email=' . $email,
                     'color' => 'success',
-                    'icon' => 'fas fa-envelope',
+                    'icon' => 'fa-solid fa-envelope',
                     'label' => 'send',
                     'type' => 'link'
                 ]);
+                break;
+
+            case 'ListPresupuestoCliente':
+                $id = $this->getViewModelValue($mvn, 'idcontacto');
+                $where = [new DataBaseWhere('idcontactofact', $id)];
+                $view->loadData('', $where);
                 break;
 
             case $mvn:
@@ -278,7 +291,7 @@ class EditContacto extends EditController
                 $this->addButton($viewName, [
                     'action' => 'check-vies',
                     'color' => 'info',
-                    'icon' => 'fas fa-check-double',
+                    'icon' => 'fa-solid fa-check-double',
                     'label' => 'check-vies'
                 ]);
                 break;

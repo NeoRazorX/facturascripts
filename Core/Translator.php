@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core;
 
+/**
+ * Permite la traducción de cadenas de texto a diferentes idiomas. Con posibilidad de usar parámetros.
+ */
 final class Translator
 {
     private static $defaultLang = 'es_ES';

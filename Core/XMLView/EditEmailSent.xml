@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,26 +23,26 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="date" numcolumns="4" order="110">
-                <widget type="date" fieldname="date" required="true" readonly="true" />
+                <widget type="datetime" fieldname="date" required="true" readonly="true"/>
             </column>
             <column name="user" numcolumns="4" order="110">
                 <widget type="select" fieldname="nick" onclick="EditUser" readonly="true">
-                    <values source="users" fieldcode="nick" fieldtitle="nick" />
+                    <values source="users" fieldcode="nick" fieldtitle="nick"/>
                 </widget>
             </column>
             <column name="to" numcolumns="4" order="120">
-                <widget type="text" fieldname="addressee" required="true" readonly="true" />
+                <widget type="text" fieldname="addressee" required="true" readonly="true"/>
             </column>
         </group>
         <group name="content" numcolumns="12">
             <column name="subject" numcolumns="12" order="100">
-                <widget type="text" fieldname="subject" required="true" readonly="true" />
+                <widget type="text" fieldname="subject" required="true" readonly="true"/>
             </column>
             <column name="message" numcolumns="12" order="110">
-                <widget type="textarea" fieldname="body" required="true" readonly="true" />
+                <widget type="textarea" fieldname="body" required="true" readonly="true"/>
             </column>
             <column name="opened" order="120">
-                <widget type="checkbox" fieldname="opened" />
+                <widget type="checkbox" fieldname="opened"/>
             </column>
         </group>
     </columns>

@@ -22,9 +22,10 @@ namespace FacturaScripts\Core\Lib\Export;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\PDF\PDFDocument;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * PDF export data.
@@ -113,7 +114,7 @@ class PDFExport extends PDFDocument
         }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
-            $this->removeEmptyCols($tableData, $tableColsTitle, $this->numberTools->format(0));
+            $this->removeEmptyCols($tableData, $tableColsTitle, Tools::number(0));
             $this->pdf->ezTable($tableData, $tableColsTitle, $title, $tableOptions);
 
             // Advance within the results

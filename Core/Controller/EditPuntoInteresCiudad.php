@@ -33,7 +33,7 @@ class EditPuntoInteresCiudad extends EditController
         $data = parent::getPageData();
         $data["menu"] = "admin";
         $data["title"] = "PuntoInteresCiudad";
-        $data["icon"] = "fas fa-search";
+        $data["icon"] = "fa-solid fa-search";
         return $data;
     }
 }

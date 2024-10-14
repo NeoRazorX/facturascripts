@@ -48,7 +48,7 @@ class EditEjercicio extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'exercise';
-        $data['icon'] = 'fas fa-calendar-alt';
+        $data['icon'] = 'fa-solid fa-calendar-alt';
         return $data;
     }
 
@@ -64,7 +64,7 @@ class EditEjercicio extends EditController
                     'row' => 'footer-actions',
                     'action' => 'import-accounting',
                     'color' => 'warning',
-                    'icon' => 'fas fa-file-import',
+                    'icon' => 'fa-solid fa-file-import',
                     'label' => 'import-accounting-plan',
                     'type' => 'modal'
                 ]);
@@ -73,7 +73,7 @@ class EditEjercicio extends EditController
                     'row' => 'footer-actions',
                     'action' => 'close-exercise',
                     'color' => 'danger',
-                    'icon' => 'fas fa-calendar-check',
+                    'icon' => 'fa-solid fa-calendar-check',
                     'label' => 'close-exercise',
                     'type' => 'modal'
                 ]);
@@ -84,7 +84,7 @@ class EditEjercicio extends EditController
                     'row' => 'footer-actions',
                     'action' => 'open-exercise',
                     'color' => 'warning',
-                    'icon' => 'fas fa-calendar-plus',
+                    'icon' => 'fa-solid fa-calendar-plus',
                     'label' => 'open-exercise',
                     'type' => 'modal'
                 ]);
@@ -148,7 +148,7 @@ class EditEjercicio extends EditController
 
     protected function createViewsAccounting(string $viewName = 'ListCuenta'): void
     {
-        $this->addListView($viewName, 'Cuenta', 'accounts', 'fas fa-book')
+        $this->addListView($viewName, 'Cuenta', 'accounts', 'fa-solid fa-book')
             ->addOrderBy(['codcuenta'], 'code', 1)
             ->addSearchFields(['codcuenta', 'descripcion']);
 
@@ -159,7 +159,7 @@ class EditEjercicio extends EditController
 
     protected function createViewsAccountingEntries(string $viewName = 'ListAsiento'): void
     {
-        $this->addListView($viewName, 'Asiento', 'special-accounting-entries', 'fas fa-balance-scale')
+        $this->addListView($viewName, 'Asiento', 'special-accounting-entries', 'fa-solid fa-balance-scale')
             ->addOrderBy(['fecha', 'numero'], 'date')
             ->addSearchFields(['concepto', 'numero']);
 
@@ -330,6 +330,9 @@ class EditEjercicio extends EditController
             case 'ListSubcuenta':
                 $where = [new DataBaseWhere('codejercicio', $codejercicio)];
                 $view->loadData('', $where);
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
                 break;
         }
     }

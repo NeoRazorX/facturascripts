@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
@@ -38,6 +38,7 @@ use FacturaScripts\Dinamic\Model\Variante;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/PurchasesController
  */
 abstract class PurchasesController extends PanelController
 {
@@ -84,10 +85,12 @@ abstract class PurchasesController extends PanelController
      */
     public function renderPurchasesForm(PurchaseDocument $model, array $lines): string
     {
+        $url = empty($model->primaryColumnValue()) ? $this->url() : $model->url();
+
         return '<div id="purchasesFormHeader">' . PurchasesHeaderHTML::render($model) . '</div>'
             . '<div id="purchasesFormLines">' . PurchasesLineHTML::render($lines, $model) . '</div>'
             . '<div id="purchasesFormFooter">' . PurchasesFooterHTML::render($model) . '</div>'
-            . PurchasesModalHTML::render($model, $this->url());
+            . PurchasesModalHTML::render($model, $url);
     }
 
     public function series(string $type = ''): array
@@ -143,7 +146,7 @@ abstract class PurchasesController extends PanelController
     protected function createViewsDoc()
     {
         $pageData = $this->getPageData();
-        $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fas fa-file');
+        $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fa-solid fa-file');
         AssetManager::addCss(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::addJs(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
         PurchasesHeaderHTML::assets();
@@ -315,7 +318,7 @@ abstract class PurchasesController extends PanelController
                 $view->settings['btnPrint'] = true;
                 $this->addButton($viewName, [
                     'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
-                    'icon' => 'fas fa-cut',
+                    'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',
                     'type' => 'link'
                 ]);
@@ -440,7 +443,7 @@ abstract class PurchasesController extends PanelController
         foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
             // si no está pagado, actualizamos fechapago y codpago
-            if (false == $receipt->pagado){
+            if (false == $receipt->pagado) {
                 $receipt->fechapago = $formData['fechapagorecibo'] ?? Tools::date();
                 $receipt->codpago = $model->codpago;
             }

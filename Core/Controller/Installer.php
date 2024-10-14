@@ -26,9 +26,9 @@ use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use mysqli;
-use Symfony\Component\HttpFoundation\Request;
 
 class Installer implements ControllerInterface
 {
@@ -37,6 +37,9 @@ class Installer implements ControllerInterface
 
     /** @var string */
     public $db_name;
+
+    /** @var string */
+    public $db_pass;
 
     /** @var int */
     public $db_port;
@@ -75,14 +78,15 @@ class Installer implements ControllerInterface
 
     public function run(): void
     {
-        $this->db_host = $this->request->get('fs_db_host', 'localhost');
-        $this->db_name = $this->request->get('fs_db_name', 'facturascripts');
-        $this->db_port = $this->request->get('fs_db_port', 3306);
+        $this->db_host = strtolower(trim($this->request->get('fs_db_host', 'localhost')));
+        $this->db_name = strtolower(trim($this->request->get('fs_db_name', 'facturascripts')));
+        $this->db_pass = $this->request->get('fs_db_pass', '');
+        $this->db_port = (int)$this->request->get('fs_db_port', 3306);
         $this->db_type = $this->request->get('fs_db_type', 'mysql');
-        $this->db_user = $this->request->get('fs_db_user', 'root');
+        $this->db_user = strtolower(trim($this->request->get('fs_db_user', 'root')));
 
         $installed = $this->searchErrors() &&
-            $this->request->getMethod() === 'POST' &&
+            $this->request->method() === 'POST' &&
             $this->createDataBase() &&
             $this->createFolders() &&
             $this->saveHtaccess() &&
@@ -118,9 +122,11 @@ class Installer implements ControllerInterface
             'host' => $this->db_host,
             'port' => $this->db_port,
             'user' => $this->db_user,
-            'pass' => $this->request->request->get('fs_db_pass'),
+            'pass' => $this->db_pass,
             'name' => $this->db_name,
-            'socket' => $this->request->request->get('mysql_socket', '')
+            'socket' => $this->request->request->get('mysql_socket', ''),
+            'pgsql-ssl' => $this->request->request->get('pgsql_ssl_mode', ''),
+            'pgsql-endpoint' => $this->request->request->get('pgsql_endpoint', '')
         ];
 
         if ('postgresql' == $this->db_type && strtolower($dbData['name']) != $dbData['name']) {
@@ -158,30 +164,6 @@ class Installer implements ControllerInterface
         return true;
     }
 
-    private function extractFromMarkers(string $fileName, string $marker): array
-    {
-        $result = [];
-        if (!file_exists($fileName)) {
-            return $result;
-        }
-
-        $markerData = explode("\n", file_get_contents($fileName));
-        $state = false;
-        foreach ($markerData as $markerLine) {
-            if (false !== strpos($markerLine, '# END ' . $marker)) {
-                $state = false;
-            }
-            if ($state) {
-                $result[] = $markerLine;
-            }
-            if (false !== strpos($markerLine, '# BEGIN ' . $marker)) {
-                $state = true;
-            }
-        }
-
-        return $result;
-    }
-
     private function getUri(): string
     {
         $uri = $this->request->getBasePath();
@@ -195,89 +177,27 @@ class Installer implements ControllerInterface
         return file_exists(FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json') ? $userLanguage : 'en_EN';
     }
 
-    private function insertWithMarkers(array $insertion, string $fileName, string $marker): bool
-    {
-        if (!file_exists($fileName)) {
-            if (!is_writable(dirname($fileName))) {
-                return false;
-            }
-            if (!touch($fileName)) {
-                return false;
-            }
-        } elseif (!is_writable($fileName)) {
-            return false;
-        }
-
-        $startMarker = '# BEGIN ' . $marker;
-        $endMarker = '# END ' . $marker;
-        $fp = fopen($fileName, 'rb+');
-        if (!$fp) {
-            return false;
-        }
-
-        // Attempt to get a lock. If the filesystem supports locking, this will block until the lock is acquired.
-        flock($fp, LOCK_EX);
-        $lines = [];
-        while (!feof($fp)) {
-            $lines[] = rtrim(fgets($fp), "\r\n");
-        }
-
-        // Split out the existing file into the preceding lines, and those that appear after the marker
-        $preLines = $postLines = $existingLines = [];
-        $foundMarker = $foundEndMarker = false;
-        foreach ($lines as $line) {
-            if (!$foundMarker && false !== strpos($line, $startMarker)) {
-                $foundMarker = true;
-                continue;
-            }
-            if (!$foundEndMarker && false !== strpos($line, $endMarker)) {
-                $foundEndMarker = true;
-                continue;
-            }
-            if (!$foundMarker) {
-                $preLines[] = $line;
-            } elseif ($foundEndMarker) {
-                $postLines[] = $line;
-            } else {
-                $existingLines[] = $line;
-            }
-        }
-
-        // Check to see if there was a change
-        if ($existingLines === $insertion) {
-            flock($fp, LOCK_UN);
-            fclose($fp);
-            return true;
-        }
-
-        // If it's true, is the old content version without the tags marker, we can remove it
-        if (empty(array_diff($insertion, $preLines))) {
-            $preLines = [];
-        }
-
-        // Generate the new file data
-        $newFileData = implode(
-            PHP_EOL, array_merge(
-                $preLines, [$startMarker], $insertion, [$endMarker], $postLines
-            )
-        );
-
-        // Write to the start of the file, and truncate it to that length
-        fseek($fp, 0);
-        $bytes = fwrite($fp, $newFileData);
-        if ($bytes) {
-            ftruncate($fp, ftell($fp));
-        }
-        fflush($fp);
-        flock($fp, LOCK_UN);
-        fclose($fp);
-        return (bool)$bytes;
-    }
-
     private function saveHtaccess(): bool
     {
-        $contentFile = $this->extractFromMarkers(FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
-        return $this->insertWithMarkers($contentFile, FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
+        // guardamos el archivo .htaccess
+        $file = fopen(FS_FOLDER . '/.htaccess', 'wb');
+        if (false === is_resource($file)) {
+            Tools::log()->critical('cant-save-htaccess');
+            return false;
+        }
+
+        $samplePath = Tools::folder('htaccess-sample');
+        $contentFile = file_get_contents($samplePath);
+
+        // reemplazamos la ruta de la instalación
+        $route = $this->request->request->get('fs_route', $this->getUri());
+        if (!empty($route)) {
+            $contentFile = str_replace('RewriteBase /', 'RewriteBase ' . $route, $contentFile);
+        }
+
+        fwrite($file, $contentFile);
+        fclose($file);
+        return true;
     }
 
     private function saveInstall(): bool
@@ -291,6 +211,12 @@ class Installer implements ControllerInterface
         fwrite($file, "<?php\n");
         fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 31536000) . ");\n");
         fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
+        fwrite($file, "define('FS_DB_TYPE', '" . $this->db_type . "');\n");
+        fwrite($file, "define('FS_DB_HOST', '" . $this->db_host . "');\n");
+        fwrite($file, "define('FS_DB_PORT', " . $this->db_port . ");\n");
+        fwrite($file, "define('FS_DB_NAME', '" . $this->db_name . "');\n");
+        fwrite($file, "define('FS_DB_USER', '" . $this->db_user . "');\n");
+        fwrite($file, "define('FS_DB_PASS', '" . $this->db_pass . "');\n");
         fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
         fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
 
@@ -298,15 +224,26 @@ class Installer implements ControllerInterface
             // for new databases, we use utf8mb4
             fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8mb4');\n");
             fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8mb4_unicode_520_ci');\n");
-        } elseif ($this->request->request->get('db_type') === 'MYSQL') {
+        } elseif ($this->db_type === 'mysql') {
             // for existing databases, we use utf8
             fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8');\n");
             fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
         }
 
-        $fields = ['lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user', 'db_pass', 'hidden_plugins'];
-        foreach ($fields as $field) {
-            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, '') . "');\n");
+        if ($this->db_type === 'mysql' && $this->request->request->get('mysql_socket') !== '') {
+            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
+        } elseif ($this->db_type === 'postgresql') {
+            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->request->request->get('pgsql_ssl_mode') . "');\n");
+            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->request->request->get('pgsql_endpoint') . "');\n");
+        }
+
+        $fields = [
+            'lang' => 'es_ES',
+            'timezone' => 'Europe/Madrid',
+            'hidden_plugins' => ''
+        ];
+        foreach ($fields as $field => $default) {
+            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, $default) . "');\n");
         }
 
         $booleanFields = ['debug', 'disable_add_plugins', 'disable_rm_plugins'];
@@ -314,11 +251,10 @@ class Installer implements ControllerInterface
             fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->request->get('fs_' . $field, 'false') . ");\n");
         }
 
-        if ($this->request->request->get('db_type') === 'MYSQL' && $this->request->request->get('mysql_socket') !== '') {
-            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
+        if ($this->request->request->get('fs_gtm', false)) {
+            fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
         }
 
-        fwrite($file, "\n");
         fclose($file);
         return true;
     }
@@ -365,7 +301,7 @@ class Installer implements ControllerInterface
 
         try {
             // Omit the DB name because it will be checked on a later stage
-            $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
+            $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', $dbData['port']);
             if ($connection->connect_error) {
                 Tools::log()->critical('cant-connect-database');
                 Tools::log()->critical($connection->connect_errno . ': ' . $connection->connect_error);
@@ -383,7 +319,8 @@ class Installer implements ControllerInterface
             return false;
         }
 
-        $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS `' . $dbData['name'] . '`;';
+        // create the database if it doesn't exist
+        $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS ' . $connection->escape_string($dbData['name']) . ';';
         if (!$connection->query($sqlCrearBD)) {
             return false;
         }
@@ -391,6 +328,18 @@ class Installer implements ControllerInterface
         // for mysql >= 8 or mariadb >= 10.2, we use utf8mb4
         $version = $connection->server_version;
         $this->use_new_mysql = $version >= 100200 || ($version >= 80000 && $version < 100000);
+
+        // except if there is a previous installation, with te table co_cuentas
+        $sql = 'SHOW TABLES FROM ' . $connection->escape_string($dbData['name']) . ';';
+        $result = $connection->query($sql);
+        if (false !== $result) {
+            while ($row = $result->fetch_row()) {
+                if ('co_cuentas' === $row[0]) {
+                    $this->use_new_mysql = false;
+                    break;
+                }
+            }
+        }
 
         return true;
     }
@@ -402,8 +351,19 @@ class Installer implements ControllerInterface
             return false;
         }
 
-        $connectionStr = 'host=' . $dbData['host'] . ' port=' . $dbData['port'];
-        $connection = @pg_connect($connectionStr . ' dbname=postgres user=' . $dbData['user'] . ' password=' . $dbData['pass']);
+        $connectionStr = 'host=' . $dbData['host'] . ' port=' . $dbData['port']
+            . ' user=' . $dbData['user'] . ' password=' . $dbData['pass'];
+
+        if ($dbData['pgsql-ssl'] !== '') {
+            $connectionStr .= ' sslmode=' . $dbData['pgsql-ssl'];
+        }
+
+        if ($dbData['pgsql-endpoint'] !== '') {
+            $connectionStr .= " options='endpoint=" . $dbData['pgsql-endpoint'] . "'";
+        }
+
+        // try to connect to the database
+        $connection = pg_connect($connectionStr . ' dbname=' . $dbData['name']);
         if (is_resource($connection)) {
             // if postgresql version is too old, we can't continue
             if ($this->versionPostgres($connection) < 10) {
@@ -411,17 +371,31 @@ class Installer implements ControllerInterface
                 return false;
             }
 
-            // Check that the DB exists, if it doesn't, we try to create a new one
-            $sqlExistsBD = "SELECT 1 AS result FROM pg_database WHERE datname = '" . $dbData['name'] . "';";
-            $result = pg_query($connection, $sqlExistsBD);
-            if (is_resource($result) && pg_num_rows($result) > 0) {
+            return true;
+        }
+
+        // can't connect to the database, try to connect to the default database
+        $connection = pg_connect($connectionStr . ' dbname=postgres');
+        if (is_resource($connection)) {
+            // if postgresql version is too old, we can't continue
+            if ($this->versionPostgres($connection) < 10) {
+                Tools::log()->critical('postgresql-version-too-old');
+                return false;
+            }
+
+            // create the database
+            $sqlCreateBD = 'CREATE DATABASE ' . pg_escape_string($connection, $dbData['name']) . ';';
+            if (false !== @pg_query($connection, $sqlCreateBD)) {
                 return true;
             }
 
-            $sqlCreateBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
-            if (false !== pg_query($connection, $sqlCreateBD)) {
-                return true;
+            if (pg_last_error($connection) != false) {
+                Tools::log()->critical(pg_last_error($connection));
+                return false;
             }
+
+            Tools::log()->critical('cant-create-database');
+            return false;
         }
 
         Tools::log()->critical('cant-connect-database');

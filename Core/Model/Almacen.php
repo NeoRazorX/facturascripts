@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,26 +37,23 @@ class Almacen extends Address
     use ModelTrait;
     use CompanyRelationTrait;
 
-    /**
-     * Primary key. Varchar (4).
-     *
-     * @var string
-     */
+    /** @var bool */
+    public $activo;
+
+    /** @var string */
     public $codalmacen;
 
-    /**
-     * Store name.
-     *
-     * @var string
-     */
+    /** @var string */
     public $nombre;
 
-    /**
-     * Store phone number.
-     *
-     * @var string
-     */
+    /** @var string */
     public $telefono;
+
+    public function clear()
+    {
+        parent::clear();
+        $this->activo = true;
+    }
 
     public function delete(): bool
     {
@@ -65,13 +62,13 @@ class Almacen extends Address
             return false;
         }
 
-        if (parent::delete()) {
-            // limpiamos la caché
-            Almacenes::clear();
-            return true;
+        if (false === parent::delete()) {
+            return false;
         }
 
-        return false;
+        // limpiamos la caché
+        Almacenes::clear();
+        return true;
     }
 
     public function install(): string
@@ -104,13 +101,13 @@ class Almacen extends Address
 
     public function save(): bool
     {
-        if (parent::save()) {
-            // limpiamos la caché
-            Almacenes::clear();
-            return true;
+        if (false === parent::save()) {
+            return false;
         }
 
-        return false;
+        // limpiamos la caché
+        Almacenes::clear();
+        return true;
     }
 
     public static function tableName(): string

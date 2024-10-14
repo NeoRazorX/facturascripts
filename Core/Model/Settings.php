@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,17 +52,26 @@ class Settings extends Base\ModelClass
      */
     public function __get($name)
     {
-        return $this->properties[$name] ?? null;
+        if (!is_array($this->properties) || !array_key_exists($name, $this->properties)) {
+            return null;
+        }
+
+        // si contiene html, lo limpiamos
+        if (is_string($this->properties[$name]) && strpos($this->properties[$name], '<') !== false) {
+            return Tools::noHtml($this->properties[$name]);
+        }
+
+        return $this->properties[$name];
     }
 
     public function delete(): bool
     {
-        if (parent::delete()) {
-            Tools::settingsClear();
-            return true;
+        if (false === parent::delete()) {
+            return false;
         }
 
-        return false;
+        Tools::settingsClear();
+        return true;
     }
 
     /**
@@ -99,12 +108,15 @@ class Settings extends Base\ModelClass
 
     public function save(): bool
     {
-        if (parent::save()) {
-            Tools::settingsClear();
-            return true;
+        // escapamos el html
+        $this->name = Tools::noHtml($this->name);
+
+        if (false === parent::save()) {
+            return false;
         }
 
-        return false;
+        Tools::settingsClear();
+        return true;
     }
 
     public static function tableName(): string

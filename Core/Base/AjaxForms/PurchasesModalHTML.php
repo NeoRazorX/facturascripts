@@ -34,6 +34,7 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/PurchasesModalHTML
  */
 class PurchasesModalHTML
 {
@@ -96,7 +97,7 @@ class PurchasesModalHTML
             $cost = $row['neto'] ?? $row['coste'];
             $label = empty($row['refproveedor']) || $row['refproveedor'] === $row['referencia'] ?
                 '<b>' . $row['referencia'] . '</b>' :
-                '<b>' . $row['referencia'] . '</b> <span class="badge badge-light">' . $row['refproveedor'] . '</span>';
+                '<b>' . $row['referencia'] . '</b> <span class="badge bg-light">' . $row['refproveedor'] . '</span>';
             $description = Tools::textBreak($row['descripcion'], 120)
                 . static::idatributovalor($row['idatributovalor1'])
                 . static::idatributovalor($row['idatributovalor2'])
@@ -105,9 +106,9 @@ class PurchasesModalHTML
             $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return purchasesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
                 . '<td>' . $label . ' ' . $description . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($cost)) . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>'
-                . '<td class="text-right">' . $row['disponible'] . '</td>'
+                . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($cost)) . '</td>'
+                . '<td class="text-end">' . str_replace(' ', '&nbsp;', Tools::money($row['precio'])) . '</td>'
+                . '<td class="text-end">' . $row['disponible'] . '</td>'
                 . '</tr>';
         }
 
@@ -119,9 +120,9 @@ class PurchasesModalHTML
             . '<thead>'
             . '<tr>'
             . '<th>' . $i18n->trans('product') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('cost-price') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('price') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('stock') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('cost-price') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('price') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('stock') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -137,7 +138,7 @@ class PurchasesModalHTML
             $options .= '<option value="' . $man->codfabricante . '">' . $man->nombre . '</option>';
         }
 
-        return '<select name="fp_codfabricante" class="form-control" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
+        return '<select name="fp_codfabricante" class="form-select" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
             . $options . '</select>';
     }
 
@@ -156,7 +157,7 @@ class PurchasesModalHTML
             $options .= static::subfamilias($fam, $i18n);
         }
 
-        return '<select name="fp_codfamilia" class="form-control" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
+        return '<select name="fp_codfamilia" class="form-select" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
             . $options . '</select>';
     }
 
@@ -257,28 +258,28 @@ class PurchasesModalHTML
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fas fa-cubes fa-fw"></i> ' . $i18n->trans('products') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-cubes fa-fw"></i> ' . $i18n->trans('products') . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-sm mb-2">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
             . '" onkeyup="return purchasesFormActionWait(\'find-product\', \'0\', event);"/>'
-            . '<div class="input-group-append">'
+            . ''
             . '<button class="btn btn-primary btn-spin-action" type="button" onclick="return purchasesFormAction(\'find-product\', \'0\');">'
-            . '<i class="fas fa-search"></i></button>'
-            . '</div>'
+            . '<i class="fa-solid fa-search"></i></button>'
+            . ''
             . '</div>'
             . '</div>'
             . '<div class="col-sm mb-2">' . static::fabricantes($i18n) . '</div>'
             . '<div class="col-sm mb-2">' . static::familias($i18n) . '</div>'
             . '<div class="col-sm mb-2">' . static::orden($i18n) . '</div>'
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-sm">'
             . '<div class="form-check">'
             . '<input type="checkbox" name="fp_comprado" value="1" class="form-check-input" id="comprado" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
@@ -302,7 +303,7 @@ class PurchasesModalHTML
             $name = ($pro->nombre === $pro->razonsocial) ? $pro->nombre : $pro->nombre . ' <small>(' . $pro->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'purchasesForm\'][\'codproveedor\'].value = \''
                 . $pro->codproveedor . '\'; $(\'#findSupplierModal\').modal(\'hide\'); purchasesFormAction(\'set-supplier\', \'0\'); return false;">'
-                . '<td><i class="fas fa-user fa-fw"></i> ' . $name . '</td>'
+                . '<td><i class="fa-solid fa-user fa-fw"></i> ' . $name . '</td>'
                 . '</tr>';
         }
 
@@ -310,9 +311,9 @@ class PurchasesModalHTML
             . '<div class="modal-dialog modal-dialog-scrollable">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fas fa-users fa-fw"></i> ' . $i18n->trans('suppliers') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-users fa-fw"></i> ' . $i18n->trans('suppliers') . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body p-0">'
@@ -320,14 +321,14 @@ class PurchasesModalHTML
             . '<div class="input-group">'
             . '<input type="text" id="findSupplierInput" class="form-control" placeholder="' . $i18n->trans('search') . '" />'
             . '<div class="input-group-apend">'
-            . '<button type="button" class="btn btn-primary"><i class="fas fa-search"></i></button>'
+            . '<button type="button" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>'
             . '</div>'
             . '</div>'
             . '</div>'
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
-            . '<div class="modal-footer bg-light">'
-            . '<a href="EditProveedor?return=' . urlencode($url) . '" class="btn btn-block btn-success">'
-            . '<i class="fas fa-plus fa-fw"></i> ' . $i18n->trans('new')
+            . '<div class="modal-footer bg-light d-grid">'
+            . '<a href="EditProveedor?return=' . urlencode($url) . '" class="btn btn-success">'
+            . '<i class="fa-solid fa-plus fa-fw"></i> ' . $i18n->trans('new')
             . '</a>'
             . '</div>'
             . '</div>'
@@ -338,8 +339,8 @@ class PurchasesModalHTML
     protected static function orden(Translator $i18n): string
     {
         return '<div class="input-group">'
-            . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span></div>'
-            . '<select name="fp_orden" class="form-control" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
+            . '<span class="input-group-text"><i class="fa-solid fa-sort-amount-down-alt"></i></span>'
+            . '<select name="fp_orden" class="form-select" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
             . '<option value="">' . $i18n->trans('sort') . '</option>'
             . '<option value="">------</option>'
             . '<option value="ref_asc">' . $i18n->trans('reference') . '</option>'

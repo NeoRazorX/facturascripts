@@ -49,14 +49,14 @@ trait ListBusinessActionTrait
         $this->addButton($viewName, [
             'action' => 'approve-document-same-date',
             'confirm' => 'true',
-            'icon' => 'fas fa-calendar-check',
+            'icon' => 'fa-solid fa-calendar-check',
             'label' => 'approve-document-same-date'
         ]);
 
         $this->addButton($viewName, [
             'action' => 'approve-document',
             'confirm' => 'true',
-            'icon' => 'fas fa-check',
+            'icon' => 'fa-solid fa-check',
             'label' => 'approve-document'
         ]);
     }
@@ -122,7 +122,7 @@ trait ListBusinessActionTrait
         $this->addButton($viewName, [
             'action' => 'lock-invoice',
             'confirm' => 'true',
-            'icon' => 'fas fa-lock fa-fw',
+            'icon' => 'fa-solid fa-lock fa-fw',
             'label' => 'lock-invoice'
         ]);
     }
@@ -137,7 +137,7 @@ trait ListBusinessActionTrait
         $this->addButton($viewName, [
             'action' => 'pay-receipt',
             'confirm' => 'true',
-            'icon' => 'fas fa-dollar-sign',
+            'icon' => 'fa-solid fa-dollar-sign',
             'label' => 'paid',
             'type' => 'action'
         ]);
@@ -173,7 +173,7 @@ trait ListBusinessActionTrait
             }
 
             foreach ($model->getAvailableStatus() as $status) {
-                if (empty($status->generadoc)) {
+                if (empty($status->generadoc) || !$status->activo) {
                     continue;
                 }
 
@@ -289,7 +289,7 @@ trait ListBusinessActionTrait
             }
 
             foreach ($model->getAvailableStatus() as $status) {
-                if ($status->editable) {
+                if ($status->editable || !$status->activo) {
                     continue;
                 }
 

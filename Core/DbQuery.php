@@ -23,6 +23,8 @@ use Exception;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
+ * Permite realizar consultas a la base de datos de forma sencilla.
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 final class DbQuery
@@ -180,11 +182,26 @@ final class DbQuery
         }
 
         $fields = [];
-        foreach (array_keys($data[0]) as $field) {
+        $values = [];
+
+        // comprobamos si es una inserción simple (no es un array de arrays)
+        $first = reset($data);
+        if (!is_array($first)) {
+            foreach ($data as $field => $value) {
+                $fields[] = self::db()->escapeColumn($field);
+                $values[] = self::db()->var2str($value);
+            }
+
+            $sql = 'INSERT INTO ' . self::db()->escapeColumn($this->table)
+                . ' (' . implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ');';
+            return self::db()->exec($sql);
+        }
+
+        // inserción múltiple
+        foreach (array_keys($first) as $field) {
             $fields[] = self::db()->escapeColumn($field);
         }
 
-        $values = [];
         foreach ($data as $row) {
             $line = [];
             foreach ($row as $value) {
@@ -359,6 +376,11 @@ final class DbQuery
         }
 
         $sql = 'UPDATE ' . self::db()->escapeColumn($this->table) . ' SET ' . implode(', ', $fields);
+
+        if (!empty($this->where)) {
+            $sql .= ' WHERE ' . Where::multiSql($this->where);
+        }
+
         return self::db()->exec($sql);
     }
 

@@ -17,12 +17,14 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 #}
+{% import 'Macro/GoogleTagManager.html.twig' as GoogleTagManager %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG') | slice(0, 2) }}"
       xml:lang="{{ constant('FS_LANG') | slice(0, 2) }}">
 <head>
-    {% for item in getIncludeViews('MenuTemplate', 'HeadFirst') %}
-        {% include item['path'] %}
+    {{ GoogleTagManager.head() }}
+    {% for includeView in getIncludeViews('MenuTemplate', 'HeadFirst') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% block meta %}
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -37,8 +39,8 @@
         <link rel="apple-touch-icon" sizes="180x180"
               href="{{ asset('Dinamic/Assets/Images/apple-icon-180x180.png') }}"/>
     {% endblock %}
-    {% for item in getIncludeViews('MenuTemplate', 'CssBefore') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'CssBefore') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% block css %}
         <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}"/>
@@ -49,11 +51,11 @@
     {% for css in assetManager.get('css') %}
         <link rel="stylesheet" href="{{ css }}"/>
     {% endfor %}
-    {% for item in getIncludeViews('MenuTemplate', 'CssAfter') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'CssAfter') %}
+        {% include includeView['path'] %}
     {% endfor %}
-    {% for item in getIncludeViews('MenuTemplate', 'JsHeadBefore') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'JsHeadBefore') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% block javascripts %}
         <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
@@ -68,23 +70,25 @@
     {% for js in assetManager.get('js') %}
         <script src="{{ js }}"></script>
     {% endfor %}
-    {% for item in getIncludeViews('MenuTemplate', 'JsHeadAfter') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'JsHeadAfter') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% if debugBarRender %}
         {{ debugBarRender.renderHead() | raw }}
     {% endif %}
-    {% for item in getIncludeViews('MenuTemplate', 'HeadEnd') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'HeadEnd') %}
+        {% include includeView['path'] %}
     {% endfor %}
 </head>
 {% block fullBody %}
     <body>
-    {% for item in getIncludeViews('MenuTemplate', 'BodyFirst') %}
-        {% include item['path'] %}
+    {{ GoogleTagManager.body() }}
+    {% for includeView in getIncludeViews('MenuTemplate', 'BodyFirst') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% block navbar %}
         <nav class="navbar navbar-expand navbar-dark bg-primary sticky-top d-print-none">
+            <div class="container-fluid">
             {% block navbarContent %}
                 <a class="navbar-brand d-none d-sm-inline" href="{{ asset(fsc.user.homepage) }}" title="{{ trans('homepage') }}">
                     <img src="{{ asset('Dinamic/Assets/Images/logo-white.png') }}" width="30" height="30"
@@ -98,53 +102,54 @@
                             {{ macros.showMenu(menuItem) }}
                         {% endfor %}
                     </ul>
-                    <ul class="navbar-nav flex-row ml-auto">
+                    <ul class="navbar-nav flex-row ms-auto">
                         {% block navbarMenuIcon %}
-                            {% for item in getIncludeViews('MenuTemplate', 'MenuIconBefore') %}
-                                {% include item['path'] %}
+                            {% for includeView in getIncludeViews('MenuTemplate', 'MenuIconBefore') %}
+                                {% include includeView['path'] %}
                             {% endfor %}
                             <li class="nav-item{{ template == 'MegaSearch.html.twig' ? ' active' : '' }}"
                                 title="{{ trans('search') }}">
                                 <a class="nav-link" href="MegaSearch" id="menuIconSearch">
-                                    <i class="fas fa-search" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-search" aria-hidden="true"></i>
                                 </a>
                             </li>
                             <li class="nav-item" title="{{ trans('help') }}">
                                 <a class="nav-link" href="https://facturascripts.com/ayuda" rel="nofollow"
                                    target="_blank" id="menuIconHelp">
-                                    <i class="fas fa-question-circle" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-question-circle" aria-hidden="true"></i>
                                 </a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle mr-md-2" href="#" data-toggle="dropdown"
+                                <a class="nav-link dropdown-toggle mr-md-2" href="#" data-bs-toggle="dropdown"
                                    aria-haspopup="true" aria-expanded="false" id="menuIconUser"
                                    title="{{ trans('user') }}">
-                                    <i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-user-circle fa-fw" aria-hidden="true"></i>
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user-list">
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="user-list">
                                     <a class="dropdown-item" href="{{ fsc.user.url() }}">
-                                        <i class="fas fa-user-circle fa-fw" aria-hidden="true"></i> {{ fsc.user.nick }}
+                                        <i class="fa-solid fa-user-circle fa-fw" aria-hidden="true"></i> {{ fsc.user.nick }}
                                     </a>
                                     <a class="dropdown-item send-email" href="SendMail">
-                                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i>
+                                        <i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i>
                                         {{ trans('send-mail') }}
                                     </a>
-                                    {% for item in getIncludeViews('MenuTemplate', 'MenuIconUser') %}
-                                        {% include item['path'] %}
+                                    {% for includeView in getIncludeViews('MenuTemplate', 'MenuIconUser') %}
+                                        {% include includeView['path'] %}
                                     {% endfor %}
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ asset('login') }}?action=logout&multireqtoken={{ formToken(false) }}">
-                                        <i class="fas fa-door-open fa-fw" aria-hidden="true"></i> {{ trans('logout') }}
+                                        <i class="fa-solid fa-door-open fa-fw" aria-hidden="true"></i> {{ trans('logout') }}
                                     </a>
                                 </div>
                             </li>
-                            {% for item in getIncludeViews('MenuTemplate', 'MenuIconAfter') %}
-                                {% include item['path'] %}
+                            {% for includeView in getIncludeViews('MenuTemplate', 'MenuIconAfter') %}
+                                {% include includeView['path'] %}
                             {% endfor %}
                         {% endblock %}
                     </ul>
                 </div>
             {% endblock %}
+            </div>
         </nav>
     {% endblock %}
     <div class="pt-3">
@@ -167,11 +172,11 @@
     </div>
     {% block body %}
     {% endblock %}
-    {% for item in getIncludeViews('MenuTemplate', 'JsFooter') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'JsFooter') %}
+        {% include includeView['path'] %}
     {% endfor %}
-    {% for item in getIncludeViews('MenuTemplate', 'BodyEnd') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'BodyEnd') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {% if debugBarRender %}
         {{ debugBarRender.render() | raw }}

@@ -23,8 +23,8 @@
                 <input type="hidden" name="action" value="add-file" />
                 <div class="card border-success shadow mb-2">
                     <div class="card-body p-2">
-                        <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse" data-target="#NewFileCollapse" aria-expanded="false">
-                            <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
+                        <button class="btn btn-sm btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#NewFileCollapse" aria-expanded="false">
+                            <i class="fa-solid fa-plus-square fa-fw" aria-hidden="true"></i>
                             {{ trans('add') }}
                         </button>
                         &nbsp;
@@ -33,14 +33,14 @@
                     <div class="collapse" id="NewFileCollapse">
                         <div class="card-body border-top">
                             {{ _self.inputTextArea('') }}
-                            <div class="form-row align-items-end">
+                            <div class="row align-items-end">
                                 <div class="col">
                                     <input type="file" name="new-files[]" class="form-control-file" required multiple/>
                                     <p class="text-muted mb-0">{{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}</p>
                                 </div>
-                                <div class="col text-right">
+                                <div class="col text-end">
                                     <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
+                                        <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
                                 </div>
                             </div>
@@ -64,27 +64,27 @@
                     <input type="hidden" name="action" value="edit-file"/>
                     <div class="card shadow mb-3">
                         <div class="card-body">
-                            <div class="form-row">
+                            <div class="row">
                                 <div class="col-md-9">
                                     <h5 class="card-title"><i class="far fa-file-image mb-3"></i> &nbsp;{{ file.filename }}</h5>
                                     {{ _self.inputTextArea(docfile.observations) }}
-                                    <div class="form-row">
+                                    <div class="row">
                                         <div class="col">
                                             {{ _self.buttonDelete(formName) }}
                                         </div>
                                         <div class="col text-center">
                                             <small>
-                                                <i class="fas fa-user"></i> {{ docfile.nick }} &nbsp;
-                                                <i class="fas fa-calendar-alt"></i> {{ docfile.creationdate }}
+                                                <i class="fa-solid fa-user"></i> {{ docfile.nick }} &nbsp;
+                                                <i class="fa-solid fa-calendar-alt"></i> {{ docfile.creationdate }}
                                             </small>
                                         </div>
-                                        <div class="col text-right">
+                                        <div class="col text-end">
                                             <a class="btn btn-sm btn-outline-info" target="_blank" href="{{ asset(urlDownload) }}">
-                                                <i class="fas fa-cloud-download-alt"></i>
+                                                <i class="fa-solid fa-cloud-download-alt"></i>
                                                 <span class="d-none d-sm-inline-block">{{ trans('download') }}</span>
                                             </a>
                                             <button class="btn btn-sm btn-primary" type="submit" name="action" value="edit-file">
-                                                <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                                                <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i>
                                                 <span class="d-none d-sm-inline-block">{{ trans('save') }}</span>
                                             </button>
                                         </div>
@@ -103,7 +103,7 @@
 </div>
 
 {% macro inputTextArea(text) %}
-    <div class="form-group">
+    <div class="mb-3">
         <textarea name="observations" class="form-control col-12" rows="4" placeholder="{{ trans('observations') }}">{{ text }}</textarea>
     </div>
 {% endmacro %}
@@ -132,7 +132,7 @@
     {% set confirm = trans('confirm') %}
     <button type="button" class="btn btn-sm btn-danger"
             onclick="confirmAction('{{ formName }}','delete-file','{{ label }}','{{ text }}','{{ cancel }}','{{ confirm }}');">
-        <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+        <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
         <span class="d-none d-sm-inline-block">{{ trans('delete') }}</span>
     </button>
 {% endmacro %}

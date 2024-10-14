@@ -24,6 +24,10 @@ use Closure;
 use ReflectionClass;
 use ReflectionMethod;
 
+/**
+ * Trait ExtensionsTrait.
+ * @deprecated use FacturaScripts\Core\Template\ExtensionsTrait instead.
+ */
 trait ExtensionsTrait
 {
     /**

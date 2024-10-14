@@ -18,9 +18,11 @@
      *
      */
 #}
+{% import 'Macro/GoogleTagManager.html.twig' as GoogleTagManager %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG') | slice(0, 2) }}" xml:lang="{{ constant('FS_LANG') | slice(0, 2) }}" >
     <head>
+        {{ GoogleTagManager.head() }}
         {% block meta %}
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <title>{{ fsc.title }}</title>
@@ -36,6 +38,11 @@
         {% block css %}
             <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" />
             <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}"/>
+            <style>
+                .btn-link {
+                    text-decoration: none;
+                }
+            </style>
         {% endblock %}
         {# Adds custom CSS assets #}
         {% for css in assetManager.get('css') %}
@@ -56,6 +63,7 @@
     </head>
     {% block fullBody %}
         <body>
+            {{ GoogleTagManager.body() }}
             {% block messages %}
                 {% include 'Macro/Toasts.html.twig' %}
                 {% from 'Macro/Utils.html.twig' import message as showMessage %}

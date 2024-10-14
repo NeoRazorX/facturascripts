@@ -21,14 +21,14 @@ namespace FacturaScripts\Test\Core\Model;
 
 use Exception;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Lib\MyFilesToken;
+use FacturaScripts\Core\Internal\UploadedFile;
 use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final class ProductoImagenTest extends TestCase
 {

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -138,6 +138,8 @@ final class EjercicioTest extends TestCase
         // Eliminamos
         $this->assertTrue($ejercicioEmpresa1->delete());
         $this->assertTrue($ejercicioEmpresa2->delete());
+        $this->assertTrue($empresa1->delete());
+        $this->assertTrue($empresa2->delete());
     }
 
     protected function tearDown(): void

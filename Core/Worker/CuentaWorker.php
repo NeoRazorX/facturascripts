@@ -32,33 +32,37 @@ class CuentaWorker extends WorkerClass
     {
         // cargamos la cuenta
         $cuenta = new Cuenta();
-        if (false === $cuenta->loadFromCode($event->param('idcuenta'))) {
+        // si es una subcuenta, su cuenta padre es idcuenta, para cuentas es parent_idcuenta
+        $id = $event->param('parent_idcuenta') ?? $event->param('idcuenta');
+        if (false === $cuenta->loadFromCode($id)) {
             return $this->done();
         }
 
         // calculamos el debe y haber
-        $cuenta->debe = 0.0;
-        $cuenta->haber = 0.0;
+        $debe = 0.0;
+        $haber = 0.0;
 
         // obtenemos las cuentas hijas
         foreach ($cuenta->getChildren() as $child) {
-            $cuenta->debe += $child->debe;
-            $cuenta->haber += $child->haber;
+            $debe += $child->debe;
+            $haber += $child->haber;
         }
 
         // obtenemos las subcuentas
         foreach ($cuenta->getSubcuentas() as $subcuenta) {
-            $cuenta->debe += $subcuenta->debe;
-            $cuenta->haber += $subcuenta->haber;
+            $debe += $subcuenta->debe;
+            $haber += $subcuenta->haber;
         }
 
         // calculamos el saldo
-        $saldo = $cuenta->debe - $cuenta->haber;
-        if (abs($cuenta->saldo - $saldo) >= 0.01) {
+        $diffDebe = abs($cuenta->debe - $debe);
+        $diffHaber = abs($cuenta->haber - $haber);
+        $diffSaldo = abs($cuenta->saldo - ($debe - $haber));
+        if ($diffDebe >= 0.01 || $diffHaber >= 0.01 || $diffSaldo >= 0.01) {
             // actualizamos la cuenta
-            $cuenta->debe = round($cuenta->debe, FS_NF0);
-            $cuenta->haber = round($cuenta->haber, FS_NF0);
-            $cuenta->saldo = round($cuenta->debe - $cuenta->haber, FS_NF0);
+            $cuenta->debe = round($debe, FS_NF0);
+            $cuenta->haber = round($haber, FS_NF0);
+            $cuenta->saldo = round($debe - $haber, FS_NF0);
             $cuenta->save();
         }
 

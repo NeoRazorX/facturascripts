@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,6 +52,9 @@ class Cliente extends Base\ComercialContact
     /** @var string */
     public $diaspago;
 
+    /** @var string */
+    public $excepcioniva;
+
     /** @var integer */
     public $idcontactoenv;
 
@@ -64,10 +67,10 @@ class Cliente extends Base\ComercialContact
     /** @var float */
     public $riesgomax;
 
-    public function checkVies(): bool
+    public function checkVies(bool $msg = true): bool
     {
         $codiso = Paises::get($this->getDefaultAddress()->codpais)->codiso ?? '';
-        return Vies::check($this->cifnif ?? '', $codiso) === 1;
+        return Vies::check($this->cifnif ?? '', $codiso, $msg) === 1;
     }
 
     public function clear()

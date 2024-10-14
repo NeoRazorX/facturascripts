@@ -45,11 +45,11 @@
         <type>PRIMARY KEY (codcuenta)</type>
     </constraint>
     <constraint>
-        <name>unique_cuentasbcocli_mandato</name>
-        <type>UNIQUE (mandato)</type>
-    </constraint>
-    <constraint>
         <name>ca_cuentasbcocli_clientes</name>
         <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>unique_cuentasbcocli_mandato</name>
+        <type>UNIQUE (mandato)</type>
     </constraint>
 </table>
