@@ -72,17 +72,26 @@ final class MyFilesTokenTest extends TestCase
 
         // eliminamos el archivo
         $this->assertTrue($model->delete(), 'can-not-delete-file');
+
+        // volvemos a la fecha de hoy
+        MyFilesToken::setCurrentDate(date('d-m-Y'));
     }
 
     public function testGetUrl(): void
     {
-        $url = MyFilesToken::getUrl('MyFiles/test.jpg', false);
-        $this->assertEquals('MyFiles/test.jpg?myft', explode('=', $url)[0]);
+        $urlPermanent = MyFilesToken::getUrl('MyFiles/test.jpg', true);
+        $this->assertStringStartsWith('MyFiles/test.jpg?myft=', $urlPermanent);
+        $token = explode('=', $urlPermanent)[1];
+        $this->assertTrue(MyFilesToken::validate('MyFiles/test.jpg', $token), 'Permanent Token not valid');
 
-        $url = MyFilesToken::getUrl('/MyFiles/test.jpg', false);
-        $this->assertEquals('MyFiles/test.jpg?myft', explode('=', $url)[0]);
+        $url2 = MyFilesToken::getUrl('/MyFiles/test.jpg', false);
+        $this->assertStringStartsWith('MyFiles/test.jpg?myft=', $url2);
+        $token2 = explode('=', $url2)[1];
+        $this->assertTrue(MyFilesToken::validate('MyFiles/test.jpg', $token2), 'Temporal Token not valid');
 
-        $url = MyFilesToken::getUrl('test.jpg', false);
-        $this->assertEquals('MyFiles/test.jpg?myft', explode('=', $url)[0]);
+        $url3 = MyFilesToken::getUrl('test.jpg', false);
+        $this->assertStringStartsWith('MyFiles/test.jpg?myft=', $url3);
+        $token3 = explode('=', $url3)[1];
+        $this->assertTrue(MyFilesToken::validate('MyFiles/test.jpg', $token3), 'Temporal Token not valid');
     }
 }

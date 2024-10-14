@@ -47,12 +47,7 @@ class MyFilesToken
     {
         self::checkPath($path);
 
-        // si no se encuentra MyFiles en el path, lo agregamos
-        if (false === stripos($path, 'MyFiles')) {
-            $path = 'MyFiles' . DIRECTORY_SEPARATOR . $path;
-        }
-
-        return $path . '?myft=' . MyFilesToken::get($path, $permanent, $expiration);
+        return str_replace('\\', '/', $path) . '?myft=' . MyFilesToken::get($path, $permanent, $expiration);
     }
 
     public static function getCurrentDate(): string
@@ -101,6 +96,11 @@ class MyFilesToken
         // comprobamos si el path empieza por \ y lo eliminamos
         if (strpos($path, '\\') === 0) {
             $path = substr($path, 1);
+        }
+
+        // si el path no empieza por MyFiles, lo añadimos
+        if (strpos($path, 'MyFiles') !== 0) {
+            $path = 'MyFiles' . DIRECTORY_SEPARATOR . $path;
         }
     }
 }
