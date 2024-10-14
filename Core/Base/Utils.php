@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Base;
 
 /**
  * Utils give us some basic and common methods.
- *
+ * @deprecated since version 2024.92
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Utils
@@ -89,7 +89,7 @@ class Utils
 
     /**
      * Make corrections in the HTML code
-     * @deprecated since version 2024.92 replaced by Tools::fixHtml
+     *
      * @param ?string $txt
      * @return ?string
      */
@@ -104,7 +104,7 @@ class Utils
     /**
      * Compare two floating point numbers with an accuracy of $precision,
      * returns True if they are equal, False otherwise.
-     *
+     * @deprecated since version 2024.92 replaced by Tools::floatcmp
      * @param double $f1
      * @param double $f2
      * @param int $precision
@@ -135,7 +135,6 @@ class Utils
     }
 
     /**
-     * @deprecated since version 2024.92 replaced by Validator::url
      * @param string $url
      * @return bool
      */
@@ -163,7 +162,7 @@ class Utils
      *
      * Do not be tempted to substitute by htmlentities or htmlspecialshars
      * because you will find many unpleasant surprises.
-     * @deprecated since version 2024.92 replaced by Tools::noHtml
+     *
      * @param ?string $txt
      * @return ?string
      */
@@ -178,7 +177,7 @@ class Utils
     /**
      * Normalizes a string replacing accented characters to
      * their normalized counterparts.
-     * @deprecated since version 2024.92 replaced by Tools::ascii
+     *
      * @param ?string $string
      * @return ?string
      */
@@ -200,7 +199,7 @@ class Utils
 
     /**
      * Returns a random text string of length $length.
-     * @deprecated since version 2024.92 replaced by Tools::randomString
+     *
      * @param int $length
      * @return string
      */
@@ -238,7 +237,7 @@ class Utils
 
     /**
      * Breaks text at maximum width, without break words.
-     * @deprecated since version 2024.92 replaced by Tools::textBreak
+     *
      * @param ?string $text
      * @param int $maxWidth
      * @return ?string
