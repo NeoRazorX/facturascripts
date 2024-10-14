@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,27 +19,65 @@
 
 namespace FacturaScripts\Core;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\WorkEvent;
 use Throwable;
 
+/**
+ * La cola de trabajos en segundo plano. Permite añadir workers y lanzar eventos.
+ */
 final class WorkQueue
 {
-    private static $workers = [];
+    /** @var array */
+    private static $new_events = [];
 
-    public static function addWorker(string $worker, string $event = '*', int $position = 0): void
+    /** @var array */
+    private static $prevent_new_events = [];
+
+    /** @var array */
+    private static $workers_list = [];
+
+    public static function addWorker(string $worker_name, string $event = '*', int $position = 0): void
     {
-        self::$workers[] = [
-            'class' => self::getWorkerClass($worker),
+        self::$workers_list[] = [
+            'class' => self::getWorkerClass($worker_name),
             'event' => $event,
-            'name' => $worker,
+            'name' => $worker_name,
             'position' => $position,
         ];
     }
 
-    public static function removeAllWorkers(): void
+    public static function clear(): void
     {
-        self::$workers = [];
+        self::$new_events = [];
+        self::$prevent_new_events = [];
+        self::$workers_list = [];
+    }
+
+    public static function getWorkersList(): array
+    {
+        return self::$workers_list;
+    }
+
+    public static function matchEvent(string $pattern, string $event): bool
+    {
+        if ($pattern === $event || $pattern === '*') {
+            return true;
+        }
+
+        // si contiene un *, comparamos hasta el *
+        $pos = strpos($pattern, '*');
+        if ($pos !== false) {
+            return substr($pattern, 0, $pos) === substr($event, 0, $pos);
+        }
+
+        return false;
+    }
+
+    public static function preventNewEvents(array $event_names): void
+    {
+        self::$prevent_new_events = $event_names;
     }
 
     public static function run(): bool
@@ -49,6 +87,8 @@ final class WorkQueue
         $where = [new DataBaseWhere('done', false)];
         $orderBy = ['id' => 'ASC'];
         foreach ($workEventModel->all($where, $orderBy, 0, 1) as $event) {
+            self::preventDuplicated($event);
+
             return self::runEvent($event);
         }
 
@@ -57,69 +97,123 @@ final class WorkQueue
 
     public static function send(string $event, string $value, array $params = []): bool
     {
+        // comprobamos si el evento está bloqueado
+        foreach (self::$prevent_new_events as $prevent_event) {
+            if (self::matchEvent($prevent_event, $event)) {
+                return false;
+            }
+        }
+
+        // excluimos también Model.WorkEvent.* para evitar bucles infinitos
+        if (self::matchEvent('Model.WorkEvent.*', $event)) {
+            return false;
+        }
+
         // recorremos los workers
-        foreach (self::$workers as $worker) {
+        foreach (self::$workers_list as $info) {
             // si no es el evento que buscamos, pasamos al siguiente
-            if ($worker['event'] !== $event) {
+            if (!self::matchEvent($info['event'], $event)) {
                 continue;
             }
 
             // worker encontrado, guardamos el evento
-            $workEvent = new WorkEvent();
-            $workEvent->name = $event;
-            $workEvent->params = json_encode($params, JSON_PRETTY_PRINT);
-            $workEvent->value = $value;
-            return $workEvent->save();
+            $work_event = new WorkEvent();
+            $work_event->name = $event;
+            $work_event->value = $value;
+            $work_event->setParams($params);
+
+            if (self::isDuplicated($work_event)) {
+                // devolvemos true porque ya se había enviado el evento
+                return true;
+            }
+
+            if (false === $work_event->save()) {
+                return false;
+            }
+
+            self::preventDuplicated($work_event);
+            return true;
         }
 
         return false;
     }
 
-    private static function getWorkerClass(string $worker): string
+    private static function getWorkerClass(string $worker_name): string
     {
-        $workerClass = '\\FacturaScripts\\Dinamic\\Worker\\' . $worker;
-        if (!class_exists($workerClass)) {
-            $workerClass = '\\FacturaScripts\\Core\\Worker\\' . $worker;
+        $workerClass = '\\FacturaScripts\\Dinamic\\Worker\\' . $worker_name;
+        if (class_exists($workerClass)) {
+            return $workerClass;
         }
 
-        return $workerClass;
+        // buscamos en los plugins
+        foreach (Plugins::enabled() as $name) {
+            $pluginWorker = '\\FacturaScripts\\Plugins\\' . $name . '\\Worker\\' . $worker_name;
+            if (class_exists($pluginWorker)) {
+                return $pluginWorker;
+            }
+        }
+
+        // buscamos en el core
+        $coreWorker = '\\FacturaScripts\\Core\\Worker\\' . $worker_name;
+        if (class_exists($coreWorker)) {
+            return $coreWorker;
+        }
+
+        throw new Exception('Worker not found: ' . $worker_name);
+    }
+
+    private static function isDuplicated(WorkEvent $event): bool
+    {
+        $hash = $event->getHash();
+        return isset(self::$new_events[$hash]);
+    }
+
+    private static function preventDuplicated(WorkEvent $event): void
+    {
+        $hash = $event->getHash();
+        self::$new_events[$hash] = true;
     }
 
     private static function runEvent(WorkEvent &$event): bool
     {
+        // creamos un bloqueo para evitar que se ejecute el mismo evento varias veces
+        if (false === Kernel::lock('work-queue-' . $event->name)) {
+            return false;
+        }
+
         // ordenamos los workers por posición
-        usort(self::$workers, function ($a, $b) {
+        usort(self::$workers_list, function ($a, $b) {
             return $a['position'] <=> $b['position'];
         });
 
         // recorremos los workers
         $worker_list = [];
-        foreach (self::$workers as $worker) {
+        foreach (self::$workers_list as $info) {
             // si no es el evento que buscamos, pasamos al siguiente
-            if ($worker['event'] !== $event->name && $worker['event'] != '*') {
+            if (!self::matchEvent($info['event'], $event->name)) {
                 continue;
             }
 
             // si la clase no existe, pasamos al siguiente
-            if (!class_exists($worker['class'])) {
+            if (!class_exists($info['class'])) {
                 continue;
             }
 
             // ejecutamos el worker
             $continue = true;
             try {
-                $workerClass = new $worker['class']();
-                $continue = $workerClass->run($event);
+                $worker = new $info['class']();
+                $continue = $worker->run($event);
             } catch (Throwable $th) {
                 Tools::log('work-queue')->error($th->getMessage(), [
-                    '%class%' => $worker['class'],
+                    '%class%' => $info['class'],
                     '%event%' => $event->name,
                     '%value%' => $event->value,
                 ]);
             }
 
             // guardamos el worker
-            $worker_list[] = $worker['name'];
+            $worker_list[] = $info['name'];
 
             // si ha devuelto false, detenemos la ejecución
             if (!$continue) {
@@ -136,6 +230,11 @@ final class WorkQueue
         $event->done_date = Tools::dateTime();
         $event->workers = count($worker_list);
         $event->worker_list = implode(',', $worker_list);
-        return $event->save();
+        $return = $event->save();
+
+        // liberamos el bloqueo
+        Kernel::unlock('work-queue-' . $event->name);
+
+        return $return;
     }
 }

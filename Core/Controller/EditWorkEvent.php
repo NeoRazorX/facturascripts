@@ -31,8 +31,9 @@ class EditWorkEvent extends EditController
     public function getPageData(): array
     {
         $data = parent::getPageData();
+        $data["menu"] = "admin";
         $data["title"] = "WorkEvent";
-        $data["icon"] = "fas fa-search";
+        $data["icon"] = "fa-solid fa-search";
         return $data;
     }
 

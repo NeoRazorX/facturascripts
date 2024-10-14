@@ -30,13 +30,16 @@ abstract class BaseBlock
     /** @var string */
     protected $css;
 
+    /** @var bool */
+    protected $footer = false;
+
     /** @var string */
     protected $style;
 
     /** @var string */
     protected $verificode;
 
-    abstract public function render(): string;
+    abstract public function render(bool $footer = false): string;
 
     public function setVerificode(string $code): void
     {

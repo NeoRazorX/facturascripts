@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,11 @@
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\TelemetryManager;
+use FacturaScripts\Core\CrashReport;
 use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\NextCode;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\WorkQueue;
 
@@ -42,7 +44,7 @@ $timeZone = Tools::config('timezone', 'Europe/Madrid');
 date_default_timezone_set($timeZone);
 
 // cargamos el gestor de errores
-register_shutdown_function('FacturaScripts\Core\Kernel::shutdown');
+CrashReport::init();
 
 // iniciamos el kernel
 Kernel::init();
@@ -51,7 +53,7 @@ Kernel::init();
 // si se le pasa el parámetro cron, entonces ejecutamos la url /cron
 $url = isset($argv[1]) && $argv[1] === '-cron' ?
     '/cron' :
-    parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+    parse_url($_SERVER["REQUEST_URI"] ?? '', PHP_URL_PATH) ?? '';
 
 // iniciamos los plugins, a menos que la ruta sea /deploy
 if ($url !== '/deploy') {
@@ -67,10 +69,13 @@ if ($db->connected()) {
     WorkQueue::run();
 
     // actualizamos la telemetría
-    $telemetry = new TelemetryManager();
+    $telemetry = new Telemetry();
     $telemetry->update();
 
     // guardamos los logs y cerramos la conexión a la base de datos
     MiniLog::save();
     $db->close();
+
+    // limpiamos archivos temporales antiguos
+    NextCode::clearOld();
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,6 +45,9 @@ class CuentaBancoCliente extends Base\BankAccount
      */
     public $fmandato;
 
+    /** @var string */
+    public $mandato;
+
     /**
      * Is it the customer's main account?
      *
@@ -74,14 +77,25 @@ class CuentaBancoCliente extends Base\BankAccount
         return parent::install();
     }
 
-    public function save(): bool
+    public function test(): bool
     {
-        if (parent::save()) {
-            $this->updatePrimaryAccount();
-            return true;
+        if (empty($this->mandato)) {
+            $this->mandato = $this->newCode('mandato');
         }
 
-        return false;
+        $this->mandato = Tools::noHtml($this->mandato);
+
+        return parent::test();
+    }
+
+    public function save(): bool
+    {
+        if (false === parent::save()) {
+            return false;
+        }
+
+        $this->updatePrimaryAccount();
+        return true;
     }
 
     public static function tableName(): string
@@ -89,7 +103,7 @@ class CuentaBancoCliente extends Base\BankAccount
         return 'cuentasbcocli';
     }
 
-    protected function updatePrimaryAccount()
+    protected function updatePrimaryAccount(): void
     {
         if ($this->principal) {
             // If this account is the main one, we demarcate the others

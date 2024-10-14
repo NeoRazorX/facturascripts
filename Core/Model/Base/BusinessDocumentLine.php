@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -58,9 +58,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
     /** @var bool */
     private $disableUpdateStock = false;
-
-    /** @var bool */
-    private $disableUpdateTotals = false;
 
     /** @var array */
     protected static $dont_copy_fields = ['idlinea', 'orden', 'servido'];
@@ -195,11 +192,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->disableUpdateStock = $value;
     }
 
-    public function disableUpdateTotals(bool $value): void
-    {
-        $this->disableUpdateTotals = $value;
-    }
-
     /**
      * Returns the identifier of the document.
      *
@@ -224,11 +216,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public function getDisableUpdateStock(): bool
     {
         return $this->disableUpdateStock;
-    }
-
-    public function getDisableUpdateTotals(): bool
-    {
-        return $this->disableUpdateTotals;
     }
 
     /**
@@ -281,40 +268,17 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return 'idlinea';
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        if (empty($this->codimpuesto)) {
-            $this->codimpuesto = null;
-        }
-
-        if ($this->servido < 0 && $this->cantidad >= 0) {
-            $this->servido = 0.0;
-        }
-
-        if (false === $this->disableUpdateTotals) {
-            $this->pvpsindto = $this->pvpunitario * $this->cantidad;
-            $this->pvptotal = $this->pvpsindto * $this->getEUDiscount();
-        }
-
-        $this->descripcion = Tools::noHtml($this->descripcion);
-        $this->referencia = Tools::noHtml($this->referencia);
-
-        return parent::test();
-    }
-
-    /**
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         $done = parent::save();
         $this->disableUpdateStock(false);
         return $done;
+    }
+
+    public function setPriceWithTax(float $price): void
+    {
+        $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
+        $this->pvpunitario = round($newPrice, Producto::ROUND_DECIMALS);
     }
 
     /**
@@ -360,6 +324,27 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         }
 
         return false;
+    }
+
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
+    public function test(): bool
+    {
+        if (empty($this->codimpuesto)) {
+            $this->codimpuesto = null;
+        }
+
+        if ($this->servido < 0 && $this->cantidad >= 0) {
+            $this->servido = 0.0;
+        }
+
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->referencia = Tools::noHtml($this->referencia);
+
+        return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'List'): string
@@ -428,12 +413,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         parent::onDelete();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return $this->updateStock() && parent::saveInsert($values);
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,13 +22,14 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of ReportTaxes
@@ -80,7 +81,7 @@ class ReportTaxes extends Controller
         $data = parent::getPageData();
         $data['title'] = 'taxes';
         $data['menu'] = 'reports';
-        $data['icon'] = 'fas fa-wallet';
+        $data['icon'] = 'fa-solid fa-wallet';
         return $data;
     }
 
@@ -142,7 +143,6 @@ class ReportTaxes extends Controller
 
         $totalsData = $this->getTotals($data);
         if (false === $this->validateTotals($totalsData)) {
-            Tools::log()->error('wrong-total-tax-calculation');
             return;
         }
 
@@ -219,7 +219,7 @@ class ReportTaxes extends Controller
         switch ($this->source) {
             case 'purchases':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor AS numero2, f.fecha, f.fechadevengo, f.nombre, f.cifnif, l.pvptotal,'
-                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total'
+                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion'
                     . ' FROM lineasfacturasprov AS l'
                     . ' LEFT JOIN facturasprov AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
@@ -231,7 +231,7 @@ class ReportTaxes extends Controller
 
             case 'sales':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numero2, f.fecha, f.fechadevengo, f.nombrecliente AS nombre, f.cifnif, l.pvptotal,'
-                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total'
+                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion'
                     . ' FROM lineasfacturascli AS l'
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
@@ -259,9 +259,9 @@ class ReportTaxes extends Controller
             $code = $row['codigo'] . '-' . $row['iva'] . '-' . $row['recargo'] . '-' . $row['irpf'] . '-' . $row['suplido'];
             if (isset($data[$code])) {
                 $data[$code]['neto'] += $row['suplido'] ? 0 : $pvpTotal;
-                $data[$code]['totaliva'] += (float)$row['iva'] * $pvpTotal / 100;
-                $data[$code]['totalrecargo'] += (float)$row['recargo'] * $pvpTotal / 100;
-                $data[$code]['totalirpf'] += (float)$row['irpf'] * $pvpTotal / 100;
+                $data[$code]['totaliva'] += $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float)$row['iva'] * $pvpTotal / 100;
+                $data[$code]['totalrecargo'] += $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100;
+                $data[$code]['totalirpf'] += $row['suplido'] ? 0 : (float)$row['irpf'] * $pvpTotal / 100;
                 $data[$code]['suplidos'] += $row['suplido'] ? $pvpTotal : 0;
                 continue;
             }
@@ -276,12 +276,12 @@ class ReportTaxes extends Controller
                 'nombre' => $row['nombre'],
                 'cifnif' => $row['cifnif'],
                 'neto' => $row['suplido'] ? 0 : $pvpTotal,
-                'iva' => (float)$row['iva'],
-                'totaliva' => (float)$row['iva'] * $pvpTotal / 100,
-                'recargo' => (float)$row['recargo'],
-                'totalrecargo' => (float)$row['recargo'] * $pvpTotal / 100,
-                'irpf' => (float)$row['irpf'],
-                'totalirpf' => (float)$row['irpf'] * $pvpTotal / 100,
+                'iva' => $row['suplido'] ? 0 : (float)$row['iva'],
+                'totaliva' => $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float)$row['iva'] * $pvpTotal / 100,
+                'recargo' => $row['suplido'] ? 0 : (float)$row['recargo'],
+                'totalrecargo' => $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100,
+                'irpf' => $row['suplido'] ? 0 : (float)$row['irpf'],
+                'totalirpf' => $row['suplido'] ? 0 : (float)$row['irpf'] * $pvpTotal / 100,
                 'suplidos' => $row['suplido'] ? $pvpTotal : 0,
                 'total' => (float)$row['total']
             ];
@@ -490,8 +490,24 @@ class ReportTaxes extends Controller
         }
 
         // compare
-        return abs($neto - $neto2) <= self::MAX_TOTAL_DIFF &&
-            abs($totalIva - $totalIva2) <= self::MAX_TOTAL_DIFF &&
-            abs($totalRecargo - $totalRecargo2) <= self::MAX_TOTAL_DIFF;
+        $result = true;
+        if (abs($neto - $neto2) > self::MAX_TOTAL_DIFF) {
+            Tools::log()->error('calculated-net-diff', ['%net%' => $neto, '%net2%' => $neto2]);
+            $result = false;
+        }
+
+        if (abs($totalIva - $totalIva2) > self::MAX_TOTAL_DIFF) {
+            Tools::log()->error('calculated-tax-diff', ['%tax%' => $totalIva, '%tax2%' => $totalIva2]);
+            $result = false;
+        }
+
+        if (abs($totalRecargo - $totalRecargo2) > self::MAX_TOTAL_DIFF) {
+            Tools::log()->error('calculated-surcharge-diff', [
+                '%surcharge%' => $totalRecargo, '%surcharge2%' => $totalRecargo2
+            ]);
+            $result = false;
+        }
+
+        return $result;
     }
 }

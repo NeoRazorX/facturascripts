@@ -16,26 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\Contract;
 
-use FacturaScripts\Core\Base\Translator;
-use FacturaScripts\Core\Model\Base\SalesDocument;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Contract\SalesModInterface as NewSalesModInterface;
 
-interface SalesModInterface
+/**
+ * @deprecated since version 2024.92 replaced by FacturaScripts\Core\Contract\SalesModInterface
+ */
+interface SalesModInterface extends NewSalesModInterface
 {
-    public function apply(SalesDocument &$model, array $formData, User $user);
-
-    public function applyBefore(SalesDocument &$model, array $formData, User $user);
-
-    public function assets(): void;
-
-    public function newBtnFields(): array;
-
-    public function newFields(): array;
-
-    public function newModalFields(): array;
-
-    public function renderField(Translator $i18n, SalesDocument $model, string $field): ?string;
 }

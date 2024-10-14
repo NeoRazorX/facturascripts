@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,13 +19,13 @@
 
 namespace FacturaScripts\Test\Core\Data;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\Subcuenta;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -103,7 +103,7 @@ final class AccountImportTest extends TestCase
         $ejercicio = new Ejercicio();
         if (false === $ejercicio->loadFromCode(self::CODEJERCICIO)) {
             $ejercicio->codejercicio = self::CODEJERCICIO;
-            $ejercicio->idempresa = AppSettings::get('default', 'idempresa', 1);
+            $ejercicio->idempresa = Tools::settings('default', 'idempresa', 1);
             $ejercicio->fechainicio = '01-01-' . self::CODEJERCICIO;
             $ejercicio->fechafin = '31-12-' . self::CODEJERCICIO;
             $ejercicio->nombre = self::CODEJERCICIO;

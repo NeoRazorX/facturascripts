@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
-use FacturaScripts\Core\Base\ExtensionsTrait;
+use FacturaScripts\Core\Template\ExtensionsTrait;
 
 /**
  * Description of TextBlock
@@ -41,8 +41,9 @@ class TextBlock extends BaseBlock
         $this->text = $text;
     }
 
-    public function render(): string
+    public function render(bool $footer = false): string
     {
+        $this->footer = $footer;
         $return = $this->pipe('render');
         return $return ?? '<p class="' . (empty($this->css) ? 'text' : $this->css) . '">'
         . nl2br($this->text) . '</p>';

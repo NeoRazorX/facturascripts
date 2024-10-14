@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,10 +24,10 @@ use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
 use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
-use FacturaScripts\Core\Model\Base\PasswordTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
+use FacturaScripts\Core\Lib\TwoFactorManager;
 
 /**
  * Usuario de FacturaScripts.
@@ -39,7 +39,6 @@ class User extends ModelClass
 {
     use ModelTrait;
     use CompanyRelationTrait;
-    use PasswordTrait;
     use GravatarTrait;
 
     const DEFAULT_LEVEL = 2;
@@ -86,6 +85,21 @@ class User extends ModelClass
 
     /** @var string */
     public $nick;
+
+    /** @var string */
+    public $newPassword;
+
+    /** @var string */
+    public $newPassword2;
+
+    /** @var string */
+    public $password;
+
+    /** @var bool */
+    public $two_factor_enabled;
+
+    /** @var string */
+    public $two_factor_secret_key;
 
     public function addRole(?string $code): bool
     {
@@ -156,6 +170,7 @@ class User extends ModelClass
         $this->idempresa = Tools::settings('default', 'idempresa', 1);
         $this->langcode = FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
+        $this->two_factor_enabled = false;
     }
 
     public function delete(): bool
@@ -180,6 +195,20 @@ class User extends ModelClass
         }
 
         return $roles;
+    }
+
+    public function getTwoFactorUrl(): string
+    {
+        if (empty($this->two_factor_secret_key)) {
+            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
+        }
+
+        return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->two_factor_secret_key);
+    }
+
+    public function getTwoFactorQR(): string
+    {
+        return TwoFactorManager::getQRCodeImage($this->getTwoFactorUrl());
     }
 
     public function install(): string
@@ -211,6 +240,11 @@ class User extends ModelClass
     public static function primaryColumn(): string
     {
         return 'nick';
+    }
+
+    public function setPassword($value): void
+    {
+        $this->password = password_hash($value, PASSWORD_DEFAULT);
     }
 
     public static function tableName(): string
@@ -256,26 +290,50 @@ class User extends ModelClass
             $this->level = 0;
         }
 
+        if (empty($this->two_factor_secret_key)) {
+            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
+        }
+
         return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();
     }
 
-    public function updateActivity(string $ipAddress, string $browser = '')
+    public function updateActivity(string $ipAddress, string $browser = ''): void
     {
         $this->lastactivity = Tools::dateTime();
         $this->lastip = $ipAddress;
         $this->lastbrowser = $browser;
     }
 
-    /**
-     * Verifies the login key.
-     *
-     * @param string $value
-     *
-     * @return bool
-     */
     public function verifyLogkey(string $value): bool
     {
         return $this->logkey === $value;
+    }
+
+    public function verifyPassword(string $value): bool
+    {
+        if (password_verify($value, $this->password)) {
+            if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
+                $this->setPassword($value);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function testPassword(): bool
+    {
+        if (isset($this->newPassword, $this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
+            if ($this->newPassword !== $this->newPassword2) {
+                Tools::log()->warning('different-passwords', ['%userNick%' => $this->primaryColumnValue()]);
+                return false;
+            }
+
+            $this->setPassword($this->newPassword);
+        }
+
+        return true;
     }
 
     protected function saveInsert(array $values = []): bool

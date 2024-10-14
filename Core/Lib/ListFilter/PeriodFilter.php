@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\ListFilter;
 
-use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Request;
 
 /**
  * Description of PeriodFilter
@@ -42,14 +42,14 @@ class PeriodFilter extends BaseFilter
     /** @var DateFilter */
     private $startDate;
 
-    public function __construct(string $key, string $field, string $label)
+    public function __construct(string $key, string $field, string $label, $dateTime = false)
     {
         parent::__construct($key, $field, $label);
         $values = PeriodTools::getFilterOptions(static::$i18n);
         $this->select = new SelectFilter($key, '', $label, $values);
-        $this->select->icon = 'fas fa-calendar-alt';
-        $this->startDate = new DateFilter(self::START_DATE_ID . $key, $field, 'from-date', '>=');
-        $this->endDate = new DateFilter(self::END_DATE_ID . $key, $field, 'until-date', '<=');
+        $this->select->icon = 'fa-solid fa-calendar-alt';
+        $this->startDate = new DateFilter(self::START_DATE_ID . $key, $field, 'from-date', '>=', $dateTime);
+        $this->endDate = new DateFilter(self::END_DATE_ID . $key, $field, 'until-date', '<=', $dateTime);
     }
 
     public function getDataBaseWhere(array &$where): bool

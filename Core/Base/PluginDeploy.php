@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,7 +49,7 @@ final class PluginDeploy
     {
         $this->enabledPlugins = array_reverse($enabledPlugins);
 
-        $folders = ['Assets', 'Controller', 'Data', 'Lib', 'Model', 'Table', 'View', 'Worker', 'XMLView'];
+        $folders = ['Assets', 'Controller', 'Data', 'Error', 'Lib', 'Model', 'Table', 'View', 'Worker', 'XMLView'];
         foreach ($folders as $folder) {
             if ($clean) {
                 ToolBox::files()::delTree(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
@@ -78,7 +78,7 @@ final class PluginDeploy
     /**
      * Initialize the controllers dynamically.
      */
-    public function initControllers()
+    public function initControllers(): void
     {
         $menuManager = new MenuManager();
         $menuManager->init();
@@ -90,13 +90,14 @@ final class PluginDeploy
                 continue;
             }
 
-            // excluimos Installer y ApiRoot
-            if (in_array(substr($fileName, 0, -4), ['Installer', 'ApiRoot'])) {
+            // excluimos Installer y los que comienzan por Api
+            if (substr($fileName, 0, -4) === 'Installer' || substr($fileName, 0, 3) === 'Api') {
                 continue;
             }
 
             $controllerName = substr($fileName, 0, -4);
             $controllerNamespace = '\\FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
+            Tools::log()->debug('Loading controller: ' . $controllerName);
 
             if (!class_exists($controllerNamespace)) {
                 // we force the loading of the file because at this point the autoloader will not find it
@@ -243,7 +244,7 @@ final class PluginDeploy
             . ' */' . "\n"
             . $this->getClassType($fileName, $folder, $place, $pluginName) . ' ' . $className . ' extends \\' . $namespace . '\\' . $className;
 
-        $txt .= $this->extensionSupport($newNamespace) ? "\n{\n\tuse \FacturaScripts\Core\Base\ExtensionsTrait;\n}\n" : "\n{\n}\n";
+        $txt .= $this->extensionSupport($newNamespace) ? "\n{\n\tuse \FacturaScripts\Core\Template\ExtensionsTrait;\n}\n" : "\n{\n}\n";
 
         file_put_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName, $txt);
         $this->fileList[$folder][$fileName] = $fileName;

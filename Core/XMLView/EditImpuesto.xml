@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,7 +40,7 @@
                 <widget type="number" decimal="2" fieldname="recargo" required="true"/>
             </column>
             <column name="code" description="optional" numcolumns="2" order="140">
-                <widget type="text" fieldname="codimpuesto" icon="fas fa-hashtag" maxlength="10" readonly="dinamic"/>
+                <widget type="text" fieldname="codimpuesto" icon="fa-solid fa-hashtag" maxlength="10" readonly="dinamic"/>
             </column>
             <column name="impacted-tax-subaccount" description="optional" order="150">
                 <widget type="autocomplete" fieldname="codsubcuentarep">
@@ -61,6 +61,11 @@
                 <widget type="autocomplete" fieldname="codsubcuentasopre">
                     <values source="subcuentas" fieldcode="codsubcuenta"/>
                 </widget>
+            </column>
+        </group>
+        <group name="extra" numcolumns="12">
+            <column name="active" order="100">
+                <widget type="checkbox" fieldname="activo"/>
             </column>
         </group>
     </columns>

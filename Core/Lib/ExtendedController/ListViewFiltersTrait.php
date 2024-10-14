@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Dinamic\Lib\ListFilter\AutocompleteFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\CheckboxFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\DateFilter;
@@ -30,7 +31,6 @@ use FacturaScripts\Dinamic\Lib\ListFilter\PeriodFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\SelectFilter;
 use FacturaScripts\Dinamic\Lib\ListFilter\SelectWhereFilter;
 use FacturaScripts\Dinamic\Model\PageFilter;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of ListViewFiltersTrait
@@ -111,11 +111,12 @@ trait ListViewFiltersTrait
      * @param string $label
      * @param string $field
      * @param string $operation
+     * @param bool $dateTime
      * @return ListView
      */
-    public function addFilterDatePicker(string $key, string $label = '', string $field = '', string $operation = '>='): ListView
+    public function addFilterDatePicker(string $key, string $label = '', string $field = '', string $operation = '>=', bool $dateTime = false): ListView
     {
-        $this->filters[$key] = new DateFilter($key, $field, $label, $operation);
+        $this->filters[$key] = new DateFilter($key, $field, $label, $operation, $dateTime);
 
         return $this;
     }
@@ -143,11 +144,12 @@ trait ListViewFiltersTrait
      * @param string $key
      * @param string $label
      * @param string $field
+     * @param bool $dateTime
      * @return ListView
      */
-    public function addFilterPeriod(string $key, string $label, string $field): ListView
+    public function addFilterPeriod(string $key, string $label, string $field, bool $dateTime = false): ListView
     {
-        $this->filters[$key] = new PeriodFilter($key, $field, $label);
+        $this->filters[$key] = new PeriodFilter($key, $field, $label, $dateTime);
 
         return $this;
     }

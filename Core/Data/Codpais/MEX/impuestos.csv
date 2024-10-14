@@ -1,5 +1,5 @@
-codimpuesto;descripcion;iva;recargo
-"999";"EXCENTO";"0";"0"
-"001";"ISR 30%";"30";"0"
-"002";"IVA 16%";16;"0"
-"003";"IEPS 35%";35;"0"
+codimpuesto,descripcion,iva,recargo
+IVA16GEN,"IVA general del 16%",16,0
+IVA08FRON,"IVA reducido en la frontera",8,0
+IVA0,"Exportaciones exentas de IVA",0,0
+IVAEXEMPT,"Operaciones exentas de IVA",0,0

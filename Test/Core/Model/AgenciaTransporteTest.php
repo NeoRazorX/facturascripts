@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,13 +27,17 @@ final class AgenciaTransporteTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testDataInstalled()
+    public function testDataInstalled(): void
     {
+        // llamamos de forma estática
+        $this->assertNotEmpty(AgenciaTransporte::all(), 'agency-data-not-installed-from-csv');
+
+        // llamamos de forma dinámica
         $agency = new AgenciaTransporte();
         $this->assertNotEmpty($agency->all(), 'agency-data-not-installed-from-csv');
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $agency = new AgenciaTransporte();
         $agency->codtrans = 'Test';
@@ -44,7 +48,7 @@ final class AgenciaTransporteTest extends TestCase
         $this->assertTrue($agency->delete(), 'agency-cant-delete');
     }
 
-    public function testCreateWithNewCode()
+    public function testCreateWithNewCode(): void
     {
         $agency = new AgenciaTransporte();
         $agency->nombre = 'Test Agency with new code';
@@ -52,7 +56,7 @@ final class AgenciaTransporteTest extends TestCase
         $this->assertTrue($agency->delete(), 'agency-cant-delete');
     }
 
-    public function testBadWeb()
+    public function testBadWeb(): void
     {
         $agency = new AgenciaTransporte();
         $agency->codtrans = 'Test';
@@ -69,7 +73,7 @@ final class AgenciaTransporteTest extends TestCase
         $this->assertFalse($agency->save(), 'agency-can-save-bad-web-3');
     }
 
-    public function testGoodWeb()
+    public function testGoodWeb(): void
     {
         $agency = new AgenciaTransporte();
         $agency->codtrans = 'Test';
@@ -79,7 +83,7 @@ final class AgenciaTransporteTest extends TestCase
         $this->assertTrue($agency->delete(), 'agency-cant-delete');
     }
 
-    public function testLoadFromData()
+    public function testLoadFromData(): void
     {
         $agency = new AgenciaTransporte();
         $agency->loadFromData([

@@ -1,10 +1,11 @@
 {
     "default": {
         "coddivisa": "ARS",
-        "codimpuesto": "AR21",
+        "codimpuesto": "IVA21",
         "codserie": "A",
         "codpago": "CONT",
         "tipoidfiscal": "CUIT",
+        "updatesupplierprices": true,
         "validate_iban": false
     },
     "email": {

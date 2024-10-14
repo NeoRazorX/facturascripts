@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -32,7 +33,6 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\User;
 use PHPMailer\PHPMailer\Exception;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of SendMail
@@ -57,7 +57,7 @@ class SendMail extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'send-mail';
-        $data['icon'] = 'fas fa-envelope';
+        $data['icon'] = 'fa-solid fa-envelope';
         $data['showonmenu'] = false;
         return $data;
     }
@@ -193,8 +193,8 @@ class SendMail extends Controller
             new DataBaseWhere('enabled', true)
         ];
         if ($notificationModel->loadFromCode('', $where)) {
-            $shortCodes = ['{code}', '{name}', '{date}', '{total}'];
-            $shortValues = [$model->codigo, $model->nombrecliente, $model->fecha, $model->total];
+            $shortCodes = ['{code}', '{name}', '{date}', '{total}', '{number2}'];
+            $shortValues = [$model->codigo, $model->nombrecliente, $model->fecha, $model->total, $model->numero2];
             $this->newMail->title = str_replace($shortCodes, $shortValues, $notificationModel->subject);
             $this->newMail->text = str_replace($shortCodes, $shortValues, $notificationModel->body);
             return;
@@ -312,7 +312,7 @@ class SendMail extends Controller
         Tools::folderCheckOrCreate(NewMail::ATTACHMENTS_TMP_PATH);
         $this->newMail->addAttachment(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName, $fileName);
 
-        foreach ($this->request->files->get('uploads', []) as $file) {
+        foreach ($this->request->files->getArray('uploads') as $file) {
             // guardamos el adjunto en una carpeta temporal
             if ($file->move(NewMail::ATTACHMENTS_TMP_PATH, $file->getClientOriginalName())) {
                 // añadimos el adjunto al email

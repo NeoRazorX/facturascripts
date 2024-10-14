@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Core\Model\PagoCliente;
 use FacturaScripts\Core\Model\PagoProveedor;
@@ -131,8 +130,11 @@ class PaymentToAccounting
             return false;
         }
 
+        $amount = $this->payment->importe + abs($this->payment->gastos);
+
         $newLine = $entry->getNewLine($account);
-        $newLine->debe = $this->payment->importe + abs($this->payment->gastos);
+        $newLine->debe = max($amount, 0);
+        $newLine->haber = $amount < 0 ? abs($amount) : 0;
         return $newLine->save();
     }
 
@@ -158,7 +160,8 @@ class PaymentToAccounting
         }
 
         $newLine = $entry->getNewLine($account);
-        $newLine->haber = $this->payment->importe;
+        $newLine->debe = $this->payment->importe < 0 ? abs($this->payment->importe) : 0;
+        $newLine->haber = max($this->payment->importe, 0);
         return $newLine->save();
     }
 
@@ -203,7 +206,8 @@ class PaymentToAccounting
         }
 
         $newLine = $entry->getNewLine($account);
-        $newLine->haber = $this->payment->importe;
+        $newLine->debe = $this->payment->importe < 0 ? abs($this->payment->importe) : 0;
+        $newLine->haber = max($this->payment->importe, 0);
         return $newLine->save();
     }
 
@@ -215,7 +219,8 @@ class PaymentToAccounting
         }
 
         $newLine = $entry->getNewLine($account);
-        $newLine->debe = $this->payment->importe;
+        $newLine->debe = max($this->payment->importe, 0);
+        $newLine->haber = $this->payment->importe < 0 ? abs($this->payment->importe) : 0;
         return $newLine->save();
     }
 

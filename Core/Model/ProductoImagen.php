@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,16 +19,17 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Lib\MyFilesToken;
+use FacturaScripts\Core\Internal\UploadedFile;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinAttachedFile;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
 
 /**
  * Description of ProductoImagen
  *
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author José Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ProductoImagen extends Base\ModelClass
@@ -48,6 +49,18 @@ class ProductoImagen extends Base\ModelClass
 
     /** @var string */
     public $referencia;
+
+    /** @var int */
+    public $orden;
+
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+
+        // Inicialmente el orden es el id
+        // hasta que se asigne un orden en concreto.
+        $this->orden = $this->orden ?? $this->id;
+    }
 
     public function delete(): bool
     {
@@ -97,7 +110,7 @@ class ProductoImagen extends Base\ModelClass
     {
         // comprobamos si no existe la imagen
         $file = $this->getFile();
-        if (false === $file->exists()) {
+        if (false === $file->exists() || false === file_exists($file->getFullPath())) {
             return '';
         }
 
@@ -139,7 +152,7 @@ class ProductoImagen extends Base\ModelClass
             switch ($ext) {
                 case 'jpg':
                 case 'jpeg':
-                    imagejpeg($thumb, FS_FOLDER . $thumbFile);
+                    imagejpeg($thumb, FS_FOLDER . $thumbFile, 90);
                     break;
 
                 case 'png':
@@ -179,6 +192,17 @@ class ProductoImagen extends Base\ModelClass
     public static function tableName(): string
     {
         return 'productos_imagenes';
+    }
+
+    public function test(): bool
+    {
+        // si el archivo no es una imagen, devolvemos false
+        if (false === $this->getFile()->isImage()) {
+            Tools::log()->error('not-valid-image');
+            return false;
+        }
+
+        return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'List'): string

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,11 +20,10 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
- * Description of DebugBar
+ * La barra de debug que se muestra en la parte inferior de la página cuando el modo debug está activado.
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
@@ -61,7 +60,7 @@ class DebugBar
     private function addItemAssets(array &$items): void
     {
         foreach (['css', 'js'] as $type) {
-            $label = '<i class="fas fa-file"></i> ' . strtoupper($type);
+            $label = '<i class="fa-solid fa-file"></i> ' . strtoupper($type);
             $data = AssetManager::get($type);
             if (!empty($data)) {
                 $this->addItem($items, $label, $data, true);
@@ -82,7 +81,7 @@ class DebugBar
                 continue;
             }
 
-            $label = '<i class="fas fa-keyboard"></i> ' . $type;
+            $label = '<i class="fa-solid fa-keyboard"></i> ' . $type;
             $data = [];
             foreach ($rows as $key => $value) {
                 if (is_array($value)) {
@@ -101,8 +100,6 @@ class DebugBar
     {
         $channels = [];
 
-        $timers = Kernel::getTimers();
-        $lastMicroTime = $timers['kernel::init']['start'] ?? microtime(true);
         foreach (MiniLog::read() as $log) {
             if (!isset($channels[$log['channel']])) {
                 $channels[$log['channel']] = [
@@ -111,16 +108,16 @@ class DebugBar
                 ];
             }
 
-            $diff = ($log['time'] - $lastMicroTime) * 1000;
-            $diffText = round($diff) > 0 ? '&#8593;+' . number_format($diff) . 'ms' : '&#8593;';
+            $duration = ($log['context']['duration'] ?? 0) * 1000;
+            $diffText = $duration >= 0.2 ? number_format($duration, 1) . 'ms' : '';
+
             $channels[$log['channel']]['data'][] = [
                 'level' => $log['level'], 'message' => $log['message'], 'time' => $diffText
             ];
-            $lastMicroTime = $log['time'];
         }
 
         foreach ($channels as $channel) {
-            $label = '<i class="fas fa-file-medical-alt"></i> ' . $channel['label'];
+            $label = '<i class="fa-solid fa-file-medical-alt"></i> ' . $channel['label'];
             $this->addItem($items, $label, $channel['data'], true);
         }
     }
@@ -130,7 +127,7 @@ class DebugBar
         $usage = memory_get_usage();
         $peak = memory_get_peak_usage();
 
-        $label = '<i class="fas fa-memory"></i> ' . $this->getSize(max([$usage, $peak]));
+        $label = '<i class="fa-solid fa-memory"></i> ' . $this->getSize(max($usage, $peak));
         $data = [
             ['Memory usage', $this->getSize($usage)],
             ['Memory peak', $this->getSize($peak)]
@@ -142,15 +139,20 @@ class DebugBar
     private function addItemTimer(array &$items): void
     {
         $totalTime = Kernel::getExecutionTime();
-        $label = '<i class="fas fa-hourglass-half"></i> ' . number_format($totalTime * 1000) . 'ms';
+        $label = '<i class="fa-solid fa-hourglass-half"></i> ' . number_format($totalTime * 1000) . 'ms';
 
         $data = [];
         foreach (Kernel::getTimers() as $task => $timer) {
             $stop = $timer['stop'] ?? microtime(true);
             $diff = $stop - $timer['start'];
+
+            $stop_memory = $timer['stop_mem'] ?? memory_get_usage();
+            $diff_memory = $stop_memory - $timer['start_mem'];
+
             $data[] = [
                 'task' => empty($task) ? 'Total' : $task,
-                'time' => number_format($diff * 1000) . 'ms'
+                'time' => number_format($diff * 1000) . 'ms',
+                'memory' => $this->getSize($diff_memory)
             ];
         }
 
@@ -162,7 +164,7 @@ class DebugBar
         $i18n = new Translator();
         $missing = $i18n->getMissingStrings();
         if (count($missing) > 0) {
-            $label = '<i class="fas fa-language"></i> Missing';
+            $label = '<i class="fa-solid fa-language"></i> Missing';
             $this->addItem($items, $label, $missing, true);
         }
     }
@@ -170,13 +172,14 @@ class DebugBar
     private function getSize(int $size): string
     {
         $unit = ['b', 'kb', 'mb', 'gb', 'tb', 'pb'];
-        return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
+        $i = (int)floor(log($size, 1024));
+        return round($size / pow(1024, $i), 2) . $unit[$i];
     }
 
     private function renderItems(array $items): string
     {
         $html = '<li class="debugbar-item debugbar-minimize">'
-            . '<a href="#" onclick="return hideAllDebugBar();"><i class="fas fa-chevron-down"></i></a>'
+            . '<a href="#" onclick="return hideAllDebugBar();"><i class="fa-solid fa-chevron-down"></i></a>'
             . '</li>';
 
         foreach ($items as $key => $item) {

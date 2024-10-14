@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,11 +24,14 @@ use FacturaScripts\Core\Model\Role;
 use FacturaScripts\Core\Model\RoleAccess;
 use FacturaScripts\Core\Model\RoleUser;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class RoleTest extends TestCase
 {
-    public function testCreateRole()
+    use LogErrorsTrait;
+
+    public function testCreateRole(): void
     {
         $role = new Role();
         $role->codrole = 'test1';
@@ -45,7 +48,7 @@ final class RoleTest extends TestCase
         $this->assertFalse($role->exists());
     }
 
-    public function testCreateRoleWithoutCode()
+    public function testCreateRoleWithoutCode(): void
     {
         $role = new Role();
         $role->descripcion = 'test without code';
@@ -61,7 +64,7 @@ final class RoleTest extends TestCase
         $this->assertFalse($role->exists());
     }
 
-    public function testRoleAccessAfterDelete()
+    public function testRoleAccessAfterDelete(): void
     {
         // crear role
         $role = new Role();
@@ -96,7 +99,7 @@ final class RoleTest extends TestCase
         $this->assertFalse($rolePage->exists());
     }
 
-    public function testRoleUser()
+    public function testRoleUser(): void
     {
         // crear role
         $role = new Role();
@@ -124,5 +127,10 @@ final class RoleTest extends TestCase
 
         // borramos user
         $this->assertTrue($user->delete());
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

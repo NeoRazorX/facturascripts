@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use Closure;
 use Exception;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -56,11 +57,14 @@ class CronJob extends ModelClass
     /** @var string */
     public $jobname;
 
+    /** @var bool */
+    private $overlapping = false;
+
     /** @var string */
     public $pluginname;
 
     /** @var bool */
-    public $ready;
+    private $ready = false;
 
     /** @var float */
     private $start;
@@ -73,7 +77,6 @@ class CronJob extends ModelClass
         $this->duration = 0.0;
         $this->enabled = true;
         $this->failed = false;
-        $this->ready = false;
     }
 
     public function every(string $period): self
@@ -109,44 +112,49 @@ class CronJob extends ModelClass
         return $this->everyDayAux('today', $hour, $strict);
     }
 
-    public function everyFridayAt(int $hour, bool $strict): self
+    public function everyFridayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('friday', $hour, $strict);
     }
 
-    public function everyLastDayOfMonthAt(int $hour, bool $strict): self
+    public function everyLastDayOfMonthAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('last day of this month', $hour, $strict);
     }
 
-    public function everyMondayAt(int $hour, bool $strict): self
+    public function everyMondayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('monday', $hour, $strict);
     }
 
-    public function everySaturdayAt(int $hour, bool $strict): self
+    public function everySaturdayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('saturday', $hour, $strict);
     }
 
-    public function everySundayAt(int $hour, bool $strict): self
+    public function everySundayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('sunday', $hour, $strict);
     }
 
-    public function everyThursdayAt(int $hour, bool $strict): self
+    public function everyThursdayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('thursday', $hour, $strict);
     }
 
-    public function everyTuesdayAt(int $hour, bool $strict): self
+    public function everyTuesdayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('tuesday', $hour, $strict);
     }
 
-    public function everyWednesdayAt(int $hour, bool $strict): self
+    public function everyWednesdayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('wednesday', $hour, $strict);
+    }
+
+    public function isReady(): bool
+    {
+        return $this->ready && false === $this->overlapping;
     }
 
     public static function primaryColumn(): string
@@ -156,7 +164,7 @@ class CronJob extends ModelClass
 
     public function run(Closure $function): bool
     {
-        if (false === $this->ready) {
+        if (false === $this->isReady()) {
             return false;
         }
 
@@ -210,6 +218,25 @@ class CronJob extends ModelClass
     public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    public function withoutOverlapping(...$jobs): self
+    {
+        // comprobamos la lista de trabajos en ejecución
+        $whereRunning = [
+            new DataBaseWhere('done', false),
+            new DataBaseWhere('enabled', true),
+        ];
+
+        if (count($jobs) > 0) {
+            $whereRunning[] = new DataBaseWhere('jobname', implode(',', $jobs), 'IN');
+        } else {
+            $whereRunning[] = new DataBaseWhere('jobname', $this->jobname, '!=');
+        }
+
+        $this->overlapping = $this->count($whereRunning) > 0;
+
+        return $this;
     }
 
     private function everyDayAux(string $day, int $hour, bool $strict): self

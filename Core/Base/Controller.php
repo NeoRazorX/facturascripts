@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,17 +22,17 @@ namespace FacturaScripts\Core\Base;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User as DinUser;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class from which all FacturaScripts controllers must inherit.
@@ -126,8 +126,10 @@ class Controller implements ControllerInterface
     public function __construct(string $className, string $uri = '')
     {
         $this->className = $className;
+
         Session::set('controllerName', $this->className);
         Session::set('pageName', $this->className);
+        Session::set('uri', $uri);
 
         $this->dataBase = new DataBase();
         $this->empresa = new Empresa();
@@ -142,7 +144,7 @@ class Controller implements ControllerInterface
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
 
-        $this->checkPhpVersion(7.3);
+        $this->checkPhpVersion(7.4);
     }
 
     /**
@@ -163,7 +165,7 @@ class Controller implements ControllerInterface
         return [
             'name' => $this->className,
             'title' => $this->className,
-            'icon' => 'fas fa-circle',
+            'icon' => 'fa-solid fa-circle',
             'menu' => 'new',
             'submenu' => null,
             'showonmenu' => true,
@@ -232,25 +234,11 @@ class Controller implements ControllerInterface
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->headers->setCookie(
-                Cookie::create(
-                    'fsHomepage',
-                    $this->user->homepage,
-                    time() + FS_COOKIES_EXPIRE,
-                    Tools::config('route', '/')
-                ),
-            );
+            $this->response->cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE);
             $this->user->save();
         } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;
-            $this->response->headers->setCookie(
-                Cookie::create(
-                    'fsHomepage',
-                    $this->user->homepage,
-                    time() - FS_COOKIES_EXPIRE,
-                    Tools::config('route', '/')
-                )
-            );
+            $this->response->cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE);
             $this->user->save();
         }
     }
@@ -307,12 +295,14 @@ class Controller implements ControllerInterface
 
         // renderizamos la plantilla
         if ($this->template) {
+            Kernel::startTimer('Controller::html-render');
             $response->setContent(Html::render($this->template, [
                 'controllerName' => $this->className,
                 'fsc' => $this,
                 'menuManager' => $menu,
                 'template' => $this->template,
             ]));
+            Kernel::stopTimer('Controller::html-render');
         }
         $response->send();
     }

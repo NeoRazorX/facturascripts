@@ -1,4 +1,6 @@
-"IVA19";"IVA 19%";19;0
-"IVA10";"IVA 10%";10;0
-"IA13";"ADICIONAL 13%";13;0
-"EXCTO";"EXENTO";0;0
+codimpuesto,descripcion,iva,recargo
+IVA_NORMAL,"Impuesto al Valor Agregado General",19,0
+IVA_REDUC,"Impuesto reducido a ciertos servicios",10,0
+IVA_EXPORT,"Exportaciones exentas de IVA",0,0
+IVA_EDUC,"Servicios de educación exentos",0,0
+IVA_MEDICO,"Servicios médicos exentos de IVA",0,0

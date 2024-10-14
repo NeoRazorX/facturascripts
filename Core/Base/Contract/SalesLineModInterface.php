@@ -16,32 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\Contract;
 
-use FacturaScripts\Core\Base\Translator;
-use FacturaScripts\Core\Model\Base\SalesDocument;
-use FacturaScripts\Core\Model\Base\SalesDocumentLine;
+use FacturaScripts\Core\Contract\SalesLineModInterface as NewSalesLineModInterface;
 
-interface SalesLineModInterface
+/**
+ * @deprecated since version 2024.92 replaced by FacturaScripts\Core\Contract\SalesLineModInterface
+ */
+interface SalesLineModInterface extends NewSalesLineModInterface
 {
-    public function apply(SalesDocument &$model, array &$lines, array $formData);
-
-    public function applyToLine(array $formData, SalesDocumentLine &$line, string $id);
-
-    public function assets(): void;
-
-    public function getFastLine(SalesDocument $model, array $formData): ?SalesDocumentLine;
-
-    public function map(array $lines, SalesDocument $model): array;
-
-    public function newFields(): array;
-
-    public function newModalFields(): array;
-
-    public function newTitles(): array;
-
-    public function renderField(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): ?string;
-
-    public function renderTitle(Translator $i18n, SalesDocument $model, string $field): ?string;
 }

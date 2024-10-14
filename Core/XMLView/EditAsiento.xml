@@ -22,7 +22,7 @@
 -->
 <view>
     <columns>
-        <group name="data" title="general-data" numcolumns="6" icon="fas fa-info">
+        <group name="data" title="general-data" numcolumns="6" icon="fa-solid fa-info">
             <column name="id" display="none" order="100">
                 <widget type="number" fieldname="idasiento" />
             </column>
@@ -38,7 +38,7 @@
                 <widget type="number" fieldname="numero" decimal="0" step="1" readonly="true" />
             </column>
         </group>
-        <group name="advanced" title="advanced" numcolumns="6" icon="fas fa-chart-line">
+        <group name="advanced" title="advanced" numcolumns="6" icon="fa-solid fa-chart-line">
             <column name="journal" numcolumns="5" order="210">
                 <widget type="select" fieldname="iddiario" onclick="EditDiario">
                     <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion" />

@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to perform searches on the page
@@ -58,6 +58,7 @@ class MegaSearch extends Controller
     public function getPageData(): array
     {
         $data = parent::getPageData();
+        $data['menu'] = 'reports';
         $data['title'] = 'mega-search';
         $data['showonmenu'] = false;
         return $data;
@@ -117,7 +118,7 @@ class MegaSearch extends Controller
         if (!empty($results)) {
             $this->results['pages'] = [
                 'columns' => ['icon' => 'icon', 'menu' => 'menu', 'submenu' => 'submenu', 'title' => 'title'],
-                'icon' => 'fas fa-mouse-pointer',
+                'icon' => 'fa-solid fa-mouse-pointer',
                 'title' => 'pages',
                 'results' => $results
             ];

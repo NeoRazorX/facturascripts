@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,7 +49,10 @@
         <column name="net" display="right" order="170">
             <widget type="money" fieldname="neto"/>
         </column>
-        <column name="update-time" display="right" order="180">
+        <column name="stock" display="none" order="180">
+            <widget type="number" fieldname="stock"/>
+        </column>
+        <column name="update-time" display="right" order="190">
             <widget type="datetime" fieldname="actualizado"/>
         </column>
     </columns>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,11 @@
 namespace FacturaScripts\Core;
 
 use Closure;
+use Throwable;
 
 /**
+ * Permite leer y escribir de forma sencilla información que se almacena en la carpeta /MyFiles/Tmp/FileCache.
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 final class Cache
@@ -59,6 +62,12 @@ final class Cache
         // buscamos los archivos que contengan el prefijo y los borramos
         $folder = FS_FOLDER . self::FILE_PATH;
         foreach (scandir($folder) as $fileName) {
+            // si no es un archivo, continuamos
+            if (!str_ends_with($fileName, '.cache')) {
+                continue;
+            }
+
+            // si el archivo empieza por el prefijo, lo borramos
             $len = strlen($prefix);
             if (substr($fileName, 0, $len) === $prefix) {
                 unlink($folder . '/' . $fileName);
@@ -84,7 +93,11 @@ final class Cache
         if (file_exists($fileName) && filemtime($fileName) >= time() - self::EXPIRATION) {
             // todavía no ha expirado, devolvemos el contenido
             $data = file_get_contents($fileName);
-            return unserialize($data);
+            try {
+                return unserialize($data);
+            } catch (Throwable $e) {
+                return null;
+            }
         }
 
         return null;
@@ -101,7 +114,14 @@ final class Cache
         // guardamos el contenido
         $data = serialize($value);
         $fileName = self::filename($key);
-        @file_put_contents($fileName, $data);
+        $exists = file_exists($fileName);
+
+        file_put_contents($fileName, $data);
+
+        // si no existía el archivo, le damos permisos de escritura
+        if (!$exists) {
+            chmod($fileName, 0666);
+        }
     }
 
     private static function filename(string $key): string
