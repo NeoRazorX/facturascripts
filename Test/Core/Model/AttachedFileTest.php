@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\AttachedFile;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
 final class AttachedFileTest extends TestCase
@@ -43,7 +43,7 @@ final class AttachedFileTest extends TestCase
         $this->assertTrue($model->save(), 'can-not-save-file');
 
         // filename no puede contener html
-        $fileNameNoHtml = ToolBox::utils()::noHtml($name);
+        $fileNameNoHtml = Tools::noHtml($name);
         $this->assertEquals($fileNameNoHtml, $model->filename);
 
         // si forzamos el html en el filename, debe quitar el html
