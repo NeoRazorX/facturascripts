@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Familia;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -68,7 +68,7 @@ final class FamiliaTest extends TestCase
         $this->assertTrue($family->save(), 'family-cant-save');
 
         // comprobamos que el html ha sido escapado
-        $noHtml = ToolBox::utils()::noHtml('<b>Test Html</b>');
+        $noHtml = Tools::noHtml('<b>Test Html</b>');
         $this->assertEquals($noHtml, $family->descripcion, 'family-wrong-html');
 
         // eliminamos

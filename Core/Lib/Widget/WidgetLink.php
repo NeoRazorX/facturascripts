@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Validator;
 
 /**
  * Description of WidgetLink
@@ -42,7 +42,7 @@ class WidgetLink extends WidgetText
             return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
-        return Utils::isValidUrl($this->value) ?
+        return Validator::url($this->value) ?
             '<a target="_blank" href="' . $this->value . '" class="cancelClickable">' . $inside . '</a>' :
             $inside;
     }

@@ -89,9 +89,8 @@ class Utils
 
     /**
      * Make corrections in the HTML code
-     *
+     * @deprecated since version 2024.92 replaced by Tools::fixHtml
      * @param ?string $txt
-     *
      * @return ?string
      */
     public static function fixHtml(?string $txt): ?string
@@ -135,6 +134,11 @@ class Utils
         return $str === null ? null : (int)$str;
     }
 
+    /**
+     * @deprecated since version 2024.92 replaced by Validator::url
+     * @param string $url
+     * @return bool
+     */
     public static function isValidUrl(string $url): bool
     {
         // si la url está vacía o comienza por javascript: entonces no es una url válida
@@ -159,9 +163,8 @@ class Utils
      *
      * Do not be tempted to substitute by htmlentities or htmlspecialshars
      * because you will find many unpleasant surprises.
-     *
+     * @deprecated since version 2024.92 replaced by Tools::noHtml
      * @param ?string $txt
-     *
      * @return ?string
      */
     public static function noHtml(?string $txt): ?string
@@ -175,9 +178,8 @@ class Utils
     /**
      * Normalizes a string replacing accented characters to
      * their normalized counterparts.
-     *
+     * @deprecated since version 2024.92 replaced by Tools::ascii
      * @param ?string $string
-     *
      * @return ?string
      */
     public static function normalize(?string $string): ?string
@@ -198,9 +200,8 @@ class Utils
 
     /**
      * Returns a random text string of length $length.
-     *
+     * @deprecated since version 2024.92 replaced by Tools::randomString
      * @param int $length
-     *
      * @return string
      */
     public static function randomString(int $length = 10): string
@@ -237,10 +238,9 @@ class Utils
 
     /**
      * Breaks text at maximum width, without break words.
-     *
+     * @deprecated since version 2024.92 replaced by Tools::textBreak
      * @param ?string $text
      * @param int $maxWidth
-     *
      * @return ?string
      */
     public static function trueTextBreak(?string $text, int $maxWidth = 500): ?string
