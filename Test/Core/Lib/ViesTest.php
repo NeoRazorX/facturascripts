@@ -22,6 +22,9 @@ namespace FacturaScripts\Test\Core\Lib;
 use FacturaScripts\Core\Lib\Vies;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group lentos
+ */
 final class ViesTest extends TestCase
 {
     public function testCheck(): void

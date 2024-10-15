@@ -26,6 +26,9 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group lentos
+ */
 final class PluginsTest extends TestCase
 {
     use LogErrorsTrait;
