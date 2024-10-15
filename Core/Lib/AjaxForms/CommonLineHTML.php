@@ -28,7 +28,7 @@ use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
-use FacturaScripts\Core\Translator;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
@@ -52,20 +52,20 @@ trait CommonLineHTML
     /** @var array */
     private static $stocks = [];
 
-    private static function cantidadRestante(Translator $i18n, BusinessDocumentLine $line, TransformerDocument $model): string
+    private static function cantidadRestante(BusinessDocumentLine $line, TransformerDocument $model): string
     {
         if ($line->servido <= 0 || false === $model->editable) {
             return '';
         }
 
         $restante = $line->cantidad - $line->servido;
-        return '<div class="input-group-prepend" title="' . $i18n->trans('quantity-remaining') . '">'
+        return '<div class="input-group-prepend" title="' . Tools::lang()->trans('quantity-remaining') . '">'
             . '<a href="DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $model->primaryColumnValue()
             . '" class="btn btn-outline-secondary" type="button">' . $restante . '</a>'
             . '</div>';
     }
 
-    private static function codimpuesto(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    private static function codimpuesto(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         // comprobamos el régimen de IVA del cliente o proveedor
         if (!isset(self::$regimeniva)) {
@@ -95,13 +95,13 @@ trait CommonLineHTML
             'name="codimpuesto_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
             'disabled=""';
         return '<div class="col-sm col-lg-1 order-6">'
-            . '<div class="d-lg-none mt-3 small">' . $i18n->trans('tax') . '</div>'
+            . '<div class="d-lg-none mt-3 small">' . Tools::lang()->trans('tax') . '</div>'
             . '<select ' . $attributes . ' class="form-select form-select-sm border-0">' . implode('', $options) . '</select>'
             . '<input type="hidden" name="iva_' . $idlinea . '" value="' . $line->iva . '"/>'
             . '</div>';
     }
 
-    private static function descripcion(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
+    private static function descripcion(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
     {
         $attributes = $model->editable ? 'name="descripcion_' . $idlinea . '"' : 'disabled=""';
 
@@ -113,35 +113,35 @@ trait CommonLineHTML
         $columnMd = empty($line->referencia) ? 12 : 8;
         $columnSm = empty($line->referencia) ? 10 : 8;
         return '<div class="col-sm-' . $columnSm . ' col-md-' . $columnMd . ' col-lg order-2">'
-            . '<div class="d-lg-none mt-3 small">' . $i18n->trans('description') . '</div>'
+            . '<div class="d-lg-none mt-3 small">' . Tools::lang()->trans('description') . '</div>'
             . '<textarea ' . $attributes . ' class="form-control form-control-sm border-0 doc-line-desc" rows="' . $rows . '">'
             . $line->descripcion . '</textarea></div>';
     }
 
-    private static function dtopor(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    private static function dtopor(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="dtopor_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-sm col-lg-1 order-5">'
-            . '<div class="d-lg-none mt-3 small">' . $i18n->trans('percentage-discount') . '</div>'
+            . '<div class="d-lg-none mt-3 small">' . Tools::lang()->trans('percentage-discount') . '</div>'
             . '<input type="number" ' . $attributes . ' value="' . $line->dtopor . '" class="form-control form-control-sm text-lg-center border-0"/>'
             . '</div>';
     }
 
-    private static function dtopor2(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
+    private static function dtopor2(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="' . $field . '_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
-            . '<div class="mb-2">' . $i18n->trans('percentage-discount') . ' 2'
+            . '<div class="mb-2">' . Tools::lang()->trans('percentage-discount') . ' 2'
             . '<input type="number" ' . $attributes . ' value="' . $line->{$field} . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    private static function excepcioniva(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
+    private static function excepcioniva(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="excepcioniva_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
@@ -153,30 +153,30 @@ trait CommonLineHTML
 
         foreach (RegimenIVA::allExceptions() as $key => $value) {
             $selected = $excepcionIva === $key ? 'selected' : '';
-            $options .= '<option value="' . $key . '" ' . $selected . '>' . $i18n->trans($value) . '</option>';
+            $options .= '<option value="' . $key . '" ' . $selected . '>' . Tools::lang()->trans($value) . '</option>';
         }
 
         return '<div class="col-6">'
-            . '<div class="mb-2">' . $i18n->trans('vat-exception')
+            . '<div class="mb-2">' . Tools::lang()->trans('vat-exception')
             . '<select ' . $attributes . ' class="form-select">' . $options . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    private static function genericBool(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $label): string
+    private static function genericBool(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $label): string
     {
         $attributes = $model->editable ? 'name="' . $field . '_' . $idlinea . '"' : 'disabled=""';
         $options = $line->{$field} ?
-            ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected>' . $i18n->trans('yes') . '</option>'] :
-            ['<option value="0" selected>' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
+            ['<option value="0">' . Tools::lang()->trans('no') . '</option>', '<option value="1" selected>' . Tools::lang()->trans('yes') . '</option>'] :
+            ['<option value="0" selected>' . Tools::lang()->trans('no') . '</option>', '<option value="1">' . Tools::lang()->trans('yes') . '</option>'];
         return '<div class="col-6">'
-            . '<div class="mb-2">' . $i18n->trans($label)
+            . '<div class="mb-2">' . Tools::lang()->trans($label)
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    private static function irpf(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    private static function irpf(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $options = ['<option value="">------</option>'];
         foreach (Retenciones::all() as $ret) {
@@ -194,13 +194,13 @@ trait CommonLineHTML
             'name="irpf_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
-            . '<div class="mb-2"><a href="ListImpuesto?activetab=ListRetencion">' . $i18n->trans('retention') . '</a>'
+            . '<div class="mb-2"><a href="ListImpuesto?activetab=ListRetencion">' . Tools::lang()->trans('retention') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    private static function lineTotal(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsSubtotal, string $jsNeto): string
+    private static function lineTotal(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsSubtotal, string $jsNeto): string
     {
         if ('subtotal' === self::$columnView) {
             $cssSubtotal = '';
@@ -220,11 +220,11 @@ trait CommonLineHTML
 
         $subtotal = self::subtotalValue($line, $model);
         return '<div class="col col-lg-1 order-7 columSubtotal ' . $cssSubtotal . '">'
-            . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
+            . '<div class="d-lg-none mt-2 small">' . Tools::lang()->trans('subtotal') . '</div>'
             . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($subtotal, FS_NF0, '.', '')
             . '" class="form-control form-control-sm text-lg-end border-0"' . $onclickSubtotal . ' readonly/></div>'
             . '<div class="col col-lg-1 order-7 columNeto ' . $cssNeto . '">'
-            . '<div class="d-lg-none mt-2 small">' . $i18n->trans('net') . '</div>'
+            . '<div class="d-lg-none mt-2 small">' . Tools::lang()->trans('net') . '</div>'
             . '<input type="number" name="lineneto_' . $idlinea . '"  value="' . number_format($line->pvptotal, FS_NF0, '.', '')
             . '" class="form-control form-control-sm text-lg-end border-0"' . $onclickNeto . ' readonly/></div>';
     }
@@ -260,7 +260,7 @@ trait CommonLineHTML
         }
     }
 
-    private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    private static function recargo(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         // comprobamos el régimen de IVA del cliente o proveedor
         if (!isset(self::$regimeniva)) {
@@ -278,13 +278,13 @@ trait CommonLineHTML
             'name="recargo_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
-            . '<div class="mb-2"><a href="ListImpuesto">' . $i18n->trans('percentage-surcharge') . '</a>'
+            . '<div class="mb-2"><a href="ListImpuesto">' . Tools::lang()->trans('percentage-surcharge') . '</a>'
             . '<input type="number" ' . $attributes . ' value="' . $line->recargo . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    private static function referencia(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
+    private static function referencia(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
     {
         $sortable = $model->editable ?
             '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' :
@@ -300,19 +300,19 @@ trait CommonLineHTML
             $line->referencia;
 
         return '<div class="col-sm-2 col-lg-1 order-1">'
-            . '<div class="small text-break"><div class="d-lg-none mt-2 text-truncate">' . $i18n->trans('reference') . '</div>'
+            . '<div class="small text-break"><div class="d-lg-none mt-2 text-truncate">' . Tools::lang()->trans('reference') . '</div>'
             . $sortable . $link . '<input type="hidden" name="referencia_' . $idlinea . '" value="' . $line->referencia . '"/>'
             . '</div>'
             . '</div>';
     }
 
-    private static function renderExpandButton(Translator $i18n, string $idlinea, TransformerDocument $model, string $jsName): string
+    private static function renderExpandButton(string $idlinea, TransformerDocument $model, string $jsName): string
     {
         if ($model->editable) {
             return '<div class="col-auto order-9">'
                 . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-light me-2" title="'
-                . $i18n->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button>'
-                . '<button class="btn btn-sm btn-danger btn-spin-action" type="button" title="' . $i18n->trans('delete') . '"'
+                . Tools::lang()->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button>'
+                . '<button class="btn btn-sm btn-danger btn-spin-action" type="button" title="' . Tools::lang()->trans('delete') . '"'
                 . ' onclick="return ' . $jsName . '(\'rm-line\', \'' . $idlinea . '\');">'
                 . '<i class="fa-solid fa-trash-alt"></i></button>'
                 . '</div>';
@@ -320,7 +320,7 @@ trait CommonLineHTML
 
         return '<div class="col-auto order-9"><button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-'
             . $idlinea . '" class="btn btn-sm btn-outline-secondary" title="'
-            . $i18n->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button></div>';
+            . Tools::lang()->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button></div>';
     }
 
     private static function subtotalValue(BusinessDocumentLine $line, TransformerDocument $model): float
@@ -336,16 +336,16 @@ trait CommonLineHTML
         return $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
     }
 
-    private static function suplido(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    private static function suplido(string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="suplido_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         $options = $line->suplido ?
-            ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected>' . $i18n->trans('yes') . '</option>'] :
-            ['<option value="0" selected>' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
+            ['<option value="0">' . Tools::lang()->trans('no') . '</option>', '<option value="1" selected>' . Tools::lang()->trans('yes') . '</option>'] :
+            ['<option value="0" selected>' . Tools::lang()->trans('no') . '</option>', '<option value="1">' . Tools::lang()->trans('yes') . '</option>'];
         return '<div class="col-6">'
-            . '<div class="mb-2">' . $i18n->trans('supplied')
+            . '<div class="mb-2">' . Tools::lang()->trans('supplied')
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
@@ -357,37 +357,37 @@ trait CommonLineHTML
         return '<div class="col-lg-auto order-8"><div style="min-width: ' . $width . 'px;"></div></div>';
     }
 
-    private static function titleCantidad(Translator $i18n): string
+    private static function titleCantidad(): string
     {
-        return '<div class="col-lg-1 text-end order-3">' . $i18n->trans('quantity') . '</div>';
+        return '<div class="col-lg-1 text-end order-3">' . Tools::lang()->trans('quantity') . '</div>';
     }
 
-    private static function titleCodimpuesto(Translator $i18n): string
+    private static function titleCodimpuesto(): string
     {
-        return '<div class="col-lg-1 order-6"><a href="ListImpuesto">' . $i18n->trans('tax') . '</a></div>';
+        return '<div class="col-lg-1 order-6"><a href="ListImpuesto">' . Tools::lang()->trans('tax') . '</a></div>';
     }
 
-    private static function titleDescripcion(Translator $i18n): string
+    private static function titleDescripcion(): string
     {
-        return '<div class="col-lg order-2">' . $i18n->trans('description') . '</div>';
+        return '<div class="col-lg order-2">' . Tools::lang()->trans('description') . '</div>';
     }
 
-    private static function titleDtopor(Translator $i18n): string
+    private static function titleDtopor(): string
     {
-        return '<div class="col-lg-1 text-center order-5">' . $i18n->trans('percentage-discount') . '</div>';
+        return '<div class="col-lg-1 text-center order-5">' . Tools::lang()->trans('percentage-discount') . '</div>';
     }
 
-    private static function titlePrecio(Translator $i18n): string
+    private static function titlePrecio(): string
     {
-        return '<div class="col-lg-1 text-end order-4">' . $i18n->trans('price') . '</div>';
+        return '<div class="col-lg-1 text-end order-4">' . Tools::lang()->trans('price') . '</div>';
     }
 
-    private static function titleReferencia(Translator $i18n): string
+    private static function titleReferencia(): string
     {
-        return '<div class="col-lg-1 order-1">' . $i18n->trans('reference') . '</div>';
+        return '<div class="col-lg-1 order-1">' . Tools::lang()->trans('reference') . '</div>';
     }
 
-    private static function titleTotal(Translator $i18n): string
+    private static function titleTotal(): string
     {
         if ('subtotal' === self::$columnView) {
             $cssSubtotal = '';
@@ -397,7 +397,7 @@ trait CommonLineHTML
             $cssNeto = '';
         }
 
-        return '<div class="col-lg-1 text-end order-7 columSubtotal ' . $cssSubtotal . '">' . $i18n->trans('subtotal') . '</div>'
-            . '<div class="col-lg-1 text-end order-7 columNeto ' . $cssNeto . '">' . $i18n->trans('net') . '</div>';
+        return '<div class="col-lg-1 text-end order-7 columSubtotal ' . $cssSubtotal . '">' . Tools::lang()->trans('subtotal') . '</div>'
+            . '<div class="col-lg-1 text-end order-7 columNeto ' . $cssNeto . '">' . Tools::lang()->trans('net') . '</div>';
     }
 }

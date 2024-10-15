@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,15 +19,13 @@
 
 namespace FacturaScripts\Core\Contract;
 
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
-use FacturaScripts\Core\Model\User;
 
 interface PurchasesModInterface
 {
-    public function apply(PurchaseDocument &$model, array $formData, User $user);
+    public function apply(PurchaseDocument &$model, array $formData): void;
 
-    public function applyBefore(PurchaseDocument &$model, array $formData, User $user);
+    public function applyBefore(PurchaseDocument &$model, array $formData): void;
 
     public function assets(): void;
 
@@ -37,5 +35,5 @@ interface PurchasesModInterface
 
     public function newModalFields(): array;
 
-    public function renderField(Translator $i18n, PurchaseDocument $model, string $field): ?string;
+    public function renderField(PurchaseDocument $model, string $field): ?string;
 }

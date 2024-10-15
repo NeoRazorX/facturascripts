@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,15 +19,14 @@
 
 namespace FacturaScripts\Core\Contract;
 
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
 
 interface PurchasesLineModInterface
 {
-    public function apply(PurchaseDocument &$model, array &$lines, array $formData);
+    public function apply(PurchaseDocument &$model, array &$lines, array $formData): void;
 
-    public function applyToLine(array $formData, PurchaseDocumentLine &$line, string $id);
+    public function applyToLine(array $formData, PurchaseDocumentLine &$line, string $id): void;
 
     public function assets(): void;
 
@@ -41,7 +40,7 @@ interface PurchasesLineModInterface
 
     public function newTitles(): array;
 
-    public function renderField(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $field): ?string;
+    public function renderField(string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $field): ?string;
 
-    public function renderTitle(Translator $i18n, PurchaseDocument $model, string $field): ?string;
+    public function renderTitle(PurchaseDocument $model, string $field): ?string;
 }

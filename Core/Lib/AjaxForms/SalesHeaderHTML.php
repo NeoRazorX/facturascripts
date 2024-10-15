@@ -26,9 +26,8 @@ use FacturaScripts\Core\Model\AgenciaTransporte;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Contacto;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Provincia;
@@ -49,22 +48,22 @@ class SalesHeaderHTML
     /** @var SalesModInterface[] */
     private static $mods = [];
 
-    public static function addMod(SalesModInterface $mod)
+    public static function addMod(SalesModInterface $mod): void
     {
         self::$mods[] = $mod;
     }
 
-    public static function apply(SalesDocument &$model, array $formData, User $user)
+    public static function apply(SalesDocument &$model, array $formData): void
     {
         // mods
         foreach (self::$mods as $mod) {
-            $mod->applyBefore($model, $formData, $user);
+            $mod->applyBefore($model, $formData);
         }
 
         $cliente = new Cliente();
         if (empty($model->primaryColumnValue())) {
             // new record. Sets user and customer
-            $model->setAuthor($user);
+            $model->setAuthor(Session::user());
             if (isset($formData['codcliente']) && $formData['codcliente'] && $cliente->loadFromCode($formData['codcliente'])) {
                 $model->setSubject($cliente);
                 if (empty($formData['action']) || $formData['action'] === 'set-customer') {
@@ -149,11 +148,11 @@ class SalesHeaderHTML
 
         // mods
         foreach (self::$mods as $mod) {
-            $mod->apply($model, $formData, $user);
+            $mod->apply($model, $formData);
         }
     }
 
-    public static function assets()
+    public static function assets(): void
     {
         // mods
         foreach (self::$mods as $mod) {
@@ -163,45 +162,44 @@ class SalesHeaderHTML
 
     public static function render(SalesDocument $model): string
     {
-        $i18n = new Translator();
         return '<div class="container-fluid">'
             . '<div class="row g-3 align-items-end">'
-            . self::renderField($i18n, $model, 'codcliente')
-            . self::renderField($i18n, $model, 'codalmacen')
-            . self::renderField($i18n, $model, 'codserie')
-            . self::renderField($i18n, $model, 'fecha')
-            . self::renderNewFields($i18n, $model)
-            . self::renderField($i18n, $model, 'numero2')
-            . self::renderField($i18n, $model, 'codpago')
-            . self::renderField($i18n, $model, 'finoferta')
-            . self::renderField($i18n, $model, 'total')
+            . self::renderField($model, 'codcliente')
+            . self::renderField($model, 'codalmacen')
+            . self::renderField($model, 'codserie')
+            . self::renderField($model, 'fecha')
+            . self::renderNewFields($model)
+            . self::renderField($model, 'numero2')
+            . self::renderField($model, 'codpago')
+            . self::renderField($model, 'finoferta')
+            . self::renderField($model, 'total')
             . '</div>'
             . '<div class="row g-3 align-items-end">'
-            . self::renderField($i18n, $model, '_detail')
-            . self::renderField($i18n, $model, '_parents')
-            . self::renderField($i18n, $model, '_children')
-            . self::renderField($i18n, $model, '_email')
-            . self::renderNewBtnFields($i18n, $model)
-            . self::renderField($i18n, $model, '_paid')
-            . self::renderField($i18n, $model, 'idestado')
+            . self::renderField($model, '_detail')
+            . self::renderField($model, '_parents')
+            . self::renderField($model, '_children')
+            . self::renderField($model, '_email')
+            . self::renderNewBtnFields($model)
+            . self::renderField($model, '_paid')
+            . self::renderField($model, 'idestado')
             . '</div>'
             . '</div>';
     }
 
-    private static function addressField(Translator $i18n, SalesDocument $model, string $field, string $label, int $size, int $maxlength): string
+    private static function addressField(SalesDocument $model, string $field, string $label, int $size, int $maxlength): string
     {
         $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
             'name="' . $field . '" maxlength="' . $maxlength . '" autocomplete="off"' :
             'disabled=""';
 
         return '<div class="col-sm-' . $size . '">'
-            . '<div class="mb-3">' . $i18n->trans($label)
+            . '<div class="mb-3">' . Tools::lang()->trans($label)
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->{$field}) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    private static function ciudad(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
+    private static function ciudad(SalesDocument $model, int $size, int $maxlength): string
     {
         $list = '';
         $dataList = '';
@@ -222,14 +220,14 @@ class SalesHeaderHTML
         }
 
         return '<div class="col-sm-' . $size . '">'
-            . '<div class="mb-3">' . $i18n->trans('city')
+            . '<div class="mb-3">' . Tools::lang()->trans('city')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->ciudad) . '" ' . $list . ' class="form-control"/>'
             . $dataList
             . '</div>'
             . '</div>';
     }
 
-    private static function codagente(Translator $i18n, SalesDocument $model): string
+    private static function codagente(SalesDocument $model): string
     {
         $agentes = Agentes::all();
         if (count($agentes) === 0) {
@@ -251,25 +249,25 @@ class SalesHeaderHTML
         $attributes = $model->editable ? 'name="codagente"' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="mb-3">'
-            . '<a href="' . Agentes::get($model->codagente)->url() . '">' . $i18n->trans('agent') . '</a>'
+            . '<a href="' . Agentes::get($model->codagente)->url() . '">' . Tools::lang()->trans('agent') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    private static function codcliente(Translator $i18n, SalesDocument $model): string
+    private static function codcliente(SalesDocument $model): string
     {
         self::$cliente = new Cliente();
         if (empty($model->codcliente) || false === self::$cliente->loadFromCode($model->codcliente)) {
             return '<div class="col-sm-3">'
-                . '<div class="mb-3">' . $i18n->trans('customer')
+                . '<div class="mb-3">' . Tools::lang()->trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
                 . '<a href="#" id="btnFindCustomerModal" class="btn btn-block btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
                 . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw"></i> '
-                . $i18n->trans('select') . '</a>'
+                . Tools::lang()->trans('select') . '</a>'
                 . '</div>'
                 . '</div>'
-                . self::detailModal($i18n, $model);
+                . self::detailModal($model);
         }
 
         $btnCliente = $model->editable ?
@@ -279,7 +277,7 @@ class SalesHeaderHTML
 
         $html = '<div class="col-sm-3 col-lg">'
             . '<div class="mb-3">'
-            . '<a href="' . self::$cliente->url() . '">' . $i18n->trans('customer') . '</a>'
+            . '<a href="' . self::$cliente->url() . '">' . Tools::lang()->trans('customer') . '</a>'
             . '<input type="hidden" name="codcliente" value="' . $model->codcliente . '"/>'
             . '<div class="input-group">'
             . '<input type="text" value="' . Tools::noHtml(self::$cliente->nombre) . '" class="form-control" readonly/>'
@@ -289,23 +287,23 @@ class SalesHeaderHTML
             . '</div>';
 
         if (empty($model->primaryColumnValue())) {
-            $html .= self::detail($i18n, $model, true);
+            $html .= self::detail($model, true);
         }
 
         return $html;
     }
 
-    private static function codigoenv(Translator $i18n, SalesDocument $model): string
+    private static function codigoenv(SalesDocument $model): string
     {
         $attributes = $model->editable ? 'name="codigoenv" maxlength="200" autocomplete="off"' : 'disabled=""';
         return '<div class="col-sm-4">'
-            . '<div class="mb-3">' . $i18n->trans('tracking-code')
+            . '<div class="mb-3">' . Tools::lang()->trans('tracking-code')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->codigoenv) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    private static function codpais(Translator $i18n, SalesDocument $model): string
+    private static function codpais(SalesDocument $model): string
     {
         $options = [];
         foreach (Paises::all() as $pais) {
@@ -320,13 +318,13 @@ class SalesHeaderHTML
             'disabled=""';
         return '<div class="col-sm-6">'
             . '<div class="mb-3">'
-            . '<a href="' . $pais->url() . '">' . $i18n->trans('country') . '</a>'
+            . '<a href="' . $pais->url() . '">' . Tools::lang()->trans('country') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    private static function codtrans(Translator $i18n, SalesDocument $model): string
+    private static function codtrans(SalesDocument $model): string
     {
         $options = ['<option value="">------</option>'];
         $agenciaTransporte = new AgenciaTransporte();
@@ -339,13 +337,13 @@ class SalesHeaderHTML
         $attributes = $model->editable ? 'name="codtrans"' : 'disabled=""';
         return '<div class="col-sm-4">'
             . '<div class="mb-3">'
-            . '<a href="' . $agenciaTransporte->url() . '">' . $i18n->trans('carrier') . '</a>'
+            . '<a href="' . $agenciaTransporte->url() . '">' . Tools::lang()->trans('carrier') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    private static function detail(Translator $i18n, SalesDocument $model, bool $new = false): string
+    private static function detail(SalesDocument $model, bool $new = false): string
     {
         if (empty($model->primaryColumnValue()) && $new === false) {
             // si el modelo es nuevo, ya hemos pintado el modal de detalle
@@ -356,66 +354,66 @@ class SalesHeaderHTML
         return '<div class="' . $css . '">'
             . '<div class="mb-3">'
             . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#headerModal">'
-            . '<i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . ' </button>'
+            . '<i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . Tools::lang()->trans('detail') . ' </button>'
             . '</div>'
             . '</div>'
-            . self::detailModal($i18n, $model);
+            . self::detailModal($model);
     }
 
-    private static function detailModal(Translator $i18n, SalesDocument $model): string
+    private static function detailModal(SalesDocument $model): string
     {
         return '<div class="modal fade" id="headerModal" tabindex="-1" aria-labelledby="headerModalLabel" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-centered modal-lg">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . Tools::lang()->trans('detail') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="row g-3">'
-            . self::renderField($i18n, $model, 'nombrecliente')
-            . self::renderField($i18n, $model, 'cifnif')
-            . self::renderField($i18n, $model, 'idcontactofact')
-            . self::renderField($i18n, $model, 'direccion')
-            . self::renderField($i18n, $model, 'apartado')
-            . self::renderField($i18n, $model, 'codpostal')
-            . self::renderField($i18n, $model, 'ciudad')
-            . self::renderField($i18n, $model, 'provincia')
-            . self::renderField($i18n, $model, 'codpais')
-            . self::renderField($i18n, $model, 'idcontactoenv')
-            . self::renderField($i18n, $model, 'codtrans')
-            . self::renderField($i18n, $model, 'codigoenv')
-            . self::renderField($i18n, $model, 'fechadevengo')
-            . self::renderField($i18n, $model, 'hora')
-            . self::renderField($i18n, $model, 'operacion')
-            . self::renderField($i18n, $model, 'femail')
-            . self::renderField($i18n, $model, 'coddivisa')
-            . self::renderField($i18n, $model, 'tasaconv')
-            . self::renderField($i18n, $model, 'user')
-            . self::renderField($i18n, $model, 'codagente')
-            . self::renderNewModalFields($i18n, $model)
+            . self::renderField($model, 'nombrecliente')
+            . self::renderField($model, 'cifnif')
+            . self::renderField($model, 'idcontactofact')
+            . self::renderField($model, 'direccion')
+            . self::renderField($model, 'apartado')
+            . self::renderField($model, 'codpostal')
+            . self::renderField($model, 'ciudad')
+            . self::renderField($model, 'provincia')
+            . self::renderField($model, 'codpais')
+            . self::renderField($model, 'idcontactoenv')
+            . self::renderField($model, 'codtrans')
+            . self::renderField($model, 'codigoenv')
+            . self::renderField($model, 'fechadevengo')
+            . self::renderField($model, 'hora')
+            . self::renderField($model, 'operacion')
+            . self::renderField($model, 'femail')
+            . self::renderField($model, 'coddivisa')
+            . self::renderField($model, 'tasaconv')
+            . self::renderField($model, 'user')
+            . self::renderField($model, 'codagente')
+            . self::renderNewModalFields($model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('close') . '</button>'
-            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . $i18n->trans('accept') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Tools::lang()->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . Tools::lang()->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
     }
 
-    private static function finoferta(Translator $i18n, SalesDocument $model): string
+    private static function finoferta(SalesDocument $model): string
     {
         if (false === property_exists($model, 'finoferta') || empty($model->primaryColumnValue())) {
             return '';
         }
 
         $label = empty($model->finoferta) || strtotime($model->finoferta) > time() ?
-            $i18n->trans('expiration') :
-            '<span class="text-danger">' . $i18n->trans('expiration') . '</span>';
+            Tools::lang()->trans('expiration') :
+            '<span class="text-danger">' . Tools::lang()->trans('expiration') . '</span>';
 
         $attributes = $model->editable ? 'name="finoferta"' : 'disabled=""';
         $value = empty($model->finoferta) ? '' : 'value="' . date('Y-m-d', strtotime($model->finoferta)) . '"';
@@ -426,18 +424,11 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param mixed $selected
-     * @param bool $empty
-     *
-     * @return array
-     */
-    private static function getAddressOptions(Translator $i18n, $selected, bool $empty): array
+    private static function getAddressOptions($selected, bool $empty): array
     {
         $options = $empty ? ['<option value="">------</option>'] : [];
         foreach (self::$cliente->getAddresses() as $contact) {
-            $descripcion = empty($contact->descripcion) ? '(' . $i18n->trans('empty') . ') ' : '(' . $contact->descripcion . ') ';
+            $descripcion = empty($contact->descripcion) ? '(' . Tools::lang()->trans('empty') . ') ' : '(' . $contact->descripcion . ') ';
             $descripcion .= empty($contact->direccion) ? '' : $contact->direccion;
             $options[] = $contact->idcontacto == $selected ?
                 '<option value="' . $contact->idcontacto . '" selected>' . $descripcion . '</option>' :
@@ -446,62 +437,62 @@ class SalesHeaderHTML
         return $options;
     }
 
-    private static function idcontactoenv(Translator $i18n, SalesDocument $model): string
+    private static function idcontactoenv(SalesDocument $model): string
     {
         if (empty($model->codcliente)) {
             return '';
         }
 
         $attributes = $model->editable ? 'name="idcontactoenv"' : 'disabled=""';
-        $options = self::getAddressOptions($i18n, $model->idcontactoenv, true);
+        $options = self::getAddressOptions($model->idcontactoenv, true);
         return '<div class="col-sm-4">'
             . '<div class="mb-3">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">'
-            . $i18n->trans('shipping-address') . '</a>'
+            . Tools::lang()->trans('shipping-address') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    private static function idcontactofact(Translator $i18n, SalesDocument $model): string
+    private static function idcontactofact(SalesDocument $model): string
     {
         if (empty($model->codcliente)) {
             return '';
         }
 
         $attributes = $model->editable ? 'name="idcontactofact" onchange="return salesFormActionWait(\'recalculate-line\', \'0\', event);"' : 'disabled=""';
-        $options = self::getAddressOptions($i18n, $model->idcontactofact, true);
+        $options = self::getAddressOptions($model->idcontactofact, true);
         return '<div class="col-sm-6">'
             . '<div class="mb-3">'
-            . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">' . $i18n->trans('billing-address') . '</a>'
+            . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">' . Tools::lang()->trans('billing-address') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    private static function nombrecliente(Translator $i18n, SalesDocument $model): string
+    private static function nombrecliente(SalesDocument $model): string
     {
         $attributes = $model->editable ? 'name="nombrecliente" required="" maxlength="100" autocomplete="off"' : 'disabled=""';
         return '<div class="col-sm-6">'
             . '<div class="mb-3">'
-            . $i18n->trans('business-name')
+            . Tools::lang()->trans('business-name')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nombrecliente) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    private static function numero2(Translator $i18n, SalesDocument $model): string
+    private static function numero2(SalesDocument $model): string
     {
-        $attributes = $model->editable ? 'name="numero2" maxlength="50" placeholder="' . $i18n->trans('optional') . '"' : 'disabled=""';
+        $attributes = $model->editable ? 'name="numero2" maxlength="50" placeholder="' . Tools::lang()->trans('optional') . '"' : 'disabled=""';
         return empty($model->codcliente) ? '' : '<div class="col-sm">'
             . '<div class="mb-3">'
-            . $i18n->trans('number2')
+            . Tools::lang()->trans('number2')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->numero2) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    private static function provincia(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
+    private static function provincia(SalesDocument $model, int $size, int $maxlength): string
     {
         $list = '';
         $dataList = '';
@@ -522,17 +513,17 @@ class SalesHeaderHTML
         }
 
         return '<div class="col-sm-' . $size . '">'
-            . '<div class="mb-3">' . $i18n->trans('province')
+            . '<div class="mb-3">' . Tools::lang()->trans('province')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->provincia) . '" ' . $list . ' class="form-control"/>'
             . $dataList
             . '</div>'
             . '</div>';
     }
 
-    private static function renderField(Translator $i18n, SalesDocument $model, string $field): ?string
+    private static function renderField(SalesDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
-            $html = $mod->renderField($i18n, $model, $field);
+            $html = $mod->renderField($model, $field);
             if ($html !== null) {
                 return $html;
             }
@@ -540,115 +531,115 @@ class SalesHeaderHTML
 
         switch ($field) {
             case '_children':
-                return self::children($i18n, $model);
+                return self::children($model);
 
             case '_detail':
-                return self::detail($i18n, $model);
+                return self::detail($model);
 
             case '_email':
-                return self::email($i18n, $model);
+                return self::email($model);
 
             case '_fecha':
-                return self::fecha($i18n, $model, false);
+                return self::fecha($model, false);
 
             case '_paid':
-                return self::paid($i18n, $model, 'salesFormSave');
+                return self::paid($model, 'salesFormSave');
 
             case '_parents':
-                return self::parents($i18n, $model);
+                return self::parents($model);
 
             case 'apartado':
-                return self::addressField($i18n, $model, 'apartado', 'post-office-box', 4, 10);
+                return self::addressField($model, 'apartado', 'post-office-box', 4, 10);
 
             case 'cifnif':
-                return self::cifnif($i18n, $model);
+                return self::cifnif($model);
 
             case 'ciudad':
-                return self::ciudad($i18n, $model, 4, 100);
+                return self::ciudad($model, 4, 100);
 
             case 'codagente':
-                return self::codagente($i18n, $model);
+                return self::codagente($model);
 
             case 'codalmacen':
-                return self::codalmacen($i18n, $model, 'salesFormAction');
+                return self::codalmacen($model, 'salesFormAction');
 
             case 'codcliente':
-                return self::codcliente($i18n, $model);
+                return self::codcliente($model);
 
             case 'coddivisa':
-                return self::coddivisa($i18n, $model);
+                return self::coddivisa($model);
 
             case 'codigoenv':
-                return self::codigoenv($i18n, $model);
+                return self::codigoenv($model);
 
             case 'codpago':
-                return self::codpago($i18n, $model);
+                return self::codpago($model);
 
             case 'codpais':
-                return self::codpais($i18n, $model);
+                return self::codpais($model);
 
             case 'codpostal':
-                return self::addressField($i18n, $model, 'codpostal', 'zip-code', 4, 10);
+                return self::addressField($model, 'codpostal', 'zip-code', 4, 10);
 
             case 'codserie':
-                return self::codserie($i18n, $model, 'salesFormAction');
+                return self::codserie($model, 'salesFormAction');
 
             case 'codtrans':
-                return self::codtrans($i18n, $model);
+                return self::codtrans($model);
 
             case 'direccion':
-                return self::addressField($i18n, $model, 'direccion', 'address', 6, 100);
+                return self::addressField($model, 'direccion', 'address', 6, 100);
 
             case 'fecha':
-                return self::fecha($i18n, $model);
+                return self::fecha($model);
 
             case 'fechadevengo':
-                return self::fechadevengo($i18n, $model);
+                return self::fechadevengo($model);
 
             case 'femail':
-                return self::femail($i18n, $model);
+                return self::femail($model);
 
             case 'finoferta':
-                return self::finoferta($i18n, $model);
+                return self::finoferta($model);
 
             case 'hora':
-                return self::hora($i18n, $model);
+                return self::hora($model);
 
             case 'idcontactofact':
-                return self::idcontactofact($i18n, $model);
+                return self::idcontactofact($model);
 
             case 'idcontactoenv':
-                return self::idcontactoenv($i18n, $model);
+                return self::idcontactoenv($model);
 
             case 'idestado':
-                return self::idestado($i18n, $model, 'salesFormSave');
+                return self::idestado($model, 'salesFormSave');
 
             case 'nombrecliente':
-                return self::nombrecliente($i18n, $model);
+                return self::nombrecliente($model);
 
             case 'numero2':
-                return self::numero2($i18n, $model);
+                return self::numero2($model);
 
             case 'operacion':
-                return self::operacion($i18n, $model);
+                return self::operacion($model);
 
             case 'provincia':
-                return self::provincia($i18n, $model, 6, 100);
+                return self::provincia($model, 6, 100);
 
             case 'tasaconv':
-                return self::tasaconv($i18n, $model);
+                return self::tasaconv($model);
 
             case 'total':
-                return self::total($i18n, $model, 'salesFormSave');
+                return self::total($model, 'salesFormSave');
 
             case 'user':
-                return self::user($i18n, $model);
+                return self::user($model);
         }
 
         return null;
     }
 
-    private static function renderNewBtnFields(Translator $i18n, SalesDocument $model): string
+    private static function renderNewBtnFields(SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -664,7 +655,7 @@ class SalesHeaderHTML
         $html = '';
         foreach ($newFields as $field) {
             foreach (self::$mods as $mod) {
-                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                $fieldHtml = $mod->renderField($model, $field);
                 if ($fieldHtml !== null) {
                     $html .= $fieldHtml;
                     break;
@@ -674,7 +665,7 @@ class SalesHeaderHTML
         return $html;
     }
 
-    private static function renderNewFields(Translator $i18n, SalesDocument $model): string
+    private static function renderNewFields(SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -690,7 +681,7 @@ class SalesHeaderHTML
         $html = '';
         foreach ($newFields as $field) {
             foreach (self::$mods as $mod) {
-                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                $fieldHtml = $mod->renderField($model, $field);
                 if ($fieldHtml !== null) {
                     $html .= $fieldHtml;
                     break;
@@ -700,7 +691,7 @@ class SalesHeaderHTML
         return $html;
     }
 
-    private static function renderNewModalFields(Translator $i18n, SalesDocument $model): string
+    private static function renderNewModalFields(SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -716,7 +707,7 @@ class SalesHeaderHTML
         $html = '';
         foreach ($newFields as $field) {
             foreach (self::$mods as $mod) {
-                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                $fieldHtml = $mod->renderField($model, $field);
                 if ($fieldHtml !== null) {
                     $html .= $fieldHtml;
                     break;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
+use FacturaScripts\Core\Contract\PurchasesModInterface;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -40,22 +39,22 @@ class PurchasesHeaderHTML
     /** @var PurchasesModInterface[] */
     private static $mods = [];
 
-    public static function addMod(PurchasesModInterface $mod)
+    public static function addMod(PurchasesModInterface $mod): void
     {
         self::$mods[] = $mod;
     }
 
-    public static function apply(PurchaseDocument &$model, array $formData, User $user)
+    public static function apply(PurchaseDocument &$model, array $formData): void
     {
         // mods
         foreach (self::$mods as $mod) {
-            $mod->applyBefore($model, $formData, $user);
+            $mod->applyBefore($model, $formData);
         }
 
         $proveedor = new Proveedor();
         if (empty($model->primaryColumnValue())) {
             // new record. Sets user and supplier
-            $model->setAuthor($user);
+            $model->setAuthor(Session::user());
             if (isset($formData['codproveedor']) && $formData['codproveedor'] && $proveedor->loadFromCode($formData['codproveedor'])) {
                 $model->setSubject($proveedor);
                 if (empty($formData['action']) || $formData['action'] === 'set-supplier') {
@@ -92,11 +91,11 @@ class PurchasesHeaderHTML
 
         // mods
         foreach (self::$mods as $mod) {
-            $mod->apply($model, $formData, $user);
+            $mod->apply($model, $formData);
         }
     }
 
-    public static function assets()
+    public static function assets(): void
     {
         // mods
         foreach (self::$mods as $mod) {
@@ -106,43 +105,42 @@ class PurchasesHeaderHTML
 
     public static function render(PurchaseDocument $model): string
     {
-        $i18n = new Translator();
         return '<div class="container-fluid">'
             . '<div class="row g-3 align-items-end">'
-            . self::renderField($i18n, $model, 'codproveedor')
-            . self::renderField($i18n, $model, 'codalmacen')
-            . self::renderField($i18n, $model, 'codserie')
-            . self::renderField($i18n, $model, 'fecha')
-            . self::renderNewFields($i18n, $model)
-            . self::renderField($i18n, $model, 'numproveedor')
-            . self::renderField($i18n, $model, 'codpago')
-            . self::renderField($i18n, $model, 'total')
+            . self::renderField($model, 'codproveedor')
+            . self::renderField($model, 'codalmacen')
+            . self::renderField($model, 'codserie')
+            . self::renderField($model, 'fecha')
+            . self::renderNewFields($model)
+            . self::renderField($model, 'numproveedor')
+            . self::renderField($model, 'codpago')
+            . self::renderField($model, 'total')
             . '</div>'
             . '<div class="row g-3 align-items-end">'
-            . self::renderField($i18n, $model, '_detail')
-            . self::renderField($i18n, $model, '_parents')
-            . self::renderField($i18n, $model, '_children')
-            . self::renderField($i18n, $model, '_email')
-            . self::renderNewBtnFields($i18n, $model)
-            . self::renderField($i18n, $model, '_paid')
-            . self::renderField($i18n, $model, 'idestado')
+            . self::renderField($model, '_detail')
+            . self::renderField($model, '_parents')
+            . self::renderField($model, '_children')
+            . self::renderField($model, '_email')
+            . self::renderNewBtnFields($model)
+            . self::renderField($model, '_paid')
+            . self::renderField($model, 'idestado')
             . '</div>'
             . '</div>';
     }
 
-    private static function codproveedor(Translator $i18n, PurchaseDocument $model): string
+    private static function codproveedor(PurchaseDocument $model): string
     {
         $proveedor = new Proveedor();
         if (empty($model->codproveedor) || false === $proveedor->loadFromCode($model->codproveedor)) {
             return '<div class="col-sm-3">'
-                . '<div class="mb-3">' . $i18n->trans('supplier')
+                . '<div class="mb-3">' . Tools::lang()->trans('supplier')
                 . '<input type="hidden" name="codproveedor" />'
                 . '<a href="#" id="btnFindSupplierModal" class="btn btn-block btn-primary" onclick="$(\'#findSupplierModal\').modal(\'show\');'
                 . ' $(\'#findSupplierInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw"></i> '
-                . $i18n->trans('select') . '</a>'
+                . Tools::lang()->trans('select') . '</a>'
                 . '</div>'
                 . '</div>'
-                . self::detailModal($i18n, $model);
+                . self::detailModal($model);
         }
 
         $btnProveedor = $model->editable ?
@@ -152,7 +150,7 @@ class PurchasesHeaderHTML
 
         $html = '<div class="col-sm-3 col-lg">'
             . '<div class="mb-3">'
-            . '<a href="' . $proveedor->url() . '">' . $i18n->trans('supplier') . '</a>'
+            . '<a href="' . $proveedor->url() . '">' . Tools::lang()->trans('supplier') . '</a>'
             . '<input type="hidden" name="codproveedor" value="' . $model->codproveedor . '" />'
             . '<div class="input-group">'
             . '<input type="text" value="' . Tools::noHtml($proveedor->nombre) . '" class="form-control" readonly />'
@@ -162,13 +160,13 @@ class PurchasesHeaderHTML
             . '</div>';
 
         if (empty($model->primaryColumnValue())) {
-            $html .= self::detail($i18n, $model, true);
+            $html .= self::detail($model, true);
         }
 
         return $html;
     }
 
-    private static function detail(Translator $i18n, PurchaseDocument $model, bool $new = false): string
+    private static function detail(PurchaseDocument $model, bool $new = false): string
     {
         if (empty($model->primaryColumnValue()) && $new === false) {
             // si el modelo es nuevo, ya hemos pintado el modal de detalle
@@ -179,71 +177,71 @@ class PurchasesHeaderHTML
         return '<div class="' . $css . '">'
             . '<div class="mb-3">'
             . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#headerModal">'
-            . '<i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . ' </button>'
+            . '<i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . Tools::lang()->trans('detail') . ' </button>'
             . '</div>'
             . '</div>'
-            . self::detailModal($i18n, $model);
+            . self::detailModal($model);
     }
 
-    private static function detailModal(Translator $i18n, PurchaseDocument $model): string
+    private static function detailModal(PurchaseDocument $model): string
     {
         return '<div class="modal fade" id="headerModal" tabindex="-1" aria-labelledby="headerModalLabel" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-centered">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">' . $i18n->trans('detail') . '</h5>'
+            . '<h5 class="modal-title">' . Tools::lang()->trans('detail') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="row g-3">'
-            . self::renderField($i18n, $model, 'nombre')
-            . self::renderField($i18n, $model, 'cifnif')
-            . self::renderField($i18n, $model, 'fechadevengo')
-            . self::renderField($i18n, $model, 'hora')
-            . self::renderField($i18n, $model, 'operacion')
-            . self::renderField($i18n, $model, 'femail')
-            . self::renderField($i18n, $model, 'coddivisa')
-            . self::renderField($i18n, $model, 'tasaconv')
-            . self::renderField($i18n, $model, 'user')
-            . self::renderNewModalFields($i18n, $model)
+            . self::renderField($model, 'nombre')
+            . self::renderField($model, 'cifnif')
+            . self::renderField($model, 'fechadevengo')
+            . self::renderField($model, 'hora')
+            . self::renderField($model, 'operacion')
+            . self::renderField($model, 'femail')
+            . self::renderField($model, 'coddivisa')
+            . self::renderField($model, 'tasaconv')
+            . self::renderField($model, 'user')
+            . self::renderNewModalFields($model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('close') . '</button>'
-            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . $i18n->trans('accept') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Tools::lang()->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . Tools::lang()->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
     }
 
-    private static function nombre(Translator $i18n, PurchaseDocument $model): string
+    private static function nombre(PurchaseDocument $model): string
     {
         $attributes = $model->editable ? 'name="nombre" required=""' : 'disabled=""';
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">' . $i18n->trans('business-name')
+            . '<div class="mb-3">' . Tools::lang()->trans('business-name')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nombre) . '" class="form-control" maxlength="100" autocomplete="off" />'
             . '</div>'
             . '</div>';
     }
 
-    private static function numproveedor(Translator $i18n, PurchaseDocument $model): string
+    private static function numproveedor(PurchaseDocument $model): string
     {
         $attributes = $model->editable ? 'name="numproveedor"' : 'disabled=""';
         return empty($model->codproveedor) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
-            . '<div class="mb-3">' . $i18n->trans('numsupplier')
+            . '<div class="mb-3">' . Tools::lang()->trans('numsupplier')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->numproveedor) . '" class="form-control" maxlength="50"'
-            . ' placeholder="' . $i18n->trans('optional') . '" />'
+            . ' placeholder="' . Tools::lang()->trans('optional') . '" />'
             . '</div>'
             . '</div>';
     }
 
-    private static function renderField(Translator $i18n, PurchaseDocument $model, string $field): ?string
+    private static function renderField(PurchaseDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
-            $html = $mod->renderField($i18n, $model, $field);
+            $html = $mod->renderField($model, $field);
             if ($html !== null) {
                 return $html;
             }
@@ -251,79 +249,79 @@ class PurchasesHeaderHTML
 
         switch ($field) {
             case '_children':
-                return self::children($i18n, $model);
+                return self::children($model);
 
             case '_detail':
-                return self::detail($i18n, $model);
+                return self::detail($model);
 
             case '_email':
-                return self::email($i18n, $model);
+                return self::email($model);
 
             case '_fecha':
-                return self::fecha($i18n, $model, false);
+                return self::fecha($model, false);
 
             case '_paid':
-                return self::paid($i18n, $model, 'purchasesFormSave');
+                return self::paid($model, 'purchasesFormSave');
 
             case '_parents':
-                return self::parents($i18n, $model);
+                return self::parents($model);
 
             case 'cifnif':
-                return self::cifnif($i18n, $model);
+                return self::cifnif($model);
 
             case 'codalmacen':
-                return self::codalmacen($i18n, $model, 'purchasesFormAction');
+                return self::codalmacen($model, 'purchasesFormAction');
 
             case 'coddivisa':
-                return self::coddivisa($i18n, $model);
+                return self::coddivisa($model);
 
             case 'codpago':
-                return self::codpago($i18n, $model);
+                return self::codpago($model);
 
             case 'codproveedor':
-                return self::codproveedor($i18n, $model);
+                return self::codproveedor($model);
 
             case 'codserie':
-                return self::codserie($i18n, $model, 'purchasesFormAction');
+                return self::codserie($model, 'purchasesFormAction');
 
             case 'fecha':
-                return self::fecha($i18n, $model);
+                return self::fecha($model);
 
             case 'fechadevengo':
-                return self::fechadevengo($i18n, $model);
+                return self::fechadevengo($model);
 
             case 'femail':
-                return self::femail($i18n, $model);
+                return self::femail($model);
 
             case 'hora':
-                return self::hora($i18n, $model);
+                return self::hora($model);
 
             case 'idestado':
-                return self::idestado($i18n, $model, 'purchasesFormSave');
+                return self::idestado($model, 'purchasesFormSave');
 
             case 'nombre':
-                return self::nombre($i18n, $model);
+                return self::nombre($model);
 
             case 'numproveedor':
-                return self::numproveedor($i18n, $model);
+                return self::numproveedor($model);
 
             case 'operacion':
-                return self::operacion($i18n, $model);
+                return self::operacion($model);
 
             case 'tasaconv':
-                return self::tasaconv($i18n, $model);
+                return self::tasaconv($model);
 
             case 'total':
-                return self::total($i18n, $model, 'purchasesFormSave');
+                return self::total($model, 'purchasesFormSave');
 
             case 'user':
-                return self::user($i18n, $model);
+                return self::user($model);
         }
 
         return null;
     }
 
-    private static function renderNewBtnFields(Translator $i18n, PurchaseDocument $model): string
+    private static function renderNewBtnFields(PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -339,7 +337,7 @@ class PurchasesHeaderHTML
         $html = '';
         foreach ($newFields as $field) {
             foreach (self::$mods as $mod) {
-                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                $fieldHtml = $mod->renderField($model, $field);
                 if ($fieldHtml !== null) {
                     $html .= $fieldHtml;
                     break;
@@ -349,7 +347,7 @@ class PurchasesHeaderHTML
         return $html;
     }
 
-    private static function renderNewFields(Translator $i18n, PurchaseDocument $model): string
+    private static function renderNewFields(PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -365,7 +363,7 @@ class PurchasesHeaderHTML
         $html = '';
         foreach ($newFields as $field) {
             foreach (self::$mods as $mod) {
-                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                $fieldHtml = $mod->renderField($model, $field);
                 if ($fieldHtml !== null) {
                     $html .= $fieldHtml;
                     break;
@@ -375,7 +373,7 @@ class PurchasesHeaderHTML
         return $html;
     }
 
-    private static function renderNewModalFields(Translator $i18n, PurchaseDocument $model): string
+    private static function renderNewModalFields(PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -391,7 +389,7 @@ class PurchasesHeaderHTML
         $html = '';
         foreach ($newFields as $field) {
             foreach (self::$mods as $mod) {
-                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                $fieldHtml = $mod->renderField($model, $field);
                 if ($fieldHtml !== null) {
                     $html .= $fieldHtml;
                     break;

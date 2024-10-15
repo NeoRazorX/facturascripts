@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,9 +21,7 @@ namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Contract\SalesModInterface;
 use FacturaScripts\Core\Model\Base\SalesDocument;
-use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Translator;
 
 /**
  * Description of SalesFooterHTML
@@ -38,16 +36,16 @@ class SalesFooterHTML
     /** @var SalesModInterface[] */
     private static $mods = [];
 
-    public static function addMod(SalesModInterface $mod)
+    public static function addMod(SalesModInterface $mod): void
     {
         self::$mods[] = $mod;
     }
 
-    public static function apply(SalesDocument &$model, array $formData, User $user)
+    public static function apply(SalesDocument &$model, array $formData): void
     {
         // mods
         foreach (self::$mods as $mod) {
-            $mod->applyBefore($model, $formData, $user);
+            $mod->applyBefore($model, $formData);
         }
 
         self::$columnView = $formData['columnView'] ?? Tools::settings('default', 'columnetosubtotal', 'subtotal');
@@ -58,11 +56,11 @@ class SalesFooterHTML
 
         // mods
         foreach (self::$mods as $mod) {
-            $mod->apply($model, $formData, $user);
+            $mod->apply($model, $formData);
         }
     }
 
-    public static function assets()
+    public static function assets(): void
     {
         // mods
         foreach (self::$mods as $mod) {
@@ -80,47 +78,46 @@ class SalesFooterHTML
             return '';
         }
 
-        $i18n = new Translator();
         return '<div class="container-fluid mt-3">'
             . '<div class="row g-3">'
-            . self::renderField($i18n, $model, '_productBtn')
-            . self::renderField($i18n, $model, '_newLineBtn')
-            . self::renderField($i18n, $model, '_sortableBtn')
-            . self::renderField($i18n, $model, '_fastLineInput')
-            . self::renderField($i18n, $model, '_subtotalNetoBtn')
+            . self::renderField($model, '_productBtn')
+            . self::renderField($model, '_newLineBtn')
+            . self::renderField($model, '_sortableBtn')
+            . self::renderField($model, '_fastLineInput')
+            . self::renderField($model, '_subtotalNetoBtn')
             . '</div>'
             . '<div class="row g-3">'
-            . self::renderField($i18n, $model, 'observaciones')
-            . self::renderNewFields($i18n, $model)
-            . self::renderField($i18n, $model, 'netosindto')
-            . self::renderField($i18n, $model, 'dtopor1')
-            . self::renderField($i18n, $model, 'dtopor2')
-            . self::renderField($i18n, $model, 'neto')
-            . self::renderField($i18n, $model, 'totaliva')
-            . self::renderField($i18n, $model, 'totalrecargo')
-            . self::renderField($i18n, $model, 'totalirpf')
-            . self::renderField($i18n, $model, 'totalsuplidos')
-            . self::renderField($i18n, $model, 'totalcoste')
-            . self::renderField($i18n, $model, 'totalbeneficio')
-            . self::renderField($i18n, $model, 'total')
+            . self::renderField($model, 'observaciones')
+            . self::renderNewFields($model)
+            . self::renderField($model, 'netosindto')
+            . self::renderField($model, 'dtopor1')
+            . self::renderField($model, 'dtopor2')
+            . self::renderField($model, 'neto')
+            . self::renderField($model, 'totaliva')
+            . self::renderField($model, 'totalrecargo')
+            . self::renderField($model, 'totalirpf')
+            . self::renderField($model, 'totalsuplidos')
+            . self::renderField($model, 'totalcoste')
+            . self::renderField($model, 'totalbeneficio')
+            . self::renderField($model, 'total')
             . '</div>'
             . '<div class="row g-3">'
             . '<div class="col-auto">'
-            . self::renderField($i18n, $model, '_deleteBtn')
+            . self::renderField($model, '_deleteBtn')
             . '</div>'
             . '<div class="col text-end">'
-            . self::renderNewBtnFields($i18n, $model)
-            . self::renderField($i18n, $model, '_modalFooter')
-            . self::renderField($i18n, $model, '_undoBtn')
-            . self::renderField($i18n, $model, '_saveBtn')
+            . self::renderNewBtnFields($model)
+            . self::renderField($model, '_modalFooter')
+            . self::renderField($model, '_undoBtn')
+            . self::renderField($model, '_saveBtn')
             . '</div>'
             . '</div>'
             . '</div>';
     }
 
-    private static function modalFooter(Translator $i18n, SalesDocument $model): string
+    private static function modalFooter(SalesDocument $model): string
     {
-        $htmlModal = self::renderNewModalFields($i18n, $model);
+        $htmlModal = self::renderNewModalFields($model);
 
         if (empty($htmlModal)) {
             return '';
@@ -128,16 +125,16 @@ class SalesFooterHTML
 
         return '<button class="btn btn-outline-secondary me-2" type="button" data-bs-toggle="modal" data-bs-target="#footerModal">'
             . '<i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i></button>'
-            . self::modalFooterHtml($i18n, $htmlModal);
+            . self::modalFooterHtml($htmlModal);
     }
 
-    private static function modalFooterHtml(Translator $i18n, string $htmlModal): string
+    private static function modalFooterHtml(string $htmlModal): string
     {
         return '<div class="modal fade" id="footerModal" tabindex="-1" aria-labelledby="footerModalLabel" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-centered modal-lg">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">' . $i18n->trans('detail') . ' ' . $i18n->trans('footer') . '</h5>'
+            . '<h5 class="modal-title">' . Tools::lang()->trans('detail') . ' ' . Tools::lang()->trans('footer') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . ''
             . '</button>'
@@ -148,18 +145,18 @@ class SalesFooterHTML
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('close') . '</button>'
-            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . $i18n->trans('accept') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Tools::lang()->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . Tools::lang()->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
     }
 
-    private static function renderField(Translator $i18n, SalesDocument $model, string $field): ?string
+    private static function renderField(SalesDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
-            $html = $mod->renderField($i18n, $model, $field);
+            $html = $mod->renderField($model, $field);
             if ($html !== null) {
                 return $html;
             }
@@ -167,73 +164,73 @@ class SalesFooterHTML
 
         switch ($field) {
             case '_deleteBtn':
-                return self::deleteBtn($i18n, $model, 'salesFormSave');
+                return self::deleteBtn($model, 'salesFormSave');
 
             case '_fastLineInput':
-                return self::fastLineInput($i18n, $model, 'salesFastLine');
+                return self::fastLineInput($model, 'salesFastLine');
 
             case '_modalFooter':
-                return self::modalFooter($i18n, $model);
+                return self::modalFooter($model);
 
             case '_newLineBtn':
-                return self::newLineBtn($i18n, $model, 'salesFormAction');
+                return self::newLineBtn($model, 'salesFormAction');
 
             case '_productBtn':
-                return self::productBtn($i18n, $model);
+                return self::productBtn($model);
 
             case '_saveBtn':
-                return self::saveBtn($i18n, $model, 'salesFormSave');
+                return self::saveBtn($model, 'salesFormSave');
 
             case '_sortableBtn':
-                return self::sortableBtn($i18n, $model);
+                return self::sortableBtn($model);
 
             case '_subtotalNetoBtn':
-                return self::subtotalNetoBtn($i18n);
+                return self::subtotalNetoBtn();
 
             case '_undoBtn':
-                return self::undoBtn($i18n, $model);
+                return self::undoBtn($model);
 
             case 'dtopor1':
-                return self::dtopor1($i18n, $model, 'salesFormActionWait');
+                return self::dtopor1($model, 'salesFormActionWait');
 
             case 'dtopor2':
-                return self::dtopor2($i18n, $model, 'salesFormActionWait');
+                return self::dtopor2($model, 'salesFormActionWait');
 
             case 'neto':
-                return self::column($i18n, $model, 'neto', 'net', true);
+                return self::column($model, 'neto', 'net', true);
 
             case 'netosindto':
-                return self::netosindto($i18n, $model);
+                return self::netosindto($model);
 
             case 'observaciones':
-                return self::observaciones($i18n, $model);
+                return self::observaciones($model);
 
             case 'total':
-                return self::column($i18n, $model, 'total', 'total', true);
+                return self::column($model, 'total', 'total', true);
 
             case 'totalbeneficio':
-                return self::column($i18n, $model, 'totalbeneficio', 'profits', true, Tools::settings('default', 'levelbenefitsales', 0));
+                return self::column($model, 'totalbeneficio', 'profits', true, Tools::settings('default', 'levelbenefitsales', 0));
 
             case 'totalcoste':
-                return self::column($i18n, $model, 'totalcoste', 'total-cost', true, Tools::settings('default', 'levelcostsales', 0));
+                return self::column($model, 'totalcoste', 'total-cost', true, Tools::settings('default', 'levelcostsales', 0));
 
             case 'totalirpf':
-                return self::column($i18n, $model, 'totalirpf', 'irpf', true);
+                return self::column($model, 'totalirpf', 'irpf', true);
 
             case 'totaliva':
-                return self::column($i18n, $model, 'totaliva', 'taxes', true);
+                return self::column($model, 'totaliva', 'taxes', true);
 
             case 'totalrecargo':
-                return self::column($i18n, $model, 'totalrecargo', 're', true);
+                return self::column($model, 'totalrecargo', 're', true);
 
             case 'totalsuplidos':
-                return self::column($i18n, $model, 'totalsuplidos', 'supplied-amount', true);
+                return self::column($model, 'totalsuplidos', 'supplied-amount', true);
         }
 
         return null;
     }
 
-    private static function renderNewBtnFields(Translator $i18n, SalesDocument $model): string
+    private static function renderNewBtnFields(SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -249,7 +246,7 @@ class SalesFooterHTML
         $html = '';
         foreach ($newFields as $field) {
             foreach (self::$mods as $mod) {
-                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                $fieldHtml = $mod->renderField($model, $field);
                 if ($fieldHtml !== null) {
                     $html .= $fieldHtml;
                     break;
@@ -259,7 +256,7 @@ class SalesFooterHTML
         return $html;
     }
 
-    private static function renderNewFields(Translator $i18n, SalesDocument $model): string
+    private static function renderNewFields(SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -275,7 +272,7 @@ class SalesFooterHTML
         $html = '';
         foreach ($newFields as $field) {
             foreach (self::$mods as $mod) {
-                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                $fieldHtml = $mod->renderField($model, $field);
                 if ($fieldHtml !== null) {
                     $html .= $fieldHtml;
                     break;
@@ -285,7 +282,7 @@ class SalesFooterHTML
         return $html;
     }
 
-    private static function renderNewModalFields(Translator $i18n, SalesDocument $model): string
+    private static function renderNewModalFields(SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -301,7 +298,7 @@ class SalesFooterHTML
         $html = '';
         foreach ($newFields as $field) {
             foreach (self::$mods as $mod) {
-                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                $fieldHtml = $mod->renderField($model, $field);
                 if ($fieldHtml !== null) {
                     $html .= $fieldHtml;
                     break;

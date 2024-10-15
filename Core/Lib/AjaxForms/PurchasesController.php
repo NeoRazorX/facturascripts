@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
@@ -67,7 +67,7 @@ abstract class PurchasesController extends PanelController
         if (empty($code)) {
             // empty identifier? Then sets initial parameters to the new record and return it
             $formData = $this->request->query->all();
-            PurchasesHeaderHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData, $this->user);
+            PurchasesHeaderHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData);
             return $this->views[static::MAIN_VIEW_NAME]->model;
         }
 
@@ -268,8 +268,8 @@ abstract class PurchasesController extends PanelController
         $this->setTemplate(false);
         $model = $this->getModel();
         $formData = json_decode($this->request->request->get('data'), true);
-        PurchasesHeaderHTML::apply($model, $formData, $this->user);
-        PurchasesFooterHTML::apply($model, $formData, $this->user);
+        PurchasesHeaderHTML::apply($model, $formData);
+        PurchasesFooterHTML::apply($model, $formData);
         PurchasesModalHTML::apply($model, $formData);
         $content = [
             'header' => '',
@@ -331,8 +331,8 @@ abstract class PurchasesController extends PanelController
         $model = $this->getModel();
         $lines = $model->getLines();
         $formData = json_decode($this->request->request->get('data'), true);
-        PurchasesHeaderHTML::apply($model, $formData, $this->user);
-        PurchasesFooterHTML::apply($model, $formData, $this->user);
+        PurchasesHeaderHTML::apply($model, $formData);
+        PurchasesFooterHTML::apply($model, $formData);
         PurchasesLineHTML::apply($model, $lines, $formData);
         Calculator::calculate($model, $lines, false);
 
@@ -362,8 +362,8 @@ abstract class PurchasesController extends PanelController
 
         $model = $this->getModel();
         $formData = json_decode($this->request->request->get('data'), true);
-        PurchasesHeaderHTML::apply($model, $formData, $this->user);
-        PurchasesFooterHTML::apply($model, $formData, $this->user);
+        PurchasesHeaderHTML::apply($model, $formData);
+        PurchasesFooterHTML::apply($model, $formData);
 
         if (false === $model->save()) {
             $this->sendJsonWithLogs(['ok' => false]);

@@ -29,7 +29,6 @@ use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
@@ -61,17 +60,17 @@ trait CommonSalesPurchases
         return $level <= $user->level;
     }
 
-    protected static function cifnif(Translator $i18n, BusinessDocument $model): string
+    protected static function cifnif(BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="cifnif" maxlength="30" autocomplete="off"' : 'disabled';
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">' . $i18n->trans('cifnif')
+            . '<div class="mb-3">' . Tools::lang()->trans('cifnif')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->cifnif) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function children(Translator $i18n, TransformerDocument $model): string
+    protected static function children(TransformerDocument $model): string
     {
         if (empty($model->primaryColumnValue())) {
             return '';
@@ -95,15 +94,15 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="mb-3">'
-            . '<button class="btn btn-block btn-info" type="button" title="' . $i18n->trans('documents-generated')
+            . '<button class="btn btn-block btn-info" type="button" title="' . Tools::lang()->trans('documents-generated')
             . '" data-bs-toggle="modal" data-bs-target="#childrenModal"><i class="fa-solid fa-forward fa-fw" aria-hidden="true"></i> '
             . count($children) . ' </button>'
             . '</div>'
             . '</div>'
-            . self::modalDocList($i18n, $children, 'documents-generated', 'childrenModal');
+            . self::modalDocList($children, 'documents-generated', 'childrenModal');
     }
 
-    protected static function codalmacen(Translator $i18n, BusinessDocument $model, string $jsFunc): string
+    protected static function codalmacen(BusinessDocument $model, string $jsFunc): string
     {
         $warehouses = 0;
         $options = [];
@@ -133,13 +132,13 @@ trait CommonSalesPurchases
 
         return empty($model->subjectColumnValue()) || $warehouses <= 1 ? '' : '<div class="col-sm-2 col-lg">'
             . '<div class="mb-3">'
-            . '<a href="' . Almacenes::get($model->codalmacen)->url() . '">' . $i18n->trans('company-warehouse') . '</a>'
+            . '<a href="' . Almacenes::get($model->codalmacen)->url() . '">' . Tools::lang()->trans('company-warehouse') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function coddivisa(Translator $i18n, BusinessDocument $model): string
+    protected static function coddivisa(BusinessDocument $model): string
     {
         $options = [];
         foreach (Divisas::all() as $row) {
@@ -151,14 +150,14 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="coddivisa" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="mb-3">'
-            . '<a href="' . Divisas::get($model->coddivisa)->url() . '">' . $i18n->trans('currency') . '</a>'
+            . '<a href="' . Divisas::get($model->coddivisa)->url() . '">' . Tools::lang()->trans('currency') . '</a>'
             . '<select ' . $attributes . ' class="form-select">'
             . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function codpago(Translator $i18n, BusinessDocument $model): string
+    protected static function codpago(BusinessDocument $model): string
     {
         $options = [];
         foreach (FormasPago::all() as $row) {
@@ -180,13 +179,13 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="codpago" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
             . '<div id="payment-methods" class="mb-3">'
-            . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . $i18n->trans('payment-method') . '</a>'
+            . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . Tools::lang()->trans('payment-method') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function codserie(Translator $i18n, BusinessDocument $model, string $jsFunc): string
+    protected static function codserie(BusinessDocument $model, string $jsFunc): string
     {
         // es una factura rectificativa?
         $rectificativa = property_exists($model, 'idfacturarect') && $model->idfacturarect;
@@ -216,28 +215,28 @@ trait CommonSalesPurchases
             'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
             . '<div class="mb-3">'
-            . '<a href="' . Series::get($model->codserie)->url() . '">' . $i18n->trans('serie') . '</a>'
+            . '<a href="' . Series::get($model->codserie)->url() . '">' . Tools::lang()->trans('serie') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function column(Translator $i18n, BusinessDocument $model, string $colName, string $label, bool $autoHide = false, int $level = 0): string
+    protected static function column(BusinessDocument $model, string $colName, string $label, bool $autoHide = false, int $level = 0): string
     {
         if (false === self::checkLevel($level)) {
             return '';
         }
 
-        return empty($model->{$colName}) && $autoHide ? '' : '<div class="col-sm"><div class="mb-3">' . $i18n->trans($label)
+        return empty($model->{$colName}) && $autoHide ? '' : '<div class="col-sm"><div class="mb-3">' . Tools::lang()->trans($label)
             . '<input type="text" value="' . number_format($model->{$colName}, FS_NF0, FS_NF1, '')
             . '" class="form-control" disabled/></div></div>';
     }
 
-    protected static function deleteBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
+    protected static function deleteBtn(BusinessDocument $model, string $jsName): string
     {
         return $model->primaryColumnValue() && $model->editable ?
             '<button type="button" class="btn btn-spin-action btn-danger mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
-            . '<i class="fa-solid fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete')
+            . '<i class="fa-solid fa-trash-alt fa-fw"></i> ' . Tools::lang()->trans('delete')
             . '</button>'
             . '<div class="modal fade" id="deleteDocModal" tabindex="-1" aria-hidden="true">'
             . '<div class="modal-dialog">'
@@ -250,20 +249,20 @@ trait CommonSalesPurchases
             . '</div>'
             . '<div class="modal-body text-center">'
             . '<i class="fa-solid fa-trash-alt fa-3x"></i>'
-            . '<h5 class="mt-3 mb-1">' . $i18n->trans('confirm-delete') . '</h5>'
-            . '<p class="mb-0">' . $i18n->trans('are-you-sure') . '</p>'
+            . '<h5 class="mt-3 mb-1">' . Tools::lang()->trans('confirm-delete') . '</h5>'
+            . '<p class="mb-0">' . Tools::lang()->trans('are-you-sure') . '</p>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-spin-action btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('cancel') . '</button>'
+            . '<button type="button" class="btn btn-spin-action btn-secondary" data-bs-dismiss="modal">' . Tools::lang()->trans('cancel') . '</button>'
             . '<button type="button" class="btn btn-spin-action btn-danger" onclick="return ' . $jsName . '(\'delete-doc\', \'0\');">'
-            . $i18n->trans('delete') . '</button>'
+            . Tools::lang()->trans('delete') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
             . '</div>' : '';
     }
 
-    protected static function dtopor1(Translator $i18n, BusinessDocument $model, string $jsName): string
+    protected static function dtopor1(BusinessDocument $model, string $jsName): string
     {
         if (empty($model->netosindto) && empty($model->dtopor1)) {
             return '<input type="hidden" name="dtopor1" value="0"/>';
@@ -272,14 +271,14 @@ trait CommonSalesPurchases
         $attributes = $model->editable ?
             'max="100" min="0" name="dtopor1" required step="any" onkeyup="return ' . $jsName . '(\'recalculate\', \'0\', event);"' :
             'disabled';
-        return '<div class="col-sm"><div class="mb-3">' . $i18n->trans('global-dto')
+        return '<div class="col-sm"><div class="mb-3">' . Tools::lang()->trans('global-dto')
             . '<div class="input-group">'
             . '<span class="input-group-text"><i class="fa-solid fa-percentage"></i></span>'
             . '<input type="number" ' . $attributes . ' value="' . floatval($model->dtopor1) . '" class="form-control"/>'
             . '</div></div></div>';
     }
 
-    protected static function dtopor2(Translator $i18n, BusinessDocument $model, string $jsName): string
+    protected static function dtopor2(BusinessDocument $model, string $jsName): string
     {
         if (empty($model->dtopor1) && empty($model->dtopor2)) {
             return '<input type="hidden" name="dtopor2" value="0"/>';
@@ -288,7 +287,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ?
             'max="100" min="0" name="dtopor2" required step="any" onkeyup="return ' . $jsName . '(\'recalculate\', \'0\', event);"' :
             'disabled';
-        return '<div class="col-sm-2 col-md"><div class="mb-3">' . $i18n->trans('global-dto-2')
+        return '<div class="col-sm-2 col-md"><div class="mb-3">' . Tools::lang()->trans('global-dto-2')
             . '<div class="input-group">'
             . ''
             . '<span class="input-group-text"><i class="fa-solid fa-percentage"></i></span>'
@@ -297,36 +296,36 @@ trait CommonSalesPurchases
             . '</div></div></div>';
     }
 
-    private static function email(Translator $i18n, BusinessDocument $model): string
+    private static function email(BusinessDocument $model): string
     {
         return empty($model->femail) ? '' : '<div class="col-sm-auto">'
             . '<div class="mb-3">'
-            . '<button class="btn btn-outline-info" type="button" title="' . $i18n->trans('email-sent')
+            . '<button class="btn btn-outline-info" type="button" title="' . Tools::lang()->trans('email-sent')
             . '" data-bs-toggle="modal" data-bs-target="#headerModal"><i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i> '
             . $model->femail . ' </button></div></div>';
     }
 
-    protected static function fastLineInput(Translator $i18n, BusinessDocument $model, string $jsName): string
+    protected static function fastLineInput(BusinessDocument $model, string $jsName): string
     {
         return $model->editable ? '<div class="col-8 col-md">'
             . '<div class="input-group mb-3">'
             . '<span class="input-group-text"><i class="fa-solid fa-barcode"></i></span>'
-            . '<input type="text" name="fastli" class="form-control" placeholder="' . $i18n->trans('barcode')
+            . '<input type="text" name="fastli" class="form-control" placeholder="' . Tools::lang()->trans('barcode')
             . '" onkeyup="' . $jsName . '(event)"/>'
             . '</div></div>' : '<div class="col"></div>';
     }
 
-    protected static function fecha(Translator $i18n, BusinessDocument $model, bool $enabled = true): string
+    protected static function fecha(BusinessDocument $model, bool $enabled = true): string
     {
         $attributes = $model->editable && $enabled ? 'name="fecha" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
-            . '<div id="document-date" class="mb-3">' . $i18n->trans('date')
+            . '<div id="document-date" class="mb-3">' . Tools::lang()->trans('date')
             . '<input type="date" ' . $attributes . ' value="' . date('Y-m-d', strtotime($model->fecha)) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function fechadevengo(Translator $i18n, BusinessDocument $model): string
+    protected static function fechadevengo(BusinessDocument $model): string
     {
         if (false === property_exists($model, 'fechadevengo')) {
             return '';
@@ -335,13 +334,13 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="fechadevengo" required' : 'disabled';
         $value = empty($model->fechadevengo) ? '' : date('Y-m-d', strtotime($model->fechadevengo));
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
-            . '<div class="mb-3">' . $i18n->trans('accrual-date')
+            . '<div class="mb-3">' . Tools::lang()->trans('accrual-date')
             . '<input type="date" ' . $attributes . ' value="' . $value . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function femail(Translator $i18n, BusinessDocument $model): string
+    protected static function femail(BusinessDocument $model): string
     {
         if (empty($model->primaryColumnValue())) {
             return '';
@@ -350,23 +349,23 @@ trait CommonSalesPurchases
         $attributes = empty($model->femail) && $model->editable ? 'name="femail" ' : 'disabled';
         $value = empty($model->femail) ? '' : date('Y-m-d', strtotime($model->femail));
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">' . $i18n->trans('email-sent')
+            . '<div class="mb-3">' . Tools::lang()->trans('email-sent')
             . '<input type="date" ' . $attributes . ' value="' . $value . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function hora(Translator $i18n, BusinessDocument $model): string
+    protected static function hora(BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="hora" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
-            . '<div class="mb-3">' . $i18n->trans('hour')
+            . '<div class="mb-3">' . Tools::lang()->trans('hour')
             . '<input type="time" ' . $attributes . ' value="' . date('H:i:s', strtotime($model->hora)) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function idestado(Translator $i18n, TransformerDocument $model, string $jsName): string
+    protected static function idestado(TransformerDocument $model, string $jsName): string
     {
         // Si no se ha guardado no se puede cambiar el estado. Mantenemos el predeterminado
         if (empty($model->primaryColumnValue())) {
@@ -407,7 +406,7 @@ trait CommonSalesPurchases
         if ($model->editable && false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
             $options[] = '<div class="dropdown-divider"></div>'
                 . '<a class="dropdown-item" href="DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $model->primaryColumnValue() . '">'
-                . '<i class="fa-solid fa-magic fa-fw" aria-hidden="true"></i> ' . $i18n->trans('group-or-split')
+                . '<i class="fa-solid fa-magic fa-fw" aria-hidden="true"></i> ' . Tools::lang()->trans('group-or-split')
                 . '</a>';
         }
 
@@ -443,13 +442,13 @@ trait CommonSalesPurchases
         return false === $status->editable && empty($status->actualizastock) ? ' text-danger' : '';
     }
 
-    public static function modalDocList(Translator $i18n, array $documents, string $title, string $id): string
+    public static function modalDocList(array $documents, string $title, string $id): string
     {
         $list = '';
         $sum = 0;
         foreach ($documents as $doc) {
             $list .= '<tr>'
-                . '<td><a href="' . $doc->url() . '">' . $i18n->trans($doc->modelClassName()) . ' ' . $doc->codigo . '</a></td>'
+                . '<td><a href="' . $doc->url() . '">' . Tools::lang()->trans($doc->modelClassName()) . ' ' . $doc->codigo . '</a></td>'
                 . '<td>' . $doc->observaciones . '</td>'
                 . '<td class="text-end text-nowrap">' . Tools::money($doc->total) . '</td>'
                 . '<td class="text-end text-nowrap">' . $doc->fecha . ' ' . $doc->hora . '</td>'
@@ -460,7 +459,7 @@ trait CommonSalesPurchases
         // añadimos el total
         $list .= '<tr class="table-warning">'
             . '<td class="text-end text-nowrap" colspan="3">'
-            . $i18n->trans('total') . ' <b>' . Tools::money($sum) . '</b></td>'
+            . Tools::lang()->trans('total') . ' <b>' . Tools::money($sum) . '</b></td>'
             . '<td></td>'
             . '</tr>';
 
@@ -468,8 +467,8 @@ trait CommonSalesPurchases
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fa-solid fa-copy fa-fw" aria-hidden="true"></i> ' . $i18n->trans($title) . '</h5>'
-            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' . $i18n->trans('close') . '">'
+            . '<h5 class="modal-title"><i class="fa-solid fa-copy fa-fw" aria-hidden="true"></i> ' . Tools::lang()->trans($title) . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' . Tools::lang()->trans('close') . '">'
             . ''
             . '</button>'
             . '</div>'
@@ -477,10 +476,10 @@ trait CommonSalesPurchases
             . '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
-            . '<th>' . $i18n->trans('document') . '</th>'
-            . '<th>' . $i18n->trans('observations') . '</th>'
-            . '<th class="text-end">' . $i18n->trans('total') . '</th>'
-            . '<th class="text-end">' . $i18n->trans('date') . '</th>'
+            . '<th>' . Tools::lang()->trans('document') . '</th>'
+            . '<th>' . Tools::lang()->trans('observations') . '</th>'
+            . '<th class="text-end">' . Tools::lang()->trans('total') . '</th>'
+            . '<th class="text-end">' . Tools::lang()->trans('date') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $list . '</tbody>'
@@ -491,21 +490,21 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function netosindto(Translator $i18n, BusinessDocument $model): string
+    protected static function netosindto(BusinessDocument $model): string
     {
-        return empty($model->dtopor1) && empty($model->dtopor2) ? '' : '<div class="col-sm-2"><div class="mb-3">' . $i18n->trans('subtotal')
+        return empty($model->dtopor1) && empty($model->dtopor2) ? '' : '<div class="col-sm-2"><div class="mb-3">' . Tools::lang()->trans('subtotal')
             . '<input type="text" value="' . number_format($model->netosindto, FS_NF0, FS_NF1, '')
             . '" class="form-control" disabled/></div></div>';
     }
 
-    protected static function newLineBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
+    protected static function newLineBtn(BusinessDocument $model, string $jsName): string
     {
         return $model->editable ? '<div class="col-3 col-md-auto">'
             . '<a href="#" class="btn btn-success btn-block btn-spin-action mb-3" onclick="return ' . $jsName . '(\'new-line\', \'0\');">'
-            . '<i class="fa-solid fa-plus fa-fw"></i> ' . $i18n->trans('line') . '</a></div>' : '';
+            . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::lang()->trans('line') . '</a></div>' : '';
     }
 
-    protected static function observaciones(Translator $i18n, BusinessDocument $model): string
+    protected static function observaciones(BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="observaciones"' : 'disabled';
         $rows = 1;
@@ -513,30 +512,30 @@ trait CommonSalesPurchases
             $rows += mb_strlen($desLine) < 140 ? 1 : ceil(mb_strlen($desLine) / 140);
         }
 
-        return '<div class="col-sm-12"><div class="mb-3">' . $i18n->trans('observations')
-            . '<textarea ' . $attributes . ' class="form-control" placeholder="' . $i18n->trans('observations')
+        return '<div class="col-sm-12"><div class="mb-3">' . Tools::lang()->trans('observations')
+            . '<textarea ' . $attributes . ' class="form-control" placeholder="' . Tools::lang()->trans('observations')
             . '" rows="' . $rows . '">' . Tools::noHtml($model->observaciones) . '</textarea>'
             . '</div></div>';
     }
 
-    protected static function operacion(Translator $i18n, BusinessDocument $model): string
+    protected static function operacion(BusinessDocument $model): string
     {
         $options = ['<option value="">------</option>'];
         foreach (InvoiceOperation::all() as $key => $value) {
             $options[] = ($key === $model->operacion) ?
-                '<option value="' . $key . '" selected>' . $i18n->trans($value) . '</option>' :
-                '<option value="' . $key . '">' . $i18n->trans($value) . '</option>';
+                '<option value="' . $key . '" selected>' . Tools::lang()->trans($value) . '</option>' :
+                '<option value="' . $key . '">' . Tools::lang()->trans($value) . '</option>';
         }
 
         $attributes = $model->editable ? ' name="operacion"' : ' disabled';
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">' . $i18n->trans('operation')
+            . '<div class="mb-3">' . Tools::lang()->trans('operation')
             . '<select' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function paid(Translator $i18n, BusinessDocument $model, string $jsName): string
+    protected static function paid(BusinessDocument $model, string $jsName): string
     {
         if (empty($model->primaryColumnValue()) || false === method_exists($model, 'getReceipts')) {
             return '';
@@ -546,9 +545,9 @@ trait CommonSalesPurchases
             return '<div class="col-sm-auto">'
                 . '<div class="mb-3">'
                 . '<button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
-                . '<i class="fa-solid fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</button>'
+                . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::lang()->trans('paid') . '</button>'
                 . '<div class="dropdown-menu"><a class="dropdown-item text-danger" href="#" onclick="return ' . $jsName . '(\'save-paid\', \'0\');">'
-                . '<i class="fa-solid fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</a></div>'
+                . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::lang()->trans('unpaid') . '</a></div>'
                 . '</div>'
                 . '</div>';
         }
@@ -556,14 +555,14 @@ trait CommonSalesPurchases
         return '<div class="col-sm-auto">'
             . '<div class="mb-3">'
             . '<button class="btn btn-spin-action btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
-            . '<i class="fa-solid fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</button>'
+            . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::lang()->trans('unpaid') . '</button>'
             . '<div class="dropdown-menu"><a class="dropdown-item text-success" href="#" onclick="showModalPaymentConditions(' . $jsName . ')">'
-            . '<i class="fa-solid fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</a></div>'
+            . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::lang()->trans('paid') . '</a></div>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function parents(Translator $i18n, TransformerDocument $model): string
+    protected static function parents(TransformerDocument $model): string
     {
         if (empty($model->primaryColumnValue())) {
             return '';
@@ -587,97 +586,97 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="mb-3">'
-            . '<button class="btn btn-block btn-warning" type="button" title="' . $i18n->trans('previous-documents')
+            . '<button class="btn btn-block btn-warning" type="button" title="' . Tools::lang()->trans('previous-documents')
             . '" data-bs-toggle="modal" data-bs-target="#parentsModal"><i class="fa-solid fa-backward fa-fw" aria-hidden="true"></i> '
             . count($parents) . ' </button>'
             . '</div>'
             . '</div>'
-            . self::modalDocList($i18n, $parents, 'previous-documents', 'parentsModal');
+            . self::modalDocList($parents, 'previous-documents', 'parentsModal');
     }
 
-    protected static function productBtn(Translator $i18n, BusinessDocument $model): string
+    protected static function productBtn(BusinessDocument $model): string
     {
         return $model->editable ? '<div class="col-9 col-md col-lg-2">'
             . '<div class="input-group mb-3">'
-            . '<input type="text" id="findProductInput" class="form-control" placeholder="' . $i18n->trans('reference') . '"/>'
+            . '<input type="text" id="findProductInput" class="form-control" placeholder="' . Tools::lang()->trans('reference') . '"/>'
             . '<button class="btn btn-info" type="button" onclick="$(\'#findProductModal\').modal(\'show\');'
             . ' $(\'#productModalInput\').select();"><i class="fa-solid fa-book fa-fw"></i></button>'
             . '</div>'
             . '</div>' : '';
     }
 
-    protected static function saveBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
+    protected static function saveBtn(BusinessDocument $model, string $jsName): string
     {
         return $model->subjectColumnValue() && $model->editable ? '<button type="button" class="btn btn-primary btn-spin-action"'
             . ' load-after="true" onclick="return ' . $jsName . '(\'save-doc\', \'0\');">'
-            . '<i class="fa-solid fa-save fa-fw"></i> ' . $i18n->trans('save')
+            . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::lang()->trans('save')
             . '</button>' : '';
     }
 
-    protected static function sortableBtn(Translator $i18n, BusinessDocument $model): string
+    protected static function sortableBtn(BusinessDocument $model): string
     {
         return $model->editable ? '<div class="col-4 col-md-auto">'
             . '<button type="button" class="btn btn-block btn-light mb-3" id="sortableBtn">'
-            . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . $i18n->trans('move-lines')
+            . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . Tools::lang()->trans('move-lines')
             . '</button>'
             . '</div>' : '';
     }
 
-    protected static function subtotalNetoBtn(Translator $i18n): string
+    protected static function subtotalNetoBtn(): string
     {
         $html = '<div class="col-12 col-md-auto mb-3">'
             . '<div id="columnView" class="btn-group btn-block" role="group">';
 
         if ('subtotal' === self::$columnView) {
             $html .= '<button type="button" class="btn btn-light" data-column="neto" onclick="changeColumn(this)">'
-                . $i18n->trans('net') . '</button>'
+                . Tools::lang()->trans('net') . '</button>'
                 . '<button type="button" class="btn btn-light active" data-column="subtotal" onclick="changeColumn(this)">'
-                . $i18n->trans('subtotal') . '</button>';
+                . Tools::lang()->trans('subtotal') . '</button>';
         } else {
             $html .= '<button type="button" class="btn btn-light active" data-column="neto" onclick="changeColumn(this)">'
-                . $i18n->trans('net') . '</button>'
+                . Tools::lang()->trans('net') . '</button>'
                 . '<button type="button" class="btn btn-light" data-column="subtotal" onclick="changeColumn(this)">'
-                . $i18n->trans('subtotal') . '</button>';
+                . Tools::lang()->trans('subtotal') . '</button>';
         }
 
         $html .= '</div></div>';
         return $html;
     }
 
-    protected static function tasaconv(Translator $i18n, BusinessDocument $model): string
+    protected static function tasaconv(BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="tasaconv" step="any" autocomplete="off"' : 'disabled';
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">' . $i18n->trans('conversion-rate')
+            . '<div class="mb-3">' . Tools::lang()->trans('conversion-rate')
             . '<input type="number" ' . $attributes . ' value="' . floatval($model->tasaconv) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function total(Translator $i18n, BusinessDocument $model, string $jsName): string
+    protected static function total(BusinessDocument $model, string $jsName): string
     {
-        return empty($model->total) ? '' : '<div class="col-sm"><div class="mb-3">' . $i18n->trans('total')
+        return empty($model->total) ? '' : '<div class="col-sm"><div class="mb-3">' . Tools::lang()->trans('total')
             . '<div class="input-group">'
             . '<input type="text" value="' . number_format($model->total, FS_NF0, FS_NF1, '')
             . '" class="form-control" disabled/>'
             . '<button class="btn btn-primary btn-spin-action" onclick="return ' . $jsName
-            . '(\'save-doc\', \'0\');" title="' . $i18n->trans('save') . '" type="button">'
+            . '(\'save-doc\', \'0\');" title="' . Tools::lang()->trans('save') . '" type="button">'
             . '<i class="fa-solid fa-save fa-fw"></i></button>'
             . '</div></div></div>';
     }
 
-    protected static function undoBtn(Translator $i18n, BusinessDocument $model): string
+    protected static function undoBtn(BusinessDocument $model): string
     {
         return $model->subjectColumnValue() && $model->editable ? '<a href="' . $model->url() . '" class="btn btn-secondary me-2">'
-            . '<i class="fa-solid fa-undo fa-fw"></i> ' . $i18n->trans('undo')
+            . '<i class="fa-solid fa-undo fa-fw"></i> ' . Tools::lang()->trans('undo')
             . '</a>' : '';
     }
 
-    protected static function user(Translator $i18n, BusinessDocument $model): string
+    protected static function user(BusinessDocument $model): string
     {
         $attributes = 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
-            . '<div class="mb-3">' . $i18n->trans('user')
+            . '<div class="mb-3">' . Tools::lang()->trans('user')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nick) . '" class="form-control"/>'
             . '</div>'
             . '</div>';

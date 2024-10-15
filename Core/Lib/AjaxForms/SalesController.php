@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
@@ -67,8 +67,8 @@ abstract class SalesController extends PanelController
         if (empty($code)) {
             // empty identifier? Then sets initial parameters to the new record and return it
             $formData = $this->request->query->all();
-            SalesHeaderHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData, $this->user);
-            SalesFooterHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData, $this->user);
+            SalesHeaderHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData);
+            SalesFooterHTML::apply($this->views[static::MAIN_VIEW_NAME]->model, $formData);
             return $this->views[static::MAIN_VIEW_NAME]->model;
         }
 
@@ -90,7 +90,7 @@ abstract class SalesController extends PanelController
         return '<div id="salesFormHeader">' . SalesHeaderHTML::render($model) . '</div>'
             . '<div id="salesFormLines">' . SalesLineHTML::render($lines, $model) . '</div>'
             . '<div id="salesFormFooter">' . SalesFooterHTML::render($model) . '</div>'
-            . SalesModalHTML::render($model, $url, $this->user, $this->permissions);
+            . SalesModalHTML::render($model, $url);
     }
 
     public function series(string $type = ''): array
@@ -283,8 +283,8 @@ abstract class SalesController extends PanelController
         $this->setTemplate(false);
         $model = $this->getModel();
         $formData = json_decode($this->request->request->get('data'), true);
-        SalesHeaderHTML::apply($model, $formData, $this->user);
-        SalesFooterHTML::apply($model, $formData, $this->user);
+        SalesHeaderHTML::apply($model, $formData);
+        SalesFooterHTML::apply($model, $formData);
         SalesModalHTML::apply($model, $formData);
         $content = [
             'header' => '',
@@ -346,8 +346,8 @@ abstract class SalesController extends PanelController
         $model = $this->getModel();
         $lines = $model->getLines();
         $formData = json_decode($this->request->request->get('data'), true);
-        SalesHeaderHTML::apply($model, $formData, $this->user);
-        SalesFooterHTML::apply($model, $formData, $this->user);
+        SalesHeaderHTML::apply($model, $formData,);
+        SalesFooterHTML::apply($model, $formData);
         SalesLineHTML::apply($model, $lines, $formData);
         Calculator::calculate($model, $lines, false);
 
@@ -377,8 +377,8 @@ abstract class SalesController extends PanelController
 
         $model = $this->getModel();
         $formData = json_decode($this->request->request->get('data'), true);
-        SalesHeaderHTML::apply($model, $formData, $this->user);
-        SalesFooterHTML::apply($model, $formData, $this->user);
+        SalesHeaderHTML::apply($model, $formData);
+        SalesFooterHTML::apply($model, $formData);
 
         if (false === $model->save()) {
             $this->sendJsonWithLogs(['ok' => false]);
