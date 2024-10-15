@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,6 @@ namespace FacturaScripts\Core\Lib\AjaxForms;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -46,7 +45,7 @@ class AccountingLineHTML
      * @param Partida[] $lines
      * @param array $formData
      */
-    public static function apply(Asiento &$model, array &$lines, array $formData)
+    public static function apply(Asiento &$model, array &$lines, array $formData): void
     {
         // update or remove lines
         $rmLineId = $formData['action'] === 'rm-line' ? $formData['selectedLine'] : 0;
@@ -93,8 +92,6 @@ class AccountingLineHTML
 
     /**
      * Returns the list of deleted lines.
-     *
-     * @return array
      */
     public static function getDeletedLines(): array
     {
@@ -103,11 +100,6 @@ class AccountingLineHTML
 
     /**
      * Render the lines of the accounting entry.
-     *
-     * @param Partida[] $lines
-     * @param Asiento $model
-     *
-     * @return string
      */
     public static function render(array $lines, Asiento $model): string
     {
@@ -123,30 +115,24 @@ class AccountingLineHTML
 
     /**
      * Render one of the lines of the accounting entry
-     *
-     * @param Partida $line
-     * @param Asiento $model
-     *
-     * @return string
      */
     public static function renderLine(Partida $line, Asiento $model): string
     {
         static::$num++;
-        $i18n = new Translator();
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $cssClass = static::$num % 2 == 0 ? 'bg-white border-top' : 'bg-light border-top';
         return '<div class="' . $cssClass . ' line ps-2 pe-2">'
             . '<div class="row g-3 align-items-end">'
-            . static::subcuenta($i18n, $line, $model)
-            . static::debe($i18n, $line, $model)
-            . static::haber($i18n, $line, $model)
-            . static::renderExpandButton($i18n, $idlinea, $model)
+            . static::subcuenta($line, $model)
+            . static::debe($line, $model)
+            . static::haber($line, $model)
+            . static::renderExpandButton($idlinea, $model)
             . '</div>'
-            . self::renderLineModal($i18n, $line, $idlinea, $model)
+            . self::renderLineModal($line, $idlinea, $model)
             . '</div>';
     }
 
-    private static function renderLineModal(Translator $i18n, Partida $line, string $idlinea, Asiento $model): string
+    private static function renderLineModal(Partida $line, string $idlinea, Asiento $model): string
     {
         return '<div class="modal fade" id="lineModal-' . $idlinea . '" tabindex="-1" aria-labelledby="lineModal-' . $idlinea . 'Label" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-centered">'
@@ -159,23 +145,23 @@ class AccountingLineHTML
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="row g-3">'
-            . static::iva($i18n, $line, $model)
-            . static::recargo($i18n, $line, $model)
+            . static::iva($line, $model)
+            . static::recargo( $line, $model)
             . '</div>'
             . '<div class="row g-3">'
-            . static::baseimponible($i18n, $line, $model)
-            . static::cifnif($i18n, $line, $model)
+            . static::baseimponible($line, $model)
+            . static::cifnif($line, $model)
             . '</div>'
             . '<div class="row g-3">'
-            . static::documento($i18n, $line, $model)
+            . static::documento($line, $model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
             . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
-            . $i18n->trans('close')
+            . Tools::lang()->trans('close')
             . '</button>'
             . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">'
-            . $i18n->trans('accept')
+            . Tools::lang()->trans('accept')
             . '</button>'
             . '</div>'
             . '</div>'
@@ -183,12 +169,7 @@ class AccountingLineHTML
             . '</div>';
     }
 
-    /**
-     * @param array $formData
-     * @param Partida $line
-     * @param string $id
-     */
-    protected static function applyToLine(array &$formData, Partida &$line, string $id)
+    protected static function applyToLine(array &$formData, Partida &$line, string $id): void
     {
         $line->baseimponible = (float)($formData['baseimponible_' . $id] ?? '0');
         $line->cifnif = $formData['cifnif_' . $id] ?? '';
@@ -208,28 +189,18 @@ class AccountingLineHTML
 
     /**
      * Amount base for apply tax.
-     *
-     * @param Translator $i18n
-     * @param Partida $line
-     * @param Asiento $model
-     *
-     * @return string
      */
-    protected static function baseimponible(Translator $i18n, Partida $line, Asiento $model): string
+    protected static function baseimponible(Partida $line, Asiento $model): string
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="baseimponible_' . $idlinea . '"' : 'disabled';
-        return '<div class="col pb-2 small">' . $i18n->trans('tax-base')
+        return '<div class="col pb-2 small">' . Tools::lang()->trans('tax-base')
             . '<input type="number" ' . $attributes . ' value="' . floatval($line->baseimponible)
             . '" class="form-control" step="any" autocomplete="off">'
             . '</div>';
     }
 
-    /**
-     * @param Asiento $model
-     * @param Partida[] $lines
-     */
-    public static function calculateUnbalance(Asiento &$model, array $lines)
+    public static function calculateUnbalance(Asiento &$model, array $lines): void
     {
         $model->debe = 0.0;
         $model->haber = 0.0;
@@ -240,103 +211,63 @@ class AccountingLineHTML
         $model->importe = max([$model->debe, $model->haber]);
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Partida $line
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function cifnif(Translator $i18n, Partida $line, Asiento $model): string
+    protected static function cifnif(Partida $line, Asiento $model): string
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="cifnif_' . $idlinea . '"' : 'disabled';
-        return '<div class="col pb-2 small">' . $i18n->trans('cifnif')
+        return '<div class="col pb-2 small">' . Tools::lang()->trans('cifnif')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($line->cifnif)
             . '" class="form-control" maxlength="30" autocomplete="off"/>'
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Partida $line
-     * @param Asiento $model
-     * @return string
-     */
-    protected static function concepto(Translator $i18n, Partida $line, Asiento $model): string
+    protected static function concepto(Partida $line, Asiento $model): string
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable
             ? 'name="concepto_' . $idlinea . '" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col pb-2 small">' . $i18n->trans('concept')
+        return '<div class="col pb-2 small">' . Tools::lang()->trans('concept')
             . '<input type="text" ' . $attributes . ' class="form-control" value="' . Tools::noHtml($line->concepto) . '">'
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Partida $line
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function contrapartida(Translator $i18n, Partida $line, Asiento $model): string
+    protected static function contrapartida(Partida $line, Asiento $model): string
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable
             ? 'name="codcontrapartida_' . $idlinea . '" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col pb-2 small">' . $i18n->trans('counterpart')
+        return '<div class="col pb-2 small">' . Tools::lang()->trans('counterpart')
             . '<input type="text" ' . $attributes . ' value="' . $line->codcontrapartida
-            . '" class="form-control" maxlength="15" autocomplete="off" placeholder="' . $i18n->trans('optional') . '"/>'
+            . '" class="form-control" maxlength="15" autocomplete="off" placeholder="' . Tools::lang()->trans('optional') . '"/>'
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Partida $line
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function debe(Translator $i18n, Partida $line, Asiento $model): string
+    protected static function debe(Partida $line, Asiento $model): string
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable
             ? 'name="debe_' . $idlinea . '" step="1" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col pb-2 small">' . $i18n->trans('debit')
+        return '<div class="col pb-2 small">' . Tools::lang()->trans('debit')
             . '<input type="number" class="form-control line-debit" ' . $attributes . ' value="' . floatval($line->debe) . '"/>'
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Partida $line
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function documento(Translator $i18n, Partida $line, Asiento $model): string
+    protected static function documento(Partida $line, Asiento $model): string
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="documento_' . $idlinea . '"' : 'disabled';
-        return '<div class="col pb-2 small">' . $i18n->trans('document')
+        return '<div class="col pb-2 small">' . Tools::lang()->trans('document')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($line->documento)
             . '" class="form-control" maxlength="30" autocomplete="off"/>'
             . '</div>';
     }
 
-    /**
-     * @param string $code
-     * @param Asiento $model
-     *
-     * @return Subcuenta
-     */
     protected static function getSubcuenta(string $code, Asiento $model): Subcuenta
     {
         $subcuenta = new Subcuenta();
@@ -352,33 +283,19 @@ class AccountingLineHTML
         return $subcuenta;
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Partida $line
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function haber(Translator $i18n, Partida $line, Asiento $model): string
+    protected static function haber(Partida $line, Asiento $model): string
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable
             ? 'name="haber_' . $idlinea . '" step="1" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col pb-2 small">' . $i18n->trans('credit')
+        return '<div class="col pb-2 small">' . Tools::lang()->trans('credit')
             . '<input type="number" class="form-control" ' . $attributes . ' value="' . round($line->haber, FS_NF0) . '"/>'
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Partida $line
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function iva(Translator $i18n, Partida $line, Asiento $model): string
+    protected static function iva(Partida $line, Asiento $model): string
     {
         // preseleccionamos el impuesto que corresponda
         $codimpuesto = null;
@@ -403,72 +320,45 @@ class AccountingLineHTML
 
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="iva_' . $idlinea . '"' : 'disabled';
-        return '<div class="col pb-2 small"><a href="ListImpuesto">' . $i18n->trans('vat') . '</a>'
+        return '<div class="col pb-2 small"><a href="ListImpuesto">' . Tools::lang()->trans('vat') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Partida $line
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function recargo(Translator $i18n, Partida $line, Asiento $model): string
+    protected static function recargo(Partida $line, Asiento $model): string
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="recargo_' . $idlinea . '"' : 'disabled';
-        return '<div class="col pb-2 small">' . $i18n->trans('surcharge')
+        return '<div class="col pb-2 small">' . Tools::lang()->trans('surcharge')
             . '<input type="number" ' . $attributes . ' value="' . floatval($line->recargo)
             . '" class="form-control" step="any" autocomplete="off">'
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param string $idlinea
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function renderExpandButton(Translator $i18n, string $idlinea, Asiento $model): string
+    protected static function renderExpandButton(string $idlinea, Asiento $model): string
     {
         if ($model->editable) {
             return '<div class="col-sm-auto pb-1">'
                 . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
-                . $i18n->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button>'
-                . '<button class="btn btn-outline-danger btn-spin-action ms-2 mb-1" type="button" title="' . $i18n->trans('delete') . '"'
+                . Tools::lang()->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button>'
+                . '<button class="btn btn-outline-danger btn-spin-action ms-2 mb-1" type="button" title="' . Tools::lang()->trans('delete') . '"'
                 . ' onclick="return accEntryFormAction(\'rm-line\', \'' . $idlinea . '\');">'
                 . '<i class="fa-solid fa-trash-alt"></i></button></div>';
         }
 
         return '<div class="col-sm-auto pb-1">'
             . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
-            . $i18n->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button></div>';
+            . Tools::lang()->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button></div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Subcuenta $subcuenta
-     *
-     * @return string
-     */
-    protected static function saldo(Translator $i18n, Subcuenta $subcuenta): string
+    protected static function saldo(Subcuenta $subcuenta): string
     {
-        return '<div class="col pb-2 small">' . $i18n->trans('balance')
+        return '<div class="col pb-2 small">' . Tools::lang()->trans('balance')
             . '<input type="text" class="form-control" value="' . Tools::number($subcuenta->saldo) . '" tabindex="-1" readonly>'
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Partida $line
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function subcuenta(Translator $i18n, Partida $line, Asiento $model): string
+    protected static function subcuenta(Partida $line, Asiento $model): string
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $subcuenta = static::getSubcuenta($line->codsubcuenta, $model);
@@ -480,8 +370,8 @@ class AccountingLineHTML
                 . '<i class="far fa-eye"></i></a>'
                 . '</div>'
                 . '</div>'
-                . static::contrapartida($i18n, $line, $model)
-                . static::concepto($i18n, $line, $model);
+                . static::contrapartida($line, $model)
+                . static::concepto($line, $model);
         }
 
         return '<div class="col pb-2 small">'
@@ -492,7 +382,7 @@ class AccountingLineHTML
             . '<i class="far fa-eye"></i></a>'
             . '</div>'
             . '</div>'
-            . static::contrapartida($i18n, $line, $model)
-            . static::concepto($i18n, $line, $model);
+            . static::contrapartida($line, $model)
+            . static::concepto($line, $model);
     }
 }
