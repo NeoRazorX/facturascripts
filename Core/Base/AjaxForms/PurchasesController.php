@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Series;
-use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
@@ -38,7 +38,8 @@ use FacturaScripts\Dinamic\Model\Variante;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @deprecated since version 2024.92 replaced by Facturascripts/Core/AjaxForms/PurchasesController
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/PurchasesController
  */
 abstract class PurchasesController extends PanelController
 {
@@ -146,7 +147,7 @@ abstract class PurchasesController extends PanelController
     protected function createViewsDoc()
     {
         $pageData = $this->getPageData();
-        $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fa-solid fa-file');
+        $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fas fa-file');
         AssetManager::addCss(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::addJs(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
         PurchasesHeaderHTML::assets();
@@ -318,7 +319,7 @@ abstract class PurchasesController extends PanelController
                 $view->settings['btnPrint'] = true;
                 $this->addButton($viewName, [
                     'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
-                    'icon' => 'fa-solid fa-cut',
+                    'icon' => 'fas fa-cut',
                     'label' => 'copy',
                     'type' => 'link'
                 ]);

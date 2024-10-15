@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,13 +16,26 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\Contract;
 
-use FacturaScripts\Core\Contract\CalculatorModInterface as NewCalculatorModInterface;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 
 /**
- * @deprecated since version 2024.92 replaced by FacturaScripts\Core\Lib\Calculator
+ * Interface for calculator modules.
+ *
+ * @deprecated replaced by Core/Contract/CalculatorModInterface
  */
-interface CalculatorModInterface extends NewCalculatorModInterface
+interface CalculatorModInterface
 {
+    public function apply(BusinessDocument &$doc, array &$lines): bool;
+
+    public function calculate(BusinessDocument &$doc, array &$lines): bool;
+
+    public function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): bool;
+
+    public function clear(BusinessDocument &$doc, array &$lines): bool;
+
+    public function getSubtotals(array &$subtotals, BusinessDocument $doc, array $lines): bool;
 }
