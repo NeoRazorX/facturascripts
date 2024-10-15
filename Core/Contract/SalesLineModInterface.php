@@ -19,20 +19,20 @@
 
 namespace FacturaScripts\Core\Contract;
 
-use FacturaScripts\Core\Model\Base\SalesDocument as SalesDocumentAlias;
+use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 
 interface SalesLineModInterface
 {
-    public function apply(SalesDocumentAlias &$model, array &$lines, array $formData): void;
+    public function apply(SalesDocument &$model, array &$lines, array $formData): void;
 
     public function applyToLine(array $formData, SalesDocumentLine &$line, string $id): void;
 
     public function assets(): void;
 
-    public function getFastLine(SalesDocumentAlias $model, array $formData): ?SalesDocumentLine;
+    public function getFastLine(SalesDocument $model, array $formData): ?SalesDocumentLine;
 
-    public function map(array $lines, SalesDocumentAlias $model): array;
+    public function map(array $lines, SalesDocument $model): array;
 
     public function newFields(): array;
 
@@ -40,7 +40,7 @@ interface SalesLineModInterface
 
     public function newTitles(): array;
 
-    public function renderField(string $idlinea, SalesDocumentLine $line, SalesDocumentAlias $model, string $field): ?string;
+    public function renderField(string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): ?string;
 
-    public function renderTitle(SalesDocumentAlias $model, string $field): ?string;
+    public function renderTitle(SalesDocument $model, string $field): ?string;
 }
