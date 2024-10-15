@@ -41,6 +41,9 @@ final class AccountingCreationTest extends TestCase
         self::installAccountingPlan();
     }
 
+    /**
+     * @group lentos
+     */
     public function testCreateCustomer()
     {
         // creamos un cliente
