@@ -49,7 +49,7 @@ class MyFilesToken
 
         // si no se encuentra MyFiles en el path, lo agregamos
         if (false === stripos($path, 'MyFiles')) {
-            $path = 'MyFiles' . DIRECTORY_SEPARATOR . $path;
+            $path = 'MyFiles/' . $path;
         }
 
         return $path . '?myft=' . MyFilesToken::get($path, $permanent, $expiration);
