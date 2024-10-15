@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Lib\MyFilesToken;
-use FacturaScripts\Core\Internal\UploadedFile;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinAttachedFile;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use Throwable;

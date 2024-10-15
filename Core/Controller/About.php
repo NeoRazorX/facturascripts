@@ -1,12 +1,28 @@
-<?php declare(strict_types=1);
+<?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
-use FacturaScripts\Core\Internal\UploadedFile;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
-use mysqli;
+use FacturaScripts\Core\UploadedFile;
 
 class About extends Controller
 {
@@ -29,10 +45,10 @@ class About extends Controller
         $this->data = $this->getData();
     }
 
-    private function getData()
+    private function getData(): array
     {
         // Obtener la versión de FacturaScripts
-        $facturascripts_version = Kernel::version();
+        $core_version = Kernel::version();
 
         // Obtener la versión de PHP
         $php_version = phpversion();
@@ -40,7 +56,7 @@ class About extends Controller
         // Obtener las extensiones de PHP instaladas
         $extensions = get_loaded_extensions();
 
-        // Obtener el tamaño maximo de subida de archivo
+        // Obtener el tamaño maxim de subida de archivo
         $max_filesize = UploadedFile::getMaxFilesize();
 
         // Información del servidor web
@@ -50,24 +66,13 @@ class About extends Controller
         $os_info = php_uname();
 
         // Obtener la versión de la Base de Datos
-        switch (strtolower(FS_DB_TYPE)) {
-            case 'postgresql':
-                $string = 'host=' . \FS_DB_HOST . ' dbname=' . \FS_DB_NAME . ' port=' . \FS_DB_PORT
-                    . ' user=' . \FS_DB_USER . ' password=' . \FS_DB_PASS;
-                $pg_conn = pg_connect($string);
-                $database_version = pg_version($pg_conn)['client'] . '-' . 'PostgreSQL';
-                break;
+        $database_version = $this->dataBase->version();
 
-            default:
-                $mysqli = new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME);
-                $database_version = $mysqli->server_info;
-                break;
-        }
-
+        // Obtener la lista de plugins
         $plugins = Plugins::list();
 
         return compact(
-            'facturascripts_version',
+            'core_version',
             'php_version',
             'extensions',
             'server_software',

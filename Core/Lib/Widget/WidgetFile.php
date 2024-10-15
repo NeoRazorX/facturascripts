@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Internal\UploadedFile;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\UploadedFile;
 
 /**
  * Description of WidgetFile

@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Internal;
 
+use FacturaScripts\Core\UploadedFile;
+
 final class RequestFiles
 {
     /** @return array */

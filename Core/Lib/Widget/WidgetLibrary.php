@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Internal\UploadedFile;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 

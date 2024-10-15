@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Internal;
+namespace FacturaScripts\Core;
 
 final class UploadedFile
 {

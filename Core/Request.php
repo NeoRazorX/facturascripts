@@ -21,7 +21,6 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Internal\RequestFiles;
 use FacturaScripts\Core\Internal\SubRequest;
-use FacturaScripts\Core\Internal\UploadedFile;
 
 final class Request
 {
