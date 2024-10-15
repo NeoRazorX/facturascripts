@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\CodePatterns;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\ConceptoPartida;
 use FacturaScripts\Dinamic\Model\Diario;
@@ -38,7 +37,7 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor;
  */
 class AccountingHeaderHTML
 {
-    public static function apply(Asiento &$model, array $formData)
+    public static function apply(Asiento &$model, array $formData): void
     {
         $model->idempresa = $formData['idempresa'] ?? $model->idempresa;
         $model->setDate($formData['fecha'] ?? $model->fecha);
@@ -51,41 +50,40 @@ class AccountingHeaderHTML
 
     public static function render(Asiento $model): string
     {
-        $i18n = new Translator();
         return '<div class="container-fluid">'
             . '<div class="row g-3">'
-            . static::idempresa($i18n, $model)
-            . static::fecha($i18n, $model)
-            . static::concepto($i18n, $model)
-            . static::documento($i18n, $model)
-            . static::diario($i18n, $model)
-            . static::canal($i18n, $model)
-            . static::operacion($i18n, $model)
+            . static::idempresa($model)
+            . static::fecha($model)
+            . static::concepto($model)
+            . static::documento($model)
+            . static::diario($model)
+            . static::canal($model)
+            . static::operacion($model)
             . '</div></div><br/>';
     }
 
-    protected static function canal(Translator $i18n, Asiento $model): string
+    protected static function canal(Asiento $model): string
     {
         $attributes = $model->editable ? 'name="canal"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
-            . '<div class="mb-3">' . $i18n->trans('channel')
+            . '<div class="mb-3">' . Tools::lang()->trans('channel')
             . '<input type="number" ' . $attributes . ' value="' . $model->canal . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function concepto(Translator $i18n, Asiento $model): string
+    protected static function concepto(Asiento $model): string
     {
         $attributes = $model->editable ? 'name="concepto" autocomplete="off" required' : 'disabled';
         return '<div class="col-sm-6 col-md">'
-            . '<div class="mb-3">' . $i18n->trans('concept')
+            . '<div class="mb-3">' . Tools::lang()->trans('concept')
             . '<input type="text" list="concept-items" ' . $attributes . ' value="' . Tools::noHtml($model->concepto) . '" class="form-control"/>'
             . '<datalist id="concept-items">' . static::getConceptItems($model) . '</datalist>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function documento(Translator $i18n, Asiento $model): string
+    protected static function documento(Asiento $model): string
     {
         if (empty($model->documento)) {
             return '';
@@ -108,7 +106,7 @@ class AccountingHeaderHTML
 
         if ($link) {
             return '<div class="col-sm-3 col-md-2">'
-                . '<div class="mb-3">' . $i18n->trans('document')
+                . '<div class="mb-3">' . Tools::lang()->trans('document')
                 . '<div class="input-group">'
                 . ''
                 . '<a class="btn btn-outline-primary" href="' . $link . '"><i class="far fa-eye"></i></a>'
@@ -120,12 +118,12 @@ class AccountingHeaderHTML
         }
 
         return '<div class="col-sm-3 col-md-2 mb-2">'
-            . '<div class="mb-3">' . $i18n->trans('document')
+            . '<div class="mb-3">' . Tools::lang()->trans('document')
             . '<input type="text" value="' . Tools::noHtml($model->documento) . '" class="form-control" readonly/>'
             . '</div></div>';
     }
 
-    protected static function diario(Translator $i18n, Asiento $model): string
+    protected static function diario(Asiento $model): string
     {
         $options = '<option value="">------</option>';
         $modelDiario = new Diario();
@@ -136,17 +134,17 @@ class AccountingHeaderHTML
 
         $attributes = $model->editable ? 'name="iddiario"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
-            . '<div class="mb-3">' . $i18n->trans('daily')
+            . '<div class="mb-3">' . Tools::lang()->trans('daily')
             . '<select ' . $attributes . ' class="form-select">' . $options . '</select>'
             . '</div>'
             . '</div>';
     }
 
-    protected static function fecha(Translator $i18n, Asiento $model): string
+    protected static function fecha(Asiento $model): string
     {
         $attributes = $model->editable ? 'name="fecha" required' : 'disabled';
         return '<div class="col-sm-3 col-md-2">'
-            . '<div class="mb-3">' . $i18n->trans('date')
+            . '<div class="mb-3">' . Tools::lang()->trans('date')
             . '<input type="date" ' . $attributes . ' value="' . date('Y-m-d', strtotime($model->fecha)) . '" class="form-control" />'
             . '</div>'
             . '</div>';
@@ -164,13 +162,6 @@ class AccountingHeaderHTML
 
     /**
      * Returns the list of options.
-     *
-     * @param array $options
-     * @param string $key
-     * @param string $name
-     * @param string $value
-     *
-     * @return string
      */
     private static function getItems(array &$options, string $key, string $name, $value): string
     {
@@ -182,7 +173,7 @@ class AccountingHeaderHTML
         return $result;
     }
 
-    protected static function idempresa(Translator $i18n, Asiento $model): string
+    protected static function idempresa(Asiento $model): string
     {
         $companyList = Empresas::all();
         if (count($companyList) < 2) {
@@ -192,7 +183,7 @@ class AccountingHeaderHTML
         $attributes = $model->primaryColumnValue() ? 'readonly' : 'required';
 
         return '<div class="col-sm-3 col-md-2">'
-            . '<div class="mb-3">' . $i18n->trans('company')
+            . '<div class="mb-3">' . Tools::lang()->trans('company')
             . '<select name="idempresa" class="form-select" ' . $attributes . '>'
             . static::getItems($companyList, 'idempresa', 'nombre', $model->idempresa)
             . '</select>'
@@ -200,16 +191,16 @@ class AccountingHeaderHTML
             . '</div>';
     }
 
-    protected static function operacion(Translator $i18n, Asiento $model): string
+    protected static function operacion(Asiento $model): string
     {
         $attributes = $model->editable ? 'name="operacion"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
-            . '<div class="mb-3">' . $i18n->trans('operation')
+            . '<div class="mb-3">' . Tools::lang()->trans('operation')
             . '<select ' . $attributes . ' class="form-select">'
             . '<option value="">------</option>'
-            . '<option value="A" ' . ($model->operacion === 'A' ? 'selected' : '') . '>' . $i18n->trans('opening-operation') . '</option>'
-            . '<option value="C" ' . ($model->operacion === 'C' ? 'selected' : '') . '>' . $i18n->trans('closing-operation') . '</option>'
-            . '<option value="R" ' . ($model->operacion === 'R' ? 'selected' : '') . '>' . $i18n->trans('regularization-operation') . '</option>'
+            . '<option value="A" ' . ($model->operacion === 'A' ? 'selected' : '') . '>' . Tools::lang()->trans('opening-operation') . '</option>'
+            . '<option value="C" ' . ($model->operacion === 'C' ? 'selected' : '') . '>' . Tools::lang()->trans('closing-operation') . '</option>'
+            . '<option value="R" ' . ($model->operacion === 'R' ? 'selected' : '') . '>' . Tools::lang()->trans('regularization-operation') . '</option>'
             . '</select>'
             . '</div>'
             . '</div>';

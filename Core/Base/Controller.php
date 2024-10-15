@@ -217,6 +217,7 @@ class Controller implements ControllerInterface
     public function privateCore(&$response, $user, $permissions)
     {
         $this->permissions = $permissions;
+        Session::set('permissions', $this->permissions);
         $this->response = &$response;
         $this->user = $user;
 
@@ -251,6 +252,7 @@ class Controller implements ControllerInterface
     public function publicCore(&$response)
     {
         $this->permissions = new ControllerPermissions();
+        Session::set('permissions', $this->permissions);
         $this->response = &$response;
         $this->template = 'Login/Login.html.twig';
 
