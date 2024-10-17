@@ -117,7 +117,7 @@ final class UploadedFile
 
     public function getSize(): int
     {
-        return $this->getMaxFilesize();
+        return $this->size;
     }
 
     public function isUploaded(): bool
