@@ -110,6 +110,16 @@ final class UploadedFile
         return $this->tmp_name;
     }
 
+    public function getRealPath(): string
+    {
+        return $this->getPathname();
+    }
+
+    public function getSize(): int
+    {
+        return $this->getMaxFilesize();
+    }
+
     public function isUploaded(): bool
     {
         return is_uploaded_file($this->tmp_name);
