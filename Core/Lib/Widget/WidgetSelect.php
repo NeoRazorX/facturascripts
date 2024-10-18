@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Daniel Fernández Giménez     <hola@danielfg.es>
+ * @author Daniel Fernández Giménez      <hola@danielfg.es>
  */
 class WidgetSelect extends BaseWidget
 {
@@ -293,7 +293,7 @@ class WidgetSelect extends BaseWidget
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
             // don't use strict comparison (===)
-            if (!empty($this->value) && in_array($option['value'], explode(',', $this->value))) {
+            if ($option['value'] == $this->value && (!$found || $this->multiple)) {
                 $found = true;
                 $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
                 continue;
