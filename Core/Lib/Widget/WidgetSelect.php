@@ -290,12 +290,23 @@ class WidgetSelect extends BaseWidget
             . ' data-limit="' . $this->limit . '"'
             . '>';
 
+        // guardamos el valor original en otra variable para modificarla
+        $modelValues = $this->value;
+
+        // si el value del modelo es un booleano, lo convertimos a string
+        if (is_bool($modelValues)) {
+            $modelValues = $modelValues ? '1' : '0';
+        }
+
+        // separamos el value del modelo por comas para poder seleccionar varios valores
+        // necesario si activamos el modo multiple
+        $modelValues = explode(',', $modelValues);
+
         $found = false;
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
-            // don't use strict comparison (===)
-            if (!empty($this->value) && in_array($option['value'], explode(',', $this->value))) {
+            if (in_array($option['value'], $modelValues) && (!$found || $this->multiple)) {
                 $found = true;
                 $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
                 continue;
@@ -305,7 +316,8 @@ class WidgetSelect extends BaseWidget
         }
 
         // value not found?
-        if (!$found && !empty($this->value) && !empty($this->source)) {
+        // don't use strict comparison (===)
+        if (!$this->multiple && !$found && $this->value != '' && !empty($this->source)) {
             $html .= '<option value="' . $this->value . '" selected>'
                 . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
                 . '</option>';
