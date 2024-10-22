@@ -32,7 +32,7 @@ final class NextCode
                 continue;
             }
 
-            $file_path = $folder . $file;
+            $file_path = $folder . DIRECTORY_SEPARATOR . $file;
             if (filemtime($file_path) < time() - 3600) {
                 unlink($file_path);
             }
