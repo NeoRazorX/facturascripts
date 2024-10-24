@@ -375,6 +375,22 @@ class OpenAi
         return $response->json();
     }
 
+    public function threadRead(string $id_thread): array
+    {
+        $response = Http::get(self::THREADS_URL . '/' . $id_thread)
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT thread read error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
+            return [];
+        }
+
+        return $response->json();
+    }
+
     public function threadRun(string $id_thread, string $id_assistant): array
     {
         $data = ['assistant_id' => $id_assistant];
