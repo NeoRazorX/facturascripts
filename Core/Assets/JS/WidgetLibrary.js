@@ -23,9 +23,9 @@ function widgetLibrarySearch(id) {
         action: 'widget-library-search',
         active_tab: input.closest('form').find('input[name="activetab"]').val(),
         col_name: input.attr("name"),
-        widget_id: id,
         query: $("#modal_" + id + "_q").val(),
         sort: $("#modal_" + id + "_s").val(),
+        unique_id: id,
     };
 
     $.ajax({
@@ -64,8 +64,8 @@ function widgetLibraryUpload(id, file) {
     data.append('action', 'widget-library-upload');
     data.append('active_tab', input.closest('form').find('input[name="activetab"]').val());
     data.append('col_name', input.attr("name"));
-    data.append('widget_id', id);
     data.append('file', file);
+    data.append('unique_id', id);
 
     $.ajax({
         method: "POST",

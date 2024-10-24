@@ -393,13 +393,13 @@ abstract class PanelController extends BaseController
 
     protected function widgetLibrarySearchAction(): array
     {
-        // localizamos la pestaña y el nombre de la columna
+        // localizamos la pestaña, el nombre de la columna y el unique id
         $activeTab = $this->request->request->get('active_tab', '');
         $colName = $this->request->request->get('col_name', '');
-        $widgetId = $this->request->request->get('widget_id', '');
+        $uniqueId = (int)$this->request->request->get('unique_id', -1);
 
         // si está vacío, no hacemos nada
-        if (empty($activeTab) || empty($colName)) {
+        if (empty($activeTab) || empty($colName) || $uniqueId < 0) {
             return ['records' => 0, 'html' => ''];
         }
 
@@ -414,22 +414,22 @@ abstract class PanelController extends BaseController
             $this->request->request->get('sort', '')
         );
 
-        $selectedValue = (int)$column->widget->plainText($this->tab($activeTab)->model);
+        $selected_value = (int)$column->widget->plainText($this->tab($activeTab)->model);
         return [
-            'html' => $column->widget->renderFileList($files, $selectedValue, $widgetId),
+            'html' => $column->widget->renderFileList($uniqueId, $files, $selected_value),
             'records' => count($files),
         ];
     }
 
     protected function widgetLibraryUploadAction(): array
     {
-        // localizamos la pestaña y el nombre de la columna
+        // localizamos la pestaña, el nombre de la columna y el unique id
         $activeTab = $this->request->request->get('active_tab', '');
         $colName = $this->request->request->get('col_name', '');
-        $widgetId = $this->request->request->get('widget_id', '');
+        $uniqueId = (int)$this->request->request->get('unique_id', -1);
 
         // si está vacío, no hacemos nada
-        if (empty($activeTab) || empty($colName)) {
+        if (empty($activeTab) || empty($colName) || $uniqueId < 0) {
             return [];
         }
 
@@ -446,7 +446,7 @@ abstract class PanelController extends BaseController
 
         $files = $column->widget->files();
         return [
-            'html' => $column->widget->renderFileList($files, $file->idfile, $widgetId),
+            'html' => $column->widget->renderFileList($uniqueId, $files),
             'records' => count($files),
             'new_file' => $file->idfile,
             'new_filename' => $file->shortFileName(),

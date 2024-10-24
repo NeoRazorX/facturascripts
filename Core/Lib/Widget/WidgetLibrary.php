@@ -78,7 +78,7 @@ class WidgetLibrary extends BaseWidget
             . '</a>'
             . $descriptionHtml
             . '</div>'
-            . $this->renderModal($icon, $label)
+            . $this->renderModal($icon, $label, $this->id)
             . "<script>\n"
             . "widgetLibrarySelectStr = '" . Tools::lang()->trans('select') . "';\n"
             . "</script>\n";
@@ -160,7 +160,7 @@ class WidgetLibrary extends BaseWidget
         return $list;
     }
 
-    public function renderFileList(array $files = [], ?int $selected_value = null, ?string $id = null): string
+    public function renderFileList(int $id, array $files = [], ?int $selected_value = null): string
     {
         $html = '';
 
@@ -185,7 +185,7 @@ class WidgetLibrary extends BaseWidget
 
             if ($file->isImage()) {
                 $html .= '<div class="media">'
-                    . '<img loading="lazy" src="' . $file->url('download-permanent') . '" class="mr-3" alt="' . $file->filename
+                    . '<img src="' . $file->url('download-permanent') . '" class="mr-3" alt="' . $file->filename
                     . '" width="64" type="button" onclick="' . $js . '" title="' . Tools::lang()->trans('select') . '">'
                     . '<div class="media-body">'
                     . '<h5 class="text-break mt-0">' . $file->filename . '</h5>'
@@ -235,27 +235,27 @@ class WidgetLibrary extends BaseWidget
         return new AttachedFile();
     }
 
-    protected function renderQueryFilter(): string
+    protected function renderQueryFilter(int $id): string
     {
         return '<div class="input-group mb-2">'
-            . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
-            . Tools::lang()->trans('search') . '" onkeydown="widgetLibrarySearchKp(\'' . $this->id . '\', event);">'
+            . '<input type="text" id="modal_' . $id . '_q" class="form-control" placeholder="'
+            . Tools::lang()->trans('search') . '" onkeydown="widgetLibrarySearchKp(\'' . $id . '\', event);">'
             . '<div class="input-group-append">'
-            . '<button type="button" class="btn btn-primary" onclick="widgetLibrarySearch(\'' . $this->id . '\');">'
+            . '<button type="button" class="btn btn-primary" onclick="widgetLibrarySearch(\'' . $id . '\');">'
             . '<i class="fas fa-search"></i>'
             . '</button>'
             . '</div>'
             . '</div>';
     }
 
-    protected function renderModal(string $icon, string $label): string
+    protected function renderModal(string $icon, string $label, int $id): string
     {
-        return '<div class="modal fade" id="modal_' . $this->id . '" tabindex="-1" aria-labelledby="modal_'
-            . $this->id . '_label" aria-hidden="true">'
+        return '<div class="modal fade" id="modal_' . $id . '" tabindex="-1" aria-labelledby="modal_'
+            . $id . '_label" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-scrollable modal-lg">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title" id="modal_' . $this->id . '_label">'
+            . '<h5 class="modal-title" id="modal_' . $id . '_label">'
             . '<i class="' . $icon . ' mr-1"></i> ' . $label
             . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
@@ -264,45 +264,41 @@ class WidgetLibrary extends BaseWidget
             . '</div>'
             . '<div class="modal-body bg-light">'
             . '<div class="form-row">'
-            . '<div class="col-6">' . $this->renderQueryFilter() . '</div>'
-            . '<div class="col-6">' . $this->renderSortFilter() . '</div>'
-            . '</div>'
-            . '<div id="list_' . $this->id . '" class="form-row pt-3">'
-            . $this->renderFileList([], $this->value, $this->id)
-            . '</div>'
-            . '</div>'
-            . '<div class="modal-footer p-2">'
-            . '<div class="col">'
-            . '<div class="custom-file">'
-            . '<input type="file" class="custom-file-input" id="modal_' . $this->id . '_f" accept="' . $this->accept
-            . '" onchange="widgetLibraryUpload(\'' . $this->id . '\', this.files[0]);">'
-            . '<label class="custom-file-label" for="modal_' . $this->id . '_f" data-browse="' . Tools::lang()->trans('select')
+            . '<div class="col-12">'
+            . '<div class="custom-file mb-2">'
+            . '<input type="file" class="custom-file-input" id="modal_' . $id . '_f" accept="' . $this->accept
+            . '" onchange="widgetLibraryUpload(\'' . $id . '\', this.files[0]);">'
+            . '<label class="custom-file-label" for="modal_' . $id . '_f" data-browse="' . Tools::lang()->trans('select')
             . '">' . Tools::lang()->trans('add-file') . '</label>'
             . '</div>'
             . '</div>'
-            . '<div class="col">'
-            . $this->renderSelectNoneBtn()
+            . '<div class="col-6">' . $this->renderQueryFilter($id) . '</div>'
+            . '<div class="col-6">' . $this->renderSortFilter($id) . '</div>'
+            . '</div>'
+            . '<div id="list_' . $id . '" class="form-row pt-3">'
+            . $this->renderFileList($id)
             . '</div>'
             . '</div>'
+            . '<div class="modal-footer p-2">' . $this->renderSelectNoneBtn($id) . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
     }
 
-    protected function renderSelectNoneBtn(): string
+    protected function renderSelectNoneBtn(int $id): string
     {
         if ($this->required) {
             return '';
         }
 
-        return '<a href="#" class="btn btn-block btn-secondary" onclick="widgetLibrarySelect(\'' . $this->id . '\', \'\', \'' . Tools::lang()->trans('select') . '\');">'
+        return '<a href="#" class="btn btn-block btn-secondary" onclick="widgetLibrarySelect(\'' . $id . '\', \'\', \'' . Tools::lang()->trans('select') . '\');">'
             . '<i class="fas fa-times mr-1"></i>' . Tools::lang()->trans('none')
             . '</a>';
     }
 
-    protected function renderSortFilter(): string
+    protected function renderSortFilter(int $id): string
     {
-        return '<select class="form-control mb-2" id="modal_' . $this->id . '_s" onchange="widgetLibrarySearch(\'' . $this->id . '\');">'
+        return '<select class="form-control mb-2" id="modal_' . $id . '_s" onchange="widgetLibrarySearch(\'' . $id . '\');">'
             . '<option value="date-asc">' . Tools::lang()->trans('sort-by-date-asc') . '</option>'
             . '<option value="date-desc" selected>' . Tools::lang()->trans('sort-by-date-desc') . '</option>'
             . '</select>';
