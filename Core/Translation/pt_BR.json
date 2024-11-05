@@ -606,7 +606,7 @@
     "field-required": "Campo obrigatório: %field%",
     "fields": "Campos",
     "file": "Arquivo",
-    "file-audio-codec-not-accepted": "Erro ao enviar o arquivo de áudio %fileName% porque seu codec %codec% não é permitido. Os codecs permitidos são: %supported%",
+    "file-audio-codec-not-accepted": "Erro ao enviar o arquivo de áudio %fileName% porque o seu codec %codec% não é permitido. Os codecs permitidos são: %supported%",
     "file-extension-not-accepted": "Erro ao enviar o arquivo %fileName% pois sua extensão não é permitida. As extensões permitidas são: %accepted%",
     "file-name": "Nome do ficheiro",
     "file-not-exists": "O Ficheiro não existe: %fileName%",
