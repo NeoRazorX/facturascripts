@@ -257,6 +257,9 @@ class SalesModalHTML
             case 'stock_desc':
                 $sql .= " ORDER BY 8 DESC";
                 break;
+            default:
+                $sql .= " ORDER BY 8 DESC";
+                break;
         }
 
         $results = $dataBase->selectLimit($sql);
