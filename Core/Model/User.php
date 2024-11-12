@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
+use FacturaScripts\Core\Lib\TwoFactorManager;
 
 /**
  * Usuario de FacturaScripts.
@@ -93,6 +94,12 @@ class User extends ModelClass
 
     /** @var string */
     public $password;
+
+    /** @var bool */
+    public $two_factor_enabled;
+
+    /** @var string */
+    public $two_factor_secret_key;
 
     public function addRole(?string $code): bool
     {
@@ -163,6 +170,7 @@ class User extends ModelClass
         $this->idempresa = Tools::settings('default', 'idempresa', 1);
         $this->langcode = FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
+        $this->two_factor_enabled = false;
     }
 
     public function delete(): bool
@@ -187,6 +195,20 @@ class User extends ModelClass
         }
 
         return $roles;
+    }
+
+    public function getTwoFactorUrl(): string
+    {
+        if (empty($this->two_factor_secret_key)) {
+            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
+        }
+
+        return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->two_factor_secret_key);
+    }
+
+    public function getTwoFactorQR(): string
+    {
+        return TwoFactorManager::getQRCodeImage($this->getTwoFactorUrl());
     }
 
     public function install(): string
@@ -266,6 +288,10 @@ class User extends ModelClass
             $this->level = 99;
         } elseif ($this->level === null) {
             $this->level = 0;
+        }
+
+        if (empty($this->two_factor_secret_key)) {
+            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
         }
 
         return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();

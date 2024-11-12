@@ -13,7 +13,7 @@
             case 'completed':
                 styleHeader = 'bg-success text-white';
                 styleBorder = 'border border-success';
-                icon = '<i class="fas fa-check-circle mr-1"></i>';
+                icon = '<i class="fa-solid fa-check-circle me-1"></i>';
                 title = title !== '' ? title : '{{ trans('completed') }}';
                 break;
 
@@ -24,21 +24,21 @@
                 live = 'assertive';
                 styleHeader = 'bg-danger text-white';
                 styleBorder = 'border border-danger';
-                icon = '<i class="fas fa-times-circle mr-1"></i>';
+                icon = '<i class="fa-solid fa-times-circle me-1"></i>';
                 title = title !== '' ? title : '{{ trans('common-error') }}';
                 break;
 
             case 'info':
                 styleHeader = 'bg-info text-white';
                 styleBorder = 'border border-info';
-                icon = '<i class="fas fa-info-circle mr-1"></i>';
+                icon = '<i class="fa-solid fa-info-circle me-1"></i>';
                 title = title !== '' ? title : '{{ trans('info') }}';
                 break;
 
             case 'spinner':
                 styleHeader = 'bg-info text-white';
                 styleBorder = 'border border-info';
-                icon = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i>';
+                icon = '<i class="fa-solid fa-circle-notch fa-spin me-1"></i>';
                 title = title !== '' ? title : '{{ trans('processing') }}';
                 break;
 
@@ -46,14 +46,14 @@
             case 'success':
                 styleHeader = 'bg-success text-white';
                 styleBorder = 'border border-success';
-                icon = '<i class="fas fa-check-circle mr-1"></i>';
+                icon = '<i class="fa-solid fa-check-circle me-1"></i>';
                 title = title !== '' ? title : '{{ trans('success') }}';
                 break;
 
             case 'warning':
                 styleHeader = 'bg-warning';
                 styleBorder = 'border border-warning';
-                icon = '<i class="fas fa-exclamation-circle mr-1"></i>';
+                icon = '<i class="fa-solid fa-exclamation-circle me-1"></i>';
                 title = title !== '' ? title : '{{ trans('warning') }}';
                 break;
         }
@@ -65,8 +65,8 @@
         let html = '<div class="toast toast-' + style + ' ' + styleBorder + '" style="margin: 15px auto 0 auto;" role="' + role + '" aria-live="' + live + '" aria-atomic="true" ' + delay + '>'
             + '<div class="toast-header ' + styleHeader + '">'
             + '<strong class="mr-auto">' + icon + title + '</strong>'
-            + '<button type="button" class="ml-4 btn close ' + styleHeader + '" data-dismiss="toast" aria-label="{{ trans('close') }}">'
-            + '<span aria-hidden="true">&times;</span>'
+            + '<button type="button" class="ms-4 btn btn-close ' + styleHeader + '" data-bs-dismiss="toast" aria-label="{{ trans('close') }}">'
+            + ''
             + '</button>'
             + '</div>';
 

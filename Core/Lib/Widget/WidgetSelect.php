@@ -20,8 +20,9 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\AssetManager;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetSelect
@@ -238,7 +239,7 @@ class WidgetSelect extends BaseWidget
                 continue;
             }
 
-            $this->values[$key]['title'] = static::$i18n->trans($value['title']);
+            $this->values[$key]['title'] = Tools::lang()->trans($value['title']);
         }
     }
 
@@ -258,7 +259,8 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $class = $this->combineClasses($this->css('form-control select2'), $this->class, $extraClass);
+        $class = $this->combineClasses($this->css('form-select select2'), $this->class, $extraClass);
+
         if ($this->parent) {
             $class .= ' parentSelect';
         }
@@ -288,12 +290,23 @@ class WidgetSelect extends BaseWidget
             . ' data-limit="' . $this->limit . '"'
             . '>';
 
+        // guardamos el valor original en otra variable para modificarla
+        $modelValues = $this->value;
+
+        // si el value del modelo es un booleano, lo convertimos a string
+        if (is_bool($modelValues)) {
+            $modelValues = $modelValues ? '1' : '0';
+        }
+
+        // separamos el value del modelo por comas para poder seleccionar varios valores
+        // necesario si activamos el modo multiple
+        $modelValues = explode(',', $modelValues);
+
         $found = false;
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
-            // don't use strict comparison (===)
-            if ($option['value'] == $this->value && (!$found || $this->multiple)) {
+            if (in_array($option['value'], $modelValues) && (!$found || $this->multiple)) {
                 $found = true;
                 $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
                 continue;
@@ -303,7 +316,8 @@ class WidgetSelect extends BaseWidget
         }
 
         // value not found?
-        if (!$found && !empty($this->value) && !empty($this->source)) {
+        // don't use strict comparison (===)
+        if (!$this->multiple && !$found && $this->value != '' && !empty($this->source)) {
             $html .= '<option value="' . $this->value . '" selected>'
                 . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
                 . '</option>';
@@ -370,7 +384,7 @@ class WidgetSelect extends BaseWidget
             }
 
             $txtBreak = substr($txt, 0, 20);
-            return '<span data-toggle="tooltip" data-html="true" title="' . $txt . '">' . $txtBreak . '...</span>';
+            return '<span data-bs-toggle="tooltip" data-html="true" title="' . $txt . '">' . $txtBreak . '...</span>';
         }
 
         $selected = null;

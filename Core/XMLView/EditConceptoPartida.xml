@@ -24,7 +24,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" description="optional" display="none" id="pk" numcolumns="2" order="100">
-                <widget type="text" fieldname="codconcepto" maxlength="6" icon="fas fa-hashtag" readonly="dinamic" />
+                <widget type="text" fieldname="codconcepto" maxlength="6" icon="fa-solid fa-hashtag" readonly="dinamic" />
             </column>
             <column name="description" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
@@ -33,7 +33,7 @@
     </columns>
     <rows>
         <row type="actions">
-            <button type="js" label='help' color="primary" action="$('#help-card').toggle()" icon="fas fa-question-circle" />
+            <button type="js" label='help' color="primary" action="$('#help-card').toggle()" icon="fa-solid fa-question-circle" />
         </row>
         <row type="footer">
             <group name="help" id="help-card" class="collapse" html="Block/AccountNoteInfo.html.twig"></group>

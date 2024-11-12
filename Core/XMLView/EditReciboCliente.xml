@@ -36,7 +36,7 @@
                 </widget>
             </column>
             <column name="number" order="130">
-                <widget type="number" fieldname="numero" icon="fas fa-hashtag" readonly="dinamic"/>
+                <widget type="number" fieldname="numero" icon="fa-solid fa-hashtag" readonly="dinamic"/>
             </column>
             <column name="date" order="140">
                 <widget type="date" fieldname="fecha"/>

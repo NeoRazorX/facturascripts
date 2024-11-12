@@ -22,9 +22,9 @@ namespace FacturaScripts\Core\Lib\Export;
 use FacturaScripts\Core\Lib\Email\NewMail;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Export\PDFExport as ParentClass;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of MAILExport

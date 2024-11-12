@@ -1,0 +1,76 @@
+{% extends "Master/MicroTemplate.html.twig" %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-6">
+                <form action="{{ asset('login') }}" method="post" class="form">
+                    {{ formToken() }}
+                    <input type="hidden" name="action" value="valid-totp">
+                    <input type="hidden" name="fsNick" value="{{ fsc.user.nick }}">
+                    <div class="card mt-4">
+                        <a href="{{ asset('login') }}">
+                            {% set idfile = settings('default','idloginimage', 0) %}
+                            {{ _self.loadLogo(idfile) }}
+                        </a>
+                        <div class="card-body">
+                            <p class="card-text text-center">Ingrese el codigo TOTP</p>
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                            <i class="fa-solid fa-user fa-fw" aria-hidden="true"></i>
+                                    </span>
+                                    <input type="text" name="fsCode" class="form-control" maxlength="50"
+                                           placeholder="{{ trans('code') }}" required autocomplete="off"
+                                           autofocus/>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-block btn-primary mb-4">
+                                {{ trans('login') }}
+                            </button>
+                        </div>
+                        <div class="card-footer text-center">
+                            <p>
+                                FacturaScripts es un software libre de contabilidad, facturación y CRM.
+                                No dude en consultar la web oficial o las cuentas de facebook, twitter o youtube.
+                            </p>
+                            <a href="https://facturascripts.com" rel="nofollow" class="btn btn-secondary">
+                                <i class="fa-solid fa-question-circle me-1"></i> facturascripts.com
+                            </a>
+                            <a href="https://www.facebook.com/facturascripts/" rel="nofollow" class="btn btn-primary"
+                               title="facebook"> <i class="fa-brands fa-facebook"></i>
+                            </a>
+                            <a href="https://twitter.com/facturascripts" rel="nofollow" class="btn btn-info"
+                               title="twitter"> <i class="fa-brands fa-twitter"></i>
+                            </a>
+                            <a href="https://www.youtube.com/channel/UCtsptMQYpW2wJZkvak6NYng" rel="nofollow"
+                               class="btn btn-danger" title="youtube"> <i class="fa-brands fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        body {
+            background-color: #333A40;
+        }
+    </style>
+{% endblock %}
+
+{% macro loadLogo(idfile) %}
+    {% set url = 'Dinamic/Assets/Images/horizontal-logo.png' %}
+    {% if idfile > 0 %}
+        {% set attached = attachedFile(idfile) %}
+        {% if attached.filename is not empty %}
+            {% set url = attached.url('download-permanent') %}
+        {% endif %}
+    {% endif %}
+    <img class="card-img-top" src="{{ asset(url) }}" alt="FacturaScripts"/>
+{% endmacro loadLogo %}

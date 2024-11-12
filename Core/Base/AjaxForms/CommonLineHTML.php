@@ -32,6 +32,11 @@ use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
+/**
+ * Trait CommonLineHTML
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/CommonLineHTML
+ */
 trait CommonLineHTML
 {
     /** @var string */

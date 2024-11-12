@@ -23,7 +23,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" display="none" order="100">
-                <widget type="text" fieldname="id" icon="fas fa-hashtag" required="true" />
+                <widget type="text" fieldname="id" icon="fa-solid fa-hashtag" required="true" />
             </column>
             <column name="tax" order="110">
                 <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto" required="true">
@@ -31,7 +31,7 @@
                 </widget>
             </column>
             <column name="country" titleurl="ListPais" order="120">
-                <widget type="select" fieldname="codpais" icon="fas fa-globe-americas">
+                <widget type="select" fieldname="codpais" icon="fa-solid fa-globe-americas">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
                 </widget>
             </column>
@@ -46,7 +46,7 @@
                 </widget>
             </column>
             <column name="priority" order="150">
-                <widget type="number" fieldname="prioridad" icon="fas fa-sort-numeric-down-alt" required="true" />
+                <widget type="number" fieldname="prioridad" icon="fa-solid fa-sort-numeric-down-alt" required="true" />
             </column>
         </group>
     </columns>

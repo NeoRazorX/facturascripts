@@ -32,6 +32,8 @@ use FacturaScripts\Core\Model\ImpuestoZona;
 /**
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
+ *
+ * @deprecated replaced by Core/Lib/Calculator
  */
 final class Calculator
 {

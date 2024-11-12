@@ -41,7 +41,7 @@ class EditProvincia extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'province';
-        $data['icon'] = 'fas fa-map-signs';
+        $data['icon'] = 'fa-solid fa-map-signs';
         return $data;
     }
 
@@ -55,7 +55,7 @@ class EditProvincia extends EditController
 
     protected function createViewsCities(string $viewName = 'ListCiudad'): void
     {
-        $this->addListView($viewName, 'Ciudad', 'cities', 'fas fa-city')
+        $this->addListView($viewName, 'Ciudad', 'cities', 'fa-solid fa-city')
             ->addOrderBy(['ciudad'], 'name')
             ->addOrderBy(['idprovincia'], 'province')
             ->addSearchFields(['ciudad', 'alias'])

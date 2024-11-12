@@ -1,0 +1,66 @@
+{% extends "Master/MenuBghTemplate.html.twig" %}
+
+{% block bodyHeaderOptions %}
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+{% endblock %}
+
+{% block body %}
+    <div class="container" style="margin-top: -70px;">
+        <div class="row">
+            <div class="col-sm">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <h3>
+                            <i class="fa-solid fa-circle-info mr-2"></i> {{ trans('installation') }}
+                        </h3>
+                        <hr>
+                        <p>FacturaScripts Versión: <strong>{{ fsc.data.facturascripts_version }}</strong></p>
+                        <p>PHP Versión: <strong>{{ fsc.data.php_version }}</strong></p>
+                        <p>Extensiones activas: <strong>{{ fsc.data.extensions | join(', ') }}</strong></p>
+                        <p>Tamaño Máximo de Subida de Archivo: <strong>{{ bytes(fsc.data.max_filesize) }}</strong></p>
+                        <p>Software del Servidor: <strong>{{ fsc.data.server_software }}</strong></p>
+                        <p>Sistema Operativo: <strong>{{ fsc.data.os_info }}</strong></p>
+                        <p>Base de Datos: <strong>{{ fsc.data.database_version }}</strong></p>
+                    </div>
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <h3>
+                            <i class="fa-solid fa-plug mr-2"></i> {{ trans('plugins') }}
+                        </h3>
+                    </div>
+                    <table class="table table-hover mb-0">
+                        <thead>
+                        <tr>
+                            <th scope="col">{{ trans('name') }}</th>
+                            <th scope="col">{{ trans('enabled') }}</th>
+                            <th scope="col">{{ trans('min-php-version') }}</th>
+                            <th scope="col">{{ trans('min-fs-version') }}</th>
+                            <th scope="col">{{ trans('plugins-required') }}</th>
+                            <th scope="col">{{ trans('php-extensions-required') }}</th>
+                            <th scope="col">{{ trans('priority') }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for plugin in fsc.data.plugins %}
+                            <tr>
+                                <td>{{ plugin.name }} - v{{ plugin.version }}</td>
+                                <td>{{ plugin.enabled ? trans('yes') : trans('no') }}</td>
+                                <td>{{ plugin.min_php }}</td>
+                                <td>{{ plugin.min_version }}</td>
+                                <td>{{ plugin.require | join(', ') }}</td>
+                                <td>{{ plugin.require_php | join(', ') }}</td>
+                                <td>{{ plugin.order }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

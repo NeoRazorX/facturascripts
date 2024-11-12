@@ -76,7 +76,7 @@ class EditProveedor extends ComercialContactController
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'supplier';
-        $data['icon'] = 'fas fa-users';
+        $data['icon'] = 'fa-solid fa-users';
         return $data;
     }
 
@@ -101,7 +101,7 @@ class EditProveedor extends ComercialContactController
 
     protected function createProductView(string $viewName = 'ListProductoProveedor'): void
     {
-        $this->addListView($viewName, 'ProductoProveedor', 'products', 'fas fa-cubes')
+        $this->addListView($viewName, 'ProductoProveedor', 'products', 'fa-solid fa-cubes')
             ->addOrderBy(['actualizado'], 'update-time', 2)
             ->addOrderBy(['referencia'], 'reference')
             ->addOrderBy(['refproveedor'], 'supplier-reference')
@@ -124,7 +124,7 @@ class EditProveedor extends ComercialContactController
     {
         parent::createViews();
         $this->createContactsView();
-        $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
+        $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fa-solid fa-piggy-bank');
 
         if ($this->user->can('EditSubcuenta')) {
             $this->createSubaccountsView();

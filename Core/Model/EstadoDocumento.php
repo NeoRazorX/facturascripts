@@ -91,10 +91,10 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         if (!empty($this->icon)) {
             return $this->icon;
         } elseif (!empty($this->generadoc)) {
-            return 'fas fa-check';
+            return 'fa-solid fa-check';
         }
 
-        return $this->editable ? 'fas fa-pen' : 'fas fa-lock';
+        return $this->editable ? 'fa-solid fa-pen' : 'fa-solid fa-lock';
     }
 
     public static function primaryColumn(): string

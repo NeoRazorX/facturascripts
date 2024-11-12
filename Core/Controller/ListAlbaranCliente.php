@@ -35,7 +35,7 @@ class ListAlbaranCliente extends ListBusinessDocument
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'delivery-notes';
-        $data['icon'] = 'fas fa-dolly-flatbed';
+        $data['icon'] = 'fa-solid fa-dolly-flatbed';
         return $data;
     }
 
