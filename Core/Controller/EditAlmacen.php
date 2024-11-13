@@ -124,7 +124,7 @@ class EditAlmacen extends EditController
         switch ($viewName) {
             case 'ListStock':
                 $code = $this->getViewModelValue($this->getMainViewName(), 'codalmacen');
-                $where = [new DataBaseWhere('codalmacen', $code)];
+                $where = [new DataBaseWhere('stocks.codalmacen', $code)];
                 $view->loadData('', $where);
                 break;
 
