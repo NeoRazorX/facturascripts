@@ -891,7 +891,7 @@
     "location": "Ubicación",
     "lock-accounting": "Bloquear contabilidad",
     "lock-entry": "Bloquear asiento",
-    "lock-invoice": "Uzamknout fakturu",
+    "lock-invoice": "Označit fakturu jako vydanou",
     "lock-unlock": "(Des)Bloquear",
     "lock-unlock-account-entry": "Bloquear\/Desbloquear el asiento contable",
     "locked": "Bloqueado",

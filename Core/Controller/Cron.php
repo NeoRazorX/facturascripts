@@ -226,7 +226,7 @@ END;
                 $cron->run();
             } catch (Exception $ex) {
                 echo $ex->getMessage() . PHP_EOL;
-                Tools::log()->error($ex->getMessage());
+                Tools::log('cron')->error($ex->getMessage());
             }
 
             ob_flush();
