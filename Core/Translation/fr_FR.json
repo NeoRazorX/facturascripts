@@ -504,7 +504,7 @@
     "email": "Email",
     "email-bcc": "Mettre en copie invisible",
     "email-cc": "Mettre en copie",
-    "email-not-configured": "Les paramètres de messagerie électronique ne sont pas configurés. Vous pouvez le faire depuis le menu Administration > Panneau de contrôle > Préférences de l'application",
+    "email-not-configured": "Email non configuré. Vous pouvez configurer l'email depuis le menu Administrateur, Email.",
     "email-not-sent": "Non envoyé",
     "email-notification": "Notification par email",
     "email-notification-disabled": "La notification par email %name% est désactivée",
