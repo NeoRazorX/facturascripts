@@ -504,7 +504,7 @@
     "email": "Posta elektronikoa",
     "email-bcc": "Emaila Kopia Eskutuarekin",
     "email-cc": "Emaila Karboi Kopiarekin",
-    "email-not-configured": "Posta elektronikoa konfiguratu gabe dago. Administratzailea, kontrol panela, aplikazioaren lehentasunak menutik ahal duzu konfiguratu.",
+    "email-not-configured": "Posta elektronikoa konfiguratu gabe dago. Administratzailearen menutik emaila konfiguratu dezakezu.",
     "email-not-sent": "Bidali gabe",
     "email-notification": "Email Jakinarazpena",
     "email-notification-disabled": "Email jakinarazpena %name% desgaituta dago",

@@ -504,7 +504,7 @@
     "email": "E-mail",
     "email-bcc": "Cópia oculta do email",
     "email-cc": "Email com cópia",
-    "email-not-configured": "e",
+    "email-not-configured": "Email não configurado. Você pode configurar o email no menu administrador, email.",
     "email-not-sent": "Não enviado",
     "email-notification": "Notificação por email",
     "email-notification-disabled": "A notificação por email %name% está desativada",
