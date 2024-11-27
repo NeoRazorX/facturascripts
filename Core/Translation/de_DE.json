@@ -504,7 +504,7 @@
     "email": "E-Mail",
     "email-bcc": "Blindkopie-E-Mail",
     "email-cc": "Email mit Kopie",
-    "email-not-configured": "E-Mail nicht konfiguriert. Sie können die E-Mail über das Administratormenü, Systemsteuerung, Anwendungseinstellungen konfigurieren.",
+    "email-not-configured": "E-Mail nicht konfiguriert. Sie können die E-Mail über das Administratormenü, E-Mail, konfigurieren.",
     "email-not-sent": "nicht gesendet",
     "email-notification": "E-Mail Benachrichtigung",
     "email-notification-disabled": "Die E-Mail-Benachrichtigung %name% ist deaktiviert",
