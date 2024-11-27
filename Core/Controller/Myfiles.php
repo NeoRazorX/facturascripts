@@ -80,7 +80,8 @@ class Myfiles implements ControllerInterface
             'ogg', 'pdf', 'png', 'pptx', 'rar', 'sql', 'step', 'svg', 'ttf', 'txt', 'webm', 'webp', 'woff', 'woff2',
             'xls', 'xlsm', 'xlsx', 'xml', 'xsig', 'zip'
         ];
-        return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
+        $extension = strtolower(end($parts));
+        return empty($parts) || count($parts) === 1 || in_array($extension, $safe, true);
     }
 
     public function run(): void
