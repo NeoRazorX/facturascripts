@@ -178,6 +178,9 @@ final class ClienteTest extends TestCase
         $this->assertEquals([1, 5], $cliente->getPaymentDays(), 'cliente-has-payment-days');
     }
 
+    /**
+     * @group lentos
+     */
     public function testVies(): void
     {
         // creamos un cliente sin cifnif
