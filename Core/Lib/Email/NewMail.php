@@ -87,6 +87,9 @@ class NewMail
     /** @var string */
     public $verificode;
 
+    /** @var string */
+    public $notification;
+
     public function __construct()
     {
         $this->empresa = Empresas::default();
@@ -533,6 +536,7 @@ class NewMail
             $emailSent->subject = $this->title;
             $emailSent->uuid = $uuid;
             $emailSent->verificode = $this->verificode;
+            $emailSent->notification = $this->notification;
             $emailSent->save();
         }
 
