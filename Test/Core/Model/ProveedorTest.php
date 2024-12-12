@@ -152,6 +152,9 @@ final class ProveedorTest extends TestCase
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
+    /**
+     * @group lentos
+     */
     public function testVies(): void
     {
         // creamos un proveedor sin cif/nif

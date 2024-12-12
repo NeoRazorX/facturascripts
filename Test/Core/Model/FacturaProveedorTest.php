@@ -574,6 +574,9 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete());
     }
 
+    /**
+     * @group lentos
+     */
     public function testSetIntraCommunity(): void
     {
         // comprobamos si el VIES funciona
