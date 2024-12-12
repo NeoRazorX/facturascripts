@@ -319,6 +319,13 @@ abstract class JoinModel
         return null;
     }
 
+    /**
+     * Returns the total sum of the indicated field.
+     *
+     * @param string $field
+     * @param array $where
+     * @return float
+     */
     public function totalSum(string $field, array $where = []): float
     {
         // buscamos en caché
@@ -334,9 +341,9 @@ abstract class JoinModel
         $fields = $this->getFields();
         $field = $fields[$field] ?? $field;
 
-        $sql = false !== strpos($field, '(') ?
-            'SELECT ' . $field . ' AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where) :
-            'SELECT SUM(' . $field . ') AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where);
+        $sql = $this->checkTotalField($field)
+            ? 'SELECT SUM(' . $field . ') AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where)
+            : 'SELECT ' . $field . ' AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where);
 
         $data = self::$dataBase->select($sql);
         $sum = count($data) == 1 ? (float)$data[0]['total_sum'] : 0.0;
@@ -381,6 +388,26 @@ abstract class JoinModel
             }
         }
 
+        return true;
+    }
+
+    /**
+     * Check if the field can be a total field.
+     *
+     * @param string $field
+     * @return bool
+     */
+    private function checkTotalField(string $field): bool
+    {
+        $field = strtolower($field);
+        if (is_numeric(strpos($field, 'sum('))
+            || is_numeric(strpos($field, 'max('))
+            || is_numeric(strpos($field, 'min('))
+            || is_numeric(strpos($field, 'avg('))
+            || is_numeric(strpos($field, '(select'))
+        ) {
+            return false;
+        }
         return true;
     }
 
