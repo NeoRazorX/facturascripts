@@ -99,6 +99,11 @@ class Tarifa extends Base\ModelClass
                 break;
         }
 
+        $ext = $this->pipe('apply', $finalPrice, $cost, $price);
+        if ($ext && is_numeric($ext)) {
+            $finalPrice = $ext;
+        }
+
         if ($this->maxpvp && $finalPrice > $price) {
             return (float)$price;
         } elseif ($this->mincoste && $finalPrice < $cost) {
