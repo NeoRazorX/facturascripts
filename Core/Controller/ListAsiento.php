@@ -119,7 +119,7 @@ class ListAsiento extends ListController
         $this->addFilterSelect($viewName, 'iddiario', 'journals', 'iddiario', $selectJournals);
 
         $selectChannel = $this->codeModel->all('asientos', 'canal', 'canal');
-        if (count($selectChannel) > 2) {
+        if (count($selectChannel) > 1) {
             $this->addFilterSelect($viewName, 'canal', 'channel', 'canal', $selectChannel);
         }
 
