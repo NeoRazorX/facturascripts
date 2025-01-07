@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -61,6 +61,10 @@ class EditSubcuenta extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
+        // ocultamos el botón imprimir
+        $mvn = $this->getMainViewName();
+        $this->tab($mvn)->setSettings('btnPrint', false);
+
         // añadimos las partidas de asientos
         $this->createViewsLines();
     }
@@ -69,25 +73,23 @@ class EditSubcuenta extends EditController
     {
         $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale')
             ->addOrderBy(['fecha', 'numero', 'idpartida'], 'date', 2)
-            ->addSearchFields(['partidas.concepto']);
-
-        // filtros
-        $this->views[$viewName]->addFilterPeriod('date', 'date', 'fecha');
+            ->addSearchFields(['partidas.concepto'])
+            ->disableColumn('subaccount')
+            ->setSettings('btnDelete', false);
 
         $iva = $this->codeModel->all('partidas', 'iva', 'iva');
-        $this->views[$viewName]->addFilterSelect('iva', 'vat', 'iva', $iva);
-        $this->views[$viewName]->addFilterCheckbox('no-iva', 'without-taxation', 'iva', 'IS', null);
 
-        $this->views[$viewName]->addFilterNumber('debit-major', 'debit', 'debe');
-        $this->views[$viewName]->addFilterNumber('debit-minor', 'debit', 'debe', '<=');
-        $this->views[$viewName]->addFilterNumber('credit-major', 'credit', 'haber');
-        $this->views[$viewName]->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
-
-        // disable column
-        $this->views[$viewName]->disableColumn('subaccount');
+        // filtros
+        $this->listView($viewName)
+            ->addFilterPeriod('date', 'date', 'fecha')
+            ->addFilterSelect('iva', 'vat', 'iva', $iva)
+            ->addFilterCheckbox('no-iva', 'without-taxation', 'iva', 'IS', null)
+            ->addFilterNumber('debit-major', 'debit', 'debe')
+            ->addFilterNumber('debit-minor', 'debit', 'debe', '<=')
+            ->addFilterNumber('credit-major', 'credit', 'haber')
+            ->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
 
         // botones
-        $this->setSettings($viewName, 'btnDelete', false);
         $this->addButton($viewName, [
             'action' => 'dot-accounting-on',
             'color' => 'info',
