@@ -81,6 +81,7 @@ class MailNotifier
         $newMail->to($email, $name);
         $newMail->title = static::getText($notification->subject, $params);
         $newMail->text = static::getText($notification->body, $params);
+        $newMail->notification = $notificationName;
 
         foreach ($mainBlocks as $block) {
             $newMail->addMainBlock($block);
