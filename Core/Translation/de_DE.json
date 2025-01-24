@@ -1555,6 +1555,7 @@
     "total": "Gesamt",
     "total-amount": "Gesamtbetrag",
     "total-cost": "Gesamtkosten",
+    "total-pending": "Gesamtbetrag ausstehend",
     "total-purchases": "Gesamteinkäufe",
     "total-sales": "Gesamtverkäufe",
     "total-value-error": "Gesamtmenge von 0 1 falsch (2). Richtige Menge: 3",

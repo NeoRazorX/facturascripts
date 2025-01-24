@@ -1555,6 +1555,7 @@
     "total": "Total",
     "total-amount": "Valor total",
     "total-cost": "Custo total",
+    "total-pending": "Total pendente",
     "total-purchases": "Total das Compras",
     "total-sales": "Total das Vendas",
     "total-value-error": "Valor total de %docType% %docCode% incorreto (%docTotal%). Valor correto: %calcTotal%",

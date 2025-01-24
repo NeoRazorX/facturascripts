@@ -1555,6 +1555,7 @@
     "total": "Totala",
     "total-amount": "Batuketa totala",
     "total-cost": "Kostu totala",
+    "total-pending": "Guztira zain",
     "total-purchases": "Erosketa totala",
     "total-sales": "Salmenta totala",
     "total-value-error": "%docType% %docCode% (%docTotal%) totala ez da zuzena. Total zuzena: %calcTotal%",
