@@ -1610,6 +1610,7 @@
     "update-supplier-prices": "Update supplier prices",
     "update-time": "Update time",
     "updated-model": "Updated %model% (%key%) %desc%",
+    "updated-records": "Updated %updatedRecords% records in %totalRecords%",
     "updater": "Updater",
     "updates-available": "Updates Available",
     "updates-available-p": "There are updates available for FacturaScripts. Please click on the updater and download the new version. Updates fix bugs and add new features.",

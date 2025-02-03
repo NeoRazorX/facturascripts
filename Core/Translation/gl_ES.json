@@ -1610,6 +1610,7 @@
     "update-supplier-prices": "Actualizar prezos provedores",
     "update-time": "hora de actualización",
     "updated-model": "Actualizado %model% (%key%) %desc%",
+    "updated-records": "Actualizáronse %updatedRecords% rexistros de %totalRecords%",
     "updater": "Actualizador",
     "updates-available": "Actualizacións dispoñibles",
     "updates-available-p": "Hai actualizacións dispoñibles de FacturaScripts. Por favor, fai clic no actualizador e descarga a nova versión. As actualizacións corrixen fallos e engaden novas funcionalidades.",

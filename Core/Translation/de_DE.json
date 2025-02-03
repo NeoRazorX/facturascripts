@@ -1610,6 +1610,7 @@
     "update-supplier-prices": "aktullieren Lieferantenpreise",
     "update-time": "Aktuallierungszeit",
     "updated-model": "Aktualisiert %model% (%key%) %desc%",
+    "updated-records": "%updatedRecords% von %totalRecords% Datensätzen wurden aktualisiert",
     "updater": "Updater",
     "updates-available": "Verfügbare Updates",
     "updates-available-p": "Es gibt verfügbare Updates für FacturaScripts. Bitte klicken Sie auf den Aktualisierer und laden Sie die neue Version herunter. Die Updates beheben Fehler und fügen neue Funktionen hinzu.",

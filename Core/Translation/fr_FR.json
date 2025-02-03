@@ -1610,6 +1610,7 @@
     "update-supplier-prices": "Mise à jour des prix fournisseurs",
     "update-time": "Heure de mise à jour",
     "updated-model": "%model% (%key%) %desc% mis à jour",
+    "updated-records": "Les enregistrements %updatedRecords% de %totalRecords% ont été mis à jour.",
     "updater": "Processus de mise à jour",
     "updates-available": "Mises à jour disponibles",
     "updates-available-p": "Des mises à jour d'InfacturaScripts sont disponibles. Veuillez cliquer sur le programme de mise à jour et télécharger la nouvelle version. Les mises à jour corrigent les bugs et ajoutent de nouvelles fonctionnalités.",
