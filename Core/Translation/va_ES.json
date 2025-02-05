@@ -1703,5 +1703,6 @@
     "your": "seu",
     "zip-code": "Codi postal",
     "zip-codes": "Codis postals",
-    "zip-error-wrong-structure": "L'estructura del zip és incorrecta. Deu contindre la carpeta del complement i només un complement."
+    "zip-error-wrong-structure": "L'estructura del zip és incorrecta. Deu contindre la carpeta del complement i només un complement.",
+    "zone": "Zona"
 }

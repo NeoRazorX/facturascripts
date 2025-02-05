@@ -1703,5 +1703,6 @@
     "your": "Il tuo",
     "zip-code": "Cap",
     "zip-codes": "Codici postali",
-    "zip-error-wrong-structure": "La struttura del file ZIP è incorretta. Può contenere solamente la cartella del plugin e solamente un plugin."
+    "zip-error-wrong-structure": "La struttura del file ZIP è incorretta. Può contenere solamente la cartella del plugin e solamente un plugin.",
+    "zone": "Zona"
 }

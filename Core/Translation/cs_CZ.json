@@ -1703,5 +1703,6 @@
     "your": "Suyo",
     "zip-code": "Código Postal",
     "zip-codes": "Poštovní směrovací čísla",
-    "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin."
+    "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin.",
+    "zone": "Zóna"
 }

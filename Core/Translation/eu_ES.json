@@ -1703,5 +1703,6 @@
     "your": "Zure",
     "zip-code": "Posta Kodea",
     "zip-codes": "Posta kodeak",
-    "zip-error-wrong-structure": "Zip-aren egitura okerra da. Pluginaren karpeta eta plugin bakarra izan behar ditu."
+    "zip-error-wrong-structure": "Zip-aren egitura okerra da. Pluginaren karpeta eta plugin bakarra izan behar ditu.",
+    "zone": "Eremua"
 }

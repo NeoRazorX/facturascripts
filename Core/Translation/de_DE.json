@@ -282,7 +282,7 @@
     "company-commission-info": "Es wird nur für das ausgewählte Unternehmen angewendet",
     "company-manager": "Firmenleiter",
     "company-name": "Name der Firma",
-    "company-tax": "Körperschaftsteuer",
+    "company-tax": "Körperschaftsteuervorschriften",
     "company-warehouse": "Unternehmen\/Lager",
     "comparative": "Vergleich",
     "compared": "verglichen",
@@ -1703,5 +1703,6 @@
     "your": "Ihr",
     "zip-code": "Postleitzahl",
     "zip-codes": "Postleitzahlen",
-    "zip-error-wrong-structure": "zip Fehler falsche Struktur"
+    "zip-error-wrong-structure": "zip Fehler falsche Struktur",
+    "zone": "Zone"
 }

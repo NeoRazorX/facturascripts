@@ -1703,5 +1703,6 @@
     "your": "Your",
     "zip-code": "Zip code",
     "zip-codes": "Zip codes",
-    "zip-error-wrong-structure": "The zip structure is incorrect. It must contain the plugin folder and only one plugin."
+    "zip-error-wrong-structure": "The zip structure is incorrect. It must contain the plugin folder and only one plugin.",
+    "zone": "Zone"
 }

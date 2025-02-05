@@ -1703,5 +1703,6 @@
     "your": "El vostre",
     "zip-code": "Codi Postal",
     "zip-codes": "Codis postals",
-    "zip-error-wrong-structure": "L'estructura del zip és incorrecta. Ha de contenir la carpeta del plugin i solament un plugin."
+    "zip-error-wrong-structure": "L'estructura del zip és incorrecta. Ha de contenir la carpeta del plugin i solament un plugin.",
+    "zone": "Zona"
 }

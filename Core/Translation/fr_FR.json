@@ -1703,5 +1703,6 @@
     "your": "Votre",
     "zip-code": "Code postal",
     "zip-codes": "Codes postaux",
-    "zip-error-wrong-structure": "Erreur dans la structure du fichier ZIP. Il doit contenir le dossier du module externe, et un seul module."
+    "zip-error-wrong-structure": "Erreur dans la structure du fichier ZIP. Il doit contenir le dossier du module externe, et un seul module.",
+    "zone": "Zone"
 }
