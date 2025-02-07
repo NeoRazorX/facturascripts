@@ -409,6 +409,24 @@ class OpenAi
         return $response->json();
     }
 
+    public function threadRunSubmitToolOutputs(string $id_thread, string $id_run, array $outputs)
+    {
+        $data = ['tool_outputs' => $outputs];
+        $response = Http::post(self::THREADS_URL . '/' . $id_thread . '/runs/' . $id_run . '/submit_tool_outputs', json_encode($data))
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setHeader('Content-Type', 'application/json')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT thread run submit tool outputs error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
+            return [];
+        }
+
+        return $response->json();
+    }
+
     public function threadRunRead(string $id_thread, string $id_run): array
     {
         $response = Http::get(self::THREADS_URL . '/' . $id_thread . '/runs/' . $id_run)
