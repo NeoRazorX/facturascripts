@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,7 +53,7 @@ class OpenAi
         }
     }
 
-    public function assistantCreate(array $params)
+    public function assistantCreate(array $params): array
     {
         $response = Http::post(self::ASSISTANTS_URL, json_encode($params))
             ->setHeader('OpenAI-Beta', 'assistants=v2')
@@ -154,7 +154,7 @@ class OpenAi
         if ($response->failed()) {
             Tools::log()->error(
                 'chatGPT error: ' . $response->status() . ' ' . $response->errorMessage(),
-                $response->json()
+                $response->json() ?? []
             );
             return '';
         }
@@ -461,7 +461,7 @@ class OpenAi
         return $response->json();
     }
 
-    public function threadRunSubmitToolOutputs(string $id_thread, string $id_run, array $outputs)
+    public function threadRunSubmitToolOutputs(string $id_thread, string $id_run, array $outputs): array
     {
         $data = ['tool_outputs' => $outputs];
         $response = Http::post(self::THREADS_URL . '/' . $id_thread . '/runs/' . $id_run . '/submit_tool_outputs', json_encode($data))
