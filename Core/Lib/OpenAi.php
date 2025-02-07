@@ -409,6 +409,24 @@ class OpenAi
         return $response->json();
     }
 
+    public function threadRunSubmitToolOutputs(string $id_thread, string $id_run, array $outputs)
+    {
+        $data = ['tool_outputs' => $outputs];
+        $response = Http::post(self::THREADS_URL . '/' . $id_thread . '/runs/' . $id_run . '/submit_tool_outputs', json_encode($data))
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setHeader('Content-Type', 'application/json')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT thread run submit tool outputs error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
+            return [];
+        }
+
+        return $response->json();
+    }
+
     public function threadRunRead(string $id_thread, string $id_run): array
     {
         $response = Http::get(self::THREADS_URL . '/' . $id_thread . '/runs/' . $id_run)
@@ -423,6 +441,57 @@ class OpenAi
         }
 
         return $response->json();
+    }
+
+    public function vectorCreate(array $data): array
+    {
+        $response = Http::post(self::VECTOR_URL, json_encode($data))
+            ->setHeader('Content-Type', 'application/json')
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('vector create error: ' . $response->status() . ' ' . $response->errorMessage()
+                . ' ' . $response->body());
+            return [];
+        }
+
+        return $response->json();
+    }
+
+    public function vectorFiles(string $idVector, array $data = []): array
+    {
+        $response = Http::get(self::VECTOR_URL . '/' . $idVector . '/files', $data)
+            ->setHeader('Content-Type', 'application/json')
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('vector files error: ' . $response->status() . ' ' . $response->errorMessage()
+                . ' ' . $response->body());
+            return [];
+        }
+
+        return $response->json();
+    }
+
+    public function vectorFileDelete(string $idVector, string $idFile): bool
+    {
+        $response = Http::delete(self::VECTOR_URL . '/' . $idVector . '/files/' . $idFile)
+            ->setHeader('Content-Type', 'application/json')
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('vector file delete error: ' . $response->status() . ' ' . $response->errorMessage()
+                . ' ' . $response->body());
+            return false;
+        }
+
+        return true;
     }
 
     public function vectorRead(string $idVector): array
