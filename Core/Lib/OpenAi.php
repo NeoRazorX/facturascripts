@@ -27,6 +27,7 @@ use Throwable;
 
 class OpenAi
 {
+    const ASSISTANTS_URL = 'https://api.openai.com/v1/assistants';
     const AUDIO_SPEECH_URL = 'https://api.openai.com/v1/audio/speech';
     const CHAT_URL = 'https://api.openai.com/v1/chat/completions';
     const FILES_URL = 'https://api.openai.com/v1/files';
@@ -50,6 +51,57 @@ class OpenAi
         if (empty($this->api_key)) {
             Tools::log()->error('OpenAI API Key not found');
         }
+    }
+
+    public function assistantCreate(array $params)
+    {
+        $response = Http::post(self::ASSISTANTS_URL, json_encode($params))
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setHeader('Content-Type', 'application/json')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT assistant create error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
+            return [];
+        }
+
+        return $response->json();
+    }
+
+    public function assistantRead(string $idAssistant): array
+    {
+        $response = Http::get(self::ASSISTANTS_URL . '/' . $idAssistant)
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setHeader('Content-Type', 'application/json')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT assistant read error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
+            return [];
+        }
+
+        return $response->json();
+    }
+
+    public function assistantUpdate(string $idAssistant, array $params)
+    {
+        $response = Http::post(self::ASSISTANTS_URL . '/' . $idAssistant, json_encode($params))
+            ->setHeader('OpenAI-Beta', 'assistants=v2')
+            ->setHeader('Content-Type', 'application/json')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('chatGPT assistant update error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
+            return [];
+        }
+
+        return $response->json();
     }
 
     public function audio(string $input, string $voice = 'alloy', string $format = 'mp3', string $model = 'tts-1'): string
