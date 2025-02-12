@@ -505,7 +505,7 @@
     "email": "Email",
     "email-bcc": "Email con copia oculta",
     "email-cc": "Email con copia",
-    "email-not-configured": "E-mail není nakonfigurován. E-mail lze nakonfigurovat v administračním menu, e-mail.",
+    "email-not-configured": "E-mail není nakonfigurován. E-mail lze nakonfigurovat v administrativním menu, e-mail.",
     "email-not-sent": "No enviado",
     "email-notification": "Notificación por email",
     "email-notification-disabled": "Notifikace e-mailu %name% je vypnuta",
