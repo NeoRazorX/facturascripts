@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,12 +30,11 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor;
 /**
  * Class that performs accounting closures
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ClosingToAcounting
 {
-
     /**
      * Indicates whether the accounting account plan should be copied
      * to the new fiscal year.
@@ -198,8 +197,18 @@ class ClosingToAcounting
      */
     protected function execCloseInvoices(): bool
     {
-        // apply to customer invoices
+        // find customer invoices without accounting entry
         $customerInvoice = new FacturaCliente();
+        $whereMissing = [
+            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
+            new DataBaseWhere('idasiento', null),
+            new DataBaseWhere('total', 0, '!=')
+        ];
+        if ($customerInvoice->count($whereMissing) > 0) {
+            return false;
+        }
+
+        // close customer invoices
         $status1 = $customerInvoice->getAvailableStatus();
         $where = [
             new DataBaseWhere('editable', true),
@@ -219,8 +228,13 @@ class ClosingToAcounting
             break;
         }
 
-        // apply to supplier invoices
+        // find supplier invoices without accounting entry
         $supplierInvoice = new FacturaProveedor();
+        if ($supplierInvoice->count($whereMissing) > 0) {
+            return false;
+        }
+
+        // close supplier invoices
         $status2 = $supplierInvoice->getAvailableStatus();
         foreach ($status2 as $stat) {
             if ($stat->editable || $stat->generadoc) {
