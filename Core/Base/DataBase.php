@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -478,12 +478,18 @@ final class DataBase
 
         // If it's a date
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
-            return "'" . date(self::$engine->dateStyle(), strtotime($val)) . "'";
+            $date = date(self::$engine->dateStyle(), strtotime($val));
+            return $date === '1970-01-01' ?
+                "'" . $this->escapeString($val) . "'" :
+                "'" . $date . "'";
         }
 
         // If it's a date time
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
-            return "'" . date(self::$engine->dateStyle() . ' H:i:s', strtotime($val)) . "'";
+            $date = date(self::$engine->dateStyle() . ' H:i:s', strtotime($val));
+            return $date === '1970-01-01 00:00:00' ?
+                "'" . $this->escapeString($val) . "'" :
+                "'" . $date . "'";
         }
 
         return "'" . $this->escapeString($val) . "'";
