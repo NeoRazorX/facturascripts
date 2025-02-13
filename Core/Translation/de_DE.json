@@ -1661,6 +1661,7 @@
     "warehouses": "Lagerhallen",
     "warning": "<b>Warnung<\/b>",
     "warnings": "Warnungen",
+    "weak-password": "La contraseña debe tener al menos 8 caracteres, con números y letras.",
     "web": "web:",
     "website": "Webseite",
     "wednesday": "Mittwoch",

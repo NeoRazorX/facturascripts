@@ -1661,6 +1661,7 @@
     "warehouses": "Entrepôts",
     "warning": "Avertissement",
     "warnings": "Avis",
+    "weak-password": "La contraseña debe tener al menos 8 caracteres, con números y letras.",
     "web": "Web",
     "website": "Site Internet",
     "wednesday": "Mercredi",

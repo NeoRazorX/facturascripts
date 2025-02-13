@@ -1661,6 +1661,7 @@
     "warehouses": "Magatzems",
     "warning": "Atenció",
     "warnings": "Avisos",
+    "weak-password": "La contraseña debe tener al menos 8 caracteres, con números y letras.",
     "web": "Web",
     "website": "Lloc web",
     "wednesday": "Dimecres",

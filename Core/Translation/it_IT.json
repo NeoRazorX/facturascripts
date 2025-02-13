@@ -1661,6 +1661,7 @@
     "warehouses": "magazzini",
     "warning": "Attenzione",
     "warnings": "Avvisi",
+    "weak-password": "La contraseña debe tener al menos 8 caracteres, con números y letras.",
     "web": "web:",
     "website": "Sito web",
     "wednesday": "Mercoledì",
