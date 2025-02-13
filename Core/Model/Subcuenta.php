@@ -203,7 +203,7 @@ class Subcuenta extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->saldo = $this->debe - $this->haber;
+        $this->saldo = round($this->debe - $this->haber, FS_NF0);
 
         // escape html
         foreach (['codcuenta', 'codsubcuenta', 'descripcion', 'codcuentaesp'] as $field) {

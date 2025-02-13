@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\JoinModel;
 
 /**
- * Auxiliary model to load a sumary of subaccount
+ * Auxiliary model to load a summary of subaccount
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
@@ -115,7 +115,7 @@ class SubcuentaSaldo extends JoinModel
     protected function loadFromData(array $data)
     {
         parent::loadFromData($data);
-        $this->saldo = $this->debe - $this->haber;
+        $this->saldo = round($this->debe - $this->haber, FS_NF0);
     }
 
     /**

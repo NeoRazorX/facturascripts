@@ -62,7 +62,7 @@ class PartidaWorker extends WorkerClass
 
                 // calculamos y comprobamos el saldo
                 $saldo += $line->debe - $line->haber;
-                if (abs($line->saldo - $saldo) < 0.01) {
+                if (abs($line->saldo - $saldo) < 0.009) {
                     continue;
                 }
 
@@ -82,7 +82,7 @@ class PartidaWorker extends WorkerClass
         $diffDebe = abs($subcuenta->debe - $debe);
         $diffHaber = abs($subcuenta->haber - $haber);
         $diffSaldo = abs($subcuenta->saldo - $saldo);
-        if ($diffDebe >= 0.01 || $diffHaber >= 0.01 || $diffSaldo >= 0.01) {
+        if ($diffDebe >= 0.009 || $diffHaber >= 0.009 || $diffSaldo >= 0.009) {
             $subcuenta->debe = round($debe, FS_NF0);
             $subcuenta->haber = round($haber, FS_NF0);
             $subcuenta->saldo = round($saldo, FS_NF0);
