@@ -1331,6 +1331,7 @@
     "rules": "Reglas",
     "run": "Ejecutar",
     "running-plugin-cron": "Ejecutando cron del plugin %pluginName%",
+    "running-work-queue": "Ejecutando la cola de eventos de trabajo",
     "sales": "Ventas",
     "sales-invoice": "Factura de venta",
     "sales-rate": "Tasa de ventas",

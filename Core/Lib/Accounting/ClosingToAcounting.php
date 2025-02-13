@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\CuentaEspecial;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
@@ -205,6 +206,7 @@ class ClosingToAcounting
             new DataBaseWhere('total', 0, '!=')
         ];
         if ($customerInvoice->count($whereMissing) > 0) {
+            Tools::log()->warning('invoice-without-acc-entry');
             return false;
         }
 
@@ -231,6 +233,7 @@ class ClosingToAcounting
         // find supplier invoices without accounting entry
         $supplierInvoice = new FacturaProveedor();
         if ($supplierInvoice->count($whereMissing) > 0) {
+            Tools::log()->warning('invoice-without-acc-entry');
             return false;
         }
 
