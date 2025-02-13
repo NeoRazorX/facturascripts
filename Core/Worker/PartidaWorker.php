@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,6 +69,7 @@ class PartidaWorker extends WorkerClass
                 // actualizamos la partida
                 $partida = $line->getPartida();
                 $partida->saldo = round($saldo, FS_NF0);
+                $partida->disableAdditionalTest(true);
                 $partida->save();
             }
 
@@ -85,6 +86,7 @@ class PartidaWorker extends WorkerClass
             $subcuenta->debe = round($debe, FS_NF0);
             $subcuenta->haber = round($haber, FS_NF0);
             $subcuenta->saldo = round($saldo, FS_NF0);
+            $subcuenta->disableAdditionalTest(true);
             $subcuenta->save();
         }
 
