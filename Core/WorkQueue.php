@@ -90,7 +90,10 @@ final class WorkQueue
         $return = false;
 
         // leemos la lista de trabajos pendientes
-        $where = [new DataBaseWhere('done', false)];
+        $where = [
+            new DataBaseWhere('creation_date', Tools::dateTime(), '<='),
+            new DataBaseWhere('done', false)
+        ];
         $orderBy = ['id' => 'ASC'];
         foreach (WorkEvent::all($where, $orderBy, 0, 1) as $event) {
             self::preventDuplicated($event);
@@ -105,6 +108,11 @@ final class WorkQueue
     }
 
     public static function send(string $event, string $value, array $params = []): bool
+    {
+        return self::sendFuture(0, $event, $value, $params);
+    }
+
+    public static function sendFuture(int $delay, string $event, string $value, array $params = []): bool
     {
         // comprobamos si el evento está bloqueado
         foreach (self::$prevent_new_events as $prevent_event) {
@@ -127,6 +135,7 @@ final class WorkQueue
 
             // worker encontrado, guardamos el evento
             $work_event = new WorkEvent();
+            $work_event->creation_date = Tools::dateTime('+ ' . $delay . ' seconds');
             $work_event->name = $event;
             $work_event->value = $value;
             $work_event->setParams($params);
