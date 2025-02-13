@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -82,17 +82,26 @@ final class WorkQueue
 
     public static function run(): bool
     {
-        // leemos la lista de trabajos pendientes
-        $workEventModel = new WorkEvent();
-        $where = [new DataBaseWhere('done', false)];
-        $orderBy = ['id' => 'ASC'];
-        foreach ($workEventModel->all($where, $orderBy, 0, 1) as $event) {
-            self::preventDuplicated($event);
-
-            return self::runEvent($event);
+        // creamos un bloqueo para evitar que se ejecute el mismo evento varias veces
+        if (false === Kernel::lock('work-queue')) {
+            return false;
         }
 
-        return false;
+        $return = false;
+
+        // leemos la lista de trabajos pendientes
+        $where = [new DataBaseWhere('done', false)];
+        $orderBy = ['id' => 'ASC'];
+        foreach (WorkEvent::all($where, $orderBy, 0, 1) as $event) {
+            self::preventDuplicated($event);
+
+            $return = self::runEvent($event);
+        }
+
+        // liberamos el bloqueo
+        Kernel::unlock('work-queue');
+
+        return $return;
     }
 
     public static function send(string $event, string $value, array $params = []): bool
@@ -176,11 +185,6 @@ final class WorkQueue
 
     private static function runEvent(WorkEvent &$event): bool
     {
-        // creamos un bloqueo para evitar que se ejecute el mismo evento varias veces
-        if (false === Kernel::lock('work-queue-' . $event->name)) {
-            return false;
-        }
-
         // ordenamos los workers por posición
         usort(self::$workers_list, function ($a, $b) {
             return $a['position'] <=> $b['position'];
@@ -230,11 +234,6 @@ final class WorkQueue
         $event->done_date = Tools::dateTime();
         $event->workers = count($worker_list);
         $event->worker_list = implode(',', $worker_list);
-        $return = $event->save();
-
-        // liberamos el bloqueo
-        Kernel::unlock('work-queue-' . $event->name);
-
-        return $return;
+        return $event->save();
     }
 }
