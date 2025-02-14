@@ -1331,7 +1331,7 @@
     "rules": "Regles",
     "run": "run",
     "running-plugin-cron": "S'està eixecutant el cron del plugin %pluginName%",
-    "running-work-queue": "Ejecutando la cola de eventos de trabajo",
+    "running-work-queue": "Executant la cua d'esdeveniments de treball",
     "sales": "Vendes",
     "sales-invoice": "Factura de venda",
     "sales-rate": "Taxa de vendes",
