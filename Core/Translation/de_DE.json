@@ -1489,7 +1489,7 @@
     "supplier-estimation": "Lieferanten-Kostenvoranschlag",
     "supplier-estimations": "Lieferanten-Kostenvoranschläge",
     "supplier-have-no-iban": "Der Lieferant %%supplier hat keine IBAN (Bankkonto)",
-    "supplier-iban-changed": "Se ha cambiado el iban de la cuenta bancaria del proveedor %codproveedor%. Antes era %old% y ahora es %new%",
+    "supplier-iban-changed": "Der IBAN des Kontos des Lieferanten %codproveedor% wurde geändert. Er war vorher %old% und ist jetzt %new%.",
     "supplier-invoice": "Lieferantenrechnung",
     "supplier-invoice-deleted-successfully": "Kaufrechnung 0 wurde erfolgreich gelöscht.",
     "supplier-invoices": "Lieferantenrechnungen",

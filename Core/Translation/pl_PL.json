@@ -1332,7 +1332,7 @@
     "rules": "Zasady",
     "run": "Uruchom",
     "running-plugin-cron": "Uruchamianie cron wtyczki %pluginName%",
-    "running-work-queue": "Ejecutando la cola de eventos de trabajo",
+    "running-work-queue": "Uruchamianie kolejki zadań roboczych",
     "sales": "Sprzedaż",
     "sales-invoice": "Faktura sprzedaży",
     "sales-rate": "Wskaźnik sprzedaży",
