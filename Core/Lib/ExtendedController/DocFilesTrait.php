@@ -189,7 +189,7 @@ trait DocFilesTrait
         $where[] = is_numeric($modelid) ?
             new DataBaseWhere('modelid|modelcode', $modelid) :
             new DataBaseWhere('modelcode', $modelid);
-        $view->loadData('', $where, ['creationdate' => 'DESC']);
+        $view->loadData('', $where, ['creationdate' => 'DESC'], 0, 0);
     }
 
     private function unlinkFileAction(): bool
