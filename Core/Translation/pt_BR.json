@@ -281,7 +281,7 @@
     "companies": "Empresas",
     "company": "Empresa",
     "company-commission-info": "Informações de comissão da empresa",
-    "company-iban-changed": "Se ha cambiado el iban de la cuenta bancaria %account%. Antes era %old% y ahora es %new%",
+    "company-iban-changed": "Foi alterado o iban da conta bancária %account%. Antes era %old% e agora é %new%",
     "company-manager": "Gerente da empresa",
     "company-name": "Nome da empresa",
     "company-tax": "Imposto de empresas",
