@@ -1332,7 +1332,7 @@
     "rules": "Regeln",
     "run": "Ausführen",
     "running-plugin-cron": "Führe FacturaScripts Cron für das Plugin %pluginName% aus",
-    "running-work-queue": "Arbeitsereignisschleife wird ausgeführt",
+    "running-work-queue": "Die Arbeitsereignisschleife wird ausgeführt",
     "sales": "Der Umsatz",
     "sales-invoice": "Verkaufsrechnung",
     "sales-rate": "Verkaufsrate",
