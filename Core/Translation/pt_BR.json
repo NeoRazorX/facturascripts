@@ -1489,7 +1489,7 @@
     "supplier-estimation": "Estimativa de Fornecedor",
     "supplier-estimations": "Estimativas de Fornecedor",
     "supplier-have-no-iban": "O fornecedor %%supplier não tem IBAN (conta bancária)",
-    "supplier-iban-changed": "O IBAN da conta bancária do fornecedor %codproveedor% foi alterado. Antes era %old% e agora é %new%.",
+    "supplier-iban-changed": "Foi mudado o IBAN da conta bancária do fornecedor %codproveedor%. Antes era %old% e agora é %new%",
     "supplier-invoice": "Fatura de Fornecedor",
     "supplier-invoice-deleted-successfully": "Fatura de compra %docCode% excluída com sucesso.",
     "supplier-invoices": "Faturas de Fornecedor",
