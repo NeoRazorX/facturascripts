@@ -152,6 +152,7 @@ class EditSubcuenta extends EditController
         ]);
         $title = Tools::lang()->trans('ledger') . ' ' . $subAccount->codsubcuenta;
         $this->exportManager->newDoc($request['format'], $title);
+        $this->exportManager->setCompany($subAccount->getExercise()->idempresa);
 
         // añadimos la tabla de cabecera con la info del informe
         if ($request['format'] === 'PDF') {
