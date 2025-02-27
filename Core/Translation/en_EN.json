@@ -1665,7 +1665,7 @@
     "warehouses": "Warehouses",
     "warning": "Attention",
     "warnings": "Warnings",
-    "weak-password": "The password must be at least 8 characters long, containing numbers and letters.",
+    "weak-password": "The password must be at least 8 characters long, including numbers and letters.",
     "web": "Web",
     "website": "Website",
     "wednesday": "Wednesday",
