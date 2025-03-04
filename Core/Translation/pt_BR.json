@@ -1647,7 +1647,7 @@
     "vat-exception": "Exceção de IVA",
     "vat-number-is-short": "O número '%vat-number%' é muito curto",
     "vat-number-not-vies": "O número '%vat-number%' não está registrado no sistema VIES",
-    "vat-regime": "Regime de IVA",
+    "vat-regime": "Regime de impostos",
     "VAT-register": "Registro de VAT",
     "vat-regularization": "Regularização de IVA",
     "vehicle": "Veículo",
