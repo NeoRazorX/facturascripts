@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -19,15 +19,36 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Lib\Calculator;
-use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
-use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
+use Symfony\Component\HttpFoundation\Response;
 
 class ApiCreateFacturaRectificativaCliente extends ApiController
 {
+    /**
+     * It provides direct access to the database.
+     *
+     * @var DataBase
+     */
+    protected $dataBase;
+
+    /**
+     * @param string $className
+     * @param string $url
+     */
+    public function __construct(string $className, string $url = '')
+    {
+        parent::__construct($className, $url);
+
+        $this->dataBase = new DataBase();
+    }
+
+    /**
+     * @return void
+     */
     protected function runResource(): void
     {
         // si el método no es POST o PUT, devolvemos un error
@@ -40,8 +61,8 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
             return;
         }
 
-        // comprobamos que los datos necesarios nos llegan en la request
-        $camposNecesarios = ['codcliente', 'codigorect'];
+        // comprobamos que los datos obligatorios nos llegan en la request
+        $camposNecesarios = ['idfactura', 'fecha'];
         foreach ($camposNecesarios as $keyCampo) {
             $datosCampo = $this->request->get($keyCampo);
             if (empty($datosCampo)) {
@@ -54,181 +75,126 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
             }
         }
 
-        // comprobamos que la factura a rectificar existe
-        $facturaARectificar = new FacturaCliente();
-        $idfactura = $this->request->get('codigorect');
-        if(false === $facturaARectificar->loadFromCode($idfactura)){
-            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+        $factura = $this->newRefundAction();
+
+        if ($factura) {
             $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Invoice to refound not found',
+                'doc' => $factura->toArray(),
+                'lines' => $factura->getLines(),
             ]));
-            return;
+        }
+    }
+
+    /**
+     * @return FacturaCliente|null
+     */
+    protected function newRefundAction(): ?FacturaCliente
+    {
+        $invoice = new FacturaCliente();
+        if (false === $invoice->loadFromCode($this->request->request->get('idfactura'))) {
+            $this->sendError('record-not-found', Response::HTTP_NOT_FOUND);
+            return null;
         }
 
-
-        // cargamos el cliente
-        $codcliente = $this->request->get('codcliente');
-        $cliente = new Cliente();
-        if (!$cliente->loadFromCode($codcliente)) {
-            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Customer not found',
-            ]));
-            return;
-        }
-
-        // creamos la factura
-        $factura->setSubject($cliente);
-
-        // asignamos el almacén
-        $codalmacen = $this->request->get('codalmacen');
-        if ($codalmacen && false === $factura->setWarehouse($codalmacen)) {
-            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Warehouse not found',
-            ]));
-            return;
-        }
-
-        // asignamos la fecha
-        $fecha = $this->request->get('fecha');
-        $hora = $this->request->get('hora', $factura->hora);
-        if ($fecha && false === $factura->setDate($fecha, $hora)) {
-            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Invalid date',
-            ]));
-            return;
-        }
-
-        // asignamos la divisa
-        $coddivisa = $this->request->get('coddivisa');
-        if ($coddivisa) {
-            $factura->setCurrency($coddivisa);
-        }
-
-        // asignamos el resto de campos del modelo
-        foreach ($factura->getModelFields() as $key => $field) {
-            if ($this->request->request->has($key)) {
-                $factura->{$key} = $this->request->request->get($key);
+        $lines = [];
+        $invoiceLines = $invoice->getLines();
+        foreach ($invoiceLines as $line) {
+            $quantity = (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
+            if (!empty($quantity)) {
+                $lines[] = $line;
             }
         }
 
-        $db = new DataBase();
-        $db->beginTransaction();
-
-        // guardamos la factura
-        if (false === $factura->save()) {
-            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Error saving the invoice',
-            ]));
-            $db->rollback();
-            return;
+        // si no se especifican cantidades de las lineas,
+        // incluimos todas las lineas en la factura rectificativa.
+        if (empty($lines)) {
+            $lines = $invoiceLines;
         }
 
-        // guardamos las líneas
-        if (false === $this->saveLines($factura)) {
-            $db->rollback();
-            return;
+        $this->dataBase->beginTransaction();
+
+        if ($invoice->editable) {
+            foreach ($invoice->getAvailableStatus() as $status) {
+                if ($status->editable || !$status->activo) {
+                    continue;
+                }
+
+                $invoice->idestado = $status->idestado;
+                if (false === $invoice->save()) {
+                    $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
+                    $this->dataBase->rollback();
+                    return null;
+                }
+            }
         }
 
-        // ¿Está pagada?
-        if ($this->request->get('pagada', false)) {
-            foreach ($factura->getReceipts() as $receipt) {
+        $newRefund = new FacturaCliente();
+        $newRefund->loadFromData($invoice->toArray(), $invoice::dontCopyFields());
+        $newRefund->codigorect = $invoice->codigo;
+        $newRefund->codserie = $this->request->request->get('codserie') ?? $invoice->codserie;
+        $newRefund->idfacturarect = $invoice->idfactura;
+        $newRefund->nick = $this->request->request->get('nick');
+        $newRefund->observaciones = $this->request->request->get('observaciones');
+        $newRefund->setDate($this->request->request->get('fecha'), date(FacturaCliente::HOUR_STYLE));
+        if (false === $newRefund->save()) {
+            $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->dataBase->rollback();
+            return null;
+        }
+
+        foreach ($lines as $line) {
+            $newLine = $newRefund->getNewLine($line->toArray());
+            $newLine->cantidad = 0 - (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), $line->cantidad);
+            $newLine->idlinearect = $line->idlinea;
+            if (false === $newLine->save()) {
+                $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
+                $this->dataBase->rollback();
+                return null;
+            }
+        }
+
+        $newLines = $newRefund->getLines();
+        $newRefund->idestado = $invoice->idestado;
+        if (false === Calculator::calculate($newRefund, $newLines, true)) {
+            $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->dataBase->rollback();
+            return null;
+        }
+
+        // si la factura estaba pagada, marcamos los recibos de la nueva como pagados
+        if ($invoice->pagada) {
+            foreach ($newRefund->getReceipts() as $receipt) {
                 $receipt->pagado = true;
                 $receipt->save();
             }
-
-            // recargamos la factura
-            $factura->loadFromCode($factura->idfactura);
         }
 
-        $db->commit();
+        // asignamos el estado de la factura
+        $newRefund->idestado = $this->request->request->get('idestado');
+        if (false === $newRefund->save()) {
+            $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->dataBase->rollback();
+            return null;
+        }
 
-        // devolvemos la respuesta
-        $this->response->setContent(json_encode([
-            'doc' => $factura->toArray(),
-            'lines' => $factura->getLines(),
-        ]));
+        $this->dataBase->commit();
+        Tools::log()->notice('record-updated-correctly');
+
+        return $newRefund;
     }
 
-    protected function saveLines(FacturaCliente &$factura): bool
+    /**
+     * @param string $mensaje
+     * @param int $errorCode
+     *
+     * @return void
+     */
+    private function sendError(string $mensaje, int $errorCode): void
     {
-        if (!$this->request->request->has('lineas')) {
-            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'lineas field is required',
-            ]));
-            return false;
-        }
-
-        $lineData = $this->request->request->get('lineas');
-        $lineas = json_decode($lineData, true);
-        if (!is_array($lineas)) {
-            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Invalid lines',
-            ]));
-            return false;
-        }
-
-        $newLines = [];
-        foreach ($lineas as $line) {
-            $newLine = empty($line['referencia'] ?? '') ?
-                $factura->getNewLine() :
-                $factura->getNewProductLine($line['referencia']);
-
-            $newLine->cantidad = (float)($line['cantidad'] ?? 1);
-            $newLine->descripcion = $line['descripcion'] ?? $newLine->descripcion ?? '?';
-            $newLine->pvpunitario = (float)($line['pvpunitario'] ?? $newLine->pvpunitario);
-            $newLine->dtopor = (float)($line['dtopor'] ?? $newLine->dtopor);
-            $newLine->dtopor2 = (float)($line['dtopor2'] ?? $newLine->dtopor2);
-
-            if (!empty($line['excepcioniva'] ?? '')) {
-                $newLine->excepcioniva = $line['excepcioniva'];
-            }
-
-            if (!empty($line['codimpuesto'] ?? '')) {
-                $newLine->codimpuesto = $line['codimpuesto'];
-            }
-
-            if (!empty($line['suplido'] ?? '')) {
-                $newLine->suplido = (bool)$line['suplido'];
-            }
-
-            if (!empty($line['mostrar_cantidad'] ?? '')) {
-                $newLine->mostrar_cantidad = (bool)$line['mostrar_cantidad'];
-            }
-
-            if (!empty($line['mostrar_precio'] ?? '')) {
-                $newLine->mostrar_precio = (bool)$line['mostrar_precio'];
-            }
-
-            if (!empty($line['salto_pagina'] ?? '')) {
-                $newLine->salto_pagina = (bool)$line['salto_pagina'];
-            }
-
-            $newLines[] = $newLine;
-        }
-
-        // actualizamos los totales y guardamos
-        if (false === Calculator::calculate($factura, $newLines, true)) {
-            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Error calculating the invoice',
-            ]));
-            return false;
-        }
-
-        return true;
+        $this->response->setStatusCode($errorCode);
+        $this->response->setContent(json_encode([
+            'status' => 'error',
+            'message' => Tools::lang()->trans($mensaje),
+        ]));
     }
 }
