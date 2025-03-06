@@ -231,7 +231,7 @@ final class Kernel
     public static function unlock(string $processName): bool
     {
         $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
-        return file_exists($lockFile) && unlink($lockFile);
+        return file_exists($lockFile) && @unlink($lockFile);
     }
 
     public static function version(): float
