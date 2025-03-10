@@ -126,27 +126,15 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        {% if fsc.getMaxFileUpload() < 99 %}
-                            <div class="alert alert-warning mb-0">
-                                {{ trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}
-                            </div>
-                        {% endif %}
                         <div class="modal-body">
-                            <div class="form-group">
+                            <div class="form-group mb-2">
                                 {{ trans('select-plugin-zip-file') }}<br/>
-                                <input type="file" name="plugin[]" accept="application/zip" multiple required/>
-                                {% if fsc.getMaxFileUpload() >= 99 %}
-                                    <small class="form-text text-muted">
-                                        {{ trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}
-                                    </small>
-                                {% endif %}
+                                <input type="file" name="plugin[]" id="inputPluginFile" accept="application/zip" multiple required/>
                             </div>
+                            <div id="progressFileUpload"></div>
                             <div class="text-right mt-5">
                                 <button type="button" class="btn btn-spin-action btn-secondary" data-dismiss="modal">
                                     {{ trans('cancel') }}
-                                </button>
-                                <button type="submit" class="btn btn-spin-action btn-success">
-                                    {{ trans('continue') }}
                                 </button>
                             </div>
                         </div>
@@ -188,21 +176,6 @@
             $(document).ready(function () {
                 searchList('#querySearchPlugin', '#all-plugins .card', '.card-title');
                 searchList('#querySearchInstalledPlugins', '#installed-plugins .item-plugin', '.plugin-name');
-
-                // si los archivos son demasiado grandes, no se pueden subir
-                $("#f_add_plugins").submit(function (e) {
-                    let size = 0;
-                    let files = document.querySelector('input[type=file]').files;
-                    for (let i = 0; i < files.length; i++) {
-                        size += files[i].size;
-                    }
-
-                    if (size > {{ fsc.getMaxFileUpload() }} * 1024 * 1024) { // MB
-                        e.preventDefault();
-                        alert('{{ trans('plugin-file-too-big', {'%size%': fsc.getMaxFileUpload()}) }}');
-                        animateSpinner('remove');
-                    }
-                });
             });
 
             function searchList(querySelectorInput, querySelectorItem, querySelectorPluginName) {
@@ -213,6 +186,43 @@
                     });
                 });
             }
+        </script>
+        <script src="{{ asset('Dinamic/Assets/JS/FileUploader.js') }}"></script>
+        <script>
+            $(document).ready(function () {
+                // restamos 1024 al chunkSize para que quepan
+                // los datos que se le enviar por form
+                // "file", "filename", "totalChunks", "chunkIndex", "action"
+                const chunkSize = {{ fsc.getMaxFileUpload() * 1024 * 1024 }} - 1024;
+                const action = 'upload-chunk';
+
+                const urlLimpia = new URL(location.href);
+                urlLimpia.searchParams.delete('action');
+                urlLimpia.searchParams.delete('multireqtoken');
+                const url = urlLimpia.toString();
+
+                $("#inputPluginFile").fileUploader({
+                    url, chunkSize, action,
+                    onStart: function (filename, fileSize) {
+                        animateSpinner('add')
+                    },
+                    onProgress: function (percentage) {
+                        $('#progressFileUpload')
+                            .addClass('progress')
+                            .html(`<div class="progress-bar" role="progressbar" style="width: ${percentage}%;" aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100">${percentage}%</div>`);
+                    },
+                    onComplete: function (filename) {
+                        const percentage = 100;
+                        $('#progressFileUpload')
+                            .html(`<div class="progress-bar" role="progressbar" style="width: ${percentage}%;" aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100">Recargando la página, espere.</div>`);
+                        location.href = url;
+                    },
+                    onError: function (error) {
+                        animateSpinner('remove');
+                        console.error("Error: ", error);
+                    }
+                });
+            });
         </script>
     {% endif %}
 {% endblock %}
