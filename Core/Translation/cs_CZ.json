@@ -1489,7 +1489,7 @@
     "supplier-estimation": "Presupuesto de Proveedor",
     "supplier-estimations": "Presupuestos de proveedores",
     "supplier-have-no-iban": "Dodavatel %%supplier nemá IBAN (bankovní účet)",
-    "supplier-iban-changed": "Byl změněn IBAN bankovního účtu dodavatele %codproveedor%. Předtím to bylo %old% a nyní je to %new%",
+    "supplier-iban-changed": "Byl změněn IBAN bankovního účtu dodavatele %codprovezor%. Předtím to bylo %old% a nyní je to %new%",
     "supplier-invoice": "Factura de Proveedor",
     "supplier-invoice-deleted-successfully": "Factura de compra %docCode% ha sido eliminada correctamente.",
     "supplier-invoices": "Facturas de proveedores",
