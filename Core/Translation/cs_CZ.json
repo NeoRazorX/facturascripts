@@ -281,7 +281,7 @@
     "companies": "Empresas",
     "company": "Empresa",
     "company-commission-info": "Sólo se aplicará a la empresa seleccionada",
-    "company-iban-changed": "Byl změněn IBAN bankovního účtu %account%. Předtím bylo %old% a nyní je %new%",
+    "company-iban-changed": "Byl změněn IBAN bankovního účtu %account%. Předtím byl %old% a nyní je %new%",
     "company-manager": "Administrador de la empresa",
     "company-name": "Nombre de empresa",
     "company-tax": "Daň z příjmů právnických osob",
