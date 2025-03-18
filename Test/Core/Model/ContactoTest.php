@@ -195,6 +195,9 @@ final class ContactoTest extends TestCase
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
     }
 
+    /**
+     * @group lentos
+     */
     public function testVies(): void
     {
         // creamos un contacto sin cif/nif

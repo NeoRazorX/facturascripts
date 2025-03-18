@@ -800,6 +800,9 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($customer->delete());
     }
 
+    /**
+     * @group lentos
+     */
     public function testSetIntraCommunity(): void
     {
         // comprobamos primero si el VIES funciona
