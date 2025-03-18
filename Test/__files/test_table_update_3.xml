@@ -65,12 +65,4 @@
         <name>idx_email_email2</name>
         <columns>email, email2</columns>
     </index>
-    <index>
-        <name>idx_observaciones</name>
-        <columns>observaciones</columns>
-    </index>
-    <rename>
-        <old_column>numero</old_column>
-        <new_column>numero_test</new_column>
-    </rename>
 </table>
