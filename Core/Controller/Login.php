@@ -300,7 +300,7 @@ class Login implements ControllerInterface
             return;
         }
 
-        $this->saveCookies($user);
+        $this->saveCookies($user, $request);
 
         // redirect to the user's main page
         if (empty($user->homepage)) {
@@ -328,11 +328,11 @@ class Login implements ControllerInterface
         Tools::log()->notice('logout-ok');
     }
 
-    protected function saveCookies(User $user): void
+    protected function saveCookies(User $user, Request $request): void
     {
         $expiration = time() + (int)Tools::config('cookies_expire', 31536000);
         $path = Tools::config('route', '/');
-        $secure = substr(Tools::siteUrl(), 0, 5) === 'https';
+        $secure = $request->isSecure();
 
         setcookie('fsNick', $user->nick, $expiration, $path, '', $secure, true);
         setcookie('fsLogkey', $user->logkey, $expiration, $path, '', $secure, true);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -241,6 +241,16 @@ class PDFExport extends PDFDocument
         if (!empty($langcode)) {
             $this->i18n->setLang($langcode);
         }
+    }
+
+    public function setCompany(int $idempresa): void
+    {
+        // new page
+        if ($this->pdf === null) {
+            $this->newPage();
+        }
+
+        $this->insertHeader($idempresa);
     }
 
     /**

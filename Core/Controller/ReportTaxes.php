@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -356,6 +356,7 @@ class ReportTaxes extends Controller
         $exportManager = new ExportManager();
         $exportManager->setOrientation('landscape');
         $exportManager->newDoc($this->format, $i18n->trans('taxes'));
+        $exportManager->setCompany($this->idempresa);
 
         // add information table
         $exportManager->addTablePage(

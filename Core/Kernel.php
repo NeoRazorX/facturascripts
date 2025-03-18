@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -236,7 +236,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2024.94;
+        return 2024.95;
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
