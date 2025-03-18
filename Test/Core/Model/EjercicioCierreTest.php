@@ -70,10 +70,14 @@ final class EjercicioCierreTest extends TestCase
 
         // creamos una factura de compra con fecha 04-01-2020
         $facturaCompra = $this->getRandomSupplierInvoice('2020-01-04', $almacen->codalmacen);
+        $facturaCompra->codpago = $empresa->getPaymentMethods()[0]->codpago;
+        $facturaCompra->save();
         $this->assertTrue($facturaCompra->exists());
 
         // creamos una factura de venta con fecha 05-01-2020
         $facturaVenta = $this->getRandomCustomerInvoice('2020-01-05', $almacen->codalmacen);
+        $facturaVenta->codpago = $empresa->getPaymentMethods()[0]->codpago;
+        $facturaVenta->save();
         $this->assertTrue($facturaVenta->exists());
 
         // cerramos el ejercicio
