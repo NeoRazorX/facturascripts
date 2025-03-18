@@ -335,6 +335,11 @@ final class Request
         return $this->query->get($key, $default);
     }
 
+    public function isSecure() : bool
+    {
+        return $this->protocol() === 'https';
+    }
+
     public function url(?int $position = null): string
     {
         // si contiene '?', lo quitamos y lo que venga después
