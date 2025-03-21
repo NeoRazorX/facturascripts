@@ -36,6 +36,7 @@ jobs:
       uses: getong/mariadb-action@v1.11
       with:
         mysql root password: 'root'
+        mysql database: 'facturascripts'
 
     - name: Agregar configuración al proyecto
       run: echo "<?php
