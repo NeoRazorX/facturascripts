@@ -58,5 +58,8 @@ jobs:
           define('FS_DISABLE_ADD_PLUGINS', false);
           define('FS_DISABLE_RM_PLUGINS', false);" > config.php
 
+    - name: Ver info
+      run: echo config.php; pwd; ls -la
+
     - name: Ejecutar tests
       run: vendor/bin/phpunit --testdox --colors=always
