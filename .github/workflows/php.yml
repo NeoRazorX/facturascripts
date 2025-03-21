@@ -38,7 +38,7 @@ jobs:
         mysql root password: 'root'
 
     - name: Agregar configuración al proyecto
-      run: echo "<?php                                                                                                                          [12:42:18]
+      run: echo "<?php
           define('FS_COOKIES_EXPIRE', 31536000);
           define('FS_ROUTE', '');
           define('FS_DB_TYPE', 'mysql');
@@ -59,7 +59,7 @@ jobs:
           define('FS_DISABLE_RM_PLUGINS', false);" > config.php
 
     - name: Ver info
-      run: echo config.php; pwd; ls -la
+      run: cat config.php
 
     - name: Ejecutar tests
       run: vendor/bin/phpunit --testdox --colors=always
