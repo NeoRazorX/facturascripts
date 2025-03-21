@@ -59,4 +59,4 @@ jobs:
           define('FS_DISABLE_RM_PLUGINS', false);" > config.php
 
     - name: Ejecutar tests
-      run: vendor/bin/phpunit --testdox --colors=always --allow-risky=yes
+      run: vendor/bin/phpunit --testdox --colors=always
