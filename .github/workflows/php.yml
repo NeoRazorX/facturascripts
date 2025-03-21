@@ -1,39 +1,62 @@
-name: PHP Composer
+name: Test Facturascripts
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "githubActions" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "githubActions" ]
 
-permissions:
-  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: ['8.4'] #php-versions: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
 
+    name: PHP ${{ matrix.php-versions }}
     steps:
-    - uses: actions/checkout@v4
+    - name: Agregar el repo
+      uses: actions/checkout@v4
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
-
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v3
+    - name: Montar php
+      uses: shivammathur/setup-php@v2
       with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+        php-version: ${{ matrix.php-versions }}
+        extensions: bcmath, curl, gd, iconv, mysqli, pdo_mysql, soap, zip, fileinfo, openssl, simplexml, mbstring
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+    - name: Instalar dependencias de composer
+      uses: "ramsey/composer-install@v3"
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
+    - name: Agregar la base de datos
+      uses: getong/mariadb-action@v1.11
+      with:
+        mysql root password: 'root'
 
-    # - name: Run test suite
-    #   run: composer run-script test
+    - name: Agregar configuración al proyecto
+      run: echo "<?php                                                                                                                          [12:42:18]
+          define('FS_COOKIES_EXPIRE', 31536000);
+          define('FS_ROUTE', '');
+          define('FS_DB_TYPE', 'mysql');
+          define('FS_DB_HOST', '127.0.0.1');
+          define('FS_DB_PORT', 3306);
+          define('FS_DB_NAME', 'facturascripts');
+          define('FS_DB_USER', 'root');
+          define('FS_DB_PASS', 'root');
+          define('FS_DB_FOREIGN_KEYS', true);
+          define('FS_DB_TYPE_CHECK', true);
+          define('FS_MYSQL_CHARSET', 'utf8mb4');
+          define('FS_MYSQL_COLLATE', 'utf8mb4_unicode_520_ci');
+          define('FS_LANG', 'es_ES');
+          define('FS_TIMEZONE', 'Africa/Abidjan');
+          define('FS_HIDDEN_PLUGINS', '');
+          define('FS_DEBUG', true);
+          define('FS_DISABLE_ADD_PLUGINS', false);
+          define('FS_DISABLE_RM_PLUGINS', false);" > config.php
+
+    - name: Ejecutar tests
+      run: vendor/bin/phpunit --testdox --colors=always --allow-risky=yes
