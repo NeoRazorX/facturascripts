@@ -33,15 +33,15 @@ jobs:
     - name: Instalar dependencias
       uses: "ramsey/composer-install@v3"
 
-    - name: Shutdown default Ubuntu MySQL
-      run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
-
     - name: Montar base de datos
-      uses: mirromutth/mysql-action@v1.1
+      uses: shogo82148/actions-setup-mysql@v1
       with:
-        mysql root password: 'root'
-        mysql database: 'facturascripts'
-        mysql version: '8.0'
+        distribution: "mysql"
+        mysql-version: "8.0"
+        root-password: "root"
+      
+    - name: Crear base de datos
+      run: 'mysql -u root -proot -e "CREATE DATABASE facturascripts CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;'
 
     - name: Agregar configuración del proyecto
       run: echo "<?php
