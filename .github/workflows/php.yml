@@ -67,4 +67,5 @@ jobs:
           define('FS_DISABLE_RM_PLUGINS', false);" > config.php
 
     - name: Ejecutar tests
+      if: ${{ always() }}
       run: vendor/bin/phpunit --testdox --colors=always
