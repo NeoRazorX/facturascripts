@@ -8,9 +8,9 @@ on:
     branches: [ "master", "githubActions" ]
 
 concurrency:
+  # que se cancele el test actual si se hace otro commit en la misma rama
   group: ci-${{ github.ref }}
-  # que no se cancelen el resto de tests si falla alguno
-  #cancel-in-progress: true
+  cancel-in-progress: true
 
 jobs:
   
@@ -67,5 +67,5 @@ jobs:
           define('FS_DISABLE_RM_PLUGINS', false);" > config.php
 
     - name: Ejecutar tests
-      if: ${{ always() }}
+      if: ${{ success() }}
       run: vendor/bin/phpunit --testdox --colors=always
