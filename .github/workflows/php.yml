@@ -1,6 +1,7 @@
 name: Test Facturascripts
 
 on:
+  # las ramas en las que quieres que se ejecuten los tests
   push:
     branches: [ "master", "githubActions" ]
   pull_request:
@@ -8,7 +9,8 @@ on:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # que no se cancelen el resto de tests si falla alguno
+  #cancel-in-progress: true
 
 jobs:
   
