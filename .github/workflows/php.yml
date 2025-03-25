@@ -44,7 +44,7 @@ jobs:
         root-password: "root"
       
     - name: Crear base de datos
-      run: 'mysql -u root -proot -e "CREATE DATABASE facturascripts CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"'
+      run: 'mysql -u root -proot -e "CREATE DATABASE facturascripts CHARACTER SET utf8 COLLATE utf8_bin;"'
 
     - name: Agregar configuración del proyecto
       run: echo "<?php
