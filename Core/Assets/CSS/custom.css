@@ -103,10 +103,10 @@
 .pointer {
     cursor: pointer;
 }
-input[required]:not(:read-only) {
+input[required].form-control:not(:read-only) {
     background-image: linear-gradient(to bottom, rgba(253,253,150,0.5), rgba(253,253,150,0.25));
 }
-textarea[required]:not(:read-only) {
+textarea[required].form-control:not(:read-only) {
     background-image: linear-gradient(to bottom, rgba(253,253,150,0.5), rgba(253,253,150,0.25));
 }
 /* end pace customizations */
