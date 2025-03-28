@@ -317,9 +317,9 @@ class DocumentStitcher extends Controller
      */
     protected function getCodes(): array
     {
-        $code = $this->request->request->getArray('code');
-        if ($code) {
-            return $code;
+        $codes = $this->request->request->getArray('codes');
+        if ($codes) {
+            return $codes;
         }
 
         $codes = explode(',', $this->request->get('codes', ''));
