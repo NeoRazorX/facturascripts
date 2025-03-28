@@ -53,9 +53,7 @@
             </column>
             <column name="mailer" numcolumns="3" order="140">
                 <widget type="select" fieldname="mailer" required="true">
-                    <values title="Mail">mail</values>
-                    <values title="SendMail">sendmail</values>
-                    <values title="SMTP">smtp</values>
+                    <values/>
                 </widget>
             </column>
             <column name="authentication" numcolumns="3" order="150">
