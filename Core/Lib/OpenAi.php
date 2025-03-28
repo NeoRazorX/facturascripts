@@ -29,6 +29,7 @@ class OpenAi
 {
     const ASSISTANTS_URL = 'https://api.openai.com/v1/assistants';
     const AUDIO_SPEECH_URL = 'https://api.openai.com/v1/audio/speech';
+    const AUDIO_TRANSCRIPT_URL = 'https://api.openai.com/v1/audio/transcriptions';
     const CHAT_URL = 'https://api.openai.com/v1/chat/completions';
     const FILES_URL = 'https://api.openai.com/v1/files';
     const IMAGES_URL = 'https://api.openai.com/v1/images/generations';
@@ -135,6 +136,27 @@ class OpenAi
     public function audioHD(string $input, string $voice = 'alloy', string $format = 'mp3'): string
     {
         return $this->audio($input, $voice, $format, 'tts-1-hd');
+    }
+
+    public function audioTranscript(CURLFile $file, string $model = 'gpt-4o-transcribe'): string
+    {
+        $data = [
+            'file' => $file,
+            'model' => $model
+        ];
+
+        $response = Http::post(self::AUDIO_TRANSCRIPT_URL, $data)
+            ->setHeader('Content-Type', 'multipart/form-data')
+            ->setBearerToken($this->api_key)
+            ->setTimeOut($this->timeout);
+
+        if ($response->failed()) {
+            Tools::log()->error('audio transcript error: ' . $response->status() . ' '
+                . $response->errorMessage() . ' ' . $response->body());
+            return '';
+        }
+
+        return $response->json()['text'] ?? '';
     }
 
     public function chat(array $messages, string $user = '', string $model = 'gpt-4o-mini'): string
