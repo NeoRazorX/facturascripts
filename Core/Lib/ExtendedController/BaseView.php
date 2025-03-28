@@ -353,21 +353,12 @@ abstract class BaseView
      */
     public function loadPageOptions($user = false)
     {
-        if (false === is_bool($user)) {
-            // sets user security level for use in render
-            VisualItem::setLevel($user->level);
-        }
+        $viewName = explode('-', $this->name)[0];
 
-        $orderBy = ['nick' => 'ASC'];
-        $where = $this->getPageWhere($user);
-        if ($this->pageOption->loadFromCode('', $where, $orderBy)) {
-            $this->settings['customized'] = true;
-        } else {
-            $viewName = explode('-', $this->name)[0];
-            VisualItemLoadEngine::installXML($viewName, $this->pageOption);
-        }
+        $isCustomized = false;
+        VisualItemLoadEngine::loadPageOptions($viewName, $this->pageOption, $this->columns, $this->modals, $this->rows, $user, $isCustomized);
 
-        VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->pageOption);
+        $this->settings['customized'] = $isCustomized;
     }
 
     public function setSettings(string $key, $value): BaseView

@@ -166,15 +166,12 @@ class EditPageOption extends Controller
      */
     protected function loadPageOptions()
     {
-        if ($this->selectedUser && false === $this->loadPageOptionsForUser()) {
-            VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
+        $user = new User();
+        if(false === $user->loadFromCode($this->selectedUser)){
+            $user = false;
         }
 
-        if (empty($this->selectedUser) && false === $this->loadPageOptionsForAll()) {
-            VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
-        }
-
-        VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->model);
+        VisualItemLoadEngine::loadPageOptions($this->selectedViewName, $this->model, $this->columns, $this->modals, $this->rows, $user);
     }
 
     protected function loadSelectedViewName()
