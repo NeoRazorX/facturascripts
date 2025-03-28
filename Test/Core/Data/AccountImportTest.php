@@ -30,6 +30,9 @@ use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group lentos
+ */
 final class AccountImportTest extends TestCase
 {
     use LogErrorsTrait;

@@ -43,6 +43,9 @@ final class EjercicioCierreTest extends TestCase
         self::removeTaxRegularization();
     }
 
+    /**
+     * @group lentos
+     */
     public function testCloseExercise()
     {
         // creamos una nueva empresa
