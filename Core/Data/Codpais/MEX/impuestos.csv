@@ -1,5 +1,17 @@
-codimpuesto,descripcion,iva,recargo
-IVA16GEN,"IVA general del 16%",16,0
-IVA08FRON,"IVA reducido en la frontera",8,0
-IVA0,"Exportaciones exentas de IVA",0,0
-IVAEXEMPT,"Operaciones exentas de IVA",0,0
+codimpuesto;descripcion;iva;recargo
+IVA0;IVA 0%;0;0
+IVA16;IVA 16%;16;0
+IVA8;IVA Crédito aplicado del 50%;8;0
+IEPS265;IEPS 26.5%;26.5;0
+IEPS30;IEPS 30%;30;0
+IEPS53;IEPS 53%;53;0
+IEPS50;IEPS 50%;50;0
+IEPS160;IEPS 160%;160;0
+IEPS304;IEPS 30.4%;30.4;0
+IEPS25;IEPS 25%;25;0
+IEPS9;IEPS 9%;9;0
+IEPS8;IEPS 8%;8;0
+IEPS7;IEPS 7%;7;0
+IEPS6;IEPS 6%;6;0
+IEPS3;IEPS 3%;3;0
+IEPS0;IEPS 0%;0;0
