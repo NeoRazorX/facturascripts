@@ -32,7 +32,7 @@ class ApiExportFacturaCliente extends ApiController
     {
         // si el método no es GET, devolvemos un error
         if (false === $this->request->isMethod(Request::METHOD_GET)) {
-            $this->response->setStatusCode(Response::HTTP_METHOD_NOT_ALLOWED);
+            $this->response->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED);
             $this->response->setContent(json_encode([
                 'status' => 'error',
                 'message' => 'Method not allowed',
@@ -42,7 +42,7 @@ class ApiExportFacturaCliente extends ApiController
 
         $code = $this->getUriParam(3);
         if (empty($code)) {
-            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $this->response->setHttpCode(Response::HTTP_BAD_REQUEST);
             $this->response->setContent(json_encode([
                 'status' => 'error',
                 'message' => 'No invoice selected',
@@ -52,7 +52,7 @@ class ApiExportFacturaCliente extends ApiController
 
         $facturaCliente = new FacturaCliente();
         if (false === $facturaCliente->loadFromCode($code)) {
-            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $this->response->setHttpCode(Response::HTTP_NOT_FOUND);
             $this->response->setContent(json_encode([
                 'status' => 'error',
                 'message' => 'Invoice not found',
