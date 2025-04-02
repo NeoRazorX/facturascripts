@@ -373,7 +373,7 @@ final class Kernel
             }
 
             // coincidencia con comodín
-            if (str_ends_with($route, '*') && 0 === strncmp($url, $route, strlen($route) - 1)) {
+            if (substr($route, -1) === '*' && 0 === strncmp($url, $route, strlen($route) - 1)) {
                 $app = new $controller($name, $url);
                 $app->run();
                 return;
