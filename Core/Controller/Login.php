@@ -316,7 +316,7 @@ class Login implements ControllerInterface
             return;
         }
 
-        $this->updateUserAndRedirect($user, Session::getClientIp(), $request->headers->get('User-Agent'));
+        $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
     }
 
     protected function validCodeAction(Request $request): void
@@ -329,11 +329,13 @@ class Login implements ControllerInterface
             return;
         }
 
-        $this->updateUserAndRedirect($user, Session::getClientIp(), $request->headers->get('User-Agent'));
+        $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
     }
 
-    protected function updateUserAndRedirect(User $user, string $ip, string $browser): void
+    protected function updateUserAndRedirect(User $user, string $ip, Request $request): void
     {
+        $browser = $request->headers->get('User-Agent');
+
         // update user data
         Session::set('user', $user);
         $user->newLogkey($ip, $browser);
