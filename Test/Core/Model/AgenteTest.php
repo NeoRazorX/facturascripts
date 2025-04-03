@@ -86,6 +86,9 @@ final class AgenteTest extends TestCase
         $this->assertTrue($agent->delete(), 'agent-cant-delete-3');
     }
 
+    /**
+     * @group lentos
+     */
     public function testVies(): void
     {
         // creamos un agente sin cifnif
