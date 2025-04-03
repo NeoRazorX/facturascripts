@@ -300,7 +300,7 @@ class WidgetSelect extends BaseWidget
 
         // separamos el value del modelo por comas para poder seleccionar varios valores
         // necesario si activamos el modo multiple
-        $modelValues = explode(',', $modelValues);
+        $modelValues = explode(',', $modelValues ?? '');
 
         $found = false;
         foreach ($this->values as $option) {
