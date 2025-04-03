@@ -57,19 +57,21 @@
     </script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-    <a class="navbar-brand" href="" onclick="location.reload();">
-        <img src="Core/Assets/Images/logo.png" width="30" height="30" class="align-top" alt="FacturaScripts"/>
-        FacturaScripts {{ version }}
-    </a>
-    <ul class="nav navbar-nav mr-auto"></ul>
-    <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
-        <li class="nav-item">
-            <a class="nav-link" href="?phpinfo=TRUE">
-                <i class="fa-solid fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
-            </a>
-        </li>
-    </ul>
+<nav class="navbar bg-dark" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="" onclick="location.reload();">
+            <img src="Core/Assets/Images/logo.png" width="30" height="30" class="align-top me-2" alt="FacturaScripts"/>
+            FacturaScripts {{ version }}
+        </a>
+        <ul class="nav navbar-nav me-auto"></ul>
+        <ul class="navbar-nav flex-row ms-md-auto d-none d-md-flex">
+            <li class="nav-item">
+                <a class="nav-link" href="?phpinfo=TRUE">
+                    <i class="fa-solid fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
+                </a>
+            </li>
+        </ul>
+    </div>
 </nav>
 <div class="container-fluid">
     <div class="row">
@@ -85,8 +87,8 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
-            <h1 class="h2 mb-1">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> {{ trans('installer') }}
+            <h1 class="h2 mt-sm-5 mb-1">
+                <i class="fa-solid fa-wand-magic-sparkles me-2"></i> {{ trans('installer') }}
             </h1>
             <p>{{ trans('installer-p') }}</p>
         </div>
@@ -285,27 +287,30 @@
                     </div>
                 </div>
             </form>
-            <br/>
-            <div class="card-deck">
-                <div class="card shadow mb-3">
-                    <div class="card-body text-center">
-                        <i class="fa-solid fa-book fa-3x text-primary"></i>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn btn-block btn-lg btn-link" href="https://facturascripts.com/ayuda" rel="nofollow"
-                           target="_blank">{{ trans('help') }}
-                        </a>
-                    </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <div class="card shadow mb-3">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-book fa-3x text-primary"></i>
                 </div>
-                <div class="card shadow mb-3">
-                    <div class="card-body text-center">
-                        <i class="fa-solid fa-comment-dots fa-3x text-info"></i>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn btn-block btn-lg btn-link" href="https://facturascripts.com/contacto"
-                           rel="nofollow" target="_blank">{{ trans('support') }}
-                        </a>
-                    </div>
+                <div class="card-footer">
+                    <a class="btn btn-lg btn-link w-100" href="https://facturascripts.com/ayuda" rel="nofollow"
+                       target="_blank">{{ trans('help') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div class="card shadow mb-3">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-comment-dots fa-3x text-info"></i>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-lg btn-link w-100" href="https://facturascripts.com/contacto"
+                       rel="nofollow" target="_blank">{{ trans('support') }}
+                    </a>
                 </div>
             </div>
         </div>

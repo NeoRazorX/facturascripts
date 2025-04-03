@@ -109,9 +109,6 @@ final class Kernel
         $lang = $_COOKIE['fsLang'] ?? Tools::config('lang', 'es_ES');
         Translator::setDefaultLang($lang);
 
-        // inicializamos el antiguo traductor
-        ToolBox::i18n()->setDefaultLang($lang);
-
         // workers
         WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Delete');
         WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Update');
