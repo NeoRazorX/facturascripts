@@ -84,4 +84,76 @@ class Validator
 
         return filter_var($url, FILTER_VALIDATE_URL) !== false;
     }
+
+    /**
+     * Devuelve true si la fecha es válida en cualquier formato común (dd-mm-yyyy, mm/dd/yyyy, etc)
+     */
+    public static function date(string $date): bool
+    {
+        if (empty($date)) {
+            return false;
+        }
+
+        // Intentar convertir la fecha a timestamp
+        $timestamp = strtotime($date);
+        if ($timestamp === false) {
+            return false;
+        }
+
+        // Verificar que la fecha convertida sea válida
+        return checkdate(
+            (int)date('m', $timestamp),
+            (int)date('d', $timestamp),
+            (int)date('Y', $timestamp)
+        );
+    }
+
+    /**
+     * Devuelve true si la hora es válida en cualquier formato común (HH:ii:ss, HH:ii, etc)
+     */
+    public static function hour(string $hour): bool
+    {
+        if (empty($hour)) {
+            return false;
+        }
+
+        // Intentar convertir la hora a timestamp
+        $timestamp = strtotime($hour);
+        if ($timestamp === false) {
+            return false;
+        }
+
+        // Verificar que la hora sea válida (0-23 para horas, 0-59 para minutos y segundos)
+        $h = (int)date('H', $timestamp);
+        $i = (int)date('i', $timestamp);
+        $s = (int)date('s', $timestamp);
+
+        return $h >= 0 && $h <= 23 && 
+               $i >= 0 && $i <= 59 && 
+               $s >= 0 && $s <= 59;
+    }
+
+    /**
+     * Devuelve true si la fecha y hora son válidas en cualquier formato común
+     */
+    public static function datetime(string $datetime): bool
+    {
+        if (empty($datetime)) {
+            return false;
+        }
+
+        // Intentar convertir la fecha y hora a timestamp
+        $timestamp = strtotime($datetime);
+        if ($timestamp === false) {
+            return false;
+        }
+
+        // Verificar que la fecha sea válida usando el método date()
+        if (!static::date(date('Y-m-d', $timestamp))) {
+            return false;
+        }
+
+        // Verificar que la hora sea válida usando el método hour()
+        return static::hour(date('H:i:s', $timestamp));
+    }
 }
