@@ -43,6 +43,8 @@ class EditProducto extends EditController
     use DocFilesTrait;
     use ProductImagesTrait;
 
+    private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
+
     public function getModelClassName(): string
     {
         return 'Producto';
