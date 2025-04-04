@@ -102,10 +102,29 @@ final class Request
         return new self([
             'cookies' => $_COOKIE,
             'files' => $_FILES,
-            'headers' => $_SERVER,
+            'headers' => self::getHeaders(),
             'query' => $_GET,
             'request' => $_POST,
         ]);
+    }
+
+    private static function getHeaders(): array
+    {
+        $headers = [];
+
+        foreach ($_SERVER as $key => $value) {
+            $normalizedKey = strtoupper($key);
+
+            // Si la clave comienza con "HTTP_", eliminamos el prefijo.
+            // ejemplo: HTTP_TOKEN -> TOKEN
+            if (str_starts_with($normalizedKey, 'HTTP_')) {
+                $headers[strtr($normalizedKey, ['HTTP_' => ''])] = $value;
+            } else {
+                $headers[$normalizedKey] = $value;
+            }
+        }
+
+        return $headers;
     }
 
     public function file(string $key): ?UploadedFile

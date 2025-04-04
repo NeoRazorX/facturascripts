@@ -342,6 +342,7 @@ class Login implements ControllerInterface
         }
 
         // save cookies
+        $request = Request::createFromGlobals();
         $this->saveCookies($user, $request);
 
         // redirect to the user's main page

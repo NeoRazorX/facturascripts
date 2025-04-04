@@ -58,9 +58,8 @@ final class SubRequest
 
     public function get(string $key, $default = null): ?string
     {
-        if ($key === 'User-Agent') {
-            return $this->data['HTTP_USER_AGENT'] ?? $default;
-        }
+        // normalizar key
+        $key = strtoupper($key);
 
         $value = $this->data[$key] ?? $default;
 
