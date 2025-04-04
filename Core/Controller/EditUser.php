@@ -142,7 +142,7 @@ class EditUser extends EditController
     protected function createViewsRole(string $viewName = 'EditRoleUser'): void
     {
         $this->addEditListView($viewName, 'RoleUser', 'roles', 'fa-solid fa-address-card')
-            ->setInLine('true')
+            ->setInLine(true)
             ->disableColumn('user', true);
     }
 
