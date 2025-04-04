@@ -200,7 +200,7 @@ class Familia extends ModelClass
         return parent::test() && $this->testLoops() && $this->testAccounting();
     }
 
-    private static function getSubaccountFromFamily(?string $code, string $field, Familia $model = null): string
+    private static function getSubaccountFromFamily(?string $code, string $field, ?Familia $model = null): string
     {
         if (empty($code)) {
             return '';
