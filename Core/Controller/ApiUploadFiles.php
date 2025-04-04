@@ -41,7 +41,7 @@ class ApiUploadFiles extends ApiController
         $files = $this->request->files->getArray('files');
         foreach ($files as $file) {
             /** @var UploadedFile $file */
-            if($uploadedFile = $this->uploadFile($file)){
+            if ($uploadedFile = $this->uploadFile($file)) {
                 $uploadedFiles[] = $uploadedFile;
             }
         }
