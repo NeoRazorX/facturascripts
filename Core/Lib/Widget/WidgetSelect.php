@@ -290,18 +290,6 @@ class WidgetSelect extends BaseWidget
             . ' data-limit="' . $this->limit . '"'
             . '>';
 
-        // guardamos el valor original en otra variable para modificarla
-        $modelValues = $this->value;
-
-        // si el value del modelo es un booleano, lo convertimos a string
-        if (is_bool($modelValues)) {
-            $modelValues = $modelValues ? '1' : '0';
-        }
-
-        // separamos el value del modelo por comas para poder seleccionar varios valores
-        // necesario si activamos el modo multiple
-        $modelValues = explode(',', $modelValues ?? '');
-
         $found = false;
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
