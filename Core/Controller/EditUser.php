@@ -260,14 +260,14 @@ class EditUser extends EditController
     /**
      * Valida el código TOTP proporcionado por el usuario.
      *
-     * @param Model $userModel El modelo del usuario.
+     * @param User $userModel El modelo del usuario.
      * @param string $totpCode El código TOTP introducido.
      * @return bool Verdadero si el código es válido, falso en caso contrario.
      */
-    private function validateTotpCode($userModel, string $totpCode): bool
+    private function validateTotpCode(User $userModel, string $totpCode): bool
     {
         if (empty($userModel->two_factor_secret_key)) {
-            Tools::log()->error("El usuario con ID {$userModel->id} no tiene una clave secreta de TOTP configurada.");
+            Tools::log()->error("El usuario con nick {$userModel->nick} no tiene una clave secreta de TOTP configurada.");
             return false;
         }
 
