@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib\API\Base;
 
 use Exception;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -140,7 +139,7 @@ abstract class APIResourceClass
      */
     public function processResource(string $name): bool
     {
-        $this->method = $this->request->getMethod();
+        $this->method = $this->request->method();
 
         try {
             // http://www.restapitutorial.com/lessons/httpmethods.html
@@ -227,14 +226,5 @@ abstract class APIResourceClass
 
         $this->response->setContent(json_encode($res));
         $this->response->setHttpCode($status);
-    }
-
-    /**
-     * @return ToolBox
-     * @deprecated since version 2023.1
-     */
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 }
