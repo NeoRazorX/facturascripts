@@ -179,6 +179,7 @@ class ConfigEmail extends PanelController
             case 'ConfigEmail':
                 $view->loadData('email');
                 $view->model->name = 'email';
+                $this->loadMailerValues($viewName);
                 if ($view->model->mailer === 'smtp') {
                     // añadimos el botón test
                     $this->addButton($viewName, [
@@ -194,6 +195,14 @@ class ConfigEmail extends PanelController
             case 'ListEmailSent':
                 $view->loadData();
                 break;
+        }
+    }
+
+    protected function loadMailerValues(string $viewName)
+    {
+        $column = $this->views[$viewName]->columnForName('mailer');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArray(NewMail::getMailer(), true, false);
         }
     }
 
