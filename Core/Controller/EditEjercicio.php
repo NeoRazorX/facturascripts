@@ -150,24 +150,18 @@ class EditEjercicio extends EditController
     {
         $this->addListView($viewName, 'Cuenta', 'accounts', 'fa-solid fa-book')
             ->addOrderBy(['codcuenta'], 'code', 1)
-            ->addSearchFields(['codcuenta', 'descripcion']);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('fiscal-exercise');
-        $this->views[$viewName]->disableColumn('parent-account');
+            ->addSearchFields(['codcuenta', 'descripcion'])
+            ->disableColumn('fiscal-exercise')
+            ->disableColumn('parent-account');
     }
 
     protected function createViewsAccountingEntries(string $viewName = 'ListAsiento'): void
     {
         $this->addListView($viewName, 'Asiento', 'special-accounting-entries', 'fa-solid fa-balance-scale')
             ->addOrderBy(['fecha', 'numero'], 'date')
-            ->addSearchFields(['concepto', 'numero']);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('exercise');
-
-        // disable button
-        $this->setSettings($viewName, 'btnNew', false);
+            ->addSearchFields(['concepto', 'numero'])
+            ->disableColumn('exercise')
+            ->setSettings('btnNew', false);
     }
 
     protected function createViewsSubaccounting(string $viewName = 'ListSubcuenta'): void
@@ -175,10 +169,8 @@ class EditEjercicio extends EditController
         $this->addListView($viewName, 'Subcuenta', 'subaccounts')
             ->addOrderBy(['codsubcuenta'], 'code', 1)
             ->addOrderBy(['saldo'], 'balance')
-            ->addSearchFields(['codsubcuenta', 'descripcion']);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('fiscal-exercise');
+            ->addSearchFields(['codsubcuenta', 'descripcion'])
+            ->disableColumn('fiscal-exercise');
     }
 
     /**
@@ -350,8 +342,8 @@ class EditEjercicio extends EditController
         }
 
         $data = [
-            'deleteClosing' => $this->request->request->get('delete-closing', true),
-            'deleteOpening' => $this->request->request->get('delete-opening', false)
+            'deleteClosing' => (bool)$this->request->request->get('delete-closing'),
+            'deleteOpening' => (bool)$this->request->request->get('delete-opening')
         ];
         $model = $this->getModel();
 
@@ -359,6 +351,7 @@ class EditEjercicio extends EditController
         if ($closing->delete($model, $data)) {
             Tools::log()->notice('opening-acounting-completed');
         }
+
         // error message not needed
         return true;
     }

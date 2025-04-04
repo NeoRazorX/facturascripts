@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,6 @@ namespace FacturaScripts\Core;
 
 use Closure;
 use Exception;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
 use FacturaScripts\Core\Error\DefaultError;
 
@@ -228,7 +227,7 @@ final class Kernel
     public static function unlock(string $processName): bool
     {
         $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
-        return file_exists($lockFile) && unlink($lockFile);
+        return file_exists($lockFile) && @unlink($lockFile);
     }
 
     public static function version(): float

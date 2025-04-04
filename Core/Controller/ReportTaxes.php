@@ -356,6 +356,7 @@ class ReportTaxes extends Controller
         $exportManager = new ExportManager();
         $exportManager->setOrientation('landscape');
         $exportManager->newDoc($this->format, $i18n->trans('taxes'));
+        $exportManager->setCompany($this->idempresa);
 
         // add information table
         $exportManager->addTablePage(

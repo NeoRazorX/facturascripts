@@ -226,7 +226,7 @@ END;
                 $cron->run();
             } catch (Exception $ex) {
                 echo $ex->getMessage() . PHP_EOL;
-                Tools::log()->error($ex->getMessage());
+                Tools::log('cron')->error($ex->getMessage());
             }
 
             ob_flush();
@@ -241,6 +241,9 @@ END;
 
     protected function runWorkQueue(): void
     {
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('running-work-queue') . ' ... ';
+        ob_flush();
+
         $max = 1000;
         while ($max > 0) {
             if (false === WorkQueue::run()) {

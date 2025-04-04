@@ -161,4 +161,22 @@ class CuentaBanco extends BankAccount
     {
         return parent::url($type, $list);
     }
+
+    protected function saveUpdate(array $values = []): bool
+    {
+        if (false === parent::saveUpdate($values)) {
+            return false;
+        }
+
+        // si ha cambiado el iban, añadimos un aviso al log
+        if (!empty($this->iban_old) && $this->iban_old !== $this->iban) {
+            Tools::log('audit')->warning('company-iban-changed', [
+                '%account%' => $this->codcuenta,
+                '%old%' => $this->iban_old,
+                '%new%' => $this->iban,
+            ]);
+        }
+
+        return true;
+    }
 }

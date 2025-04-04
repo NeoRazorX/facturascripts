@@ -168,7 +168,7 @@ abstract class Receipt extends ModelOnChangeClass
         }
 
         // comprobamos la fecha de vencimiento
-        if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
+        if (empty($this->vencimiento) || strtotime($this->vencimiento) < strtotime($this->fecha)) {
             $this->vencimiento = $this->fecha;
         }
 

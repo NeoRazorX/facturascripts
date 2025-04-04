@@ -306,7 +306,7 @@ class WidgetSelect extends BaseWidget
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
-            if (in_array($option['value'], $modelValues) && (!$found || $this->multiple)) {
+            if ($option['value'] == $this->value && (!$found || $this->multiple)) {
                 $found = true;
                 $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
                 continue;

@@ -104,7 +104,8 @@ trait CommonSalesPurchases
 
     protected static function codalmacen(BusinessDocument $model, string $jsFunc): string
     {
-        $warehouses = 0;
+        $warehouses = count(Almacenes::all());
+
         $options = [];
         foreach (Empresas::all() as $company) {
             if ($company->idempresa != $model->idempresa && $model->exists()) {
@@ -121,7 +122,6 @@ trait CommonSalesPurchases
                 $option .= ($row->codalmacen === $model->codalmacen) ?
                     '<option value="' . $row->codalmacen . '" selected>' . $row->nombre . '</option>' :
                     '<option value="' . $row->codalmacen . '">' . $row->nombre . '</option>';
-                $warehouses++;
             }
             $options[] = '<optgroup label="' . $company->nombrecorto . '">' . $option . '</optgroup>';
         }
