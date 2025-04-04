@@ -162,7 +162,7 @@ final class ValidatorTest extends TestCase
         $this->assertFalse(Validator::url('data:text/html;base64,PHNjcmlwdD5hbGVydCgiVGVzdCIpOzwvc2NyaXB0Pg=='));
     }
 
-    public function testValidDates()
+    public function testValidDates(): void
     {
         $validDates = [
             '15-01-2023',
@@ -175,7 +175,7 @@ final class ValidatorTest extends TestCase
         }
     }
 
-    public function testInvalidDates()
+    public function testInvalidDates(): void
     {
         $invalidDates = [
             '2023-01-15', // Formato incorrecto (debe ser d-m-Y)
@@ -193,7 +193,7 @@ final class ValidatorTest extends TestCase
         }
     }
 
-    public function testValidDateTimes()
+    public function testValidDateTimes(): void
     {
         $validDateTimes = [
             '15-01-2023 14:30:00',
@@ -206,7 +206,7 @@ final class ValidatorTest extends TestCase
         }
     }
 
-    public function testInvalidDateTimes()
+    public function testInvalidDateTimes(): void
     {
         $invalidDateTimes = [
             '15-01-2023T14:30:00',     // Formato incorrecto
