@@ -291,6 +291,7 @@ final class Kernel
             '/api' => 'ApiRoot',
             '/api/3/crearFacturaCliente' => 'ApiCreateFacturaCliente',
             '/api/3/exportarFacturaCliente/*' => 'ApiExportFacturaCliente',
+            '/api/3/uploadFiles' => 'ApiUploadFiles',
             '/api/*' => 'ApiRoot',
             '/Core/Assets/*' => 'Files',
             '/cron' => 'Cron',
