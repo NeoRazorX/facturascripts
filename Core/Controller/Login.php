@@ -311,7 +311,6 @@ class Login implements ControllerInterface
 
         if ($user->two_factor_enabled) {
             $this->two_factor_view = true;
-            $this->user = $user;
             return;
         }
 
