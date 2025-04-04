@@ -253,6 +253,7 @@ final class PedidoProveedorTest extends TestCase
 
         // creamos un pedido
         $doc = new PedidoProveedor();
+        $doc->codpago = $company2->getPaymentMethods()[0]->codpago;
         $doc->setSubject($subject);
         $doc->codalmacen = $warehouse->codalmacen;
         $this->assertTrue($doc->save(), 'pedido-cant-save');
