@@ -96,6 +96,10 @@ class AdminPlugins extends Controller
                 $this->uploadPluginAction();
                 break;
 
+            case 'upload-chunk':
+                $this->uploadPluginChunkAction();
+                break;
+
             default:
                 $this->extractPluginsZipFiles();
                 if (FS_DEBUG) {
@@ -249,5 +253,43 @@ class AdminPlugins extends Controller
             Tools::log()->notice('reloading');
             $this->redirect($this->url(), 3);
         }
+    }
+
+    private function uploadPluginChunkAction()
+    {
+        $chunk = $this->request->files->get('file');
+        $filename = $this->request->request->get('filename');
+        $totalChunks = (int) $this->request->request->get('totalChunks');
+        $chunkIndex = (int) $this->request->request->get('chunkIndex');
+        $uploadDir = Tools::folder('MyFiles', 'Tmp', 'Uploads') . DIRECTORY_SEPARATOR;
+
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $chunkPath = $uploadDir . $filename . ".part{$chunkIndex}";
+        move_uploaded_file($chunk->getPathname(), $chunkPath);
+
+        // Si se han subido todos los chunks, los unimos y movemos al directorio de plugins
+        if (count(glob($uploadDir . $filename . ".part*")) === $totalChunks) {
+            $finalPath = $uploadDir . $filename;
+            $output = fopen($finalPath, 'wb');
+
+            for ($i = 0; $i < $totalChunks; $i++) {
+                $chunkFile = $uploadDir . $filename . ".part{$i}";
+                fwrite($output, file_get_contents($chunkFile));
+                unlink($chunkFile);
+            }
+
+            fclose($output);
+
+            $pluginsPath = Tools::folder('Plugins', $filename);
+            rename($finalPath, $pluginsPath);
+        }
+
+        $this->setTemplate(false);
+        $this->response->setStatusCode(Response::HTTP_OK);
+        $this->response->setContent(json_encode(['status' => 'ok']));
+        $this->response->headers->set('Content-Type', 'application/json');
     }
 }
