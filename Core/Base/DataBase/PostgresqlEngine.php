@@ -111,7 +111,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @param string $error
      *
-     * @return bool|null
+     * @return null|resource
      */
     public function connect(&$error)
     {
@@ -313,7 +313,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function version($link)
+    public function version($link): string
     {
         return 'POSTGRESQL ' . pg_version($link)['server'];
     }
