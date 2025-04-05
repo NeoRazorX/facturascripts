@@ -54,7 +54,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function beginTransaction($link)
+    public function beginTransaction($link): bool
     {
         return $this->exec($link, 'BEGIN TRANSACTION;');
     }
@@ -71,7 +71,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function close($link)
+    public function close($link): bool
     {
         return pg_close($link);
     }
@@ -83,7 +83,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return array
      */
-    public function columnFromData($colData)
+    public function columnFromData($colData): array
     {
         $colData['extra'] = null;
 
@@ -101,7 +101,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function commit($link)
+    public function commit($link): bool
     {
         return $this->exec($link, 'COMMIT;');
     }
@@ -149,7 +149,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function errorMessage($link)
+    public function errorMessage($link): string
     {
         $error = pg_last_error($link);
         return empty($error) ? $this->lastErrorMsg : $error;
@@ -163,7 +163,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function escapeColumn($link, $name)
+    public function escapeColumn($link, $name): string
     {
         return '"' . $name . '"';
     }
@@ -176,7 +176,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function escapeString($link, $str)
+    public function escapeString($link, $str): string
     {
         return pg_escape_string($link, $str);
     }
@@ -190,7 +190,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function exec($link, $sql)
+    public function exec($link, $sql): bool
     {
         return $this->runSql($link, $sql, false) === true;
     }
@@ -200,7 +200,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @param string $operator
      */
-    public function getOperator($operator)
+    public function getOperator($operator): string
     {
         switch ($operator) {
             case 'REGEXP':
@@ -228,7 +228,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function inTransaction($link)
+    public function inTransaction($link): bool
     {
         $status = pg_transaction_status($link);
         switch ($status) {
@@ -249,7 +249,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return array
      */
-    public function listTables($link)
+    public function listTables($link): array
     {
         $tables = [];
         $sql = 'SELECT tablename FROM pg_catalog.pg_tables'
@@ -270,7 +270,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function rollback($link)
+    public function rollback($link): bool
     {
         return $this->exec($link, 'ROLLBACK;');
     }
@@ -283,7 +283,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return array
      */
-    public function select($link, $sql)
+    public function select($link, $sql): array
     {
         $results = $this->runSql($link, $sql);
         return is_array($results) ? $results : [];
