@@ -15,11 +15,11 @@
                 <div class="card shadow mb-4">
                     <div class="card-body">
                         <h3>
-                            <i class="fa-solid fa-circle-info mr-2"></i> {{ trans('installation') }}
+                            <i class="fa-solid fa-circle-info me-2"></i> {{ trans('installation') }}
                         </h3>
                         <hr>
-                        <p>FacturaScripts Versión: <strong>{{ fsc.data.facturascripts_version }}</strong></p>
-                        <p>PHP Versión: <strong>{{ fsc.data.php_version }}</strong></p>
+                        <p>FacturaScripts: <strong>{{ fsc.data.core_version }}</strong></p>
+                        <p>PHP: <strong>{{ fsc.data.php_version }}</strong></p>
                         <p>Extensiones activas: <strong>{{ fsc.data.extensions | join(', ') }}</strong></p>
                         <p>Tamaño Máximo de Subida de Archivo: <strong>{{ bytes(fsc.data.max_filesize) }}</strong></p>
                         <p>Software del Servidor: <strong>{{ fsc.data.server_software }}</strong></p>
@@ -30,7 +30,7 @@
                 <div class="card shadow mb-4">
                     <div class="card-body">
                         <h3>
-                            <i class="fa-solid fa-plug mr-2"></i> {{ trans('plugins') }}
+                            <i class="fa-solid fa-plug me-2"></i> {{ trans('plugins') }}
                         </h3>
                     </div>
                     <table class="table table-hover mb-0">
@@ -55,6 +55,10 @@
                                 <td>{{ plugin.require | join(', ') }}</td>
                                 <td>{{ plugin.require_php | join(', ') }}</td>
                                 <td>{{ plugin.order }}</td>
+                            </tr
+                        {% else %}
+                            <tr class="table-warning">
+                                <td colspan="7">{{ trans('no-plugins-installed') }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
