@@ -1581,6 +1581,8 @@
     "travel": "Travel",
     "try-again-later": "Try again later",
     "tuesday": "Tuesday",
+    "two-factor-auth": "Autenticación en 2 pasos",
+    "two-factor-enabled": "Activar autenticación en 2 pasos",
     "type": "Type",
     "type-alert": "Type alert",
     "type-critical": "Type critical",
