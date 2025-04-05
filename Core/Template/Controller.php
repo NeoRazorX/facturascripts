@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Template;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Contract\ControllerInterface;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Dinamic\Model\User as DinUser;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
@@ -66,7 +67,7 @@ class Controller implements ControllerInterface
 
         $this->className = $className;
         $this->dataBase = new DataBase();
-        $this->empresa = new Empresa();
+        $this->empresa = Empresas::default();
         $this->template = $className . '.html.twig';
         $this->url = $url;
 
