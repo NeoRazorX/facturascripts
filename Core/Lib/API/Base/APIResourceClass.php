@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -142,7 +142,6 @@ abstract class APIResourceClass
         $this->method = $this->request->method();
 
         try {
-            // http://www.restapitutorial.com/lessons/httpmethods.html
             switch ($this->method) {
                 case 'DELETE':
                     return $this->doDELETE();
@@ -192,9 +191,9 @@ abstract class APIResourceClass
      * Can return an array with additional information.
      *
      * @param string $message is an informative text of the confirmation message
-     * @param array $data with additional information.
+     * @param ?array $data with additional information.
      */
-    protected function setOk(string $message, $data = null)
+    protected function setOk(string $message, ?array $data = null)
     {
         Tools::log('api')->notice($message);
 
@@ -212,10 +211,10 @@ abstract class APIResourceClass
      * Can also return an array with additional information.
      *
      * @param string $message
-     * @param array $data
+     * @param ?array $data
      * @param int $status
      */
-    protected function setError(string $message, $data = null, int $status = Response::HTTP_BAD_REQUEST)
+    protected function setError(string $message, ?array $data = null, int $status = Response::HTTP_BAD_REQUEST)
     {
         Tools::log('api')->error($message);
 
