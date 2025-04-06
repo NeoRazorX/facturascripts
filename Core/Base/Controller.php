@@ -295,18 +295,34 @@ class Controller implements ControllerInterface
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000');
 
-        // ejecutamos la parte privada o pública del controlador
+        // si se ha podido autenticar, ejecutamos la parte privada del controlador
         if ($this->auth()) {
             $permissions = new ControllerPermissions(Session::user(), $this->className);
             $this->privateCore($response, Session::user(), $permissions);
-        } else {
-            $this->publicCore($response);
+
+            // carga el menú
+            $menu = new MenuManager();
+            $menu->setUser(Session::user());
+            $menu->selectPage($this->getPageData());
+
+            // renderizamos la plantilla
+            if ($this->template) {
+                Kernel::startTimer('Controller::html-render');
+                $response->setContent(Html::render($this->template, [
+                    'controllerName' => $this->className,
+                    'fsc' => $this,
+                    'menuManager' => $menu,
+                    'template' => $this->template,
+                ]));
+                Kernel::stopTimer('Controller::html-render');
+            }
+
+            $response->send();
+            return;
         }
 
-        // carga el menú
-        $menu = new MenuManager();
-        $menu->setUser(Session::user());
-        $menu->selectPage($this->getPageData());
+        // si no se ha podido autenticar, ejecutamos la parte pública
+        $this->publicCore($response);
 
         // renderizamos la plantilla
         if ($this->template) {
@@ -314,11 +330,11 @@ class Controller implements ControllerInterface
             $response->setContent(Html::render($this->template, [
                 'controllerName' => $this->className,
                 'fsc' => $this,
-                'menuManager' => $menu,
                 'template' => $this->template,
             ]));
             Kernel::stopTimer('Controller::html-render');
         }
+
         $response->send();
     }
 
