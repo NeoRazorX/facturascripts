@@ -264,7 +264,7 @@ final class DbQueryTest extends TestCase
         $this->assertTrue($done);
     }
 
-    public function testMaxMinString()
+    public function testMaxMinString(): void
     {
         // si no existe la tabla de impuestos, saltamos el test
         if (false === $this->db()->tableExists('impuestos')) {
