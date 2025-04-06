@@ -262,7 +262,7 @@ class SalesHeaderHTML
             return '<div class="col-sm-3">'
                 . '<div class="mb-3">' . Tools::lang()->trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
-                . '<a href="#" id="btnFindCustomerModal" class="btn btn-block btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
+                . '<a href="#" id="btnFindCustomerModal" class="btn w-100 btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
                 . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw"></i> '
                 . Tools::lang()->trans('select') . '</a>'
                 . '</div>'

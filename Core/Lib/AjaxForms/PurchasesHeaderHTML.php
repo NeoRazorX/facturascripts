@@ -135,7 +135,7 @@ class PurchasesHeaderHTML
             return '<div class="col-sm-3">'
                 . '<div class="mb-3">' . Tools::lang()->trans('supplier')
                 . '<input type="hidden" name="codproveedor" />'
-                . '<a href="#" id="btnFindSupplierModal" class="btn btn-block btn-primary" onclick="$(\'#findSupplierModal\').modal(\'show\');'
+                . '<a href="#" id="btnFindSupplierModal" class="btn btn-primary w-100" onclick="$(\'#findSupplierModal\').modal(\'show\');'
                 . ' $(\'#findSupplierInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw"></i> '
                 . Tools::lang()->trans('select') . '</a>'
                 . '</div>'
