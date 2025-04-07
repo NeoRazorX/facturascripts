@@ -300,13 +300,13 @@ class Controller implements ControllerInterface
             $permissions = new ControllerPermissions(Session::user(), $this->className);
             $this->privateCore($response, Session::user(), $permissions);
 
-            // carga el menú
-            $menu = new MenuManager();
-            $menu->setUser(Session::user());
-            $menu->selectPage($this->getPageData());
-
             // renderizamos la plantilla
             if ($this->template) {
+                // carga el menú
+                $menu = new MenuManager();
+                $menu->setUser(Session::user());
+                $menu->selectPage($this->getPageData());
+
                 Kernel::startTimer('Controller::html-render');
                 $response->setContent(Html::render($this->template, [
                     'controllerName' => $this->className,
