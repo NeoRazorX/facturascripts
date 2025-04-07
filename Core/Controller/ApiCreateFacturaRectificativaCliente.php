@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,10 +35,6 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
      */
     protected DataBase $dataBase;
 
-    /**
-     * @param string $className
-     * @param string $url
-     */
     public function __construct(string $className, string $url = '')
     {
         parent::__construct($className, $url);
@@ -46,9 +42,6 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         $this->dataBase = new DataBase();
     }
 
-    /**
-     * @return void
-     */
     protected function runResource(): void
     {
         // si el método no es POST o PUT, devolvemos un error
@@ -62,36 +55,33 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         }
 
         // comprobamos que los datos obligatorios nos llegan en la request
-        $camposNecesarios = ['idfactura', 'fecha'];
-        foreach ($camposNecesarios as $keyCampo) {
-            $datosCampo = $this->request->get($keyCampo);
-            if (empty($datosCampo)) {
+        $required_fields = ['idfactura', 'fecha'];
+        foreach ($required_fields as $field) {
+            $value = $this->request->get($field);
+            if (empty($value)) {
                 $this->response->setHttpCode(Response::HTTP_BAD_REQUEST);
                 $this->response->setContent(json_encode([
                     'status' => 'error',
-                    'message' => "$keyCampo field is required",
+                    'message' => $field . ' field is required',
                 ]));
                 return;
             }
         }
 
-        $factura = $this->newRefundAction();
-
-        if ($factura) {
+        $invoice = $this->newRefundAction();
+        if ($invoice) {
             $this->response->setContent(json_encode([
-                'doc' => $factura->toArray(),
-                'lines' => $factura->getLines(),
+                'doc' => $invoice->toArray(),
+                'lines' => $invoice->getLines(),
             ]));
         }
     }
 
-    /**
-     * @return FacturaCliente|null
-     */
     protected function newRefundAction(): ?FacturaCliente
     {
         $invoice = new FacturaCliente();
-        if (false === $invoice->loadFromCode($this->request->request->get('idfactura'))) {
+        $code = $this->request->request->get('idfactura');
+        if (empty($code) || false === $invoice->loadFromCode($code)) {
             $this->sendError('record-not-found', Response::HTTP_NOT_FOUND);
             return null;
         }
@@ -135,7 +125,15 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         $newRefund->idfacturarect = $invoice->idfactura;
         $newRefund->nick = $this->request->request->get('nick');
         $newRefund->observaciones = $this->request->request->get('observaciones');
-        $newRefund->setDate($this->request->request->get('fecha'), date(FacturaCliente::HOUR_STYLE));
+
+        $date = $this->request->request->get('fecha');
+        $hour = $this->request->request->get('hora');
+        if (false === $newRefund->setDate($date, $hour)) {
+            $this->sendError('error-set-date', Response::HTTP_BAD_REQUEST);
+            $this->dataBase->rollback();
+            return null;
+        }
+
         if (false === $newRefund->save()) {
             $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->dataBase->rollback();
@@ -183,18 +181,12 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         return $newRefund;
     }
 
-    /**
-     * @param string $mensaje
-     * @param int $errorCode
-     *
-     * @return void
-     */
-    private function sendError(string $mensaje, int $errorCode): void
+    private function sendError(string $message, int $http_code): void
     {
-        $this->response->setHttpCode($errorCode);
+        $this->response->setHttpCode($http_code);
         $this->response->setContent(json_encode([
             'status' => 'error',
-            'message' => Tools::lang()->trans($mensaje),
+            'message' => Tools::lang()->trans($message),
         ]));
     }
 }
