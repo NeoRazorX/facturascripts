@@ -264,6 +264,40 @@ final class DbQueryTest extends TestCase
         $this->assertTrue($done);
     }
 
+    public function testMaxMinString(): void
+    {
+        // si no existe la tabla de impuestos, saltamos el test
+        if (false === $this->db()->tableExists('impuestos')) {
+            $this->markTestSkipped('Table impuestos does not exist.');
+        }
+
+        $data = [
+            ['codimpuesto' => 'test1', 'descripcion' => 'test1', 'iva' => 29.99, 'recargo' => 0],
+            ['codimpuesto' => 'test2', 'descripcion' => 'test2', 'iva' => 11.5, 'recargo' => 2.3],
+            ['codimpuesto' => 'test3', 'descripcion' => 'test3', 'iva' => 3.76, 'recargo' => 0.5]
+        ];
+
+        // insertamos 3 impuestos
+        $done = DbQuery::table('impuestos')->insert($data);
+        $this->assertTrue($done);
+
+        $maxString = DbQuery::table('impuestos')
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
+            ->maxString('codimpuesto');
+        $this->assertEquals('test3', $maxString);
+
+        $minString = DbQuery::table('impuestos')
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
+            ->minString('codimpuesto');
+        $this->assertEquals('test1', $minString);
+
+        // eliminamos los impuestos
+        $done = DbQuery::table('impuestos')
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
+            ->delete();
+        $this->assertTrue($done);
+    }
+
     public function testDelete(): void
     {
         // si no existe la tabla de impuestos, saltamos el test

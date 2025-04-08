@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,16 @@
 
 namespace FacturaScripts\Core\DataSrc;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Empresa;
 
 final class Empresas implements DataSrcInterface
 {
+    /**
+     * @var Empresa[]
+     */
     private static $list;
 
     /**
@@ -33,8 +37,9 @@ final class Empresas implements DataSrcInterface
     public static function all(): array
     {
         if (!isset(self::$list)) {
-            $model = new Empresa();
-            self::$list = $model->all([], ['nombre' => 'ASC'], 0, 0);
+            self::$list = Cache::remember('model-Empresa-list', function () {
+                return Empresa::all([], ['nombre' => 'ASC'], 0, 0);
+            });
         }
 
         return self::$list;

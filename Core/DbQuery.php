@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -233,12 +233,16 @@ final class DbQuery
 
     public function max(string $field, ?int $decimals = null): float
     {
-        $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ') as _max';
-
-        $row = $this->first();
+        $max = $this->maxString($field);
         return is_null($decimals) ?
-            (float)$row['_max'] :
-            round((float)$row['_max'], $decimals);
+            (float)$max :
+            round((float)$max, $decimals);
+    }
+
+    public function maxString(string $field): string
+    {
+        $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ') as _max';
+        return $this->first()['_max'];
     }
 
     public function maxArray(string $field, string $groupByKey): array
@@ -250,12 +254,16 @@ final class DbQuery
 
     public function min(string $field, ?int $decimals = null): float
     {
-        $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ') as _min';
-
-        $row = $this->first();
+        $min = $this->minString($field);
         return is_null($decimals) ?
-            (float)$row['_min'] :
-            round((float)$row['_min'], $decimals);
+            (float)$min :
+            round((float)$min, $decimals);
+    }
+
+    public function minString(string $field): string
+    {
+        $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ') as _min';
+        return $this->first()['_min'];
     }
 
     public function minArray(string $field, string $groupByKey): array
