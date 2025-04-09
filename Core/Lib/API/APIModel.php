@@ -275,12 +275,14 @@ class APIModel extends APIResourceClass
             } elseif (substr($key, -6) == '_isnot') {
                 $field = substr($key, 0, -6);
                 $operator = 'IS NOT';
-            } elseif (substr($key, -5) == '_notin') {
+            } elseif (substr($key, -5) == '_null') {
                 $field = substr($key, 0, -5);
-                $operator = 'NOT IN';
-            } elseif (substr($key, -4) == '_in') {
+                $operator = 'IS';
+                $value = null;
+            } elseif (substr($key, -4) == '_not_null') {
                 $field = substr($key, 0, -4);
-                $operator = 'IN';
+                $operator = 'IS NOT';
+                $value = null;
             }
 
             if (!isset($operation[$key])) {
