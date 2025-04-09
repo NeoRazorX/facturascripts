@@ -38,13 +38,10 @@
                     <div class="card shadow mb-3">
                         <div class="card-body">
                             <h1 class="h3 mb-1">
-                                <i class="{{ fsc.getPageData().icon }}"></i> {{ fsc.title }}
+                                <i class="{{ fsc.getPageData().icon }} mr-2"></i> {{ fsc.title }}
                             </h1>
                             <p class="text-muted mb-4">{{ trans('report-taxes-p') }}.</p>
                             <div class="form-row">
-                                <div class="col-12 h5 border-bottom pb-2 mb-3">
-                                    {{ trans('filters') }}
-                                </div>
                                 {% if fsc.empresa.count() > 1 %}
                                     <div class="col-sm mb-3">
                                         {{ trans('company') }}
@@ -144,10 +141,10 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="col-12 h5 border-bottom pb-2 mb-3">
-                                    {{ trans('columns') }}
+                                <div class="col-12 h5 border-bottom pt-4 pb-2">
+                                    <i class="fa-solid fa-list-check mr-1"></i> {{ trans('columns') }}
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_serie"
                                                id="column_serie" checked>
@@ -156,7 +153,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_code"
                                                id="column_code" checked>
@@ -165,7 +162,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_number2"
                                                id="column_number2" checked>
@@ -174,7 +171,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_name"
                                                id="column_name" checked>
@@ -183,7 +180,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_cifnif"
                                                id="column_cifnif" checked>
@@ -192,7 +189,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_country"
                                                id="column_country" checked>
@@ -201,7 +198,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_net"
                                                id="column_net" checked>
@@ -210,7 +207,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_pct_tax"
                                                id="pct_tax" checked>
@@ -219,7 +216,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_tax"
                                                id="column_tax" checked>
@@ -228,7 +225,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_pct_surcharge"
                                                id="column_pct_surcharge" checked>
@@ -237,7 +234,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1"
                                                name="column_surcharge" id="column_surcharge" checked>
@@ -246,7 +243,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_pct_irpf"
                                                id="column_pct_irpf" checked>
@@ -255,7 +252,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1"
                                                name="column_irpf" id="column_irpf" checked>
@@ -264,7 +261,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_supplied_amount"
                                                id="column_supplied_amount" checked>
@@ -273,7 +270,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_total"
                                                id="column_total" checked>
@@ -288,13 +285,13 @@
                             <div class="form-row">
                                 <div class="col-sm">
                                     <button type="button" onclick="sendReportTaxes('purchases')"
-                                            class="btn btn-spin-action btn-block btn-secondary btn-spin-action">
+                                            class="btn btn-lg btn-block btn-secondary btn-spin-action">
                                         {{ trans('purchases') }}
                                     </button>
                                 </div>
                                 <div class="col-sm">
                                     <button type="button" onclick="sendReportTaxes('sales')"
-                                            class="btn btn-spin-action btn-block btn-primary btn-spin-action">
+                                            class="btn btn-lg btn-block btn-primary btn-spin-action">
                                         {{ trans('sales') }}
                                     </button>
                                 </div>
