@@ -278,11 +278,9 @@ class APIModel extends APIResourceClass
             } elseif (substr($key, -5) == '_null') {
                 $field = substr($key, 0, -5);
                 $operator = 'IS';
-                $value = null;
             } elseif (substr($key, -4) == '_not_null') {
                 $field = substr($key, 0, -4);
                 $operator = 'IS NOT';
-                $value = null;
             }
 
             if (!isset($operation[$key])) {
