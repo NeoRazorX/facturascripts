@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -76,6 +77,9 @@ class ReportTaxes extends Controller
     /** @var string */
     public $typeDate;
 
+    /** @var array */
+    protected $columns = [];
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -98,6 +102,12 @@ class ReportTaxes extends Controller
         $this->pais = new Pais();
         $this->serie = new Serie();
         $this->initFilters();
+        $this->initColumns();
+
+        // si no hay columnas, terminamos
+        if (empty($this->columns)) {
+            return;
+        }
 
         if ('export' === $this->request->request->get('action')) {
             $this->exportAction();
@@ -127,6 +137,7 @@ class ReportTaxes extends Controller
                 $i18n->trans('date') => $hide ? '' : Tools::date($row['fecha']),
                 $i18n->trans('name') => $hide ? '' : Tools::fixHtml($row['nombre']),
                 $i18n->trans('cifnif') => $hide ? '' : $row['cifnif'],
+                $i18n->trans('country') => $hide ? '' : ($row['codpais'] ? Paises::get($row['codpais'])->nombre : ''),
                 $i18n->trans('net') => $this->exportFieldFormat('number', $row['neto']),
                 $i18n->trans('pct-tax') => $this->exportFieldFormat('number', $row['iva']),
                 $i18n->trans('tax') => $this->exportFieldFormat('number', $row['totaliva']),
@@ -231,7 +242,7 @@ class ReportTaxes extends Controller
 
             case 'sales':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numero2, f.fecha, f.fechadevengo, f.nombrecliente AS nombre, f.cifnif, l.pvptotal,'
-                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion'
+                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion, f.codpais'
                     . ' FROM lineasfacturascli AS l'
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
@@ -267,6 +278,7 @@ class ReportTaxes extends Controller
             }
 
             $data[$code] = [
+                'codpais' => $row['codpais'] ?? null,
                 'codserie' => $row['codserie'],
                 'codigo' => $row['codigo'],
                 'numero2' => $row['numero2'],
@@ -326,6 +338,26 @@ class ReportTaxes extends Controller
         }
 
         return $totals;
+    }
+
+    protected function initColumns(): void
+    {
+        // recorremos los datos recibidos
+        foreach ($this->request->request->all() as $key => $value) {
+            // obtenemos la key sin el column_
+            $column = substr($key, 7);
+
+            // reemplazamos _ por -
+            $column = str_replace('_', '-', $column);
+
+            // traducimos la columna
+            $column = Tools::lang()->trans($column);
+
+            // si la key empieza por column_ y no está en el array de columnas, la añadimos
+            if (strpos($key, 'column_') === 0 && !in_array($column, $this->columns)) {
+                $this->columns[] = $column;
+            }
+        }
     }
 
     protected function initFilters(): void
@@ -402,58 +434,12 @@ class ReportTaxes extends Controller
 
     protected function reduceLines(array &$lines): void
     {
-        $i18n = Tools::lang();
-        $zero = Tools::number(0);
-        $numero2 = $recargo = $totalRecargo = $irpf = $totalIrpf = $suplidos = false;
-        foreach ($lines as $row) {
-            if (!empty($row[$i18n->trans('number2')])) {
-                $numero2 = true;
-            }
-
-            if ($row[$i18n->trans('pct-surcharge')] !== $zero) {
-                $recargo = true;
-            }
-
-            if ($row[$i18n->trans('surcharge')] !== $zero) {
-                $totalRecargo = true;
-            }
-
-            if ($row[$i18n->trans('pct-irpf')] !== $zero) {
-                $irpf = true;
-            }
-
-            if ($row[$i18n->trans('irpf')] !== $zero) {
-                $totalIrpf = true;
-            }
-
-            if ($row[$i18n->trans('supplied-amount')] !== $zero) {
-                $suplidos = true;
-            }
-        }
-
-        foreach (array_keys($lines) as $key) {
-            if (false === $numero2) {
-                unset($lines[$key][$i18n->trans('number2')]);
-            }
-
-            if (false === $recargo) {
-                unset($lines[$key][$i18n->trans('pct-surcharge')]);
-            }
-
-            if (false === $totalRecargo) {
-                unset($lines[$key][$i18n->trans('surcharge')]);
-            }
-
-            if (false === $irpf) {
-                unset($lines[$key][$i18n->trans('pct-irpf')]);
-            }
-
-            if (false === $totalIrpf) {
-                unset($lines[$key][$i18n->trans('irpf')]);
-            }
-
-            if (false === $suplidos) {
-                unset($lines[$key][$i18n->trans('supplied-amount')]);
+        // recorremos las líneas y buscamos la key de cada línea en el array de columnas, si no existe, eliminamos la columna
+        foreach ($lines as $key => $line) {
+            foreach ($line as $column => $value) {
+                if (!in_array($column, $this->columns)) {
+                    unset($lines[$key][$column]);
+                }
             }
         }
     }
