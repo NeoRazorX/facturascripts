@@ -143,35 +143,6 @@
     </style>
 {% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        function deleteOptions() {
-            bootbox.confirm({
-                title: "{{ trans('confirm-delete')|raw }}",
-                message: "{{ trans('are-you-sure') }}",
-                closeButton: false,
-                buttons: {
-                    cancel: {
-                        label: "<i class='fa-solid fa-times'></i> {{ trans('cancel') }}"
-                    },
-                    confirm: {
-                        label: "<i class='fa-solid fa-check'></i> {{ trans('delete') }}",
-                        className: 'btn-danger'
-                    }
-                },
-                callback: function (result) {
-                    if (result) {
-                        animateSpinner('add');
-                        document.main_form.action.value = 'delete';
-                        document.main_form.submit();
-                    }
-                }
-            });
-        }
-    </script>
-{% endblock %}
-
 {% macro editGroupColumn(col) %}
     <tr>
         <td title="{{ trans('title') }}">
