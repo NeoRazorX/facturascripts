@@ -121,10 +121,11 @@ interface DataBaseQueries
      * @param string $tableName
      * @param array $columns
      * @param array $constraints
+     * @param array $indexes
      *
      * @return string
      */
-    public function sqlCreateTable(string $tableName, array $columns, array $constraints): string;
+    public function sqlCreateTable(string $tableName, array $columns, array $constraints, array $indexes): string;
 
     /**
      * SQL statement to delete a given table column's constraint
