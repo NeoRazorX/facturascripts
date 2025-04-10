@@ -46,7 +46,7 @@
                                 {% if fsc.empresa.count() > 1 %}
                                     <div class="col-sm mb-3">
                                         {{ trans('company') }}
-                                        <select name="idempresa" class="form-control">
+                                        <select name="idempresa" class="form-select">
                                             {% for empresa in fsc.empresa.all() %}
                                                 {% if empresa.idempresa == fsc.idempresa %}
                                                     <option value="{{ empresa.idempresa }}" selected>
@@ -65,7 +65,7 @@
                                 {% endif %}
                                 <div class="col-sm mb-3">
                                     {{ trans('serie') }}
-                                    <select name="codserie" class="form-control">
+                                    <select name="codserie" class="form-select">
                                         <option value="">{{ trans('all') }}</option>
                                         <option value="">------</option>
                                         {% for serie in fsc.serie.all({}, {'descripcion': 'ASC'}, 0, 0) %}
@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="col-sm mb-3">
                                     {{ trans('currency') }}
-                                    <select name="coddivisa" class="form-control">
+                                    <select name="coddivisa" class="form-select">
                                         {% for divisa in fsc.divisa.all({}, {'descripcion': 'ASC'}, 0, 0) %}
                                             {% if divisa.coddivisa == fsc.coddivisa %}
                                                 <option value="{{ divisa.coddivisa }}" selected>
@@ -95,7 +95,7 @@
                                 </div>
                                 <div class="col-sm mb-3">
                                     {{ trans('country') }}
-                                    <select name="codpais" class="form-control">
+                                    <select name="codpais" class="form-select">
                                         <option value="">{{ trans('all') }}</option>
                                         <option value="">------</option>
                                         {% for pais in fsc.pais.all({}, {'nombre': 'ASC'}, 0, 0) %}
@@ -113,7 +113,7 @@
                             <div class="form-row">
                                 <div class="col-sm-3 mb-3">
                                     {{ trans('date') }}
-                                    <select name="type-date" class="form-control">
+                                    <select name="type-date" class="form-select">
                                         <option value="create" {{ fsc.typeDate == 'create' ? 'selected': '' }}>
                                             {{ trans('creation-date') }}
                                         </option>
@@ -134,7 +134,7 @@
                                 </div>
                                 <div class="col-sm-3 mb-3">
                                     {{ trans('format') }}
-                                    <select name="format" class="form-control">
+                                    <select name="format" class="form-select">
                                         <option value="PDF">PDF</option>
                                         <option value="CSV">CSV</option>
                                         <option value="XLS">Excel</option>
