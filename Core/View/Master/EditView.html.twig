@@ -24,33 +24,6 @@
     {% set fieldCount = fieldCount + group.columns | length %}
 {% endfor %}
 
-<script>
-    function editViewDelete(viewName) {
-        bootbox.confirm({
-            title: "{{ trans('confirm-delete') }}",
-            message: "{{ trans('are-you-sure') }}",
-            closeButton: false,
-            buttons: {
-                cancel: {
-                    label: '<i class="fa-solid fa-times"></i> {{ trans('cancel') }}'
-                },
-                confirm: {
-                    label: '<i class="fa-solid fa-check"></i> {{ trans('confirm') }}',
-                    className: "btn-danger"
-                }
-            },
-            callback: function (result) {
-                if (result) {
-                    $("#form" + viewName + " :input[name=\"action\"]").val("delete");
-                    $("#form" + viewName).submit();
-                }
-            }
-        });
-
-        return false;
-    }
-</script>
-
 {# -- Row header -- #}
 <div class="row">
     {% set row = currentView.getRow('header') %}
