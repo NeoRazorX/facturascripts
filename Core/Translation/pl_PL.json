@@ -611,7 +611,7 @@
     "field-required": "Pole wymagane: %field%",
     "fields": "Pola",
     "file": "Plik",
-    "file-audio-codec-not-accepted": "Błąd podczas wysyłania pliku audio %fileName%, ponieważ jego kodek %codec% nie jest dozwolony. Dozwolone kodeki to: %supported%",
+    "file-audio-codec-not-accepted": "Błąd podczas wysyłania pliku audio %fileName%, ponieważ jego kodek %codec% jest niedozwolony. Dozwolone kodeki to: %supported%",
     "file-extension-not-accepted": "Error al enviar el archivo %fileName% porque su extensión no está permitida. Las extensiones permitidas son: %accepted%",
     "file-name": "Nazwa pliku",
     "file-not-exists": "Plik nie istnieje: %fileName%",
