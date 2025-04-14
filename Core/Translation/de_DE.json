@@ -1026,6 +1026,7 @@
     "no": "nicht",
     "no-data": "Keine Daten",
     "no-data-received-form": "Keine Daten vom Formular erhalten",
+    "no-document-selected": "Es wurde kein Dokument ausgewählt.",
     "no-extra-lines": "Keine zusätzlichen Zeilen hinzufügen",
     "no-gaps-found": "Keine Lücken gefunden",
     "no-invoice": "keine Rechnung",
