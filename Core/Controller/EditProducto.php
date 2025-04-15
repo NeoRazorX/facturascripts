@@ -29,6 +29,7 @@ use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
+use FacturaScripts\Dinamic\Model\CodeModel;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -63,6 +64,10 @@ class EditProducto extends EditController
     protected function createViews()
     {
         parent::createViews();
+
+        // establecemos el límite de registros a 9999, para el select de atributos
+        CodeModel::setLimit(9999);
+
         $this->createViewsVariants();
         $this->createViewsProductImages();
         $this->createViewDocFiles();
