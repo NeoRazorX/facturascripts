@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,13 +30,12 @@ final class IdentificadorFiscalTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
-    public function testDataInstalled()
+    public function testDataInstalled(): void
     {
-        $identificador = new IdentificadorFiscal();
-        $this->assertNotEmpty($identificador->all(), 'identificador-fiscal-data-not-installed-from-csv');
+        $this->assertNotEmpty(IdentificadorFiscal::all(), 'identificador-fiscal-data-not-installed-from-csv');
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         // creamos un identificador fiscal
         $identificador = new IdentificadorFiscal();
@@ -47,13 +46,13 @@ final class IdentificadorFiscalTest extends TestCase
         $this->assertTrue($identificador->delete(), 'cant-delete-identificador-fiscal');
     }
 
-    public function testCantCreateWithoutTipo()
+    public function testCantCreateWithoutTipo(): void
     {
         $identificador = new IdentificadorFiscal();
         $this->assertFalse($identificador->save(), 'cant-save-identificador-fiscal');
     }
 
-    public function testHtmlOnFields()
+    public function testHtmlOnFields(): void
     {
         // creamos un identificador fiscal con html
         $identificador = new IdentificadorFiscal();
@@ -62,22 +61,25 @@ final class IdentificadorFiscalTest extends TestCase
         $this->assertFalse($identificador->save(), 'can-save-with-html');
     }
 
-    public function testValidateCIF()
+    public function testValidateCIF(): void
     {
         $this->validate('CIF', 'P4698162G', 'T1234');
+        $this->validate('CIF', 'U10994408', 'B12345678');
     }
 
-    public function testValidateDNI()
+    public function testValidateDNI(): void
     {
         $this->validate('DNI', '25296158E', '25296158K');
+        $this->validate('DNI', '74003828V', '74003828X');
     }
 
-    public function testValidateNIF()
+    public function testValidateNIF(): void
     {
         $this->validate('NIF', '36155837K', '36155837V');
+        $this->validate('NIF', '74003828V', '74003828Z');
     }
 
-    protected function validate(string $fiscalId, string $validCode, string $invalidCode)
+    protected function validate(string $fiscalId, string $validCode, string $invalidCode): void
     {
         // cargamos el identificador fiscal y activamos la validación
         $identificador = new IdentificadorFiscal();
