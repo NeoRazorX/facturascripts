@@ -67,10 +67,12 @@
             {% block messages %}
                 {% include 'Macro/Toasts.html.twig' %}
                 {% from 'Macro/Utils.html.twig' import message as showMessage %}
-                {{ showMessage(log, ['error', 'critical'], 'danger') }}
-                {{ showMessage(log, ['warning'], 'warning') }}
-                {{ showMessage(log, ['notice'], 'success') }}
-                {{ showMessage(log, ['info'], 'info') }}
+                <div class="px-2 pt-2">
+                    {{ showMessage(log, ['error', 'critical'], 'danger') }}
+                    {{ showMessage(log, ['warning'], 'warning') }}
+                    {{ showMessage(log, ['notice'], 'success') }}
+                    {{ showMessage(log, ['info'], 'info') }}
+                </div>
             {% endblock %}
             {% block body %}
             {% endblock %}
