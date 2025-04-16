@@ -429,6 +429,11 @@ class ReportTaxes extends Controller
         $headTotals = empty($totals) ? [] : array_keys(end($totals));
         $exportManager->addTablePage($headTotals, $totals, $options);
 
+        // clear output buffer to avoid errors
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
+
         $exportManager->show($this->response);
     }
 
