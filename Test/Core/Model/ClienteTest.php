@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -208,6 +209,26 @@ final class ClienteTest extends TestCase
         // eliminamos
         $this->assertTrue($address->delete());
         $this->assertTrue($cliente->delete());
+    }
+
+    public function testLimitarCamposSegunTabla()
+    {
+        $texto = Tools::randomString(200);
+
+        $cliente = new Cliente();
+        $cliente->nombre = $texto;
+        $cliente->cifnif = '12345678A';
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+
+        $cliente->loadFromCode($cliente->codcliente);
+
+        // comprobamos que se ha limitado el nombre a 100 caracteres ya que en la tabla es varchar(100)
+        $this->assertEquals(substr($texto, 0, 100), $cliente->nombre);
+        $this->assertNotEquals($texto, $cliente->nombre);
+
+        // eliminamos
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
     protected function tearDown(): void
