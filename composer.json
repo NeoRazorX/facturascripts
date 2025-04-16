@@ -11,11 +11,11 @@
   ],
   "config": {
     "platform": {
-      "php": "7.4"
+      "php": "8.0"
     }
   },
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0",
     "mk-j/php_xlsxwriter": "0.39",
     "parsecsv/php-parsecsv": "1.*",
     "phpmailer/phpmailer": "6.*",
