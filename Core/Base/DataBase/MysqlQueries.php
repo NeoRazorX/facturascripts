@@ -82,6 +82,11 @@ class MysqlQueries implements DataBaseQueries
         return $colData['type'] === 'serial' ? '' : $this->sqlAlterModifyColumn($tableName, $colData);
     }
 
+    public function sqlAddIndex(string $tableName, string $indexName, string $columns): string
+    {
+        return 'CREATE INDEX ' . $indexName . ' ON ' . $tableName . ' (' . $columns . ');';
+    }
+
     /**
      * SQL statement to alter a null constraint in a table column
      *
@@ -173,10 +178,11 @@ class MysqlQueries implements DataBaseQueries
      * @param string $tableName
      * @param array $columns
      * @param array $constraints
+     * @param array $indexes
      *
      * @return string
      */
-    public function sqlCreateTable(string $tableName, array $columns, array $constraints): string
+    public function sqlCreateTable(string $tableName, array $columns, array $constraints, array $indexes): string
     {
         $fields = '';
         foreach ($columns as $col) {
@@ -189,7 +195,8 @@ class MysqlQueries implements DataBaseQueries
         $collate = defined('FS_MYSQL_COLLATE') ? FS_MYSQL_COLLATE : 'utf8_bin';
         return 'CREATE TABLE ' . $tableName . ' (' . $sql
             . $this->sqlTableConstraints($constraints) . ') '
-            . 'ENGINE=InnoDB DEFAULT CHARSET=' . $charset . ' COLLATE=' . $collate . ';';
+            . 'ENGINE=InnoDB DEFAULT CHARSET=' . $charset . ' COLLATE=' . $collate . ';'
+            . $this->sqlTableIndexes($tableName, $indexes);
     }
 
     /**
@@ -213,6 +220,11 @@ class MysqlQueries implements DataBaseQueries
             default:
                 return '';
         }
+    }
+
+    public function sqlDropIndex(string $tableName, array $colData): string
+    {
+        return 'DROP INDEX IF EXISTS ' . $colData['name'] . ' ON ' . $tableName . ';';
     }
 
     /**
@@ -249,6 +261,11 @@ class MysqlQueries implements DataBaseQueries
         return 'SELECT LAST_INSERT_ID() as num;';
     }
 
+    public function sqlRenameColumn(string $tableName, string $old_column, string $new_column): string
+    {
+        return 'ALTER TABLE ' . $tableName . ' RENAME COLUMN ' . $old_column . ' TO ' . $new_column . ';';
+    }
+
     /**
      * Generates the needed SQL to establish the given constraints
      *
@@ -267,6 +284,16 @@ class MysqlQueries implements DataBaseQueries
         }
 
         return $this->fixPostgresql($sql);
+    }
+
+    private function sqlTableIndexes(string $tableName, array $xmlIndexes)
+    {
+        $sql = '';
+        foreach ($xmlIndexes as $idx) {
+            $sql .= ' CREATE INDEX fs_' . $idx['name'] . ' ON ' . $tableName . ' (' . $idx['columns'] . ');';
+        }
+
+        return $sql;
     }
 
     /**
