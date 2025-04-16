@@ -1156,6 +1156,7 @@
     "php-extension-needed": "Es requereix l'extensió %extension% a la configuració de PHP",
     "php-extension-not-found": "No tens l'extensió %extension% de PHP instal·lada.",
     "php-support-end": "El suport per a PHP %current% acabarà aviat. Si us plau, actualitza PHP a la versió %min% o superior.",
+    "php-version-too-new": "Se recomienda usar una versión de PHP entre la %min_version% y la %max_version%. Actualmente tienes la %version%",
     "physical-stock": "Estoc físic",
     "picking": "Picking",
     "plan": "Pla",

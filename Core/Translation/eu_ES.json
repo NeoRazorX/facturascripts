@@ -1156,6 +1156,7 @@
     "php-extension-needed": "PHP-ren konfigurazioan %extension% luzapena behar da",
     "php-extension-not-found": "%extension% PHP gehigarria instalatu gabe duzu.",
     "php-support-end": "PHP %current%-(r)en laguntza laster amaituko da. PHP %min% bertsiora eguneratu mesedez.",
+    "php-version-too-new": "Se recomienda usar una versión de PHP entre la %min_version% y la %max_version%. Actualmente tienes la %version%",
     "physical-stock": "Stock fisikoa",
     "picking": "Picking",
     "plan": "Plana",

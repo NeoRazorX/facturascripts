@@ -1156,6 +1156,7 @@
     "php-extension-needed": "The extension %extension% is required in the PHP configuration",
     "php-extension-not-found": "You don't have the %extension% PHP extension installed.",
     "php-support-end": "Support for PHP %current% will end soon. Please update PHP to version %min% or higher.",
+    "php-version-too-new": "Se recomienda usar una versión de PHP entre la %min_version% y la %max_version%. Actualmente tienes la %version%",
     "physical-stock": "Physical stock",
     "picking": "Picking",
     "plan": "Plan",

@@ -69,6 +69,15 @@ class Installer implements ControllerInterface
         }
 
         Html::disablePlugins();
+
+        // si la versión de php es superior a la 8.1, lanzamos una advertencia
+        if (version_compare(PHP_VERSION, '8.1', '>')) {
+            Tools::log()->warning('php-version-too-new', [
+                '%version%' => PHP_VERSION,
+                '%min_version%' => '8.0',
+                '%max_version%' => '8.1'
+            ]);
+        }
     }
 
     public function getPageData(): array
