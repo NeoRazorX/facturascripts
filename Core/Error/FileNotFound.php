@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,6 +27,10 @@ class FileNotFound extends ErrorController
     public function run(): void
     {
         http_response_code(404);
+
+        $this->setSaveCrash(false);
+        $this->setShowDeployActions(false);
+        $this->setShowFooter(false);
 
         $title = Tools::lang()->trans('file-not-found', ['%fileName%' => '']);
         $cardBody = '<h1>' . $title . '</h1>'

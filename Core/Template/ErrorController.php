@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,12 +32,19 @@ abstract class ErrorController implements ErrorControllerInterface
     /** @var bool */
     protected $save_crash = false;
 
+    /** @var bool */
+    protected $show_deploy_actions = true;
+
+    /** @var bool */
+    protected $show_footer = true;
+
     /** @var string */
     protected $url;
 
     public function __construct(Exception $exception, string $url = '')
     {
         $this->exception = $exception;
+        $this->show_deploy_actions = Tools::config('disable_deploy_actions', false) === false;
         $this->url = $url;
     }
 
@@ -76,40 +83,44 @@ abstract class ErrorController implements ErrorControllerInterface
             . '<div class="card-body">'
             . '<img src="' . $info['report_qr'] . '" class="float-end" alt="QR" />' . $cardBody
             . '</div>'
-            . $table
-            . '<div class="card-footer p-2">'
-            . '<div class="row">'
-            . '<div class="col">'
-            . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
-            . '<input type="hidden" name="error_code" value="' . $info['code'] . '">'
-            . '<input type="hidden" name="error_message" value="' . $info['message'] . '">'
-            . '<input type="hidden" name="error_file" value="' . $info['file'] . '">'
-            . '<input type="hidden" name="error_line" value="' . $info['line'] . '">'
-            . '<input type="hidden" name="error_hash" value="' . $info['hash'] . '">'
-            . '<input type="hidden" name="error_url" value="' . $info['url'] . '">'
-            . '<input type="hidden" name="error_core_version" value="' . $info['core_version'] . '">'
-            . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">'
-            . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">'
-            . '<input type="hidden" name="error_os" value="' . $info['os'] . '">'
-            . '<button type="submit" class="btn btn-secondary">' . Tools::lang()->trans('to-report') . '</button>'
-            . '</form>'
-            . '</div>';
+            . $table;
 
-        if (false === Tools::config('disable_deploy_actions', false)) {
-            $body .= '<div class="col-auto">'
-                . '<a href="' . Tools::config('route') . '/deploy?action=disable-plugins&token=' . CrashReport::newToken()
-                . '" class="btn btn-light">' . Tools::lang()->trans('disable-plugins') . '</a> '
-                . '<a href="' . Tools::config('route') . '/deploy?action=rebuild&token=' . CrashReport::newToken()
-                . '" class="btn btn-light">' . Tools::lang()->trans('rebuild') . '</a> '
+        if ($this->show_footer) {
+            $body .= '<div class="card-footer p-2">'
+                . '<div class="row">'
+                . '<div class="col">'
+                . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
+                . '<input type="hidden" name="error_code" value="' . $info['code'] . '">'
+                . '<input type="hidden" name="error_message" value="' . $info['message'] . '">'
+                . '<input type="hidden" name="error_file" value="' . $info['file'] . '">'
+                . '<input type="hidden" name="error_line" value="' . $info['line'] . '">'
+                . '<input type="hidden" name="error_hash" value="' . $info['hash'] . '">'
+                . '<input type="hidden" name="error_url" value="' . $info['url'] . '">'
+                . '<input type="hidden" name="error_core_version" value="' . $info['core_version'] . '">'
+                . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">'
+                . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">'
+                . '<input type="hidden" name="error_os" value="' . $info['os'] . '">'
+                . '<button type="submit" class="btn btn-secondary">' . Tools::lang()->trans('to-report') . '</button>'
+                . '</form>'
                 . '</div>';
+
+            if ($this->show_deploy_actions) {
+                $body .= '<div class="col-auto">'
+                    . '<a href="' . Tools::config('route') . '/deploy?action=disable-plugins&token=' . CrashReport::newToken()
+                    . '" class="btn btn-light">' . Tools::lang()->trans('disable-plugins') . '</a> '
+                    . '<a href="' . Tools::config('route') . '/deploy?action=rebuild&token=' . CrashReport::newToken()
+                    . '" class="btn btn-light">' . Tools::lang()->trans('rebuild') . '</a> '
+                    . '</div>';
+            }
+
+            $body .= '</div>' // row
+                . '</div>'; // footer
         }
 
-        $body .= '</div>'
-            . '</div>'
-            . '</div>'
-            . '</div>'
-            . '</div>'
-            . '</div>';
+        $body .= '</div>' // card
+            . '</div>' // col
+            . '</div>' // row
+            . '</div>'; // container
 
         return $this->html($title, $body, $bodyCss);
     }
@@ -117,5 +128,15 @@ abstract class ErrorController implements ErrorControllerInterface
     protected function setSaveCrash(bool $save): void
     {
         $this->save_crash = $save;
+    }
+
+    protected function setShowDeployActions(bool $show): void
+    {
+        $this->show_deploy_actions = $show;
+    }
+
+    protected function setShowFooter(bool $show): void
+    {
+        $this->show_footer = $show;
     }
 }
