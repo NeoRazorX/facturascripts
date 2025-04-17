@@ -1491,7 +1491,7 @@
     "supplier-estimation": "Hornitzaile aurrekontua",
     "supplier-estimations": "Hornitzaileen aurrekontuak",
     "supplier-have-no-iban": "Hornitzaileak %%iban-kontu bankurik ez du",
-    "supplier-iban-changed": "Hornitzailearen %codproveedor% banku kontuaren iban-a aldatu da. Lehen %old% zen eta orain %new% da.",
+    "supplier-iban-changed": "Hornitzailearen %codproveedor% banku kontuaren IBAN-a aldatu da. Lehen %old% zen eta orain %new% da.",
     "supplier-invoice": "Hornitzaile faktura",
     "supplier-invoice-deleted-successfully": "%docCode% erosketa faktura ondo ezabatu da.",
     "supplier-invoices": "Hornitzaileen fakturak",
