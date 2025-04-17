@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -151,7 +151,7 @@ class Variante extends Base\ModelClass
             . DataBaseWhere::getSQLWhere($where)
             . " ORDER BY v." . $field . " ASC";
 
-        foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $data) {
+        foreach (self::$dataBase->selectLimit($sql, CodeModel::getLimit()) as $data) {
             $data['description'] = $this->getAttributeDescription(
                 $data['idatributovalor1'],
                 $data['idatributovalor2'],
