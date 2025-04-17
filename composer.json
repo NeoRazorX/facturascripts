@@ -24,7 +24,6 @@
     "symfony/translation": "4.4.*",
     "twig/twig": "3.*",
     "tavo1987/ec-validador-cedula-ruc": "1.0.2",
-    "filp/whoops": "2.*",
     "globalcitizen/php-iban": "4.*",
     "ext-json": "*",
     "ext-fileinfo": "*",
