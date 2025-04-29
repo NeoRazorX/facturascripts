@@ -203,6 +203,7 @@ final class ContactoTest extends TestCase
 
         $check1 = $contact->checkVies();
         if (Vies::getLastError() != '') {
+            $contact->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertFalse($check1);
@@ -211,6 +212,7 @@ final class ContactoTest extends TestCase
         $contact->cifnif = '123456789';
         $check2 = $contact->checkVies();
         if (Vies::getLastError() != '') {
+            $contact->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertFalse($check2);
@@ -219,6 +221,7 @@ final class ContactoTest extends TestCase
         $contact->cifnif = 'ESB01563311';
         $check3 = $contact->checkVies();
         if (Vies::getLastError() != '') {
+            $contact->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertTrue($check3);

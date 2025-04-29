@@ -95,6 +95,8 @@ final class AgenteTest extends TestCase
 
         $check1 = $agent->checkVies();
         if (Vies::getLastError() != '') {
+            $agent->getContact()->delete();
+            $agent->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertFalse($check1);
@@ -103,6 +105,8 @@ final class AgenteTest extends TestCase
         $agent->cifnif = '12345678A';
         $check2 = $agent->checkVies();
         if (Vies::getLastError() != '') {
+            $agent->getContact()->delete();
+            $agent->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertFalse($check2);
@@ -111,6 +115,8 @@ final class AgenteTest extends TestCase
         $agent->cifnif = 'B87533303';
         $check3 = $agent->checkVies();
         if (Vies::getLastError() != '') {
+            $agent->getContact()->delete();
+            $agent->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertTrue($check3);
