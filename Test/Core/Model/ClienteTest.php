@@ -188,6 +188,8 @@ final class ClienteTest extends TestCase
 
         $check1 = $cliente->checkVies();
         if (Vies::getLastError() != '') {
+            $cliente->getDefaultAddress()->delete();
+            $cliente->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertFalse($check1);
@@ -201,6 +203,8 @@ final class ClienteTest extends TestCase
         $cliente->cifnif = '12345678A';
         $check2 = $cliente->checkVies();
         if (Vies::getLastError() != '') {
+            $cliente->getDefaultAddress()->delete();
+            $cliente->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertFalse($check2);
@@ -209,6 +213,8 @@ final class ClienteTest extends TestCase
         $cliente->cifnif = '503297887';
         $check3 = $cliente->checkVies();
         if (Vies::getLastError() != '') {
+            $cliente->getDefaultAddress()->delete();
+            $cliente->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertTrue($check3);

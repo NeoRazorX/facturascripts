@@ -162,6 +162,8 @@ final class ProveedorTest extends TestCase
 
         $check1 = $proveedor->checkVies();
         if (Vies::getLastError() != '') {
+            $proveedor->getDefaultAddress()->delete();
+            $proveedor->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertFalse($check1);
@@ -175,6 +177,8 @@ final class ProveedorTest extends TestCase
         $proveedor->cifnif = '12345678A';
         $check2 = $proveedor->checkVies();
         if (Vies::getLastError() != '') {
+            $proveedor->getDefaultAddress()->delete();
+            $proveedor->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertFalse($check2);
@@ -183,6 +187,8 @@ final class ProveedorTest extends TestCase
         $proveedor->cifnif = '02839750995';
         $check3 = $proveedor->checkVies();
         if (Vies::getLastError() != '') {
+            $proveedor->getDefaultAddress()->delete();
+            $proveedor->delete();
             $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
         }
         $this->assertTrue($check3);
