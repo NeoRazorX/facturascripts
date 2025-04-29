@@ -1156,7 +1156,7 @@
     "php-extension-needed": "Ve zkonfiguraci PHP je vyžadováno rozšíření %extension%",
     "php-extension-not-found": "No tienes la extensión %extension% de PHP instalada.",
     "php-support-end": "El soporte para PHP %current% terminará pronto. Por favor, actualiza PHP a la versión %min% o superior.",
-    "php-version-too-new": "Se recomienda usar una versión de PHP entre la %min_version% y la %max_version%. Actualmente tienes la %version%",
+    "php-version-too-new": "Doporučuje se používat verzi PHP mezi %min_version% a %max_version%. Aktuálně máte %version%.",
     "physical-stock": "Stock físico",
     "picking": "Vyřizování",
     "plan": "Plan",
