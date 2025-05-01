@@ -1371,6 +1371,7 @@
     "send-mail-error": "Erreur lors de l'envoi de l'e-mail",
     "send-mail-ok": "L'e-mail a été envoyé avec succès",
     "send-videos": "Envoyer des vidéos",
+    "sent": "Envoyé à",
     "sent-a-audio": "Il a envoyé un fichier audio",
     "sent-a-document": "Envoi d'un document",
     "sent-a-location": "Envoi d'un lieu",
