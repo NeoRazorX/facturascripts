@@ -83,7 +83,7 @@ $(document).ready(function () {
         // pueda pulsar tab o cambiar a otro input sin tener que
         // seleccionar ninguna opcion(ni si quiera la opción de su propia busqueda)
         $(this).on("keyup", function (event) {
-            if(data.strict === "0") {
+            if(data.strict === "0" && event.key !== "Enter") {
                 $("form[id=" + formId + "] input[name=" + data.field + "]").val(event.target.value);
             }
         });
