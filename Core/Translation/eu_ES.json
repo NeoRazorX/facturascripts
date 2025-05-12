@@ -1334,7 +1334,7 @@
     "rules": "Arauak",
     "run": "Exekutatu",
     "running-plugin-cron": "FacturaScripts %pluginName% pluginaren cron exekutatzen",
-    "running-work-queue": "Lan ekitaldien ilara exekutatzen",
+    "running-work-queue": "Lanen ekitaldietako ilara exekutatzen",
     "sales": "Salmentak",
     "sales-invoice": "Salmenta faktura",
     "sales-rate": "Salmenta-tasa",
