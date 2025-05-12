@@ -117,23 +117,17 @@ class EditUser extends EditController
 
     protected function createViewsTwofactor(string $viewName = 'UserTwoFactor'): void
     {
-        $this->addHtmlView($viewName, 'Tab\UserTwoFactor', 'User', 'two-factor', 'fa-solid fa-key');
+        $this->addHtmlView($viewName, 'Tab\UserTwoFactor', 'User', 'two-factor-auth', 'fa-solid fa-key');
     }
 
     protected function createViewsEmails(string $viewName = 'ListEmailSent'): void
     {
         $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
             ->addOrderBy(['date'], 'date', 2)
-            ->addSearchFields(['addressee', 'body', 'subject']);
-
-        // desactivamos la columna de destinatario
-        $this->views[$viewName]->disableColumn('user');
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
-
-        // filtros
-        $this->listView($viewName)->addFilterPeriod('period', 'date', 'date', true);
+            ->addSearchFields(['addressee', 'body', 'subject'])
+            ->disableColumn('user')
+            ->setSettings('btnNew', false)
+            ->addFilterPeriod('period', 'date', 'date', true);
     }
 
     protected function createViewsPageOptions(string $viewName = 'ListPageOption'): void
@@ -141,19 +135,15 @@ class EditUser extends EditController
         $this->addListView($viewName, 'PageOption', 'options', 'fa-solid fa-wrench')
             ->addOrderBy(['name'], 'name', 1)
             ->addOrderBy(['last_update'], 'last-update')
-            ->addSearchFields(['name']);
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
+            ->addSearchFields(['name'])
+            ->setSettings('btnNew', false);
     }
 
     protected function createViewsRole(string $viewName = 'EditRoleUser'): void
     {
-        $this->addEditListView($viewName, 'RoleUser', 'roles', 'fa-solid fa-address-card');
-        $this->views[$viewName]->setInLine('true');
-
-        // Disable column
-        $this->views[$viewName]->disableColumn('user', true);
+        $this->addEditListView($viewName, 'RoleUser', 'roles', 'fa-solid fa-address-card')
+            ->setInLine(true)
+            ->disableColumn('user', true);
     }
 
     protected function deleteAction(): bool
@@ -270,14 +260,14 @@ class EditUser extends EditController
     /**
      * Valida el código TOTP proporcionado por el usuario.
      *
-     * @param Model $userModel El modelo del usuario.
+     * @param User $userModel El modelo del usuario.
      * @param string $totpCode El código TOTP introducido.
      * @return bool Verdadero si el código es válido, falso en caso contrario.
      */
-    private function validateTotpCode($userModel, string $totpCode): bool
+    private function validateTotpCode(User $userModel, string $totpCode): bool
     {
         if (empty($userModel->two_factor_secret_key)) {
-            Tools::log()->error("El usuario con ID {$userModel->id} no tiene una clave secreta de TOTP configurada.");
+            Tools::log()->error("El usuario con nick {$userModel->nick} no tiene una clave secreta de TOTP configurada.");
             return false;
         }
 

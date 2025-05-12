@@ -36,6 +36,8 @@ class EditContacto extends EditController
 {
     use DocFilesTrait;
 
+    private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
+
     public function getImageUrl(): string
     {
         $mvn = $this->getMainViewName();

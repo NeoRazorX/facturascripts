@@ -131,6 +131,7 @@ class EditCuenta extends EditController
         ]);
         $title = Tools::lang()->trans('ledger') . ' ' . $account->codcuenta;
         $this->exportManager->newDoc($request['format'], $title);
+        $this->exportManager->setCompany($account->getExercise()->idempresa);
 
         // añadimos la tabla de cabecera con la info del informe
         if ($request['format'] === 'PDF') {

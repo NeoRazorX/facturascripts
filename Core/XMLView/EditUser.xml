@@ -27,7 +27,7 @@
                         readonly="dinamic"/>
             </column>
             <column name="email" order="110">
-                <widget type="email" fieldname="email" icon="fa-solid fa-envelope" required="true"/>
+                <widget type="email" fieldname="email" icon="fa-solid fa-envelope"/>
             </column>
             <column name="new-password" order="120">
                 <widget type="password" fieldname="newPassword" icon="fa-solid fa-key"/>

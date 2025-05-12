@@ -60,7 +60,7 @@ class WidgetLibrary extends BaseWidget
             return '<div class="mb-3">'
                 . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
                 . $labelHtml
-                . '<a href="' . $file->url() . '" class="btn btn-block btn-outline-secondary">'
+                . '<a href="' . $file->url() . '" class="btn w-100 btn-outline-secondary">'
                 . '<i class="' . $icon . ' fa-fw"></i> ' . ($file->filename ? $file->shortFileName() : Tools::lang()->trans('select'))
                 . '</a>'
                 . $descriptionHtml
@@ -70,7 +70,7 @@ class WidgetLibrary extends BaseWidget
         return '<div class="mb-3" id="' . $this->id . '">'
             . '<input type="hidden" class="input-hidden" name="' . $this->fieldname . '" value="' . $this->value . '">'
             . $labelHtml
-            . '<a href="#" class="btn btn-block btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
+            . '<a href="#" class="btn w-100 btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
             . '<span class="file-name">'
             . ($file->filename ? $file->shortFileName() : Tools::lang()->trans('select'))
@@ -295,7 +295,7 @@ class WidgetLibrary extends BaseWidget
             return '';
         }
 
-        return '<a href="#" class="btn btn-block btn-secondary" onclick="widgetLibrarySelect(\'' . $this->id . '\', \'\', \'' . Tools::lang()->trans('select') . '\');">'
+        return '<a href="#" class="btn w-100 btn-secondary" onclick="widgetLibrarySelect(\'' . $this->id . '\', \'\', \'' . Tools::lang()->trans('select') . '\');">'
             . '<i class="fa-solid fa-times me-1"></i>' . Tools::lang()->trans('none')
             . '</a>';
     }

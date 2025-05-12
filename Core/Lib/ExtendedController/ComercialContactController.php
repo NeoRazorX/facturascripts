@@ -38,6 +38,8 @@ abstract class ComercialContactController extends EditController
     use ListBusinessActionTrait;
     use DocFilesTrait;
 
+    private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
+
     /**
      * Set custom configuration when load main data
      *

@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Model\User;
@@ -317,10 +316,6 @@ class NewMail
             return false;
         }
 
-        if (false === $this->checkHourlyLimit()) {
-            return false;
-        }
-
         $this->mail->setFrom($this->fromEmail, $this->fromName);
         $this->mail->Subject = $this->title;
 
@@ -443,22 +438,6 @@ class NewMail
         return $this;
     }
 
-    protected function checkHourlyLimit(): bool
-    {
-        // calculamos cuantos emails se han enviado en la última hora
-        $model = new EmailSent();
-        $whereLastHour = [new DataBaseWhere('date', Tools::dateTime('-1 hour'), '>=')];
-        $total = $model->count($whereLastHour);
-
-        // si se ha superado el límite, no enviamos el email
-        if ($total >= Tools::config('max_emails_hour', 1000)) {
-            Tools::log()->warning('hourly-email-limit-reached');
-            return false;
-        }
-
-        return true;
-    }
-
     /**
      * Devuelve los bloques del pie del correo.
      */
@@ -556,10 +535,24 @@ class NewMail
             }
 
             // si el adjunto está fuera de la carpeta temporal, lo copiamos
+            $currentPath = FS_FOLDER . '/MyFiles/' . $attach[0];
+            if (file_exists($currentPath)) {
+                copy($currentPath, $newPath);
+                continue;
+            }
+
             $currentPath = FS_FOLDER . '/' . $attach[0];
             if (file_exists($currentPath)) {
                 copy($currentPath, $newPath);
+                continue;
             }
+
+            if (file_exists($attach[0])) {
+                copy($attach[0], $newPath);
+                continue;
+            }
+
+            Tools::log('NewMail')->warning('attachment-not-found', ['%file%' => $attach[0]]);
         }
     }
 

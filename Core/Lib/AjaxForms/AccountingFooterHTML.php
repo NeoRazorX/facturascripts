@@ -60,13 +60,13 @@ class AccountingFooterHTML
         $lockBtn = '';
         if ($model->editable) {
             $lockBtn .= '<div class="col-sm-auto">'
-                . '<button type="button" class="btn btn-block btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
+                . '<button type="button" class="btn w-100 btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
                 . '<i class="fa-solid fa-lock fa-fw"></i> ' . Tools::lang()->trans('lock-entry') . '</button>'
                 . '</div>';
         }
 
         return '<div class="col-sm-auto">'
-            . '<button type="button" class="btn btn-block btn-danger btn-spin-action mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
+            . '<button type="button" class="btn w-100 btn-danger btn-spin-action mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
             . '<i class="fa-solid fa-trash-alt fa-fw"></i> ' . Tools::lang()->trans('delete') . '</button>'
             . '</div>'
             . $lockBtn
@@ -145,13 +145,13 @@ class AccountingFooterHTML
     {
         if (false === $model->editable) {
             return '<div class="col-sm-auto">'
-                . '<button type="button" class="btn btn-block btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\');">'
+                . '<button type="button" class="btn w-100 btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\');">'
                 . '<i class="fa-solid fa-lock-open fa-fw"></i> ' . Tools::lang()->trans('unlock-entry') . '</button>'
                 . '</div>';
         }
 
         return '<div class="col-sm-auto">'
-            . '<button type="button" class="btn btn-block btn-primary btn-spin-action mb-3" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
+            . '<button type="button" class="btn w-100 btn-primary btn-spin-action mb-3" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
             . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::lang()->trans('save') . '</button>'
             . '</div>';
     }

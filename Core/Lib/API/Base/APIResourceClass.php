@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib\API\Base;
 
 use Exception;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -140,10 +139,9 @@ abstract class APIResourceClass
      */
     public function processResource(string $name): bool
     {
-        $this->method = $this->request->getMethod();
+        $this->method = $this->request->method();
 
         try {
-            // http://www.restapitutorial.com/lessons/httpmethods.html
             switch ($this->method) {
                 case 'DELETE':
                     return $this->doDELETE();
@@ -193,9 +191,9 @@ abstract class APIResourceClass
      * Can return an array with additional information.
      *
      * @param string $message is an informative text of the confirmation message
-     * @param array $data with additional information.
+     * @param ?array $data with additional information.
      */
-    protected function setOk(string $message, $data = null)
+    protected function setOk(string $message, ?array $data = null)
     {
         Tools::log('api')->notice($message);
 
@@ -213,10 +211,10 @@ abstract class APIResourceClass
      * Can also return an array with additional information.
      *
      * @param string $message
-     * @param array $data
+     * @param ?array $data
      * @param int $status
      */
-    protected function setError(string $message, $data = null, int $status = Response::HTTP_BAD_REQUEST)
+    protected function setError(string $message, ?array $data = null, int $status = Response::HTTP_BAD_REQUEST)
     {
         Tools::log('api')->error($message);
 
@@ -227,14 +225,5 @@ abstract class APIResourceClass
 
         $this->response->setContent(json_encode($res));
         $this->response->setHttpCode($status);
-    }
-
-    /**
-     * @return ToolBox
-     * @deprecated since version 2023.1
-     */
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 }

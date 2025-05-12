@@ -1,6 +1,7 @@
 codcuentaesp;descripcion
 "ACREED";"Cuentas de acreedores"
 "ANTCLI";"Anticipos de clientes"
+"ANTPRO";"Anticipos a proveedores"
 "CAJA";"Cuentas de caja"
 "CAMNEG";"Cuentas de diferencias negativas de cambio"
 "CAMPOS";"Cuentas de diferencias positivas de cambio"
