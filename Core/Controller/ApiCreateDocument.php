@@ -24,9 +24,9 @@ use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Dinamic\Model\Cliente;
-use FacturaScripts\Dinamic\Model\PedidoCliente;
+use FacturaScripts\Dinamic\Model\Proveedor;
 
-class ApiCreatePedidoCliente extends ApiController
+class ApiCreateDocument extends ApiController
 {
     protected function runResource(): void
     {
@@ -40,33 +40,62 @@ class ApiCreatePedidoCliente extends ApiController
             return;
         }
 
-        // cargamos el cliente
-        $codcliente = $this->request->get('codcliente');
-        if (empty($codcliente)) {
+        // documentos existentes
+        $documents = [
+            'PresupuestoCliente',
+            'PedidoCliente',
+            'AlbaranCliente',
+            'FacturaCliente',
+            'PresupuestoProveedor',
+            'PedidoProveedor',
+            'AlbaranProveedor',
+            'FacturaProveedor',
+        ];
+
+        // comprobamos que el nombre del documento es válido
+        $documentName = $this->request->get('documentname');
+        $documentNamespace = '\\FacturaScripts\\Dinamic\\Model\\' . $documentName;
+        if (isset($documents[$documentName]) && !class_exists($documentNamespace)) {
             $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
             $this->response->setContent(json_encode([
                 'status' => 'error',
-                'message' => 'codcliente field is required',
+                'message' => 'Document type not found (' . $documentName . '). Document types available: ' . implode(', ', $documents) . '.',
+            ]));
+        }
+
+        // cargamos el subject
+        $codsubject = $this->request->get('codsubject');
+        if (empty($codsubject)) {
+            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $this->response->setContent(json_encode([
+                'status' => 'error',
+                'message' => 'codsubject field is required',
             ]));
             return;
         }
-        $cliente = new Cliente();
-        if (!$cliente->loadFromCode($codcliente)) {
+
+        if (str_contains($documentName, 'Cliente')) {
+            $subject = new Cliente();
+        } else {
+            $subject = new Proveedor();
+        }
+
+        if (!$subject->loadFromCode($codsubject)) {
             $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
             $this->response->setContent(json_encode([
                 'status' => 'error',
-                'message' => 'Customer not found',
+                'message' => 'Subject not found',
             ]));
             return;
         }
 
-        // creamos el pedido
-        $pedido = new PedidoCliente();
-        $pedido->setSubject($cliente);
+        // creamos el documento
+        $documento = new $documentNamespace();
+        $documento->setSubject($subject);
 
         // asignamos el almacén
         $codalmacen = $this->request->get('codalmacen');
-        if ($codalmacen && false === $pedido->setWarehouse($codalmacen)) {
+        if ($codalmacen && false === $documento->setWarehouse($codalmacen)) {
             $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
             $this->response->setContent(json_encode([
                 'status' => 'error',
@@ -77,8 +106,8 @@ class ApiCreatePedidoCliente extends ApiController
 
         // asignamos la fecha
         $fecha = $this->request->get('fecha');
-        $hora = $this->request->get('hora', $pedido->hora);
-        if ($fecha && false === $pedido->setDate($fecha, $hora)) {
+        $hora = $this->request->get('hora', $documento->hora);
+        if ($fecha && false === $documento->setDate($fecha, $hora)) {
             $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
             $this->response->setContent(json_encode([
                 'status' => 'error',
@@ -90,21 +119,21 @@ class ApiCreatePedidoCliente extends ApiController
         // asignamos la divisa
         $coddivisa = $this->request->get('coddivisa');
         if ($coddivisa) {
-            $pedido->setCurrency($coddivisa);
+            $documento->setCurrency($coddivisa);
         }
 
         // asignamos el resto de campos del modelo
-        foreach ($pedido->getModelFields() as $key => $field) {
+        foreach ($documento->getModelFields() as $key => $field) {
             if ($this->request->request->has($key)) {
-                $pedido->{$key} = $this->request->request->get($key);
+                $documento->{$key} = $this->request->request->get($key);
             }
         }
 
         $db = new DataBase();
         $db->beginTransaction();
 
-        // guardamos el pedido
-        if (false === $pedido->save()) {
+        // guardamos la factura
+        if (false === $documento->save()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent(json_encode([
                 'status' => 'error',
@@ -115,21 +144,32 @@ class ApiCreatePedidoCliente extends ApiController
         }
 
         // guardamos las líneas
-        if (false === $this->saveLines($pedido)) {
+        if (false === $this->saveLines($documento)) {
             $db->rollback();
             return;
+        }
+
+        // ¿Está pagada?
+        if ($this->request->get('pagada', false)) {
+            foreach ($documento->getReceipts() as $receipt) {
+                $receipt->pagado = true;
+                $receipt->save();
+            }
+
+            // recargamos la factura
+            $documento->loadFromCode($documento->idfactura);
         }
 
         $db->commit();
 
         // devolvemos la respuesta
         $this->response->setContent(json_encode([
-            'doc' => $pedido->toArray(),
-            'lines' => $pedido->getLines(),
+            'doc' => $documento->toArray(),
+            'lines' => $documento->getLines(),
         ]));
     }
 
-    protected function saveLines(PedidoCliente &$pedido): bool
+    protected function saveLines(&$documento): bool
     {
         if (!$this->request->request->has('lineas')) {
             $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
@@ -154,8 +194,8 @@ class ApiCreatePedidoCliente extends ApiController
         $newLines = [];
         foreach ($lineas as $line) {
             $newLine = empty($line['referencia'] ?? '') ?
-                $pedido->getNewLine() :
-                $pedido->getNewProductLine($line['referencia']);
+                $documento->getNewLine() :
+                $documento->getNewProductLine($line['referencia']);
 
             $newLine->cantidad = (float)($line['cantidad'] ?? 1);
             $newLine->descripcion = $line['descripcion'] ?? $newLine->descripcion ?? '?';
@@ -191,7 +231,7 @@ class ApiCreatePedidoCliente extends ApiController
         }
 
         // actualizamos los totales y guardamos
-        if (false === Calculator::calculate($pedido, $newLines, true)) {
+        if (false === Calculator::calculate($documento, $newLines, true)) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent(json_encode([
                 'status' => 'error',
