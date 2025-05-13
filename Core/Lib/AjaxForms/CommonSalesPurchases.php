@@ -84,7 +84,7 @@ trait CommonSalesPurchases
             case 1:
                 return '<div class="col-sm-auto">'
                     . '<div class="mb-3">'
-                    . '<a href="' . $children[0]->url() . '" class="btn btn-block btn-info">'
+                    . '<a href="' . $children[0]->url() . '" class="btn w-100 btn-info">'
                     . '<i class="fa-solid fa-forward fa-fw" aria-hidden="true"></i> ' . $children[0]->primaryDescription()
                     . '</a>'
                     . '</div>'
@@ -94,7 +94,7 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="mb-3">'
-            . '<button class="btn btn-block btn-info" type="button" title="' . Tools::lang()->trans('documents-generated')
+            . '<button class="btn w-100 btn-info" type="button" title="' . Tools::lang()->trans('documents-generated')
             . '" data-bs-toggle="modal" data-bs-target="#childrenModal"><i class="fa-solid fa-forward fa-fw" aria-hidden="true"></i> '
             . count($children) . ' </button>'
             . '</div>'
@@ -104,7 +104,8 @@ trait CommonSalesPurchases
 
     protected static function codalmacen(BusinessDocument $model, string $jsFunc): string
     {
-        $warehouses = 0;
+        $warehouses = count(Almacenes::all());
+
         $options = [];
         foreach (Empresas::all() as $company) {
             if ($company->idempresa != $model->idempresa && $model->exists()) {
@@ -121,7 +122,6 @@ trait CommonSalesPurchases
                 $option .= ($row->codalmacen === $model->codalmacen) ?
                     '<option value="' . $row->codalmacen . '" selected>' . $row->nombre . '</option>' :
                     '<option value="' . $row->codalmacen . '">' . $row->nombre . '</option>';
-                $warehouses++;
             }
             $options[] = '<optgroup label="' . $company->nombrecorto . '">' . $option . '</optgroup>';
         }
@@ -373,9 +373,9 @@ trait CommonSalesPurchases
         }
 
         $status = $model->getStatus();
-        $btnClass = 'btn btn-block btn-secondary btn-spin-action';
+        $btnClass = 'btn w-100 btn-secondary btn-spin-action';
         if (false === $status->editable && empty($status->generadoc) && empty($status->actualizastock)) {
-            $btnClass = 'btn btn-block btn-danger btn-spin-action';
+            $btnClass = 'btn w-100 btn-danger btn-spin-action';
         }
 
         // si el estado genera documento, no se puede cambiar, sin eliminar el nuevo documento
@@ -500,7 +500,7 @@ trait CommonSalesPurchases
     protected static function newLineBtn(BusinessDocument $model, string $jsName): string
     {
         return $model->editable ? '<div class="col-3 col-md-auto">'
-            . '<a href="#" class="btn btn-success btn-block btn-spin-action mb-3" onclick="return ' . $jsName . '(\'new-line\', \'0\');">'
+            . '<a href="#" class="btn btn-success w-100 btn-spin-action mb-3" onclick="return ' . $jsName . '(\'new-line\', \'0\');">'
             . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::lang()->trans('line') . '</a></div>' : '';
     }
 
@@ -576,7 +576,7 @@ trait CommonSalesPurchases
             case 1:
                 return '<div class="col-sm-auto">'
                     . '<div class="mb-3">'
-                    . '<a href="' . $parents[0]->url() . '" class="btn btn-block btn-warning">'
+                    . '<a href="' . $parents[0]->url() . '" class="btn w-100 btn-warning">'
                     . '<i class="fa-solid fa-backward fa-fw" aria-hidden="true"></i> ' . $parents[0]->primaryDescription()
                     . '</a>'
                     . '</div>'
@@ -586,7 +586,7 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="mb-3">'
-            . '<button class="btn btn-block btn-warning" type="button" title="' . Tools::lang()->trans('previous-documents')
+            . '<button class="btn w-100 btn-warning" type="button" title="' . Tools::lang()->trans('previous-documents')
             . '" data-bs-toggle="modal" data-bs-target="#parentsModal"><i class="fa-solid fa-backward fa-fw" aria-hidden="true"></i> '
             . count($parents) . ' </button>'
             . '</div>'
@@ -616,7 +616,7 @@ trait CommonSalesPurchases
     protected static function sortableBtn(BusinessDocument $model): string
     {
         return $model->editable ? '<div class="col-4 col-md-auto">'
-            . '<button type="button" class="btn btn-block btn-light mb-3" id="sortableBtn">'
+            . '<button type="button" class="btn w-100 btn-light mb-3" id="sortableBtn">'
             . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . Tools::lang()->trans('move-lines')
             . '</button>'
             . '</div>' : '';
@@ -625,7 +625,7 @@ trait CommonSalesPurchases
     protected static function subtotalNetoBtn(): string
     {
         $html = '<div class="col-12 col-md-auto mb-3">'
-            . '<div id="columnView" class="btn-group btn-block" role="group">';
+            . '<div id="columnView" class="btn-group w-100" role="group">';
 
         if ('subtotal' === self::$columnView) {
             $html .= '<button type="button" class="btn btn-light" data-column="neto" onclick="changeColumn(this)">'

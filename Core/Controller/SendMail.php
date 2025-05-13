@@ -342,7 +342,7 @@ class SendMail extends Controller
         $model->loadFromCode($this->request->get('modelCode', ''));
         $this->loadDataDefault($model);
 
-        if (property_exists($model, 'email')) {
+        if (property_exists($model, 'email') && $model->email) {
             $this->newMail->to($model->email);
             return;
         }

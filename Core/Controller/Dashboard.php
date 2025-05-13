@@ -218,7 +218,7 @@ class Dashboard extends Controller
         $this->news = Cache::remember('dashboard-news', function () {
             return Http::get('https://facturascripts.com/comm3/index.php?page=community_changelog&json=TRUE')
                 ->setTimeout(5)
-                ->json();
+                ->json() ?? [];
         });
     }
 

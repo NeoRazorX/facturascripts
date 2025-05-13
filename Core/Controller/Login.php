@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
@@ -310,13 +309,12 @@ class Login implements ControllerInterface
             return;
         }
 
-        if($user->two_factor_enabled){
+        if ($user->two_factor_enabled) {
             $this->two_factor_view = true;
-            $this->user = $user;
             return;
         }
 
-        $this->updateUserAndRedirect($user, Session::getClientIp(), $request->headers->get('User-Agent'));
+        $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
     }
 
     protected function validCodeAction(Request $request): void
@@ -324,18 +322,19 @@ class Login implements ControllerInterface
         $user = new User();
         $user->loadFromCode($request->request->get('fsNick'));
 
-        if(!TwoFactorManager::verifyCode($user->two_factor_secret_key, $request->request->get('fsCode'))){
+        if (!TwoFactorManager::verifyCode($user->two_factor_secret_key, $request->request->get('fsCode'))) {
             Tools::log()->warning('login-2fa-fail');
             return;
         }
 
-        $this->updateUserAndRedirect($user, Session::getClientIp(), $request->headers->get('User-Agent'));
+        $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
     }
 
-    protected function updateUserAndRedirect(User $user, string $ip, string $browser): void
+    protected function updateUserAndRedirect(User $user, string $ip, Request $request): void
     {
         // update user data
         Session::set('user', $user);
+        $browser = $request->headers->get('User-Agent');
         $user->newLogkey($ip, $browser);
         if (false === $user->save()) {
             Tools::log()->warning('login-user-not-saved');

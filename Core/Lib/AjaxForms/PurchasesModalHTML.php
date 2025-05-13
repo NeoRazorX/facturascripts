@@ -322,7 +322,7 @@ class PurchasesModalHTML
             . '</div>'
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
             . '<div class="modal-footer bg-light">'
-            . '<a href="EditProveedor?return=' . urlencode($url) . '" class="btn btn-block btn-success">'
+            . '<a href="EditProveedor?return=' . urlencode($url) . '" class="btn w-100 btn-success">'
             . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::lang()->trans('new')
             . '</a>'
             . '</div>'

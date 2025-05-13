@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,8 +45,8 @@
             <div class="card shadow mb-5">
                 <div class="card-body">
                     <h1 class="h3">
-                        <i class="fa-solid fa-magic" aria-hidden="true"></i> {{ trans('wizard') }}
-                        <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary"
+                        <i class="fa-solid fa-wand-magic-sparkles me-2"></i> {{ trans('wizard') }}
+                        <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary float-end"
                            title="{{ trans('refresh') }}">
                             <i class="fa-solid fa-redo" aria-hidden="true"></i>
                         </a>
@@ -115,7 +115,7 @@
                 </div>
                 <div class="card-footer text-end">
                     <button type="submit" class="btn btn-primary" id="btnWizard">
-                        {{ trans('continue') }}
+                        {{ trans('continue') }} <i class="fa-solid fa-arrow-right ms-1"></i>
                     </button>
                 </div>
             </div>

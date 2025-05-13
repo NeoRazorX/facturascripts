@@ -243,6 +243,16 @@ class PDFExport extends PDFDocument
         }
     }
 
+    public function setCompany(int $idempresa): void
+    {
+        // new page
+        if ($this->pdf === null) {
+            $this->newPage();
+        }
+
+        $this->insertHeader($idempresa);
+    }
+
     /**
      * Set headers and output document content to response.
      *

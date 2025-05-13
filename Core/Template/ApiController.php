@@ -75,8 +75,10 @@ abstract class ApiController implements ControllerInterface
         if ($this->request->headers->get('REQUEST_METHOD') == 'OPTIONS') {
             $this->response->headers->set('Access-Control-Allow-Origin', '*');
             $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+            
             $allowHeaders = $this->request->headers->get('ACCESS_CONTROL_REQUEST_HEADERS');
             $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
+            
             $this->response->headers->set('Content-Type', 'application/json');
             $this->response->send();
             return;
@@ -168,7 +170,7 @@ abstract class ApiController implements ControllerInterface
             new DataBaseWhere('resource', $resource)
         ];
         if ($apiAccess->loadFromCode('', $where)) {
-            switch ($this->request->getMethod()) {
+            switch ($this->request->method()) {
                 case 'DELETE':
                     return $apiAccess->allowdelete;
 
