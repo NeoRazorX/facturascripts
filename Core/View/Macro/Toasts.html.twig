@@ -1,4 +1,4 @@
-<div id="messages-toasts" style="z-index: 9999; position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);"></div>
+<div id="messages-toasts" style="z-index: 9999; position: fixed; bottom: 2%; left: 50%; transform: translateX(-50%);"></div>
 
 <script>
     function setToast(message, style = 'info', title = '', time = 10000) {
@@ -36,9 +36,9 @@
                 break;
 
             case 'spinner':
-                styleHeader = 'bg-info text-white';
+                styleHeader = 'text-bg-info';
                 styleBorder = 'border border-info';
-                icon = '<i class="fa-solid fa-circle-notch fa-spin me-1"></i>';
+                icon = '<div class="spinner-border me-2 spinner-border-sm" role="status"></div>';
                 title = title !== '' ? title : '{{ trans('processing') }}';
                 break;
 
@@ -64,7 +64,7 @@
 
         let html = '<div class="toast toast-' + style + ' ' + styleBorder + '" style="margin: 15px auto 0 auto;" role="' + role + '" aria-live="' + live + '" aria-atomic="true" ' + delay + '>'
             + '<div class="toast-header ' + styleHeader + '">'
-            + '<strong class="mr-auto">' + icon + title + '</strong>'
+            + '<strong class="me-auto">' + icon + title + '</strong>'
             + '<button type="button" class="ms-4 btn btn-close ' + styleHeader + '" data-bs-dismiss="toast" aria-label="{{ trans('close') }}">'
             + ''
             + '</button>'
