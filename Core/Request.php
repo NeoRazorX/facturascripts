@@ -34,7 +34,7 @@ final class Request
     /** @var RequestFiles */
     public $files;
 
-    /** @var SubRequest */
+    /** @var Headers */
     public $headers;
 
     /** @var SubRequest */
