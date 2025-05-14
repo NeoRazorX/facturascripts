@@ -1045,6 +1045,7 @@
     "not-enough-stock": "Nie ma wystarczającej ilości zapasów %reference%",
     "not-passed-integrity-check": "Niektóre pliki nie przeszły weryfikacji integralności ... <br\/>Możesz <a class='alert-link' target='_blank' href='IntegritySystemCheck'>uzyskać więcej szczegółów tutaj<\/a>.",
     "not-public": "Niepubliczny",
+    "not-sent": "No enviado",
     "not-stored-content": "Zawartość nieprzechowana",
     "not-valid-email": "Email %email% jest nieprawidłowy",
     "not-valid-fiscal-number": "%type% %number% jest nieprawidłowy",

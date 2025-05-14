@@ -1045,6 +1045,7 @@
     "not-enough-stock": "Not enough stock of %reference%",
     "not-passed-integrity-check": "Some files have not passed the integrity check...<br\/>You can <a class='alert-link' target='_blank' href='IntegritySystemCheck'>get more details here<\/a>.",
     "not-public": "Not Public",
+    "not-sent": "Not sent",
     "not-stored-content": "Content not stored",
     "not-valid-email": "Invalid email %email%",
     "not-valid-fiscal-number": "The %type% %number% is not valid",
