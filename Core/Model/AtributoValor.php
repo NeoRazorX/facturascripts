@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -79,7 +79,7 @@ class AtributoValor extends Base\ModelClass
 
         $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $this->primaryDescriptionColumn() . ' AS description, codatributo, orden '
             . 'FROM ' . static::tableName() . ' ORDER BY codatributo ASC, orden ASC';
-        foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $d) {
+        foreach (self::$dataBase->selectLimit($sql, CodeModel::getLimit()) as $d) {
             $results[] = new CodeModel($d);
         }
 
