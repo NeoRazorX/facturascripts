@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core;
 
+use FacturaScripts\Core\Internal\Headers;
 use FacturaScripts\Core\Internal\RequestFiles;
 use FacturaScripts\Core\Internal\SubRequest;
 
@@ -46,15 +47,11 @@ final class Request
     {
         $this->cookies = new SubRequest($data['cookies'] ?? []);
         $this->files = new RequestFiles($data['files'] ?? []);
-        $this->headers = new SubRequest($data['headers'] ?? []);
+        $this->headers = new Headers($data['headers'] ?? []);
         $this->query = new SubRequest($data['query'] ?? []);
         $this->request = new SubRequest($data['request'] ?? []);
     }
 
-    /**
-     * @param string ...$key
-     * @return array
-     */
     public function all(string ...$key): array
     {
         if (empty($key)) {
@@ -209,8 +206,8 @@ final class Request
     }
 
     /**
-     * @deprecated use method() instead
      * @return string
+     * @deprecated use method() instead
      */
     public function getMethod(): string
     {
@@ -244,10 +241,11 @@ final class Request
         return $this->query->getUrl($key, $allowNull);
     }
 
-    public function getBasePath()
+    public function getBasePath(): string
     {
         $url = $_SERVER['REQUEST_URI'];
-        return parse_url($url, PHP_URL_PATH);
+        $base = parse_url($url, PHP_URL_PATH);
+        return is_string($base) ? $base : '';
     }
 
     public function has(string ...$key): bool
@@ -335,7 +333,7 @@ final class Request
         return $this->query->get($key, $default);
     }
 
-    public function isSecure() : bool
+    public function isSecure(): bool
     {
         return $this->protocol() === 'https';
     }

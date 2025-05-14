@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Internal;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
 
-final class SubRequest
+class Headers
 {
     /** @var array */
     private $data;
@@ -54,18 +54,34 @@ final class SubRequest
 
     public function get(string $key, $default = null): ?string
     {
-        $value = $this->data[$key] ?? $default;
-
-        if (is_array($value)) {
-            return serialize($value);
+        $alt_keys = [
+            $key,
+            'HTTP_' . strtoupper(str_replace('-', '_', $key)),
+            strtoupper(str_replace('-', '_', $key)),
+        ];
+        foreach ($alt_keys as $alt_key) {
+            if (array_key_exists($alt_key, $this->data)) {
+                return $this->data[$alt_key];
+            }
         }
 
-        return $value;
+        return $default;
     }
 
     public function getArray(string $key, bool $allowNull = true): ?array
     {
-        $value = $this->data[$key] ?? [];
+        $value = null;
+        $alt_keys = [
+            $key,
+            'HTTP_' . strtoupper(str_replace('-', '_', $key)),
+            strtoupper(str_replace('-', '_', $key)),
+        ];
+        foreach ($alt_keys as $alt_key) {
+            if (array_key_exists($alt_key, $this->data)) {
+                $value = $this->data[$alt_key];
+                break;
+            }
+        }
         if ($allowNull && empty($value)) {
             return null;
         }
@@ -186,26 +202,49 @@ final class SubRequest
     public function has(string ...$key): bool
     {
         foreach ($key as $k) {
-            if (!isset($this->data[$k])) {
+            $found = false;
+            $alt_keys = [
+                $k,
+                'HTTP_' . strtoupper(str_replace('-', '_', $k)),
+                strtoupper(str_replace('-', '_', $k)),
+            ];
+            foreach ($alt_keys as $alt_key) {
+                if (array_key_exists($alt_key, $this->data)) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
                 return false;
             }
         }
+
         return true;
     }
 
     public function isMissing(string ...$key): bool
     {
         foreach ($key as $k) {
-            if (isset($this->data[$k])) {
+            if (!$this->has($k)) {
                 return false;
             }
         }
+
         return true;
     }
 
     public function remove(string $key): void
     {
-        unset($this->data[$key]);
+        $alt_keys = [
+            $key,
+            'HTTP_' . strtoupper(str_replace('-', '_', $key)),
+            strtoupper(str_replace('-', '_', $key)),
+        ];
+        foreach ($alt_keys as $alt_key) {
+            if (array_key_exists($alt_key, $this->data)) {
+                unset($this->data[$alt_key]);
+            }
+        }
     }
 
     public function set(string $key, $value): void
