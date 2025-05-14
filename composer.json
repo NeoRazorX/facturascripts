@@ -11,16 +11,15 @@
   ],
   "config": {
     "platform": {
-      "php": "7.3"
+      "php": "8.0"
     }
   },
   "require": {
-    "php": ">=7.3",
+    "php": ">=8.0",
     "mk-j/php_xlsxwriter": "0.39",
     "parsecsv/php-parsecsv": "1.*",
     "phpmailer/phpmailer": "6.*",
     "rospdf/pdf-php": "0.12.*",
-    "symfony/http-foundation": "4.4.*",
     "symfony/translation": "4.4.*",
     "twig/twig": "3.*",
     "tavo1987/ec-validador-cedula-ruc": "1.0.2",
@@ -34,7 +33,10 @@
     "ext-mysqli": "*",
     "ext-bcmath": "*",
     "ext-gd": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "pragmarx/google2fa": "^8.0",
+    "endroid/qr-code": "^4.3",
+    "ext-pgsql": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "9.*",

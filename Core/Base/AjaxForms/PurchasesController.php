@@ -38,6 +38,8 @@ use FacturaScripts\Dinamic\Model\Variante;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/PurchasesController
  */
 abstract class PurchasesController extends PanelController
 {

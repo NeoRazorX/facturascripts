@@ -38,6 +38,8 @@ use FacturaScripts\Dinamic\Model\Provincia;
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/SalesHeaderHTML
  */
 class SalesHeaderHTML
 {

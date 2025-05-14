@@ -32,6 +32,8 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/AccountingLineHTML
  */
 class AccountingLineHTML
 {

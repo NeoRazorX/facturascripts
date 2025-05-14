@@ -38,7 +38,7 @@ class ListEjercicio extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'exercises';
-        $data['icon'] = 'fas fa-calendar-alt';
+        $data['icon'] = 'fa-solid fa-calendar-alt';
         return $data;
     }
 
@@ -48,7 +48,7 @@ class ListEjercicio extends ListController
     protected function createViews()
     {
         $viewName = 'ListEjercicio';
-        $this->addView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt')
+        $this->addView($viewName, 'Ejercicio', 'exercises', 'fa-solid fa-calendar-alt')
             ->addSearchFields(['nombre', 'codejercicio'])
             ->addOrderBy(['fechainicio'], 'start-date', 2)
             ->addOrderBy(['codejercicio'], 'code')

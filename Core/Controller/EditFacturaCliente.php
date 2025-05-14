@@ -5,9 +5,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\AjaxForms\SalesController;
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\AjaxForms\SalesController;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
@@ -25,9 +25,6 @@ class EditFacturaCliente extends SalesController
     private const VIEW_ACCOUNTS = 'ListAsiento';
     private const VIEW_RECEIPTS = 'ListReciboCliente';
 
-    /** @var bool */
-    public $isRectified;
-
     public function getModelClassName(): string
     {
         return 'FacturaCliente';
@@ -35,27 +32,10 @@ class EditFacturaCliente extends SalesController
 
     public function getPageData(): array
     {
-        $title = 'invoice';
-
-        if(!empty($this->views)){
-            $mvn = $this->getMainViewName();
-
-            // es una factura rectificativa?
-            /** @var FacturaCliente $model */
-            $model = $this->getModel();
-            $this->isRectified = property_exists($model, 'idfacturarect') && $model->idfacturarect;
-
-            if ($this->isRectified){
-                // cambiamos el titulo para que sea mas facil identificar la factura rectificativa
-                $title = $this->views[$mvn]->title = Tools::lang()->trans('rectified-invoice');
-                $this->title = $title . ' ' . $model->codigorect;
-            }
-        }
-
         $data = parent::getPageData();
         $data['menu'] = 'sales';
-        $data['title'] = $title;
-        $data['icon'] = 'fas fa-file-invoice-dollar';
+        $data['title'] = 'invoice';
+        $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         $data['showonmenu'] = false;
         return $data;
     }
@@ -78,7 +58,7 @@ class EditFacturaCliente extends SalesController
      */
     private function createViewsAccounting(string $viewName = self::VIEW_ACCOUNTS): void
     {
-        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fa-solid fa-balance-scale');
 
         // buttons
         $this->addButton($viewName, [
@@ -96,7 +76,7 @@ class EditFacturaCliente extends SalesController
      */
     private function createViewsRefunds(string $viewName = 'refunds'): void
     {
-        $this->addHtmlView($viewName, 'Tab/RefundFacturaCliente', 'FacturaCliente', 'refunds', 'fas fa-share-square');
+        $this->addHtmlView($viewName, 'Tab/RefundFacturaCliente', 'FacturaCliente', 'refunds', 'fa-solid fa-share-square');
     }
 
     /**
@@ -106,7 +86,7 @@ class EditFacturaCliente extends SalesController
      */
     private function createViewsReceipts(string $viewName = self::VIEW_RECEIPTS): void
     {
-        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign')
+        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fa-solid fa-dollar-sign')
             ->addOrderBy(['vencimiento'], 'expiration');
 
         // buttons
@@ -120,7 +100,7 @@ class EditFacturaCliente extends SalesController
         $this->addButton($viewName, [
             'action' => 'paid',
             'confirm' => 'true',
-            'icon' => 'fas fa-check',
+            'icon' => 'fa-solid fa-check',
             'label' => 'paid'
         ]);
 
@@ -376,9 +356,9 @@ class EditFacturaCliente extends SalesController
             return true;
         }
 
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         $model = $this->views[$this->active]->model;
-        if (false === is_array($codes) || empty($model)) {
+        if (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         }

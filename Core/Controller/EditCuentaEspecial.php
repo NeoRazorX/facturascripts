@@ -41,13 +41,13 @@ class EditCuentaEspecial extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'special-account';
-        $data['icon'] = 'fas fa-newspaper';
+        $data['icon'] = 'fa-solid fa-newspaper';
         return $data;
     }
 
     protected function createAccountsView(string $viewName = 'ListCuenta')
     {
-        $this->addListView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
+        $this->addListView($viewName, 'Cuenta', 'accounts', 'fa-solid fa-book');
         $this->views[$viewName]->addOrderBy(['codejercicio', 'codcuenta'], 'exercise', 2);
         $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
         $this->views[$viewName]->addSearchFields(['codcuenta', 'descripcion']);
@@ -63,7 +63,7 @@ class EditCuentaEspecial extends EditController
 
     protected function createSubaccountsView(string $viewName = 'ListSubcuenta')
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-th-list');
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-th-list');
         $this->views[$viewName]->addOrderBy(['codejercicio', 'codsubcuenta'], 'exercise', 2);
         $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
         $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);

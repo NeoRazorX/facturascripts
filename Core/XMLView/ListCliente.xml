@@ -86,7 +86,7 @@
         </column>
     </columns>
     <modals>
-        <group name="setcustomerrate" title="add" icon="fas fa-folder-plus">
+        <group name="setcustomerrate" title="add" icon="fa-solid fa-folder-plus">
             <column name="setcustomerrate" title="customer" order="100">
                 <widget type="autocomplete" fieldname="setcustomerrate" required="true">
                     <values source="clientes" fieldcode="codcliente" fieldtitle="nombre" />

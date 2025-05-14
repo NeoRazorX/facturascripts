@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ReceiptGenerator;
 use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\FacturaCliente;

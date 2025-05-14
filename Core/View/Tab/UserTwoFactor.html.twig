@@ -1,0 +1,25 @@
+{% set firstView = fsc.views | first %}
+{% set model = firstView.model %}
+{% set twoFactorUrl = fsc.model.getTwoFactorUrl() %}
+
+<div class="container text-center">
+    <div>
+        <img src="{{ fsc.model.getTwoFactorQR() }}"/>
+    </div>
+    <div class="mb-3">
+        <a href="{{ twoFactorUrl }}">{{ twoFactorUrl }}</a>
+    </div>
+    <div>
+        <form method="post" action="{{ model.url() }}">
+            {{ formToken() }}
+            <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
+            <input type="hidden" name="action" value="modal2fa"/>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="codetime" placeholder="{{ trans('code') }}" required/>
+                <button class="btn btn-primary" type="submit">
+                        {{ trans('save') }}
+                    </button>
+            </div>
+        </form>
+    </div>
+</div>

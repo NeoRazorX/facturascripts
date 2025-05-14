@@ -33,7 +33,7 @@ class ListAtributo extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'attributes';
-        $data['icon'] = 'fas fa-tshirt';
+        $data['icon'] = 'fa-solid fa-tshirt';
         return $data;
     }
 
@@ -48,7 +48,7 @@ class ListAtributo extends ListController
 
     protected function createViewsAttributes(string $viewName = 'ListAtributo'): void
     {
-        $this->addView($viewName, 'Atributo', 'attributes', 'fas fa-tshirt')
+        $this->addView($viewName, 'Atributo', 'attributes', 'fa-solid fa-tshirt')
             ->addSearchFields(['nombre', 'codatributo'])
             ->addOrderBy(['codatributo'], 'code')
             ->addOrderBy(['nombre'], 'name');
@@ -56,7 +56,7 @@ class ListAtributo extends ListController
 
     protected function createViewsValues(string $viewName = 'ListAtributoValor'): void
     {
-        $this->addView($viewName, 'AtributoValor', 'values', 'fas fa-list')
+        $this->addView($viewName, 'AtributoValor', 'values', 'fa-solid fa-list')
             ->addSearchFields(['valor', 'codatributo'])
             ->addOrderBy(['codatributo', 'orden', 'valor'], 'sort', 2)
             ->addOrderBy(['codatributo', 'valor'], 'value');

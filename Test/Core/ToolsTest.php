@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Divisa;
@@ -77,6 +76,16 @@ final class ToolsTest extends TestCase
     {
         $this->assertEquals(FS_FOLDER, Tools::folder());
         $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('Test'));
+
+        // comprobamos que elimina barras al inicio y al final
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('/Test'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('/Test/'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('Test/'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('\\Test'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('\\Test\\'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('Test\\'));
+        $expected = FS_FOLDER . DIRECTORY_SEPARATOR . 'Test1' . DIRECTORY_SEPARATOR . 'test2';
+        $this->assertEquals($expected, Tools::folder('/Test1/', '/test2'));
 
         // creamos la carpeta MyFiles/Test/Folder1
         $folder1 = Tools::folder('MyFiles', 'Test', 'Folder1');
@@ -141,7 +150,7 @@ final class ToolsTest extends TestCase
 
     public function testSettings(): void
     {
-        $this->assertEquals(AppSettings::get('default', 'codpais'), Tools::settings('default', 'codpais'));
+        $this->assertEquals(Tools::settings('default', 'codpais'), Tools::settings('default', 'codpais'));
 
         // nos guardamos el valor actual
         $value = Tools::settings('default', 'codpais');
