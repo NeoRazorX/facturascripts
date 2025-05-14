@@ -52,6 +52,13 @@ class WidgetAutocomplete extends WidgetSelect
      */
     public $strict = true;
 
+    public function __construct(array $data)
+    {
+        parent::__construct($data);
+
+        $this->strict = isset($data['strict']) ? ($data['strict'] == 'true') : true;
+    }
+
     /**
      * @param object $model
      * @param string $title
@@ -162,7 +169,6 @@ class WidgetAutocomplete extends WidgetSelect
         // according to the information entered by the user.
         parent::setSourceData($child, false);
         $this->fieldfilter = $child['fieldfilter'] ?? '';
-        $this->strict = isset($child['strict']) ? ($child['strict'] == 'true') : true;
     }
 
     /**
