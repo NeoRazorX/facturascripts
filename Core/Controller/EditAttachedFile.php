@@ -41,7 +41,7 @@ class EditAttachedFile extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'attached-file';
-        $data['icon'] = 'fas fa-paperclip';
+        $data['icon'] = 'fa-solid fa-paperclip';
         return $data;
     }
 
@@ -55,12 +55,12 @@ class EditAttachedFile extends EditController
 
     protected function createViewsPreview(string $viewName = 'preview')
     {
-        $this->addHtmlView($viewName, 'Tab/AttachedFilePreview', 'AttachedFile', 'file', 'fas fa-eye');
+        $this->addHtmlView($viewName, 'Tab/AttachedFilePreview', 'AttachedFile', 'file', 'fa-solid fa-eye');
     }
 
     protected function createViewsRelations(string $viewName = 'ListAttachedFileRelation')
     {
-        $this->addListView($viewName, 'AttachedFileRelation', 'related', 'fas fa-copy');
+        $this->addListView($viewName, 'AttachedFileRelation', 'related', 'fa-solid fa-copy');
         $this->views[$viewName]->addSearchFields(['observations']);
         $this->views[$viewName]->addOrderBy(['creationdate'], 'date', 2);
 

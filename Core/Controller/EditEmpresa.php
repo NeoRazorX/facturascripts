@@ -44,7 +44,7 @@ class EditEmpresa extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'company';
-        $data['icon'] = 'fas fa-building';
+        $data['icon'] = 'fa-solid fa-building';
         return $data;
     }
 
@@ -73,25 +73,25 @@ class EditEmpresa extends EditController
 
     protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco'): void
     {
-        $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank')
+        $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fa-solid fa-piggy-bank')
             ->disableColumn('company');
     }
 
     protected function createViewExercises(string $viewName = 'ListEjercicio'): void
     {
-        $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt')
+        $this->addListView($viewName, 'Ejercicio', 'exercises', 'fa-solid fa-calendar-alt')
             ->disableColumn('company');
     }
 
     protected function createViewPaymentMethods(string $viewName = 'ListFormaPago'): void
     {
-        $this->addListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card')
+        $this->addListView($viewName, 'FormaPago', 'payment-method', 'fa-solid fa-credit-card')
             ->disableColumn('company');
     }
 
     protected function createViewWarehouse(string $viewName = 'EditAlmacen'): void
     {
-        $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse')
+        $this->addListView($viewName, 'Almacen', 'warehouses', 'fa-solid fa-warehouse')
             ->disableColumn('company');
     }
 
@@ -133,7 +133,7 @@ class EditEmpresa extends EditController
                     $this->addButton($viewName, [
                         'action' => 'check-vies',
                         'color' => 'info',
-                        'icon' => 'fas fa-check-double',
+                        'icon' => 'fa-solid fa-check-double',
                         'label' => 'check-vies'
                     ]);
                 }

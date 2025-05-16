@@ -36,13 +36,13 @@ class ListAgente extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'agents';
-        $data['icon'] = 'fas fa-user-tie';
+        $data['icon'] = 'fa-solid fa-user-tie';
         return $data;
     }
 
     protected function createAgentView(string $viewName = 'ListAgente'): void
     {
-        $this->addView($viewName, 'Agente', 'agents', 'fas fa-user-tie')
+        $this->addView($viewName, 'Agente', 'agents', 'fa-solid fa-user-tie')
             ->addSearchFields(['nombre', 'codagente', 'email', 'telefono1', 'telefono2', 'observaciones'])
             ->addOrderBy(['codagente'], 'code')
             ->addOrderBy(['nombre'], 'name', 1);

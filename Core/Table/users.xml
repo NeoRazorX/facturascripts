@@ -76,6 +76,16 @@
         <type>character varying(255)</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>two_factor_enabled</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>two_factor_secret_key</name>
+        <type>character varying(32)</type>
+    </column>
     <constraint>
         <name>users_pkey</name>
         <type>PRIMARY KEY (nick)</type>

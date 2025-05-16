@@ -40,7 +40,7 @@
                 <widget type="number" decimal="2" fieldname="recargo" required="true"/>
             </column>
             <column name="code" description="optional" numcolumns="2" order="140">
-                <widget type="text" fieldname="codimpuesto" icon="fas fa-hashtag" maxlength="10" readonly="dinamic"/>
+                <widget type="text" fieldname="codimpuesto" icon="fa-solid fa-hashtag" maxlength="10" readonly="dinamic"/>
             </column>
             <column name="impacted-tax-subaccount" description="optional" order="150">
                 <widget type="autocomplete" fieldname="codsubcuentarep">

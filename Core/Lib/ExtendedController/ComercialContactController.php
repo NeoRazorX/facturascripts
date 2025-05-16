@@ -38,6 +38,8 @@ abstract class ComercialContactController extends EditController
     use ListBusinessActionTrait;
     use DocFilesTrait;
 
+    private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
+
     /**
      * Set custom configuration when load main data
      *
@@ -85,7 +87,7 @@ abstract class ComercialContactController extends EditController
      */
     protected function createContactsView(string $viewName = 'EditDireccionContacto'): void
     {
-        $this->addEditListView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
+        $this->addEditListView($viewName, 'Contacto', 'addresses-and-contacts', 'fa-solid fa-address-book');
     }
 
     /**
@@ -107,7 +109,7 @@ abstract class ComercialContactController extends EditController
      */
     protected function createEmailsView(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope')
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
             ->addOrderBy(['date'], 'date', 2)
             ->addSearchFields(['addressee', 'body', 'subject']);
 
@@ -130,7 +132,7 @@ abstract class ComercialContactController extends EditController
      */
     protected function createLineView(string $viewName, string $model, string $label = 'products'): void
     {
-        $this->addListView($viewName, $model, $label, 'fas fa-cubes')
+        $this->addListView($viewName, $model, $label, 'fa-solid fa-cubes')
             ->addOrderBy(['idlinea'], 'code', 2)
             ->addOrderBy(['cantidad'], 'quantity')
             ->addOrderBy(['pvptotal'], 'amount')
@@ -152,7 +154,7 @@ abstract class ComercialContactController extends EditController
      */
     private function createListView(string $viewName, string $model, string $label, array $fields): void
     {
-        $this->addListView($viewName, $model, $label, 'fas fa-copy')
+        $this->addListView($viewName, $model, $label, 'fa-solid fa-copy')
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['fecha', 'hora'], 'date', 2)
             ->addOrderBy(['numero'], 'number')
@@ -175,7 +177,7 @@ abstract class ComercialContactController extends EditController
      */
     protected function createReceiptView(string $viewName, string $model): void
     {
-        $this->addListView($viewName, $model, 'receipts', 'fas fa-dollar-sign')
+        $this->addListView($viewName, $model, 'receipts', 'fa-solid fa-dollar-sign')
             ->addOrderBy(['fecha'], 'date')
             ->addOrderBy(['fechapago'], 'payment-date')
             ->addOrderBy(['vencimiento'], 'expiration', 2)
@@ -204,7 +206,7 @@ abstract class ComercialContactController extends EditController
      */
     protected function createSubaccountsView(string $viewName = 'ListSubcuenta'): void
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book')
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-book')
             ->addOrderBy(['codsubcuenta'], 'code')
             ->addOrderBy(['codejercicio'], 'exercise', 2)
             ->addOrderBy(['descripcion'], 'description')
@@ -239,7 +241,7 @@ abstract class ComercialContactController extends EditController
     protected function execPreviousAction($action)
     {
         $allowUpdate = $this->permissions->allowUpdate;
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         $model = $this->views[$this->active]->model;
 
         switch ($action) {
@@ -327,7 +329,7 @@ abstract class ComercialContactController extends EditController
                     $this->addButton($viewName, [
                         'action' => 'check-vies',
                         'color' => 'info',
-                        'icon' => 'fas fa-check-double',
+                        'icon' => 'fa-solid fa-check-double',
                         'label' => 'check-vies'
                     ]);
                 }
@@ -358,7 +360,7 @@ abstract class ComercialContactController extends EditController
                 $this->addButton($viewName, [
                     'action' => 'SendMail?email=' . $email,
                     'color' => 'success',
-                    'icon' => 'fas fa-envelope',
+                    'icon' => 'fa-solid fa-envelope',
                     'label' => 'send',
                     'type' => 'link'
                 ]);

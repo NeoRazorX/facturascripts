@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\AjaxForms\SalesController;
+use FacturaScripts\Core\Lib\AjaxForms\SalesController;
 
 /**
  * Description of EditAlbaranCliente
@@ -14,11 +14,7 @@ use FacturaScripts\Core\Base\AjaxForms\SalesController;
  */
 class EditAlbaranCliente extends SalesController
 {
-
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'AlbaranCliente';
     }
@@ -28,7 +24,7 @@ class EditAlbaranCliente extends SalesController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'delivery-note';
-        $data['icon'] = 'fas fa-dolly-flatbed';
+        $data['icon'] = 'fa-solid fa-dolly-flatbed';
         $data['showonmenu'] = false;
         return $data;
     }

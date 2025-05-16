@@ -112,7 +112,7 @@ abstract class ListBusinessDocument extends ListController
 
     protected function createViewLines(string $viewName, string $modelName): void
     {
-        $this->addView($viewName, $modelName, 'lines', 'fas fa-list')
+        $this->addView($viewName, $modelName, 'lines', 'fa-solid fa-list')
             ->addOrderBy(['referencia'], 'reference')
             ->addOrderBy(['cantidad'], 'quantity')
             ->addOrderBy(['servido'], 'quantity-served')
@@ -165,7 +165,7 @@ abstract class ListBusinessDocument extends ListController
 
     protected function createViewPurchases(string $viewName, string $modelName, string $label)
     {
-        $this->addView($viewName, $modelName, $label, 'fas fa-copy')
+        $this->addView($viewName, $modelName, $label, 'fa-solid fa-copy')
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)
             ->addOrderBy([$this->tableColToNumber('numero')], 'number')
@@ -185,7 +185,7 @@ abstract class ListBusinessDocument extends ListController
 
     protected function createViewSales(string $viewName, string $modelName, string $label)
     {
-        $this->addView($viewName, $modelName, $label, 'fas fa-copy')
+        $this->addView($viewName, $modelName, $label, 'fa-solid fa-copy')
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['codcliente'], 'customer-code')
             ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)
@@ -247,7 +247,7 @@ abstract class ListBusinessDocument extends ListController
     protected function execPreviousAction($action)
     {
         $allowUpdate = $this->permissions->allowUpdate;
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         $model = $this->views[$this->active]->model;
 
         switch ($action) {

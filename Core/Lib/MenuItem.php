@@ -77,7 +77,7 @@ class MenuItem
      * @param string $url
      * @param string $icon
      */
-    public function __construct($name, $title, $url, $icon = 'fas fa-file')
+    public function __construct($name, $title, $url, $icon = 'fa-solid fa-file')
     {
         $this->name = $name;
         $this->title = $title;

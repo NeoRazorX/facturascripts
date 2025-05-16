@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="idproducto" required="true"/>
             </column>
             <column name="reference" numcolumns="2" order="110">
-                <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag"/>
+                <widget type="text" fieldname="referencia" maxlength="30" icon="fa-solid fa-hashtag"/>
             </column>
             <column name="attribute-value-1" titleurl="ListAtributo" numcolumns="2" order="120">
                 <widget type="select" fieldname="idatributovalor1" jslist="true"/>
@@ -41,7 +41,7 @@
                 <widget type="select" fieldname="idatributovalor4" jslist="true"/>
             </column>
             <column name="barcode" numcolumns="2" order="160">
-                <widget type="text" fieldname="codbarras" maxlength="20" icon="fas fa-barcode"/>
+                <widget type="text" fieldname="codbarras" maxlength="20" icon="fa-solid fa-barcode"/>
             </column>
             <column name="cost-price" display="right" numcolumns="2" order="170">
                 <widget type="money" decimal="2" fieldname="coste" class="calc-cost"/>

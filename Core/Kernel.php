@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,6 @@ namespace FacturaScripts\Core;
 
 use Closure;
 use Exception;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
 use FacturaScripts\Core\Error\DefaultError;
 
@@ -109,9 +108,6 @@ final class Kernel
         $lang = $_COOKIE['fsLang'] ?? Tools::config('lang', 'es_ES');
         Translator::setDefaultLang($lang);
 
-        // inicializamos el antiguo traductor
-        ToolBox::i18n()->setDefaultLang($lang);
-
         // workers
         WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Delete');
         WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Update');
@@ -120,6 +116,10 @@ final class Kernel
         WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Delete');
         WorkQueue::addWorker('PartidaWorker', 'Model.Partida.Save');
         WorkQueue::addWorker('AtributoWorker', 'Model.Atributo.Update');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.AlbaranProveedor.Update');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.FacturaProveedor.Update');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.PedidoProveedor.Update');
+        WorkQueue::addWorker('PurchaseDocumentWorker', 'Model.PresupuestoProveedor.Update');
 
         self::stopTimer('kernel::init');
     }
@@ -228,12 +228,12 @@ final class Kernel
     public static function unlock(string $processName): bool
     {
         $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
-        return file_exists($lockFile) && unlink($lockFile);
+        return file_exists($lockFile) && @unlink($lockFile);
     }
 
     public static function version(): float
     {
-        return 2024.92;
+        return 2025;
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
@@ -290,7 +290,9 @@ final class Kernel
             '/AdminPlugins' => 'AdminPlugins',
             '/api' => 'ApiRoot',
             '/api/3/crearFacturaCliente' => 'ApiCreateFacturaCliente',
+            '/api/3/crearFacturaRectificativaCliente' => 'ApiCreateFacturaRectificativaCliente',
             '/api/3/exportarFacturaCliente/*' => 'ApiExportFacturaCliente',
+            '/api/3/uploadFiles' => 'ApiUploadFiles',
             '/api/*' => 'ApiRoot',
             '/Core/Assets/*' => 'Files',
             '/cron' => 'Cron',
@@ -370,7 +372,7 @@ final class Kernel
             }
 
             // coincidencia con comodín
-            if (str_ends_with($route, '*') && 0 === strncmp($url, $route, strlen($route) - 1)) {
+            if (substr($route, -1) === '*' && 0 === strncmp($url, $route, strlen($route) - 1)) {
                 $app = new $controller($name, $url);
                 $app->run();
                 return;

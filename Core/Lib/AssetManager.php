@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,10 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Tools;
+
 /**
- * Asset Manager for easy add extra assets.
+ * Gestiona los assets de la aplicación.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -30,7 +32,7 @@ class AssetManager
     protected static $list;
 
     /**
-     * Adds and asset to the list.
+     * Añade un asset a la lista.
      *
      * @param string $type
      * @param string $asset
@@ -39,18 +41,15 @@ class AssetManager
     public static function add(string $type, string $asset, int $priority = 1): void
     {
         static::init();
-        if (!isset(static::$list[$type])) {
-            return;
-        }
 
-        // avoid duplicates
+        // evitamos duplicados
         foreach (static::$list[$type] as $item) {
             if ($item['asset'] == $asset) {
                 return;
             }
         }
 
-        // insert
+        // añadimos el asset
         static::$list[$type][] = [
             'asset' => $asset,
             'priority' => $priority,
@@ -67,44 +66,102 @@ class AssetManager
         static::add('js', $asset, $priority);
     }
 
-    /**
-     * Clears all asset lists.
-     */
+    public static function addJsModule(string $asset, int $priority = 1): void
+    {
+        static::add('mjs', $asset, $priority);
+    }
+
+    /** Eliminamos todos los assets de la lista */
     public static function clear(): void
     {
         static::$list = [
             'css' => [],
             'js' => [],
+            'mjs' => [],
         ];
     }
 
     /**
-     * Combine and returns the content of the selected type.
-     *
-     * @param string $type
+     * Combina los assets CSS en un único archivo y devuelve la ruta.
      *
      * @return string
      */
-    public static function combine(string $type): string
+    public static function combinedCss(): string
     {
-        $txt = '';
+        $assets = static::pull('css');
+        $route = Tools::config('route');
 
-        $fsRouteLen = strlen(FS_ROUTE);
-        foreach (static::get($type) as $file) {
-            $path = (FS_ROUTE == substr($file, 0, $fsRouteLen)) ? substr($file, $fsRouteLen + 1) : $file;
-
-            $filePath = FS_FOLDER . DIRECTORY_SEPARATOR . $path;
-            if (is_file($filePath)) {
-                $content = file_get_contents($filePath) . "\n";
-                $txt .= static::fixCombineContent($content, FS_ROUTE . DIRECTORY_SEPARATOR . $path);
-            }
+        // generamos una semilla a partir de la fecha y las rutas de los assets
+        $seed = date('Y-m-d');
+        foreach ($assets as $item) {
+            $seed .= $item['asset'];
         }
 
-        return $txt;
+        // generamos el nombre del archivo
+        $file_name = 'combined-' . md5($seed) . '.css';
+        $file_path = Tools::folder('Dinamic', 'Assets', 'CSS', $file_name);
+
+        // si el archivo no existe, lo creamos
+        if (!file_exists($file_path)) {
+            $content = '';
+            foreach ($assets as $item) {
+                // si es una url, añadimos el include
+                if (strpos($item['asset'], 'http') === 0) {
+                    $content .= '@import url("' . $item['asset'] . '");';
+                    continue;
+                }
+
+                $content .= static::fixCombinedCss(
+                    file_get_contents($item['asset']),
+                    $route . '/' . $item['asset']
+                );
+            }
+            file_put_contents($file_path, $content);
+        }
+
+        return implode('/', [$route, 'Dinamic', 'Assets', 'CSS', $file_name]);
     }
 
     /**
-     * Gets the list of assets.
+     * Combina los assets JS en un único archivo y devuelve la ruta.
+     *
+     * @return string
+     */
+    public static function combinedJs(): string
+    {
+        $assets = static::pull('js');
+        $route = Tools::config('route');
+
+        // generamos una semilla a partir de la fecha y las rutas de los assets
+        $seed = date('Y-m-d');
+        foreach ($assets as $item) {
+            $seed .= $item['asset'];
+        }
+
+        // generamos el nombre del archivo
+        $file_name = 'combined-' . md5($seed) . '.js';
+        $file_path = Tools::folder('Dinamic', 'Assets', 'JS', $file_name);
+
+        // si el archivo no existe, lo creamos
+        if (!file_exists($file_path)) {
+            $content = '';
+            foreach ($assets as $item) {
+                // si es una url, añadimos el include
+                if (strpos($item['asset'], 'http') === 0) {
+                    $content .= 'import "' . $item['asset'] . '";';
+                    continue;
+                }
+
+                $content .= file_get_contents($item['asset']);
+            }
+            file_put_contents($file_path, $content);
+        }
+
+        return implode('/', [$route, 'Dinamic', 'Assets', 'JS', $file_name]);
+    }
+
+    /**
+     * Devuelve la lista de assets de un tipo.
      *
      * @param string $type
      *
@@ -112,72 +169,60 @@ class AssetManager
      */
     public static function get(string $type): array
     {
-        static::init();
+        static::sort();
 
-        // sort by priority
-        uasort(static::$list[$type], function ($item1, $item2) {
-            if ($item1['priority'] > $item2['priority']) {
-                return -1;
-            } elseif ($item1['priority'] < $item2['priority']) {
-                return 1;
-            }
-
-            return 0;
-        });
-
-        // extract assets
-        $assets = [];
+        $list = [];
         foreach (static::$list[$type] as $item) {
-            $assets[] = $item['asset'];
+            $list[] = $item['asset'];
         }
-        return $assets;
+
+        return $list;
+    }
+
+    public static function getCss(): array
+    {
+        return static::get('css');
+    }
+
+    public static function getJs(): array
+    {
+        return static::get('js');
+    }
+
+    public static function getJsModules(): array
+    {
+        return static::get('mjs');
     }
 
     /**
-     * Finds and sets the assets for this page.
+     * Busca los assets de una página y los añade a la lista.
      *
      * @param string $name
      */
     public static function setAssetsForPage(string $name): void
     {
-        $base = DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR;
-
-        // find js file with $name name
-        $jsFile = $base . 'JS' . DIRECTORY_SEPARATOR . $name . '.js';
-        if (file_exists(FS_FOLDER . $jsFile)) {
-            static::add('js', FS_ROUTE . $jsFile, 0);
-        }
-
-        // find css file with $name name
-        $cssFile = $base . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
-        if (file_exists(FS_FOLDER . $cssFile)) {
-            static::add('css', FS_ROUTE . $cssFile, 0);
+        foreach (['css' => 'CSS', 'js' => 'JS', 'mjs' => 'JS'] as $ext => $folder) {
+            $file_path = Tools::folder('Dinamic', 'Assets', $folder, $name . '.' . $ext);
+            if (file_exists($file_path)) {
+                $route = implode('/', [
+                    Tools::config('route'), 'Dinamic', 'Assets', $folder, $name . '.' . $ext
+                ]);
+                static::add($ext, $route, 0);
+            }
         }
     }
 
-    /**
-     * @param string $path
-     * @param int $levels
-     *
-     * @return string
-     */
     protected static function dirname(string $path, int $levels = 1): string
     {
         return str_replace('\\', '/', dirname($path, $levels));
     }
 
-    /**
-     * @param string $data
-     * @param string $url
-     *
-     * @return string
-     */
-    protected static function fixCombineContent(string $data, string $url): string
+    protected static function fixCombinedCss(string $content, string $url): string
     {
-        // Exclude url("data:) from replacement
-        $buffer = str_replace('url("data:', '#url-data:#', $data);
+        // excluimos url("data:) del reemplazo
+        $buffer = str_replace('url("data:', '#url-data:#', $content);
 
-        // Replace relative paths in url()
+        // reemplazamos las rutas relativas
         $replace = [
             'url("' => 'url("' . static::dirname($url) . '/',
             'url(../' => "url(" . static::dirname($url, 2) . '/',
@@ -185,16 +230,16 @@ class AssetManager
         ];
         $buffer = str_replace(array_keys($replace), $replace, $buffer);
 
-        // fix url("data:)
+        // arreglamos url("data:)
         $buffer = str_replace('#url-data:#', 'url("data:', $buffer);
 
-        // Remove comments
+        // eliminamos comentarios
         $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
 
-        // Remove space after colons
+        // eliminamos espacios después de :
         $buffer = str_replace(': ', ':', $buffer);
 
-        // Remove whitespace
+        // eliminamos espacios en blanco
         return str_replace(["\r\n", "\r", "\n", "\t", '  ', '    ', '    '], '', $buffer);
     }
 
@@ -202,6 +247,35 @@ class AssetManager
     {
         if (!isset(static::$list)) {
             static::clear();
+        }
+    }
+
+    protected static function pull(string $type): array
+    {
+        static::sort();
+
+        $list = static::$list[$type];
+        static::$list[$type] = [];
+
+        return $list;
+    }
+
+    /** Ordenamos los assets por prioridad */
+    protected static function sort(): void
+    {
+        static::init();
+
+        foreach (static::$list as $type => $items) {
+            uasort($items, function ($item1, $item2) {
+                if ($item1['priority'] > $item2['priority']) {
+                    return -1;
+                } elseif ($item1['priority'] < $item2['priority']) {
+                    return 1;
+                }
+
+                return 0;
+            });
+            static::$list[$type] = $items;
         }
     }
 }

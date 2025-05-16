@@ -37,7 +37,7 @@ class ConfigEmail extends PanelController
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
         $pageData['title'] = 'email';
-        $pageData['icon'] = 'fas fa-envelope';
+        $pageData['icon'] = 'fa-solid fa-envelope';
         return $pageData;
     }
 
@@ -51,7 +51,7 @@ class ConfigEmail extends PanelController
 
     protected function createViewsEmail(string $viewName = 'ConfigEmail'): void
     {
-        $this->addEditView($viewName, 'Settings', 'email', 'fas fa-envelope');
+        $this->addEditView($viewName, 'Settings', 'email', 'fa-solid fa-envelope');
 
         // desactivamos los botones nuevo y eliminar
         $this->tab($viewName)
@@ -61,7 +61,7 @@ class ConfigEmail extends PanelController
 
     protected function createViewsEmailNotification(string $viewName = 'ListEmailNotification'): void
     {
-        $this->addListView($viewName, 'EmailNotification', 'notifications', 'fas fa-bell')
+        $this->addListView($viewName, 'EmailNotification', 'notifications', 'fa-solid fa-bell')
             ->addSearchFields(['body', 'name', 'subject'])
             ->addOrderBy(['date'], 'date')
             ->addOrderBy(['name'], 'name', 1);
@@ -76,7 +76,7 @@ class ConfigEmail extends PanelController
         $this->addButton($viewName, [
             'action' => 'enable-notification',
             'color' => 'success',
-            'icon' => 'fas fa-check-square',
+            'icon' => 'fa-solid fa-check-square',
             'label' => 'enable'
         ]);
 
@@ -90,7 +90,7 @@ class ConfigEmail extends PanelController
 
     protected function createViewsEmailSent(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-paper-plane')
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-paper-plane')
             ->addSearchFields(['addressee', 'body', 'subject'])
             ->addOrderBy(['date'], 'date', 2);
 
@@ -119,7 +119,7 @@ class ConfigEmail extends PanelController
             return;
         }
 
-        $codes = $this->request->request->get('code', []);
+        $codes = $this->request->request->getArray('codes');
         if (false === is_array($codes)) {
             return;
         }
@@ -184,7 +184,7 @@ class ConfigEmail extends PanelController
                     $this->addButton($viewName, [
                         'action' => 'testmail',
                         'color' => 'info',
-                        'icon' => 'fas fa-envelope',
+                        'icon' => 'fa-solid fa-envelope',
                         'label' => 'test'
                     ]);
                 }

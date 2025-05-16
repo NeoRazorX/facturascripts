@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListView;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of ColumnItem
@@ -87,7 +87,17 @@ class ColumnItem extends VisualItem
     {
         parent::__construct($data);
         $this->description = $data['description'] ?? '';
-        $this->display = $data['display'] ?? 'left';
+
+        $this->display = $data['display'] ?? 'start';
+        switch ($this->display) {
+            case 'left':
+                $this->display = 'start';
+                break;
+            case 'right':
+                $this->display = 'end';
+                break;
+        }
+
         $this->level = isset($data['level']) ? (int)$data['level'] : 0;
         $this->numcolumns = isset($data['numcolumns']) ? (int)$data['numcolumns'] : 0;
         $this->order = isset($data['order']) ? (int)$data['order'] : 0;
@@ -112,6 +122,10 @@ class ColumnItem extends VisualItem
         $colAuto = $this->widget->getType() === 'checkbox' ? 'col-sm-auto' : 'col-sm';
 
         $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css($colAuto);
+        if (false === empty($this->class)) {
+            $divClass .= ' ' . $this->class;
+        }
+
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
         $editHtml = $onlyField ? $this->widget->edit($model) : $this->widget->edit($model, $this->title, $this->description, $this->titleurl);
         return '<div' . $divID . ' class="' . $divClass . '">'

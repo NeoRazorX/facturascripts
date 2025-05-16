@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\JoinModel;
 
 /**
- * Auxiliary model to load a sumary of subaccount
+ * Auxiliary model to load a summary of subaccount
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
@@ -37,7 +37,6 @@ use FacturaScripts\Core\Model\Base\JoinModel;
  */
 class SubcuentaSaldo extends JoinModel
 {
-
     /**
      * Reset the values of all model view properties.
      */
@@ -115,7 +114,7 @@ class SubcuentaSaldo extends JoinModel
     protected function loadFromData(array $data)
     {
         parent::loadFromData($data);
-        $this->saldo = $this->debe - $this->haber;
+        $this->saldo = round($this->debe - $this->haber, FS_NF0);
     }
 
     /**

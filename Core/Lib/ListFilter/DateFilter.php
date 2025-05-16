@@ -73,10 +73,10 @@ class DateFilter extends BaseFilter
     {
         $value = empty($this->value) ? '' : date('Y-m-d', strtotime($this->value));
         return '<div class="col-sm-3 col-lg-2">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<div class="input-group" title="' . static::$i18n->trans($this->label) . '">'
-            . '<span class="input-group-prepend">'
-            . '<span class="input-group-text">' . $this->operation . '</span>'
+            . ''
+            . '<span class="input-group-text">' . $this->operation . ''
             . '</span>'
             . '<input type="date" name="' . $this->name() . '" value="' . $value . '" class="form-control"'
             . ' autocomplete="off"' . $this->onChange() . $this->readonly() . '/>'

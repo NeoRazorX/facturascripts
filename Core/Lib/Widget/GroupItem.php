@@ -19,7 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of GroupItem
@@ -102,7 +103,7 @@ class GroupItem extends VisualItem
     {
         $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css('col');
         $divId = empty($this->id) ? '' : ' id="' . $this->id . '"';
-        $rowClass = $this->css('form-row') . ' ' . $this->valign();
+        $rowClass = $this->css('row g-3') . ' ' . $this->valign();
 
         $html = '<div' . $divId . ' class="' . $divClass . '"><div class="' . $rowClass . '">';
         if ($this->title) {
@@ -136,9 +137,9 @@ class GroupItem extends VisualItem
             . '<div class="modal-dialog ' . $this->class . '" role="document">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">' . $icon . static::$i18n->trans($this->title) . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<h5 class="modal-title">' . $icon . Tools::lang()->trans($this->title) . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
+            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
@@ -151,12 +152,12 @@ class GroupItem extends VisualItem
         $html .= '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-spin-action btn-secondary" data-dismiss="modal">'
-            . static::$i18n->trans('cancel')
+            . '<button type="button" class="btn btn-spin-action btn-secondary" data-bs-dismiss="modal">'
+            . Tools::lang()->trans('cancel')
             . '</button>'
             . '<input type="hidden" name="action" value="' . $this->name . '"/>'
             . '<button type="submit" class="btn-spin-action btn btn-primary">'
-            . static::$i18n->trans('accept')
+            . Tools::lang()->trans('accept')
             . '</button>'
             . '</div>'
             . '</div>'
@@ -202,11 +203,11 @@ class GroupItem extends VisualItem
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         if (empty($this->description)) {
-            return '<legend class="text-info mt-2 mb-0">' . $icon . static::$i18n->trans($this->title) . '</legend>';
+            return '<legend class="text-info mt-2 mb-0">' . $icon . Tools::lang()->trans($this->title) . '</legend>';
         }
 
-        return '<legend class="text-info mt-2 mb-1">' . $icon . static::$i18n->trans($this->title) . '</legend>'
-            . '<small class="form-text text-muted w-100 mb-2">' . static::$i18n->trans($this->description) . '</small>';
+        return '<legend class="text-info mt-2 mb-1">' . $icon . Tools::lang()->trans($this->title) . '</legend>'
+            . '<small class="form-text text-muted w-100 mb-2">' . Tools::lang()->trans($this->description) . '</small>';
     }
 
     /**

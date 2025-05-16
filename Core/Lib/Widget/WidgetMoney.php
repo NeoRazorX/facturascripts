@@ -47,15 +47,15 @@ class WidgetMoney extends WidgetNumber
             $simbol = Divisas::get($this->coddivisa)->simbolo;
             switch ($simbol) {
                 case '€':
-                    $this->icon = 'fas fa-euro-sign';
+                    $this->icon = 'fa-solid fa-euro-sign';
                     break;
 
                 case 'Q':
-                    $this->icon = 'fab fa-quora';
+                    $this->icon = 'fa-brands fa-quora';
                     break;
 
                 default:
-                    $this->icon = 'fas fa-dollar-sign';
+                    $this->icon = 'fa-solid fa-dollar-sign';
                     break;
             }
         }

@@ -36,20 +36,45 @@ class Vies
 
     const VIES_URL = "https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl";
 
+    // Resultados posibles de la validación
+    const RESULT_VALID = 1;
+    const RESULT_INVALID = 0;
+    const RESULT_ERROR = -1;
+
     private static $lastError = '';
+    private static $simulatedResponse = null;
+
+    /**
+     * Simula una respuesta del servicio VIES para usar en pruebas unitarias.
+     * Este método solo debe utilizarse en el contexto de pruebas.
+     * 
+     * @param int|null $response Vies::RESULT_VALID para simular un número de IVA válido,
+     *                           Vies::RESULT_INVALID para simular un número de IVA inválido,
+     *                           Vies::RESULT_ERROR para simular un error,
+     *                           null para volver al comportamiento normal
+     */
+    public static function simulateViesResponse(?int $response): void
+    {
+        self::$simulatedResponse = $response;
+    }
 
     public static function check(string $cifnif, string $codiso, bool $msg = true): int
     {
+        // Si hay una respuesta simulada, la devolvemos inmediatamente
+        if (self::$simulatedResponse !== null) {
+            return self::$simulatedResponse;
+        }
+
         // comprobamos si la extensión soap está instalada
         if (false === extension_loaded('soap')) {
             static::setMessage($msg, 'soap-extension-not-installed');
-            return -1;
+            return self::RESULT_ERROR;
         }
 
         // si el país no es de la unión europea, devolvemos error
         if (!in_array($codiso, self::EU_COUNTRIES)) {
             static::setMessage($msg, 'country-not-in-eu', ['%codiso%' => $codiso]);
-            return -1;
+            return self::RESULT_ERROR;
         }
 
         // quitamos caracteres especiales del cifnif
@@ -58,13 +83,13 @@ class Vies
         // si el cifnif tiene menos de 5 caracteres, devolvemos error
         if (strlen($cifnif) < 5) {
             static::setMessage($msg, 'vat-number-is-short', ['%vat-number%' => $cifnif]);
-            return -1;
+            return self::RESULT_ERROR;
         }
 
         // si codiso está vacío o es diferente de 2 caracteres, devolvemos error
         if (empty($codiso) || strlen($codiso) !== 2) {
             static::setMessage($msg, 'invalid-iso-code', ['%iso-code%' => $codiso]);
-            return -1;
+            return self::RESULT_ERROR;
         }
 
         // si existe el codiso al principio del cifnif, lo quitamos
@@ -95,22 +120,22 @@ class Vies
 
             $result = json_decode($json, true);
             if (isset($result["valid"]) && $result["valid"]) {
-                return 1;
+                return self::RESULT_VALID;
             }
 
             static::setMessage($msg, 'vat-number-not-valid', ['%vat-number%' => $vatNumber]);
-            return 0;
+            return self::RESULT_INVALID;
         } catch (Exception $ex) {
             Tools::log('VatInfoFinder')->error($ex->getCode() . ' - ' . $ex->getMessage());
             self::$lastError = $ex->getMessage();
             if ($ex->getMessage() == 'INVALID_INPUT') {
-                return 0;
+                return self::RESULT_INVALID;
             }
         }
 
         // se ha producido error al comprobar el VAT number con VIES
         static::setMessage($msg, 'error-checking-vat-number', ['%vat-number%' => $vatNumber]);
-        return -1;
+        return self::RESULT_ERROR;
     }
 
     private static function setMessage(bool $msg, string $txt, array $context = []): void
