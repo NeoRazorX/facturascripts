@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,31 +45,31 @@
             <div class="card shadow mb-5">
                 <div class="card-body">
                     <h1 class="h3">
-                        <i class="fas fa-magic" aria-hidden="true"></i> {{ trans('wizard') }}
-                        <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary"
+                        <i class="fa-solid fa-wand-magic-sparkles me-2"></i> {{ trans('wizard') }}
+                        <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary float-end"
                            title="{{ trans('refresh') }}">
-                            <i class="fas fa-redo" aria-hidden="true"></i>
+                            <i class="fa-solid fa-redo" aria-hidden="true"></i>
                         </a>
                     </h1>
                     <p>{{ trans('wizard-p') }}</p>
                     <hr/>
-                    <div class="form-row">
+                    <div class="row">
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleSelect('regimeniva', 'regimeniva', fsc.empresa.regimeniva,
                                     fsc.getRegimenIva(), trans('vat-regime')) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleSelect('codimpuesto', 'codimpuesto', codimpuesto,
                                     fsc.getSelectValues('Impuesto', true), trans('default-tax')) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="mb-1">{{ trans('cost-price-policy') }}</label>
-                                <select name="costpricepolicy" class="form-control">
+                                <select name="costpricepolicy" class="form-select">
                                     <option value="">------</option>
                                     <option value="last-price">{{ trans('last-purchase-price') }}</option>
                                     <option value="average-price">{{ trans('average-purchase-price') }}</option>
@@ -79,16 +79,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-row">
+                    <div class="row">
                         <div class="col-sm-auto">
-                            <div class="form-group form-check pr-3">
+                            <div class="mb-3 form-check pe-3">
                                 <input type="checkbox" name="defaultplan" value="1" id="checkboxPlan"
                                        class="form-check-input" checked/>
                                 <label for="checkboxPlan">{{ trans('load-def-acc-plan') }}</label>
                             </div>
                         </div>
                         <div class="col-sm-auto">
-                            <div class="form-group form-check pr-3">
+                            <div class="mb-3 form-check pe-3">
                                 {% if settings('default', 'ventasinstock') %}
                                     <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock"
                                            class="form-check-input" checked/>
@@ -100,7 +100,7 @@
                             </div>
                         </div>
                         <div class="col-sm-auto">
-                            <div class="form-group form-check">
+                            <div class="mb-3 form-check">
                                 {% if settings('default', 'updatesupplierprices') %}
                                     <input type="checkbox" name="updatesupplierprices" value="1"
                                            id="cbUpdateSupplierPrices" class="form-check-input" checked/>
@@ -111,23 +111,11 @@
                                 <label for="cbUpdateSupplierPrices">{{ trans('update-supplier-prices') }}</label>
                             </div>
                         </div>
-                        <div class="col-sm-auto">
-                            <div class="form-group form-check">
-                                {% if settings('default', 'google_tag_manager') %}
-                                    <input type="checkbox" name="google_tag_manager" value="1" id="cbGoogleTagManager"
-                                           class="form-check-input" checked>
-                                {% else %}
-                                    <input type="checkbox" name="google_tag_manager" value="1" id="cbGoogleTagManager"
-                                           class="form-check-input">
-                                {% endif %}
-                                <label for="cbGoogleTagManager">{{ trans('send-anonymous-data') }}</label>
-                            </div>
-                        </div>
                     </div>
                 </div>
-                <div class="card-footer text-right">
+                <div class="card-footer text-end">
                     <button type="submit" class="btn btn-primary" id="btnWizard">
-                        {{ trans('continue') }}
+                        {{ trans('continue') }} <i class="fa-solid fa-arrow-right ms-1"></i>
                     </button>
                 </div>
             </div>
@@ -149,7 +137,7 @@
         $(document).ready(function () {
             $("#formWizard").submit(function () {
                 $("#btnWizard").prop('disabled', true);
-                $("#btnWizard").html('<i class="fas fa-circle-notch fa-spin"></i>');
+                $("#btnWizard").html('<i class="fa-solid fa-circle-notch fa-spin"></i>');
             });
         });
     </script>

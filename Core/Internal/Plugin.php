@@ -54,7 +54,7 @@ final class Plugin
     public $min_version = 0;
 
     /** @var float */
-    public $min_php = 7.3;
+    public $min_php = 7.4;
 
     /** @var string */
     public $name = '-';

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,7 +46,7 @@ final class AsientoTest extends TestCase
         self::removeTaxRegularization();
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         // creamos el asiento
         $asiento = new Asiento();
@@ -80,7 +80,7 @@ final class AsientoTest extends TestCase
         $this->assertFalse($secondLine->exists(), 'linea-cant-delete-2');
     }
 
-    public function testCheckLogAudit()
+    public function testCheckLogAudit(): void
     {
         // creamos el asiento
         $asiento = new Asiento();
@@ -95,7 +95,7 @@ final class AsientoTest extends TestCase
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete-2');
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         // creamos el asiento
         $asiento = new Asiento();
@@ -125,7 +125,7 @@ final class AsientoTest extends TestCase
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete-3');
     }
 
-    public function testUpdateLocked()
+    public function testUpdateLocked(): void
     {
         // creamos el asiento
         $asiento = new Asiento();
@@ -175,7 +175,7 @@ final class AsientoTest extends TestCase
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete-5');
     }
 
-    public function testCreateOnClosedExercise()
+    public function testCreateOnClosedExercise(): void
     {
         // creamos un ejercicio cerrado
         $exercise = $this->getRandomExercise();
@@ -201,7 +201,7 @@ final class AsientoTest extends TestCase
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete-3');
     }
 
-    public function testUpdateOnClosedExercise()
+    public function testUpdateOnClosedExercise(): void
     {
         // cargamos un ejercicio
         $exercise = $this->getRandomExercise();
@@ -256,7 +256,7 @@ final class AsientoTest extends TestCase
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete-4');
     }
 
-    public function testCreateOnTaxRegularization()
+    public function testCreateOnTaxRegularization(): void
     {
         // obtenemos un ejercicio
         $exercise = $this->getRandomExercise();
@@ -282,7 +282,7 @@ final class AsientoTest extends TestCase
         $this->assertTrue($regularization->delete(), 'regularization-cant-delete');
     }
 
-    public function testUpdateOnTaxRegularization()
+    public function testUpdateOnTaxRegularization(): void
     {
         // obtenemos un ejercicio
         $exercise = $this->getRandomExercise();
@@ -313,7 +313,47 @@ final class AsientoTest extends TestCase
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete-6');
     }
 
-    public function testChangeExercise()
+    public function testCreateOnUnrelatedTaxRegularization(): void
+    {
+        // obtenemos un ejercicio
+        $exercise = $this->getRandomExercise();
+        $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
+        $this->assertTrue($exercise->save(), 'can-not-save-exercise-6');
+
+        // creamos una nueva empresa
+        $newCompany = $this->getRandomCompany();
+        $this->assertTrue($newCompany->save(), 'can-not-save-company-1');
+
+        // creamos un ejercicio en la nueva empresa
+        $newExercise = new Ejercicio();
+        $newExercise->idempresa = $newCompany->idempresa;
+        $newExercise->nombre = 'Test ' . date('Y');
+        $newExercise->codejercicio = $newExercise->newCode();
+        $this->assertTrue($newExercise->save(), 'can-not-save-exercise-8');
+
+        // creamos una regularización de impuestos para el ejercicio de la nueva empresa
+        $regularization = new RegularizacionImpuesto();
+        $regularization->bloquear = true;
+        $regularization->codejercicio = $newExercise->codejercicio;
+        $regularization->periodo = 'T4';
+        $this->assertTrue($regularization->save(), 'can-not-save-regularization-3');
+
+        // Creamos un asiento en el ejercicio original. No debe fallar
+        $asiento = new Asiento();
+        $asiento->concepto = 'Test';
+        $asiento->codejercicio = $exercise->codejercicio;
+        $asiento->fecha = $exercise->fechafin;
+        $asiento->idempresa = $exercise->idempresa;
+        $this->assertTrue($asiento->save(), 'asiento-cant-save-7');
+
+        // eliminamos
+        $this->assertTrue($asiento->delete());
+        $this->assertTrue($regularization->delete());
+        $this->assertTrue($newExercise->delete());
+        $this->assertTrue($newCompany->delete());
+    }
+
+    public function testChangeExercise(): void
     {
         // obtenemos un ejercicio
         $exercise = $this->getRandomExercise();
@@ -350,7 +390,7 @@ final class AsientoTest extends TestCase
         $this->assertTrue($nextExercise->delete(), 'next-exercise-cant-delete');
     }
 
-    public function testRenumber()
+    public function testRenumber(): void
     {
         // obtenemos un ejercicio
         $exercise = $this->getRandomExercise();

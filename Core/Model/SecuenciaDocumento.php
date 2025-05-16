@@ -69,6 +69,7 @@ class SecuenciaDocumento extends ModelClass
     public function clear()
     {
         parent::clear();
+        $this->idempresa = Tools::settings('default', 'idempresa');
         $this->inicio = 1;
         $this->longnumero = 6;
         $this->numero = 1;

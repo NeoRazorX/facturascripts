@@ -182,11 +182,26 @@ final class DbQuery
         }
 
         $fields = [];
-        foreach (array_keys($data[0]) as $field) {
+        $values = [];
+
+        // comprobamos si es una inserción simple (no es un array de arrays)
+        $first = reset($data);
+        if (!is_array($first)) {
+            foreach ($data as $field => $value) {
+                $fields[] = self::db()->escapeColumn($field);
+                $values[] = self::db()->var2str($value);
+            }
+
+            $sql = 'INSERT INTO ' . self::db()->escapeColumn($this->table)
+                . ' (' . implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ');';
+            return self::db()->exec($sql);
+        }
+
+        // inserción múltiple
+        foreach (array_keys($first) as $field) {
             $fields[] = self::db()->escapeColumn($field);
         }
 
-        $values = [];
         foreach ($data as $row) {
             $line = [];
             foreach ($row as $value) {
@@ -218,12 +233,16 @@ final class DbQuery
 
     public function max(string $field, ?int $decimals = null): float
     {
-        $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ') as _max';
-
-        $row = $this->first();
+        $max = $this->maxString($field);
         return is_null($decimals) ?
-            (float)$row['_max'] :
-            round((float)$row['_max'], $decimals);
+            (float)$max:
+            round((float)$max, $decimals);
+    }
+
+    public function maxString(string $field): string
+    {
+        $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ') as _max';
+        return $this->first()['_max'];
     }
 
     public function maxArray(string $field, string $groupByKey): array
@@ -235,12 +254,16 @@ final class DbQuery
 
     public function min(string $field, ?int $decimals = null): float
     {
-        $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ') as _min';
-
-        $row = $this->first();
+        $min = $this->minString($field);
         return is_null($decimals) ?
-            (float)$row['_min'] :
-            round((float)$row['_min'], $decimals);
+            (float)$min:
+            round((float)$min, $decimals);
+    }
+
+    public function minString(string $field): string
+    {
+        $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ') as _min';
+        return $this->first()['_min'];
     }
 
     public function minArray(string $field, string $groupByKey): array
@@ -361,6 +384,11 @@ final class DbQuery
         }
 
         $sql = 'UPDATE ' . self::db()->escapeColumn($this->table) . ' SET ' . implode(', ', $fields);
+
+        if (!empty($this->where)) {
+            $sql .= ' WHERE ' . Where::multiSql($this->where);
+        }
+
         return self::db()->exec($sql);
     }
 

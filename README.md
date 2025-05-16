@@ -10,7 +10,7 @@
   <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Logo-FacturaScripts.png" width="500" title="Logo">
 </p>
 
-<h3 align="center">FacturaScripts - Open source ERP software. Built on modern PHP and bootstrap 4. Easy and powerful.</h3>
+<h3 align="center">FacturaScripts - Open source ERP software. Built on modern PHP and bootstrap 5. Easy and powerful.</h3>
 <br/>
 
 <p align="center">
@@ -21,16 +21,14 @@
 <br/>
 
 <p align="center">
-  <a href="README_es_ES.md">Español</a>
-  <a href="README_ca_ES.md">Català</a>
-  <a href="README_fr_FR.md">Français</a>
-  <a href="README_it_IT.md">Italiano</a>
+  <b>English</b>
+  <a href="README_ES.md">Español</a>
 </p>
 
 ## Disclaimer
 - ⚠️ The repository is under **very active** development.
-- ⚠️ Expect bugs and breaking changes.
-- ⚠️ For production purposes, use the stable version at the following <a href="https://facturascripts.com/descargar">link</a>.
+- 🐞 Expect bugs and breaking changes.
+- ✅ For production purposes, use the stable version at the following <a href="https://facturascripts.com/descargar">link</a>.
 
 ## Content
 - [Official Documentation](https://facturascripts.com/ayuda)

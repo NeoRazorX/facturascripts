@@ -22,13 +22,13 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
 use FacturaScripts\Dinamic\Lib\Widget\RowStatus;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * View definition for its use in ListController
@@ -207,7 +207,7 @@ class ListView extends BaseView
      * @param int $offset
      * @param int $limit
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = -1)
     {
         $this->offset = $offset < 0 ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
@@ -217,6 +217,13 @@ class ListView extends BaseView
         // avoid overflow
         if ($this->offset > $this->count) {
             $this->offset = 0;
+        }
+
+        // check limit
+        if ($limit < 0) {
+            $limit = $this->settings['itemLimit'];
+        } elseif ($limit != $this->settings['itemLimit']) {
+            $this->settings['itemLimit'] = $limit;
         }
 
         // needed when mega-search force data reload

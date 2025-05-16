@@ -33,6 +33,9 @@ class EstadoDocumento extends Base\ModelOnChangeClass
 {
     use Base\ModelTrait;
 
+    /** @var bool */
+    public $activo;
+
     /** @var int */
     public $actualizastock;
 
@@ -66,6 +69,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
     public function clear()
     {
         parent::clear();
+        $this->activo = true;
         $this->actualizastock = 0;
         $this->bloquear = false;
         $this->editable = true;
@@ -87,10 +91,10 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         if (!empty($this->icon)) {
             return $this->icon;
         } elseif (!empty($this->generadoc)) {
-            return 'fas fa-check';
+            return 'fa-solid fa-check';
         }
 
-        return $this->editable ? 'fas fa-pen' : 'fas fa-lock';
+        return $this->editable ? 'fa-solid fa-pen' : 'fa-solid fa-lock';
     }
 
     public static function primaryColumn(): string
@@ -115,6 +119,11 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         // Comprobamos que el nombre no esté vacío
         if (empty($this->nombre) || empty($this->tipodoc)) {
             return false;
+        }
+
+        // si no está activo, no puede ser predeterminado
+        if (!$this->activo) {
+            $this->predeterminado = false;
         }
 
         // No permitimos que un estado predeterminado sea no editable.

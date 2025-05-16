@@ -25,15 +25,14 @@ use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User as DinUser;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class from which all FacturaScripts controllers must inherit.
@@ -145,7 +144,7 @@ class Controller implements ControllerInterface
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
 
-        $this->checkPhpVersion(7.4);
+        $this->checkPhpVersion(8.1);
     }
 
     /**
@@ -166,7 +165,7 @@ class Controller implements ControllerInterface
         return [
             'name' => $this->className,
             'title' => $this->className,
-            'icon' => 'fas fa-circle',
+            'icon' => 'fa-solid fa-circle',
             'menu' => 'new',
             'submenu' => null,
             'showonmenu' => true,
@@ -218,6 +217,7 @@ class Controller implements ControllerInterface
     public function privateCore(&$response, $user, $permissions)
     {
         $this->permissions = $permissions;
+        Session::set('permissions', $this->permissions);
         $this->response = &$response;
         $this->user = $user;
 
@@ -235,25 +235,11 @@ class Controller implements ControllerInterface
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->headers->setCookie(
-                Cookie::create(
-                    'fsHomepage',
-                    $this->user->homepage,
-                    time() + FS_COOKIES_EXPIRE,
-                    Tools::config('route', '/')
-                ),
-            );
+            $this->response->cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE);
             $this->user->save();
         } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;
-            $this->response->headers->setCookie(
-                Cookie::create(
-                    'fsHomepage',
-                    $this->user->homepage,
-                    time() - FS_COOKIES_EXPIRE,
-                    Tools::config('route', '/')
-                )
-            );
+            $this->response->cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE);
             $this->user->save();
         }
     }
@@ -266,6 +252,7 @@ class Controller implements ControllerInterface
     public function publicCore(&$response)
     {
         $this->permissions = new ControllerPermissions();
+        Session::set('permissions', $this->permissions);
         $this->response = &$response;
         $this->template = 'Login/Login.html.twig';
 
@@ -295,18 +282,34 @@ class Controller implements ControllerInterface
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000');
 
-        // ejecutamos la parte privada o pública del controlador
+        // si se ha podido autenticar, ejecutamos la parte privada
         if ($this->auth()) {
             $permissions = new ControllerPermissions(Session::user(), $this->className);
             $this->privateCore($response, Session::user(), $permissions);
-        } else {
-            $this->publicCore($response);
+
+            // renderizamos la plantilla
+            if ($this->template) {
+                // carga el menú
+                $menu = new MenuManager();
+                $menu->setUser(Session::user());
+                $menu->selectPage($this->getPageData());
+
+                Kernel::startTimer('Controller::html-render');
+                $response->setContent(Html::render($this->template, [
+                    'controllerName' => $this->className,
+                    'fsc' => $this,
+                    'menuManager' => $menu,
+                    'template' => $this->template,
+                ]));
+                Kernel::stopTimer('Controller::html-render');
+            }
+
+            $response->send();
+            return;
         }
 
-        // carga el menú
-        $menu = new MenuManager();
-        $menu->setUser(Session::user());
-        $menu->selectPage($this->getPageData());
+        // si no se ha podido autenticar, ejecutamos la parte pública
+        $this->publicCore($response);
 
         // renderizamos la plantilla
         if ($this->template) {
@@ -314,11 +317,11 @@ class Controller implements ControllerInterface
             $response->setContent(Html::render($this->template, [
                 'controllerName' => $this->className,
                 'fsc' => $this,
-                'menuManager' => $menu,
                 'template' => $this->template,
             ]));
             Kernel::stopTimer('Controller::html-render');
         }
+
         $response->send();
     }
 

@@ -122,6 +122,10 @@ final class Plugins
         Kernel::rebuildRoutes();
         Kernel::saveRoutes();
 
+        DbUpdater::rebuild();
+
+        Tools::folderDelete(Tools::folder('MyFiles', 'Cache'));
+
         if ($initControllers) {
             $pluginDeploy->initControllers();
         }

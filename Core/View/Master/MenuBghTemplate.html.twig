@@ -37,11 +37,11 @@
     {% block body %}
         {{ parent() }}
     {% endblock %}
-    {% for item in getIncludeViews('MenuTemplate', 'JsFooter') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'JsFooter') %}
+        {% include includeView['path'] %}
     {% endfor %}
-    {% for item in getIncludeViews('MenuTemplate', 'BodyEnd') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'BodyEnd') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {{ debugBarRender.render() | raw }}
     <br/>

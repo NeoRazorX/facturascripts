@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,19 +21,19 @@
 -->
 <view>
     <columns>
-        <column name="company" display="none" order="90">
+        <column name="company" order="90">
             <widget type="select" fieldname="idempresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
             </widget>
         </column>
         <column name="code" order="100">
-            <widget type="text" fieldname="codpago" onclick="EditFormaPago" />
+            <widget type="text" fieldname="codpago"/>
         </column>
         <column name="description" order="110">
-            <widget type="textarea" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion"/>
         </column>
         <column name="expiration" display="right" order="120">
-            <widget type="number" fieldname="plazovencimiento" decimal="0" />
+            <widget type="number" fieldname="plazovencimiento" decimal="0"/>
         </column>
         <column name="expiration-type" numcolumns="4" order="130">
             <widget type="select" fieldname="tipovencimiento" translate="true">
@@ -44,19 +44,20 @@
             </widget>
         </column>
         <column name="paid" display="center" order="140">
-            <widget type="checkbox" fieldname="pagado" />
+            <widget type="checkbox" fieldname="pagado"/>
         </column>
         <column name="domiciled" display="center" order="150">
-            <widget type="checkbox" fieldname="domiciliado" />
+            <widget type="checkbox" fieldname="domiciliado"/>
         </column>
         <column name="bank-account" display="right" order="160">
             <widget type="select" fieldname="codcuentabanco" onclick="EditCuentaBanco">
-                <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion" />
+                <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion"/>
             </widget>
         </column>
     </columns>
     <rows>
         <row type="status">
+            <option color="danger" fieldname="activa" title="inactive">0</option>
             <option color="success" fieldname="pagado" title="paid">1</option>
             <option color="info" fieldname="domiciliado" title="domiciled">1</option>
         </row>

@@ -27,10 +27,11 @@ use FacturaScripts\Dinamic\Model\Asiento;
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ *
+ * @deprecated replaced by Core/lib/AjaxForms/AccountingFooterHTML
  */
 class AccountingFooterHTML
 {
-
     public static function apply(Asiento &$model, array $formData)
     {
     }

@@ -93,21 +93,17 @@ class AutocompleteFilter extends BaseFilter
         $label = static::$i18n->trans($this->label);
         $html = '<div class="col-sm-3 col-lg-2">'
             . '<input type="hidden" name="' . $this->name() . '" value="' . $this->value . '"/>'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<div class="input-group">';
 
         if ('' === $this->value || null === $this->value) {
-            $html .= '<span class="input-group-prepend" title="' . $label . '">'
-                . '<span class="input-group-text">'
-                . '<i class="fas fa-search fa-fw" aria-hidden="true"></i>'
-                . '</span>'
+            $html .= '<span class="input-group-text">'
+                . '<i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>'
                 . '</span>';
         } else {
-            $html .= '<span class="input-group-prepend" title="' . $label . '">'
-                . '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->name() . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
-                . '<i class="fas fa-times fa-fw" aria-hidden="true"></i>'
-                . '</button>'
-                . '</span>';
+            $html .= '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->name() . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
+                . '<i class="fa-solid fa-times fa-fw" aria-hidden="true"></i>'
+                . '</button>';
         }
 
         $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control filter-autocomplete"'

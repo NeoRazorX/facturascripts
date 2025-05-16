@@ -165,7 +165,7 @@ abstract class DataBaseEngine
      *
      * @return string
      */
-    abstract public function version($link);
+    abstract public function version($link): string;
 
     public function __construct()
     {

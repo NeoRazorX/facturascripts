@@ -35,7 +35,7 @@ class ListUser extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'users';
-        $data['icon'] = 'fas fa-users';
+        $data['icon'] = 'fa-solid fa-users';
         return $data;
     }
 
@@ -50,7 +50,7 @@ class ListUser extends ListController
 
     protected function createViewsRoles(string $viewName = 'ListRole'): void
     {
-        $this->addView($viewName, 'Role', 'roles', 'fas fa-address-card')
+        $this->addView($viewName, 'Role', 'roles', 'fa-solid fa-address-card')
             ->addSearchFields(['codrole', 'descripcion'])
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['codrole'], 'code');
@@ -58,7 +58,7 @@ class ListUser extends ListController
 
     protected function createViewsUsers(string $viewName = 'ListUser'): void
     {
-        $this->addView($viewName, 'User', 'users', 'fas fa-users')
+        $this->addView($viewName, 'User', 'users', 'fa-solid fa-users')
             ->addSearchFields(['nick', 'email'])
             ->addOrderBy(['nick'], 'nick', 1)
             ->addOrderBy(['email'], 'email');

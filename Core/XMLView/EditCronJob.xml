@@ -22,7 +22,7 @@
     <columns>
         <group name="data" valign="bottom" numcolumns="12">
             <column name="id" numcolumns="2" order="100">
-                <widget type="text" fieldname="id" icon="fas fa-hashtag" readonly="dinamic"/>
+                <widget type="text" fieldname="id" icon="fa-solid fa-hashtag" readonly="dinamic"/>
             </column>
             <column name="plugin" numcolumns="2" order="110">
                 <widget type="text" fieldname="pluginname" readonly="true"/>
@@ -34,7 +34,7 @@
                 <widget type="datetime" fieldname="date" readonly="true"/>
             </column>
             <column name="duration" numcolumns="2" order="140">
-                <widget type="number" fieldname="duration" icon="fas fa-clock" readonly="true"/>
+                <widget type="number" fieldname="duration" icon="fa-solid fa-clock" readonly="true"/>
             </column>
             <column name="enabled" numcolumns="2" order="150">
                 <widget type="checkbox" fieldname="enabled"/>

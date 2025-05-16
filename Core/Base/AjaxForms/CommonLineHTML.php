@@ -32,6 +32,11 @@ use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
+/**
+ * Trait CommonLineHTML
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/CommonLineHTML
+ */
 trait CommonLineHTML
 {
     /** @var string */
@@ -75,6 +80,11 @@ trait CommonLineHTML
         // necesitamos una opción vacía para cuando el sujeto está exento de impuestos
         $options = ['<option value="">------</option>'];
         foreach (Impuestos::all() as $imp) {
+            // si el impuesto no está activo o seleccionado, lo saltamos
+            if (!$imp->activo && $line->codimpuesto != $imp->codimpuesto) {
+                continue;
+            }
+
             $options[] = $line->codimpuesto == $imp->codimpuesto ?
                 '<option value="' . $imp->codimpuesto . '" selected>' . $imp->descripcion . '</option>' :
                 '<option value="' . $imp->codimpuesto . '">' . $imp->descripcion . '</option>';
@@ -175,6 +185,11 @@ trait CommonLineHTML
     {
         $options = ['<option value="">------</option>'];
         foreach (Retenciones::all() as $ret) {
+            // si la retención no está activa o seleccionada, la saltamos
+            if (!$ret->activa && $line->irpf != $ret->porcentaje) {
+                continue;
+            }
+
             $options[] = $line->irpf === $ret->porcentaje ?
                 '<option value="' . $ret->porcentaje . '" selected>' . $ret->descripcion . '</option>' :
                 '<option value="' . $ret->porcentaje . '">' . $ret->descripcion . '</option>';
@@ -234,8 +249,7 @@ trait CommonLineHTML
 
         // cargamos las variantes
         $variantModel = new Variante();
-        $sql_in = implode(',', array_unique($references));
-        $where = [new DataBaseWhere('referencia', $sql_in, 'IN')];
+        $where = [new DataBaseWhere('referencia', $references, 'IN')];
         foreach ($variantModel->all($where, [], 0, 0) as $variante) {
             self::$variants[$variante->referencia] = $variante;
         }
@@ -244,7 +258,7 @@ trait CommonLineHTML
         $stockModel = new Stock();
         $where = [
             new DataBaseWhere('codalmacen', $model->codalmacen),
-            new DataBaseWhere('referencia', $sql_in, 'IN'),
+            new DataBaseWhere('referencia', $references, 'IN'),
         ];
         foreach ($stockModel->all($where, [], 0, 0) as $stock) {
             self::$stocks[$stock->referencia] = $stock;

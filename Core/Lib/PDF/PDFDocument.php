@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib\PDF;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
@@ -61,11 +60,11 @@ abstract class PDFDocument extends PDFCore
      */
     protected function combineAddress($model): string
     {
-        $completeAddress = Utils::fixHtml($model->direccion);
+        $completeAddress = Tools::fixHtml($model->direccion);
         $completeAddress .= empty($model->apartado) ? '' : ', ' . $this->i18n->trans('box') . ' ' . $model->apartado;
         $completeAddress .= empty($model->codpostal) ? '' : "\n" . $model->codpostal;
-        $completeAddress .= empty($model->ciudad) ? '' : ', ' . Utils::fixHtml($model->ciudad);
-        $completeAddress .= empty($model->provincia) ? '' : ' (' . Utils::fixHtml($model->provincia) . ')';
+        $completeAddress .= empty($model->ciudad) ? '' : ', ' . Tools::fixHtml($model->ciudad);
+        $completeAddress .= empty($model->provincia) ? '' : ' (' . Tools::fixHtml($model->provincia) . ')';
         $completeAddress .= empty($model->codpais) ? '' : ', ' . $this->getCountryName($model->codpais);
         return $completeAddress;
     }
@@ -139,7 +138,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         $country = new Pais();
-        return $country->loadFromCode($code) ? Utils::fixHtml($country->nombre) : '';
+        return $country->loadFromCode($code) ? Tools::fixHtml($country->nombre) : '';
     }
 
     /**
@@ -233,9 +232,9 @@ abstract class PDFDocument extends PDFCore
 
         // round
         foreach ($subtotals as $key => $value) {
-            $subtotals[$key]['taxbase'] = $this->numberTools->format($value['taxbase']);
-            $subtotals[$key]['taxamount'] = $this->numberTools->format($value['taxamount']);
-            $subtotals[$key]['taxsurcharge'] = $this->numberTools->format($value['taxsurcharge']);
+            $subtotals[$key]['taxbase'] = Tools::number($value['taxbase']);
+            $subtotals[$key]['taxamount'] = Tools::number($value['taxamount']);
+            $subtotals[$key]['taxsurcharge'] = Tools::number($value['taxsurcharge']);
         }
 
         return $subtotals;
@@ -275,13 +274,13 @@ abstract class PDFDocument extends PDFCore
                 }
 
                 if ($key === 'referencia') {
-                    $data[$key] = empty($line->{$key}) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->{$key} . " - " . $line->descripcion);
+                    $data[$key] = empty($line->{$key}) ? Tools::fixHtml($line->descripcion) : Tools::fixHtml($line->{$key} . " - " . $line->descripcion);
                 } elseif ($key === 'cantidad' && property_exists($line, 'mostrar_cantidad')) {
                     $data[$key] = $line->mostrar_cantidad ? $line->{$key} : '';
                 } elseif ($value['type'] === 'percentage') {
-                    $data[$key] = $this->numberTools->format($line->{$key}) . '%';
+                    $data[$key] = Tools::number($line->{$key}) . '%';
                 } elseif ($value['type'] === 'number') {
-                    $data[$key] = $this->numberTools->format($line->{$key});
+                    $data[$key] = Tools::number($line->{$key});
                 } else {
                     $data[$key] = $line->{$key};
                 }
@@ -290,7 +289,7 @@ abstract class PDFDocument extends PDFCore
             $tableData[] = $data;
 
             if (property_exists($line, 'salto_pagina') && $line->salto_pagina) {
-                $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
+                $this->removeEmptyCols($tableData, $headers, Tools::number(0));
                 $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
                 $tableData = [];
                 $this->pdf->ezNewPage();
@@ -298,7 +297,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         if (false === empty($tableData)) {
-            $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
+            $this->removeEmptyCols($tableData, $headers, Tools::number(0));
             $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
         }
     }
@@ -314,7 +313,7 @@ abstract class PDFDocument extends PDFCore
             $this->newPage();
             $this->pdf->ezText($this->i18n->trans('observations') . "\n", self::FONT_SIZE);
             $this->newLine();
-            $this->pdf->ezText(Utils::fixHtml($model->observaciones) . "\n", self::FONT_SIZE);
+            $this->pdf->ezText(Tools::fixHtml($model->observaciones) . "\n", self::FONT_SIZE);
         }
 
         $this->newPage();
@@ -343,7 +342,7 @@ abstract class PDFDocument extends PDFCore
             'width' => $this->tableWidth
         ];
         if (count($taxRows) > 1) {
-            $this->removeEmptyCols($taxRows, $taxHeaders, $this->numberTools->format(0));
+            $this->removeEmptyCols($taxRows, $taxHeaders, Tools::number(0));
             $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
             $this->pdf->ezText("\n");
         } elseif ($this->pdf->ezPageCount < 2 && strlen($this->format->texto) < 400 && $this->pdf->y > static::INVOICE_TOTALS_Y) {
@@ -366,18 +365,18 @@ abstract class PDFDocument extends PDFCore
         $rows = [
             [
                 'currency' => $this->getDivisaName($model->coddivisa),
-                'subtotal' => $this->numberTools->format($model->netosindto != $model->neto ? $model->netosindto : 0),
-                'dto' => $this->numberTools->format($model->dtopor1) . '%',
-                'dto-2' => $this->numberTools->format($model->dtopor2) . '%',
-                'net' => $this->numberTools->format($model->neto),
-                'taxes' => $this->numberTools->format($model->totaliva),
-                'totalSurcharge' => $this->numberTools->format($model->totalrecargo),
-                'totalIrpf' => $this->numberTools->format(0 - $model->totalirpf),
-                'totalSupplied' => $this->numberTools->format($model->totalsuplidos),
-                'total' => $this->numberTools->format($model->total)
+                'subtotal' => Tools::number($model->netosindto != $model->neto ? $model->netosindto : 0),
+                'dto' => Tools::number($model->dtopor1) . '%',
+                'dto-2' => Tools::number($model->dtopor2) . '%',
+                'net' => Tools::number($model->neto),
+                'taxes' => Tools::number($model->totaliva),
+                'totalSurcharge' => Tools::number($model->totalrecargo),
+                'totalIrpf' => Tools::number(0 - $model->totalirpf),
+                'totalSupplied' => Tools::number($model->totalsuplidos),
+                'total' => Tools::number($model->total)
             ]
         ];
-        $this->removeEmptyCols($rows, $headers, $this->numberTools->format(0));
+        $this->removeEmptyCols($rows, $headers, Tools::number(0));
         $tableOptions = [
             'cols' => [
                 'subtotal' => ['justification' => 'right'],
@@ -404,7 +403,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         if (!empty($this->format->texto)) {
-            $this->pdf->ezText("\n" . Utils::fixHtml($this->format->texto), self::FONT_SIZE);
+            $this->pdf->ezText("\n" . Tools::fixHtml($this->format->texto), self::FONT_SIZE);
         }
     }
 
@@ -427,7 +426,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         if (!empty($this->format->titulo)) {
-            $headerData['title'] = Utils::fixHtml($this->format->titulo);
+            $headerData['title'] = Tools::fixHtml($this->format->titulo);
         }
 
         $this->pdf->ezText("\n" . $headerData['title'] . ': ' . $model->codigo . "\n", self::FONT_SIZE + 6);
@@ -438,7 +437,7 @@ abstract class PDFDocument extends PDFCore
         $serie = $model->getSerie();
 
         $tableData = [
-            ['key' => $headerData['subject'], 'value' => Utils::fixHtml($model->{$headerData['fieldName']})],
+            ['key' => $headerData['subject'], 'value' => Tools::fixHtml($model->{$headerData['fieldName']})],
             ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
             ['key' => $this->i18n->trans('address'), 'value' => $this->getDocAddress($subject, $model)],
             ['key' => $this->i18n->trans('code'), 'value' => $model->codigo],
@@ -492,7 +491,7 @@ abstract class PDFDocument extends PDFCore
 
         $contacto = new Contacto();
         if ($contacto->loadFromCode($model->idcontactoenv)) {
-            $name = Utils::fixHtml($contacto->nombre) . ' ' . Utils::fixHtml($contacto->apellidos);
+            $name = Tools::fixHtml($contacto->nombre) . ' ' . Tools::fixHtml($contacto->apellidos);
             $carrier = new AgenciaTransporte();
             $carrierName = $carrier->loadFromCode($model->codtrans) ? $carrier->nombre : '-';
             $tableData = [
@@ -573,7 +572,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         $size = mb_strlen($company->nombre) > 20 ? self::FONT_SIZE + 2 : self::FONT_SIZE + 7;
-        $this->pdf->ezText(Utils::fixHtml($company->nombre), $size, ['justification' => 'right']);
+        $this->pdf->ezText(Tools::fixHtml($company->nombre), $size, ['justification' => 'right']);
         $address = $company->direccion;
         $address .= empty($company->codpostal) ? "\n" : "\n" . $company->codpostal . ', ';
         $address .= empty($company->ciudad) ? '' : $company->ciudad;
@@ -586,7 +585,7 @@ abstract class PDFDocument extends PDFCore
             }
         }
 
-        $lineText = $company->cifnif . ' - ' . Utils::fixHtml($address) . "\n\n" . implode(' · ', $contactData);
+        $lineText = $company->cifnif . ' - ' . Tools::fixHtml($address) . "\n\n" . implode(' · ', $contactData);
         $this->pdf->ezText($lineText, self::FONT_SIZE, ['justification' => 'right']);
 
         $idLogo = $this->format->idlogo ?? $company->idlogo;
@@ -641,7 +640,7 @@ abstract class PDFDocument extends PDFCore
                     'numero' => $receipt->numero,
                     'bank' => empty($payLink) ? $this->getBankData($receipt) : '<c:alink:' . $payLink . '>'
                         . $this->i18n->trans('pay') . '</c:alink>',
-                    'importe' => $this->numberTools->format($receipt->importe),
+                    'importe' => Tools::number($receipt->importe),
                     'vencimiento' => $receipt->pagado ? $this->i18n->trans('paid') : $receipt->vencimiento
                 ];
             }

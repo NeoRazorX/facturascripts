@@ -386,7 +386,7 @@ class Producto extends ModelClass
         }
 
         // si hay cambios, actualizamos el producto
-        if ($newPrecio != $this->precio || $newReferencia != $this->referencia) {
+        if ($newPrecio != $this->precio || $newReferencia !== $this->referencia) {
             $this->precio = $newPrecio;
             $this->referencia = $newReferencia;
             $this->save();

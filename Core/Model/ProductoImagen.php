@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinAttachedFile;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Throwable;
 
 /**
@@ -152,7 +152,7 @@ class ProductoImagen extends Base\ModelClass
             switch ($ext) {
                 case 'jpg':
                 case 'jpeg':
-                    imagejpeg($thumb, FS_FOLDER . $thumbFile);
+                    imagejpeg($thumb, FS_FOLDER . $thumbFile, 90);
                     break;
 
                 case 'png':
