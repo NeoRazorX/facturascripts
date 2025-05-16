@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Error;
 
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ErrorController;
-use Symfony\Component\HttpFoundation\Response;
 
 class AccessDenied extends ErrorController
 {
@@ -31,7 +31,7 @@ class AccessDenied extends ErrorController
     {
         // creamos la respuesta
         $response = new Response();
-        $response->setStatusCode(Response::HTTP_FORBIDDEN);
+        $response->setHttpCode(Response::HTTP_FORBIDDEN);
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('X-Content-Type-Options', 'nosniff');

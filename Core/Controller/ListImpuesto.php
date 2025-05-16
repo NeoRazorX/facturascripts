@@ -35,7 +35,7 @@ class ListImpuesto extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'taxes';
-        $data['icon'] = 'fas fa-plus-square';
+        $data['icon'] = 'fa-solid fa-plus-square';
         return $data;
     }
 
@@ -50,7 +50,7 @@ class ListImpuesto extends ListController
 
     protected function createViewsRetention(string $viewName = 'ListRetencion'): void
     {
-        $this->addView($viewName, 'Retencion', 'retentions', 'fas fa-plus-square')
+        $this->addView($viewName, 'Retencion', 'retentions', 'fa-solid fa-plus-square')
             ->addOrderBy(['codretencion'], 'code')
             ->addOrderBy(['descripcion'], 'description')
             ->addSearchFields(['descripcion', 'codretencion']);
@@ -58,7 +58,7 @@ class ListImpuesto extends ListController
 
     protected function createViewsTax(string $viewName = 'ListImpuesto'): void
     {
-        $this->addView($viewName, 'Impuesto', 'taxes', 'fas fa-plus-square')
+        $this->addView($viewName, 'Impuesto', 'taxes', 'fa-solid fa-plus-square')
             ->addOrderBy(['codimpuesto'], 'code')
             ->addOrderBy(['descripcion'], 'description')
             ->addSearchFields(['descripcion', 'codimpuesto']);

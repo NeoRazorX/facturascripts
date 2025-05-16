@@ -41,7 +41,7 @@ class ListProducto extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'products';
-        $data['icon'] = 'fas fa-cubes';
+        $data['icon'] = 'fa-solid fa-cubes';
         return $data;
     }
 
@@ -57,7 +57,7 @@ class ListProducto extends ListController
 
     protected function createViewProducto(string $viewName = 'ListProducto'): void
     {
-        $this->addView($viewName, 'Producto', 'products', 'fas fa-cubes')
+        $this->addView($viewName, 'Producto', 'products', 'fa-solid fa-cubes')
             ->addOrderBy(['referencia'], 'reference')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['fechaalta'], 'creation-date')
@@ -117,7 +117,7 @@ class ListProducto extends ListController
 
     protected function createViewVariante(string $viewName = 'ListVariante'): void
     {
-        $this->addView($viewName, 'Join\VarianteProducto', 'variants', 'fas fa-project-diagram')
+        $this->addView($viewName, 'Join\VarianteProducto', 'variants', 'fa-solid fa-project-diagram')
             ->addOrderBy(['variantes.referencia'], 'reference')
             ->addOrderBy(['variantes.codbarras'], 'barcode')
             ->addOrderBy(['variantes.precio'], 'price')
@@ -158,7 +158,7 @@ class ListProducto extends ListController
 
     protected function createViewStock(string $viewName = 'ListStock'): void
     {
-        $this->addView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly')
+        $this->addView($viewName, 'Join\StockProducto', 'stock', 'fa-solid fa-dolly')
             ->addOrderBy(['stocks.referencia'], 'reference')
             ->addOrderBy(['stocks.cantidad'], 'quantity')
             ->addOrderBy(['stocks.disponible'], 'available')

@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Template\ExtensionsTrait;
 
 /**
  * The class from which all models inherit, connects to the database,

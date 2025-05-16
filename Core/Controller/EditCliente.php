@@ -88,7 +88,7 @@ class EditCliente extends ComercialContactController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'customer';
-        $data['icon'] = 'fas fa-users';
+        $data['icon'] = 'fa-solid fa-users';
         return $data;
     }
 
@@ -118,7 +118,7 @@ class EditCliente extends ComercialContactController
     {
         parent::createViews();
         $this->createContactsView();
-        $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
+        $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-solid fa-piggy-bank');
 
         if ($this->user->can('EditSubcuenta')) {
             $this->createSubaccountsView();
@@ -228,11 +228,20 @@ class EditCliente extends ComercialContactController
             case $mainViewName:
                 parent::loadData($viewName, $view);
                 $this->loadLanguageValues($viewName);
+                $this->loadExceptionVat($viewName);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
                 break;
+        }
+    }
+
+    protected function loadExceptionVat(string $viewName): void
+    {
+        $column = $this->views[$viewName]->columnForName('vat-exception');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
     }
 

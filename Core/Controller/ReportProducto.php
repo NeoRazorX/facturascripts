@@ -36,7 +36,7 @@ class ReportProducto extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'reports';
         $data['title'] = 'products';
-        $data['icon'] = 'fas fa-cubes';
+        $data['icon'] = 'fa-solid fa-cubes';
         return $data;
     }
 
@@ -72,7 +72,7 @@ class ReportProducto extends ListController
 
     protected function createViewsCustomerDeliveryNotes(string $viewName = 'FacturaClienteProducto-alb'): void
     {
-        $this->addView($viewName, 'Join\AlbaranClienteProducto', 'customer-delivery-notes', 'fas fa-shipping-fast');
+        $this->addView($viewName, 'Join\AlbaranClienteProducto', 'customer-delivery-notes', 'fa-solid fa-shipping-fast');
         $this->addOrderBy($viewName, ['cantidad'], 'quantity-sold', 2);
         $this->addOrderBy($viewName, ['avgbeneficio'], 'unit-profit');
         $this->addOrderBy($viewName, ['avgprecio'], 'unit-sale-price');
@@ -91,7 +91,7 @@ class ReportProducto extends ListController
 
     protected function createViewsCustomerInvoices(string $viewName = 'FacturaClienteProducto'): void
     {
-        $this->addView($viewName, 'Join\FacturaClienteProducto', 'customer-invoices', 'fas fa-shopping-cart');
+        $this->addView($viewName, 'Join\FacturaClienteProducto', 'customer-invoices', 'fa-solid fa-shopping-cart');
         $this->addOrderBy($viewName, ['cantidad'], 'quantity-sold', 2);
         $this->addOrderBy($viewName, ['avgbeneficio'], 'unit-profit');
         $this->addOrderBy($viewName, ['avgprecio'], 'unit-sale-price');
@@ -110,7 +110,7 @@ class ReportProducto extends ListController
 
     protected function createViewsSupplierDeliveryNotes(string $viewName = 'FacturaProveedorProducto-alb'): void
     {
-        $this->addView($viewName, 'Join\AlbaranProveedorProducto', 'supplier-delivery-notes', 'fas fa-copy');
+        $this->addView($viewName, 'Join\AlbaranProveedorProducto', 'supplier-delivery-notes', 'fa-solid fa-copy');
         $this->addOrderBy($viewName, ['cantidad'], 'purchased-quantity', 2);
         $this->addOrderBy($viewName, ['avgcoste'], 'unit-purchase-price');
         $this->addOrderBy($viewName, ['coste'], 'cost-price');
@@ -128,7 +128,7 @@ class ReportProducto extends ListController
 
     protected function createViewsSupplierInvoices(string $viewName = 'FacturaProveedorProducto'): void
     {
-        $this->addView($viewName, 'Join\FacturaProveedorProducto', 'supplier-invoices', 'fas fa-copy');
+        $this->addView($viewName, 'Join\FacturaProveedorProducto', 'supplier-invoices', 'fa-solid fa-copy');
         $this->addOrderBy($viewName, ['cantidad'], 'quantity', 2);
         $this->addSearchFields($viewName, ['productos.descripcion', 'lineasfacturasprov.referencia']);
 

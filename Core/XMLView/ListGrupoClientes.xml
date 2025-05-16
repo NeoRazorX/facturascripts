@@ -37,7 +37,7 @@
         </column>
     </columns>
     <modals>
-        <group name="setgrouprate" title="add" icon="fas fa-folder-plus">
+        <group name="setgrouprate" title="add" icon="fa-solid fa-folder-plus">
             <column name="setgrouprate" title="group" titleurl="ListCliente?activetab=ListGrupoClientes" order="100">
                 <widget type="select" fieldname="setgrouprate" required="true">
                     <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre" />

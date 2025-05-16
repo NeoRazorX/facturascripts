@@ -31,10 +31,10 @@
                 </widget>
             </column>
             <column name="city" order="120">
-                <widget type="text" fieldname="ciudad" icon="fas fa-city" required="true"/>
+                <widget type="text" fieldname="ciudad" icon="fa-solid fa-city" required="true"/>
             </column>
             <column name="code" description="optional" numcolumns="2" order="130">
-                <widget type="text" maxlength="5" fieldname="codeid" icon="fas fa-hashtag"/>
+                <widget type="text" maxlength="5" fieldname="codeid" icon="fa-solid fa-hashtag"/>
             </column>
             <column name="latitude" numcolumns="2" order="140">
                 <widget type="number" fieldname="latitude"/>

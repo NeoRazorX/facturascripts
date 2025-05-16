@@ -198,6 +198,15 @@ class Tools
             str_replace(self::HTML_REPLACEMENTS, self::HTML_CHARS, trim($text));
     }
 
+    public static function floatcmp($f1, $f2, $precision = 10, $round = false): bool
+    {
+        if ($round || false === function_exists('bccomp')) {
+            return abs($f1 - $f2) < 6 / 10 ** ($precision + 1);
+        }
+
+        return bccomp((string)$f1, (string)$f2, $precision) === 0;
+    }
+
     /**
      * Construye una ruta de carpeta a partir de los nombres de carpetas proporcionados.
      *
@@ -210,6 +219,11 @@ class Tools
         if (empty($folders)) {
             return self::config('folder') ?? '';
         }
+
+        // eliminamos barras al incio y al final
+        $folders = array_map(function($folder) {
+            return ltrim(rtrim($folder, '/\\'), '/\\');
+        }, $folders);
 
         array_unshift($folders, self::config('folder'));
         return implode(DIRECTORY_SEPARATOR, $folders);

@@ -21,14 +21,14 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * AdminPlugins.
@@ -59,7 +59,7 @@ class AdminPlugins extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'plugins';
-        $data['icon'] = 'fas fa-plug';
+        $data['icon'] = 'fa-solid fa-plug';
         return $data;
     }
 
@@ -111,7 +111,7 @@ class AdminPlugins extends Controller
         $this->loadRemotePluginList();
 
         // comprobamos si la instalación está registrada
-        $telemetry = new TelemetryManager();
+        $telemetry = new Telemetry();
         $this->registered = $telemetry->ready();
 
         // comprobamos si hay actualizaciones disponibles
@@ -226,7 +226,7 @@ class AdminPlugins extends Controller
         }
 
         $ok = true;
-        $uploadFiles = $this->request->files->get('plugin', []);
+        $uploadFiles = $this->request->files->getArray('plugin');
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
                 Tools::log()->error($uploadFile->getErrorMessage());

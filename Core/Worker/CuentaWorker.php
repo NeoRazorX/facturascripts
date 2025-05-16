@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,6 +32,7 @@ class CuentaWorker extends WorkerClass
     {
         // cargamos la cuenta
         $cuenta = new Cuenta();
+
         // si es una subcuenta, su cuenta padre es idcuenta, para cuentas es parent_idcuenta
         $id = $event->param('parent_idcuenta') ?? $event->param('idcuenta');
         if (false === $cuenta->loadFromCode($id)) {
@@ -58,11 +59,12 @@ class CuentaWorker extends WorkerClass
         $diffDebe = abs($cuenta->debe - $debe);
         $diffHaber = abs($cuenta->haber - $haber);
         $diffSaldo = abs($cuenta->saldo - ($debe - $haber));
-        if ($diffDebe >= 0.01 || $diffHaber >= 0.01 || $diffSaldo >= 0.01) {
+        if ($diffDebe >= 0.009 || $diffHaber >= 0.009 || $diffSaldo >= 0.009) {
             // actualizamos la cuenta
             $cuenta->debe = round($debe, FS_NF0);
             $cuenta->haber = round($haber, FS_NF0);
             $cuenta->saldo = round($debe - $haber, FS_NF0);
+            $cuenta->disableAdditionalTest(true);
             $cuenta->save();
         }
 

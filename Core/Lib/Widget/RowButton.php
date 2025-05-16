@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * Description of RowButton
  *
@@ -60,10 +62,10 @@ class RowButton extends VisualItem
         $this->color = $data['color'] ?? '';
         $this->confirm = isset($data['confirm']);
         $this->icon = $data['icon'] ?? '';
-        $this->label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
+        $this->label = isset($data['label']) ? Tools::lang()->trans($data['label']) : '';
         $this->level = isset($data['level']) ? (int)$data['level'] : 0;
         $this->target = $data['target'] ?? '';
-        $this->title = isset($data['title']) ? static::$i18n->trans($data['title']) : '';
+        $this->title = isset($data['title']) ? Tools::lang()->trans($data['title']) : '';
         $this->type = $data['type'] ?? 'action';
     }
 
@@ -77,7 +79,7 @@ class RowButton extends VisualItem
             $this->icon = 'far fa-question-circle';
         }
 
-        $cssClass = $small ? 'btn mr-1 ' : 'btn btn-sm mr-1 ';
+        $cssClass = $small ? 'btn me-1 ' : 'btn btn-sm me-1 ';
         $cssClass .= empty($this->color) ? 'btn-light' : $this->colorToClass($this->color, 'btn-');
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
         $title = empty($this->title) ? $this->label : $this->title;
@@ -106,7 +108,7 @@ class RowButton extends VisualItem
 
             case 'modal':
                 $modal = 'modal' . $this->action;
-                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" data-toggle="modal" data-target="#'
+                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" data-bs-toggle="modal" data-bs-target="#'
                     . $modal . '" title="' . $title . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
                     . $icon . $label . '</button>';
 
@@ -172,8 +174,8 @@ class RowButton extends VisualItem
     {
         if ($this->confirm) {
             return 'confirmAction(\'' . $viewName . '\',\'' . $this->action . '\',\''
-                . $this->label . '\',\'' . self::$i18n->trans('are-you-sure-action') . '\',\''
-                . self::$i18n->trans('cancel') . '\',\'' . self::$i18n->trans('confirm') . '\');';
+                . $this->label . '\',\'' . Tools::lang()->trans('are-you-sure-action') . '\',\''
+                . Tools::lang()->trans('cancel') . '\',\'' . Tools::lang()->trans('confirm') . '\');';
         }
 
         if (empty($jsFunction)) {

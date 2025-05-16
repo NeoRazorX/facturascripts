@@ -29,14 +29,14 @@
             <div class="row">
                 <div class="col">
                     <h1 class="h3">
-                        <i class="{{ pageData.icon }} mr-2" aria-hidden="true"></i> {{ trans(pageData.title) }}
+                        <i class="{{ pageData.icon }} me-2" aria-hidden="true"></i> {{ trans(pageData.title) }}
                     </h1>
                     <p>{{ trans('group-or-split-p') }}</p>
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 <div class="col-lg-2 col-sm-6 mb-2">
-                    <select name="codserie" class="form-control">
+                    <select name="codserie" class="form-select">
                         <option value="">{{ trans('serie') }}</option>
                         <option value="">------</option>
                         {% for item in fsc.getSeries() %}
@@ -53,7 +53,7 @@
                            autocomplete="off"/>
                 </div>
                 <div class="col-lg-2 col-sm-6 mb-2">
-                    <select name="extralines" class="form-control">
+                    <select name="extralines" class="form-select">
                         <option value="true">{{ trans('add-extra-lines') }}</option>
                         <option value="false">{{ trans('no-extra-lines') }}</option>
                     </select>
@@ -61,8 +61,8 @@
                 <div class="col mb-2">
                     <div class="dropdown">
                         <button class="btn btn-spin-action btn-primary dropdown-toggle" type="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-magic fa-fw"></i> {{ trans('generate') }}
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa-solid fa-magic fa-fw"></i> {{ trans('generate') }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             {% set availableStatus = fsc.getAvailableStatus() %}
@@ -77,7 +77,7 @@
                             {% for status in availableStatus %}
                                 <button type="button" onclick="sendFormData('close:{{ status.primaryColumnValue() }}');"
                                         class="dropdown-item text-danger">
-                                    <i class="fas fa-lock fa-fw" aria-hidden="true"></i>
+                                    <i class="fa-solid fa-lock fa-fw" aria-hidden="true"></i>
                                     {% if availableStatus | length > 1 %}
                                         {{ trans('close') }}: {{ trans(status.generadoc) }}
                                     {% else %}
@@ -88,18 +88,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="col text-right mb-2">
+                <div class="col text-end mb-2">
                     <div class="dropdown">
                         <button class="btn btn-spin-action btn-secondary dropdown-toggle" type="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-check-square fa-fw"></i> {{ trans('selected-quantity') }}
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa-solid fa-check-square fa-fw"></i> {{ trans('selected-quantity') }}
                         </button>
-                        <div class="dropdown-menu dropdown-menu-right">
+                        <div class="dropdown-menu dropdown-menu-end">
                             <a class="dropdown-item" href="#" onClick="return selectNone();">
                                 <i class="far fa-square fa-fw"></i> {{ trans('select-none') }}
                             </a>
                             <a class="dropdown-item" href="#" onClick="return selectAll();">
-                                <i class="fas fa-square fa-fw"></i> {{ trans('select-all') }}
+                                <i class="fa-solid fa-square fa-fw"></i> {{ trans('select-all') }}
                             </a>
                         </div>
                     </div>
@@ -108,10 +108,10 @@
             <div class="row">
                 <div class="col mt-3">
                     {% for doc in fsc.documents %}
-                        <input type="hidden" name="code[]" value="{{ doc.primaryColumnValue() }}"/>
+                        <input type="hidden" name="codes[]" value="{{ doc.primaryColumnValue() }}"/>
                         {{ _self.documentCard(doc, fsc) }}
                     {% else %}
-                        <div class="alert alert-warning" role="alert">{{ trans('no-data') }}</div>
+                        <div class="alert alert-dismissible alert-warning" role="alert">{{ trans('no-data') }}</div>
                     {% endfor %}
                 </div>
             </div>
@@ -164,12 +164,12 @@
                                     <table class="table table-hover mb-0">
                                         <thead>
                                         <tr>
-                                            <th><input type="checkbox" onclick="checkAllDoc(this)" class="ml-1"></th>
+                                            <th><input type="checkbox" onclick="checkAllDoc(this)" class="ms-1"></th>
                                             <th>{{ trans('code') }}</th>
                                             <th>{{ trans('observations') }}</th>
                                             <th>{{ trans('payment-method') }}</th>
-                                            <th class="text-right">{{ trans('total') }}</th>
-                                            <th class="text-right">{{ trans('date') }}</th>
+                                            <th class="text-end">{{ trans('total') }}</th>
+                                            <th class="text-end">{{ trans('date') }}</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -191,8 +191,8 @@
                                                 </td>
                                                 <td>{{ doc.observaciones | slice(0, 60) | raw }}</td>
                                                 <td>{{ doc.getPaymentMethod().descripcion }}</td>
-                                                <td class="text-right text-nowrap">{{ money(doc.total) }}</td>
-                                                <td class="text-right text-nowrap">
+                                                <td class="text-end text-nowrap">{{ money(doc.total) }}</td>
+                                                <td class="text-end text-nowrap">
                                                     {{ doc.fecha }} <span class="small">{{ doc.hora }}</span>
                                                 </td>
                                             </tr>
@@ -272,7 +272,7 @@
             <div class="row">
                 <div class="col-sm">
                     <div class="h5 mb-1">
-                        <i class="fas fa-file mr-2" aria-hidden="true"></i> {{ trans(fsc.modelName) }}
+                        <i class="fa-solid fa-file me-2" aria-hidden="true"></i> {{ trans(fsc.modelName) }}
                         <a href="{{ doc.url() }}">{{ doc.codigo }}</a>
                         {% if doc.numero2 %}
                             {{ doc.numero2 }}
@@ -284,7 +284,7 @@
                         <p class="mb-2">{{ doc.observaciones | raw }}</p>
                     {% endif %}
                 </div>
-                <div class="col-sm-3 text-right">
+                <div class="col-sm-3 text-end">
                     <p class="small mb-0">
                         <i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
                         &nbsp;
@@ -305,9 +305,9 @@
                 <tr>
                     <th>{{ trans('reference') }}</th>
                     <th>{{ trans('description') }}</th>
-                    <th class="text-right td-quantity">{{ trans('quantity') }}</th>
-                    <th class="text-right td-quantity">{{ trans('quantity-served') }}</th>
-                    <th class="text-right td-quantity">{{ trans('selected-quantity') }}</th>
+                    <th class="text-end td-quantity">{{ trans('quantity') }}</th>
+                    <th class="text-end td-quantity">{{ trans('quantity-served') }}</th>
+                    <th class="text-end td-quantity">{{ trans('selected-quantity') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -316,11 +316,11 @@
                         <td class="align-middle">{{ line.referencia }}</td>
                         <td class="align-middle">{{ line.descripcion | raw | nl2br }}</td>
                         <td>
-                            <input type="number" value="{{ line.cantidad }}" class="form-control text-right"
+                            <input type="number" value="{{ line.cantidad }}" class="form-control text-end"
                                    readonly="true"/>
                         </td>
                         <td class="{{ servido == 0 ? '' : 'table-warning' }}">
-                            <input type="number" value="{{ line.servido }}" class="form-control text-right"
+                            <input type="number" value="{{ line.servido }}" class="form-control text-end"
                                    readonly="true"/>
                         </td>
                         {% set newQuantity = line.cantidad - line.servido %}
@@ -328,7 +328,7 @@
                             <input type="hidden" class="to_serve" value="{{ newQuantity }}"/>
                             <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}"
                                    value="{{ newQuantity }}" step="any" min="0" max="{{ line.cantidad }}"
-                                   class="form-control text-right to_be_served" autocomplete="off"/>
+                                   class="form-control text-end to_be_served" autocomplete="off"/>
                         </td>
                     </tr>
                 {% else %}

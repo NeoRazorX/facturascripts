@@ -38,6 +38,8 @@ use FacturaScripts\Dinamic\Model\Variante;
  * Description of SalesController
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/SalesController
  */
 abstract class SalesController extends PanelController
 {
@@ -457,7 +459,7 @@ abstract class SalesController extends PanelController
         foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
             // si no está pagado, actualizamos fechapago y codpago
-            if (false == $receipt->pagado){
+            if (false == $receipt->pagado) {
                 $receipt->fechapago = $formData['fechapagorecibo'] ?? Tools::date();
                 $receipt->codpago = $model->codpago;
             }

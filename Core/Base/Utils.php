@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Base;
 
 /**
  * Utils give us some basic and common methods.
- *
+ * @deprecated since version 2024.92
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Utils
@@ -91,7 +91,6 @@ class Utils
      * Make corrections in the HTML code
      *
      * @param ?string $txt
-     *
      * @return ?string
      */
     public static function fixHtml(?string $txt): ?string
@@ -105,7 +104,7 @@ class Utils
     /**
      * Compare two floating point numbers with an accuracy of $precision,
      * returns True if they are equal, False otherwise.
-     *
+     * @deprecated since version 2024.92 replaced by Tools::floatcmp
      * @param double $f1
      * @param double $f2
      * @param int $precision
@@ -135,6 +134,10 @@ class Utils
         return $str === null ? null : (int)$str;
     }
 
+    /**
+     * @param string $url
+     * @return bool
+     */
     public static function isValidUrl(string $url): bool
     {
         // si la url está vacía o comienza por javascript: entonces no es una url válida
@@ -161,7 +164,6 @@ class Utils
      * because you will find many unpleasant surprises.
      *
      * @param ?string $txt
-     *
      * @return ?string
      */
     public static function noHtml(?string $txt): ?string
@@ -177,7 +179,6 @@ class Utils
      * their normalized counterparts.
      *
      * @param ?string $string
-     *
      * @return ?string
      */
     public static function normalize(?string $string): ?string
@@ -200,7 +201,6 @@ class Utils
      * Returns a random text string of length $length.
      *
      * @param int $length
-     *
      * @return string
      */
     public static function randomString(int $length = 10): string
@@ -240,7 +240,6 @@ class Utils
      *
      * @param ?string $text
      * @param int $maxWidth
-     *
      * @return ?string
      */
     public static function trueTextBreak(?string $text, int $maxWidth = 500): ?string

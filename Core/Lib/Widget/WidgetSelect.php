@@ -20,15 +20,16 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\AssetManager;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetSelect
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Daniel Fernández Giménez     <hola@danielfg.es>
+ * @author Daniel Fernández Giménez      <hola@danielfg.es>
  */
 class WidgetSelect extends BaseWidget
 {
@@ -238,7 +239,7 @@ class WidgetSelect extends BaseWidget
                 continue;
             }
 
-            $this->values[$key]['title'] = static::$i18n->trans($value['title']);
+            $this->values[$key]['title'] = Tools::lang()->trans($value['title']);
         }
     }
 
@@ -258,19 +259,20 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $class = $this->combineClasses($this->css('form-control select2'), $this->class, $extraClass);
+        $class = $this->combineClasses($this->css('form-select select2'), $this->class, $extraClass);
+
         if ($this->parent) {
             $class .= ' parentSelect';
         }
 
         $html = '';
         $name = '';
-        if ($this->multiple && $this->readonly()) {
+        if ($this->readonly()) {
             $html .= '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '">';
-        } elseif ($this->multiple && false === $this->readonly()) {
-            $name = ' name="' . $this->fieldname . '[]"';
-        } elseif (false === $this->readonly()) {
-            $name = ' name="' . $this->fieldname . '"';
+        } else {
+            $name = $this->multiple
+                ? ' name="' . $this->fieldname . '[]"'
+                : ' name="' . $this->fieldname . '"';
         }
 
         $html .= '<select'
@@ -292,8 +294,7 @@ class WidgetSelect extends BaseWidget
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
-            // don't use strict comparison (===)
-            if (!empty($this->value) && in_array($option['value'], explode(',', $this->value))) {
+            if ($option['value'] == $this->value && (!$found || $this->multiple)) {
                 $found = true;
                 $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
                 continue;
@@ -303,7 +304,8 @@ class WidgetSelect extends BaseWidget
         }
 
         // value not found?
-        if (!$found && !empty($this->value) && !empty($this->source)) {
+        // don't use strict comparison (===)
+        if (!$this->multiple && !$found && $this->value != '' && !empty($this->source)) {
             $html .= '<option value="' . $this->value . '" selected>'
                 . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
                 . '</option>';
@@ -370,7 +372,7 @@ class WidgetSelect extends BaseWidget
             }
 
             $txtBreak = substr($txt, 0, 20);
-            return '<span data-toggle="tooltip" data-html="true" title="' . $txt . '">' . $txtBreak . '...</span>';
+            return '<span data-bs-toggle="tooltip" data-html="true" title="' . $txt . '">' . $txtBreak . '...</span>';
         }
 
         $selected = null;

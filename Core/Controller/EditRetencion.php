@@ -41,7 +41,7 @@ class EditRetencion extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'retention';
-        $data['icon'] = 'fas fa-plus-square';
+        $data['icon'] = 'fa-solid fa-plus-square';
         return $data;
     }
 
@@ -58,7 +58,7 @@ class EditRetencion extends EditController
 
     protected function createViewsCustomers(string $viewName = 'ListCliente')
     {
-        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
+        $this->addListView($viewName, 'Cliente', 'customers', 'fa-solid fa-users');
         $this->views[$viewName]->addSearchFields(['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
 
@@ -69,7 +69,7 @@ class EditRetencion extends EditController
 
     protected function createViewsSuppliers(string $viewName = 'ListProveedor')
     {
-        $this->addListView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
+        $this->addListView($viewName, 'Proveedor', 'suppliers', 'fa-solid fa-users');
         $this->views[$viewName]->addSearchFields(['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
 

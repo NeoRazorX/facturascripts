@@ -24,6 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
+use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Partida;
@@ -49,7 +50,7 @@ class EditSubcuenta extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'subaccount';
-        $data['icon'] = 'fas fa-th-list';
+        $data['icon'] = 'fa-solid fa-th-list';
         return $data;
     }
 
@@ -61,37 +62,42 @@ class EditSubcuenta extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
+        // establecemos el límite de registros a 9999, para el select de cuentas
+        CodeModel::setLimit(9999);
+
+        // ocultamos el botón imprimir
+        $mvn = $this->getMainViewName();
+        $this->tab($mvn)->setSettings('btnPrint', false);
+
         // añadimos las partidas de asientos
         $this->createViewsLines();
     }
 
     protected function createViewsLines(string $viewName = 'ListPartidaAsiento'): void
     {
-        $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale')
+        $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fa-solid fa-balance-scale')
             ->addOrderBy(['fecha', 'numero', 'idpartida'], 'date', 2)
-            ->addSearchFields(['partidas.concepto']);
-
-        // filtros
-        $this->views[$viewName]->addFilterPeriod('date', 'date', 'fecha');
+            ->addSearchFields(['partidas.concepto'])
+            ->disableColumn('subaccount')
+            ->setSettings('btnDelete', false);
 
         $iva = $this->codeModel->all('partidas', 'iva', 'iva');
-        $this->views[$viewName]->addFilterSelect('iva', 'vat', 'iva', $iva);
-        $this->views[$viewName]->addFilterCheckbox('no-iva', 'without-taxation', 'iva', 'IS', null);
 
-        $this->views[$viewName]->addFilterNumber('debit-major', 'debit', 'debe');
-        $this->views[$viewName]->addFilterNumber('debit-minor', 'debit', 'debe', '<=');
-        $this->views[$viewName]->addFilterNumber('credit-major', 'credit', 'haber');
-        $this->views[$viewName]->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
-
-        // disable column
-        $this->views[$viewName]->disableColumn('subaccount');
+        // filtros
+        $this->listView($viewName)
+            ->addFilterPeriod('date', 'date', 'fecha')
+            ->addFilterSelect('iva', 'vat', 'iva', $iva)
+            ->addFilterCheckbox('no-iva', 'without-taxation', 'iva', 'IS', null)
+            ->addFilterNumber('debit-major', 'debit', 'debe')
+            ->addFilterNumber('debit-minor', 'debit', 'debe', '<=')
+            ->addFilterNumber('credit-major', 'credit', 'haber')
+            ->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
 
         // botones
-        $this->setSettings($viewName, 'btnDelete', false);
         $this->addButton($viewName, [
             'action' => 'dot-accounting-on',
             'color' => 'info',
-            'icon' => 'fas fa-check-double',
+            'icon' => 'fa-solid fa-check-double',
             'label' => 'checked'
         ]);
         $this->addButton($viewName, [
@@ -150,6 +156,7 @@ class EditSubcuenta extends EditController
         ]);
         $title = Tools::lang()->trans('ledger') . ' ' . $subAccount->codsubcuenta;
         $this->exportManager->newDoc($request['format'], $title);
+        $this->exportManager->setCompany($subAccount->getExercise()->idempresa);
 
         // añadimos la tabla de cabecera con la info del informe
         if ($request['format'] === 'PDF') {
@@ -201,7 +208,7 @@ class EditSubcuenta extends EditController
                 $this->addButton($mainViewName, [
                     'action' => 'ledger',
                     'color' => 'info',
-                    'icon' => 'fas fa-book fa-fw',
+                    'icon' => 'fa-solid fa-book fa-fw',
                     'label' => 'ledger',
                     'type' => 'modal'
                 ]);
@@ -238,7 +245,7 @@ class EditSubcuenta extends EditController
      */
     private function dotAccountingAction(bool $value): bool
     {
-        $ids = $this->request->request->get('code', []);
+        $ids = $this->request->request->getArray('code');
         if (empty($ids)) {
             Tools::log()->warning('no-selected-item');
             return false;
