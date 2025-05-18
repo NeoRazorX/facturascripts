@@ -32,7 +32,7 @@
 "020101";"Sobregiro Bancario";"GTORF"
 "020102";"Cuentas por pagar";"PROVEE"
 "020103";"Prestamos por pagar";
-"020104";"Impuestos sobre la renta por pagar";"IVAREP"
+"020104";"Impuestos por pagar";
 "020105";"Dividendos declarado por pagar";
 "020106";"Retenciones y acumulaciones por pagar";
 "0202";"Pasivos diferidos";
@@ -59,6 +59,7 @@
 "050103";"Descuento en compras";
 "050104";"Devoluciones en compras";"DEVCOM"
 "050105";"Compras Generales";"COMPRA"
+"050106";"Impuestos por Compras";
 "06";"Gastos";
 "0601";"Gastos generales y administrativos";"ACREED"
 "060101";"Sueldos";
@@ -72,7 +73,7 @@
 "07";"Finanzas";
 "0701";"Tesoreria";
 "070101";"Caja";"CAJA"
-"02010401";"ITBIS";
+"02010401";"ITBIS";"IVAREP"
 "02010601";"ARS";
 "02010602";"ITBIS";
 "02010603";"Impuestos sobre la renta";
@@ -84,5 +85,6 @@
 "05010101";"Bienes";
 "05010102";"Servicios";
 "05010501";"Compras Generales";
+"05010601";"ITBIS compras";"IVASOP"
 "07010101";"Caja moneda local";
 "07010102";"Caja moneda extranjera";
