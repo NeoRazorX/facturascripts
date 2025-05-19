@@ -1,0 +1,4 @@
+codimpuesto,descripcion,iva,recargo
+IVAPRI,"IVA General Puerto Rico",11.5,0
+IVAPRIRED,"IVA Productos Reducidos",4,0
+IVAPRIMED,"IVA Medicamentos",0,0

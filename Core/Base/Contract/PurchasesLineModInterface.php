@@ -23,6 +23,11 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
 
+/**
+ * Interface for classes that modify purchase lines.
+ *
+ * @deprecated replaced by Core/Contract/PurchasesLineModInterface
+ */
 interface PurchasesLineModInterface
 {
     public function apply(PurchaseDocument &$model, array &$lines, array $formData);

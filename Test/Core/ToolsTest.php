@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Divisa;
@@ -64,17 +63,29 @@ final class ToolsTest extends TestCase
         $this->assertEquals($date, Tools::timeToDate($time2));
         $this->assertEquals('07-10-2020', Tools::date($date3));
         $this->assertEquals('07-10-2020', Tools::timeToDate($tim3));
+        $this->assertEquals('09-10-2020', Tools::dateOperation($date3, '+2 days'));
 
         $this->assertEquals($dateTime, Tools::dateTime($dateTime));
         $this->assertEquals($dateTime, Tools::timeToDateTime($time2));
         $this->assertEquals('17-05-2020 12:00:00', Tools::dateTime($dateTime2));
         $this->assertEquals('17-05-2020 12:00:00', Tools::timeToDateTime($time4));
+        $this->assertEquals('19-05-2020 13:00:00', Tools::dateTimeOperation($dateTime2, '+2 days +1 hour'));
     }
 
     public function testFolderFunctions(): void
     {
         $this->assertEquals(FS_FOLDER, Tools::folder());
         $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('Test'));
+
+        // comprobamos que elimina barras al inicio y al final
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('/Test'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('/Test/'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('Test/'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('\\Test'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('\\Test\\'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('Test\\'));
+        $expected = FS_FOLDER . DIRECTORY_SEPARATOR . 'Test1' . DIRECTORY_SEPARATOR . 'test2';
+        $this->assertEquals($expected, Tools::folder('/Test1/', '/test2'));
 
         // creamos la carpeta MyFiles/Test/Folder1
         $folder1 = Tools::folder('MyFiles', 'Test', 'Folder1');
@@ -139,7 +150,7 @@ final class ToolsTest extends TestCase
 
     public function testSettings(): void
     {
-        $this->assertEquals(AppSettings::get('default', 'codpais'), Tools::settings('default', 'codpais'));
+        $this->assertEquals(Tools::settings('default', 'codpais'), Tools::settings('default', 'codpais'));
 
         // nos guardamos el valor actual
         $value = Tools::settings('default', 'codpais');
@@ -225,12 +236,16 @@ final class ToolsTest extends TestCase
 
     public function testBytes(): void
     {
+        Tools::settingsSet('default', 'decimal_separator', '.');
+        Tools::settingsSet('default', 'thousands_separator', '_');
+
         $this->assertEquals('0 bytes', Tools::bytes(0, 0));
         $this->assertEquals('1.0 byte', Tools::bytes(1, 1));
-        $this->assertEquals('2.00 bytes', Tools::bytes(2, 2));
+        $this->assertEquals('2.00 bytes', Tools::bytes(2));
         $this->assertEquals('1.0 KB', Tools::bytes(1025, 1));
         $this->assertEquals('1 MB', Tools::bytes(1048577, 0));
         $this->assertEquals('1.00 GB', Tools::bytes(1073741825));
+        $this->assertEquals('1_024.00 GB', Tools::bytes(1099511627776));
 
         $this->assertEquals('0 bytes', Tools::bytes(null, 0));
     }
@@ -254,6 +269,8 @@ final class ToolsTest extends TestCase
         $this->assertEquals('-1.23 €', Tools::money(-1.23));
         $this->assertEquals('-1.23 €', Tools::money(-1.234));
         $this->assertEquals('-1 234.56 €', Tools::money(-1234.56));
+        $this->assertEquals('-1 234.4 €', Tools::money(-1234.40, '', 1));
+        $this->assertEquals('-1 234 €', Tools::money(-1234.40, '', 0));
 
         // probamos con otra divisa
         $this->assertEquals('1.23 ?', Tools::money(1.234, 'TES'));

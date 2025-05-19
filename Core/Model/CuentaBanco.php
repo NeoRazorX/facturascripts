@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,6 +37,9 @@ class CuentaBanco extends BankAccount
 
     const SPECIAL_ACCOUNT = 'CAJA';
 
+    /** @var bool */
+    public $activa;
+
     /** @var string */
     public $codsubcuenta;
 
@@ -52,6 +55,7 @@ class CuentaBanco extends BankAccount
     public function clear()
     {
         parent::clear();
+        $this->activa = true;
         $this->sufijosepa = '000';
     }
 
@@ -156,5 +160,23 @@ class CuentaBanco extends BankAccount
     public function url(string $type = 'auto', string $list = 'ListFormaPago?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    protected function saveUpdate(array $values = []): bool
+    {
+        if (false === parent::saveUpdate($values)) {
+            return false;
+        }
+
+        // si ha cambiado el iban, añadimos un aviso al log
+        if (!empty($this->iban_old) && $this->iban_old !== $this->iban) {
+            Tools::log('audit')->warning('company-iban-changed', [
+                '%account%' => $this->codcuenta,
+                '%old%' => $this->iban_old,
+                '%new%' => $this->iban,
+            ]);
+        }
+
+        return true;
     }
 }

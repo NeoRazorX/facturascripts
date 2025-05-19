@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -56,7 +56,7 @@ final class UserTest extends TestCase
     {
         $user = new User();
         $user->nick = 'test1';
-        $user->setPassword('test1');
+        $user->setPassword('test9876');
         $this->assertTrue($user->save());
 
         // comprobamos que se ha creado el usuario
@@ -64,8 +64,8 @@ final class UserTest extends TestCase
 
         // comprobamos la contraseña
         $this->assertNotEquals('test', $user->password);
-        $this->assertTrue($user->verifyPassword('test1'));
-        $this->assertFalse($user->verifyPassword('test2'));
+        $this->assertTrue($user->verifyPassword('test9876'));
+        $this->assertFalse($user->verifyPassword('test6789'));
 
         // eliminamos
         $this->assertTrue($user->delete());
@@ -76,7 +76,7 @@ final class UserTest extends TestCase
         // creamos un usuario con html en lastbrowser y lastip
         $user = new User();
         $user->nick = 'test1';
-        $user->setPassword('test1');
+        $user->setPassword('test1010');
         $user->lastbrowser = '<script>alert("test");</script>';
         $user->lastip = '<b>123456</b>';
         $this->assertTrue($user->save());
@@ -94,7 +94,7 @@ final class UserTest extends TestCase
         // creamos un usuario con un email incorrecto
         $user = new User();
         $user->nick = 'test2';
-        $user->setPassword('test2');
+        $user->setPassword('test2345');
         $user->email = 'bademail';
         $this->assertFalse($user->save());
     }
@@ -104,7 +104,7 @@ final class UserTest extends TestCase
         // creamos un usuario con un nick incorrecto
         $user = new User();
         $user->nick = 'bad nick';
-        $user->setPassword('password3');
+        $user->setPassword('password3456');
         $this->assertFalse($user->save());
     }
 
@@ -113,7 +113,7 @@ final class UserTest extends TestCase
         // creamos un usuario con un agente que no existe
         $user = new User();
         $user->nick = 'test4';
-        $user->setPassword('password4');
+        $user->setPassword('password4567');
         $user->codagente = 1234;
         $this->assertTrue($user->save());
 
@@ -129,23 +129,33 @@ final class UserTest extends TestCase
         // creamos un usuario
         $user = new User();
         $user->nick = 'test_password';
-        $user->setPassword('password5');
+        $this->assertTrue($user->setPassword('password5678'));
         $this->assertTrue($user->save());
 
         // comprobamos que se ha encriptado la contraseña
-        $this->assertNotEquals('password5', $user->password);
+        $this->assertNotEquals('password5678', $user->password);
 
         // validamos la contraseña
-        $this->assertTrue($user->verifyPassword('password5'));
-        $this->assertFalse($user->verifyPassword('password6'));
+        $this->assertTrue($user->verifyPassword('password5678'));
+        $this->assertFalse($user->verifyPassword('password6789'));
 
         // cambiamos la contraseña
-        $user->setPassword('password-7');
+        $this->assertTrue($user->setPassword('password-789'));
         $this->assertTrue($user->save());
 
         // validamos la nueva contraseña
-        $this->assertTrue($user->verifyPassword('password-7'));
+        $this->assertTrue($user->verifyPassword('password-789'));
         $this->assertFalse($user->verifyPassword('password8'));
+
+        // intentamos poner una contraseña débil
+        $this->assertFalse($user->setPassword('pass'));
+        $this->assertFalse($user->setPassword('password'));
+        $this->assertFalse($user->setPassword('password-test'));
+        $this->assertFalse($user->setPassword('123'));
+        $this->assertFalse($user->setPassword('12345678'));
+
+        // comprobamos que la contraseña no ha cambiado
+        $this->assertTrue($user->verifyPassword('password-789'));
 
         // eliminamos
         $this->assertTrue($user->delete());
@@ -156,25 +166,25 @@ final class UserTest extends TestCase
         // creamos un usuario
         $user = new User();
         $user->nick = 'test_new_password';
-        $user->setPassword('password-0');
+        $user->setPassword('password-012');
         $this->assertTrue($user->save());
 
         // probamos 2 contraseñas mal
-        $user->newPassword = 'password1';
-        $user->newPassword2 = 'password2';
+        $user->newPassword = 'password1234';
+        $user->newPassword2 = 'password2345';
         $this->assertFalse($user->save());
 
         // probamos 2 contraseñas iguales
-        $user->newPassword = 'password-8';
-        $user->newPassword2 = 'password-8';
+        $user->newPassword = 'password-8765';
+        $user->newPassword2 = 'password-8765';
         $this->assertTrue($user->save());
 
         // comprobamos que se ha encriptado la contraseña
-        $this->assertNotEquals('password-8', $user->password);
+        $this->assertNotEquals('password-8765', $user->password);
 
         // validamos la contraseña
-        $this->assertTrue($user->verifyPassword('password-8'));
-        $this->assertFalse($user->verifyPassword('password-9'));
+        $this->assertTrue($user->verifyPassword('password-8765'));
+        $this->assertFalse($user->verifyPassword('password-9999'));
 
         // eliminamos
         $this->assertTrue($user->delete());
@@ -185,7 +195,7 @@ final class UserTest extends TestCase
         // creamos un usuario
         $user = new User();
         $user->nick = 'test_log_key';
-        $user->setPassword('password9');
+        $user->setPassword('password9876');
         $this->assertTrue($user->save());
 
         // guardamos la clave
@@ -225,7 +235,7 @@ final class UserTest extends TestCase
         // creamos un usuario
         $user = new User();
         $user->nick = 'test_role1';
-        $user->setPassword('password1');
+        $user->setPassword('password101');
         $this->assertTrue($user->save());
 
         // comprobamos que se ha asignado el rol
@@ -255,7 +265,7 @@ final class UserTest extends TestCase
         // creamos un usuario administrador
         $user = new User();
         $user->nick = 'test_admin';
-        $user->setPassword('test_admin');
+        $user->setPassword('test_admin2');
         $user->admin = true;
         $this->assertTrue($user->save());
 
@@ -290,7 +300,7 @@ final class UserTest extends TestCase
         // creamos un usuario
         $user = new User();
         $user->nick = 'test6';
-        $user->setPassword('password6');
+        $user->setPassword('password678');
         $this->assertTrue($user->save());
 
         // comprobamos que no tiene roles
@@ -355,7 +365,7 @@ final class UserTest extends TestCase
         // creamos un usuario
         $user = new User();
         $user->nick = 'test7';
-        $user->setPassword('password7');
+        $user->setPassword('password789');
         $this->assertTrue($user->save());
 
         // creamos un rol

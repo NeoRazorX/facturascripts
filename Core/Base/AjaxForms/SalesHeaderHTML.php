@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,6 +38,8 @@ use FacturaScripts\Dinamic\Model\Provincia;
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/SalesHeaderHTML
  */
 class SalesHeaderHTML
 {
@@ -68,6 +70,14 @@ class SalesHeaderHTML
             if (isset($formData['codcliente']) && $formData['codcliente'] && $cliente->loadFromCode($formData['codcliente'])) {
                 $model->setSubject($cliente);
                 if (empty($formData['action']) || $formData['action'] === 'set-customer') {
+                    return;
+                }
+            }
+
+            $contacto = new Contacto();
+            if (isset($formData['idcontactofact']) && $contacto->loadFromCode($formData['idcontactofact'])) {
+                $model->setSubject($contacto);
+                if (empty($formData['action'])) {
                     return;
                 }
             }
@@ -230,12 +240,17 @@ class SalesHeaderHTML
 
         $options = ['<option value="">------</option>'];
         foreach ($agentes as $row) {
+            // si el agente no está activo o seleccionado, lo ignoramos
+            if ($row->debaja && $row->codagente != $model->codagente) {
+                continue;
+            }
+
             $options[] = ($row->codagente === $model->codagente) ?
                 '<option value="' . $row->codagente . '" selected>' . $row->nombre . '</option>' :
                 '<option value="' . $row->codagente . '">' . $row->nombre . '</option>';
         }
 
-        $attributes = $model->editable ? 'name="codagente"' : 'disabled=""';
+        $attributes = $model->editable ? 'name="codagente"' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="form-group">'
             . '<a href="' . Agentes::get($model->codagente)->url() . '">' . $i18n->trans('agent') . '</a>'

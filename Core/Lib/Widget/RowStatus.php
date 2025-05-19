@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,8 @@
  */
 
 namespace FacturaScripts\Core\Lib\Widget;
+
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of RowStatus
@@ -45,7 +47,7 @@ class RowStatus extends VisualItem
         foreach ($this->options as $opt) {
             if (!empty($opt['title'])) {
                 $trs .= '<tr class="' . $this->colorToClass($opt['color'], 'table-') . '">'
-                    . '<td class="text-center">' . static::$i18n->trans($opt['title']) . '</td>'
+                    . '<td class="text-center">' . Tools::lang()->trans($opt['title']) . '</td>'
                     . '</tr>';
             }
         }
@@ -88,7 +90,7 @@ class RowStatus extends VisualItem
             $this->replaceFieldValue($opt, $model);
 
             if ($this->applyOperatorFromOption($opt, $value)) {
-                return isset($opt['title']) ? static::$i18n->trans($opt['title']) : '';
+                return isset($opt['title']) ? Tools::lang()->trans($opt['title']) : '';
             }
         }
 

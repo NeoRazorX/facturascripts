@@ -33,7 +33,7 @@ use FacturaScripts\Dinamic\Model\ProductoImagen;
  */
 trait ProductImagesTrait
 {
-    abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5');
+    abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fa-brands fa-html5');
 
     abstract protected function validateFormToken(): bool;
 
@@ -52,7 +52,7 @@ trait ProductImagesTrait
         }
 
         $count = 0;
-        $uploadFiles = $this->request->files->get('newfiles', []);
+        $uploadFiles = $this->request->files->getArray('newfiles');
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
                 Tools::log()->error($uploadFile->getErrorMessage());
@@ -97,7 +97,7 @@ trait ProductImagesTrait
      */
     protected function createViewsProductImages(string $viewName = 'EditProductoImagen'): void
     {
-        $this->addHtmlView($viewName, 'Tab/ProductoImagen', 'ProductoImagen', 'images', 'fas fa-images');
+        $this->addHtmlView($viewName, 'Tab/ProductoImagen', 'ProductoImagen', 'images', 'fa-solid fa-images');
     }
 
     /**

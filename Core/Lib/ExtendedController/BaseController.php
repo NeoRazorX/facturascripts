@@ -25,11 +25,11 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of BaseController
@@ -327,7 +327,7 @@ abstract class BaseController extends Controller
 
         $results = [];
         foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $value) {
-            $results[] = ['key' => Tools::fixHtml($value->code), 'value' => Tools::fixHtml($value->description)];
+            $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;
     }
@@ -348,13 +348,14 @@ abstract class BaseController extends Controller
         }
 
         $model = $this->views[$this->active]->model;
-        $codes = $this->request->request->get('code', '');
-        if (empty($codes)) {
+        $codes = $this->request->request->getArray('codes');
+        $code = $this->request->request->get('code');
+        if (empty($codes) && empty($code)) {
             Tools::log()->warning('no-selected-item');
             return false;
         }
 
-        if (is_array($codes)) {
+        if (false === empty($codes) && is_array($codes)) {
             $this->dataBase->beginTransaction();
 
             // deleting multiples rows
@@ -365,7 +366,7 @@ abstract class BaseController extends Controller
                     continue;
                 }
 
-                // error?
+                // ¿error?
                 $this->dataBase->rollback();
                 break;
             }
@@ -376,7 +377,7 @@ abstract class BaseController extends Controller
                 Tools::log()->notice('record-deleted-correctly');
                 return true;
             }
-        } elseif ($model->loadFromCode($codes) && $model->delete()) {
+        } elseif ($model->loadFromCode($code) && $model->delete()) {
             // deleting a single row
             Tools::log()->notice('record-deleted-correctly');
             $model->clear();
@@ -409,7 +410,7 @@ abstract class BaseController extends Controller
                 continue;
             }
 
-            $codes = $this->request->request->get('code');
+            $codes = $this->request->request->getArray('codes');
             if (false === $selectedView->export($this->exportManager, $codes)) {
                 break;
             }
@@ -476,7 +477,8 @@ abstract class BaseController extends Controller
 
         $results = [];
         foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], !$required, $where) as $value) {
-            $results[] = ['key' => Tools::fixHtml($value->code), 'value' => Tools::fixHtml($value->description)];
+            // no usar fixHtml() aquí porque compromete la seguridad
+            $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;
     }

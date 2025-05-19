@@ -1,0 +1,5 @@
+codimpuesto,descripcion,iva,recargo
+IVA01,"IVA Reg. Básico",16,0
+IVA02,"IVA Reducido",8,0
+IVA03,"IVA Incrementado",31,0
+IVA04,"IVA Con Recargo",16,5

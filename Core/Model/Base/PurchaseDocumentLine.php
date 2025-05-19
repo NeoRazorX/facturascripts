@@ -19,10 +19,6 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Model\ProductoProveedor;
-
 /**
  * Description of PurchaseDocumentLine
  *
@@ -30,44 +26,4 @@ use FacturaScripts\Dinamic\Model\ProductoProveedor;
  */
 abstract class PurchaseDocumentLine extends BusinessDocumentLine
 {
-    public function save(): bool
-    {
-        if (parent::save()) {
-            $this->updateSupplierProduct();
-            return true;
-        }
-
-        return false;
-    }
-
-    protected function updateSupplierProduct()
-    {
-        if (empty($this->referencia) ||
-            $this->cantidad <= 0 ||
-            $this->pvpunitario <= 0 ||
-            false === Tools::settings('default', 'updatesupplierprices')) {
-            return;
-        }
-
-        $doc = $this->getDocument();
-
-        $product = new ProductoProveedor();
-        $where = [
-            new DataBaseWhere('codproveedor', $doc->codproveedor),
-            new DataBaseWhere('referencia', $this->referencia),
-            new DataBaseWhere('coddivisa', $doc->coddivisa)
-        ];
-        if (false === $product->loadFromCode('', $where) ||
-            strtotime($product->actualizado) <= strtotime($doc->fecha . ' ' . $doc->hora)) {
-            $product->actualizado = Tools::dateTime($doc->fecha . ' ' . $doc->hora);
-            $product->coddivisa = $doc->coddivisa;
-            $product->codproveedor = $doc->codproveedor;
-            $product->dtopor = $this->dtopor;
-            $product->dtopor2 = $this->dtopor2;
-            $product->idproducto = $this->idproducto;
-            $product->precio = $this->pvpunitario;
-            $product->referencia = $this->referencia;
-            $product->save();
-        }
-    }
 }

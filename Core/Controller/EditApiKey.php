@@ -67,7 +67,7 @@ class EditApiKey extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'api-key';
-        $data['icon'] = 'fas fa-key';
+        $data['icon'] = 'fa-solid fa-key';
         return $data;
     }
 
@@ -84,7 +84,7 @@ class EditApiKey extends EditController
 
     protected function createViewsAccess(string $viewName = 'ApiAccess')
     {
-        $this->addHtmlView($viewName, 'Tab/ApiAccess', 'ApiAccess', 'rules', 'fas fa-check-square');
+        $this->addHtmlView($viewName, 'Tab/ApiAccess', 'ApiAccess', 'rules', 'fa-solid fa-check-square');
     }
 
     protected function editRulesAction(): bool
@@ -97,20 +97,20 @@ class EditApiKey extends EditController
             return true;
         }
 
-        $allowGet = $this->request->request->get('allowget', []);
-        $allowPut = $this->request->request->get('allowput', []);
-        $allowPost = $this->request->request->get('allowpost', []);
-        $allowDelete = $this->request->request->get('allowdelete', []);
+        $allowGet = $this->request->request->getArray('allowget');
+        $allowPut = $this->request->request->getArray('allowput');
+        $allowPost = $this->request->request->getArray('allowpost');
+        $allowDelete = $this->request->request->getArray('allowdelete');
 
         // update current access rules
         $accessModel = new ApiAccess();
         $where = [new DataBaseWhere('idapikey', $this->request->query->get('code'))];
         $rules = $accessModel->all($where, [], 0, 0);
         foreach ($rules as $access) {
-            $access->allowget = is_array($allowGet) && in_array($access->resource, $allowGet);
-            $access->allowput = is_array($allowPut) && in_array($access->resource, $allowPut);
-            $access->allowpost = is_array($allowPost) && in_array($access->resource, $allowPost);
-            $access->allowdelete = is_array($allowDelete) && in_array($access->resource, $allowDelete);
+            $access->allowget = in_array($access->resource, $allowGet);
+            $access->allowput = in_array($access->resource, $allowPut);
+            $access->allowpost = in_array($access->resource, $allowPost);
+            $access->allowdelete = in_array($access->resource, $allowDelete);
             $access->save();
         }
 
@@ -131,10 +131,10 @@ class EditApiKey extends EditController
             $newAccess = new ApiAccess();
             $newAccess->idapikey = $this->request->query->get('code');
             $newAccess->resource = $resource;
-            $newAccess->allowget = is_array($allowGet) && in_array($resource, $allowGet);
-            $newAccess->allowput = is_array($allowPut) && in_array($resource, $allowPut);
-            $newAccess->allowpost = is_array($allowPost) && in_array($resource, $allowPost);
-            $newAccess->allowdelete = is_array($allowDelete) && in_array($resource, $allowDelete);
+            $newAccess->allowget = in_array($resource, $allowGet);
+            $newAccess->allowput = in_array($resource, $allowPut);
+            $newAccess->allowpost = in_array($resource, $allowPost);
+            $newAccess->allowdelete = in_array($resource, $allowDelete);
             $newAccess->save();
         }
 
@@ -183,6 +183,9 @@ class EditApiKey extends EditController
                 }
             }
         }
+
+        // agregamos los recursos custom y de los plugins
+        $resources = array_merge($resources, ApiRoot::getCustomResources());
 
         sort($resources);
         return $resources;

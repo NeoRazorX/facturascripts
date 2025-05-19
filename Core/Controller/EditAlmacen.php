@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,14 +43,14 @@ class EditAlmacen extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'warehouse';
-        $data['icon'] = 'fas fa-warehouse';
+        $data['icon'] = 'fa-solid fa-warehouse';
         return $data;
     }
 
     protected function createStockView(string $viewName = 'ListStock'): void
     {
-        $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly')
-            ->addSearchFields(['stocks.referencia', 'productos.descripcion'])
+        $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fa-solid fa-dolly')
+            ->addSearchFields(['stocks.referencia', 'stocks.ubicacion', 'productos.descripcion'])
             ->addOrderBy(['stocks.referencia'], 'reference')
             ->addOrderBy(['stocks.cantidad'], 'quantity')
             ->addOrderBy(['stocks.disponible'], 'available')
@@ -124,7 +124,7 @@ class EditAlmacen extends EditController
         switch ($viewName) {
             case 'ListStock':
                 $code = $this->getViewModelValue($this->getMainViewName(), 'codalmacen');
-                $where = [new DataBaseWhere('codalmacen', $code)];
+                $where = [new DataBaseWhere('stocks.codalmacen', $code)];
                 $view->loadData('', $where);
                 break;
 

@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Request;
 
 /**
  * Description of WidgetDate
@@ -28,7 +28,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class WidgetDate extends BaseWidget
 {
-
     /**
      * @param object $model
      * @param Request $request
@@ -82,7 +81,7 @@ class WidgetDate extends BaseWidget
 
         // is today? is the future?
         if ($this->value && strtotime($this->value) >= strtotime(date('Y-m-d'))) {
-            $alternativeClass = 'font-weight-bold';
+            $alternativeClass = 'fw-bold';
         }
 
         return parent::tableCellClass($initialClass, $alternativeClass);

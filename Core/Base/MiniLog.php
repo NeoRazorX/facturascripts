@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,37 +28,25 @@ use FacturaScripts\Core\Base\Contract\MiniLogStorageInterface;
  */
 final class MiniLog
 {
-
     const DEFAULT_CHANNEL = 'master';
     const LIMIT = 5000;
 
-    /**
-     * Current channel.
-     *
-     * @var string
-     */
+    /** @var string */
     private $channel;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private static $context = [];
 
-    /**
-     * Contains the log data.
-     *
-     * @var array
-     */
+    /** @var array */
     private static $data = [];
 
-    /**
-     * @var MiniLogStorageInterface
-     */
+    /** @var bool */
+    private static $disabled = false;
+
+    /** @var MiniLogStorageInterface */
     private static $storage;
 
-    /**
-     * @var Translator|null
-     */
+    /** @var Translator|null */
     private $translator;
 
     public function __construct(string $channel = '', $translator = null)
@@ -72,7 +60,7 @@ final class MiniLog
      *
      * @param string $channel
      */
-    public static function clear(string $channel = '')
+    public static function clear(string $channel = ''): void
     {
         if (empty($channel)) {
             self::$data = [];
@@ -94,7 +82,7 @@ final class MiniLog
      * @param string $message
      * @param array $context
      */
-    public function critical(string $message, array $context = [])
+    public function critical(string $message, array $context = []): void
     {
         $this->log('critical', $message, $context);
     }
@@ -105,11 +93,16 @@ final class MiniLog
      * @param string $message
      * @param array $context
      */
-    public function debug(string $message, array $context = [])
+    public function debug(string $message, array $context = []): void
     {
         if (FS_DEBUG) {
             $this->log('debug', $message, $context);
         }
+    }
+
+    public static function disable(bool $value = true): void
+    {
+        self::$disabled = $value;
     }
 
     /**
@@ -119,7 +112,7 @@ final class MiniLog
      * @param string $message
      * @param array $context
      */
-    public function error(string $message, array $context = [])
+    public function error(string $message, array $context = []): void
     {
         $this->log('error', $message, $context);
     }
@@ -142,7 +135,7 @@ final class MiniLog
      * @param string $message
      * @param array $context
      */
-    public function info(string $message, array $context = [])
+    public function info(string $message, array $context = []): void
     {
         $this->log('info', $message, $context);
     }
@@ -153,7 +146,7 @@ final class MiniLog
      * @param string $message
      * @param array $context
      */
-    public function notice(string $message, array $context = [])
+    public function notice(string $message, array $context = []): void
     {
         $this->log('notice', $message, $context);
     }
@@ -198,12 +191,13 @@ final class MiniLog
         }
 
         $data = empty($channel) ? self::$data : self::read($channel);
-        if (self::$storage->save($data)) {
-            self::clear($channel);
-            return true;
-        }
+        self::clear($channel);
 
-        return false;
+        self::disable();
+        $return = self::$storage->save($data);
+        self::disable(false);
+
+        return $return;
     }
 
     /**
@@ -212,7 +206,7 @@ final class MiniLog
      * @param string $key
      * @param string $value
      */
-    public static function setContext(string $key, string $value)
+    public static function setContext(string $key, string $value): void
     {
         self::$context[$key] = $value;
     }
@@ -222,7 +216,7 @@ final class MiniLog
      *
      * @param MiniLogStorageInterface $storage
      */
-    public static function setStorage(MiniLogStorageInterface $storage)
+    public static function setStorage(MiniLogStorageInterface $storage): void
     {
         self::$storage = $storage;
     }
@@ -236,7 +230,7 @@ final class MiniLog
      * @param string $message
      * @param array $context
      */
-    public function warning(string $message, array $context = [])
+    public function warning(string $message, array $context = []): void
     {
         $this->log('warning', $message, $context);
     }
@@ -248,9 +242,9 @@ final class MiniLog
      * @param string $message
      * @param array $context
      */
-    private function log(string $level, string $message, array $context = [])
+    private function log(string $level, string $message, array $context = []): void
     {
-        if (empty($message)) {
+        if (empty($message) || self::$disabled) {
             return;
         }
 
@@ -281,7 +275,7 @@ final class MiniLog
     /**
      * Saves on the default storage and clear all data.
      */
-    protected function reduce()
+    protected function reduce(): void
     {
         if (count(self::$data) > self::LIMIT) {
             self::save($this->channel);

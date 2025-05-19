@@ -29,7 +29,7 @@ class Root extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'reports';
         $data['title'] = Empresas::default()->nombrecorto ?? 'FacturaScripts';
-        $data['icon'] = 'fas fa-home';
+        $data['icon'] = 'fa-solid fa-home';
         $data['showonmenu'] = false;
         return $data;
     }

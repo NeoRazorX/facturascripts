@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
@@ -62,9 +63,10 @@ class WidgetAutocomplete extends WidgetSelect
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
-        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
+        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
-        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
+
+        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(Tools::lang()->trans($title), $titleurl) . '</label>';
         $name = $this->readonly() ? '' : 'name="' . $this->fieldname . '"';
 
         if ('' === $this->value || null === $this->value) {
@@ -72,16 +74,14 @@ class WidgetAutocomplete extends WidgetSelect
                 . '<div class="form-group mb-2">'
                 . $labelHtml
                 . '<div class="input-group">'
-                . '<div class="' . $this->css('input-group-prepend') . '">'
-                . '<span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>'
-                . '</div>'
+                . '<span class="input-group-text"><i class="fa-solid fa-search fa-fw"></i></span>'
                 . $inputHtml
                 . '</div>'
                 . $descriptionHtml
                 . '</div>';
         }
 
-        return '<input type="hidden" ' . $name . ' value="' . $this->value . '"/>'
+        return '<input type="hidden" name="' . $name . '" value="' . $this->value . '"/>'
             . '<div class="form-group mb-2">'
             . $labelHtml
             . '<div class="input-group">'
@@ -128,16 +128,12 @@ class WidgetAutocomplete extends WidgetSelect
     protected function inputGroupClearBtn()
     {
         if ($this->readonly()) {
-            return '<div class="' . $this->css('input-group-prepend') . '">'
-                . '<span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>'
-                . '</div>';
+            return '<span class="input-group-text"><i class="fa-solid fa-search fa-fw"></i></span>';
         }
 
-        return '<div class="' . $this->css('input-group-prepend') . '">'
-            . '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
-            . '<i class="fas fa-times" aria-hidden="true"></i>'
-            . '</button>'
-            . '</div>';
+        return '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
+            . '<i class="fa-solid fa-times" aria-hidden="true"></i>'
+            . '</button>';
     }
 
     /**

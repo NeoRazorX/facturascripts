@@ -278,7 +278,10 @@ class Cuenta extends Base\ModelClass
 
             // code length must be bigger than the parent
             if (strlen($this->codcuenta) <= strlen($parent->codcuenta)) {
-                Tools::log()->warning('account-code-lower-than-parent', ['%code%' => $this->codcuenta]);
+                Tools::log()->warning('account-code-lower-than-parent', [
+                    '%code%' => $this->codcuenta,
+                    '%parent%' => $parent->codcuenta
+                ]);
                 return false;
             }
         }

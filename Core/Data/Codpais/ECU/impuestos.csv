@@ -1,3 +1,5 @@
-codimpuesto;descripcion;iva;recargo
-"IVA12";"IVA 12%";"12";"0"
-"IVA0";"IVA 0%";"0";"0"
+codimpuesto,descripcion,iva,recargo
+IVA12,"IVA General 12%",12,0
+IVA0,"Tasa Cero",0,0
+IVA14,"IVA Especial 14%",14,0
+IVADIF,"Impuesto Diferenciado",10,0.5

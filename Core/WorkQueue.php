@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,8 +24,14 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\WorkEvent;
 use Throwable;
 
+/**
+ * La cola de trabajos en segundo plano. Permite añadir workers y lanzar eventos.
+ */
 final class WorkQueue
 {
+    /** @var array */
+    private static $new_events = [];
+
     /** @var array */
     private static $prevent_new_events = [];
 
@@ -40,6 +46,13 @@ final class WorkQueue
             'name' => $worker_name,
             'position' => $position,
         ];
+    }
+
+    public static function clear(): void
+    {
+        self::$new_events = [];
+        self::$prevent_new_events = [];
+        self::$workers_list = [];
     }
 
     public static function getWorkersList(): array
@@ -67,25 +80,39 @@ final class WorkQueue
         self::$prevent_new_events = $event_names;
     }
 
-    public static function removeAllWorkers(): void
-    {
-        self::$workers_list = [];
-    }
-
     public static function run(): bool
     {
-        // leemos la lista de trabajos pendientes
-        $workEventModel = new WorkEvent();
-        $where = [new DataBaseWhere('done', false)];
-        $orderBy = ['id' => 'ASC'];
-        foreach ($workEventModel->all($where, $orderBy, 0, 1) as $event) {
-            return self::runEvent($event);
+        // creamos un bloqueo para evitar que se ejecute el mismo evento varias veces
+        if (false === Kernel::lock('work-queue')) {
+            return false;
         }
 
-        return false;
+        $return = false;
+
+        // leemos la lista de trabajos pendientes
+        $where = [
+            new DataBaseWhere('creation_date', Tools::dateTime(), '<='),
+            new DataBaseWhere('done', false)
+        ];
+        $orderBy = ['id' => 'ASC'];
+        foreach (WorkEvent::all($where, $orderBy, 0, 1) as $event) {
+            self::preventDuplicated($event);
+
+            $return = self::runEvent($event);
+        }
+
+        // liberamos el bloqueo
+        Kernel::unlock('work-queue');
+
+        return $return;
     }
 
     public static function send(string $event, string $value, array $params = []): bool
+    {
+        return self::sendFuture(0, $event, $value, $params);
+    }
+
+    public static function sendFuture(int $delay, string $event, string $value, array $params = []): bool
     {
         // comprobamos si el evento está bloqueado
         foreach (self::$prevent_new_events as $prevent_event) {
@@ -108,10 +135,22 @@ final class WorkQueue
 
             // worker encontrado, guardamos el evento
             $work_event = new WorkEvent();
+            $work_event->creation_date = Tools::dateTime('+ ' . $delay . ' seconds');
             $work_event->name = $event;
-            $work_event->params = json_encode($params, JSON_PRETTY_PRINT);
             $work_event->value = $value;
-            return $work_event->save();
+            $work_event->setParams($params);
+
+            if (self::isDuplicated($work_event)) {
+                // devolvemos true porque ya se había enviado el evento
+                return true;
+            }
+
+            if (false === $work_event->save()) {
+                return false;
+            }
+
+            self::preventDuplicated($work_event);
+            return true;
         }
 
         return false;
@@ -139,6 +178,18 @@ final class WorkQueue
         }
 
         throw new Exception('Worker not found: ' . $worker_name);
+    }
+
+    private static function isDuplicated(WorkEvent $event): bool
+    {
+        $hash = $event->getHash();
+        return isset(self::$new_events[$hash]);
+    }
+
+    private static function preventDuplicated(WorkEvent $event): void
+    {
+        $hash = $event->getHash();
+        self::$new_events[$hash] = true;
     }
 
     private static function runEvent(WorkEvent &$event): bool

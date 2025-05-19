@@ -268,32 +268,17 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return 'idlinea';
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
-    public function test(): bool
-    {
-        if (empty($this->codimpuesto)) {
-            $this->codimpuesto = null;
-        }
-
-        if ($this->servido < 0 && $this->cantidad >= 0) {
-            $this->servido = 0.0;
-        }
-
-        $this->descripcion = Tools::noHtml($this->descripcion);
-        $this->referencia = Tools::noHtml($this->referencia);
-
-        return parent::test();
-    }
-
     public function save(): bool
     {
         $done = parent::save();
         $this->disableUpdateStock(false);
         return $done;
+    }
+
+    public function setPriceWithTax(float $price): void
+    {
+        $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
+        $this->pvpunitario = round($newPrice, Producto::ROUND_DECIMALS);
     }
 
     /**
@@ -339,6 +324,27 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         }
 
         return false;
+    }
+
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
+    public function test(): bool
+    {
+        if (empty($this->codimpuesto)) {
+            $this->codimpuesto = null;
+        }
+
+        if ($this->servido < 0 && $this->cantidad >= 0) {
+            $this->servido = 0.0;
+        }
+
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->referencia = Tools::noHtml($this->referencia);
+
+        return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'List'): string

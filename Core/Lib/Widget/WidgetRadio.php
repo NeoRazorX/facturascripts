@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Daniel Fernández Giménez <hola@danielfg.es>
@@ -206,7 +207,7 @@ class WidgetRadio extends BaseWidget
                 continue;
             }
 
-            $this->values[$key]['title'] = static::$i18n->trans($value['title']);
+            $this->values[$key]['title'] = Tools::lang()->trans($value['title']);
         }
     }
 
@@ -257,7 +258,7 @@ class WidgetRadio extends BaseWidget
 
             $firstCss = '';
             if ($cont === 1 && strpos($class, 'form-check-inline') !== false) {
-                $firstCss = $class != '' ? ' ml-3' : 'ml-3';
+                $firstCss = $class != '' ? ' ms-3' : 'ms-3';
             }
 
             $name = $this->readonly() ? '' : 'name="' . $this->fieldname . '"';
@@ -297,7 +298,7 @@ class WidgetRadio extends BaseWidget
                 . '<label class="mb-0" for="' . $nameImg . '">'
                 . '<img src="' . $url . '" />'
                 . '<div class="tick_container">'
-                . '<div class="tick"><i class="fas fa-check"></i></div>'
+                . '<div class="tick"><i class="fa-solid fa-check"></i></div>'
                 . '</div>'
                 . '</label>'
                 . '</div>';

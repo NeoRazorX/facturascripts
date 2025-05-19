@@ -1,7 +1,7 @@
 {
     "default": {
         "coddivisa": "EUR",
-        "codimpuesto": "IGI45",
+        "codimpuesto": "GENIVA",
         "codpago": "CONT",
         "codserie": "A",
         "codserierec": "R",

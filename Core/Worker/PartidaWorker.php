@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,13 +62,14 @@ class PartidaWorker extends WorkerClass
 
                 // calculamos y comprobamos el saldo
                 $saldo += $line->debe - $line->haber;
-                if (abs($line->saldo - $saldo) < 0.01) {
+                if (abs($line->saldo - $saldo) < 0.009) {
                     continue;
                 }
 
                 // actualizamos la partida
                 $partida = $line->getPartida();
                 $partida->saldo = round($saldo, FS_NF0);
+                $partida->disableAdditionalTest(true);
                 $partida->save();
             }
 
@@ -78,10 +79,14 @@ class PartidaWorker extends WorkerClass
         }
 
         // actualizamos la subcuenta
-        if (abs($subcuenta->saldo - $saldo) >= 0.01) {
+        $diffDebe = abs($subcuenta->debe - $debe);
+        $diffHaber = abs($subcuenta->haber - $haber);
+        $diffSaldo = abs($subcuenta->saldo - $saldo);
+        if ($diffDebe >= 0.009 || $diffHaber >= 0.009 || $diffSaldo >= 0.009) {
             $subcuenta->debe = round($debe, FS_NF0);
             $subcuenta->haber = round($haber, FS_NF0);
             $subcuenta->saldo = round($saldo, FS_NF0);
+            $subcuenta->disableAdditionalTest(true);
             $subcuenta->save();
         }
 

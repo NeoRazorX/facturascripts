@@ -33,7 +33,7 @@ class EditEmailNotification extends EditController
         $pageData = parent::getPageData();
         $pageData['title'] = 'email-notification';
         $pageData['menu'] = 'admin';
-        $pageData['icon'] = 'fas fa-bell';
+        $pageData['icon'] = 'fa-solid fa-bell';
         return $pageData;
     }
 

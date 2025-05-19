@@ -23,9 +23,9 @@ if (basename(__FILE__) !== 'index.php') {
     exit(1);
 }
 
-// si la versión de PHP es inferior a 7.3, entonces mostramos un error
-if (version_compare(PHP_VERSION, '7.3.0') < 0) {
-    echo 'FacturaScripts requires PHP 7.3.0 or newer.';
+// si la versión de PHP es inferior a 8.0, entonces mostramos un error
+if (version_compare(PHP_VERSION, '8.0.0') < 0) {
+    echo 'FacturaScripts requires PHP 8.0.0 or newer.';
     exit(1);
 }
 

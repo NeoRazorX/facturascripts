@@ -1,0 +1,34 @@
+idprovincia,codpais,provincia,codisoprov,latitude,longitude
+1,COL,"Amazonas Department",,-1.0987,-71.93911
+2,COL,Antioquia,,6.04027,-75.7078
+3,COL,"Arauca Department",,6.87306,-70.47972
+4,COL,Atlántico,,10.79497,-74.92073
+8,COL,Caquetá,,1.41667,-75.91667
+9,COL,"Cauca Department",,1.91667,-76.83333
+10,COL,"Cesar Department",,10.25,-74
+11,COL,Chocó,,5.60464,-77.06975
+12,COL,Córdoba,,8.2722,-75.03957
+14,COL,"Guaviare Department",,1.35,-71.9444
+15,COL,"Guainía Department",,3.49046,-69.81194
+16,COL,"Huila Department",,2.52791,-75.28198
+17,COL,"La Guajira Department",,10.9718,-72.69115
+19,COL,"Meta Department",,3.8,-73.58333
+20,COL,Nariño,,1.26538,-77.53258
+21,COL,"Norte de Santander Department",,7.63494,-72.8605
+22,COL,"Putumayo Department",,0.50514,-76.49571
+23,COL,"Quindío Department",,4.53307,-75.70438
+24,COL,"Risaralda Department",,5.33278,-75.79111
+25,COL,"San Andres y Providencia",,13.38479,-81.37468
+26,COL,"Santander Department",,6.7045,-73.02877
+27,COL,"Sucre Department",,8.78834,-75.13583
+28,COL,"Tolima Department",,3.39222,-74.93271
+29,COL,"Valle del Cauca Department",,4.14035,-76.14739
+30,COL,Vaupés,,-0.9,-69.93333
+31,COL,"Vichada Department",,6.18472,-67.49316
+32,COL,"Casanare Department",,5.19237,-72.88952
+33,COL,Cundinamarca,,4.54363,-74.54686
+34,COL,"Bogota D.C.",,4.70159,-74.14695
+35,COL,Bolívar,,10.17594,-75.35884
+36,COL,Boyacá,,4.9226,-73.41131
+37,COL,"Caldas Department",,5.20427,-75.79167
+38,COL,"Magdalena Department",,10.18694,-74.57528

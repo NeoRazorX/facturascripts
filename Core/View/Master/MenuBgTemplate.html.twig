@@ -17,10 +17,12 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 #}
+{% import 'Macro/GoogleTagManager.html.twig' as GoogleTagManager %}
 {% extends "Master/MenuTemplate.html.twig" %}
 
 {% block fullBody %}
     <body class="bg-light">
+    {{ GoogleTagManager.body() }}
     {% block navbar %}
         {{ parent() }}
     {% endblock %}
@@ -35,11 +37,11 @@
     {% block body %}
         {{ parent() }}
     {% endblock %}
-    {% for item in getIncludeViews('MenuTemplate', 'JsFooter') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'JsFooter') %}
+        {% include includeView['path'] %}
     {% endfor %}
-    {% for item in getIncludeViews('MenuTemplate', 'BodyEnd') %}
-        {% include item['path'] %}
+    {% for includeView in getIncludeViews('MenuTemplate', 'BodyEnd') %}
+        {% include includeView['path'] %}
     {% endfor %}
     {{ debugBarRender.render() | raw }}
     <br/>

@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -46,8 +47,8 @@ abstract class ModelClass extends ModelCore
      */
     public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
     {
-        // si todavía no se ha comprobado la tabla, inicializamos la clase
-        if (!in_array(static::tableName(), self::$checkedTables)) {
+        // si todavía no se ha comprobado la tabla o conectado a la base de datos, inicializamos la clase
+        if (!DbUpdater::isTableChecked(static::tableName()) || is_null(self::$dataBase) || !self::$dataBase->connected()) {
             new static();
         }
 
@@ -338,7 +339,7 @@ abstract class ModelClass extends ModelCore
 
         if ($where) {
             $data = self::$dataBase->select($sql . DataBaseWhere::getSQLWhere($where));
-            return empty($data) ? 0 : (int)$data[0]['total'];
+            return empty($data) ? 0 : (float)$data[0]['total'];
         }
 
         $key = 'model-' . $this->modelClassName() . '-' . $field . '-total-sum';

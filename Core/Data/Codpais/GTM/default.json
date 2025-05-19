@@ -1,6 +1,7 @@
 {
     "default": {
         "coddivisa": "GTQ",
+        "codimpuesto": "IVA_GEN",
         "codpago": "CONT",
         "codserie": "A",
         "codserierec": "R",

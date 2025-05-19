@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of WidgetCheckbox
@@ -28,7 +29,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class WidgetCheckbox extends BaseWidget
 {
-
     /**
      * @param object $model
      * @param string $title
@@ -49,11 +49,11 @@ class WidgetCheckbox extends BaseWidget
 
         $inputHtml = '<input type="checkbox" ' . $name . ' value="TRUE" id="' . $id
             . '" class="' . $class . '"' . $checked . $readonly . $tabindex . '/>';
-        $labelHtml = '<label for="' . $id . '">' . static::$i18n->trans($title) . '</label>';
+        $labelHtml = '<label for="' . $id . '">' . Tools::lang()->trans($title) . '</label>';
         $descriptionHtml = empty($description) ? '' :
-            '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
+            '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
 
-        return '<div class="form-group form-check pr-3 mb-2">'
+        return '<div class="form-check pe-3 mb-3">'
             . $inputHtml
             . $labelHtml
             . $descriptionHtml
@@ -103,7 +103,7 @@ class WidgetCheckbox extends BaseWidget
             return '-';
         }
 
-        return $this->value ? static::$i18n->trans('yes') : static::$i18n->trans('no');
+        return $this->value ? Tools::lang()->trans('yes') : Tools::lang()->trans('no');
     }
 
     /**
