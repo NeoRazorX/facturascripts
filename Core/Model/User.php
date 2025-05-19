@@ -301,7 +301,7 @@ class User extends ModelClass
             $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
         }
 
-        return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();
+        return $this->testPassword() && $this->testAgent() && parent::test();
     }
 
     public function updateActivity(string $ipAddress, string $browser = ''): void
