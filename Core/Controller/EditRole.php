@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,12 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Model\Role;
+use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 
@@ -29,18 +33,19 @@ use FacturaScripts\Dinamic\Model\RoleAccess;
  * Controller to edit a single item from the Role model.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  */
 class EditRole extends EditController
 {
-
     public function getAccessRules(): array
     {
         $rules = [];
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         foreach ($this->getAllPages() as $page) {
             $rules[$page->name] = [
-                'menu' => $i18n->trans($page->menu) . ' » ' . $i18n->trans($page->title),
+                'menu' => $i18n->trans($page->menu),
+                'submenu' => $i18n->trans($page->submenu),
+                'page' => $i18n->trans($page->title),
                 'show' => false,
                 'onlyOwner' => false,
                 'update' => false,
@@ -72,7 +77,7 @@ class EditRole extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'role';
-        $data['icon'] = 'fas fa-id-card';
+        $data['icon'] = 'fa-solid fa-id-card';
         return $data;
     }
 
@@ -82,30 +87,34 @@ class EditRole extends EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        // desactivamos los botones de opciones e imprimir
+        $mvn = $this->getMainViewName();
+        $this->setSettings($mvn, 'btnOptions', false);
+        $this->setSettings($mvn, 'btnPrint', false);
+
         $this->createViewsAccess();
         $this->createViewsUsers();
-        $this->setTabsPosition('bottom');
     }
 
-    protected function createViewsAccess(string $viewName = 'RoleAccess')
+    protected function createViewsAccess(string $viewName = 'RoleAccess'): void
     {
-        $this->addHtmlView($viewName, 'Tab/RoleAccess', 'RoleAccess', 'rules', 'fas fa-check-square');
+        $this->addHtmlView($viewName, 'Tab/RoleAccess', 'RoleAccess', 'rules', 'fa-solid fa-check-square');
     }
 
-    protected function createViewsUsers(string $viewName = 'EditRoleUser')
+    protected function createViewsUsers(string $viewName = 'EditRoleUser'): void
     {
-        $this->addEditListView($viewName, 'RoleUser', 'users', 'fas fa-address-card');
-        $this->views[$viewName]->setInLine(true);
-
-        // Disable column
-        $this->views[$viewName]->disableColumn('role', true);
+        $this->addEditListView($viewName, 'RoleUser', 'users', 'fa-solid fa-address-card')
+            ->disableColumn('role', true)
+            ->setInLine(true);
     }
 
     protected function editRulesAction(): bool
     {
-        // check user permissions
+        // comprobamos permisos y token
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            Tools::log()->warning('not-allowed-update');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -118,18 +127,18 @@ class EditRole extends EditController
         $export = $this->request->request->get('export', []);
         $import = $this->request->request->get('import', []);
 
-        // update or delete current access rules
+        // actualizamos los permisos del rol
         $roleAccessModel = new RoleAccess();
         $where = [new DataBaseWhere('codrole', $this->request->query->get('code'))];
         $rules = $roleAccessModel->all($where, [], 0, 0);
         foreach ($rules as $roleAccess) {
-            // delete rule?
+            // eliminamos la regla?
             if (false === is_array($show) || false === in_array($roleAccess->pagename, $show)) {
                 $roleAccess->delete();
                 continue;
             }
 
-            // update
+            // actualizamos la regla
             $roleAccess->onlyownerdata = is_array($onlyOwner) && in_array($roleAccess->pagename, $onlyOwner);
             $roleAccess->allowupdate = is_array($update) && in_array($roleAccess->pagename, $update);
             $roleAccess->allowdelete = is_array($delete) && in_array($roleAccess->pagename, $delete);
@@ -138,20 +147,16 @@ class EditRole extends EditController
             $roleAccess->save();
         }
 
-        // add new rules
+        // añadimos las nuevas reglas
         foreach ($show as $pageName) {
-            $found = false;
+            // comprobamos si ya existe la regla
             foreach ($rules as $rule) {
                 if ($rule->pagename === $pageName) {
-                    $found = true;
-                    break;
+                    continue 2;
                 }
             }
-            if ($found) {
-                continue;
-            }
 
-            // add
+            // añadimos la regla
             $newRoleAccess = new RoleAccess();
             $newRoleAccess->codrole = $this->request->query->get('code');
             $newRoleAccess->pagename = $pageName;
@@ -163,7 +168,10 @@ class EditRole extends EditController
             $newRoleAccess->save();
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        // Eliminamos los permisos huérfanos
+        $this->removeOrphanAccess();
+
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 
@@ -191,8 +199,8 @@ class EditRole extends EditController
     protected function getAllPages(): array
     {
         $page = new Page();
-        $order = ['menu' => 'ASC', 'title' => 'ASC'];
-        return $page->all([], $order, 0, 0);
+        $orderBy = ['menu' => 'ASC', 'submenu' => 'ASC', 'title' => 'ASC'];
+        return $page->all([], $orderBy, 0, 0);
     }
 
     /**
@@ -212,6 +220,33 @@ class EditRole extends EditController
 
             default:
                 parent::loadData($viewName, $view);
+        }
+    }
+
+    protected function removeOrphanAccess(): void
+    {
+        $pages = Page::all([], [], 0, 0);
+        $roleAccess = RoleAccess::all([], [], 0, 0);
+        $pageNames = array_column($pages, 'name');
+        $roleAccessPageNames = array_column($roleAccess, 'pagename');
+
+        $orphanPages = array_diff($roleAccessPageNames, $pageNames);
+        foreach ($orphanPages as $pageName) {
+            $page = new RoleAccess();
+            $page->loadFromCode('', [new DataBaseWhere('pagename', $pageName)]);
+            $page->delete();
+
+            // si el rol ya no tiene permisos, lo eliminamos.
+            $rolesLength = DbQuery::table(RoleAccess::tableName())->whereEq('codrole', $page->codrole)->count();
+
+            if ($rolesLength === 0) {
+                $role = new Role();
+                $role->loadFromCode('', [new DataBaseWhere('codrole', $page->codrole)]);
+                $role->delete();
+
+                // redireccionamos al listado, ya que el rol lo hemos borrado
+                $this->redirect((new User())->url() . '?activetab=ListRole');
+            }
         }
     }
 }

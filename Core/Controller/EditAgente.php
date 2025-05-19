@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\TotalModel;
 
@@ -47,7 +48,7 @@ class EditAgente extends ComercialContactController
         ];
 
         $totalModel = TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
-        return $this->toolBox()->coins()->format($totalModel->totals['total'], 2);
+        return Tools::money($totalModel->totals['total'], 2);
     }
 
     public function getModelClassName(): string
@@ -60,66 +61,66 @@ class EditAgente extends ComercialContactController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'agent';
-        $data['icon'] = 'fas fa-user-tie';
+        $data['icon'] = 'fa-solid fa-user-tie';
         return $data;
     }
 
-    protected function createContactView(string $viewName = 'EditContacto')
+    protected function createContactView(string $viewName = 'EditContacto'): void
     {
-        $this->addEditView($viewName, 'Contacto', 'contact', 'fa fa-address-book');
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('agent', true);
-        $this->views[$viewName]->disableColumn('company', true);
-        $this->views[$viewName]->disableColumn('fiscal-id', true);
-        $this->views[$viewName]->disableColumn('fiscal-number', true);
-        $this->views[$viewName]->disableColumn('position', true);
+        $this->addEditView($viewName, 'Contacto', 'contact', 'fa fa-address-book')
+            ->disableColumn('agent')
+            ->disableColumn('company')
+            ->disableColumn('fiscal-id')
+            ->disableColumn('fiscal-number')
+            ->disableColumn('position');
 
         // disable delete button
-        $this->setSettings($viewName, 'btnDelete', false);
+        $this->tab($viewName)->setSettings('btnDelete', false);
     }
 
-    protected function createCustomerView(string $viewName = 'ListCliente')
+    protected function createCustomerView(string $viewName = 'ListCliente'): void
     {
-        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
-        $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
-        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
-        $this->views[$viewName]->addSearchFields(['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
+        $this->addListView($viewName, 'Cliente', 'customers', 'fa-solid fa-users')
+            ->addSearchFields(['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'])
+            ->addOrderBy(['codcliente'], 'code')
+            ->addOrderBy(['nombre'], 'name', 1);
 
         // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->tab($viewName)
+            ->setSettings('btnDelete', false)
+            ->setSettings('btnNew', false);
     }
 
-    protected function createDocumentView(string $viewName, string $model, string $label)
+    protected function createDocumentView(string $viewName, string $model, string $label): void
     {
         $this->createCustomerListView($viewName, $model, $label);
 
         // botones
-        $this->setSettings($viewName, 'btnPrint', true);
+        $this->tab($viewName)->setSettings('btnPrint', true);
         $this->addButtonGroupDocument($viewName);
         $this->addButtonApproveDocument($viewName);
     }
 
-    protected function createEmailsView(string $viewName = 'ListEmailSent')
+    protected function createEmailsView(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
-        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
-        $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
+            ->addSearchFields(['addressee', 'body', 'subject'])
+            ->addOrderBy(['date'], 'date', 2);
+
 
         // disable column
-        $this->views[$viewName]->disableColumn('to');
+        $this->tab($viewName)->disableColumn('to');
 
         // disable buttons
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->tab($viewName)->setSettings('btnNew', false);
     }
 
-    protected function createInvoiceView(string $viewName)
+    protected function createInvoiceView(string $viewName): void
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
 
         // botones
-        $this->setSettings($viewName, 'btnPrint', true);
+        $this->tab($viewName)->setSettings('btnPrint', true);
         $this->addButtonLockInvoice($viewName);
     }
 
@@ -179,11 +180,12 @@ class EditAgente extends ComercialContactController
             case 'EditContacto':
                 $idcontacto = $this->getViewModelValue($mvn, 'idcontacto');
                 if (empty($idcontacto)) {
-                    $this->setSettings($viewName, 'active', false);
+                    $view->setSettings('active', false);
                     break;
                 }
                 $where = [new DataBaseWhere('idcontacto', $idcontacto)];
                 $view->loadData('', $where);
+                $this->loadLanguageValues($viewName);
                 break;
 
             case 'ListAlbaranCliente':
@@ -198,9 +200,22 @@ class EditAgente extends ComercialContactController
 
             case 'ListEmailSent':
                 $email = $this->getViewModelValue($mvn, 'email');
+                if (empty($email)) {
+                    $view->setSettings('active', false);
+                    break;
+                }
+
                 $where = [new DataBaseWhere('addressee', $email)];
                 $view->loadData('', $where);
-                $this->setSettings($viewName, 'active', $view->count > 0);
+
+                // añadimos un botón para enviar un nuevo email
+                $this->addButton($viewName, [
+                    'action' => 'SendMail?email=' . $email,
+                    'color' => 'success',
+                    'icon' => 'fa-solid fa-envelope',
+                    'label' => 'send',
+                    'type' => 'link'
+                ]);
                 break;
 
             case $mvn:
@@ -209,6 +224,22 @@ class EditAgente extends ComercialContactController
                     $view->disableColumn('contact');
                 }
                 break;
+        }
+    }
+
+    /**
+     * Load the available language values from translator.
+     */
+    protected function loadLanguageValues(string $viewName)
+    {
+        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
+            $langs = [];
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
+                $langs[] = ['value' => $key, 'title' => $value];
+            }
+
+            $columnLangCode->widget->setValuesFromArray($langs, false, true);
         }
     }
 

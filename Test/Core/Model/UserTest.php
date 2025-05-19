@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,16 +19,19 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\Page;
 use FacturaScripts\Core\Model\Role;
 use FacturaScripts\Core\Model\RoleAccess;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class UserTest extends TestCase
 {
-    public function testDefaultUser()
+    use LogErrorsTrait;
+
+    public function testDefaultUser(): void
     {
         // comprobamos que ya hay un usuario por defecto
         $user = new User();
@@ -40,7 +43,7 @@ final class UserTest extends TestCase
         }
     }
 
-    public function testDefaultValues()
+    public function testDefaultValues(): void
     {
         $user = new User();
 
@@ -49,11 +52,11 @@ final class UserTest extends TestCase
         $this->assertTrue($user->enabled);
     }
 
-    public function testCreateUser()
+    public function testCreateUser(): void
     {
         $user = new User();
         $user->nick = 'test1';
-        $user->setPassword('test1');
+        $user->setPassword('test9876');
         $this->assertTrue($user->save());
 
         // comprobamos que se ha creado el usuario
@@ -61,19 +64,19 @@ final class UserTest extends TestCase
 
         // comprobamos la contraseña
         $this->assertNotEquals('test', $user->password);
-        $this->assertTrue($user->verifyPassword('test1'));
-        $this->assertFalse($user->verifyPassword('test2'));
+        $this->assertTrue($user->verifyPassword('test9876'));
+        $this->assertFalse($user->verifyPassword('test6789'));
 
         // eliminamos
         $this->assertTrue($user->delete());
     }
 
-    public function testEscapeHtml()
+    public function testEscapeHtml(): void
     {
         // creamos un usuario con html en lastbrowser y lastip
         $user = new User();
         $user->nick = 'test1';
-        $user->setPassword('test1');
+        $user->setPassword('test1010');
         $user->lastbrowser = '<script>alert("test");</script>';
         $user->lastip = '<b>123456</b>';
         $this->assertTrue($user->save());
@@ -86,31 +89,31 @@ final class UserTest extends TestCase
         $this->assertTrue($user->delete());
     }
 
-    public function testCantUseBadEmail()
+    public function testCantUseBadEmail(): void
     {
         // creamos un usuario con un email incorrecto
         $user = new User();
         $user->nick = 'test2';
-        $user->setPassword('test2');
+        $user->setPassword('test2345');
         $user->email = 'bademail';
         $this->assertFalse($user->save());
     }
 
-    public function testCantUseBadNick()
+    public function testCantUseBadNick(): void
     {
         // creamos un usuario con un nick incorrecto
         $user = new User();
         $user->nick = 'bad nick';
-        $user->setPassword('password3');
+        $user->setPassword('password3456');
         $this->assertFalse($user->save());
     }
 
-    public function testCantUseBadAgent()
+    public function testCantUseBadAgent(): void
     {
         // creamos un usuario con un agente que no existe
         $user = new User();
         $user->nick = 'test4';
-        $user->setPassword('password4');
+        $user->setPassword('password4567');
         $user->codagente = 1234;
         $this->assertTrue($user->save());
 
@@ -121,7 +124,103 @@ final class UserTest extends TestCase
         $this->assertTrue($user->delete());
     }
 
-    public function testDefaultRole()
+    public function testPassword(): void
+    {
+        // creamos un usuario
+        $user = new User();
+        $user->nick = 'test_password';
+        $this->assertTrue($user->setPassword('password5678'));
+        $this->assertTrue($user->save());
+
+        // comprobamos que se ha encriptado la contraseña
+        $this->assertNotEquals('password5678', $user->password);
+
+        // validamos la contraseña
+        $this->assertTrue($user->verifyPassword('password5678'));
+        $this->assertFalse($user->verifyPassword('password6789'));
+
+        // cambiamos la contraseña
+        $this->assertTrue($user->setPassword('password-789'));
+        $this->assertTrue($user->save());
+
+        // validamos la nueva contraseña
+        $this->assertTrue($user->verifyPassword('password-789'));
+        $this->assertFalse($user->verifyPassword('password8'));
+
+        // intentamos poner una contraseña débil
+        $this->assertFalse($user->setPassword('pass'));
+        $this->assertFalse($user->setPassword('password'));
+        $this->assertFalse($user->setPassword('password-test'));
+        $this->assertFalse($user->setPassword('123'));
+        $this->assertFalse($user->setPassword('12345678'));
+
+        // comprobamos que la contraseña no ha cambiado
+        $this->assertTrue($user->verifyPassword('password-789'));
+
+        // eliminamos
+        $this->assertTrue($user->delete());
+    }
+
+    public function testNewPassword(): void
+    {
+        // creamos un usuario
+        $user = new User();
+        $user->nick = 'test_new_password';
+        $user->setPassword('password-012');
+        $this->assertTrue($user->save());
+
+        // probamos 2 contraseñas mal
+        $user->newPassword = 'password1234';
+        $user->newPassword2 = 'password2345';
+        $this->assertFalse($user->save());
+
+        // probamos 2 contraseñas iguales
+        $user->newPassword = 'password-8765';
+        $user->newPassword2 = 'password-8765';
+        $this->assertTrue($user->save());
+
+        // comprobamos que se ha encriptado la contraseña
+        $this->assertNotEquals('password-8765', $user->password);
+
+        // validamos la contraseña
+        $this->assertTrue($user->verifyPassword('password-8765'));
+        $this->assertFalse($user->verifyPassword('password-9999'));
+
+        // eliminamos
+        $this->assertTrue($user->delete());
+    }
+
+    public function testLogKey(): void
+    {
+        // creamos un usuario
+        $user = new User();
+        $user->nick = 'test_log_key';
+        $user->setPassword('password9876');
+        $this->assertTrue($user->save());
+
+        // guardamos la clave
+        $logKey = $user->logkey;
+
+        // registramos la actividad
+        $newLogKey = $user->newLogkey('12.34.56.78', 'Mozilla/5.0');
+
+        // comprobamos que se ha guardado la clave
+        $this->assertNotNull($user->logkey);
+        $this->assertNotEmpty($user->logkey);
+        $this->assertNotEquals($logKey, $user->logkey);
+        $this->assertEquals($newLogKey, $user->logkey);
+        $this->assertEquals('12.34.56.78', $user->lastip);
+        $this->assertEquals('Mozilla/5.0', $user->lastbrowser);
+
+        // verificamos la clave
+        $this->assertTrue($user->verifyLogkey($newLogKey));
+        $this->assertFalse($user->verifyLogkey('1234'));
+
+        // eliminamos
+        $this->assertTrue($user->delete());
+    }
+
+    public function testDefaultRole(): void
     {
         // creamos un rol
         $role = new Role();
@@ -130,14 +229,13 @@ final class UserTest extends TestCase
         $this->assertTrue($role->save());
 
         // asignamos el rol por defecto
-        $appSettings = new AppSettings();
-        $appSettings->set('default', 'codrole', 'test1');
-        $appSettings->save();
+        Tools::settingsSet('default', 'codrole', 'test1');
+        Tools::settingsSave();
 
         // creamos un usuario
         $user = new User();
         $user->nick = 'test_role1';
-        $user->setPassword('password1');
+        $user->setPassword('password101');
         $this->assertTrue($user->save());
 
         // comprobamos que se ha asignado el rol
@@ -146,15 +244,15 @@ final class UserTest extends TestCase
         $this->assertEquals('test1', $roles[0]->codrole);
 
         // restauramos el rol por defecto
-        $appSettings->set('default', 'codrole', null);
-        $appSettings->save();
+        Tools::settingsSet('default', 'codrole', null);
+        Tools::settingsSave();
 
         // eliminamos
         $this->assertTrue($user->delete());
         $this->assertTrue($role->delete());
     }
 
-    public function testAdminPermissions()
+    public function testAdminPermissions(): void
     {
         // añadimos una página al menú
         $page = new Page();
@@ -167,7 +265,7 @@ final class UserTest extends TestCase
         // creamos un usuario administrador
         $user = new User();
         $user->nick = 'test_admin';
-        $user->setPassword('test_admin');
+        $user->setPassword('test_admin2');
         $user->admin = true;
         $this->assertTrue($user->save());
 
@@ -189,7 +287,7 @@ final class UserTest extends TestCase
         $this->assertTrue($user->delete());
     }
 
-    public function testPermissions()
+    public function testPermissions(): void
     {
         // añadimos una página al menú
         $page = new Page();
@@ -202,7 +300,7 @@ final class UserTest extends TestCase
         // creamos un usuario
         $user = new User();
         $user->nick = 'test6';
-        $user->setPassword('password6');
+        $user->setPassword('password678');
         $this->assertTrue($user->save());
 
         // comprobamos que no tiene roles
@@ -254,7 +352,7 @@ final class UserTest extends TestCase
         $this->assertTrue($role->delete());
     }
 
-    public function testPermissionOnMultiRole()
+    public function testPermissionOnMultiRole(): void
     {
         // añadimos una página al menú
         $page = new Page();
@@ -267,7 +365,7 @@ final class UserTest extends TestCase
         // creamos un usuario
         $user = new User();
         $user->nick = 'test7';
-        $user->setPassword('password7');
+        $user->setPassword('password789');
         $this->assertTrue($user->save());
 
         // creamos un rol
@@ -320,5 +418,10 @@ final class UserTest extends TestCase
         $this->assertTrue($role1->delete());
         $this->assertTrue($role2->delete());
         $this->assertTrue($page->delete());
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

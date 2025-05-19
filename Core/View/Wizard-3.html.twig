@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,16 +39,16 @@
         <div class="card shadow mb-5">
             <div class="card-body">
                 <h1 class="h3">
-                    <i class="fas fa-magic" aria-hidden="true"></i> {{ i18n.trans('wizard') }}
-                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary"
-                       title="{{ i18n.trans('refresh') }}">
-                        <i class="fas fa-redo" aria-hidden="true"></i>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> {{ trans('wizard') }}
+                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary float-end"
+                       title="{{ trans('refresh') }}">
+                        <i class="fa-solid fa-redo" aria-hidden="true"></i>
                     </a>
                 </h1>
-                <p>{{ i18n.trans('wizard-p') }}</p>
+                <p>{{ trans('wizard-p') }}</p>
                 <hr/>
                 <div class="text-center pt-5 pb-5 mt-5 mb-5">
-                    <i class="fas fa-circle-notch fa-5x fa-spin"></i>
+                    <i class="fa-solid fa-circle-notch fa-5x fa-spin"></i>
                 </div>
             </div>
         </div>

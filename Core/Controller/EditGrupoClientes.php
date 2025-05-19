@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -47,13 +48,13 @@ class EditGrupoClientes extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'customer-group';
-        $data['icon'] = 'fas fa-users-cog';
+        $data['icon'] = 'fa-solid fa-users-cog';
         return $data;
     }
 
     protected function addCustomerAction()
     {
-        $codes = $this->request->request->get('code', []);
+        $codes = $this->request->request->getArray('codes');
         if (false === is_array($codes)) {
             return;
         }
@@ -71,7 +72,7 @@ class EditGrupoClientes extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('items-added-correctly', ['%num%' => $num]);
+        Tools::log()->notice('items-added-correctly', ['%num%' => $num]);
     }
 
     /**
@@ -104,7 +105,7 @@ class EditGrupoClientes extends EditController
         $this->views[$viewName]->settings['btnDelete'] = false;
 
         // filters
-        $i18n = $this->toolBox()->i18n();
+        $i18n = Tools::lang();
         $values = [
             ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
             ['label' => $i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
@@ -122,7 +123,7 @@ class EditGrupoClientes extends EditController
      */
     protected function createViewCustomers(string $viewName = 'ListCliente')
     {
-        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
+        $this->addListView($viewName, 'Cliente', 'customers', 'fa-solid fa-users');
         $this->createViewCommon($viewName);
 
         // add action button
@@ -130,7 +131,7 @@ class EditGrupoClientes extends EditController
             'action' => 'remove-customer',
             'color' => 'danger',
             'confirm' => true,
-            'icon' => 'fas fa-folder-minus',
+            'icon' => 'fa-solid fa-folder-minus',
             'label' => 'remove-from-list'
         ]);
     }
@@ -140,14 +141,14 @@ class EditGrupoClientes extends EditController
      */
     protected function createViewNewCustomers(string $viewName = 'ListCliente-new')
     {
-        $this->addListView($viewName, 'Cliente', 'add', 'fas fa-user-plus');
+        $this->addListView($viewName, 'Cliente', 'add', 'fa-solid fa-user-plus');
         $this->createViewCommon($viewName);
 
         // add action button
         $this->addButton($viewName, [
             'action' => 'add-customer',
             'color' => 'success',
-            'icon' => 'fas fa-folder-plus',
+            'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add'
         ]);
     }
@@ -200,7 +201,7 @@ class EditGrupoClientes extends EditController
 
     protected function removeCustomerAction()
     {
-        $codes = $this->request->request->get('code', []);
+        $codes = $this->request->request->getArray('codes');
         if (false === is_array($codes)) {
             return;
         }
@@ -218,6 +219,6 @@ class EditGrupoClientes extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('items-removed-correctly', ['%num%' => $num]);
+        Tools::log()->notice('items-removed-correctly', ['%num%' => $num]);
     }
 }

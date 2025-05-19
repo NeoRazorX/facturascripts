@@ -46,7 +46,7 @@
         </group>
         <group name="address" numcolumns="12">
             <column name="address" numcolumns="10" order="100">
-                <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked" required="true"/>
+                <widget type="text" fieldname="direccion" maxlength="100" icon="fa-solid fa-map-marked" required="true"/>
             </column>
             <column name="post-office-box" numcolumns="2" order="110">
                 <widget type="text" fieldname="apartado" maxlength="10"/>
@@ -72,16 +72,16 @@
         </group>
         <group name="contact-data" numcolumns="12">
             <column name="phone" numcolumns="3" order="100">
-                <widget type="text" fieldname="telefono1" maxlength="30" icon="fas fa-phone"/>
+                <widget type="text" fieldname="telefono1" maxlength="30" icon="fa-solid fa-phone"/>
             </column>
             <column name="phone2" numcolumns="3" order="110">
-                <widget type="text" fieldname="telefono2" maxlength="30" icon="fas fa-mobile-alt"/>
+                <widget type="text" fieldname="telefono2" maxlength="30" icon="fa-solid fa-mobile-alt"/>
             </column>
             <column name="fax" numcolumns="3" order="120">
-                <widget type="text" fieldname="fax" maxlength="30" icon="fas fa-fax"/>
+                <widget type="text" fieldname="fax" maxlength="30" icon="fa-solid fa-fax"/>
             </column>
             <column name="email" numcolumns="3" order="130">
-                <widget type="text" fieldname="email" maxlength="100" icon="fas fa-envelope"/>
+                <widget type="text" fieldname="email" maxlength="100" icon="fa-solid fa-envelope"/>
             </column>
             <column name="administrator" numcolumns="3" order="140">
                 <widget type="text" fieldname="administrador"/>
@@ -90,7 +90,7 @@
                 <widget type="link" fieldname="web" maxlength="100"/>
             </column>
         </group>
-        <group name="management" numcolumns="12" icon="fas fa-cog" title="advanced">
+        <group name="management" numcolumns="12" icon="fa-solid fa-cog" title="advanced">
             <column name="start-date" numcolumns="3" order="100">
                 <widget type="date" fieldname="fechaalta"/>
             </column>
@@ -104,8 +104,8 @@
                     <values/>
                 </widget>
             </column>
-            <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="130">
-                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile"/>
+            <column name="logo" order="130">
+                <widget type="library" fieldname="idlogo" icon="fa-solid fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.png"/>
             </column>
             <column name="observations" numcolumns="12" order="140">
                 <widget type="textarea" fieldname="observaciones"/>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -184,7 +185,12 @@ final class ClienteTest extends TestCase
         $cliente->nombre = 'Test';
         $cliente->cifnif = '';
         $this->assertTrue($cliente->save());
-        $this->assertFalse($cliente->checkVies());
+
+        $check1 = $cliente->checkVies();
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
+        $this->assertFalse($check1);
 
         // asignamos dirección de Portugal
         $address = $cliente->getDefaultAddress();

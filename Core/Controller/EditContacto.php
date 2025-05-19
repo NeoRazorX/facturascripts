@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 
@@ -34,6 +35,8 @@ use FacturaScripts\Dinamic\Model\RoleAccess;
 class EditContacto extends EditController
 {
     use DocFilesTrait;
+
+    private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
 
     public function getImageUrl(): string
     {
@@ -51,7 +54,7 @@ class EditContacto extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'contact';
-        $data['icon'] = 'fas fa-address-book';
+        $data['icon'] = 'fa-solid fa-address-book';
         return $data;
     }
 
@@ -62,7 +65,7 @@ class EditContacto extends EditController
             $this->addButton($viewName, [
                 'action' => 'convert-into-customer',
                 'color' => 'success',
-                'icon' => 'fas fa-user-check',
+                'icon' => 'fa-solid fa-user-check',
                 'label' => 'convert-into-customer'
             ]);
         }
@@ -72,7 +75,7 @@ class EditContacto extends EditController
             $this->addButton($viewName, [
                 'action' => 'convert-into-supplier',
                 'color' => 'success',
-                'icon' => 'fas fa-user-cog',
+                'icon' => 'fa-solid fa-user-cog',
                 'label' => 'convert-into-supplier'
             ]);
         }
@@ -93,51 +96,54 @@ class EditContacto extends EditController
     {
         $access = $this->getRolePermissions('EditCliente');
         if (false === $access['allowupdate']) {
-            self::toolBox()::i18nLog()->warning('not-allowed-update');
+            Tools::log()->warning('not-allowed-update');
             return;
         }
 
         $mvn = $this->getMainViewName();
         $customer = $this->views[$mvn]->model->getCustomer();
         if ($customer->exists()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             $this->redirect($customer->url() . '&action=save-ok');
             return;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
     }
 
-    protected function createEmailsView(string $viewName = 'ListEmailSent')
+    protected function createEmailsView(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
-        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
-        $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
+            ->addOrderBy(['date'], 'date', 2)
+            ->addSearchFields(['addressee', 'body', 'subject'])
+            ->disableColumn('to')
+            ->setSettings('btnNew', false);
+    }
 
-        // disable column
-        $this->views[$viewName]->disableColumn('to');
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnNew', false);
+    protected function createEstimationsView(string $viewName = 'ListPresupuestoCliente'): void
+    {
+        $this->addListView($viewName, 'PresupuestoCliente', 'estimations', 'fa-solid fa-copy')
+            ->addOrderBy(['fecha'], 'date', 2)
+            ->addSearchFields(['codigo', 'numero2', 'observaciones']);
     }
 
     protected function createSupplierAction()
     {
         $access = $this->getRolePermissions('EditProveedor');
         if (false === $access['allowupdate']) {
-            self::toolBox()::i18nLog()->warning('not-allowed-update');
+            Tools::log()->warning('not-allowed-update');
             return;
         }
 
         $mvn = $this->getMainViewName();
         $supplier = $this->views[$mvn]->model->getSupplier();
         if ($supplier->exists()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             $this->redirect($supplier->url() . '&action=save-ok');
             return;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        Tools::log()->error('record-save-error');
     }
 
     /**
@@ -148,6 +154,10 @@ class EditContacto extends EditController
         parent::createViews();
         $this->createEmailsView();
         $this->createViewDocFiles();
+
+        if ($this->user->can('EditPresupuestoCliente')) {
+            $this->createEstimationsView();
+        }
     }
 
     /**
@@ -238,7 +248,7 @@ class EditContacto extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $mainViewName = $this->getMainViewName();
+        $mvn = $this->getMainViewName();
 
         switch ($viewName) {
             case 'docfiles':
@@ -246,13 +256,32 @@ class EditContacto extends EditController
                 break;
 
             case 'ListEmailSent':
-                $email = $this->getViewModelValue($mainViewName, 'email');
+                $email = $this->getViewModelValue($mvn, 'email');
+                if (empty($email)) {
+                    $this->setSettings($viewName, 'active', false);
+                    break;
+                }
+
                 $where = [new DataBaseWhere('addressee', $email)];
                 $view->loadData('', $where);
-                $this->setSettings($viewName, 'active', $view->count > 0);
+
+                // añadimos un botón para enviar un nuevo email
+                $this->addButton($viewName, [
+                    'action' => 'SendMail?email=' . $email,
+                    'color' => 'success',
+                    'icon' => 'fa-solid fa-envelope',
+                    'label' => 'send',
+                    'type' => 'link'
+                ]);
                 break;
 
-            case $mainViewName:
+            case 'ListPresupuestoCliente':
+                $id = $this->getViewModelValue($mvn, 'idcontacto');
+                $where = [new DataBaseWhere('idcontactofact', $id)];
+                $view->loadData('', $where);
+                break;
+
+            case $mvn:
                 parent::loadData($viewName, $view);
                 $this->loadLanguageValues($viewName);
                 if (false === $view->model->exists()) {
@@ -264,7 +293,7 @@ class EditContacto extends EditController
                 $this->addButton($viewName, [
                     'action' => 'check-vies',
                     'color' => 'info',
-                    'icon' => 'fas fa-check-double',
+                    'icon' => 'fa-solid fa-check-double',
                     'label' => 'check-vies'
                 ]);
                 break;
@@ -279,7 +308,7 @@ class EditContacto extends EditController
         $columnLangCode = $this->views[$viewName]->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
-            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
                 $langs[] = ['value' => $key, 'title' => $value];
             }
 

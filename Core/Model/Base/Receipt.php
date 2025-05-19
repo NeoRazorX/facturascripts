@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
@@ -89,11 +90,10 @@ abstract class Receipt extends ModelOnChangeClass
     public function clear()
     {
         parent::clear();
-        $appSettings = $this->toolBox()->appSettings();
-        $this->coddivisa = $appSettings->get('default', 'coddivisa');
-        $this->codpago = $appSettings->get('default', 'codpago');
-        $this->fecha = date(self::DATE_STYLE);
-        $this->idempresa = $appSettings->get('default', 'idempresa');
+        $this->coddivisa = Tools::settings('default', 'coddivisa');
+        $this->codpago = Tools::settings('default', 'codpago');
+        $this->fecha = Tools::date();
+        $this->idempresa = Tools::settings('default', 'idempresa');
         $this->importe = 0.0;
         $this->liquidado = 0.0;
         $this->numero = 1;
@@ -105,7 +105,7 @@ abstract class Receipt extends ModelOnChangeClass
     {
         foreach ($this->getPayments() as $pay) {
             if (false === $pay->delete()) {
-                $this->toolBox()->i18nLog()->warning('cant-remove-payment');
+                Tools::log()->warning('cant-remove-payment');
                 return false;
             }
         }
@@ -153,7 +153,7 @@ abstract class Receipt extends ModelOnChangeClass
 
     public function test(): bool
     {
-        $this->observaciones = $this->toolBox()->utils()->noHtml($this->observaciones);
+        $this->observaciones = Tools::noHtml($this->observaciones);
 
         // asignamos el código de la factura
         if (empty($this->codigofactura)) {
@@ -164,11 +164,11 @@ abstract class Receipt extends ModelOnChangeClass
         if ($this->pagado === false) {
             $this->fechapago = null;
         } elseif (empty($this->fechapago)) {
-            $this->fechapago = date(self::DATE_STYLE);
+            $this->fechapago = Tools::date();
         }
 
         // comprobamos la fecha de vencimiento
-        if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
+        if (empty($this->vencimiento) || strtotime($this->vencimiento) < strtotime($this->fecha)) {
             $this->vencimiento = $this->fecha;
         }
 
@@ -185,6 +185,10 @@ abstract class Receipt extends ModelOnChangeClass
      */
     protected function onChange($field)
     {
+        if (false === parent::onChange($field)) {
+            return false;
+        }
+
         switch ($field) {
             case 'importe':
                 return !$this->previousData['pagado'];
@@ -194,7 +198,7 @@ abstract class Receipt extends ModelOnChangeClass
                 return true;
 
             default:
-                return parent::onChange($field);
+                return true;
         }
     }
 

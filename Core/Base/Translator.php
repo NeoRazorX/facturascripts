@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Tools;
 use Symfony\Component\Translation\Loader\JsonFileLoader;
 use Symfony\Component\Translation\Translator as SymfonyTranslator;
 
@@ -27,7 +28,7 @@ use Symfony\Component\Translation\Translator as SymfonyTranslator;
  * The Translator class manage all translations methods required for internationalization.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @deprecated since FacturaScripts 2023.06
+ * @deprecated since FacturaScripts 2023.06. Use FacturaScripts\Core\Translator instead.
  */
 class Translator
 {
@@ -156,7 +157,7 @@ class Translator
      */
     private function getDefaultLang(): string
     {
-        return self::$defaultLang ?? FS_LANG;
+        return self::$defaultLang ?? Tools::config('lang', self::FALLBACK_LANG);
     }
 
     /**

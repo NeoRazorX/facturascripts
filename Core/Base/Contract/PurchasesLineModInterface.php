@@ -23,6 +23,11 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
 
+/**
+ * Interface for classes that modify purchase lines.
+ *
+ * @deprecated replaced by Core/Contract/PurchasesLineModInterface
+ */
 interface PurchasesLineModInterface
 {
     public function apply(PurchaseDocument &$model, array &$lines, array $formData);
@@ -35,9 +40,9 @@ interface PurchasesLineModInterface
 
     public function map(array $lines, PurchaseDocument $model): array;
 
-    public function newModalFields(): array;
-
     public function newFields(): array;
+
+    public function newModalFields(): array;
 
     public function newTitles(): array;
 

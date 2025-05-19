@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as DinLineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
 
@@ -98,18 +99,13 @@ class FacturaCliente extends Base\SalesDocument
         return 'facturascli';
     }
 
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return $this->testDate() && parent::saveInsert($values);
     }
 
     protected function testDate(): bool
     {
-        if ($this->codserie != $this->previousData['codserie']) {
-            // prevent check date if serie is changed
-            return true;
-        }
-
         // prevent form using old dates
         $numColumn = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
         $whereOld = [
@@ -119,7 +115,7 @@ class FacturaCliente extends Base\SalesDocument
         ];
         foreach ($this->all($whereOld, ['fecha' => 'DESC'], 0, 1) as $old) {
             if (strtotime($old->fecha) > strtotime($this->fecha)) {
-                self::toolBox()::i18nLog()->error(
+                Tools::log()->error(
                     'invalid-date-there-are-invoices-before',
                     ['%date%' => $this->fecha, '%other-date%' => $old->fecha, '%other%' => $old->codigo]
                 );
@@ -135,7 +131,7 @@ class FacturaCliente extends Base\SalesDocument
         ];
         foreach ($this->all($whereNew, ['fecha' => 'ASC'], 0, 1) as $old) {
             if (strtotime($old->fecha) < strtotime($this->fecha)) {
-                self::toolBox()::i18nLog()->error(
+                Tools::log()->error(
                     'invalid-date-there-are-invoices-after',
                     ['%date%' => $this->fecha, '%other-date%' => $old->fecha, '%other%' => $old->codigo]
                 );

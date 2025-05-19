@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Test\Traits;
 
-use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cliente;
@@ -62,20 +62,22 @@ trait RandomDataTrait
         return $company;
     }
 
-    protected function getRandomContact(): Contacto
+    protected function getRandomContact(string $test_name = ''): Contacto
     {
         $contact = new Contacto();
         $contact->cifnif = 'B' . mt_rand(1, 999999);
-        $contact->nombre = 'Contact ' . mt_rand(1, 99999);
+        $contact->nombre = 'Contact Rand ' . mt_rand(1, 99999);
         $contact->empresa = 'Empresa ' . mt_rand(1, 99999);
+        $contact->observaciones = $test_name;
         return $contact;
     }
 
-    protected function getRandomCustomer(): Cliente
+    protected function getRandomCustomer(string $test_name = ''): Cliente
     {
         $cliente = new Cliente();
         $cliente->cifnif = 'B' . mt_rand(1, 999999);
-        $cliente->nombre = 'Customer ' . mt_rand(1, 99999);
+        $cliente->nombre = 'Customer Rand ' . mt_rand(1, 99999);
+        $cliente->observaciones = $test_name;
         $cliente->razonsocial = 'Empresa ' . mt_rand(1, 99999);
         return $cliente;
     }
@@ -83,7 +85,7 @@ trait RandomDataTrait
     protected function getRandomCustomerInvoice(string $date = '', string $codalmacen = ''): FacturaCliente
     {
         // creamos el cliente
-        $subject = $this->getRandomCustomer();
+        $subject = $this->getRandomCustomer('RandomDataTrait');
         $subject->save();
 
         $invoice = new FacturaCliente();
@@ -131,16 +133,17 @@ trait RandomDataTrait
     protected function getRandomSerie(): Serie
     {
         $serie = new Serie();
-        $serie->codserie = 'T';
+        $serie->codserie = 'T' . mt_rand(1, 999);
         $serie->descripcion = 'Test Serie';
         return $serie;
     }
 
-    protected function getRandomSupplier(): Proveedor
+    protected function getRandomSupplier(string $test_name = ''): Proveedor
     {
         $proveedor = new Proveedor();
         $proveedor->cifnif = mt_rand(1, 99999999) . 'J';
-        $proveedor->nombre = 'Proveedor ' . mt_rand(1, 999);
+        $proveedor->nombre = 'Proveedor Rand ' . mt_rand(1, 999);
+        $proveedor->observaciones = $test_name;
         $proveedor->razonsocial = 'Empresa ' . mt_rand(1, 999);
         return $proveedor;
     }
@@ -148,7 +151,7 @@ trait RandomDataTrait
     protected function getRandomSupplierInvoice(string $date = '', string $codalmacen = ''): FacturaProveedor
     {
         // creamos el proveedor
-        $subject = $this->getRandomSupplier();
+        $subject = $this->getRandomSupplier('RandomDataTrait');
         $subject->save();
 
         $invoice = new FacturaProveedor();

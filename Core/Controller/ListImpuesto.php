@@ -35,7 +35,7 @@ class ListImpuesto extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'taxes';
-        $data['icon'] = 'fas fa-plus-square';
+        $data['icon'] = 'fa-solid fa-plus-square';
         return $data;
     }
 
@@ -48,19 +48,19 @@ class ListImpuesto extends ListController
         $this->createViewsRetention();
     }
 
-    protected function createViewsRetention(string $viewName = 'ListRetencion')
+    protected function createViewsRetention(string $viewName = 'ListRetencion'): void
     {
-        $this->addView($viewName, 'Retencion', 'retentions', 'fas fa-plus-square');
-        $this->addOrderBy($viewName, ['codretencion'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
-        $this->addSearchFields($viewName, ['descripcion', 'codretencion']);
+        $this->addView($viewName, 'Retencion', 'retentions', 'fa-solid fa-plus-square')
+            ->addOrderBy(['codretencion'], 'code')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addSearchFields(['descripcion', 'codretencion']);
     }
 
-    protected function createViewsTax(string $viewName = 'ListImpuesto')
+    protected function createViewsTax(string $viewName = 'ListImpuesto'): void
     {
-        $this->addView($viewName, 'Impuesto', 'taxes', 'fas fa-plus-square');
-        $this->addOrderBy($viewName, ['codimpuesto'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
-        $this->addSearchFields($viewName, ['descripcion', 'codimpuesto']);
+        $this->addView($viewName, 'Impuesto', 'taxes', 'fa-solid fa-plus-square')
+            ->addOrderBy(['codimpuesto'], 'code')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addSearchFields(['descripcion', 'codimpuesto']);
     }
 }

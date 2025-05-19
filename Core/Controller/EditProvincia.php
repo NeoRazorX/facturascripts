@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,7 +31,6 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditProvincia extends EditController
 {
-
     public function getModelClassName(): string
     {
         return 'Provincia';
@@ -42,29 +41,25 @@ class EditProvincia extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'province';
-        $data['icon'] = 'fas fa-map-signs';
+        $data['icon'] = 'fa-solid fa-map-signs';
         return $data;
     }
 
-    /**
-     * Create tabs or views.
-     */
     protected function createViews()
     {
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->createCityView();
+        $this->createViewsCities();
     }
 
-    protected function createCityView(string $viewName = 'ListCiudad')
+    protected function createViewsCities(string $viewName = 'ListCiudad'): void
     {
-        $this->addListView($viewName, 'Ciudad', 'cities');
-        $this->views[$viewName]->addOrderBy(['ciudad'], 'name', 1);
-        $this->views[$viewName]->searchFields = ['ciudad'];
-
-        // disable column
-        $this->views[$viewName]->disableColumn('province');
+        $this->addListView($viewName, 'Ciudad', 'cities', 'fa-solid fa-city')
+            ->addOrderBy(['ciudad'], 'name')
+            ->addOrderBy(['idprovincia'], 'province')
+            ->addSearchFields(['ciudad', 'alias'])
+            ->disableColumn('province');
     }
 
     /**
@@ -75,8 +70,8 @@ class EditProvincia extends EditController
     {
         switch ($viewName) {
             case 'ListCiudad':
-                $idprovincia = $this->getViewModelValue($this->getMainViewName(), 'idprovincia');
-                $where = [new DataBaseWhere('idprovincia', $idprovincia)];
+                $id_provincia = $this->getViewModelValue($this->getMainViewName(), 'idprovincia');
+                $where = [new DataBaseWhere('idprovincia', $id_provincia)];
                 $view->loadData('', $where);
                 break;
 

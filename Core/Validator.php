@@ -19,9 +19,18 @@
 
 namespace FacturaScripts\Core;
 
+use DateTime;
+
+/**
+ * Permite validar distintos tipos de datos.
+ */
 class Validator
 {
-    public static function alphaNumeric(string $text, string $extra = '', int $min = 1, $max = 99): bool
+    /**
+     * Devuelve true si $text contiene solamente números, letras y los caracteres $extra.
+     * También comprueba si la longitud de $text está entre $min y $max.
+     */
+    public static function alphaNumeric(string $text, string $extra = '', int $min = 1, int $max = 99): bool
     {
         $replace = [
             '[' => '\[',
@@ -43,16 +52,26 @@ class Validator
         return preg_match($pattern, $text) === 1;
     }
 
+    /**
+     * Devuelve true si el email es válido
+     */
     public static function email(string $email): bool
     {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 
-    public static function string(string $text, int $min = 1, $max = 99): bool
+    /**
+     * Devuelve true si la cadena tiene entre $min y $max caracteres
+     */
+    public static function string(string $text, int $min = 1, int $max = 99): bool
     {
         return strlen($text) >= $min && strlen($text) <= $max;
     }
 
+    /**
+     * Devuelve true si la $url es válida.
+     * Si $strict es true, entonces la url debe comenzar por http, https o cualquier otro protocolo válido.
+     */
     public static function url(string $url, bool $strict = false): bool
     {
         // si la url está vacía o comienza por javascript: entonces no es una url válida
@@ -66,5 +85,85 @@ class Validator
         }
 
         return filter_var($url, FILTER_VALIDATE_URL) !== false;
+    }
+
+    /**
+     * Valida una fecha en formato ESTRICTO 'd-m-Y' (día-mes-año con guiones)
+     * Ejemplos válidos: "31-12-2023", "01-01-2024"
+     *
+     * @param string $date Fecha a validar (formato requerido: 'd-m-Y')
+     * @return bool True si es válida y tiene el formato correcto
+     */
+    public static function date(string $date): bool
+    {
+        if (empty($date)) {
+            return false;
+        }
+
+        // Validación ESTRICTA del formato 'd-m-Y'
+        $dateObj = DateTime::createFromFormat('d-m-Y', $date);
+        if (!$dateObj || $dateObj->format('d-m-Y') !== $date) {
+            return false;
+        }
+
+        return checkdate(
+            (int)$dateObj->format('m'),
+            (int)$dateObj->format('d'),
+            (int)$dateObj->format('Y')
+        );
+    }
+
+    /**
+     * Valida fecha y hora con:
+     * - Fecha ESTRICTA en formato 'd-m-Y'
+     * - Tiempo en formato 'H:i:s' O 'H:i'
+     *
+     * Ejemplos válidos:
+     * "31-12-2023 23:59:59", "01-01-2024 00:00", "15-06-2023 14:30"
+     *
+     * @param string $datetime Fecha y hora a validar
+     * @return bool True si es válido y tiene el formato correcto
+     */
+    public static function datetime(string $datetime): bool
+    {
+        if (empty($datetime)) {
+            return false;
+        }
+
+        // Primero separamos fecha y tiempo
+        $parts = explode(' ', $datetime);
+        if (count($parts) !== 2) {
+            return false;
+        }
+
+        // Validar la parte de la fecha (estricto)
+        if (!static::date($parts[0])) {
+            return false;
+        }
+
+        // Validar la parte del tiempo (flexible)
+        return static::hour($parts[1]);
+    }
+
+    /**
+     * Valida un tiempo en formato 'H:i:s' o 'H:i'
+     *
+     * @param string $time Tiempo a validar
+     * @return bool True si es válido
+     */
+    public static function hour(string $time): bool
+    {
+        // Aceptar HH:MM:SS o HH:MM
+        if (!preg_match('/^([01]?\d|2[0-3]):([0-5]?\d)(?::([0-5]?\d))?$/', $time)) {
+            return false;
+        }
+
+        // Validación adicional para segundos si existen
+        $parts = explode(':', $time);
+        if (count($parts) === 3 && ($parts[2] < 0 || $parts[2] > 59)) {
+            return false;
+        }
+
+        return true;
     }
 }

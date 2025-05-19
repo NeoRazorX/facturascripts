@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,14 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
+use FacturaScripts\Core\Model\Base\GravatarTrait;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
+use FacturaScripts\Core\Lib\TwoFactorManager;
 
 /**
  * Usuario de FacturaScripts.
@@ -29,14 +35,14 @@ use FacturaScripts\Dinamic\Model\Page as DinPage;
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
-class User extends Base\ModelClass
+class User extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\CompanyRelationTrait;
-    use Base\PasswordTrait;
-    use Base\GravatarTrait;
+    use ModelTrait;
+    use CompanyRelationTrait;
+    use GravatarTrait;
 
     const DEFAULT_LEVEL = 2;
+    const UPDATE_ACTIVITY_PERIOD = 3600;
 
     /** @var bool */
     public $admin;
@@ -79,6 +85,21 @@ class User extends Base\ModelClass
 
     /** @var string */
     public $nick;
+
+    /** @var string */
+    public $newPassword;
+
+    /** @var string */
+    public $newPassword2;
+
+    /** @var string */
+    public $password;
+
+    /** @var bool */
+    public $two_factor_enabled;
+
+    /** @var string */
+    public $two_factor_secret_key;
 
     public function addRole(?string $code): bool
     {
@@ -143,19 +164,20 @@ class User extends Base\ModelClass
     {
         parent::clear();
         $this->admin = false;
-        $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
-        $this->creationdate = date(self::DATE_STYLE);
+        $this->codalmacen = Tools::settings('default', 'codalmacen');
+        $this->creationdate = Tools::date();
         $this->enabled = true;
-        $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa', 1);
+        $this->idempresa = Tools::settings('default', 'idempresa', 1);
         $this->langcode = FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
+        $this->two_factor_enabled = false;
     }
 
     public function delete(): bool
     {
         if ($this->count() === 1) {
             // impide eliminar el último usuario
-            $this->toolBox()->i18nLog()->error('cant-delete-last-user');
+            Tools::log()->error('cant-delete-last-user');
             return false;
         }
 
@@ -175,18 +197,34 @@ class User extends Base\ModelClass
         return $roles;
     }
 
+    public function getTwoFactorUrl(): string
+    {
+        if (empty($this->two_factor_secret_key)) {
+            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
+        }
+
+        return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->two_factor_secret_key);
+    }
+
+    public function getTwoFactorQR(): string
+    {
+        return TwoFactorManager::getQRCodeImage($this->getTwoFactorUrl());
+    }
+
     public function install(): string
     {
         // we need this models to be checked before
         new DinPage();
         new DinEmpresa();
 
-        $nick = defined('FS_INITIAL_USER') ? FS_INITIAL_USER : 'admin';
-        $pass = defined('FS_INITIAL_PASS') ? FS_INITIAL_PASS : 'admin';
+        $nick = Tools::config('initial_user', 'admin');
+        $pass = Tools::config('initial_pass', 'admin');
         $email = filter_var($this->nick, FILTER_VALIDATE_EMAIL) ?
             $this->nick :
-            (defined('FS_INITIAL_EMAIL') ? FS_INITIAL_EMAIL : '');
-        $this->toolBox()->i18nLog()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
+            Tools::config('initial_email', '');
+
+        Tools::log()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
+
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,email,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
             . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT) . "','" . $email
             . "',TRUE,TRUE,'1','1','" . FS_LANG . "','Wizard','99');";
@@ -195,13 +233,25 @@ class User extends Base\ModelClass
     public function newLogkey(string $ipAddress, string $browser = ''): string
     {
         $this->updateActivity($ipAddress, $browser);
-        $this->logkey = $this->toolBox()->utils()->randomString(99);
+        $this->logkey = Tools::randomString(99);
         return $this->logkey;
     }
 
     public static function primaryColumn(): string
     {
         return 'nick';
+    }
+
+    public function setPassword($value): bool
+    {
+        // si la contraseña tiene menos de 8 caracteres, o no tiene números o no tiene letras, devolvemos false
+        if (strlen($value) < 8 || !preg_match('/[0-9]/', $value) || !preg_match('/[a-zA-Z]/', $value)) {
+            return false;
+        }
+
+        $this->password = password_hash($value, PASSWORD_DEFAULT);
+        $this->newLogkey($this->lastip ?? '', $this->lastbrowser ?? '');
+        return true;
     }
 
     public static function tableName(): string
@@ -213,22 +263,22 @@ class User extends Base\ModelClass
     {
         $this->nick = trim($this->nick);
         if (1 !== preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']
             );
             return false;
         }
 
-        $this->email = $this->toolBox()->utils()->noHtml(mb_strtolower($this->email ?? '', 'UTF8'));
+        $this->email = Tools::noHtml(mb_strtolower($this->email ?? '', 'UTF8'));
         if ($this->email && false === filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-            $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
+            Tools::log()->warning('not-valid-email', ['%email%' => $this->email]);
             $this->email = null;
             return false;
         }
 
         if (empty($this->creationdate)) {
-            $this->creationdate = date(self::DATE_STYLE);
+            $this->creationdate = Tools::date();
         }
 
         if (empty($this->lastactivity)) {
@@ -236,10 +286,10 @@ class User extends Base\ModelClass
         }
 
         // escapamos lastbrowser y comprobamos que no excede los 200 caracteres
-        $this->lastbrowser = substr($this->toolBox()->utils()->noHtml($this->lastbrowser ?? ''), 0, 200);
+        $this->lastbrowser = substr(Tools::noHtml($this->lastbrowser ?? ''), 0, 200);
 
         // escapamos el html de lastip y comprobamos que no excede los 40 caracteres
-        $this->lastip = substr($this->toolBox()->utils()->noHtml($this->lastip ?? ''), 0, 40);
+        $this->lastip = substr(Tools::noHtml($this->lastip ?? ''), 0, 40);
 
         if ($this->admin) {
             $this->level = 99;
@@ -247,26 +297,53 @@ class User extends Base\ModelClass
             $this->level = 0;
         }
 
+        if (empty($this->two_factor_secret_key)) {
+            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
+        }
+
         return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();
     }
 
-    public function updateActivity(string $ipAddress, string $browser = '')
+    public function updateActivity(string $ipAddress, string $browser = ''): void
     {
-        $this->lastactivity = date(self::DATETIME_STYLE);
+        $this->lastactivity = Tools::dateTime();
         $this->lastip = $ipAddress;
         $this->lastbrowser = $browser;
     }
 
-    /**
-     * Verifies the login key.
-     *
-     * @param string $value
-     *
-     * @return bool
-     */
     public function verifyLogkey(string $value): bool
     {
         return $this->logkey === $value;
+    }
+
+    public function verifyPassword(string $value): bool
+    {
+        if (password_verify($value, $this->password)) {
+            if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
+                $this->setPassword($value);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function testPassword(): bool
+    {
+        if (isset($this->newPassword, $this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
+            if ($this->newPassword !== $this->newPassword2) {
+                Tools::log()->warning('different-passwords', ['%userNick%' => $this->primaryColumnValue()]);
+                return false;
+            }
+
+            if (false === $this->setPassword($this->newPassword)) {
+                Tools::log()->warning('weak-password', ['%userNick%' => $this->nick]);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     protected function saveInsert(array $values = []): bool
@@ -277,7 +354,7 @@ class User extends Base\ModelClass
 
         // si el usuario no es admin, le asignamos el rol por defecto
         if (false === $this->admin) {
-            $code = $this->toolBox()->appSettings()->get('default', 'codrole');
+            $code = Tools::settings('default', 'codrole');
             $this->addRole($code);
         }
 
@@ -301,18 +378,16 @@ class User extends Base\ModelClass
 
     protected function testWarehouse(): bool
     {
-        $appSettings = $this->toolBox()->appSettings();
-
         if (empty($this->codalmacen)) {
-            $this->codalmacen = $appSettings->get('default', 'codalmacen');
-            $this->idempresa = $appSettings->get('default', 'idempresa');
+            $this->codalmacen = Tools::settings('default', 'codalmacen');
+            $this->idempresa = Tools::settings('default', 'idempresa');
             return true;
         }
 
         $warehouse = new Almacen();
         if (false === $warehouse->loadFromCode($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
-            $this->codalmacen = $appSettings->get('default', 'codalmacen');
-            $this->idempresa = $appSettings->get('default', 'idempresa');
+            $this->codalmacen = Tools::settings('default', 'codalmacen');
+            $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
         return true;

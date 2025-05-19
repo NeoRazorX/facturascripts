@@ -17,6 +17,19 @@
                     font-size: 1em;
                     padding: 10px;
                 }
+                .w-100 {
+                    width: 100%;
+                }
+                .mb-15 {
+                    margin-bottom: 15px;
+                }
+                .block {
+                    border: 3px solid #e3e9ef;
+                    border-radius: 5px;
+                    color: black;
+                    font-size: 1em;
+                    padding: 10px;
+                }
                 .company {
                     color: #3D67AC;
                     font-size: 2em;
@@ -38,7 +51,7 @@
                     font-size: 14px;
                     border-radius: 5px;
                     background-color: #2E7EFA;
-                    color: #FFFFFF; 
+                    color: #FFFFFF;
                     text-decoration: none;
                     font-weight: bold;
                     display: inline-block;
@@ -49,6 +62,21 @@
                 }
                 .text-center {
                     text-align: center;
+                }
+                .table {
+                    border: 1px solid #e3e9ef;
+                    border-collapse: collapse;
+                }
+                .table th {
+                    font-weight: bold;
+                    background-color: #e3e9ef;
+                }
+                .table th, .table td {
+                    text-align: left;
+                    padding: 5px;
+                }
+                .table td {
+                    border-top: 1px solid #e3e9ef;
                 }
             {% endblock %}
         </style>
@@ -63,11 +91,11 @@
                         <td>&nbsp;&nbsp;&nbsp;</td>
                         <td style="padding:10px">
                             <h3 class="company" style="text-align:center; color:#3D67AC; font-size:2em; font-weight:bold">
-                                {% if empresa.web is empty %}
-                                    {{ empresa.nombrecorto }}
+                                {% if company.web is empty %}
+                                    {{ company.nombrecorto }}
                                 {% else %}
-                                    <a href="{{ empresa.web }}" style="text-decoration:none">
-                                        {{ empresa.nombrecorto }}
+                                    <a href="{{ company.web }}" style="text-decoration:none">
+                                        {{ company.nombrecorto }}
                                     </a>
                                 {% endif %}
                             </h3>
@@ -87,7 +115,7 @@
                         <td>&nbsp;&nbsp;&nbsp;</td>
                         <td class="footer" style="font-size:10px; color:black; padding:10px">
                             {% for block in footerBlocks %}
-                                {{ block.render() | raw }}
+                                {{ block.render(true) | raw }}
                             {% endfor %}
                         </td>
                         <td>&nbsp;&nbsp;&nbsp;</td>

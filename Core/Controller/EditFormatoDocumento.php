@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
@@ -41,12 +40,11 @@ class EditFormatoDocumento extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'printing-format';
-        $data['icon'] = 'fas fa-print';
+        $data['icon'] = 'fa-solid fa-print';
         return $data;
     }
 
     /**
-     *
      * @param string $viewName
      * @param BaseView $view
      */
@@ -57,31 +55,20 @@ class EditFormatoDocumento extends EditController
         switch ($viewName) {
             case $mvn:
                 parent::loadData($viewName, $view);
-                /// disable company column if there is only one company
+
+                // desactivamos los botones de imprimir y opciones
+                $this->setSettings($viewName, 'btnOptions', false);
+                $this->setSettings($viewName, 'btnPrint', false);
+
+                // deshabilitar la columna de empresa si solo hay una
                 if ($this->empresa->count() < 2) {
                     $view->disableColumn('company');
                 }
-                $this->loadLogoWidget($view);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
                 break;
-        }
-    }
-
-    /**
-     *
-     * @param BaseView $view
-     */
-    protected function loadLogoWidget(&$view)
-    {
-        $columnLogo = $view->columnForName('logo');
-        if ($columnLogo && $columnLogo->widget->getType() === 'select') {
-            $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
-                new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
-            ]);
-            $columnLogo->widget->setValuesFromCodeModel($images);
         }
     }
 }

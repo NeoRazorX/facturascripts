@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,16 +19,17 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of BaseController
@@ -70,7 +71,7 @@ abstract class BaseController extends Controller
     /**
      * List of views displayed by the controller.
      *
-     * @var BaseView[]|ListView[]
+     * @var BaseView[]
      */
     public $views = [];
 
@@ -107,40 +108,47 @@ abstract class BaseController extends Controller
      *
      * @param string $viewName
      * @param array $btnArray
+     * @return BaseView
      */
-    public function addButton(string $viewName, array $btnArray)
+    public function addButton(string $viewName, array $btnArray): BaseView
     {
+        if (!array_key_exists($viewName, $this->views)) {
+            throw new Exception('View not found: ' . $viewName);
+        }
+
         $rowType = isset($btnArray['row']) ? 'footer' : 'actions';
-        $row = array_key_exists($viewName, $this->views) ? $this->views[$viewName]->getRow($rowType) : null;
+        $row = $this->views[$viewName]->getRow($rowType);
         if ($row) {
             $row->addButton($btnArray);
         }
+
+        return $this->tab($viewName);
     }
 
     /**
      * @param string $viewName
-     * @param BaseView|ListView $view
+     * @param BaseView $view
+     * @return BaseView
      */
-    public function addCustomView(string $viewName, $view)
+    public function addCustomView(string $viewName, BaseView $view): BaseView
     {
         if ($viewName !== $view->getViewName()) {
-            Tools::log()->error('$viewName must be equals to $view->name');
-            return;
+            throw new Exception('$viewName must be equals to $view->name');
         }
 
         $view->loadPageOptions($this->user);
+
         $this->views[$viewName] = $view;
         if (empty($this->active)) {
             $this->active = $viewName;
         }
+
+        return $view;
     }
 
-    /**
-     * @return BaseView|ListView
-     */
-    public function getCurrentView()
+    public function getCurrentView(): BaseView
     {
-        return $this->views[$this->current];
+        return $this->tab($this->current);
     }
 
     /**
@@ -162,16 +170,11 @@ abstract class BaseController extends Controller
      *
      * @param string $viewName
      * @param string $property
-     *
      * @return mixed
      */
     public function getSettings(string $viewName, string $property)
     {
-        if (isset($this->views[$viewName])) {
-            return $this->views[$viewName]->settings[$property] ?? null;
-        }
-
-        return null;
+        return $this->tab($viewName)->settings[$property] ?? null;
     }
 
     /**
@@ -179,13 +182,20 @@ abstract class BaseController extends Controller
      *
      * @param string $viewName
      * @param string $fieldName
-     *
      * @return mixed
      */
     public function getViewModelValue(string $viewName, string $fieldName)
     {
-        $model = $this->views[$viewName]->model;
-        return $model->{$fieldName} ?? null;
+        return $this->tab($viewName)->model->{$fieldName} ?? null;
+    }
+
+    public function listView(string $viewName): ListView
+    {
+        if (isset($this->views[$viewName]) && $this->views[$viewName] instanceof ListView) {
+            return $this->views[$viewName];
+        }
+
+        throw new Exception('ListView not found: ' . $viewName);
     }
 
     /**
@@ -198,6 +208,7 @@ abstract class BaseController extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
         VisualItem::setToken($this->multiRequestProtection->newToken());
 
         // Create the views to display
@@ -205,7 +216,7 @@ abstract class BaseController extends Controller
         $this->pipe('createViews');
     }
 
-    public function setCurrentView(string $viewName)
+    public function setCurrentView(string $viewName): void
     {
         $this->current = $viewName;
     }
@@ -216,12 +227,20 @@ abstract class BaseController extends Controller
      * @param string $viewName
      * @param string $property
      * @param mixed $value
+     * @return BaseView
      */
-    public function setSettings(string $viewName, string $property, $value): void
+    public function setSettings(string $viewName, string $property, $value): BaseView
+    {
+        return $this->tab($viewName)->setSettings($property, $value);
+    }
+
+    public function tab(string $viewName): BaseView
     {
         if (isset($this->views[$viewName])) {
-            $this->views[$viewName]->settings[$property] = $value;
+            return $this->views[$viewName];
         }
+
+        throw new Exception('View not found: ' . $viewName);
     }
 
     /**
@@ -292,6 +311,28 @@ abstract class BaseController extends Controller
     }
 
     /**
+     * Run the datalist action.
+     * Returns a JSON string for the searched values.
+     *
+     * @return array
+     */
+    protected function datalistAction(): array
+    {
+        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
+
+        $where = [];
+        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
+            $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
+        }
+
+        $results = [];
+        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $value) {
+            $results[] = ['key' => $value->code, 'value' => $value->description];
+        }
+        return $results;
+    }
+
+    /**
      * Action to delete data.
      *
      * @return bool
@@ -307,13 +348,14 @@ abstract class BaseController extends Controller
         }
 
         $model = $this->views[$this->active]->model;
-        $codes = $this->request->request->get('code', '');
-        if (empty($codes)) {
+        $codes = $this->request->request->getArray('codes');
+        $code = $this->request->request->get('code');
+        if (empty($codes) && empty($code)) {
             Tools::log()->warning('no-selected-item');
             return false;
         }
 
-        if (is_array($codes)) {
+        if (false === empty($codes) && is_array($codes)) {
             $this->dataBase->beginTransaction();
 
             // deleting multiples rows
@@ -324,7 +366,7 @@ abstract class BaseController extends Controller
                     continue;
                 }
 
-                // error?
+                // ¿error?
                 $this->dataBase->rollback();
                 break;
             }
@@ -335,7 +377,7 @@ abstract class BaseController extends Controller
                 Tools::log()->notice('record-deleted-correctly');
                 return true;
             }
-        } elseif ($model->loadFromCode($codes) && $model->delete()) {
+        } elseif ($model->loadFromCode($code) && $model->delete()) {
             // deleting a single row
             Tools::log()->notice('record-deleted-correctly');
             $model->clear();
@@ -349,8 +391,8 @@ abstract class BaseController extends Controller
 
     protected function exportAction()
     {
-        if (false === $this->views[$this->active]->settings['btnPrint']
-            || false === $this->permissions->allowExport) {
+        if (false === $this->views[$this->active]->settings['btnPrint'] ||
+            false === $this->permissions->allowExport) {
             Tools::log()->warning('no-print-permission');
             return;
         }
@@ -368,7 +410,7 @@ abstract class BaseController extends Controller
                 continue;
             }
 
-            $codes = $this->request->request->get('code');
+            $codes = $this->request->request->getArray('codes');
             if (false === $selectedView->export($this->exportManager, $codes)) {
                 break;
             }
@@ -423,6 +465,11 @@ abstract class BaseController extends Controller
         $required = (bool)$this->request->get('required', false);
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
 
+        $return = $this->pipe('selectAction', $data, $required);
+        if ($return) {
+            return $return;
+        }
+
         $where = [];
         foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
             $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
@@ -430,7 +477,8 @@ abstract class BaseController extends Controller
 
         $results = [];
         foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], !$required, $where) as $value) {
-            $results[] = ['key' => Tools::fixHtml($value->code), 'value' => Tools::fixHtml($value->description)];
+            // no usar fixHtml() aquí porque compromete la seguridad
+            $results[] = ['key' => $value->code, 'value' => $value->description];
         }
         return $results;
     }

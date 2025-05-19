@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Template\ExtensionsTrait;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -84,7 +84,7 @@ trait ModelTrait
         }
 
         // read from the cache
-        $key = 'model-fields-' . get_class($this);
+        $key = 'model-fields-' . $this->modelClassName();
         static::$fields = Cache::get($key);
         if (is_array(static::$fields) && static::$fields) {
             return;

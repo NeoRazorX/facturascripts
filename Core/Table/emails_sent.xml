@@ -11,12 +11,25 @@
         <type>character varying(100)</type>
     </column>
     <column>
+        <name>attachment</name>
+        <type>bool</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>body</name>
         <type>text</type>
     </column>
     <column>
         <name>date</name>
         <type>timestamp</type>
+    </column>
+    <column>
+        <name>email_from</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>html</name>
+        <type>text</type>
     </column>
     <column>
         <name>id</name>
@@ -35,6 +48,10 @@
     <column>
         <name>subject</name>
         <type>character varying(300)</type>
+    </column>
+    <column>
+        <name>uuid</name>
+        <type>character varying(13)</type>
     </column>
     <column>
         <name>verificode</name>

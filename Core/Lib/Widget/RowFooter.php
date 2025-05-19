@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of RowFooter
@@ -67,7 +68,7 @@ class RowFooter extends VisualItem
         }
 
         if (empty($jsFunction)) {
-            return '<form method="post">'
+            return '<form method="post" onsubmit="animateSpinner(\'add\')">'
                 . '<input type="hidden" name="action"/>'
                 . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
                 . $html
@@ -80,7 +81,7 @@ class RowFooter extends VisualItem
     protected function renderCardFooter(array $group): string
     {
         if (isset($group['footer'])) {
-            return '<div class="card-footer">' . static::$i18n->trans($group['footer']) . '</div>';
+            return '<div class="card-footer">' . Tools::lang()->trans($group['footer']) . '</div>';
         }
 
         return '';
@@ -89,7 +90,7 @@ class RowFooter extends VisualItem
     protected function renderCardHeader(array $group): string
     {
         if (isset($group['title'])) {
-            return '<div class="card-header">' . static::$i18n->trans($group['title']) . '</div>';
+            return '<div class="card-header">' . Tools::lang()->trans($group['title']) . '</div>';
         }
 
         return '';
@@ -125,7 +126,7 @@ class RowFooter extends VisualItem
         }
 
         if (isset($group['label'])) {
-            $html .= '<p>' . static::$i18n->trans($group['label']) . '</p>';
+            $html .= '<p>' . Tools::lang()->trans($group['label']) . '</p>';
         }
 
         $html .= '</div>'

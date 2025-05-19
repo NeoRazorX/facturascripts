@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\CuentaBancoCliente;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -28,7 +28,7 @@ final class CuentaBancoClienteTest extends TestCase
 {
     use RandomDataTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
         // creamos un cliente
         $cliente = $this->getRandomCustomer();
@@ -50,7 +50,7 @@ final class CuentaBancoClienteTest extends TestCase
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
-    public function testCantCreateWithoutCustomer()
+    public function testCantCreateWithoutCustomer(): void
     {
         // creamos una cuenta bancaria
         $cuenta = new CuentaBancoCliente();
@@ -58,11 +58,10 @@ final class CuentaBancoClienteTest extends TestCase
         $this->assertFalse($cuenta->save(), 'cuenta-can-save');
     }
 
-    public function testHtmlOnFields()
+    public function testHtmlOnFields(): void
     {
         // desactivamos la validación de IBAN
-        $settings = new AppSettings();
-        $settings->set('default', 'validate_iban', '0');
+        Tools::settingsSet('default', 'validate_iban', '0');
 
         // creamos un cliente
         $cliente = $this->getRandomCustomer();
@@ -87,7 +86,7 @@ final class CuentaBancoClienteTest extends TestCase
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
-    public function testDeleteWithCustomer()
+    public function testDeleteWithCustomer(): void
     {
         // creamos un cliente
         $cliente = $this->getRandomCustomer();
@@ -107,11 +106,10 @@ final class CuentaBancoClienteTest extends TestCase
         $this->assertFalse($cuenta->exists(), 'cuenta-persist');
     }
 
-    public function testValidateIban()
+    public function testValidateIban(): void
     {
         // activamos la validación de IBAN
-        $settings = new AppSettings();
-        $settings->set('default', 'validate_iban', '1');
+        Tools::settingsSet('default', 'validate_iban', '1');
 
         // creamos un cliente
         $cliente = $this->getRandomCustomer();
@@ -133,6 +131,33 @@ final class CuentaBancoClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
+    }
+
+    public function testMultipleEmptyMandato(): void
+    {
+        // creamos un cliente
+        $cliente = $this->getRandomCustomer();
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+
+        // creamos una cuenta bancaria
+        $cuenta1 = new CuentaBancoCliente();
+        $cuenta1->codcliente = $cliente->codcliente;
+        $cuenta1->descripcion = 'Test Account 1';
+        $cuenta1->mandato = '';
+        $this->assertTrue($cuenta1->save(), 'cuenta-cant-save');
+
+        // creamos otra cuenta bancaria
+        $cuenta2 = new CuentaBancoCliente();
+        $cuenta2->codcliente = $cliente->codcliente;
+        $cuenta2->descripcion = 'Test Account 2';
+        $cuenta2->mandato = '';
+        $this->assertTrue($cuenta2->save(), 'cuenta-can-save');
+
+        // eliminamos
+        $this->assertTrue($cuenta1->delete(), 'cuenta1-cant-delete');
+        $this->assertTrue($cuenta2->delete(), 'cuenta2-cant-delete');
         $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }

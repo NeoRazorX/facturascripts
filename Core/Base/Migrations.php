@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\EmailNotification;
-use FacturaScripts\Dinamic\Model\EstadoDocumento;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\AgenciaTransporte;
+use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\LogMessage;
-use ParseCsv\Csv;
+use FacturaScripts\Dinamic\Model\Serie;
 
 /**
  * Description of Migrations
@@ -33,40 +33,16 @@ use ParseCsv\Csv;
  */
 final class Migrations
 {
+    /** @var DataBase */
     private static $database;
 
     public static function run(): void
     {
-        self::unlockNullProducts();
-        self::updateInvoiceStatus();
-        self::updateExceptionVatCompany();
-        self::fixInvoiceLines();
-        self::fixAccountingEntries();
-        self::fixContacts();
-        self::fixAgents();
-        self::fixClients();
-        self::fixSuppliers();
         self::clearLogs();
-        self::addEmailNotifications();
         self::fixSeries();
-    }
-
-    private static function addEmailNotifications(): void
-    {
-        $csv = new Csv();
-        $csv->auto(FS_FOLDER . '/Dinamic/Data/Lang/ES/emails_notifications.csv');
-        foreach ($csv->data as $row) {
-            $notification = new EmailNotification();
-            $where = [new DataBaseWhere('name', $row['name'])];
-            if (false === $notification->loadFromCode('', $where)) {
-                // no existe, la creamos
-                $notification->enabled = true;
-                $notification->name = $row['name'];
-                $notification->subject = $row['subject'];
-                $notification->body = $row['body'];
-                $notification->save();
-            }
-        }
+        self::fixAgenciasTransporte();
+        self::fixFormasPago();
+        self::fixRectifiedInvoices();
     }
 
     private static function clearLogs(): void
@@ -92,181 +68,90 @@ final class Migrations
         return self::$database;
     }
 
-    private static function fixAccountingEntries(): void
+    private static function fixAgenciasTransporte(): void
     {
-        // version 2022.09, fecha 05-06-2022
-        // si no existe la tabla 'partidas', terminamos
-        if (false === self::db()->tableExists('partidas')) {
-            return;
-        }
+        // forzamos la comprobación de la tabla agenciastransporte
+        new AgenciaTransporte();
 
-        // si no está la columna debeme, terminamos
-        $columns = self::db()->getColumns('partidas');
-        if (!isset($columns['debeme'])) {
-            return;
-        }
+        // desvinculamos las agencias de transporte que no existan
+        foreach (['albaranescli', 'facturascli', 'pedidoscli', 'presupuestoscli'] as $table) {
+            if (false === self::db()->tableExists($table)) {
+                continue;
+            }
 
-        // marcamos como null las columnas 'debeme' y 'haberme'
-        foreach (['debeme', 'haberme'] as $column) {
-            $sql = strtolower(FS_DB_TYPE) === 'mysql' ?
-                "ALTER TABLE partidas MODIFY " . $column . " double NULL DEFAULT NULL;" :
-                "ALTER TABLE partidas ALTER COLUMN " . $column . " DROP NOT NULL;";
+            $sql = "UPDATE " . $table . " SET codtrans = NULL WHERE codtrans IS NOT NULL"
+                . " AND codtrans NOT IN (SELECT codtrans FROM agenciastrans);";
+
             self::db()->exec($sql);
         }
     }
 
-    private static function fixAgents(): void
+    // versión 2024.5, fecha 15-04-2024
+    private static function fixFormasPago(): void
     {
-        // version 2022.09, fecha 05-06-2022
-        $table = 'agentes';
-        if (self::db()->tableExists($table)) {
-            $sqlUpdate = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
-            self::db()->exec($sqlUpdate);
-        }
-    }
+        // forzamos la comprobación de la tabla formas_pago
+        new FormaPago();
 
-    private static function fixClients(): void
-    {
-        // version 2022.09, fecha 05-06-2022
-        $table = 'clientes';
-        if (self::db()->tableExists($table)) {
-            $sqlUpdate = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;"
-                . " UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
-            self::db()->exec($sqlUpdate);
-        }
-    }
-
-    private static function fixContacts(): void
-    {
-        // version 2022.09, fecha 05-06-2022
-        $table = 'contactos';
-        if (self::db()->tableExists($table)) {
-            $sqlUpdate = "UPDATE " . $table . " SET aceptaprivacidad = false WHERE aceptaprivacidad IS NULL;"
-                . " UPDATE " . $table . " SET admitemarketing = false WHERE admitemarketing IS NULL;"
-                . " UPDATE " . $table . " SET habilitado = true WHERE habilitado IS NULL;"
-                . " UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;"
-                . " UPDATE " . $table . " SET verificado = false WHERE verificado IS NULL;";
-            self::db()->exec($sqlUpdate);
-        }
-    }
-
-    private static function fixInvoiceLines(): void
-    {
-        // version 2022.09, fecha 05-06-2022
-        $tables = ['lineasfacturascli', 'lineasfacturasprov'];
+        // recorremos las tablas de documentos de compra o venta
+        $tables = [
+            'albaranescli', 'albaranesprov', 'facturascli', 'facturasprov', 'pedidoscli', 'pedidosprov',
+            'presupuestoscli', 'presupuestosprov'
+        ];
         foreach ($tables as $table) {
-            if (self::db()->tableExists($table)) {
-                $sql = "UPDATE " . $table . " SET irpf = '0' WHERE irpf IS NULL;";
+            if (false === self::db()->tableExists($table)) {
+                continue;
+            }
+
+            // buscamos aquellos códigos de pago que no estén en la tabla formaspago
+            $sql = "SELECT DISTINCT codpago FROM " . $table . " WHERE codpago NOT IN (SELECT codpago FROM formaspago);";
+            foreach (self::db()->select($sql) as $row) {
+                $formaPago = new FormaPago();
+                $formaPago->activa = false;
+                $formaPago->codpago = $row['codpago'];
+                $formaPago->descripcion = Tools::lang()->trans('deleted');
+                if ($formaPago->save()) {
+                    continue;
+                }
+
+                // no hemos podido guardar, la añadimos por sql
+                $sql = "INSERT INTO " . FormaPago::tableName() . " (codpago, descripcion) VALUES ("
+                    . self::db()->var2str($formaPago->codpago) . ", "
+                    . self::db()->var2str($formaPago->descripcion) . ");";
                 self::db()->exec($sql);
             }
         }
     }
 
+    // versión 2024.5, fecha 16-04-2024
+    private static function fixRectifiedInvoices(): void
+    {
+        // ponemos a null el idfacturarect de las facturas que rectifiquen a una factura que no existe
+        foreach (['facturascli', 'facturasprov'] as $table) {
+            if (false === self::db()->tableExists($table)) {
+                continue;
+            }
+
+            $sql = "UPDATE " . $table . " SET idfacturarect = NULL"
+                . " WHERE idfacturarect IS NOT NULL"
+                . " AND idfacturarect NOT IN (SELECT idfactura FROM (SELECT idfactura FROM " . $table . ") AS subquery);";
+
+            self::db()->exec($sql);
+        }
+    }
+
+    // version 2023.06, fecha 07-10-2023
     private static function fixSeries(): void
     {
+        // forzamos la comprobación de la tabla series
+        new Serie();
+
         // actualizamos con el tipo R la serie marcada como rectificativa en el panel de control
-        $serieRectifying = AppSettings::get('default', 'codserierec', '');
+        $serieRectifying = Tools::settings('default', 'codserierec', '');
         if (empty($serieRectifying)) {
             return;
         }
+
         $sqlUpdate = "UPDATE series SET tipo = 'R' WHERE codserie = " . self::db()->var2str($serieRectifying) . ";";
         self::db()->exec($sqlUpdate);
-    }
-
-    private static function fixSuppliers(): void
-    {
-        // version 2022.09, fecha 05-06-2022
-        $table = 'proveedores';
-        if (self::db()->tableExists($table)) {
-            $sqlUpdate = "UPDATE " . $table . " SET acreedor = false WHERE acreedor IS NULL;"
-                . " UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;"
-                . " UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
-            self::db()->exec($sqlUpdate);
-        }
-    }
-
-    private static function unlockNullProducts(): void
-    {
-        // version 2022.06, fecha 05-05-2022
-        if (self::db()->tableExists('productos')) {
-            $sql = 'UPDATE productos SET bloqueado = false WHERE bloqueado IS NULL;';
-            self::db()->exec($sql);
-        }
-    }
-
-    private static function updateExceptionVatCompany(): void
-    {
-        $existIVA = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . FS_DB_NAME . "' AND TABLE_NAME = 'empresas' AND COLUMN_NAME = 'excepcioniva';";
-        $existVAT = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . FS_DB_NAME . "' AND TABLE_NAME = 'empresas' AND COLUMN_NAME = 'exceptioniva';";
-
-        // comprobamos si existe la columna excepcioniva en la tabla
-        // si no existe, pero si existe la columna exceptioniva
-        // renombramos la columna exceptioniva por excepcioniva de la tabla
-        if (empty(self::db()->select($existIVA)) && false === empty(self::db()->select($existVAT))) {
-            $sql = "ALTER TABLE empresas CHANGE exceptioniva excepcioniva VARCHAR(20) NULL DEFAULT NULL;";
-            self::db()->exec($sql);
-            return;
-        }
-
-        // si existe la columna excepcioniva y exceptioniva,
-        // copiamos el valor de la columna exceptioniva a la columna excepcioniva
-        // y eliminamos la columna exceptioniva
-        if (false === empty(self::db()->select($existIVA)) && false === empty(self::db()->select($existVAT))) {
-            $sql = "UPDATE empresas SET excepcioniva = exceptioniva;";
-            self::db()->exec($sql);
-            $sql = "ALTER TABLE empresas DROP COLUMN exceptioniva;";
-            self::db()->exec($sql);
-        }
-    }
-
-    private static function updateInvoiceStatus(): void
-    {
-        // version 2021.81, fecha 01-02-2022
-        $status = new EstadoDocumento();
-        if ($status->loadFromCode('10') && $status->nombre === 'Nueva') {
-            // unlock
-            $status->bloquear = false;
-            $status->save();
-            // update
-            $status->bloquear = true;
-            $status->editable = true;
-            $status->nombre = 'Boceto';
-            $status->predeterminado = true;
-            $status->save();
-        }
-
-        if ($status->loadFromCode('11') && $status->nombre === 'Completada') {
-            // unlock
-            $status->bloquear = false;
-            $status->save();
-            // update
-            $status->bloquear = true;
-            $status->editable = false;
-            $status->nombre = 'Emitida';
-            $status->save();
-        }
-
-        if ($status->loadFromCode('21') && $status->nombre === 'Nueva') {
-            // unlock
-            $status->bloquear = false;
-            $status->save();
-            // update
-            $status->bloquear = true;
-            $status->editable = true;
-            $status->nombre = 'Boceto';
-            $status->predeterminado = true;
-            $status->save();
-        }
-
-        if ($status->loadFromCode('22') && $status->nombre === 'Completada') {
-            // unlock
-            $status->bloquear = false;
-            $status->save();
-            // update
-            $status->bloquear = true;
-            $status->editable = false;
-            $status->nombre = 'Recibida';
-            $status->save();
-        }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -28,12 +28,13 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Description of AccountingModalHTML
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/AccountingModalHTML
  */
 class AccountingModalHTML
 {
-
     /**
      * @var string
      */
@@ -47,7 +48,7 @@ class AccountingModalHTML
     public static function apply(Asiento &$model, array $formData)
     {
         self::$orden = $formData['fp_orden'] ?? 'ref_asc';
-        self::$query = isset($formData['fp_query']) ? ToolBox::utils()->noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
+        self::$query = isset($formData['fp_query']) ? Tools::noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
     }
 
     public static function render(Asiento $model): string
@@ -67,7 +68,7 @@ class AccountingModalHTML
 
             $tbody .= '<tr class="' . $cssClass . '" onclick="' . $onclick . '">'
                 . '<td><b>' . $subaccount->codsubcuenta . '</b> ' . $subaccount->descripcion . '</td>'
-                . '<td class="text-right">' . ToolBox::coins()::format($subaccount->saldo) . '</td>'
+                . '<td class="text-right">' . Tools::money($subaccount->saldo) . '</td>'
                 . '</tr>';
         }
 

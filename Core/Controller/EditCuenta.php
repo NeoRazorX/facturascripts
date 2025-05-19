@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -46,32 +47,8 @@ class EditCuenta extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'account';
-        $data['icon'] = 'fas fa-book';
+        $data['icon'] = 'fa-solid fa-book';
         return $data;
-    }
-
-    protected function createAccountingView(string $viewName = 'ListCuenta')
-    {
-        $this->addListView($viewName, 'Cuenta', 'children-accounts', 'fas fa-level-down-alt');
-        $this->views[$viewName]->addOrderBy(['codcuenta'], 'code', 1);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('fiscal-exercise');
-        $this->views[$viewName]->disableColumn('parent-account');
-    }
-
-    protected function createSubAccountingView(string $viewName = 'ListSubcuenta')
-    {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts');
-        $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code', 1);
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
-        $this->views[$viewName]->addOrderBy(['debe'], 'debit');
-        $this->views[$viewName]->addOrderBy(['haber'], 'credit');
-        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
-        $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('fiscal-exercise');
     }
 
     /**
@@ -80,10 +57,37 @@ class EditCuenta extends EditController
     protected function createViews()
     {
         parent::createViews();
+
+        // desactivamos el botón de imprimir
+        $mvn = $this->getMainViewName();
+        $this->tab($mvn)->setSettings('btnPrint', false);
+
+        // ponemos las pestañas en la parte inferior
         $this->setTabsPosition('bottom');
 
-        $this->createSubAccountingView();
-        $this->createAccountingView();
+        // añadimos las vistas
+        $this->createViewsSubAccounts();
+        $this->createViewsChildAccounts();
+    }
+
+    protected function createViewsChildAccounts(string $viewName = 'ListCuenta'): void
+    {
+        $this->addListView($viewName, 'Cuenta', 'children-accounts', 'fa-solid fa-level-down-alt')
+            ->addOrderBy(['codcuenta'], 'code', 1)
+            ->disableColumn('fiscal-exercise')
+            ->disableColumn('parent-account');
+    }
+
+    protected function createViewsSubAccounts(string $viewName = 'ListSubcuenta'): void
+    {
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts')
+            ->addOrderBy(['codsubcuenta'], 'code', 1)
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['debe'], 'debit')
+            ->addOrderBy(['haber'], 'credit')
+            ->addOrderBy(['saldo'], 'balance')
+            ->addSearchFields(['codsubcuenta', 'descripcion'])
+            ->disableColumn('fiscal-exercise');
     }
 
     /**
@@ -97,7 +101,7 @@ class EditCuenta extends EditController
     {
         if ($action == 'ledger') {
             if (false === $this->permissions->allowExport) {
-                $this->toolBox()->i18nLog()->warning('no-print-permission');
+                Tools::log()->warning('no-print-permission');
                 return true;
             }
 
@@ -112,7 +116,7 @@ class EditCuenta extends EditController
         return parent::execPreviousAction($action);
     }
 
-    protected function ledgerReport(int $idAccount)
+    protected function ledgerReport(int $idAccount): void
     {
         $account = new Cuenta();
         $account->loadFromCode($idAccount);
@@ -125,16 +129,17 @@ class EditCuenta extends EditController
             'grouped' => $request['groupingtype'],
             'account-from' => $account->codcuenta
         ]);
-        $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $account->codcuenta;
+        $title = Tools::lang()->trans('ledger') . ' ' . $account->codcuenta;
         $this->exportManager->newDoc($request['format'], $title);
+        $this->exportManager->setCompany($account->getExercise()->idempresa);
 
         // añadimos la tabla de cabecera con la info del informe
         if ($request['format'] === 'PDF') {
             $titles = [[
-                self::toolBox()::i18n()->trans('account') => $account->codcuenta,
-                self::toolBox()::i18n()->trans('exercise') => $account->codejercicio,
-                self::toolBox()::i18n()->trans('from-date') => $request['dateFrom'],
-                self::toolBox()::i18n()->trans('until-date') => $request['dateTo']
+                Tools::lang()->trans('account') => $account->codcuenta,
+                Tools::lang()->trans('exercise') => $account->codejercicio,
+                Tools::lang()->trans('from-date') => $request['dateFrom'],
+                Tools::lang()->trans('until-date') => $request['dateTo']
             ]];
             $this->exportManager->addTablePage(array_keys($titles[0]), $titles);
         }
@@ -167,22 +172,31 @@ class EditCuenta extends EditController
             case 'ListCuenta':
                 $where = [new DataBaseWhere('parent_idcuenta', $idcuenta)];
                 $view->loadData('', $where);
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
                 break;
 
             case 'ListSubcuenta':
                 $where = [new DataBaseWhere('idcuenta', $idcuenta)];
                 $view->loadData('', $where);
-                if ($view->count > 0) {
-                    $this->addButton($mainViewName, [
-                        'action' => 'ledger',
-                        'color' => 'info',
-                        'icon' => 'fas fa-book fa-fw',
-                        'label' => 'ledger',
-                        'type' => 'modal'
-                    ]);
-                    $this->setLedgerReportExportOptions($mainViewName);
-                    $this->setLedgerReportValues($mainViewName);
+                if ($view->count == 0) {
+                    break;
                 }
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
+
+                // añadimos botón de imprimir mayor
+                $this->addButton($mainViewName, [
+                    'action' => 'ledger',
+                    'color' => 'info',
+                    'icon' => 'fa-solid fa-print fa-fw',
+                    'label' => 'print',
+                    'type' => 'modal'
+                ]);
+                $this->setLedgerReportExportOptions($mainViewName);
+                $this->setLedgerReportValues($mainViewName);
                 break;
 
             case $mainViewName:
@@ -194,7 +208,7 @@ class EditCuenta extends EditController
         }
     }
 
-    protected function prepareCuenta(BaseView $view)
+    protected function prepareCuenta(BaseView $view): void
     {
         $cuenta = new Cuenta();
         $idcuenta = $this->request->query->get('parent_idcuenta', '');
@@ -203,7 +217,7 @@ class EditCuenta extends EditController
         }
     }
 
-    private function setLedgerReportExportOptions(string $viewName)
+    private function setLedgerReportExportOptions(string $viewName): void
     {
         $columnFormat = $this->views[$viewName]->columnModalForName('format');
         if ($columnFormat && $columnFormat->widget->getType() === 'select') {
@@ -215,7 +229,7 @@ class EditCuenta extends EditController
         }
     }
 
-    private function setLedgerReportValues(string $viewName)
+    private function setLedgerReportValues(string $viewName): void
     {
         $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();

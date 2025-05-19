@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,12 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Lib\TwoFactorManager;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleUser;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Cookie;
 
 /**
  * Controller to edit a single item from the User model
@@ -52,7 +53,7 @@ class EditUser extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'user';
-        $data['icon'] = 'fas fa-user-circle';
+        $data['icon'] = 'fa-solid fa-user-circle';
         return $data;
     }
 
@@ -84,32 +85,65 @@ class EditUser extends EditController
         $this->setTabsPosition('top');
 
         // disable company column if there is only one company
+        $mvn = $this->getMainViewName();
         if ($this->empresa->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('company');
+            $this->views[$mvn]->disableColumn('company');
         }
 
         // disable warehouse column if there is only one company
         $almacen = new Almacen();
         if ($almacen->count() < 2) {
-            $this->views[$this->getMainViewName()]->disableColumn('warehouse');
+            $this->views[$mvn]->disableColumn('warehouse');
         }
 
-        // disable print button
-        $this->setSettings($this->getMainViewName(), 'btnPrint', false);
+        // disable options and print buttons
+        $this->setSettings($mvn, 'btnOptions', false);
+        $this->setSettings($mvn, 'btnPrint', false);
+
+        // add two factor authentication tab
+        $this->createViewsTwofactor();
 
         // add roles tab
         if ($this->user->admin) {
             $this->createViewsRole();
         }
+
+        // add page options tab
+        $this->createViewsPageOptions();
+
+        // add emails tab
+        $this->createViewsEmails();
     }
 
-    protected function createViewsRole(string $viewName = 'EditRoleUser')
+    protected function createViewsTwofactor(string $viewName = 'UserTwoFactor'): void
     {
-        $this->addEditListView($viewName, 'RoleUser', 'roles', 'fas fa-address-card');
-        $this->views[$viewName]->setInLine('true');
+        $this->addHtmlView($viewName, 'Tab\UserTwoFactor', 'User', 'two-factor-auth', 'fa-solid fa-key');
+    }
 
-        // Disable column
-        $this->views[$viewName]->disableColumn('user', true);
+    protected function createViewsEmails(string $viewName = 'ListEmailSent'): void
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
+            ->addOrderBy(['date'], 'date', 2)
+            ->addSearchFields(['addressee', 'body', 'subject'])
+            ->disableColumn('user')
+            ->setSettings('btnNew', false)
+            ->addFilterPeriod('period', 'date', 'date', true);
+    }
+
+    protected function createViewsPageOptions(string $viewName = 'ListPageOption'): void
+    {
+        $this->addListView($viewName, 'PageOption', 'options', 'fa-solid fa-wrench')
+            ->addOrderBy(['name'], 'name', 1)
+            ->addOrderBy(['last_update'], 'last-update')
+            ->addSearchFields(['name'])
+            ->setSettings('btnNew', false);
+    }
+
+    protected function createViewsRole(string $viewName = 'EditRoleUser'): void
+    {
+        $this->addEditListView($viewName, 'RoleUser', 'roles', 'fa-solid fa-address-card')
+            ->setInLine(true)
+            ->disableColumn('user', true);
     }
 
     protected function deleteAction(): bool
@@ -137,12 +171,10 @@ class EditUser extends EditController
 
         // Are we changing user language?
         if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
-            $this->toolBox()->i18n()->setLang($this->views['EditUser']->model->langcode);
+            Tools::lang()->setLang($this->views['EditUser']->model->langcode);
 
             $expire = time() + FS_COOKIES_EXPIRE;
-            $this->response->headers->setCookie(
-                new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire, \FS_ROUTE)
-            );
+            $this->response->cookie('fsLang', $this->views['EditUser']->model->langcode, $expire);
         }
 
         return $result;
@@ -193,7 +225,57 @@ class EditUser extends EditController
         return $pageList;
     }
 
+    protected function execAfterAction($action)
+    {
+        if ($action === 'modal2fa') {
+            // Obtener el código TOTP enviado en la solicitud
+            $totpCode = $this->request->request->get('codetime');
+
+            // Validar que el código no esté vacío
+            if (empty($totpCode)) {
+                Tools::log()->error('totp-code-not-received');
+                return parent::execAfterAction($action);
+            }
+
+            // Obtener el modelo de usuario para validar el TOTP
+            $userModel = $this->views['EditUser']->model;
+
+            // Validar el código TOTP
+            if ($this->validateTotpCode($userModel, $totpCode)) {
+                // Activar la autenticación de dos factores y guardar el estado
+                $userModel->two_factor_enabled = true;
+                if ($userModel->save()) {
+                    Tools::log()->info("totp-code-correct-two-step-authentication-has-been-activated-for-the-user", ['%nick%' => $userModel->nick]);
+                } else {
+                    Tools::log()->error("error-saving two-factor-status-for-user", ['%nick%' => $userModel->nick]);
+                }
+            } else {
+                Tools::log()->error('incorrect-totp-code.');
+            }
+        }
+
+        return parent::execAfterAction($action);
+    }
+
     /**
+     * Valida el código TOTP proporcionado por el usuario.
+     *
+     * @param User $userModel El modelo del usuario.
+     * @param string $totpCode El código TOTP introducido.
+     * @return bool Verdadero si el código es válido, falso en caso contrario.
+     */
+    private function validateTotpCode(User $userModel, string $totpCode): bool
+    {
+        if (empty($userModel->two_factor_secret_key)) {
+            Tools::log()->error("El usuario con nick {$userModel->nick} no tiene una clave secreta de TOTP configurada.");
+            return false;
+        }
+
+        return TwoFactorManager::verifyCode($userModel->two_factor_secret_key, $totpCode);
+    }
+
+    /**
+     *
      * Load view data procedure
      *
      * @param string $viewName
@@ -201,9 +283,11 @@ class EditUser extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+        $nick = $this->getViewModelValue($mvn, 'nick');
+
         switch ($viewName) {
             case 'EditRoleUser':
-                $nick = $this->getViewModelValue('EditUser', 'nick');
                 $where = [new DataBaseWhere('nick', $nick)];
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;
@@ -212,6 +296,12 @@ class EditUser extends EditController
                 parent::loadData($viewName, $view);
                 $this->loadHomepageValues();
                 $this->loadLanguageValues();
+
+                // guarda el usuario si no tiene clave secreta de dos factores
+                if (empty($view->model->two_factor_secret_key)) {
+                    $view->model->save();
+                }
+
                 if (false === $this->allowUpdate()) {
                     $this->setTemplate('Error/AccessDenied');
                 } elseif ($view->model->nick == $this->user->nick) {
@@ -219,9 +309,22 @@ class EditUser extends EditController
                     $this->setSettings($viewName, 'btnDelete', false);
                 }
                 // is the user is admin, hide the EditRoleUser tab
-                if ($view->model->admin) {
+                if ($view->model->admin && array_key_exists('EditRoleUser', $this->views)) {
                     $this->setSettings('EditRoleUser', 'active', false);
                 }
+                break;
+
+            case 'ListEmailSent':
+                $where = [new DataBaseWhere('nick', $nick)];
+                $view->loadData('', $where);
+                break;
+
+            case 'ListPageOption':
+                $where = [
+                    new DataBaseWhere('nick', $nick),
+                    new DataBaseWhere('nick', null, 'IS', 'OR'),
+                ];
+                $view->loadData('', $where);
                 break;
         }
     }
@@ -229,7 +332,7 @@ class EditUser extends EditController
     /**
      * Load a list of pages where user has access that can be set as homepage.
      */
-    protected function loadHomepageValues()
+    protected function loadHomepageValues(): void
     {
         if (false === $this->views['EditUser']->model->exists()) {
             $this->views['EditUser']->disableColumn('homepage');
@@ -239,19 +342,19 @@ class EditUser extends EditController
         $columnHomepage = $this->views['EditUser']->columnForName('homepage');
         if ($columnHomepage && $columnHomepage->widget->getType() === 'select') {
             $userPages = $this->getUserPages($this->views['EditUser']->model);
-            $columnHomepage->widget->setValuesFromArray($userPages);
+            $columnHomepage->widget->setValuesFromArray($userPages, false, true);
         }
     }
 
     /**
      * Load the available language values from translator.
      */
-    protected function loadLanguageValues()
+    protected function loadLanguageValues(): void
     {
         $columnLangCode = $this->views['EditUser']->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
-            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
                 $langs[] = ['value' => $key, 'title' => $value];
             }
 

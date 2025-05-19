@@ -20,10 +20,10 @@
 {% set currentView = fsc.getCurrentView() %}
 
 <script>
-    var editListViewDeleteCancel = "{{ i18n.trans('cancel') }}";
-    var editListViewDeleteConfirm = "{{ i18n.trans('confirm') }}";
-    var editListViewDeleteMessage = "{{ i18n.trans('are-you-sure') }}";
-    var editListViewDeleteTitle = "{{ i18n.trans('confirm-delete') }}";
+    var editListViewDeleteCancel = "{{ trans('cancel') }}";
+    var editListViewDeleteConfirm = "{{ trans('confirm') }}";
+    var editListViewDeleteMessage = "{{ trans('are-you-sure') }}";
+    var editListViewDeleteTitle = "{{ trans('confirm-delete') }}";
 </script>
 
 <div class="{{ currentView.settings.card ? '' : 'container-fluid' }}">
@@ -42,61 +42,70 @@
     {# -- New form -- #}
     {% if currentView.settings.btnNew %}
         {% set formName = 'form' ~ currentView.getViewName() ~ 'New' %}
-        <form id="{{ formName }}" method="post" enctype="multipart/form-data">
+        <form id="{{ formName }}" method="post" enctype="multipart/form-data" onsubmit="animateSpinner('add')">
+            {{ formToken() }}
             <input type="hidden" name="action" value="insert"/>
             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-            <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
             <div class="card border-success shadow mb-2">
                 <div class="card-body p-2">
-                    <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse"
-                            data-target="#{{ formName }}Collapse" aria-expanded="false">
-                        <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
-                        {{ i18n.trans('add') }}
+                    <button class="btn btn-spin-action btn-sm btn-outline-success me-1" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#{{ formName }}Collapse" aria-expanded="false">
+                        <i class="fa-solid fa-plus-square fa-fw" aria-hidden="true"></i>
+                        {{ trans('add') }}
                     </button>
-                    &nbsp;
                     {{ currentView.title }}
                 </div>
                 <div class="collapse" id="{{ formName }}Collapse">
                     <div class="card-body border-top">
-                        <div class="form-row">
+                        <div class="row">
                             {% for group in currentView.getColumns() %}
                                 {{ group.edit(currentView.model) | raw }}
                             {% endfor %}
-                            <div class="col-12 text-right">
-                                <button class="btn btn-sm btn-success" type="submit">
-                                    <i class="fas fa-save fa-fw" aria-hidden="true"></i>
-                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
-                                </button>
-                            </div>
                         </div>
+                    </div>
+                    <div class="card-footer text-end p-2">
+                        <button class="btn btn-spin-action btn-sm btn-success" type="submit">
+                            <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline-block">{{ trans('save') }}</span>
+                        </button>
                     </div>
                 </div>
             </div>
         </form>
+
+        <script>
+            $(document).ready(function () {
+                $('#{{ formName }}Collapse').on('shown.bs.collapse', function () {
+                    $('#{{ formName }}Collapse input[type="text"]').first().focus();
+                });
+            });
+        </script>
     {% endif %}
 
     {# -- Forms -- #}
     {% for counter, model in currentView.cursor %}
         {% set formName = 'form' ~ currentView.getViewName() ~ counter %}
-        <form id="{{ formName }}" method="post" enctype="multipart/form-data">
+        <form id="{{ formName }}" method="post" enctype="multipart/form-data" onsubmit="animateSpinner('add')">
+            {{ formToken() }}
             <input type="hidden" name="action" value="edit"/>
             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
             <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
-            <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
             <div class="card shadow mb-2"{% if currentView.selected == model.primaryColumnValue() %} id="EditListViewSelected"{% endif %}>
                 <div class="card-body">
-                    <div class="form-row">
+                    <div class="row">
                         {% for group in currentView.getColumns() %}
                             {{ group.edit(model) | raw }}
                         {% endfor %}
                     </div>
+                </div>
+                <div class="card-footer p-2">
                     <div class="row">
                         {% if currentView.settings.btnDelete %}
                             <div class="col-auto">
-                                <button type="button" class="btn btn-sm btn-danger"
+                                <button type="button" class="btn btn-spin-action btn-sm btn-danger"
                                         onclick="editListViewDelete('{{ currentView.getViewName() ~ counter }}');">
-                                    <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
-                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
+                                    <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
+                                    <span class="d-none d-sm-inline-block">{{ trans('delete') }}</span>
                                 </button>
                             </div>
                         {% endif %}
@@ -107,15 +116,15 @@
                         </div>
                         <div class="col-auto">
                             {% if currentView.settings.btnUndo %}
-                                <button class="btn btn-sm btn-secondary" type="reset">
-                                    <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
-                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('undo') }}</span>
+                                <button class="btn btn-spin-action btn-sm btn-secondary" type="reset">
+                                    <i class="fa-solid fa-undo fa-fw" aria-hidden="true"></i>
+                                    <span class="d-none d-sm-inline-block">{{ trans('undo') }}</span>
                                 </button>
                             {% endif %}
                             {% if currentView.settings.btnSave %}
-                                <button class="btn btn-sm btn-primary" type="submit">
-                                    <i class="fas fa-save fa-fw" aria-hidden="true"></i>
-                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                                <button class="btn btn-spin-action btn-sm btn-primary" type="submit">
+                                    <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i>
+                                    <span class="d-none d-sm-inline-block">{{ trans('save') }}</span>
                                 </button>
                             {% endif %}
                         </div>
@@ -128,14 +137,14 @@
     {# -- Pagination -- #}
     {% if currentView.getPagination() | length > 0 %}
         {% set formName = 'form' ~ currentView.getViewName() ~ 'Offset' %}
-        <form id="{{ formName }}" method="post">
+        <form id="{{ formName }}" method="post" onsubmit="animateSpinner('add')">
             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
             <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
             <div class="text-center pt-3">
                 <div class="btn-group">
                     {% for page in currentView.getPagination() %}
                         {% set btnClass = page.active ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
-                        <button type="button" class="{{ btnClass }}"
+                        <button type="button" class="btn-spin-action {{ btnClass }}"
                                 onclick="editListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
                             {{ page.num }}
                         </button>

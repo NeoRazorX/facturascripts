@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
@@ -28,9 +30,12 @@ use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class FormaPago extends Base\ModelClass
+class FormaPago extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
+
+    /** @var bool */
+    public $activa;
 
     /** @var string */
     public $codcuentabanco;
@@ -62,6 +67,7 @@ class FormaPago extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+        $this->activa = true;
         $this->domiciliado = false;
         $this->imprimir = true;
         $this->plazovencimiento = 0;
@@ -133,7 +139,7 @@ class FormaPago extends Base\ModelClass
      */
     public function isDefault(): bool
     {
-        return $this->codpago === $this->toolBox()->appSettings()->get('default', 'codpago');
+        return $this->codpago === Tools::settings('default', 'codpago');
     }
 
     public static function primaryColumn(): string
@@ -174,7 +180,7 @@ class FormaPago extends Base\ModelClass
         }
 
         if (empty($this->idempresa)) {
-            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+            $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
         return parent::test();

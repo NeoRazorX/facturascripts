@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -91,15 +92,28 @@ final class AgenteTest extends TestCase
         $agent = new Agente();
         $agent->codagente = 'Test';
         $agent->nombre = 'Test Agent';
-        $this->assertFalse($agent->checkVies());
+
+        $check1 = $agent->checkVies();
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
+        $this->assertFalse($check1);
 
         // asignamos un nif incorrecto
         $agent->cifnif = '12345678A';
-        $this->assertFalse($agent->checkVies());
+        $check2 = $agent->checkVies();
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
+        $this->assertFalse($check2);
 
         // asignamos un cif correcto
         $agent->cifnif = 'B87533303';
-        $this->assertTrue($agent->checkVies());
+        $check3 = $agent->checkVies();
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
+        $this->assertTrue($check3);
     }
 
     protected function tearDown(): void

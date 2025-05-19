@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,38 +22,35 @@ namespace FacturaScripts\Test\Core\Lib;
 use FacturaScripts\Core\Lib\Vies;
 use PHPUnit\Framework\TestCase;
 
-class ViesTest extends TestCase
+final class ViesTest extends TestCase
 {
     public function testCheck(): void
     {
-        $this->assertEquals(-1, Vies::check('', ''));
-        $this->assertEquals(-1, Vies::check('123', ''));
-        $this->assertEquals(0, Vies::check('123456789', 'ES'));
+        $data = [
+            ['results' => -1, 'number' => '', 'iso' => ''],
+            ['results' => -1, 'number' => '123', 'iso' => ''],
+            ['results' => 0, 'number' => '123456789', 'iso' => 'ES'],
+            ['results' => 0, 'number' => 'ES74003828J', 'iso' => 'ES'],
+            ['results' => 1, 'number' => 'ES74003828V', 'iso' => 'ES'],
+            ['results' => 1, 'number' => '74003828V', 'iso' => 'ES'],
+            ['results' => 1, 'number' => '43834596223', 'iso' => 'FR'],
+            ['results' => 0, 'number' => '81328757100011', 'iso' => 'FR'],
+            ['results' => 1, 'number' => '514356480', 'iso' => 'PT'],
+            ['results' => 1, 'number' => '513969144', 'iso' => 'PT'],
+            ['results' => 0, 'number' => '513967144', 'iso' => 'PT'],
+        ];
 
-        // esperamos medio segundo para no saturar el servicio
-        usleep(500000);
+        foreach ($data as $item) {
+            $check = Vies::check($item['number'], $item['iso']);
 
-        $this->assertEquals(0, Vies::check('ES74003828J', 'ES'));
-        usleep(500000);
+            if ($check == -1 && $item['results'] != -1) {
+                $this->markTestSkipped('Vies service returns error: ' . Vies::getLastError());
+            }
 
-        $this->assertEquals(1, Vies::check('ES74003828V', 'ES'));
-        usleep(500000);
+            $this->assertEquals($item['results'], $check);
 
-        $this->assertEquals(1, Vies::check('74003828V', 'ES'));
-        usleep(500000);
-
-        $this->assertEquals(1, Vies::check('43834596223', 'FR'));
-        usleep(500000);
-
-        $this->assertEquals(0, Vies::check('81328757100011', 'FR'));
-        usleep(500000);
-
-        $this->assertEquals(1, Vies::check('514356480', 'PT'));
-        usleep(500000);
-
-        $this->assertEquals(1, Vies::check('513969144', 'PT'));
-        usleep(500000);
-
-        $this->assertEquals(0, Vies::check('513967144', 'PT'));
+            // esperamos medio segundo para no saturar el servicio
+            usleep(500000);
+        }
     }
 }

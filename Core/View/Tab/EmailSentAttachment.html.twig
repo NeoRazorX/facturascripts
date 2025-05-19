@@ -1,0 +1,19 @@
+{% set currentView = fsc.getCurrentView() %}
+
+{% for attachment in currentView.cursor %}
+    <div class="card shadow mb-3">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-paperclip text-secondary me-1"></i>
+                    <span class="d-inline-block text-truncate">{{ attachment.name }}</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <a href="{{ attachment.path }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" download>
+                        {{ bytes(attachment.size) }} <i class="fa-solid fa-download ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}

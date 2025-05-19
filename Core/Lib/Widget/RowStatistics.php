@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,8 @@
  */
 
 namespace FacturaScripts\Core\Lib\Widget;
+
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of RowStatistics
@@ -66,7 +68,7 @@ class RowStatistics extends VisualItem
     {
         $color = isset($data['color']) ? $this->colorToClass($data['color'], 'btn-') : 'btn-light';
         $icon = isset($data['icon']) ? '<i class="' . $data['icon'] . ' fa-fw"></i> ' : '';
-        $label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
+        $label = isset($data['label']) ? Tools::lang()->trans($data['label']) : '';
         $link = $data['link'] ?? '#';
         $divID = empty($data['id']) ? '' : ' id="' . $data['id'] . '"';
         $class = empty($data['class']) ? '' : $data['class'];

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Dinamic\Model\Base\JoinModel;
+use FacturaScripts\Core\Model\Base\JoinModel;
 use FacturaScripts\Dinamic\Model\Producto;
 
 /**
@@ -31,7 +31,6 @@ use FacturaScripts\Dinamic\Model\Producto;
  */
 class StockProducto extends JoinModel
 {
-
     /**
      * Class constructor.
      * Set master model for controller actions.
@@ -75,7 +74,8 @@ class StockProducto extends JoinModel
             'reservada' => 'stocks.reservada',
             'stockmax' => 'stocks.stockmax',
             'stockmin' => 'stocks.stockmin',
-            'total' => 'stocks.cantidad*variantes.coste'
+            'total' => 'stocks.cantidad*variantes.coste',
+            'ubicacion' => 'stocks.ubicacion',
         ];
     }
 

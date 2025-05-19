@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,6 +37,25 @@ class BusinessDocumentCode
     public static function getNewCode(SecuenciaDocumento &$sequence, BusinessDocument &$document): string
     {
         return CodePatterns::trans($sequence->patron, $document, ['long' => $sequence->longnumero]);
+    }
+
+    public static function getOtherExercises(SecuenciaDocumento $sequence): array
+    {
+        $other = [];
+
+        // find other exercises from equivalent sequences
+        $where = [
+            new DataBaseWhere('codejercicio', null, 'IS NOT'),
+            new DataBaseWhere('codserie', $sequence->codserie),
+            new DataBaseWhere('idsecuencia', $sequence->idsecuencia, '<>'),
+            new DataBaseWhere('idempresa', $sequence->idempresa),
+            new DataBaseWhere('tipodoc', $sequence->tipodoc)
+        ];
+        foreach ($sequence->all($where) as $item) {
+            $other[] = $item->codejercicio;
+        }
+
+        return $other;
     }
 
     public static function getSequence(BusinessDocument $document): SecuenciaDocumento
@@ -124,7 +143,10 @@ class BusinessDocumentCode
                     // hole found
                     $document->fecha = $preDate;
                     $document->hora = $preHour;
+                    $sequence->disablePatternTest(true);
                     $sequence->save();
+                    $sequence->disablePatternTest(false);
+
                     return (string)$expectedNumber;
                 }
 
@@ -143,7 +165,10 @@ class BusinessDocumentCode
                 // the gap is in the first positions of the range
                 $document->fecha = $preDate;
                 $document->hora = $preHour;
+                $sequence->disablePatternTest(true);
                 $sequence->save();
+                $sequence->disablePatternTest(false);
+
                 return (string)$expectedNumber;
             }
         }
@@ -152,7 +177,9 @@ class BusinessDocumentCode
 
         // update sequence
         $sequence->numero++;
+        $sequence->disablePatternTest(true);
         $sequence->save();
+        $sequence->disablePatternTest(false);
 
         return (string)$newNumber;
     }
@@ -165,6 +192,11 @@ class BusinessDocumentCode
         ];
         if ($sequence->codejercicio) {
             $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
+        } else {
+            $other = implode(',', static::getOtherExercises($sequence));
+            if (!empty($other)) {
+                $where[] = new DataBaseWhere('codejercicio', $other, 'NOT IN');
+            }
         }
         $orderBy = strtolower(FS_DB_TYPE) == 'postgresql' ?
             ['CAST(numero as integer)' => 'DESC'] :

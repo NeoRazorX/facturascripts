@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to list the items in the Serie model
@@ -34,7 +35,7 @@ class ListSerie extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'series';
-        $data['icon'] = 'fas fa-layer-group';
+        $data['icon'] = 'fa-solid fa-layer-group';
         return $data;
     }
 
@@ -43,11 +44,23 @@ class ListSerie extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListSerie', 'Serie', 'series', 'fas fa-layer-group');
-        $this->addSearchFields('ListSerie', ['descripcion', 'codserie']);
-        $this->addOrderBy('ListSerie', ['codserie'], 'code');
-        $this->addOrderBy('ListSerie', ['descripcion'], 'description');
+        $this->createViewsSeries();
+    }
 
-        $this->addFilterCheckbox('ListSerie', 'siniva', 'without-tax', 'siniva');
+    protected function createViewsSeries(string $viewName = 'ListSerie'): void
+    {
+        $this->addView($viewName, 'Serie', 'series', 'fa-solid fa-layer-group')
+            ->addSearchFields(['descripcion', 'codserie'])
+            ->addOrderBy(['codserie'], 'code')
+            ->addOrderBy(['descripcion'], 'description');
+
+        // filtros
+        $this->addFilterCheckbox($viewName, 'siniva', 'without-tax', 'siniva');
+
+        $this->addFilterSelect($viewName, 'tipo', 'type', 'tipo', [
+            '' => '------',
+            'R' => Tools::lang()->trans('rectifying'),
+            'S' => Tools::lang()->trans('simplified'),
+        ]);
     }
 }

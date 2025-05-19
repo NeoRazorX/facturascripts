@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\Contract\CalculatorModInterface;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
@@ -31,12 +32,12 @@ use FacturaScripts\Core\Model\ImpuestoZona;
 /**
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
+ *
+ * @deprecated replaced by Core/Lib/Calculator
  */
 final class Calculator
 {
-    /**
-     * @var CalculatorModInterface[]
-     */
+    /** @var CalculatorModInterface[] */
     public static $mods = [];
 
     public static function addMod(CalculatorModInterface $mod): void
@@ -67,6 +68,11 @@ final class Calculator
         $doc->totaliva = $subtotals['totaliva'];
         $doc->totalrecargo = $subtotals['totalrecargo'];
         $doc->totalsuplidos = $subtotals['totalsuplidos'];
+
+        // si tiene totalbeneficio, lo asignamos
+        if (property_exists($doc, 'totalbeneficio')) {
+            $doc->totalbeneficio = $subtotals['totalbeneficio'];
+        }
 
         // si tiene totalcoste, lo asignamos
         if (property_exists($doc, 'totalcoste')) {
@@ -106,6 +112,12 @@ final class Calculator
 
         // acumulamos por cada línea
         foreach ($lines as $line) {
+            // coste
+            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
+            if (isset($line->coste)) {
+                $subtotals['totalcoste'] += $totalCoste;
+            }
+
             $pvpTotal = $line->pvptotal * (100 - $doc->dtopor1) / 100 * (100 - $doc->dtopor2) / 100;
             if (empty($pvpTotal)) {
                 continue;
@@ -133,12 +145,6 @@ final class Calculator
                     'totaliva' => 0.0,
                     'totalrecargo' => 0.0
                 ];
-            }
-
-            // coste
-            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
-            if (isset($line->coste)) {
-                $subtotals['totalcoste'] += $totalCoste;
             }
 
             // si es una venta de segunda mano, calculamos el beneficio y el IVA
@@ -187,6 +193,9 @@ final class Calculator
         $subtotals['totalrecargo'] = round($subtotals['totalrecargo'], FS_NF0);
         $subtotals['totalsuplidos'] = round($subtotals['totalsuplidos'], FS_NF0);
 
+        // calculamos el beneficio
+        $subtotals['totalbeneficio'] = round($subtotals['neto'] - $subtotals['totalcoste'], FS_NF0);
+
         // calculamos el total
         $subtotals['total'] = round($subtotals['neto'] + $subtotals['totalsuplidos'] + $subtotals['totaliva']
             + $subtotals['totalrecargo'] - $subtotals['totalirpf'], FS_NF0);
@@ -210,8 +219,10 @@ final class Calculator
      */
     private static function apply(BusinessDocument &$doc, array &$lines): void
     {
-        $sinIva = $doc->getSerie()->siniva;
-        $regimen = $doc->getSubject()->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
+        $subject = $doc->getSubject();
+        $noTax = $doc->getSerie()->siniva;
+        $taxException = $subject->excepcioniva ?? null;
+        $regimen = $subject->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
         $company = $doc->getCompany();
 
         // cargamos las zonas de impuestos
@@ -231,9 +242,9 @@ final class Calculator
 
         foreach ($lines as $line) {
             // Si es una compra de bienes usados, no aplicamos impuestos
-            if ($doc->subjectColumn() === 'codproveedor'
-                && $company->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
-                && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+            if ($doc->subjectColumn() === 'codproveedor' &&
+                $company->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS &&
+                $line->getProducto()->tipo === ProductType::SECOND_HAND) {
                 $line->codimpuesto = null;
                 $line->iva = $line->recargo = 0.0;
                 continue;
@@ -250,9 +261,10 @@ final class Calculator
             }
 
             // ¿La serie es sin impuestos o el régimen exento?
-            if ($sinIva || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
-                $line->codimpuesto = null;
+            if ($noTax || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
+                $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
                 $line->iva = $line->recargo = 0.0;
+                $line->excepcioniva = $taxException;
                 continue;
             }
 
@@ -273,9 +285,9 @@ final class Calculator
 
     private static function applyUsedGoods(array &$subtotals, BusinessDocument $doc, BusinessDocumentLine $line, string $ivaKey, float $pvpTotal, float $totalCoste): bool
     {
-        if ($doc->subjectColumn() === 'codcliente'
-            && $doc->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
-            && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+        if ($doc->subjectColumn() === 'codcliente' &&
+            $doc->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS &&
+            $line->getProducto()->tipo === ProductType::SECOND_HAND) {
             // IVA 0%
             $ivaKey0 = '0|0';
             if (false === array_key_exists($ivaKey0, $subtotals['iva'])) {
@@ -292,9 +304,9 @@ final class Calculator
             $subtotals['iva'][$ivaKey0]['neto'] += $totalCoste;
             $subtotals['iva'][$ivaKey0]['netosindto'] += $totalCoste;
 
-            // si el beneficio es negativo, no hay IVA
+            // si el beneficio es negativo y la serie no es rectificativa, no hay IVA
             $beneficio = $pvpTotal - $totalCoste;
-            if ($beneficio <= 0) {
+            if ($beneficio <= 0 && $doc->getSerie()->tipo !== 'R') {
                 return true;
             }
 
@@ -314,9 +326,6 @@ final class Calculator
     {
         $line->pvpsindto = $line->cantidad * $line->pvpunitario;
         $line->pvptotal = $line->pvpsindto * (100 - $line->dtopor) / 100 * (100 - $line->dtopor2) / 100;
-
-        // desactivamos la función del modelo de recalcular pvpsindto y pvptotal
-        $line->disableUpdateTotals(true);
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {

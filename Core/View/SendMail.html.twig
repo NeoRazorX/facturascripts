@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,19 +29,18 @@
     <div class="container" style="margin-top: -60px;">
         <div class="row">
             <div class="col-12">
-                <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data">
+                <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data"
+                      onsubmit="animateSpinner('add')">
                     {{ formToken() }}
                     <input type="hidden" name="action" value="send"/>
                     <div class="card shadow">
                         <div class="card-body">
                             <h1 class="h3 mb-3">
-                                <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send-mail') }}
+                                <i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send-mail') }}
                             </h1>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ trans('from') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ trans('from') }}</span>
                                     <select class="custom-select" name="email-from">
                                         {% for emailFrom in fsc.newMail.getAvailableMailboxes() %}
                                             <option value="{{ emailFrom }}">{{ emailFrom }}</option>
@@ -49,16 +48,13 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ trans('to') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ trans('to') }}</span>
                                     {% set emails = fsc.newMail.getToAddresses() is empty ? '' : fsc.newMail.getToAddresses() | join(',') ~ ', ' %}
                                     <input type="text" id="email" name="email" value="{{ emails }}" class="form-control"
                                            placeholder="{{ trans('email-to') }}" required/>
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-outline-secondary"
+                                    <button type="button" class="btn btn-outline-secondary"
                                                 title="{{ trans('email-cc') }}" onclick="$('#fgCC').show();
                                                 $(this).hide();">{{ trans('cc') }}
                                         </button>
@@ -66,57 +62,50 @@
                                                 title="{{ trans('email-bcc') }}" onclick="$('#fgBCC').show();
                                                 $(this).hide();">{{ trans('bcc') }}
                                         </button>
-                                    </div>
                                 </div>
                             </div>
-                            <div id="fgCC" class="form-group" style="display: none;">
+                            <div id="fgCC" class="mb-3" style="display: none;">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ trans('cc') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ trans('cc') }}</span>
                                     <input type="text" id="email-cc" name="email-cc" class="form-control"
                                            placeholder="{{ trans('email-cc') }}"/>
                                 </div>
                             </div>
-                            <div id="fgBCC" class="form-group" style="display: none;">
+                            <div id="fgBCC" class="mb-3" style="display: none;">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ trans('bcc') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ trans('bcc') }}</span>
                                     <input type="text" id="email-bcc" name="email-bcc" class="form-control"
                                            placeholder="{{ trans('email-bcc') }}"/>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ trans('subject') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ trans('subject') }}</span>
                                     <input type="text" name="subject" value="{{ fsc.newMail.title }}"
                                            class="form-control" placeholder="{{ trans('subject') }}" required/>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <textarea name="body" rows="5" class="form-control">{{ fsc.newMail.text | raw }}</textarea>
+                            <div class="mb-3">
+                                <textarea name="body" rows="5"
+                                          class="form-control">{{ fsc.newMail.text | raw }}</textarea>
                             </div>
                             {% if fsc.newMail.signature %}
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ trans('email-signature') }}
-                                    <textarea rows="3" class="form-control" readonly>{{ fsc.newMail.signature }}</textarea>
+                                    <textarea rows="3" class="form-control"
+                                              readonly>{{ fsc.newMail.signature }}</textarea>
                                 </div>
                             {% endif %}
-                            <div class="form-group">
-                                {% for name in fsc.newMail.getAttachmentNames() %}
-                                    <p>
-                                        <i class="fas fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}
-                                    </p>
-                                {% endfor %}
-                                <input type="file" name="uploads[]" multiple=""/>
-                            </div>
+                            {% for name in fsc.newMail.getAttachmentNames() %}
+                                <p>
+                                    <i class="fa-solid fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}
+                                </p>
+                            {% endfor %}
+                            <div id="email-attachments"></div>
                             <div class="row align-items-end">
                                 <div class="col-sm-6">
-                                    {% if appSettings.get('email', 'replytouseremail', '1') in ['1', '0'] %}
-                                        {% set check = appSettings.get('email', 'replytouseremail') == '1' ? 'checked' : '' %}
+                                    {% if settings('email', 'replytouseremail', '1') in ['1', '0'] %}
+                                        {% set check = settings('email', 'replytouseremail') == '1' ? 'checked' : '' %}
                                         <div class="form-check">
                                             <input type="checkbox" name="replyto" value="1" {{ check }}
                                                    class="form-check-input" id="replytoCheck"/>
@@ -126,9 +115,9 @@
                                         </div>
                                     {% endif %}
                                 </div>
-                                <div class="col-sm-6 text-right">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send') }}
+                                <div class="col-sm-6 text-end">
+                                    <button type="submit" class="btn btn-primary btn-spin-action">
+                                        <i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send') }}
                                     </button>
                                 </div>
                             </div>
@@ -149,16 +138,56 @@
     {{ parent() }}
     <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
     <script>
-        function split(val) {
-            return val.split(/,\s*/);
+        function addAnotherInputFile(input) {
+            // si en el div de email-attachments el último input file está vacío, no añadimos otro
+            let inputs = document.getElementById('email-attachments').getElementsByTagName('input');
+            if (inputs.length > 0 && inputs[inputs.length - 1].value === '') {
+                clearInputFile();
+                return;
+            }
+
+            // si el archivo subido es una carpeta, no lo añadimos y limpiamos el input
+            if (input && input.target.files.length > 0 && input.target.files[0].type === '') {
+                input.target.value = '';
+                return;
+            }
+
+            let div = document.createElement('div');
+            div.className = 'mb-3';
+
+            let file = document.createElement('input');
+            file.type = 'file';
+            file.name = 'uploads[]';
+            file.onchange = addAnotherInputFile;
+            file.multiple = true;
+            div.appendChild(file);
+
+            document.getElementById('email-attachments').appendChild(div);
+            clearInputFile();
+        }
+
+        function clearInputFile() {
+            // obtenemos todos los inputs file
+            let inputs = document.getElementById('email-attachments').getElementsByTagName('input');
+
+            // eliminamos los inputs que estén vacíos, excepto el último
+            for (let i = 0; i < inputs.length - 1; i++) {
+                if (inputs[i].value === '') {
+                    inputs[i].parentNode.remove();
+                }
+            }
         }
 
         function extractLast(term) {
             return split(term).pop();
         }
 
+        function split(val) {
+            return val.split(/,\s*/);
+        }
+
         $(document).ready(function () {
-            var cacheQuery = {};
+            let cacheQuery = {};
             $("#email,#email-cc,#email-bcc").on("keydown", function (event) {
                 if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
                     event.preventDefault();
@@ -167,7 +196,7 @@
                 minLength: 0,
                 source: function (request, response) {
                     // Avoid re-query the same
-                    var term = request.term;
+                    let term = request.term;
                     if (term in cacheQuery) {
                         response(cacheQuery[term]);
                         return;
@@ -189,7 +218,7 @@
                     return false;
                 },
                 select: function (event, ui) {
-                    var terms = split(this.value);
+                    let terms = split(this.value);
                     // Remove the current input
                     terms.pop();
                     // Add the selected item
@@ -200,6 +229,8 @@
                     return false;
                 }
             });
+
+            addAnotherInputFile();
         });
     </script>
 {% endblock %}

@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 
@@ -44,7 +45,7 @@ class EditTarifa extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'rate';
-        $data['icon'] = 'fas fa-percentage';
+        $data['icon'] = 'fa-solid fa-percentage';
         return $data;
     }
 
@@ -54,7 +55,7 @@ class EditTarifa extends EditController
      */
     protected function createCustomerGroupView(string $viewName = 'ListGrupoClientes')
     {
-        $this->addListView($viewName, 'GrupoClientes', 'customer-group', 'fas fa-users-cog');
+        $this->addListView($viewName, 'GrupoClientes', 'customer-group', 'fa-solid fa-users-cog');
         $this->views[$viewName]->searchFields = ['nombre', 'codgrupo'];
         $this->views[$viewName]->addOrderBy(['codgrupo'], 'code');
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
@@ -70,7 +71,7 @@ class EditTarifa extends EditController
         $this->addButton($viewName, [
             'action' => 'setgrouprate',
             'color' => 'success',
-            'icon' => 'fas fa-folder-plus',
+            'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add',
             'type' => 'modal'
         ]);
@@ -78,14 +79,14 @@ class EditTarifa extends EditController
             'action' => 'unsetgrouprate',
             'color' => 'danger',
             'confirm' => true,
-            'icon' => 'fas fa-folder-minus',
+            'icon' => 'fa-solid fa-folder-minus',
             'label' => 'remove-from-list'
         ]);
     }
 
     protected function createCustomerView(string $viewName = 'ListCliente')
     {
-        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
+        $this->addListView($viewName, 'Cliente', 'customers', 'fa-solid fa-users');
         $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
         $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
@@ -98,7 +99,7 @@ class EditTarifa extends EditController
         $this->addButton($viewName, [
             'action' => 'setcustomerrate',
             'color' => 'success',
-            'icon' => 'fas fa-folder-plus',
+            'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add',
             'type' => 'modal'
         ]);
@@ -106,14 +107,14 @@ class EditTarifa extends EditController
             'action' => 'unsetcustomerrate',
             'color' => 'danger',
             'confirm' => true,
-            'icon' => 'fas fa-folder-minus',
+            'icon' => 'fa-solid fa-folder-minus',
             'label' => 'remove-from-list'
         ]);
     }
 
     protected function createProductView(string $viewName = 'ListTarifaProducto')
     {
-        $this->addListView($viewName, 'Join\TarifaProducto', 'products', 'fas fa-cubes');
+        $this->addListView($viewName, 'Join\TarifaProducto', 'products', 'fa-solid fa-cubes');
         $this->views[$viewName]->addOrderBy(['coste'], 'cost-price');
         $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
         $this->views[$viewName]->addOrderBy(['precio'], 'price');
@@ -190,9 +191,9 @@ class EditTarifa extends EditController
 
     protected function unsetCustomerRate()
     {
-        $codes = $this->request->request->get('code', '');
-        if (empty($codes) || false === \is_array($codes)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+        $codes = $this->request->request->getArray('codes');
+        if (empty($codes) || false === is_array($codes)) {
+            Tools::log()->warning('no-selected-item');
             return;
         }
 
@@ -204,14 +205,14 @@ class EditTarifa extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
     }
 
     protected function unsetGroupRate()
     {
-        $codes = $this->request->request->get('code', '');
-        if (empty($codes) || false === \is_array($codes)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+        $codes = $this->request->request->getArray('codes');
+        if (empty($codes) || false === is_array($codes)) {
+            Tools::log()->warning('no-selected-item');
             return;
         }
 
@@ -223,7 +224,7 @@ class EditTarifa extends EditController
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
     }
 
     protected function setCustomerRate()
@@ -231,17 +232,17 @@ class EditTarifa extends EditController
         $customer = new Cliente();
         $code = $this->request->request->get('setcustomerrate');
         if (empty($code) || false === $customer->loadFromCode($code)) {
-            $this->toolBox()->i18nLog()->warning('customer-not-found');
+            Tools::log()->warning('customer-not-found');
             return;
         }
 
         $customer->codtarifa = $this->request->get('code');
         if ($customer->save()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('record-save-error');
+        Tools::log()->warning('record-save-error');
     }
 
     protected function setGroupRate()
@@ -249,16 +250,16 @@ class EditTarifa extends EditController
         $group = new GrupoClientes();
         $code = $this->request->request->get('setgrouprate');
         if (empty($code) || false === $group->loadFromCode($code)) {
-            $this->toolBox()->i18nLog()->warning('group-not-found');
+            Tools::log()->warning('group-not-found');
             return;
         }
 
         $group->codtarifa = $this->request->get('code');
         if ($group->save()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             return;
         }
 
-        $this->toolBox()->i18nLog()->warning('record-save-error');
+        Tools::log()->warning('record-save-error');
     }
 }

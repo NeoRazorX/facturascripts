@@ -22,6 +22,11 @@ namespace FacturaScripts\Core\Base\Contract;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 
+/**
+ * Interface for calculator modules.
+ *
+ * @deprecated replaced by Core/Contract/CalculatorModInterface
+ */
 interface CalculatorModInterface
 {
     public function apply(BusinessDocument &$doc, array &$lines): bool;

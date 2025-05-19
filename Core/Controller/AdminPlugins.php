@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,9 +24,11 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Telemetry;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * AdminPlugins.
@@ -41,6 +43,12 @@ class AdminPlugins extends Controller
     /** @var array */
     public $remotePluginList = [];
 
+    /** @var bool */
+    public $registered = false;
+
+    /** @var bool */
+    public $updated = false;
+
     public function getMaxFileUpload(): float
     {
         return UploadedFile::getMaxFilesize() / 1024 / 1024;
@@ -51,7 +59,7 @@ class AdminPlugins extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'plugins';
-        $data['icon'] = 'fas fa-plug';
+        $data['icon'] = 'fa-solid fa-plug';
         return $data;
     }
 
@@ -89,6 +97,7 @@ class AdminPlugins extends Controller
                 break;
 
             default:
+                $this->extractPluginsZipFiles();
                 if (FS_DEBUG) {
                     // On debug mode, always deploy the contents of Dinamic.
                     Plugins::deploy(true, true);
@@ -97,14 +106,22 @@ class AdminPlugins extends Controller
                 break;
         }
 
+        // cargamos la lista de plugins
         $this->pluginList = Plugins::list();
         $this->loadRemotePluginList();
+
+        // comprobamos si la instalación está registrada
+        $telemetry = new Telemetry();
+        $this->registered = $telemetry->ready();
+
+        // comprobamos si hay actualizaciones disponibles
+        $this->updated = Forja::canUpdateCore() === false;
     }
 
     private function disablePluginAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -118,7 +135,7 @@ class AdminPlugins extends Controller
     private function enablePluginAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -127,6 +144,29 @@ class AdminPlugins extends Controller
         $pluginName = $this->request->get('plugin', '');
         Plugins::enable($pluginName);
         Cache::clear();
+    }
+
+    private function extractPluginsZipFiles(): void
+    {
+        $ok = false;
+        foreach (Tools::folderScan(Plugins::folder()) as $zipFileName) {
+            // si el archivo no es un zip, lo ignoramos
+            if (pathinfo($zipFileName, PATHINFO_EXTENSION) !== 'zip') {
+                continue;
+            }
+
+            // instalamos el plugin
+            $zipPath = Plugins::folder() . DIRECTORY_SEPARATOR . $zipFileName;
+            if (Plugins::add($zipPath, $zipFileName)) {
+                $ok = true;
+                unlink($zipPath);
+            }
+        }
+
+        if ($ok) {
+            Tools::log()->notice('reloading');
+            $this->redirect($this->url(), 3);
+        }
     }
 
     private function loadRemotePluginList(): void
@@ -151,7 +191,7 @@ class AdminPlugins extends Controller
     private function rebuildAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            Tools::log()->warning('not-allowed-update');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -159,13 +199,13 @@ class AdminPlugins extends Controller
 
         Plugins::deploy(true, true);
         Cache::clear();
-        $this->toolBox()->i18nLog()->notice('rebuild-completed');
+        Tools::log()->notice('rebuild-completed');
     }
 
     private function removePluginAction(): void
     {
         if (false === $this->permissions->allowDelete) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-delete');
+            Tools::log()->warning('not-allowed-delete');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
@@ -179,22 +219,22 @@ class AdminPlugins extends Controller
     private function uploadPluginAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            Tools::log()->warning('not-allowed-update');
             return;
         } elseif (false === $this->validateFormToken()) {
             return;
         }
 
         $ok = true;
-        $uploadFiles = $this->request->files->get('plugin', []);
+        $uploadFiles = $this->request->files->getArray('plugin');
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
-                $this->toolBox()->log()->error($uploadFile->getErrorMessage());
+                Tools::log()->error($uploadFile->getErrorMessage());
                 continue;
             }
 
             if ($uploadFile->getMimeType() !== 'application/zip') {
-                $this->toolBox()->i18nLog()->error('file-not-supported');
+                Tools::log()->error('file-not-supported');
                 continue;
             }
 
@@ -206,7 +246,7 @@ class AdminPlugins extends Controller
 
         Cache::clear();
         if ($ok) {
-            $this->toolBox()->i18nLog()->notice('reloading');
+            Tools::log()->notice('reloading');
             $this->redirect($this->url(), 3);
         }
     }

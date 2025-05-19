@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * Visual configuration of the FacturaScripts views,
  * each PageOption corresponds to a view or tab.
@@ -28,7 +30,6 @@ namespace FacturaScripts\Core\Model;
  */
 class PageOption extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -45,6 +46,13 @@ class PageOption extends Base\ModelClass
      * @var int
      */
     public $id;
+
+    /**
+     * Last update date
+     *
+     * @var string
+     */
+    public $last_update;
 
     /**
      * Definition of modal forms
@@ -78,6 +86,7 @@ class PageOption extends Base\ModelClass
     {
         parent::clear();
         $this->columns = [];
+        $this->last_update = Tools::dateTime();
         $this->modals = [];
         $this->rows = [];
     }
@@ -116,6 +125,13 @@ class PageOption extends Base\ModelClass
         return 'pages_options';
     }
 
+    public function url(string $type = 'auto', string $list = 'List'): string
+    {
+        return $type === 'list' ?
+            parent::url($type, $list) :
+            'EditPageOption?code=' . $this->name;
+    }
+
     /**
      * Returns the values of the view configuration fields in JSON format
      *
@@ -132,11 +148,15 @@ class PageOption extends Base\ModelClass
 
     protected function saveInsert(array $values = []): bool
     {
+        $this->last_update = Tools::dateTime();
+
         return parent::saveInsert($this->getEncodeValues());
     }
 
     protected function saveUpdate(array $values = []): bool
     {
+        $this->last_update = Tools::dateTime();
+
         return parent::saveUpdate($this->getEncodeValues());
     }
 }

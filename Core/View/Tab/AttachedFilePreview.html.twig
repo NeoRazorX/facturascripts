@@ -4,22 +4,22 @@
 <div class="card shadow mb-3">
     <div class="card-body">
         <div class="dropdown">
-            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-cloud-download-alt"></i> {{ i18n.trans('download') }}
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-cloud-download-alt"></i> {{ trans('download') }}
             </button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" target="_blank" href="{{ asset(file.url('download')) }}">
-                    {{ trans('valid-for-day') }}
+                    <i class="fa-regular fa-hourglass-half fa-fw me-1"></i> {{ trans('valid-for-day') }}
                 </a>
                 <a class="dropdown-item" target="_blank" href="{{ asset(file.url('download-permanent')) }}">
-                    {{ trans('unlimited') }}
+                    <i class="fa-solid fa-circle-check fa-fw me-1"></i> {{ trans('unlimited') }}
                 </a>
             </div>
         </div>
     </div>
-    {% if file.mimetype in ['image/gif','image/jpeg','image/png'] %}
+    {% if file.isImage() %}
         <img src="{{ asset(file.url('download')) }}" class="card-img-top" alt="{{ file.filename }}" />
-    {% elseif file.getExtension() == 'mp4' %}
+    {% elseif file.isVideo() %}
         <div class="embed-responsive embed-responsive-16by9">
             <video width="320" height="240" controls>
                 <source src="{{ asset(file.url('download-permanent')) }}" type="video/mp4" />

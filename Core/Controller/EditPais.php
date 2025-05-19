@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,29 +41,25 @@ class EditPais extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'country';
-        $data['icon'] = 'fas fa-globe-americas';
+        $data['icon'] = 'fa-solid fa-globe-americas';
         return $data;
     }
 
-    protected function createProvinceView(string $viewName = 'ListProvincia')
-    {
-        $this->addListView($viewName, 'Provincia', 'provinces');
-        $this->views[$viewName]->addOrderBy(['provincia'], 'name', 1);
-        $this->views[$viewName]->searchFields = ['provincia'];
-
-        // disable column
-        $this->views[$viewName]->disableColumn('country');
-    }
-
-    /**
-     * Create tabs or views.
-     */
     protected function createViews()
     {
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->createProvinceView();
+        $this->createViewsProvince();
+    }
+
+    protected function createViewsProvince(string $viewName = 'ListProvincia'): void
+    {
+        $this->addListView($viewName, 'Provincia', 'provinces', 'fa-solid fa-map-signs')
+            ->addOrderBy(['provincia'], 'name')
+            ->addOrderBy(['codpais'], 'country')
+            ->addSearchFields(['provincia', 'codisoprov', 'alias'])
+            ->disableColumn('country');
     }
 
     /**

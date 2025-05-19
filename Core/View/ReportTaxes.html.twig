@@ -1,7 +1,8 @@
+
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,116 +24,277 @@
     <br/>
     <br/>
     <br/>
+    <br/>
+    <br/>
 {% endblock %}
 
 {% block body %}
-    <form method="post">
+    <form id="fReportTaxes" method="post">
+        {{ formToken() }}
         <input type="hidden" name="action" value="export"/>
-        <div class="container" style="margin-top: -60px;">
+        <input type="hidden" name="source" value="sales"/>
+        <div class="container" style="margin-top: -90px;">
             <div class="row">
                 <div class="col-12">
                     <div class="card shadow mb-3">
                         <div class="card-body">
-                            <h1 class="h3 mb-3">
-                                <i class="{{ fsc.getPageData().icon }}"></i> {{ fsc.title }}
+                            <h1 class="h3 mb-1">
+                                <i class="{{ fsc.getPageData().icon }} mr-2"></i> {{ fsc.title }}
                             </h1>
+                            <p class="text-muted mb-4">{{ trans('report-taxes-p') }}.</p>
                             <div class="form-row">
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        {{ i18n.trans('company') }}
-                                        <select name="idempresa" class="form-control">
+                                {% if fsc.empresa.count() > 1 %}
+                                    <div class="col-sm mb-3">
+                                        {{ trans('company') }}
+                                        <select name="idempresa" class="form-select">
                                             {% for empresa in fsc.empresa.all() %}
                                                 {% if empresa.idempresa == fsc.idempresa %}
-                                                    <option value="{{ empresa.idempresa }}"
-                                                            selected="">{{ empresa.nombrecorto | raw }}</option>
+                                                    <option value="{{ empresa.idempresa }}" selected>
+                                                        {{ empresa.nombrecorto | raw }}
+                                                    </option>
                                                 {% else %}
-                                                    <option value="{{ empresa.idempresa }}">{{ empresa.nombrecorto | raw }}</option>
+                                                    <option value="{{ empresa.idempresa }}">
+                                                        {{ empresa.nombrecorto | raw }}
+                                                    </option>
                                                 {% endif %}
                                             {% endfor %}
                                         </select>
                                     </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        {{ i18n.trans('invoices') }}
-                                        <select name="source" class="form-control">
-                                            {% if fsc.source == 'purchases' %}
-                                                <option value="sales">{{ i18n.trans('sales') }}</option>
-                                                <option value="purchases"
-                                                        selected="">{{ i18n.trans('purchases') }}</option>
+                                {% else %}
+                                    <input type="hidden" name="idempresa" value="{{ fsc.idempresa }}"/>
+                                {% endif %}
+                                <div class="col-sm mb-3">
+                                    {{ trans('serie') }}
+                                    <select name="codserie" class="form-select">
+                                        <option value="">{{ trans('all') }}</option>
+                                        <option value="">------</option>
+                                        {% for serie in fsc.serie.all({}, {'descripcion': 'ASC'}, 0, 0) %}
+                                            {% if serie.codserie == fsc.codserie %}
+                                                <option value="{{ serie.codserie }}" selected>
+                                                    {{ serie.descripcion | raw }}
+                                                </option>
                                             {% else %}
-                                                <option value="sales" selected="">{{ i18n.trans('sales') }}</option>
-                                                <option value="purchases">{{ i18n.trans('purchases') }}</option>
+                                                <option value="{{ serie.codserie }}">{{ serie.descripcion | raw }}</option>
                                             {% endif %}
-                                        </select>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm mb-3">
+                                    {{ trans('currency') }}
+                                    <select name="coddivisa" class="form-select">
+                                        {% for divisa in fsc.divisa.all({}, {'descripcion': 'ASC'}, 0, 0) %}
+                                            {% if divisa.coddivisa == fsc.coddivisa %}
+                                                <option value="{{ divisa.coddivisa }}" selected>
+                                                    {{ divisa.descripcion | raw }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ divisa.coddivisa }}">{{ divisa.descripcion | raw }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm mb-3">
+                                    {{ trans('country') }}
+                                    <select name="codpais" class="form-select">
+                                        <option value="">{{ trans('all') }}</option>
+                                        <option value="">------</option>
+                                        {% for pais in fsc.pais.all({}, {'nombre': 'ASC'}, 0, 0) %}
+                                            {% if pais.codpais == fsc.codpais %}
+                                                <option value="{{ pais.codpais }}" selected>
+                                                    {{ pais.nombre | raw }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ pais.codpais }}">{{ pais.nombre | raw }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-sm-3 mb-3">
+                                    {{ trans('date') }}
+                                    <select name="type-date" class="form-select">
+                                        <option value="create" {{ fsc.typeDate == 'create' ? 'selected': '' }}>
+                                            {{ trans('creation-date') }}
+                                        </option>
+                                        <option value="accrual" {{ fsc.typeDate == 'accrual' ? 'selected': '' }}>
+                                            {{ trans('accrual-date') }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3 mb-3">
+                                    {{ trans('from-date') }}
+                                    <input type="date" name="datefrom" value="{{ fsc.datefrom }}" class="form-control"
+                                           required/>
+                                </div>
+                                <div class="col-sm-3 mb-3">
+                                    {{ trans('until-date') }}
+                                    <input type="date" name="dateto" value="{{ fsc.dateto }}" class="form-control"
+                                           required/>
+                                </div>
+                                <div class="col-sm-3 mb-3">
+                                    {{ trans('format') }}
+                                    <select name="format" class="form-select">
+                                        <option value="PDF">PDF</option>
+                                        <option value="CSV">CSV</option>
+                                        <option value="XLS">Excel</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-12 h5 border-bottom pt-4 pb-2">
+                                    <i class="fa-solid fa-list-check mr-1"></i> {{ trans('columns') }}
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_serie"
+                                               id="column_serie" checked>
+                                        <label class="form-check-label" for="column_serie">
+                                            {{ trans('serie') }}
+                                        </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        {{ i18n.trans('from-date') }}
-                                        <input type="date" name="datefrom" value="{{ fsc.datefrom }}"
-                                               class="form-control" required=""/>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_code"
+                                               id="column_code" checked>
+                                        <label class="form-check-label" for="column_code">
+                                            {{ trans('code') }}
+                                        </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        {{ i18n.trans('until-date') }}
-                                        <input type="date" name="dateto" value="{{ fsc.dateto }}" class="form-control"
-                                               required=""/>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_number2"
+                                               id="column_number2" checked>
+                                        <label class="form-check-label" for="column_number2">
+                                            {{ trans('number') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_name"
+                                               id="column_name" checked>
+                                        <label class="form-check-label" for="column_name">
+                                            {{ trans('name') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_cifnif"
+                                               id="column_cifnif" checked>
+                                        <label class="form-check-label" for="column_cifnif">
+                                            {{ trans('cifnif') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_country"
+                                               id="column_country" checked>
+                                        <label class="form-check-label" for="column_country">
+                                            {{ trans('country') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_net"
+                                               id="column_net" checked>
+                                        <label class="form-check-label" for="column_net">
+                                            {{ trans('net') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_pct_tax"
+                                               id="pct_tax" checked>
+                                        <label class="form-check-label" for="pct_tax">
+                                            {{ trans('pct-tax') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_tax"
+                                               id="column_tax" checked>
+                                        <label class="form-check-label" for="column_tax">
+                                            {{ trans('tax') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_pct_surcharge"
+                                               id="column_pct_surcharge" checked>
+                                        <label class="form-check-label" for="column_pct_surcharge">
+                                            {{ trans('pct-surcharge') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1"
+                                               name="column_surcharge" id="column_surcharge" checked>
+                                        <label class="form-check-label" for="column_surcharge">
+                                            {{ trans('surcharge') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_pct_irpf"
+                                               id="column_pct_irpf" checked>
+                                        <label class="form-check-label" for="column_pct_irpf">
+                                            {{ trans('pct-irpf') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1"
+                                               name="column_irpf" id="column_irpf" checked>
+                                        <label class="form-check-label" for="column_irpf">
+                                            {{ trans('irpf') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_supplied_amount"
+                                               id="column_supplied_amount" checked>
+                                        <label class="form-check-label" for="column_supplied_amount">
+                                            {{ trans('supplied-amount') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="column_total"
+                                               id="column_total" checked>
+                                        <label class="form-check-label" for="column_total">
+                                            {{ trans('total') }}
+                                        </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-row align-items-end">
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        {{ i18n.trans('serie') }}
-                                        <select name="codserie" class="form-control">
-                                            <option value="">{{ i18n.trans('all') }}</option>
-                                            <option value="">------</option>
-                                            {% for serie in fsc.serie.all({}, {'descripcion': 'ASC'}, 0, 0) %}
-                                                {% if serie.codserie == fsc.codserie %}
-                                                    <option value="{{ serie.codserie }}"
-                                                            selected="">{{ serie.descripcion | raw }}</option>
-                                                {% else %}
-                                                    <option value="{{ serie.codserie }}">{{ serie.descripcion | raw }}</option>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        {{ i18n.trans('country') }}
-                                        <select name="codpais" class="form-control">
-                                            <option value="">{{ i18n.trans('all') }}</option>
-                                            <option value="">------</option>
-                                            {% for pais in fsc.pais.all({}, {'nombre': 'ASC'}, 0, 0) %}
-                                                {% if pais.codpais == fsc.codpais %}
-                                                    <option value="{{ pais.codpais }}"
-                                                            selected="">{{ pais.nombre | raw }}</option>
-                                                {% else %}
-                                                    <option value="{{ pais.codpais }}">{{ pais.nombre | raw }}</option>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        {{ i18n.trans('format') }}
-                                        <select name="format" class="form-control">
-                                            <option value="PDF">PDF</option>
-                                            <option value="CSV">CSV</option>
-                                            <option value="XLS">Excel</option>
-                                        </select>
-                                    </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="form-row">
+                                <div class="col-sm">
+                                    <button type="button" onclick="sendReportTaxes('purchases')"
+                                            class="btn btn-lg btn-block btn-secondary btn-spin-action">
+                                        {{ trans('purchases') }}
+                                    </button>
                                 </div>
                                 <div class="col-sm">
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary">
-                                            {{ i18n.trans('generate') }}
-                                        </button>
-                                    </div>
+                                    <button type="button" onclick="sendReportTaxes('sales')"
+                                            class="btn btn-lg btn-block btn-primary btn-spin-action">
+                                        {{ trans('sales') }}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -141,4 +303,24 @@
             </div>
         </div>
     </form>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function sendReportTaxes(source) {
+            animateSpinner('add');
+
+            let form = document.getElementById('fReportTaxes');
+            form.source.value = source;
+            form.submit();
+
+            // si el formato es excel o csv, esperamos 3 segundos y paramos la animación
+            if (form.format.value === 'XLS' || form.format.value === 'CSV') {
+                setTimeout(function () {
+                    animateSpinner('remove');
+                }, 3000);
+            }
+        }
+    </script>
 {% endblock %}

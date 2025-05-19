@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,11 +24,19 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
 
+/**
+ * Trait CommonLineHTML
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/CommonLineHTML
+ */
 trait CommonLineHTML
 {
     /** @var string */
@@ -42,6 +50,12 @@ trait CommonLineHTML
 
     /** @var string */
     protected static $regimeniva;
+
+    /** @var array */
+    private static $variants = [];
+
+    /** @var array */
+    private static $stocks = [];
 
     private static function cantidadRestante(Translator $i18n, BusinessDocumentLine $line, TransformerDocument $model): string
     {
@@ -66,6 +80,11 @@ trait CommonLineHTML
         // necesitamos una opción vacía para cuando el sujeto está exento de impuestos
         $options = ['<option value="">------</option>'];
         foreach (Impuestos::all() as $imp) {
+            // si el impuesto no está activo o seleccionado, lo saltamos
+            if (!$imp->activo && $line->codimpuesto != $imp->codimpuesto) {
+                continue;
+            }
+
             $options[] = $line->codimpuesto == $imp->codimpuesto ?
                 '<option value="' . $imp->codimpuesto . '" selected>' . $imp->descripcion . '</option>' :
                 '<option value="' . $imp->codimpuesto . '">' . $imp->descripcion . '</option>';
@@ -166,6 +185,11 @@ trait CommonLineHTML
     {
         $options = ['<option value="">------</option>'];
         foreach (Retenciones::all() as $ret) {
+            // si la retención no está activa o seleccionada, la saltamos
+            if (!$ret->activa && $line->irpf != $ret->porcentaje) {
+                continue;
+            }
+
             $options[] = $line->irpf === $ret->porcentaje ?
                 '<option value="' . $ret->porcentaje . '" selected>' . $ret->descripcion . '</option>' :
                 '<option value="' . $ret->porcentaje . '">' . $ret->descripcion . '</option>';
@@ -199,7 +223,7 @@ trait CommonLineHTML
             ' onclick="' . $jsNeto . '(\'' . $idlinea . '\')"' :
             '';
 
-        $subtotal = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+        $subtotal = self::subtotalValue($line, $model);
         return '<div class="col col-lg-1 order-7 columSubtotal ' . $cssSubtotal . '">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
             . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($subtotal, FS_NF0, '.', '')
@@ -208,6 +232,37 @@ trait CommonLineHTML
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('net') . '</div>'
             . '<input type="number" name="lineneto_' . $idlinea . '"  value="' . number_format($line->pvptotal, FS_NF0, '.', '')
             . '" class="form-control form-control-sm text-lg-right border-0"' . $onclickNeto . ' readonly/></div>';
+    }
+
+    private static function loadProducts(array $lines, BusinessDocument $model): void
+    {
+        // cargamos las referencias
+        $references = [];
+        foreach ($lines as $line) {
+            if (!empty($line->referencia)) {
+                $references[] = $line->referencia;
+            }
+        }
+        if (empty($references)) {
+            return;
+        }
+
+        // cargamos las variantes
+        $variantModel = new Variante();
+        $where = [new DataBaseWhere('referencia', $references, 'IN')];
+        foreach ($variantModel->all($where, [], 0, 0) as $variante) {
+            self::$variants[$variante->referencia] = $variante;
+        }
+
+        // cargamos los stocks
+        $stockModel = new Stock();
+        $where = [
+            new DataBaseWhere('codalmacen', $model->codalmacen),
+            new DataBaseWhere('referencia', $references, 'IN'),
+        ];
+        foreach ($stockModel->all($where, [], 0, 0) as $stock) {
+            self::$stocks[$stock->referencia] = $stock;
+        }
     }
 
     private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
@@ -241,14 +296,12 @@ trait CommonLineHTML
             '';
         $numlinea = self::$numlines > 10 ? self::$num . '. ' : '';
 
-        $variante = new Variante();
-        $where = [new DataBaseWhere('referencia', $line->referencia)];
         if (empty($line->referencia)) {
             return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '<div class="small text-break">' . $numlinea . '</div></div>';
         }
 
-        $link = $variante->loadFromCode('', $where) ?
-            $numlinea . '<a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>' :
+        $link = isset(self::$variants[$line->referencia]) ?
+            $numlinea . '<a href="' . self::$variants[$line->referencia]->url() . '" target="_blank">' . $line->referencia . '</a>' :
             $line->referencia;
 
         return '<div class="col-sm-2 col-lg-1 order-1">'
@@ -273,6 +326,19 @@ trait CommonLineHTML
         return '<div class="col-auto order-9"><button type="button" data-toggle="modal" data-target="#lineModal-'
             . $idlinea . '" class="btn btn-sm btn-outline-secondary" title="'
             . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
+    }
+
+    private static function subtotalValue(BusinessDocumentLine $line, TransformerDocument $model): float
+    {
+        if ($model->subjectColumn() === 'codcliente'
+            && $model->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
+            && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+            $profit = $line->pvpunitario - $line->coste;
+            $tax = $profit * ($line->iva + $line->recargo - $line->irpf) / 100;
+            return ($line->coste + $profit + $tax) * $line->cantidad;
+        }
+
+        return $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
     }
 
     private static function suplido(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string

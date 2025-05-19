@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,10 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Cliente as CoreCliente;
 use FacturaScripts\Core\Model\Contacto as CoreContacto;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
+use FacturaScripts\Dinamic\Model\AgenciaTransporte;
+use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
@@ -137,6 +140,13 @@ abstract class SalesDocument extends TransformerDocument
     public $provincia;
 
     /**
+     * sum total of the benefits of the lines.
+     *
+     * @var float
+     */
+    public $totalbeneficio;
+
+    /**
      * total sum of the costs of the lines.
      *
      * @var float
@@ -150,10 +160,11 @@ abstract class SalesDocument extends TransformerDocument
     {
         parent::clear();
         $this->direccion = '';
+        $this->totalbeneficio = 0.0;
         $this->totalcoste = 0.0;
 
         // select default currency
-        $coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
+        $coddivisa = Tools::settings('default', 'coddivisa');
         $this->setCurrency($coddivisa, false);
     }
 
@@ -161,13 +172,13 @@ abstract class SalesDocument extends TransformerDocument
     {
         $country = new Pais();
         if ($country->loadFromCode($this->codpais)) {
-            return $this->toolBox()->utils()->fixHtml($country->nombre) ?? '';
+            return Tools::fixHtml($country->nombre) ?? '';
         }
 
         return $this->codpais ?? '';
     }
 
-    public function delete()
+    public function delete(): bool
     {
         if (empty($this->total)) {
             return parent::delete();
@@ -202,8 +213,8 @@ abstract class SalesDocument extends TransformerDocument
         }
 
         $variant = new Variante();
-        $where1 = [new DataBaseWhere('referencia', $this->toolBox()->utils()->noHtml($reference))];
-        $where2 = [new DataBaseWhere('codbarras', $this->toolBox()->utils()->noHtml($reference))];
+        $where1 = [new DataBaseWhere('referencia', Tools::noHtml($reference))];
+        $where2 = [new DataBaseWhere('codbarras', Tools::noHtml($reference))];
         if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
             $product = $variant->getProducto();
 
@@ -255,12 +266,14 @@ abstract class SalesDocument extends TransformerDocument
         $result = parent::install();
 
         // needed dependencies
+        new AgenciaTransporte();
+        new Agente();
         new Cliente();
 
         return $result;
     }
 
-    public function save()
+    public function save(): bool
     {
         if (empty($this->total)) {
             return parent::save();
@@ -269,7 +282,7 @@ abstract class SalesDocument extends TransformerDocument
         // check if the customer has exceeded the maximum risk
         $customer = $this->getSubject();
         if ($customer->riesgomax && $customer->riesgoalcanzado > $customer->riesgomax) {
-            $this->toolBox()->i18nLog()->warning('customer-reached-maximum-risk');
+            Tools::log()->warning('customer-reached-maximum-risk');
             return false;
         } elseif (empty($customer->primaryColumnValue())) {
             return parent::save();
@@ -346,17 +359,16 @@ abstract class SalesDocument extends TransformerDocument
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->apartado = $utils->noHtml($this->apartado);
-        $this->ciudad = $utils->noHtml($this->ciudad);
-        $this->codigoenv = $utils->noHtml($this->codigoenv);
-        $this->codpostal = $utils->noHtml($this->codpostal);
-        $this->direccion = $utils->noHtml($this->direccion);
-        $this->nombrecliente = $utils->noHtml($this->nombrecliente);
-        $this->numero2 = $utils->noHtml($this->numero2);
-        $this->provincia = $utils->noHtml($this->provincia);
+        $this->apartado = Tools::noHtml($this->apartado);
+        $this->ciudad = Tools::noHtml($this->ciudad);
+        $this->codigoenv = Tools::noHtml($this->codigoenv);
+        $this->codpostal = Tools::noHtml($this->codpostal);
+        $this->direccion = Tools::noHtml($this->direccion);
+        $this->nombrecliente = Tools::noHtml($this->nombrecliente);
+        $this->numero2 = Tools::noHtml($this->numero2);
+        $this->provincia = Tools::noHtml($this->provincia);
 
         return parent::test();
     }

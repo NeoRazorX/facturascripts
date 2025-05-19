@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -54,7 +54,7 @@ final class Plugin
     public $min_version = 0;
 
     /** @var float */
-    public $min_php = 7.2;
+    public $min_php = 7.4;
 
     /** @var string */
     public $name = '-';
@@ -147,6 +147,11 @@ final class Plugin
         return true;
     }
 
+    public function disabled(): bool
+    {
+        return !$this->enabled;
+    }
+
     public function exists(): bool
     {
         return file_exists($this->folder());
@@ -203,8 +208,8 @@ final class Plugin
 
     public function init(): bool
     {
-        // si el plugin no está activado, no hacemos nada
-        if (!$this->enabled) {
+        // si el plugin no está activado y no tiene post_disable, no hacemos nada
+        if ($this->disabled() && !$this->post_disable) {
             return false;
         }
 
@@ -218,13 +223,17 @@ final class Plugin
 
         // ejecutamos los procesos de la clase Init del plugin
         $init = new $className();
-        if ($this->post_enable) {
+        if ($this->enabled && $this->post_enable && Kernel::lock('plugin-init-update')) {
             $init->update();
+            Kernel::unlock('plugin-init-update');
         }
-        if ($this->post_disable) {
+        if ($this->disabled() && $this->post_disable && Kernel::lock('plugin-init-uninstall')) {
             $init->uninstall();
+            Kernel::unlock('plugin-init-uninstall');
         }
-        $init->init();
+        if ($this->enabled) {
+            $init->init();
+        }
 
         $done = $this->post_disable || $this->post_enable;
 
@@ -305,7 +314,7 @@ final class Plugin
         $this->installed = $this->exists();
 
         $this->hidden = $this->hidden();
-        if (!$this->enabled) {
+        if ($this->disabled()) {
             $this->order = 0;
         }
 
@@ -319,7 +328,10 @@ final class Plugin
             return;
         }
 
-        $iniData = parse_ini_file($iniPath);
-        $this->loadIniData($iniData);
+        $data = file_get_contents($iniPath);
+        $iniData = parse_ini_string($data);
+        if ($iniData) {
+            $this->loadIniData($iniData);
+        }
     }
 }

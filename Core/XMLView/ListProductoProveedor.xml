@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,33 +21,39 @@
 <view>
     <columns>
         <column name="code" display="none" order="100">
-            <widget type="text" fieldname="id" />
+            <widget type="text" fieldname="id"/>
         </column>
         <column name="supplier" order="110">
             <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor">
-                <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre" />
+                <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"/>
             </widget>
         </column>
         <column name="reference" order="120">
-            <widget type="text" fieldname="referencia" />
+            <widget type="text" fieldname="referencia"/>
         </column>
         <column name="supplier-reference" order="130">
-            <widget type="text" fieldname="refproveedor" />
+            <widget type="text" fieldname="refproveedor"/>
+        </column>
+        <column name="description" order="135">
+            <widget type="textarea" fieldname="descripcion"/>
         </column>
         <column name="price" display="none" order="140">
-            <widget type="money" fieldname="precio" />
+            <widget type="money" fieldname="precio"/>
         </column>
         <column name="dto" display="none" order="150">
-            <widget type="number" fieldname="dtopor" />
+            <widget type="number" fieldname="dtopor"/>
         </column>
         <column name="dto-2" display="none" order="160">
-            <widget type="number" fieldname="dtopor2" />
+            <widget type="number" fieldname="dtopor2"/>
         </column>
         <column name="net" display="right" order="170">
-            <widget type="money" fieldname="neto" />
+            <widget type="money" fieldname="neto"/>
         </column>
-        <column name="update-time" display="right" order="180">
-            <widget type="datetime" fieldname="actualizado" />
+        <column name="stock" display="none" order="180">
+            <widget type="number" fieldname="stock"/>
+        </column>
+        <column name="update-time" display="right" order="190">
+            <widget type="datetime" fieldname="actualizado"/>
         </column>
     </columns>
 </view>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\Receipt;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 
 /**
@@ -49,14 +49,14 @@ trait ListBusinessActionTrait
         $this->addButton($viewName, [
             'action' => 'approve-document-same-date',
             'confirm' => 'true',
-            'icon' => 'fas fa-calendar-check',
+            'icon' => 'fa-solid fa-calendar-check',
             'label' => 'approve-document-same-date'
         ]);
 
         $this->addButton($viewName, [
             'action' => 'approve-document',
             'confirm' => 'true',
-            'icon' => 'fas fa-check',
+            'icon' => 'fa-solid fa-check',
             'label' => 'approve-document'
         ]);
     }
@@ -67,7 +67,7 @@ trait ListBusinessActionTrait
      * @param string $viewName
      * @param string|null $code
      */
-    protected function addButtonGenerateAccountingInvoices(string $viewName, string $code = null): void
+    protected function addButtonGenerateAccountingInvoices(string $viewName, ?string $code = null): void
     {
         $model = $this->views[$viewName]->model;
         if (false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
@@ -75,8 +75,9 @@ trait ListBusinessActionTrait
         }
 
         $where = [
-            new DataBaseWhere('idasiento', null),
-            new DataBaseWhere('fecha', date('Y-m-d', strtotime('-1 year')), '>')
+            new DataBaseWhere('idasiento', null, 'IS'),
+            new DataBaseWhere('fecha', Tools::date('-1 year'), '>'),
+            new DataBaseWhere('total', 0, '!=')
         ];
 
         if (false === empty($code) && property_exists($model, 'codcliente')) {
@@ -92,7 +93,7 @@ trait ListBusinessActionTrait
         $this->addButton($viewName, [
             'action' => 'generate-accounting-entries',
             'color' => 'warning',
-            'icon' => 'fas fa-magic',
+            'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'generate-accounting-entries'
         ]);
     }
@@ -106,7 +107,7 @@ trait ListBusinessActionTrait
     {
         $this->addButton($viewName, [
             'action' => 'group-document',
-            'icon' => 'fas fa-magic',
+            'icon' => 'fa-solid fa-wand-magic-sparkles',
             'label' => 'group-or-split'
         ]);
     }
@@ -121,7 +122,7 @@ trait ListBusinessActionTrait
         $this->addButton($viewName, [
             'action' => 'lock-invoice',
             'confirm' => 'true',
-            'icon' => 'fas fa-lock fa-fw',
+            'icon' => 'fa-solid fa-lock fa-fw',
             'label' => 'lock-invoice'
         ]);
     }
@@ -136,7 +137,7 @@ trait ListBusinessActionTrait
         $this->addButton($viewName, [
             'action' => 'pay-receipt',
             'confirm' => 'true',
-            'icon' => 'fas fa-dollar-sign',
+            'icon' => 'fa-solid fa-dollar-sign',
             'label' => 'paid',
             'type' => 'action'
         ]);
@@ -155,10 +156,10 @@ trait ListBusinessActionTrait
     protected function approveDocumentAction($codes, $model, $allowUpdate, $dataBase): bool
     {
         if (false === $allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === is_array($codes) || empty($model)) {
-            ToolBox::i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -167,12 +168,12 @@ trait ListBusinessActionTrait
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                ToolBox::i18nLog()->error('record-not-found');
+                Tools::log()->error('record-not-found');
                 continue;
             }
 
             foreach ($model->getAvailableStatus() as $status) {
-                if (empty($status->generadoc)) {
+                if (empty($status->generadoc) || !$status->activo) {
                     continue;
                 }
 
@@ -181,13 +182,13 @@ trait ListBusinessActionTrait
                     break;
                 }
 
-                ToolBox::i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 $dataBase->rollback();
                 return true;
             }
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
         return true;
@@ -196,7 +197,7 @@ trait ListBusinessActionTrait
     protected function generateAccountingEntriesAction($model, $allowUpdate, $dataBase): bool
     {
         if (false === $allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -206,13 +207,13 @@ trait ListBusinessActionTrait
             return true;
         }
 
-        $where = [
-            new DataBaseWhere('idasiento', null),
-            new DataBaseWhere('fecha', date('Y-m-d', strtotime('-1 year')), '>')
-        ];
-
         $dataBase->beginTransaction();
-        foreach ($model->all($where, ['idfactura' => 'ASC'], 0, 0) as $invoice) {
+        $where = [
+            new DataBaseWhere('idasiento', null, 'IS'),
+            new DataBaseWhere('fecha', Tools::date('-1 year'), '>'),
+            new DataBaseWhere('total', 0, '!=')
+        ];
+        foreach ($model->all($where, ['idfactura' => 'ASC'], 0, 300) as $invoice) {
             if (false === empty($invoice->idasiento)) {
                 continue;
             }
@@ -220,17 +221,19 @@ trait ListBusinessActionTrait
             $generator = new InvoiceToAccounting();
             $generator->generate($invoice);
             if (empty($invoice->idasiento)) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('cannot-generate-accounting-entry', ['%invoice%' => $invoice->codigo]);
+                $dataBase->rollback();
                 return true;
             }
 
             if (false === $invoice->save()) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error', ['invoice' => $invoice->codigo]);
+                $dataBase->rollback();
                 return true;
             }
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $dataBase->commit();
         return true;
     }
@@ -252,7 +255,7 @@ trait ListBusinessActionTrait
             return false;
         }
 
-        ToolBox::i18nLog()->warning('no-selected-item');
+        Tools::log()->warning('no-selected-item');
         return true;
     }
 
@@ -269,10 +272,10 @@ trait ListBusinessActionTrait
     protected function lockInvoiceAction($codes, $model, $allowUpdate, $dataBase): bool
     {
         if (false === $allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === is_array($codes) || empty($model)) {
-            ToolBox::i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -281,12 +284,12 @@ trait ListBusinessActionTrait
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                ToolBox::i18nLog()->error('record-not-found');
+                Tools::log()->error('record-not-found');
                 continue;
             }
 
             foreach ($model->getAvailableStatus() as $status) {
-                if ($status->editable) {
+                if ($status->editable || !$status->activo) {
                     continue;
                 }
 
@@ -295,13 +298,13 @@ trait ListBusinessActionTrait
                     break;
                 }
 
-                ToolBox::i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 $dataBase->rollback();
                 return true;
             }
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
         return true;
@@ -321,10 +324,10 @@ trait ListBusinessActionTrait
     protected function payReceiptAction($codes, $model, $allowUpdate, $dataBase, $nick): bool
     {
         if (false === $allowUpdate) {
-            ToolBox::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return true;
         } elseif (false === is_array($codes) || empty($model)) {
-            ToolBox::i18nLog()->warning('no-selected-item');
+            Tools::log()->warning('no-selected-item');
             return true;
         } elseif (false === $this->validateFormToken()) {
             return true;
@@ -333,20 +336,20 @@ trait ListBusinessActionTrait
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                ToolBox::i18nLog()->error('record-not-found');
+                Tools::log()->error('record-not-found');
                 continue;
             }
 
             $model->nick = $nick;
             $model->pagado = true;
             if (false === $model->save()) {
-                ToolBox::i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 $dataBase->rollback();
                 return true;
             }
         }
 
-        ToolBox::i18nLog()->notice('record-updated-correctly');
+        Tools::log()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
         return true;

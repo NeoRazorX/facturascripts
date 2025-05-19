@@ -1,0 +1,5 @@
+codimpuesto,descripcion,iva,recargo
+IVA_STD,"Tasa estándar",20,0
+IVA_RED1,"Tasa reducida alimentos",10,0
+IVA_RED2,"Tasa reducida libros",5.5,0
+IVA_SUPR,"Tasa super-reducida",2.1,0

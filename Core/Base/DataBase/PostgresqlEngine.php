@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,19 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
+use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Tools;
 
 /**
  * Class to connect with PostgreSQL.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class PostgresqlEngine extends DataBaseEngine
 {
-
     /**
      * Link to the SQL statements for the connected database
      *
@@ -52,9 +54,14 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function beginTransaction($link)
+    public function beginTransaction($link): bool
     {
         return $this->exec($link, 'BEGIN TRANSACTION;');
+    }
+
+    public function castInteger($link, $column)
+    {
+        return 'CAST(' . $this->escapeColumn($link, $column) . ' AS unsigned)';
     }
 
     /**
@@ -64,7 +71,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function close($link)
+    public function close($link): bool
     {
         return pg_close($link);
     }
@@ -76,7 +83,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return array
      */
-    public function columnFromData($colData)
+    public function columnFromData($colData): array
     {
         $colData['extra'] = null;
 
@@ -94,7 +101,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function commit($link)
+    public function commit($link): bool
     {
         return $this->exec($link, 'COMMIT;');
     }
@@ -104,24 +111,33 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @param string $error
      *
-     * @return bool|null
+     * @return null|resource
      */
     public function connect(&$error)
     {
         if (!function_exists('pg_connect')) {
             $error = $this->i18n->trans('php-postgresql-not-found');
-            return null;
+            throw new KernelException('DatabaseError', $error);
         }
 
-        $string = 'host=' . \FS_DB_HOST . ' dbname=' . \FS_DB_NAME . ' port=' . \FS_DB_PORT
-            . ' user=' . \FS_DB_USER . ' password=' . \FS_DB_PASS;
+        $string = 'host=' . Tools::config('db_host') . ' dbname=' . Tools::config('db_name') . ' port=' . Tools::config('db_port')
+            . ' user=' . Tools::config('db_user') . ' password=' . Tools::config('db_pass');
+
+        if (Tools::config('pgsql_ssl')) {
+            $string .= ' sslmode=' . Tools::config('pgsql_ssl');
+        }
+
+        if (Tools::config('pgsql_endpoint')) {
+            $string .= " options='endpoint=" . Tools::config('pgsql_endpoint') . "'";
+        }
+
         $result = pg_connect($string);
         if (!$result) {
             $error = pg_last_error();
-            return null;
+            throw new KernelException('DatabaseError', $error);
         }
 
-        /// set datestyle
+        // set datestyle
         $this->exec($result, 'SET DATESTYLE TO ISO, YMD;');
         return $result;
     }
@@ -133,7 +149,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function errorMessage($link)
+    public function errorMessage($link): string
     {
         $error = pg_last_error($link);
         return empty($error) ? $this->lastErrorMsg : $error;
@@ -143,11 +159,11 @@ class PostgresqlEngine extends DataBaseEngine
      * Escapes the column name.
      *
      * @param resource $link
-     * @param string   $name
+     * @param string $name
      *
      * @return string
      */
-    public function escapeColumn($link, $name)
+    public function escapeColumn($link, $name): string
     {
         return '"' . $name . '"';
     }
@@ -156,11 +172,11 @@ class PostgresqlEngine extends DataBaseEngine
      * Escapes quotes from a text string
      *
      * @param resource $link
-     * @param string   $str
+     * @param string $str
      *
      * @return string
      */
-    public function escapeString($link, $str)
+    public function escapeString($link, $str): string
     {
         return pg_escape_string($link, $str);
     }
@@ -170,11 +186,11 @@ class PostgresqlEngine extends DataBaseEngine
      * (inserts, updates or deletes)
      *
      * @param resource $link
-     * @param string   $sql
+     * @param string $sql
      *
      * @return bool
      */
-    public function exec($link, $sql)
+    public function exec($link, $sql): bool
     {
         return $this->runSql($link, $sql, false) === true;
     }
@@ -184,7 +200,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @param string $operator
      */
-    public function getOperator($operator)
+    public function getOperator($operator): string
     {
         switch ($operator) {
             case 'REGEXP':
@@ -212,7 +228,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function inTransaction($link)
+    public function inTransaction($link): bool
     {
         $status = pg_transaction_status($link);
         switch ($status) {
@@ -233,7 +249,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return array
      */
-    public function listTables($link)
+    public function listTables($link): array
     {
         $tables = [];
         $sql = 'SELECT tablename FROM pg_catalog.pg_tables'
@@ -254,7 +270,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function rollback($link)
+    public function rollback($link): bool
     {
         return $this->exec($link, 'ROLLBACK;');
     }
@@ -263,11 +279,11 @@ class PostgresqlEngine extends DataBaseEngine
      * Runs a SELECT SQL statement
      *
      * @param resource $link
-     * @param string   $sql
+     * @param string $sql
      *
      * @return array
      */
-    public function select($link, $sql)
+    public function select($link, $sql): array
     {
         $results = $this->runSql($link, $sql);
         return is_array($results) ? $results : [];
@@ -276,14 +292,14 @@ class PostgresqlEngine extends DataBaseEngine
     /**
      *
      * @param resource $link
-     * @param string   $tableName
-     * @param array    $fields
+     * @param string $tableName
+     * @param array $fields
      */
     public function updateSequence($link, $tableName, $fields)
     {
         foreach ($fields as $colName => $field) {
             /// serial type
-            if (stripos($field['default'], 'nextval(') !== false) {
+            if (!empty($field['default']) && stripos($field['default'], 'nextval(') !== false) {
                 $sql = "SELECT setval('" . $tableName . "_" . $colName . "_seq', (SELECT MAX(" . $colName . ") from " . $tableName . "));";
                 $this->exec($link, $sql);
             }
@@ -297,7 +313,7 @@ class PostgresqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function version($link)
+    public function version($link): string
     {
         return 'POSTGRESQL ' . pg_version($link)['server'];
     }
@@ -307,8 +323,8 @@ class PostgresqlEngine extends DataBaseEngine
      * or an empty array if it fails.
      *
      * @param resource $link
-     * @param string   $sql
-     * @param bool     $selectRows
+     * @param string $sql
+     * @param bool $selectRows
      *
      * @return array|bool
      */

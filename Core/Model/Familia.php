@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,18 +20,20 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
  * A family of products.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
-class Familia extends Base\ModelClass
+class Familia extends ModelClass
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Primary key.
@@ -41,21 +43,21 @@ class Familia extends Base\ModelClass
     public $codfamilia;
 
     /**
-     * Sub-account code for purchases.
+     * Account code for purchases.
      *
      * @var string
      */
     public $codsubcuentacom;
 
     /**
-     * Code for the shopping sub-account, but with IRPF.
+     * Code for the shopping account, but with IRPF.
      *
      * @var string
      */
     public $codsubcuentairpfcom;
 
     /**
-     * Sub-account code for sales.
+     * Account code for sales.
      *
      * @var string
      */
@@ -82,10 +84,49 @@ class Familia extends Base\ModelClass
      */
     public $numproductos;
 
+    public function changePrimaryColumnValue($newValue): bool
+    {
+        // nos guardamos las subfamilias
+        $subFamilias = $this->getSubFamilias();
+
+        // les quitamos la madre
+        foreach ($subFamilias as $subFamilia) {
+            $subFamilia->madre = null;
+            $subFamilia->save();
+        }
+
+        if (false === parent::changePrimaryColumnValue($newValue)) {
+            // les volvemos a poner la madre
+            foreach ($subFamilias as $subFamilia) {
+                $subFamilia->madre = $this->codfamilia;
+                $subFamilia->save();
+            }
+            return false;
+        }
+
+        // actualizamos las subfamilias
+        foreach ($subFamilias as $subFamilia) {
+            $subFamilia->madre = $newValue;
+            $subFamilia->save();
+        }
+
+        return true;
+    }
+
     public function clear()
     {
         parent::clear();
         $this->numproductos = 0;
+    }
+
+    /**
+     * @return static[]
+     */
+    public function getSubFamilias(): array
+    {
+        $where = [new DataBaseWhere('madre', $this->codfamilia)];
+        $orderBy = ['descripcion' => 'ASC'];
+        return $this->all($where, $orderBy, 0, 0);
     }
 
     public static function primaryColumn(): string
@@ -137,9 +178,9 @@ class Familia extends Base\ModelClass
     public function test(): bool
     {
         // comprobamos codfamilia
-        $this->codfamilia = self::toolBox()::utils()::noHtml($this->codfamilia);
+        $this->codfamilia = Tools::noHtml($this->codfamilia);
         if ($this->codfamilia && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codfamilia, '%column%' => 'codfamilia', '%min%' => '1', '%max%' => '8']
             );
@@ -147,9 +188,9 @@ class Familia extends Base\ModelClass
         }
 
         // comprobamos descripción
-        $this->descripcion = self::toolBox()::utils()::noHtml($this->descripcion);
+        $this->descripcion = Tools::noHtml($this->descripcion);
         if (empty($this->descripcion) || strlen($this->descripcion) > 100) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'invalid-column-lenght',
                 ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '100']
             );
@@ -159,7 +200,7 @@ class Familia extends Base\ModelClass
         return parent::test() && $this->testLoops() && $this->testAccounting();
     }
 
-    private static function getSubaccountFromFamily(?string $code, string $field, Familia $model = null): string
+    private static function getSubaccountFromFamily(?string $code, string $field, ?Familia $model = null): string
     {
         if (empty($code)) {
             return '';
@@ -190,25 +231,25 @@ class Familia extends Base\ModelClass
     protected function testAccounting(): bool
     {
         // comprobamos las subcuentas vinculadas
-        $subaccount = new DinSubcuenta();
+        $subAccount = new DinSubcuenta();
         if ($this->codsubcuentacom) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentacom)];
-            if (false === $subaccount->loadFromCode('', $where)) {
-                $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
+            if (false === $subAccount->loadFromCode('', $where)) {
+                Tools::log()->warning('purchases-subaccount-not-found');
                 return false;
             }
         }
         if (false === empty($this->codsubcuentairpfcom)) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentairpfcom)];
-            if (false === $subaccount->loadFromCode('', $where)) {
-                $this->toolBox()->i18nLog()->warning('irpf-subaccount-not-found');
+            if (false === $subAccount->loadFromCode('', $where)) {
+                Tools::log()->warning('irpf-subaccount-not-found');
                 return false;
             }
         }
         if (false === empty($this->codsubcuentaven)) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentaven)];
-            if (false === $subaccount->loadFromCode('', $where)) {
-                $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
+            if (false === $subAccount->loadFromCode('', $where)) {
+                Tools::log()->warning('sales-subaccount-not-found');
                 return false;
             }
         }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,10 +28,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class NumberFilter extends BaseFilter
 {
-
-    /**
-     * @var string
-     */
+    /** @var string */
     public $operation;
 
     /**
@@ -46,11 +43,6 @@ class NumberFilter extends BaseFilter
         $this->operation = $operation;
     }
 
-    /**
-     * @param array $where
-     *
-     * @return bool
-     */
     public function getDataBaseWhere(array &$where): bool
     {
         if ('' !== $this->value && null !== $this->value) {
@@ -61,21 +53,23 @@ class NumberFilter extends BaseFilter
         return false;
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
         return '<div class="col-sm-3 col-lg-2">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<div class="input-group" title="' . static::$i18n->trans($this->label) . '">'
-            . '<span class="input-group-prepend">'
-            . '<span class="input-group-text">' . $this->operation . '</span>'
+            . ''
+            . '<span class="input-group-text">' . $this->operation . ''
             . '</span>'
             . '<input type="text" name="' . $this->name() . '" value="' . $this->value . '" class="form-control" placeholder="'
             . static::$i18n->trans($this->label) . '" autocomplete="off"' . $this->onChange() . $this->readonly() . '/>'
             . '</div>'
             . '</div>'
             . '</div>';
+    }
+
+    public function setValue($value): void
+    {
+        parent::setValue(str_replace(',', '.', $value ?? ''));
     }
 }

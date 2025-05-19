@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,8 @@ namespace FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
 use FacturaScripts\Core\Base\DataBase\MysqlEngine;
 use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
+use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Tools;
 
 /**
  * Generic class of access to the database, either MySQL or PostgreSQL.
@@ -66,7 +68,7 @@ final class DataBase
      */
     public function __construct()
     {
-        if (self::$link === null) {
+        if (Tools::config('db_name') && self::$link === null) {
             self::$miniLog = new MiniLog(self::CHANNEL);
 
             switch (strtolower(FS_DB_TYPE)) {
@@ -94,6 +96,11 @@ final class DataBase
 
         self::$miniLog->debug('Begin Transaction');
         return self::$engine->beginTransaction(self::$link);
+    }
+
+    public function castInteger(string $col): string
+    {
+        return self::$engine->castInteger(self::$link, $col);
     }
 
     /**
@@ -208,11 +215,15 @@ final class DataBase
             $inTransaction = $this->inTransaction();
             $this->beginTransaction();
 
-            // adds the sql query to the history
-            self::$miniLog->debug($sql);
-
             // execute sql
+            $start = microtime(true);
             $result = self::$engine->exec(self::$link, $sql);
+            $stop = microtime(true);
+
+            // adds the sql query to the history
+            self::$miniLog->debug($sql, ['duration' => $stop - $start]);
+
+
             if (!$result) {
                 self::$miniLog->error(self::$engine->errorMessage(self::$link), ['sql' => $sql]);
             }
@@ -290,7 +301,7 @@ final class DataBase
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
         foreach ($data as $row) {
-            $result[] = ['name' => $row['Key_name']];
+            $result[] = ['name' => $row['Key_name'] ?? $row['key_name'] ?? ''];
         }
 
         return $result;
@@ -392,9 +403,13 @@ final class DataBase
             $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
         }
 
-        // add the sql query to the history
-        self::$miniLog->debug($sql);
+        $start = microtime(true);
         $result = self::$engine->select(self::$link, $sql);
+        $stop = microtime(true);
+
+        // add the sql query to the history
+        self::$miniLog->debug($sql, ['duration' => $stop - $start]);
+
         if (!empty($result)) {
             return $result;
         }
@@ -451,14 +466,30 @@ final class DataBase
             return $val ? 'TRUE' : 'FALSE';
         }
 
+        // If it's an array
+        if (is_array($val)) {
+            throw new KernelException('DatabaseError', 'Array not allowed in var2str function');
+        }
+
+        // If it's an object
+        if (is_object($val)) {
+            throw new KernelException('DatabaseError', 'Object not allowed in var2str function');
+        }
+
         // If it's a date
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
-            return "'" . date(self::$engine->dateStyle(), strtotime($val)) . "'";
+            $date = date(self::$engine->dateStyle(), strtotime($val));
+            return $date === '1970-01-01' ?
+                "'" . $this->escapeString($val) . "'" :
+                "'" . $date . "'";
         }
 
         // If it's a date time
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
-            return "'" . date(self::$engine->dateStyle() . ' H:i:s', strtotime($val)) . "'";
+            $date = date(self::$engine->dateStyle() . ' H:i:s', strtotime($val));
+            return $date === '1970-01-01 00:00:00' ?
+                "'" . $this->escapeString($val) . "'" :
+                "'" . $date . "'";
         }
 
         return "'" . $this->escapeString($val) . "'";

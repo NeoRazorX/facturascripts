@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -158,7 +159,12 @@ final class ProveedorTest extends TestCase
         $proveedor->nombre = 'Test';
         $proveedor->cifnif = '';
         $this->assertTrue($proveedor->save());
-        $this->assertFalse($proveedor->checkVies());
+
+        $check1 = $proveedor->checkVies();
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
+        $this->assertFalse($check1);
 
         // asignamos dirección de Italia
         $address = $proveedor->getDefaultAddress();
@@ -167,11 +173,19 @@ final class ProveedorTest extends TestCase
 
         // asignamos un cif/nif incorrecto
         $proveedor->cifnif = '12345678A';
-        $this->assertFalse($proveedor->checkVies());
+        $check2 = $proveedor->checkVies();
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
+        $this->assertFalse($check2);
 
         // asignamos un cif/nif correcto
         $proveedor->cifnif = '02839750995';
-        $this->assertTrue($proveedor->checkVies());
+        $check3 = $proveedor->checkVies();
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
+        $this->assertTrue($check3);
 
         // eliminamos
         $this->assertTrue($address->delete());

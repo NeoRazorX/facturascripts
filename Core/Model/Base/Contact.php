@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\FiscalNumberValidator;
 
 /**
@@ -110,9 +111,9 @@ abstract class Contact extends ModelClass
     public function clear()
     {
         parent::clear();
-        $this->fechaalta = date(self::DATE_STYLE);
+        $this->fechaalta = Tools::date();
         $this->personafisica = true;
-        $this->tipoidfiscal = $this->toolBox()->appSettings()->get('default', 'tipoidfiscal');
+        $this->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
     }
 
     /**
@@ -120,29 +121,28 @@ abstract class Contact extends ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->cifnif = $utils->noHtml($this->cifnif);
+        $this->cifnif = Tools::noHtml($this->cifnif);
         if ($this->email !== null) {
-            $this->email = $utils->noHtml(mb_strtolower($this->email, 'UTF8'));
+            $this->email = Tools::noHtml(mb_strtolower($this->email, 'UTF8'));
         }
-        $this->fax = $utils->noHtml($this->fax) ?? '';
-        $this->nombre = $utils->noHtml($this->nombre);
-        $this->observaciones = $utils->noHtml($this->observaciones) ?? '';
-        $this->telefono1 = $utils->noHtml($this->telefono1) ?? '';
-        $this->telefono2 = $utils->noHtml($this->telefono2) ?? '';
+        $this->fax = Tools::noHtml($this->fax) ?? '';
+        $this->nombre = Tools::noHtml($this->nombre);
+        $this->observaciones = Tools::noHtml($this->observaciones) ?? '';
+        $this->telefono1 = Tools::noHtml($this->telefono1) ?? '';
+        $this->telefono2 = Tools::noHtml($this->telefono2) ?? '';
 
         $validator = new FiscalNumberValidator();
         if (!empty($this->cifnif) && false === $validator->validate($this->tipoidfiscal, $this->cifnif)) {
-            $this->toolBox()->i18nLog()->warning('not-valid-fiscal-number', ['%type%' => $this->tipoidfiscal, '%number%' => $this->cifnif]);
+            Tools::log()->warning('not-valid-fiscal-number', ['%type%' => $this->tipoidfiscal, '%number%' => $this->cifnif]);
             return false;
         }
 
         if (empty($this->email)) {
             $this->email = '';
         } elseif (false === filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-            $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
+            Tools::log()->warning('not-valid-email', ['%email%' => $this->email]);
             $this->email = '';
             return false;
         }

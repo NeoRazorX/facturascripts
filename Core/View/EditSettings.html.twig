@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,12 +25,12 @@
         <div class="row">
             <div class="col-1">
                 <div class="btn-group">
-                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}" title="{{ i18n.trans('refresh') }}">
-                        <i class="fas fa-redo" aria-hidden="true"></i>
+                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}" title="{{ trans('refresh') }}">
+                        <i class="fa-solid fa-redo" aria-hidden="true"></i>
                     </a>
                 </div>
             </div>
-            <div class="col-11 text-right">
+            <div class="col-11 text-end">
                 <h1 class="h4">
                     {{ fsc.title }}
                     <i class="{{ pageData.icon }} fa-fw" aria-hidden="true"></i>

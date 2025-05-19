@@ -1,0 +1,88 @@
+<div id="messages-toasts" style="z-index: 9999; position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);"></div>
+
+<script>
+    function setToast(message, style = 'info', title = '', time = 10000) {
+        let icon = '';
+        let styleBorder = '';
+        let styleHeader = '';
+        let role = 'status';
+        let live = 'polite';
+        let delay = time > 0 ? 'data-delay="' + time + '"' : 'data-autohide="false"';
+
+        switch (style) {
+            case 'completed':
+                styleHeader = 'bg-success text-white';
+                styleBorder = 'border border-success';
+                icon = '<i class="fa-solid fa-check-circle me-1"></i>';
+                title = title !== '' ? title : '{{ trans('completed') }}';
+                break;
+
+            case 'critical':
+            case 'error':
+            case 'danger':
+                role = 'alert';
+                live = 'assertive';
+                styleHeader = 'bg-danger text-white';
+                styleBorder = 'border border-danger';
+                icon = '<i class="fa-solid fa-times-circle me-1"></i>';
+                title = title !== '' ? title : '{{ trans('common-error') }}';
+                break;
+
+            case 'info':
+                styleHeader = 'bg-info text-white';
+                styleBorder = 'border border-info';
+                icon = '<i class="fa-solid fa-info-circle me-1"></i>';
+                title = title !== '' ? title : '{{ trans('info') }}';
+                break;
+
+            case 'spinner':
+                styleHeader = 'bg-info text-white';
+                styleBorder = 'border border-info';
+                icon = '<i class="fa-solid fa-circle-notch fa-spin me-1"></i>';
+                title = title !== '' ? title : '{{ trans('processing') }}';
+                break;
+
+            case 'notice':
+            case 'success':
+                styleHeader = 'bg-success text-white';
+                styleBorder = 'border border-success';
+                icon = '<i class="fa-solid fa-check-circle me-1"></i>';
+                title = title !== '' ? title : '{{ trans('success') }}';
+                break;
+
+            case 'warning':
+                styleHeader = 'bg-warning';
+                styleBorder = 'border border-warning';
+                icon = '<i class="fa-solid fa-exclamation-circle me-1"></i>';
+                title = title !== '' ? title : '{{ trans('warning') }}';
+                break;
+        }
+
+        if (message === '') {
+            styleHeader += ' border-bottom-0';
+        }
+
+        let html = '<div class="toast toast-' + style + ' ' + styleBorder + '" style="margin: 15px auto 0 auto;" role="' + role + '" aria-live="' + live + '" aria-atomic="true" ' + delay + '>'
+            + '<div class="toast-header ' + styleHeader + '">'
+            + '<strong class="mr-auto">' + icon + title + '</strong>'
+            + '<button type="button" class="ms-4 btn btn-close ' + styleHeader + '" data-bs-dismiss="toast" aria-label="{{ trans('close') }}">'
+            + ''
+            + '</button>'
+            + '</div>';
+
+            if (message !== '') {
+                html += '<div class="toast-body">' + message + '</div>';
+            }
+
+            html += '</div>';
+
+        // eliminamos los toast con la clase hide
+        $('#messages-toasts .toast.hide').remove();
+
+        // agregamos el toast al div
+        $('#messages-toasts').append(html);
+
+        // mostramos los toast
+        $('#messages-toasts .toast').toast('show');
+    }
+</script>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,11 +24,12 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class DocumentStitcher
@@ -55,9 +56,11 @@ class DocumentStitcher extends Controller
     public function getAvailableStatus(): array
     {
         $status = [];
-        $documentState = new EstadoDocumento();
-        $where = [new DataBaseWhere('tipodoc', $this->modelName)];
-        foreach ($documentState->all($where) as $docState) {
+        $where = [
+            new DataBaseWhere('activo', true),
+            new DataBaseWhere('tipodoc', $this->modelName)
+        ];
+        foreach (EstadoDocumento::all($where) as $docState) {
             if ($docState->generadoc) {
                 $status[] = $docState;
             }
@@ -70,9 +73,9 @@ class DocumentStitcher extends Controller
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
-        $data['showonmenu'] = false;
         $data['title'] = 'group-or-split';
-        $data['icon'] = 'fas fa-magic';
+        $data['icon'] = 'fa-solid fa-wand-magic-sparkles';
+        $data['showonmenu'] = false;
         return $data;
     }
 
@@ -91,6 +94,7 @@ class DocumentStitcher extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
 
@@ -107,14 +111,20 @@ class DocumentStitcher extends Controller
             return;
         }
 
-        $status = (int)$this->request->request->get('status', '');
-        if ($status) {
+        $statusCode = $this->request->request->get('status', '');
+        if ($statusCode) {
             // validate form request?
             if (false === $this->validateFormToken()) {
                 return;
             }
 
-            $this->generateNewDocument($status);
+            // si el $statusCode empieza por close:, cerramos
+            if (0 === strpos($statusCode, 'close:')) {
+                $status = substr($statusCode, 6);
+                $this->closeDocuments((int)$status);
+            } else {
+                $this->generateNewDocument((int)$statusCode);
+            }
         }
     }
 
@@ -129,6 +139,8 @@ class DocumentStitcher extends Controller
             'mostrar_cantidad' => false,
             'mostrar_precio' => false
         ]);
+
+        $this->pipe('addBlankLine', $blankLine);
         $newLines[] = $blankLine;
     }
 
@@ -146,7 +158,7 @@ class DocumentStitcher extends Controller
                 $doc->dtopor1 != $newDoc->dtopor1 ||
                 $doc->dtopor2 != $newDoc->dtopor2 ||
                 $doc->subjectColumnValue() != $newDoc->subjectColumnValue()) {
-                $this->toolBox()->i18nLog()->warning('incompatible-document', ['%code%' => $newDoc->codigo]);
+                Tools::log()->warning('incompatible-document', ['%code%' => $newDoc->codigo]);
                 return false;
             }
         }
@@ -167,6 +179,7 @@ class DocumentStitcher extends Controller
             'mostrar_cantidad' => false,
             'mostrar_precio' => false
         ]);
+        $this->pipe('addInfoLine', $infoLine);
         $newLines[] = $infoLine;
     }
 
@@ -191,6 +204,7 @@ class DocumentStitcher extends Controller
                 $full = false;
             }
 
+            $this->pipe('breakDownLines', $line);
             $newLines[] = $line;
         }
 
@@ -199,7 +213,7 @@ class DocumentStitcher extends Controller
             $doc->idestado = $idestado;
             if (false === $doc->save()) {
                 $this->dataBase->rollback();
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 return;
             }
         }
@@ -209,10 +223,28 @@ class DocumentStitcher extends Controller
             $line->servido += $quantities[$line->primaryColumnValue()];
             if (false === $line->save()) {
                 $this->dataBase->rollback();
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                Tools::log()->error('record-save-error');
                 return;
             }
         }
+    }
+
+    protected function closeDocuments(int $idestado): void
+    {
+        $this->dataBase->beginTransaction();
+
+        foreach ($this->documents as $doc) {
+            $doc->setDocumentGeneration(false);
+            $doc->idestado = $idestado;
+            if (false === $doc->save()) {
+                $this->dataBase->rollback();
+                Tools::log()->error('record-save-error');
+                return;
+            }
+        }
+
+        $this->dataBase->commit();
+        Tools::log()->notice('record-updated-correctly');
     }
 
     /**
@@ -268,7 +300,7 @@ class DocumentStitcher extends Controller
 
         if (false === $generator->generate($prototype, $newClass, $newLines, $quantities, $properties)) {
             $this->dataBase->rollback();
-            $this->toolBox()->i18nLog()->error('record-save-error');
+            Tools::log()->error('record-save-error');
             return;
         }
 
@@ -277,7 +309,7 @@ class DocumentStitcher extends Controller
         // redirect to the new document
         foreach ($generator->getLastDocs() as $doc) {
             $this->redirect($doc->url());
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
             break;
         }
     }
@@ -289,13 +321,13 @@ class DocumentStitcher extends Controller
      */
     protected function getCodes(): array
     {
-        $code = $this->request->request->get('code', []);
-        if ($code) {
-            return $code;
+        $codes = $this->request->request->getArray('codes');
+        if ($codes) {
+            return $codes;
         }
 
         $codes = explode(',', $this->request->get('codes', ''));
-        $newcodes = $this->request->get('newcodes', []);
+        $newcodes = $this->request->getArray('newcodes');
         return empty($newcodes) ? $codes : array_merge($codes, $newcodes);
     }
 
@@ -306,7 +338,7 @@ class DocumentStitcher extends Controller
      */
     protected function getDocInfoLineDescription($doc): string
     {
-        $description = $this->toolBox()->i18n()->trans($doc->modelClassName() . '-min') . ' ' . $doc->codigo;
+        $description = Tools::lang()->trans($doc->modelClassName() . '-min') . ' ' . $doc->codigo;
 
         if (isset($doc->numero2) && $doc->numero2) {
             $description .= ' (' . $doc->numero2 . ')';
@@ -381,9 +413,13 @@ class DocumentStitcher extends Controller
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         $model = new $modelClass();
         $where = [
-            new DataBaseWhere('editable', true),
             new DataBaseWhere('codalmacen', $this->documents[0]->codalmacen),
             new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa),
+            new DataBaseWhere('codserie', $this->documents[0]->codserie),
+            new DataBaseWhere('dtopor1', $this->documents[0]->dtopor1),
+            new DataBaseWhere('dtopor2', $this->documents[0]->dtopor2),
+            new DataBaseWhere('editable', true),
+            new DataBaseWhere('idempresa', $this->documents[0]->idempresa),
             new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
         ];
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];

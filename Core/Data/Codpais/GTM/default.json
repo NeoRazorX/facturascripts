@@ -1,10 +1,12 @@
 {
     "default": {
         "coddivisa": "GTQ",
+        "codimpuesto": "IVA_GEN",
         "codpago": "CONT",
         "codserie": "A",
         "codserierec": "R",
         "tipoidfiscal": "DPI",
+        "updatesupplierprices": true,
         "validate_iban": false
     },
     "email": {

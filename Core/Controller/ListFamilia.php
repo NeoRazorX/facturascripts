@@ -34,7 +34,7 @@ class ListFamilia extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'families';
-        $data['icon'] = 'fas fa-sitemap';
+        $data['icon'] = 'fa-solid fa-sitemap';
         return $data;
     }
 
@@ -44,12 +44,12 @@ class ListFamilia extends ListController
     protected function createViews()
     {
         $viewName = 'ListFamilia';
-        $this->addView($viewName, 'Familia', 'families', 'fas fa-sitemap');
-        $this->addSearchFields($viewName, ['descripcion', 'codfamilia', 'madre']);
-        $this->addOrderBy($viewName, ['codfamilia'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
-        $this->addOrderBy($viewName, ['madre'], 'parent');
-        $this->addOrderBy($viewName, ['numproductos'], 'products');
+        $this->addView($viewName, 'Familia', 'families', 'fa-solid fa-sitemap')
+            ->addSearchFields(['descripcion', 'codfamilia', 'madre'])
+            ->addOrderBy(['codfamilia'], 'code')
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['madre'], 'parent')
+            ->addOrderBy(['numproductos'], 'products');
 
         $selectValues = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $this->addFilterSelect($viewName, 'madre', 'parent', 'madre', $selectValues);

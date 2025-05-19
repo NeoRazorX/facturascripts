@@ -19,17 +19,20 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of PurchasesFooterHTML
  *
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Daniel Fernández Giménez      <hola@danielfg.es>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/PurchasesFooterHTML
  */
 class PurchasesFooterHTML
 {
@@ -50,7 +53,7 @@ class PurchasesFooterHTML
             $mod->applyBefore($model, $formData, $user);
         }
 
-        self::$columnView = $formData['columnView'] ?? AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+        self::$columnView = $formData['columnView'] ?? Tools::settings('default', 'columnetosubtotal', 'subtotal');
 
         $model->dtopor1 = isset($formData['dtopor1']) ? (float)$formData['dtopor1'] : $model->dtopor1;
         $model->dtopor2 = isset($formData['dtopor2']) ? (float)$formData['dtopor2'] : $model->dtopor2;
@@ -73,7 +76,7 @@ class PurchasesFooterHTML
     public static function render(PurchaseDocument $model): string
     {
         if (empty(self::$columnView)) {
-            self::$columnView = AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+            self::$columnView = Tools::settings('default', 'columnetosubtotal', 'subtotal');
         }
 
         if (empty($model->codproveedor)) {
@@ -102,9 +105,53 @@ class PurchasesFooterHTML
             . self::renderField($i18n, $model, 'total')
             . '</div>'
             . '<div class="form-row">'
-            . '<div class="col">' . self::renderField($i18n, $model, '_deleteBtn') . '</div>'
-            . '<div class="col-auto">' . self::renderField($i18n, $model, '_undoBtn') . '</div>'
-            . '<div class="col-auto">' . self::renderField($i18n, $model, '_saveBtn') . '</div>'
+            . '<div class="col-auto">'
+            . self::renderField($i18n, $model, '_deleteBtn')
+            . '</div>'
+            . '<div class="col text-right">'
+            . self::renderNewBtnFields($i18n, $model)
+            . self::renderField($i18n, $model, '_modalFooter')
+            . self::renderField($i18n, $model, '_undoBtn')
+            . self::renderField($i18n, $model, '_saveBtn')
+            . '</div>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function modalFooter(Translator $i18n, PurchaseDocument $model): string
+    {
+        $htmlModal = self::renderNewModalFields($i18n, $model);
+
+        if (empty($htmlModal)) {
+            return '';
+        }
+
+        return '<button class="btn btn-outline-secondary mr-2" type="button" data-toggle="modal" data-target="#footerModal">'
+            . '<i class="fas fa-plus fa-fw" aria-hidden="true"></i></button>'
+            . self::modalFooterHtml($i18n, $htmlModal);
+    }
+
+    private static function modalFooterHtml(Translator $i18n, string $htmlModal): string
+    {
+        return '<div class="modal fade" id="footerModal" tabindex="-1" aria-labelledby="footerModalLabel" aria-hidden="true">'
+            . '<div class="modal-dialog modal-dialog-centered modal-lg">'
+            . '<div class="modal-content">'
+            . '<div class="modal-header">'
+            . '<h5 class="modal-title">' . $i18n->trans('detail') . ' ' . $i18n->trans('footer') . '</h5>'
+            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+            . '<span aria-hidden="true">&times;</span>'
+            . '</button>'
+            . '</div>'
+            . '<div class="modal-body">'
+            . '<div class="form-row">'
+            . $htmlModal
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer">'
+            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
+            . '</div>'
+            . '</div>'
             . '</div>'
             . '</div>';
     }
@@ -124,6 +171,9 @@ class PurchasesFooterHTML
 
             case '_fastLineInput':
                 return self::fastLineInput($i18n, $model, 'purchasesFastLine');
+
+            case '_modalFooter':
+                return self::modalFooter($i18n, $model);
 
             case '_newLineBtn':
                 return self::newLineBtn($i18n, $model, 'purchasesFormAction');
@@ -174,6 +224,32 @@ class PurchasesFooterHTML
         return null;
     }
 
+    private static function renderNewBtnFields(Translator $i18n, PurchaseDocument $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newBtnFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
+    }
+
     private static function renderNewFields(Translator $i18n, PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
@@ -197,6 +273,33 @@ class PurchasesFooterHTML
                 }
             }
         }
+        return $html;
+    }
+
+    private static function renderNewModalFields(Translator $i18n, PurchaseDocument $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newModalFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+
         return $html;
     }
 }

@@ -23,6 +23,7 @@ namespace FacturaScripts\Core\Base;
  * NumberTools give us some basic and common methods for numbers.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @deprecated since 2024.8, use Tools::number() instead.
  */
 class NumberTools
 {

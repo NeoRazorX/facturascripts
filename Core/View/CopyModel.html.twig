@@ -5,26 +5,24 @@
         <div class="row">
             <div class="col">
                 <h1 class="h3">
-                    <i class="fas fa-cut"></i> {{ fsc.title }}
+                    <i class="fa-solid fa-cut me-2"></i> {{ fsc.title }}
                 </h1>
                 <p>{{ trans('copy-p') }}</p>
-                <form method="post">
+                <form method="post" onsubmit="animateSpinner('add')">
                     {{ formToken() }}
                     <input type="hidden" name="action" value="save"/>
                     <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
                     <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
                     <div class="card shadow mb-4">
                         <div class="card-body">
-                            <div class="form-row">
+                            <div class="row g-2">
                                 {% if fsc.model.codcliente %}
                                     <div class="col-sm">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    <i class="fas fa-search"></i>
+                                                    <i class="fa-solid fa-search"></i>
                                                 </span>
-                                                </div>
                                                 <input type="hidden" id="codclienteAutocomplete" name="codcliente"
                                                        value="{{ fsc.model.codcliente }}"/>
                                                 <input type="text" id="codcliente"
@@ -38,13 +36,11 @@
                                     </div>
                                 {% elseif fsc.model.codproveedor %}
                                     <div class="col-sm">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    <i class="fas fa-search"></i>
+                                                    <i class="fa-solid fa-search"></i>
                                                 </span>
-                                                </div>
                                                 <input type="hidden" id="codproveedorAutocomplete" name="codproveedor"
                                                        value="{{ fsc.model.codproveedor }}"/>
                                                 <input type="text" id="codproveedor"
@@ -58,26 +54,24 @@
                                     </div>
                                 {% endif %}
                                 <div class="col-sm">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <input type="date" name="fecha" value="{{ "now" | date('Y-m-d') }}"
-                                               class="form-control" required=""/>
+                                               class="form-control" required/>
                                     </div>
                                 </div>
                                 <div class="col-sm">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <input type="time" name="hora" value="{{ "now" | date('H:i:s') }}"
-                                               class="form-control" required=""/>
+                                               class="form-control" required/>
                                     </div>
                                 </div>
                                 {% if fsc.model.codcliente %}
                                     <div class="col-sm">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    <i class="fas fa-hashtag"></i>
+                                                    <i class="fa-solid fa-hashtag"></i>
                                                 </span>
-                                                </div>
                                                 <input type="text" name="numero2" class="form-control"
                                                        placeholder="{{ trans('number2') }}"/>
                                             </div>
@@ -85,13 +79,11 @@
                                     </div>
                                 {% elseif fsc.model.codproveedor %}
                                     <div class="col-sm">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    <i class="fas fa-hashtag"></i>
+                                                    <i class="fa-solid fa-hashtag"></i>
                                                 </span>
-                                                </div>
                                                 <input type="text" name="numproveedor" class="form-control"
                                                        placeholder="{{ trans('numsupplier') }}"/>
                                             </div>
@@ -106,10 +98,10 @@
                                 <tr>
                                     <th>{{ trans('reference') }}</th>
                                     <th>{{ trans('description') }}</th>
-                                    <th class="text-right">{{ trans('quantity') }}</th>
-                                    <th class="text-right">{{ trans('price') }}</th>
-                                    <th class="text-right">{{ trans('dto') }}</th>
-                                    <th class="text-right">{{ trans('dto-2') }}</th>
+                                    <th class="text-end">{{ trans('quantity') }}</th>
+                                    <th class="text-end">{{ trans('price') }}</th>
+                                    <th class="text-end">{{ trans('dto') }}</th>
+                                    <th class="text-end">{{ trans('dto-2') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -117,30 +109,24 @@
                                     <tr>
                                         <td>{{ line.referencia }}</td>
                                         <td>{{ line.descripcion | raw | nl2br }}</td>
-                                        <td class="text-right">{{ line.cantidad }}</td>
-                                        <td class="text-right">
-                                            {{ fsc.toolBox().numbers().format(line.pvpunitario) }}
-                                        </td>
-                                        <td class="text-right">
-                                            {{ fsc.toolBox().numbers().format(line.dtopor) }}%
-                                        </td>
-                                        <td class="text-right">
-                                            {{ fsc.toolBox().numbers().format(line.dtopor2) }}%
-                                        </td>
+                                        <td class="text-end">{{ line.cantidad }}</td>
+                                        <td class="text-end">{{ number(line.pvpunitario) }}</td>
+                                        <td class="text-end">{{ number(line.dtopor) }}%</td>
+                                        <td class="text-end">{{ number(line.dtopor2) }}%</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                         <div class="card-body">
-                            <div class="form-row">
+                            <div class="row g-2">
                                 <div class="col-sm">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ trans('warehouse') }}
-                                        <select name="codalmacen" class="form-control" required="">
+                                        <select name="codalmacen" class="form-select" required>
                                             {% for item in fsc.codeModel.all('almacenes', 'codalmacen', 'nombre', false) %}
                                                 {% if item.code == fsc.model.codalmacen %}
-                                                    <option value="{{ item.code }}" selected="">
+                                                    <option value="{{ item.code }}" selected>
                                                         {{ item.description }}
                                                     </option>
                                                 {% else %}
@@ -153,12 +139,12 @@
                                     </div>
                                 </div>
                                 <div class="col-sm">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ trans('serie') }}
-                                        <select name="codserie" class="form-control" required="">
+                                        <select name="codserie" class="form-select" required>
                                             {% for item in fsc.codeModel.all('series', 'codserie', 'descripcion', false) %}
                                                 {% if item.code == fsc.model.codserie %}
-                                                    <option value="{{ item.code }}" selected="">
+                                                    <option value="{{ item.code }}" selected>
                                                         {{ item.description }}
                                                     </option>
                                                 {% else %}
@@ -171,12 +157,12 @@
                                     </div>
                                 </div>
                                 <div class="col-sm">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ trans('payment-method') }}
-                                        <select name="codpago" class="form-control" required="">
+                                        <select name="codpago" class="form-select" required>
                                             {% for item in fsc.codeModel.all('formaspago', 'codpago', 'descripcion', false) %}
                                                 {% if item.code == fsc.model.codpago %}
-                                                    <option value="{{ item.code }}" selected="">
+                                                    <option value="{{ item.code }}" selected>
                                                         {{ item.description }}
                                                     </option>
                                                 {% else %}
@@ -189,28 +175,24 @@
                                     </div>
                                 </div>
                                 <div class="col-sm">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ trans('global-dto') }}
                                         <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fas fa-percentage"></i>
+                                            <span class="input-group-text">
+                                                    <i class="fa-solid fa-percentage"></i>
                                                 </span>
-                                            </div>
                                             <input type="number" max="100" min="0" step="any" name="dtopor1"
                                                    class="form-control" value="{{ fsc.model.dtopor1 }}"/>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ trans('global-dto-2') }}
                                         <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fas fa-percentage"></i>
+                                            <span class="input-group-text">
+                                                    <i class="fa-solid fa-percentage"></i>
                                                 </span>
-                                            </div>
                                             <input type="number" max="100" min="0" step="any" name="dtopor2"
                                                    class="form-control" value="{{ fsc.model.dtopor2 }}"/>
                                         </div>
@@ -224,10 +206,17 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <div class="text-right">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> {{ trans('save') }}
-                                </button>
+                            <div class="row">
+                                <div class="col">
+                                    <a href="{{ asset(fsc.model.url()) }}" class="btn btn-spin-action btn-secondary">
+                                        <i class="fa-solid fa-arrow-left me-1"></i> {{ trans('back') }}
+                                    </a>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-spin-action btn-primary">
+                                        <i class="fa-solid fa-save me-1"></i> {{ trans('save') }}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,13 +30,12 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  */
 class ListUser extends ListController
 {
-
     public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'users';
-        $data['icon'] = 'fas fa-users';
+        $data['icon'] = 'fa-solid fa-users';
         return $data;
     }
 
@@ -49,23 +48,25 @@ class ListUser extends ListController
         $this->createViewsRoles();
     }
 
-    protected function createViewsRoles(string $viewName = 'ListRole')
+    protected function createViewsRoles(string $viewName = 'ListRole'): void
     {
-        $this->addView($viewName, 'Role', 'roles', 'fas fa-address-card');
-        $this->addSearchFields($viewName, ['codrole', 'descripcion']);
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
-        $this->addOrderBy($viewName, ['codrole'], 'code');
+        $this->addView($viewName, 'Role', 'roles', 'fa-solid fa-address-card')
+            ->addSearchFields(['codrole', 'descripcion'])
+            ->addOrderBy(['descripcion'], 'description')
+            ->addOrderBy(['codrole'], 'code');
     }
 
-    protected function createViewsUsers(string $viewName = 'ListUser')
+    protected function createViewsUsers(string $viewName = 'ListUser'): void
     {
-        $this->addView($viewName, 'User', 'users', 'fas fa-users');
-        $this->addSearchFields($viewName, ['nick', 'email']);
-        $this->addOrderBy($viewName, ['nick'], 'nick', 1);
-        $this->addOrderBy($viewName, ['email'], 'email');
+        $this->addView($viewName, 'User', 'users', 'fa-solid fa-users')
+            ->addSearchFields(['nick', 'email'])
+            ->addOrderBy(['nick'], 'nick', 1)
+            ->addOrderBy(['email'], 'email');
+
         if ($this->user->admin) {
             $this->addOrderBy($viewName, ['level'], 'level');
         }
+
         $this->addOrderBy($viewName, ['creationdate'], 'creation-date');
         $this->addOrderBy($viewName, ['lastactivity'], 'last-activity');
 

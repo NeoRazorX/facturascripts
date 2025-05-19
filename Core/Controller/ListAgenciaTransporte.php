@@ -34,7 +34,7 @@ class ListAgenciaTransporte extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'carriers';
-        $data['icon'] = 'fas fa-truck';
+        $data['icon'] = 'fa-solid fa-truck';
         return $data;
     }
 
@@ -43,11 +43,10 @@ class ListAgenciaTransporte extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAgenciaTransporte', 'AgenciaTransporte', 'carriers', 'fas fa-truck');
-        $this->addSearchFields('ListAgenciaTransporte', ['nombre', 'web', 'codtrans']);
-        $this->addOrderBy('ListAgenciaTransporte', ['codtrans'], 'code');
-        $this->addOrderBy('ListAgenciaTransporte', ['nombre'], 'name');
-
-        $this->addFilterCheckbox('ListAgenciaTransporte', 'activo', 'active', 'activo');
+        $this->addView('ListAgenciaTransporte', 'AgenciaTransporte', 'carriers', 'fa-solid fa-truck')
+            ->addSearchFields(['nombre', 'web', 'codtrans'])
+            ->addOrderBy(['codtrans'], 'code')
+            ->addOrderBy(['nombre'], 'name')
+            ->addFilterCheckbox('activo', 'active', 'activo');
     }
 }

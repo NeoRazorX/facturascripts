@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
@@ -43,7 +44,7 @@ class EditEmpresa extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'company';
-        $data['icon'] = 'fas fa-building';
+        $data['icon'] = 'fa-solid fa-building';
         return $data;
     }
 
@@ -54,7 +55,10 @@ class EditEmpresa extends EditController
             return true;
         }
 
-        $model->checkVies();
+        if ($model->checkVies()) {
+            Tools::log()->notice('vies-check-success', ['%vat-number%' => $model->cifnif]);
+        }
+
         return true;
     }
 
@@ -67,28 +71,28 @@ class EditEmpresa extends EditController
         $this->createViewExercises();
     }
 
-    protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco')
+    protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco'): void
     {
-        $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fa-solid fa-piggy-bank')
+            ->disableColumn('company');
     }
 
-    protected function createViewExercises(string $viewName = 'ListEjercicio')
+    protected function createViewExercises(string $viewName = 'ListEjercicio'): void
     {
-        $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'Ejercicio', 'exercises', 'fa-solid fa-calendar-alt')
+            ->disableColumn('company');
     }
 
-    protected function createViewPaymentMethods(string $viewName = 'ListFormaPago')
+    protected function createViewPaymentMethods(string $viewName = 'ListFormaPago'): void
     {
-        $this->addListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'FormaPago', 'payment-method', 'fa-solid fa-credit-card')
+            ->disableColumn('company');
     }
 
-    protected function createViewWarehouse(string $viewName = 'EditAlmacen')
+    protected function createViewWarehouse(string $viewName = 'EditAlmacen'): void
     {
-        $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse');
-        $this->views[$viewName]->disableColumn('company');
+        $this->addListView($viewName, 'Almacen', 'warehouses', 'fa-solid fa-warehouse')
+            ->disableColumn('company');
     }
 
     protected function execPreviousAction($action): bool
@@ -125,13 +129,12 @@ class EditEmpresa extends EditController
             case $mvn:
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($view);
-                if ($view->model->exists()) {
+                if ($view->model->exists() && $view->model->cifnif) {
                     $this->addButton($viewName, [
                         'action' => 'check-vies',
                         'color' => 'info',
-                        'icon' => 'fas fa-check-double',
-                        'label' => 'check-vies',
-                        'type' => 'action'
+                        'icon' => 'fa-solid fa-check-double',
+                        'label' => 'check-vies'
                     ]);
                 }
                 break;
@@ -142,7 +145,7 @@ class EditEmpresa extends EditController
         }
     }
 
-    protected function setCustomWidgetValues(BaseView &$view)
+    protected function setCustomWidgetValues(BaseView &$view): void
     {
         $columnVATType = $view->columnForName('vat-regime');
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {
@@ -152,14 +155,6 @@ class EditEmpresa extends EditController
         $columnVATException = $view->columnForName('vat-exception');
         if ($columnVATException && $columnVATException->widget->getType() === 'select') {
             $columnVATException->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
-        }
-
-        $columnLogo = $view->columnForName('logo');
-        if ($columnLogo && $columnLogo->widget->getType() === 'select') {
-            $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
-                new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
-            ]);
-            $columnLogo->widget->setValuesFromCodeModel($images);
         }
     }
 }

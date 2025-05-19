@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,8 @@
 
 namespace FacturaScripts\Core;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
@@ -32,10 +31,13 @@ use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 
 /**
+ * Una clase para renderizar plantillas HTML con Twig.
+ *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
@@ -82,8 +84,8 @@ final class Html
     public static function render(string $template, array $params = []): string
     {
         $templateVars = [
-            'appSettings' => new AppSettings(),
             'assetManager' => new AssetManager(),
+            'debugBarRender' => Tools::config('debug') ? new DebugBar() : false,
             'i18n' => new Translator(),
             'log' => new MiniLog()
         ];
@@ -93,6 +95,10 @@ final class Html
     private static function assetFunction(): TwigFunction
     {
         return new TwigFunction('asset', function ($string) {
+            if (null === $string) {
+                return '';
+            }
+
             $path = FS_ROUTE . '/';
             return substr($string, 0, strlen($path)) == $path ?
                 $string :
@@ -127,6 +133,13 @@ final class Html
             }
 
             return $default;
+        });
+    }
+
+    private static function executionTimeFunction(): TwigFunction
+    {
+        return new TwigFunction('executionTime', function () {
+            return Kernel::getExecutionTime();
         });
     }
 
@@ -258,15 +271,15 @@ final class Html
     {
         return new TwigFunction('money', function (?float $number, string $coddivisa = '') {
             if (empty($coddivisa)) {
-                $coddivisa = AppSettings::get('default', 'coddivisa');
+                $coddivisa = Tools::settings('default', 'coddivisa');
             }
 
             // cargamos la configuración de divisas
             $symbol = Divisas::get($coddivisa)->simbolo;
-            $decimals = AppSettings::get('default', 'decimals');
-            $decimalSeparator = AppSettings::get('default', 'decimal_separator');
-            $thousandsSeparator = AppSettings::get('default', 'thousands_separator');
-            $currencyPosition = AppSettings::get('default', 'currency_position');
+            $decimals = Tools::settings('default', 'decimals');
+            $decimalSeparator = Tools::settings('default', 'decimal_separator');
+            $thousandsSeparator = Tools::settings('default', 'thousands_separator');
+            $currencyPosition = Tools::settings('default', 'currency_position');
 
             return $currencyPosition === 'right' ?
                 number_format($number, $decimals, $decimalSeparator, $thousandsSeparator) . ' ' . $symbol :
@@ -285,12 +298,12 @@ final class Html
     {
         return new TwigFunction('number', function (?float $number, ?int $decimals = null) {
             if ($decimals === null) {
-                $decimals = AppSettings::get('default', 'decimals');
+                $decimals = Tools::settings('default', 'decimals');
             }
 
             // cargamos la configuración
-            $decimalSeparator = AppSettings::get('default', 'decimal_separator');
-            $thousandsSeparator = AppSettings::get('default', 'thousands_separator');
+            $decimalSeparator = Tools::settings('default', 'decimal_separator');
+            $thousandsSeparator = Tools::settings('default', 'thousands_separator');
 
             return number_format($number, $decimals, $decimalSeparator, $thousandsSeparator);
         });
@@ -299,7 +312,7 @@ final class Html
     private static function settingsFunction(): TwigFunction
     {
         return new TwigFunction('settings', function (string $group, string $property, $default = null) {
-            return AppSettings::get($group, $property, $default);
+            return Tools::settings($group, $property, $default);
         });
     }
 
@@ -350,11 +363,16 @@ final class Html
         }
         self::$twig = new Environment(self::$loader, $options);
 
+        if (FS_DEBUG) {
+            self::$twig->addExtension(new DebugExtension());
+        }
+
         // cargamos las funciones de twig
         self::$twig->addFunction(self::assetFunction());
         self::$twig->addFunction(self::attachedFileFunction());
         self::$twig->addFunction(self::cacheFunction());
         self::$twig->addFunction(self::configFunction());
+        self::$twig->addFunction(self::executionTimeFunction());
         self::$twig->addFunction(self::fixHtmlFunction());
         self::$twig->addFunction(self::formTokenFunction());
         self::$twig->addFunction(self::getIncludeViews());

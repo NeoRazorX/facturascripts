@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,15 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\AjaxForms\AccountingFooterHTML;
-use FacturaScripts\Core\Base\AjaxForms\AccountingHeaderHTML;
-use FacturaScripts\Core\Base\AjaxForms\AccountingLineHTML;
-use FacturaScripts\Core\Base\AjaxForms\AccountingModalHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingFooterHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingHeaderHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingLineHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingModalHTML;
 use FacturaScripts\Core\Lib\Export\AsientoExport;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExtendedController\PanelController;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -83,7 +84,7 @@ class EditAsiento extends PanelController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'accounting-entry';
-        $data['icon'] = 'fas fa-balance-scale';
+        $data['icon'] = 'fa-solid fa-balance-scale';
         $data['showonmenu'] = false;
         return $data;
     }
@@ -144,16 +145,16 @@ class EditAsiento extends PanelController
             static::MAIN_VIEW_TEMPLATE,
             $this->getModelClassName(),
             'accounting-entry',
-            'fas fa-balance-scale'
+            'fa-solid fa-balance-scale'
         );
 
         // activamos el botón de imprimir
         $this->setSettings(static::MAIN_VIEW_NAME, 'btnPrint', true);
 
         // cargamos css y javascript
-        AssetManager::add('css', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
-        AssetManager::add('js', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
+        AssetManager::addCss(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
+        AssetManager::addJs(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
     }
 
     /**
@@ -165,7 +166,7 @@ class EditAsiento extends PanelController
     {
         $this->setTemplate(false);
         if (false === $this->permissions->allowDelete) {
-            self::toolBox()::i18nLog()->warning('not-allowed-delete');
+            Tools::log()->warning('not-allowed-delete');
             return $this->sendJsonError();
         } elseif (false === $this->validateFileActionToken()) {
             return $this->sendJsonError();
@@ -228,9 +229,8 @@ class EditAsiento extends PanelController
 
     protected function exportAction()
     {
-        if (false === $this->views[$this->active]->settings['btnPrint']
-            || false === $this->permissions->allowExport) {
-            $this->toolBox()->i18nLog()->warning('no-print-permission');
+        if (false === $this->views[$this->active]->settings['btnPrint'] || false === $this->permissions->allowExport) {
+            Tools::log()->warning('no-print-permission');
             return;
         }
 
@@ -261,7 +261,7 @@ class EditAsiento extends PanelController
             'lines' => '',
             'footer' => '',
             'list' => AccountingModalHTML::renderSubaccountList($model),
-            'messages' => self::toolBox()::log()::read('', $this->logLevels)
+            'messages' => Tools::log()::read('', $this->logLevels)
         ];
         $this->response->setContent(json_encode($content));
         return false;
@@ -297,20 +297,20 @@ class EditAsiento extends PanelController
                 $view->loadData($code);
                 $action = $this->request->request->get('action', '');
                 if ('' === $action && false === $view->model->exists()) {
-                    $this->toolBox()->i18nLog()->warning('record-not-found');
+                    Tools::log()->warning('record-not-found');
                     break;
                 }
 
                 // unbalanced?
                 if (false === $view->model->isBalanced()) {
-                    $this->toolBox()->i18nLog()->warning('unbalanced-entry');
+                    Tools::log()->warning('unbalanced-entry');
                     break;
                 }
 
                 $this->title .= ' ' . $view->model->primaryDescription();
                 $this->addButton($viewName, [
                     'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
-                    'icon' => 'fas fa-cut',
+                    'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',
                     'type' => 'link'
                 ]);
@@ -337,7 +337,7 @@ class EditAsiento extends PanelController
             'lines' => $renderLines ? AccountingLineHTML::render($lines, $model) : '',
             'footer' => AccountingFooterHTML::render($model),
             'list' => '',
-            'messages' => self::toolBox()::log()::read('', $this->logLevels)
+            'messages' => Tools::log()::read('', $this->logLevels)
         ];
         $this->response->setContent(json_encode($content));
         return false;
@@ -352,7 +352,7 @@ class EditAsiento extends PanelController
     {
         $this->setTemplate(false);
         if (false === $this->permissions->allowUpdate) {
-            self::toolBox()::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return $this->sendJsonError();
         }
 
@@ -388,7 +388,7 @@ class EditAsiento extends PanelController
 
     protected function sendJsonError(): bool
     {
-        $this->response->setContent(json_encode(['ok' => false, 'messages' => self::toolBox()::log()::read('', $this->logLevels)]));
+        $this->response->setContent(json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]));
         return false;
     }
 
@@ -396,7 +396,7 @@ class EditAsiento extends PanelController
     {
         $this->setTemplate(false);
         if (false === $this->permissions->allowUpdate) {
-            self::toolBox()::i18nLog()->warning('not-allowed-modify');
+            Tools::log()->warning('not-allowed-modify');
             return $this->sendJsonError();
         } elseif (false === $this->validateFileActionToken()) {
             return $this->sendJsonError();

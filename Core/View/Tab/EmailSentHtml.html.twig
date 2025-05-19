@@ -1,0 +1,72 @@
+{% set firstView = fsc.views | first %}
+{% set model = firstView.model %}
+
+<div class="card shadow mb-4" id="email-html">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 text-center mb-4">
+                <h4>{{ trans('loading') }}</h4>
+                <i class="fa-solid fa-circle-notch fa-5x fa-spin"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function limpiarJS(html) {
+        // Eliminar cualquier script incrustado
+        html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+
+        // Eliminar cualquier atributo de evento en línea (onclick, onload, etc.)
+        // eliminamos con comillas simples
+        html = html.replace(/on\w+='[^']*'/gi, '');
+        // eliminamos con comillas dobles
+        html = html.replace(/on\w+="[^"]*"/gi, '');
+        // eliminamos sin comillas
+        html = html.replace(/on\w+=[^"'\s]*/gi, '');
+        return html;
+    }
+
+    let formData = new FormData();
+    formData.append('action', 'getHtml');
+    formData.append('code', '{{ model.primaryColumnValue() }}');
+
+    fetch('{{ fsc.url() }}', {
+        method: 'POST',
+        body: formData,
+    }).then(function (response) {
+        if (response.ok) {
+            return response.json();
+        }
+        return Promise.reject(response);
+    }).then(function (data) {
+        if (data.getHtml) {
+            $('#email-html').html('');
+
+            // creamos un div
+            let div = document.createElement('div');
+            div.className = 'message-content';
+            $('#email-html').prepend(div);
+
+            // obtenemos el div con la clase message-content
+            let content = document.querySelector('#email-html div.message-content');
+
+            // obtenemos el shadow del div
+            let shadow = content.attachShadow({mode: "open"});
+
+            // creamos un elemento html
+            let html = document.createElement('html');
+            html.innerHTML = limpiarJS(data.html);
+
+            // añadimos el html al shadow
+            shadow.appendChild(html);
+
+            // al hacer clic en cualquier enlace dentro del email
+            // se debe abrir en una nueva pestaña
+            $(shadow).find('a').attr('target', '_blank');
+        }
+    }).catch(function (error) {
+        alert('error getHtml');
+        console.warn(error);
+    });
+</script>

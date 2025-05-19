@@ -5,6 +5,7 @@
         "codserie": "A",
         "codpago": "CONT",
         "tipoidfiscal": "NIT",
+        "updatesupplierprices": true,
         "validate_iban": false
     },
     "email": {
