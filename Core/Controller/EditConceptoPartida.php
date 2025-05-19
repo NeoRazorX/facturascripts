@@ -39,7 +39,7 @@ class EditConceptoPartida extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'predefined-concepts';
-        $data['icon'] = 'fas fa-indent';
+        $data['icon'] = 'fa-solid fa-indent';
         return $data;
     }
 }

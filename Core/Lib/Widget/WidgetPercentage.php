@@ -36,7 +36,7 @@ class WidgetPercentage extends WidgetNumber
     public function __construct($data)
     {
         parent::__construct($data);
-        $this->icon = $data['icon'] ?? 'fas fa-percentage';
+        $this->icon = $data['icon'] ?? 'fa-solid fa-percentage';
     }
 
     /**

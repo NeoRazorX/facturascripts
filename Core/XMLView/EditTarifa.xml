@@ -23,7 +23,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" description="optional" display="none" order="100">
-                <widget type="text" fieldname="codtarifa" icon="fas fa-hashtag" maxlength="6" readonly="dinamic" />
+                <widget type="text" fieldname="codtarifa" icon="fa-solid fa-hashtag" maxlength="6" readonly="dinamic" />
             </column>
             <column name="name" order="110">
                 <widget type="text" fieldname="nombre" required="true" maxlength="50" />
@@ -35,7 +35,7 @@
                 </widget>
             </column>
             <column name="value-x" order="130">
-                <widget type="number" fieldname="valorx" icon="fas fa-percentage" />
+                <widget type="number" fieldname="valorx" icon="fa-solid fa-percentage" />
             </column>
             <column name="value-y" order="140">
                 <widget type="money" fieldname="valory" />

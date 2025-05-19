@@ -36,21 +36,21 @@
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
         <div class="{{ currentView.settings.card ? 'container-fluid pt-3' : 'container-fluid' }}">
-            <div class="form-row">
+            <div class="row">
                 {# -- Left buttons -- #}
                 <div class="col-md-auto mb-2">
                     {% if currentView.settings.btnNew %}
                         {% if currentView.settings.modalInsert %}
                             <button type="button" class="btn btn-success" title="{{ trans('new') }}"
-                                    data-toggle="modal" data-target="#modal{{ currentView.settings.modalInsert }}">
-                                <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                                    data-bs-toggle="modal" data-bs-target="#modal{{ currentView.settings.modalInsert }}">
+                                <i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i>
                                 {% if currentView.settings.card == false %}
                                     <span class="d-none d-xl-inline-block">{{ trans('new') }}</span>
                                 {% endif %}
                             </button>
                         {% else %}
                             <a href="{{ asset(currentView.btnNewUrl()) }}" class="btn btn-success"
-                               title="{{ trans('new') }}"><i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                               title="{{ trans('new') }}"><i class="fa-solid fa-plus fa-fw" aria-hidden="true"></i>
                                 {% if currentView.settings.card == false %}
                                     <span class="d-none d-xl-inline-block">{{ trans('new') }}</span>
                                 {% endif %}
@@ -61,7 +61,7 @@
                         <button type="button" class="btn btn-danger"
                                 onclick="listViewDelete('{{ currentView.getViewName() }}');"
                                 title="{{ trans('delete') }}">
-                            <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                            <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
                         </button>
                     {% endif %}
                     {% if currentView.settings.btnPrint %}
@@ -73,7 +73,7 @@
                         <button type="button" class="btn btn-light"
                                 onclick="listViewOpenTab('{{ currentView.getViewName() }}');"
                                 title="{{ trans('open-tab') }}">
-                            <i class="fas fa-external-link-alt fa-fw" aria-hidden="true"></i>
+                            <i class="fa-solid fa-external-link-alt fa-fw" aria-hidden="true"></i>
                         </button>
                     {% endif %}
                     {# -- Row actions -- #}
@@ -85,7 +85,7 @@
                     {# -- Search field -- #}
                     {{ _self.searchControl(currentView) }}
                 </div>
-                <div class="col-sm-auto text-right mb-2">
+                <div class="col-sm-auto text-end mb-2">
                     {# -- Filters button -- #}
                     {{ _self.filterButton(currentView, fsc) }}
                     {# -- OrderBy button -- #}
@@ -96,7 +96,7 @@
             </div>
             {# -- Filters -- #}
             {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
-            <div id="form{{ currentView.getViewName() }}Filters" class="form-row align-items-center border-bottom mb-3"
+            <div id="form{{ currentView.getViewName() }}Filters" class="row align-items-center border-bottom mb-3"
                  style="{{ divFiltersStyle }}">
                 {% for filterName, filter in currentView.filters %}
                     {{ filter.render() | raw }}
@@ -137,7 +137,7 @@
                                 </div>
                             {% endif %}
                             {% if currentView.settings.clickable %}
-                                <i class="fas fa-external-link-alt toggle-ext-link d-none"
+                                <i class="fa-solid fa-external-link-alt toggle-ext-link d-none"
                                    title="{{ trans('open-tab') }}"></i>
                             {% endif %}
                         </th>
@@ -157,14 +157,14 @@
                             <td class="cancelClickable p-0 text-center align-middle">
                                 {% if currentView.settings.checkBoxes %}
                                     <div class="form-check form-check-inline m-0 toggle-ext-link">
-                                        <input class="form-check-input listAction" type="checkbox" name="code[]"
+                                        <input class="form-check-input listAction" type="checkbox" name="codes[]"
                                                value="{{ model.primaryColumnValue() }}"/>
                                     </div>
                                 {% endif %}
                                 {% if currentView.settings.clickable %}
                                     <a href="{{ asset(model.url()) }}" target="_blank" class="toggle-ext-link d-none"
                                        onauxclick="$(this).addClass('text-dark');" title="{{ trans('open-tab') }}">
-                                        <i class="fas fa-external-link-alt"></i>
+                                        <i class="fa-solid fa-external-link-alt"></i>
                                     </a>
                                 {% endif %}
                             </td>
@@ -189,21 +189,21 @@
                     <tr>
                         <th></th>
                         {% for item in currentView.totalAmounts %}
-                            <th class="text-right text-capitalize">{{ trans(item.title) }}</th>
+                            <th class="text-end text-capitalize">{{ trans(item.title) }}</th>
                         {% endfor %}
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <td class="text-right">{{ trans('page-total-amount') }}</td>
+                        <td class="text-end">{{ trans('page-total-amount') }}</td>
                         {% for item in currentView.totalAmounts %}
-                            <td class="text-right">{{ number(item.page) }}</td>
+                            <td class="text-end">{{ number(item.page) }}</td>
                         {% endfor %}
                     </tr>
                     <tr>
-                        <td class="text-right">{{ trans('total-amount') }}</td>
+                        <td class="text-end">{{ trans('total-amount') }}</td>
                         {% for item in currentView.totalAmounts %}
-                            <td class="text-right">{{ number(item.total) }}</td>
+                            <td class="text-end">{{ number(item.total) }}</td>
                         {% endfor %}
                     </tr>
                     </tbody>
@@ -250,17 +250,17 @@
         {% if currentView.pageFilterKey %}
             {# -- Disable user filters -- #}
             <a href="{{ fsc.url() }}?activetab={{ viewName }}" class="btn btn-light" title="{{ trans('all') }}">
-                <i class="fas fa-filter fa-fw"></i> {{ trans('all') }}
+                <i class="fa-solid fa-filter fa-fw"></i> {{ trans('all') }}
             </a>
         {% else %}
             <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
-                <i class="fas fa-filter fa-fw"></i> {{ trans('filters') }}
+                <i class="fa-solid fa-filter fa-fw"></i> {{ trans('filters') }}
             </button>
             {% if currentView.showFilters and currentView.settings.saveFilters %}
                 {# -- Save user filters -- #}
-                <button type="button" class="btn btn-success" data-toggle="modal"
-                        data-target="#savefilter{{ viewName }}" title="{{ trans('save-filter') }}">
-                    <i class="fas fa-save fa-fw"></i> {{ trans('save') }}
+                <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                        data-bs-target="#savefilter{{ viewName }}" title="{{ trans('save-filter') }}">
+                    <i class="fa-solid fa-save fa-fw"></i> {{ trans('save') }}
                 </button>
             {% endif %}
         {% endif %}
@@ -274,20 +274,20 @@
                         {# -- Selected user filter -- #}
                         <button title="{{ pageFilter.description }}" class="btn btn-light active"
                                 onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
-                            <i class="fas fa-filter fa-fw"></i> {{ filterDesc }}
+                            <i class="fa-solid fa-filter fa-fw"></i> {{ filterDesc }}
                         </button>
                         {# -- Delete user filter -- #}
                         <button type="button" class="btn btn-light text-danger"
                                 title="{{ trans('remove-filter') }}"
                                 onclick="listViewSetAction('{{ viewName }}', 'delete-filter');">
-                            <i class="fas fa-trash-alt fa-fw"></i>
+                            <i class="fa-solid fa-trash-alt fa-fw"></i>
                         </button>
                     </div>
                 {% else %}
                     {# -- Select user filters -- #}
                     <button title="{{ pageFilter.description }}" class="btn btn-light"
                             onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
-                        <i class="fas fa-filter fa-fw"></i> {{ filterDesc }}
+                        <i class="fa-solid fa-filter fa-fw"></i> {{ filterDesc }}
                     </button>
                 {% endif %}
             {% endfor %}
@@ -302,16 +302,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="fas fa-filter fa-fw"></i> {{ trans('save-filter') }}
+                        <i class="fa-solid fa-filter fa-fw"></i> {{ trans('save-filter') }}
                     </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>{{ trans('description') }}</label>
                                 <input type="text" name="filter-description" class="form-control noEnterKey"
                                        autofocus=""/>
@@ -320,7 +320,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         {{ trans('cancel') }}
                     </button>
                     <button type="button" class="btn btn-primary"
@@ -339,11 +339,11 @@
         {% set viewName = currentView.getViewName() %}
         <div class="btn-group">
             <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
-                    <i class="fas fa-fill-drip fa-fw" aria-hidden="true"></i>
+                    <i class="fa-solid fa-fill-drip fa-fw" aria-hidden="true"></i>
                 </button>
-                <div class="dropdown-menu dropdown-menu-right pb-0">
+                <div class="dropdown-menu dropdown-menu-end pb-0">
                     <h6 class="dropdown-header">
                         {{ trans('colors') }}
                     </h6>
@@ -356,9 +356,9 @@
 
 {% macro printButton(fsc, currentView) %}
     <div class="dropdown">
-        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
-            <i class="fas fa-print fa-fw" aria-hidden="true"></i>
+            <i class="fa-solid fa-print fa-fw" aria-hidden="true"></i>
         </button>
         <div class="dropdown-menu">
             {% for key, option in fsc.exportManager.options() %}
@@ -383,15 +383,13 @@
 
 {% macro searchControl(currentView) %}
     {% if currentView.searchFields is not empty %}
-        <div class="form-group">
+        <div class="mb-3">
             <div class="input-group">
                 <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off"
                        placeholder="{{ trans('search') }}"/>
-                <span class="input-group-append">
-                    <button type="submit" class="btn btn-secondary">
-                        <i class="fas fa-search" aria-hidden="true"></i>
+                <button type="submit" class="btn btn-secondary">
+                        <i class="fa-solid fa-search" aria-hidden="true"></i>
                     </button>
-                </span>
             </div>
         </div>
     {% endif %}
@@ -400,14 +398,14 @@
 {% macro sortButton(currentView) %}
     {% if currentView.orderOptions is not empty %}
         <div class="btn-group">
-            <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+            <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="true">
-                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fas fa-sort-amount-up' : 'fas fa-sort-amount-down' %}
+                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fa-solid fa-sort-amount-up' : 'fa-solid fa-sort-amount-down' %}
                 <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
                 <span class="d-none d-lg-inline">{{ currentView.orderOptions[currentView.orderKey]['label'] }}</span>
                 <span class="caret"></span>
             </button>
-            <div class="dropdown-menu dropdown-menu-right">
+            <div class="dropdown-menu dropdown-menu-end">
                 {% for key, orderby in currentView.orderOptions %}
                     {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
                     {% set icon = (orderby.type == 'ASC') ? 'fa-solid fa-angles-up' : 'fa-solid fa-angles-down' %}

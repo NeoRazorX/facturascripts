@@ -1,6 +1,7 @@
 codcuentaesp;descripcion
 "ACREED";"Accounts of creditors"
-"ANTCLI";"Anticipos de clientes"
+"ANTCLI";"Customer advances"
+"ANTPRO";"Supplier advances"
 "CAJA";"Cash accounts"
 "CAMNEG";"Negative exchange difference accounts"
 "CAMPOS";"Positive exchange differences accounts"

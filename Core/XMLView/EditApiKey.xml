@@ -29,13 +29,13 @@
                 <widget type="text" fieldname="description" required="true" />
             </column>
             <column name="api-key" numcolumns="5" order="120">
-                <widget type="text" fieldname="apikey" icon="fas fa-key" required="true" />
+                <widget type="text" fieldname="apikey" icon="fa-solid fa-key" required="true" />
             </column>
             <column name="created" numcolumns="2" order="130">
                 <widget type="date" fieldname="creationdate" readonly="true" />
             </column>
             <column name="user" titleurl="ListUser" numcolumns="2" order="140">
-                <widget type="select" fieldname="nick" icon="fas fa-user-circle" onclick="EditUser" readonly="true" required="true">
+                <widget type="select" fieldname="nick" icon="fa-solid fa-user-circle" onclick="EditUser" readonly="true" required="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick" />
                 </widget>
             </column>

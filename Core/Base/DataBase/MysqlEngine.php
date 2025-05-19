@@ -182,7 +182,7 @@ class MysqlEngine extends DataBaseEngine
 
         $charset = defined('FS_MYSQL_CHARSET') ? FS_MYSQL_CHARSET : 'utf8';
         $result->set_charset($charset);
-        //$result->autocommit(false);
+        $result->autocommit(false);
 
         // disable foreign keys
         if (defined('FS_DB_FOREIGN_KEYS') && false === FS_DB_FOREIGN_KEYS) {
@@ -349,9 +349,9 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function version($link)
+    public function version($link): string
     {
-        return 'MYSQL ' . $link->server_version;
+        return $link->server_info;
     }
 
     /**

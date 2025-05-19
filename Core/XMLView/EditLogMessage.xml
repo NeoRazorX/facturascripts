@@ -40,12 +40,12 @@
                 <widget type="text" fieldname="ip" readonly="true"/>
             </column>
             <column name="user" order="110">
-                <widget type="select" fieldname="nick" icon="fas fa-user-circle" onclick="EditUser" readonly="true">
+                <widget type="select" fieldname="nick" icon="fa-solid fa-user-circle" onclick="EditUser" readonly="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick"/>
                 </widget>
             </column>
             <column name="contact" order="120">
-                <widget type="autocomplete" fieldname="idcontacto" icon="fas fa-user" onclick="EditContacto" readonly="true">
+                <widget type="autocomplete" fieldname="idcontacto" icon="fa-solid fa-user" onclick="EditContacto" readonly="true">
                     <values source="contactos" fieldcode="idcontacto" fieldtitle="email"/>
                 </widget>
             </column>

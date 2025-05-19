@@ -37,6 +37,8 @@ use FacturaScripts\Dinamic\Model\RoleAccess;
  * Description of SalesModalHTML
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/SalesModalHTML
  */
 class SalesModalHTML
 {

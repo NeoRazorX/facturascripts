@@ -19,7 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of BaseWidget
@@ -28,7 +29,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class BaseWidget extends VisualItem
 {
-
     /**
      * @var bool
      */
@@ -108,23 +108,21 @@ class BaseWidget extends VisualItem
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
-        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
-        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
+        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
+        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(Tools::lang()->trans($title), $titleurl) . '</label>';
 
         if (empty($this->icon)) {
-            return '<div class="form-group mb-2">'
+            return '<div class="mb-3">'
                 . $labelHtml
                 . $this->inputHtml()
                 . $descriptionHtml
                 . '</div>';
         }
 
-        return '<div class="form-group mb-2">'
+        return '<div class="mb-3">'
             . $labelHtml
             . '<div class="input-group">'
-            . '<div class="' . $this->css('input-group-prepend') . ' d-flex d-sm-none d-xl-flex">'
             . '<span class="input-group-text"><i class="' . $this->icon . ' fa-fw"></i></span>'
-            . '</div>'
             . $this->inputHtml()
             . '</div>'
             . $descriptionHtml

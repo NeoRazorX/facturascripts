@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="descripcion" maxlength="50" required="true"/>
             </column>
             <column name="code" description="optional" numcolumns="2" order="110">
-                <widget type="text" fieldname="codretencion" icon="fas fa-hashtag" maxlength="10"/>
+                <widget type="text" fieldname="codretencion" icon="fa-solid fa-hashtag" maxlength="10"/>
             </column>
             <column name="percentage" numcolumns="3" order="120">
                 <widget type="percentage" decimal="2" fieldname="porcentaje" required="true"/>

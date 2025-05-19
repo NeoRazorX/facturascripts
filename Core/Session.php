@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core;
 
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Dinamic\Model\User as DinUser;
 
@@ -45,6 +46,11 @@ final class Session
         }
 
         return '::1';
+    }
+
+    public static function permissions(): ControllerPermissions
+    {
+        return self::get('permissions') ?? new ControllerPermissions();
     }
 
     public static function set(string $key, $value): void

@@ -23,8 +23,8 @@ use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\API\Base\APIResourceClass;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * APIModel is the class for any API Model Resource in Dinamic/Model folder.
@@ -49,7 +49,7 @@ class APIModel extends APIResourceClass
     public function doDELETE(): bool
     {
         if (empty($this->params) || false === $this->model->loadFromCode($this->params[0])) {
-            $this->setError(Tools::lang()->trans('record-not-found'));
+            $this->setError(Tools::lang()->trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
             return false;
         }
 
@@ -90,7 +90,7 @@ class APIModel extends APIResourceClass
 
         // record not found
         if (false === $this->model->loadFromCode($this->params[0])) {
-            $this->setError(Tools::lang()->trans('record-not-found'));
+            $this->setError(Tools::lang()->trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
             return false;
         }
 
@@ -138,7 +138,7 @@ class APIModel extends APIResourceClass
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
         if (false === $this->model->loadFromCode($code)) {
-            $this->setError(Tools::lang()->trans('record-not-found'));
+            $this->setError(Tools::lang()->trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
             return false;
         } elseif (empty($values)) {
             $this->setError(Tools::lang()->trans('no-data-received-form'));

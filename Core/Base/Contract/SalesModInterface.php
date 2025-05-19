@@ -23,6 +23,11 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
 
+/**
+ * Interface for Sales Document Modules.
+ *
+ * @deprecated replaced by Core/Contract/SalesModInterface
+ */
 interface SalesModInterface
 {
     public function apply(SalesDocument &$model, array $formData, User $user);

@@ -18,21 +18,20 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Request;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Request;
 use const FS_ITEM_LIMIT;
 
 /**
  * View definition for its use in ExtendedControllers
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class HtmlView extends BaseView
 {
-
     /**
      * HtmlView constructor and initialization.
      *

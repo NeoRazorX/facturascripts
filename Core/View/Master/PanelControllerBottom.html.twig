@@ -21,7 +21,7 @@
 
 {% block body %}
     <div class="container-fluid">
-        <div class="form-row">
+        <div class="row">
             <div class="col">
                 {# -- First view -- #}
                 {% set firstView = fsc.views | first %}
@@ -31,7 +31,7 @@
             </div>
         </div>
         {% if fsc.views | length > 2 %}
-            <div class="form-row">
+            <div class="row">
                 <div class="col">
                     <ul class="nav nav-pills mb-3 d-print-none" id="mainTabs" role="tablist">
                         {% set contActiveTab = 0 %}
@@ -40,11 +40,11 @@
                                 {% set contActiveTab = contActiveTab + 1 %}
                                 <li class="nav-item">
                                     {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and contActiveTab == 1) ? ' active' : '' %}
-                                    <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
+                                    <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-bs-toggle="tab" role="tab" aria-controls="{{ viewName }}">
                                         <i class="{{ view.icon }}" aria-hidden="true"></i>
                                         <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
                                         {% if view.count > 0 %}
-                                            <span class="badge badge-secondary">{{ number(view.count, 0) }}</span>
+                                            <span class="badge bg-secondary">{{ number(view.count, 0) }}</span>
                                         {% endif %}
                                     </a>
                                 </li>

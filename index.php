@@ -19,10 +19,11 @@
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\CrashReport;
 use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\NextCode;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\WorkQueue;
 
@@ -68,10 +69,13 @@ if ($db->connected()) {
     WorkQueue::run();
 
     // actualizamos la telemetría
-    $telemetry = new TelemetryManager();
+    $telemetry = new Telemetry();
     $telemetry->update();
 
     // guardamos los logs y cerramos la conexión a la base de datos
     MiniLog::save();
     $db->close();
+
+    // limpiamos archivos temporales antiguos
+    NextCode::clearOld();
 }

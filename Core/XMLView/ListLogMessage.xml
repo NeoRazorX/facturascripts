@@ -47,7 +47,7 @@
         </column>
     </columns>
     <modals>
-        <group name="delete-logs" title="delete-logs" icon="fas fa-trash-alt">
+        <group name="delete-logs" title="delete-logs" icon="fa-solid fa-trash-alt">
             <column name="from-date" numcolumns="12">
                 <widget type="date" fieldname="delete_from" required="true"/>
             </column>
