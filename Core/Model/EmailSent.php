@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -118,7 +118,7 @@ class EmailSent extends ModelClass
     public function test(): bool
     {
         $body = Tools::noHtml($this->body);
-        $this->body = strlen($body) > 5000 ? substr($body, 0, 4997) . '...' : $body;
+        $this->body = strlen($body ?? '') > 5000 ? substr($body, 0, 4997) . '...' : $body;
 
         $this->html = Tools::noHtml($this->html);
         $this->subject = Tools::noHtml($this->subject);

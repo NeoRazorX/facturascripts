@@ -1,7 +1,7 @@
 {
     "default": {
         "coddivisa": "PAB",
-        "codimpuesto": "ITBMS",
+        "codimpuesto": "IVA_001",
         "codserie": "A",
         "codpago": "CONT",
         "tipoidfiscal": "RUC",

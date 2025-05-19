@@ -32,6 +32,8 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Daniel Fernández Giménez      <hola@danielfg.es>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/PurchasesHeaderHTML
  */
 class PurchasesHeaderHTML
 {

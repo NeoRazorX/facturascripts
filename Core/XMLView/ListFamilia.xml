@@ -43,7 +43,7 @@
             <widget type="text" fieldname="codsubcuentaven"/>
         </column>
         <column name="products" display="right" order="160">
-            <widget type="number" fieldname="numproductos"/>
+            <widget type="number" fieldname="numproductos" decimal="0"/>
         </column>
     </columns>
     <rows>

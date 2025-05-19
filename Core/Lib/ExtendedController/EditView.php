@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Dinamic\Lib\ExportManager;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -99,9 +99,12 @@ class EditView extends BaseView
      * Allows you to set the view as read only
      *
      * @param bool $value
+     * @return EditView
      */
-    public function setReadOnly(bool $value)
+    public function setReadOnly(bool $value): EditView
     {
         $this->template = $value ? static::READONLY_TEMPLATE : static::DEFAULT_TEMPLATE;
+
+        return $this;
     }
 }

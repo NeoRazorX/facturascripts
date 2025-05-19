@@ -22,7 +22,7 @@
 <view>
     <columns>
         <column name="code" description="optional" display="none" numcolumns="2" order="100">
-            <widget type="text" fieldname="iddiario" icon="fas fa-hashtag" readonly="dinamic" />
+            <widget type="text" fieldname="iddiario" icon="fa-solid fa-hashtag" readonly="dinamic" />
         </column>
         <column name="description" order="110">
             <widget type="text" fieldname="descripcion" required="true" />

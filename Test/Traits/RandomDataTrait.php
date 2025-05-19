@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Test\Traits;
 
-use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cliente;
@@ -133,7 +133,7 @@ trait RandomDataTrait
     protected function getRandomSerie(): Serie
     {
         $serie = new Serie();
-        $serie->codserie = 'T';
+        $serie->codserie = 'T' . mt_rand(1, 999);
         $serie->descripcion = 'Test Serie';
         return $serie;
     }

@@ -22,9 +22,9 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller that lists the data in table mode
@@ -252,7 +252,7 @@ abstract class ListController extends BaseController
      * @param string $icon
      * @return ListView
      */
-    protected function addView(string $viewName, string $modelName, string $viewTitle = '', string $icon = 'fas fa-search'): ListView
+    protected function addView(string $viewName, string $modelName, string $viewTitle = '', string $icon = 'fa-solid fa-search'): ListView
     {
         $title = empty($viewTitle) ? $this->title : $viewTitle;
         $view = new ListView($viewName, $title, self::MODEL_NAMESPACE . $modelName, $icon);
@@ -343,7 +343,7 @@ abstract class ListController extends BaseController
         }
 
         $this->setTemplate(false);
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         $option = $this->request->get('option', '');
         $this->exportManager->newDoc($option);
         $this->views[$this->active]->export($this->exportManager, $codes);

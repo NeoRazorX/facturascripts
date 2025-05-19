@@ -38,6 +38,8 @@ use FacturaScripts\Dinamic\Model\Variante;
  * Description of SalesController
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/SalesController
  */
 abstract class SalesController extends PanelController
 {
@@ -85,10 +87,12 @@ abstract class SalesController extends PanelController
      */
     public function renderSalesForm(SalesDocument $model, array $lines): string
     {
+        $url = empty($model->primaryColumnValue()) ? $this->url() : $model->url();
+
         return '<div id="salesFormHeader">' . SalesHeaderHTML::render($model) . '</div>'
             . '<div id="salesFormLines">' . SalesLineHTML::render($lines, $model) . '</div>'
             . '<div id="salesFormFooter">' . SalesFooterHTML::render($model) . '</div>'
-            . SalesModalHTML::render($model, $this->url(), $this->user, $this->permissions);
+            . SalesModalHTML::render($model, $url, $this->user, $this->permissions);
     }
 
     public function series(string $type = ''): array
@@ -451,8 +455,14 @@ abstract class SalesController extends PanelController
         }
 
         // marcamos los recibos como pagados, eso marca la factura como pagada
+        $formData = json_decode($this->request->request->get('data'), true);
         foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
+            // si no está pagado, actualizamos fechapago y codpago
+            if (false == $receipt->pagado) {
+                $receipt->fechapago = $formData['fechapagorecibo'] ?? Tools::date();
+                $receipt->codpago = $model->codpago;
+            }
             $receipt->pagado = (bool)$this->request->request->get('selectedLine');
             if (false === $receipt->save()) {
                 $this->sendJsonWithLogs(['ok' => false]);

@@ -349,9 +349,9 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function version($link)
+    public function version($link): string
     {
-        return 'MYSQL ' . $link->server_version;
+        return $link->server_info;
     }
 
     /**

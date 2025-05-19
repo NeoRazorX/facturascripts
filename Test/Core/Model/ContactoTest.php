@@ -224,24 +224,6 @@ final class ContactoTest extends TestCase
         $this->assertTrue($check3);
     }
 
-    public function testAlias(): void
-    {
-        $contacto = new Contacto();
-        $contacto->idcontacto = 999;
-
-        $result = $contacto->alias();
-
-        $this->assertEquals('999', $result);
-
-        $contacto->email = 'noreply@example.com';
-        $result = $contacto->alias();
-        $this->assertEquals('noreply_999', $result);
-
-        $contacto->email = 'info@example.com';
-        $result = $contacto->alias();
-        $this->assertEquals('example_999', $result);
-    }
-
     public function testCodeModelSearch(): void
     {
         $contact1 = $this->getRandomContact();

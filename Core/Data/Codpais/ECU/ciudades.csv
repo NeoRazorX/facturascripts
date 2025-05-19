@@ -1,42 +1,901 @@
-"ciudad";"idprovincia";"codeid";"latitude";"longitude"
-"Cuenca";"540";"";"-2.9006";"-79.0045"
-"Guaranda";"541";"";"-1.5986";"-79.0030"
-"Azogues";"542";"";"-2.7357";"-78.8455"
-"Tulcán";"543";"";"0.8212";"-77.6695"
-"San Gabriel";"543";"";"0.6114";"-77.9391"
-"Riobamba";"544";"";"-1.6636";"-78.6546"
-"Alausí";"544";"";"-2.2207";"-78.8450"
-"Latacunga";"545";"";"-0.9291";"-78.6150"
-"Machala";"546";"";"-3.2586";"-79.9555"
-"Piñas";"546";"";"-3.6760";"-79.6518"
-"Esmeraldas";"547";"";"0.9595";"-79.6538"
-"San Lorenzo de Esmeraldas";"547";"";"1.2817";"-78.8230"
-"Muisne";"547";"";"0.6043";"-80.0202"
-"Valdez";"547";"";"1.2029";"-79.8736"
-"Santa Cruz";"548";"";"-0.6236";"-90.3556"
-"Puerto Baquerizo Moreno";"548";"";"-0.9001";"-89.6047"
-"Puerto Villamil";"548";"";"-0.9544";"-91.0125"
-"Guayaquil";"549";"";"-2.1709";"-79.9224"
-"Milagro";"549";"";"-2.1167";"-79.7333"
-"Salinas";"549";"";"-2.2064";"-80.9762"
-"Ibarra";"550";"";"0.3476";"-78.1220"
-"Loja";"551";"";"-3.9881";"-79.2045"
-"Macará";"551";"";"-4.3811";"-79.9456"
-"Babahoyo";"552";"";"-1.8012";"-79.5345"
-"Portoviejo";"553";"";"-1.0546";"-80.4543"
-"Manta";"553";"";"-0.9677";"-80.7089"
-"Chone";"553";"";"-0.6987";"-80.0996"
-"Jipijapa";"553";"";"-1.3526";"-80.5808"
-"Macas";"554";"";"-2.3102";"-78.1186"
-"Yaupi";"554";"";"-2.8542";"-77.9409"
-"Tena";"555";"";"-1.0021";"-77.8100"
-"Puerto Francisco de Orellana";"556";"";"-0.4667";"-76.9667"
-"Puyo";"557";"";"-1.4924";"-77.9960"
-"Quito";"558";"";"-0.1807";"-78.4678"
-"Sangolquí";"558";"";"-0.3314";"-78.3557"
-"Cayambe";"558";"";"0.0461";"-78.1410"
-"Santa Elena";"559";"";"-2.2268";"-80.8587"
-"Santo Domingo de los Colorados";"560";"";"-0.2531";"-79.1754"
-"Nueva Loja";"561";"";"0.0847";"-76.8828"
-"Ambato";"562";"";"-1.2491";"-78.6167"
-"Zamora";"563";"";"-4.0693";"-78.9567"
+ciudad,idprovincia,codeid,latitude,longitude
+"Abingdon Island",1,,0.58501,-90.75502
+Agoyán,19,,-1.38333,-78.31667
+"Agua Blanca",14,,-1.53267,-80.73785
+"Agua Sucia",9,,1.05064,-78.76182
+Ahuano,23,,-1.05868,-77.54592
+Alamor,12,,-4.01847,-80.02141
+Alausí,6,,-2.20329,-78.84714
+"Albemarle Island",1,,-0.59286,-91.02528
+"Alfredo Baquerizo Moreno",10,,-1.91667,-79.51667
+"Alfredo Baquerizo Moreno (Juján)",10,,-1.94487,-79.54073
+"Altos de Boliche",5,,0.7,-77.75
+Ambato,19,,-1.24908,-78.61675
+"Ambato / Chachoan",19,,-1.21207,-78.57464
+Anona,14,,-1.27833,-80.46758
+Antisana,23,,-0.48477,-78.14173
+"Antisana Ecological Reserve",23,,-0.55171,-78.15528
+Arajuno,17,,-1.34578,-76.77553
+Archidona,23,,-0.9095,-77.80772
+Armenía,18,,0.07314,-78.69343
+Atacames,9,,0.86903,-79.84806
+Atacazo,18,,-0.35697,-78.61894
+Atahualpa,8,,-3.54638,-79.71621
+Atravesao,10,,-2.2766,-80.69407
+Atuntaqui,11,,0.32759,-78.21908
+"Augusto N. Martínez",19,,-1.21792,-78.61863
+Azogues,4,,-2.73969,-78.8486
+Azuay,2,,-3.08333,-79.33333
+Babahoyo,13,,-1.80217,-79.53443
+Baeza,23,,-0.46314,-77.89375
+"Bahía de Caráquez",14,,-0.60033,-80.42444
+Balao,10,,-2.89411,-79.70746
+Balastrera,22,,0.25028,-76.81917
+Balsas,8,,-3.76085,-79.82404
+"Baltra Island",1,,-0.45859,-90.27493
+Balzar,10,,-1.36553,-79.90507
+Baños,2,,-2.92165,-79.06458
+"Bartholomew Island",1,,-0.28418,-90.54809
+Bellavista,1,,-0.26367,-90.70862
+Bermijos,22,,0.195,-77.28306
+"Boca de Solano",10,,-1.04269,-79.83307
+"Boca Suno",24,,-0.69832,-77.14083
+Bogotá,9,,1.02919,-78.68737
+Bolívar,3,,-1.58333,-79.08333
+"Brattle Island",1,,-1.00938,-90.87253
+Británica,10,,-1.36188,-79.84019
+Bucay,10,,-2.68333,-79.66667
+"Buena Fe",13,,-0.89319,-79.48913
+"Cabo Pasado",14,,-0.36515,-80.48775
+"Cabo San Mateo",14,,-0.95495,-80.8191
+Cacha,6,,-1.71401,-78.70633
+Cachipamba,2,,-3.45055,-79.16927
+Cajabamba,6,,-1.69592,-78.75823
+"Cajas National Park",2,,-2.83333,-79.16667
+Calceta,14,,-0.84582,-80.16389
+Calderón,18,,-0.10511,-78.43139
+"Camilo Ponce Enríquez",2,,-3.06199,-79.74583
+Cañar,4,,-2.56062,-78.9394
+"Canchas ESPE",18,,-0.31627,-78.44515
+Candelillas,9,,1.06826,-78.85902
+Canoa,14,,-0.4638,-80.4545
+"Cantón Aguarico",24,,-0.90097,-75.39282
+"Cantón Alausí",6,,-2.2,-78.85
+"Cantón Ambato",19,,-1.25,-78.63333
+"Cantón Antonio Ante",11,,0.33989,-78.20515
+"Cantón Archidona",23,,-0.64748,-78.2132
+"Cantón Arenillas",8,,-3.55,-80.06667
+"Cantón Azogues",4,,-2.73333,-78.81667
+"Cantón Baba",13,,-1.78333,-79.66667
+"Cantón Babahoyo",13,,-1.81667,-79.51667
+"Cantón Balzar",10,,-1.36667,-79.88333
+"Cantón Baños",19,,-1.4,-78.41667
+"Cantón Biblián",4,,-2.70472,-78.90518
+"Canton Bolivar",5,,0.50255,-77.90246
+"Cantón Buena Fe",13,,-0.61598,-79.40223
+"Canton Caluma",3,,-1.63333,-79.25
+"Cantón Calvas",12,,-4.31667,-79.56667
+"Cantón Cañar",4,,-2.55,-78.93333
+"Cantón Catamayo",12,,-3.98333,-79.35
+"Cantón Cayambe",18,,0.04746,-78.04409
+"Cantón Celica",12,,-4.15536,-80.00725
+"Cantón Chaco",23,,-0.13715,-77.8423
+"Cantón Chillanes",3,,-1.93333,-79.06667
+"Cantón Chimbo",3,,-1.68444,-79.02526
+"Cantón Chinchipe",20,,-4.86667,-79.13333
+"Cantón Chone",14,,-0.7,-80.1
+"Cantón Chunchi",6,,-2.28333,-78.91667
+"Canton Colimes",10,,-1.55,-80.01666
+"Cantón Colta",6,,-1.7,-78.75
+"Cantón Cotacachi",11,,0.31526,-78.48511
+"Cantón Cuenca",2,,-2.9,-78.98333
+"Cantón Daule",10,,-1.85,-79.96667
+"Canton Echeandia",3,,-1.43333,-79.26667
+"Cantón El Carmen",14,,-0.40848,-79.57864
+"Cantón El Empalme",10,,-1.05,-79.61667
+"Canton El Tambo",4,,-2.5081,-78.9249
+"Cantón Eloy Alfaro",9,,1.25,-79
+"Cantón Esmeraldas",9,,0.96667,-79.65
+"Cantón Espejo",5,,0.61667,-77.93333
+"Cantón Espindola",12,,-4.6,-79.41667
+"Cantón Girón",2,,-3.2,-79.15
+"Cantón Gonzanamá",12,,-4.25,-79.45
+"Cantón Guabo",8,,-3.25,-79.85
+"Cantón Gualaceo",2,,-2.9,-78.78333
+"Cantón Gualaquiza",15,,-3.4,-78.58333
+"Cantón Guamote",6,,-1.93333,-78.71667
+"Cantón Guano",6,,-1.6,-78.63333
+"Cantón Guaranda",3,,-1.6,-79
+"Cantón Guayaquil",10,,-2.2,-79.88333
+"Cantón Huaquillas",8,,-3.48333,-80.23333
+"Cantón Isabela",1,,-0.48788,-91.06709
+"Cantón Jipijapa",14,,-1.35,-80.58333
+"Cantón Junín",14,,-0.91667,-80.21667
+"Cantón Lago Agrio",22,,0.1,-76.86667
+"Canton Las Naves",3,,-1.28333,-79.3
+"Cantón Latacunga",7,,-0.93333,-78.61667
+"Cantón Limón Indanza",15,,-2.96667,-78.41667
+"Cantón Loja",12,,-4,-79.2
+"Cantón Macará",12,,-4.38333,-79.95
+"Cantón Machala",8,,-3.26667,-79.95
+"Cantón Manta",14,,-0.95,-80.73333
+"Cantón Mejía",18,,-0.35077,-78.74451
+"Cantón Mera",17,,-1.43494,-78.08327
+"Cantón Milagro",10,,-2.16667,-79.6
+"Cantón Mira",5,,0.55,-78.03333
+"Cantón Montecristi",14,,-1.05,-80.68333
+"Cantón Montúfar",5,,0.6,-77.83333
+"Cantón Morona",15,,-2.31667,-78.1
+"Cantón Muisne",9,,0.58089,-79.95438
+"Cantón Nabón",2,,-3.32356,-79.06517
+"Cantón Naranjal",10,,-2.66667,-79.61667
+"Cantón Naranjito",10,,-2.21667,-79.48333
+"Cantón Otavalo",11,,0.22409,-78.17255
+"Cantón Paján",14,,-1.55,-80.43333
+"Cantón Palora",15,,-1.7,-77.93333
+"Cantón Paltas",12,,-4.06667,-79.63333
+"Cantón Pangua",7,,-1.08209,-79.15924
+"Cantón Pasaje",8,,-3.33333,-79.81667
+"Cantón Pastaza",17,,-1.75,-76.91667
+"Cantón Patate",19,,-1.31667,-78.5
+"Cantón Paute",2,,-2.78333,-78.73333
+"Canton Pedernales",14,,0.0701,-80.0536
+"Cantón Pedro Moncayo",18,,0.02244,-78.27313
+"Canton Pedro Vicente Maldonado",18,,0.16667,-79
+"Cantón Pelileo",19,,-1.31667,-78.53333
+"Cantón Píllaro",19,,-1.16667,-78.53333
+"Cantón Pimampiro",11,,0.4,-77.96667
+"Cantón Piñas",8,,-3.66667,-79.66667
+"Cantón Portovelo",8,,-3.71667,-79.61667
+"Cantón Portoviejo",14,,-1.05,-80.45
+"Cantón Puebloviejo",13,,-1.55,-79.53333
+"Cantón Pujilí",7,,-0.95,-78.68333
+"Cantón Putumayo",22,,0.1,-75.85
+"Cantón Puyango",12,,-4.01667,-80.01667
+"Cantón Quero",19,,-1.36667,-78.6
+"Cantón Quevedo",13,,-1.01667,-79.48333
+"Cantón Quijos",23,,-0.46463,-78.15297
+"Cantón Quinindé",9,,0.27631,-79.64197
+"Cantón Quito",18,,-0.21667,-78.5
+"Cantón Riobamba",6,,-1.66667,-78.63333
+"Cantón Rocafuerte",14,,-0.91667,-80.46667
+"Cantón Rumiñahui",18,,-0.4319,-78.43558
+"Cantón Salcedo",7,,-1.03333,-78.6
+"Cantón Salinas",25,,-2.21667,-80.96667
+"Cantón Salitre",10,,-1.83333,-79.8
+"Cantón Samborondón",10,,-1.95,-79.73333
+"Cantón San Cristóbal",1,,-0.92233,-89.5576
+"Cantón San Fernando",2,,-3.13349,-79.26893
+"Cantón San Lorenzo",9,,1.28333,-78.83333
+"Cantón San Miguel",3,,-1.7,-79.03333
+"Cantón Santa Ana",14,,-1.21667,-80.38333
+"Cantón Santa Cruz",1,,-0.62958,-90.33297
+"Cantón Santa Elena",25,,-2.23333,-80.86667
+"Cantón Santa Isabel",2,,-3.33333,-79.31667
+"Cantón Santa Rosa",8,,-3.46407,-79.95712
+"Cantón Santo Domingo de los Colorados",26,,-0.20975,-78.99351
+"Cantón Saraguro",12,,-3.65,-79.25
+"Cantón Sigchos",7,,-0.49197,-78.89137
+"Cantón Sigsig",2,,-3.01667,-78.78333
+"Cantón Sozoranga",12,,-4.33333,-79.78333
+"Cantón Sucre",14,,-0.65367,-80.4158
+"Cantón Sucúa",15,,-2.46667,-78.16667
+"Cantón Sucumbíos",22,,0.36941,-77.64313
+"Cantón Tulcán",5,,0.8,-77.73333
+"Cantón Urdaneta",13,,-1.58333,-79.46667
+"Cantón Valencia",13,,-0.71187,-79.37743
+"Cantón Veinticuatro de Mayo",14,,-1.26667,-80.43333
+"Cantón Ventanas",13,,-1.45,-79.46667
+"Cantón Vinces",13,,-1.55,-79.73333
+"Cantón Yacuambi",20,,-3.66667,-78.91667
+"Cantón Yaguachi",10,,-2.11677,-79.69897
+"Cantón Yantzaza",20,,-3.85,-78.75
+"Cantón Zamora",20,,-4.06667,-78.95
+"Cantón Zaruma",8,,-3.68333,-79.61667
+Carchi,5,,0.75,-78.08333
+Cariamanga,12,,-4.32796,-79.55554
+Carihuairazo,19,,-1.40694,-78.75
+"Carlos Julio Arosemena Tola",23,,-1.16608,-77.85533
+Cascales,22,,0.15075,-77.23538
+Catacocha,12,,-4.04974,-79.64944
+Catamayo,12,,-3.98652,-79.35912
+"Catamayo / Camilo Ponce Enriquez",12,,-4,-79.36667
+Catarama,13,,-1.57504,-79.45998
+Cayambe,18,,0.04103,-78.14636
+"Cayambe Coca Ecological Reserve",23,,0.05,-77.8
+Celica,12,,-4.10266,-79.95665
+"Centinela Del Cóndor",20,,-3.91563,-78.74931
+"Cerro Antisana",18,,-0.50167,-78.12417
+"Cerro Cusín",11,,0.16539,-78.13895
+"Cerro de Acumbe",10,,-2.41667,-80.5
+"Cerro de La Cruz",12,,-4.3,-79.3
+"Cerro de Los Pacitos",10,,-2.21667,-80.23333
+"Cerro del Oso",8,,-3.73333,-79.98333
+"Cerro Hermoso",19,,-1.22499,-78.28758
+"Cerro Ilaló",18,,-0.26269,-78.41944
+"Cerro Jalilahua",18,,-0.01667,-78.5
+"Cerro Lumbaquí",22,,0.00793,-77.32165
+"Cerro Minas",2,,-3.07534,-79.36527
+"Cerro Mirador",5,,0.60392,-77.65615
+"Cerro Molobog Grande",4,,-2.63035,-78.85478
+"Cerro Ñuñurcu",18,,-0.31452,-78.29257
+"Cerro Orta",12,,-4.21667,-79.16667
+"Cerro Padre Corral",18,,-0.38333,-78.28333
+"Cerro Paduana",12,,-4.41667,-79.66667
+"Cerro Sincholagua",18,,-0.545,-78.36639
+"Cerro Yasún",10,,-2.74082,-80.05908
+"Cerros de Colonche",10,,-2,-80.33333
+"Cerros de Los Liberales",14,,-0.28333,-80.13333
+"Cerros de Másvale",10,,-2.393,-79.67541
+"Cerros de Paján",14,,-1.41667,-80.6
+"Cerros de Pandomine",12,,-4.31667,-79.73333
+Cevallos,19,,-1.35512,-78.6167
+Chacana,18,,-0.45,-78.25
+Chaguarpamba,12,,-3.87776,-79.64455
+Chambo,6,,-1.75149,-78.54528
+Chanangue,22,,0.22972,-76.63191
+"Chatham Island",1,,-0.82532,-89.42442
+Chaucha,2,,-2.90906,-79.41303
+Checa,2,,-2.80491,-78.98838
+Chilla,8,,-3.45862,-79.5805
+Chillanes,3,,-1.94366,-79.06631
+Chillogallo,18,,-0.27541,-78.55577
+Chimborazo,6,,-1.46952,-78.81686
+"Chimborazo Province",6,,-1.91667,-78.75
+Chiquintad,2,,-2.81771,-79.00706
+Chone,14,,-0.6985,-80.0925
+Chordeleg,2,,-2.98286,-78.73462
+Chucchilán,7,,-0.79953,-78.92072
+Chunchi,6,,-2.29026,-78.91994
+Cojitambo,4,,-2.75794,-78.8836
+Colimes,10,,-1.54566,-80.01158
+"Como Hacemos",9,,1.05028,-78.8691
+Cononaco,24,,-1.05322,-76.07212
+"Cooperativa Bellavista",22,,0.00826,-76.65203
+"Cooperativa Cáfetalera San Miguel",22,,0.19194,-76.84583
+"Cooperativa Doce de Febrero",22,,0.04034,-76.89067
+"Cooperativa Doce de Octubre",22,,0.03048,-76.65673
+"Cooperativa El Cóndor",22,,0.21556,-76.91917
+"Cooperativa Flor de Los Ríos",22,,0.08384,-76.72621
+"Cooperativa Flor de Valle",22,,0.06497,-77.33738
+"Cooperativa Loja",9,,1.22137,-78.68689
+"Cooperativa Los Ángeles",22,,0.09451,-76.68367
+"Cooperativa Nueva Loja",22,,0.25124,-76.727
+"Cooperativa Pío Jaramillo",22,,0.16889,-76.70306
+"Cooperativa Sol Naciente",22,,0.0645,-76.70712
+"Cooperativa Tres Palmas",22,,0.11194,-76.70518
+Corazón,18,,-0.5315,-78.65996
+"Cordillera de los Leones",19,,-1.3,-78.4
+"Cordillera de Misahuallí",23,,-0.81434,-77.85333
+"Cordillera de Mullepungo",8,,-3.23333,-79.66667
+"Cordillera de Pagllurco",23,,-0.91667,-78
+"Cordillera del Portachuelo",12,,-4.61667,-79.33333
+"Coronel Marcelino Maridueña",10,,-2.20924,-79.43248
+Cotacachi,11,,0.36187,-78.35199
+"Cotacachi Cayapas Ecological Reserve",9,,0.5833,-78.6833
+Cotocollao,18,,-0.12291,-78.50367
+Cotopaxi,18,,-0.68917,-78.42889
+"Cotopaxi International Airport",7,,-0.90683,-78.61576
+"Cotopaxi National Park",7,,-0.70049,-78.4294
+Cuembi,22,,0.36667,-76.41667
+Cuenca,2,,-2.90055,-79.00453
+"Cuenca / Mariscal Lamar",2,,-2.88947,-78.9844
+Cumanda,6,,-2.20788,-79.13504
+Cumbe,2,,-3.08546,-79.01135
+Curaray,17,,-1.35353,-76.69424
+Cuyabeno,22,,-0.26948,-75.88444
+"Cuyabeno Faunistic Reserve",22,,-0.01667,-76.18333
+"Daniel Córdova Toral",2,,-2.87996,-78.72915
+"Darwin Island",1,,1.67814,-92.0024
+Daule,9,,0.40612,-80.01222
+"Daylight Point",1,,-1.23067,-90.47473
+Déleg,4,,-2.77151,-78.93276
+"Doctor Miguel Egas Cabezas",11,,0.2502,-78.24371
+Durán,10,,-2.22581,-79.77477
+Echeandía,3,,-1.43112,-79.28049
+"El Ángel",5,,0.62022,-77.94098
+"El Batán",10,,-1.16485,-79.95565
+"El Cañón",1,,-0.90919,-89.62293
+"El Chaco",23,,-0.33904,-77.81115
+"El Corazón",7,,-1.13663,-79.08137
+"El Guabo",8,,-3.24401,-79.82874
+"El Jurón",14,,-1.28202,-80.70695
+"El Limón",10,,-1.64575,-80.022
+"El Naranjo",12,,-4.03011,-79.73914
+"El Oro",8,,-3.5,-79.83333
+"El Pan",2,,-2.86365,-78.65407
+"El Pangui",20,,-3.69363,-78.5443
+"El Rosario",19,,-1.29517,-78.56751
+"El Triunfo",10,,-2.29156,-79.3623
+"El Yangual",18,,-0.20685,-78.62781
+"El Zapote",10,,-2.02853,-79.44932
+"Eloy Alfaro International Airport",14,,-0.94608,-80.67881
+"Emilio María Terán",19,,-1.22444,-78.51274
+Esmeraldas,9,,1,-79.65
+"Esmeraldas Airport",9,,0.97428,-79.62687
+"Flavio Alfaro",14,,-0.32306,-79.8157
+"Floreana Island",1,,-1.2975,-90.43417
+"Florida Tingo",12,,-4.48883,-79.41615
+"Francisco De Orellana Airport",23,,-0.46289,-76.9868
+"Francisco de Orellana Canton",24,,-0.46667,-76.96667
+Galápagos,1,,-0.67015,-90.87341
+"Galapagos Islands",1,,0,-90.5
+"General Antonio Elizalde",10,,-2.15499,-79.19854
+"General Pedro J. Montero",10,,-2.25754,-79.62423
+"General Ulpiano Paez Airport",25,,-2.20329,-80.99233
+"General Villamil",10,,-2.63199,-80.38808
+Girón,2,,-3.16076,-79.14752
+"Gonzalo Pizarro",22,,0.08459,-77.58758
+Guacamayo,9,,1.0649,-78.97545
+Guachalá,18,,-0.00522,-78.1824
+Guachapala,2,,-2.77239,-78.70442
+Gualaceo,2,,-2.89264,-78.77814
+Gualaquiza,15,,-3.40359,-78.58166
+Guamote,6,,-1.93307,-78.70955
+Guano,6,,-1.60789,-78.63105
+Guápulo,18,,-0.2001,-78.47534
+Guarainac,2,,-2.6622,-78.63186
+Guaranda,3,,-1.59263,-79.00098
+Guayaquil,10,,-2.19616,-79.88621
+Guayas,10,,-2,-79.83333
+"Hacienda El Carmelo",10,,-2.6984,-79.97986
+"Hacienda El Zapote",8,,-3.15477,-79.77671
+"Hacienda Ishubamba",6,,-1.95555,-78.63423
+"Hacienda Isigcho",18,,0.01667,-78.15
+"Hacienda Jerusalén",18,,0.01667,-78.35
+"Hacienda Jubones",2,,-3.34318,-79.31967
+"Hacienda La Aguada",8,,-3.48333,-80.18333
+"Hacienda La Barba",18,,-0.33333,-78.55
+"Hacienda La Boyería",18,,-0.5,-78.6
+"Hacienda La Bretaña",18,,-0.3,-78.55
+"Hacienda La Calera",19,,-1.25,-78.68333
+"Hacienda La Campiña",18,,-0.08333,-78.56667
+"Hacienda La Ciénega",7,,-0.76667,-78.61667
+"Hacienda La Cuadra",18,,-0.28333,-78.55
+"Hacienda La Delicia",18,,-0.3,-78.48333
+"Hacienda La Esperanza",18,,-0.33333,-78.43333
+"Hacienda La Florida",18,,-0.36667,-78.5
+"Hacienda La Granja",18,,-0.3,-78.48333
+"Hacienda La Italia",10,,-2.91979,-79.74228
+"Hacienda La Joya",18,,-0.05,-78.41667
+"Hacienda La Joya Vieja",5,,0.82224,-77.78495
+"Hacienda La Libertad",18,,-0.06667,-78.15
+"Hacienda La Lola",18,,-0.5,-78.55
+"Hacienda La María",10,,-2.90277,-79.81016
+"Hacienda La Merced",18,,-0.4,-78.35
+"Hacienda La Provincia",7,,-1.08333,-78.65
+"Hacienda La Rinconada",19,,-1.24323,-78.48824
+"Hacienda La Soledad",10,,-2.82453,-79.70547
+"Hacienda La Victoria",18,,-0.05,-78.31667
+"Hacienda La Viña",18,,-0.2,-78.4
+"Hacienda Leticia",18,,-0.38333,-78.46667
+"Hacienda Llacay Bajo",2,,-3.29541,-79.28503
+"Hacienda Lulunquí Madera",11,,0.33333,-78.1
+"Hacienda Macas de Pazmiño",7,,-0.9,-78.71667
+"Hacienda Manzano Guaranguí",11,,0.34569,-78.03098
+"Hacienda Matilde",10,,-2.24394,-79.8577
+"Hacienda Merizalde",18,,-0.16667,-78.46667
+"Hacienda Milagro",10,,-2.09935,-79.45039
+"Hacienda Miraflores Alto",18,,0.03333,-78.15
+"Hacienda Miraflores Bajo",18,,0.03333,-78.15
+"Hacienda Monjas",5,,0.51667,-77.91667
+"Hacienda Opaluca",12,,-4.01667,-79.66667
+"Hacienda Pacay",2,,-3.18406,-79.22913
+"Hacienda Pasochoa",18,,-0.4,-78.5
+"Hacienda Pechichal",10,,-2.66248,-79.61827
+"Hacienda Pinllocoto",18,,-0.36667,-78.41667
+"Hacienda Pirca",18,,0.15,-78.41667
+"Hacienda Pompeya",12,,-4.04899,-79.195
+"Hacienda Potrerillos",10,,-1.51156,-79.92202
+"Hacienda Puchalitola",18,,-0.53333,-78.55
+"Hacienda Puchués",5,,0.58613,-78.00486
+"Hacienda Puente Limón",10,,-2.18333,-79.33333
+"Hacienda Pullincate",18,,-0.4,-78.43333
+"Hacienda Quillán",19,,-1.21582,-78.53949
+"Hacienda Rayocucho",18,,-0.03333,-78.5
+"Hacienda Romero",12,,-4.45,-80.35
+"Hacienda Salazar",18,,-0.28333,-78.55
+"Hacienda San Agustín",18,,-0.03333,-78.45
+"Hacienda San Antonio",18,,-0.43333,-78.43333
+"Hacienda San Francisco Olaes",18,,-0.26667,-78.46667
+"Hacienda San Germán",18,,-0.30639,-78.47484
+"Hacienda San Jerónimo",2,,-3.43333,-79.21667
+"Hacienda San José de Olaes",18,,-0.25,-78.46667
+"Hacienda San Pedro Urauco",18,,-0.18333,-78.43333
+"Hacienda Santa Ana",7,,-0.65179,-78.93315
+"Hacienda Santa Cecilia",18,,-0.4,-78.51667
+"Hacienda Santa Isabel",10,,-1.11667,-79.7
+"Hacienda Santa Laurita",18,,-0.51667,-78.53333
+"Hacienda Santa Lucía",18,,-0.08333,-78.41667
+"Hacienda Shiña",2,,-3.28409,-79.023
+"Hacienda Siria",18,,-0.26667,-78.45
+"Hacienda Surucucho",2,,-2.84461,-79.11858
+"Hacienda Tablón Grande",18,,-0.29115,-78.29562
+"Hacienda Tabloncillo",12,,-4.43728,-79.55964
+"Hacienda Tajamar",18,,-0.06667,-78.45
+"Hacienda Tanyolpud",5,,0.75065,-77.71793
+"Hacienda Taxourcu",18,,-0.41667,-78.45
+"Hacienda Tilicuchu",18,,-0.3,-78.56667
+"Hacienda Tilicuchu Grande",18,,-0.31667,-78.56667
+"Hacienda Turubamba Bajo",18,,-0.33333,-78.53333
+"Hacienda Usaime",12,,-4.45677,-79.53948
+"Hacienda Veintimilla",18,,-0.05,-78.45
+"Hacienda Yalaquer",5,,0.6878,-77.68204
+"Hacienda Yaraco",12,,-4.11667,-79.9
+"Hacienda Yunguilla",18,,0.02751,-78.55717
+"Hacienda Yunguillapamba",2,,-3.43857,-79.15503
+"Honorato Vásquez",14,,-1.11055,-80.22266
+"Hood Island",1,,-1.37702,-89.67343
+"Hoya del Guayllabamba",18,,0,-78.33333
+"Hoya del Napo",23,,-1,-77.66667
+"Huachi Chico",19,,-1.27345,-78.62994
+Hualtacal,12,,-4.23333,-80.28333
+Huamboya,15,,-1.99019,-77.92191
+Huaquillas,8,,-3.47523,-80.23084
+Ibarra,11,,0.33039,-78.08265
+"Ibarra / Atahualpa",11,,0.33842,-78.13642
+Ichañag,6,,-1.95943,-78.62354
+Igualata,19,,-1.4923,-78.64183
+Iliniza,18,,-0.66148,-78.71532
+Imbabura,11,,0.2667,-78.1667
+Indillana,17,,-1.58333,-77.9
+Ingapirca,2,,-3.46093,-79.22587
+"Isabela Island",1,,-0.94278,-90.9531
+"Isidro Ayora",10,,-1.88048,-80.14509
+"Isla de La Campana",10,,-2.5037,-80.18908
+"Isla de La Seca",10,,-2.42954,-80.0622
+"Isla de La Tola",9,,1.16667,-78.98333
+"Isla de los Ingleses",10,,-2.57997,-79.76206
+"Isla de Pongal",8,,-3.40558,-80.08101
+"Isla Guy Fawkes",1,,-0.51533,-90.52505
+"Isla La Bocanita",10,,-2.4,-79.95
+"Isla La Reforma",22,,-0.05,-75.45
+"Isla Lobos",1,,-0.85588,-89.56604
+"Isla Marchena",1,,0.32882,-90.46944
+"Isla Masa",10,,-2.33333,-79.83333
+"Isla Matorrillos",10,,-2.4687,-79.81575
+"Isla Mondragón",10,,-2.58127,-79.84983
+"Isla Palo Santo",10,,-2.49205,-80.13339
+"Isla Payana",8,,-3.38444,-80.28139
+"Isla Pinzón",1,,-0.60997,-90.66629
+"Isla Plaza Norte",1,,-0.57975,-90.16145
+"Isla Plaza Sur",1,,-0.58372,-90.16325
+"Isla Pollos",8,,-3.43024,-80.21667
+"Isla Puná",10,,-2.82739,-80.11994
+"Isla Rábida",1,,-0.414,-90.70846
+"Isla Santa Cruz",1,,-0.61912,-90.3382
+"Isla Santa Fé",1,,-0.81777,-90.05866
+"Isla Santa María",1,,-1.2886,-90.4317
+"Isla Santa María (Floreana) (Cab. En  Pto. Velasco Ibarra)",1,,-1.29765,-90.46005
+"Isla Santay",10,,-2.22225,-79.85086
+"Isla Sin Nombre",1,,-0.67049,-90.5855
+"Islas Los Cuatro Hermanos",1,,-0.86268,-90.77987
+"Islas Manglecito",10,,-2.65739,-80.18792
+"Istmo Perry",1,,-0.5898,-91.00171
+"J.M. Velasco Ibarra",12,,-4.37823,-79.94102
+Jama,14,,-0.20172,-80.26358
+Jambelí,8,,-3.39645,-80.22943
+Jaramijó,14,,-0.97892,-80.60424
+"Jatún Molino",17,,-1.83333,-77.33333
+"Jatun Sacha Biological Reserve",23,,-1.06667,-77.6
+"Jibaría Shurupe",17,,-1.93333,-77.78333
+Jimbiquiti,17,,-1.98333,-77.71667
+Jimbiquito,15,,-2.53333,-77.25
+Jipijapa,14,,-1.34841,-80.57913
+"Jipijapa Airport",14,,-1,-80.66666
+Joa,14,,-1.37457,-80.62993
+"José Joaquín de Olmedo International Airport",10,,-2.15742,-79.88356
+"José Luis Tamayo",10,,-2.23038,-80.92856
+Josefina,10,,-2.26147,-79.86389
+"Joséguango Bajo",7,,-0.81842,-78.59521
+"Juan Benigno Vela",19,,-1.30161,-78.69389
+Juncal,5,,0.85,-78.05
+Junín,14,,-0.92777,-80.20583
+"La Chispa",22,,0.31818,-77.48607
+"La Concordia",26,,0.00801,-79.39462
+"La Delicia",10,,-1.90733,-79.67329
+"La Esperanza",11,,0.29791,-78.11935
+"La Foresta",18,,-0.21667,-78.48333
+"La Joya de Los Sachas",24,,-0.29394,-76.85573
+"La Laguna",9,,1.1,-78.88333
+"La Libertad",18,,-0.28275,-78.58264
+"La Magdalena",11,,0.26667,-78.1
+"La Maná",7,,-0.7908,-79.1342
+"La Mangonera",9,,1.21988,-78.98568
+"La Nueva Santa Rosa",22,,0.25422,-76.42425
+"La Plata Island",14,,-1.27252,-81.06906
+"La Pretoria",10,,-2.23529,-79.35501
+"La Troncal",4,,-2.42355,-79.33977
+"La Unión",10,,-2.24627,-79.829
+"Lago Agrio",22,,0.06667,-77
+"Lago de Sade",9,,0.58333,-79.25
+"Laguna Buza",2,,-3.1562,-79.26442
+"Laguna Cubillín",6,,-2.27486,-78.57608
+"Laguna de Colta",6,,-1.73744,-78.75572
+"Laguna de Cuicocha",11,,0.30043,-78.3628
+"Laguna de Limpiopungu",18,,-0.61667,-78.46667
+"Laguna de los Patos",2,,-2.92281,-78.69354
+"Laguna de Patul",2,,-2.70947,-79.22464
+"Laguna de Pólvora",2,,-2.88333,-78.98333
+"Laguna de Potrerillos",5,,0.71307,-77.87951
+"Laguna de San Pablo",11,,0.20903,-78.22407
+"Laguna de Yaguarcocha",11,,0.37203,-78.10064
+"Laguna de Yambo",7,,-1.1,-78.58333
+"Laguna Grande",22,,-0.01249,-76.17776
+"Laguna Grande de Mojanda",11,,0.13782,-78.26709
+"Laguna Imuya",22,,-0.6,-75.25
+"Laguna Ishin",2,,-2.8,-79.23333
+"Laguna Jatuncocha",24,,-1,-75.45
+"Laguna La Dormida",18,,-0.13405,-78.07964
+"Laguna Lechuza",10,,-2.93333,-80.15
+"Laguna Loma de la Caja",2,,-2.83333,-79.31667
+"Laguna Mactayang",6,,-2.24194,-78.5785
+"Laguna Mapahuiña",6,,-2.43333,-78.66667
+"Laguna Micacocha",24,,-0.55,-77.2
+"Laguna Muerte Pungu",18,,-0.41752,-78.26804
+"Laguna Napalé",2,,-2.88726,-79.29301
+"Laguna Narihuiña",2,,-3.03333,-79.48333
+"Laguna Negra",2,,-2.78168,-79.14919
+"Laguna Nunalviro",18,,-0.25868,-78.20351
+"Laguna Paila Cocha",2,,-2.81667,-79.28333
+"Laguna Pataquinoas",2,,-2.78184,-79.20887
+"Laguna Patococha",19,,-1.21667,-78.81667
+"Laguna Pintada",15,,-1.71208,-78.40268
+"Laguna Pisayambo",19,,-1.08644,-78.38662
+"Laguna Puruhanta",11,,0.1993,-77.94642
+"Laguna Shogra",2,,-3.17403,-79.2044
+Lalanguso,6,,-1.93333,-78.81667
+Lamaca,12,,-4.03886,-79.84441
+"Las Lajas",8,,-3.80555,-80.0585
+"Las Lomas de Arriba",10,,-1.86667,-80.1
+"Las Palmas",1,,-1.28502,-90.47141
+Latacunga,7,,-0.93521,-78.61554
+Limón,15,,-2.98333,-78.36667
+Limones,9,,1.11551,-78.76874
+Llacao,2,,-2.86667,-78.88333
+"Lliniza Norte",18,,-0.64618,-78.71895
+Lloa,18,,-0.24994,-78.58379
+Llurimaguas,11,,0.2204,-78.97952
+Logroño,15,,-2.61677,-78.20898
+Loja,12,,-4.16667,-79.5
+"Loma El Palto",12,,-4.35514,-79.92497
+"Loma El Panecillo",18,,-0.22906,-78.51826
+"Loma Mulanga",18,,-0.2642,-78.60622
+"Lomas de Sargentillo",10,,-1.88082,-80.08354
+Loreto,18,,-0.38238,-78.40684
+"Loreto Canton",24,,-0.69487,-77.30255
+"Los Encuentros",12,,-4.15329,-80.15376
+"Los Lojas",10,,-2.01404,-79.94419
+"Los Perales Airport",14,,-0.606,-80.404
+"Los Ríos",13,,-1.41667,-79.58333
+"Los Tres Chorros",1,,-0.93523,-89.47883
+Loyola,4,,-2.79145,-78.85304
+Macará,12,,-4.38181,-79.9437
+Macas,15,,-2.30868,-78.11135
+"Macas Airport",15,,-2.29917,-78.1208
+Machachi,18,,-0.51273,-78.57066
+Machala,8,,-3.25861,-79.96053
+"Machala Airport",8,,-3.2689,-79.96157
+"Machalilla National Park",14,,-1.5625,-80.83
+"Mache-Chindul Ecological Reserve",9,,0.48232,-79.78473
+"Mache Mountains",9,,0.25,-79.83333
+"Mala Hill",10,,-2.79765,-79.9903
+Malacatus,12,,-4.21901,-79.26008
+"Malecón 2000",10,,-2.19406,-79.87987
+Manabí,14,,-0.66667,-80.08333
+Mangaurco,12,,-4.15622,-80.43126
+Manta,14,,-0.95,-80.71667
+"Manuel Cornejo Astorga",18,,-0.41658,-78.79932
+"Manuel J. Calle",4,,-2.35554,-79.39948
+Mapasingue,10,,-2.15,-79.9
+"Maquipucuna Biological Reserve",18,,0.05517,-78.67958
+Marcabelí,8,,-3.77573,-79.92319
+"Marcos Espinel",19,,-1.17391,-78.52401
+"Mariana Miller Biological Reserve",23,,-1.09299,-77.62708
+"Mariano Moreno",2,,-2.85656,-78.72007
+"Mariscal Sucre International Airport",18,,-0.11956,-78.35518
+"Martín Galve",9,,1.09225,-78.82806
+Maspa,23,,-0.41667,-78.01667
+Matadero,12,,-4.26667,-79.86667
+Mayaycu,20,,-3.97602,-78.63934
+"Méndez Airport",15,,-2.75368,-78.26488
+Mera,17,,-1.46097,-78.11394
+Miazal,15,,-2.59578,-77.77803
+Milagro,10,,-2.13404,-79.59415
+Milín,7,,-0.89478,-78.7405
+"Minas Viejas",9,,1.09248,-78.64782
+"Miraflores Park",2,,-2.88423,-78.9944
+Miravalle,18,,-0.26667,-78.51667
+Mocache,13,,-1.18683,-79.54442
+Mocha,19,,-1.41939,-78.66207
+Mojanda,18,,0.13,-78.27
+"Mojanda Grande",18,,0.14732,-78.34351
+Molleturo,2,,-2.76704,-79.39705
+Mompiche,9,,0.50473,-80.02182
+Montalvo,13,,-1.80295,-79.31703
+"Montalvo (Andoas)",17,,-1.93428,-76.91522
+"Montañas de Jama",14,,-0.15,-80.1
+"Montañas de Mindo",18,,0.16667,-78.91667
+"Montañas de Nanegal",18,,0.11667,-78.66667
+Montañita,25,,-1.82736,-80.75293
+"Monte Grande",12,,-4.01667,-79.53333
+Montecristi,14,,-1.04576,-80.65889
+Monteverde,10,,-2.05501,-80.73367
+Morilla,10,,-2.19024,-80.75134
+Morona,15,,-2.88784,-77.69028
+"Morona-Santiago Province",15,,-2.5,-77.91667
+"Mount Pitt",1,,-0.7191,-89.24849
+Muisne,9,,0.61045,-80.0186
+Najurungo,9,,1.16895,-78.8229
+Ñamurelte,4,,-2.72609,-78.99048
+Nangaritza,20,,-4.32616,-78.75638
+Napo,23,,-0.62915,-77.83164
+Naranjal,10,,-2.67364,-79.6183
+Naranjamba,12,,-4.13333,-80.01667
+Naranjito,10,,-2.16671,-79.4654
+"Narborough Island",1,,-0.39019,-91.49929
+"Narciza de Jesús",10,,-1.91524,-80.01112
+Narihuiña,2,,-3.14122,-79.53664
+Nashicta,15,,-2.3,-77.68333
+Naypungu,12,,-4.36828,-79.52138
+Nayumpim,15,,-2.72024,-77.80236
+Nieves,2,,-3.34154,-79.11547
+Nobol,10,,-1.91667,-80.01667
+Nono,18,,-0.06694,-78.57732
+"North Seymour Island",1,,-0.3948,-90.28442
+"Nueva Loja",22,,0.086,-76.89528
+"Nueva Loja Airport",22,,0.09306,-76.8675
+"Nuevo Rocafuerte",24,,-0.92624,-75.40243
+Nulti,2,,-2.91667,-78.85
+"Octavio Cordero",2,,-2.8,-78.96667
+Olmedo,10,,-2.38868,-80.43697
+Oña,2,,-3.48573,-79.12986
+"Orellana Province",24,,-0.75,-76.41667
+Organos,12,,-4.1239,-80.16516
+Otavalo,11,,0.23457,-78.26248
+"Pablo Sexto",15,,-1.85362,-78.29544
+Palanda,20,,-4.55736,-79.09327
+Palenque,13,,-1.43795,-79.75647
+Palestina,10,,-1.93709,-79.71396
+Pallatanga,6,,-2.01392,-78.92697
+"Palma Real",11,,0.33395,-78.93333
+"Palo Santo",12,,-4.43686,-79.67204
+Palora,15,,-1.70131,-77.96516
+Palugo,18,,-0.24637,-78.33364
+Pambamarca,18,,-0.07939,-78.20867
+Pambamarquito,18,,-0.03174,-78.23587
+"Pampa de Oro",9,,1.19373,-78.9809
+"Pampas de la Procesión",2,,-3.03333,-79.31667
+Pangua,7,,-1.1388,-79.05463
+Papallacta,23,,-0.37654,-78.14241
+Paquisha,20,,-3.93299,-78.67722
+"Páramo de Las Lagunas",5,,0.68333,-77.86667
+"Páramos de Piñán",11,,0.5,-78.5
+"Parque El Ejido",18,,-0.20968,-78.49854
+"Parque Nacional Cajas",2,,-2.8333,-79.1667
+Pasaje,10,,-1.18504,-79.92243
+Pasochoa,18,,-0.43333,-78.48333
+"Pastaza Province",17,,-1.66667,-76.83333
+"Pastaza / Rio Amazonas",17,,-1.50583,-78.06208
+Patatena,18,,0.02589,-78.5193
+Patichubamba,18,,-0.40382,-78.39428
+Patococha,2,,-3.22312,-79.50707
+Patzocul,19,,-1.15,-78.56667
+Pedernales,14,,0.07168,-80.05216
+"Pedro Carbo",10,,-1.8538,-80.28787
+"Pedro Pablo Gómez",14,,-1.62688,-80.56084
+Pelileo,19,,-1.3299,-78.54341
+Peñaherrera,11,,0.35077,-78.53463
+Penipe,6,,-1.56228,-78.44812
+Perjavi,18,,-0.01667,-78.51667
+Petzcinda,15,,-2.66667,-77.71667
+Pichincha,14,,-1.04695,-79.82139
+"Pichincha Volcano",18,,-0.17082,-78.61263
+Picoazá,14,,-1.03603,-80.49335
+Pilco,18,,-0.3,-78.43333
+Píllaro,19,,-1.17414,-78.54676
+Pimampiro,11,,0.39093,-77.94094
+Piñas,8,,-3.68107,-79.68083
+Pindal,20,,-3.75108,-78.58592
+Pinguilla,18,,0.09114,-78.4012
+Playas,10,,-2.55413,-80.43465
+Pocita,14,,-1.51667,-80.53333
+Pocitos,10,,-2.28484,-80.26759
+"Podocarpus National Park",20,,-4.35716,-78.97407
+Pomasqui,18,,-0.0542,-78.45382
+Portovelo,8,,-3.72145,-79.62187
+Portoviejo,14,,-1.05458,-80.45445
+Posorja,10,,-2.71006,-80.24556
+"Poza de Tono",8,,-3.55,-80.1
+"Presidente Urbina",19,,-1.1475,-78.54236
+Principal,2,,-3.02369,-78.75366
+Pucallpa,2,,-3.22377,-79.23326
+Pucara,2,,-3.14503,-79.56561
+"Pueblo Viejo de Cayapas",9,,0.75,-78.66667
+Puengasí,18,,-0.25,-78.5
+"Puerto Ayora",1,,-0.74018,-90.3138
+"Puerto Balao Grande",10,,-2.89343,-79.83361
+"Puerto Balsa",10,,-2.575,-79.89444
+"Puerto Balsas",10,,-2.5759,-79.89966
+"Puerto Baquerizo Moreno",1,,-0.90172,-89.61021
+"Puerto Bolivar",8,,-3.26667,-80
+"Puerto de Cayo",14,,-1.34858,-80.73908
+"Puerto de El Morro",10,,-2.61139,-80.30332
+"Puerto de Guayaquil",10,,-2.69213,-80.24949
+"Puerto El Carmen de Putumayo",22,,0.11922,-75.85721
+"Puerto Francisco de Orellana",24,,-0.46645,-76.98719
+"Puerto Hualtaco",8,,-3.43333,-80.25
+"Puerto Ila",18,,-0.55,-79.36667
+"Puerto La Pitahaya",8,,-3.42324,-80.0781
+"Puerto López",14,,-1.55873,-80.80931
+"Puerto Marítimo de Guayaquil",10,,-2.27959,-79.90674
+"Puerto Napo",23,,-1.03333,-77.73333
+"Puerto Proaño",15,,-2.93333,-77.7
+"Puerto Quito",18,,0.17233,-79.23624
+"Puerto Rico",10,,-2.21595,-80.89982
+"Puerto Roma",10,,-2.51531,-79.88249
+"Puerto San Francisco",10,,-2.5262,-79.86152
+"Puerto Serrano",10,,-2.43333,-79.86944
+"Puerto Villamil",1,,-0.95542,-90.96654
+Puetata,2,,-3.4293,-79.26114
+Pujilí,7,,-0.95759,-78.69636
+Pululagua,18,,0.03485,-78.46543
+"Punta Ballena",14,,-0.17011,-80.32571
+"Punta Brava",10,,-1.975,-80.76667
+"Punta Carnero",10,,-2.29282,-80.91576
+"Punta de Jaramijó",14,,-0.92673,-80.65757
+"Punta de Piedra",10,,-2.42778,-79.85278
+"Punta Jambelí",8,,-3.20935,-80.02979
+"Punta Malamocco",1,,-0.89332,-89.61284
+"Punta Mangle",1,,-0.46159,-91.394
+"Punta Mejía",1,,0.36885,-90.5298
+"Punta Mondragón",10,,-2.66667,-79.88333
+"Punta Montañita",10,,-1.83333,-80.76667
+"Punta Portete",9,,0.4938,-80.04756
+"Punta Venado",14,,-0.23333,-80.36667
+"Punta Verde",9,,1.08272,-79.39211
+Purunuma,12,,-4.20927,-79.37362
+Pusagcocha,11,,0.23996,-78.45487
+"Putumayo Airport",22,,0.08333,-75.9
+Puyo,17,,-1.48369,-78.00257
+Quevedo,13,,-1.02863,-79.46352
+Quibil,12,,-3.59465,-79.19315
+Quilanga,12,,-4.34159,-79.37862
+Quilotoa,7,,-0.84819,-78.91199
+Quingeo,2,,-3.0309,-78.93193
+Quininde,9,,0.32744,-79.46647
+Quinsaloma,13,,-1.20726,-79.31099
+Quito,18,,-0.22985,-78.52495
+Quizapincha,19,,-1.23439,-78.68434
+"Reales Tamarindos Airport",14,,-1.04165,-80.4722
+Ricaurte,2,,-2.86256,-78.96455
+"Río Naranjal",10,,-2.65786,-79.76595
+"Rio Tigre",17,,-1.90303,-76.25143
+"Rio Verde",9,,1.06235,-79.39939
+Riobamba,6,,-1.67098,-78.64712
+"Roca Pateadora",1,,-0.77731,-89.5195
+"Roca Redonda",1,,0.27002,-91.62545
+Rocafuerte,14,,-0.92447,-80.45017
+"Rocas Bainbridge",1,,-0.35049,-90.566
+"Rocas Nerus",1,,0.71272,-90.78813
+"Rosa Zarate",9,,0.32779,-79.47407
+Rumicucho,18,,0.01778,-78.43696
+Rumiñahui,7,,-0.63333,-78.53333
+"Rumipamba de Espinoza",7,,-0.79128,-78.59907
+"Rumipamba Villacís",7,,-0.7495,-78.56235
+Sacapianga,12,,-4.00054,-79.66269
+"Salamalag Grande",7,,-0.84364,-78.73303
+Salango,14,,-1.59239,-80.84262
+Salasaca,19,,-1.31974,-78.57484
+Salinas,3,,-1.40537,-79.01862
+"Salinas Point",10,,-3.02315,-80.26484
+Samborondón,10,,-1.96276,-79.72402
+"San Agustín de Callo",7,,-0.72966,-78.57512
+"San Antonio",11,,0.33266,-78.17046
+"San Antonio de Pichincha",18,,-0.0075,-78.4479
+"San Clemente",14,,-0.76141,-80.51057
+"San Cristóbal Airport",1,,-0.91021,-89.61745
+"San Gabriel",5,,0.59354,-77.83066
+"San Joaquín",2,,-2.89583,-79.05125
+"San José",9,,1.02509,-78.60769
+"San Juan",13,,-1.66667,-79.76667
+"San Juan Bosco",15,,-3.2627,-78.38168
+"San Juan de Manta",14,,-0.99838,-80.76144
+"San Lorenzo de Esmeraldas",9,,1.28626,-78.83514
+"San Miguel",3,,-1.70884,-79.04311
+"San Miguel De Los Bancos",18,,-0.03583,-78.98868
+"San Miguel de Salcedo",7,,-1.04559,-78.59019
+"San Miguel de Urcuqui Canton",11,,0.4203,-78.1972
+"San Pedro De Huaca",5,,0.61652,-77.70866
+"San Vicente",14,,-0.60435,-80.40267
+Sanaguin,2,,-2.56988,-79.29953
+Sangay,15,,-2.00511,-78.34059
+Sangolquí,18,,-0.33405,-78.45217
+"Santa Ana de Pedregal",18,,-0.52856,-78.4792
+"Santa Ana de Vuelta Larga",14,,-1.20784,-80.37059
+"Santa Clara",17,,-1.26699,-77.8965
+"Santa Clara Island",8,,-3.17245,-80.43629
+"Santa Elena",25,,-2.08333,-80.58333
+"Santa Lucía",10,,-2.18333,-80
+"Santa María",1,,-1.25,-90.45
+"Santa Rosa",8,,-3.44882,-79.95952
+"Santa Rosa de Cusubamba",18,,-0.04475,-78.27208
+"Santa Rosa de Sucumbíos",22,,0.37667,-77.13028
+"Santa Rosa Regional Airport",8,,-3.44385,-80.00982
+"Santiago de Méndez",15,,-2.71835,-78.31883
+"Santo Domingo de los Colorados",26,,-0.25305,-79.17536
+"Santo Domingo de los Tsáchilas",26,,-0.28945,-79.18577
+Saquisilí,7,,-0.8399,-78.667
+Saraguro,12,,-3.62554,-79.239
+Sarayacu,17,,-1.73651,-77.48477
+Sayausí,2,,-2.87142,-79.07225
+"Sector Cofanes",22,,0.2283,-76.6607
+"Sector de Los Cofanes",22,,0.01345,-76.7021
+"Sevilla De Oro",2,,-2.68189,-78.57499
+Seymour,1,,-0.45094,-90.26433
+"Seymour Airport",1,,-0.45352,-90.26616
+Shell,17,,-1.50373,-78.064
+Shiriculapo,12,,-4.05186,-79.65175
+Shurucpamba,2,,-3.43537,-79.19439
+Shushufindi,22,,-0.31063,-76.41662
+Sidcay,2,,-2.84793,-78.95539
+"Sierra Negro",1,,-0.78333,-90.95
+Sigchos,7,,-0.7047,-78.88868
+"Simón Bolívar",10,,-2.03624,-79.40141
+Sinincay,2,,-2.85151,-79.01422
+"St. Elena Point",25,,-2.19027,-81.01136
+"St. James Island",1,,-0.26667,-90.7
+Sucre,14,,-1.27987,-80.41776
+Sucúa,15,,-2.45866,-78.17171
+"Sucua Airport",15,,-2.471,-78.169
+Sucumbíos,22,,0.1,-76.86667
+"Sumaco Napo-Galeras National Park",23,,-0.32821,-77.47078
+Suscal,4,,-2.43718,-79.05168
+Susudel,2,,-3.4043,-79.18415
+Taisha,15,,-2.49054,-77.48315
+"Taisha Airport",15,,-2.38167,-77.5028
+Tangaral,9,,1.09715,-78.9139
+Tarapoa,22,,-0.12425,-76.3457
+"Tarapoa Airport",22,,-0.12296,-76.3378
+Tarqui,2,,-3.01418,-79.03437
+Tena,23,,-0.98333,-77.81667
+"Tena Jumandy Airport",23,,-0.98675,-77.82202
+"Teniente Coronel Luis a Mantilla International Airport",5,,0.80951,-77.70806
+Tiputini,24,,-0.78333,-75.51667
+Tisaleo,19,,-1.34884,-78.66875
+Tiwintza,15,,-3.04841,-78.00662
+Tixán,6,,-2.15184,-78.8026
+"Tomas De Berlanga (Santo Tomas)",1,,-0.71135,-91.05194
+Tosagua,14,,-0.77931,-80.27831
+"Tower Island",1,,0.32905,-89.95522
+Tugaduaja,10,,-2.41832,-80.60594
+Tulcán,5,,0.81187,-77.71727
+"Tungurahua Province",19,,-1.25,-78.5
+Turi,2,,-2.92587,-79.01119
+Udushapa,2,,-3.42269,-79.11249
+Valencia,13,,-0.95229,-79.35588
+Valle,2,,-2.93632,-78.96603
+"Valle de Malacatos",12,,-4.25,-79.28333
+"Velasco Ibarra",10,,-1.04376,-79.63837
+Ventanas,13,,-1.44158,-79.45943
+"Victoria del Portete",2,,-3.06326,-79.06613
+Vilcabamba,12,,-4.26233,-79.22287
+Vinces,13,,-1.55611,-79.75191
+"Volcán Alcedo",1,,-0.42434,-91.12087
+"Volcán Cerro Azul",1,,-0.927,-91.39224
+"Volcán Reventador",23,,-0.67556,-77.67
+"Volcán Sierra Negra",1,,-0.81871,-91.12729
+"Volcán Sumaco",23,,-0.54119,-77.62744
+"Volcán Wolf",1,,0.01954,-91.34373
+"Wenmen Island",1,,1.38271,-91.81474
+"Wreck Point",1,,-0.91798,-89.62765
+"Yaguachi Nuevo",10,,-2.0968,-79.69485
+Yantzaza,20,,-3.83261,-78.76076
+"Yasuni National Park",23,,-1.09479,-75.80669
+Yunguishe,8,,-3.39295,-79.59491
+"Zamba Palo",10,,-2.96485,-80.21584
+Zamora,20,,-4.06685,-78.95488
+"Zamora Chinchipe",20,,-4.25,-78.83333
+Zapotillo,12,,-4.22038,-80.32116
+Zaspi,9,,1.13007,-78.81614
+Zumbahua,7,,-0.96098,-78.89839

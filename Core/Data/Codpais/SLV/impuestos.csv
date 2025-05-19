@@ -1,0 +1,4 @@
+codimpuesto,descripcion,iva,recargo
+IVA_GNRL,"IVA General",13,0
+IVA_REDUC,"IVA Reducido Servicios",5,0
+0_RATE,"Tasa Cero",0,0

@@ -38,7 +38,7 @@ final class Forja
     public static function builds(): array
     {
         if (!isset(self::$builds)) {
-            self::$builds = Http::get(self::BUILDS_URL)->setTimeout(10)->json();
+            self::$builds = Http::get(self::BUILDS_URL)->setTimeout(10)->json() ?? [];
         }
 
         return self::$builds ?? [];
@@ -88,7 +88,7 @@ final class Forja
     public static function plugins(): array
     {
         if (!isset(self::$pluginList)) {
-            self::$pluginList = Http::get(self::PLUGIN_LIST_URL)->setTimeout(10)->json();
+            self::$pluginList = Http::get(self::PLUGIN_LIST_URL)->setTimeout(10)->json() ?? [];
         }
 
         return self::$pluginList ?? [];

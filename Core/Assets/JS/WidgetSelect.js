@@ -50,6 +50,11 @@ function widgetSelectGetData(select, parent) {
 }
 
 $(document).ready(function () {
+    $('select.select2').select2({
+        width: 'style',
+        theme: 'bootstrap4'
+    });
+
     $('.parentSelect').each(function () {
         let parentStr = $(this).attr('parent');
         if (parentStr === 'undefined' || parentStr === false || parentStr === '') {

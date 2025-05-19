@@ -209,6 +209,12 @@ trait InvoiceTrait
             case 'fechadevengo':
             case 'total':
                 return $this->onChangeTotal();
+
+            case 'codserie':
+                if (false === $this->testDate()) {
+                    return false;
+                }
+                break;
         }
 
         return true;
