@@ -1,3 +1,6 @@
-codimpuesto;descripcion;iva;recargo
-"IGV";"IGV 18%";18;0
-"EXE";"EXENTO";"0";"0"
+codimpuesto,descripcion,iva,recargo
+IVA_GEN,"IVA General",18,0
+IVA_REDUC,"IVA Reducido en Alimentos",8,0
+IVA18,"IVA Sector Turismo",18,0
+IVA_SVC,"IVA Servicios Específicos",10,0
+IVA_EXPORT,"Exoneración para Exportación",0,0

@@ -1,0 +1,916 @@
+ciudad,idprovincia,codeid,latitude,longitude
+Aconcagua,13,,-32.65383,-70.01141
+"Adolfo Gonzáles Chaves",1,,-38,-60.25
+Adrogué,1,,-34.80041,-58.38384
+"Aeroclub Argentino",1,,-34.73186,-58.59646
+"Aeroparque Jorge Newbery",7,,-34.55918,-58.41561
+Aguilares,24,,-27.4315,-65.61465
+Albardón,18,,-31.43722,-68.52556
+Alderetes,24,,-26.81787,-65.14202
+Allen,16,,-38.97736,-67.82714
+"Almirante Brown Department",3,,-25.81662,-61.45576
+"Almirante Brown Partido",1,,-34.83333,-58.33333
+"Alta Gracia",5,,-31.64978,-64.42972
+"American Cordillera",18,,-32.57382,-70.08392
+"Antofagasta de la Sierra Department",2,,-26,-67.58333
+"Antoine de Saint Exupéry Airport",16,,-40.752,-65.03288
+Arauco,12,,-28.58071,-66.7925
+"Argentino Lake",20,,-50.21667,-72.41667
+"Aristóbulo del Valle",14,,-27.09571,-54.89344
+Armstrong,21,,-32.78215,-61.60222
+Arroyito,5,,-31.41917,-63.05084
+"Arroyo Seco",21,,-33.15489,-60.50863
+"Ascochinga Airport",5,,-30.9899,-64.24421
+"Astor Piazzolla International Airport",1,,-37.93417,-57.57333
+Avellaneda,21,,-29.11761,-59.65834
+Ayacucho,1,,-37,-58.5
+Azul,1,,-36.75,-59.66667
+"Azul Airport",1,,-36.83821,-59.88081
+"Bahía Blanca",1,,-38.7176,-62.26545
+Balcarce,1,,-37.84638,-58.25549
+Balvanera,7,,-34.61032,-58.39766
+Bariloche,16,,-41.14557,-71.30822
+Barracas,7,,-34.64966,-58.38341
+Barranqueras,3,,-27.48132,-58.93925
+Belgrano,7,,-34.5627,-58.45829
+"Belgrano Department",21,,-32.5,-61.75
+"Bell Ville",5,,-32.63021,-62.68883
+"Bella Vista",1,,-34.5651,-58.69034
+"Benito Juárez",1,,-37.5,-59.91667
+Berazategui,1,,-34.76531,-58.21278
+Boedo,7,,-34.63333,-58.41667
+Bolívar,1,,-36.33333,-61.08333
+"Brigadier Hector Eduardo Ruiz Airport",1,,-37.44962,-61.8886
+"Brigadier Mayor César Raúl Ojeda Airport",19,,-33.27319,-66.35642
+"Buenos Aires",1,,-36,-60
+"Buenos Aires F.D.",7,,-34.6,-58.45
+Cachi,17,,-25.09741,-66.18542
+Cafayate,17,,-26.07286,-65.97766
+"Caleta Olivia",20,,-46.44785,-67.52274
+"Caleta Olivia Airport",20,,-46.37219,-67.58549
+Campana,1,,-34.14444,-58.96583
+"Campo de Mayo Airport",1,,-34.53453,-58.67216
+"Campo Ramón",14,,-27.4549,-55.02122
+"Cañada de Gómez",21,,-32.81636,-61.39493
+"Capital Department",21,,-31.5,-60.66667
+"Capitán Bermúdez",21,,-32.82262,-60.71852
+"Capitán Vicente Almandos Almonacid Airport",12,,-29.38164,-66.79584
+Carcarañá,21,,-32.85679,-61.15331
+Casilda,21,,-33.04417,-61.16806
+Castelar,1,,-34.65142,-58.64074
+Catamarca,2,,-27,-67
+"Cataratas del Iguazú International Airport",14,,-25.73728,-54.47344
+Catriel,16,,-37.87552,-67.79451
+Caucete,18,,-31.6515,-68.28216
+Cauchari,10,,-24.08177,-66.80042
+"Caviahue Airport",15,,-37.8514,-71.0092
+Centenario,15,,-38.82955,-68.1318
+"Centro de Ski La Hoya",4,,-42.83368,-71.25355
+Ceres,21,,-29.881,-61.94504
+"Ceres Airport",21,,-29.87339,-61.92923
+"Cerro Aracar",17,,-24.3,-67.78333
+"Cerro Archibarca",17,,-25.23771,-67.86491
+"Cerro Bayo",2,,-27.28179,-68.52465
+"Cerro Bonete",12,,-27.85061,-68.8193
+"Cerro Ciénaga Grande",17,,-24.76567,-66.41284
+"Cerro de Incahuasi",2,,-27.03382,-68.29574
+"Cerro de la Majadita",18,,-30.41667,-69.73333
+"Cerro del Baboso",12,,-28.28661,-69.37461
+"Cerro del Bolsón",24,,-27.21417,-66.09417
+"’Cerro del Nacimiento",2,,-27.19406,-68.56015
+"Cerro El Cóndor",2,,-26.63169,-68.36058
+"Cerro El Libertador",17,,-24.93229,-66.39107
+"Cerro Galán",2,,-25.9392,-66.92266
+"Cerro General Manuel Belgrano",12,,-29.01392,-67.82877
+"Cerro Incahuasi",2,,-26.39938,-67.77288
+"Cerro Pajonal",2,,-25.45,-68.3
+"Cerro Peinado",2,,-26.6216,-68.11522
+"Cerro Tuzgle",10,,-24.05631,-66.47894
+Chacabuco,1,,-34.64203,-60.47124
+Chaco,3,,-26.33333,-60.5
+"Chaco Central",9,,-25,-59.75
+Chajarí,8,,-30.75482,-57.98196
+"Chamical Airport",12,,-30.34528,-66.29361
+"Chapelco - Aviador Carlos Campos Airport",15,,-40.07528,-71.13722
+Charata,3,,-27.21787,-61.18738
+"Chepes Airport",12,,-31.33333,-66.6
+Chilecito,12,,-29.16195,-67.4974
+"Chilecito Airport",12,,-29.22389,-67.43889
+Chivilcoy,1,,-34.8969,-60.01909
+"Chos Malal",15,,-37.37809,-70.27085
+"Chos Malal Airport",15,,-37.44499,-70.22289
+Chubut,4,,-44,-69
+"Cinco Saltos",16,,-38.82225,-68.06293
+Cipolletti,16,,-38.93392,-67.99032
+"Ciudad de Mendoza Airpark",13,,-32.86521,-68.87123
+Colegiales,7,,-34.57365,-58.44924
+"Colonia Ayuí",8,,-31.20557,-58.03012
+"Colonia Catriel Airport",16,,-37.9102,-67.835
+"Colonia Lapin",1,,-37.37259,-63.05265
+"Colonia Suiza",16,,-41.0952,-71.50744
+"Colonia Wanda",14,,-25.97337,-54.56304
+"Comandante Espora Airport",1,,-38.72868,-62.15301
+"Comodoro D. Ricardo Salomón Airport",13,,-35.4936,-69.57427
+"Comodoro International Airport",4,,-45.78535,-67.46551
+"Comodoro P. Zanni Airport",1,,-35.84459,-61.85755
+"Comodoro Pierrestegui Airport",8,,-31.29694,-57.99663
+"Comodoro Rivadavia",4,,-45.86256,-67.494
+"Concepción del Uruguay",8,,-32.48463,-58.23217
+Concordia,8,,-31.39195,-58.01706
+"Constitución Department",21,,-33.5,-60.91667
+Cordoba,5,,-32,-64
+"Coronel Felipe Varela International Airport",2,,-28.59321,-65.75092
+"Coronel Olmedo Airport",5,,-31.49024,-64.14415
+"Coronel Pringles",19,,-33.08333,-65.83333
+"Coronel Suárez",1,,-37.45859,-61.93294
+Corrientes,6,,-29,-58
+"Corrientes International Airport",6,,-27.4455,-58.76186
+Crespo,8,,-32.03077,-60.30619
+"Cruz del Eje",5,,-30.72644,-64.80387
+"Cumbre del Laudo",2,,-26.50541,-68.52546
+"Curuzú Cuatiá",6,,-29.79145,-58.0499
+"Curuzú Cuatiá Airport",6,,-29.77056,-57.97889
+Cutral-Có,15,,-38.93424,-69.23052
+"Cutral Có Airport",15,,-38.9397,-69.2646
+"D. Casimiro Szlapelis Airport",4,,-45.0136,-70.8122
+"Departamento Capital",17,,-24.83333,-65.33333
+"Departamento de Adolfo Alsina",16,,-40.75,-63.75
+"Departamento de Aguirre",22,,-29.33333,-62.5
+"Departamento de Albardón",18,,-31.28333,-68.41667
+"Departamento de Alberdi",22,,-26.5,-62.75
+"Departamento de Aluminé",15,,-39.16667,-71
+"Departamento de Ambato",2,,-28,-65.91667
+"Departamento de Ancasti",2,,-29,-65.5
+"Departamento de Andalgalá",2,,-27.58333,-66.46667
+"Departamento de Añelo",15,,-38.16667,-69
+"Departamento de Angaco",18,,-31.2,-68.13333
+"Departamento de Anta",17,,-24.91667,-64
+"Departamento de Apóstoles",14,,-27.91667,-55.75
+"Departamento de Arauco",12,,-28.5,-66.83333
+"Departamento de Atamisqui",22,,-28.66667,-63.9
+"Departamento de Atreucó",11,,-37,-63.75
+"Departamento de Avellaneda",22,,-28.5,-63.16667
+"Departamento de Ayacucho",19,,-32.16667,-66.58333
+"Departamento de Bahía Thetis",23,,-54.71625,-67.12198
+"Departamento de Banda",22,,-27.5,-64.33333
+"Departamento de Bariloche",16,,-41.5,-71.5
+"Departamento de Belén",2,,-27.08333,-66.91667
+"Departamento de Belgrano",22,,-29.08333,-62.25
+"Departamento de Bella Vista",6,,-28.5,-58.83333
+"Departamento de Bermejo",3,,-27,-58.66667
+"Departamento de Berón de Astrada",6,,-27.5,-57.66667
+"Departamento de Biedma",4,,-42.41667,-65
+"Departamento de Burruyacú",24,,-26.5,-64.91667
+"Departamento de Cainguás",14,,-27.16667,-54.83333
+"Departamento de Calamuchita",5,,-32.25,-64.58333
+"Departamento de Caleu-Caleu",11,,-38.58333,-64
+"Departamento de Calingasta",18,,-31.5,-69.75
+"Departamento de Candelaria",14,,-27.5,-55.5
+"Departamento de Capayán",2,,-28.83333,-66
+"Departamento de Capital",14,,-27.5,-55.83333
+"Departamento de Caseros",21,,-33.25,-61.66667
+"Departamento de Castellanos",21,,-31.16667,-61.66667
+"Departamento de Castro Barros",12,,-28.83333,-66.91667
+"Departamento de Catán-Lil",15,,-39.5,-70.33333
+"Departamento de Catriló",11,,-36.5,-63.75
+"Departamento de Caucete",18,,-31.45,-67.66667
+"Departamento de Cerrillos",17,,-25,-65.41667
+"Departamento de Chacabuco",19,,-32.75,-65.25
+"Departamento de Chalileo",11,,-36.41667,-66.58333
+"Departamento de Chamical",12,,-30.25,-65.83333
+"Departamento de Chapaleufú",11,,-35.16667,-63.75
+"Departamento de Chical-Có",11,,-36.41667,-67.58333
+"Departamento de Chicligasta",24,,-27.33333,-65.58333
+"Departamento de Chicoana",17,,-25.11583,-65.59466
+"Departamento de Chilecito",12,,-29.41667,-67.5
+"Departamento de Chimbas",18,,-31.48738,-68.52691
+"Departamento de Chos-Malal",15,,-36.91667,-70.16667
+"Departamento de Choya",22,,-28.75,-64.75
+"Departamento de Cochinoca",10,,-23,-65.83333
+"Departamento de Collón-Curá",15,,-40.08333,-70.16667
+"Departamento de Colón",8,,-32.00382,-58.36319
+"Departamento de Comandante Fernández",3,,-26.83333,-60.5
+"Departamento de Concepción",6,,-28.33333,-58
+"Departamento de Concepción de la Sierra",14,,-27.83333,-55.41667
+"Departamento de Concordia",8,,-31.21345,-58.16274
+"Departamento de Conesa",16,,-40.25,-64.25
+"Departamento de Confluencia",15,,-38.83333,-68.83333
+"Departamento de Conhelo",11,,-36,-64.5
+"Departamento de Copo",22,,-26,-62.75
+"Departamento de Coronel Felipe Varela",12,,-29.5,-68.33333
+"Departamento de Corpen Aike",20,,-50,-69.25
+"Departamento de Cruz Alta",24,,-26.91667,-64.91667
+"Departamento de Cruz del Eje",5,,-30.75,-65
+"Departamento de Curacó",11,,-38.16667,-66.5
+"Departamento de Curuzú Cuatiá",6,,-29.5,-58.5
+"Departamento de Cushamen",4,,-42.5,-70.83333
+"Departamento de Diamante",8,,-32.16667,-60.41667
+"Departamento de Doce de Octubre",3,,-27.41667,-61.33333
+"Departamento de Doctor Manuel Belgrano",10,,-24.16667,-65.33333
+"Departamento de El Alto",2,,-28.41667,-65.41667
+"Departamento de El Carmen",10,,-24.41667,-65.16667
+"Departamento de El Cuy",16,,-39.58333,-68.5
+"Departamento de Eldorado",14,,-26.25,-54.41667
+"Departamento de Empedrado",6,,-27.83333,-58.66667
+"Departamento de Escalante",4,,-45.33333,-67.33333
+"Departamento de Esquina",6,,-30,-59.33333
+"Departamento de Famaillá",24,,-26.91667,-65.5
+"Departamento de Famatina",12,,-28.66667,-67.58333
+"Departamento de Federación",8,,-30.66667,-58.33333
+"Departamento de Feliciano",8,,-30.41667,-58.75
+"Departamento de Figueroa",22,,-27.33333,-63.55
+"Departamento de Florentino Ameghino",4,,-44.41667,-66.16667
+"Departamento de Formosa",9,,-26,-58.5
+"Departamento de Fray Mamerto Esquiú",2,,-28.3,-65.75
+"Departamento de Futaleufú",4,,-43.08333,-71.41667
+"Departamento de Gaimán",4,,-43.33333,-66.33333
+"Departamento de Gastre",4,,-42.83333,-68.66667
+"Departamento de General Alvear",6,,-28.83333,-56.5
+"Departamento de General Angel Peñaloza",12,,-30.25,-66.66667
+"Departamento de General Belgrano",12,,-30.58333,-66
+"Departamento de General Donovan",3,,-27.16667,-59.33333
+"Departamento de General Güemes",17,,-24.79464,-64.94393
+"Departamento de General José de San Martín",17,,-22.83333,-63.75
+"Departamento de General Juan F. Quiroga",12,,-30.8,-66.615
+"Departamento de General Lamadrid",12,,-28.83333,-68.66667
+"Departamento de General Manuel Belgrano",14,,-26.16667,-53.91667
+"Departamento de General Ocampo",12,,-31,-66.25
+"Departamento de General Paz",6,,-27.75,-57.83333
+"Departamento de General Pedernera",19,,-33.83333,-65.58333
+"Departamento de General Roca",5,,-34.66667,-64.25
+"Departamento de General San Martín",12,,-31.5,-66.08333
+"Departamento de General Taboada",22,,-28.58333,-62.5
+"Departamento de Gobernador Vicente Dupuy",19,,-35.33333,-65.83333
+"Departamento de Godoy Cruz",13,,-32.93333,-68.86667
+"Departamento de Goya",6,,-29.5,-59.5
+"Departamento de Graneros",24,,-27.75,-65.33333
+"Departamento de Guachipas",17,,-25.66667,-65.5
+"Departamento de Gualeguay",8,,-33,-59.58333
+"Departamento de Gualeguaychú",8,,-33.25,-59
+"Departamento de Guaraní",14,,-27.16667,-54.16667
+"Departamento de Guasayán",22,,-28,-64.83333
+"Departamento de Guatraché",11,,-37.5,-63.75
+"Departamento de Guaymallén",13,,-32.88333,-68.7
+"Departamento de Hucal",11,,-38,-64
+"Departamento de Huiliches",15,,-39.75,-71.33333
+"Departamento de Humahuaca",10,,-23.08333,-65.33333
+"Departamento de Iguazú",14,,-25.86667,-54.36667
+"Departamento de Independencia",3,,-26.66667,-60.66667
+"Departamento de Iruya",17,,-22.8,-64.91667
+"Departamento de Ischilín",5,,-30.5,-64.58333
+"Departamento de Itatí",6,,-27.33333,-58
+"Departamento de Ituzaingó",6,,-27.90085,-56.86604
+"Departamento de Jáchal",18,,-30.5,-68.5
+"Departamento de Jiménez",22,,-27,-64.41667
+"Departamento de Juan F. Ibarra",22,,-28,-62.5
+"Departamento de Juárez Celman",5,,-33.33333,-63.66667
+"Departamento de Junín",19,,-32.25,-65.33333
+"Departamento de La Paz",8,,-30.83333,-59.41667
+"Departamento de La Poma",17,,-24.16667,-66.16667
+"Departamento de La Viña",17,,-25.5,-65.66667
+"Departamento de Lácar",15,,-40.25,-71.2
+"Departamento de Lago Buenos Aires",20,,-47,-70.91667
+"Departamento de Laishí",9,,-26.5,-58.75
+"Departamento de Languiñeo",4,,-43.33333,-70.66667
+"Departamento de Lavalle",6,,-29,-58.91667
+"Departamento de Leales",24,,-27.2,-65.08333
+"Departamento de Leandro N. Alem",14,,-27.56667,-55.33333
+"Departamento de Ledesma",10,,-23.66667,-64.83333
+"Departamento de Libertad",3,,-27.33333,-59.33333
+"Departamento de Libertador General San Martín",14,,-26.91667,-54.91667
+"Departamento de Lihuel-Calel",11,,-38.25,-65.08333
+"Departamento de Limay Mahuida",11,,-37.33333,-66.5
+"Departamento de Loncopué",15,,-38.08333,-70.33333
+"Departamento de Loreto",22,,-28.55,-64.33333
+"Departamento de Los Lagos",15,,-40.75,-71.41667
+"Departamento de Loventué",11,,-36.5,-65.5
+"Departamento de Luján",13,,-33,-69.33333
+"Departamento de Magallanes",20,,-48.75,-68.5
+"Departamento de Maipú",13,,-33,-68.58333
+"Departamento de Maracó",11,,-35.75,-63.75
+"Departamento de Marcos Juárez",5,,-33,-62.25
+"Departamento de Mártires",4,,-43.83333,-67.16667
+"Departamento de Matacos",9,,-23.83333,-62.16667
+"Departamento de Mayor Luis J. Fontana",3,,-27.75,-60.66667
+"Departamento de Mburucuyá",6,,-28,-58.25
+"Departamento de Mercedes",6,,-29,-57.83333
+"Departamento de Metán",17,,-25.5,-64.66667
+"Departamento de Minas",5,,-31,-65.33333
+"Departamento de Mitre",22,,-29.5,-62.83333
+"Departamento de Molinos",17,,-25.58333,-66.41667
+"Departamento de Monte Caseros",6,,-30.25,-57.83333
+"Departamento de Montecarlo",14,,-26.71667,-54.58333
+"Departamento de Monteros",24,,-27.16667,-65.58333
+"Departamento de Moreno",22,,-27.33333,-62.5
+"Departamento de Nogoyá",8,,-32.16667,-59.83333
+"Departamento de Ñorquín",15,,-37.75,-70.58333
+"Departamento de Ñorquincó",16,,-41.66667,-70.41667
+"Departamento de Nueve de Julio",18,,-31.65072,-68.38925
+"Departamento de O’Higgins",3,,-27.25,-60.66667
+"Departamento de Oberá",14,,-27.55,-55.08333
+"Departamento de Ojo de Agua",22,,-29.25,-64.25
+"Departamento de Orán",17,,-23.33333,-64.25
+"Departamento de Paclín",2,,-28.08333,-65.66667
+"Departamento de Paraná",8,,-31.66667,-60
+"Departamento de Paso de Indios",4,,-44,-68.83333
+"Departamento de Paso de los Libres",6,,-29.66667,-57.25
+"Departamento de Patiño",9,,-24.75,-60
+"Departamento de Pehuenches",15,,-37.5,-69.33333
+"Departamento de Pellegrini",22,,-26.16667,-64.25
+"Departamento de Pichi Mahuida",16,,-39.5,-64.5
+"Departamento de Picún Leufú",15,,-39.5,-69.5
+"Departamento de Picunches",15,,-38.53333,-70.25
+"Departamento de Pilagás",9,,-25.08333,-58.75
+"Departamento de Pilcaniyeu",16,,-40.75,-70.5
+"Departamento de Pilcomayo",9,,-25.5,-58.08333
+"Departamento de Pirané",9,,-25.66667,-59.16667
+"Departamento de Pocho",5,,-31.5,-65.5
+"Departamento de Pocito",18,,-31.80712,-68.58531
+"Departamento de Pomán",2,,-28.25,-66.41667
+"Departamento de Presidencia de la Plaza",3,,-27,-59.75
+"Departamento de Presidente Roque Sáenz Peña",5,,-34.25,-63.5
+"Departamento de Puelén",11,,-37.25,-67.66667
+"Departamento de Punilla",5,,-31.16667,-64.66667
+"Departamento de Quebrachos",22,,-29.33333,-63.33333
+"Departamento de Quemú Quemú",11,,-36.25,-63.75
+"Departamento de Quitilipi",3,,-26.66667,-60.16667
+"Departamento de Ramón Lista",9,,-23,-62.16667
+"Departamento de Rancul",11,,-35.5,-64.75
+"Departamento de Rawson",18,,-31.7,-68.46667
+"Departamento de Realicó",11,,-35.25,-64.25
+"Departamento de Río Chico",24,,-27.43368,-65.76671
+"Departamento de Río Cuarto",5,,-33.33333,-64.5
+"Departamento de Río Grande",23,,-53.5,-68.33333
+"Departamento de Río Hondo",22,,-27.58333,-64.75
+"Departamento de Río Primero",5,,-31.08333,-63.5
+"Departamento de Río Seco",5,,-30.08333,-63
+"Departamento de Río Segundo",5,,-31.75,-63.5
+"Departamento de Rivadavia",22,,-29.83333,-62.16667
+"Departamento de Robles",22,,-27.83333,-63.91667
+"Departamento de Rosario de la Frontera",17,,-25.91667,-64.83333
+"Departamento de Rosario de Lerma",17,,-24.58333,-65.83333
+"Departamento de Rosario Vera Peñaloza",12,,-31.41667,-66.66667
+"Departamento de Saladas",6,,-28.25,-58.75
+"Departamento de Salavina",22,,-28.91667,-63.3
+"Departamento de San Alberto",5,,-31.75,-65.25
+"Departamento de San Antonio",10,,-24.33333,-65.5
+"Departamento de San Blas de los Sauces",12,,-28.5,-67.08333
+"Departamento de San Cosme",6,,-27.33333,-58.5
+"Departamento de San Fernando",3,,-27.66667,-59.16667
+"Departamento de San Ignacio",14,,-27.25,-55.33333
+"Departamento de San Javier",14,,-27.77806,-55.13004
+"Departamento de San Justo",21,,-30.66667,-60.5
+"Departamento de San Lorenzo",21,,-33,-61
+"Departamento de San Luis del Palmar",6,,-27.5,-58.25
+"Departamento de San Martín",6,,-28.83333,-56.91667
+"Departamento de San Miguel",6,,-27.91667,-57.5
+"Departamento de San Pedro",14,,-26.66667,-54
+"Departamento de San Roque",6,,-28.66667,-58.75
+"Departamento de Sanagasta",12,,-29.2,-67.08333
+"Departamento de Santa Bárbara",10,,-23.83333,-64.4
+"Departamento de Santa Catalina",10,,-22.08716,-66.14497
+"Departamento de Santa Lucía",18,,-31.53333,-68.46667
+"Departamento de Santa María",2,,-26.66667,-66.41667
+"Departamento de Santa Rosa",2,,-28.08333,-65.25
+"Departamento de Santa Victoria",17,,-22.41667,-64.91667
+"Departamento de Santo Tomé",6,,-28.25,-56.25
+"Departamento de Sargento Cabral",3,,-26.83333,-59.5
+"Departamento de Sarmiento",22,,-28.08333,-63.41667
+"Departamento de Sauce",6,,-30,-58.66667
+"Departamento de Silípica",22,,-28.16667,-64.33333
+"Departamento de Sobremonte",5,,-29.66667,-64.08333
+"Departamento de Susques",10,,-23.5,-66.66667
+"Departamento de Tafí del Valle",24,,-26.85288,-65.70951
+"Departamento de Tala",8,,-32.33333,-59.33333
+"Departamento de Tapenagá",3,,-27.5,-59.75
+"Departamento de Tehuelches",4,,-44.22132,-70.2526
+"Departamento de Telsen",4,,-42.41667,-67.16667
+"Departamento de Tercero Arriba",5,,-32.33333,-63.75
+"Departamento de Tilcara",10,,-23.5,-65.33333
+"Departamento de Toay",11,,-36.58333,-64.8
+"Departamento de Totoral",5,,-30.83333,-63.91667
+"Departamento de Trancas",24,,-26.41667,-65.5
+"Departamento de Trenel",11,,-35.66667,-64.25
+"Departamento de Tumbaya",10,,-23.71667,-65.66667
+"Departamento de Tunuyán",13,,-33.66667,-69.5
+"Departamento de Tupungato",13,,-33.25,-69.25
+"Departamento de Ullúm",18,,-31,-68.91667
+"Departamento de Unión",5,,-32.83333,-62.75
+"Departamento de Uruguay",8,,-32.44344,-58.58278
+"Departamento de Ushuaia",23,,-54.62912,-67.8962
+"Departamento de Utracán",11,,-37.25,-65
+"Departamento de Valcheta",16,,-41,-66.25
+"Departamento de Valle Fértil",18,,-30.58333,-67.5
+"Departamento de Valle Grande",10,,-23.5,-65
+"Departamento de Valle Viejo",2,,-28.58333,-65.75
+"Departamento de Veinticinco de Mayo",14,,-27.41667,-54.66667
+"Departamento de Vera",21,,-29,-60.5
+"Departamento de Victoria",8,,-32.66667,-60.33333
+"Departamento de Villaguay",8,,-31.58333,-59
+"Departamento de Vinchina",12,,-28.2,-68.66667
+"Departamento de Yaví",10,,-22.3,-65.6
+"Departamento de Zapala",15,,-39,-69.83333
+"Departamento de Zonda",18,,-31.6826,-68.89938
+"Departamento del Primero de Mayo",3,,-27.25,-58.91667
+"Deseado Department",20,,-47.33333,-67.83333
+Dolores,1,,-36.31539,-57.67546
+"Domingo Faustino Sarmiento Airport",18,,-31.57147,-68.41819
+"Don Torcuato",1,,-34.49459,-58.62729
+"Dos de Mayo",14,,-27.01998,-54.68462
+"Dr. Arturo Umberto Illia Airport",16,,-39.0007,-67.6205
+"El Bolsón",16,,-41.96051,-71.53336
+"El Bolsón Airport",16,,-41.94319,-71.53229
+"El Calafate",20,,-50.34075,-72.27682
+"El Calafate Airport",20,,-50.2803,-72.0531
+"El Colorado",9,,-26.30896,-59.37226
+"El Maitén Airport",4,,-42.0292,-71.1725
+"El Palomar",1,,-34.61771,-58.60153
+"El Palomar Airport",1,,-34.60994,-58.61259
+"El Quebrachal",17,,-25.28333,-64.06667
+"El Trébol",21,,-32.2008,-61.7014
+"Eldorado Airport",14,,-26.3975,-54.5747
+Embalse,5,,-32.20681,-64.40064
+Embarcación,17,,-23.21003,-64.09965
+"Embarcacion Airport",17,,-23.24971,-64.08634
+"Entre Rios",8,,-32,-59
+"Escuela de Aviación Militar Airport",5,,-31.4435,-64.28276
+Esperanza,21,,-31.4488,-60.93173
+Esquel,4,,-42.91147,-71.31947
+"Esquel Airport",4,,-42.90795,-71.13947
+Esquina,6,,-30.01476,-59.5289
+Famaillá,24,,-27.05452,-65.40189
+Firmat,21,,-33.45937,-61.4832
+Fontana,3,,-27.42039,-59.03731
+Formosa,9,,-26.18489,-58.17313
+"Formosa Aerodrome",9,,-26.21272,-58.22811
+"Fraile Pintado",10,,-23.94148,-64.8009
+"Fray Justo Santa María de Oro",3,,-27.83333,-61.25
+"Fray Luis A. Beltrán",21,,-32.79122,-60.72819
+Funes,21,,-32.91568,-60.80995
+"Güer Aike Department",20,,-51.33333,-70.33333
+Gálvez,21,,-32.02927,-61.22103
+"Garay Department",21,,-31,-60.08333
+Garupá,14,,-27.48315,-55.82924
+"General Acha Airport",11,,-37.40018,-64.61154
+"General Alvear",1,,-36,-60.08333
+"General Alvear Airport",13,,-35.0594,-67.69308
+"General Güemes Department",3,,-25.16667,-61.41667
+"General José de San Martín",3,,-26.53643,-59.34138
+"General Justo José de Urquiza Airport",8,,-31.79478,-60.48036
+"General López Department",21,,-33.83333,-61.83333
+"General Mosconi",17,,-22.59617,-63.811
+"General Obligado Department",21,,-28.75,-59.75
+"General Pacheco",1,,-34.45256,-58.64312
+"General Pico",11,,-35.6593,-63.75787
+"General Pico Airport",11,,-35.69618,-63.75829
+"General Roca",16,,-39.03333,-67.58333
+"Gobernador Edgardo Castello Airport",16,,-40.86922,-63.00039
+"Gobernador Gálvez",21,,-33.03016,-60.64045
+"Gobernador Gregores Aerodrome",20,,-48.78333,-70.16667
+"Gobernador Horacio Guzmán International Airport",10,,-24.39278,-65.09778
+"Gobernador Virasoro",6,,-28.05,-56.03333
+"Governor Francisco Gabrielli International Airport",13,,-32.83172,-68.79286
+Goya,6,,-29.13995,-59.26343
+"Goya Airport",6,,-29.1058,-59.2189
+"Granadero Baigorria",21,,-32.85683,-60.71754
+"Greater Rosario",21,,-32.97516,-60.68189
+Gualeguay,8,,-33.14091,-59.31257
+Gualeguaychú,8,,-33.00777,-58.51836
+"Gualeguaychu Aerodrome",8,,-33.01028,-58.61306
+Haedo,1,,-34.64239,-58.59212
+"Hermes Quijada International Airport",23,,-53.77767,-67.74939
+Hernando,5,,-32.42785,-63.7335
+Hurlingham,1,,-34.5904,-58.62904
+"Iglesia Department",18,,-29.33333,-69.58333
+"Iguazú National Park",14,,-25.70508,-54.24829
+"Independencia Department",12,,-30.16667,-67.41667
+"Ingeniero Aeronáutico Ambrosio L.V. Taravella International Airport",5,,-31.32362,-64.20795
+"Ingeniero Jacobacci Airport",16,,-41.3209,-69.5749
+"Iriondo Department",21,,-32.63333,-61.33333
+"Islas del Atlántico Sur",23,,-51.94426,-59.21631
+"Ituzaingó Yacireta Airport",6,,-27.52567,-56.63366
+"Jáchal Airport",18,,-30.25,-68.75
+"Japanese Gardens",7,,-34.5753,-58.4094
+"Jardín América",14,,-27.04346,-55.22698
+"Jesús María",5,,-30.98153,-64.09424
+"Joaquín V. González",17,,-25.11364,-64.12628
+"Jose De San Martin Airport",4,,-44.0486,-70.4589
+"Juan José Castelli",3,,-25.9466,-60.62008
+"Juan Martín de Pueyrredón",19,,-33.27544,-66.32017
+Jujuy,10,,-23,-66
+Junín,1,,-34.59391,-60.94644
+"Junín Airport",1,,-34.54589,-60.93056
+"La Caldera",17,,-24.58333,-65.41667
+"La Candelaria",17,,-26.10997,-65.09623
+"La Cumbre Airport",5,,-31.0058,-64.5319
+"La Falda",5,,-31.09321,-64.48448
+"La Pampa",11,,-37,-66
+"La Paz Aeroclub",8,,-30.74608,-59.57324
+"La Paz Department",2,,-29.25,-65.25
+"La Plata",1,,-34.92145,-57.95453
+"La Plata Airport",1,,-34.96674,-57.89211
+"La Quiaca",10,,-22.10448,-65.59646
+"La Quiaca Airport",10,,-22.15056,-65.5775
+"La Rioja",12,,-29.41105,-66.85067
+"Laboulaye Airport",5,,-34.13544,-63.36225
+"Lago Aluminé",15,,-38.91889,-71.13007
+"Lago Argentino Aerodrome",20,,-50.33333,-72.3
+"Lago Argentino Department",20,,-49.75,-72
+"Lago Belgrano",20,,-47.85229,-72.14244
+"Lago Cardiel",20,,-48.91991,-71.20513
+"Lago Cari Laufquén Grande",16,,-41.11792,-69.44772
+"Lago Cholila",4,,-42.4594,-71.66969
+"Lago Colhué Huapí",7,,-45.52965,-68.73816
+"Lago Correntoso",15,,-40.66654,-71.66241
+"Lago Espejo",15,,-40.63808,-71.7509
+"Lago Futalaufquen",4,,-42.8109,-71.66952
+"Lago Gutiérrez",16,,-41.20605,-71.41063
+"Lago Huechulafquén",15,,-39.76755,-71.3347
+"Lago Lácar",15,,-40.16947,-71.50899
+"Lago Mascardi",16,,-41.34858,-71.54425
+"Lago Menéndez",4,,-42.69637,-71.80192
+"Lago Pellegrini",16,,-38.67533,-68.01245
+"Lago Posadas",20,,-47.49175,-71.83148
+"Lago Puelo",4,,-42.14903,-71.63783
+"Lago Rivadavia",4,,-42.6048,-71.6647
+"Lago Rosario",4,,-43.26877,-71.32848
+"Lago San Roque",5,,-31.37353,-64.46756
+"Lago Traful",15,,-40.63464,-71.42656
+"Laguna de Lobos",1,,-35.28234,-59.11886
+"Laguna de los Padres",1,,-37.93602,-57.73656
+"Laguna de Vilama",10,,-22.60085,-66.92786
+"Laguna del Barón",20,,-49.42067,-71.67528
+"Laguna del Carbón",20,,-49.58672,-68.3421
+"Laguna Diamante",13,,-34.1623,-69.69401
+"Laguna Escondida",23,,-54.64836,-67.79824
+"Laguna Honda",1,,-38.05,-59.8
+"Laguna La Brava",1,,-37.88071,-57.97748
+"Laguna Llancanelo",13,,-35.60424,-69.14125
+"Laguna Mar Chiquita",5,,-30.67296,-62.53589
+"Laguna Melincué",21,,-33.70677,-61.46541
+"Laguna Potrok Aike",20,,-51.96296,-70.37935
+"Laguna Seca",1,,-37.35,-57.4
+"Laguna Socompa",17,,-24.53333,-68.21667
+"Laguna Verde",1,,-37.15,-57.35
+"Laguna Volcán",10,,-23.92379,-65.47441
+"Lake Viedma",20,,-49.56171,-72.67058
+Laprida,1,,-37.5,-60.75
+"Las Breñas",3,,-27.08819,-61.08217
+"Las Colonias Department",21,,-31.5,-61.13333
+"Las Flores",1,,-36.08333,-59.08333
+"Las Flores Airport",1,,-36.06645,-59.10447
+"Las Heras Airport",20,,-46.5383,-68.9653
+"Las Heras Department",13,,-32.5,-69.5
+"Las Higueras Airport",5,,-33.08513,-64.26131
+"Las Lomitas",9,,-24.70818,-60.59239
+"Las Parejas",21,,-32.68478,-61.51637
+"Las Termas Airport",22,,-27.496,-64.935
+"Lavalle Department",13,,-32.5,-68
+Ledesma,10,,-23.8333,-64.75
+"Libertador General San Martín",10,,-23.81305,-64.79353
+Lincoln,1,,-34.86819,-61.52929
+"Los Alerces National Park",4,,-42.94073,-71.62976
+"Los Andes Department",17,,-24.5,-67.33333
+"Los Arrayanes National Park",15,,-40.83044,-71.62605
+"Los Polvorines",1,,-34.50316,-58.70596
+Luján,1,,-34.5664,-59.11478
+Machagai,3,,-26.92617,-60.04852
+"Malargüe Department",13,,-36.25,-69.25
+"Maquinchao Airport",16,,-41.2431,-68.7078
+"Mar del Plata",1,,-38.00042,-57.5562
+"Marcos Juárez Airport",5,,-32.68333,-62.15
+"Mariano Moreno Airport",1,,-34.55941,-58.78883
+"Martín Miguel de Güemes International Airport",17,,-24.85598,-65.48617
+Mendoza,13,,-32.89084,-68.82717
+Mercedario,18,,-31.97889,-70.11277
+Mercedes,6,,-29.18416,-58.07519
+"Mercedes Airport",6,,-29.2214,-58.0878
+Merlo,1,,-34.66583,-58.72828
+"Ministro Pistarini International Airport",1,,-34.82222,-58.53583
+"Miramar Airport",1,,-38.2279,-57.87199
+Misiones,14,,-26.81427,-54.34387
+"Monte Caseros Aerodrome",6,,-30.27192,-57.64023
+"Monte Pissis",12,,-27.7586,-68.79913
+Morón,1,,-34.65118,-58.62205
+"Morón Airport",1,,-34.67649,-58.64262
+Morteros,5,,-30.71066,-62.00714
+"Mundo Marino",1,,-36.33995,-56.74713
+Muñiz,1,,-34.55622,-58.70739
+"Ñanco Lauquen Airport",1,,-35.97224,-62.77305
+Necochea,1,,-38.5545,-58.73961
+Neuquen,15,,-39,-70
+"Nevado de Acay",17,,-24.41284,-66.16061
+"Nevado de Chañi",10,,-24.06292,-65.74571
+"Nevado Tres Cruces",2,,-27.0981,-68.77905
+"Nevados de Cachí",17,,-24.84454,-66.4162
+"Nevados de Palermo",17,,-24.8,-66.38333
+"Nueve de Julio",1,,-35.44394,-60.88463
+"Nueve de Julio Department",21,,-28.83333,-61.33333
+Oberá,14,,-27.48683,-55.11994
+"Oberá Airport",14,,-27.51771,-55.12442
+"Ojos del Salado",5,,-27.10979,-68.54044
+Olavarría,1,,-36.89384,-60.32319
+"Olavarria Airport",1,,-36.89,-60.2166
+Oncativo,5,,-31.9134,-63.68214
+Orán,17,,-23.13705,-64.32426
+"Oran Airport",17,,-23.15278,-64.32917
+Palpalá,10,,-24.25798,-65.21358
+"Pampa del Indio",3,,-26.04982,-59.93728
+Paraná,8,,-31.73271,-60.52897
+"Parque Nacional del Chaco",3,,-26.83333,-59.66667
+"Parque Nacional El Palmar",8,,-31.87974,-58.28693
+"Parque Nacional Finca El Rey",17,,-24.69154,-64.61558
+"Parque Nacional Laguna Blanca",15,,-39.03333,-70.4
+"Parque Nacional Nahuel Huapí",16,,-41,-71.5
+"Parque Nacional  Quebrada del Condorito",5,,-31.6666,-64.66634
+"Parque Nacional Sierra de las Quijadas",19,,-32.5,-67.1
+"Parque Nacional Tierra del Fuego",23,,-54.66667,-68.5
+"Parque Tres de Febrero",7,,-34.57333,-58.41472
+"Partido de Adolfo Alsina",1,,-37.25,-63
+"Partido de Alberti",1,,-35,-60.33333
+"Partido de Arrecifes",1,,-34,-60
+"Partido de Avellaneda",1,,-34.66667,-58.33333
+"Partido de Bahía Blanca",1,,-38.66667,-62.33333
+"Partido de Balcarce",1,,-37.75,-58.25
+"Partido de Baradero",1,,-33.83333,-59.5
+"Partido de Berazategui",1,,-34.83333,-58.16667
+"Partido de Berisso",1,,-34.91667,-57.83333
+"Partido de Bragado",1,,-35,-60.66667
+"Partido de Brandsen",1,,-35.25,-58.16667
+"Partido de Campana",1,,-34.16667,-58.91667
+"Partido de Canuelas",1,,-35.08333,-58.75
+"Partido de Capitán Sarmiento",1,,-34.16667,-59.83333
+"Partido de Carlos Casares",1,,-35.75,-61.25
+"Partido de Carlos Tejedor",1,,-35.41667,-62.41667
+"Partido de Carmen de Areco",1,,-34.33333,-59.83333
+"Partido de Castelli",1,,-36,-57.66667
+"Partido de Chacabuco",1,,-34.66667,-60.33333
+"Partido de Chascomús",1,,-35.47745,-57.9776
+"Partido de Chivilcoy",1,,-34.91667,-59.91667
+"Partido de Colón",1,,-33.83333,-61
+"Partido de Coronel Dorrego",1,,-38.66667,-61.16667
+"Partido de Coronel Pringles",1,,-38.25,-61.33333
+"Partido de Coronel Rosales",1,,-38.83333,-61.83333
+"Partido de Coronel Suárez",1,,-37.5,-61.83333
+"Partido de Daireaux",1,,-36.59806,-61.74306
+"Partido de Dolores",1,,-36.41667,-57.66667
+"Partido de Ensenada",1,,-34.85833,-57.91889
+"Partido de Escobar",1,,-34.33333,-58.75
+"Partido de Esteban Echeverría",1,,-34.81917,-58.46583
+"Partido de Exaltación de la Cruz",1,,-34.25,-59.25
+"Partido de Ezeiza",1,,-34.85417,-58.52472
+"Partido de Florencio Varela",1,,-34.83333,-58.25
+"Partido de Florentino Ameghino",1,,-34.83889,-62.46722
+"Partido de General Alvarado",1,,-38.16667,-58.08333
+"Partido de General Arenales",1,,-34.25,-61.25
+"Partido de General Belgrano",1,,-35.8487,-58.67023
+"Partido de General Guido",1,,-36.75,-58
+"Partido de General La Madrid",1,,-37.5,-61.25
+"Partido de General Las Heras",1,,-34.83333,-59
+"Partido de General Lavalle",1,,-36.66667,-57
+"Partido de General Madariaga",1,,-37.25,-57.25
+"Partido de General Paz",1,,-35.5,-58.41667
+"Partido de General Pinto",1,,-34.71779,-62.00155
+"Partido de General Pueyrredón",1,,-38,-57.75
+"Partido de General Rodríguez",1,,-34.66667,-59
+"Partido de General San Martín",1,,-34.5733,-58.54099
+"Partido de General Viamonte",1,,-35,-61
+"Partido de General Villegas",1,,-34.75,-63
+"Partido de Guaminí",1,,-36.75,-62.5
+"Partido de Hipólito Yrigoyen",1,,-36.25,-61.66667
+"Partido de Hurlingham",1,,-34.58694,-58.62806
+"Partido de Ituzaingó",1,,-34.66028,-58.66611
+"Partido de José C. Paz",1,,-34.5198,-58.76556
+"Partido de Junín",1,,-34.5,-61
+"Partido de La Costa",1,,-36.57722,-56.6875
+"Partido de La Matanza",1,,-34.75,-58.58333
+"Partido de La Plata",1,,-35,-58
+"Partido de Lanús",1,,-34.66667,-58.41667
+"Partido de Leandro N. Alem",1,,-34.5,-61.5
+"Partido de Lincoln",1,,-34.8684,-61.52962
+"Partido de Lobería",1,,-38.08333,-58.75
+"Partido de Lobos",1,,-35.25,-59.16667
+"Partido de Lomas de Zamora",1,,-34.75,-58.41667
+"Partido de Luján",1,,-34.58333,-59.16667
+"Partido de Magdalena",1,,-35.18487,-57.68628
+"Partido de Maipú",1,,-36.83333,-57.5
+"Partido de Mar Chiquita",1,,-37.5,-57.75
+"Partido de Marcos Paz",1,,-34.83333,-58.83333
+"Partido de Mercedes",1,,-34.66667,-59.41667
+"Partido de Monte",1,,-35.5,-58.75
+"Partido de Monte Hermoso",1,,-38.97944,-61.29667
+"Partido de Moreno",1,,-34.6349,-58.79059
+"Partido de Morón",1,,-34.65139,-58.62194
+"Partido de Navarro",1,,-35,-59.5
+"Partido de Necochea",1,,-38.25,-59.25
+"Partido de Nueve de Julio",1,,-35.5,-61
+"Partido de Olavarría",1,,-36.75,-60.75
+"Partido de Patagones",1,,-40.25,-62.91667
+"Partido de Pehuajó",1,,-35.91667,-61.75
+"Partido de Pellegrini",1,,-36.2628,-63.11853
+"Partido de Pergamino",1,,-33.75,-60.58333
+"Partido de Pila",1,,-36.25,-58.33333
+"Partido de Pilar",1,,-34.41667,-58.83333
+"Partido de Pinamar",1,,-37.11028,-56.855
+"Partido de Presidente Perón",1,,-34.91778,-58.37917
+"Partido de Puan",1,,-38.16667,-63
+"Partido de Punta Indio",1,,-35.38722,-57.33833
+"Partido de Quilmes",1,,-34.75,-58.25
+"Partido de Ramallo",1,,-33.5,-60.08333
+"Partido de Rojas",1,,-34.25,-60.75
+"Partido de Roque Pérez",1,,-35.44512,-59.41064
+"Partido de Saavedra",1,,-37.75,-62.5
+"Partido de Saladillo",1,,-35.75,-59.66667
+"Partido de Salliqueló",1,,-36.66667,-63.08333
+"Partido de Salto",1,,-34.25,-60.25
+"Partido de San Andrés de Giles",1,,-34.5,-59.5
+"Partido de San Cayetano",1,,-38.41667,-59.66667
+"Partido de San Miguel",1,,-34.55209,-58.69171
+"Partido de San Nicolás",1,,-33.5,-60.33333
+"Partido de San Pedro",1,,-33.75,-59.75
+"Partido de San Vicente",1,,-35.08333,-58.5
+"Partido de Suipacha",1,,-34.75,-59.75
+"Partido de Tapalqué",1,,-36.33333,-60.08333
+"Partido de Tigre",1,,-34.42058,-58.58279
+"Partido de Tordillo",1,,-36.5,-57.25
+"Partido de Tornquist",1,,-38.25,-62.25
+"Partido de Tres Arroyos",1,,-38.5,-60.25
+"Partido de Tres Lomas",1,,-36.45278,-62.8625
+"Partido de Veinticinco de Mayo",1,,-35.5,-60.25
+"Partido de Villa Gesell",1,,-37.26167,-56.9725
+"Partido de Villarino",1,,-39,-62.75
+"Partido de Zárate",1,,-34,-59.16667
+"Paso de los Libres",6,,-29.71251,-57.08771
+"Paso de los Libres Airport",6,,-29.68942,-57.15208
+"Patio Bullrich",7,,-34.58833,-58.38361
+"Peñas Blancas",16,,-37.69118,-67.82481
+Pérez,21,,-32.99835,-60.76791
+Pergamino,1,,-33.89101,-60.57462
+"Perito Moreno Airport",20,,-46.53791,-70.97869
+"Pico Truncado",20,,-46.79942,-67.95785
+Pilar,5,,-31.68129,-63.8824
+"Piloto Civil Norberto Fernández International Airport",20,,-51.60887,-69.31264
+"Plaza Huincul",15,,-38.93012,-69.20778
+"Plaza San Martín",7,,-34.595,-58.3756
+Plottier,15,,-38.96667,-68.23333
+Pontevedra,1,,-34.74947,-58.70158
+Posadas,14,,-27.36708,-55.89608
+"Posadas Airport",14,,-27.38584,-55.97073
+"Presidencia Roque Sáenz Peña",3,,-26.79095,-60.44132
+"Presidencia Roque Sáenz Peña Airport",3,,-26.75652,-60.4931
+"Presidente Perón International Airport",15,,-38.949,-68.15571
+"Puelches Airport",11,,-38.14564,-65.92386
+"Puerto Deseado",20,,-47.75131,-65.89674
+"Puerto Deseado Airport",20,,-47.73529,-65.9041
+"Puerto Eldorado",14,,-26.40843,-54.69463
+"Puerto Iguazú",14,,-25.59912,-54.57355
+"Puerto Madryn",4,,-42.76848,-65.03827
+"Puerto Madryn, CHT",4,,-42.75917,-65.10278
+"Punta Alta",1,,-38.8805,-62.07503
+Quilmes,1,,-34.72065,-58.25454
+"Quilmes Airport",1,,-34.70702,-58.24488
+Quitilipi,3,,-26.8708,-60.21537
+Rafaela,21,,-31.25033,-61.4867
+"Rafaela Airport",21,,-31.28333,-61.5
+Rauch,1,,-36.58333,-58.83333
+Rawson,4,,-43.30016,-65.10228
+Reconquista,21,,-29.15,-59.65
+"Reconquista Airport",21,,-29.21028,-59.68
+Recreo,2,,-29.28184,-65.06096
+"Reserva Ecológica de Buenos Aires",7,,-34.60389,-58.3525
+Resistencia,3,,-27.46056,-58.98389
+"Resistencia Aeroclub",3,,-27.63115,-59.18052
+"Resistencia International Airport",3,,-27.44999,-59.05613
+Retiro,7,,-34.58333,-58.38333
+Riachuelo,7,,-34.66269,-58.39263
+"Rincon De Los Sauces Airport",15,,-37.3906,-68.9042
+"Rinconada Department",10,,-22.5,-66.5
+"Río Ceballos",5,,-31.1697,-64.3175
+"Río Chico Department",20,,-48.25,-71
+"Río Colorado Airport",16,,-38.99518,-64.14029
+"Río Cuarto",5,,-33.13044,-64.35272
+"Río Gallegos",20,,-51.62261,-69.21813
+"Río Grande",23,,-53.78773,-67.70975
+"Río Mayo",4,,-45.68618,-70.25664
+"Rio Mayo Airport",4,,-45.7039,-70.2456
+"Rio Negro",16,,-40,-67
+"Río Segundo",5,,-31.6501,-63.91165
+"Río Senguer",4,,-45.33333,-70.83333
+"Río Tercero",5,,-32.17675,-64.11295
+"Río Turbio Airport",20,,-51.60554,-72.21764
+"Rivadavia Partido",1,,-35.5,-63
+Roldán,21,,-32.89846,-60.90681
+Rosario,21,,-32.94682,-60.63932
+"Rosario Department",21,,-33.16667,-60.75
+"Rosario – Islas Malvinas International Airport",21,,-32.90361,-60.785
+Rufino,21,,-34.26827,-62.71262
+"Salar de Arizaro",17,,-24.7,-67.75
+Salta,17,,-24.75806,-65.43457
+"San Antonio de Areco",1,,-34.24236,-59.46899
+"San Antonio de Areco Airport",1,,-34.21117,-59.39119
+"San Carlos Airport",13,,-33.76667,-69.03333
+"San Carlos Centro",21,,-31.72864,-61.09192
+"San Carlos de Bariloche Airport",16,,-41.15117,-71.15754
+"San Carlos Department",17,,-25.75,-66.08333
+"San Clemente del Tuyú",1,,-36.35419,-56.72568
+"San Cristóbal Department",21,,-30.33333,-61.33333
+"San Fernando Airport",1,,-34.45306,-58.58972
+"San Fernando Partido",1,,-34.44542,-58.54202
+"San Francisco",5,,-31.42497,-62.08404
+"San Isidro",1,,-34.46971,-58.52111
+"San Isidro Partido",1,,-34.49009,-58.53028
+"San Jerónimo Department",21,,-32.16667,-61.08333
+"San Juan",18,,-31.5375,-68.53639
+"San Julián Airport",20,,-49.30678,-67.80259
+"San Justo Department",5,,-31.33333,-62.66667
+"San Lorenzo",6,,-28.13442,-58.76685
+"San Luis",19,,-34,-66
+"San Martín",13,,-33.08338,-68.47312
+"San Martín Airport",13,,-33.08333,-68.41667
+"San Martín de los Andes",15,,-40.15789,-71.35337
+"San Miguel",1,,-34.54335,-58.71229
+"San Nicolás de los Arroyos",1,,-33.33425,-60.2108
+"San Pedro",1,,-33.67918,-59.66633
+"San Pedro de Jujuy",10,,-24.23127,-64.86614
+"San Pedro de Jujuy Airport",2,,-24.20341,-64.83512
+"San Rafael",13,,-34.61531,-68.33238
+"San Rafael Department",13,,-35,-68.83333
+"San Rafael ""Santiago Germano"" Airport",13,,-34.58831,-68.40385
+"San Salvador de Jujuy",10,,-24.19457,-65.29712
+"San Vicente",14,,-26.61667,-54.13333
+"Santa Cruz",20,,-49,-70
+"Santa Cruz Aerodrome",20,,-50.01655,-68.5792
+"Santa Elena",8,,-30.94432,-59.78832
+"Santa Fe",21,,-31,-61
+"Santa Fe – Sauce Viejo Airport",21,,-31.71167,-60.81167
+"Santa Rosa",11,,-36.61667,-64.28333
+"Santa Rosa Aerodrome",11,,-36.58832,-64.27569
+"Santiago del Estero",22,,-27.79511,-64.26149
+"Santo Tomé",21,,-31.66274,-60.7653
+"Santos Lugares",1,,-34.60306,-58.54074
+"Sierra del Veladero",12,,-28.04142,-68.94038
+"Sierra Grande Airport",16,,-41.5917,-65.3394
+"Sierra Nevada de Lagunas Bravas",2,,-26.48,-68.58
+"Staten Island",23,,-54.78333,-64.25
+Sunchales,21,,-30.94404,-61.56148
+"Tafí Viejo",24,,-26.7333,-65.26146
+Tandil,1,,-37.33333,-59.25
+"Tandil Aerodrome",1,,-37.23739,-59.22792
+Tartagal,17,,-22.51682,-63.8056
+"Tartagal ""General Enrique Mosconi"" Airport",17,,-22.61917,-63.79319
+"Teniente General Benjamín Matienzo International Airport",24,,-26.84086,-65.10494
+"Termas de Río Hondo",22,,-27.49362,-64.85972
+"Text corpus",14,,-27.12947,-55.51083
+"Tierra del Fuego",23,,-54.5,-67
+Tigre,1,,-34.42603,-58.57962
+"Tinogasta Airport",2,,-28.03775,-67.58031
+"Tinogasta Department",2,,-27.5,-68
+"Tolhuin Lago Fagnano Airport",23,,-54.4997,-67.17388
+Tortuguitas,1,,-34.47513,-58.75367
+Trelew,4,,-43.24895,-65.30505
+"Trelew Aerodrome",4,,-43.2105,-65.27032
+"Trenque Lauquen Partido",1,,-36,-62.66667
+"Tres Arroyos",1,,-38.37694,-60.27563
+"Tres Arroyos Airport",1,,-38.38876,-60.32928
+"Tres de Febrero",1,,-34.59987,-58.56606
+Tucuman,24,,-27,-65.5
+"Tulumba Department",5,,-30.25,-63.91667
+"Univ. Río Matanza Aeroclub",1,,-34.72772,-58.50121
+Unquillo,5,,-31.23717,-64.31176
+Ushuaia,23,,-54.81084,-68.31591
+"Ushuaia Aerodrome",23,,-54.84328,-68.29575
+"Valcheta Airport",16,,-40.7,-66.15
+"Valdes Peninsula",4,,-42.5,-64
+"Valle del Conlara Airport",19,,-32.38384,-65.18558
+"Veinticinco de Mayo",14,,-27.37796,-54.74505
+"Venado Tuerto",21,,-33.74556,-61.96885
+"Vicecomodoro Ángel de la Paz Aragonés Airport",22,,-27.76562,-64.31012
+"Vicente López Partido",1,,-34.52353,-58.47439
+Victoria,8,,-32.61841,-60.15478
+Viedma,16,,-40.81345,-62.99668
+"Villa Allende",5,,-31.29368,-64.2977
+"Villa Ángela",3,,-27.57679,-60.71114
+"Villa Angela Airport",3,,-27.5946,-60.68371
+"Villa Carlos Paz",5,,-31.4183,-64.49008
+"Villa Constitución",21,,-33.22778,-60.3297
+"Villa de Mayo",1,,-34.5108,-58.68059
+"Villa de Soto Airport",5,,-30.87527,-64.99289
+"Villa Dolores",5,,-31.94504,-65.19025
+"Villa Dolores Aerodrome",5,,-31.94518,-65.14628
+"Villa General Mitre Airport",5,,-30.69993,-64.03881
+"Villa Gesell",1,,-37.26394,-56.97304
+"Villa Gesell Airport",1,,-37.23541,-57.02924
+"Villa Lugano",7,,-34.67907,-58.47263
+"Villa María",5,,-32.40751,-63.24016
+"Villa Mercedes",19,,-33.67571,-65.45783
+"Villa Ocampo",21,,-28.48689,-59.35423
+"Villa Regina",16,,-39.09631,-67.08374
+"Villa Reynolds Airport",19,,-33.72514,-65.37809
+"Villa Santa Rita",7,,-34.61082,-58.481
+Villaguay,8,,-31.86767,-59.02701
+"Villaguay Aerodrome",8,,-31.85,-59.08333
+"Volcán Antofalla",2,,-25.56257,-67.88066
+"Yerba Buena",24,,-26.81298,-65.29543
+Zapala,15,,-38.90056,-70.06674
+"Zapala Airport",15,,-38.9755,-70.1136
+Zárate,1,,-34.09584,-59.02423

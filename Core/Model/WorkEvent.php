@@ -79,6 +79,11 @@ class WorkEvent extends ModelClass
         return parent::delete();
     }
 
+    public function getHash(): string
+    {
+        return md5($this->name . $this->value . json_encode($this->params()));
+    }
+
     public function param(string $key, $default = null)
     {
         $params = $this->params();

@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core;
 
+/**
+ * Permite la traducción de cadenas de texto a diferentes idiomas. Con posibilidad de usar parámetros.
+ */
 final class Translator
 {
     private static $defaultLang = 'es_ES';
@@ -46,7 +49,7 @@ final class Translator
         $this->load($langCode);
 
         $key = $this->getTransKey($txt) . '@' . $langCode;
-        $translation = self::$translations[$key] ?? $txt;
+        $translation = self::$translations[$key] ?? $txt ?? '';
 
         if (false === array_key_exists($key, self::$translations)) {
             self::$notFound[$key] = $txt;

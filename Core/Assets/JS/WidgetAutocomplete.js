@@ -76,5 +76,16 @@ $(document).ready(function () {
                 return false;
             }
         });
+
+        // cuando el modo estricto se encuentra deshabilitado
+        // actualizamos el valor del input mientras escribe
+        // por si el usuario no encuentra ningún item en el select
+        // pueda pulsar tab o cambiar a otro input sin tener que
+        // seleccionar ninguna opcion(ni si quiera la opción de su propia busqueda)
+        $(this).on("keyup", function (event) {
+            if(data.strict === "0" && event.key !== "Enter") {
+                $("form[id=" + formId + "] input[name=" + data.field + "]").val(event.target.value);
+            }
+        });
     });
 });

@@ -535,10 +535,24 @@ class NewMail
             }
 
             // si el adjunto está fuera de la carpeta temporal, lo copiamos
+            $currentPath = FS_FOLDER . '/MyFiles/' . $attach[0];
+            if (file_exists($currentPath)) {
+                copy($currentPath, $newPath);
+                continue;
+            }
+
             $currentPath = FS_FOLDER . '/' . $attach[0];
             if (file_exists($currentPath)) {
                 copy($currentPath, $newPath);
+                continue;
             }
+
+            if (file_exists($attach[0])) {
+                copy($attach[0], $newPath);
+                continue;
+            }
+
+            Tools::log('NewMail')->warning('attachment-not-found', ['%file%' => $attach[0]]);
         }
     }
 

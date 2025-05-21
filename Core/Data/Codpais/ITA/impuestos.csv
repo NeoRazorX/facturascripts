@@ -1,0 +1,4 @@
+codimpuesto,descripcion,iva,recargo
+IVA22,"IVA estándar Italia",22,0
+IVA10,"IVA reducido Italia",10,0
+IVA4,"IVA superreducido Italia",4,0

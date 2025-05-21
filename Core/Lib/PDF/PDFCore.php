@@ -20,8 +20,6 @@
 namespace FacturaScripts\Core\Lib\PDF;
 
 use Cezpdf;
-use FacturaScripts\Core\Base\DivisaTools;
-use FacturaScripts\Core\Base\NumberTools;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\Export\ExportBase;
 use FacturaScripts\Core\Translator;
@@ -55,11 +53,6 @@ abstract class PDFCore extends ExportBase
     const MAX_TITLE_LEN = 12;
 
     /**
-     * @var DivisaTools
-     */
-    protected $divisaTools;
-
-    /**
      * Translator object
      *
      * @var Translator
@@ -70,13 +63,6 @@ abstract class PDFCore extends ExportBase
      * @var bool
      */
     protected $insertedHeader = false;
-
-    /**
-     * Class with number tools (to format numbers)
-     *
-     * @var NumberTools
-     */
-    protected $numberTools;
 
     /**
      * PDF object.
@@ -97,9 +83,7 @@ abstract class PDFCore extends ExportBase
      */
     public function __construct()
     {
-        $this->divisaTools = new DivisaTools();
         $this->i18n = new Translator();
-        $this->numberTools = new NumberTools();
     }
 
     public function getOrientation()

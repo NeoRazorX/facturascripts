@@ -38,7 +38,7 @@ class ListCuenta extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'accounting-accounts';
-        $data['icon'] = 'fas fa-book';
+        $data['icon'] = 'fa-solid fa-book';
         return $data;
     }
 
@@ -54,13 +54,20 @@ class ListCuenta extends ListController
 
     protected function createViewsAccounts(string $viewName = 'ListCuenta'): void
     {
-        $this->addView($viewName, 'Cuenta', 'accounts', 'fas fa-book')
+        $this->addView($viewName, 'Cuenta', 'accounts', 'fa-solid fa-book')
             ->addSearchFields(['descripcion', 'codcuenta', 'codejercicio', 'codcuentaesp'])
             ->addOrderBy(['codejercicio desc, codcuenta'], 'code')
             ->addOrderBy(['codejercicio desc, descripcion'], 'description');
 
         // filters
-        $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
+        $this->listView($viewName)
+            ->addFilterNumber('debit-major', 'debit', 'debe')
+            ->addFilterNumber('debit-minor', 'debit', 'debe', '<=')
+            ->addFilterNumber('credit-major', 'credit', 'haber')
+            ->addFilterNumber('credit-minor', 'credit', 'haber', '<=')
+            ->addFilterNumber('balance-major', 'balance', 'saldo')
+            ->addFilterNumber('balance-minor', 'balance', 'saldo', '<=')
+            ->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
 
         $specialAccounts = $this->codeModel->all('cuentasesp', 'codcuentaesp', 'codcuentaesp');
         $this->addFilterSelect($viewName, 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccounts);
@@ -68,7 +75,7 @@ class ListCuenta extends ListController
 
     protected function createViewsSpecialAccounts(string $viewName = 'ListCuentaEspecial'): void
     {
-        $this->addView($viewName, 'CuentaEspecial', 'special-accounts', 'fas fa-newspaper')
+        $this->addView($viewName, 'CuentaEspecial', 'special-accounts', 'fa-solid fa-newspaper')
             ->addSearchFields(['descripcion', 'codcuentaesp'])
             ->addOrderBy(['codcuentaesp'], 'code', 1)
             ->addOrderBy(['descripcion'], 'description');
@@ -85,7 +92,7 @@ class ListCuenta extends ListController
                 'action' => 'restore-special',
                 'color' => 'warning',
                 'confirm' => true,
-                'icon' => 'fas fa-trash-restore',
+                'icon' => 'fa-solid fa-trash-restore',
                 'label' => 'restore'
             ]);
         }
@@ -93,7 +100,7 @@ class ListCuenta extends ListController
 
     protected function createViewsSubaccounts(string $viewName = 'ListSubcuenta'): void
     {
-        $this->addView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-th-list')
+        $this->addView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-th-list')
             ->addSearchFields(['codsubcuenta', 'descripcion', 'codejercicio', 'codcuentaesp'])
             ->addOrderBy(['codejercicio desc, codsubcuenta'], 'code')
             ->addOrderBy(['codejercicio desc, descripcion'], 'description')

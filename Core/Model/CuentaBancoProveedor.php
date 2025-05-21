@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * A bank account of a provider.
  *
@@ -26,7 +28,6 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaBancoProveedor extends Base\BankAccount
 {
-
     use Base\ModelTrait;
 
     /**
@@ -59,12 +60,23 @@ class CuentaBancoProveedor extends Base\BankAccount
 
     public function save(): bool
     {
-        if (parent::save()) {
-            $this->updatePrimaryAccount();
-            return true;
+        if (false === parent::save()) {
+            return false;
         }
 
-        return false;
+        $this->updatePrimaryAccount();
+
+        // si ha cambiado el iban, añadimos un aviso al log
+        if (!empty($this->iban_old) && $this->iban_old !== $this->iban) {
+            Tools::log('audit')->warning('supplier-iban-changed', [
+                '%account%' => $this->codcuenta,
+                '%old%' => $this->iban_old,
+                '%new%' => $this->iban,
+                '%codproveedor%' => $this->codproveedor,
+            ]);
+        }
+
+        return true;
     }
 
     public static function tableName(): string

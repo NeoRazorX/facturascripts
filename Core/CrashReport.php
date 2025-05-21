@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core;
 
+/**
+ * La clase que se encarga de gestionar los errores fatales.
+ */
 final class CrashReport
 {
     public static function getErrorInfo(int $code, string $message, string $file, int $line): array

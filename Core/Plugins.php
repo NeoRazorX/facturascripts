@@ -24,6 +24,9 @@ use FacturaScripts\Core\Base\PluginDeploy;
 use FacturaScripts\Core\Internal\Plugin;
 use ZipArchive;
 
+/**
+ * Permite gestionar los plugins de FacturaScripts: añadir, eliminar, activar, desactivar, etc.
+ */
 final class Plugins
 {
     const FILE_NAME = 'plugins.json';
@@ -118,6 +121,10 @@ final class Plugins
 
         Kernel::rebuildRoutes();
         Kernel::saveRoutes();
+
+        DbUpdater::rebuild();
+
+        Tools::folderDelete(Tools::folder('MyFiles', 'Cache'));
 
         if ($initControllers) {
             $pluginDeploy->initControllers();

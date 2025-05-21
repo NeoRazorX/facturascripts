@@ -42,7 +42,7 @@ class ListCliente extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'customers';
-        $data['icon'] = 'fas fa-users';
+        $data['icon'] = 'fa-solid fa-users';
         return $data;
     }
 
@@ -61,7 +61,7 @@ class ListCliente extends ListController
 
     protected function createViewBankAccounts(string $viewName = 'ListCuentaBancoCliente'): void
     {
-        $this->addView($viewName, 'CuentaBancoCliente', 'bank-accounts', 'fas fa-piggy-bank')
+        $this->addView($viewName, 'CuentaBancoCliente', 'bank-accounts', 'fa-solid fa-piggy-bank')
             ->addSearchFields(['codcuenta', 'descripcion', 'iban', 'swift'])
             ->addOrderBy(['codcuenta'], 'bank-mandate')
             ->addOrderBy(['descripcion'], 'description')
@@ -77,7 +77,7 @@ class ListCliente extends ListController
 
     protected function createViewContacts(string $viewName = 'ListContacto'): void
     {
-        $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book')
+        $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fa-solid fa-address-book')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['direccion'], 'address')
             ->addOrderBy(['nombre'], 'name')
@@ -123,7 +123,7 @@ class ListCliente extends ListController
 
     protected function createViewCustomers(string $viewName = 'ListCliente'): void
     {
-        $this->addView($viewName, 'Cliente', 'customers', 'fas fa-users')
+        $this->addView($viewName, 'Cliente', 'customers', 'fa-solid fa-users')
             ->addOrderBy(['codcliente'], 'code')
             ->addOrderBy(['LOWER(nombre)'], 'name', 1)
             ->addOrderBy(['cifnif'], 'fiscal-number')
@@ -164,7 +164,7 @@ class ListCliente extends ListController
 
     protected function createViewGroups(string $viewName = 'ListGrupoClientes'): void
     {
-        $this->addView($viewName, 'GrupoClientes', 'groups', 'fas fa-users-cog')
+        $this->addView($viewName, 'GrupoClientes', 'groups', 'fa-solid fa-users-cog')
             ->addSearchFields(['nombre', 'codgrupo'])
             ->addOrderBy(['codgrupo'], 'code')
             ->addOrderBy(['nombre'], 'name', 1);

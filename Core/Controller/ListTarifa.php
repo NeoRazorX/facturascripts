@@ -34,7 +34,7 @@ class ListTarifa extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'rates';
-        $data['icon'] = 'fas fa-percentage';
+        $data['icon'] = 'fa-solid fa-percentage';
         return $data;
     }
 
@@ -44,7 +44,7 @@ class ListTarifa extends ListController
     protected function createViews()
     {
         $viewName = 'ListTarifa';
-        $this->addView($viewName, 'Tarifa', 'rates', 'fas fa-percentage')
+        $this->addView($viewName, 'Tarifa', 'rates', 'fa-solid fa-percentage')
             ->addSearchFields(['nombre', 'codtarifa'])
             ->addOrderBy(['codtarifa'], 'code')
             ->addOrderBy(['nombre'], 'name', 1);

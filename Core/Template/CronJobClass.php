@@ -21,12 +21,13 @@ namespace FacturaScripts\Core\Template;
 
 use Exception;
 use FacturaScripts\Core\DataSrc\Users;
-use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\LogMessage;
 
 abstract class CronJobClass
 {
+    const ECHO_MODE_FULL = 'full';
+    const ECHO_MODE_LOG = 'log';
     const JOB_NAME = 'cron';
 
     abstract public static function run(): void;
@@ -34,12 +35,22 @@ abstract class CronJobClass
     /** @var string */
     private static $echo = '';
 
+    /** @var string */
+    private static $echo_mode = self::ECHO_MODE_FULL;
+
     protected static function echo(string $text): void
     {
-        echo $text;
-        ob_flush();
+        if (self::$echo_mode === self::ECHO_MODE_FULL) {
+            echo $text;
+            ob_flush();
+        }
 
         self::$echo .= $text;
+    }
+
+    public static function echoMode(string $mode): void
+    {
+        self::$echo_mode = $mode;
     }
 
     protected static function getEcho(): string
@@ -88,16 +99,18 @@ abstract class CronJobClass
             }
 
             try {
-                NewMail::create()
+                $mail = NewMail::create()
                     ->to($user->email, $user->nick)
                     ->subject($subject)
                     ->body(
                         '<p>Hola ' . $user->nick . ",<br><br>" . nl2br($body)
                         . '</p><br/><br/><p>Atentamente,<br/>el cron de FacturaSctipts</p>'
-                    )
-                    ->send();
+                    );
+                if (!$mail->send()) {
+                    self::echo($body);
+                }
             } catch (Exception $ex) {
-                Tools::log(static::JOB_NAME)->error($ex->getCode() . ' - ' . $ex->getMessage());
+                self::echo($ex->getCode() . ' - ' . $ex->getMessage());
             }
         }
     }

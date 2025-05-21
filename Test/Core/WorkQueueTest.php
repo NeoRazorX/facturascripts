@@ -40,7 +40,7 @@ final class WorkQueueTest extends TestCase
         }
 
         // eliminamos todos los workers
-        WorkQueue::removeAllWorkers();
+        WorkQueue::clear();
     }
 
     public function testMatchEvent(): void
@@ -80,7 +80,7 @@ final class WorkQueueTest extends TestCase
         $this->assertTrue($events[0]->delete());
 
         // eliminamos el worker
-        WorkQueue::removeAllWorkers();
+        WorkQueue::clear();
     }
 
     public function testSendWithParams(): void
@@ -106,7 +106,34 @@ final class WorkQueueTest extends TestCase
         $this->assertTrue($events[0]->delete());
 
         // eliminamos el worker
-        WorkQueue::removeAllWorkers();
+        WorkQueue::clear();
+    }
+
+    public function testSendDuplicated(): void
+    {
+        // añadimos el worker
+        WorkQueue::addWorker('TestWorker', 'test-event');
+
+        // añadimos el evento
+        $this->assertTrue(WorkQueue::send('test-event', 'test-value'));
+
+        // lo volvemos a añadir
+        $this->assertTrue(WorkQueue::send('test-event', 'test-value'));
+
+        // comprobamos que se ha guardado el evento
+        $model = new WorkEvent();
+        $events = $model->all([], [], 0, 0);
+        $this->assertCount(1, $events);
+        $this->assertEquals('test-event', $events[0]->name);
+        $this->assertEquals('test-value', $events[0]->value);
+        $this->assertFalse($events[0]->done);
+        $this->assertNull($events[0]->done_date);
+
+        // eliminamos el evento
+        $this->assertTrue($events[0]->delete());
+
+        // eliminamos el worker
+        WorkQueue::clear();
     }
 
     public function testRemoveAllWorkers(): void
@@ -121,7 +148,7 @@ final class WorkQueueTest extends TestCase
         $this->assertCount($count + 1, WorkQueue::getWorkersList());
 
         // eliminamos todos los workers
-        WorkQueue::removeAllWorkers();
+        WorkQueue::clear();
 
         // comprobamos que se han eliminado todos los workers
         $this->assertEmpty(WorkQueue::getWorkersList());
@@ -144,7 +171,7 @@ final class WorkQueueTest extends TestCase
         $this->assertEquals('test-event-2', $events[1]->name);
 
         // eliminamos el worker
-        WorkQueue::removeAllWorkers();
+        WorkQueue::clear();
 
         // eliminamos los eventos
         $this->assertTrue($events[0]->delete());
@@ -171,7 +198,7 @@ final class WorkQueueTest extends TestCase
         $this->assertEquals('Model.Asiento.Delete', $events[1]->name);
 
         // eliminamos el worker
-        WorkQueue::removeAllWorkers();
+        WorkQueue::clear();
 
         // eliminamos los eventos
         $this->assertTrue($events[0]->delete());
@@ -198,7 +225,7 @@ final class WorkQueueTest extends TestCase
         $this->assertEquals('Model.Producto.Save', $events[1]->name);
 
         // eliminamos el worker
-        WorkQueue::removeAllWorkers();
+        WorkQueue::clear();
 
         // eliminamos los eventos
         $this->assertTrue($events[0]->delete());
@@ -249,7 +276,7 @@ final class WorkQueueTest extends TestCase
         $this->assertTrue($events[0]->delete());
 
         // eliminamos el worker
-        WorkQueue::removeAllWorkers();
+        WorkQueue::clear();
     }
 
     public function testModelEvent(): void

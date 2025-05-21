@@ -37,7 +37,7 @@
                 <widget type="text" fieldname="codisoprov" maxlength="10" required="true" />
             </column>
             <column name="code" numcolumns="2" order="140">
-                <widget type="text" maxlength="2" fieldname="codeid" icon="fas fa-hashtag"/>
+                <widget type="text" maxlength="2" fieldname="codeid" icon="fa-solid fa-hashtag"/>
             </column>
             <column name="latitude" order="150">
                 <widget type="number" fieldname="latitude"/>

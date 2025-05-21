@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
@@ -31,7 +32,6 @@ use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Role;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of Wizard
@@ -145,20 +145,24 @@ class Wizard extends Controller
      */
     private function loadDefaultAccountingPlan(string $codpais): void
     {
-        // Is there a default accounting plan?
+        // ¿Hay un plan contable para ese país?
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
             return;
         }
 
-        // Does an accounting plan already exist?
-        $cuenta = new Cuenta();
-        if ($cuenta->count() > 0 || $this->dataBase->tableExists('co_cuentas')) {
+        // ¿La base de datos es de 2017 o anterior?
+        if ($this->dataBase->tableExists('co_cuentas')) {
             return;
         }
 
-        $exerciseModel = new Ejercicio();
-        foreach ($exerciseModel->all() as $exercise) {
+        // ¿Ya existe el plan contable?
+        $cuenta = new Cuenta();
+        if ($cuenta->count() > 0) {
+            return;
+        }
+
+        foreach (Ejercicio::all() as $exercise) {
             $planImport = new AccountingPlanImport();
             $planImport->importCSV($filePath, $exercise->codejercicio);
             return;
@@ -173,20 +177,18 @@ class Wizard extends Controller
     private function preSetAppSettings(string $codpais): void
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/default.json';
-        if (false === file_exists($filePath)) {
-            return;
-        }
-
-        $fileContent = file_get_contents($filePath);
-        $defaultValues = json_decode($fileContent, true) ?? [];
-        foreach ($defaultValues as $group => $values) {
-            foreach ($values as $key => $value) {
-                Tools::settingsSet($group, $key, $value);
+        if (file_exists($filePath)) {
+            $fileContent = file_get_contents($filePath);
+            $defaultValues = json_decode($fileContent, true) ?? [];
+            foreach ($defaultValues as $group => $values) {
+                foreach ($values as $key => $value) {
+                    Tools::settingsSet($group, $key, $value);
+                }
             }
         }
 
         Tools::settingsSet('default', 'codpais', $codpais);
-        Tools::settingsSet('default', 'homepage', 'AdminPlugins');
+        Tools::settingsSet('default', 'homepage', 'Root');
         Tools::settings('default', 'uuid_install', Tools::randomString(20));
         Tools::settingsSave();
     }
@@ -302,6 +304,7 @@ class Wizard extends Controller
         }
         Tools::settingsSet('default', 'updatesupplierprices', (bool)$this->request->request->get('updatesupplierprices', '0'));
         Tools::settingsSet('default', 'ventasinstock', (bool)$this->request->request->get('ventasinstock', '0'));
+        Tools::settingsSet('default', 'site_url', Tools::siteUrl());
         Tools::settingsSave();
 
         if ($this->request->request->get('defaultplan', '0')) {

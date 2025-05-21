@@ -35,6 +35,8 @@ use FacturaScripts\Dinamic\Model\Variante;
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Daniel Fernández Giménez      <hola@danielfg.es>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/SalesLineHTML
  */
 class SalesLineHTML
 {
@@ -196,7 +198,7 @@ class SalesLineHTML
     {
         $line->orden = (int)$formData['orden_' . $id];
         $line->cantidad = (float)$formData['cantidad_' . $id];
-        $line->coste = (float)$formData['coste_' . $id];
+        $line->coste = floatval($formData['coste_' . $id] ?? $line->coste);
         $line->dtopor = (float)$formData['dtopor_' . $id];
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];

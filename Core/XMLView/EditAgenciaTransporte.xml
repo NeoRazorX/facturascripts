@@ -26,10 +26,10 @@
                 <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
             </column>
             <column name="code" description="optional" display="none" order="110">
-                <widget type="text" fieldname="codtrans" icon="fas fa-hashtag" maxlength="8" readonly="dinamic"/>
+                <widget type="text" fieldname="codtrans" icon="fa-solid fa-hashtag" maxlength="8" readonly="dinamic"/>
             </column>
             <column name="phone" order="120">
-                <widget type="text" fieldname="telefono" maxlength="30" icon="fas fa-phone"/>
+                <widget type="text" fieldname="telefono" maxlength="30" icon="fa-solid fa-phone"/>
             </column>
             <column name="url" order="130">
                 <widget type="link" fieldname="web" maxlength="100"/>

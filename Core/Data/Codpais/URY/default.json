@@ -1,7 +1,7 @@
 {
     "default": {
         "coddivisa": "UYU",
-        "codimpuesto": "IVA22",
+        "codimpuesto": "IVA_BASICO",
         "codserie": "A",
         "codpago": "CONT",
         "tipoidfiscal": "RUT",
