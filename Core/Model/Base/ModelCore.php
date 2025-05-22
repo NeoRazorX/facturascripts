@@ -61,6 +61,14 @@ abstract class ModelCore
     abstract public function getModelFields(): array;
 
     /**
+     * Returns true if the extension exists.
+     *
+     * @param $extension
+     * @return bool
+     */
+    abstract public function hasExtension($extension): bool;
+
+    /**
      * Loads table fields if is necessary.
      *
      * @param DataBase $dataBase
