@@ -34,7 +34,6 @@
     "ext-bcmath": "*",
     "ext-gd": "*",
     "ext-curl": "*",
-    "nesbot/carbon": "^2.71"
     "pragmarx/google2fa": "^8.0",
     "endroid/qr-code": "^4.3",
     "ext-pgsql": "*"
