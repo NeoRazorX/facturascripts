@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,6 +34,8 @@ use FacturaScripts\Dinamic\Model\Variante;
  * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Daniel Fernández Giménez      <hola@danielfg.es>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/PurchasesLineHTML
  */
 class PurchasesLineHTML
 {
@@ -159,6 +161,8 @@ class PurchasesLineHTML
         }
 
         self::$numlines = count($lines);
+        self::loadProducts($lines, $model);
+
         $i18n = new Translator();
         $html = '';
         foreach ($lines as $line) {

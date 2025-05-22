@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core;
 
+/**
+ * La clase que se encarga de gestionar los errores fatales.
+ */
 final class CrashReport
 {
     public static function getErrorInfo(int $code, string $message, string $file, int $line): array
@@ -36,6 +39,7 @@ final class CrashReport
             'message' => Tools::noHtml($errorMessage),
             'file' => $errorFile,
             'line' => $line,
+            'fragment' => self::getErrorFragment($file, $line),
             'hash' => $errorHash,
             'url' => $errorUrl,
             'report_url' => $reportUrl,
@@ -62,6 +66,11 @@ final class CrashReport
 
     public static function save(array $info): void
     {
+        // si no existe la carpeta MyFiles, no podemos guardar el archivo
+        if (!is_dir(Tools::folder('MyFiles'))) {
+            return;
+        }
+
         // guardamos los datos en un archivo en MyFiles
         $file_name = 'crash_' . $info['hash'] . '.json';
         $file_path = Tools::folder('MyFiles', $file_name);
@@ -75,7 +84,7 @@ final class CrashReport
     public static function shutdown(): void
     {
         $error = error_get_last();
-        if (!isset($error)) {
+        if (!isset($error) || in_array($error['type'], [E_WARNING, E_NOTICE, E_DEPRECATED, E_CORE_ERROR, E_CORE_WARNING])) {
             return;
         }
 
@@ -135,6 +144,8 @@ final class CrashReport
             echo '<p class="mb-0"><b>Core</b>: ' . $info['core_version']
                 . ', <b>plugins</b>: ' . implode(', ', Plugins::enabled()) . '<br/>'
                 . '<b>PHP</b>: ' . $info['php_version'] . ', <b>OS</b>: ' . $info['os'] . '</p>';
+
+            echo '<pre style="border: solid 1px grey; margin: 2px; padding: 5px">' . htmlspecialchars_decode($info['fragment']) . '</pre>';
         }
 
         echo '</div>';
@@ -229,5 +240,33 @@ final class CrashReport
         ];
 
         return $translations[FS_LANG][$code] ?? $code;
+    }
+
+    protected static function getErrorFragment($file, $line, $linesToShow = 10): string
+    {
+        // leemos el archivo
+        $content = file_get_contents($file);
+        $lines = explode("\n", $content);
+
+        // calculamos el fragmento
+        $startLine = ($line - ($linesToShow / 2)) - 1;
+        $start = max($startLine, 0);
+        $length = $linesToShow + 1;
+
+        $errorFragment = array_slice($lines, $start, $length, true);
+        foreach ($errorFragment as $index => $value) {
+            $index++;
+
+            // marcamos la línea del error
+            if ($index === $line) {
+                $errorFragment[$index] = '<spam style="padding-top: 0.1rem; padding-bottom: 0.1rem; '
+                    . 'background-color: red; color: white">' . $index . $value . '</spam>';
+                continue;
+            }
+
+            $errorFragment[$index] = $index . $value;
+        }
+
+        return implode("\n", $errorFragment);
     }
 }

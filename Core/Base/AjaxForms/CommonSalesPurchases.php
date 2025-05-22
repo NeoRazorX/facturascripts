@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,13 +37,15 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/CommonSalesPurchases
  */
 trait CommonSalesPurchases
 {
     /** @var string */
     protected static $columnView;
 
-    protected static function checkLevel(int $level): bool
+    public static function checkLevel(int $level): bool
     {
         $user = Session::user();
 
@@ -66,7 +68,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="cifnif" maxlength="30" autocomplete="off"' : 'disabled';
         return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('cifnif')
-            . '<input type="text" ' . $attributes . ' value="' . $model->cifnif . '" class="form-control"/>'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->cifnif) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -105,23 +107,33 @@ trait CommonSalesPurchases
 
     protected static function codalmacen(Translator $i18n, BusinessDocument $model, string $jsFunc): string
     {
+        $warehouses = 0;
         $options = [];
         foreach (Empresas::all() as $company) {
             if ($company->idempresa != $model->idempresa && $model->exists()) {
                 continue;
             }
-            $options[] = '<optgroup label="' . $company->nombrecorto . '">';
+
+            $option = '';
             foreach ($company->getWarehouses() as $row) {
-                $options[] = ($row->codalmacen === $model->codalmacen) ?
+                // si el almacén no está activo o seleccionado, no lo mostramos
+                if ($row->codalmacen != $model->codalmacen && !$row->activo) {
+                    continue;
+                }
+
+                $option .= ($row->codalmacen === $model->codalmacen) ?
                     '<option value="' . $row->codalmacen . '" selected>' . $row->nombre . '</option>' :
                     '<option value="' . $row->codalmacen . '">' . $row->nombre . '</option>';
+                $warehouses++;
             }
-            $options[] = '</optgroup>';
+            $options[] = '<optgroup label="' . $company->nombrecorto . '">' . $option . '</optgroup>';
         }
+
         $attributes = $model->editable ?
             'name="codalmacen" onchange="return ' . $jsFunc . '(\'recalculate\', \'0\');" required' :
             'disabled';
-        return empty($model->subjectColumnValue()) || count($options) <= 1 ? '' : '<div class="col-sm-2 col-lg">'
+
+        return empty($model->subjectColumnValue()) || $warehouses <= 1 ? '' : '<div class="col-sm-2 col-lg">'
             . '<div class="form-group">'
             . '<a href="' . Almacenes::get($model->codalmacen)->url() . '">' . $i18n->trans('company-warehouse') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
@@ -152,9 +164,16 @@ trait CommonSalesPurchases
     {
         $options = [];
         foreach (FormasPago::all() as $row) {
+            // saltamos las formas de pago de otras empresas
             if ($row->idempresa != $model->idempresa) {
                 continue;
             }
+
+            // si la forma de pago no está activa o seleccionada, la saltamos
+            if ($row->codpago != $model->codpago && !$row->activa) {
+                continue;
+            }
+
             $options[] = ($row->codpago === $model->codpago) ?
                 '<option value="' . $row->codpago . '" selected>' . $row->descripcion . '</option>' :
                 '<option value="' . $row->codpago . '">' . $row->descripcion . '</option>';
@@ -162,7 +181,7 @@ trait CommonSalesPurchases
 
         $attributes = $model->editable ? 'name="codpago" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
-            . '<div class="form-group">'
+            . '<div id="payment-methods" class="form-group">'
             . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . $i18n->trans('payment-method') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
@@ -258,7 +277,7 @@ trait CommonSalesPurchases
         return '<div class="col-sm"><div class="form-group">' . $i18n->trans('global-dto')
             . '<div class="input-group">'
             . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-percentage"></i></span></div>'
-            . '<input type="number" ' . $attributes . ' value="' . $model->dtopor1 . '" class="form-control"/>'
+            . '<input type="number" ' . $attributes . ' value="' . floatval($model->dtopor1) . '" class="form-control"/>'
             . '</div></div></div>';
     }
 
@@ -276,7 +295,7 @@ trait CommonSalesPurchases
             . '<div class="input-group-prepend">'
             . '<span class="input-group-text"><i class="fas fa-percentage"></i></span>'
             . '</div>'
-            . '<input type="number" ' . $attributes . ' value="' . $model->dtopor2 . '" class="form-control"/>'
+            . '<input type="number" ' . $attributes . ' value="' . floatval($model->dtopor2) . '" class="form-control"/>'
             . '</div></div></div>';
     }
 
@@ -303,7 +322,7 @@ trait CommonSalesPurchases
     {
         $attributes = $model->editable && $enabled ? 'name="fecha" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
-            . '<div class="form-group">' . $i18n->trans('date')
+            . '<div id="document-date" class="form-group">' . $i18n->trans('date')
             . '<input type="date" ' . $attributes . ' value="' . date('Y-m-d', strtotime($model->fecha)) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -376,7 +395,8 @@ trait CommonSalesPurchases
         // añadimos los estados posibles
         $options = [];
         foreach ($model->getAvailableStatus() as $sta) {
-            if ($sta->idestado === $model->idestado) {
+            // si está seleccionado o no activo, lo saltamos
+            if ($sta->idestado === $model->idestado || false === $sta->activo) {
                 continue;
             }
 
@@ -497,7 +517,7 @@ trait CommonSalesPurchases
 
         return '<div class="col-sm-12"><div class="form-group">' . $i18n->trans('observations')
             . '<textarea ' . $attributes . ' class="form-control" placeholder="' . $i18n->trans('observations')
-            . '" rows="' . $rows . '">' . $model->observaciones . '</textarea>'
+            . '" rows="' . $rows . '">' . Tools::noHtml($model->observaciones) . '</textarea>'
             . '</div></div>';
     }
 
@@ -539,7 +559,7 @@ trait CommonSalesPurchases
             . '<div class="form-group">'
             . '<button class="btn btn-spin-action btn-outline-danger dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">'
             . '<i class="fas fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</button>'
-            . '<div class="dropdown-menu"><a class="dropdown-item text-success" href="#" onclick="return ' . $jsName . '(\'save-paid\', \'1\');">'
+            . '<div class="dropdown-menu"><a class="dropdown-item text-success" href="#" onclick="showModalPaymentConditions(' . $jsName . ')">'
             . '<i class="fas fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</a></div>'
             . '</div>'
             . '</div>';
@@ -631,7 +651,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="tasaconv" step="any" autocomplete="off"' : 'disabled';
         return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('conversion-rate')
-            . '<input type="number" ' . $attributes . ' value="' . $model->tasaconv . '" class="form-control"/>'
+            . '<input type="number" ' . $attributes . ' value="' . floatval($model->tasaconv) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -660,7 +680,7 @@ trait CommonSalesPurchases
         $attributes = 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('user')
-            . '<input type="text" ' . $attributes . ' value="' . $model->nick . '" class="form-control"/>'
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nick) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }

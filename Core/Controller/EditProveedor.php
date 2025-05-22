@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -76,11 +76,11 @@ class EditProveedor extends ComercialContactController
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'supplier';
-        $data['icon'] = 'fas fa-users';
+        $data['icon'] = 'fa-solid fa-users';
         return $data;
     }
 
-    protected function createDocumentView(string $viewName, string $model, string $label)
+    protected function createDocumentView(string $viewName, string $model, string $label): void
     {
         $this->createSupplierListView($viewName, $model, $label);
 
@@ -90,7 +90,7 @@ class EditProveedor extends ComercialContactController
         $this->addButtonApproveDocument($viewName);
     }
 
-    protected function createInvoiceView(string $viewName)
+    protected function createInvoiceView(string $viewName): void
     {
         $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices');
 
@@ -99,14 +99,15 @@ class EditProveedor extends ComercialContactController
         $this->addButtonLockInvoice($viewName);
     }
 
-    protected function createProductView(string $viewName = 'ListProductoProveedor')
+    protected function createProductView(string $viewName = 'ListProductoProveedor'): void
     {
-        $this->addListView($viewName, 'ProductoProveedor', 'products', 'fas fa-cubes');
-        $this->views[$viewName]->addOrderBy(['actualizado'], 'update-time', 2);
-        $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
-        $this->views[$viewName]->addOrderBy(['refproveedor'], 'supplier-reference');
-        $this->views[$viewName]->addOrderBy(['neto'], 'net');
-        $this->views[$viewName]->addSearchFields(['referencia', 'refproveedor']);
+        $this->addListView($viewName, 'ProductoProveedor', 'products', 'fa-solid fa-cubes')
+            ->addOrderBy(['actualizado'], 'update-time', 2)
+            ->addOrderBy(['referencia'], 'reference')
+            ->addOrderBy(['refproveedor'], 'supplier-reference')
+            ->addOrderBy(['neto'], 'net')
+            ->addOrderBy(['stock'], 'stock')
+            ->addSearchFields(['referencia', 'refproveedor']);
 
         // desactivamos la columna de proveedor
         $this->views[$viewName]->disableColumn('supplier');
@@ -123,7 +124,7 @@ class EditProveedor extends ComercialContactController
     {
         parent::createViews();
         $this->createContactsView();
-        $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
+        $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fa-solid fa-piggy-bank');
 
         if ($this->user->can('EditSubcuenta')) {
             $this->createSubaccountsView();
@@ -177,11 +178,17 @@ class EditProveedor extends ComercialContactController
             return false;
         }
 
-        // redirect to returnUrl if return is defined
-        $returnUrl = $this->request->query->get('return');
-        if (!empty($returnUrl)) {
-            $model = $this->views[$this->active]->model;
-            $this->redirect($returnUrl . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+        // redirect to return_url if return is defined
+        $return_url = $this->request->query->get('return');
+        if (empty($return_url)) {
+            return true;
+        }
+
+        $model = $this->views[$this->active]->model;
+        if (strpos($return_url, '?') === false) {
+            $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+        } else {
+            $this->redirect($return_url . '&' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
         }
 
         return true;
@@ -241,7 +248,7 @@ class EditProveedor extends ComercialContactController
     /**
      * Load the available language values from translator.
      */
-    protected function loadLanguageValues(string $viewName)
+    protected function loadLanguageValues(string $viewName): void
     {
         $columnLangCode = $this->views[$viewName]->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {

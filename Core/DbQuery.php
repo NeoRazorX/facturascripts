@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,8 @@ use Exception;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
+ * Permite realizar consultas a la base de datos de forma sencilla.
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 final class DbQuery
@@ -102,12 +104,21 @@ final class DbQuery
         return $this->groupBy($groupByKey)->array($groupByKey, '_avg');
     }
 
-    public function count(): int
+    public function count(string $field = ''): int
     {
-        $this->fields = 'COUNT(*) as _count';
+        if ($field !== '') {
+            $this->fields = 'COUNT(DISTINCT ' . self::db()->escapeColumn($field) . ') as _count';
+        } elseif ($this->fields === '*' || empty($this->fields)) {
+            $this->fields = 'COUNT(*) as _count';
+        } else {
+            $this->fields = 'COUNT(' . $this->fields . ') as _count';
+        }
 
-        $row = $this->first();
-        return (int)$row['_count'];
+        foreach ($this->first() as $value) {
+            return (int)$value;
+        }
+
+        return 0;
     }
 
     public function countArray(string $field, string $groupByKey): array
@@ -171,11 +182,26 @@ final class DbQuery
         }
 
         $fields = [];
-        foreach (array_keys($data[0]) as $field) {
+        $values = [];
+
+        // comprobamos si es una inserción simple (no es un array de arrays)
+        $first = reset($data);
+        if (!is_array($first)) {
+            foreach ($data as $field => $value) {
+                $fields[] = self::db()->escapeColumn($field);
+                $values[] = self::db()->var2str($value);
+            }
+
+            $sql = 'INSERT INTO ' . self::db()->escapeColumn($this->table)
+                . ' (' . implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ');';
+            return self::db()->exec($sql);
+        }
+
+        // inserción múltiple
+        foreach (array_keys($first) as $field) {
             $fields[] = self::db()->escapeColumn($field);
         }
 
-        $values = [];
         foreach ($data as $row) {
             $line = [];
             foreach ($row as $value) {
@@ -207,12 +233,16 @@ final class DbQuery
 
     public function max(string $field, ?int $decimals = null): float
     {
-        $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ') as _max';
-
-        $row = $this->first();
+        $max = $this->maxString($field);
         return is_null($decimals) ?
-            (float)$row['_max'] :
-            round((float)$row['_max'], $decimals);
+            (float)$max:
+            round((float)$max, $decimals);
+    }
+
+    public function maxString(string $field): string
+    {
+        $this->fields = 'MAX(' . self::db()->escapeColumn($field) . ') as _max';
+        return $this->first()['_max'];
     }
 
     public function maxArray(string $field, string $groupByKey): array
@@ -224,12 +254,16 @@ final class DbQuery
 
     public function min(string $field, ?int $decimals = null): float
     {
-        $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ') as _min';
-
-        $row = $this->first();
+        $min = $this->minString($field);
         return is_null($decimals) ?
-            (float)$row['_min'] :
-            round((float)$row['_min'], $decimals);
+            (float)$min:
+            round((float)$min, $decimals);
+    }
+
+    public function minString(string $field): string
+    {
+        $this->fields = 'MIN(' . self::db()->escapeColumn($field) . ') as _min';
+        return $this->first()['_min'];
     }
 
     public function minArray(string $field, string $groupByKey): array
@@ -282,6 +316,13 @@ final class DbQuery
         }
 
         $this->fields = implode(', ', $list);
+
+        return $this;
+    }
+
+    public function selectRaw(string $fields): self
+    {
+        $this->fields = $fields;
 
         return $this;
     }
@@ -343,6 +384,11 @@ final class DbQuery
         }
 
         $sql = 'UPDATE ' . self::db()->escapeColumn($this->table) . ' SET ' . implode(', ', $fields);
+
+        if (!empty($this->where)) {
+            $sql .= ' WHERE ' . Where::multiSql($this->where);
+        }
+
         return self::db()->exec($sql);
     }
 

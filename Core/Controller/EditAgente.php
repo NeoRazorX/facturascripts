@@ -61,7 +61,7 @@ class EditAgente extends ComercialContactController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'agent';
-        $data['icon'] = 'fas fa-user-tie';
+        $data['icon'] = 'fa-solid fa-user-tie';
         return $data;
     }
 
@@ -80,7 +80,7 @@ class EditAgente extends ComercialContactController
 
     protected function createCustomerView(string $viewName = 'ListCliente'): void
     {
-        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users')
+        $this->addListView($viewName, 'Cliente', 'customers', 'fa-solid fa-users')
             ->addSearchFields(['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'])
             ->addOrderBy(['codcliente'], 'code')
             ->addOrderBy(['nombre'], 'name', 1);
@@ -103,7 +103,7 @@ class EditAgente extends ComercialContactController
 
     protected function createEmailsView(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope')
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-envelope')
             ->addSearchFields(['addressee', 'body', 'subject'])
             ->addOrderBy(['date'], 'date', 2);
 
@@ -185,6 +185,7 @@ class EditAgente extends ComercialContactController
                 }
                 $where = [new DataBaseWhere('idcontacto', $idcontacto)];
                 $view->loadData('', $where);
+                $this->loadLanguageValues($viewName);
                 break;
 
             case 'ListAlbaranCliente':
@@ -211,7 +212,7 @@ class EditAgente extends ComercialContactController
                 $this->addButton($viewName, [
                     'action' => 'SendMail?email=' . $email,
                     'color' => 'success',
-                    'icon' => 'fas fa-envelope',
+                    'icon' => 'fa-solid fa-envelope',
                     'label' => 'send',
                     'type' => 'link'
                 ]);
@@ -223,6 +224,22 @@ class EditAgente extends ComercialContactController
                     $view->disableColumn('contact');
                 }
                 break;
+        }
+    }
+
+    /**
+     * Load the available language values from translator.
+     */
+    protected function loadLanguageValues(string $viewName)
+    {
+        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
+            $langs = [];
+            foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
+                $langs[] = ['value' => $key, 'title' => $value];
+            }
+
+            $columnLangCode->widget->setValuesFromArray($langs, false, true);
         }
     }
 

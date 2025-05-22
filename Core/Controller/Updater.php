@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,16 +23,16 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\Migrations;
-use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
 
 /**
@@ -48,7 +48,7 @@ class Updater extends Controller
     /** @var array */
     public $coreUpdateWarnings = [];
 
-    /** @var TelemetryManager */
+    /** @var Telemetry */
     public $telemetryManager;
 
     /** @var array */
@@ -59,13 +59,36 @@ class Updater extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'updater';
-        $data['icon'] = 'fas fa-cloud-download-alt';
+        $data['icon'] = 'fa-solid fa-cloud-download-alt';
         return $data;
     }
 
-    public function getCoreVersion(): float
+    public static function getCoreVersion(): float
     {
         return Kernel::version();
+    }
+
+    public static function getUpdateItems(): array
+    {
+        $items = [];
+
+        // comprobamos si se puede actualizar el core
+        if (Forja::canUpdateCore()) {
+            $item = self::getUpdateItemsCore();
+            if (!empty($item)) {
+                $items[] = $item;
+            }
+        }
+
+        // comprobamos si se puede actualizar algún plugin
+        foreach (Plugins::list() as $plugin) {
+            $item = self::getUpdateItemsPlugin($plugin);
+            if (!empty($item)) {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
     }
 
     /**
@@ -77,7 +100,7 @@ class Updater extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-        $this->telemetryManager = new TelemetryManager();
+        $this->telemetryManager = new Telemetry();
 
         // Folders writable?
         $folders = FileManager::notWritableFolders();
@@ -114,7 +137,7 @@ class Updater extends Controller
     private function downloadAction(): void
     {
         $idItem = $this->request->get('item', '');
-        $this->updaterItems = $this->getUpdateItems();
+        $this->updaterItems = self::getUpdateItems();
         foreach ($this->updaterItems as $key => $item) {
             if ($item['id'] != $idItem) {
                 continue;
@@ -175,7 +198,7 @@ class Updater extends Controller
 
             case 'unlink':
                 if ($this->telemetryManager->unlink()) {
-                    $this->telemetryManager = new TelemetryManager();
+                    $this->telemetryManager = new Telemetry();
                     Tools::log()->notice('unlink-install-ok');
                     break;
                 }
@@ -187,38 +210,15 @@ class Updater extends Controller
                 return;
         }
 
-        $this->updaterItems = $this->getUpdateItems();
+        $this->updaterItems = self::getUpdateItems();
         $this->setCoreWarnings();
     }
 
-    private function getUpdateItems(): array
-    {
-        $items = [];
-
-        // comprobamos si se puede actualizar el core
-        if (Forja::canUpdateCore()) {
-            $item = $this->getUpdateItemsCore();
-            if (!empty($item)) {
-                $items[] = $item;
-            }
-        }
-
-        // comprobamos si se puede actualizar algún plugin
-        foreach (Plugins::list() as $plugin) {
-            $item = $this->getUpdateItemsPlugin($plugin);
-            if (!empty($item)) {
-                $items[] = $item;
-            }
-        }
-
-        return $items;
-    }
-
-    private function getUpdateItemsCore(): array
+    private static function getUpdateItemsCore(): array
     {
         $fileName = 'update-' . Forja::CORE_PROJECT_ID . '.zip';
         foreach (Forja::getBuilds(Forja::CORE_PROJECT_ID) as $build) {
-            if ($build['version'] <= $this->getCoreVersion()) {
+            if ($build['version'] <= self::getCoreVersion()) {
                 continue;
             }
 
@@ -247,7 +247,7 @@ class Updater extends Controller
         return [];
     }
 
-    private function getUpdateItemsPlugin(Plugin $plugin): array
+    private static function getUpdateItemsPlugin(Plugin $plugin): array
     {
         $id = $plugin->forja('idplugin', 0);
         $fileName = 'update-' . $id . '.zip';
@@ -354,7 +354,7 @@ class Updater extends Controller
 
         // get the name of the plugin to init after update (if the plugin is enabled)
         $init = '';
-        foreach ($this->getUpdateItems() as $item) {
+        foreach (self::getUpdateItems() as $item) {
             if ($idItem == Forja::CORE_PROJECT_ID) {
                 break;
             }
@@ -408,9 +408,11 @@ class Updater extends Controller
         }
 
         // update files
-        $origin = Tools::folder(self::CORE_ZIP_FOLDER, 'index.php');
-        $dest = Tools::folder('index.php');
-        copy($origin, $dest);
+        foreach (['index.php', 'replace_index_to_restore.php'] as $name) {
+            $origin = Tools::folder(self::CORE_ZIP_FOLDER, $name);
+            $dest = Tools::folder($name);
+            copy($origin, $dest);
+        }
 
         // remove zip folder
         FileManager::delTree(Tools::folder(self::CORE_ZIP_FOLDER));

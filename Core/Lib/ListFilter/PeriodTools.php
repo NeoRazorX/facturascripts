@@ -106,6 +106,18 @@ class PeriodTools
                 static::applyFormatToPeriod($startDate, $endDate, 'first day of October', 'last day of December');
                 break;
 
+            case 'previous-quarter':
+                $trimestre = ceil(date('n', strtotime("-3 month")) / 3);
+                $startDate = "01-" . str_pad((($trimestre - 1) * 3) + 1, 2, "0", STR_PAD_LEFT) . "-" . date('Y', strtotime("-3 month"));
+                $endDate = date("t-m-Y", strtotime("01" . "-" . str_pad((($trimestre - 1) * 3) + 3, 2, "0", STR_PAD_LEFT) . "-" . date('Y', strtotime("-3 month"))));
+                break;
+
+            case 'current-quarter':
+                $trimestre = ceil(date('n') / 3);
+                $startDate = "01-" . str_pad((($trimestre - 1) * 3) + 1, 2, "0", STR_PAD_LEFT) . "-" . date('Y');
+                $endDate = date("t-m-Y", strtotime("01" . "-" . str_pad((($trimestre - 1) * 3) + 3, 2, "0", STR_PAD_LEFT) . "-" . date('Y')));
+                break;
+
             case 'this-year':
                 static::applyFormatToPeriod($startDate, $endDate, 'first day of january', 'last day of December');
                 break;
@@ -158,6 +170,8 @@ class PeriodTools
             'this-last-month',
             'last-month',
             '',
+            'previous-quarter',
+            'current-quarter',
             'first-quarter',
             'second-quarter',
             'third-quarter',

@@ -18,6 +18,17 @@
         $(document).ready(function () {
             document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+            let db_type = document.fs_install.fs_db_type.value;
+            if (db_type === 'mysql') {
+                $("#mysql_socket_div").show();
+                $("#pgsql_ssl_div").hide();
+                $("#pgsql_endpoint").hide();
+            } else if (db_type === 'postgresql') {
+                $("#mysql_socket_div").hide();
+                $("#pgsql_ssl_div").show();
+                $("#pgsql_endpoint").show();
+            }
+
             $('#db_type').on('change', function () {
                 let str = '';
                 $('#db_type option:selected').each(function () {
@@ -27,35 +38,40 @@
                     $('#db_port').val(3306);
                     $('#db_user').val('root');
                     $("#mysql_socket_div").show();
+                    $("#pgsql_ssl_div").hide();
+                    $("#pgsql_endpoint").hide();
                 } else if (str === 'postgresql') {
                     $('#db_port').val(5432);
                     $('#db_user').val('postgres');
                     $("#mysql_socket_div").hide();
+                    $("#pgsql_ssl_div").show();
+                    $("#pgsql_endpoint").show();
                 }
             });
 
             $('#fs_lang').on('change', function () {
                 let lang = $("#fs_lang option:selected").val();
-                let url = location.pathname + '?fs_lang=' + lang;
-                window.location.href = url;
+                window.location.href = location.pathname + '?fs_lang=' + lang;
             });
         });
     </script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-    <a class="navbar-brand" href="" onclick="location.reload();">
-        <img src="Core/Assets/Images/logo.png" width="30" height="30" class="align-top" alt="FacturaScripts"/>
-        FacturaScripts {{ version }}
-    </a>
-    <ul class="nav navbar-nav mr-auto"></ul>
-    <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
-        <li class="nav-item">
-            <a class="nav-link" href="?phpinfo=TRUE">
-                <i class="fas fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
-            </a>
-        </li>
-    </ul>
+<nav class="navbar bg-dark" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="" onclick="location.reload();">
+            <img src="Core/Assets/Images/logo.png" width="30" height="30" class="align-top me-2" alt="FacturaScripts"/>
+            FacturaScripts {{ version }}
+        </a>
+        <ul class="nav navbar-nav me-auto"></ul>
+        <ul class="navbar-nav flex-row ms-md-auto d-none d-md-flex">
+            <li class="nav-item">
+                <a class="nav-link" href="?phpinfo=TRUE">
+                    <i class="fa-solid fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
+                </a>
+            </li>
+        </ul>
+    </div>
 </nav>
 <div class="container-fluid">
     <div class="row">
@@ -71,47 +87,49 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
-            <h1 class="h2">{{ trans('installer') }}</h1>
+            <h1 class="h2 mt-sm-5 mb-1">
+                <i class="fa-solid fa-wand-magic-sparkles me-2"></i> {{ trans('installer') }}
+            </h1>
             <p>{{ trans('installer-p') }}</p>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <div class="card shadow mb-5">
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                        <li role="presentation" class="nav-item">
-                            <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab"
-                               data-toggle="tab">
-                                <i class="fas fa-cogs" aria-hidden="true"></i>&nbsp; {{ trans('preferences') }}
-                            </a>
-                        </li>
-                        <li role="presentation" class="nav-item">
-                            <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
-                                <i class="far fa-file-alt"></i>&nbsp; {{ trans('license') }}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-body">
-                    <form name="fs_install" method="post" class="form">
+            <form name="fs_install" method="post" class="form">
+                <div class="card shadow mb-5">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            <li role="presentation" class="nav-item">
+                                <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab"
+                                   data-bs-toggle="tab">
+                                    <i class="fa-solid fa-cogs" aria-hidden="true"></i>&nbsp; {{ trans('preferences') }}
+                                </a>
+                            </li>
+                            <li role="presentation" class="nav-item">
+                                <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab"
+                                   data-bs-toggle="tab">
+                                    <i class="far fa-file-alt"></i>&nbsp; {{ trans('license') }}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" id="preferencias">
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('language') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-language"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                        <i class="fa-solid fa-language"></i>
                                                 </span>
-                                                <select id="fs_lang" name="fs_lang" class="form-control">
+                                                <select id="fs_lang" name="fs_lang" class="form-select">
                                                     {% for langCode, langName in i18n.getAvailableLanguages() %}
                                                         {% if langCode == i18n.getLang() %}
-                                                            <option value="{{ langCode }}"
-                                                                    selected>{{ langName }}</option>
+                                                            <option value="{{ langCode }}" selected>
+                                                                {{ langName }}
+                                                            </option>
                                                         {% else %}
                                                             <option value="{{ langCode }}">{{ langName }}</option>
                                                         {% endif %}
@@ -121,15 +139,13 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('timezone') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                <span class="input-group-text">
                                                         <i class="far fa-clock"></i>
-                                                    </span>
                                                 </span>
-                                                <select name="fs_timezone" class="form-control">
+                                                <select name="fs_timezone" class="form-select">
                                                     {% for tz in timezones %}
                                                         <option value="{{ tz }}">{{ tz }}</option>
                                                     {% endfor %}
@@ -138,68 +154,109 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('db-type') }}:
-                                            <select id="db_type" name="fs_db_type" class="form-control">
-                                                <option value="mysql">MySQL</option>
-                                                <option value="postgresql">PostgreSQL</option>
+                                            <select id="db_type" name="fs_db_type" class="form-select">
+                                                {% if fsc.db_type == 'mysql' %}
+                                                    <option value="mysql" selected>MySQL</option>
+                                                    <option value="postgresql">PostgreSQL</option>
+                                                {% else %}
+                                                    <option value="mysql">MySQL</option>
+                                                    <option value="postgresql" selected>PostgreSQL</option>
+                                                {% endif %}
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('db-host') }}:
-                                            <input type="text" name="fs_db_host" value="localhost" class="form-control"
-                                                   required/>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            {{ trans('db-port') }}:
-                                            <input type="number" id="db_port" name="fs_db_port" value="3306"
+                                            <input type="text" name="fs_db_host" value="{{ fsc.db_host }}"
                                                    class="form-control" required/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
+                                            {{ trans('db-port') }}:
+                                            <input type="number" id="db_port" name="fs_db_port"
+                                                   value="{{ fsc.db_port }}" class="form-control" required/>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
                                             {{ trans('db-name') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-database"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                        <i class="fa-solid fa-database"></i>
                                                 </span>
-                                                <input type="text" name="fs_db_name" value="facturascripts"
+                                                <input type="text" name="fs_db_name" value="{{ fsc.db_name }}"
                                                        class="form-control" required/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('db-user') }}:
-                                            <input type="text" id="db_user" name="fs_db_user" value="root"
+                                            <input type="text" id="db_user" name="fs_db_user" value="{{ fsc.db_user }}"
                                                    class="form-control" required/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('db-password') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-key"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                        <i class="fa-solid fa-key"></i>
                                                 </span>
-                                                <input type="password" name="fs_db_pass" class="form-control"/>
+                                                <input type="password" name="fs_db_pass" value="{{ fsc.db_pass }}"
+                                                       class="form-control"/>
                                             </div>
                                         </div>
                                     </div>
                                     <div id="mysql_socket_div" class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('mysql-socket') }}:
                                             <input type="text" name="mysql_socket" class="form-control"
                                                    placeholder="{{ trans('optional') }}"/>
                                             <small class="form-text text-muted">{{ trans('mysql-socket-p') }}</small>
+                                        </div>
+                                    </div>
+                                    <div id="pgsql_ssl_div" class="col-sm-4">
+                                        <div class="mb-3">
+                                            {{ trans('pgsql-ssl-mode') }}:
+                                            <select name="pgsql_ssl_mode" class="form-select">
+                                                <option value="" selected>------</option>
+                                                <option value="disable">disable</option>
+                                                <option value="allow">allow</option>
+                                                <option value="prefer">prefer</option>
+                                                <option value="require">require</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center">
+                                    <div id="pgsql_endpoint" class="col-sm-4">
+                                        <div class="mb-3">
+                                            {{ trans('pgsql-endpoint') }}:
+                                            <input type="text" name="pgsql_endpoint" class="form-control"
+                                                   placeholder="{{ trans('optional') }}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-auto">
+                                        <div class="form-check mb-2 mb-sm-0">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" name="fs_debug"
+                                                       value="true"/>
+                                                {{ trans('debug-mode') }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm">
+                                        <div class="form-check mb-2 mb-sm-0">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" name="fs_gtm"
+                                                       value="true"/>
+                                                {{ trans('send-anonymous-data') }}
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
@@ -207,36 +264,55 @@
                             <div role="tabpanel" class="tab-pane" id="licencia">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <pre>{{ license }}</pre>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="card-footer">
                         <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-check mb-2 mb-sm-0">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="fs_debug" value="true"/>
-                                        {{ trans('debug-mode') }}
-                                    </label>
-                                </div>
+                            <div class="col-sm">
+                                &COPY; 2013-{{ 'now' | date('Y') }}
+                                <a href="https://facturascripts.com" rel="nofollow" target="_blank">FacturaScripts</a>
                             </div>
-                            <div class="col-sm-6 text-right">
+                            <div class="col-sm-auto">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-check" aria-hidden="true"></i> {{ trans('accept') }}
+                                    <i class="fa-solid fa-check me-1" aria-hidden="true"></i> {{ trans('accept') }}
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <div class="card shadow mb-3">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-book fa-3x text-primary"></i>
                 </div>
                 <div class="card-footer">
-                    &COPY; 2013-{{ 'now' | date('Y') }}
-                    <a href="https://facturascripts.com" rel="nofollow" target="_blank">FacturaScripts</a>
+                    <a class="btn btn-lg btn-link w-100" href="https://facturascripts.com/ayuda" rel="nofollow"
+                       target="_blank">{{ trans('help') }}
+                    </a>
                 </div>
             </div>
-            <br/>
+        </div>
+        <div class="col-sm">
+            <div class="card shadow mb-3">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-comment-dots fa-3x text-info"></i>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-lg btn-link w-100" href="https://facturascripts.com/contacto"
+                       rel="nofollow" target="_blank">{{ trans('support') }}
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

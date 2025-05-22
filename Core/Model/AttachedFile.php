@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
@@ -137,7 +137,7 @@ class AttachedFile extends ModelOnChangeClass
 
     public function isImage(): bool
     {
-        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif']);
+        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
     }
 
     public function isPdf(): bool
@@ -175,7 +175,7 @@ class AttachedFile extends ModelOnChangeClass
     public function shortFileName(int $length = 20): string
     {
         if (strlen($this->filename) <= $length) {
-            return $this->filename;
+            return $this->filename ?? '';
         }
 
         $parts = explode('.', $this->filename);
@@ -192,7 +192,7 @@ class AttachedFile extends ModelOnChangeClass
     public function test(): bool
     {
         if (empty($this->idfile)) {
-            $this->idfile = $this->newCode();
+            $this->idfile = $this->getNextCode();
             return $this->setFile() && parent::test();
         }
 
@@ -228,6 +228,28 @@ class AttachedFile extends ModelOnChangeClass
         $extension = count($parts) > 1 ? end($parts) : '';
         $name = substr($fixed, 0, static::MAX_FILENAME_LEN - strlen('.' . $extension));
         return $name . '.' . $extension;
+    }
+
+    protected function getNextCode(): int
+    {
+        switch (Tools::config('db_type')) {
+            case 'mysql':
+                $sql = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . Tools::config('db_name')
+                    . "' AND TABLE_NAME = '" . static::tableName() . "';";
+                foreach (static::$dataBase->select($sql) as $row) {
+                    return max($this->newCode(), $row['AUTO_INCREMENT']);
+                }
+                break;
+
+            case 'postgresql':
+                $sql = "SELECT nextval('" . static::tableName() . "_idfile_seq');";
+                foreach (static::$dataBase->select($sql) as $row) {
+                    return max($this->newCode(), $row['nextval']);
+                }
+                break;
+        }
+
+        return $this->newCode();
     }
 
     /**

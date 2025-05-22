@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,6 +29,8 @@ class DefaultError extends ErrorController
 {
     public function run(): void
     {
+        $this->setSaveCrash(true);
+
         http_response_code(500);
 
         if ($this->exception instanceof SyntaxError) {
@@ -36,7 +38,7 @@ class DefaultError extends ErrorController
             $body = '<h1>' . $title . '</h1>'
                 . '<p>' . $this->exception->getRawMessage() . '</p>'
                 . '<p><b>File</b>: ' . $this->exception->getFile()
-                . ', <b>line</b>:' . $this->exception->getLine() . '</p>';
+                . ', <b>line</b>: ' . $this->exception->getLine() . '</p>';
 
             echo $this->htmlCard($title, $body, 'bg-danger');
             return;
@@ -47,7 +49,7 @@ class DefaultError extends ErrorController
             $body = '<h1>' . $title . '</h1>'
                 . '<p>' . $this->exception->getRawMessage() . '</p>'
                 . '<p><b>File</b>: ' . $this->exception->getFile()
-                . ', <b>line</b>:' . $this->exception->getLine() . '</p>';
+                . ', <b>line</b>: ' . $this->exception->getLine() . '</p>';
 
             echo $this->htmlCard($title, $body, 'bg-danger');
             return;
@@ -58,7 +60,7 @@ class DefaultError extends ErrorController
             $body = '<h1>' . $title . '</h1>'
                 . '<p>' . $this->exception->getRawMessage() . '</p>'
                 . '<p><b>File</b>: ' . $this->exception->getFile()
-                . ', <b>line</b>:' . $this->exception->getLine() . '</p>';
+                . ', <b>line</b>: ' . $this->exception->getLine() . '</p>';
 
             echo $this->htmlCard($title, $body, 'bg-danger');
             return;
@@ -68,7 +70,7 @@ class DefaultError extends ErrorController
         $body = '<h1>' . $title . '</h1>'
             . '<p>' . $this->exception->getMessage() . '</p>'
             . '<p><b>File</b>: ' . $this->exception->getFile()
-            . ', <b>line</b>:' . $this->exception->getLine() . '</p>';
+            . ', <b>line</b>: ' . $this->exception->getLine() . '</p>';
 
         $table = $this->getTrace();
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,8 +22,8 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\AlbaranProveedor;
 use FacturaScripts\Core\Model\Divisa;
 use FacturaScripts\Core\Model\Producto;
@@ -31,6 +31,7 @@ use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -54,7 +55,7 @@ final class ProductoProveedorTest extends TestCase
     /**
      * Comprobamos que se puede crear un ProductoProveedor
      */
-    public function testItCanCreateProductoProveedor(): void
+    public function testCreate(): void
     {
         // creamos un proveedor
         $proveedor = $this->getRandomSupplier();
@@ -68,23 +69,42 @@ final class ProductoProveedorTest extends TestCase
         $this->assertNotNull($productoProveedor->id);
 
         // eliminamos
+        $this->assertTrue($productoProveedor->delete());
         $this->assertTrue($proveedor->getDefaultAddress()->delete());
         $this->assertTrue($proveedor->delete());
-        $this->assertTrue($productoProveedor->delete());
+    }
+
+    public function testCantCreateWithoutReference(): void
+    {
+        // creamos un proveedor
+        $proveedor = $this->getRandomSupplier();
+        $this->assertTrue($proveedor->save());
+
+        $productoProveedor = new ProductoProveedor();
+        $this->assertFalse($productoProveedor->save());
+
+        // asignamos una referencia que no existe
+        $productoProveedor->referencia = 'wrong-ref';
+        $this->assertFalse($productoProveedor->save());
+
+        // eliminamos
+        $this->assertTrue($proveedor->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor->delete());
     }
 
     /**
      * Comprobamos que NO se puede crear un ProductoProveedor
      * cuando el Proveedor no existe
      */
-    public function testItCanNotCreateProductoProveedorWhitOutSupplier(): void
+    public function testItCanNotCreateWithoutSupplier(): void
     {
         $productoProveedor = new ProductoProveedor();
         $productoProveedor->referencia = 'test';
-        $productoProveedor->codproveedor = 'wrong-cod';
-
         $this->assertFalse($productoProveedor->save());
-        $this->assertNull($productoProveedor->id);
+
+        // asignamos un proveedor que no existe
+        $productoProveedor->codproveedor = 'wrong-cod';
+        $this->assertFalse($productoProveedor->save());
     }
 
     /**
@@ -93,10 +113,11 @@ final class ProductoProveedorTest extends TestCase
      */
     public function testItDeleteProductosProveedorOnCascade(): void
     {
-        // Creamos un proveedor con dos productos
+        // Creamos un proveedor
         $proveedor = $this->getRandomSupplier();
         $this->assertTrue($proveedor->save());
 
+        // Creamos dos productos del proveedor
         $productoProveedor1 = new ProductoProveedor();
         $productoProveedor1->referencia = 'test-1';
         $productoProveedor1->codproveedor = $proveedor->codproveedor;
@@ -107,31 +128,28 @@ final class ProductoProveedorTest extends TestCase
         $productoProveedor2->codproveedor = $proveedor->codproveedor;
         $this->assertTrue($productoProveedor2->save());
 
-        // Comprobamos que los dos productos se encuentran en la BBDD
-        $productoProveedor = new ProductoProveedor();
-        $productoProveedor->loadFromCode($productoProveedor1->id);
-        $this->assertNotNull($productoProveedor->id);
-        $productoProveedor->loadFromCode($productoProveedor2->id);
-        $this->assertNotNull($productoProveedor->id);
-
-        // Borramos el proveedor
+        // eliminamos el proveedor
         $this->assertTrue($proveedor->getDefaultAddress()->delete());
         $this->assertTrue($proveedor->delete());
 
-        // Comprobamos que los dos productos ya NO se encuentran en la BBDD
-        $productoProveedor->loadFromCode($productoProveedor1->id);
-        $this->assertNull($productoProveedor->id);
-        $productoProveedor->loadFromCode($productoProveedor2->id);
-        $this->assertNull($productoProveedor->id);
+        // Comprobamos que los dos productos ya NO se encuentran en la base de datos
+        $this->assertFalse($productoProveedor1->exists());
+        $this->assertFalse($productoProveedor2->exists());
     }
 
     /**
      * Comprobamos que al crear una línea de Albarán se
      * crea un ProductoProveedor
      */
-    public function testItCanCreateProductoProveedorWhenCreatingAlbaran(): void
+    public function testItCreateWhenCreatingAlbaran(): void
     {
+        Tools::settingsSet('default', 'updatesupplierprices', true);
+
         [$subject, $product, $doc, $pvpUnitario, $dtopor, $dtopor2] = $this->getAlbaranConLineaProducto();
+        $this->assertTrue($subject->exists());
+        $this->assertTrue($product->exists());
+        $this->assertTrue($doc->exists());
+        $this->assertCount(1, $doc->getLines());
 
         $model = new ProductoProveedor();
         $productosProveedor = $model->all([
@@ -172,9 +190,11 @@ final class ProductoProveedorTest extends TestCase
         $doc2->setSubject($subject);
         $this->assertTrue($doc2->save());
 
+        // Añadimos el producto
         $line = $doc2->getNewProductLine($product->referencia);
         $this->assertTrue($line->save());
 
+        // comprobamos que el precio del producto es el del albarán previo
         $this->assertEquals($pvpUnitario, $line->pvpunitario);
         $this->assertEquals($dtopor, $line->dtopor);
         $this->assertEquals($dtopor2, $line->dtopor2);
@@ -200,31 +220,42 @@ final class ProductoProveedorTest extends TestCase
 
         // Creamos otra divisa
         $divisa = new Divisa();
-        $divisa->coddivisa = 'USD';
+        $divisa->coddivisa = 'XXX';
         $this->assertTrue($divisa->save());
 
         // Creamos otro albarán
         $doc2 = new AlbaranProveedor();
         $doc2->setSubject($subject);
-        $doc2->setCurrency('USD');
+        $doc2->setCurrency('XXX');
         $this->assertTrue($doc2->save());
 
+        // Añadimos el producto
         $line = $doc2->getNewProductLine($product->referencia);
         $line->pvpunitario = 1000;
         $this->assertTrue($line->save());
 
-        $productosProveedor = new ProductoProveedor();
-        $productosProveedor = $productosProveedor->all(
-            [
-                new DataBaseWhere('referencia', $product->referencia),
-                new DataBaseWhere('codproveedor', $subject->codproveedor),
-            ]
-        );
+        // actualizamos los totales
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc2, $lines, true));
 
+        // procesamos la cola de trabajos
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
+
+        // buscamos el producto del proveedor
+        $productosProveedor = ProductoProveedor::all([
+            new DataBaseWhere('referencia', $product->referencia),
+            new DataBaseWhere('codproveedor', $subject->codproveedor),
+        ]);
+
+        // comprobamos que se han creado dos productos proveedor
         $this->assertCount(2, $productosProveedor);
         $this->assertEquals($productosProveedor[0]->referencia, $productosProveedor[1]->referencia);
         $this->assertEquals('EUR', $productosProveedor[0]->coddivisa);
-        $this->assertEquals('USD', $productosProveedor[1]->coddivisa);
+        $this->assertEquals('XXX', $productosProveedor[1]->coddivisa);
 
         // eliminamos
         $this->assertTrue($doc->delete());
@@ -297,7 +328,7 @@ final class ProductoProveedorTest extends TestCase
         $productoProveedor->clear();
 
         $this->assertNotNull($productoProveedor->actualizado);
-        $this->assertEquals(ToolBox::appSettings()::get('default', 'coddivisa'), $productoProveedor->coddivisa);
+        $this->assertEquals(Tools::settings('default', 'coddivisa'), $productoProveedor->coddivisa);
         $this->assertEquals(0, $productoProveedor->dtopor);
         $this->assertEquals(0, $productoProveedor->dtopor2);
         $this->assertEquals(0, $productoProveedor->neto);
@@ -445,6 +476,7 @@ final class ProductoProveedorTest extends TestCase
         // creamos un albarán
         $doc = new AlbaranProveedor();
         $doc->setSubject($subject);
+        $doc->observaciones = 'test producto proveedor';
         $this->assertTrue($doc->save());
 
         // añadimos el producto
@@ -456,6 +488,17 @@ final class ProductoProveedorTest extends TestCase
         $line->dtopor = $dtopor;
         $line->dtopor2 = $dtopor2;
         $this->assertTrue($line->save());
+
+        // actualizamos los totales
+        $lines = [$line];
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+
+        // procesamos la cola de trabajos
+        while (true) {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
 
         return [
             $subject,

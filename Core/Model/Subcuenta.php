@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -122,7 +122,7 @@ class Subcuenta extends Base\ModelClass
         return false;
     }
 
-    public function disableAdditionalTest(bool $value)
+    public function disableAdditionalTest(bool $value): void
     {
         $this->disableAdditionalTest = $value;
     }
@@ -203,7 +203,7 @@ class Subcuenta extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->saldo = $this->debe - $this->haber;
+        $this->saldo = round($this->debe - $this->haber, FS_NF0);
 
         // escape html
         foreach (['codcuenta', 'codsubcuenta', 'descripcion', 'codcuentaesp'] as $field) {
@@ -262,9 +262,9 @@ class Subcuenta extends Base\ModelClass
      * @param float $debit
      * @param float $credit
      */
-    public function updateBalance(float $debit = 0.0, float $credit = 0.0)
+    public function updateBalance(float $debit = 0.0, float $credit = 0.0): void
     {
-        // supplied debit and credit?
+        // Si nos proporcionan un importe, lo usamos para actualizar el saldo.
         if ($debit + $credit != 0.0) {
             $this->debe += $debit;
             $this->haber += $credit;
@@ -272,14 +272,23 @@ class Subcuenta extends Base\ModelClass
             return;
         }
 
-        // calculate account balance
+        // calculamos el saldo de la subcuenta
         $sql = "SELECT COALESCE(SUM(debe), 0) as debe, COALESCE(SUM(haber), 0) as haber"
             . " FROM " . DinPartida::tableName()
             . " WHERE idsubcuenta = " . self::$dataBase->var2str($this->idsubcuenta) . ";";
 
         foreach (self::$dataBase->select($sql) as $row) {
-            $this->debe = (float)$row['debe'];
-            $this->haber = (float)$row['haber'];
+            $decimals = Tools::settings('default', 'decimals');
+            $debe = round($row['debe'], $decimals);
+            $haber = round($row['haber'], $decimals);
+
+            // si no hay cambios, no actualizamos
+            if (abs($debe - $this->debe) < 0.01 && abs($haber - $this->haber) < 0.01) {
+                continue;
+            }
+
+            $this->debe = $debe;
+            $this->haber = $haber;
             $this->save();
         }
     }

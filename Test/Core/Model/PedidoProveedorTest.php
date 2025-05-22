@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoProveedor;
@@ -86,7 +86,7 @@ final class PedidoProveedorTest extends TestCase
         $doc = new PedidoProveedor();
         $this->assertTrue($doc->setSubject($subject), 'can-not-set-subject-1');
 
-        // comprobamos que se hana siguido correctamente los datos del proveedor
+        // comprobamos que se han asignado correctamente los datos del proveedor
         $this->assertEquals($subject->cifnif, $doc->cifnif, 'pedido-proveedor-bad-cifnif-1');
         $this->assertEquals($subject->codproveedor, $doc->codproveedor, 'pedido-proveedor-bad-codproveedor-1');
         $this->assertEquals($subject->razonsocial, $doc->nombre, 'pedido-proveedor-bad-nombre-1');

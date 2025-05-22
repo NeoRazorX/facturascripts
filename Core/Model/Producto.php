@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -208,9 +208,19 @@ class Producto extends ModelClass
 
     public function delete(): bool
     {
+        // comprobamos si podemos eliminar las variantes
+        foreach ($this->getVariants() as $variant) {
+            if ($variant->isInDocuments()) {
+                Tools::log()->warning('cant-delete-variant-with-documents', ['%reference%' => $variant->referencia]);
+                return false;
+            }
+        }
+
         // eliminamos las imágenes del producto
         foreach ($this->getImages() as $image) {
-            $image->delete();
+            if (false === $image->delete()) {
+                return false;
+            }
         }
 
         // eliminamos el resto de la base de datos
@@ -244,7 +254,7 @@ class Producto extends ModelClass
             $where[] = new DataBaseWhere('referencia', null);
         }
 
-        $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
+        $orderBy = ['orden' => 'ASC'];
         return $image->all($where, $orderBy, 0, 0);
     }
 
@@ -309,6 +319,14 @@ class Producto extends ModelClass
         $this->observaciones = Tools::noHtml($this->observaciones);
         $this->referencia = Tools::noHtml($this->referencia);
 
+        // descripción y observaciones no pueden ser null
+        if ($this->descripcion === null) {
+            $this->descripcion = '';
+        }
+        if ($this->observaciones === null) {
+            $this->observaciones = '';
+        }
+
         if (empty($this->referencia)) {
             // obtenemos una nueva referencia de variantes, en lugar del producto
             $variant = new DinVariante();
@@ -368,7 +386,7 @@ class Producto extends ModelClass
         }
 
         // si hay cambios, actualizamos el producto
-        if ($newPrecio != $this->precio || $newReferencia != $this->referencia) {
+        if ($newPrecio != $this->precio || $newReferencia !== $this->referencia) {
             $this->precio = $newPrecio;
             $this->referencia = $newReferencia;
             $this->save();

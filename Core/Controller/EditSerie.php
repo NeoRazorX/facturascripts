@@ -44,13 +44,13 @@ class EditSerie extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'serie';
-        $data['icon'] = 'fas fa-layer-group';
+        $data['icon'] = 'fa-solid fa-layer-group';
         return $data;
     }
 
     protected function createFormatView(string $viewName = 'ListFormatoDocumento')
     {
-        $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fas fa-print');
+        $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fa-solid fa-print');
         $this->views[$viewName]->addOrderBy(['tipodoc'], 'doc-type', 2);
 
         // desactivamos la columna serie
@@ -59,7 +59,7 @@ class EditSerie extends EditController
 
     protected function createSequenceView(string $viewName = 'ListSecuenciaDocumento')
     {
-        $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
+        $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fa-solid fa-code');
         $this->views[$viewName]->addOrderBy(['codejercicio', 'tipodoc'], 'exercise');
         $this->views[$viewName]->addOrderBy(['tipodoc', 'codejercicio'], 'doc-type', 1);
         $this->views[$viewName]->addSearchFields(['patron', 'tipodoc']);

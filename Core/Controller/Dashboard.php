@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,9 +25,12 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Lib\Calendar;
+use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\ReciboProveedor;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CalendarEvent;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
@@ -41,7 +44,6 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\TotalModel;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of Dashboard
@@ -66,6 +68,9 @@ class Dashboard extends Controller
     /** @var array */
     public $receipts = [];
 
+    /** @var bool */
+    public $registered = false;
+
     /** @var array */
     public $sections = [];
 
@@ -75,12 +80,15 @@ class Dashboard extends Controller
     /** @var string|null */
     public $calendario = null;
 
+    /** @var bool */
+    public $updated = false;
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'reports';
         $data['title'] = 'dashboard';
-        $data['icon'] = 'fas fa-chalkboard-teacher';
+        $data['icon'] = 'fa-solid fa-chalkboard-teacher';
         return $data;
     }
 
@@ -98,6 +106,13 @@ class Dashboard extends Controller
         $this->title = Tools::lang()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
 
         $this->loadExtensions();
+
+        // comprobamos si la instalación está registrada
+        $telemetry = new Telemetry();
+        $this->registered = $telemetry->ready();
+
+        // comprobamos si hay actualizaciones disponibles
+        $this->updated = Forja::canUpdateCore() === false;
     }
 
     public function showBackupWarning(): bool
@@ -207,20 +222,11 @@ class Dashboard extends Controller
      */
     private function loadNews(): void
     {
-        // buscamos en la caché
-        $news = Cache::get('dashboard-news');
-        if ($news !== null) {
-            $this->news = $news;
-            return;
-        }
-
-        // si no está en caché, consultamos a facturascripts.com
-        $this->news = Http::get('https://facturascripts.com/comm3/index.php?page=community_changelog&json=TRUE')
-            ->setTimeout(5)
-            ->json();
-
-        // guardamos en caché
-        Cache::set('dashboard-news', $this->news);
+        $this->news = Cache::remember('dashboard-news', function () {
+            return Http::get('https://facturascripts.com/comm3/index.php?page=community_changelog&json=TRUE')
+                ->setTimeout(5)
+                ->json() ?? [];
+        });
     }
 
     private function loadCalendar(): void
@@ -252,8 +258,8 @@ class Dashboard extends Controller
         $this->setOpenLinksForDocument(new PedidoCliente(), 'order');
         $this->setOpenLinksForDocument(new PresupuestoCliente(), 'estimation');
 
-        $minDate = date(Producto::DATE_STYLE, strtotime('-2 days'));
-        $minDateTime = date(Producto::DATETIME_STYLE, strtotime('-2 days'));
+        $minDate = Tools::date('-2 days');
+        $minDateTime = Tools::dateTime('-2 days');
 
         $customerModel = new Cliente();
         $whereCustomer = [new DataBaseWhere('fechaalta', $minDate, '>=')];

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,6 +28,9 @@ abstract class ErrorController implements ErrorControllerInterface
 {
     /** @var Exception */
     protected $exception;
+
+    /** @var bool */
+    protected $save_crash = false;
 
     /** @var string */
     protected $url;
@@ -61,7 +64,10 @@ abstract class ErrorController implements ErrorControllerInterface
             $this->exception->getFile(),
             $this->exception->getLine()
         );
-        CrashReport::save($info);
+
+        if ($this->save_crash) {
+            CrashReport::save($info);
+        }
 
         $body = '<div class="container">'
             . '<div class="row justify-content-center">'
@@ -106,5 +112,10 @@ abstract class ErrorController implements ErrorControllerInterface
             . '</div>';
 
         return $this->html($title, $body, $bodyCss);
+    }
+
+    protected function setSaveCrash(bool $save): void
+    {
+        $this->save_crash = $save;
     }
 }

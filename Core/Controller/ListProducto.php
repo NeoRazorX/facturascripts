@@ -41,7 +41,7 @@ class ListProducto extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'products';
-        $data['icon'] = 'fas fa-cubes';
+        $data['icon'] = 'fa-solid fa-cubes';
         return $data;
     }
 
@@ -57,7 +57,7 @@ class ListProducto extends ListController
 
     protected function createViewProducto(string $viewName = 'ListProducto'): void
     {
-        $this->addView($viewName, 'Producto', 'products', 'fas fa-cubes')
+        $this->addView($viewName, 'Producto', 'products', 'fa-solid fa-cubes')
             ->addOrderBy(['referencia'], 'reference')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['fechaalta'], 'creation-date')
@@ -72,6 +72,7 @@ class ListProducto extends ListController
             ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
             ['label' => $i18n->trans('blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
             ['label' => $i18n->trans('public'), 'where' => [new DataBaseWhere('publico', true)]],
+            ['label' => $i18n->trans('not-public'), 'where' => [new DataBaseWhere('publico', false)]],
             ['label' => $i18n->trans('all'), 'where' => []]
         ]);
 
@@ -90,8 +91,8 @@ class ListProducto extends ListController
         }
         $this->addFilterSelect($viewName, 'tipo', 'type', 'tipo', $types);
 
-        $this->addFilterNumber($viewName, 'min-price', 'price', 'precio', '<=');
-        $this->addFilterNumber($viewName, 'max-price', 'price', 'precio', '>=');
+        $this->addFilterNumber($viewName, 'min-price', 'price', 'precio', '>=');
+        $this->addFilterNumber($viewName, 'max-price', 'price', 'precio', '<=');
 
         $taxes = Impuestos::codeModel();
         $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
@@ -105,19 +106,18 @@ class ListProducto extends ListController
         }
         $this->addFilterSelect($viewName, 'excepcioniva', 'vat-exception', 'excepcioniva', $exceptions);
 
-        $this->addFilterNumber($viewName, 'min-stock', 'stock', 'stockfis', '<=');
-        $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis', '>=');
+        $this->addFilterNumber($viewName, 'min-stock', 'stock', 'stockfis', '>=');
+        $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis', '<=');
 
         $this->addFilterCheckbox($viewName, 'nostock', 'no-stock', 'nostock');
         $this->addFilterCheckbox($viewName, 'ventasinstock', 'allow-sale-without-stock', 'ventasinstock');
         $this->addFilterCheckbox($viewName, 'secompra', 'for-purchase', 'secompra');
         $this->addFilterCheckbox($viewName, 'sevende', 'for-sale', 'sevende');
-        $this->addFilterCheckbox($viewName, 'publico', 'public', 'publico');
     }
 
     protected function createViewVariante(string $viewName = 'ListVariante'): void
     {
-        $this->addView($viewName, 'Join\VarianteProducto', 'variants', 'fas fa-project-diagram')
+        $this->addView($viewName, 'Join\VarianteProducto', 'variants', 'fa-solid fa-project-diagram')
             ->addOrderBy(['variantes.referencia'], 'reference')
             ->addOrderBy(['variantes.codbarras'], 'barcode')
             ->addOrderBy(['variantes.precio'], 'price')
@@ -145,10 +145,11 @@ class ListProducto extends ListController
         $attributes4 = $this->getAttributesForFilter(4);
         $this->addFilterSelect($viewName, 'idatributovalor4', 'attribute-value-4', 'variantes.idatributovalor4', $attributes4);
 
-        $this->addFilterNumber($viewName, 'min-price', 'price', 'variantes.precio', '<=');
-        $this->addFilterNumber($viewName, 'max-price', 'price', 'variantes.precio', '>=');
-        $this->addFilterNumber($viewName, 'min-stock', 'stock', 'variantes.stockfis', '<=');
-        $this->addFilterNumber($viewName, 'max-stock', 'stock', 'variantes.stockfis', '>=');
+        $this->addFilterNumber($viewName, 'min-price', 'price', 'variantes.precio', '>=');
+        $this->addFilterNumber($viewName, 'max-price', 'price', 'variantes.precio', '<=');
+
+        $this->addFilterNumber($viewName, 'min-stock', 'stock', 'variantes.stockfis', '>=');
+        $this->addFilterNumber($viewName, 'max-stock', 'stock', 'variantes.stockfis', '<=');
 
         // desactivamos los botones de nuevo y eliminar
         $this->setSettings($viewName, 'btnDelete', false);
@@ -157,18 +158,23 @@ class ListProducto extends ListController
 
     protected function createViewStock(string $viewName = 'ListStock'): void
     {
-        $this->addView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly')
+        $this->addView($viewName, 'Join\StockProducto', 'stock', 'fa-solid fa-dolly')
             ->addOrderBy(['stocks.referencia'], 'reference')
             ->addOrderBy(['stocks.cantidad'], 'quantity')
             ->addOrderBy(['stocks.disponible'], 'available')
             ->addOrderBy(['stocks.reservada'], 'reserved')
             ->addOrderBy(['stocks.pterecibir'], 'pending-reception')
             ->addOrderBy(['productos.descripcion', 'stocks.referencia'], 'product')
-            ->addSearchFields(['stocks.referencia', 'productos.descripcion']);
+            ->addSearchFields(['stocks.referencia', 'stocks.ubicacion', 'productos.descripcion']);
 
         // filtros
-        $warehouses = Almacenes::codeModel();
-        $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
+        if (count(Almacenes::all()) > 1) {
+            $warehouses = Almacenes::codeModel();
+            $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
+        } else {
+            // ocultamos la columna de almacén si solo hay uno
+            $this->tab($viewName)->disableColumn('warehouse');
+        }
 
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
         $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'productos.codfabricante', $manufacturers);
@@ -195,8 +201,17 @@ class ListProducto extends ListController
             ]
         ]);
 
-        $this->addFilterNumber($viewName, 'max-stock', 'quantity', 'cantidad', '>=');
-        $this->addFilterNumber($viewName, 'min-stock', 'quantity', 'cantidad', '<=');
+        $this->addFilterNumber($viewName, 'min-stock', 'quantity', 'cantidad', '>=');
+        $this->addFilterNumber($viewName, 'max-stock', 'quantity', 'cantidad', '<=');
+
+        $this->addFilterNumber($viewName, 'min-reserved', 'reserved', 'reservada', '>=');
+        $this->addFilterNumber($viewName, 'max-reserved', 'reserved', 'reservada', '<=');
+
+        $this->addFilterNumber($viewName, 'min-pterecibir', 'pending-reception', 'pterecibir', '>=');
+        $this->addFilterNumber($viewName, 'max-pterecibir', 'pending-reception', 'pterecibir', '<=');
+
+        $this->addFilterNumber($viewName, 'min-disponible', 'available', 'disponible', '>=');
+        $this->addFilterNumber($viewName, 'max-disponible', 'available', 'disponible', '<=');
 
         // desactivamos los botones de nuevo y eliminar
         $this->setSettings($viewName, 'btnDelete', false);

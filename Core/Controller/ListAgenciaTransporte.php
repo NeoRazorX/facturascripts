@@ -34,7 +34,7 @@ class ListAgenciaTransporte extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'carriers';
-        $data['icon'] = 'fas fa-truck';
+        $data['icon'] = 'fa-solid fa-truck';
         return $data;
     }
 
@@ -43,7 +43,7 @@ class ListAgenciaTransporte extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAgenciaTransporte', 'AgenciaTransporte', 'carriers', 'fas fa-truck')
+        $this->addView('ListAgenciaTransporte', 'AgenciaTransporte', 'carriers', 'fa-solid fa-truck')
             ->addSearchFields(['nombre', 'web', 'codtrans'])
             ->addOrderBy(['codtrans'], 'code')
             ->addOrderBy(['nombre'], 'name')

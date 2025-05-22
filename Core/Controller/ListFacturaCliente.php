@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,7 +44,7 @@ class ListFacturaCliente extends ListBusinessDocument
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'invoices';
-        $data['icon'] = 'fas fa-file-invoice-dollar';
+        $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         return $data;
     }
 
@@ -70,13 +70,13 @@ class ListFacturaCliente extends ListBusinessDocument
 
     protected function createViewReceipts(string $viewName = 'ListReciboCliente')
     {
-        $this->addView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
-        $this->addOrderBy($viewName, ['codcliente'], 'customer-code');
-        $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date');
-        $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
-        $this->addOrderBy($viewName, ['vencimiento'], 'expiration', 2);
-        $this->addOrderBy($viewName, ['importe'], 'amount');
-        $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
+        $this->addView($viewName, 'ReciboCliente', 'receipts', 'fa-solid fa-dollar-sign')
+            ->addOrderBy(['codcliente'], 'customer-code')
+            ->addOrderBy(['fecha', 'idrecibo'], 'date')
+            ->addOrderBy(['fechapago'], 'payment-date')
+            ->addOrderBy(['vencimiento'], 'expiration', 2)
+            ->addOrderBy(['importe'], 'amount')
+            ->addSearchFields(['codigofactura', 'observaciones']);
 
         // filtros
         $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
@@ -112,10 +112,10 @@ class ListFacturaCliente extends ListBusinessDocument
 
     protected function createViewRefunds(string $viewName = 'ListFacturaCliente-rect')
     {
-        $this->addView($viewName, 'FacturaCliente', 'refunds', 'fas fa-share-square');
-        $this->addSearchFields($viewName, ['codigo', 'codigorect', 'numero2', 'observaciones']);
-        $this->addOrderBy($viewName, ['fecha', 'idfactura'], 'date', 2);
-        $this->addOrderBy($viewName, ['total'], 'total');
+        $this->addView($viewName, 'FacturaCliente', 'refunds', 'fa-solid fa-share-square')
+            ->addSearchFields(['codigo', 'codigorect', 'numero2', 'observaciones'])
+            ->addOrderBy(['fecha', 'idfactura'], 'date', 2)
+            ->addOrderBy(['total'], 'total');
 
         // filtro de fecha
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
@@ -138,6 +138,7 @@ class ListFacturaCliente extends ListBusinessDocument
     protected function createViewSales(string $viewName, string $modelName, string $label)
     {
         parent::createViewSales($viewName, $modelName, $label);
+
         $this->addSearchFields($viewName, ['codigorect']);
 
         // filtros
@@ -158,7 +159,7 @@ class ListFacturaCliente extends ListBusinessDocument
         if (false === $this->permissions->onlyOwnerData) {
             $this->addButton($viewName, [
                 'action' => 'look-for-gaps',
-                'icon' => 'fas fa-exclamation-triangle',
+                'icon' => 'fa-solid fa-exclamation-triangle',
                 'label' => 'look-for-gaps'
             ]);
         }

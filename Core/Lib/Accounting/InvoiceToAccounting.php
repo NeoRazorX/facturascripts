@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -418,7 +418,13 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function initialChecks(): bool
     {
-        if (!empty($this->document->idasiento) || empty($this->document->total)) {
+        if (!empty($this->document->idasiento)) {
+            Tools::log()->warning('document-already-accounted', ['%document%' => $this->document->codigo]);
+            return false;
+        }
+
+        if (empty($this->document->total)) {
+            Tools::log()->warning('document-without-total', ['%document%' => $this->document->codigo]);
             return false;
         }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,21 +22,21 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codejercicio" onclick="EditEjercicio" />
+            <widget type="text" fieldname="codejercicio" onclick="EditEjercicio"/>
         </column>
         <column name="name" order="110">
-            <widget type="text" fieldname="nombre" />
+            <widget type="text" fieldname="nombre"/>
         </column>
         <column name="company" display="none" order="115">
             <widget type="select" fieldname="idempresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
             </widget>
         </column>
         <column name="start-date" display="center" order="120">
-            <widget type="text" fieldname="fechainicio" />
+            <widget type="text" fieldname="fechainicio"/>
         </column>
         <column name="end-date" display="center" order="130">
-            <widget type="text" fieldname="fechafin" />
+            <widget type="text" fieldname="fechafin"/>
         </column>
         <column name="state" display="center" order="140">
             <widget type="select" fieldname="estado" translate="true">
@@ -48,7 +48,7 @@
             </widget>
         </column>
         <column name="account-length" display="none" order="160">
-            <widget type="number" fieldname="longsubcuenta" decimal="0" />
+            <widget type="number" fieldname="longsubcuenta" decimal="0"/>
         </column>
     </columns>
     <rows>

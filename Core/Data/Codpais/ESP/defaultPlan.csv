@@ -251,7 +251,7 @@
 "404";"Proveedores, empresas asociadas";""
 "405";"Proveedores, otras partes vinculadas";""
 "406";"Envases y embalajes a devolver a proveedores";""
-"407";"Anticipos a proveedores";""
+"407";"Anticipos a proveedores";"ANTPRO"
 "41";"Acreedores varios";""
 "410";"Acreedores";"ACREED"
 "4104";"Acreedores por prestaciones de servicios, (moneda extranjera)";""

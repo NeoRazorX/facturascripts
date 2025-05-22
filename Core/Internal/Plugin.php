@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -54,7 +54,7 @@ final class Plugin
     public $min_version = 0;
 
     /** @var float */
-    public $min_php = 7.3;
+    public $min_php = 7.4;
 
     /** @var string */
     public $name = '-';
@@ -223,11 +223,13 @@ final class Plugin
 
         // ejecutamos los procesos de la clase Init del plugin
         $init = new $className();
-        if ($this->enabled && $this->post_enable) {
+        if ($this->enabled && $this->post_enable && Kernel::lock('plugin-init-update')) {
             $init->update();
+            Kernel::unlock('plugin-init-update');
         }
-        if ($this->disabled() && $this->post_disable) {
+        if ($this->disabled() && $this->post_disable && Kernel::lock('plugin-init-uninstall')) {
             $init->uninstall();
+            Kernel::unlock('plugin-init-uninstall');
         }
         if ($this->enabled) {
             $init->init();
@@ -326,7 +328,8 @@ final class Plugin
             return;
         }
 
-        $iniData = parse_ini_file($iniPath);
+        $data = file_get_contents($iniPath);
+        $iniData = parse_ini_string($data);
         if ($iniData) {
             $this->loadIniData($iniData);
         }

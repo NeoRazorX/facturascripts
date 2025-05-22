@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,8 +47,8 @@
                 <th>{{ trans('rectified-invoice') }}</th>
                 <th>{{ trans('number2') }}</th>
                 <th>{{ trans('observations') }}</th>
-                <th class="text-right">{{ trans('total') }}</th>
-                <th class="text-right">{{ trans('date') }}</th>
+                <th class="text-end">{{ trans('total') }}</th>
+                <th class="text-end">{{ trans('date') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -57,8 +57,8 @@
                     <td>{{ rectified.codigo }}</td>
                     <td>{{ rectified.numero2 | raw }}</td>
                     <td>{{ rectified.observaciones | raw }}</td>
-                    <td class="text-right">{{ money(rectified.total) }}</td>
-                    <td class="text-right">{{ rectified.fecha }}</td>
+                    <td class="text-end">{{ money(rectified.total) }}</td>
+                    <td class="text-end">{{ rectified.fecha }}</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -76,56 +76,76 @@
             <div class="col">
                 <div class="card border-warning shadow mb-4">
                     <div class="card-header bg-warning">
-                        <i class="fas fa-share fa-fw" aria-hidden="true"></i> {{ trans('new-refund') }}
+                        <i class="fa-solid fa-share fa-fw" aria-hidden="true"></i> {{ trans('new-refund') }}
                     </div>
                     <div class="card-body">
                         <p>{{ trans('rectified-invoice-p') }}</p>
-                        <div class="form-row align-items-end">
+                        <div class="row align-items-end">
                             <div class="col-sm">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ trans('serie') }}
-                                    <select name="codserie" class="form-control">
-                                        {% for serie in fsc.series() %}
-                                            {% if serie.tipo is same as('R') %}
-                                                {% if serie.codserie == settings('default','codserierec','R') %}
-                                                    <option value="{{ serie.codserie }}" selected>
-                                                        {{ serie.descripcion }}
-                                                    </option>
-                                                {% else %}
-                                                    <option value="{{ serie.codserie }}">{{ serie.descripcion }}</option>
-                                                {% endif %}
+                                    <select name="codserie" class="form-select">
+                                        {% set series = fsc.series('R') %}
+                                        {% if series is empty %}
+                                            {% set series = fsc.series() %}
+                                        {% endif %}
+                                        {% for serie in series %}
+                                            {% if serie.codserie == settings('default','codserierec','R') %}
+                                                <option value="{{ serie.codserie }}" selected>
+                                                    {{ serie.descripcion }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ serie.codserie }}">{{ serie.descripcion }}</option>
                                             {% endif %}
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
                             <div class="col-sm">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ trans('date') }}
                                     <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}"
                                            class="form-control" required>
                                 </div>
                             </div>
-                            <div class="col-sm text-right">
+                            <div class="col-sm">
+                                <div class="mb-3">
+                                    {{ trans('status') }}
+                                    <select name="idestado" class="form-select">
+                                        {% for status in firstView.model.getAvailableStatus() %}
+                                            {% if status.idestado is same as(11) %}
+                                                <option value="{{ status.idestado }}" selected>
+                                                    {{ status.nombre }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ status.idestado }}">
+                                                    {{ status.nombre }}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm text-end">
                                 <div class="btn-group mb-3">
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-check-square fa-fw"></i> {{ trans('select') }}
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa-solid fa-check-square fa-fw"></i> {{ trans('select') }}
                                         </button>
-                                        <div class="dropdown-menu dropdown-menu-right">
+                                        <div class="dropdown-menu dropdown-menu-end">
                                             <a class="dropdown-item" href="#" onClick="return refundNone();">
                                                 <i class="far fa-square fa-fw"></i> {{ trans('select-none') }}
                                             </a>
                                             <a class="dropdown-item" href="#" onClick="return refundAll();">
-                                                <i class="fas fa-square fa-fw"></i> {{ trans('select-all') }}
+                                                <i class="fa-solid fa-square fa-fw"></i> {{ trans('select-all') }}
                                             </a>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="btn-group mb-3 ml-3">
+                                <div class="btn-group mb-3 ms-3">
                                     <button type="submit" class="btn btn-spin-action btn-warning">
-                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
+                                        <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
                                 </div>
                             </div>
@@ -136,9 +156,9 @@
                             <thead>
                             <tr>
                                 <th>{{ trans('description') }}</th>
-                                <th class="text-right">{{ trans('quantity') }}</th>
-                                <th class="text-right">{{ trans('to-refund') }}</th>
-                                <th class="text-right">{{ trans('refund-amount') }}</th>
+                                <th class="text-end">{{ trans('quantity') }}</th>
+                                <th class="text-end">{{ trans('to-refund') }}</th>
+                                <th class="text-end">{{ trans('refund-amount') }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -149,7 +169,7 @@
                                         <a href="{{ line.getProducto().url() }}">{{ line.referencia }}</a>
                                         {{ line.descripcion | raw }}
                                     </td>
-                                    <td class="align-middle text-right">
+                                    <td class="align-middle text-end">
                                         {{ number(line.cantidad) }}
                                     </td>
                                     <td class="table-warning">
@@ -157,14 +177,14 @@
                                         {% if line.cantidad > 0 %}
                                             <input type="number" name="refund_{{ line.primaryColumnValue() }}"
                                                    value="0" min="0" max="{{ line.cantidad - refunded }}" step="any"
-                                                   class="form-control text-right to_refund" autocomplete="off"/>
+                                                   class="form-control text-end to_refund" autocomplete="off"/>
                                         {% else %}
                                             <input type="number" name="refund_{{ line.primaryColumnValue() }}"
-                                                   value="0" step="any" class="form-control text-right to_refund"
+                                                   value="0" step="any" class="form-control text-end to_refund"
                                                    autocomplete="off"/>
                                         {% endif %}
                                     </td>
-                                    <td class="align-middle table-warning text-right">
+                                    <td class="align-middle table-warning text-end">
                                         {% if refunded == 0 %}
                                             -
                                         {% else %}
@@ -177,7 +197,7 @@
                         </table>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <textarea name="observaciones" class="form-control"
                                       placeholder="{{ trans('observations') }}"></textarea>
                         </div>

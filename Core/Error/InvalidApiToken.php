@@ -25,6 +25,8 @@ class InvalidApiToken extends ErrorController
 {
     public function run(): void
     {
+        $this->setSaveCrash(false);
+
         http_response_code(401);
         header('content-type: application/json');
 

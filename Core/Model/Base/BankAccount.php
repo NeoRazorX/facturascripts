@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -60,6 +60,13 @@ abstract class BankAccount extends ModelClass
     public $iban;
 
     /**
+     * Previous bank account.
+     *
+     * @var string
+     */
+    public $iban_old;
+
+    /**
      * International bank identification of the bank and entity.
      *
      * @var string
@@ -92,6 +99,14 @@ abstract class BankAccount extends ModelClass
         return $spaced ? implode(' ', $groups) : implode('', $groups);
     }
 
+    public function loadFromData(array $data = [], array $exclude = [])
+    {
+        parent::loadFromData($data, $exclude);
+
+        // save the old iban
+        $this->iban_old = $this->iban;
+    }
+
     public static function primaryColumn(): string
     {
         return 'codcuenta';
@@ -107,7 +122,7 @@ abstract class BankAccount extends ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (!empty($this->codcuenta) && false === is_numeric($this->codcuenta)) {
             Tools::log()->error('invalid-number', ['%number%' => $this->codcuenta]);
@@ -138,12 +153,7 @@ abstract class BankAccount extends ModelClass
         return true;
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codcuenta)) {
             $this->codcuenta = $this->newCode();

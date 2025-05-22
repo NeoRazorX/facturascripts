@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -181,7 +181,9 @@ abstract class BaseView
             'checkBoxes' => true,
             'clickable' => true,
             'customized' => false,
-            'megasearch' => false
+            'itemLimit' => FS_ITEM_LIMIT,
+            'megasearch' => false,
+            'saveFilters' => false,
         ];
         $this->template = static::DEFAULT_TEMPLATE;
         $this->title = Tools::lang()->trans($title);
@@ -276,19 +278,20 @@ abstract class BaseView
         $pages = [];
         $key1 = $key2 = 0;
         $current = 1;
+        $limit = (int)$this->settings['itemLimit'];
 
         // add all pages
         while ($key2 < $this->count) {
             $pages[$key1] = [
                 'active' => ($key2 == $this->offset),
                 'num' => $key1 + 1,
-                'offset' => $key1 * FS_ITEM_LIMIT,
+                'offset' => $key1 * $limit,
             ];
             if ($key2 == $this->offset) {
                 $current = $key1;
             }
             $key1++;
-            $key2 += FS_ITEM_LIMIT;
+            $key2 += $limit;
         }
 
         // now remove pages

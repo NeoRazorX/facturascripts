@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\AjaxForms\SalesController;
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\AjaxForms\SalesController;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
@@ -35,7 +35,7 @@ class EditFacturaCliente extends SalesController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'invoice';
-        $data['icon'] = 'fas fa-file-invoice-dollar';
+        $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         $data['showonmenu'] = false;
         return $data;
     }
@@ -56,9 +56,9 @@ class EditFacturaCliente extends SalesController
      *
      * @param string $viewName
      */
-    private function createViewsAccounting(string $viewName = self::VIEW_ACCOUNTS)
+    private function createViewsAccounting(string $viewName = self::VIEW_ACCOUNTS): void
     {
-        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fa-solid fa-balance-scale');
 
         // buttons
         $this->addButton($viewName, [
@@ -74,9 +74,9 @@ class EditFacturaCliente extends SalesController
     /**
      * Add view for refund invoice.
      */
-    private function createViewsRefunds(string $viewName = 'refunds')
+    private function createViewsRefunds(string $viewName = 'refunds'): void
     {
-        $this->addHtmlView($viewName, 'Tab/RefundFacturaCliente', 'FacturaCliente', 'refunds', 'fas fa-share-square');
+        $this->addHtmlView($viewName, 'Tab/RefundFacturaCliente', 'FacturaCliente', 'refunds', 'fa-solid fa-share-square');
     }
 
     /**
@@ -84,10 +84,10 @@ class EditFacturaCliente extends SalesController
      *
      * @param string $viewName
      */
-    private function createViewsReceipts(string $viewName = self::VIEW_RECEIPTS)
+    private function createViewsReceipts(string $viewName = self::VIEW_RECEIPTS): void
     {
-        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
-        $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
+        $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fa-solid fa-dollar-sign')
+            ->addOrderBy(['vencimiento'], 'expiration');
 
         // buttons
         $this->addButton($viewName, [
@@ -100,7 +100,7 @@ class EditFacturaCliente extends SalesController
         $this->addButton($viewName, [
             'action' => 'paid',
             'confirm' => 'true',
-            'icon' => 'fas fa-check',
+            'icon' => 'fa-solid fa-check',
             'label' => 'paid'
         ]);
 
@@ -260,7 +260,7 @@ class EditFacturaCliente extends SalesController
 
         if ($invoice->editable) {
             foreach ($invoice->getAvailableStatus() as $status) {
-                if ($status->editable) {
+                if ($status->editable || !$status->activo) {
                     continue;
                 }
 
@@ -299,9 +299,8 @@ class EditFacturaCliente extends SalesController
         }
 
         $newLines = $newRefund->getLines();
-        Calculator::calculate($newRefund, $newLines, false);
         $newRefund->idestado = $invoice->idestado;
-        if (false === $newRefund->save()) {
+        if (false === Calculator::calculate($newRefund, $newLines, true)) {
             Tools::log()->error('record-save-error');
             $this->dataBase->rollback();
             return true;
@@ -313,6 +312,14 @@ class EditFacturaCliente extends SalesController
                 $receipt->pagado = true;
                 $receipt->save();
             }
+        }
+
+        // asignamos el estado de la factura
+        $newRefund->idestado = $this->request->request->get('idestado');
+        if (false === $newRefund->save()) {
+            Tools::log()->error('record-save-error');
+            $this->dataBase->rollback();
+            return true;
         }
 
         $this->dataBase->commit();
@@ -349,9 +356,9 @@ class EditFacturaCliente extends SalesController
             return true;
         }
 
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         $model = $this->views[$this->active]->model;
-        if (false === is_array($codes) || empty($model)) {
+        if (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         }

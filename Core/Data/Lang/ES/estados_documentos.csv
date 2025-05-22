@@ -2,7 +2,7 @@ idestado;tipodoc;nombre;predeterminado;bloquear;editable;actualizastock;generado
 1;PresupuestoCliente;Abierto;true;true;true;0;;
 2;PresupuestoCliente;Pedido;false;true;false;0;PedidoCliente;
 3;PresupuestoCliente;Rechazado;false;true;false;0;;
-23;PresupuestoCliente;Caducado;false;true;false;0;;fas fa-hourglass-end
+23;PresupuestoCliente;Caducado;false;true;false;0;;fa-solid fa-hourglass-end
 24;PresupuestoCliente;Facturar;false;true;false;0;FacturaCliente;
 4;PedidoCliente;Abierto;true;true;true;-2;;
 5;PedidoCliente;Albarán;false;true;false;0;AlbaranCliente;
@@ -16,9 +16,11 @@ idestado;tipodoc;nombre;predeterminado;bloquear;editable;actualizastock;generado
 12;PresupuestoProveedor;Abierto;true;true;true;0;;
 13;PresupuestoProveedor;Pedido;false;true;false;0;PedidoProveedor;
 14;PresupuestoProveedor;Cancelado;false;true;false;0;;
+26;PresupuestoProveedor;Facturar;false;true;false;0;FacturaProveedor;
 15;PedidoProveedor;Abierto;true;true;true;2;;
 16;PedidoProveedor;Albarán;false;true;false;0;AlbaranProveedor;
 17;PedidoProveedor;Cancelado;false;true;false;0;;
+27;PedidoProveedor;Facturar;false;true;false;0;FacturaProveedor;
 18;AlbaranProveedor;Abierto;true;true;true;1;;
 19;AlbaranProveedor;Facturar;false;true;false;0;FacturaProveedor;
 20;AlbaranProveedor;Devuelto;false;true;false;0;;

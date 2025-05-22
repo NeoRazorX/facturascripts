@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Translator;
-
 /**
  * Description of VisualItem
  *
@@ -33,12 +31,6 @@ class VisualItem
      * @var string
      */
     public $class;
-
-    /**
-     * @var Translator
-     * @deprecated since version 2023.1
-     */
-    protected static $i18n;
 
     /**
      * Identifies the object with a defined name in the view
@@ -76,10 +68,6 @@ class VisualItem
      */
     public function __construct(array $data)
     {
-        if (!isset(static::$i18n)) {
-            static::$i18n = new Translator();
-        }
-
         $this->class = $data['class'] ?? '';
         $this->id = $data['id'] ?? '';
         $this->name = $data['name'] ?? '';

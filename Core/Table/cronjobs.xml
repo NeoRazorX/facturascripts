@@ -42,7 +42,6 @@
     <column>
         <name>pluginname</name>
         <type>character varying(50)</type>
-        <null>NO</null>
     </column>
     <constraint>
         <name>cronjobs_pkey</name>

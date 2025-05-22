@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,22 +19,19 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
-use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\Role;
-use FacturaScripts\Dinamic\Model\RoleAccess;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of Wizard
@@ -120,67 +117,6 @@ class Wizard extends Controller
         }
     }
 
-    /**
-     * Add/update the default role for agents, and adds to this role access to all default pages.
-     *
-     * @return void
-     */
-    private function addDefaultRoleAccess(): void
-    {
-        $role = new Role();
-        $role->codrole = 'employee';
-        $role->descripcion = Tools::lang()->trans('employee');
-        if ($role->exists()) {
-            return;
-        }
-
-        $role->save();
-        $this->addPagesToRole($role->codrole);
-
-        // asignamos este rol como el predeterminado
-        Tools::settingsSet('default', 'codrole', $role->codrole);
-        Tools::settingsSave();
-    }
-
-    /**
-     * Adds to received codrole, all pages that are not in admin menu and are not yet enabled.
-     *
-     * @param string $codrole
-     *
-     * @return void
-     */
-    private function addPagesToRole(string $codrole): void
-    {
-        $this->dataBase->beginTransaction();
-
-        try {
-            $page = new Page();
-            $roleAccess = new RoleAccess();
-
-            // all pages not in admin menu and not yet enabled
-            $inSQL = "SELECT name FROM pages WHERE menu != 'admin' AND name NOT IN "
-                . '(SELECT pagename FROM roles_access WHERE codrole = ' . $this->dataBase->var2str($codrole) . ')';
-            $where = [new DataBaseWhere('name', $inSQL, 'IN')];
-            $pages = $page->all($where, [], 0, 0);
-
-            // add EditUser page
-            if ($page->loadFromCode('EditUser')) {
-                $pages[] = $page;
-            }
-
-            // add pages to the role
-            if (false === $roleAccess->addPagesToRole($codrole, $pages)) {
-                throw new Exception(Tools::lang()->trans('cancel-process'));
-            }
-
-            $this->dataBase->commit();
-        } catch (Exception $exc) {
-            $this->dataBase->rollback();
-            Tools::log()->error($exc->getMessage());
-            return;
-        }
-    }
-
     protected function finalRedirect(): void
     {
         // redirect to the home page
@@ -209,20 +145,24 @@ class Wizard extends Controller
      */
     private function loadDefaultAccountingPlan(string $codpais): void
     {
-        // Is there a default accounting plan?
+        // ¿Hay un plan contable para ese país?
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
             return;
         }
 
-        // Does an accounting plan already exist?
-        $cuenta = new Cuenta();
-        if ($cuenta->count() > 0 || $this->dataBase->tableExists('co_cuentas')) {
+        // ¿La base de datos es de 2017 o anterior?
+        if ($this->dataBase->tableExists('co_cuentas')) {
             return;
         }
 
-        $exerciseModel = new Ejercicio();
-        foreach ($exerciseModel->all() as $exercise) {
+        // ¿Ya existe el plan contable?
+        $cuenta = new Cuenta();
+        if ($cuenta->count() > 0) {
+            return;
+        }
+
+        foreach (Ejercicio::all() as $exercise) {
             $planImport = new AccountingPlanImport();
             $planImport->importCSV($filePath, $exercise->codejercicio);
             return;
@@ -237,20 +177,18 @@ class Wizard extends Controller
     private function preSetAppSettings(string $codpais): void
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/default.json';
-        if (false === file_exists($filePath)) {
-            return;
-        }
-
-        $fileContent = file_get_contents($filePath);
-        $defaultValues = json_decode($fileContent, true) ?? [];
-        foreach ($defaultValues as $group => $values) {
-            foreach ($values as $key => $value) {
-                Tools::settingsSet($group, $key, $value);
+        if (file_exists($filePath)) {
+            $fileContent = file_get_contents($filePath);
+            $defaultValues = json_decode($fileContent, true) ?? [];
+            foreach ($defaultValues as $group => $values) {
+                foreach ($values as $key => $value) {
+                    Tools::settingsSet($group, $key, $value);
+                }
             }
         }
 
         Tools::settingsSet('default', 'codpais', $codpais);
-        Tools::settingsSet('default', 'homepage', 'AdminPlugins');
+        Tools::settingsSet('default', 'homepage', 'Root');
         Tools::settingsSave();
     }
 
@@ -365,6 +303,7 @@ class Wizard extends Controller
         }
         Tools::settingsSet('default', 'updatesupplierprices', (bool)$this->request->request->get('updatesupplierprices', '0'));
         Tools::settingsSet('default', 'ventasinstock', (bool)$this->request->request->get('ventasinstock', '0'));
+        Tools::settingsSet('default', 'site_url', Tools::siteUrl());
         Tools::settingsSave();
 
         if ($this->request->request->get('defaultplan', '0')) {
@@ -394,8 +333,12 @@ class Wizard extends Controller
         // load controllers
         Plugins::deploy(true, true);
 
-        // add the default role for employees
-        $this->addDefaultRoleAccess();
+        // obtenemos el rol de empleados, y lo asignamos como rol predeterminado
+        $role = new Role();
+        if ($role->loadFromCode('employee')) {
+            Tools::settingsSet('default', 'codrole', $role->codrole);
+            Tools::settingsSave();
+        }
 
         // change user homepage
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : static::NEW_DEFAULT_PAGE;

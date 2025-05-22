@@ -1,0 +1,3 @@
+codimpuesto,descripcion,iva,recargo
+IVA_10,"IVA General 10%",10,0
+IVA_5,"IVA Reducido 5%",5,0

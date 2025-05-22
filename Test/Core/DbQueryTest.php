@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\Model\LogMessage;
 use FacturaScripts\Core\Model\Pais;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -35,6 +36,11 @@ final class DbQueryTest extends TestCase
 
     public function testTable(): void
     {
+        // si no existe la tabla series, saltamos el test
+        if (false === $this->db()->tableExists('series')) {
+            $this->markTestSkipped('Table series does not exist.');
+        }
+
         $query = DbQuery::table('series');
 
         $sql = 'SELECT * FROM ' . $this->db()->escapeColumn('series');
@@ -46,6 +52,11 @@ final class DbQueryTest extends TestCase
 
     public function testWhere(): void
     {
+        // si no existe la tabla clientes, saltamos el test
+        if (false === $this->db()->tableExists('clientes')) {
+            $this->markTestSkipped('Table clientes does not exist.');
+        }
+
         $query = DbQuery::table('clientes')
             ->select('codcliente, nombre')
             ->where([
@@ -63,6 +74,11 @@ final class DbQueryTest extends TestCase
 
     public function testWhereEq(): void
     {
+        // si no existe la tabla clientes, saltamos el test
+        if (false === $this->db()->tableExists('clientes')) {
+            $this->markTestSkipped('Table clientes does not exist.');
+        }
+
         $query = DbQuery::table('clientes')
             ->select('codcliente, nombre')
             ->whereEq('codcliente', 'test');
@@ -76,6 +92,11 @@ final class DbQueryTest extends TestCase
 
     public function testWhereDynamic(): void
     {
+        // si no existe la tabla clientes, saltamos el test
+        if (false === $this->db()->tableExists('clientes')) {
+            $this->markTestSkipped('Table clientes does not exist.');
+        }
+
         $query = DbQuery::table('clientes')
             ->select('codcliente, nombre')
             ->whereNombre('test');
@@ -89,6 +110,11 @@ final class DbQueryTest extends TestCase
 
     public function testOrderBy(): void
     {
+        // si no existe la tabla series, saltamos el test
+        if (false === $this->db()->tableExists('series')) {
+            $this->markTestSkipped('Table series does not exist.');
+        }
+
         $query = DbQuery::table('series')
             ->select('codserie, descripcion')
             ->orderBy('codserie', 'ASC');
@@ -102,16 +128,82 @@ final class DbQueryTest extends TestCase
 
     public function testCount(): void
     {
+        // si no existe la tabla países, saltamos el test
+        if (false === $this->db()->tableExists('paises')) {
+            $this->markTestSkipped('Table paises does not exist.');
+        }
+
         // obtenemos el número de registros en la tabla países
         $count = DbQuery::table('paises')->count();
 
         // lo comprobamos contra el modelo
         $pais = new Pais();
         $this->assertEquals($count, $pais->count());
+
+        // limpiamos la lista de logs
+        $sqlDelete = 'DELETE FROM logs;';
+        $this->db()->exec($sqlDelete);
+
+        // añadimos 2 mensajes de log al canal test1
+        foreach (range(1, 2) as $i) {
+            $logMessage = new LogMessage();
+            $logMessage->channel = 'test1';
+            $logMessage->level = 'info';
+            $logMessage->message = 'test' . $i;
+            $this->assertTrue($logMessage->save());
+        }
+
+        // añadimos un mensaje de log al canal test2
+        $logMessage = new LogMessage();
+        $logMessage->channel = 'test2';
+        $logMessage->level = 'info';
+        $logMessage->message = 'test3';
+        $this->assertTrue($logMessage->save());
+
+        // obtenemos el número de canales de log
+        $count = DbQuery::table('logs')->count('channel');
+        $this->assertEquals(2, $count);
+
+        // comprobamos con selectRaw
+        $data = DbQuery::table('logs')->selectRaw('COUNT(DISTINCT channel) as c')->first();
+        $this->assertEquals(2, $data['c']);
+
+        // comprobamos con selectRaw + count
+        $count = DbQuery::table('logs')->selectRaw('DISTINCT channel')->count();
+        $this->assertEquals(2, $count);
     }
 
     public function testInsert(): void
     {
+        // si no existe la tabla de impuestos, saltamos el test
+        if (false === $this->db()->tableExists('impuestos')) {
+            $this->markTestSkipped('Table impuestos does not exist.');
+        }
+
+        // insertamos un impuesto
+        $data = ['codimpuesto' => 'test', 'descripcion' => 'test', 'iva' => 29.99, 'recargo' => 0];
+        $done = DbQuery::table('impuestos')->insert($data);
+        $this->assertTrue($done);
+
+        // comprobamos que se ha insertado
+        $row = DbQuery::table('impuestos')
+            ->select('codimpuesto, descripcion, iva, recargo')
+            ->whereEq('codimpuesto', 'test')
+            ->first();
+        $this->assertEquals($data, $row);
+
+        // eliminamos el impuesto
+        $done = DbQuery::table('impuestos')->whereEq('codimpuesto', 'test')->delete();
+        $this->assertTrue($done);
+    }
+
+    public function testInsertMulti(): void
+    {
+        // si no existe la tabla de impuestos, saltamos el test
+        if (false === $this->db()->tableExists('impuestos')) {
+            $this->markTestSkipped('Table impuestos does not exist.');
+        }
+
         $data = [
             ['codimpuesto' => 'test1', 'descripcion' => 'test1', 'iva' => 29.99, 'recargo' => 0],
             ['codimpuesto' => 'test2', 'descripcion' => 'test2', 'iva' => 11.5, 'recargo' => 2.3],
@@ -164,6 +256,108 @@ final class DbQueryTest extends TestCase
             ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
             ->sum('iva', 2);
         $this->assertEquals(45.25, $sum);
+
+        // eliminamos los impuestos
+        $done = DbQuery::table('impuestos')
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
+            ->delete();
+        $this->assertTrue($done);
+    }
+
+    public function testMaxMinString(): void
+    {
+        // si no existe la tabla de impuestos, saltamos el test
+        if (false === $this->db()->tableExists('impuestos')) {
+            $this->markTestSkipped('Table impuestos does not exist.');
+        }
+
+        $data = [
+            ['codimpuesto' => 'test1', 'descripcion' => 'test1', 'iva' => 29.99, 'recargo' => 0],
+            ['codimpuesto' => 'test2', 'descripcion' => 'test2', 'iva' => 11.5, 'recargo' => 2.3],
+            ['codimpuesto' => 'test3', 'descripcion' => 'test3', 'iva' => 3.76, 'recargo' => 0.5]
+        ];
+
+        // insertamos 3 impuestos
+        $done = DbQuery::table('impuestos')->insert($data);
+        $this->assertTrue($done);
+
+        $maxString = DbQuery::table('impuestos')
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
+            ->maxString('codimpuesto');
+        $this->assertEquals('test3', $maxString);
+
+        $minString = DbQuery::table('impuestos')
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
+            ->minString('codimpuesto');
+        $this->assertEquals('test1', $minString);
+
+        // eliminamos los impuestos
+        $done = DbQuery::table('impuestos')
+            ->whereIn('codimpuesto', ['test1', 'test2', 'test3'])
+            ->delete();
+        $this->assertTrue($done);
+    }
+
+    public function testDelete(): void
+    {
+        // si no existe la tabla de impuestos, saltamos el test
+        if (false === $this->db()->tableExists('impuestos')) {
+            $this->markTestSkipped('Table impuestos does not exist.');
+        }
+
+        // insertamos un impuesto
+        $data = ['codimpuesto' => 'test', 'descripcion' => 'test', 'iva' => 29.99, 'recargo' => 0];
+        $done = DbQuery::table('impuestos')->insert($data);
+        $this->assertTrue($done);
+
+        // eliminamos el impuesto
+        $done = DbQuery::table('impuestos')->whereEq('codimpuesto', 'test')->delete();
+        $this->assertTrue($done);
+
+        // comprobamos que se ha eliminado
+        $row = DbQuery::table('impuestos')
+            ->select('codimpuesto, descripcion, iva, recargo')
+            ->whereEq('codimpuesto', 'test')
+            ->first();
+        $this->assertEmpty($row);
+    }
+
+    public function testUpdate(): void
+    {
+        // si no existe la tabla de impuestos, saltamos el test
+        if (false === $this->db()->tableExists('impuestos')) {
+            $this->markTestSkipped('Table impuestos does not exist.');
+        }
+
+        $data = [
+            ['codimpuesto' => 'test1', 'descripcion' => 'test1', 'iva' => 29.99, 'recargo' => 0],
+            ['codimpuesto' => 'test2', 'descripcion' => 'test2', 'iva' => 11.5, 'recargo' => 2.3],
+            ['codimpuesto' => 'test3', 'descripcion' => 'test3', 'iva' => 3.76, 'recargo' => 0.5]
+        ];
+
+        // insertamos 3 impuestos
+        $done = DbQuery::table('impuestos')->insert($data);
+        $this->assertTrue($done);
+
+        // actualizamos el recargo de test1
+        $done = DbQuery::table('impuestos')
+            ->whereEq('codimpuesto', 'test1')
+            ->update(['recargo' => 1.5]);
+        $this->assertTrue($done);
+
+        // comprobamos que se ha actualizado
+        $row1 = DbQuery::table('impuestos')
+            ->select('codimpuesto, descripcion, iva, recargo')
+            ->whereEq('codimpuesto', 'test1')
+            ->first();
+        $this->assertEquals(1.5, $row1['recargo']);
+
+        // comprobamos que no se ha actualizado test2
+        $row2 = DbQuery::table('impuestos')
+            ->select('codimpuesto, descripcion, iva, recargo')
+            ->whereEq('codimpuesto', 'test2')
+            ->first();
+        $this->assertEquals(2.3, $row2['recargo']);
 
         // eliminamos los impuestos
         $done = DbQuery::table('impuestos')

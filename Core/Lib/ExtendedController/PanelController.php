@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to edit data through the vertical panel
@@ -152,7 +152,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return EditListView
      */
-    protected function addEditListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-bars'): EditListView
+    protected function addEditListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fa-solid fa-bars'): EditListView
     {
         $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -170,7 +170,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return EditView
      */
-    protected function addEditView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-edit'): EditView
+    protected function addEditView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fa-solid fa-edit'): EditView
     {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -189,7 +189,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return HtmlView
      */
-    protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5'): HtmlView
+    protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fa-brands fa-html5'): HtmlView
     {
         $view = new HtmlView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
         $this->addCustomView($viewName, $view);
@@ -206,7 +206,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return ListView
      */
-    protected function addListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-list'): ListView
+    protected function addListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fa-solid fa-list'): ListView
     {
         $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -241,7 +241,7 @@ abstract class PanelController extends BaseController
 
         // has PK value been changed?
         $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
-        if ($code != $this->views[$this->active]->newCode && $this->views[$this->active]->model->test()) {
+        if ($code !== $this->views[$this->active]->newCode && $this->views[$this->active]->model->test()) {
             $pkColumn = $this->views[$this->active]->model->primaryColumn();
             $this->views[$this->active]->model->{$pkColumn} = $code;
             // change in database
@@ -310,6 +310,12 @@ abstract class PanelController extends BaseController
             case 'autocomplete':
                 $this->setTemplate(false);
                 $results = $this->autocompleteAction();
+                $this->response->setContent(json_encode($results));
+                return false;
+
+            case 'datalist':
+                $this->setTemplate(false);
+                $results = $this->datalistAction();
                 $this->response->setContent(json_encode($results));
                 return false;
 
@@ -390,16 +396,17 @@ abstract class PanelController extends BaseController
         // localizamos la pestaña y el nombre de la columna
         $activeTab = $this->request->request->get('active_tab', '');
         $colName = $this->request->request->get('col_name', '');
+        $widgetId = $this->request->request->get('widget_id', '');
 
         // si está vacío, no hacemos nada
         if (empty($activeTab) || empty($colName)) {
-            return [];
+            return ['records' => 0, 'html' => ''];
         }
 
         // buscamos la columna
         $column = $this->tab($activeTab)->columnForField($colName);
-        if (empty($column) || $column->widget->getType() !== 'library') {
-            return [];
+        if (empty($column) || strtolower($column->widget->getType()) !== 'library') {
+            return ['records' => 0, 'html' => ''];
         }
 
         $files = $column->widget->files(
@@ -407,21 +414,11 @@ abstract class PanelController extends BaseController
             $this->request->request->get('sort', '')
         );
 
-        $results = [];
-        foreach ($files as $file) {
-            $results[] = [
-                'id_file' => $file->idfile,
-                'filename' => $file->filename,
-                'date' => $file->date,
-                'hour' => $file->hour,
-                'size' => Tools::bytes($file->size),
-                'mime_type' => $file->mimetype,
-                'is_image' => $file->isImage(),
-                'url' => $file->url('download-permanent'),
-                'selected_value' => (int)$column->widget->plainText($this->tab($activeTab)->model),
-            ];
-        }
-        return $results;
+        $selectedValue = (int)$column->widget->plainText($this->tab($activeTab)->model);
+        return [
+            'html' => $column->widget->renderFileList($files, $selectedValue, $widgetId),
+            'records' => count($files),
+        ];
     }
 
     protected function widgetLibraryUploadAction(): array
@@ -429,6 +426,7 @@ abstract class PanelController extends BaseController
         // localizamos la pestaña y el nombre de la columna
         $activeTab = $this->request->request->get('active_tab', '');
         $colName = $this->request->request->get('col_name', '');
+        $widgetId = $this->request->request->get('widget_id', '');
 
         // si está vacío, no hacemos nada
         if (empty($activeTab) || empty($colName)) {
@@ -437,27 +435,21 @@ abstract class PanelController extends BaseController
 
         // buscamos la columna
         $column = $this->tab($activeTab)->columnForField($colName);
-        if (empty($column) || $column->widget->getType() !== 'library') {
+        if (empty($column) || strtolower($column->widget->getType()) !== 'library') {
             return [];
         }
 
         $file = $column->widget->uploadFile($this->request->files->get('file'));
-        if (empty($file)) {
+        if (false === $file->exists()) {
             return [];
         }
 
+        $files = $column->widget->files();
         return [
-            [
-                'id_file' => $file->idfile,
-                'filename' => $file->filename,
-                'date' => $file->date,
-                'hour' => $file->hour,
-                'size' => Tools::bytes($file->size),
-                'mime_type' => $file->mimetype,
-                'is_image' => $file->isImage(),
-                'url' => $file->url('download-permanent'),
-                'selected_value' => (int)$column->widget->plainText($this->tab($activeTab)->model),
-            ]
+            'html' => $column->widget->renderFileList($files, $file->idfile, $widgetId),
+            'records' => count($files),
+            'new_file' => $file->idfile,
+            'new_filename' => $file->shortFileName(),
         ];
     }
 
@@ -474,7 +466,7 @@ abstract class PanelController extends BaseController
 
         // buscamos la columna
         $column = $this->tab($activeTab)->columnForField($colName);
-        if (empty($column) || $column->widget->getType() !== 'variante') {
+        if (empty($column) || strtolower($column->widget->getType()) !== 'variante') {
             return [];
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Cache;
 
 /**
  * The class from which all views of the model are inherited.
@@ -179,6 +180,15 @@ abstract class JoinModel
             $groupFields .= ', ';
         }
 
+        // buscamos en caché
+        $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-count';
+        if (empty($where)) {
+            $count = Cache::get($cacheKey);
+            if (is_numeric($count)) {
+                return $count;
+            }
+        }
+
         $sql = 'SELECT ' . $groupFields . 'COUNT(*) count_total'
             . ' FROM ' . $this->getSQLFrom()
             . DataBaseWhere::getSQLWhere($where)
@@ -186,7 +196,14 @@ abstract class JoinModel
 
         $data = self::$dataBase->select($sql);
         $count = count($data);
-        return ($count == 1) ? (int)$data[0]['count_total'] : $count;
+        $final = $count == 1 ? (int)$data[0]['count_total'] : $count;
+
+        // guardamos en caché
+        if (empty($where)) {
+            Cache::set($cacheKey, $final);
+        }
+
+        return $final;
     }
 
     /**
@@ -194,7 +211,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (isset($this->masterModel)) {
             $primaryColumn = $this->masterModel->primaryColumn();
@@ -224,14 +241,19 @@ abstract class JoinModel
                 'type' => ''
             ];
 
-            // si empieza por paréntesis, saltamos
-            if (0 === strpos($field, '(')) {
+            // si contiene paréntesis, saltamos
+            if (false !== strpos($field, '(')) {
                 continue;
             }
 
             // extraemos el nombre de la tabla
             $arrayField = explode('.', $field);
             if (false === is_array($arrayField) && false === isset($arrayField[0])) {
+                continue;
+            }
+
+            // comprobamos si existe la tabla
+            if (false === in_array($arrayField[0], $this->getTables())) {
                 continue;
             }
 
@@ -295,6 +317,36 @@ abstract class JoinModel
         }
 
         return null;
+    }
+
+    public function totalSum(string $field, array $where = []): float
+    {
+        // buscamos en caché
+        $cacheKey = 'join-model-' . md5($this->getSQLFrom()) . '-' . $field . '-total-sum';
+        if (empty($where)) {
+            $count = Cache::get($cacheKey);
+            if (is_numeric($count)) {
+                return $count;
+            }
+        }
+
+        // obtenemos el nombre completo del campo
+        $fields = $this->getFields();
+        $field = $fields[$field] ?? $field;
+
+        $sql = false !== strpos($field, '(') ?
+            'SELECT ' . $field . ' AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where) :
+            'SELECT SUM(' . $field . ') AS total_sum' . ' FROM ' . $this->getSQLFrom() . DataBaseWhere::getSQLWhere($where);
+
+        $data = self::$dataBase->select($sql);
+        $sum = count($data) == 1 ? (float)$data[0]['total_sum'] : 0.0;
+
+        // guardamos en caché
+        if (empty($where)) {
+            Cache::set($cacheKey, $sum);
+        }
+
+        return $sum;
     }
 
     /**

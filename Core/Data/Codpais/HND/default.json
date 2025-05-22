@@ -1,0 +1,18 @@
+{
+    "default": {
+        "coddivisa": "HNL",
+        "codimpuesto": "IVAGNRL1",
+        "codpago": "CONT",
+        "codserie": "A",
+        "codserierec": "R",
+        "tipoidfiscal": "RTN",
+        "updatesupplierprices": true,
+        "validate_iban": false
+    },
+    "email": {
+        "enc": "ssl",
+        "host": "smtp.gmail.com",
+        "mailer": "smtp",
+        "port": "465"
+    }
+}

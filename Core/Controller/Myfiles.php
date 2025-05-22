@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Tools;
 
 class Myfiles implements ControllerInterface
@@ -40,7 +40,7 @@ class Myfiles implements ControllerInterface
             return;
         }
 
-        $this->filePath = Tools::folder() . $url;
+        $this->filePath = Tools::folder() . urldecode($url);
 
         if (false === is_file($this->filePath)) {
             throw new KernelException(
@@ -75,12 +75,13 @@ class Myfiles implements ControllerInterface
     {
         $parts = explode('.', $filePath);
         $safe = [
-            'accdb', 'ai', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'html', 'ico', 'jfif',
-            'jpeg', 'jpg', 'js', 'json', 'map', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf',
-            'png', 'pptx', 'rar', 'sql', 'svg', 'ttf', 'txt', 'webm', 'webp', 'woff', 'woff2', 'xls', 'xlsm', 'xlsx',
-            'xml', 'xsig', 'zip'
+            '7z', 'accdb', 'ai', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'dxf', 'dwg', 'eot', 'gif', 'gz', 'html',
+            'ico', 'jfif', 'jpeg', 'jpg', 'js', 'json', 'map', 'md', 'mdb', 'mkv', 'mov', 'mp3', 'mp4', 'ndg', 'ods', 'odt',
+            'ogg', 'pdf', 'png', 'pptx', 'rar', 'sql', 'step', 'svg', 'ttf', 'txt', 'webm', 'webp', 'woff', 'woff2',
+            'xls', 'xlsm', 'xlsx', 'xml', 'xsig', 'zip'
         ];
-        return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
+        $extension = strtolower(end($parts));
+        return empty($parts) || count($parts) === 1 || in_array($extension, $safe, true);
     }
 
     public function run(): void
@@ -97,7 +98,7 @@ class Myfiles implements ControllerInterface
         }
 
         // force to download svg files to prevent XSS attacks
-        if (strpos($this->filePath, '.svg') !== false) {
+        if ($this->isSvg($this->filePath)) {
             header('Content-Disposition: attachment; filename="' . basename($this->filePath) . '"');
         }
 
@@ -121,5 +122,20 @@ class Myfiles implements ControllerInterface
         }
 
         return mime_content_type($filePath);
+    }
+
+    private function isSvg(string $filePath): bool
+    {
+        // comprobamos la extensión
+        if (strpos($filePath, '.svg') !== false) {
+            return true;
+        }
+
+        // comprobamos mime
+        if (strpos($this->getMime($filePath), 'image/svg') !== false) {
+            return true;
+        }
+
+        return false;
     }
 }

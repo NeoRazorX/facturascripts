@@ -168,7 +168,7 @@ abstract class Receipt extends ModelOnChangeClass
         }
 
         // comprobamos la fecha de vencimiento
-        if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
+        if (empty($this->vencimiento) || strtotime($this->vencimiento) < strtotime($this->fecha)) {
             $this->vencimiento = $this->fecha;
         }
 
@@ -185,6 +185,10 @@ abstract class Receipt extends ModelOnChangeClass
      */
     protected function onChange($field)
     {
+        if (false === parent::onChange($field)) {
+            return false;
+        }
+
         switch ($field) {
             case 'importe':
                 return !$this->previousData['pagado'];
@@ -194,7 +198,7 @@ abstract class Receipt extends ModelOnChangeClass
                 return true;
 
             default:
-                return parent::onChange($field);
+                return true;
         }
     }
 

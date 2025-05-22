@@ -45,7 +45,7 @@ class EditTarifa extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'rate';
-        $data['icon'] = 'fas fa-percentage';
+        $data['icon'] = 'fa-solid fa-percentage';
         return $data;
     }
 
@@ -55,7 +55,7 @@ class EditTarifa extends EditController
      */
     protected function createCustomerGroupView(string $viewName = 'ListGrupoClientes')
     {
-        $this->addListView($viewName, 'GrupoClientes', 'customer-group', 'fas fa-users-cog');
+        $this->addListView($viewName, 'GrupoClientes', 'customer-group', 'fa-solid fa-users-cog');
         $this->views[$viewName]->searchFields = ['nombre', 'codgrupo'];
         $this->views[$viewName]->addOrderBy(['codgrupo'], 'code');
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
@@ -71,7 +71,7 @@ class EditTarifa extends EditController
         $this->addButton($viewName, [
             'action' => 'setgrouprate',
             'color' => 'success',
-            'icon' => 'fas fa-folder-plus',
+            'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add',
             'type' => 'modal'
         ]);
@@ -79,14 +79,14 @@ class EditTarifa extends EditController
             'action' => 'unsetgrouprate',
             'color' => 'danger',
             'confirm' => true,
-            'icon' => 'fas fa-folder-minus',
+            'icon' => 'fa-solid fa-folder-minus',
             'label' => 'remove-from-list'
         ]);
     }
 
     protected function createCustomerView(string $viewName = 'ListCliente')
     {
-        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
+        $this->addListView($viewName, 'Cliente', 'customers', 'fa-solid fa-users');
         $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
         $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
@@ -99,7 +99,7 @@ class EditTarifa extends EditController
         $this->addButton($viewName, [
             'action' => 'setcustomerrate',
             'color' => 'success',
-            'icon' => 'fas fa-folder-plus',
+            'icon' => 'fa-solid fa-folder-plus',
             'label' => 'add',
             'type' => 'modal'
         ]);
@@ -107,14 +107,14 @@ class EditTarifa extends EditController
             'action' => 'unsetcustomerrate',
             'color' => 'danger',
             'confirm' => true,
-            'icon' => 'fas fa-folder-minus',
+            'icon' => 'fa-solid fa-folder-minus',
             'label' => 'remove-from-list'
         ]);
     }
 
     protected function createProductView(string $viewName = 'ListTarifaProducto')
     {
-        $this->addListView($viewName, 'Join\TarifaProducto', 'products', 'fas fa-cubes');
+        $this->addListView($viewName, 'Join\TarifaProducto', 'products', 'fa-solid fa-cubes');
         $this->views[$viewName]->addOrderBy(['coste'], 'cost-price');
         $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
         $this->views[$viewName]->addOrderBy(['precio'], 'price');
@@ -191,8 +191,8 @@ class EditTarifa extends EditController
 
     protected function unsetCustomerRate()
     {
-        $codes = $this->request->request->get('code', '');
-        if (empty($codes) || false === \is_array($codes)) {
+        $codes = $this->request->request->getArray('codes');
+        if (empty($codes) || false === is_array($codes)) {
             Tools::log()->warning('no-selected-item');
             return;
         }
@@ -210,8 +210,8 @@ class EditTarifa extends EditController
 
     protected function unsetGroupRate()
     {
-        $codes = $this->request->request->get('code', '');
-        if (empty($codes) || false === \is_array($codes)) {
+        $codes = $this->request->request->getArray('codes');
+        if (empty($codes) || false === is_array($codes)) {
             Tools::log()->warning('no-selected-item');
             return;
         }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,9 +22,10 @@ namespace FacturaScripts\Core\Lib\Export;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\PDF\PDFDocument;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * PDF export data.
@@ -35,7 +36,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PDFExport extends PDFDocument
 {
-
     const LIST_LIMIT = 500;
 
     /**
@@ -114,7 +114,7 @@ class PDFExport extends PDFDocument
         }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
-            $this->removeEmptyCols($tableData, $tableColsTitle, $this->numberTools->format(0));
+            $this->removeEmptyCols($tableData, $tableColsTitle, Tools::number(0));
             $this->pdf->ezTable($tableData, $tableColsTitle, $title, $tableOptions);
 
             // Advance within the results
@@ -241,6 +241,16 @@ class PDFExport extends PDFDocument
         if (!empty($langcode)) {
             $this->i18n->setLang($langcode);
         }
+    }
+
+    public function setCompany(int $idempresa): void
+    {
+        // new page
+        if ($this->pdf === null) {
+            $this->newPage();
+        }
+
+        $this->insertHeader($idempresa);
     }
 
     /**

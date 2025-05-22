@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -84,6 +84,35 @@ class Familia extends ModelClass
      */
     public $numproductos;
 
+    public function changePrimaryColumnValue($newValue): bool
+    {
+        // nos guardamos las subfamilias
+        $subFamilias = $this->getSubFamilias();
+
+        // les quitamos la madre
+        foreach ($subFamilias as $subFamilia) {
+            $subFamilia->madre = null;
+            $subFamilia->save();
+        }
+
+        if (false === parent::changePrimaryColumnValue($newValue)) {
+            // les volvemos a poner la madre
+            foreach ($subFamilias as $subFamilia) {
+                $subFamilia->madre = $this->codfamilia;
+                $subFamilia->save();
+            }
+            return false;
+        }
+
+        // actualizamos las subfamilias
+        foreach ($subFamilias as $subFamilia) {
+            $subFamilia->madre = $newValue;
+            $subFamilia->save();
+        }
+
+        return true;
+    }
+
     public function clear()
     {
         parent::clear();
@@ -91,7 +120,7 @@ class Familia extends ModelClass
     }
 
     /**
-     * @return self[]
+     * @return static[]
      */
     public function getSubFamilias(): array
     {
@@ -171,7 +200,7 @@ class Familia extends ModelClass
         return parent::test() && $this->testLoops() && $this->testAccounting();
     }
 
-    private static function getSubaccountFromFamily(?string $code, string $field, Familia $model = null): string
+    private static function getSubaccountFromFamily(?string $code, string $field, ?Familia $model = null): string
     {
         if (empty($code)) {
             return '';

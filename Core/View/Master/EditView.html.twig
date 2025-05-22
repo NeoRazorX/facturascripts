@@ -32,10 +32,10 @@
             closeButton: false,
             buttons: {
                 cancel: {
-                    label: '<i class="fas fa-times"></i> {{ trans('cancel') }}'
+                    label: '<i class="fa-solid fa-times"></i> {{ trans('cancel') }}'
                 },
                 confirm: {
-                    label: '<i class="fas fa-check"></i> {{ trans('confirm') }}',
+                    label: '<i class="fa-solid fa-check"></i> {{ trans('confirm') }}',
                     className: "btn-danger"
                 }
             },
@@ -65,31 +65,31 @@
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
         <div class="{{ currentView.settings.card ? 'card-body' : 'container-fluid' }}">
             <div class="row">
-                <div class="col-12 text-right">
+                <div class="col-12 text-end">
                     {# -- Row statistics -- #}
                     {% set row = currentView.getRow('statistics') %}
                     {{ row.render(fsc) | raw }}
                     {% if fieldCount > 30 and currentView.settings.btnSave %}
                         <button class="btn btn-sm btn-primary" type="submit">
-                            <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                            <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">{{ trans('save') }}</span>
                         </button>
                     {% endif %}
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row">
                 {% for group in currentView.getColumns() %}
                     {{ group.edit(currentView.model) | raw }}
                 {% endfor %}
             </div>
         </div>
         <div class="{{ currentView.settings.card ? 'card-footer p-2' : 'container-fluid' }}">
-            <div class="form-row">
+            <div class="row">
                 {% if fsc.hasData and currentView.settings.btnDelete %}
                     <div class="col-auto">
                         <button type="button" class="btn btn-sm btn-danger"
                                 onclick="editViewDelete('{{ currentView.getViewName() }}');">
-                            <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                            <i class="fa-solid fa-trash-alt fa-fw" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">{{ trans('delete') }}</span>
                         </button>
                     </div>
@@ -103,13 +103,13 @@
                 <div class="col-auto">
                     {% if currentView.settings.btnUndo %}
                         <button class="btn btn-sm btn-secondary" type="reset">
-                            <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
+                            <i class="fa-solid fa-undo fa-fw" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">{{ trans('undo') }}</span>
                         </button>
                     {% endif %}
                     {% if currentView.settings.btnSave %}
                         <button class="btn btn-sm btn-primary" type="submit">
-                            <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                            <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">{{ trans('save') }}</span>
                         </button>
                     {% endif %}

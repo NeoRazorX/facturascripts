@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,6 +48,9 @@ class RegularizacionImpuesto extends Base\ModelClass
     /** @var string */
     public $codsubcuentadeu;
 
+    /** @var bool */
+    private $disableAdditionalTest = false;
+
     /** @var string */
     public $fechaasiento;
 
@@ -93,6 +96,11 @@ class RegularizacionImpuesto extends Base\ModelClass
         return true;
     }
 
+    public function disableAdditionalTest(bool $value): void
+    {
+        $this->disableAdditionalTest = $value;
+    }
+
     public function install(): string
     {
         // dependencias
@@ -107,7 +115,8 @@ class RegularizacionImpuesto extends Base\ModelClass
     {
         return $this->loadFromCode('', [
             new DataBaseWhere('fechainicio', $fecha, '<='),
-            new DataBaseWhere('fechafin', $fecha, '>=')
+            new DataBaseWhere('fechafin', $fecha, '>='),
+            new DataBaseWhere('idempresa', $this->idempresa),
         ]);
     }
 
@@ -142,7 +151,7 @@ class RegularizacionImpuesto extends Base\ModelClass
             return false;
         }
 
-        if ($this->getExercise()->isOpened() === false) {
+        if ($this->getExercise()->isOpened() === false && $this->disableAdditionalTest === false) {
             Tools::log()->warning('closed-exercise', ['%exerciseName%' => $this->codejercicio]);
             return false;
         }
@@ -190,6 +199,68 @@ class RegularizacionImpuesto extends Base\ModelClass
 
             case 'Y':
                 $this->fechainicio = date('01-01-' . $year);
+                $this->fechafin = date('31-12-' . $year);
+                break;
+
+            case '01':
+                $this->fechainicio = date('01-01-' . $year);
+                $this->fechafin = date('31-01-' . $year);
+                break;
+
+            case '02':
+                $this->fechainicio = date('01-02-' . $year);
+                $this->fechafin = ($year % 4) == 0 && ($year % 100) != 0 || ($year % 100) == 0 && ($year % 400) == 0
+                    ? date('29-02-' . $year)
+                    : date('28-02-' . $year);
+                break;
+
+            case '03':
+                $this->fechainicio = date('01-03-' . $year);
+                $this->fechafin = date('31-03-' . $year);
+                break;
+
+            case '04':
+                $this->fechainicio = date('01-04-' . $year);
+                $this->fechafin = date('30-04-' . $year);
+                break;
+
+            case '05':
+                $this->fechainicio = date('01-05-' . $year);
+                $this->fechafin = date('31-05-' . $year);
+                break;
+
+            case '06':
+                $this->fechainicio = date('01-06-' . $year);
+                $this->fechafin = date('30-06-' . $year);
+                break;
+
+            case '07':
+                $this->fechainicio = date('01-07-' . $year);
+                $this->fechafin = date('31-07-' . $year);
+                break;
+
+            case '08':
+                $this->fechainicio = date('01-08-' . $year);
+                $this->fechafin = date('31-08-' . $year);
+                break;
+
+            case '09':
+                $this->fechainicio = date('01-09-' . $year);
+                $this->fechafin = date('30-09-' . $year);
+                break;
+
+            case '10':
+                $this->fechainicio = date('01-10-' . $year);
+                $this->fechafin = date('31-10-' . $year);
+                break;
+
+            case '11':
+                $this->fechainicio = date('01-11-' . $year);
+                $this->fechafin = date('30-11-' . $year);
+                break;
+
+            case '12':
+                $this->fechainicio = date('01-12-' . $year);
                 $this->fechafin = date('31-12-' . $year);
                 break;
         }

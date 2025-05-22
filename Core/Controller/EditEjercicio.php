@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,46 +48,43 @@ class EditEjercicio extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'exercise';
-        $data['icon'] = 'fas fa-calendar-alt';
+        $data['icon'] = 'fa-solid fa-calendar-alt';
         return $data;
     }
 
     /**
      * Add action buttons.
      */
-    protected function addExerciseActionButtons()
+    protected function addExerciseActionButtons(string $viewName): void
     {
-        $status = $this->getViewModelValue('EditEjercicio', 'estado');
+        $status = $this->getViewModelValue($viewName, 'estado');
         switch ($status) {
             case Ejercicio::EXERCISE_STATUS_OPEN:
-                $this->addButton('EditEjercicio', [
+                $this->addButton($viewName, [
                     'row' => 'footer-actions',
                     'action' => 'import-accounting',
                     'color' => 'warning',
-                    'icon' => 'fas fa-file-import',
+                    'icon' => 'fa-solid fa-file-import',
                     'label' => 'import-accounting-plan',
                     'type' => 'modal'
                 ]);
 
-                $this->addButton('EditEjercicio', [
+                $this->addButton($viewName, [
                     'row' => 'footer-actions',
                     'action' => 'close-exercise',
                     'color' => 'danger',
-                    'icon' => 'fas fa-calendar-check',
+                    'icon' => 'fa-solid fa-calendar-check',
                     'label' => 'close-exercise',
                     'type' => 'modal'
                 ]);
-
-                $model = $this->views['EditEjercicio']->model;
-                $model->copysubaccounts = true;
                 break;
 
             case Ejercicio::EXERCISE_STATUS_CLOSED:
-                $this->addButton('EditEjercicio', [
+                $this->addButton($viewName, [
                     'row' => 'footer-actions',
                     'action' => 'open-exercise',
                     'color' => 'warning',
-                    'icon' => 'fas fa-calendar-plus',
+                    'icon' => 'fa-solid fa-calendar-plus',
                     'label' => 'open-exercise',
                     'type' => 'modal'
                 ]);
@@ -149,42 +146,31 @@ class EditEjercicio extends EditController
         $this->createViewsAccountingEntries();
     }
 
-    protected function createViewsAccounting(string $viewName = 'ListCuenta')
+    protected function createViewsAccounting(string $viewName = 'ListCuenta'): void
     {
-        $this->addListView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
-        $this->views[$viewName]->addOrderBy(['codcuenta'], 'code', 1);
-        $this->views[$viewName]->searchFields[] = 'codcuenta';
-        $this->views[$viewName]->searchFields[] = 'descripcion';
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('fiscal-exercise');
-        $this->views[$viewName]->disableColumn('parent-account');
+        $this->addListView($viewName, 'Cuenta', 'accounts', 'fa-solid fa-book')
+            ->addOrderBy(['codcuenta'], 'code', 1)
+            ->addSearchFields(['codcuenta', 'descripcion'])
+            ->disableColumn('fiscal-exercise')
+            ->disableColumn('parent-account');
     }
 
-    protected function createViewsAccountingEntries(string $viewName = 'ListAsiento')
+    protected function createViewsAccountingEntries(string $viewName = 'ListAsiento'): void
     {
-        $this->addListView($viewName, 'Asiento', 'special-accounting-entries', 'fas fa-balance-scale');
-        $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date');
-        $this->views[$viewName]->searchFields[] = 'numero';
-        $this->views[$viewName]->searchFields[] = 'concepto';
-
-        // disable columns
-        $this->views[$viewName]->disableColumn('exercise');
-
-        // disable button
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->addListView($viewName, 'Asiento', 'special-accounting-entries', 'fa-solid fa-balance-scale')
+            ->addOrderBy(['fecha', 'numero'], 'date')
+            ->addSearchFields(['concepto', 'numero'])
+            ->disableColumn('exercise')
+            ->setSettings('btnNew', false);
     }
 
-    protected function createViewsSubaccounting(string $viewName = 'ListSubcuenta')
+    protected function createViewsSubaccounting(string $viewName = 'ListSubcuenta'): void
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts');
-        $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code', 1);
-        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
-        $this->views[$viewName]->searchFields[] = 'codsubcuenta';
-        $this->views[$viewName]->searchFields[] = 'descripcion';
-
-        /// disable columns
-        $this->views[$viewName]->disableColumn('fiscal-exercise');
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts')
+            ->addOrderBy(['codsubcuenta'], 'code', 1)
+            ->addOrderBy(['saldo'], 'balance')
+            ->addSearchFields(['codsubcuenta', 'descripcion'])
+            ->disableColumn('fiscal-exercise');
     }
 
     /**
@@ -321,7 +307,7 @@ class EditEjercicio extends EditController
         switch ($viewName) {
             case 'EditEjercicio':
                 parent::loadData($viewName, $view);
-                $this->addExerciseActionButtons();
+                $this->addExerciseActionButtons($viewName);
                 break;
 
             case 'ListAsiento':
@@ -336,6 +322,9 @@ class EditEjercicio extends EditController
             case 'ListSubcuenta':
                 $where = [new DataBaseWhere('codejercicio', $codejercicio)];
                 $view->loadData('', $where);
+
+                // ocultamos la columna saldo de los totales
+                unset($view->totalAmounts['saldo']);
                 break;
         }
     }
@@ -353,8 +342,8 @@ class EditEjercicio extends EditController
         }
 
         $data = [
-            'deleteClosing' => $this->request->request->get('delete-closing', true),
-            'deleteOpening' => $this->request->request->get('delete-opening', false)
+            'deleteClosing' => (bool)$this->request->request->get('delete-closing'),
+            'deleteOpening' => (bool)$this->request->request->get('delete-opening')
         ];
         $model = $this->getModel();
 
@@ -362,6 +351,7 @@ class EditEjercicio extends EditController
         if ($closing->delete($model, $data)) {
             Tools::log()->notice('opening-acounting-completed');
         }
+
         // error message not needed
         return true;
     }
