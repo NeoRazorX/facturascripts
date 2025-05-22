@@ -1,3 +1,5 @@
-codimpuesto;descripcion;iva;recargo
-999;EXCENTO;0;0
-002;IVA 13%;13;0
+codimpuesto,descripcion,iva,recargo
+CR_IVA_GEN,"IVA General Costa Rica",13,0
+CR_IVA_RED,"IVA Reducido Costa Rica",4,0
+CR_IVA_EDU,"IVA Educación",0,0
+CR_IVA_TUR,"IVA Turismo",4,0

@@ -1,0 +1,962 @@
+ciudad,idprovincia,codeid,latitude,longitude
+"Aeródromo Cochrane",2,,-47.24385,-72.58842
+"Aeródromo El Buitre",16,,-18.51054,-70.28762
+"Aeródromo La Laguna",8,,-34.35283,-71.66413
+"Aerodromo Las Marias",14,,-39.79667,-73.24173
+"Aeródromo Las Misiones",6,,-37.77472,-73.38302
+"Aeródromo Lo Castillo",12,,-33.3826,-70.59343
+"Aeródromo Punta Catalina",10,,-53.13063,-70.86037
+"Aeropuerto de Puyuhuapi",2,,-44.38379,-72.59418
+"Agua Buena Airport",4,,-37.99378,-72.24983
+"Agua Santa Airport",8,,-34.55431,-71.33559
+Aguada,8,,-34.02175,-71.78657
+Aisen,2,,-45.98869,-73.77348
+"Alejandro Selkirk Island",1,,-33.76902,-80.79243
+Algarrobo,1,,-33.36952,-71.67654
+"Alhué Airport",12,,-34.06023,-71.25327
+"All Saints Lake",14,,-41.1,-72.25
+"Almirante Schroeders Airport",10,,-53.60952,-70.47455
+"Alto del Carmen",5,,-28.75946,-70.48651
+"Alto del Carmen Tres Quebradas Airport",5,,-29.2599,-70.08715
+"Alto Hospicio",15,,-20.26871,-70.1049
+"Alto Palena Airport",14,,-43.6119,-71.8061
+"Amincha Airport",11,,-34.86537,-71.10015
+Ancud,14,,-41.8707,-73.81622
+Andacollo,7,,-30.23449,-71.08534
+"Andacollo Airport",14,,-41.04524,-73.0461
+Angol,4,,-37.79519,-72.71636
+"Angol Los Confines Airport",4,,-37.79449,-72.68748
+Antofagasta,3,,-24.27389,-69.40969
+"Antofagasta Airport",3,,-23.44448,-70.4451
+Arauco,6,,-37.2463,-73.31752
+"Archipiélago Guayaneco",2,,-47.7735,-75.03551
+"Archipiélago Reina Adelaida",10,,-52.50073,-74.22548
+Arica,16,,-18.4746,-70.29792
+"Arica y Parinacota Region",16,,-18.57336,-69.46106
+Atacama,5,,-27.5,-70
+"Atacama Desert",3,,-24.5,-69.25
+"Ayacara Airport",14,,-42.30791,-72.78773
+Aysén,2,,-46.5,-73.5
+"Azopardo Airport",10,,-54.48164,-68.93938
+Balmaceda,2,,-45.90885,-71.70076
+"Balmaceda Airport",2,,-45.91606,-71.68948
+"Baños de Salinilla",12,,-33.49939,-70.09174
+"Baños del Toro",7,,-29.83356,-70.02281
+"Barrio Italia",12,,-33.44701,-70.62491
+"Buena Esperanza",5,,-26.9,-69.95
+Buin,12,,-33.73257,-70.74281
+Bulnes,18,,-36.74232,-72.29854
+"Bulnes El Litral Airport",18,,-36.7965,-72.41741
+"Bulnes Rucamelen Airport",18,,-36.80939,-72.16653
+"Cabo de Hornos",10,,-55.02252,-69.22825
+"Cabo de Hornos Airport",1,,-33.27756,-71.45645
+"Cabo Juan Román Airfield",2,,-45.3992,-72.6703
+Cabrero,6,,-37.03394,-72.40468
+"Caburgua Lake",4,,-39.12458,-71.77458
+"Calafquén Lake",4,,-39.51802,-72.14706
+Calama,3,,-22.45667,-68.92371
+Calbuco,14,,-41.77338,-73.13049
+Caldera,5,,-27.06812,-70.81921
+"Caleta Blanco Airport",2,,-45.14863,-73.51367
+"Caleta Hornos Airport",7,,-31.88466,-71.47872
+"Caleta Tortel Airport",2,,-47.78686,-73.5324
+"Cambridge Island",10,,-51.43192,-75.16336
+"Campos de Glaciares Doctor Juan Brüggen",10,,-49.13333,-73.5
+"Cañal Bajo Carlos - Hott Siebert Airport",14,,-40.6112,-73.061
+Cañete,6,,-37.80128,-73.39616
+"Cape Froward",10,,-53.89572,-71.29239
+"Cape Horn",10,,-55.9801,-67.28918
+"Capitan Fuentes Martinez Airport Airport",10,,-53.2537,-70.3192
+Carahue,4,,-38.71122,-73.16101
+"Carolina Airport",3,,-22.78333,-70.16667
+"Carrán-Los Venados",17,,-40.31594,-72.0697
+"Carriel Sur International Airport",6,,-36.77265,-73.06311
+Cartagena,1,,-33.55384,-71.60761
+Castro,14,,-42.4721,-73.77319
+Cauquenes,11,,-35.9671,-72.32248
+"Cauquenes Airport",11,,-35.97057,-72.22489
+"Cerro Acamarachi",3,,-23.29256,-67.61789
+"Cerro Aguas Calientes",3,,-23.36667,-67.68333
+"Cerro Aguilas",12,,-33.44759,-71.13987
+"Cerro Alconcha",3,,-21.06499,-68.53555
+"Cerro Alto de Varas",3,,-24.74625,-69.15708
+"Cerro Amaculla",15,,-21.02871,-68.87662
+"Cerro Arintica",16,,-18.74592,-69.04746
+"Cerro Aucanquilcha",3,,-21.22,-68.46833
+"Cerro Azufre",5,,-27.30646,-69.13088
+"Cerro Azul",11,,-35.6566,-70.76345
+"Cerro Cariquima",15,,-19.5436,-68.66947
+"Cerro Castillo Airport",10,,-51.2602,-72.33748
+"Cerro Cebollar",3,,-21.60845,-68.44701
+"Cerro Chela",3,,-21.40421,-68.50458
+"Cerro Chiliques",3,,-23.58333,-67.7
+"Cerro Colachi",3,,-23.24028,-67.64631
+"Cerro Colorado",7,,-31.77045,-70.72087
+"Cerro Coposa",15,,-20.67109,-68.76593
+"Cerro Cosapilla",16,,-17.85141,-69.4014
+"Cerro de Aiquina",3,,-22.31662,-68.29748
+"Cerro de La Isla",3,,-25.6044,-70.42493
+"Cerro de las Cuevas",3,,-21.58383,-68.47917
+"Cerro de Los Inocentes",1,,-33.7718,-80.8065
+"Cerro del Azufre",3,,-21.78722,-68.2375
+"Cerro del Deslinde",8,,-34.59069,-71.31935
+"Cerro del León",3,,-22.18333,-68.11667
+"Cerro del Palomo",8,,-34.61097,-70.29686
+"Cerro Doña Ana",7,,-29.76277,-70.10699
+"Cerro Doña Inés",5,,-26.07784,-69.18499
+"Cerro El Fraile",5,,-27.89518,-70.27354
+"Cerro Ermitaño",5,,-26.78355,-68.60126
+"Cerro Escalante",10,,-53.24054,-69.28732
+"Cerro Gemelos",1,,-32.88247,-70.00454
+"Cerro Guanaquero",3,,-24.50792,-68.50042
+"Cerro Hudson",2,,-46.07011,-72.93725
+"Cerro Incahuasi",3,,-23.01206,-67.57392
+"Cerro Irruputuncu",15,,-19.9,-68.55
+"Cerro Juncal",12,,-33.05198,-70.09458
+"Cerro La Higuera",1,,-32.54034,-71.43924
+"Cerro Laguna Verde",3,,-23.25423,-67.7121
+"Cerro Larancagua",16,,-18.11976,-69.37005
+"Cerro Limón Verde",3,,-24.02535,-70.11712
+"Cerro Lirima",15,,-19.75946,-68.86166
+"Cerro Los Leones",1,,-32.9515,-70.2265
+"Cerro Macá",2,,-45.10707,-73.16544
+"Cerro Maltusado",17,,-39.83231,-72.21595
+"Cerro Mauco de Aconcagua",1,,-32.88053,-71.42825
+"Cerro Miñiques",3,,-23.80389,-67.75654
+"Cerro Miragualay",14,,-43.57321,-72.98864
+"Cerro Miscanti",3,,-23.67393,-67.71654
+"Cerro Morado",12,,-33.73062,-70.06393
+"Cerro Palpana",3,,-21.54469,-68.5235
+"Cerro Paniri",3,,-22.06019,-68.22802
+"Cerro Paranal Airport",3,,-24.63947,-70.34881
+"Cerro Pico El Laco",3,,-23.81829,-67.49921
+"Cerro Plomo",12,,-33.23278,-70.21222
+"Cerro Polapi",3,,-21.64844,-68.393
+"Cerro Purico",3,,-22.98664,-67.74166
+"Cerro Quimán",17,,-40.05772,-72.27554
+"Cerro Renca",12,,-33.39062,-70.71064
+"Cerro Resiliente",5,,-25.6157,-68.5441
+"Cerro San Valentín",2,,-46.595,-73.34583
+"Cerro Solo",5,,-27.10039,-68.73253
+"Cerro Sombrero",10,,-52.73333,-69.33333
+"Cerro Taapacá",15,,-18.1,-69.5
+"Cerro Tapado",1,,-32.24325,-71.43006
+"Cerro Tatajachura",15,,-19.49645,-69.10246
+"Cerro Tenerife",10,,-51.38691,-72.94417
+"Cerro Toco",3,,-22.94631,-67.77689
+"Cerro Toconce",3,,-22.19377,-68.07298
+"Cerro Toro",10,,-52.23901,-74.62662
+"Cerro Tralcán",17,,-39.79583,-72.46018
+"Cerro Tres Cruces",5,,-27.14185,-68.89594
+"Cerro Tumisa",3,,-23.45735,-67.81365
+"Cerros de Barrancas Blancas",5,,-26.98166,-68.65941
+"Cerros de Cunupa",15,,-20.11803,-69.08862
+"Cerros de Incahuasi",3,,-24.02591,-67.52825
+"Chacalluta Arica Airport",16,,-18.34853,-70.33874
+Chaitén,14,,-42.91596,-72.70632
+"Chaitén Airport",14,,-42.9328,-72.6991
+"Chaitén Caleta Gonzalo Airport",14,,-42.5637,-72.59942
+"Chaitén Pumalín Airport",14,,-42.69913,-72.83614
+"Chaitén Renihue Airport",14,,-42.58589,-72.49556
+"Chaltén Mountain Range Natural Site, Chile",10,,-49.27576,-73.08038
+"Chamonate Airport",5,,-27.29689,-70.41404
+"Chan Chan Airport",17,,-39.86594,-72.1311
+Chañaral,5,,-26.34298,-70.61648
+"Chañaral Airport",5,,-26.33254,-70.60731
+"Chapo Lake",14,,-41.45648,-72.49097
+Chicureo,12,,-33.28379,-70.65333
+Chiguayante,6,,-36.9256,-73.02841
+"Chile Chico Airport",2,,-46.57997,-71.69076
+Chillán,18,,-36.60664,-72.10344
+"Chillán Airport",18,,-36.5825,-72.03137
+Chimbarongo,8,,-34.71247,-71.0434
+"Cholguahue Airport",6,,-37.47081,-72.1384
+Chonchi,14,,-42.62387,-73.775
+Chuiloma,16,,-18.40113,-70.2618
+"Chungará Lake",16,,-18.24353,-69.15246
+"Circo de los Altares",10,,-49.27836,-73.12344
+Cisnes,2,,-44.45773,-73.13744
+Cobquecura,18,,-36.13251,-72.79401
+"Cobquecura Airport",18,,-36.12963,-72.80395
+Cochamó,14,,-41.49752,-72.30789
+"Cochamó Airport",14,,-41.48319,-72.30733
+"Cochina Island",14,,-41.84333,-73.80417
+Cochrane,2,,-47.2557,-72.5695
+"Cocks Head",2,,-48.26835,-74.53734
+Codegua,8,,-34.03563,-70.66876
+Codpa,16,,-18.83327,-69.74318
+Coelemu,18,,-36.48741,-72.7032
+Coihueco,18,,-36.62785,-71.83068
+Coinco,8,,-34.26688,-70.94835
+Colbún,11,,-35.69494,-71.40568
+"Colbún Lake",11,,-35.674,-71.264
+Colchane,15,,-19.27588,-68.63763
+"Colico Lake",4,,-39.08129,-71.98277
+Collehue,17,,-40.21699,-71.98712
+Colliguay,12,,-33.2,-71.11667
+Collipulli,4,,-37.95453,-72.43438
+Combarbalá,7,,-31.17863,-71.00304
+"Comodoro Arturo Merino Benítez International Airport",12,,-33.39297,-70.7858
+Concepción,6,,-36.82699,-73.04977
+Concón,1,,-32.92203,-71.51619
+Conelhue,4,,-39.56248,-72.48535
+"Conguillio Lake",4,,-38.63398,-71.63946
+"Conguillio National Park",4,,-38.73052,-71.71394
+Constitución,11,,-35.33321,-72.41156
+"Contao Airport",14,,-41.80106,-72.72295
+Cope,4,,-39.07665,-72.66747
+Copiapó,5,,-27.3202,-69.8277
+"Coposa Airport",15,,-20.75011,-68.68358
+Coquimbo,7,,-29.95332,-71.33947
+"Coquimbo Region",7,,-30.75,-71
+"Cordillera Domeyko",3,,-24.4171,-69.04681
+"Cordillera Riesco",10,,-52.0499,-73.18206
+"Cordillera Sarmiento Gamboa",10,,-51.7803,-73.39417
+Coronel,6,,-37.03386,-73.14019
+Corral,17,,-39.8873,-73.43101
+"Costa del Sol Airport",8,,-34.12075,-71.5281
+"Costa Inabordable",10,,-53.83333,-73.3
+"Cotacotani Lake",16,,-18.15961,-69.21194
+Coyhaique,2,,-45.57524,-72.06619
+"Cuesta La Dormida",1,,-33.06122,-71.02333
+Cunco,4,,-38.93181,-72.03151
+Curacaví,12,,-33.39762,-71.12708
+"Curaco Airport",17,,-39.53703,-72.35588
+Curanilahue,6,,-37.47793,-73.34495
+Curarrehue,4,,-39.36019,-71.58748
+Curepto,11,,-35.09166,-72.01958
+Curicó,11,,-34.98279,-71.23943
+Cuyuncaví,7,,-30.79376,-70.75556
+Dalcahue,14,,-42.37845,-73.65011
+"Del Toro Lake",10,,-51.21845,-72.7416
+"Desierto de Atacama Airport",5,,-27.25249,-70.78182
+"Dickson Lake",10,,-50.83805,-73.11319
+"Diego Aracena International Airport",15,,-20.53522,-70.18127
+"Diego de Almagro",5,,-26.39022,-70.04556
+"Diego Portales Airport",1,,-32.4489,-71.25956
+Diguillín,18,,-36.72204,-72.29608
+Doñihue,8,,-34.22631,-70.96479
+"Duke of York Island",10,,-50.61382,-75.31599
+"Duqueco Airport",6,,-37.52571,-71.72429
+"Easter Island",1,,-27.11667,-109.36667
+"El Algarrobo Airport",1,,-32.47096,-70.9935
+"El Arenal",1,,-32.65125,-70.74881
+"El Bosque Airport",12,,-33.56099,-70.68775
+"El Canelillo",1,,-32.48528,-71.4258
+"El Cardal Airport",17,,-40.46759,-72.68654
+"El Carmen",18,,-36.89834,-72.0261
+"El Codornal",1,,-32.53728,-70.39347
+"El Coligual",8,,-34.14337,-70.94364
+"El Dique",14,,-41.85412,-73.88124
+"El Gentil",3,,-22.08333,-69.81667
+"El Juncalillo",1,,-32.85763,-70.13333
+"El Loa International Airport",3,,-22.49662,-68.90857
+"El Manzanito",12,,-33.88596,-70.19627
+"El Manzano Airport",8,,-34.1556,-71.45604
+"El Mirador Airport",14,,-41.3494,-72.9467
+"El Monte",12,,-33.67969,-70.98482
+"El Ñadi de Caipulli",14,,-40.73715,-72.72187
+"El Negrillar",3,,-24.18333,-68.26667
+"El Principal Airport",12,,-33.72548,-70.51146
+"El Quisco",1,,-33.39772,-71.69388
+"El Rodeo",12,,-33.1,-70.98333
+"El Salto del Soldado",1,,-32.92013,-70.34913
+"El Tapihue Airport",1,,-33.32055,-71.33208
+"El Tepual International Airport",14,,-41.43889,-73.09395
+Empedrado,11,,-35.59157,-72.2776
+Ercilla,4,,-38.06323,-72.37425
+"Esperanza Airport",4,,-38.54963,-72.14756
+Espino,8,,-34.20352,-71.74598
+"Estancia Río Cisnes Airport",2,,-44.50067,-71.31515
+"Eulogio Sánchez Airport",12,,-33.45601,-70.54669
+"Exmouth Peninsula",10,,-49.33333,-74.25
+"Fachinal Airport",2,,-46.54853,-72.2232
+"False Cape Horn",10,,-55.7166,-68.07041
+"Farellones Airport",11,,-35.45818,-71.2807
+Finca,5,,-27.64006,-69.84727
+Florida,6,,-36.82399,-72.66097
+Freire,4,,-38.95252,-72.62653
+Freirina,5,,-28.50917,-71.08124
+Fresia,14,,-41.15364,-73.42102
+"Fundo Loma Larga Airport",1,,-33.27874,-71.37702
+Futaleufú,14,,-43.18492,-71.86722
+"Futaleufú Airport",14,,-43.1892,-71.8511
+Futrono,17,,-40.1295,-72.38536
+Galvarino,4,,-38.41359,-72.78151
+"Gamboa Castro Airport",14,,-42.48854,-73.77504
+Garganta,2,,-44.69398,-71.96116
+"General Freire Airfield",11,,-34.96522,-71.2157
+"General Lagos",16,,-17.65363,-69.63465
+Gorbea,4,,-39.10164,-72.67602
+Graneros,8,,-34.06863,-70.72747
+"Greve Lake",10,,-49.04286,-73.97247
+"Grey Lake",10,,-51.05863,-73.15594
+"Grupo La Paz",10,,-52.00785,-73.20379
+"Guadaba Airport",4,,-37.97842,-72.93171
+Guañaguano,15,,-19.42868,-68.71396
+"Guardiamarina Zañartu Airport",10,,-54.9311,-67.6263
+"Hacienda La Calera",1,,-32.78333,-71.21667
+"Hanga Roa",1,,-27.15253,-109.42438
+"Hardy Peninsula",10,,-55.41911,-68.40102
+"Hermite Island",10,,-55.84794,-67.71541
+Hijuelas,1,,-32.79828,-71.14635
+"Hoskins Island",10,,-50.98802,-74.23232
+"Hualaihué Airport",14,,-42.02697,-72.6904
+Hualpén,6,,-36.78908,-73.10165
+Hualqui,6,,-36.97266,-72.93559
+Huara,15,,-19.99631,-69.77205
+Huasco,5,,-28.46599,-71.22276
+Huelquepulli,4,,-39.54404,-71.91482
+Huenteleufú,17,,-40.224,-71.88522
+"Huerquehue National Park",4,,-39.13861,-71.66639
+Huespepulli,17,,-40.34334,-72.24988
+Huichaco,17,,-39.79898,-72.70056
+"Huishue Lake",17,,-40.4367,-71.99891
+"Icalma Lake",4,,-38.793,-71.27976
+Illapel,7,,-31.63349,-71.16967
+"Illapel Aucó Airport",7,,-31.57737,-71.11061
+Iloca,11,,-34.94285,-72.18569
+Ilochegua,11,,-35.83878,-72.27876
+"Ingenio del Chañar",5,,-28.11667,-70.76667
+Iquique,15,,-20.21326,-70.15027
+"Isla Angamos",10,,-49.11667,-75
+"Isla Apiao Airport",14,,-42.60518,-73.20922
+"Isla Butachauques",14,,-42.30144,-73.10027
+"Isla Butachauques Airport",14,,-42.30816,-73.14303
+"Isla Chiloé",14,,-42.55798,-73.94676
+"Isla Clarence",10,,-54.06261,-71.98242
+"Isla Contreras",10,,-51.88651,-74.87398
+"Isla Croft",10,,-48.9941,-74.43336
+"Isla Cuptana",2,,-44.61606,-73.70435
+"Isla Dawson",10,,-53.95031,-70.60909
+"Isla de Pascua Airport",1,,-27.16479,-109.42183
+"Isla del Rey",17,,-39.89877,-73.29864
+"Isla Desolación",10,,-52.99717,-74.29931
+"Isla Esmeralda",10,,-48.90225,-75.41323
+"Isla Farrel",10,,-50.7926,-74.81345
+"Isla Gonzalo",10,,-56.52314,-68.71655
+"Isla Gordon",10,,-54.96667,-69.58333
+"Isla Guafo",14,,-43.59303,-74.71348
+"Isla Guamblín",2,,-44.84473,-75.10769
+"Isla Guar",14,,-41.68428,-72.95123
+"Isla Guarello",10,,-50.3853,-75.35285
+"Isla Guarello Airport",3,,-24.12351,-69.84559
+"Isla Guayanec",2,,-44.75341,-73.43019
+"Isla Guilleifa",17,,-40.16844,-72.3344
+"Isla Hall",10,,-55.8868,-67.41587
+"Isla Hanover",10,,-50.9562,-74.71408
+"Isla Herschel",10,,-55.84502,-67.29525
+"Isla Hornos",10,,-55.94396,-67.27722
+"Isla Hoste",10,,-55.11548,-69.32787
+"Isla Inchemó",2,,-45.79861,-74.97704
+"Isla Ipún",2,,-44.60516,-74.76306
+"Isla Jorge Montt",10,,-51.28864,-74.7577
+"Isla Juan Guillermos",10,,-52.16412,-74.18777
+"Isla Laitec",14,,-43.21626,-73.61103
+"Isla Lemuy",14,,-42.61908,-73.64908
+"Isla Lilian",2,,-45.66501,-73.86539
+"Isla Lira",10,,-52.18205,-74.49945
+"Isla Little Wellington",2,,-48.53235,-74.77557
+"Isla Llingua",14,,-42.42778,-73.44436
+"Isla Madre de Dios",10,,-50.10278,-75.24389
+"Isla Magdalena",2,,-44.62481,-73.07011
+"Isla Mancera",14,,-39.89123,-73.39282
+"Isla Manuel Rodríguez",10,,-52.51053,-73.76792
+"Isla Mechuque",14,,-42.30177,-73.27004
+"Isla Melchor",2,,-45.10527,-73.91435
+"Isla Mellersh",2,,-44.10912,-74.26722
+"Isla Merino Jarpa",2,,-47.87031,-74.16161
+"Isla Mocha",6,,-38.3716,-73.91229
+"Isla Mocha Airport",6,,-38.38459,-73.86879
+"Isla Mocha National Reserve",6,,-38.36667,-73.91667
+"Isla Mornington",10,,-49.69551,-75.35956
+"Isla Quinchao",14,,-42.46913,-73.51465
+"Isla Ramírez",10,,-51.82101,-75.01184
+"Isla Recalada",10,,-53.3,-74.16667
+"Isla Riesco",10,,-53.05634,-72.58434
+"Isla Rivero",2,,-45.5752,-74.35985
+"Isla Róbinson Crusoe",1,,-33.63949,-78.8566
+"Isla San Ambrosio",5,,-26.34283,-79.88772
+"Isla San Félix",5,,-26.29105,-80.09523
+"Isla San Felix Airport",1,,-26.29331,-80.09748
+"Isla San Pedro",14,,-43.35275,-73.73374
+"Isla Santa Cruz",10,,-54.17557,-70.28324
+"Isla Santa Inés",10,,-53.76042,-72.67212
+"Isla Santa María",6,,-37.02453,-73.52338
+"Isla Santa María Airport",6,,-37.02887,-73.50772
+"Isla Stosch",10,,-49.09342,-75.42747
+"Isla Talcan Airport",14,,-42.74282,-72.96671
+"Isla Teja",14,,-39.80616,-73.25907
+"Isla Tenglo",14,,-41.49812,-72.97273
+"Isla Tortuga",10,,-51.44564,-75.05084
+"Isla Traiguén",2,,-45.58147,-73.67349
+"Islas Desertores",14,,-42.70078,-73.02081
+"Islas Diego Ramírez",10,,-56.48297,-68.72261
+"Islas Ildefonso",10,,-55.82888,-69.35988
+"Islas Los Cinco Hermanos",2,,-45.26942,-73.25422
+"Islas Malvinas",2,,-46.61454,-72.59766
+"Islas Rennell",10,,-52.01006,-73.97051
+"Islote Connor",10,,-49.47091,-74.4412
+"Islote Gennell",2,,-44.32546,-72.91656
+"Islote Guanillo",5,,-27.59327,-70.91333
+"Islote Kao Kao",1,,-27.19585,-109.44972
+"Islotes Evangelistas",10,,-52.38256,-75.09615
+"Islotes Las Hermanas",2,,-43.77249,-73.0405
+"Islotes Marie",10,,-49.66561,-74.39821
+Itata,18,,-36.33139,-72.50207
+"Juan Fernandez Islands",1,,-33.67064,-78.87703
+"Juntas de Tolar",5,,-28.39801,-69.95728
+"La Aguada Airport",11,,-35.35094,-71.78334
+"La Angostura",5,,-27.55237,-69.42618
+"La Araucanía International Airport",4,,-38.9255,-72.65104
+"La Calera",1,,-32.78676,-71.19795
+"La Chimba Airport",3,,-23.46841,-70.43447
+"La Cisterna",12,,-33.55,-70.68333
+"La Cruz",1,,-32.82748,-71.22634
+"La Engorda",1,,-32.34105,-71.17166
+"La Esperanza",8,,-34.28608,-71.26842
+"La Estrella",8,,-34.20649,-71.65417
+"La Florida",12,,-33.53833,-70.55446
+"La Florida Airport",7,,-29.91574,-71.20149
+"La Higuera",7,,-29.51195,-71.2019
+"La Huayca",15,,-20.43168,-69.56192
+"La Isla",11,,-34.81417,-72.05658
+"La Junta Airport",2,,-43.97673,-72.41278
+"La Leonora",6,,-36.53873,-71.46533
+"La Ligua",1,,-32.45242,-71.23106
+"La Lisera",16,,-18.50015,-70.35112
+"La Paloma Lake",7,,-30.71639,-71.02139
+"La Pelada",17,,-40.19506,-73.43664
+"La Pintana",12,,-33.58331,-70.63419
+"La Quebrada",6,,-36.35581,-72.70272
+"La Reina",12,,-33.44156,-70.54417
+"La Serena",7,,-29.90453,-71.24894
+"La Tapa",14,,-40.34254,-73.38892
+"La Tirana",15,,-20.33552,-69.65671
+"La Unión",17,,-40.29313,-73.08167
+"La Victoria de Chacabuco Airport",12,,-33.04975,-70.70796
+"Lago Abascal",14,,-42.21771,-72.33287
+"Lago Bergues",2,,-48.32274,-73.26326
+"Lago Bertrand",2,,-46.93456,-72.85961
+"Lago Bruch",10,,-51.29732,-73.04016
+"Lago Coihuín",14,,-42.76688,-73.71282
+"Lago Colico Airport",4,,-39.05678,-72.07713
+"Lago Constancia",14,,-40.64197,-71.88154
+"Lago Cucao",14,,-42.639,-74.06641
+"Lago de Los Cisnes",10,,-53.23718,-70.35836
+"Lago Deseado",10,,-53.09419,-70.28339
+"Lago Donoso",10,,-53.18426,-69.652
+"Lago Elena",2,,-46.5597,-74.66143
+"Lago Gualletué",4,,-38.67939,-71.29258
+"Lago Huelde",14,,-42.59638,-74.10997
+"Lago Inferior",14,,-42.09663,-71.77836
+"Lago Jack Cameron",10,,-53.29827,-69.27885
+"Lago La Monneraye",10,,-55.17592,-69.31343
+"Lago La Paloma",2,,-45.9171,-72.1431
+"Lago Los Pejerreyes",8,,-34.4769,-70.26225
+"Lago Lowenborg",10,,-54.63483,-68.65189
+"Lago Lynch",10,,-53.9496,-69.3993
+"Lago MacKay",10,,-53.33014,-70.32399
+"Lago Maullín",2,,-45.19172,-72.9681
+"Lago Mercedes",10,,-53.76231,-68.88288
+"Lago Millward",10,,-52.80667,-74.60983
+"Lago Nordenskjöld",10,,-51.03604,-72.9608
+"Lago Pellaifa",17,,-39.60019,-71.95126
+"Lago Pirehueico",17,,-39.92815,-71.77918
+"Lago Porteño",10,,-51.33269,-72.78842
+"Lago Ralibueno",14,,-42.86132,-73.99454
+"Lago Ranco",17,,-40.23763,-72.39903
+"Lago Reñihue",14,,-42.76032,-72.25377
+"Lago Serrano",10,,-53.13768,-70.28646
+"Lago Tarahuín",14,,-42.71514,-73.73632
+"Lago Tyndall",10,,-51.24098,-73.23066
+"Lago Verde",2,,-44.24031,-71.8495
+"Lago Villarrica",4,,-39.2555,-72.0884
+"Laguna Adelaida",10,,-52.03361,-73.45498
+"Laguna Amarga",10,,-50.97542,-72.74939
+"Laguna Caña",15,,-20.37724,-68.99534
+"Laguna Cayutúe",14,,-41.27704,-72.25403
+"Laguna Chepical",1,,-32.25974,-70.49836
+"Laguna Corazón",2,,-46.6774,-74.57442
+"Laguna de Aculeo",12,,-33.84508,-70.91729
+"Laguna de Aguas Calientes",3,,-23.52286,-67.57342
+"Laguna de Eulogio",5,,-26.69483,-68.62777
+"Laguna de La Invernada",11,,-35.71381,-70.77097
+"Laguna de la Laja",6,,-37.30519,-71.29499
+"Laguna de Matancilla",8,,-34.40336,-70.31565
+"Laguna de Tordillo",1,,-32.59303,-70.22503
+"Laguna del Dial",11,,-36.45,-70.95
+"Laguna del Encañado",12,,-33.67124,-70.13393
+"Laguna del Inca",1,,-32.8207,-70.13364
+"Laguna del Laja National Park",6,,-37.41667,-71.35
+"Laguna del Maule",11,,-36.06103,-70.49592
+"Laguna del Negro Francisco",5,,-27.4637,-69.22004
+"Laguna del Toro",10,,-52.74468,-71.15498
+"Laguna Diana",10,,-51.85724,-72.15262
+"Laguna Dorotea",10,,-51.54146,-72.47652
+"Laguna El Barco",6,,-37.92821,-71.27817
+"Laguna El Parrillar",10,,-53.41458,-71.2841
+"Laguna Ema",10,,-53.44832,-69.28908
+"Laguna Entre Vientos",10,,-52.74934,-71.24228
+"Laguna Escondida",2,,-44.82057,-72.65791
+"Laguna Jachucoposa",15,,-20.6792,-68.70778
+"Laguna Juncal",2,,-47.34813,-72.70271
+"Laguna La Colejuda",1,,-33.76495,-71.70168
+"Laguna Lloncao",6,,-37.86329,-73.4646
+"Laguna Los Litres",6,,-36.93079,-72.43274
+"Laguna Los Palos",10,,-52.73263,-71.05811
+"Laguna Lynch",10,,-53.17615,-71.00807
+"Laguna Manco",6,,-37.25234,-71.64451
+"Laguna Miñiques",3,,-23.76562,-67.79073
+"Laguna Miscanti",3,,-23.72601,-67.76704
+"Laguna Pampa Alta",2,,-45.31969,-71.38292
+"Laguna Patas",14,,-41.30234,-72.45524
+"Laguna Puyehue",4,,-39.05727,-73.27999
+"Laguna Quililo",4,,-38.6892,-71.61214
+"Laguna Quiñenco",6,,-36.98788,-73.11799
+"Laguna Redonda Airport",2,,-48.93387,-72.80064
+"Laguna Rojas",10,,-54.96659,-67.3322
+"Laguna Timone Arriba",10,,-52.01259,-70.20885
+"Laguna Torca",11,,-34.77248,-72.04011
+"Laguna Torres",10,,-53.30959,-69.07494
+"Laguna Tuyajto",3,,-23.94271,-67.59172
+Lagunas,1,,-33.81336,-71.78128
+Lagunillas,16,,-18.10796,-69.29739
+Laja,6,,-37.28415,-72.71105
+"Lake Pehoé",10,,-51.09428,-73.04205
+"Lake Verde",5,,-26.88333,-68.46667
+Lampa,12,,-33.2863,-70.87561
+"Lampa Lipangui Airport",12,,-33.33691,-70.85103
+"Lampa Palo Alto Airport",12,,-33.33549,-70.9151
+"Lanalhue Lake",6,,-37.92248,-73.30669
+Lanco,17,,-39.45246,-72.77117
+"Laraquete Airport",6,,-37.21717,-73.23439
+"Las Ánimas",12,,-33.74314,-70.31895
+"Las Brujas Airport",7,,-31.78582,-71.01597
+"Las Cabras",8,,-34.29027,-71.30616
+"Las Chacrillas",1,,-32.39424,-71.01096
+"Las Cienaguitas",1,,-32.36901,-70.42329
+"Las Condes",12,,-33.41636,-70.56413
+"Las Lajas",8,,-34.6858,-71.97776
+"Las Lomas",8,,-34.2785,-71.79199
+"Las Tacas Airport",7,,-30.09561,-71.36423
+Lautaro,4,,-38.53066,-72.43652
+Lebu,6,,-37.60825,-73.65356
+"Lebu Airport",6,,-37.65769,-73.6284
+"Lejía Lake",3,,-23.49894,-67.69341
+Leltume,4,,-39.24791,-72.23651
+"Licantén Airport",11,,-34.98909,-72.02018
+Limache,1,,-33.01327,-71.26084
+Linares,11,,-35.84667,-71.59308
+Lirquen,6,,-36.70833,-72.975
+"Litueche Airport",8,,-34.11235,-71.7185
+"Litueche Midango Airport",14,,-42.52469,-72.81537
+Llaillay,1,,-32.84043,-70.95623
+"Llanada Grande Airport",14,,-41.8707,-71.93848
+Llancopan,4,,-39.5062,-72.31405
+Llanquihue,14,,-41.25603,-73.00649
+"Llanquihue Lake",14,,-41.13239,-72.80998
+Llesquehue,14,,-40.70214,-73.80261
+"Lleulleu Lake",6,,-38.15131,-73.32172
+"Llifen Calcuruppe Airport",17,,-40.24339,-72.2477
+"Lo Barnechea",12,,-33.36071,-70.51244
+"Lo Padilla",4,,-38.69466,-71.32125
+"Lo Prado",12,,-33.4443,-70.72552
+Lolco,4,,-38.31908,-71.54176
+Lolol,8,,-34.72825,-71.6455
+"Lolol Palo Alto Airport",8,,-34.73265,-71.74029
+Loncoche,4,,-39.36708,-72.63087
+"Loncopan Airport",17,,-40.06471,-72.54106
+Longaví,11,,-35.96496,-71.6836
+"Lonquimay Airport",4,,-38.73345,-71.2187
+"Los Álamos",1,,-32.45,-71.26667
+"Los Andes",1,,-32.83369,-70.59827
+"Los Ángeles",6,,-37.46973,-72.35366
+"Los Bronces",12,,-33.1476,-70.28383
+"Los Canchones",15,,-20.48456,-69.59835
+"Los Cardones",8,,-34.1832,-71.77151
+"Los Cedros Airport",11,,-35.15534,-71.60556
+"Los Cerrillos Airport",12,,-33.49303,-70.69728
+"Los Condores Airport",15,,-20.25564,-70.08922
+"Los Corrales",8,,-34.90913,-70.47406
+"Los Guayes Airport",4,,-39.0518,-71.99375
+"Los Lagos",17,,-39.8635,-72.80914
+"Los Lagos Region",14,,-42.59889,-73.96048
+"Los Maitenes de Villa Vieja Airport",17,,-40.31597,-72.9791
+"Los Ríos Region",17,,-40.01499,-72.51526
+"Los Rosales",1,,-32.88333,-70.56667
+"Los Tambillos",1,,-32.36211,-70.27804
+"Los Vilos",7,,-31.91292,-71.50045
+Lota,6,,-37.08994,-73.1577
+Lumaco,4,,-38.16485,-72.90551
+Machalí,8,,-34.18082,-70.64933
+Máfil,17,,-39.665,-72.95159
+Mahue,6,,-37.62081,-73.05363
+"Maihue Lake",17,,-40.28324,-72.02073
+Maipú,12,,-33.51421,-70.7651
+"Majada El Tomate",5,,-27.39249,-70.88622
+Mamiña,15,,-20.07266,-69.21726
+Manzano,8,,-34.18131,-71.3873
+Marchihue,8,,-34.39754,-71.61938
+"María Dolores Airport",6,,-37.40173,-72.42544
+"María Elena",3,,-22.34449,-69.66178
+"María Elena Airport",3,,-22.30363,-69.70542
+"Maule Region",11,,-35.5,-71.5
+Maullín,14,,-41.61778,-73.59833
+Mejillones,3,,-23.10003,-70.44703
+"Mejillones del Norte",15,,-19.8,-70.16667
+"Mejillones Peninsula",3,,-23.28333,-70.56667
+"Melinka Airport",2,,-43.89439,-73.73885
+Melipilla,12,,-33.68909,-71.21528
+"Misnal Airport",3,,-23.58458,-68.38418
+"Mocopulli Airport",14,,-42.33847,-73.71547
+"Molco Airport",17,,-39.82478,-72.0829
+Molina,11,,-35.11428,-71.28232
+"Molina Alupenhue Airport",11,,-35.24907,-71.07086
+Molinos,16,,-18.38206,-69.94557
+"Molle Alto",5,,-27.82049,-70.29281
+"Monte Campana de Roldán",10,,-53.96216,-71.77378
+"Monte Darwin",10,,-54.75294,-69.48808
+"Monte Gemelos",2,,-47.26846,-74.22868
+"Monte Melimoyu",2,,-44.07891,-72.86759
+"Monte Mentolat",2,,-44.69482,-73.075
+"Monte Patria",7,,-30.69496,-70.9577
+"Monte Sarmiento",10,,-54.44872,-70.83498
+"Moon Valley",3,,-22.89768,-68.27042
+"Morro Coihaique",2,,-45.57086,-71.92457
+"Morro Jorgino",3,,-23.24349,-70.5824
+"Morro Los Codos",12,,-34.13333,-71.35758
+"Mount Fitz Roy",10,,-49.27125,-73.04375
+"Mount Tarn",10,,-53.75704,-71.02344
+Mulchén,6,,-37.71893,-72.24099
+"Municipal de Linares Airport",11,,-35.8617,-71.5486
+Nacimiento,6,,-37.50253,-72.67307
+Natales,10,,-50.67423,-73.92591
+"Neltume Lake",14,,-39.79377,-71.9838
+"Nevado Las Agujas",17,,-40.21418,-71.88542
+"Nevado Longaví",11,,-36.19656,-71.16334
+"Nochaco Airport",14,,-40.89493,-72.88069
+Ñuble,18,,-36.62291,-72.21643
+"Nueva Imperial",4,,-38.74451,-72.95025
+"O'Higgins Region",8,,-34.5,-71
+"Ojos de Agua",1,,-32.85734,-70.19056
+"Ojos del Salado",5,,-27.10979,-68.54044
+"Olmué Airport",1,,-32.99696,-71.17138
+Osorno,14,,-40.57395,-73.13348
+"Osorno Airport",14,,-40.64001,-73.12674
+"Osorno Pilauco Airport",14,,-40.55362,-73.13011
+Ovalle,7,,-30.60106,-71.19901
+"Ovalle Airport",7,,-30.6292,-71.27329
+Paine,12,,-33.80796,-70.74109
+"Paine Airport",12,,-33.89391,-70.88551
+Palena,14,,-43.61876,-71.80434
+"Pampa Colorada",3,,-21.37693,-68.62523
+"Pampa Guanaco Airport",10,,-54.0501,-68.81068
+"Pan de Azúcar National Park",5,,-26.13239,-70.55734
+"Panguilemo Airport",11,,-35.3778,-71.6017
+Panguipulli,17,,-39.64355,-72.33269
+"Panguipulli Airport",17,,-39.65611,-72.35903
+"Panguipulli Lake",17,,-39.7142,-72.22337
+"Panimávida Airport",11,,-35.76509,-71.40329
+"Parc national Torres del paine",10,,-50.98321,-72.96649
+"Paredones Airport",8,,-34.55345,-72.04753
+"Parque O'Higgins",12,,-33.46353,-70.66029
+Parral,11,,-36.14311,-71.82605
+"Parral Villa Baviera Airport",11,,-36.39424,-71.57232
+"Pelicano Airport",7,,-29.14369,-70.88744
+Peñaflor,12,,-33.60627,-70.87649
+Penco,6,,-36.74075,-72.99528
+"Península Lacui",14,,-41.80472,-73.96389
+"Peñuelas Lake",1,,-33.16172,-71.5245
+"Petorca Province",1,,-32.33333,-71
+"Peulla Airport",14,,-41.05702,-72.01351
+Pica,15,,-20.49128,-69.33118
+"Picacho Diente de Navarino",10,,-55.01414,-67.65021
+"Pichidangui Airport",7,,-32.14613,-71.50789
+Pichilemu,8,,-34.38333,-72
+"Pichilemu Aerodrome",8,,-34.39395,-72.01774
+"Pichoy Airport",17,,-39.64996,-73.08611
+"Piedra Negra Airport",11,,-35.85534,-72.64692
+"Pirque Estero Seco Airport",12,,-33.74497,-70.54982
+Pitrufquén,4,,-38.98635,-72.63721
+"Poco a Poco Airport",6,,-37.84921,-72.0092
+"Port Montt",14,,-41.4693,-72.94237
+"Portezuelo del Gaucho",5,,-28.62179,-70.05455
+"Portezuelo La Cruz del Padre",1,,-32.58668,-70.36186
+Porvenir,10,,-53.296,-70.36629
+"Posesión Airport",10,,-52.2925,-68.9347
+"Presidente Carlos Ibáñez del Campo International Airport",10,,-53.00264,-70.85459
+"Presidente Rios Lake",2,,-46.47897,-74.43966
+"Provincia Antártica Chilena",10,,-55.0225,-69.22781
+"Provincia Capitán Prat",2,,-47.9755,-73.54155
+"Provincia de Aisén",2,,-45.35626,-72.57322
+"Provincia de Antofagasta",3,,-24.31122,-69.57084
+"Provincia de Arauco",6,,-37.74174,-73.35799
+"Provincia de Arica",16,,-18.70643,-69.85607
+"Provincia de Biobío",6,,-37.59511,-71.89553
+"Provincia de Cachapoal",8,,-34.29987,-70.72061
+"Provincia de Cardenal Caro",8,,-34.38651,-71.945
+"Provincia de Cauquenes",11,,-35.96828,-72.32918
+"Provincia de Cautín",4,,-38.94719,-72.36198
+"Provincia de Chacabuco",12,,-33.1594,-70.8165
+"Provincia de Chañaral",5,,-26.32515,-69.48751
+"Provincia de Chiloé",14,,-42.57471,-73.96062
+"Provincia de Choapa",7,,-31.7109,-70.99263
+"Provincia de Colchagua",8,,-34.69485,-71.07606
+"Provincia de Concepción",6,,-36.95773,-72.89674
+"Provincia de Copiapó",5,,-27.56347,-70.00063
+"Provincia de Cordillera",12,,-33.67921,-70.54665
+"Provincia de Coyhaique",2,,-45.63037,-72.32025
+"Provincia de Curicó",11,,-35.04932,-71.09148
+"Provincia de El Loa",3,,-22.96764,-68.18716
+"Provincia de Elqui",7,,-29.73588,-70.64455
+"Provincia de Huasco",5,,-28.68428,-70.51474
+"Provincia de Iquique",15,,-20.24158,-70.08728
+"Provincia de Isla de Pascua",1,,-27.11048,-109.29749
+"Provincia de Limarí",7,,-30.75,-71
+"Provincia de Linares",11,,-36.02955,-71.43099
+"Provincia de Llanquihue",14,,-41.34285,-72.658
+"Provincia de Los Andes",1,,-32.82556,-70.33518
+"Provincia de Magallanes",10,,-52.91667,-71.08333
+"Provincia de Maipo",12,,-33.83333,-70.75
+"Provincia de Malleco",4,,-38.23591,-72.13034
+"Provincia de Marga Marga",1,,-33.04378,-71.39465
+"Provincia de Melipilla",12,,-33.75,-71.16667
+"Provincia de Ñuble",6,,-36.70663,-71.98591
+"Provincia de Osorno",14,,-40.77939,-72.95299
+"Provincia de Palena",14,,-43.16212,-72.47818
+"Provincia de Parinacota",16,,-18.19804,-69.57161
+"Provincia de Quillota",1,,-32.80753,-71.17957
+"Provincia de San Felipe de Aconcagua",1,,-32.60401,-70.6593
+"Provincia de Santiago",12,,-33.33333,-70.66667
+"Provincia de Talagante",12,,-33.66667,-70.91667
+"Provincia de Talca",11,,-35.4378,-71.35326
+"Provincia de Tierra del Fuego",10,,-53.66083,-69.45173
+"Provincia de Tocopilla",3,,-22.02949,-69.64006
+"Provincia de Última Esperanza",10,,-50.75,-74
+"Provincia de Valdivia",17,,-39.80273,-72.5469
+"Provincia de Valparaíso",1,,-33.06105,-71.59241
+"Provincia del Ranco",17,,-40.13689,-72.37793
+"Provincia del Tamarugal",15,,-20.26445,-69.81606
+"Provincia General Carrera",2,,-46.63435,-72.31476
+Pucón,4,,-39.28223,-71.95427
+"Pucón Airport",4,,-39.2928,-71.9159
+"Puelo Bajo Airport",14,,-41.65871,-72.30021
+"Puente Alto",12,,-33.61169,-70.57577
+"Puerto Aisén",2,,-45.40303,-72.69184
+"Puerto Caldera",5,,-27.05,-70.83333
+"Puerto Calderilla",5,,-27.08525,-70.86306
+"Puerto Cisnes",2,,-44.74736,-72.69695
+"Puerto Cisnes Airport",2,,-44.75852,-72.6984
+"Puerto Fuy",14,,-39.87101,-71.89144
+"Puerto Gunther",2,,-47.83985,-73.44468
+"Puerto Ingeniero Ibáñez Airport",2,,-46.29414,-71.94972
+"Puerto Marín Balmaceda Airport",2,,-43.78762,-72.9513
+"Puerto Natales",10,,-51.72987,-72.50603
+"Puerto Saavedra Airport",12,,-33.02848,-70.87995
+"Puerto Sanchez Airport",2,,-46.59202,-72.58714
+"Puerto Varas",14,,-41.31946,-72.98538
+"Puerto Williams",10,,-54.93355,-67.60963
+Pular,3,,-24.1944,-68.05871
+"Pumalin Park",14,,-42.58444,-72.49611
+Punilla,18,,-36.44636,-71.90057
+"Punta Arenas",10,,-53.64148,-72.03848
+"Punta Arenas Sandra Scabini Airport",10,,-52.39401,-69.7567
+"Punta Baja Airport",2,,-46.79266,-72.79687
+"Punta Coyumbué",14,,-42.39008,-73.65769
+Pupelde,14,,-41.90298,-73.79663
+Purranque,14,,-40.91305,-73.15913
+Puyehue,14,,-40.68945,-72.34537
+"Queilén Airport",14,,-42.89483,-73.47478
+Quellón,14,,-43.11819,-73.61661
+"Quellón Airport",14,,-43.13613,-73.63531
+Quilicura,12,,-33.36799,-70.71388
+Quillagua,3,,-21.65748,-69.53468
+Quillota,1,,-32.88341,-71.24882
+Quilpué,1,,-33.04752,-71.44249
+Quinchao,14,,-42.53578,-73.42702
+"Quinta de Tilcoco",8,,-34.3555,-70.96527
+Quintero,1,,-32.78588,-71.53222
+"Quintero Airport",1,,-32.79021,-71.52171
+"Quiriquina Island",6,,-36.62575,-73.06031
+"Quivolgo International Airport",11,,-35.3091,-72.39321
+Rancagua,8,,-34.17083,-70.74444
+"Rancagua de la Independencia Airport",8,,-34.1737,-70.7757
+"Rapel La Estrella Airport",8,,-34.20026,-71.4811
+"Rapelhuapi Airport",8,,-34.10555,-71.51267
+Rauco,11,,-34.92546,-71.31722
+"Refugio Lagunillas",12,,-33.61048,-70.28968
+"Región de la Araucanía",4,,-38.5,-72
+"Región de Valparaíso",1,,-32.75,-71.33333
+"Región del Biobío",6,,-37.375,-72.45
+"Región Norte",2,,-45.212,-71.705
+"Region of Magallanes",10,,-52.50026,-73.00067
+Renca,12,,-33.4019,-70.70619
+Rengo,8,,-34.40639,-70.85834
+Requínoa,8,,-34.28557,-70.81683
+"Reserva Nacional Cerro Castillo",2,,-46.02939,-72.26532
+"Reserva Nacional Futaleufú",14,,-43.25721,-71.83445
+"Reserva Nacional Ralco",4,,-37.92037,-71.315
+Retiro,11,,-36.05172,-71.75771
+"Retiro Copihue Airport",11,,-36.07773,-71.78023
+"Retiro El Almendro Airport",11,,-35.96043,-71.79261
+"Retiro Las Alpacas Airport",11,,-36.1449,-71.76358
+"Retiro Los Maitenes Airport",11,,-36.03057,-71.74014
+"Retiro San Andrés Airport",11,,-35.99704,-71.77042
+"Retiro San Guillermo Airport",11,,-35.99897,-71.82847
+"Rincón Pausiri",15,,-19.27829,-68.98039
+"Riñihue Lake",17,,-39.83431,-72.3153
+"Río Bravo Airport",2,,-47.98999,-73.14371
+"Río Bueno",17,,-40.33494,-72.95564
+"Río Claro Airport",11,,-35.18638,-71.29625
+"Río Mayer Airport",2,,-48.47028,-72.56411
+"Río Negro",14,,-40.79644,-73.21546
+"Rocas Hazeltine",10,,-55.47795,-67.55741
+"Rodelillo Airport",1,,-33.0681,-71.5575
+"Romeral San Miguel Airport",11,,-34.95893,-71.03256
+"Rucananco Airport",17,,-40.52112,-72.77314
+"Rupanco Lake",14,,-40.82283,-72.46588
+"Sagrada Familia",11,,-34.99919,-71.38424
+"Sala y Gómez",1,,-26.4722,-105.3619
+Salamanca,7,,-31.77922,-70.96389
+"Salamanca Los Pelmabres Airport",7,,-31.87107,-70.61767
+"Salar Agua Amarga",5,,-25.54957,-68.82615
+"Salar de Aguas Calientes",3,,-25.00696,-68.62602
+"Salar de Ascotán",3,,-21.5583,-68.27784
+"Salar de Atacama",3,,-23.53513,-68.26147
+"Salar de Atacama Airport",3,,-23.64878,-68.31282
+"Salar de Bellavista",15,,-20.7252,-69.61869
+"Salar de Infieles",5,,-25.97738,-69.05701
+"Salar de Los Morros",3,,-23.72381,-68.98064
+"Salar de Loyoques",3,,-23.25139,-67.28394
+"Salar de San Martín",3,,-21.36523,-68.33178
+"Salar de Talar",3,,-23.9867,-67.69758
+"Salar del Huasco",15,,-20.30493,-68.8497
+"Salar del Miraje",3,,-22.55266,-69.57547
+"Salar del Sur Viejo",15,,-20.94701,-69.53095
+"Salar El Laco",3,,-23.85726,-67.4069
+"Salar Elvira",3,,-23.51731,-68.92695
+"Salar Mar Muerto",3,,-23.78035,-69.82191
+"Salar Michincha",15,,-20.98359,-68.55369
+"Salinas El Convento",1,,-33.80274,-71.7105
+"Saltos de Petrohué",14,,-41.13988,-72.39716
+"San Antonio",1,,-33.59473,-71.60746
+"San Antonio Province",1,,-33.58333,-71.5
+"San Bernardo",12,,-33.59217,-70.6996
+"San Carlos",18,,-36.42477,-71.958
+"San Clemente",11,,-35.53777,-71.487
+"San Esteban",12,,-34.05,-71.58333
+"San Fabián",18,,-36.51952,-71.58608
+"San Felipe",1,,-32.74976,-70.72584
+"San Fernando Airport",8,,-34.56648,-70.96863
+"San Javier",11,,-35.5952,-71.72924
+"San Javier Santa María de Migre Airport",11,,-35.57187,-72.00427
+"San José de Maipo",12,,-33.63912,-70.35318
+"San José de Tango",12,,-33.61667,-70.8
+"San Juan de la Costa",14,,-40.52473,-73.39223
+"San Pablo",14,,-40.41348,-73.01085
+"San Pedro",12,,-33.89346,-71.45784
+"San Pedro de Atacama",3,,-22.9111,-68.20113
+"San Pedro de la Paz",6,,-36.83897,-73.10028
+"San Pedro Verfrut Airport",12,,-34.00623,-71.39249
+"San Rafael",11,,-35.30624,-71.51906
+"San Rafael Airport",1,,-32.8142,-70.6467
+"San Rafael Lake",2,,-46.66618,-73.9332
+"San Ramón",12,,-33.45,-70.5
+"San Vicente de Tagua Tagua",8,,-34.43859,-71.07751
+"San Vicente de Tagua Tagua Peralillo Airport",8,,-34.44873,-71.38603
+"Santa Bárbara",6,,-37.66824,-72.02252
+"Santa Clara Island",1,,-33.70842,-78.94219
+"Santa Cruz",8,,-34.63881,-71.36576
+"Santa Juana",6,,-37.1751,-72.9433
+"Santa Lucía",7,,-30.55863,-71.01865
+"Santa Lucia Hill",12,,-33.44018,-70.64355
+"Santa María",1,,-32.74732,-70.65666
+"Santa Rosa de Tabali Airport",7,,-30.67716,-71.40243
+"Santa Teresa del Almendral Airport",12,,-33.57749,-71.26307
+Santiago,12,,-33.45694,-70.64827
+"Santiago Cerro Galan Airport",11,,-35.88103,-72.32738
+"Santiago Chicureo Airport",12,,-33.27026,-70.65048
+"Santiago Metropolitan",12,,-33.47269,-70.64724
+"Sarmiento Lake",10,,-51.04232,-72.72492
+"Segundo Corral",14,,-42.09215,-71.87395
+"Siberia Airport",18,,-37.17533,-72.06493
+"Sierra de Los Colorados",3,,-22.07082,-69.92883
+"Sierra Gorda",3,,-22.89061,-69.31959
+Socoroma,16,,-18.26416,-69.60253
+"Taitao Peninsula",2,,-46.36402,-74.80824
+Talagante,12,,-33.66386,-70.92734
+Talca,11,,-35.4264,-71.65542
+Talcahuano,6,,-36.69583,-73.11667
+Taltal,3,,-25.40713,-70.48554
+Tambillos,7,,-30.19889,-71.24694
+Tarapacá,15,,-20,-69.33333
+Temuco,4,,-38.73965,-72.59842
+"Temuco Maquehue Airport",4,,-38.76682,-72.6371
+"Teniente Vidal Airfield",2,,-45.59421,-72.10613
+"Teno Airport",8,,-34.81375,-71.06178
+"Teodoro Schmidt",4,,-38.99442,-73.08927
+"Tic Toc Airport",14,,-43.6137,-72.89746
+"Tierra Amarilla",5,,-27.46633,-70.26255
+"Tinquilco Lake",4,,-39.16661,-71.72807
+Tirúa,6,,-38.34179,-73.49149
+"Tirúa Airport",6,,-38.36183,-73.48987
+Tocopilla,3,,-22.09198,-70.19792
+Tomé,6,,-36.61756,-72.95593
+"Torca Airport",11,,-34.78438,-72.0513
+"Torreón Airport",18,,-36.49874,-72.68078
+Tortel,2,,-47.80098,-73.53678
+Traiguén,4,,-38.2496,-72.67027
+"Traiguén Airport",4,,-38.27112,-72.66162
+"Traiguén Quino La Colmena Airport",4,,-38.33457,-72.58716
+"Tte. Julio Gallardo Airport",10,,-51.6715,-72.5284
+Tucapel,6,,-37.29079,-71.94929
+"University of Concepción",6,,-36.82907,-73.03689
+Valdivia,17,,-39.81422,-73.24589
+Vallenar,5,,-28.57617,-70.75938
+Valparaíso,1,,-33.12984,-71.57347
+"Vega de Carvajal",3,,-23.37208,-68.11271
+"Vega La Manga",5,,-27.45785,-69.61638
+"Ventanas Radioayuda Airport",12,,-33.7672,-70.9222
+"Vicente Perez Rosales National Park",14,,-41.14167,-72.17306
+"Vichuquén Airport",11,,-34.87961,-72.14644
+"Vichuquén Cuatro Pantanos Airport",11,,-34.83746,-72.06628
+"Vichuquén El Alamo Airport",11,,-34.84731,-72.01881
+"Víctor Lafón Airport",1,,-32.7458,-70.705
+Victoria,4,,-38.23291,-72.33292
+"Victoria Airport",4,,-38.2456,-72.3486
+Vicuña,7,,-30.03541,-70.71274
+"Vicuña Airport",7,,-29.83378,-70.04623
+Vilcún,4,,-38.66875,-72.22565
+"Vilcún La Malla Airport",4,,-38.69084,-72.28755
+"Villa Alemana",1,,-33.04823,-71.3729
+"Villa Portales Airport",4,,-38.44855,-71.35768
+"Villa Tapera Airport",2,,-44.64076,-71.66664
+Villarrica,4,,-39.28569,-72.2279
+"Villarrica Airport",4,,-39.31748,-72.22824
+"Viña del Mar",1,,-33.02457,-71.55183
+"Viña del Mar Airport",1,,-32.9496,-71.4786
+"Viñamar Airport",1,,-33.35674,-71.35421
+"Volcán Choshuenco",14,,-39.91816,-72.02808
+"Volcán Corcovado",14,,-43.19382,-72.79253
+"Volcán Descabezado Grande",11,,-35.5869,-70.75168
+"Volcán Guallatiri",16,,-18.42452,-69.09018
+"Volcán Hornopirén",14,,-41.88019,-72.43333
+"Volcán Huequil",14,,-42.38215,-72.58244
+"Volcán Isluga",15,,-19.15639,-68.83433
+"Volcán Láscar",3,,-23.36307,-67.73147
+"Volcán Llaima",4,,-38.69542,-71.73208
+"Volcán Lonquimay",4,,-38.38125,-71.59292
+"Volcán Michinmahuida",14,,-42.79904,-72.44543
+"Volcán Miño",3,,-21.18643,-68.60423
+"Volcán San Pablo",3,,-21.87722,-68.36355
+"Volcán San Pedro",3,,-21.8881,-68.39071
+"Volcán Tacora",16,,-17.72115,-69.77243
+"Volcán Tinguiririca",8,,-34.81682,-70.35323
+"Yelcho Lake",14,,-43.29281,-72.29866
+"Yendegaia Airport",10,,-54.82954,-68.83104
+"Yeseras del Volcán",12,,-33.81828,-69.97655
+"Yulton Lake",2,,-45.10978,-72.87764
+Yumbel,6,,-37.0982,-72.56084
+"Yumbel Trilahue Airport",6,,-37.13346,-72.41381
+"Zapallar Casas Viejas Airport",1,,-32.59556,-71.34775

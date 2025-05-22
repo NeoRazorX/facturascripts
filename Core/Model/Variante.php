@@ -167,6 +167,11 @@ class Variante extends Base\ModelClass
 
     public function description(bool $onlyAttributes = false): string
     {
+        $pipeReturn = $this->pipe('description', $onlyAttributes);
+        if ($pipeReturn) {
+            return $pipeReturn;
+        }
+
         $description = $onlyAttributes ? '' : $this->getProducto()->descripcion;
         return $this->getAttributeDescription(
             $this->idatributovalor1,
@@ -213,6 +218,11 @@ class Variante extends Base\ModelClass
      */
     protected function getAttributeDescription($idAttVal1, $idAttVal2, $idAttVal3, $idAttVal4, $description = '', $separator1 = "\n", $separator2 = ', '): string
     {
+        $pipeReturn = $this->pipe('getAttributeDescription', $idAttVal1, $idAttVal2, $idAttVal3, $idAttVal4, $description, $separator1, $separator2);
+        if ($pipeReturn) {
+            return $pipeReturn;
+        }
+
         // obtenemos las descripciones de los atributos
         $attributeValue = new DinAtributoValor();
         $attDesc = [];

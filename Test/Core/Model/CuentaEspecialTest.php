@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\CuentaEspecial;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -56,7 +56,7 @@ final class CuentaEspecialTest extends TestCase
         $this->assertTrue($account->save(), 'account-special-cant-save');
 
         // comprobamos que el html haya sido escapado
-        $noHtml = ToolBox::utils()::noHtml('Test <b>Special Account</b>');
+        $noHtml = Tools::noHtml('Test <b>Special Account</b>');
         $this->assertEquals($noHtml, $account->descripcion, 'account-html-description');
 
         // eliminamos

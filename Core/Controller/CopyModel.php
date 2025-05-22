@@ -19,19 +19,19 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Variante;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of CopyModel
@@ -61,7 +61,7 @@ class CopyModel extends Controller
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'copy';
-        $data['icon'] = 'fas fa-cut';
+        $data['icon'] = 'fa-solid fa-cut';
         $data['showonmenu'] = false;
         return $data;
     }
@@ -80,10 +80,15 @@ class CopyModel extends Controller
         if ($action === 'autocomplete') {
             $this->autocompleteAction();
             return;
+        } elseif (false === $this->pipeFalse('execAction', $action, $this->codeModel)) {
+            return;
         } elseif (false === $this->loadModel()) {
             Tools::log()->warning('record-not-found');
             return;
         }
+
+        // creamos el título de la página
+        $this->title .= ' ' . $this->model->primaryDescription();
 
         // si no es un documento de compra o venta, cargamos su plantilla
         switch ($this->modelClass) {
@@ -94,13 +99,12 @@ class CopyModel extends Controller
             case 'Producto':
                 $this->setTemplate(self::TEMPLATE_PRODUCTO);
                 break;
+
+            default:
+                $this->pipe('before', $this->model);
+                break;
         }
 
-        if (false === $this->pipeFalse('before', $this->model)) {
-            return;
-        }
-
-        $this->title .= ' ' . $this->model->primaryDescription();
         if ($action === 'save') {
             switch ($this->modelClass) {
                 case 'AlbaranCliente':
@@ -123,6 +127,10 @@ class CopyModel extends Controller
 
                 case 'Producto':
                     $this->saveProduct();
+                    break;
+
+                default:
+                    $this->pipe('saveAction', $this->model, $this->codeModel);
                     break;
             }
         }

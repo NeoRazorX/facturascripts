@@ -181,6 +181,7 @@ abstract class BaseView
             'checkBoxes' => true,
             'clickable' => true,
             'customized' => false,
+            'itemLimit' => FS_ITEM_LIMIT,
             'megasearch' => false,
             'saveFilters' => false,
         ];
@@ -277,19 +278,20 @@ abstract class BaseView
         $pages = [];
         $key1 = $key2 = 0;
         $current = 1;
+        $limit = (int)$this->settings['itemLimit'];
 
         // add all pages
         while ($key2 < $this->count) {
             $pages[$key1] = [
                 'active' => ($key2 == $this->offset),
                 'num' => $key1 + 1,
-                'offset' => $key1 * FS_ITEM_LIMIT,
+                'offset' => $key1 * $limit,
             ];
             if ($key2 == $this->offset) {
                 $current = $key1;
             }
             $key1++;
-            $key2 += FS_ITEM_LIMIT;
+            $key2 += $limit;
         }
 
         // now remove pages

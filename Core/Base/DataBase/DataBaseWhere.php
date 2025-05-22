@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -300,10 +300,23 @@ class DataBaseWhere
      */
     private function getValueFromOperatorIn($values): string
     {
+        // es un array
+        if (is_array($values)) {
+            $result = '';
+            $comma = '';
+            foreach ($values as $value) {
+                $result .= $comma . $this->dataBase->var2str($value);
+                $comma = ',';
+            }
+            return $result;
+        }
+
+        // es una subconsulta
         if (0 === stripos($values, 'select ')) {
             return $values;
         }
 
+        // es un string con comas
         $result = '';
         $comma = '';
         foreach (explode(',', $values) as $value) {
@@ -369,7 +382,7 @@ class DataBaseWhere
             return $this->getValueFromOperator($value);
         }
 
-        if ($value !== null && strpos($value, 'field:') === 0) {
+        if ($value !== null && strpos($value, 'field:') === 0 && strlen($value) > 6) {
             return $this->dataBase->escapeColumn(substr($value, 6));
         }
 

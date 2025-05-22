@@ -1,156 +1,770 @@
-"ciudad";"idprovincia";"codeid";"latitude";"longitude"
-"Azua de Compostela";"508";"";"18.4542";"-70.7292"
-"Estebanía";"508";"";"18.4427";"-70.8129"
-"Guayabal";"508";"";"18.5311";"-70.9797"
-"Las Charcas";"508";"";"18.3177";"-70.4517"
-"Las Yayas de Viajama";"508";"";"18.4231";"-70.7658"
-"Padre Las Casas";"508";"";"18.2833";"-70.4500"
-"Peralta";"508";"";"18.3720";"-70.3113"
-"Pueblo Viejo";"508";"";"18.4645";"-70.8242"
-"Sabana Yegua";"508";"";"18.6053";"-70.9337"
-"Tábara Arriba";"508";"";"18.6439";"-70.7972"
-"Galván";"509";"";"18.4764";"-71.2608"
-"Los Ríos";"509";"";"18.2881";"-71.1619"
-"Neiba";"509";"";"18.4944";"-71.4158"
-"Tamayo";"509";"";"18.1851";"-71.1019"
-"Villa Jaragua";"509";"";"18.4128";"-71.2706"
-"Barahona";"510";"";"18.2085";"-71.1002"
-"Cabral";"510";"";"17.9345";"-71.1849"
-"El Peñón";"510";"";"18.1771";"-71.1115"
-"Enriquillo";"510";"";"17.9833";"-71.2333"
-"Fundación";"510";"";"18.2445";"-71.1137"
-"Jaquimeyes";"510";"";"18.1849";"-71.1072"
-"La Ciénaga";"510";"";"18.2633";"-71.1525"
-"Las Salinas";"510";"";"17.9323";"-71.2084"
-"Paraíso";"510";"";"18.3328";"-71.2015"
-"Polo";"510";"";"18.1083";"-71.1849"
-"Vicente Noble";"510";"";"18.4570";"-71.3922"
-"Dajabón";"511";"";"19.5480";"-71.7090"
-"El Pino";"511";"";"19.4492";"-71.7888"
-"Loma de Cabrera";"511";"";"19.9040";"-71.6318"
-"Partido";"511";"";"19.5884";"-71.3786"
-"Restauración";"511";"";"19.5563";"-71.0902"
-"Distrito Nacional";"512";"";"18.4861";"-69.9312"
-"Arenoso";"513";"";"19.1458";"-69.5224"
-"Castillo";"513";"";"19.2173";"-69.5096"
-"Eugenio María de Hostos";"513";"";"19.1204";"-69.5109"
-"Las Guáranas";"513";"";"19.0167";"-69.5667"
-"Pimentel";"513";"";"19.0540";"-69.6151"
-"San Francisco de Macorís";"513";"";"19.2973";"-70.2533"
-"Villa Riva";"513";"";"19.3345";"-69.7448"
-"Bánica";"514";"";"18.7151";"-71.7074"
-"Comendador";"514";"";"18.8752";"-71.7078"
-"El Llano";"514";"";"18.8433";"-70.6819"
-"Hondo Valle";"514";"";"18.7203";"-71.7060"
-"Juan Santiago";"514";"";"18.7703";"-71.5812"
-"Pedro Santana";"514";"";"18.4333";"-71.7333"
-"El Seibo";"515";"";"18.7649";"-69.0364"
-"Miches";"515";"";"18.9381";"-69.0136"
-"Cayetano Germosén";"516";"";"19.5941";"-70.9467"
-"Gaspar Hernández";"516";"";"19.6417";"-70.1811"
-"Jamao al Norte";"516";"";"19.7764";"-70.7633"
-"Moca";"516";"";"19.3936";"-70.5250"
-"El Valle";"517";"";"18.5789";"-69.3172"
-"Hato Mayor del Rey";"517";"";"18.7647";"-69.2575"
-"Sabana de la Mar";"517";"";"18.9578";"-69.4053"
-"Salcedo";"518";"";"19.3772";"-70.4167"
-"Tenares";"518";"";"19.3772";"-70.4167"
-"Villa Tapia";"518";"";"19.1493";"-70.6648"
-"Cristóbal";"519";"";"18.3814";"-71.2327"
-"Duvergé";"519";"";"18.5720";"-71.7319"
-"Jimaní";"519";"";"18.4931";"-71.8494"
-"La Descubierta";"519";"";"18.5969";"-71.7072"
-"Mella";"519";"";"18.4308";"-71.7842"
-"Postrer Río";"519";"";"18.4203";"-71.6361"
-"Higüey";"520";"";"18.6150";"-68.7076"
-"San Rafael del Yuma";"520";"";"18.4233";"-68.7692"
-"Guaymate";"521";"";"18.7353";"-68.6722"
-"La Romana";"521";"";"18.4273";"-68.9728"
-"Villa Hermosa";"521";"";"18.5033";"-68.9094"
-"Constanza";"522";"";"18.9146";"-70.7457"
-"Jarabacoa";"522";"";"19.1205";"-70.6455"
-"Jima Abajo";"522";"";"19.1611";"-70.8764"
-"La Concepción de La Vega";"522";"";"19.2342";"-70.5172"
-"Cabrera";"523";"";"19.6267";"-69.9026"
-"El Factor";"523";"";"19.5208";"-69.8833"
-"Nagua";"523";"";"19.3761";"-69.8478"
-"Río San Juan";"523";"";"19.3833";"-69.8500"
-"Bonao";"524";"";"18.9424";"-70.4097"
-"Maimón";"524";"";"19.2188";"-70.5404"
-"Piedra Blanca";"524";"";"18.8967";"-70.4294"
-"Castañuela";"525";"";"19.8011";"-71.0500"
-"Guayubín";"525";"";"19.7496";"-71.1015"
-"Las Matas de Santa Cruz";"525";"";"19.5489";"-71.1962"
-"Montecristi";"525";"";"19.8597";"-71.6450"
-"Pepillo Salcedo";"525";"";"19.8591";"-71.6297"
-"Villa Vásquez";"525";"";"19.8340";"-71.4758"
-"Bayaguana";"526";"";"18.7683";"-69.7064"
-"Monte Plata";"526";"";"18.8047";"-69.7872"
-"Peralvillo";"526";"";"19.2220";"-69.4255"
-"Sabana Grande de Boyá";"526";"";"18.9731";"-69.6892"
-"Yamasá";"526";"";"18.7667";"-69.4333"
-"Oviedo";"527";"";"17.8667";"-71.4667"
-"Pedernales";"527";"";"18.0384";"-71.7411"
-"Baní";"528";"";"18.2862";"-70.3316"
-"Nizao";"528";"";"18.1833";"-70.4167"
-"Altamira";"529";"";"19.4000";"-71.2833"
-"Guananico";"529";"";"19.7108";"-70.9208"
-"Imbert";"529";"";"19.8153";"-70.7892"
-"Los Hidalgos";"529";"";"19.8000";"-70.6500"
-"Luperón";"529";"";"19.8833";"-70.8667"
-"Puerto Plata";"529";"";"19.7975";"-70.6970"
-"Sosúa";"529";"";"19.7519";"-70.5229"
-"Villa Isabela";"529";"";"19.7500";"-70.8000"
-"Villa Montellano";"529";"";"19.6500";"-70.8000"
-"Las Terrenas";"530";"";"19.3167";"-69.5500"
-"Samaná";"530";"";"19.2044";"-69.3367"
-"Sánchez";"530";"";"19.2500";"-69.5167"
-"Cevicos";"531";"";"19.1587";"-70.3861"
-"Cotuí";"531";"";"19.0500";"-70.1500"
-"Fantino";"531";"";"19.2667";"-70.1500"
-"La Mata";"531";"";"19.2500";"-69.6500"
-"Bajos de Haina";"532";"";"18.4167";"-70.0333"
-"Cambita Garabito";"532";"";"18.6167";"-70.0333"
-"Los Cacaos";"532";"";"18.3500";"-70.3500"
-"Sabana Grande de Palenque";"532";"";"18.2667";"-70.1333"
-"San Cristóbal";"532";"";"18.4167";"-70.1167"
-"San Gregorio de Nigua";"532";"";"18.3833";"-70.0167"
-"Villa Altagracia";"532";"";"18.6667";"-70.1333"
-"Yaguate";"532";"";"18.4500";"-70.1500"
-"Rancho Arriba";"533";"";"18.7000";"-70.7500"
-"Sabana Larga";"533";"";"18.5500";"-70.6500"
-"San José de Ocoa";"533";"";"18.5333";"-70.5000"
-"Bohechío";"534";"";"18.9500";"-70.6667"
-"El Cercado";"534";"";"18.5000";"-71.4167"
-"Juan de Herrera";"534";"";"18.5000";"-71.2500"
-"Las Matas de Farfán";"534";"";"18.8750";"-71.2500"
-"San Juan de la Maguana";"534";"";"18.8050";"-71.2297"
-"Vallejuelo";"534";"";"18.6670";"-70.9204"
-"Consuelo";"535";"";"18.3722";"-69.2283"
-"Guayacanes";"535";"";"18.4170";"-69.1723"
-"Quisqueya";"535";"";"18.5313";"-69.7840"
-"Ramón Santana";"535";"";"18.6146";"-69.7444"
-"San José de Los Llanos";"535";"";"19.0371";"-70.0288"
-"San Pedro de Macorís";"535";"";"18.4534";"-69.3045"
-"Bisonó";"536";"";"19.3798";"-70.4000"
-"Jánico";"536";"";"19.3750";"-70.5833"
-"Licey al Medio";"536";"";"19.4667";"-70.6500"
-"Puñal";"536";"";"19.3167";"-70.7000"
-"Sabana Iglesia";"536";"";"19.3750";"-70.6667"
-"San José de las Matas";"536";"";"19.6500";"-70.8667"
-"Santiago";"536";"";"19.4500";"-70.7000"
-"Tamboril";"536";"";"19.4833";"-70.6667"
-"Villa González";"536";"";"19.5167";"-70.7000"
-"Los Almácigos";"537";"";"19.5833";"-71.1833"
-"Monción";"537";"";"19.4667";"-71.1333"
-"San Ignacio de Sabaneta";"537";"";"19.5000";"-71.3333"
-"Boca Chica";"538";"";"18.4480";"-69.6073"
-"Los Alcarrizos";"538";"";"18.5022";"-70.0131"
-"Pedro Brand";"538";"";"18.4636";"-70.0539"
-"San Antonio de Guerra";"538";"";"18.5667";"-69.6333"
-"Santo Domingo Este";"538";"";"18.4883";"-69.8575"
-"Santo Domingo Norte";"538";"";"18.5447";"-69.8333"
-"Santo Domingo Oeste";"538";"";"18.4861";"-70.0022"
-"Esperanza";"539";"";"19.5833";"-71.2500"
-"Laguna Salada";"539";"";"19.6667";"-71.0833"
-"Mao";"539";"";"19.5514";"-71.0789"
+ciudad,idprovincia,codeid,latitude,longitude
+"Abajo Guaucí",8,,19.40862,-70.52717
+"Agua Santa del Yuna",6,,19.15072,-69.80069
+"Aleta de Adón",10,,18.40371,-68.56443
+Altamira,18,,19.6773,-70.84428
+"Alto de la Bandera",30,,18.81362,-70.62633
+"Alto de la Diferencia",25,,19.25889,-71.09004
+"Alto de La Sierra",26,,19.21763,-71.38393
+"Alto de la Tierra Colorada",30,,18.86667,-70.63333
+"Alto de Los Gómex",18,,19.77615,-71.14811
+Arenoso,6,,19.18732,-69.85917
+"Arroyo Barril",20,,19.20179,-69.44553
+"Arroyo Barril Airport",20,,19.19855,-69.43046
+"Arroyo Salado",14,,19.5,-69.9
+Atolladero,15,,19.77686,-71.55667
+Auto,3,,18.08333,-71.25
+Azua,1,,18.5,-70.75
+"Azua Province",1,,18.58333,-70.8
+Baboso,15,,19.55367,-71.42448
+Baitoa,25,,19.32512,-70.70357
+"Bajos de Haina",33,,18.41667,-70.03333
+Baní,35,,18.33333,-70.38333
+Bánica,11,,19.03333,-71.61667
+"Baoruco Province",2,,18.5,-71.35
+Barahona,3,,18.21337,-71.0994
+"Barahona Province",3,,18.16667,-71.25
+Barangüeybano,28,,18.64751,-69.08397
+Barreras,1,,18.32333,-70.88922
+"Batey Iguamo",29,,18.5757,-69.36806
+"Batey Seibo",12,,18.55356,-69.02716
+Bávaro,10,,18.69634,-68.434
+Bayaguana,32,,18.75031,-69.63525
+Bayahibe,10,,18.36795,-68.83946
+"Bella Vista",3,,18.13333,-71.18333
+Berenjena,32,,18.62976,-69.81056
+Bisonó,25,,19.58333,-70.86667
+"Boca Chica",37,,18.45,-69.6
+"Boca de Yuma",10,,18.37825,-68.609
+Boguá,10,,18.56667,-68.61667
+Bohechío,23,,18.83333,-71
+Bojucal,1,,18.66566,-70.89056
+Bonao,31,,18.91667,-70.46667
+Busunai,3,,18,-71.16667
+Cabarete,18,,19.74982,-70.40829
+"Cabeza de Muerto",23,,18.62508,-71.42695
+"Cabo Beata",16,,17.60489,-71.42263
+"Cabo Engaño",10,,18.60932,-68.33994
+"Cabo Falso",16,,17.76972,-71.68778
+"Cabo La Roca",8,,19.65,-70.25
+"Cabo Rojo",16,,17.90124,-71.6324
+"Cabo Tres Amarras",14,,19.64357,-69.89976
+Cabral,3,,18.19991,-71.2466
+Cabrera,14,,19.6426,-69.90489
+"Cachón Salado",3,,18.24255,-71.20353
+"Cacique Enriquillo",9,,18.65,-71.8
+"Café de Las Mujeres",3,,18,-71.18333
+Calafón,3,,18.12354,-71.18555
+"Cambita Garabitos",33,,18.45458,-70.19907
+"Cana Chapetón",15,,19.60703,-71.25734
+Cañafístola,23,,18.63129,-71.27336
+Canoa,3,,18.35499,-71.15851
+Caquita,8,,19.55,-70.48333
+Castañuelas,15,,19.71387,-71.49876
+Castillo,6,,19.20824,-70.02726
+"Cayetano Germosén",8,,19.34413,-70.48342
+"Cayo de Las Flechas",20,,19.18333,-69.27568
+"Cayos Las Ballenas",20,,19.33333,-69.56667
+Cazuela,15,,19.7,-71.63333
+"Ceiba Mocha",18,,19.86667,-70.88333
+Cenoví,6,,19.2545,-70.368
+"Cercado Abajo",23,,18.72681,-71.51742
+"Cerro de Navas",18,,19.81397,-70.9875
+"Cerro Largo de las Cuevas",32,,18.86309,-70.09183
+"Cerro Las Calderas",35,,18.21667,-70.48333
+"Cerro Las Cayas",28,,18.98333,-68.95
+Cevicos,21,,19.00449,-69.97896
+"Charco El Toro Abajo",3,,18.03333,-71.16667
+"Charco El Toro Arriba",3,,18.05,-71.16667
+"Charco Prieto",3,,18.14814,-71.17372
+"Cibao International Airport",4,,19.40609,-70.60469
+"Cidra de Tomás",26,,19.26122,-71.30396
+"Ciénaga de la Costa",10,,18.78333,-68.55
+Cocinero,23,,18.89782,-71.55716
+"Colonia Los Jovillos",32,,18.7393,-69.92766
+Comendador,11,,18.88333,-71.66667
+"Concepción de la Vega",30,,19.22207,-70.52956
+Constanza,30,,18.86667,-70.7
+Consuelo,24,,18.58446,-69.2571
+Cortadera,3,,18.31811,-71.05021
+Cortadero,2,,18.51752,-71.52496
+"Costa de Los Haitises",20,,19.08333,-69.6
+Cotuí,21,,19,-70.16667
+"Cristo Rey",34,,18.5,-69.93333
+Cristóbal,9,,18.29405,-71.29298
+Cromo,16,,17.88333,-71.3
+Cuacho,3,,18.1,-71.18333
+"Cueva Hedionda",3,,18.32268,-71.03342
+"Cueva Las Maravillas Airport",24,,18.45003,-69.29997
+Dajabón,4,,19.58333,-71.58333
+Damaso,3,,18.3233,-71.02185
+Desambilado,16,,17.9,-71.33333
+"Don Gregorio",35,,18.24315,-70.2
+"Don Juan",32,,18.82774,-69.94629
+"Dr. Joaquin Balaguer Airport",37,,18.5725,-69.9856
+"Duarte Province",6,,19.25,-70.08333
+Duvergé,9,,18.37839,-71.52469
+"El Anón",10,,18.83732,-68.64213
+"El Balajú",12,,18.11667,-68.56667
+"El Cacao",33,,18.52719,-70.29585
+"El Cachón",3,,18.24833,-71.18912
+"El Caimán",3,,17.88169,-71.26048
+"El Cantón",9,,18.40598,-71.59624
+"El Carril",33,,18.44905,-70.02785
+"El Cascajo",16,,17.7969,-71.50662
+"El Cayo",3,,17.86667,-71.26667
+"El Cercado",23,,18.7,-71.46667
+"El Cerrazo",25,,19.53632,-70.62354
+"El Charco de Mateo",2,,18.56983,-71.27563
+"El Córbano",23,,18.81675,-71.2562
+"El Corral",33,,18.58397,-70.31203
+"El Correo",16,,17.77002,-71.67231
+"El Factor",14,,19.31834,-69.88827
+"El Guamito",15,,19.67631,-71.30363
+"El Guayabal",1,,18.7496,-70.8369
+"El Hoyazo",1,,18.89052,-70.92033
+"El Jengibral",24,,18.6205,-69.40858
+"El Jobo de los Tres Ganchos",23,,18.71282,-71.17009
+"El Juvillar",3,,18.33333,-71.01667
+"El Limo",3,,18.13333,-71.2
+"El Limón",20,,19.28729,-69.42655
+"El Llano",11,,18.81667,-71.63333
+"El Manglar",16,,18.02582,-71.72428
+"El Manglar Atravesado",3,,18.31096,-71.09619
+"El Millo",16,,17.87922,-71.29653
+"El Pajal",29,,19.0427,-69.32601
+"El Palmar",2,,18.41139,-71.24558
+"El Palo Treinta",3,,18.05,-71.23333
+"El Palo Veinte",3,,18.16667,-71.18333
+"El Peñón",3,,18.29643,-71.1841
+"El Peñón Gordo",10,,18.26547,-68.76921
+"El Peñoncito",10,,18.34665,-68.61495
+"El Pescadero",14,,19.25874,-69.80376
+"El Pino",4,,19.43537,-71.4754
+"El Pocito",15,,19.64027,-71.43553
+"El Puertecito",3,,18.28889,-71.0978
+"El Puerto",24,,18.78333,-69.46667
+"El Quemado de Satiaguito",23,,18.92916,-71.10771
+"El Rosario",37,,18.6,-69.81667
+"El Seibo",28,,18.75,-69
+"El Surgidero",12,,18.15,-68.75
+"El Tejado",15,,19.73617,-71.65048
+"El Valle",29,,18.97567,-69.37827
+"El Valle de la Algarroba",10,,18.5,-68.58333
+Enriquillo,3,,17.9,-71.23333
+"Ensanche Luperón",34,,18.5,-69.9
+"Espaillat Province",8,,19.58333,-70.41667
+Esperalvillo,32,,18.81509,-70.03557
+Esperanza,27,,19.58469,-70.98489
+Estebanía,1,,18.4577,-70.6435
+"Estero Hondo",18,,19.82712,-71.17411
+"Eugenio María De Hostos",6,,19.14028,-70.02199
+Fantino,21,,19.11667,-70.3
+"Felipa Pérez",24,,18.69635,-69.52549
+"Firme de la Loma Quemada",1,,18.55,-70.78333
+"Firme de los Limones",1,,18.47339,-70.56083
+Fundación,3,,18.28668,-71.18147
+"Gajo de Las Estacas",23,,19.07087,-71.32587
+Galván,2,,18.50228,-71.34271
+"Gaspar Hernández",8,,19.62748,-70.27772
+Gonzalo,32,,18.95147,-69.75114
+Grosampié,3,,17.95,-71.35
+"Guaimarote Abajo",32,,18.79376,-69.53208
+"Guaimarote Arriba",32,,18.81612,-69.524
+Guaitabón,10,,18.48841,-68.68312
+Guananico,18,,19.72693,-70.92294
+Guatapanal,27,,19.50705,-70.91713
+Guayabal,9,,18.5981,-71.64184
+"Guayabo Dulce",29,,18.65,-69.28333
+Guayacanes,24,,18.45063,-69.43347
+"Guayacanes, San Pedro de Macoris",24,,18.42495,-69.4576
+Guaymate,12,,18.58793,-68.97867
+Guayubín,15,,19.61667,-71.33333
+"Hatillo Palma",15,,19.66256,-71.19406
+"Hato del Medio",15,,19.68252,-71.35022
+"Hato del Yaque",25,,19.46667,-70.76667
+"Hato Mayor",29,,18.7,-69.33333
+"Hato Mayor del Rey",29,,18.76278,-69.25681
+"Hato Mayor Province",29,,18.83333,-69.33333
+"Hato Viejo",15,,19.77129,-71.58621
+"Hernando Alonso",21,,19.01491,-70.26292
+Higüerito,23,,18.82177,-71.22387
+Higüey,10,,18.7,-68.66667
+"Hondo Valle",11,,18.71599,-71.69511
+Hostos,6,,19.18043,-70.02046
+"Hoyo de la Piedra",11,,18.74038,-71.56616
+"Hueso de la Vaca",36,,18.68416,-70.49191
+Imbert,18,,19.75371,-70.82906
+Independencia,9,,18.4,-71.63333
+"Indio Viejo",23,,18.65142,-71.44079
+"Isla Alto Velo",16,,17.4759,-71.64195
+"Isla Beata",16,,17.57517,-71.51707
+"Isla Cabras",15,,19.88787,-71.66806
+"Isla Catalina",12,,18.3579,-69.00719
+"Isla Saona",12,,18.14676,-68.6877
+Jackson,20,,19.28333,-69.7
+"Jagua Amarga",30,,19.18311,-70.41782
+Jaibón,27,,19.61169,-71.14847
+"Jamao al Norte",8,,19.63552,-70.44664
+Jánico,25,,19.23528,-70.79515
+Jaquimeyes,3,,18.31173,-71.16145
+Jarabacoa,30,,19.13333,-70.66667
+Jicomé,27,,19.64955,-70.94927
+"Jima Abajo",30,,19.13292,-70.37607
+Jimaní,9,,18.46667,-71.83333
+"Joba Arriba",8,,19.56667,-70.26667
+"José Mota",3,,18.15,-71.13333
+"Juan Adrián",31,,18.76365,-70.33732
+"Juan de Herrera",23,,18.87402,-71.2383
+"Juan de Nina Muñoz",18,,19.73333,-70.61667
+"Juan Dolio",24,,18.43507,-69.42115
+"Juan Golla",16,,17.9,-71.45
+"Juan Santiago",11,,18.70342,-71.58971
+Juancho,16,,17.85782,-71.29311
+Juncalito,25,,19.2199,-70.81905
+"Junco Verde",6,,19.16532,-69.88354
+"La Agustina",34,,18.5,-69.93333
+"La Altagracia Province",10,,18.58333,-68.63333
+"La Antonia",15,,19.64448,-71.44588
+"La Boca de la Cañada",16,,17.90826,-71.49143
+"La Boca de La Laguna",3,,18.3,-71.06667
+"La Boca de Los Palos",10,,18.84572,-68.62906
+"La Cabirma",26,,19.27983,-71.29715
+"La Cabria de Robinsón Garo",16,,18.03203,-71.69722
+"La Caleta",24,,18.4,-69.48333
+"La Canela",25,,19.47341,-70.81629
+"La Casa Grande",32,,19.03214,-69.7305
+"La Caya",27,,19.69981,-71.12084
+"La Ceiba",4,,19.39113,-71.6147
+"La Ceiba de los Boquerones",29,,18.85301,-69.38623
+"La Cerca de Pensón",32,,18.85,-70.05
+"La Ciénaga",30,,18.81438,-70.75793
+"La Colgada de Hoyo",3,,18.15,-71.15
+"La Descubierta",9,,18.57053,-71.72967
+"La Emboscada",25,,19.46667,-70.73333
+"La Estrelladora",10,,18.47513,-68.5814
+"La Filipina",3,,18.11667,-71.13333
+"La Guanábana",28,,18.65,-69.01667
+"La Guardarraya",31,,18.89866,-70.34727
+"La Isabela",37,,18.5333,-69.9833
+"La Jarda de los Negros",10,,18.46211,-68.58219
+"La Jarda del Cabo",10,,18.47888,-68.44288
+"La Javilla",3,,18.19112,-71.10429
+"La Jina",34,,18.69403,-69.87726
+"La Jina Marcada",33,,18.51574,-70.2442
+"La Julia",34,,18.46667,-69.93333
+"La Lagunita",3,,18.02436,-71.16383
+"La Lechuza",3,,18.05,-71.16667
+"La Letra de los Ramos",10,,18.43559,-68.58982
+"La Mata",21,,19.09916,-70.16706
+"La Muda",3,,17.96667,-71.33333
+"La Peña",6,,19.27676,-70.17173
+"La Petaca",23,,19.12984,-71.25706
+"La Piedra",21,,19.12088,-70.26546
+"La Piedra Candela",23,,18.78868,-71.56169
+"La Piedra de Agua",23,,18.99938,-71.27994
+"La Piedra de Amolar",18,,18.31595,-70.38098
+"La Piedra de Buen Hombre",15,,19.86789,-71.42575
+"La Piedra de Candela",23,,18.96075,-71.43536
+"La Piedra de Carlos",30,,18.83496,-70.72198
+"La Piedra de la Colmena",16,,17.96667,-71.6
+"La Piedra de los Haitianos",11,,19.26337,-71.57505
+"La Piedra del Agua",23,,18.74849,-71.35735
+"La Piedra del Vigía",12,,18.13333,-68.58333
+"La Piedra Grande",32,,18.81541,-69.50788
+"La Piedra Hincada",11,,18.93444,-71.70278
+"La Piedra Sola",10,,18.45,-68.43333
+"La Pieza",4,,19.25444,-71.62266
+"La Pileta del Corozo",10,,18.53764,-68.51232
+"La Piña",26,,19.28844,-71.43299
+"La Piñita",10,,18.52089,-68.7297
+"La Pinta",15,,19.65111,-71.54197
+"La Pita",30,,19.01934,-70.60695
+"La Plata",1,,18.58099,-70.70093
+"La Playa",9,,18.42146,-71.7588
+"La Playa Grande",25,,19.12219,-71.02452
+"La Playita",10,,18.42978,-68.59013
+"La Plaza",23,,18.65896,-71.12914
+"La Plenita",2,,18.58718,-71.4142
+"La Pluma",24,,18.43333,-69.18333
+"La Plumita",24,,18.48333,-69.2
+"La Pocilga",4,,19.30118,-71.70209
+"La Potranca",25,,19.38333,-71.08333
+"La Poza",3,,18.15589,-71.22524
+"La Poza de la Paloma",9,,18.34275,-71.64484
+"La Poza del Palo",3,,18.12551,-71.0698
+"La Prensadera",23,,18.87998,-71.12673
+"La Primavera",9,,18.51534,-71.82283
+"La Pringamosa",29,,18.73538,-69.29961
+"La Puente",11,,18.71841,-71.67602
+"La Puerta",11,,19.12367,-71.59006
+"La Puerta de Cañada Vieja",2,,18.60304,-71.54927
+"La Puertecita",23,,18.67052,-71.30151
+"La Punta del Quemado",23,,18.96304,-71.19013
+"La Quebradita",21,,18.87933,-70.20994
+"La Raqueta",3,,18.38333,-71.15
+"La Regadera",1,,18.59032,-70.86813
+"La Resaca",2,,18.43412,-71.49334
+"La Rinconada",3,,18.27428,-71.29441
+"La Romana",12,,18.15621,-68.67902
+"La Romana International Airport",12,,18.45071,-68.91183
+"La Rosa",23,,18.60762,-71.34548
+"La Rosita",35,,18.23265,-70.41518
+"La Rusia",23,,18.96667,-71.46667
+"La Sabana",1,,18.52439,-70.79814
+"La Sabana Abajo",18,,19.86367,-70.98008
+"La Sabaneta",4,,19.42926,-71.60721
+"La Sabrosa",23,,19.09951,-71.24059
+"La Salvación",3,,18.13388,-71.14574
+"La Salvia",1,,18.31919,-70.56648
+"La Savita",32,,18.80416,-69.85679
+"La Sequía",9,,18.28333,-71.4
+"La Serranía",3,,18.06667,-71.26667
+"La Setenta",15,,19.79203,-71.66588
+"La Siembra",23,,18.7091,-71.52642
+"La Siembra de Pío",1,,18.42396,-70.4949
+"La Sierra",24,,18.43139,-69.46762
+"La Sierrecita",15,,19.61823,-71.5083
+"La Sierresita",25,,19.25314,-71.07748
+"La Sierrita",3,,18.38333,-71.06667
+"La Siguapa",34,,18.45374,-69.52622
+"La Solitaria",15,,19.71171,-71.38181
+"La Sovaca",23,,18.75,-71.46667
+"La Subida de Calabacito",18,,19.72998,-70.70385
+"La Subida del Candelón",2,,18.55781,-71.23486
+"La Subida del Palo de Viento",31,,18.98012,-70.52715
+"La Subida del Tunal",3,,18.00297,-71.35005
+"La Surza",3,,18.36469,-71.17106
+"La Tala",2,,18.55489,-71.44681
+"La Talanquera",20,,19.21599,-69.2263
+"La Talla",2,,18.5,-71.31667
+"La Tasajera",2,,18.58143,-71.27963
+"La Tenería",3,,17.91667,-71.23333
+"La Uvilla",2,,18.36186,-71.21046
+"La Vega",30,,19.25,-70.5
+"La Victoria",37,,18.59215,-69.84283
+"La Vigía",36,,18.73333,-70.41667
+"La Yerba de Guinea",10,,18.39998,-68.59399
+"Laguna Cabarete",18,,19.75185,-70.42601
+"Laguna Colorada",21,,19.12708,-69.97473
+"Laguna de Hoyo Claro",10,,18.52294,-68.45289
+"Laguna de Las Valles",15,,19.68482,-71.74534
+"Laguna de Los Anones",24,,18.58072,-69.57083
+"Laguna de los Sociá",15,,19.77779,-71.53209
+"Laguna de Luis Aracena",4,,19.53889,-71.55561
+"Laguna de Oviedo",16,,17.75,-71.36667
+"Laguna El Caletón",10,,18.6,-68.35
+"Laguna La Creación",37,,18.59379,-69.68388
+"Laguna La Jagua",15,,19.65259,-71.71283
+"Laguna La Perra",14,,19.39964,-69.88279
+"Laguna La Salinita",1,,18.41907,-70.69741
+"Laguna La Virtuosa",14,,19.47623,-69.97298
+"Laguna Los Aletones",3,,18.2555,-71.11715
+"Laguna Los Conucos",15,,19.83294,-71.38029
+"Laguna Mella",9,,18.35,-71.4
+"Laguna Puerto Caballo",18,,19.87547,-70.99002
+"Laguna Rincón de Clara",34,,18.61645,-69.8111
+"Laguna Salada",27,,19.65043,-71.08429
+Laguneta,3,,18.01037,-71.23829
+"Las Aguas",15,,19.7486,-71.61388
+"Las Aguas Blancas",30,,18.83876,-70.67118
+"Las Albahacas",10,,18.49914,-68.61066
+"Las Américas International Airport",34,,18.42966,-69.66893
+"Las Auyamas",9,,18.62547,-71.63924
+"Las Avispas",23,,18.67551,-71.52053
+"Las Barías",1,,18.41667,-70.8
+"Las Berenjenas",6,,19.28092,-70.05557
+"Las Bijas",28,,18.71006,-69.19465
+"Las Bocas del Licey",25,,19.51002,-70.60124
+"Las Cabilmas",23,,18.78449,-71.52926
+"Las Cabuyas",23,,18.96563,-71.40059
+"Las Calles",2,,18.53079,-71.49544
+"Las Canas",15,,19.85026,-71.61161
+"Las Canelillas",1,,18.74376,-70.86752
+"Las Cañitas",9,,18.28851,-71.51324
+"Las Canoas",35,,18.28622,-70.50777
+"Las Canteras",3,,18.2,-71.11667
+"Las Caobas",8,,19.58568,-70.22822
+"Las Caritas",3,,18.17177,-71.09409
+"Las Carreras",23,,18.84276,-71.19346
+"Las Cayas",24,,18.657,-69.23417
+"Las Charcas",1,,18.45026,-70.61724
+"Las Charcas de Azua",1,,18.45796,-70.61677
+"Las Charcas de Bobo",23,,18.6954,-71.13383
+"Las Chicharas",9,,18.62006,-71.64786
+"Las Cien Tareas",18,,19.70883,-70.48576
+"Las Claras",24,,18.50425,-69.45298
+"Las Clavellinas",2,,18.51171,-71.55963
+"Las Corcobas",14,,19.37936,-69.93117
+"Las Costas",35,,18.24876,-70.33656
+"Las Cotorras",2,,18.5566,-71.36356
+"Las Cruces",35,,18.34622,-70.44305
+"Las Cuevas",35,,18.6846,-70.66945
+"Las Damas",23,,18.78467,-71.20964
+"Las Dos Lomas",29,,18.71528,-69.30458
+"Las Dos Matas",23,,18.79633,-71.54052
+"Las Dos Piedras",16,,17.86667,-71.51667
+"Las Dos Rosas",11,,18.74545,-71.68446
+"Las Frías",23,,19.09648,-71.40086
+"Las Galeras",20,,19.29332,-69.19756
+"Las Gallardas",33,,18.36376,-70.17632
+"Las Garzas",14,,19.21769,-69.78592
+"Las Guajacas",30,,18.87454,-70.71594
+"Las Guanábanas",24,,18.53199,-69.1486
+"Las Guáranas",24,,18.69694,-69.50695
+"Las Isletas",15,,19.69889,-71.54247
+"Las Javillas",28,,18.64579,-68.98606
+"Las Lagunas",2,,18.55945,-71.46791
+"Las Lagunas Abajo",8,,19.42453,-70.47352
+"Las Lagunetas",2,,18.61341,-71.4871
+"Las Lajas",1,,18.48411,-70.62818
+"Las Lajitas",9,,18.4184,-71.70207
+"Las Lometas",32,,18.75762,-69.61495
+"Las Madres",16,,17.71667,-71.38333
+"Las Marras",18,,19.91667,-70.98333
+"Las Matas de Farfán",23,,18.91667,-71.5
+"Las Matas de Santa Cruz",15,,19.67024,-71.51512
+"Las Mayitas",1,,18.32873,-70.53287
+"Las Mesetas",2,,18.5306,-71.59076
+"Las Nueces",23,,18.75751,-71.35793
+"Las Ovejas",23,,18.85,-71.23333
+"Las Palmas",3,,17.95,-71.26667
+"Las Palmeras",9,,18.61667,-71.71667
+"Las Palmillas",10,,18.24238,-68.76043
+"Las Palmitas",3,,18.11667,-71.08333
+"Las Palomas",25,,19.42739,-70.63147
+"Las Petacas",2,,18.57898,-71.43992
+"Las Piraguas",18,,19.78333,-70.88333
+"Las Plumitas",24,,18.46702,-69.38316
+"Las Rosas",4,,19.29524,-71.57491
+"Las Sábilas",2,,18.51122,-71.34417
+"Las Salinas",3,,18.27485,-71.31596
+"Las Semajaguas",3,,18.33083,-71.07095
+"Las Siete Lomas",32,,18.81185,-69.55339
+"Las Tallotas",3,,18.1,-71.21667
+"Las Taranas",32,,18.96275,-69.76855
+"Las Tejas",1,,18.44589,-70.6064
+"Las Terrenas",20,,19.28578,-69.55459
+"Las Terreras",1,,18.38086,-70.76458
+"Las Tierritas Blancas",2,,18.54575,-71.46378
+"Las Tierritas Sucias",11,,18.96419,-71.7045
+"Las Tinas",1,,18.76667,-70.78333
+"Las Tres Bocas",34,,18.65323,-69.98279
+"Las Tres Compuertas",2,,18.51706,-71.35616
+"Las Tres Palmas",16,,17.93333,-71.65
+"Las Tumbas",2,,18.55261,-71.42805
+"Las Yautías",16,,17.91667,-71.53333
+"Las Yayas",3,,18.2,-71.21667
+"Las Yayas De Viajama",1,,18.604,-70.99966
+"Las Yayitas",1,,18.49853,-70.73727
+"Las Yerbas",9,,18.65326,-71.73402
+"Licey al Medio",8,,19.43014,-70.60038
+"Loma Atravesada",30,,19.11335,-70.66837
+"Loma Castellar",10,,18.83333,-68.7
+"Loma Caya",10,,18.76069,-68.80157
+"Loma Crepó",1,,18.81667,-70.93333
+"Loma de Cabrera",4,,19.43333,-71.6
+"Loma de la Joya",6,,19.37486,-70.28162
+"Loma de Las Canas",21,,19.0707,-70.24094
+"Loma de Las Caobas",26,,19.49313,-71.20535
+"Loma de Las Escobas",28,,18.83639,-68.9151
+"Loma de Las Nueces",21,,18.92573,-70.18447
+"Loma de Las Piraguas",8,,19.56667,-70.11667
+"Loma de Los Guananitos",31,,18.75,-70.3
+"Loma El Fuerte",2,,18.60558,-71.3941
+"Loma El Medio",31,,18.79738,-70.44158
+"Loma El Peñón de La Vieja Rufina",10,,18.61667,-68.46667
+"Loma en Medio",23,,18.70453,-71.49243
+"Loma Faisán",28,,18.93226,-68.92201
+"Loma Fuerte Resolué",33,,18.40252,-70.20716
+"Loma La Herradura",28,,18.89878,-69.10933
+"Loma La Piña",29,,18.99062,-69.24829
+"Loma La Pocilga",28,,18.96287,-69.05969
+"Loma La Prieta",18,,19.67566,-70.81279
+"Loma La Puerca",35,,18.46667,-70.4
+"Loma La Puerta",30,,19.11667,-70.71667
+"Loma La Resbalosa",1,,18.54955,-70.94329
+"Loma La Rosita",30,,19.12695,-70.66676
+"Loma La Rucilla",30,,19.04472,-70.95785
+"Loma La Salsa",29,,19.02131,-69.27672
+"Loma La Siembra",33,,18.55,-70.36667
+"Loma La Sierrecita",23,,18.6944,-71.47029
+"Loma La Sierrita",26,,19.31667,-71.36667
+"Loma Las Agustinas",28,,18.85475,-69.18143
+"Loma Las Auyamas",3,,18.09096,-71.30621
+"Loma Las Avispas",1,,18.72107,-70.82277
+"Loma Las Cayas",29,,19.02043,-69.30287
+"Loma Las Joyas",35,,18.32988,-70.29816
+"Loma Las Mesetas",26,,19.38166,-71.22709
+"Loma Las Petacas",2,,18.56667,-71.43333
+"Loma Las Tres Ceibas",28,,18.9748,-69.07294
+"Loma Las Tres Veredas",23,,19.16183,-71.31719
+"Loma Las Yagrumas",31,,18.89504,-70.25587
+"Loma Los Gabriles",29,,19.01309,-69.27073
+"Loma Manuel Golla",16,,17.94622,-71.46573
+"Loma Yaguas",35,,18.37536,-70.32024
+"Lometa La Piragua",8,,19.55,-70.23333
+"Los Alcarrizos",37,,18.52339,-70.03279
+"Los Anegadizos",23,,18.70394,-71.17798
+"Los Arroyos Chaparrales",23,,18.78333,-71.36667
+"Los Auquelles",1,,18.89061,-70.84446
+"Los Blanquizales",3,,18.21667,-71.1
+"Los Botaditos",2,,18.563,-71.28739
+"Los Botados",32,,18.73226,-69.99536
+"Los Cacaos",33,,18.59313,-70.32508
+"Los Cafeces",28,,18.92068,-69.21992
+"Los Calabozos",30,,18.96146,-70.78647
+"Los Charquitos",3,,18.08333,-71.2
+"Los Chupaderos",3,,18.11667,-71.13333
+"Los Corralitos",26,,19.40195,-71.35876
+"Los Derrumbados",3,,18.04523,-71.11886
+"Los Hatillos",28,,18.73022,-69.18022
+"Los Hidalgos",18,,19.73333,-71.03333
+"Los Hoyos de Eusebio",23,,18.9759,-71.12743
+"Los Jovillos",32,,18.74768,-69.94329
+"Los Limones",15,,19.76366,-71.31857
+"Los Llanos",24,,18.62035,-69.49581
+"Los Madrigales",24,,18.45301,-69.3401
+"Los Manglares",16,,18.04126,-71.72623
+"Los Montones Abajo",25,,19.3,-70.93333
+"Los Oréganos",10,,18.21747,-68.67619
+"Los Palos",12,,18.13176,-68.63995
+"Los Paredones",23,,18.7437,-71.55079
+"Los Patos",3,,17.95619,-71.18493
+"Los Ranchos de Babosico",25,,19.3559,-70.75956
+"Los Ríos",2,,18.52131,-71.59106
+"Los Tres Charcos",16,,17.9,-71.35
+"Los Vallecitos",1,,18.93862,-70.86979
+"Los Yabones",18,,19.75155,-70.86148
+"Los Yaguarizos",35,,18.34804,-70.37756
+Luperón,18,,19.89131,-70.96204
+Machembe,3,,18.1102,-71.08908
+Macutico,23,,19.0127,-71.0992
+Maimón,18,,19.8,-70.78333
+Maizal,27,,19.63655,-71.02734
+Majagual,2,,18.57788,-71.30858
+Mangamagua,32,,18.82353,-69.878
+Manoguayabo,37,,18.48266,-70.00029
+Mantilla,3,,18.42369,-71.05931
+Manzanillo,15,,19.79359,-71.63418
+Mao,27,,19.58333,-71.08333
+Maquén,25,,19.37616,-70.87854
+"María Montez International Airport",3,,18.25146,-71.1204
+Martín,16,,17.88333,-71.4
+"Mata de Esperanza",32,,18.75608,-69.56034
+"Mata Palacio",29,,18.70617,-69.33026
+Matanzas,35,,18.24297,-70.41768
+Matayaya,23,,18.89036,-71.59459
+"Maximo Gomez National Park",33,,18.39753,-70.25268
+Mella,9,,18.35871,-71.41716
+Mencía,16,,18.17107,-71.74121
+Miches,28,,18.98364,-69.0476
+Mirabeles,10,,18.65,-68.6
+Moca,8,,19.5,-70.5
+Monción,26,,19.41083,-71.15257
+"Monte Barbacoa",35,,18.44714,-70.32953
+"Monte Cristi",15,,19.83333,-71.61667
+"Monte Cristi Province",15,,19.71667,-71.46667
+"Monte Cristo",15,,19.84799,-71.64604
+"Monte de Pascual",10,,18.42516,-68.56412
+"Monte Las Cañitas",20,,19.26247,-69.56846
+"Monte Mogote de Rancho de Yagua",32,,18.76579,-70.20784
+"Monte Plata",32,,18.75,-69.85
+"Monte Plata Province",32,,18.83333,-69.83333
+"Monte Tina",30,,18.76667,-70.7
+"Monteada Nueva",3,,18.11273,-71.24316
+Mosquito,12,,18.50993,-68.92671
+Nacional,34,,18.48333,-69.93333
+Nagua,14,,19.36667,-70
+Neiba,2,,18.5,-71.41667
+Nicolás,16,,17.93833,-71.57694
+Nizao,35,,18.24697,-70.21053
+"Otra Banda",10,,18.65017,-68.66281
+Oviedo,16,,17.83333,-71.5
+"Padre Las Casas",1,,18.73172,-70.93917
+"Palmar Arriba",25,,19.53957,-70.73826
+"Palmar de Buena Vista",1,,18.35007,-70.86067
+"Palmar de Ocoa",1,,18.29656,-70.58635
+Palmita,11,,19.20023,-71.63198
+"Palo de Leche",3,,18.31897,-71.16787
+"Paradero de la Rabiza",16,,17.70697,-71.38344
+Paraíso,3,,18.02652,-71.20889
+"Parque Nacional Monte Cristi",15,,19.78232,-71.70512
+Partido,4,,19.48403,-71.5473
+"Paso Abajo",3,,18.285,-71.10005
+"Paso Viejo de Libón",4,,19.28045,-71.71501
+Pedernales,16,,18.08333,-71.6
+"Pedernales Province",16,,18,-71.56667
+"Pedro Brand",37,,18.53351,-70.1044
+"Pedro Corto",23,,18.84856,-71.41041
+"Pedro García",25,,19.59202,-70.65256
+"Pedro Sánchez",28,,18.86375,-69.10868
+"Pedro Santana",11,,19.10515,-71.69498
+"Peña de Ranchadero",15,,19.64346,-71.34558
+"Península de Samaná",20,,19.25,-69.41667
+"Peñón de Las Avispas",36,,18.65599,-70.479
+Pensón,32,,18.84854,-70.03006
+"Pepillo Salcedo",15,,19.69841,-71.74513
+Peralta,1,,18.58164,-70.77029
+Peralvillo,32,,18.85025,-70.05637
+Pescadería,3,,18.26766,-71.16612
+"Pico de La Guajaca",23,,18.78333,-71.01667
+"Pico Duarte",23,,19.0333,-70.9833
+"Piedra Blanca",31,,18.81217,-70.34031
+Piloncito,3,,18.03919,-71.18757
+Pimentel,6,,19.18416,-70.10884
+Pizarrete,35,,18.29935,-70.22648
+"Playa Grande",18,,19.90626,-70.94728
+"Plaza Cacique",2,,18.5033,-71.43826
+"Pocimán Basilio",16,,17.83333,-71.46667
+Polo,3,,18.07873,-71.28723
+"Postrer Río",9,,18.54374,-71.63561
+"Poza Rota",24,,18.44924,-69.1557
+"Provincia de Dajabón",4,,19.43333,-71.58333
+"Provincia de El Seibo",28,,18.8,-69.05
+"Provincia de Elías Piña",11,,19,-71.63333
+"Provincia de Hermanas Mirabal",19,,19.41667,-70.33333
+"Provincia de La Vega",30,,19.05,-70.65
+"Provincia de Monseñor Nouel",31,,18.91667,-70.41667
+"Provincia de Peravia",35,,18.33333,-70.36667
+"Provincia de San Cristóbal",33,,18.55,-70.2
+"Provincia de San José de Ocoa",36,,18.54882,-70.50877
+"Provincia de Santiago Rodríguez",26,,19.41667,-71.33333
+"Provincia María Trinidad Sánchez",14,,19.41667,-70
+"Provincia Sánchez Ramírez",21,,19,-70.16667
+"Pueblo Viejo",1,,18.4,-70.76765
+"Puerto de Puerto Plata",18,,19.80052,-70.69981
+"Puerto Manzanillo",15,,19.71667,-71.73333
+"Puerto Plata",18,,19.75119,-70.70251
+"Puerto Plata Airport",18,,19.7579,-70.57003
+"Puerto Plata province",18,,19.78333,-70.66667
+Puñal,25,,19.38564,-70.62739
+"Punta Águila",12,,18.40648,-68.94771
+"Punta Caballo de Los Griegos",12,,18.12464,-68.65547
+"Punta Cana",10,,18.58182,-68.40431
+"Punta Cana International Airport",10,,18.56737,-68.36343
+"Punta Cangrejo",15,,19.76267,-71.77218
+"Punta Chimanché",16,,17.81121,-71.65299
+"Punta de Águilas",10,,18.57095,-68.33309
+"Punta de La Granja",15,,19.89902,-71.65229
+"Punta de la Vaca",28,,18.86762,-68.84243
+"Punta de las Águilas",16,,17.86213,-71.64502
+"Punta de Las Chamuscadas",29,,19.0491,-69.34791
+"Punta de Las Flechas",20,,19.188,-69.28192
+"Punta de Los Coquitos",20,,19.3245,-69.43715
+"Punta Icaco",28,,19.0145,-69.01473
+"Punta La Bandera",20,,19.19563,-69.33785
+"Punta Las Cañitas",29,,19.02387,-69.24
+"Punta Las Galeras",20,,19.29781,-69.2053
+"Punta Las Muñecas",10,,18.8,-68.56667
+"Punta Los Róbalos",20,,19.20594,-69.48729
+"Punta Patilla",18,,19.90472,-70.8385
+"Punta Playa del Muerto",10,,18.91901,-68.6908
+"Punta Prieta",20,,19.3319,-69.28604
+"Punta Salinas",35,,18.20905,-70.56663
+"Punta Terrenas",20,,19.32649,-69.54483
+Quisqueya,24,,18.53884,-69.4204
+"Ramón Santana",24,,18.54224,-69.17979
+"Rancho Arriba",36,,18.71542,-70.44823
+"Rancho Damero",16,,18.00964,-71.68179
+"Rancho de Esteban",23,,18.94278,-71.40735
+Restauración,4,,19.31532,-71.69239
+Rincón,30,,19.11938,-70.40632
+"Rincón Largo",18,,19.91667,-70.91667
+"Río Grande",18,,19.66667,-70.76667
+"Río Limpio",11,,19.24513,-71.53077
+"Río San Juan",14,,19.64385,-70.07635
+"Río Verde Arriba",30,,19.31583,-70.56643
+"Rulo en Medio",3,,18.15,-71.15
+"Sabana Buey",35,,18.27351,-70.52352
+"Sabana de Juan Sánchez",28,,18.96941,-68.989
+"Sabana de la Mar",29,,19.03333,-69.41667
+"Sabana de Nisibón",28,,18.95229,-68.81285
+"Sabana del Medio",9,,18.51941,-71.7597
+"Sabana del Puerto",31,,19.06667,-70.41667
+"Sabana Grande de Boyá",32,,19,-69.83333
+"Sabana Grande de Palenque",33,,18.26256,-70.14821
+"Sabana Iglesia",25,,19.32114,-70.75992
+"Sabana Jovero",35,,18.24253,-70.26228
+"Sabana Larga",36,,18.64138,-70.54513
+"Sabana Yegua",1,,18.71667,-71.01667
+Sabaneta,26,,19.47793,-71.34125
+"Saber No Es Malo",16,,17.75,-71.43333
+Saberes,3,,18.13333,-71.15
+Sabina,1,,18.90881,-70.84767
+"Salado del Corbanito",35,,18.25033,-70.54242
+Salamanca,37,,18.6032,-70.05108
+Salcedo,19,,19.41667,-70.38333
+"Salvaleón de Higüey",10,,18.61501,-68.70798
+Samaná,20,,19.20404,-69.33407
+"Samaná El Catey International Airport",14,,19.26918,-69.73726
+"Samaná Municipality",20,,19.23333,-69.33333
+"San Antonio de Guerra",37,,18.579,-69.66304
+"San Carlos",34,,18.48333,-69.9
+"San Cristóbal",33,,18.41667,-70.13333
+"San Diego",37,,18.53553,-69.97071
+"San Francisco de Macorís",6,,19.3,-70.2
+"San Gregorio De Nigua",33,,18.35934,-70.08223
+"San Ignacio de Sabaneta",26,,19.38333,-71.35
+"San Isidro",37,,18.53333,-69.76667
+"San José de Las Matas",25,,19.33915,-70.93819
+"San José de Ocoa",36,,18.63333,-70.5
+"San Juan",23,,18.80588,-71.22991
+"San Juan de la Maguana",23,,18.83333,-71.16667
+"San Juan Province",23,,18.83333,-71.25
+"San Pedro de Macorís",24,,18.46919,-69.2894
+"San Rafael del Yuma",10,,18.42993,-68.6739
+"San Víctor Abajo",8,,19.45709,-70.54335
+"San Víctor Arriba",8,,19.47741,-70.53585
+Sánchez,20,,19.2281,-69.6137
+"Santa Cruz de Barahona",3,,18.20854,-71.10077
+"Santa Cruz de El Seibo",28,,18.76559,-69.03886
+Santiago,25,,19.4517,-70.69703
+"Santiago de los Caballeros",25,,19.41667,-70.7
+"Santiago Province",25,,19.31667,-70.88333
+"Santo Domingo",34,,18.47186,-69.89232
+"Santo Domingo De Guzmán",34,,18.48491,-69.94175
+"Santo Domingo Este",37,,18.51252,-69.79404
+"Santo Domingo Norte",37,,18.58333,-69.83333
+"Santo Domingo Oeste",37,,18.48388,-70.00656
+"Santo Domingo Province",37,,18.56678,-69.84874
+"Sitio El Ejido",15,,19.75111,-71.49505
+Sosúa,18,,19.71667,-70.46667
+"Sosua, Cabarete",18,,19.7522,-70.51995
+"Soto y La Pocilga",30,,19.24668,-70.52257
+"Tábara Arriba",1,,18.49603,-70.91511
+Tamayo,2,,18.3947,-71.2029
+Tamboril,25,,19.5,-70.6
+Taranas,29,,18.66923,-69.4061
+Tenares,19,,19.37439,-70.35087
+"Tierra Colorada",23,,18.93184,-71.21079
+Tireo,30,,18.93412,-70.68818
+"Uvero Alto",10,,18.8109,-68.57947
+"Valle del Bao",25,,19.092,-71.03636
+"Valle Oriental del Cibao",6,,19.25,-70.25
+Vallejuelo,23,,18.65354,-71.33431
+"Valverde Province",27,,19.58333,-71.05
+"Vereda de Musié Miguel",3,,18.28677,-71.10512
+Verón,10,,18.6,-68.41667
+"Verraco Blanco",18,,19.71667,-70.96667
+"Vicente Noble",3,,18.38333,-71.08333
+"Villa Altagracia",33,,18.63333,-70.25
+"Villa Bisonó",25,,19.56378,-70.87582
+"Villa Consuelo",34,,18.48333,-69.9
+"Villa Elisa",15,,19.6856,-71.27007
+"Villa Francisca",34,,18.48278,-69.88914
+"Villa González",25,,19.56422,-70.78712
+"Villa Hermosa",12,,18.45136,-69.04332
+"Villa Isabela",18,,19.81564,-71.06056
+"Villa Jaragua",2,,18.49077,-71.48377
+"Villa Los Almácigos",26,,19.32289,-71.44224
+"Villa Mella",37,,18.55082,-69.9012
+"Villa Montellano",18,,19.70826,-70.59261
+"Villa Riva",6,,19.18069,-69.91319
+"Villa Tapia",19,,19.30084,-70.42199
+"Villa Vásquez",15,,19.80791,-71.44
+Villarpando,1,,18.6586,-71.03916
+Yaguate,33,,18.33333,-70.18333
+Yamasá,32,,18.78333,-70.05
+Yareycito,4,,19.48804,-71.57771
+"Yayas de Viajama",1,,18.6071,-70.92753

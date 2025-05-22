@@ -24,8 +24,11 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
+use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -38,7 +41,6 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\TotalModel;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of Dashboard
@@ -63,18 +65,24 @@ class Dashboard extends Controller
     /** @var array */
     public $receipts = [];
 
+    /** @var bool */
+    public $registered = false;
+
     /** @var array */
     public $sections = [];
 
     /** @var array */
     public $stats = [];
 
+    /** @var bool */
+    public $updated = false;
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'reports';
         $data['title'] = 'dashboard';
-        $data['icon'] = 'fas fa-chalkboard-teacher';
+        $data['icon'] = 'fa-solid fa-chalkboard-teacher';
         return $data;
     }
 
@@ -92,6 +100,13 @@ class Dashboard extends Controller
         $this->title = Tools::lang()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
 
         $this->loadExtensions();
+
+        // comprobamos si la instalación está registrada
+        $telemetry = new Telemetry();
+        $this->registered = $telemetry->ready();
+
+        // comprobamos si hay actualizaciones disponibles
+        $this->updated = Forja::canUpdateCore() === false;
     }
 
     public function showBackupWarning(): bool
@@ -203,7 +218,7 @@ class Dashboard extends Controller
         $this->news = Cache::remember('dashboard-news', function () {
             return Http::get('https://facturascripts.com/comm3/index.php?page=community_changelog&json=TRUE')
                 ->setTimeout(5)
-                ->json();
+                ->json() ?? [];
         });
     }
 

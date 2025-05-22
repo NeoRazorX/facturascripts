@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PresupuestoProveedor;

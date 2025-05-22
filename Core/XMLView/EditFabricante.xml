@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
             </column>
             <column name="code" description="optional" numcolumns="2" order="110">
-                <widget type="text" fieldname="codfabricante" icon="fas fa-hashtag" maxlength="8" readonly="dinamic"/>
+                <widget type="text" fieldname="codfabricante" icon="fa-solid fa-hashtag" maxlength="8" readonly="dinamic"/>
             </column>
             <column name="products" order="120">
                 <widget type="number" fieldname="numproductos" readonly="true"/>

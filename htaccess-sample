@@ -1,4 +1,3 @@
-# BEGIN FacturaScripts code
 Options -Indexes
 
 <IfModule mod_php.c>
@@ -15,6 +14,7 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
    RewriteEngine On
+   RewriteBase /
    RewriteCond %{REQUEST_URI} !Dinamic/Assets/ [NC]
    RewriteCond %{REQUEST_URI} !node_modules/ [NC]
    RewriteRule . index.php [L]
@@ -30,4 +30,3 @@ Options -Indexes
       ExpiresActive Off
    </FilesMatch>
 </IfModule>
-# END FacturaScripts code

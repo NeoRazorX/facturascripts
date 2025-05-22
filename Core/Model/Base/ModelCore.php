@@ -19,13 +19,12 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseTools;
 use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Lib\Import\CSVImport;
-use FacturaScripts\Core\Tools;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -39,13 +38,6 @@ abstract class ModelCore
     const DATE_STYLE = 'd-m-Y';
     const DATETIME_STYLE = 'd-m-Y H:i:s';
     const HOUR_STYLE = 'H:i:s';
-
-    /**
-     * List of already tested tables.
-     *
-     * @var array
-     */
-    protected static $checkedTables = [];
 
     /**
      * It provides direct access to the database.
@@ -134,17 +126,18 @@ abstract class ModelCore
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
             self::$dataBase->connect();
-
-            $tables = Cache::get('db-checked-tables');
-            if (is_array($tables) && !empty($tables)) {
-                self::$checkedTables = $tables;
-            }
         }
 
-        if (static::tableName() !== '' && false === in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
-            Tools::log()->debug('table-checked', ['%tableName%' => static::tableName()]);
-            self::$checkedTables[] = static::tableName();
-            Cache::set('db-checked-tables', self::$checkedTables);
+        if (empty(static::tableName())) {
+            throw new Exception('The table name is not defined in the model ' . $this->modelClassName());
+        }
+
+        if (false === DbUpdater::isTableChecked(static::tableName())) {
+            if (self::$dataBase->tableExists(static::tableName())) {
+                DbUpdater::updateTable(static::tableName());
+            } else {
+                DbUpdater::createTable(static::tableName(), [], $this->install());
+            }
         }
 
         $this->loadModelFields(self::$dataBase, static::tableName());
@@ -286,33 +279,6 @@ abstract class ModelCore
         }
 
         return $data;
-    }
-
-    /**
-     * Checks and updates the structure of the table if necessary.
-     *
-     * @return bool
-     */
-    private function checkTable(): bool
-    {
-        $xmlCols = [];
-        $xmlCons = [];
-        if (false === DataBaseTools::getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
-            Tools::log()->critical('error-on-xml-file', ['%fileName%' => static::tableName() . '.xml']);
-            return false;
-        }
-
-        $sql = self::$dataBase->tableExists(static::tableName()) ?
-            DataBaseTools::checkTable(static::tableName(), $xmlCols, $xmlCons) :
-            DataBaseTools::generateTable(static::tableName(), $xmlCols, $xmlCons) . $this->install();
-
-        if ($sql !== '' && false === self::$dataBase->exec($sql)) {
-            Tools::log()->critical('check-table', ['%tableName%' => static::tableName()]);
-            Cache::clear();
-            return false;
-        }
-
-        return true;
     }
 
     /**

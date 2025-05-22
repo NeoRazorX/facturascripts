@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,25 +20,16 @@
 namespace FacturaScripts\Core\Base;
 
 use Exception;
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Dinamic\Lib\IPFilter;
 
 /**
  * Description of ToolBox
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * @deprecated since version 2024.5
+ * @deprecated since version 2024.5. Use Tools class instead.
  */
 class ToolBox
 {
-    /**
-     * @return AppSettings
-     */
-    public static function appSettings(): AppSettings
-    {
-        return new AppSettings();
-    }
-
     /**
      * @deprecated since version 2022.5
      */

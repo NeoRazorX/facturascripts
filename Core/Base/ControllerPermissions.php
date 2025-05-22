@@ -50,7 +50,7 @@ final class ControllerPermissions
     /** @var bool */
     public $onlyOwnerData = false;
 
-    public function __construct(?User $user = null, string $pageName = null)
+    public function __construct(?User $user = null, ?string $pageName = null)
     {
         if (empty($user) || empty($pageName)) {
             // do nothing

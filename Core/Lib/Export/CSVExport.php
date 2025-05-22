@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Lib\Export;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
-use Symfony\Component\HttpFoundation\Response;
+use FacturaScripts\Core\Response;
 
 /**
  * Class to export data to CSV format.
