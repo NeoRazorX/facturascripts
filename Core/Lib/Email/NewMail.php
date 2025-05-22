@@ -94,7 +94,11 @@ class NewMail
         $this->fromName = $this->empresa->nombrecorto;
 
         $this->mail = new PHPMailer();
-        $this->mail->Debugoutput = 'html';
+
+        $this->mail->Debugoutput = function ($str) {
+            Tools::log()->warning($str);
+        };
+
         $this->mail->CharSet = PHPMailer::CHARSET_UTF8;
         $this->mail->Mailer = Tools::settings('email', 'mailer');
 
