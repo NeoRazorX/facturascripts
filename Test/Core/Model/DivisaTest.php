@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Divisa;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -60,7 +60,7 @@ final class DivisaTest extends TestCase
         $this->assertTrue($currency->save(), 'currency-cant-save');
 
         // comprobamos que el html ha sido escapado
-        $noHtml = ToolBox::utils()::noHtml('<b>Test Currency</b>');
+        $noHtml = Tools::noHtml('<b>Test Currency</b>');
         $this->assertEquals($noHtml, $currency->descripcion, 'currency-wrong-html');
 
         // eliminamos

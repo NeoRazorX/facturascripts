@@ -43,13 +43,13 @@ class EditAlmacen extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'warehouse';
-        $data['icon'] = 'fas fa-warehouse';
+        $data['icon'] = 'fa-solid fa-warehouse';
         return $data;
     }
 
     protected function createStockView(string $viewName = 'ListStock'): void
     {
-        $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly')
+        $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fa-solid fa-dolly')
             ->addSearchFields(['stocks.referencia', 'stocks.ubicacion', 'productos.descripcion'])
             ->addOrderBy(['stocks.referencia'], 'reference')
             ->addOrderBy(['stocks.cantidad'], 'quantity')
@@ -124,7 +124,7 @@ class EditAlmacen extends EditController
         switch ($viewName) {
             case 'ListStock':
                 $code = $this->getViewModelValue($this->getMainViewName(), 'codalmacen');
-                $where = [new DataBaseWhere('codalmacen', $code)];
+                $where = [new DataBaseWhere('stocks.codalmacen', $code)];
                 $view->loadData('', $where);
                 break;
 

@@ -129,7 +129,7 @@
         </column>
     </columns>
     <modals>
-        <group name="renumber-invoices" title="renumber" icon="fas fa-sort-numeric-down">
+        <group name="renumber-invoices" title="renumber" icon="fa-solid fa-sort-numeric-down">
             <column name="exercise" description="renumber-invoices-p">
                 <widget type="select" fieldname="exercise" required="true">
                     <values source="ejercicios" fieldcode="codejercicio"/>

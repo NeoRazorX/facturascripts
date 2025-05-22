@@ -40,7 +40,7 @@ class ListProveedor extends ListController
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'suppliers';
-        $data['icon'] = 'fas fa-users';
+        $data['icon'] = 'fa-solid fa-users';
         return $data;
     }
 
@@ -55,7 +55,7 @@ class ListProveedor extends ListController
 
     protected function createViewAddresses(string $viewName = 'ListContacto'): void
     {
-        $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book')
+        $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fa-solid fa-address-book')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['direccion'], 'address')
             ->addOrderBy(['nombre'], 'name')
@@ -99,7 +99,7 @@ class ListProveedor extends ListController
 
     protected function createViewSuppliers(string $viewName = 'ListProveedor'): void
     {
-        $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users')
+        $this->addView($viewName, 'Proveedor', 'suppliers', 'fa-solid fa-users')
             ->addOrderBy(['codproveedor'], 'code')
             ->addOrderBy(['cifnif'], 'fiscal-number')
             ->addOrderBy(['LOWER(nombre)'], 'name', 1)

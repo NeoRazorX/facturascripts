@@ -142,7 +142,7 @@ class CustomerRiskTools
      *
      * @return float
      */
-    public static function getOrdersRisk(string $codcliente, int $idempresa = null): float
+    public static function getOrdersRisk(string $codcliente, ?int $idempresa = null): float
     {
         $sql = "SELECT SUM(total) AS total FROM pedidoscli"
             . " WHERE codcliente = " . static::database()->var2str($codcliente)

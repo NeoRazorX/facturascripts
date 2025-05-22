@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinFile;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Description of AttachedFileRelation

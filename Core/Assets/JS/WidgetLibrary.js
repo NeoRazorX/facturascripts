@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 function widgetLibrarySearch(id) {
-    $("#list_" + id).html("<div class='col-12 text-center pt-5 pb-5'><i class='fas fa-circle-notch fa-4x fa-spin'></i></div>");
+    $("#list_" + id).html("<div class='col-12 text-center pt-5 pb-5'><i class='fa-solid fa-circle-notch fa-4x fa-spin'></i></div>");
 
     let input = $("div#" + id + ' input.input-hidden');
     let data = {

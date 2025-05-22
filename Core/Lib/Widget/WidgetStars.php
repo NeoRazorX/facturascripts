@@ -25,7 +25,7 @@ class WidgetStars extends WidgetNumber
     {
         parent::__construct($data);
         $this->decimal = 1;
-        $this->icon = 'fas fa-star';
+        $this->icon = 'fa-solid fa-star';
         $this->max = 5;
         $this->min = 0;
         $this->step = 0.5;
@@ -44,11 +44,11 @@ class WidgetStars extends WidgetNumber
     private function getStars(): string
     {
         // añadimos una estrella por cada valor
-        $html = str_repeat('<i class="fas fa-star"></i>', (int)$this->value);
+        $html = str_repeat('<i class="fa-solid fa-star"></i>', (int)$this->value);
 
         // añadimos media estrella si el valor es decimal
         if ($this->value - floor($this->value) > 0) {
-            $html .= '<i class="fas fa-star-half-alt"></i>';
+            $html .= '<i class="fa-solid fa-star-half-alt"></i>';
         }
 
         // añadimos estrellas vacías hasta llegar al máximo

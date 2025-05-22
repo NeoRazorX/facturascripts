@@ -42,7 +42,7 @@ class EditImpuesto extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'tax';
-        $data['icon'] = 'fas fa-plus-square';
+        $data['icon'] = 'fa-solid fa-plus-square';
         return $data;
     }
 
@@ -61,7 +61,7 @@ class EditImpuesto extends EditController
 
     protected function createViewsAccounts(string $viewName = 'ListSubcuenta'): void
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-folder-open');
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fa-solid fa-folder-open');
         $this->views[$viewName]->addOrderBy(['codejercicio', 'codsubcuenta'], 'code', 2);
         $this->views[$viewName]->addOrderBy(['codejercicio', 'descripcion'], 'description');
         $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
@@ -74,7 +74,7 @@ class EditImpuesto extends EditController
 
     protected function createViewsProducts(string $viewName = 'ListProducto'): void
     {
-        $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
+        $this->addListView($viewName, 'Producto', 'products', 'fa-solid fa-cubes');
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
         $this->views[$viewName]->addOrderBy(['precio'], 'price');
         $this->views[$viewName]->addOrderBy(['stockfis'], 'stock');
@@ -87,7 +87,7 @@ class EditImpuesto extends EditController
 
     protected function createViewsZones(string $viewName = 'EditImpuestoZona'): void
     {
-        $this->addEditListView($viewName, 'ImpuestoZona', 'exceptions', 'fas fa-globe-americas');
+        $this->addEditListView($viewName, 'ImpuestoZona', 'exceptions', 'fa-solid fa-globe-americas');
         $this->views[$viewName]->disableColumn('tax');
         $this->views[$viewName]->setInLine(true);
     }

@@ -18,17 +18,16 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
-use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Request;
 
 /**
  * Description of WidgetTime
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class WidgetTime extends BaseWidget
 {
-
     /**
      * Indicates the max value
      *
@@ -64,7 +63,6 @@ class WidgetTime extends BaseWidget
     }
 
     /**
-     *
      * @param object  $model
      * @param Request $request
      */

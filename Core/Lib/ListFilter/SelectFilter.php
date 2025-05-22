@@ -57,7 +57,7 @@ class SelectFilter extends BaseFilter
     {
         if (empty($this->icon)) {
             return '<div class="col-sm-3 col-lg-2">'
-                . '<div class="form-group">'
+                . '<div class="mb-3">'
                 . '<select name="' . $this->name() . '" class="form-control"' . $this->onChange() . $this->readonly()
                 . ' title="' . static::$i18n->trans($this->label) . '">' . $this->getHtmlOptions()
                 . '</select>'
@@ -66,12 +66,12 @@ class SelectFilter extends BaseFilter
         }
 
         return '<div class="col-sm-3 col-lg-2">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<div class="input-group" title="' . static::$i18n->trans($this->label) . '">'
-            . '<span class="input-group-prepend">'
+            . ''
             . '<span class="input-group-text">'
             . '<i class="' . $this->icon . ' fa-fw" aria-hidden="true"></i>'
-            . '</span>'
+            . ''
             . '</span>'
             . '<select name="' . $this->name() . '" class="form-control"' . $this->onChange() . $this->readonly() . '>'
             . $this->getHtmlOptions()

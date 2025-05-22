@@ -47,7 +47,7 @@ class EditCuenta extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
         $data['title'] = 'account';
-        $data['icon'] = 'fas fa-book';
+        $data['icon'] = 'fa-solid fa-book';
         return $data;
     }
 
@@ -72,7 +72,7 @@ class EditCuenta extends EditController
 
     protected function createViewsChildAccounts(string $viewName = 'ListCuenta'): void
     {
-        $this->addListView($viewName, 'Cuenta', 'children-accounts', 'fas fa-level-down-alt')
+        $this->addListView($viewName, 'Cuenta', 'children-accounts', 'fa-solid fa-level-down-alt')
             ->addOrderBy(['codcuenta'], 'code', 1)
             ->disableColumn('fiscal-exercise')
             ->disableColumn('parent-account');
@@ -131,6 +131,7 @@ class EditCuenta extends EditController
         ]);
         $title = Tools::lang()->trans('ledger') . ' ' . $account->codcuenta;
         $this->exportManager->newDoc($request['format'], $title);
+        $this->exportManager->setCompany($account->getExercise()->idempresa);
 
         // añadimos la tabla de cabecera con la info del informe
         if ($request['format'] === 'PDF') {
@@ -190,7 +191,7 @@ class EditCuenta extends EditController
                 $this->addButton($mainViewName, [
                     'action' => 'ledger',
                     'color' => 'info',
-                    'icon' => 'fas fa-print fa-fw',
+                    'icon' => 'fa-solid fa-print fa-fw',
                     'label' => 'print',
                     'type' => 'modal'
                 ]);

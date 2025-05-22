@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetNumber
@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class WidgetNumber extends BaseWidget
 {
-
     /**
      * @var int
      */

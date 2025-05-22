@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -122,7 +122,7 @@ class Subcuenta extends Base\ModelClass
         return false;
     }
 
-    public function disableAdditionalTest(bool $value)
+    public function disableAdditionalTest(bool $value): void
     {
         $this->disableAdditionalTest = $value;
     }
@@ -203,7 +203,7 @@ class Subcuenta extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->saldo = $this->debe - $this->haber;
+        $this->saldo = round($this->debe - $this->haber, FS_NF0);
 
         // escape html
         foreach (['codcuenta', 'codsubcuenta', 'descripcion', 'codcuentaesp'] as $field) {
