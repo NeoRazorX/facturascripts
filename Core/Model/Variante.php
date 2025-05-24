@@ -388,6 +388,10 @@ class Variante extends Base\ModelClass
             return false;
         }
 
+        $this->idatributovalor1 = empty($this->idatributovalor1) ? null : $this->idatributovalor1;
+        $this->idatributovalor2 = empty($this->idatributovalor2) ? null : $this->idatributovalor2;
+        $this->idatributovalor3 = empty($this->idatributovalor3) ? null : $this->idatributovalor3;
+        $this->idatributovalor4 = empty($this->idatributovalor4) ? null : $this->idatributovalor4;
         return parent::test();
     }
 
