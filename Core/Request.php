@@ -27,6 +27,9 @@ final class Request
 {
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POST';
+    const METHOD_PUT = 'PUT';
+    const METHOD_PATCH = 'PATCH';
+
 
     /** @var SubRequest */
     public $cookies;
@@ -101,7 +104,7 @@ final class Request
             'files' => $_FILES,
             'headers' => $_SERVER,
             'query' => $_GET,
-            'request' => $_POST,
+            'request' => self::parseRequestData(),
         ]);
     }
 
@@ -321,6 +324,21 @@ final class Request
             return 'bsd';
         }
         return 'unknown';
+    }
+
+    public static function parseRequestData(): array
+    {
+        $request = $_POST;
+
+        if ($_SERVER['REQUEST_METHOD'] === self::METHOD_PUT || $_SERVER['REQUEST_METHOD'] === self::METHOD_PATCH) {
+            $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+
+            if (strpos($contentType, 'application/x-www-form-urlencoded') !== false) {
+                parse_str(file_get_contents('php://input'), $request);
+            }
+        }
+
+        return $request;
     }
 
     public function protocol(): string
