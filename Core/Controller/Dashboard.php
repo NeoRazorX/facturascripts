@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -24,12 +24,15 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
+use FacturaScripts\Core\Lib\Calendar;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\ReciboProveedor;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Telemetry;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\CalendarEvent;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -73,6 +76,9 @@ class Dashboard extends Controller
 
     /** @var array */
     public $stats = [];
+
+    /** @var string|null */
+    public $calendario = null;
 
     /** @var bool */
     public $updated = false;
@@ -185,6 +191,7 @@ class Dashboard extends Controller
         $this->loadLowStockSection();
         $this->loadReceiptSection();
         $this->loadNews();
+        $this->loadCalendar();
 
         $this->pipe('loadExtensions');
     }
@@ -220,6 +227,25 @@ class Dashboard extends Controller
                 ->setTimeout(5)
                 ->json() ?? [];
         });
+    }
+
+    private function loadCalendar(): void
+    {
+        $recibosProveedores = new ReciboProveedor();
+        $recibosClientes = new ReciboCliente();
+        $recibos = array_merge($recibosProveedores->all(), $recibosClientes->all());
+
+        $eventos = [];
+        foreach ($recibos as $recibo) {
+            $eventos[] = new CalendarEvent(
+                $recibo->vencimiento,
+                $recibo->url(),
+                $recibo->getSubject()->nombre,
+                Tools::money($recibo->importe)
+            );
+        }
+
+        $this->calendario = Calendar::renderMonth(date('Y'), date('m'), date('d'), $eventos);
     }
 
     /**
