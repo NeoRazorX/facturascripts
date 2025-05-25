@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,10 +43,12 @@ final class DbUpdater
     public static function createTable(string $tableName, array $structure = [], string $sqlAfter = ''): bool
     {
         if (self::isTableChecked($tableName)) {
+            Tools::log()->warning('Table ' . $tableName . ' already checked');
             return false;
         }
 
         if (self::db()->tableExists($tableName)) {
+            Tools::log()->warning('Table ' . $tableName . ' already exists');
             return false;
         }
 
@@ -58,11 +60,11 @@ final class DbUpdater
         $sql = self::sqlTool()->sqlCreateTable($tableName, $structure['columns'], $structure['constraints'], $structure['indexes']) . $sqlAfter;
         if (self::db()->exec($sql)) {
             self::save($tableName);
-
             Tools::log()->debug('table-checked', ['%tableName%' => $tableName]);
             return true;
         }
 
+        Tools::log()->critical('Failed to create table ' . $tableName, ['sql' => $sql]);
         self::save($tableName);
         return false;
     }
@@ -106,7 +108,7 @@ final class DbUpdater
             }
 
             $fileData = file_get_contents(Tools::folder('MyFiles', self::FILE_NAME));
-            self::$checkedTables = json_decode($fileData, true);
+            self::$checkedTables = json_decode($fileData, true) ?? [];
         }
 
         return in_array($tableName, self::$checkedTables);
@@ -203,7 +205,8 @@ final class DbUpdater
     public static function updateTable(string $tableName, array $structure = []): bool
     {
         if (self::isTableChecked($tableName)) {
-            return false;
+            Tools::log()->warning('Table ' . $tableName . ' is already checked');
+            return true;
         }
 
         if (empty($structure)) {
@@ -219,17 +222,24 @@ final class DbUpdater
             self::compareConstraints($tableName, $structure['constraints'], $dbCons) .
             self::compareIndexes($tableName, $structure['indexes'], $dbIndexes) .
             self::renameColums($tableName, $structure['rename'], $dbCols);
-        if (!empty($sql) && self::db()->exec($sql)) {
+        if (empty($sql)) {
             self::save($tableName);
-
             Tools::log()->debug('table-checked', ['%tableName%' => $tableName]);
             return true;
         }
 
-        self::save($tableName);
+        if (false === self::db()->exec($sql)) {
+            self::save($tableName);
+            Tools::log()->critical('error-updating-table', [
+                '%tableName%' => $tableName,
+                'sql' => $sql
+            ]);
+            return false;
+        }
 
+        self::save($tableName);
         Tools::log()->debug('table-checked', ['%tableName%' => $tableName]);
-        return false;
+        return true;
     }
 
     private static function db(): DataBase

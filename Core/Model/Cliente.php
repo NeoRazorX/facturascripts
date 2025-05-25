@@ -52,6 +52,9 @@ class Cliente extends Base\ComercialContact
     /** @var string */
     public $diaspago;
 
+    /** @var string */
+    public $excepcioniva;
+
     /** @var integer */
     public $idcontactoenv;
 
@@ -240,7 +243,7 @@ class Cliente extends Base\ComercialContact
 
         // we validate the days of payment
         $arrayDias = [];
-        foreach (str_getcsv($this->diaspago ?? '') as $day) {
+        foreach (explode(',', $this->diaspago ?? '') as $day) {
             if ((int)$day >= 1 && (int)$day <= 31) {
                 $arrayDias[] = (int)$day;
             }

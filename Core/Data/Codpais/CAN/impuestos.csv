@@ -1,0 +1,10 @@
+codimpuesto,descripcion,iva,recargo
+GST2023,"Impuesto sobre Productos y Servicios",5,0
+PST2023BC,"Provincia Columbia Británica",7,0
+PST2023SK,"Provincia Saskatchewan",6,0
+QST2023,"Impuesto de Ventas de Quebec",9.975,0
+HST2023ON,"Impuesto Armonizado de Ontario",13,0
+HST2023NF,"Impuesto Armonizado de Terranova y Labrador",15,0
+HST2023NB,"Impuesto Armonizado de Nuevo Brunswick",15,0
+HST2023NS,"Impuesto Armonizado de Nueva Escocia",15,0
+HST2023PE,"Impuesto Armonizado de Isla Príncipe Eduardo",15,0

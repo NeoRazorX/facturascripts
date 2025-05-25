@@ -68,9 +68,8 @@ trait DefaultSettingsTrait
 
     protected static function removeTaxRegularization(): void
     {
-        $regularizationModel = new RegularizacionImpuesto();
-        foreach ($regularizationModel->all() as $regularization) {
-            $regularization->delete();
+        foreach (RegularizacionImpuesto::all() as $reg) {
+            $reg->delete();
         }
     }
 
@@ -84,10 +83,9 @@ trait DefaultSettingsTrait
             }
         }
 
-        $almacenModel = new Almacen();
         $where = [new DataBaseWhere('idempresa', Tools::settings('default', 'idempresa', 1))];
-        foreach ($almacenModel->all($where) as $almacen) {
-            Tools::settingsSet('default', 'codalmacen', $almacen->codalmacen);
+        foreach (Almacen::all($where) as $warehouse) {
+            Tools::settingsSet('default', 'codalmacen', $warehouse->codalmacen);
         }
 
         Tools::settingsSave();

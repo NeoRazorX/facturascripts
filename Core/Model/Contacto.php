@@ -92,24 +92,6 @@ class Contacto extends Base\Contact
     /** @var string */
     public $web;
 
-    public function alias(): string
-    {
-        if (empty($this->email) || strpos($this->email, '@') === false) {
-            return (string)$this->idcontacto;
-        }
-
-        $aux = explode('@', $this->email);
-        switch ($aux[0]) {
-            case 'admin':
-            case 'info':
-                $domain = explode('.', $aux[1]);
-                return $domain[0] . '_' . $this->idcontacto;
-
-            default:
-                return $aux[0] . '_' . $this->idcontacto;
-        }
-    }
-
     public function checkVies(bool $msg = true): bool
     {
         $codiso = Paises::get($this->codpais)->codiso ?? '';
@@ -188,6 +170,7 @@ class Contacto extends Base\Contact
             $cliente->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
             $cliente->telefono1 = $this->telefono1;
             $cliente->telefono2 = $this->telefono2;
+            $cliente->tipoidfiscal = $this->tipoidfiscal;
             $cliente->web = $this->web;
             if ($cliente->save()) {
                 $this->codcliente = $cliente->codcliente;
@@ -219,6 +202,7 @@ class Contacto extends Base\Contact
             $proveedor->razonsocial = empty($this->empresa) ? $this->fullName() : $this->empresa;
             $proveedor->telefono1 = $this->telefono1;
             $proveedor->telefono2 = $this->telefono2;
+            $proveedor->tipoidfiscal = $this->tipoidfiscal;
             $proveedor->web = $this->web;
             if ($proveedor->save()) {
                 $this->codproveedor = $proveedor->codproveedor;

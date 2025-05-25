@@ -109,7 +109,7 @@ final class RoleTest extends TestCase
         // crear user
         $user = new User();
         $user->nick = 'test5';
-        $user->setPassword('test5');
+        $user->setPassword('test5555');
         $this->assertTrue($user->save());
 
         // asignamos role al user

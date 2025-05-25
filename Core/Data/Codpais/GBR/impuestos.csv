@@ -1,0 +1,4 @@
+codimpuesto,descripcion,iva,recargo
+GB_STD,"IVA estándar",20,0
+GB_REDUC,"IVA reducido para productos especiales",5,0
+GB_ZERO,"Exento de IVA",0,0

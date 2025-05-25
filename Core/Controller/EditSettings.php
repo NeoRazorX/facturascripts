@@ -44,7 +44,7 @@ class EditSettings extends PanelController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'control-panel';
-        $data['icon'] = 'fas fa-tools';
+        $data['icon'] = 'fa-solid fa-tools';
         return $data;
     }
 
@@ -157,7 +157,7 @@ class EditSettings extends PanelController
 
     protected function createViewsApiKeys(string $viewName = 'ListApiKey'): void
     {
-        $this->addListView($viewName, 'ApiKey', 'api-keys', 'fas fa-key')
+        $this->addListView($viewName, 'ApiKey', 'api-keys', 'fa-solid fa-key')
             ->addOrderBy(['id'], 'id')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['creationdate', 'id'], 'date', 2)
@@ -172,7 +172,7 @@ class EditSettings extends PanelController
 
     protected function createViewFormats(string $viewName = 'ListFormatoDocumento'): void
     {
-        $this->addListView($viewName, 'FormatoDocumento', 'printing-formats', 'fas fa-print')
+        $this->addListView($viewName, 'FormatoDocumento', 'printing-formats', 'fa-solid fa-print')
             ->addOrderBy(['nombre'], 'name')
             ->addOrderBy(['titulo'], 'title')
             ->addSearchFields(['nombre', 'titulo', 'texto']);
@@ -212,7 +212,7 @@ class EditSettings extends PanelController
 
     protected function createViewSequences(string $viewName = 'ListSecuenciaDocumento'): void
     {
-        $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code')
+        $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fa-solid fa-code')
             ->addOrderBy(['codejercicio', 'codserie', 'tipodoc'], 'exercise')
             ->addOrderBy(['codserie'], 'serie')
             ->addOrderBy(['numero'], 'number')
@@ -236,7 +236,7 @@ class EditSettings extends PanelController
 
     protected function createViewStates(string $viewName = 'ListEstadoDocumento'): void
     {
-        $this->addListView($viewName, 'EstadoDocumento', 'states', 'fas fa-tags')
+        $this->addListView($viewName, 'EstadoDocumento', 'states', 'fa-solid fa-tags')
             ->addOrderBy(['idestado'], 'id')
             ->addOrderBy(['nombre'], 'name')
             ->addSearchFields(['nombre']);

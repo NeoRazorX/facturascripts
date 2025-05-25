@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,52 +34,40 @@ class Retencion extends Base\ModelClass
 {
     use Base\ModelTrait;
 
-    /**
-     * Primary key. varchar(10).
-     *
-     * @var string
-     */
+    /** @var bool */
+    public $activa;
+
+    /** @var string */
     public $codretencion;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codsubcuentaret;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codsubcuentaacr;
 
-    /**
-     * Description of the tax.
-     *
-     * @var string
-     */
+    /** @var string */
     public $descripcion;
 
-    /**
-     * Percent of the retention
-     *
-     * @var int
-     */
+    /** @var int */
     public $porcentaje;
 
     public function clear()
     {
         parent::clear();
+        $this->activa = true;
         $this->porcentaje = 0.0;
     }
 
     public function delete(): bool
     {
-        if (parent::delete()) {
-            // limpiamos la caché
-            Retenciones::clear();
-            return true;
+        if (false === parent::delete()) {
+            return false;
         }
 
-        return false;
+        // limpiamos la caché
+        Retenciones::clear();
+        return true;
     }
 
     public function loadFromPercentage(float $percentaje): bool
@@ -96,13 +84,13 @@ class Retencion extends Base\ModelClass
 
     public function save(): bool
     {
-        if (parent::save()) {
-            // limpiamos la caché
-            Retenciones::clear();
-            return true;
+        if (false === parent::save()) {
+            return false;
         }
 
-        return false;
+        // limpiamos la caché
+        Retenciones::clear();
+        return true;
     }
 
     public static function tableName(): string

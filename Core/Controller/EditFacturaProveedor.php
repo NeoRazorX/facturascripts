@@ -5,9 +5,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\AjaxForms\PurchasesController;
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\AjaxForms\PurchasesController;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
@@ -36,7 +36,7 @@ class EditFacturaProveedor extends PurchasesController
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'invoice';
-        $data['icon'] = 'fas fa-file-invoice-dollar';
+        $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         $data['showonmenu'] = false;
         return $data;
     }
@@ -59,7 +59,7 @@ class EditFacturaProveedor extends PurchasesController
      */
     private function createViewsAccounting(string $viewName = self::VIEW_ACCOUNTS): void
     {
-        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fa-solid fa-balance-scale');
 
         // buttons
         $this->addButton($viewName, [
@@ -77,7 +77,7 @@ class EditFacturaProveedor extends PurchasesController
      */
     private function createViewsRefunds(string $viewName = 'refunds'): void
     {
-        $this->addHtmlView($viewName, 'Tab/RefundFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
+        $this->addHtmlView($viewName, 'Tab/RefundFacturaProveedor', 'FacturaProveedor', 'refunds', 'fa-solid fa-share-square');
     }
 
     /**
@@ -87,7 +87,7 @@ class EditFacturaProveedor extends PurchasesController
      */
     private function createViewsReceipts(string $viewName = self::VIEW_RECEIPTS): void
     {
-        $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign')
+        $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fa-solid fa-dollar-sign')
             ->addOrderBy(['vencimiento'], 'expiration');
 
         // buttons
@@ -101,7 +101,7 @@ class EditFacturaProveedor extends PurchasesController
         $this->addButton($viewName, [
             'action' => 'paid',
             'confirm' => 'true',
-            'icon' => 'fas fa-check',
+            'icon' => 'fa-solid fa-check',
             'label' => 'paid'
         ]);
 
@@ -261,7 +261,7 @@ class EditFacturaProveedor extends PurchasesController
 
         if ($invoice->editable) {
             foreach ($invoice->getAvailableStatus() as $status) {
-                if ($status->editable) {
+                if ($status->editable || !$status->activo) {
                     continue;
                 }
 
@@ -358,9 +358,9 @@ class EditFacturaProveedor extends PurchasesController
             return true;
         }
 
-        $codes = $this->request->request->get('code');
+        $codes = $this->request->request->getArray('codes');
         $model = $this->views[$this->active]->model;
-        if (false === is_array($codes) || empty($model)) {
+        if (empty($codes) || empty($model)) {
             Tools::log()->warning('no-selected-item');
             return true;
         }

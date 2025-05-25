@@ -22,10 +22,10 @@ namespace FacturaScripts\Core\Lib\Export;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\PDF\PDFDocument;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * PDF export data.
@@ -241,6 +241,16 @@ class PDFExport extends PDFDocument
         if (!empty($langcode)) {
             $this->i18n->setLang($langcode);
         }
+    }
+
+    public function setCompany(int $idempresa): void
+    {
+        // new page
+        if ($this->pdf === null) {
+            $this->newPage();
+        }
+
+        $this->insertHeader($idempresa);
     }
 
     /**

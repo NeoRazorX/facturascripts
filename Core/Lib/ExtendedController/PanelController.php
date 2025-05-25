@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to edit data through the vertical panel
@@ -152,7 +152,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return EditListView
      */
-    protected function addEditListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-bars'): EditListView
+    protected function addEditListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fa-solid fa-bars'): EditListView
     {
         $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -170,7 +170,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return EditView
      */
-    protected function addEditView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-edit'): EditView
+    protected function addEditView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fa-solid fa-edit'): EditView
     {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -189,7 +189,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return HtmlView
      */
-    protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5'): HtmlView
+    protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fa-brands fa-html5'): HtmlView
     {
         $view = new HtmlView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
         $this->addCustomView($viewName, $view);
@@ -206,7 +206,7 @@ abstract class PanelController extends BaseController
      * @param string $viewIcon
      * @return ListView
      */
-    protected function addListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-list'): ListView
+    protected function addListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fa-solid fa-list'): ListView
     {
         $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -396,6 +396,7 @@ abstract class PanelController extends BaseController
         // localizamos la pestaña y el nombre de la columna
         $activeTab = $this->request->request->get('active_tab', '');
         $colName = $this->request->request->get('col_name', '');
+        $widgetId = $this->request->request->get('widget_id', '');
 
         // si está vacío, no hacemos nada
         if (empty($activeTab) || empty($colName)) {
@@ -413,9 +414,9 @@ abstract class PanelController extends BaseController
             $this->request->request->get('sort', '')
         );
 
-        $selected_value = (int)$column->widget->plainText($this->tab($activeTab)->model);
+        $selectedValue = (int)$column->widget->plainText($this->tab($activeTab)->model);
         return [
-            'html' => $column->widget->renderFileList($files, $selected_value),
+            'html' => $column->widget->renderFileList($files, $selectedValue, $widgetId),
             'records' => count($files),
         ];
     }
@@ -425,6 +426,7 @@ abstract class PanelController extends BaseController
         // localizamos la pestaña y el nombre de la columna
         $activeTab = $this->request->request->get('active_tab', '');
         $colName = $this->request->request->get('col_name', '');
+        $widgetId = $this->request->request->get('widget_id', '');
 
         // si está vacío, no hacemos nada
         if (empty($activeTab) || empty($colName)) {
@@ -444,7 +446,7 @@ abstract class PanelController extends BaseController
 
         $files = $column->widget->files();
         return [
-            'html' => $column->widget->renderFileList($files),
+            'html' => $column->widget->renderFileList($files, $file->idfile, $widgetId),
             'records' => count($files),
             'new_file' => $file->idfile,
             'new_filename' => $file->shortFileName(),

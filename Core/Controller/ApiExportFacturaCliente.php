@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class ApiExportFacturaCliente extends ApiController
 {
@@ -32,7 +32,7 @@ class ApiExportFacturaCliente extends ApiController
     {
         // si el método no es GET, devolvemos un error
         if (false === $this->request->isMethod(Request::METHOD_GET)) {
-            $this->response->setStatusCode(Response::HTTP_METHOD_NOT_ALLOWED);
+            $this->response->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED);
             $this->response->setContent(json_encode([
                 'status' => 'error',
                 'message' => 'Method not allowed',
@@ -42,7 +42,7 @@ class ApiExportFacturaCliente extends ApiController
 
         $code = $this->getUriParam(3);
         if (empty($code)) {
-            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $this->response->setHttpCode(Response::HTTP_BAD_REQUEST);
             $this->response->setContent(json_encode([
                 'status' => 'error',
                 'message' => 'No invoice selected',
@@ -52,7 +52,7 @@ class ApiExportFacturaCliente extends ApiController
 
         $facturaCliente = new FacturaCliente();
         if (false === $facturaCliente->loadFromCode($code)) {
-            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $this->response->setHttpCode(Response::HTTP_NOT_FOUND);
             $this->response->setContent(json_encode([
                 'status' => 'error',
                 'message' => 'Invoice not found',
@@ -61,7 +61,7 @@ class ApiExportFacturaCliente extends ApiController
         }
 
         $type = $this->request->query->get('type', 'PDF');
-        $format = $this->request->query->get('format', 0);
+        $format = (int)$this->request->query->get('format', 0);
         $lang = $this->request->query->get('lang', $facturaCliente->getSubject()->langcode) ?? '';
         $title = Tools::lang($lang)->trans('invoice') . ' ' . $facturaCliente->primaryDescription();
 

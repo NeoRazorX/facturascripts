@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -95,6 +95,11 @@ class Partida extends ModelOnChangeClass
      * @var float|int
      */
     public $debe;
+
+    /**
+     * @var bool
+     */
+    private $disableAdditionalTest = false;
 
     /**
      * Document of departure.
@@ -208,6 +213,11 @@ class Partida extends ModelOnChangeClass
         return parent::delete();
     }
 
+    public function disableAdditionalTest(bool $value): void
+    {
+        $this->disableAdditionalTest = $value;
+    }
+
     /**
      * @param string $codsubcuenta
      *
@@ -262,12 +272,12 @@ class Partida extends ModelOnChangeClass
     public function save(): bool
     {
         $entry = $this->getAccountingEntry();
-        if (false === $entry->editable) {
+        if (false === $this->disableAdditionalTest && false === $entry->editable) {
             return false;
         }
 
         $exercise = $entry->getExercise();
-        if (false === $exercise->isOpened()) {
+        if (false === $this->disableAdditionalTest && false === $exercise->isOpened()) {
             Tools::log()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
             return false;
         }

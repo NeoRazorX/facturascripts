@@ -94,6 +94,11 @@ class NewMail
         $this->fromName = $this->empresa->nombrecorto;
 
         $this->mail = new PHPMailer();
+
+        $this->mail->Debugoutput = function ($str) {
+            Tools::log()->warning($str);
+        };
+
         $this->mail->CharSet = PHPMailer::CHARSET_UTF8;
         $this->mail->Mailer = Tools::settings('email', 'mailer');
 
@@ -535,10 +540,24 @@ class NewMail
             }
 
             // si el adjunto está fuera de la carpeta temporal, lo copiamos
+            $currentPath = FS_FOLDER . '/MyFiles/' . $attach[0];
+            if (file_exists($currentPath)) {
+                copy($currentPath, $newPath);
+                continue;
+            }
+
             $currentPath = FS_FOLDER . '/' . $attach[0];
             if (file_exists($currentPath)) {
                 copy($currentPath, $newPath);
+                continue;
             }
+
+            if (file_exists($attach[0])) {
+                copy($attach[0], $newPath);
+                continue;
+            }
+
+            Tools::log('NewMail')->warning('attachment-not-found', ['%file%' => $attach[0]]);
         }
     }
 

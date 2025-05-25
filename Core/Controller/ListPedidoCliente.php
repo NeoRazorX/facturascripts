@@ -35,7 +35,7 @@ class ListPedidoCliente extends ListBusinessDocument
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'orders';
-        $data['icon'] = 'fas fa-file-powerpoint';
+        $data['icon'] = 'fa-solid fa-file-powerpoint';
         return $data;
     }
 

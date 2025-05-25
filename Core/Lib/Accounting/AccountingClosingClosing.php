@@ -62,7 +62,7 @@ class AccountingClosingClosing extends AccountingClosingBase
      *
      * @return string
      */
-    protected function getDate()
+    protected function getDate(): string
     {
         return $this->exercise->fechafin;
     }
@@ -119,7 +119,7 @@ class AccountingClosingClosing extends AccountingClosingBase
      * @param Partida $line
      * @param array $data
      */
-    protected function setDataLine(&$line, $data)
+    protected function setDataLine(&$line, $data): void
     {
         parent::setDataLine($line, $data);
         if ($data['debit'] > $data['credit']) {

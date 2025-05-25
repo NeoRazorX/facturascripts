@@ -37,6 +37,8 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
+ *
+ * @deprecated replaced by Core/Lib/AjaxForms/CommonSalesPurchases
  */
 trait CommonSalesPurchases
 {
@@ -105,23 +107,33 @@ trait CommonSalesPurchases
 
     protected static function codalmacen(Translator $i18n, BusinessDocument $model, string $jsFunc): string
     {
+        $warehouses = 0;
         $options = [];
         foreach (Empresas::all() as $company) {
             if ($company->idempresa != $model->idempresa && $model->exists()) {
                 continue;
             }
+
             $option = '';
             foreach ($company->getWarehouses() as $row) {
+                // si el almacén no está activo o seleccionado, no lo mostramos
+                if ($row->codalmacen != $model->codalmacen && !$row->activo) {
+                    continue;
+                }
+
                 $option .= ($row->codalmacen === $model->codalmacen) ?
                     '<option value="' . $row->codalmacen . '" selected>' . $row->nombre . '</option>' :
                     '<option value="' . $row->codalmacen . '">' . $row->nombre . '</option>';
+                $warehouses++;
             }
             $options[] = '<optgroup label="' . $company->nombrecorto . '">' . $option . '</optgroup>';
         }
+
         $attributes = $model->editable ?
             'name="codalmacen" onchange="return ' . $jsFunc . '(\'recalculate\', \'0\');" required' :
             'disabled';
-        return empty($model->subjectColumnValue()) || count($options) <= 1 ? '' : '<div class="col-sm-2 col-lg">'
+
+        return empty($model->subjectColumnValue()) || $warehouses <= 1 ? '' : '<div class="col-sm-2 col-lg">'
             . '<div class="form-group">'
             . '<a href="' . Almacenes::get($model->codalmacen)->url() . '">' . $i18n->trans('company-warehouse') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
@@ -152,9 +164,16 @@ trait CommonSalesPurchases
     {
         $options = [];
         foreach (FormasPago::all() as $row) {
+            // saltamos las formas de pago de otras empresas
             if ($row->idempresa != $model->idempresa) {
                 continue;
             }
+
+            // si la forma de pago no está activa o seleccionada, la saltamos
+            if ($row->codpago != $model->codpago && !$row->activa) {
+                continue;
+            }
+
             $options[] = ($row->codpago === $model->codpago) ?
                 '<option value="' . $row->codpago . '" selected>' . $row->descripcion . '</option>' :
                 '<option value="' . $row->codpago . '">' . $row->descripcion . '</option>';
@@ -376,7 +395,8 @@ trait CommonSalesPurchases
         // añadimos los estados posibles
         $options = [];
         foreach ($model->getAvailableStatus() as $sta) {
-            if ($sta->idestado === $model->idestado) {
+            // si está seleccionado o no activo, lo saltamos
+            if ($sta->idestado === $model->idestado || false === $sta->activo) {
                 continue;
             }
 

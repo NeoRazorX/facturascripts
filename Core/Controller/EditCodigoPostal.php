@@ -33,7 +33,7 @@ class EditCodigoPostal extends EditController
         $data = parent::getPageData();
         $data["menu"] = "admin";
         $data["title"] = "zip-code";
-        $data["icon"] = "fas fa-map-pin";
+        $data["icon"] = "fa-solid fa-map-pin";
         return $data;
     }
 }

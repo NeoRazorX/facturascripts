@@ -30,13 +30,16 @@ use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\AlbaranProveedor;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\CronJob;
+use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
+use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\LogMessage;
 use FacturaScripts\Dinamic\Model\PedidoCliente;
 use FacturaScripts\Dinamic\Model\PedidoProveedor;
 use FacturaScripts\Dinamic\Model\PresupuestoCliente;
 use FacturaScripts\Dinamic\Model\PresupuestoProveedor;
+use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
 use FacturaScripts\Dinamic\Model\WorkEvent;
@@ -181,15 +184,27 @@ END;
                 $this->updateAttachedRelations();
             });
 
-        $this->job('remove-old-logs')
+        $this->job('update-families')
             ->everyDayAt(1)
+            ->run(function () {
+                $this->updateFamilies();
+            });
+
+        $this->job('update-manufacturers')
+            ->everyDayAt(2)
+            ->run(function () {
+                $this->updateManufacturers();
+            });
+
+        $this->job('remove-old-logs')
+            ->everyDayAt(3)
             ->run(function () {
                 $this->removeOldLogs();
                 $this->removeOldWorkEvents();
             });
 
         $this->job('update-receipts')
-            ->everyDayAt(2)
+            ->everyDayAt(4)
             ->run(function () {
                 $this->updateReceipts();
             });
@@ -211,7 +226,7 @@ END;
                 $cron->run();
             } catch (Exception $ex) {
                 echo $ex->getMessage() . PHP_EOL;
-                Tools::log()->error($ex->getMessage());
+                Tools::log('cron')->error($ex->getMessage());
             }
 
             ob_flush();
@@ -226,6 +241,9 @@ END;
 
     protected function runWorkQueue(): void
     {
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('running-work-queue') . ' ... ';
+        ob_flush();
+
         $max = 1000;
         while ($max > 0) {
             if (false === WorkQueue::run()) {
@@ -294,25 +312,73 @@ END;
         }
     }
 
+    protected function updateFamilies(): void
+    {
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('updating-families') . ' ... ';
+        ob_flush();
+
+        $producto = new Producto();
+
+        // recorremos todas las familias para actualizar su contador de productos
+        foreach (Familia::all([], [], 0, 0) as $familia) {
+            $count = $producto->count([new DataBaseWhere('codfamilia', $familia->codfamilia)]);
+            if ($familia->numproductos == $count) {
+                continue;
+            }
+
+            $familia->numproductos = $count;
+            $familia->save();
+        }
+    }
+
+    protected function updateManufacturers(): void
+    {
+        echo PHP_EOL . PHP_EOL . Tools::lang()->trans('updating-manufacturers') . ' ... ';
+        ob_flush();
+
+        $producto = new Producto();
+
+        // recorremos todos los fabricantes para actualizar su contador de productos
+        foreach (Fabricante::all([], [], 0, 0) as $fabricante) {
+            $count = $producto->count([new DataBaseWhere('codfabricante', $fabricante->codfabricante)]);
+            if ($fabricante->numproductos == $count) {
+                continue;
+            }
+
+            $fabricante->numproductos = $count;
+            $fabricante->save();
+        }
+    }
+
     protected function updateReceipts(): void
     {
         echo PHP_EOL . PHP_EOL . Tools::lang()->trans('updating-receipts') . ' ... ';
         ob_flush();
 
         // recorremos todos los recibos de compra impagados con fecha anterior a hoy
-        $reciboProveedor = new ReciboProveedor();
         $where = [
             new DataBaseWhere('pagado', false),
             new DataBaseWhere('vencimiento', Tools::date(), '<')
         ];
-        foreach ($reciboProveedor->all($where, [], 0, 0) as $recibo) {
+        foreach (ReciboProveedor::all($where, [], 0, 0) as $recibo) {
+            // si el código de factura ha cambiado, lo guardamos
+            $factura = $recibo->getInvoice();
+            if ($recibo->codigofactura != $factura->codigo) {
+                $recibo->codigofactura = $factura->codigo;
+            }
+
             // guardamos para que se actualice
             $recibo->save();
         }
 
         // recorremos todos los recibos de venta impagados con fecha anterior a hoy
-        $reciboCliente = new ReciboCliente();
-        foreach ($reciboCliente->all($where, [], 0, 0) as $recibo) {
+        foreach (ReciboCliente::all($where, [], 0, 0) as $recibo) {
+            // si el código de factura ha cambiado, lo guardamos
+            $factura = $recibo->getInvoice();
+            if ($recibo->codigofactura != $factura->codigo) {
+                $recibo->codigofactura = $factura->codigo;
+            }
+
             // guardamos para que se actualice
             $recibo->save();
         }

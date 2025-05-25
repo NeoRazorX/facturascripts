@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Lib\Import\CSVImport;
+use FacturaScripts\Core\Tools;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -59,6 +60,14 @@ abstract class ModelCore
      * @return array
      */
     abstract public function getModelFields(): array;
+
+    /**
+     * Returns true if the extension exists.
+     *
+     * @param $extension
+     * @return bool
+     */
+    abstract public function hasExtension($extension): bool;
 
     /**
      * Loads table fields if is necessary.
@@ -132,12 +141,12 @@ abstract class ModelCore
             throw new Exception('The table name is not defined in the model ' . $this->modelClassName());
         }
 
-        if (false === DbUpdater::isTableChecked(static::tableName())) {
-            if (self::$dataBase->tableExists(static::tableName())) {
-                DbUpdater::updateTable(static::tableName());
-            } else {
-                DbUpdater::createTable(static::tableName(), [], $this->install());
-            }
+        if (DbUpdater::isTableChecked(static::tableName())) {
+            // none
+        } elseif (self::$dataBase->tableExists(static::tableName())) {
+            DbUpdater::updateTable(static::tableName());
+        } elseif (false === DbUpdater::createTable(static::tableName(), [], $this->install())) {
+            Tools::log()->critical('Failed to create table ' . static::tableName());
         }
 
         $this->loadModelFields(self::$dataBase, static::tableName());

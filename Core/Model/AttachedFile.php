@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\MyFilesToken;
+use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
@@ -137,7 +137,7 @@ class AttachedFile extends ModelOnChangeClass
 
     public function isImage(): bool
     {
-        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif']);
+        return in_array($this->mimetype, ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
     }
 
     public function isPdf(): bool
@@ -175,7 +175,7 @@ class AttachedFile extends ModelOnChangeClass
     public function shortFileName(int $length = 20): string
     {
         if (strlen($this->filename) <= $length) {
-            return $this->filename;
+            return $this->filename ?? '';
         }
 
         $parts = explode('.', $this->filename);

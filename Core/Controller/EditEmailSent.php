@@ -44,7 +44,7 @@ class EditEmailSent extends EditController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'email-sent';
-        $data['icon'] = 'fas fa-envelope';
+        $data['icon'] = 'fa-solid fa-envelope';
         return $data;
     }
 
@@ -80,7 +80,7 @@ class EditEmailSent extends EditController
         $this->addButton($mainView, [
             'action' => 'contact',
             'color' => 'info',
-            'icon' => 'fas fa-address-book',
+            'icon' => 'fa-solid fa-address-book',
             'label' => 'contact',
             'type' => 'button'
         ]);
@@ -94,7 +94,7 @@ class EditEmailSent extends EditController
 
     protected function createViewAttachments(string $viewName = 'EmailSentAttachment'): void
     {
-        $this->addHtmlView($viewName, 'Tab\EmailSentAttachment', 'EmailSent', 'attached-files', 'fas fa-paperclip');
+        $this->addHtmlView($viewName, 'Tab\EmailSentAttachment', 'EmailSent', 'attached-files', 'fa-solid fa-paperclip');
     }
 
     protected function createViewHtml(string $viewName = 'EmailSentHtml'): void
@@ -104,7 +104,7 @@ class EditEmailSent extends EditController
 
     protected function createViewOtherEmails(string $viewName = 'ListEmailSent'): void
     {
-        $this->addListView($viewName, 'EmailSent', 'emails', 'fas fa-paper-plane');
+        $this->addListView($viewName, 'EmailSent', 'emails', 'fa-solid fa-paper-plane');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
         $this->views[$viewName]->searchFields = ['body', 'subject'];
 

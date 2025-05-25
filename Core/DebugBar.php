@@ -60,7 +60,7 @@ class DebugBar
     private function addItemAssets(array &$items): void
     {
         foreach (['css', 'js'] as $type) {
-            $label = '<i class="fas fa-file"></i> ' . strtoupper($type);
+            $label = '<i class="fa-solid fa-file"></i> ' . strtoupper($type);
             $data = AssetManager::get($type);
             if (!empty($data)) {
                 $this->addItem($items, $label, $data, true);
@@ -81,7 +81,7 @@ class DebugBar
                 continue;
             }
 
-            $label = '<i class="fas fa-keyboard"></i> ' . $type;
+            $label = '<i class="fa-solid fa-keyboard"></i> ' . $type;
             $data = [];
             foreach ($rows as $key => $value) {
                 if (is_array($value)) {
@@ -117,7 +117,7 @@ class DebugBar
         }
 
         foreach ($channels as $channel) {
-            $label = '<i class="fas fa-file-medical-alt"></i> ' . $channel['label'];
+            $label = '<i class="fa-solid fa-file-medical-alt"></i> ' . $channel['label'];
             $this->addItem($items, $label, $channel['data'], true);
         }
     }
@@ -127,7 +127,7 @@ class DebugBar
         $usage = memory_get_usage();
         $peak = memory_get_peak_usage();
 
-        $label = '<i class="fas fa-memory"></i> ' . $this->getSize(max($usage, $peak));
+        $label = '<i class="fa-solid fa-memory"></i> ' . $this->getSize(max($usage, $peak));
         $data = [
             ['Memory usage', $this->getSize($usage)],
             ['Memory peak', $this->getSize($peak)]
@@ -139,7 +139,7 @@ class DebugBar
     private function addItemTimer(array &$items): void
     {
         $totalTime = Kernel::getExecutionTime();
-        $label = '<i class="fas fa-hourglass-half"></i> ' . number_format($totalTime * 1000) . 'ms';
+        $label = '<i class="fa-solid fa-hourglass-half"></i> ' . number_format($totalTime * 1000) . 'ms';
 
         $data = [];
         foreach (Kernel::getTimers() as $task => $timer) {
@@ -164,7 +164,7 @@ class DebugBar
         $i18n = new Translator();
         $missing = $i18n->getMissingStrings();
         if (count($missing) > 0) {
-            $label = '<i class="fas fa-language"></i> Missing';
+            $label = '<i class="fa-solid fa-language"></i> Missing';
             $this->addItem($items, $label, $missing, true);
         }
     }
@@ -172,13 +172,14 @@ class DebugBar
     private function getSize(int $size): string
     {
         $unit = ['b', 'kb', 'mb', 'gb', 'tb', 'pb'];
-        return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
+        $i = (int)floor(log($size, 1024));
+        return round($size / pow(1024, $i), 2) . $unit[$i];
     }
 
     private function renderItems(array $items): string
     {
         $html = '<li class="debugbar-item debugbar-minimize">'
-            . '<a href="#" onclick="return hideAllDebugBar();"><i class="fas fa-chevron-down"></i></a>'
+            . '<a href="#" onclick="return hideAllDebugBar();"><i class="fa-solid fa-chevron-down"></i></a>'
             . '</li>';
 
         foreach ($items as $key => $item) {
