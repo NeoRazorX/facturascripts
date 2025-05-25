@@ -106,9 +106,13 @@ jobs:
       - name: Verify database connection
         run: |
           if [ "${{ matrix.database.type }}" = "mysql" ] || [ "${{ matrix.database.type }}" = "mariadb" ]; then
-            mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SHOW DATABASES; SELECT VERSION();"
+            echo "Testing ${{ matrix.database.type }} ${{ matrix.database.version }} connection..."
+            mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SHOW DATABASES;"
+            mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SELECT VERSION();"
           else
-            PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -c "\l; SELECT version();"
+            echo "Testing PostgreSQL ${{ matrix.database.version }} connection..."
+            PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -c "\l"
+            PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -c "SELECT version();"
           fi
 
       - name: Create application config
