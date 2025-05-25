@@ -297,13 +297,34 @@ final class DataBase
      *
      * @return array
      */
-    public function getIndexes(string $tableName): array
+    public function getAllIndexes(string $tableName): array
     {
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
         foreach ($data as $row) {
-            $result[] = ['name' => $row['Key_name'] ?? $row['key_name'] ?? ''];
+            $result[] = [
+                'name' => $row['Key_name'] ?? $row['key_name'] ?? '',
+                'column' => $row['Column_name'] ?? $row['column_name'] ?? '',
+            ];
         }
+
+        return $result;
+    }
+
+    /**
+     * Returns an array with the FacturaScripts indexes of a given table.
+     *
+     * @param string $tableName
+     *
+     * @return array
+     */
+    public function getIndexes(string $tableName): array
+    {
+        $result =  array_filter($this->getAllIndexes($tableName), function ($dbIdx) {
+            return false !== strpos($dbIdx['name'], 'fs_');
+        });
+
+        $result = array_values($result);
 
         return $result;
     }

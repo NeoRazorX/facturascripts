@@ -97,6 +97,11 @@ class PostgresqlQueries implements DataBaseQueries
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . ';';
     }
 
+    public function sqlAddIndex(string $tableName, string $indexName, string $columns): string
+    {
+        return 'CREATE INDEX ' . $indexName . ' ON ' . $tableName . ' (' . $columns . ');';
+    }
+
     /**
      * SQL statement to alter a null constraint in a table column
      *
@@ -199,10 +204,11 @@ class PostgresqlQueries implements DataBaseQueries
      * @param string $tableName
      * @param array $columns
      * @param array $constraints
+     * @param array $indexes
      *
      * @return string
      */
-    public function sqlCreateTable(string $tableName, array $columns, array $constraints): string
+    public function sqlCreateTable(string $tableName, array $columns, array $constraints, array $indexes): string
     {
         $serials = ['serial', 'bigserial'];
         $fields = '';
@@ -223,7 +229,8 @@ class PostgresqlQueries implements DataBaseQueries
         }
 
         return 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
-            . $this->sqlTableConstraints($constraints) . ');';
+            . $this->sqlTableConstraints($constraints) . ');'
+            . $this->sqlTableIndexes($tableName, $indexes);
     }
 
     /**
@@ -237,6 +244,11 @@ class PostgresqlQueries implements DataBaseQueries
     public function sqlDropConstraint(string $tableName, array $colData): string
     {
         return 'ALTER TABLE ' . $tableName . ' DROP CONSTRAINT ' . $colData['name'] . ';';
+    }
+
+    public function sqlDropIndex(string $tableName, array $colData): string
+    {
+        return 'DROP INDEX IF EXISTS ' . $colData['name'] . ';';
     }
 
     /**
@@ -260,7 +272,23 @@ class PostgresqlQueries implements DataBaseQueries
      */
     public function sqlIndexes(string $tableName): string
     {
-        return "SELECT indexname as Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
+        return "SELECT
+                  i.relname AS key_name,
+                  a.attname AS column_name
+                FROM
+                  pg_class t
+                JOIN
+                  pg_index ix ON t.oid = ix.indrelid
+                JOIN
+                  pg_class i ON i.oid = ix.indexrelid
+                JOIN
+                  pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(ix.indkey)
+                WHERE
+                  t.relkind = 'r'
+                  AND t.relname = '" . $tableName . "'
+                ORDER BY
+                  i.relname,
+                  a.attname;";
     }
 
     /**
@@ -271,6 +299,11 @@ class PostgresqlQueries implements DataBaseQueries
     public function sqlLastValue(): string
     {
         return 'SELECT lastval() as num;';
+    }
+
+    public function sqlRenameColumn(string $tableName, string $old_column, string $new_column): string
+    {
+        return 'ALTER TABLE ' . $tableName . ' RENAME COLUMN ' . $old_column . ' TO ' . $new_column . ';';
     }
 
     /**
@@ -294,6 +327,16 @@ class PostgresqlQueries implements DataBaseQueries
             if (FS_DB_FOREIGN_KEYS || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
                 $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
             }
+        }
+
+        return $sql;
+    }
+
+    private function sqlTableIndexes(string $tableName, array $xmlIndexes)
+    {
+        $sql = '';
+        foreach ($xmlIndexes as $idx) {
+            $sql .= ' CREATE INDEX fs_' . $idx['name'] . ' ON ' . $tableName . ' (' . $idx['columns'] . ');';
         }
 
         return $sql;
