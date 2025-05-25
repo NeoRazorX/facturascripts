@@ -234,7 +234,7 @@ final class DbUpdaterTest extends TestCase
     }
 
     /**
-     * Comprobamos que se elimina un indice si
+     * Comprobamos que se elimina un índice si
      * no se encuentra declarado en el xml
      */
     public function testCanRemoveOneIndexFromTable(): void
@@ -281,7 +281,7 @@ final class DbUpdaterTest extends TestCase
     /**
      * Comprobamos que puede renombrar una columna
      */
-    public function testCanRenameColums(): void
+    public function testCanRenameColumns(): void
     {
         // create
         $tableName = 'test_table';
