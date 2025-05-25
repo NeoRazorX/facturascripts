@@ -32,54 +32,54 @@ final class DbUpdater
     const FILE_NAME = 'db-updater.json';
 
     /** @var array */
-    private static $checkedTables;
+    private static $checked_tables;
 
     /** @var DataBase */
-    private static $dataBase;
+    private static $db;
 
     /** @var DataBaseQueries */
-    private static $sqlTool;
+    private static $sql_tool;
 
-    public static function createTable(string $tableName, array $structure = [], string $sqlAfter = ''): bool
+    public static function createTable(string $table_name, array $structure = [], string $sql_after = ''): bool
     {
-        if (self::isTableChecked($tableName)) {
-            Tools::log()->warning('Table ' . $tableName . ' already checked');
+        if (self::isTableChecked($table_name)) {
+            Tools::log()->warning('Table ' . $table_name . ' already checked');
             return false;
         }
 
-        if (self::db()->tableExists($tableName)) {
-            Tools::log()->warning('Table ' . $tableName . ' already exists');
+        if (self::db()->tableExists($table_name)) {
+            Tools::log()->warning('Table ' . $table_name . ' already exists');
             return false;
         }
 
         if (empty($structure)) {
-            $filePath = self::getTableXmlLocation($tableName);
-            $structure = self::readTableXml($filePath);
+            $file_path = self::getTableXmlLocation($table_name);
+            $structure = self::readTableXml($file_path);
         }
 
-        $sql = self::sqlTool()->sqlCreateTable($tableName, $structure['columns'], $structure['constraints'], $structure['indexes']) . $sqlAfter;
+        $sql = self::sqlTool()->sqlCreateTable($table_name, $structure['columns'], $structure['constraints'], $structure['indexes']) . $sql_after;
         if (self::db()->exec($sql)) {
-            self::save($tableName);
-            Tools::log()->debug('table-checked', ['%tableName%' => $tableName]);
+            self::save($table_name);
+            Tools::log()->debug('table-checked', ['%tableName%' => $table_name]);
             return true;
         }
 
-        Tools::log()->critical('Failed to create table ' . $tableName, ['sql' => $sql]);
-        self::save($tableName);
+        Tools::log()->critical('Failed to create table ' . $table_name, ['sql' => $sql]);
+        self::save($table_name);
         return false;
     }
 
-    public static function dropTable(string $tableName): bool
+    public static function dropTable(string $table_name): bool
     {
-        if (false === self::db()->tableExists($tableName)) {
+        if (false === self::db()->tableExists($table_name)) {
             return false;
         }
 
-        $sql = self::sqlTool()->sqlDropTable($tableName);
+        $sql = self::sqlTool()->sqlDropTable($table_name);
         if (self::db()->exec($sql)) {
             self::rebuild();
 
-            Tools::log()->debug('table-deleted', ['%tableName%' => $tableName]);
+            Tools::log()->debug('table-deleted', ['%tableName%' => $table_name]);
             return true;
         }
 
@@ -87,34 +87,34 @@ final class DbUpdater
         return false;
     }
 
-    public static function getTableXmlLocation(string $tableName): string
+    public static function getTableXmlLocation(string $table_name): string
     {
-        $fileName = Tools::folder('Dinamic', 'Table', $tableName . '.xml');
+        $fileName = Tools::folder('Dinamic', 'Table', $table_name . '.xml');
         if (Tools::config('debug') && false === file_exists($fileName)) {
-            return Tools::folder('Core', 'Table', $tableName . '.xml');
+            return Tools::folder('Core', 'Table', $table_name . '.xml');
         }
 
         return $fileName;
     }
 
-    public static function isTableChecked(string $tableName): bool
+    public static function isTableChecked(string $table_name): bool
     {
-        if (null === self::$checkedTables) {
+        if (null === self::$checked_tables) {
             // read the file
             $file = Tools::folder('MyFiles', self::FILE_NAME);
             if (false === file_exists($file)) {
-                self::$checkedTables = [];
+                self::$checked_tables = [];
                 return false;
             }
 
             $fileData = file_get_contents(Tools::folder('MyFiles', self::FILE_NAME));
-            self::$checkedTables = json_decode($fileData, true) ?? [];
+            self::$checked_tables = json_decode($fileData, true) ?? [];
         }
 
-        return in_array($tableName, self::$checkedTables);
+        return in_array($table_name, self::$checked_tables);
     }
 
-    public static function readTableXml(string $filePath): array
+    public static function readTableXml(string $file_path): array
     {
         $structure = [
             'columns' => [],
@@ -123,14 +123,14 @@ final class DbUpdater
             'rename' => [],
         ];
 
-        if (false === file_exists($filePath)) {
-            Tools::log()->critical('file-not-found', ['%fileName%' => $filePath]);
+        if (false === file_exists($file_path)) {
+            Tools::log()->critical('file-not-found', ['%fileName%' => $file_path]);
             return $structure;
         }
 
-        $xml = simplexml_load_string(file_get_contents($filePath, true));
+        $xml = simplexml_load_string(file_get_contents($file_path, true));
         if (false === $xml) {
-            Tools::log()->critical('error-reading-file', ['%fileName%' => $filePath]);
+            Tools::log()->critical('error-reading-file', ['%fileName%' => $file_path]);
             return $structure;
         }
 
@@ -193,7 +193,7 @@ final class DbUpdater
 
     public static function rebuild(): void
     {
-        self::$checkedTables = [];
+        self::$checked_tables = [];
 
         // remove the file
         $file = Tools::folder('MyFiles', self::FILE_NAME);
@@ -202,86 +202,86 @@ final class DbUpdater
         }
     }
 
-    public static function updateTable(string $tableName, array $structure = []): bool
+    public static function updateTable(string $table_name, array $structure = []): bool
     {
-        if (self::isTableChecked($tableName)) {
-            Tools::log()->warning('Table ' . $tableName . ' is already checked');
+        if (self::isTableChecked($table_name)) {
+            Tools::log()->warning('Table ' . $table_name . ' is already checked');
             return true;
         }
 
         if (empty($structure)) {
-            $filePath = self::getTableXmlLocation($tableName);
-            $structure = self::readTableXml($filePath);
+            $file_path = self::getTableXmlLocation($table_name);
+            $structure = self::readTableXml($file_path);
         }
 
         // compare table columns and constraints against xml definition
-        $dbCols = self::db()->getColumns($tableName);
-        $dbCons = self::db()->getConstraints($tableName);
-        $dbIndexes = self::db()->getIndexes($tableName);
-        $sql = self::compareColumns($tableName, $structure['columns'], $dbCols) .
-            self::compareConstraints($tableName, $structure['constraints'], $dbCons) .
-            self::compareIndexes($tableName, $structure['indexes'], $dbIndexes) .
-            self::renameColums($tableName, $structure['rename'], $dbCols);
+        $db_cols = self::db()->getColumns($table_name);
+        $db_cons = self::db()->getConstraints($table_name);
+        $db_indexes = self::db()->getIndexes($table_name);
+        $sql = self::compareColumns($table_name, $structure['columns'], $db_cols) .
+            self::compareConstraints($table_name, $structure['constraints'], $db_cons) .
+            self::compareIndexes($table_name, $structure['indexes'], $db_indexes) .
+            self::renameColumns($table_name, $structure['rename'], $db_cols);
         if (empty($sql)) {
-            self::save($tableName);
-            Tools::log()->debug('table-checked', ['%tableName%' => $tableName]);
+            self::save($table_name);
+            Tools::log()->debug('table-checked', ['%tableName%' => $table_name]);
             return true;
         }
 
         if (false === self::db()->exec($sql)) {
-            self::save($tableName);
+            self::save($table_name);
             Tools::log()->critical('error-updating-table', [
-                '%tableName%' => $tableName,
+                '%tableName%' => $table_name,
                 'sql' => $sql
             ]);
             return false;
         }
 
-        self::save($tableName);
-        Tools::log()->debug('table-checked', ['%tableName%' => $tableName]);
+        self::save($table_name);
+        Tools::log()->debug('table-checked', ['%tableName%' => $table_name]);
         return true;
     }
 
     private static function db(): DataBase
     {
-        if (null === self::$dataBase) {
-            self::$dataBase = new DataBase();
-            self::$dataBase->connect();
+        if (null === self::$db) {
+            self::$db = new DataBase();
+            self::$db->connect();
         }
 
-        return self::$dataBase;
+        return self::$db;
     }
 
-    private static function compareColumns(string $tableName, array $xmlCols, array $dbCols): string
+    private static function compareColumns(string $table_name, array $xml_cols, array $db_cols): string
     {
         $sql = '';
 
-        foreach ($xmlCols as $xmlCol) {
-            $column = self::searchInArray($dbCols, 'name', $xmlCol['name']);
+        foreach ($xml_cols as $xml_col) {
+            $column = self::searchInArray($db_cols, 'name', $xml_col['name']);
             if (empty($column)) {
-                $sql .= self::sqlTool()->sqlAlterAddColumn($tableName, $xmlCol);
+                $sql .= self::sqlTool()->sqlAlterAddColumn($table_name, $xml_col);
                 continue;
             }
 
-            if (false === self::compareDataTypes($column['type'], $xmlCol['type'])) {
-                $sql .= self::sqlTool()->sqlAlterModifyColumn($tableName, $xmlCol);
+            if (false === self::compareDataTypes($column['type'], $xml_col['type'])) {
+                $sql .= self::sqlTool()->sqlAlterModifyColumn($table_name, $xml_col);
             }
 
-            if ($column['default'] === null && $xmlCol['default'] !== '') {
-                $sql .= self::sqlTool()->sqlAlterColumnDefault($tableName, $xmlCol);
+            if ($column['default'] === null && $xml_col['default'] !== '') {
+                $sql .= self::sqlTool()->sqlAlterColumnDefault($table_name, $xml_col);
             }
 
-            if ($column['is_nullable'] !== $xmlCol['null']) {
-                $sql .= self::sqlTool()->sqlAlterColumnNull($tableName, $xmlCol);
+            if ($column['is_nullable'] !== $xml_col['null']) {
+                $sql .= self::sqlTool()->sqlAlterColumnNull($table_name, $xml_col);
             }
         }
 
         return $sql;
     }
 
-    private static function compareConstraints(string $tableName, array $xmlCons, array $dbCons): string
+    private static function compareConstraints(string $table_name, array $xml_cons, array $db_cons): string
     {
-        if (empty($xmlCons) || false === Tools::config('db_foreign_keys')) {
+        if (empty($xml_cons) || false === Tools::config('db_foreign_keys')) {
             return '';
         }
 
@@ -290,18 +290,18 @@ final class DbUpdater
         $sqlDelete = '';
         $sqlDeleteFK = '';
 
-        foreach ($dbCons as $dbCon) {
-            if ($dbCon['type'] === 'PRIMARY KEY') {
+        foreach ($db_cons as $db_con) {
+            if ($db_con['type'] === 'PRIMARY KEY') {
                 // exclude primary key
                 continue;
-            } elseif ($dbCon['type'] === 'FOREIGN KEY') {
+            } elseif ($db_con['type'] === 'FOREIGN KEY') {
                 // it is better to delete the foreign keys before the rest
-                $sqlDeleteFK .= self::sqlTool()->sqlDropConstraint($tableName, $dbCon);
+                $sqlDeleteFK .= self::sqlTool()->sqlDropConstraint($table_name, $db_con);
             } else {
-                $sqlDelete .= self::sqlTool()->sqlDropConstraint($tableName, $dbCon);
+                $sqlDelete .= self::sqlTool()->sqlDropConstraint($table_name, $db_con);
             }
 
-            $column = self::searchInArray($xmlCons, 'name', $dbCon['name']);
+            $column = self::searchInArray($xml_cons, 'name', $db_con['name']);
             if (empty($column)) {
                 $deleteCons = true;
             }
@@ -309,15 +309,15 @@ final class DbUpdater
 
         // add new constraints
         $sql = '';
-        foreach ($xmlCons as $xmlCon) {
+        foreach ($xml_cons as $xml_con) {
             // exclude primary keys because they have no name
-            if (0 === strpos($xmlCon['constraint'], 'PRIMARY')) {
+            if (0 === strpos($xml_con['constraint'], 'PRIMARY')) {
                 continue;
             }
 
-            $column = self::searchInArray($dbCons, 'name', $xmlCon['name']);
+            $column = self::searchInArray($db_cons, 'name', $xml_con['name']);
             if (empty($column)) {
-                $sql .= self::sqlTool()->sqlAddConstraint($tableName, $xmlCon['name'], $xmlCon['constraint']);
+                $sql .= self::sqlTool()->sqlAddConstraint($table_name, $xml_con['name'], $xml_con['constraint']);
             }
         }
 
@@ -326,78 +326,78 @@ final class DbUpdater
             $sql;
     }
 
-    private static function compareIndexes(string $tableName, array $xmlIndexes, array $dbIndexes)
+    private static function compareIndexes(string $table_name, array $xml_indexes, array $db_indexes): string
     {
         // Agregamos fs_ al inicio del 'name'
-        // Así la comparacion es correcta al buscar los indices
-        foreach ($xmlIndexes as $key => $value) {
+        // Así la comparación es correcta al buscar los indices
+        foreach ($xml_indexes as $key => $value) {
             if (isset($value['name'])) {
-                $xmlIndexes[$key]['name'] = 'fs_' . $value['name'];
+                $xml_indexes[$key]['name'] = 'fs_' . $value['name'];
             }
         }
 
         $sql = '';
 
-        // si no existen indices en el xml, borramos todos lo que existan en la base de datos.
-        if (empty($xmlIndexes)) {
-            foreach ($dbIndexes as $dbIdx) {
-                $sql .= self::sqlTool()->sqlDropIndex($tableName, $dbIdx);
+        // si no existen índices en el xml, borramos todos lo que existan en la base de datos.
+        if (empty($xml_indexes)) {
+            foreach ($db_indexes as $db_idx) {
+                $sql .= self::sqlTool()->sqlDropIndex($table_name, $db_idx);
             }
             return $sql;
         }
 
         // remove new indexes
-        foreach ($dbIndexes as $dbIdx) {
+        foreach ($db_indexes as $db_idx) {
             // delete if not found
-            $column = self::searchInArray($xmlIndexes, 'name', $dbIdx['name']);
+            $column = self::searchInArray($xml_indexes, 'name', $db_idx['name']);
             if (empty($column)) {
-                $sql .= self::sqlTool()->sqlDropIndex($tableName, $dbIdx);
+                $sql .= self::sqlTool()->sqlDropIndex($table_name, $db_idx);
             }
         }
 
         // add new indexes
-        foreach ($xmlIndexes as $xmlIdx) {
+        foreach ($xml_indexes as $xml_idx) {
             // add if not found
-            $column = self::searchInArray($dbIndexes, 'name', $xmlIdx['name']);
+            $column = self::searchInArray($db_indexes, 'name', $xml_idx['name']);
             if (empty($column)) {
-                $sql .= self::sqlTool()->sqlAddIndex($tableName, $xmlIdx['name'], $xmlIdx['columns']);
+                $sql .= self::sqlTool()->sqlAddIndex($table_name, $xml_idx['name'], $xml_idx['columns']);
             }
         }
 
         return $sql;
     }
 
-    private static function compareDataTypes(string $dbType, string $xmlType): bool
+    private static function compareDataTypes(string $db_type, string $xml_type): bool
     {
-        return self::db()->getEngine()->compareDataTypes($dbType, $xmlType);
+        return self::db()->getEngine()->compareDataTypes($db_type, $xml_type);
     }
 
-    private static function renameColums(string $tableName, array $xmlRenameColumns, array $dbCols)
+    private static function renameColumns(string $table_name, array $xml_rename_columns, array $db_cols): string
     {
-        if (empty($xmlRenameColumns)) {
+        if (empty($xml_rename_columns)) {
             return '';
         }
 
         $sql = '';
-        foreach ($xmlRenameColumns as $renameColumn) {
-            $column = self::searchInArray($dbCols, 'name', $renameColumn['old_column']);
+        foreach ($xml_rename_columns as $rename_col) {
+            $column = self::searchInArray($db_cols, 'name', $rename_col['old_column']);
             if (!empty($column)) {
-                $sql .= self::sqlTool()->sqlRenameColumn($tableName, $renameColumn['old_column'], $renameColumn['new_column']);
+                $sql .= self::sqlTool()->sqlRenameColumn($table_name, $rename_col['old_column'], $rename_col['new_column']);
             }
         }
 
         return $sql;
     }
 
-    private static function save(string $tableName): void
+    private static function save(string $table_name): void
     {
-        self::$checkedTables[] = $tableName;
+        self::$checked_tables[] = $table_name;
 
         Tools::folderCheckOrCreate(Tools::folder('MyFiles'));
 
         file_put_contents(
             Tools::folder('MyFiles', self::FILE_NAME),
-            json_encode(self::$checkedTables, JSON_PRETTY_PRINT)
+            json_encode(self::$checked_tables, JSON_PRETTY_PRINT)
         );
     }
 
@@ -414,10 +414,10 @@ final class DbUpdater
 
     private static function sqlTool(): DataBaseQueries
     {
-        if (null === self::$sqlTool) {
-            self::$sqlTool = self::db()->getEngine()->getSQL();
+        if (null === self::$sql_tool) {
+            self::$sql_tool = self::db()->getEngine()->getSQL();
         }
 
-        return self::$sqlTool;
+        return self::$sql_tool;
     }
 }
