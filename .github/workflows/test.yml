@@ -18,7 +18,7 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+        php-version: ['8.0', '8.1', '8.2', '8.3', '8.4']
         database:
           - type: mysql
             version: '8.0'
@@ -37,8 +37,8 @@ jobs:
       mysql:
         image: ${{ matrix.database.type == 'mysql' && format('mysql:{0}', matrix.database.version) || '' }}
         env:
-          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASS }}
-          MYSQL_DATABASE: ${{ env.DB_NAME }}
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: facturascripts_test
         ports:
           - 3306:3306
         options: >-
@@ -47,16 +47,30 @@ jobs:
           --health-timeout=5s
           --health-retries=3
 
+      mariadb:
+        image: ${{ matrix.database.type == 'mariadb' && format('mariadb:{0}', matrix.database.version) || '' }}
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: facturascripts_test
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: false
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
       postgres:
         image: ${{ matrix.database.type == 'postgresql' && format('postgres:{0}', matrix.database.version) || '' }}
         env:
-          POSTGRES_PASSWORD: ${{ env.DB_PASS }}
-          POSTGRES_DB: ${{ env.DB_NAME }}
-          POSTGRES_USER: ${{ env.DB_USER }}
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: facturascripts_test
+          POSTGRES_USER: root
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }}"
+          --health-cmd="pg_isready -U root -d facturascripts_test"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -91,15 +105,15 @@ jobs:
 
       - name: Verify database connection
         run: |
-          if [ "${{ matrix.database.type }}" = "mysql" ]; then
-            mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SHOW DATABASES;"
+          if [ "${{ matrix.database.type }}" = "mysql" ] || [ "${{ matrix.database.type }}" = "mariadb" ]; then
+            mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SHOW DATABASES; SELECT VERSION();"
           else
-            PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -c "\l"
+            PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -c "\l; SELECT version();"
           fi
 
       - name: Create application config
         run: |
-          if [ "${{ matrix.database.type }}" = "mysql" ]; then
+          if [ "${{ matrix.database.type }}" = "mysql" ] || [ "${{ matrix.database.type }}" = "mariadb" ]; then
             cat > config.php << 'EOF'
           <?php
           define('FS_COOKIES_EXPIRE', 31536000);
