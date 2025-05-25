@@ -23,11 +23,14 @@ use FacturaScripts\Core\Base\MiniLog;
 
 trait LogErrorsTrait
 {
-    protected function logErrors()
+    protected function logErrors(bool $force = false): void
     {
-        if ($this->getStatus() > 1) {
+        if ($this->getStatus() > 1 || $force) {
             foreach (MiniLog::read('', ['critical', 'error', 'warning']) as $item) {
                 error_log($item['message']);
+                if (!empty($item['context'])) {
+                    error_log(print_r($item['context'], true));
+                }
             }
         }
 

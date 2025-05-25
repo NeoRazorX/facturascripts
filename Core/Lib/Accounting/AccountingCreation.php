@@ -216,7 +216,7 @@ class AccountingCreation
      *
      * @return string
      */
-    public function getFreeSubjectSubaccount($subject, $account)
+    public function getFreeSubjectSubaccount($subject, $account): string
     {
         if (false === $this->checkExercise($account->codejercicio)) {
             return '';

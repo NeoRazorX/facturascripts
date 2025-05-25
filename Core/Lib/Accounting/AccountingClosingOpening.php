@@ -94,7 +94,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      *
      * @param bool $value
      */
-    public function setCopySubAccounts($value)
+    public function setCopySubAccounts($value): void
     {
         $this->copySubAccounts = $value;
     }
@@ -116,7 +116,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      *
      * @return string
      */
-    protected function getDate()
+    protected function getDate(): string
     {
         return $this->newExercise->fechainicio;
     }
@@ -176,7 +176,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      *
      * @param Asiento $entry
      */
-    protected function setData(&$entry)
+    protected function setData(&$entry): void
     {
         parent::setData($entry);
         $entry->codejercicio = $this->newExercise->codejercicio;
@@ -189,7 +189,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      * @param Partida $line
      * @param array $data
      */
-    protected function setDataLine(&$line, $data)
+    protected function setDataLine(&$line, $data): void
     {
         if ($this->isProfitLossAccount($data['code'])) {
             $this->setResultAccountData($data);
@@ -273,7 +273,7 @@ class AccountingClosingOpening extends AccountingClosingBase
     /**
      * Search and load next exercise of indicated exercise.
      */
-    private function loadNewExercise()
+    private function loadNewExercise(): void
     {
         $date = date('d-m-Y', strtotime($this->exercise->fechainicio . ' +1 year'));
 
@@ -287,7 +287,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      *
      * @param array $data
      */
-    private function setResultAccountData(&$data)
+    private function setResultAccountData(&$data): void
     {
         $specialAccount = ($data['debit'] > $data['credit']) ? AccountingAccounts::SPECIAL_NEGATIVE_PREV_ACCOUNT : AccountingAccounts::SPECIAL_POSITIVE_PREV_ACCOUNT;
 
