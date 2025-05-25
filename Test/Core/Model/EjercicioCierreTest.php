@@ -19,11 +19,13 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Lib\Accounting\ClosingToAcounting;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Asiento;
+use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
@@ -46,6 +48,10 @@ final class EjercicioCierreTest extends TestCase
 
     public function testCloseExercise(): void
     {
+        // comprobamos si existe la tabla de cuentas
+        $db = new DataBase();
+        $this->assertTrue($db->tableExists(Cuenta::tableName()));
+
         // creamos una nueva empresa
         $empresa = $this->getRandomCompany();
         $this->assertTrue($empresa->save());

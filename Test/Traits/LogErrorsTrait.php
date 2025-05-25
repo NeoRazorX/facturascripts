@@ -36,7 +36,7 @@ trait LogErrorsTrait
 
             // guardamos la lista de consultas sql en un archivo
             $queries = [];
-            foreach (MiniLog::read('database', ['debug']) as $item) {
+            foreach (MiniLog::read('database') as $item) {
                 $queries[] = $item['message'];
             }
             $file_path = Tools::folder('MyFiles', 'test_error_' . date('Y-m-d_H-i-s_') . rand(0, 1000) . '.log');
