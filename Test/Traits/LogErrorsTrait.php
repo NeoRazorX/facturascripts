@@ -42,6 +42,11 @@ trait LogErrorsTrait
             $file_path = Tools::folder('MyFiles', 'test_error_' . date('Y-m-d_H-i-s_') . rand(0, 1000) . '.log');
             file_put_contents($file_path, implode(PHP_EOL, $queries) . PHP_EOL, FILE_APPEND);
             error_log('Database queries in ' . $file_path . PHP_EOL);
+
+            // mostramos las 5 últimas
+            foreach (array_slice($queries, -5) as $query) {
+                error_log($query);
+            }
         }
 
         MiniLog::clear();
