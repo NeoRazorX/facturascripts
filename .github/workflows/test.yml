@@ -1,0 +1,217 @@
+name: PHPUnit Tests
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+env:
+  DB_NAME: facturascripts_test
+  DB_USER: root
+  DB_PASS: root
+  DB_HOST: 127.0.0.1
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+        database:
+          - type: mysql
+            version: '8.0'
+            port: 3306
+          - type: mariadb
+            version: '11.0'
+            port: 3306
+          - type: postgresql
+            version: '13'
+            port: 5432
+      fail-fast: false
+
+    name: PHP ${{ matrix.php-version }} - ${{ matrix.database.type }} ${{ matrix.database.version }}
+
+    services:
+      mysql:
+        image: ${{ matrix.database.type == 'mysql' && format('mysql:{0}', matrix.database.version) || '' }}
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASS }}
+          MYSQL_DATABASE: ${{ env.DB_NAME }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+      postgres:
+        image: ${{ matrix.database.type == 'postgresql' && format('postgres:{0}', matrix.database.version) || '' }}
+        env:
+          POSTGRES_PASSWORD: ${{ env.DB_PASS }}
+          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_USER: ${{ env.DB_USER }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }}"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: bcmath, curl, gd, iconv, mysqli, pdo_mysql, pdo_pgsql, pgsql, soap, zip, fileinfo, openssl, simplexml, mbstring, intl
+          coverage: xdebug
+          tools: composer:v2
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
+
+      - name: Verify database connection
+        run: |
+          if [ "${{ matrix.database.type }}" = "mysql" ]; then
+            mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SHOW DATABASES;"
+          else
+            PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -c "\l"
+          fi
+
+      - name: Create application config
+        run: |
+          if [ "${{ matrix.database.type }}" = "mysql" ]; then
+            cat > config.php << 'EOF'
+          <?php
+          define('FS_COOKIES_EXPIRE', 31536000);
+          define('FS_ROUTE', '');
+          define('FS_DB_TYPE', 'mysql');
+          define('FS_DB_HOST', '${{ env.DB_HOST }}');
+          define('FS_DB_PORT', 3306);
+          define('FS_DB_NAME', '${{ env.DB_NAME }}');
+          define('FS_DB_USER', '${{ env.DB_USER }}');
+          define('FS_DB_PASS', '${{ env.DB_PASS }}');
+          define('FS_DB_FOREIGN_KEYS', true);
+          define('FS_DB_TYPE_CHECK', true);
+          define('FS_MYSQL_CHARSET', 'utf8mb4');
+          define('FS_MYSQL_COLLATE', 'utf8mb4_unicode_520_ci');
+          define('FS_LANG', 'es_ES');
+          define('FS_TIMEZONE', 'Europe/Madrid');
+          define('FS_HIDDEN_PLUGINS', '');
+          define('FS_DEBUG', true);
+          define('FS_DISABLE_ADD_PLUGINS', false);
+          define('FS_DISABLE_RM_PLUGINS', false);
+          EOF
+          else
+            cat > config.php << 'EOF'
+          <?php
+          define('FS_COOKIES_EXPIRE', 31536000);
+          define('FS_ROUTE', '');
+          define('FS_DB_TYPE', 'postgresql');
+          define('FS_DB_HOST', '${{ env.DB_HOST }}');
+          define('FS_DB_PORT', 5432);
+          define('FS_DB_NAME', '${{ env.DB_NAME }}');
+          define('FS_DB_USER', '${{ env.DB_USER }}');
+          define('FS_DB_PASS', '${{ env.DB_PASS }}');
+          define('FS_DB_FOREIGN_KEYS', true);
+          define('FS_DB_TYPE_CHECK', true);
+          define('FS_LANG', 'es_ES');
+          define('FS_TIMEZONE', 'Europe/Madrid');
+          define('FS_HIDDEN_PLUGINS', '');
+          define('FS_DEBUG', true);
+          define('FS_DISABLE_ADD_PLUGINS', false);
+          define('FS_DISABLE_RM_PLUGINS', false);
+          EOF
+          fi
+
+      - name: Run PHPUnit tests
+        run: |
+          if [ -f phpunit.xml ] || [ -f phpunit.xml.dist ]; then
+            vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+          else
+            echo "No PHPUnit configuration found. Running with default settings..."
+            vendor/bin/phpunit --bootstrap vendor/autoload.php tests/
+          fi
+
+      - name: Upload coverage reports
+        if: matrix.php-version == '8.3' && matrix.database.type == 'mysql' && matrix.database.version == '8.1'
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  security-audit:
+    runs-on: ubuntu-latest
+    name: Security Audit
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-dev --optimize-autoloader
+
+      - name: Run security audit
+        run: composer audit
+
+  code-quality:
+    runs-on: ubuntu-latest
+    name: Code Quality
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2, phpcs, phpstan
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --optimize-autoloader
+
+      - name: Run PHP CodeSniffer
+        run: |
+          if [ -f phpcs.xml ] || [ -f phpcs.xml.dist ]; then
+            phpcs
+          else
+            echo "No PHPCS configuration found, skipping..."
+          fi
+        continue-on-error: true
+
+      - name: Run PHPStan
+        run: |
+          if [ -f phpstan.neon ] || [ -f phpstan.neon.dist ]; then
+            phpstan analyse
+          else
+            echo "No PHPStan configuration found, skipping..."
+          fi
+        continue-on-error: true
