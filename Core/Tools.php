@@ -461,20 +461,35 @@ class Tools
      * Genera una cadena aleatoria para usar como contraseña.
      *
      * Esta función crea una contraseña de longitud especificada usando un conjunto de caracteres alfanuméricos y símbolos especiales.
+     * Garantiza que la contraseña contenga al menos un número y una letra.
      *
-     * @param int $length La longitud deseada para la contraseña. Por defecto es 10.
+     * @param int $length La longitud deseada para la contraseña. Por defecto es 10. Mínimo 8.
      *
      * @return string La contraseña generada.
      */
     public static function password(int $length = 10): string
     {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.+-*¿?¡!#$%&/()=;:_,<>@';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        if ($length < 8) {
+            $length = 8;
         }
-        return $randomString;
+
+        $numbers = '0123456789';
+        $letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $symbols = '.+-*¿?¡!#$%&/()=;:_,<>@';
+        $allCharacters = $numbers . $letters . $symbols;
+
+        // Garantizar al menos un número y una letra
+        $randomString = '';
+        $randomString .= $numbers[random_int(0, strlen($numbers) - 1)];
+        $randomString .= $letters[random_int(0, strlen($letters) - 1)];
+
+        // Completar el resto de la longitud con caracteres aleatorios
+        for ($i = 2; $i < $length; $i++) {
+            $randomString .= $allCharacters[random_int(0, strlen($allCharacters) - 1)];
+        }
+
+        // Mezclar los caracteres para que el número y la letra no estén siempre al principio
+        return str_shuffle($randomString);
     }
 
     /**
