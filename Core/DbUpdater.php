@@ -107,8 +107,8 @@ final class DbUpdater
                 return false;
             }
 
-            $fileData = file_get_contents(Tools::folder('MyFiles', self::FILE_NAME));
-            self::$checked_tables = json_decode($fileData, true) ?? [];
+            $file_data = file_get_contents(Tools::folder('MyFiles', self::FILE_NAME));
+            self::$checked_tables = json_decode($file_data, true) ?? [];
         }
 
         return in_array($table_name, self::$checked_tables);
@@ -120,7 +120,6 @@ final class DbUpdater
             'columns' => [],
             'constraints' => [],
             'indexes' => [],
-            'rename' => [],
         ];
 
         if (false === file_exists($file_path)) {
@@ -144,7 +143,8 @@ final class DbUpdater
                 'name' => (string)$col->name,
                 'type' => (string)$col->type,
                 'null' => $col->null && strtolower($col->null) === 'no' ? 'NO' : 'YES',
-                'default' => $col->default === '' ? null : (string)$col->default
+                'default' => $col->default === '' ? null : (string)$col->default,
+                'rename' => (string)$col->rename,
             ];
 
             if ($col->type == 'serial') {
@@ -173,17 +173,6 @@ final class DbUpdater
                 $structure['indexes'][$key] = [
                     'name' => $key,
                     'columns' => (string)$col->columns
-                ];
-            }
-        }
-
-        if (isset($xml->rename)) {
-            foreach ($xml->rename as $col) {
-                $key = (string)$col->old_column;
-
-                $structure['rename'][$key] = [
-                    'old_column' => $key,
-                    'new_column' => (string)$col->new_column
                 ];
             }
         }
@@ -220,8 +209,7 @@ final class DbUpdater
         $db_indexes = self::db()->getIndexes($table_name);
         $sql = self::compareColumns($table_name, $structure['columns'], $db_cols) .
             self::compareConstraints($table_name, $structure['constraints'], $db_cons) .
-            self::compareIndexes($table_name, $structure['indexes'], $db_indexes) .
-            self::renameColumns($table_name, $structure['rename'], $db_cols);
+            self::compareIndexes($table_name, $structure['indexes'], $db_indexes);
         if (empty($sql)) {
             self::save($table_name);
             Tools::log()->debug('table-checked', ['%tableName%' => $table_name]);
@@ -259,7 +247,9 @@ final class DbUpdater
         foreach ($xml_cols as $xml_col) {
             $column = self::searchInArray($db_cols, 'name', $xml_col['name']);
             if (empty($column)) {
-                $sql .= self::sqlTool()->sqlAlterAddColumn($table_name, $xml_col);
+                $sql .= self::needRename($db_cols, $xml_col) ?
+                    self::sqlTool()->sqlRenameColumn($table_name, $xml_col['rename'], $xml_col['name']) :
+                    self::sqlTool()->sqlAlterAddColumn($table_name, $xml_col);
                 continue;
             }
 
@@ -286,9 +276,9 @@ final class DbUpdater
         }
 
         // if you have to delete a constraint, it is better to delete them all
-        $deleteCons = false;
-        $sqlDelete = '';
-        $sqlDeleteFK = '';
+        $delete_cons = false;
+        $sql_delete = '';
+        $sql_delete_fk = '';
 
         foreach ($db_cons as $db_con) {
             if ($db_con['type'] === 'PRIMARY KEY') {
@@ -296,14 +286,14 @@ final class DbUpdater
                 continue;
             } elseif ($db_con['type'] === 'FOREIGN KEY') {
                 // it is better to delete the foreign keys before the rest
-                $sqlDeleteFK .= self::sqlTool()->sqlDropConstraint($table_name, $db_con);
+                $sql_delete_fk .= self::sqlTool()->sqlDropConstraint($table_name, $db_con);
             } else {
-                $sqlDelete .= self::sqlTool()->sqlDropConstraint($table_name, $db_con);
+                $sql_delete .= self::sqlTool()->sqlDropConstraint($table_name, $db_con);
             }
 
             $column = self::searchInArray($xml_cons, 'name', $db_con['name']);
             if (empty($column)) {
-                $deleteCons = true;
+                $delete_cons = true;
             }
         }
 
@@ -321,8 +311,8 @@ final class DbUpdater
             }
         }
 
-        return $deleteCons ?
-            $sqlDeleteFK . $sqlDelete . $sql :
+        return $delete_cons ?
+            $sql_delete_fk . $sql_delete . $sql :
             $sql;
     }
 
@@ -372,21 +362,15 @@ final class DbUpdater
         return self::db()->getEngine()->compareDataTypes($db_type, $xml_type);
     }
 
-    private static function renameColumns(string $table_name, array $xml_rename_columns, array $db_cols): string
+    private static function needRename(array $db_cols, array $xml_col): bool
     {
-        if (empty($xml_rename_columns)) {
-            return '';
+        if (empty($xml_col['rename'])) {
+            return false;
         }
 
-        $sql = '';
-        foreach ($xml_rename_columns as $rename_col) {
-            $column = self::searchInArray($db_cols, 'name', $rename_col['old_column']);
-            if (!empty($column)) {
-                $sql .= self::sqlTool()->sqlRenameColumn($table_name, $rename_col['old_column'], $rename_col['new_column']);
-            }
-        }
-
-        return $sql;
+        // comprobamos si la columna a renombrar existe
+        $column = self::searchInArray($db_cols, 'name', $xml_col['rename']);
+        return !empty($column);
     }
 
     private static function save(string $table_name): void

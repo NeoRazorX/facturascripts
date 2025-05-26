@@ -20,7 +20,6 @@
     <column>
         <name>hora</name>
         <type>time</type>
-        <null>NO</null>
     </column>
     <column>
         <name>id</name>
@@ -29,24 +28,28 @@
     <column>
         <name>importe</name>
         <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
     </column>
     <column>
         <name>lastactivity</name>
         <type>timestamp</type>
     </column>
     <column>
-        <name>notas</name>
-        <type>text</type>
-        <rename>observaciones</rename>
-    </column>
-    <column>
         <name>numero</name>
         <type>integer</type>
         <null>NO</null>
-        <default>7</default>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
     </column>
     <constraint>
         <name>test_table_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
+    <index>
+        <name>test_idx</name>
+        <columns>fechaalta</columns>
+    </index>
 </table>

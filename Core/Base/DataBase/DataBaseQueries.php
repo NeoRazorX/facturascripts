@@ -27,7 +27,6 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 interface DataBaseQueries
 {
-
     /**
      * Statement needed to convert a column to integer
      *
@@ -161,6 +160,17 @@ interface DataBaseQueries
      * @return string
      */
     public function sqlLastValue(): string;
+
+    /**
+     * SQL statement to rename a column.
+     *
+     * @param string $tableName
+     * @param string $old_column
+     * @param string $new_column
+     *
+     * @return string
+     */
+    public function sqlRenameColumn(string $tableName, string $old_column, string $new_column): string;
 
     /**
      * Generates the SQL to establish the given restrictions.
