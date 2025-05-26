@@ -597,14 +597,32 @@ class Tools
      */
     public static function slug(string $text, string $separator = '-', int $maxLength = 0): string
     {
-        $text = self::ascii($text);
-        $text = preg_replace('/[^A-Za-z0-9]+/', $separator, $text);
-        $text = preg_replace('/' . $separator . '{2,}/', $separator, $text);
+        // Convertir a ASCII y a minúsculas
+        $text = strtolower(self::ascii($text));
+        
+        // Reemplazar caracteres no alfanuméricos con el separador
+        $text = preg_replace('/[^a-z0-9]+/', $separator, $text);
+        
+        // Escapar el separador para usar en regex y eliminar separadores consecutivos
+        $escapedSeparator = preg_quote($separator, '/');
+        $text = preg_replace('/' . $escapedSeparator . '{2,}/', $separator, $text);
+        
+        // Eliminar separadores al inicio y final
         $text = trim($text, $separator);
-        $text = strtolower($text);
-        return $maxLength > 0 ?
-            substr($text, 0, $maxLength) :
-            $text;
+        
+        // Si queda una cadena vacía, devolver una cadena vacía
+        if ($text === '') {
+            return '';
+        }
+        
+        // Aplicar límite de longitud si se especifica
+        if ($maxLength > 0 && strlen($text) > $maxLength) {
+            $text = substr($text, 0, $maxLength);
+            // Limpiar separadores finales que puedan haber quedado tras el corte
+            $text = rtrim($text, $separator);
+        }
+        
+        return $text;
     }
 
     /**
