@@ -33,6 +33,7 @@
                       onsubmit="animateSpinner('add')">
                     {{ formToken() }}
                     <input type="hidden" name="action" value="send"/>
+                    <input type="hidden" name="notification" value="{{ fsc.newMail.notification }}"/>
                     <div class="card shadow">
                         <div class="card-body">
                             <h1 class="h3 mb-3">
