@@ -19,6 +19,7 @@
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\SubscriptionManager;
 use FacturaScripts\Core\CrashReport;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\NextCode;
@@ -71,6 +72,10 @@ if ($db->connected()) {
     // actualizamos la telemetría
     $telemetry = new Telemetry();
     $telemetry->update();
+
+    // actualizamos las suscripciones
+    $subscription = new SubscriptionManager();
+    $subscription->update();
 
     // guardamos los logs y cerramos la conexión a la base de datos
     MiniLog::save();
