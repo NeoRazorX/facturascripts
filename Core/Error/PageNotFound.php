@@ -48,7 +48,7 @@ class PageNotFound extends ErrorController
 
         if (false === Tools::config('disable_deploy_actions', false)) {
             $bodyHtml .= '<div class="col-auto">'
-                . '<a href="/AdminPlugins" class="btn btn-warning">' . Tools::lang()->trans('plugins') . '</a>'
+                . '<a href="' . Tools::config('route') . '/AdminPlugins" class="btn btn-warning">' . Tools::lang()->trans('plugins') . '</a>'
                 . '</div>';
         }
 
