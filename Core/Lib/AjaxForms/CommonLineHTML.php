@@ -30,7 +30,6 @@ use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Stock;
-use FacturaScripts\Dinamic\Model\Variante;
 
 trait CommonLineHTML
 {
@@ -45,9 +44,6 @@ trait CommonLineHTML
 
     /** @var string */
     protected static $regimeniva;
-
-    /** @var array */
-    private static $variants = [];
 
     /** @var array */
     private static $stocks = [];
@@ -148,7 +144,7 @@ trait CommonLineHTML
             'disabled=""';
 
         $options = '<option value="" selected>------</option>';
-        $product = $line->getProducto();
+        $product = $line->producto;
         $excepcionIva = empty($line->idlinea) && empty($line->{$field}) ? $product->{$field} : $line->{$field};
 
         foreach (RegimenIVA::allExceptions() as $key => $value) {
@@ -242,13 +238,6 @@ trait CommonLineHTML
             return;
         }
 
-        // cargamos las variantes
-        $variantModel = new Variante();
-        $where = [new DataBaseWhere('referencia', $references, 'IN')];
-        foreach ($variantModel->all($where, [], 0, 0) as $variante) {
-            self::$variants[$variante->referencia] = $variante;
-        }
-
         // cargamos los stocks
         $stockModel = new Stock();
         $where = [
@@ -295,8 +284,8 @@ trait CommonLineHTML
             return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '<div class="small text-break">' . $numlinea . '</div></div>';
         }
 
-        $link = isset(self::$variants[$line->referencia]) ?
-            $numlinea . '<a href="' . self::$variants[$line->referencia]->url() . '" target="_blank">' . $line->referencia . '</a>' :
+        $link = isset($line->producto) ?
+            $numlinea . '<a href="' . $line->producto->url() . '" target="_blank">' . $line->referencia . '</a>' :
             $line->referencia;
 
         return '<div class="col-sm-2 col-lg-1 order-1">'
@@ -327,7 +316,7 @@ trait CommonLineHTML
     {
         if ($model->subjectColumn() === 'codcliente'
             && $model->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
-            && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+            && $line->producto->tipo === ProductType::SECOND_HAND) {
             $profit = $line->pvpunitario - $line->coste;
             $tax = $profit * ($line->iva + $line->recargo - $line->irpf) / 100;
             return ($line->coste + $profit + $tax) * $line->cantidad;
