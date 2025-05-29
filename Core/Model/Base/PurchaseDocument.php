@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Proveedor as CoreProveedor;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Variante;
@@ -35,6 +36,48 @@ use FacturaScripts\Dinamic\Model\Variante;
 abstract class PurchaseDocument extends TransformerDocument
 {
     /**
+     * Supplier's mailbox.
+     *
+     * @var string
+     */
+    public $apartado;
+
+    /**
+     * Supplier's city.
+     *
+     * @var string
+     */
+    public $ciudad;
+
+    /**
+     * Supplier's country.
+     *
+     * @var string
+     */
+    public $codpais;
+
+    /**
+     * Supplier's postal code.
+     *
+     * @var string
+     */
+    public $codpostal;
+
+    /**
+     * Supplier's address
+     *
+     * @var string
+     */
+    public $direccion;
+
+    /**
+     * Supplier's province.
+     *
+     * @var string
+     */
+    public $provincia;
+
+    /**
      * Supplier code for this document.
      *
      * @var string
@@ -42,7 +85,7 @@ abstract class PurchaseDocument extends TransformerDocument
     public $codproveedor;
 
     /**
-     * Provider's name.
+     * Supplier's name.
      *
      * @var string
      */
@@ -59,10 +102,21 @@ abstract class PurchaseDocument extends TransformerDocument
     public function clear()
     {
         parent::clear();
+        $this->direccion = '';
 
         // select default currency
         $coddivisa = Tools::settings('default', 'coddivisa');
         $this->setCurrency($coddivisa, true);
+    }
+
+    public function country(): string
+    {
+        $country = new Pais();
+        if ($country->loadFromCode($this->codpais)) {
+            return Tools::fixHtml($country->nombre) ?? '';
+        }
+
+        return $this->codpais ?? '';
     }
 
     /**
@@ -164,6 +218,12 @@ abstract class PurchaseDocument extends TransformerDocument
         $this->codproveedor = $subject->codproveedor;
         $this->nombre = $subject->razonsocial;
         $this->cifnif = $subject->cifnif ?? '';
+        $this->apartado = $subject->getDefaultAddress()->apartado;
+        $this->ciudad = $subject->getDefaultAddress()->ciudad;
+        $this->codpostal = $subject->getDefaultAddress()->codpostal;
+        $this->direccion = $subject->getDefaultAddress()->direccion;
+        $this->provincia = $subject->getDefaultAddress()->provincia;
+        $this->codpais = $subject->getDefaultAddress()->codpais;
 
         // commercial data
         if (empty($this->primaryColumnValue())) {
@@ -191,6 +251,12 @@ abstract class PurchaseDocument extends TransformerDocument
     {
         $this->nombre = Tools::noHtml($this->nombre);
         $this->numproveedor = Tools::noHtml($this->numproveedor);
+
+        $this->apartado = Tools::noHtml($this->apartado);
+        $this->ciudad = Tools::noHtml($this->ciudad);
+        $this->codpostal = Tools::noHtml($this->codpostal);
+        $this->direccion = Tools::noHtml($this->direccion);
+        $this->provincia = Tools::noHtml($this->provincia);
 
         return parent::test();
     }
@@ -232,7 +298,7 @@ abstract class PurchaseDocument extends TransformerDocument
 
     protected function setPreviousData(array $fields = [])
     {
-        $more = ['codproveedor'];
+        $more = ['codproveedor', 'direccion'];
         parent::setPreviousData(array_merge($more, $fields));
     }
 }

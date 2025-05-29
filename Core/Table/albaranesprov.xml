@@ -155,6 +155,30 @@
         <type>double precision</type>
         <default>0</default>
     </column>
+    <column>
+        <name>apartado</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>ciudad</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>codpais</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
+        <name>codpostal</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>direccion</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>provincia</name>
+        <type>character varying(100)</type>
+    </column>
     <constraint>
         <name>albaranesprov_pkey</name>
         <type>PRIMARY KEY (idalbaran)</type>
