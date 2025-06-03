@@ -194,7 +194,7 @@ class APIModel extends APIResourceClass
      */
     private function getRequestArray($key, $default = ''): array
     {
-        $array = $this->request->get($key, $default);
+        $array = $this->request->getArray($key, $default);
         return is_array($array) ? $array : []; // if is string has bad format
     }
 
@@ -269,6 +269,17 @@ class APIModel extends APIResourceClass
                     break;
             }
 
+            if (substr($key, -5) == '_null') {
+                $field = substr($key, 0, -5);
+                $operator = 'IS';
+                $value = null;
+            }
+            elseif (substr($key, -8) == '_notnull') {
+                $field = substr($key, 0, -8);
+                $operator = 'IS NOT';
+                $value = null;
+            }
+            
             if (substr($key, -5) == '_like') {
                 $field = substr($key, 0, -5);
                 $operator = 'LIKE';
