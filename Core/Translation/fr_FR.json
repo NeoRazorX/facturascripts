@@ -379,6 +379,7 @@
     "dashboard-backup": "Sauvegarde",
     "dashboard-backup-p": "Nous vous rappelons que FacturaScripts est installé sur votre PC, donc les données (factures, clients, etc.) sont stockées sur votre PC et uniquement sur votre PC. Effectuez des sauvegardes régulières et conservez ces sauvegardes loin du PC.",
     "dashboard-for": "Tableau de bord pour %company%",
+    "data-form-error": "Erreur dans les données du formulaire",
     "data-source": "Données d'origine",
     "database": "Base de données",
     "database-error": "Erreur de connexion à la base de données",

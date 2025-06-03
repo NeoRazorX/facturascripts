@@ -379,6 +379,7 @@
     "dashboard-backup": "Segurtasun kopia",
     "dashboard-backup-p": "Gogorarazten dizugu FacturaScripts zure ordenagailuan instalatuta duzula, beraz, datuak (fakturak, bezeroak, etab...) zure ordenagailuan gordetzen dira eta zure ordenagailuan bakarrik. Babeskopiak egin eta ordenagailutik urrun gorde kopia horiek.",
     "dashboard-for": "%company%-ren arbela",
+    "data-form-error": "Formularioaren datuetan errorea",
     "data-source": "Jatorrizko datuak",
     "database": "Datu basea",
     "database-error": "Errorea datubasearekin konetatzerakoan",

@@ -379,6 +379,7 @@
     "dashboard-backup": "Záloha",
     "dashboard-backup-p": "Pamatujte, že máte FakturaScripty nainstalovány na svém počítači, data (faktury, zákazníci atd...) jsou tedy uložena pouze na vašem počítači. Pravidelně dělejte zálohy a uchovávejte tyto zálohy mimo počítač.",
     "dashboard-for": "Tablero de %company%",
+    "data-form-error": "Chyba v datech formuláře",
     "data-source": "Datos de origen",
     "database": "Base de datos",
     "database-error": "Chyba při připojení k databázi",

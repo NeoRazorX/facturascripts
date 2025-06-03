@@ -379,6 +379,7 @@
     "dashboard-backup": "Sicherungskopie",
     "dashboard-backup-p": "Wir erinnern Sie daran, dass Sie FacturaScripts auf Ihrem PC installiert haben, daher werden die Daten (Rechnungen, Kunden usw.) auf Ihrem PC und nur auf Ihrem PC gespeichert. Erstellen Sie regelmäßig Backups und bewahren Sie diese Sicherungskopien außerhalb des PCs auf.",
     "dashboard-for": "Taffel der %company%",
+    "data-form-error": "Fehler bei den Formulardaten",
     "data-source": "Datenquelle",
     "database": "Datenbank",
     "database-error": "Fehler bei der Verbindung zur Datenbank",

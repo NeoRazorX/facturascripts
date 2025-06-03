@@ -379,6 +379,7 @@
     "dashboard-backup": "Copia de seguridade",
     "dashboard-backup-p": "Lembrámoslle que ten instalado FacturaScripts no seu PC, por tanto os datos (as facturas, clientes, etc...) almacénanse no seu PC e soamente no seu PC. Faga copias de seguridade de forma regular e garde esas copias lonxe do PC.",
     "dashboard-for": "Taboleiro de %company%",
+    "data-form-error": "Erro nos datos do formulario",
     "data-source": "Datos de orixe",
     "database": "Base de datos",
     "database-error": "Erro ó conectar á base de datos",

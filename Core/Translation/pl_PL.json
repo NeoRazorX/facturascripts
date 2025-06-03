@@ -379,6 +379,7 @@
     "dashboard-backup": "Kopia zapasowa",
     "dashboard-backup-p": "Przypominamy, że masz zainstalowany FacturaScripts na swoim PC, dlatego dane (faktury, klienci, itp...) są przechowywane tylko na Twoim PC. Regularnie twórz kopie zapasowe i przechowuj je z dala od komputera.",
     "dashboard-for": "Panel %company%",
+    "data-form-error": "Błąd w danych formularza",
     "data-source": "Źródła danych",
     "database": "Baza danych",
     "database-error": "Błąd połączenia z bazą danych",
