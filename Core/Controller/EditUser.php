@@ -100,8 +100,8 @@ class EditUser extends EditController
         $this->setSettings($mvn, 'btnOptions', false);
         $this->setSettings($mvn, 'btnPrint', false);
 
-        // add two factor authentication tab
-        $this->createViewsTwofactor();
+        // add two-factor authentication tab
+        $this->createViewsTwoFactor();
 
         // add roles tab
         if ($this->user->admin) {
@@ -115,7 +115,7 @@ class EditUser extends EditController
         $this->createViewsEmails();
     }
 
-    protected function createViewsTwofactor(string $viewName = 'UserTwoFactor'): void
+    protected function createViewsTwoFactor(string $viewName = 'UserTwoFactor'): void
     {
         $this->addHtmlView($viewName, 'Tab\UserTwoFactor', 'User', 'two-factor-auth', 'fa-solid fa-key');
     }
@@ -308,7 +308,8 @@ class EditUser extends EditController
                     // prevent user self-destruction
                     $this->setSettings($viewName, 'btnDelete', false);
                 }
-                // is the user is admin, hide the EditRoleUser tab
+
+                // if the user is admin, hide the EditRoleUser tab
                 if ($view->model->admin && array_key_exists('EditRoleUser', $this->views)) {
                     $this->setSettings('EditRoleUser', 'active', false);
                 }

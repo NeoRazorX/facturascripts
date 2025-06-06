@@ -44,9 +44,11 @@ class Login implements ControllerInterface
     /** @var string */
     public $title = 'Login';
 
+    /** @var string */
+    public $two_factor_user;
+
     /** @var boolean */
     private $two_factor_view = false;
-
 
     public function __construct(string $className, string $url = '')
     {
@@ -310,6 +312,7 @@ class Login implements ControllerInterface
         }
 
         if ($user->two_factor_enabled) {
+            $this->two_factor_user = $user->nick;
             $this->two_factor_view = true;
             return;
         }
@@ -320,7 +323,9 @@ class Login implements ControllerInterface
     protected function validCodeAction(Request $request): void
     {
         $user = new User();
-        $user->loadFromCode($request->request->get('fsNick'));
+        if (!$user->loadFromCode($request->request->get('fsNick'))) {
+            Tools::log()->warning('user-not-found');
+        }
 
         if (!TwoFactorManager::verifyCode($user->two_factor_secret_key, $request->request->get('fsCode'))) {
             Tools::log()->warning('login-2fa-fail');
