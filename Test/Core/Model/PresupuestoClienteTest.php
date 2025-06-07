@@ -26,6 +26,7 @@ use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -83,6 +84,57 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($agent->getContact()->delete(), 'contacto-cant-delete');
         $this->assertTrue($agent->delete(), 'can-not-delete-agent');
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
+    }
+
+    /**
+     * Comprobamos que si un usuario no tiene empresa
+     * ni almacen configurado, en los documentos se
+     * asignara el de la configuracion por defecto.
+     */
+    public function testSetAuthorEmptyCompanyEmptyWarehouse()
+    {
+        // creamos una empresa
+        $company = $this->getRandomCompany();
+        $this->assertTrue($company->save(), 'can-not-create-company');
+
+        // creamos un usuario y asignamos la empresa nueva y su correspondiente almacen
+        $user = $this->getRandomUser();
+        $user->idempresa = $company->idempresa;
+        $user->codalmacen = $company->getWarehouses()[0]->codalmacen;
+
+        // creamos un presupuesto y le asignamos el usuario
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setAuthor($user), 'can-not-set-user');
+
+        // comprobamos que la empresa/almacen del usuario es diferente a la empresa/almacen por defecto
+        $this->assertNotEquals(Tools::settings('default', 'idempresa'), $user->idempresa);
+        $this->assertNotEquals(Tools::settings('default', 'codalmacen'), $user->codalmacen);
+
+        // comprobamos que se le han asignado la empresa y el almacen por defecto.
+        $this->assertEquals($user->idempresa, $doc->idempresa, 'presupuesto-usuario-bad-company');
+        $this->assertEquals($user->codalmacen, $doc->codalmacen, 'presupuesto-usuario-bad-warehouse');
+
+        // eliminamos
+        $this->assertTrue($company->delete(), 'can-not-delete-company');
+    }
+
+    /**
+     * Comprobamos que si un usuario tiene empresa y almacen configurado,
+     * en los documentos se asignara el del usuario prevaleciendo
+     * sobre los valores de la configuracion por defecto.
+     */
+    public function testSetAuthorWithCompanyWithWarehouse()
+    {
+        // creamos un usuario
+        $user = $this->getRandomUser();
+
+        // creamos un presupuesto y le asignamos el usuario
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setAuthor($user), 'can-not-set-user');
+
+        // comprobamos que se le han asignado la empresa y el almacen por defecto.
+        $this->assertEquals(Tools::settings('default', 'idempresa'), $doc->idempresa, 'presupuesto-usuario-bad-company');
+        $this->assertEquals(Tools::settings('default', 'codalmacen'), $doc->codalmacen, 'presupuesto-usuario-bad-warehouse');
     }
 
     public function testCreateEmpty(): void
