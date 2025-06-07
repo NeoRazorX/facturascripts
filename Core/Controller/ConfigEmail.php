@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
@@ -110,18 +111,18 @@ class ConfigEmail extends PanelController
         $this->tab($viewName)->setSettings('btnNew', false);
     }
 
-    protected function enableNotificationAction(bool $value): void
+    protected function enableNotificationAction(bool $value): bool
     {
         if (false === $this->validateFormToken()) {
-            return;
+            return true;
         } elseif (false === $this->user->can('EditEmailNotification', 'update')) {
             Tools::log()->warning('not-allowed-modify');
-            return;
+            return true;
         }
 
         $codes = $this->request->request->getArray('codes');
         if (false === is_array($codes)) {
-            return;
+            return true;
         }
 
         foreach ($codes as $code) {
@@ -133,11 +134,12 @@ class ConfigEmail extends PanelController
             $notification->enabled = $value;
             if (false === $notification->save()) {
                 Tools::log()->warning('record-save-error');
-                return;
+                return true;
             }
         }
 
         Tools::log()->notice('record-updated-correctly');
+        return true;
     }
 
     /**
@@ -160,14 +162,16 @@ class ConfigEmail extends PanelController
     {
         switch ($action) {
             case 'disable-notification':
-                $this->enableNotificationAction(false);
-                break;
+                return $this->enableNotificationAction(false);
 
             case 'enable-notification':
-                $this->enableNotificationAction(true);
-                break;
+                return $this->enableNotificationAction(true);
+
+            case 'autenticate-oauth-mail':
+                return $this->oauth2AutenticateAction();
         }
 
+        $this->oauth2Token();
         return parent::execPreviousAction($action);
     }
 
@@ -188,6 +192,15 @@ class ConfigEmail extends PanelController
                         'label' => 'test'
                     ]);
                 }
+                if ($view->model->authtype === 'XOAUTH2') {
+                    // añadimos el botón test
+                    $this->addButton($viewName, [
+                        'action' => 'autenticate-oauth-mail',
+                        'color' => 'warning',
+                        'icon' => 'fa-solid fa-key',
+                        'label' => 'oauth'
+                    ]);
+                }
                 break;
 
             case 'ListEmailNotification':
@@ -195,6 +208,39 @@ class ConfigEmail extends PanelController
                 $view->loadData();
                 break;
         }
+    }
+
+    protected function oauth2AutenticateAction(): bool
+    {
+        // guardamos los datos del formulario primero
+        if (false === $this->editAction()) {
+            return true;
+        }
+
+        $email = new NewMail();
+        $url = $email->oauth2Autenticate();
+        if (empty($url)) {
+            return true;
+        }
+
+        $this->redirect($url);
+        return true;
+    }
+
+    protected function oauth2Token()
+    {
+        $code = $this->request->get('code', '');
+        $state = $this->request->get('state', '');
+        $sessionState = $this->request->get('session_state', '');
+
+        if (empty($code) || empty($state) || empty($sessionState) || $state !== Cache::get('oauth2state')) {
+            Cache::delete('oauth2state');
+            return;
+        }
+
+        $email = new NewMail();
+        $email->oauth2Token($code);
+        Cache::delete('oauth2state');
     }
 
     protected function testMailAction(): void
