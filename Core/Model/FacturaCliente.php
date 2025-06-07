@@ -57,7 +57,43 @@ class FacturaCliente extends Base\SalesDocument
         $lineaModel = new DinLineaFactura();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-        return $lineaModel->all($where, $order, 0, 0);
+        $lines = $lineaModel::all($where, $order, 0, 0);
+
+        // cargamos las referencias
+        $references = [];
+        foreach ($lines as $line) {
+            if (!empty($line->referencia)) {
+                $references[] = $line->referencia;
+            }
+        }
+
+        // cargamos las variantes
+        $variants = [];
+        $variantModel = new Variante();
+        $where = [new DataBaseWhere('referencia', $references, 'IN')];
+        foreach ($variantModel::all($where, [], 0, 0) as $variante) {
+            $variants[$variante->referencia] = $variante;
+        }
+
+        // obtenemos las ids de los productos
+        $idsProductos = array_unique(array_column($variants, 'idproducto'));
+
+        // cargamos los productos
+        $products = [];
+        $productModel = new Producto();
+        $where = [new DataBaseWhere('idproducto', $idsProductos, 'IN')];
+        foreach ($productModel::all($where, [], 0, 0) as $producto) {
+            $products[$producto->idproducto] = $producto;
+        }
+
+        // asignamos el modelo producto y modelo variante a la linea
+        foreach ($lines as $line){
+            $line->variante = $variants[$line->referencia];
+            $line->producto = $products[$line->idproducto];
+            $line->documento = $this;
+        }
+
+        return $lines;
     }
 
     /**

@@ -43,6 +43,15 @@ class LineaFacturaCliente extends SalesDocumentLine
     /** @var int */
     public $idlinearect;
 
+    /** @var Variante */
+    public Variante $variante;
+
+    /** @var Producto */
+    public Producto $producto;
+
+    /** @var FacturaCliente */
+    public FacturaCliente $documento;
+
     public function documentColumn(): string
     {
         return 'idfactura';
@@ -59,7 +68,7 @@ class LineaFacturaCliente extends SalesDocumentLine
     {
         // comprobamos si existe alguna factura rectificativa
         if ($this->has_refunded_quantity === null) {
-            $refunds = $this->getDocument()->getRefunds();
+            $refunds = $this->documento->getRefunds();
             $this->has_refunded_quantity = !empty($refunds);
         }
 
