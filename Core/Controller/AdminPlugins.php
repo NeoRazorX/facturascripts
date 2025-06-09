@@ -142,6 +142,17 @@ class AdminPlugins extends Controller
         }
 
         $pluginName = $this->request->get('plugin', '');
+
+        if($this->request->getBool('multienable')){
+            $plugin = Plugins::get($pluginName);
+            foreach ($plugin->require as $requiredPluginName) {
+                if(Plugins::isInstalled($requiredPluginName) && !Plugins::isEnabled($requiredPluginName)){
+                    Plugins::enable($requiredPluginName);
+                    Cache::clear();
+                }
+            }
+        }
+
         Plugins::enable($pluginName);
         Cache::clear();
     }

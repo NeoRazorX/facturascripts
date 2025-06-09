@@ -153,6 +153,21 @@
             </div>
         </form>
     {% endif %}
+
+    <div id="modal-multi-plugin" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('cancel') }}</button>
+                    <a id="link-multi-plugin" class="btn btn-sm btn-success btn-spin-action" onclick="animateSpinner('add');">
+                        <i class="fa-solid fa-toggle-on me-1" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline-block">{{ trans('enable-all') }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
@@ -210,6 +225,20 @@
                         $(value).toggle($(querySelectorPluginName, value).text().toLowerCase().trim().includes(query));
                     });
                 });
+            }
+
+            function modalMultiPlugin(pluginName, pluginsToEnable) {
+                const pluginsToEnableArray = JSON.parse(pluginsToEnable);
+
+                let modal = $('#modal-multi-plugin');
+                let modalBody = $(modal).find('.modal-body');
+                modalBody.html(
+                    `El plugin ${pluginName} requiere estos plugins: ${pluginsToEnableArray.join(', ')}<br/>`
+                    + `¿Desea habilitarlos también?`
+                );
+                $('#link-multi-plugin').attr('href', '{{ fsc.url() }}?action=enable&multireqtoken={{ formToken(false) }}&multienable=true&plugin=' + pluginName);
+
+                modal.modal('show');
             }
         </script>
     {% endif %}
@@ -374,19 +403,33 @@
                                             {{ trans('update') }}
                                         </a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item"
-                                           href="{{ url }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
-                                            <i class="fa-solid fa-check fa-fw me-1" aria-hidden="true"></i>
-                                            {{ trans('enable') }}
-                                        </a>
+                                        {% if plugin.require %}
+                                            <button class="dropdown-item" onclick="modalMultiPlugin('{{ plugin.name }}', '{{ plugin.require|json_encode }}');">
+                                                <i class="fa-solid fa-check fa-fw me-1" aria-hidden="true"></i>
+                                                {{ trans('enable') }}
+                                            </button>
+                                        {% else %}
+                                            <a class="dropdown-item"
+                                               href="{{ url }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
+                                                <i class="fa-solid fa-check fa-fw me-1" aria-hidden="true"></i>
+                                                {{ trans('enable') }}
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             {% else %}
-                                <a class="btn btn-sm btn-success btn-spin-action" onclick="animateSpinner('add');"
-                                   href="{{ url }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
-                                    <i class="fa-solid fa-toggle-on me-1" aria-hidden="true"></i>
-                                    <span class="d-none d-sm-inline-block">{{ trans('enable') }}</span>
-                                </a>
+                                {% if plugin.require %}
+                                    <button type="button" class="btn btn-sm btn-success btn-spin-action" onclick="modalMultiPlugin('{{ plugin.name }}', '{{ plugin.require|json_encode }}');">
+                                        <i class="fa-solid fa-toggle-on me-1" aria-hidden="true"></i>
+                                        <span class="d-none d-sm-inline-block">{{ trans('enable') }}</span>
+                                    </button>
+                                {% else %}
+                                    <a class="btn btn-sm btn-success btn-spin-action" onclick="animateSpinner('add');"
+                                       href="{{ url }}?action=enable&amp;plugin={{ plugin.name }}&amp;multireqtoken={{ formToken(false) }}">
+                                        <i class="fa-solid fa-toggle-on me-1" aria-hidden="true"></i>
+                                        <span class="d-none d-sm-inline-block">{{ trans('enable') }}</span>
+                                    </a>
+                                {% endif %}
                             {% endif %}
                         {% else %}
                             {{ plugin.compatibilityDescription() }}
