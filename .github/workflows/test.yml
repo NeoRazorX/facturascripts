@@ -2,9 +2,9 @@ name: PHPUnit Tests
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master, main, test_api ]
   pull_request:
-    branches: [ master, main ]
+    branches: [ master, main, test_api ]
 
 env:
   DB_NAME: facturascripts_test
@@ -159,6 +159,31 @@ jobs:
           define('FS_DISABLE_ADD_PLUGINS', false);
           define('FS_DISABLE_RM_PLUGINS', false);
           EOF
+          fi
+
+      - name: Add api to file
+        run: |
+          echo "define('FS_API_KEY', 'prueba');" >> config.php
+      - name: Start PHP built-in server
+        run: |
+          php -S 127.0.0.1:8000 -t . &
+          sleep 2
+
+      - name: Seed database
+        run: |
+          if [ "${{ matrix.database.type }}" = "mysql" ] || [ "${{ matrix.database.type }}" = "mariadb" ]; then
+            mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} ${{ env.DB_NAME }} < seed.sql
+          else
+            PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -f seed.sql
+          fi
+
+      - name: Run PHPUnit API tests
+        run: |
+          if [ -f phpunit-api.xml ] || [ -f phpunit-api.xml.dist ]; then
+            vendor/bin/phpunit --configuration phpunit-api.xml --coverage-text --coverage-clover=coverage.xml
+          else
+            echo "No PHPUnit configuration found. Running with default settings..."
+            vendor/bin/phpunit --bootstrap vendor/autoload.php tests/
           fi
 
       - name: Run PHPUnit tests
