@@ -26,7 +26,7 @@ $token = "prueba";
 
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
+curl_ setopt($ch, CURLOPT_HTTPHEADER, [
     "Token: $token"
 ]);
 
