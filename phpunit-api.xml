@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        beStrictAboutTestsThatDoNotTestAnything="false"
+        bootstrap="Test/test-plugins.php"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        stopOnError="true"
+        stopOnFailure="true"
+        stopOnIncomplete="false"
+        stopOnSkipped="false">
+    <testsuites>
+        <testsuite name="Plugins test suite">
+            <directory
+                    suffix="Test.php"
+                    phpVersion="8.0"
+                    phpVersionOperator=">=">
+                Test/API/
+            </directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
