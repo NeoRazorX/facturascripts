@@ -30,7 +30,7 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "Token: $token"
 ]);
 
-$respuesta = curl_exec($ch);
+$respuesta = curl_exec($ch;
 
 if (curl_errno($ch)) {
     echo 'Error en la solicitud: ' . curl_error($ch);
