@@ -1627,7 +1627,7 @@
     "updated-records": "Registos atualizados %updatedRecords% de %totalRecords%",
     "updater": "Atualizador",
     "updates-available": "Atualizações disponíveis",
-    "updates-available-p": "Há atualizações disponíveis do FacturaScripts. Por favor, clique no atualizador e baixe a nova versão. As atualizações corrigem falhas e adicionam novas funcionalidades.",
+    "updates-available-p": "Há atualizações disponíveis para o FacturaScripts. Por favor, clique no atualizador e faça o download da nova versão. As actualizações corrigem falhas e adicionam novas funcionalidades.",
     "updating-attached-relations": "Atualizando contadores de relações anexadas",
     "upload-file": "E",
     "uploaded-at": "Carregado em",
