@@ -30,12 +30,12 @@ $url = "http://127.0.0.2:8000/api/3/divisas?filter[descripcion_like]=PESO";
 $token = "prueba";
 
 $ch = curl_init($url);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
+curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+curl_ setopt($ch, CURLOPT_HTTPHEADER, [
     "Token: $token"
 ]);
 
-$respuesta = curl_exec($ch);
+$respuesta = curl_exec($ch;
 
 if (curl_errno($ch)) {
     echo 'Error en la solicitud: ' . curl_error($ch);
