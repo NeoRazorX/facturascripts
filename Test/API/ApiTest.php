@@ -1,23 +1,28 @@
 <?php
 
+use FacturaScripts\Test\Traits\ApiTrait;
 use PHPUnit\Framework\TestCase;
 
 class ApiTest extends TestCase
 {
 
+    use ApiTrait;
+
+    // static string $url = "http://127.0.0.2:8000/api/3";
+    // static string $token = "prueba";
+
     public function testApiConnection()
     {
-        $url = "http://127.0.0.2:8000/api/3/proveedores";
-        $token = "prueba";
 
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Token: $token"
-        ]);
-        $respuesta = curl_exec($ch);
-        echo 'Respuesta: ' . $respuesta;
-        $this->assertEquals('[{"cifnif": "","email": "","fax": "","fechaalta": "03-06-2025","langcode": "es_ES","nombre": "pepe","observaciones": "","personafisica": true,"telefono1": "","telefono2": "","tipoidfiscal": "NIF","codcliente": null,"codpago": null,"codproveedor": "1","codretencion": null,"codserie": null,"codsubcuenta": "","debaja": false,"fechabaja": null,"razonsocial": "pepe","regimeniva": "General","web": "","codimpuestoportes": "IVA21","idcontacto": 1}', $respuesta);
+        $result = $this->makeCurlGet();
+
+        $expected = [ 'resources' => $this->getResourcesList() ];
+
+        $this->assertEquals($expected, $result, 'response-not-equal');
+
+        
+
+        // $this->assertEquals('[{"cifnif": "","email": "","fax": "","fechaalta": "03-06-2025","langcode": "es_ES","nombre": "pepe","observaciones": "","personafisica": true,"telefono1": "","telefono2": "","tipoidfiscal": "NIF","codcliente": null,"codpago": null,"codproveedor": "1","codretencion": null,"codserie": null,"codsubcuenta": "","debaja": false,"fechabaja": null,"razonsocial": "pepe","regimeniva": "General","web": "","codimpuestoportes": "IVA21","idcontacto": 1}', $respuesta);
     }
 }
 /*
