@@ -48,6 +48,24 @@ class CRUDTest extends TestCase
         $this->assertEquals($expected, $result, 'response-not-equal');
     }
 
+    public function testDeleteData()
+    {
+        $result = $this->makeDELETECurl("divisas/123");
+
+        $expected = [
+            'ok' => 'Registro eliminado correctamente',
+            'data' => [
+                'coddivisa' => '123',
+                'codiso' => null,
+                'descripcion' => 'Divisa 123',
+                'simbolo' => '?',
+                'tasaconv' => 1,
+                'tasaconvcompra' => 1
+            ]
+        ];
+
+        $this->assertEquals($expected, $result, 'response-not-equal');
+    }
 
 
     protected function tearDown(): void
