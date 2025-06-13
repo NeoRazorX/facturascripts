@@ -5,7 +5,7 @@ use FacturaScripts\Test\Traits\ApiTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
-class ApiTest extends TestCase
+class ParametersTest extends TestCase
 {
 
     use ApiTrait;
