@@ -50,6 +50,44 @@ class CRUDTest extends TestCase
         $this->assertEquals($expected, $result, 'response-not-equal');
     }
 
+
+    public function testUpdateData(){
+        $result = $this->makePUTCurl("divisas/123", [
+            'descripcion' => 'Divisa 123 Actualizada'
+        ]);
+        $expected = [
+            'ok' => 'Registro actualizado correctamente',
+            'data' => [
+                'coddivisa' => '123',
+                'codiso' => null,
+                'descripcion' => 'Divisa 123 Actualizada',
+                'simbolo' => '?',
+                'tasaconv' => 1,
+                'tasaconvcompra' => 1
+            ]
+        ];
+        $this->assertEquals($expected, $result, 'response-not-equal');
+    }
+
+    public function testDeleteData()
+    {
+        $result = $this->makeDELETECurl("divisas/123");
+
+        $expected = [
+            'ok' => 'Registro eliminado correctamente',
+            'data' => [
+                'coddivisa' => '123',
+                'codiso' => null,
+                'descripcion' => 'Divisa 123 Actualizada',
+                'simbolo' => '?',
+                'tasaconv' => 1,
+                'tasaconvcompra' => 1
+            ]
+        ];
+
+        $this->assertEquals($expected, $result, 'response-not-equal');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
