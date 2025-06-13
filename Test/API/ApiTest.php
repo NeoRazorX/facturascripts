@@ -14,7 +14,7 @@ class ApiTest extends TestCase
     public function testApiConnection()
     {
 
-        $result = $this->makeCurlGet();
+        $result = $this->makeGETCurl();
 
         $expected = [ 'resources' => $this->getResourcesList() ];
 

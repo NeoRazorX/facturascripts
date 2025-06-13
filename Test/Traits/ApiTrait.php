@@ -24,12 +24,85 @@ trait ApiTrait
     private string $url = "http://127.0.0.2:8000/api/3/";
     private string $token = "prueba";
 
-    protected function makeCurlGet(string $params = ''): array
+    protected function setApiUrl(string $url): void
+    {
+        $this->url = $url;
+    }
+
+    protected function setApiToken(string $token): void
+    {
+        $this->token = $token;
+    }
+
+    protected function makeGETCurl(string $params = ''): array
     {
         $ch = curl_init($this->url . $params);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Token: " . $this->token
+        ]);
+        $respuesta = curl_exec($ch);
+        curl_close($ch);
+
+        $data = json_decode($respuesta, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $data;
+        } else {
+            throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
+        }
+    }
+
+    protected function makePOSTCurl(string $params = '', array $data = []): array
+    {
+        $ch = curl_init($this->url . $params);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Token: " . $this->token,
+            "Content-Type: application/json"
+        ]);
+        $respuesta = curl_exec($ch);
+        curl_close($ch);
+
+        $data = json_decode($respuesta, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $data;
+        } else {
+            throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
+        }
+    }
+
+    protected function makePUTCurl(string $params = '', array $data = []): array
+    {
+        $ch = curl_init($this->url . $params);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Token: " . $this->token,
+            "Content-Type: application/json"
+        ]);
+        $respuesta = curl_exec($ch);
+        curl_close($ch);
+
+        $data = json_decode($respuesta, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $data;
+        } else {
+            throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
+        }
+    }
+
+    protected function makeDELETECurl(string $params = '', array $data = []): array
+    {
+        $ch = curl_init($this->url . $params);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Token: " . $this->token,
+            "Content-Type: application/json"
         ]);
         $respuesta = curl_exec($ch);
         curl_close($ch);
