@@ -44,11 +44,11 @@ class CRUDTest extends TestCase
             ]
         ];
 
+        print_r($result);
+
 
         $this->assertEquals($expected, $result, 'response-not-equal');
     }
-
-}
 
     protected function tearDown(): void
     {
