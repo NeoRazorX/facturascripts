@@ -57,11 +57,12 @@ trait ApiTrait
         $ch = curl_init($this->url . $params);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // <-- Aquí el cambio
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Token: " . $this->token,
-            "Content-Type: application/json"
+            "Content-Type: application/x-www-form-urlencoded" // <-- Aquí el cambio
         ]);
+
         $respuesta = curl_exec($ch);
         curl_close($ch);
 
@@ -78,11 +79,12 @@ trait ApiTrait
         $ch = curl_init($this->url . $params);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // <-- Cambiado aquí
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Token: " . $this->token,
-            "Content-Type: application/json"
+            "Content-Type: application/x-www-form-urlencoded" // <-- Cambiado aquí
         ]);
+
         $respuesta = curl_exec($ch);
         curl_close($ch);
 
@@ -99,11 +101,12 @@ trait ApiTrait
         $ch = curl_init($this->url . $params);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // <-- Cambiado aquí
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Token: " . $this->token,
-            "Content-Type: application/json"
+            "Content-Type: application/x-www-form-urlencoded" // <-- Cambiado aquí
         ]);
+
         $respuesta = curl_exec($ch);
         curl_close($ch);
 
@@ -114,6 +117,7 @@ trait ApiTrait
             throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
         }
     }
+
 
     protected function getResourcesList(): array
     {
