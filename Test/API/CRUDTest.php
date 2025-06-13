@@ -22,6 +22,34 @@ class CRUDTest extends TestCase
 
     }
 
+    public function testCreateData(){
+        $form = [
+           'coddivisa' => '123',
+           'descripcion' => 'Divisa 123',
+        ];
+
+
+        $result = $this->makePOSTCurl("divisas", $form);
+
+
+        $expected = [ 
+            'ok' => 'Registro actualizado correctamente',
+            'data' => [
+                'coddivisa' => '123',
+                'codiso' => null,
+                'descripcion' => 'Divisa 123',
+                'simbolo' => '?',
+                'tasaconv' => 1,
+                'tasaconvcompra' => 1
+            ]
+        ];
+
+
+        $this->assertEquals($expected, $result, 'response-not-equal');
+    }
+
+}
+
     protected function tearDown(): void
     {
         $this->logErrors();
