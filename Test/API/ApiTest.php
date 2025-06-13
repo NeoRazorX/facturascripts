@@ -24,6 +24,33 @@ class ApiTest extends TestCase
 
         // $this->assertEquals('[{"cifnif": "","email": "","fax": "","fechaalta": "03-06-2025","langcode": "es_ES","nombre": "pepe","observaciones": "","personafisica": true,"telefono1": "","telefono2": "","tipoidfiscal": "NIF","codcliente": null,"codpago": null,"codproveedor": "1","codretencion": null,"codserie": null,"codsubcuenta": "","debaja": false,"fechabaja": null,"razonsocial": "pepe","regimeniva": "General","web": "","codimpuestoportes": "IVA21","idcontacto": 1}', $respuesta);
     }
+
+    public function testCreateData(){
+        $form = [
+           'coddivisa' => '123',
+           'descripcion' => 'Divisa 123',
+        ];
+
+
+        $result = $this->makePOSTCurl("divisas", $form);
+
+
+        $expected = [ 
+            'ok' => 'Registro actualizado correctamente',
+            'data' => [
+                'coddivisa' => '123',
+                'codiso' => null,
+                'descripcion' => 'Divisa 123',
+                'simbolo' => '?',
+                'tasaconv' => 1,
+                'tasaconvcompra' => 1
+            ]
+        ];
+
+
+        $this->assertEquals($expected, $result, 'response-not-equal');
+    }
+
 }
 /*
 $url = "http://127.0.0.2:8000/api/3/divisas?filter[descripcion_like]=PESO";
