@@ -209,7 +209,7 @@ final class ToolsTest extends TestCase
         
         // casos con espacios y caracteres especiales
         $this->assertEquals('mi-clase-especial', Tools::kebab('Mi Clase Especial'));
-        $this->assertEquals('texto-con-acentos', Tools::kebab('Texto Con Acentos áéíóú'));
+        $this->assertEquals('texto-con-acentos-aeiou', Tools::kebab('Texto Con Acentos áéíóú'));
         $this->assertEquals('texto-123', Tools::kebab('Texto 123'));
         
         // casos edge
