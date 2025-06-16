@@ -11,6 +11,22 @@ class ParametersTest extends TestCase
     use ApiTrait;
     use LogErrorsTrait;
 
+    protected function startAPIServer(): void
+    {
+        $this->document_root = __DIR__ . '/../../';
+        $this->router = __DIR__ . '/../../index.php';
+
+        $this->url = "http://{$this->host}:{$this->port}/api/3/";
+        $this->command = "php -S {$this->host}:{$this->port} -t {$this->document_root} {$this->router} > /dev/null 2>&1 & echo $!";
+        $this->pid = shell_exec($this->command);
+        sleep(1);
+    }
+
+    protected function stopAPIServer(): void
+    {
+        shell_exec("kill $this->pid");
+    }
+
     public function testListResources()
     {
 
