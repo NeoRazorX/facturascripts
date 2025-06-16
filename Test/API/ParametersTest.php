@@ -241,6 +241,96 @@ class ParametersTest extends TestCase
         $this->assertEquals($expected, $result, 'response-not-equal');
     }
 
+    public function testPagination(){
+        $result = $this->makeGETCurl('pais?offset=0&limit=3');
+        $expected = [
+            [
+                "alias" => null,
+                "codiso" => "AW",
+                "codpais" => "ABW",
+                "creation_date" => null,
+                "last_nick" => null,
+                "last_update" => null,
+                "latitude" => 12.5211,
+                "longitude" => -69.9683,
+                "nick" => null,
+                "nombre" => "Aruba",
+                "telephone_prefix" => "+297"
+            ],
+            [
+                "alias" => null,
+                "codiso" => "AF",
+                "codpais" => "AFG",
+                "creation_date" => null,
+                "last_nick" => null,
+                "last_update" => null,
+                "latitude" => 33.9391,
+                "longitude" => 67.71,
+                "nick" => null,
+                "nombre" => "Afganistán",
+                "telephone_prefix" => "+93"
+            ],
+            [
+                "alias" => null,
+                "codiso" => "AO",
+                "codpais" => "AGO",
+                "creation_date" => null,
+                "last_nick" => null,
+                "last_update" => null,
+                "latitude" => 11.2027,
+                "longitude" => 17.8739,
+                "nick" => null,
+                "nombre" => "Angola",
+                "telephone_prefix" => "+244"
+            ]
+        ];
+
+        $this->assertEquals($expected, $result, 'response-not-equal');
+
+        $result = $this->makeGETCurl('pais?offset=3&limit=3');
+
+        $expected = [
+            [
+                "alias" => null,
+                "codiso" => "AI",
+                "codpais" => "AIA",
+                "creation_date" => null,
+                "last_nick" => null,
+                "last_update" => null,
+                "latitude" => 18.2206,
+                "longitude" => -63.0686,
+                "nick" => null,
+                "nombre" => "Anguila",
+                "telephone_prefix" => "+1 264"
+            ],
+            [
+                "alias" => null,
+                "codiso" => "AX",
+                "codpais" => "ALA",
+                "creation_date" => null,
+                "last_nick" => null,
+                "last_update" => null,
+                "latitude" => 60.1785,
+                "longitude" => 19.9156,
+                "nick" => null,
+                "nombre" => "Islas Gland",
+                "telephone_prefix" => ""
+            ],
+            [
+                "alias" => null,
+                "codiso" => "AL",
+                "codpais" => "ALB",
+                "creation_date" => null,
+                "last_nick" => null,
+                "last_update" => null,
+                "latitude" => 41.1533,
+                "longitude" => 20.1683,
+                "nick" => null,
+                "nombre" => "Albania",
+                "telephone_prefix" => "+355"
+            ]
+        ];
+    }
 
     protected function tearDown(): void
     {
