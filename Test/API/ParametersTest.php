@@ -1,6 +1,7 @@
 <?php
 namespace FacturaScripts\Test\API;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\ApiTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -10,6 +11,14 @@ class ParametersTest extends TestCase
 
     use ApiTrait;
     use LogErrorsTrait;
+
+    protected function setUp(): void
+    {
+        if(Tools::config('FS_API_KEY') === null) {
+            $this->markTestSkipped('API desactivada. Puede activarla desde el panel de control');
+        }
+        $this->startAPIServer();
+    }
 
     public function testListResources()
     {
@@ -334,6 +343,7 @@ class ParametersTest extends TestCase
 
     protected function tearDown(): void
     {
+        $this->stopAPIServer();
         $this->logErrors();
     }
 }
