@@ -199,6 +199,26 @@ final class ToolsTest extends TestCase
         $this->assertEquals($value, Tools::settings('default', 'codpais'));
     }
 
+    public function testKebab(): void
+    {
+        // casos básicos
+        $this->assertEquals('mi-clase', Tools::kebab('MiClase'));
+        $this->assertEquals('mi-variable', Tools::kebab('miVariable'));
+        $this->assertEquals('html-parser', Tools::kebab('HTMLParser'));
+        $this->assertEquals('nombre-completo', Tools::kebab('NombreCompleto'));
+        
+        // casos con espacios y caracteres especiales
+        $this->assertEquals('mi-clase-especial', Tools::kebab('Mi Clase Especial'));
+        $this->assertEquals('texto-con-acentos', Tools::kebab('Texto Con Acentos áéíóú'));
+        $this->assertEquals('texto-123', Tools::kebab('Texto 123'));
+        
+        // casos edge
+        $this->assertEquals('', Tools::kebab(''));
+        $this->assertEquals('a', Tools::kebab('A'));
+        $this->assertEquals('a-b', Tools::kebab('A B'));
+        $this->assertEquals('test-123-abc', Tools::kebab('Test_123_ABC'));
+    }
+
     public function testSlug(): void
     {
         $text = ' aeiou áéíóú--àèìòù  âêîôû ãõ çñ ';
