@@ -381,8 +381,11 @@ class Tools
         // Convertir a ASCII para eliminar acentos y caracteres especiales
         $text = self::ascii($text);
         
-        // Insertar guiones antes de mayúsculas (para camelCase y PascalCase)
+        // Insertar guiones antes de mayúsculas precedidas por minúsculas o números
         $text = preg_replace('/([a-z0-9])([A-Z])/', '$1-$2', $text);
+        
+        // Insertar guiones entre mayúsculas consecutivas y la siguiente minúscula (ej: HTMLParser -> HTML-Parser)
+        $text = preg_replace('/([A-Z])([A-Z][a-z])/', '$1-$2', $text);
         
         // Convertir a minúsculas
         $text = strtolower($text);
