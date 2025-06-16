@@ -21,8 +21,31 @@ namespace FacturaScripts\Test\Traits;
 
 trait ApiTrait
 {
-    private string $url = "http://127.0.0.2:8000/api/3/";
+    private string $host = '127.0.0.2';
+    private string $port = '8000';
+    private string $document_root;
+    private string $router;
+
+    private string $url;
     private string $token = "prueba";
+    private string $pid;
+    private string $command;
+
+    protected function startAPIServer(): void
+    {
+        $this->document_root = __DIR__ . '/../../';
+        $this->router = __DIR__ . '/../../index.php';
+
+        $this->url = "http://{$this->host}:{$this->port}/api/3/";
+        $this->command = "php -S {$this->host}:{$this->port} -t {$this->document_root} {$this->router} > /dev/null 2>&1 & echo $!";
+        $this->pid = shell_exec($this->command);
+        sleep(1);
+    }
+
+    protected function stopAPIServer(): void
+    {
+        shell_exec("kill $this->pid");
+    }
 
     protected function setApiUrl(string $url): void
     {
@@ -65,11 +88,11 @@ trait ApiTrait
 
         $respuesta = curl_exec($ch);
         curl_close($ch);
-
         $data = json_decode($respuesta, true);
         if (json_last_error() === JSON_ERROR_NONE) {
             return $data;
         } else {
+            echo $respuesta;
             throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
         }
     }
@@ -137,6 +160,7 @@ trait ApiTrait
             "ciudades",
             "clientes",
             "codemodeles",
+            "codigopostales",
             "conceptopartidas",
             "contactos",
             "crearFacturaCliente",
@@ -191,6 +215,7 @@ trait ApiTrait
             "productos",
             "proveedores",
             "provincias",
+            "puntointeresciudades",
             "reciboclientes",
             "reciboproveedores",
             "regularizacionimpuestos",
