@@ -78,8 +78,8 @@ class SecurityTest extends TestCase
             "message" => "Por motivos de seguridad se ha bloqueado temporalmente el acceso desde su IP."
         ];
 
-        // $result = $this->makePOSTCurl("agenciatransportes", $form);
-        // $this->assertEquals($expected, $result, 'response-not-equal-' . $attempt);
+        $result = $this->makePOSTCurl("agenciatransportes", $form);
+        $this->assertEquals($expected, $result, 'response-not-equal-' . $attempt);
 
         Cache::deleteMulti(ApiController::IP_LIST); // limpiar cache de ips bloqueadas
         $this->stopAPIServer();
