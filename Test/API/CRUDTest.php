@@ -1,4 +1,5 @@
 <?php
+
 namespace FacturaScripts\Test\API;
 
 use FacturaScripts\Test\Traits\ApiTrait;
@@ -18,26 +19,26 @@ class CRUDTest extends TestCase
 
     public function testListResources()
     {
-
         $result = $this->makeGETCurl();
 
-        $expected = [ 'resources' => $this->getResourcesList() ];
-
-        $this->assertEquals($expected, $result, 'response-not-equal');
-
+        $expected = ['resources' => $this->getResourcesList()];
+        if ($result['status'] !== 200) {
+            $this->fail('API request failed');
+        } else {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        }
     }
 
-    public function testCreateData(){
+    public function testCreateData()
+    {
         $form = [
-           'coddivisa' => '123',
-           'descripcion' => 'Divisa 123',
+            'coddivisa' => '123',
+            'descripcion' => 'Divisa 123',
         ];
-
 
         $result = $this->makePOSTCurl("divisas", $form);
 
-
-        $expected = [ 
+        $expected = [
             'ok' => 'Registro actualizado correctamente.',
             'data' => [
                 'coddivisa' => '123',
@@ -49,12 +50,15 @@ class CRUDTest extends TestCase
             ]
         ];
 
-
-        $this->assertEquals($expected, $result, 'response-not-equal');
+        if ($result['status'] !== 200) {
+            $this->fail('API request failed');
+        } else {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        }
     }
 
-
-    public function testUpdateData(){
+    public function testUpdateData()
+    {
         $result = $this->makePUTCurl("divisas/123", [
             'descripcion' => 'Divisa 123 Actualizada'
         ]);
@@ -69,7 +73,12 @@ class CRUDTest extends TestCase
                 'tasaconvcompra' => 1
             ]
         ];
-        $this->assertEquals($expected, $result, 'response-not-equal');
+
+        if ($result['status'] !== 200) {
+            $this->fail('API request failed');
+        } else {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        }
     }
 
     public function testDeleteData()
@@ -88,7 +97,11 @@ class CRUDTest extends TestCase
             ]
         ];
 
-        $this->assertEquals($expected, $result, 'response-not-equal');
+        if ($result['status'] !== 200) {
+            $this->fail('API request failed');
+        } else {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        }
     }
 
     protected function tearDown(): void
