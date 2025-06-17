@@ -51,7 +51,7 @@ class ParametersTest extends TestCase
     }
 
     public function testFilterData(){
-        $result = $this->makeGETCurl('pais?filter[nombre]=Esp');
+        $result = $this->makeGETCurl('pais?filter[codpais]=ESP');
 
         $expected = [
             [
