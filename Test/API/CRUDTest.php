@@ -1,7 +1,6 @@
 <?php
 namespace FacturaScripts\Test\API;
 
-use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\ApiTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -14,9 +13,6 @@ class CRUDTest extends TestCase
 
     protected function setUp(): void
     {
-        if(Tools::config('FS_API_KEY') === null) {
-            $this->markTestSkipped('API desactivada. Puede activarla desde el panel de control');
-        }
         $this->startAPIServer();
     }
 
