@@ -14,9 +14,6 @@ class ParametersTest extends TestCase
 
     protected function setUp(): void
     {
-        if(Tools::config('FS_API_KEY') === null) {
-            $this->markTestSkipped('API desactivada. Puede activarla desde el panel de control');
-        }
         $this->startAPIServer();
     }
 

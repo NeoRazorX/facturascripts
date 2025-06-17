@@ -19,31 +19,56 @@
 
 namespace FacturaScripts\Test\Traits;
 
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\ApiKey;
+
 trait ApiTrait
 {
     private string $host = '127.0.0.2';
     private string $port = '8000';
-    private string $document_root;
-    private string $router;
+    private string $document_root = '/../../';
+    private string $router = 'index.php';
 
     private string $url;
-    private string $token = "prueba";
+    private string $token; // generado en start server y removido en stop server
     private string $pid;
     private string $command;
 
-    protected function startAPIServer(): void
+    private bool $defaultApiEnabled;
+
+    private ApiKey $ApiKeyObj;
+
+    protected function startAPIServer($enableAPI = true): void
     {
-        $this->document_root = __DIR__ . '/../../';
-        $this->router = __DIR__ . '/../../index.php';
+        $document_root = __DIR__ . $this->document_root;
+        $router = $document_root . $this->router;
+
+        $this->defaultApiEnabled = Tools::settings('default', 'enable_api', false);
+        Tools::settingsSet('default', 'enable_api', $enableAPI);
+        Tools::settingsSave();
+
+        $ApiKeyObj = new ApiKey();
+        // $ApiKeyObj->id = $IdKey.'Test';
+        $ApiKeyObj->clear();
+        $ApiKeyObj->description = 'Clave de pruebas';
+        $ApiKeyObj->nick = 'tester';
+        $ApiKeyObj->enabled = true;
+        $ApiKeyObj->fullaccess = true;
+
+        $ApiKeyObj->save();
+        $this->token = $ApiKeyObj->apikey;
+        $this->ApiKeyObj = $ApiKeyObj;
 
         $this->url = "http://{$this->host}:{$this->port}/api/3/";
-        $this->command = "php -S {$this->host}:{$this->port} -t {$this->document_root} {$this->router} > /dev/null 2>&1 & echo $!";
+        $this->command = "php -S {$this->host}:{$this->port} -t {$document_root} {$router} > /dev/null 2>&1 & echo $!";
         $this->pid = shell_exec($this->command);
         sleep(1);
     }
 
     protected function stopAPIServer(): void
     {
+        Tools::settingsSet('default', 'enable_api', $this->defaultApiEnabled);
+        Tools::settingsSave();
         shell_exec("kill $this->pid");
     }
 
