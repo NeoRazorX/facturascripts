@@ -161,22 +161,6 @@ jobs:
           EOF
           fi
 
-      - name: Add api to file
-        run: |
-          echo "define('FS_API_KEY', 'prueba');" >> config.php
-      - name: Start PHP built-in server
-        run: |
-          php -S 127.0.0.1:8000 -t . &
-          sleep 2
-
-      - name: Seed database
-        run: |
-          if [ "${{ matrix.database.type }}" = "mysql" ] || [ "${{ matrix.database.type }}" = "mariadb" ]; then
-            mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} ${{ env.DB_NAME }} < seed.sql
-          else
-            PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -f seed.sql
-          fi
-
       - name: Run PHPUnit API tests
         run: |
           if [ -f phpunit-api.xml ] || [ -f phpunit-api.xml.dist ]; then
