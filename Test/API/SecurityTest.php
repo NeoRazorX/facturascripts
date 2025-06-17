@@ -26,6 +26,8 @@ class SecurityTest extends TestCase
         if($agencia !== false) {
             $this->assertTrue($agencia->delete(), 'agenciaTransporte-cant-delete');
         }
+        
+        Cache::deleteMulti(ApiController::IP_LIST);
     }
 
     // Test para comprobar el flujo de seguridad de la API facturascripts
@@ -185,6 +187,7 @@ class SecurityTest extends TestCase
         $this->assertEquals($expected, $result, 'response-not-equal');
 
         $ApiKeyObj->delete();
+        Cache::deleteMulti(ApiController::IP_LIST);
     }
 
     protected function tearDown(): void
