@@ -53,7 +53,12 @@ class SecurityTest extends TestCase
 
         $result = $this->makePOSTCurl("agenciatransportes", $form);
 
-        $this->assertEquals($expected, $result, 'response-not-equal');
+        if ($result['status'] === 409) {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        }
+        else {
+            $this->fail('API request failed');
+        }
 
         Tools::settingsSet('default', 'enable_api', true);
         Tools::settingsSave();
@@ -69,7 +74,12 @@ class SecurityTest extends TestCase
 
         for ($attempt = 0; $attempt < ApiController::MAX_INCIDENT_COUNT; $attempt++) {
             $result = $this->makePOSTCurl("agenciatransportes", $form);
-            $this->assertEquals($expected, $result, 'response-not-equal-' . $attempt);
+            if ($result['status'] === 401) {
+                $this->assertEquals($expected, $result['data'], 'response-not-equal-' . $attempt);
+            }
+            else {
+                $this->fail('API request failed');
+            }
         }
 
 
@@ -81,8 +91,12 @@ class SecurityTest extends TestCase
         ];
 
         $result = $this->makePOSTCurl("agenciatransportes", $form);
-        $this->assertEquals($expected, $result, 'response-not-equal-' . $attempt);
-
+        if ($result['status'] === 401) {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal-' . $attempt);
+        }
+        else {
+            $this->fail('API request failed');
+        }
         Cache::deleteMulti(ApiController::IP_LIST); // limpiar cache de ips bloqueadas
         $this->stopAPIServer();
         $this->startAPIServer();
@@ -97,7 +111,11 @@ class SecurityTest extends TestCase
             "message" => "Clave de API no válida"
         ];
 
-        $this->assertEquals($expected, $result, 'response-not-equal');
+        if ($result['status'] === 401) {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
+        }
 
 
         //paso 5: Allowed resource
@@ -117,7 +135,11 @@ class SecurityTest extends TestCase
         ];
         
         $result = $this->makePOSTCurl("agenciatransportes", $form);
-        $this->assertEquals($expected, $result, 'response-not-equal');
+        if ($result['status'] === 401) {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
+        }
 
         // clave api sin permisos (pero activada)
         $ApiKeyObj->enabled = true;
@@ -129,7 +151,11 @@ class SecurityTest extends TestCase
         ];
 
         $result = $this->makePOSTCurl("agenciatransportes", $form);
-        $this->assertEquals($expected, $result, 'response-not-equal');
+        if ($result['status'] === 403) {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
+        }
 
         // clave api con todos los permisos
         $ApiKeyObj->fullaccess = true;
@@ -147,7 +173,11 @@ class SecurityTest extends TestCase
         ];
 
         $result = $this->makePOSTCurl("agenciatransportes", $form);
-        $this->assertEquals($expected, $result, 'response-not-equal');
+        if ($result['status'] === 200) {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
+        }
         
         // clave api con permisos limitados
         $ApiKeyObj->fullaccess = false;
@@ -172,7 +202,11 @@ class SecurityTest extends TestCase
             ]
         ];
         
-        $this->assertEquals($expected, $result, 'response-not-equal');
+        if ($result['status'] === 200) {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
+        }
 
         $expected = [
             "status" => "error",
@@ -180,11 +214,20 @@ class SecurityTest extends TestCase
         ];
 
         $result = $this->makeGETCurl("divisas");
-        $this->assertEquals($expected, $result, 'response-not-equal');
+        if ($result['status'] === 403) {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
+        }
 
         $this->assertTrue(ApiAccess::addResourcesToApiKey($ApiKeyObj->id, ['agenciatransportes'], false), 'can-not-add-resource');
         $result = $this->makeGETCurl("agenciatransportes");
-        $this->assertEquals($expected, $result, 'response-not-equal');
+        if ($result['status'] === 200) {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        }
+        else{
+            $this->fail('API request failed');
+        }
 
         $ApiKeyObj->delete();
         Cache::deleteMulti(ApiController::IP_LIST);
