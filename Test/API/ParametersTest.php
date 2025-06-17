@@ -17,21 +17,21 @@ class ParametersTest extends TestCase
         $this->startAPIServer();
     }
 
-    public function testListResources()
+    public function testListResources(): void
     {
 
         $result = $this->makeGETCurl();
 
         $expected = ['resources' => $this->getResourcesList()];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testFilterLike()
+    public function testFilterLike(): void
     {
         $result = $this->makeGETCurl('pais?filter[nombre_like]=Esp');
 
@@ -51,14 +51,14 @@ class ParametersTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testFilterData()
+    public function testFilterData(): void
     {
         $result = $this->makeGETCurl('pais?filter[codpais]=ESP');
 
@@ -78,14 +78,14 @@ class ParametersTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testFilterGreaterThan()
+    public function testFilterGreaterThan(): void
     {
         $result = $this->makeGETCurl('pais?filter[latitude_gt]=71.7069');
 
@@ -105,14 +105,14 @@ class ParametersTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testFilterGreaterThanOrEqual()
+    public function testFilterGreaterThanOrEqual(): void
     {
         $result = $this->makeGETCurl('pais?filter[latitude_gte]=71.7069');
 
@@ -145,14 +145,14 @@ class ParametersTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testFilterLessThan()
+    public function testFilterLessThan(): void
     {
         $result = $this->makeGETCurl('pais?filter[latitude_lt]=-54.4296');
 
@@ -172,14 +172,14 @@ class ParametersTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testFilterLessThanOrEqual()
+    public function testFilterLessThanOrEqual(): void
     {
         $result = $this->makeGETCurl('pais?filter[latitude_lte]=-54.4296');
 
@@ -212,14 +212,14 @@ class ParametersTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testFilterDistinct()
+    public function testFilterDistinct(): void
     {
         $result = $this->makeGETCurl('pais?filter[latitude_lte]=-54.4296&filter[latitude_neq]=-90');
 
@@ -239,14 +239,14 @@ class ParametersTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testsort()
+    public function testsort(): void
     {
         $result = $this->makeGETCurl('pais?filter[latitude_lte]=-54.4296&sort[latitude]=DESC');
 
@@ -279,14 +279,14 @@ class ParametersTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testPagination()
+    public function testPagination(): void
     {
         $result = $this->makeGETCurl('pais?offset=0&limit=3');
         $expected = [
@@ -331,10 +331,10 @@ class ParametersTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
 
         $result = $this->makeGETCurl('pais?offset=3&limit=3');
@@ -380,6 +380,34 @@ class ParametersTest extends TestCase
                 "telephone_prefix" => "+355"
             ]
         ];
+    }
+
+    public function testResourceNotFound():void
+    {
+        $result = $this->makeGETCurl("divisas/999");
+
+        $expected = [
+            "error" => "Registro no encontrado"
+        ];
+
+        if ($result['status'] === 404) {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
+        }
+    }
+
+    public function testFilterDataNotExists():void
+    {
+        $result = $this->makeGETCurl("divisas?filter[coddivisa]=999");
+
+        $expected = [];
+
+        if ($result['status'] === 200) {
+            $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
+        }
     }
 
     protected function tearDown(): void

@@ -17,19 +17,19 @@ class CRUDTest extends TestCase
         $this->startAPIServer();
     }
 
-    public function testListResources()
+    public function testListResources(): void
     {
         $result = $this->makeGETCurl();
 
         $expected = ['resources' => $this->getResourcesList()];
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testCreateData()
+    public function testCreateData(): void
     {
         $form = [
             'coddivisa' => '123',
@@ -50,14 +50,14 @@ class CRUDTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testUpdateData()
+    public function testUpdateData(): void
     {
         $result = $this->makePUTCurl("divisas/123", [
             'descripcion' => 'Divisa 123 Actualizada'
@@ -74,14 +74,14 @@ class CRUDTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
-    public function testDeleteData()
+    public function testDeleteData(): void
     {
         $result = $this->makeDELETECurl("divisas/123");
 
@@ -97,10 +97,10 @@ class CRUDTest extends TestCase
             ]
         ];
 
-        if ($result['status'] !== 200) {
-            $this->fail('API request failed');
-        } else {
+        if ($result['status'] === 200) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
+        } else {
+            $this->fail('API request failed');
         }
     }
 
