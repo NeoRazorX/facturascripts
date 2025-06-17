@@ -1,7 +1,6 @@
 <?php
 namespace FacturaScripts\Test\API;
 
-use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\ApiTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
