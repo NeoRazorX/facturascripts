@@ -42,7 +42,7 @@ class CRUDTest extends TestCase
 
 
         $expected = [ 
-            'ok' => 'Registro actualizado correctamente',
+            'ok' => 'Registro actualizado correctamente.',
             'data' => [
                 'coddivisa' => '123',
                 'codiso' => null,
@@ -52,8 +52,6 @@ class CRUDTest extends TestCase
                 'tasaconvcompra' => 1
             ]
         ];
-
-        print_r($result);
 
 
         $this->assertEquals($expected, $result, 'response-not-equal');
@@ -65,7 +63,7 @@ class CRUDTest extends TestCase
             'descripcion' => 'Divisa 123 Actualizada'
         ]);
         $expected = [
-            'ok' => 'Registro actualizado correctamente',
+            'ok' => 'Registro actualizado correctamente.',
             'data' => [
                 'coddivisa' => '123',
                 'codiso' => null,
@@ -83,7 +81,7 @@ class CRUDTest extends TestCase
         $result = $this->makeDELETECurl("divisas/123");
 
         $expected = [
-            'ok' => 'Registro eliminado correctamente',
+            'ok' => 'Registro eliminado correctamente!',
             'data' => [
                 'coddivisa' => '123',
                 'codiso' => null,
