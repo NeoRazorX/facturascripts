@@ -26,7 +26,7 @@ trait ApiTrait
 {
     private string $host = '127.0.0.2';
     private string $port = '8000';
-    private string $document_root = '/../../';
+    private string $documentRoot = '/../../';
     private string $router = 'index.php';
 
     private string $url;
@@ -40,8 +40,8 @@ trait ApiTrait
 
     protected function startAPIServer($enableAPI = true): void
     {
-        $document_root = __DIR__ . $this->document_root;
-        $router = $document_root . $this->router;
+        $documentRoot = __DIR__ . $this->documentRoot;
+        $router = $documentRoot . $this->router;
 
         $this->defaultApiEnabled = Tools::settings('default', 'enable_api', false);
         Tools::settingsSet('default', 'enable_api', $enableAPI);
@@ -60,13 +60,14 @@ trait ApiTrait
         $this->ApiKeyObj = $ApiKeyObj;
 
         $this->url = "http://{$this->host}:{$this->port}/api/3/";
-        $this->command = "php -S {$this->host}:{$this->port} -t {$document_root} {$router} > /dev/null 2>&1 & echo $!";
+        $this->command = "php -S {$this->host}:{$this->port} -t {$documentRoot} {$router} > /dev/null 2>&1 & echo $!";
         $this->pid = shell_exec($this->command);
         sleep(1);
     }
 
     protected function stopAPIServer(): void
     {
+        $this->ApiKeyObj->delete();
         Tools::settingsSet('default', 'enable_api', $this->defaultApiEnabled);
         Tools::settingsSave();
         shell_exec("kill $this->pid");

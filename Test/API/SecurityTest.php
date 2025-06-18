@@ -1,6 +1,7 @@
 <?php
 namespace FacturaScripts\Test\API;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\Tools;
@@ -13,9 +14,10 @@ use PHPUnit\Framework\TestCase;
 
 class SecurityTest extends TestCase
 {
-
     use ApiTrait;
     use LogErrorsTrait;
+
+    protected $securityFlowApiKeyObj;
 
     protected function setUp(): void
     {
@@ -23,17 +25,17 @@ class SecurityTest extends TestCase
 
         $agencia = new AgenciaTransporte();
         $agencia = $agencia->get('TestTest');
-        if($agencia !== false) {
+        if ($agencia !== false) {
             $this->assertTrue($agencia->delete(), 'agenciaTransporte-cant-delete');
         }
-        
+
         Cache::deleteMulti(ApiController::IP_LIST);
     }
 
     // Test para comprobar el flujo de seguridad de la API facturascripts
     public function testSecurityFlow()
     {
-        
+
         $form = [
             'codtrans' => 'TestTest',
             'nombre' => 'La agencia inexistente',
@@ -57,8 +59,8 @@ class SecurityTest extends TestCase
 
         Tools::settingsSet('default', 'enable_api', true);
         Tools::settingsSave();
-    
-        
+
+
         // paso 2: clave de API incorrecta
         $expected = [
             "status" => "error",
@@ -103,19 +105,20 @@ class SecurityTest extends TestCase
         //paso 5: Allowed resource
         // clave api desactivada
         $ApiKeyObj = new ApiKey();
+        $this->securityFlowApiKeyObj = $ApiKeyObj;
         $ApiKeyObj->clear();
         $ApiKeyObj->description = 'Clave de pruebas';
         $ApiKeyObj->nick = 'tester';
         $ApiKeyObj->enabled = false;
         $this->assertTrue($ApiKeyObj->save(), 'can-not-save-key');
-        
+
         $this->setApiToken($ApiKeyObj->apikey);
-        
+
         $expected = [
             "status" => "error",
             "message" => "Clave de API no válida"
         ];
-        
+
         $result = $this->makePOSTCurl("agenciatransportes", $form);
         $this->assertEquals($expected, $result, 'response-not-equal');
 
@@ -148,19 +151,19 @@ class SecurityTest extends TestCase
 
         $result = $this->makePOSTCurl("agenciatransportes", $form);
         $this->assertEquals($expected, $result, 'response-not-equal');
-        
+
         // clave api con permisos limitados
         $ApiKeyObj->fullaccess = false;
         $this->assertTrue($ApiKeyObj->save(), 'can-not-save-key');
         $this->assertTrue(ApiAccess::addResourcesToApiKey($ApiKeyObj->id, ['agenciatransportes'], true), 'can-not-add-resource');
-        
+
         $form = [
             'nombre' => 'La agencia intangible',
             'activo' => false
         ];
-        
+
         $result = $this->makePUTCurl("agenciatransportes/TestTest", $form);
-        
+
         $expected = [
             "ok" => "Registro actualizado correctamente.",
             "data" => [
@@ -171,30 +174,41 @@ class SecurityTest extends TestCase
                 "web" => null
             ]
         ];
-        
+
         $this->assertEquals($expected, $result, 'response-not-equal');
+
+        // clave api accediendo a recurso sin permisos
+        $result = $this->makeGETCurl("divisas");
 
         $expected = [
             "status" => "error",
             "message" => "forbidden"
         ];
 
-        $result = $this->makeGETCurl("divisas");
         $this->assertEquals($expected, $result, 'response-not-equal');
 
-        $this->assertTrue(ApiAccess::addResourcesToApiKey($ApiKeyObj->id, ['agenciatransportes'], false), 'can-not-add-resource');
+        $agenciasAccess = $ApiKeyObj->getResourceAccess('agenciatransportes');
+        $this->assertTrue($agenciasAccess !== false, 'can-not-get-access');
+        $this->assertTrue($agenciasAccess->setAllowed(false, false, false, false), 'can-not-update-access');
+
         $result = $this->makeGETCurl("agenciatransportes");
         $this->assertEquals($expected, $result, 'response-not-equal');
-
-        $ApiKeyObj->delete();
-        Cache::deleteMulti(ApiController::IP_LIST);
     }
 
     protected function tearDown(): void
     {
+        // limpieza
+        $apiAccess = new ApiAccess();
+        $allAccesses = $apiAccess->all([new DataBaseWhere('idapikey', $this->securityFlowApiKeyObj->id)], [], 0);
+        foreach ($allAccesses as $access) {
+            // TODO: descomentar esto: $this->assertTrue($access->delete(), 'can-not-delete-access');
+        }
+        // TODO: descomentar esto: $this->assertTrue($this->securityFlowApiKeyObj->delete(), 'can-not-delete-key');
+        Cache::deleteMulti(ApiController::IP_LIST);
+
         $agencia = new AgenciaTransporte();
         $agencia->get('TestTest');
-        if($agencia !== false) {
+        if ($agencia !== false) {
             $this->assertTrue($agencia->delete(), 'agenciaTransporte-cant-delete');
         }
 
