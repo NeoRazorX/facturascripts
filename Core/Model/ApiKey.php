@@ -80,11 +80,7 @@ class ApiKey extends Base\ModelClass
         $apiAccess->allowpost = $state;
         $apiAccess->allowput = $state;
 
-        if (false === $apiAccess->save()) {
-            return $apiAccess->save();
-        }
-
-        return true;
+        return $apiAccess->save();
     }
 
     public function clear()
