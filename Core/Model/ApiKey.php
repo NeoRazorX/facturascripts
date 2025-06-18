@@ -81,7 +81,7 @@ class ApiKey extends Base\ModelClass
         $apiAccess->allowput = $state;
 
         if (false === $apiAccess->save()) {
-            return false;
+            return $apiAccess->save();
         }
 
         return true;
@@ -105,7 +105,7 @@ class ApiKey extends Base\ModelClass
      *
      * @return ApiAccess|bool The ApiAccess object if found, false otherwise.
      */
-    public function getResourceAccess(string $resource): ApiAccess|bool
+    public function getResourceAccess(string $resource): ?ApiAccess
     {
         $apiAccess = new ApiAccess();
 
@@ -117,7 +117,7 @@ class ApiKey extends Base\ModelClass
         if ($apiAccess->loadFromCode('', $where)) {
             return $apiAccess;
         } else {
-            return false;
+            return null;
         }
     }
 
