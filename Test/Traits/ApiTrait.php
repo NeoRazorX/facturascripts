@@ -92,10 +92,14 @@ trait ApiTrait
         ]);
         $respuesta = curl_exec($ch);
         curl_close($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         $data = json_decode($respuesta, true);
         if (json_last_error() === JSON_ERROR_NONE) {
-            return $data;
+            return [
+                'status' => $httpCode,
+                'data' => $data
+            ];
         } else {
             throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
         }
@@ -114,9 +118,14 @@ trait ApiTrait
 
         $respuesta = curl_exec($ch);
         curl_close($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
         $data = json_decode($respuesta, true);
         if (json_last_error() === JSON_ERROR_NONE) {
-            return $data;
+            return [
+                'status' => $httpCode,
+                'data' => $data
+            ];
         } else {
             echo $respuesta;
             throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
@@ -136,10 +145,14 @@ trait ApiTrait
 
         $respuesta = curl_exec($ch);
         curl_close($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         $data = json_decode($respuesta, true);
         if (json_last_error() === JSON_ERROR_NONE) {
-            return $data;
+            return [
+                'status' => $httpCode,
+                'data' => $data
+            ];
         } else {
             throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
         }
@@ -161,7 +174,10 @@ trait ApiTrait
 
         $data = json_decode($respuesta, true);
         if (json_last_error() === JSON_ERROR_NONE) {
-            return $data;
+            return [
+                'status' => curl_getinfo($ch, CURLINFO_HTTP_CODE),
+                'data' => $data
+            ];
         } else {
             throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
         }
