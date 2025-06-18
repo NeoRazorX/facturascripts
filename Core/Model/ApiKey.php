@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -61,35 +61,39 @@ class ApiKey extends Base\ModelClass
      * If the resource already exists for this API key, no changes are made.
      *
      * @param string $resource Resource name to grant access to.
-     * @param bool $state      Initial permission state (applied to all methods).
+     * @param bool $state Initial permission state (applied to all methods).
      *
      * @return bool True if created or already exists, false on failure.
      */
-    public function addResourceAccess(string $resource, bool $state = false): bool
+    public function addAccess(string $resource, bool $state = false): bool
     {
-        if (false !== $this->getResourceAccess($resource)) {
+        if (null !== $this->getAccess($resource)) {
             return true; // already exists
         }
 
         $apiAccess = new ApiAccess();
-
         $apiAccess->idapikey = $this->id;
         $apiAccess->resource = $resource;
         $apiAccess->allowdelete = $state;
         $apiAccess->allowget = $state;
         $apiAccess->allowpost = $state;
         $apiAccess->allowput = $state;
-
         return $apiAccess->save();
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->apikey = Tools::randomString(20);
         $this->creationdate = Tools::date();
         $this->enabled = true;
         $this->fullaccess = false;
+    }
+
+    public function getAccesses(): array
+    {
+        $where = [new DataBaseWhere('idapikey', $this->id)];
+        return ApiAccess::all($where, [], 0, 0);
     }
 
     /**
@@ -99,22 +103,20 @@ class ApiKey extends Base\ModelClass
      *
      * @param string $resource Resource name to look up.
      *
-     * @return ApiAccess|bool The ApiAccess object if found, false otherwise.
+     * @return ?ApiAccess The ApiAccess object if found, false otherwise.
      */
-    public function getResourceAccess(string $resource): ?ApiAccess
+    public function getAccess(string $resource): ?ApiAccess
     {
         $apiAccess = new ApiAccess();
-
         $where = [
             new DataBaseWhere('idapikey', $this->id),
             new DataBaseWhere('resource', $resource)
         ];
-
         if ($apiAccess->loadFromCode('', $where)) {
             return $apiAccess;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     public static function primaryColumn(): string
