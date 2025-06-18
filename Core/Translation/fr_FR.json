@@ -909,6 +909,7 @@
     "login-cookie-fail": "Échec du login-cookie",
     "login-image": "Imagen de login",
     "login-ok": "Connectez-vous avec succès (cookie). Utilisateur: '%nick'",
+    "login-password-changed": "Mot de passe changé avec succès",
     "login-password-fail": "Échec de la connexion",
     "login-text": "Entrez votre nom d'utilisateur et mot de passe pour vous connecter",
     "login-to-continue": "Connectez-vous pour continuer",

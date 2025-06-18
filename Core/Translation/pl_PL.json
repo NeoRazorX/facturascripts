@@ -909,6 +909,7 @@
     "login-cookie-fail": "Nieprawidłowy ciasteczko logowania",
     "login-image": "Obrazek logowania",
     "login-ok": "Sesja została pomyślnie uruchomiona (ciasteczko). Użytkownik: '%nick%'",
+    "login-password-changed": "Contraseña cambiada correctamente",
     "login-password-fail": "Użytkownik lub hasło są niepoprawne",
     "login-text": "Wpisz swoją nazwę użytkownika i hasło, aby się zalogować",
     "login-to-continue": "Zaloguj się, aby kontynuować",

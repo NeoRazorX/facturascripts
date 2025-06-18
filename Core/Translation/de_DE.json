@@ -909,6 +909,7 @@
     "login-cookie-fail": "Session-Cookie ist fehlgeschlagen: Möglicherweise haben Sie sich von einem anderen Gerät oder Browser angemeldet.",
     "login-image": "Login-Bild",
     "login-ok": "Melden Sie sich erfolgreich an (Cookie). Benutzer: '0'",
+    "login-password-changed": "Passwort erfolgreich geändert",
     "login-password-fail": "Anmeldung fehlgeschlagen",
     "login-text": "Anmeldung",
     "login-to-continue": "Melden Sie sich an, um fortzufahren",

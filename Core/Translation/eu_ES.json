@@ -909,6 +909,7 @@
     "login-cookie-fail": "Saioaren cookiea baliogabea da",
     "login-image": "Saioa hasteko irudia",
     "login-ok": "Saioa ondo hasi da (cookie). Erabiltzailea: '%nick%'",
+    "login-password-changed": "Pasahitza arrakastaz aldatu da",
     "login-password-fail": "Erabiltzailea edo pasahitza ez dira zuzenak",
     "login-text": "Idatzi zure erabiltzaile izena eta pasahitza saioa hasteko",
     "login-to-continue": "Hasi saioa jarraitzeko",

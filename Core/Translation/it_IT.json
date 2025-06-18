@@ -909,6 +909,7 @@
     "login-cookie-fail": "Cookie di sessione non valido: probabilmente hai effettuato l'accesso da un altro dispositivo o browser.",
     "login-image": "immagine di login",
     "login-ok": "Accedi con successo (cookie). Utente: '0'",
+    "login-password-changed": "Password cambiata correttamente",
     "login-password-fail": "Accesso fallito",
     "login-text": "Accesso",
     "login-to-continue": "Effettua il login per continuare",

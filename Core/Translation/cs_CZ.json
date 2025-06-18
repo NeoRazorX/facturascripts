@@ -909,6 +909,7 @@
     "login-cookie-fail": "Neplatný relační cookie",
     "login-image": "Imagen de login",
     "login-ok": "Sesión iniciada satisfactoriamente (cookie). Usuario: '%nick%'",
+    "login-password-changed": "Contraseña cambiada correctamente",
     "login-password-fail": "El usuario o la contraseña son incorrectos",
     "login-text": "Escriba su nombre de usuario y contraseña para iniciar sesión",
     "login-to-continue": "Inicie sesión para continuar",
