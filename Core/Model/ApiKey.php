@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\ApiAccess;
 
 /**
  * ApiKey model to manage the connection tokens through the api
@@ -53,6 +55,34 @@ class ApiKey extends Base\ModelClass
     /** @var string */
     public $nick;
 
+    /**
+     * Adds a new API access entry for the given resource with the specified permissions.
+     *
+     * If the resource already exists for this API key, no changes are made.
+     *
+     * @param string $resource Resource name to grant access to.
+     * @param bool $state      Initial permission state (applied to all methods).
+     *
+     * @return bool True if created or already exists, false on failure.
+     */
+    public function addResourceAccess(string $resource, bool $state = false): bool
+    {
+        if (false !== $this->getResourceAccess($resource)) {
+            return true; // already exists
+        }
+
+        $apiAccess = new ApiAccess();
+
+        $apiAccess->idapikey = $this->id;
+        $apiAccess->resource = $resource;
+        $apiAccess->allowdelete = $state;
+        $apiAccess->allowget = $state;
+        $apiAccess->allowpost = $state;
+        $apiAccess->allowput = $state;
+
+        return $apiAccess->save();
+    }
+
     public function clear()
     {
         parent::clear();
@@ -60,6 +90,31 @@ class ApiKey extends Base\ModelClass
         $this->creationdate = Tools::date();
         $this->enabled = true;
         $this->fullaccess = false;
+    }
+
+    /**
+     * Retrieves the API access entry for the specified resource.
+     *
+     * Use addResourceAccess() first if the resource does not exist.
+     *
+     * @param string $resource Resource name to look up.
+     *
+     * @return ApiAccess|bool The ApiAccess object if found, false otherwise.
+     */
+    public function getResourceAccess(string $resource): ?ApiAccess
+    {
+        $apiAccess = new ApiAccess();
+
+        $where = [
+            new DataBaseWhere('idapikey', $this->id),
+            new DataBaseWhere('resource', $resource)
+        ];
+
+        if ($apiAccess->loadFromCode('', $where)) {
+            return $apiAccess;
+        } else {
+            return null;
+        }
     }
 
     public static function primaryColumn(): string
