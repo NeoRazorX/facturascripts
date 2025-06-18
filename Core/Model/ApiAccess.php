@@ -131,6 +131,26 @@ class ApiAccess extends Base\ModelClass
         return 'id';
     }
 
+    /**
+     * Update HTTP method permissions for this API resource and save the changes.
+     *
+     * @param bool $get    Whether GET is allowed.
+     * @param bool $post   Whether POST is allowed.
+     * @param bool $put    Whether PUT is allowed.
+     * @param bool $delete Whether DELETE is allowed.
+     *
+     * @return bool True if saved successfully, false otherwise.
+     */
+    public function setAllowed(bool $get, bool $post, bool $put, bool $delete): bool
+    {
+        $this->allowget = $get;
+        $this->allowpost = $post;
+        $this->allowput = $put;
+        $this->allowdelete = $delete;
+
+        return $this->save();
+    }
+
     public static function tableName(): string
     {
         return 'api_access';
