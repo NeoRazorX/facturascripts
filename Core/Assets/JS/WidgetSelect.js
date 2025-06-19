@@ -50,9 +50,24 @@ function widgetSelectGetData(select, parent) {
 }
 
 $(document).ready(function () {
-    $('select.select2').select2({
-        width: 'style',
-        theme: 'bootstrap4'
+    $('select.select2').each(function () {
+        var jsDataName = 'js' + $(this).attr('data-fieldname') + 'List';
+        if (window[jsDataName] !== undefined) {
+            $(this).select2({
+                width: 'style',
+                theme: 'bootstrap4',
+                data: window[jsDataName]
+            });
+
+            var values = $(this).attr('value').split(',');
+            $(this).val(values);
+            $(this).trigger('change');
+        } else {
+            $(this).select2({
+                width: 'style',
+                theme: 'bootstrap4',
+            });
+        }
     });
 
     $('.parentSelect').each(function () {
