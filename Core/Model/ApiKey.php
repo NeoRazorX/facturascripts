@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,10 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
-
+use FacturaScripts\Dinamic\Model\ApiAccess;
 /**
  * ApiKey model to manage the connection tokens through the api
  * that will be generated to synchronize different applications.
@@ -54,7 +55,33 @@ class ApiKey extends Base\ModelClass
     /** @var string */
     public $nick;
 
-    public function clear()
+    /**
+     * Adds a new API access entry for the given resource with the specified permissions.
+     *
+     * If the resource already exists for this API key, no changes are made.
+     *
+     * @param string $resource Resource name to grant access to.
+     * @param bool $state Initial permission state (applied to all methods).
+     *
+     * @return bool True if created or already exists, false on failure.
+     */
+    public function addAccess(string $resource, bool $state = false): bool
+    {
+        if (null !== $this->getAccess($resource)) {
+            return true; // already exists
+        }
+
+        $apiAccess = new ApiAccess();
+        $apiAccess->idapikey = $this->id;
+        $apiAccess->resource = $resource;
+        $apiAccess->allowdelete = $state;
+        $apiAccess->allowget = $state;
+        $apiAccess->allowpost = $state;
+        $apiAccess->allowput = $state;
+        return $apiAccess->save();
+    }
+
+    public function clear(): void
     {
         parent::clear();
         $this->apikey = Tools::randomString(20);
@@ -69,6 +96,35 @@ class ApiKey extends Base\ModelClass
         new User();
 
         return parent::install();
+    }
+  
+    public function getAccesses(): array
+    {
+        $where = [new DataBaseWhere('idapikey', $this->id)];
+        return ApiAccess::all($where, [], 0, 0);
+    }
+
+    /**
+     * Retrieves the API access entry for the specified resource.
+     *
+     * Use addResourceAccess() first if the resource does not exist.
+     *
+     * @param string $resource Resource name to look up.
+     *
+     * @return ?ApiAccess The ApiAccess object if found, false otherwise.
+     */
+    public function getAccess(string $resource): ?ApiAccess
+    {
+        $apiAccess = new ApiAccess();
+        $where = [
+            new DataBaseWhere('idapikey', $this->id),
+            new DataBaseWhere('resource', $resource)
+        ];
+        if ($apiAccess->loadFromCode('', $where)) {
+            return $apiAccess;
+        }
+
+        return null;
     }
 
     public static function primaryColumn(): string
