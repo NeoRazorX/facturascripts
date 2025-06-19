@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\User;
 
 /**
  * ApiKey model to manage the connection tokens through the api
@@ -60,6 +61,14 @@ class ApiKey extends Base\ModelClass
         $this->creationdate = Tools::date();
         $this->enabled = true;
         $this->fullaccess = false;
+    }
+
+    public function install(): string
+    {
+        // needed dependencies
+        new User();
+
+        return parent::install();
     }
 
     public static function primaryColumn(): string
