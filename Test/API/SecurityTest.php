@@ -98,8 +98,6 @@ class SecurityTest extends TestCase
 
             Cache::deleteMulti(ApiController::IP_LIST); // limpiar cache de ips bloqueadas
         }
-        // $this->stopAPIServer();
-        // $this->startAPIServer();
 
 
         // paso 3: Allowed resource
