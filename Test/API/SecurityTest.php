@@ -222,12 +222,11 @@ class SecurityTest extends TestCase
             $this->fail('API request failed');
         }
 
-        $agenciasAccess = $ApiKeyObj->getResourceAccess('agenciatransportes');
+        $agenciasAccess = $ApiKeyObj->getAccess('agenciatransportes');
         $this->assertTrue($agenciasAccess !== false, 'can-not-get-access');
         $this->assertTrue($agenciasAccess->setAllowed(false, false, false, false), 'can-not-update-access');
 
         $result = $this->makeGETCurl("agenciatransportes");
-        print_r(var_dump($result));
         if ($result['status'] === 403) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
         } else {
