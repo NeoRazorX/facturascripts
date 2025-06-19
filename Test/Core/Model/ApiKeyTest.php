@@ -42,6 +42,9 @@ final class ApiKeyTest extends TestCase
         $access->resource = 'divisas';
         $this->assertTrue($access->save());
 
+        // comprobamos que tiene acceso
+        $this->assertTrue($key->hasAccess('divisas'));
+
         // comprobamos que solamente tiene acceso a un recurso
         $accesses = $key->getAccesses();
         $this->assertCount(1, $accesses);
@@ -49,6 +52,9 @@ final class ApiKeyTest extends TestCase
 
         // eliminamos el api key
         $this->assertTrue($key->delete());
+
+        // comprobamos que ya no tiene acceso
+        $this->assertFalse($key->hasAccess('divisas'));
 
         // comprobamos que el acceso al recurso ya no existe
         $this->assertFalse($access->exists());
@@ -63,6 +69,9 @@ final class ApiKeyTest extends TestCase
 
         // añadimos un recursos en una sola llamada
         $this->assertTrue($key->addAccess('divisas', true));
+
+        // comprobamos que tiene acceso
+        $this->assertTrue($key->hasAccess('divisas'));
 
         // obtenemos el recurso
         $access = $key->getAccess('divisas');

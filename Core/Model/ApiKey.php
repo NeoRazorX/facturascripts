@@ -119,6 +119,11 @@ class ApiKey extends Base\ModelClass
         return null;
     }
 
+    public function hasAccess(string $resource): bool
+    {
+        return $this->fullaccess || null !== $this->getAccess($resource);
+    }
+
     public static function primaryColumn(): string
     {
         return 'id';
