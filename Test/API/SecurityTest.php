@@ -91,6 +91,7 @@ class SecurityTest extends TestCase
         ];
 
         $result = $this->makePOSTCurl("agenciatransportes", $form);
+        print_r(var_dump($result));
         if ($result['status'] === 401) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal-' . $attempt);
         } else {
