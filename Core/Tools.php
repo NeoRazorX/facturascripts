@@ -370,6 +370,39 @@ class Tools
     }
 
     /**
+     * Convierte un texto a formato kebab-case (minúsculas con guiones).
+     *
+     * @param string $text El texto que se debe convertir a kebab-case.
+     *
+     * @return string El texto convertido a formato kebab-case.
+     */
+    public static function kebab(string $text): string
+    {
+        // Convertir a ASCII para eliminar acentos y caracteres especiales
+        $text = self::ascii($text);
+        
+        // Insertar guiones antes de mayúsculas precedidas por minúsculas o números
+        $text = preg_replace('/([a-z0-9])([A-Z])/', '$1-$2', $text);
+        
+        // Insertar guiones entre mayúsculas consecutivas y la siguiente minúscula (ej: HTMLParser -> HTML-Parser)
+        $text = preg_replace('/([A-Z])([A-Z][a-z])/', '$1-$2', $text);
+        
+        // Convertir a minúsculas
+        $text = strtolower($text);
+        
+        // Reemplazar espacios y caracteres no alfanuméricos con guiones
+        $text = preg_replace('/[^a-z0-9]+/', '-', $text);
+        
+        // Eliminar guiones duplicados
+        $text = preg_replace('/-{2,}/', '-', $text);
+        
+        // Eliminar guiones al inicio y final
+        $text = trim($text, '-');
+        
+        return $text;
+    }
+
+    /**
      * Crea una instancia de `Translator` para gestionar la traducción en el idioma especificado.
      *
      * @param string|null $lang El código del idioma para la traducción. Si se proporciona, se usa para configurar el traductor. Si es nulo, se usa un valor predeterminado.
