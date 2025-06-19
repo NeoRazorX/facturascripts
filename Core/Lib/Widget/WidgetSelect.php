@@ -246,7 +246,7 @@ class WidgetSelect extends BaseWidget
     protected function assets()
     {
         AssetManager::add('css', FS_ROUTE . '/node_modules/select2/dist/css/select2.min.css');
-        AssetManager::add('css', FS_ROUTE . '/node_modules/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css');
+        AssetManager::add('css', FS_ROUTE . '/node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css');
         AssetManager::add('js', FS_ROUTE . '/node_modules/select2/dist/js/select2.min.js', 2);
         AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
     }
