@@ -116,6 +116,15 @@ class ApiAccess extends Base\ModelClass
         return true;
     }
 
+    public function clear()
+    {
+        parent::clear();
+        $this->allowdelete = true;
+        $this->allowget = true;
+        $this->allowpost = true;
+        $this->allowput = true;
+    }
+
     public function install(): string
     {
         // needed dependencies

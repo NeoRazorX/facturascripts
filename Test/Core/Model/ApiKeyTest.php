@@ -82,6 +82,69 @@ final class ApiKeyTest extends TestCase
         $this->assertTrue($key->delete());
     }
 
+    public function testHasAccess(): void
+    {
+        // creamos una api key
+        $key = new ApiKey();
+        $key->description = 'test';
+        $this->assertTrue($key->save());
+
+        // comprobamos que no tiene acceso a un recurso
+        $this->assertFalse($key->hasAccess('divisas'));
+        $this->assertFalse($key->hasAccess('divisas', 'post'));
+
+        // damos acceso a un recurso
+        $this->assertTrue($key->addAccess('divisas', true));
+
+        // comprobamos que ahora tiene acceso
+        $this->assertTrue($key->hasAccess('divisas'));
+        $this->assertTrue($key->hasAccess('divisas', 'post'));
+        $this->assertTrue($key->hasAccess('divisas', 'put'));
+        $this->assertTrue($key->hasAccess('divisas', 'delete'));
+
+        // comprobamos que no tiene permiso con otro recurso
+        $this->assertFalse($key->hasAccess('productos'));
+
+        // quitamos permiso para hacer post
+        $this->assertTrue($key->getAccess('divisas')->setAllowed(true, false, true, true));
+
+        // comprobamos los permisos
+        $this->assertFalse($key->hasAccess('divisas', 'post'));
+        $this->assertTrue($key->hasAccess('divisas'));
+        $this->assertTrue($key->hasAccess('divisas', 'put'));
+        $this->assertTrue($key->hasAccess('divisas', 'delete'));
+
+        // quitar permiso de put
+        $this->assertTrue($key->getAccess('divisas')->setAllowed(true, false, false, true));
+
+        // comprobamos los permisos
+        $this->assertFalse($key->hasAccess('divisas', 'put'));
+        $this->assertFalse($key->hasAccess('divisas', 'post'));
+        $this->assertTrue($key->hasAccess('divisas'));
+        $this->assertTrue($key->hasAccess('divisas', 'delete'));
+
+        // quitamos permiso de delete
+        $this->assertTrue($key->getAccess('divisas')->setAllowed(true, false, false, false));
+
+        // comprobamos los permisos
+        $this->assertFalse($key->hasAccess('divisas', 'delete'));
+        $this->assertFalse($key->hasAccess('divisas', 'post'));
+        $this->assertFalse($key->hasAccess('divisas', 'put'));
+        $this->assertTrue($key->hasAccess('divisas'));
+
+        // eliminamos el acceso
+        $this->assertTrue($key->getAccess('divisas')->delete());
+
+        // comprobamos los permisos
+        $this->assertFalse($key->hasAccess('divisas'));
+        $this->assertFalse($key->hasAccess('divisas', 'post'));
+        $this->assertFalse($key->hasAccess('divisas', 'put'));
+        $this->assertFalse($key->hasAccess('divisas', 'delete'));
+
+        // eliminamos
+        $this->assertTrue($key->delete());
+    }
+
     public function testEscapeHtml(): void
     {
         $html = '<test>';

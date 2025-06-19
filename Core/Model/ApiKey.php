@@ -119,9 +119,24 @@ class ApiKey extends Base\ModelClass
         return null;
     }
 
-    public function hasAccess(string $resource): bool
+    public function hasAccess(string $resource, string $permission = 'get'): bool
     {
-        return $this->fullaccess || null !== $this->getAccess($resource);
+        if ($this->fullaccess) {
+            return true;
+        }
+
+        $access = $this->getAccess($resource);
+        if (null === $access) {
+            return false;
+        }
+
+        return match ($permission) {
+            'delete' => $access->allowdelete ?? false,
+            'get' => $access->allowget ?? false,
+            'post' => $access->allowpost ?? false,
+            'put' => $access->allowput ?? false,
+            default => false,
+        };
     }
 
     public static function primaryColumn(): string
