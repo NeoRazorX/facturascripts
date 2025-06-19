@@ -227,7 +227,8 @@ class SecurityTest extends TestCase
         $this->assertTrue($agenciasAccess->setAllowed(false, false, false, false), 'can-not-update-access');
 
         $result = $this->makeGETCurl("agenciatransportes");
-        if ($result['status'] === 200) {
+        print_r(var_dump($result));
+        if ($result['status'] === 403) {
             $this->assertEquals($expected, $result['data'], 'response-not-equal');
         } else {
             $this->fail('API request failed');
