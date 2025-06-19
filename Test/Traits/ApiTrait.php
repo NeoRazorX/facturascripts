@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Traits;
 
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\ApiKey;
+use FacturaScripts\Dinamic\Model\User;
 
 trait ApiTrait
 {
@@ -37,152 +38,12 @@ trait ApiTrait
     private bool $defaultApiEnabled;
 
     private ApiKey $ApiKeyObj;
+    private User $apiUser;
 
-    protected function startAPIServer($enableAPI = true): void
+    protected function getApiUser(): User
     {
-        $documentRoot = __DIR__ . $this->documentRoot;
-        $router = $documentRoot . $this->router;
-
-        $this->defaultApiEnabled = Tools::settings('default', 'enable_api', false);
-        Tools::settingsSet('default', 'enable_api', $enableAPI);
-        Tools::settingsSave();
-
-        $ApiKeyObj = new ApiKey();
-        // $ApiKeyObj->id = $IdKey.'Test';
-        $ApiKeyObj->clear();
-        $ApiKeyObj->description = 'Clave de pruebas';
-        $ApiKeyObj->nick = 'tester';
-        $ApiKeyObj->enabled = true;
-        $ApiKeyObj->fullaccess = true;
-
-        $ApiKeyObj->save();
-        $this->token = $ApiKeyObj->apikey;
-        $this->ApiKeyObj = $ApiKeyObj;
-
-        $this->url = "http://{$this->host}:{$this->port}/api/3/";
-        $this->command = "php -S {$this->host}:{$this->port} -t {$documentRoot} {$router} > /dev/null 2>&1 & echo $!";
-        $this->pid = shell_exec($this->command);
-        sleep(1);
+        return $this->apiUser;
     }
-
-    protected function stopAPIServer(): void
-    {
-        $this->ApiKeyObj->delete();
-        Tools::settingsSet('default', 'enable_api', $this->defaultApiEnabled);
-        Tools::settingsSave();
-        shell_exec("kill $this->pid");
-    }
-
-    protected function setApiUrl(string $url): void
-    {
-        $this->url = $url;
-    }
-
-    protected function setApiToken(string $token): void
-    {
-        $this->token = $token;
-    }
-
-    protected function makeGETCurl(string $params = ''): array
-    {
-        $ch = curl_init($this->url . $params);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Token: " . $this->token
-        ]);
-        $respuesta = curl_exec($ch);
-        curl_close($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        $data = json_decode($respuesta, true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return [
-                'status' => $httpCode,
-                'data' => $data
-            ];
-        } else {
-            throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
-        }
-    }
-
-    protected function makePOSTCurl(string $params = '', array $data = []): array
-    {
-        $ch = curl_init($this->url . $params);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // <-- Aquí el cambio
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Token: " . $this->token,
-            "Content-Type: application/x-www-form-urlencoded" // <-- Aquí el cambio
-        ]);
-
-        $respuesta = curl_exec($ch);
-        curl_close($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        $data = json_decode($respuesta, true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return [
-                'status' => $httpCode,
-                'data' => $data
-            ];
-        } else {
-            echo $respuesta;
-            throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
-        }
-    }
-
-    protected function makePUTCurl(string $params = '', array $data = []): array
-    {
-        $ch = curl_init($this->url . $params);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // <-- Cambiado aquí
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Token: " . $this->token,
-            "Content-Type: application/x-www-form-urlencoded" // <-- Cambiado aquí
-        ]);
-
-        $respuesta = curl_exec($ch);
-        curl_close($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        $data = json_decode($respuesta, true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return [
-                'status' => $httpCode,
-                'data' => $data
-            ];
-        } else {
-            throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
-        }
-    }
-
-    protected function makeDELETECurl(string $params = '', array $data = []): array
-    {
-        $ch = curl_init($this->url . $params);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // <-- Cambiado aquí
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Token: " . $this->token,
-            "Content-Type: application/x-www-form-urlencoded" // <-- Cambiado aquí
-        ]);
-
-        $respuesta = curl_exec($ch);
-        curl_close($ch);
-
-        $data = json_decode($respuesta, true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return [
-                'status' => curl_getinfo($ch, CURLINFO_HTTP_CODE),
-                'data' => $data
-            ];
-        } else {
-            throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
-        }
-    }
-
 
     protected function getResourcesList(): array
     {
@@ -278,4 +139,157 @@ trait ApiTrait
             "workeventes"
         ];
     }
+
+    protected function makeDELETECurl(string $params = '', array $data = []): array
+    {
+        $ch = curl_init($this->url . $params);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // <-- Cambiado aquí
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Token: " . $this->token,
+            "Content-Type: application/x-www-form-urlencoded" // <-- Cambiado aquí
+        ]);
+
+        $respuesta = curl_exec($ch);
+        curl_close($ch);
+
+        $data = json_decode($respuesta, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return [
+                'status' => curl_getinfo($ch, CURLINFO_HTTP_CODE),
+                'data' => $data
+            ];
+        } else {
+            throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
+        }
+    }
+
+    protected function makeGETCurl(string $params = ''): array
+    {
+        $ch = curl_init($this->url . $params);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Token: " . $this->token
+        ]);
+        $respuesta = curl_exec($ch);
+        curl_close($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        $data = json_decode($respuesta, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return [
+                'status' => $httpCode,
+                'data' => $data
+            ];
+        } else {
+            throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
+        }
+    }
+
+    protected function makePOSTCurl(string $params = '', array $data = []): array
+    {
+        $ch = curl_init($this->url . $params);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // <-- Aquí el cambio
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Token: " . $this->token,
+            "Content-Type: application/x-www-form-urlencoded" // <-- Aquí el cambio
+        ]);
+
+        $respuesta = curl_exec($ch);
+        curl_close($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        $data = json_decode($respuesta, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return [
+                'status' => $httpCode,
+                'data' => $data
+            ];
+        } else {
+            echo $respuesta;
+            throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
+        }
+    }
+
+    protected function makePUTCurl(string $params = '', array $data = []): array
+    {
+        $ch = curl_init($this->url . $params);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // <-- Cambiado aquí
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Token: " . $this->token,
+            "Content-Type: application/x-www-form-urlencoded" // <-- Cambiado aquí
+        ]);
+
+        $respuesta = curl_exec($ch);
+        curl_close($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        $data = json_decode($respuesta, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return [
+                'status' => $httpCode,
+                'data' => $data
+            ];
+        } else {
+            throw new \Exception('Error al decodificar la respuesta JSON: ' . json_last_error_msg());
+        }
+    }
+
+    protected function setApiToken(string $token): void
+    {
+        $this->token = $token;
+    }
+
+    protected function setApiUrl(string $url): void
+    {
+        $this->url = $url;
+    }
+
+    protected function startAPIServer($enableAPI = true): void
+    {
+        $documentRoot = __DIR__ . $this->documentRoot;
+        $router = $documentRoot . $this->router;
+
+        $this->defaultApiEnabled = Tools::settings('default', 'enable_api', false);
+        Tools::settingsSet('default', 'enable_api', $enableAPI);
+        Tools::settingsSave();
+
+        $apiUser = new User();
+        $apiUser->nick = 'apiUserTest1234567890';
+        $apiUser->setPassword('test9876');
+        $apiUser->save();
+        $this->apiUser = $apiUser;
+
+        $ApiKeyObj = new ApiKey();
+        // $ApiKeyObj->id = $IdKey.'Test';
+        $ApiKeyObj->clear();
+        $ApiKeyObj->description = 'Clave de pruebas';
+        $ApiKeyObj->nick = $apiUser->nick;
+        $ApiKeyObj->enabled = true;
+        $ApiKeyObj->fullaccess = true;
+
+        $ApiKeyObj->save();
+        $this->token = $ApiKeyObj->apikey;
+        $this->ApiKeyObj = $ApiKeyObj;
+
+        $this->url = "http://{$this->host}:{$this->port}/api/3/";
+        $this->command = "php -S {$this->host}:{$this->port} -t {$documentRoot} {$router} > /dev/null 2>&1 & echo $!";
+        $this->pid = shell_exec($this->command);
+        sleep(1);
+    }
+
+    protected function stopAPIServer(): void
+    {
+        $this->ApiKeyObj->delete();
+        $this->apiUser->delete();
+        Tools::settingsSet('default', 'enable_api', $this->defaultApiEnabled);
+        Tools::settingsSave();
+        shell_exec("kill $this->pid");
+    }
+
 }

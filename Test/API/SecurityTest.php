@@ -123,7 +123,7 @@ class SecurityTest extends TestCase
         $this->securityFlowApiKeyObj = $ApiKeyObj;
         $ApiKeyObj->clear();
         $ApiKeyObj->description = 'Clave de pruebas';
-        $ApiKeyObj->nick = 'tester';
+        $ApiKeyObj->nick = $this->getApiUser()->nick;
         $ApiKeyObj->enabled = false;
         $this->assertTrue($ApiKeyObj->save(), 'can-not-save-key');
 
