@@ -291,5 +291,4 @@ trait ApiTrait
         Tools::settingsSave();
         shell_exec("kill $this->pid");
     }
-
 }

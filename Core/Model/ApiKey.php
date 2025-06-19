@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 use FacturaScripts\Dinamic\Model\ApiAccess;
+
 /**
  * ApiKey model to manage the connection tokens through the api
  * that will be generated to synchronize different applications.
@@ -97,7 +98,7 @@ class ApiKey extends Base\ModelClass
 
         return parent::install();
     }
-  
+
     public function getAccesses(): array
     {
         $where = [new DataBaseWhere('idapikey', $this->id)];
