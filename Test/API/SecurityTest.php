@@ -101,7 +101,7 @@ class SecurityTest extends TestCase
 
 
         // paso 3: Allowed resource
-        $this->token = 'invalid-token';
+        $this->setApiToken('invalid-token');
         $result = $this->makePOSTCurl("agenciatransportes", $form);
 
         $expected = [
@@ -181,7 +181,7 @@ class SecurityTest extends TestCase
         // clave api con permisos limitados
         $ApiKeyObj->fullaccess = false;
         $this->assertTrue($ApiKeyObj->save(), 'can-not-save-key');
-        $this->assertTrue(ApiAccess::addResourcesToApiKey($ApiKeyObj->id, ['agenciatransportes'], true), 'can-not-add-resource');
+        $this->assertTrue($ApiKeyObj->addAccess('agenciatransportes', true), 'can-not-add-resource');
 
         $form = [
             'nombre' => 'La agencia intangible',
@@ -221,6 +221,8 @@ class SecurityTest extends TestCase
         } else {
             $this->fail('API request failed');
         }
+
+        Cache::deleteMulti(ApiController::IP_LIST);
 
         $agenciasAccess = $ApiKeyObj->getAccess('agenciatransportes');
         $this->assertTrue($agenciasAccess !== false, 'can-not-get-access');
