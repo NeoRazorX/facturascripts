@@ -909,7 +909,7 @@
     "login-cookie-fail": "Cookie de sessão inválido: provavelmente você fez login a partir de outro dispositivo ou navegador.",
     "login-image": "Imagem de login",
     "login-ok": "Login bem-sucedido (cookie). Usuário: '%nick%'",
-    "login-password-changed": "Contraseña cambiada correctamente",
+    "login-password-changed": "Senha alterada corretamente",
     "login-password-fail": "Usuário ou senha incorretos",
     "login-text": "Digite seu nome de usuário e senha para entrar",
     "login-to-continue": "Faça login para continuar",
