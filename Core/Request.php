@@ -330,6 +330,10 @@ final class Request
     {
         $request = $_POST;
 
+        if (!array_key_exists('REQUEST_METHOD', $_SERVER)) {
+            return $request;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === self::METHOD_PUT || $_SERVER['REQUEST_METHOD'] === self::METHOD_PATCH) {
             $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
 
