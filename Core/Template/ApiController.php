@@ -130,7 +130,7 @@ abstract class ApiController implements ControllerInterface
                 $ipCount++;
             }
         }
-        return $ipCount > self::MAX_INCIDENT_COUNT;
+        return $ipCount >= self::MAX_INCIDENT_COUNT;
     }
 
     private function getIpList(): array

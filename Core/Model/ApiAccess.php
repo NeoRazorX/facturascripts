@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,14 +23,13 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\ApiKey as DinApiKey;
 
 /**
- * Defines the individual permissions for each resrouce within an api key.
+ * Defines the individual permissions for each resource within an api key.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda@x-netdigital.com>
  */
 class ApiAccess extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     /**
@@ -94,7 +93,6 @@ class ApiAccess extends Base\ModelClass
     public static function addResourcesToApiKey(int $idApiKey, array $resources, bool $state = false): bool
     {
         $apiAccess = new static();
-
         foreach ($resources as $resource) {
             $where = [
                 new DataBaseWhere('idapikey', $idApiKey),
@@ -129,6 +127,26 @@ class ApiAccess extends Base\ModelClass
     public static function primaryColumn(): string
     {
         return 'id';
+    }
+
+    /**
+     * Update HTTP method permissions for this API resource and save the changes.
+     *
+     * @param bool $get Whether GET is allowed.
+     * @param bool $post Whether POST is allowed.
+     * @param bool $put Whether PUT is allowed.
+     * @param bool $delete Whether DELETE is allowed.
+     *
+     * @return bool True if saved successfully, false otherwise.
+     */
+    public function setAllowed(bool $get, bool $post, bool $put, bool $delete): bool
+    {
+        $this->allowget = $get;
+        $this->allowpost = $post;
+        $this->allowput = $put;
+        $this->allowdelete = $delete;
+
+        return $this->save();
     }
 
     public static function tableName(): string

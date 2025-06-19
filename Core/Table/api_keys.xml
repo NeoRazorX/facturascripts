@@ -39,10 +39,13 @@
     <column>
         <name>nick</name>
         <type>character varying(50)</type>
-        <null>NO</null>
     </column>
     <constraint>
         <name>api_keys_pkey</name>
         <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_api_keys_nick</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>
