@@ -65,44 +65,44 @@ class SecurityTest extends TestCase
         Tools::settingsSave();
 
 
-        // paso 2: clave de API incorrecta
-        $expected = [
-            "status" => "error",
-            "message" => "Clave de API no válida"
-        ];
+        // paso 2: clave de API incorrecta e IP baneada
+        for ($i = 0; $i < 3; $i++) { // 3 intentos
+            $expected = [
+                "status" => "error",
+                "message" => "Clave de API no válida"
+            ];
 
-        $this->setApiToken("invalid-token");
+            $this->setApiToken("invalid-token");
 
-        for ($attempt = 0; $attempt < ApiController::MAX_INCIDENT_COUNT; $attempt++) {
+            for ($attempt = 0; $attempt < ApiController::MAX_INCIDENT_COUNT; $attempt++) {
+                $result = $this->makePOSTCurl("agenciatransportes", $form);
+                if ($result['status'] === 401) {
+                    $this->assertEquals($expected, $result['data'], 'response-not-equal-' . $attempt);
+                } else {
+                    $this->fail('API request failed');
+                }
+            }
+
+            $this->setApiToken('prueba');
+            $expected = [
+                "status" => "error",
+                "message" => "Por motivos de seguridad se ha bloqueado temporalmente el acceso desde su IP."
+            ];
+
             $result = $this->makePOSTCurl("agenciatransportes", $form);
             if ($result['status'] === 401) {
                 $this->assertEquals($expected, $result['data'], 'response-not-equal-' . $attempt);
             } else {
                 $this->fail('API request failed');
             }
+
+            Cache::deleteMulti(ApiController::IP_LIST); // limpiar cache de ips bloqueadas
         }
+        // $this->stopAPIServer();
+        // $this->startAPIServer();
 
 
-        // paso 3: IP baneada
-        $this->setApiToken('prueba');
-        $expected = [
-            "status" => "error",
-            "message" => "Por motivos de seguridad se ha bloqueado temporalmente el acceso desde su IP."
-        ];
-
-        $result = $this->makePOSTCurl("agenciatransportes", $form);
-        print_r(var_dump($result));
-        if ($result['status'] === 401) {
-            $this->assertEquals($expected, $result['data'], 'response-not-equal-' . $attempt);
-        } else {
-            $this->fail('API request failed');
-        }
-        Cache::deleteMulti(ApiController::IP_LIST); // limpiar cache de ips bloqueadas
-        $this->stopAPIServer();
-        $this->startAPIServer();
-
-
-        // paso 4: Allowed resource
+        // paso 3: Allowed resource
         $this->token = 'invalid-token';
         $result = $this->makePOSTCurl("agenciatransportes", $form);
 
@@ -118,7 +118,7 @@ class SecurityTest extends TestCase
         }
 
 
-        //paso 5: Allowed resource
+        //paso 4: Allowed resource
         // clave api desactivada
         $ApiKeyObj = new ApiKey();
         $this->securityFlowApiKeyObj = $ApiKeyObj;
