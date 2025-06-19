@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Model\User;
@@ -28,8 +29,13 @@ use FacturaScripts\Dinamic\Lib\Email\TextBlock as DinTextBlock;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
+use League\OAuth2\Client\Provider\GenericProvider;
+use League\OAuth2\Client\Provider\Google;
+use League\OAuth2\Client\Token\AccessToken;
 use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\OAuth;
 use PHPMailer\PHPMailer\PHPMailer;
+use TheNetworg\OAuth2\Client\Provider\Azure;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -70,6 +76,8 @@ class NewMail
 
     /** @var BaseBlock[] */
     protected $mainBlocks = [];
+
+    protected $provider;
 
     /** @var string */
     public $signature;
@@ -126,6 +134,7 @@ class NewMail
 
         $this->signature = Tools::settings('email', 'signature', '');
         $this->verificode = Tools::randomString(20);
+        $this->setOauth2();
     }
 
     /**
@@ -306,6 +315,33 @@ class NewMail
         return $this;
     }
 
+    public function oauth2Autenticate(): string
+    {
+        if (empty($this->provider) || $this->mail->AuthType !== 'XOAUTH2') {
+            return '';
+        }
+
+        $authorizationUrl = $this->provider->getAuthorizationUrl([
+            'prompt' => 'consent', // muestra siempre la pantalla de consentimiento
+            'access_type' => 'offline',
+            //'access_type' => 'offline.access,smtp.send,user.read,offline,offline_access,SMTP.Send,https://outlook.office.com/SMTP.Send',
+            //'scope' => ['https://outlook.office.com/SMTP.Send', 'https://outlook.office.com/IMAP.AccessAsUser.All', 'offline_access'],
+        ]);
+        Cache::set('oauth2state', $this->provider->getState());
+        return $authorizationUrl;
+    }
+
+    public function oauth2Token(string $code)
+    {
+        $accessToken = $this->provider->getAccessToken('authorization_code', ['code' => $code]);
+        Tools::settingsSet('email', 'oauth2_access_token', $accessToken->getToken());
+        Tools::settingsSet('email', 'oauth2_refresh_token', $accessToken->getRefreshToken());
+        Tools::settingsSet('email', 'oauth2_expires', $accessToken->getExpires());
+        if (Tools::settingsSave()) {
+            $this->setOauth2();
+        }
+    }
+
     /**
      * Envía el correo.
      *
@@ -454,6 +490,28 @@ class NewMail
             : array_merge($this->footerBlocks, [new TextBlock($signature, 'text-footer')]);
     }
 
+    protected function getOauthAccessToken(): AccessToken
+    {
+        $accessToken = Tools::settings('email', 'oauth2_access_token');
+        $refreshToken = Tools::settings('email', 'oauth2_refresh_token');
+        $expires = Tools::settings('email', 'oauth2_expires');
+
+        if ($expires && $expires < time()) {
+            $newAccessToken = $this->provider->getAccessToken('refresh_token', [
+                'refresh_token' => $refreshToken,
+            ]);
+            $refreshToken = $newAccessToken->getRefreshToken();
+            $expires = $newAccessToken->getExpires();
+        }
+
+        return new AccessToken([
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken,
+            //'expires' => time() + 3600,
+            'expires' => $expires,
+        ]);
+    }
+
     /**
      * Devuelve los bloques del cuerpo del correo.
      */
@@ -559,6 +617,63 @@ class NewMail
 
             Tools::log('NewMail')->warning('attachment-not-found', ['%file%' => $attach[0]]);
         }
+    }
+
+    protected function setOauth2()
+    {
+        if ($this->mail->AuthType !== 'XOAUTH2') {
+            return;
+        }
+
+        $params = ['redirectUri' => Tools::settings('default', 'site_url') . '/ConfigEmail',];
+
+        // si el host contiene live, outlook o hotmail, usamos el proveedor de Microsoft
+        if (strpos($this->mail->Host, 'live') !== false
+            || strpos($this->mail->Host, 'outlook') !== false
+            || strpos($this->mail->Host, 'hotmail') !== false) {
+
+            $params['clientId'] = Tools::config('email_azure_oauth2_client_id');
+            $params['clientSecret'] = Tools::config('email_azure_oauth2_client_secret');
+            $params['tenantId'] = Tools::config('email_azure_oauth2_tenant_id');
+            if (empty($params['tenantId'])) {
+                Tools::log()->warning('email-oauth2-tenant-id-not-configured');
+                return;
+            }
+
+            $this->provider = new Azure($params);
+        } elseif (strpos($this->mail->Host, 'gmail') !== false) {
+            // si el host contiene gmail, usamos el proveedor de Google
+            $params['clientId'] = Tools::config('email_google_oauth2_client_id');
+            $params['clientSecret'] = Tools::config('email_google_oauth2_client_secret');
+            $this->provider = new Google($params);
+        } else {
+            // en otro caso, usamos el proveedor genérico
+            $this->provider = new GenericProvider($params);
+        }
+
+        if (empty($params['clientId']) || empty($params['clientSecret'])) {
+            Tools::log()->warning('email-oauth2-not-configured');
+            return;
+        }
+
+        // configurar el token de acceso
+        $accessToken = $this->getOauthAccessToken();
+        if (empty($accessToken->getToken()) || empty($accessToken->getRefreshToken())) {
+            Tools::log()->warning('email-oauth2-access-token-or-refresh-token-not-configured');
+            return;
+        }
+
+        // configurar el proveedor de OAuth2 para PHPMailer
+        $this->mail->setOAuth(
+            new OAuth([
+                'provider' => $this->provider,
+                'clientId' => $params['clientId'],
+                'clientSecret' => $params['clientSecret'],
+                'refreshToken' => $accessToken->getRefreshToken(),
+                'userName' => $this->mail->Username,
+                'accessToken' => $accessToken->getToken(),
+            ])
+        );
     }
 
     /**
