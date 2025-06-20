@@ -140,7 +140,8 @@ class ReportTaxes extends Controller
             $lines[] = [
                 $i18n->trans('serie') => $hide ? '' : $row['codserie'],
                 $i18n->trans('code') => $hide ? '' : $row['codigo'],
-                $numberOrSuplierTrans => $numberOrSuplier,
+                $i18n->trans('number2') => $hide ? '' : $row['numero2'],
+                $i18n->trans('numsupplier') => $hide ? '' : $row['numproveedor'],
                 $i18n->trans('date') => $hide ? '' : Tools::date($row['fecha']),
                 $i18n->trans('name') => $hide ? '' : Tools::fixHtml($row['nombre']),
                 $i18n->trans('cifnif') => $hide ? '' : $row['cifnif'],
