@@ -27,6 +27,7 @@ namespace FacturaScripts\Core\Lib;
 class InvoiceOperation
 {
     const INTRA_COMMUNITY = 'intracomunitaria';
+    const REVERSE_CHARGE = 'inversion_sujeto_pasivo';
 
     /** @var array */
     private static $all = [];
@@ -40,9 +41,40 @@ class InvoiceOperation
     public static function all(): array
     {
         $defaults = [
-            self::INTRA_COMMUNITY => 'intra-community'
+            self::INTRA_COMMUNITY => 'intra-community',
+            self::REVERSE_CHARGE => 'reverse-charge'
         ];
 
         return array_merge($defaults, self::$all);
+    }
+
+    /**
+     * Get default reverse charge operations
+     * 
+     * @return array
+     */
+    public static function getReverseChargeOperations(): array
+    {
+        return [
+            self::INTRA_COMMUNITY,
+            self::REVERSE_CHARGE
+        ];
+    }
+
+    /**
+     * Check if an operation requires reverse charge (inversión de sujeto pasivo)
+     * 
+     * @param string $operation
+     * @return bool
+     */
+    public static function isReverseChargeOperation(string $operation): bool
+    {
+        if (empty($operation)) {
+            return false;
+        }
+
+        // Check against predefined reverse charge operations
+        $reverseChargeOperations = self::getReverseChargeOperations();
+        return in_array($operation, $reverseChargeOperations);
     }
 }
