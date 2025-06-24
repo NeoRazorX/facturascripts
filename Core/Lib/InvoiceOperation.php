@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Lib;
 class InvoiceOperation
 {
     const INTRA_COMMUNITY = 'intracomunitaria';
-    const REVERSE_CHARGE = 'inversion_sujeto_pasivo';
+    const REVERSE_CHARGE = 'inv_sujeto_pasivo';
 
     /** @var array */
     private static $all = [];
