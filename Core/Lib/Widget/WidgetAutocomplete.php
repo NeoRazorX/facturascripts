@@ -72,11 +72,13 @@ class WidgetAutocomplete extends WidgetSelect
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
+
         $labelHtml = '<label class="mb-0">' . $this->onclickHtml(Tools::lang()->trans($title), $titleurl) . '</label>';
+        $name = $this->readonly() ? '' : 'name="' . $this->fieldname . '"';
 
         if ('' === $this->value || null === $this->value) {
-            return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-                . '<div class="mb-3">'
+            return '<input type="hidden" ' . $name . ' value="' . $this->value . '"/>'
+                . '<div class="form-group mb-2">'
                 . $labelHtml
                 . '<div class="input-group">'
                 . '<span class="input-group-text"><i class="fa-solid fa-search fa-fw"></i></span>'
@@ -86,8 +88,8 @@ class WidgetAutocomplete extends WidgetSelect
                 . '</div>';
         }
 
-        return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-            . '<div class="mb-3">'
+        return '<input type="hidden" name="' . $name . '" value="' . $this->value . '"/>'
+            . '<div class="form-group mb-2">'
             . $labelHtml
             . '<div class="input-group">'
             . $this->inputGroupClearBtn()
