@@ -266,7 +266,7 @@ class Updater extends Controller
                 'id' => $id,
                 'name' => $plugin->name,
                 'stable' => $build['stable'],
-                'url' => self::UPDATE_CORE_URL . '/' . $id . '/' . $build['version'],
+                'url' => self::UPDATE_CORE_URL . '/' . $id . '/' . $build['version'] . '?idsub=' . $plugin->subscription,
                 'version' => $build['version'],
                 'mincore' => $build['mincore'],
                 'maxcore' => $build['maxcore']

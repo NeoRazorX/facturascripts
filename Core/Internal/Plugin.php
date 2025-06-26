@@ -74,6 +74,9 @@ final class Plugin
     /** @var array */
     public $require_php = [];
 
+    /** @var int */
+    public $subscription = 0;
+
     /** @var float */
     public $version = 0.0;
 
@@ -295,6 +298,7 @@ final class Plugin
         $this->min_version = floatval($data['min_version'] ?? 0);
         $this->min_php = floatval($data['min_php'] ?? $this->min_php);
         $this->name = $data['name'] ?? $this->name;
+        $this->subscription = $data['subscription'] ?? 0;
 
         $this->require = [];
         if ($data['require'] ?? '') {

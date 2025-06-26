@@ -189,6 +189,7 @@ class Wizard extends Controller
 
         Tools::settingsSet('default', 'codpais', $codpais);
         Tools::settingsSet('default', 'homepage', 'Root');
+        Tools::settings('default', 'uuid_install', Tools::randomString(20));
         Tools::settingsSave();
     }
 
