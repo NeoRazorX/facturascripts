@@ -1460,6 +1460,7 @@
     "stock-transfers": "Bestandübertragungen",
     "stockmax": "Lager max.",
     "stockmin": "Lager min.",
+    "storage": "Lager",
     "storage-limit-almost": "Speicherlimit fast erreicht (%limit%). Es sind noch %free% übrig",
     "storage-limit-reached": "Speicherlimit erreicht",
     "stripe": "Streifen",

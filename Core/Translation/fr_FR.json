@@ -1460,6 +1460,7 @@
     "stock-transfers": "Transferts de stock",
     "stockmax": "Stock max.",
     "stockmin": "Stock min.",
+    "storage": "storage",
     "storage-limit-almost": "La limite de stockage est presque atteinte (%limit%). Restez %free%.",
     "storage-limit-reached": "Limite de stock atteinte",
     "stripe": "Stripe",

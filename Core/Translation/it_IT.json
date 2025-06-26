@@ -1460,6 +1460,7 @@
     "stock-transfers": "trasferimenti di magazzino",
     "stockmax": "Magazzino max",
     "stockmin": "Scorte min.",
+    "storage": "archiviazione",
     "storage-limit-almost": "Limite di archiviazione quasi raggiunto (%limit%). Restano %free%",
     "storage-limit-reached": "Limite di archiviazione raggiunto",
     "stripe": "Stripe",

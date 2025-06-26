@@ -1460,6 +1460,7 @@
     "stock-transfers": "Transferències d'existències",
     "stockmax": "Estoc màx.",
     "stockmin": "Estoc mín.",
+    "storage": "Ubicació",
     "storage-limit-almost": "Límit d'emmagatzematge gairebé aconseguit (%limit%). Queden %free%",
     "storage-limit-reached": "Límit d'emmagatzematge assolit",
     "stripe": "Stripe",

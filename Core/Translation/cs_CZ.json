@@ -1460,6 +1460,7 @@
     "stock-transfers": "Transferencias de stock",
     "stockmax": "Stock máx.",
     "stockmin": "Stock mín.",
+    "storage": "Ubicación",
     "storage-limit-almost": "Téměř dosažen limit skladování (%limit%). Zbývá %free%",
     "storage-limit-reached": "Límite de almacenamiento alcanzado",
     "stripe": "Stripe",

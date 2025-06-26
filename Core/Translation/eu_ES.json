@@ -1460,6 +1460,7 @@
     "stock-transfers": "stock transferentziak",
     "stockmax": "Gehienezko stocka",
     "stockmin": "Gutxienezko stocka",
+    "storage": "Kokapena",
     "storage-limit-almost": "Biltegi muga ia hurrengora (%limit%). Faltan %free%",
     "storage-limit-reached": "Memoria bere mugara iritsi da",
     "stripe": "Stripe",

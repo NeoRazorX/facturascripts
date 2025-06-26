@@ -1460,6 +1460,7 @@
     "stock-transfers": "Przeniesienia zapasów",
     "stockmax": "Max zapasów",
     "stockmin": "Minimalny stan magazynowy",
+    "storage": "Lokalizacja",
     "storage-limit-almost": "Niemal osiągnięto limit przechowywania (%limit%). Pozostało %free%",
     "storage-limit-reached": "Osiągnięto limit przechowywania",
     "stripe": "Stripe",
