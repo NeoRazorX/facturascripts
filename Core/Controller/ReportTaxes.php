@@ -128,12 +128,19 @@ class ReportTaxes extends Controller
         $lines = [];
         foreach ($data as $row) {
             $hide = $row['codigo'] === $lastCode && $this->format === 'PDF';
-            $num2title = $this->source === 'sales' ? 'number2' : 'numproveedor';
+
+            $numberOrSuplierTrans = $i18n->trans('number2');
+            $numberOrSuplier = $hide ? '' : $row['numero2'];
+
+            if ($this->source !== 'sales') {
+                $numberOrSuplierTrans = $i18n->trans('numsupplier');
+                $numberOrSuplier = $hide ? '' : $row['numproveedor'];
+            }
 
             $lines[] = [
                 $i18n->trans('serie') => $hide ? '' : $row['codserie'],
                 $i18n->trans('code') => $hide ? '' : $row['codigo'],
-                $i18n->trans($num2title) => $hide ? '' : $row['numero2'],
+                $numberOrSuplierTrans => $numberOrSuplier,
                 $i18n->trans('date') => $hide ? '' : Tools::date($row['fecha']),
                 $i18n->trans('name') => $hide ? '' : Tools::fixHtml($row['nombre']),
                 $i18n->trans('cifnif') => $hide ? '' : $row['cifnif'],
@@ -194,7 +201,7 @@ class ReportTaxes extends Controller
 
     protected function getQuarterDate(bool $start): string
     {
-        $month = (int)date('m');
+        $month = (int) date('m');
 
         // si la fecha actual es de enero, seleccionamos el trimestre anterior
         if ($month === 1) {
@@ -229,7 +236,7 @@ class ReportTaxes extends Controller
         $columnDate = $this->typeDate === 'create' ? 'f.fecha' : 'COALESCE(f.fechadevengo, f.fecha)';
         switch ($this->source) {
             case 'purchases':
-                $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor AS numero2, f.fecha, f.fechadevengo, f.nombre, f.cifnif, l.pvptotal,'
+                $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor, f.fecha, f.fechadevengo, f.nombre, f.cifnif, l.pvptotal,'
                     . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion'
                     . ' FROM lineasfacturasprov AS l'
                     . ' LEFT JOIN facturasprov AS f ON l.idfactura = f.idfactura '
@@ -270,9 +277,9 @@ class ReportTaxes extends Controller
             $code = $row['codigo'] . '-' . $row['iva'] . '-' . $row['recargo'] . '-' . $row['irpf'] . '-' . $row['suplido'];
             if (isset($data[$code])) {
                 $data[$code]['neto'] += $row['suplido'] ? 0 : $pvpTotal;
-                $data[$code]['totaliva'] += $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float)$row['iva'] * $pvpTotal / 100;
-                $data[$code]['totalrecargo'] += $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100;
-                $data[$code]['totalirpf'] += $row['suplido'] ? 0 : (float)$row['irpf'] * $pvpTotal / 100;
+                $data[$code]['totaliva'] += $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float) $row['iva'] * $pvpTotal / 100;
+                $data[$code]['totalrecargo'] += $row['suplido'] ? 0 : (float) $row['recargo'] * $pvpTotal / 100;
+                $data[$code]['totalirpf'] += $row['suplido'] ? 0 : (float) $row['irpf'] * $pvpTotal / 100;
                 $data[$code]['suplidos'] += $row['suplido'] ? $pvpTotal : 0;
                 continue;
             }
@@ -282,20 +289,21 @@ class ReportTaxes extends Controller
                 'codserie' => $row['codserie'],
                 'codigo' => $row['codigo'],
                 'numero2' => $row['numero2'],
+                'numproveedor' => $row['numproveedor'],
                 'fecha' => $this->typeDate == 'create' ?
                     $row['fecha'] :
                     $row['fechadevengo'] ?? $row['fecha'],
                 'nombre' => $row['nombre'],
                 'cifnif' => $row['cifnif'],
                 'neto' => $row['suplido'] ? 0 : $pvpTotal,
-                'iva' => $row['suplido'] ? 0 : (float)$row['iva'],
-                'totaliva' => $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float)$row['iva'] * $pvpTotal / 100,
-                'recargo' => $row['suplido'] ? 0 : (float)$row['recargo'],
-                'totalrecargo' => $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100,
-                'irpf' => $row['suplido'] ? 0 : (float)$row['irpf'],
-                'totalirpf' => $row['suplido'] ? 0 : (float)$row['irpf'] * $pvpTotal / 100,
+                'iva' => $row['suplido'] ? 0 : (float) $row['iva'],
+                'totaliva' => $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float) $row['iva'] * $pvpTotal / 100,
+                'recargo' => $row['suplido'] ? 0 : (float) $row['recargo'],
+                'totalrecargo' => $row['suplido'] ? 0 : (float) $row['recargo'] * $pvpTotal / 100,
+                'irpf' => $row['suplido'] ? 0 : (float) $row['irpf'],
+                'totalirpf' => $row['suplido'] ? 0 : (float) $row['irpf'] * $pvpTotal / 100,
                 'suplidos' => $row['suplido'] ? $pvpTotal : 0,
-                'total' => (float)$row['total']
+                'total' => (float) $row['total']
             ];
         }
 
@@ -372,7 +380,7 @@ class ReportTaxes extends Controller
         $this->datefrom = $this->request->request->get('datefrom', $this->getQuarterDate(true));
         $this->dateto = $this->request->request->get('dateto', $this->getQuarterDate(false));
 
-        $this->idempresa = (int)$this->request->request->get(
+        $this->idempresa = (int) $this->request->request->get(
             'idempresa',
             Tools::settings('default', 'idempresa')
         );
@@ -399,13 +407,15 @@ class ReportTaxes extends Controller
                 $i18n->trans('from-date'),
                 $i18n->trans('until-date')
             ],
-            [[
-                $i18n->trans('report') => $i18n->trans('taxes') . ' ' . $i18n->trans($this->source),
-                $i18n->trans('currency') => Divisas::get($this->coddivisa)->descripcion,
-                $i18n->trans('date') => $i18n->trans($this->typeDate === 'create' ? 'creation-date' : 'accrual-date'),
-                $i18n->trans('from-date') => Tools::date($this->datefrom),
-                $i18n->trans('until-date') => Tools::date($this->dateto)
-            ]]
+            [
+                [
+                    $i18n->trans('report') => $i18n->trans('taxes') . ' ' . $i18n->trans($this->source),
+                    $i18n->trans('currency') => Divisas::get($this->coddivisa)->descripcion,
+                    $i18n->trans('date') => $i18n->trans($this->typeDate === 'create' ? 'creation-date' : 'accrual-date'),
+                    $i18n->trans('from-date') => Tools::date($this->datefrom),
+                    $i18n->trans('until-date') => Tools::date($this->dateto)
+                ]
+            ]
         );
 
         $options = [
@@ -476,9 +486,9 @@ class ReportTaxes extends Controller
             $sql .= ' AND codpais = ' . $this->dataBase->var2str($this->codpais);
         }
         foreach ($this->dataBase->selectLimit($sql) as $row) {
-            $neto2 += (float)$row['neto'];
-            $totalIva2 += (float)$row['t1'];
-            $totalRecargo2 += (float)$row['t2'];
+            $neto2 += (float) $row['neto'];
+            $totalIva2 += (float) $row['t1'];
+            $totalRecargo2 += (float) $row['t2'];
         }
 
         // compare
@@ -495,7 +505,8 @@ class ReportTaxes extends Controller
 
         if (abs($totalRecargo - $totalRecargo2) > self::MAX_TOTAL_DIFF) {
             Tools::log()->error('calculated-surcharge-diff', [
-                '%surcharge%' => $totalRecargo, '%surcharge2%' => $totalRecargo2
+                '%surcharge%' => $totalRecargo,
+                '%surcharge2%' => $totalRecargo2
             ]);
             $result = false;
         }
