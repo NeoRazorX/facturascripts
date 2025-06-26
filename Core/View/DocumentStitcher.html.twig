@@ -118,24 +118,48 @@
         </div>
     </form>
 
-    {% if fsc.moreDocuments %}
+    {% if fsc.moreDocuments or fsc.showFilters is same as(true) %}
         <div class="container-fluid">
             <div class="row">
                 <div class="col mt-3">
-                    <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
-                        {{ formToken() }}
-                        <input type="hidden" name="model" value="{{ fsc.modelName }}">
-                        <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
-                        <div class="card border-success shadow mb-2">
-                            <div class="card-body p-2">
-                                <button class="btn btn-spin-action btn-sm btn-outline-success" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#moreDocsCollapse" aria-expanded="false">
-                                    <i class="fa-solid fa-plus-square fa-fw" aria-hidden="true"></i>
-                                    {{ trans('more') }}
-                                </button>
-                                &nbsp; {{ trans('group-more-docs-p') }}
+                    <div class="card border-success shadow mb-2">
+                        <div class="card-body p-2">
+                            <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse"
+                                    data-target="#moreDocsCollapse" aria-expanded="{{ fsc.showFilters is same as(true) ? 'true' : 'false' }}">
+                                <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
+                                {{ trans('more') }}
+                            </button>
+                            &nbsp; {{ trans('group-more-docs-p') }}
+                        </div>
+                        <div class="collapse {{ fsc.showFilters is same as(true) ? 'show' : '' }}" id="moreDocsCollapse">
+                            <div class="card-body">
+                                <form action="{{ fsc.url() }}" method="post">
+                                    <input type="hidden" name="model" value="{{ fsc.modelName }}">
+                                    <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
+                                    <input type="hidden" name="action" value="search">
+                                    <div id="form{{ fsc.getViewName() }}Filters"
+                                     class="form-row align-items-center border-bottom mb-3"
+                                     style="{{ divFiltersStyle }}">
+
+                                        {% for filterName, filter in fsc.filters %}
+                                            {{ filter.render() | raw }}
+                                        {% endfor %}
+                                        {% if fsc.filters|length > 0 %}
+                                            <div class="col-auto">
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-secondary" title="{{ trans('search') }}">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </form>
                             </div>
-                            <div class="collapse" id="moreDocsCollapse">
+                            <form action="{{ fsc.url() }}" method="post">
+                                <input type="hidden" name="model" value="{{ fsc.modelName }}">
+                                <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
+                                <input type="hidden" name="action" value="add">
                                 <div class="table-responsive">
                                     <table class="table table-hover mb-0">
                                         <thead>
@@ -186,9 +210,9 @@
                                         {{ trans('add') }}
                                     </button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
