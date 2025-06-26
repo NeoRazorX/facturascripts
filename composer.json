@@ -34,6 +34,9 @@
     "ext-bcmath": "*",
     "ext-gd": "*",
     "ext-curl": "*",
+    "league/oauth2-client": "^2.7",
+    "league/oauth2-google": "^4.0",
+    "thenetworg/oauth2-azure": "^2.2"
     "pragmarx/google2fa": "^8.0",
     "endroid/qr-code": "^4.3",
     "ext-pgsql": "*"
