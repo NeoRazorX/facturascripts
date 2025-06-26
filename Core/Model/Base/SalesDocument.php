@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -184,16 +184,20 @@ abstract class SalesDocument extends TransformerDocument
             return parent::delete();
         }
 
-        if (parent::delete()) {
-            // update customer risk
-            $customer = $this->getSubject();
-            $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
-            $customer->save();
-
-            return true;
+        if (false === parent::delete()) {
+            return false;
         }
 
-        return false;
+        if (!empty($this->codcliente)) {
+            // update customer risk
+            $customer = $this->getSubject();
+            $customer->riesgoalcanzado = empty($customer->primaryColumnValue()) ?
+                0.00 :
+                CustomerRiskTools::getCurrent($customer->primaryColumnValue());
+            $customer->save();
+        }
+
+        return true;
     }
 
     /**
