@@ -199,10 +199,6 @@ class User extends ModelClass
 
     public function getTwoFactorUrl(): string
     {
-        if (empty($this->two_factor_secret_key)) {
-            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
-        }
-
         return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->two_factor_secret_key);
     }
 

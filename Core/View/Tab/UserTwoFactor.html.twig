@@ -1,25 +1,42 @@
 {% set firstView = fsc.views | first %}
-{% set model = firstView.model %}
-{% set twoFactorUrl = fsc.model.getTwoFactorUrl() %}
+{% set user = firstView.model %}
 
-<div class="container text-center">
-    <div>
-        <img src="{{ fsc.model.getTwoFactorQR() }}"/>
-    </div>
-    <div class="mb-3">
-        <a href="{{ twoFactorUrl }}">{{ twoFactorUrl }}</a>
-    </div>
-    <div>
-        <form method="post" action="{{ model.url() }}">
-            {{ formToken() }}
-            <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
-            <input type="hidden" name="action" value="modal2fa"/>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" name="codetime" placeholder="{{ trans('code') }}" required/>
-                <button class="btn btn-primary" type="submit">
-                    {{ trans('save') }}
+{% if user.two_factor_secret_key is not empty %}
+    <div class="container text-center">
+        {% if user.two_factor_enabled %}
+            <form method="post" action="{{ user.url() }}">
+                {{ formToken() }}
+                <input type="hidden" name="action" value="deauthentication2factor"/>
+                <button class="btn btn-danger" type="submit">
+                    {{ trans('deauthentication-two-factor') }}
                 </button>
+            </form>
+        {% else %}
+            {% set twoFactorUrl = fsc.model.getTwoFactorUrl() %}
+            <div class="row d-flex align-items-center">
+                <div class="col-md mb-3 text-center">
+                    <img height="200" width="auto" src="{{ user.getTwoFactorQR() }}"/>
+                </div>
+                <div class="col-md mb-3">
+                    <div>
+                        <a href="{{ twoFactorUrl }}" class="btn btn-secondary mb-3">{{ twoFactorUrl }}</a>
+                    </div>
+                    <div>
+                        <form method="post" action="{{ user.url() }}">
+                            {{ formToken() }}
+                            <input type="hidden" name="action" value="authentication2factor"/>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="code_totp"
+                                       placeholder="{{ trans('code') }}"
+                                       required/>
+                                <button class="btn btn-primary" type="submit">
+                                    {{ trans('send-code-totp') }}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </form>
+        {% endif %}
     </div>
-</div>
+{% endif %}
