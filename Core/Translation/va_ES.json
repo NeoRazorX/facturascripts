@@ -909,7 +909,7 @@
     "login-cookie-fail": "La cookie de sessió no és vàlida: probablement heu iniciat sessió des d'un altre dispositiu o navegador.",
     "login-image": "Imagen de login",
     "login-ok": "Has iniciat sessió correctament (cookie) com a usuari: '%nick%'",
-    "login-password-changed": "Contraseña cambiada correctamente",
+    "login-password-changed": "Contrasenya canviada correctament",
     "login-password-fail": "L'usuari o la contrasenya no són correctes",
     "login-text": "Escriu el teu nom d'usuari i la contrasenya per a iniciar la sessió",
     "login-to-continue": "Inicia sessió per a continuar",
