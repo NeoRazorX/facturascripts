@@ -1583,7 +1583,7 @@
     "totaliva-value-error": "Valor total ive de %docType% %docCode%incorrecto (%docTotalTax%). Valor correcto:  %calcTotalTax%",
     "totallinea-value-error": "Erro no valor total da liña de IVE do imposto %taxCode% da factura. Valor correcto: %totalLínea%",
     "totals": "Totais",
-    "totp-secret-key-not-set": "El usuario %nick% no tiene una clave secreta TOTP configurada",
+    "totp-secret-key-not-set": "O usuario %nick% non ten unha chave secreta TOTP configurada",
     "town": "Cidade",
     "tracking-code": "Código de seguimento",
     "transfer": "Transferencia",
