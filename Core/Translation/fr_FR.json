@@ -1583,7 +1583,7 @@
     "totaliva-value-error": "Montant total des taxes de %docType% %docCode% incorrect (%docTotalTax%). Montant correct: %calcTotalTax%",
     "totallinea-value-error": "Erreur dans la valeur totallinea de la ligne de TVA de la taxe %taxCode% de la facture. Valeur correcte: %totalLine%",
     "totals": "totaux",
-    "totp-secret-key-not-set": "El usuario %nick% no tiene una clave secreta TOTP configurada",
+    "totp-secret-key-not-set": "L'utilisateur %nick% n'a pas de clé secrète TOTP configurée",
     "town": "Ville",
     "tracking-code": "Code de suivi",
     "transfer": "Transfert",

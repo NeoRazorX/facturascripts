@@ -548,7 +548,7 @@
     "error-checking-vat-number": "Erro comprobando o número '%vat-number%' no sistema VIES",
     "error-connecting-memcache": "Erro ao conectar co servidor Memcache.",
     "error-deleting-lines": "Erro ao eliminar liñas",
-    "error-generating-qr-code": "No se pudo generar el QR: %message%, %url%",
+    "error-generating-qr-code": "Non se puido xerar o QR: %message%, %url%",
     "error-no-name-in-settings": "Error na vista %viewName%. Falta informar el 'name' nalgunha columna do xml",
     "error-on-xml-file": "Erro no arquivo XML %fileName%",
     "error-processing-xmlview": "Erro procesando o XML da vista, o ficheiro '%fileName%' non existe ou é incorrecto",

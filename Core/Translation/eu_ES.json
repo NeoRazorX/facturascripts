@@ -1583,7 +1583,7 @@
     "totaliva-value-error": "%docType% %docCode% (%docTotalTax%) BEZ totala ez da zuzena. Total zuzena: %calcTotalTax%",
     "totallinea-value-error": "Fakturaren %taxCode% zergaren lerroko BEZ totala baliogabea. Balio zuzena: %totalLine%",
     "totals": "Totala",
-    "totp-secret-key-not-set": "El usuario %nick% no tiene una clave secreta TOTP configurada",
+    "totp-secret-key-not-set": "Erabiltzaileak %nick% ez du TOTP gako sekreturik ezarrita",
     "town": "Herria",
     "tracking-code": "Jarraipen kodea",
     "transfer": "Transferentzia",
