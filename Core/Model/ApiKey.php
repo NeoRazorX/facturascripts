@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\User;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 
 /**
@@ -88,6 +89,14 @@ class ApiKey extends Base\ModelClass
         $this->creationdate = Tools::date();
         $this->enabled = true;
         $this->fullaccess = false;
+    }
+
+    public function install(): string
+    {
+        // needed dependencies
+        new User();
+
+        return parent::install();
     }
 
     public function getAccesses(): array
