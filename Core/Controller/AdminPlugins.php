@@ -96,6 +96,10 @@ class AdminPlugins extends Controller
                 $this->uploadPluginAction();
                 break;
 
+            case 'sort-plugins':
+                $this->sortPluginsAction();
+                break;
+
             default:
                 $this->extractPluginsZipFiles();
                 if (FS_DEBUG) {
@@ -249,5 +253,25 @@ class AdminPlugins extends Controller
             Tools::log()->notice('reloading');
             $this->redirect($this->url(), 3);
         }
+    }
+
+    private function sortPluginsAction()
+    {
+        $pluginsList = json_decode(file_get_contents(Tools::folder('MyFiles', 'plugins.json')), true);
+
+        foreach ($pluginsList as $keyList => $plugin) {
+            foreach ($this->request->getArray('orden') as $key => $pluginName) {
+                if($plugin['name'] === $pluginName) {
+                    $pluginsList[$keyList]['order'] = $key + 1;
+                }
+            }
+        }
+
+        file_put_contents(Tools::folder('MyFiles', Plugins::FILE_NAME), json_encode($pluginsList, JSON_PRETTY_PRINT));
+
+        $this->setTemplate(false);
+        $this->response->setHttpCode(Response::HTTP_OK);
+        $this->response->setContent(json_encode(['status' => 'ok']));
+        $this->response->headers->set('Content-Type', 'application/json');
     }
 }
