@@ -548,7 +548,7 @@
     "error-checking-vat-number": "Error comprobando el número '%vat-number%' en el sistema VIES",
     "error-connecting-memcache": "Errore bat gertatu da Memcache zerbitzarira konektatzean.",
     "error-deleting-lines": "Errore bat gertatu da lerroak ezabatzean",
-    "error-generating-qr-code": "No se pudo generar el QR: %message%, %url%",
+    "error-generating-qr-code": "QR-a sortzea ez da posible izan: %message%, %url%",
     "error-no-name-in-settings": "Errore bat dago %viewName% ikuspegian. Xml-an zutabe baten 'name' jakinaraztea falta da",
     "error-on-xml-file": "Errore bat dago %fileName% XML artxiboan",
     "error-processing-xmlview": "Errore bat gertatu XML ikuspegia prozesatzean, '%fileName%' artxiboa ez da existitzen edo ez da zuzena",
