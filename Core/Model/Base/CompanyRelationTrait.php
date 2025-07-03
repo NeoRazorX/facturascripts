@@ -26,7 +26,7 @@ trait CompanyRelationTrait
 {
 
     /**
-     * @var int
+     * @var int|null
      */
     public $idempresa;
 
