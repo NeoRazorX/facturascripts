@@ -138,6 +138,7 @@ class SecuenciaDocumento extends ModelClass
             '{HORA}' => Tools::hour(),
             '{FECHAHORA}' => Tools::dateTime(Tools::date() . ' ' . Tools::hour()),
             '{ANYO}' => date('Y'),
+            '{ANYO2}' => date('y'),
             '{DIA}' => date('d'),
             '{EJE}' => $this->codejercicio,
             '{EJE2}' => substr($this->codejercicio ?? '', -2),
@@ -168,7 +169,7 @@ class SecuenciaDocumento extends ModelClass
         }
 
         // si el patrón no tiene ejercicio o fecha, mostramos un aviso
-        $codes = ['{EJE}', '{EJE2}', '{ANYO}', '{FECHA}', '{FECHAHORA}'];
+        $codes = ['{EJE}', '{EJE2}', '{ANYO}', '{ANYO2}','{FECHA}', '{FECHAHORA}'];
         $found = false;
         foreach ($codes as $code) {
             if (false !== strpos($this->patron, $code)) {
