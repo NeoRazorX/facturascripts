@@ -50,6 +50,9 @@ class ReportTaxes extends Controller
     /** @var string */
     public $codserie;
 
+    /** @var array */
+    protected $columns = [];
+
     /** @var string */
     public $datefrom;
 
@@ -77,9 +80,6 @@ class ReportTaxes extends Controller
     /** @var string */
     public $typeDate;
 
-    /** @var array */
-    protected $columns = [];
-
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -104,11 +104,6 @@ class ReportTaxes extends Controller
         $this->initFilters();
         $this->initColumns();
 
-        // si no hay columnas, terminamos
-        if (empty($this->columns)) {
-            return;
-        }
-
         if ('export' === $this->request->request->get('action')) {
             $this->exportAction();
         }
@@ -116,31 +111,38 @@ class ReportTaxes extends Controller
 
     protected function exportAction(): void
     {
-        $i18n = Tools::lang();
+        // si no hay columnas, terminamos
+        if (empty($this->columns)) {
+            return;
+        }
+
+        // si no hay datos, terminamos
         $data = $this->getReportData();
         if (empty($data)) {
             Tools::log()->warning('no-data');
             return;
         }
 
-        // prepare lines
+        // preparamos las líneas
+        $i18n = Tools::lang();
         $lastCode = '';
         $lines = [];
         foreach ($data as $row) {
             $hide = $row['codigo'] === $lastCode && $this->format === 'PDF';
 
-            $numberOrSuplierTrans = $i18n->trans('number2');
-            $numberOrSuplier = $hide ? '' : $row['numero2'];
-
-            if ($this->source !== 'sales') {
-                $numberOrSuplierTrans = $i18n->trans('numsupplier');
-                $numberOrSuplier = $hide ? '' : $row['numproveedor'];
+            // en ventas usamos la columna numero2, en compras numproveedor
+            if ($this->source === 'sales') {
+                $number2title = $i18n->trans('number2');
+                $number2value = $hide ? '' : $row['numero2'];
+            } else {
+                $number2title = $i18n->trans('numsupplier');
+                $number2value = $hide ? '' : $row['numproveedor'];
             }
 
             $lines[] = [
                 $i18n->trans('serie') => $hide ? '' : $row['codserie'],
                 $i18n->trans('code') => $hide ? '' : $row['codigo'],
-                $numberOrSuplierTrans => $numberOrSuplier,
+                $number2title => $number2value,
                 $i18n->trans('date') => $hide ? '' : Tools::date($row['fecha']),
                 $i18n->trans('name') => $hide ? '' : Tools::fixHtml($row['nombre']),
                 $i18n->trans('cifnif') => $hide ? '' : $row['cifnif'],
@@ -164,7 +166,7 @@ class ReportTaxes extends Controller
             return;
         }
 
-        // prepare totals
+        // preparamos los totales
         $totals = [];
         foreach ($totalsData as $row) {
             $total = $row['neto'] + $row['totaliva'] + $row['totalrecargo'] - $row['totalirpf'] - $row['suplidos'];
@@ -201,7 +203,7 @@ class ReportTaxes extends Controller
 
     protected function getQuarterDate(bool $start): string
     {
-        $month = (int) date('m');
+        $month = (int)date('m');
 
         // si la fecha actual es de enero, seleccionamos el trimestre anterior
         if ($month === 1) {
@@ -277,9 +279,9 @@ class ReportTaxes extends Controller
             $code = $row['codigo'] . '-' . $row['iva'] . '-' . $row['recargo'] . '-' . $row['irpf'] . '-' . $row['suplido'];
             if (isset($data[$code])) {
                 $data[$code]['neto'] += $row['suplido'] ? 0 : $pvpTotal;
-                $data[$code]['totaliva'] += $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float) $row['iva'] * $pvpTotal / 100;
-                $data[$code]['totalrecargo'] += $row['suplido'] ? 0 : (float) $row['recargo'] * $pvpTotal / 100;
-                $data[$code]['totalirpf'] += $row['suplido'] ? 0 : (float) $row['irpf'] * $pvpTotal / 100;
+                $data[$code]['totaliva'] += $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float)$row['iva'] * $pvpTotal / 100;
+                $data[$code]['totalrecargo'] += $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100;
+                $data[$code]['totalirpf'] += $row['suplido'] ? 0 : (float)$row['irpf'] * $pvpTotal / 100;
                 $data[$code]['suplidos'] += $row['suplido'] ? $pvpTotal : 0;
                 continue;
             }
@@ -296,14 +298,14 @@ class ReportTaxes extends Controller
                 'nombre' => $row['nombre'],
                 'cifnif' => $row['cifnif'],
                 'neto' => $row['suplido'] ? 0 : $pvpTotal,
-                'iva' => $row['suplido'] ? 0 : (float) $row['iva'],
-                'totaliva' => $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float) $row['iva'] * $pvpTotal / 100,
-                'recargo' => $row['suplido'] ? 0 : (float) $row['recargo'],
-                'totalrecargo' => $row['suplido'] ? 0 : (float) $row['recargo'] * $pvpTotal / 100,
-                'irpf' => $row['suplido'] ? 0 : (float) $row['irpf'],
-                'totalirpf' => $row['suplido'] ? 0 : (float) $row['irpf'] * $pvpTotal / 100,
+                'iva' => $row['suplido'] ? 0 : (float)$row['iva'],
+                'totaliva' => $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float)$row['iva'] * $pvpTotal / 100,
+                'recargo' => $row['suplido'] ? 0 : (float)$row['recargo'],
+                'totalrecargo' => $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100,
+                'irpf' => $row['suplido'] ? 0 : (float)$row['irpf'],
+                'totalirpf' => $row['suplido'] ? 0 : (float)$row['irpf'] * $pvpTotal / 100,
                 'suplidos' => $row['suplido'] ? $pvpTotal : 0,
-                'total' => (float) $row['total']
+                'total' => (float)$row['total']
             ];
         }
 
@@ -380,7 +382,7 @@ class ReportTaxes extends Controller
         $this->datefrom = $this->request->request->get('datefrom', $this->getQuarterDate(true));
         $this->dateto = $this->request->request->get('dateto', $this->getQuarterDate(false));
 
-        $this->idempresa = (int) $this->request->request->get(
+        $this->idempresa = (int)$this->request->request->get(
             'idempresa',
             Tools::settings('default', 'idempresa')
         );
@@ -486,9 +488,9 @@ class ReportTaxes extends Controller
             $sql .= ' AND codpais = ' . $this->dataBase->var2str($this->codpais);
         }
         foreach ($this->dataBase->selectLimit($sql) as $row) {
-            $neto2 += (float) $row['neto'];
-            $totalIva2 += (float) $row['t1'];
-            $totalRecargo2 += (float) $row['t2'];
+            $neto2 += (float)$row['neto'];
+            $totalIva2 += (float)$row['t1'];
+            $totalRecargo2 += (float)$row['t2'];
         }
 
         // compare
