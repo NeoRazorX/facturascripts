@@ -1583,7 +1583,7 @@
     "totaliva-value-error": "Gesamtsteuerbetrag von 0 1 falsch (2). Richtige Menge: 3",
     "totallinea-value-error": "Fehler im Gesamtbetrag der Mehrwertsteuerzeile der Steuer 0 der Rechnung. Richtiger Wert: 1",
     "totals": "Summen",
-    "totp-secret-key-not-set": "El usuario %nick% no tiene una clave secreta TOTP configurada",
+    "totp-secret-key-not-set": "Der Benutzer %nick% hat keinen TOTP-Geheimschlüssel konfiguriert.",
     "town": "Stadt, Dorf",
     "tracking-code": "Tracking-Code",
     "transfer": "Übertragen",
