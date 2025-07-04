@@ -599,7 +599,7 @@ class SalesHeaderHTML
                 return self::codtrans($i18n, $model);
 
             case 'direccion':
-                return self::addressField($i18n, $model, 'direccion', 'address', 6, 100);
+                return self::addressField($i18n, $model, 'direccion', 'address', 6, 200);
 
             case 'fecha':
                 return self::fecha($i18n, $model);

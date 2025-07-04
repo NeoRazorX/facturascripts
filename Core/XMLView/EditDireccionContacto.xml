@@ -38,7 +38,7 @@
                 <widget type="text" fieldname="descripcion"/>
             </column>
             <column name="address" numcolumns="9" order="130">
-                <widget type="text" fieldname="direccion" maxlength="100" icon="fa-solid fa-map-marked"/>
+                <widget type="text" fieldname="direccion" maxlength="200" icon="fa-solid fa-map-marked"/>
             </column>
             <column name="post-office-box" order="140">
                 <widget type="text" fieldname="apartado" maxlength="10"/>
