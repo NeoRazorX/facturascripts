@@ -359,26 +359,39 @@ class Controller implements ControllerInterface
 
     private function auth(): bool
     {
+        // Obtener el nick del usuario de la cookie
         $cookieNick = $this->request->cookies->get('fsNick', '');
         if (empty($cookieNick)) {
+            // Si no hay nick en la cookie, no se puede autenticar
             return false;
         }
 
+        // Cargar el usuario desde la base de datos usando el nick
         $user = new DinUser();
-        if (false === $user->loadFromCode($cookieNick) && $user->enabled) {
+        if (false === $user->loadFromCode($cookieNick)) {
+            // Si el usuario no se encuentra, registrar advertencia y fallar autenticación
             Tools::log()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
             return false;
         }
 
-        $logKey = $this->request->cookies->get('fsLogkey', '') ?? '';
-        if (false === $user->verifyLogkey($logKey)) {
-            Tools::log()->warning('login-cookie-fail');
-            // eliminamos la cookie
+        // Verificar si el usuario está activado
+        if (false === $user->enabled) {
+            // Si el usuario está desactivado, registrar advertencia, eliminar cookie y fallar autenticación
+            Tools::log()->warning('login-user-disabled', ['%nick%' => $cookieNick]);
             setcookie('fsNick', '', time() - FS_COOKIES_EXPIRE, '/');
             return false;
         }
 
-        // actualizamos la actividad del usuario
+        // Verificar la logkey del usuario desde la cookie
+        $logKey = $this->request->cookies->get('fsLogkey', '') ?? '';
+        if (false === $user->verifyLogkey($logKey)) {
+            // Si la logkey no es válida, registrar advertencia, eliminar cookie y fallar autenticación
+            Tools::log()->warning('login-cookie-fail');
+            setcookie('fsNick', '', time() - FS_COOKIES_EXPIRE, '/');
+            return false;
+        }
+
+        // Actualizar la última actividad del usuario si ha pasado el período definido
         if (time() - strtotime($user->lastactivity) > User::UPDATE_ACTIVITY_PERIOD) {
             $ip = Session::getClientIp();
             $browser = $this->request->headers->get('User-Agent');
@@ -386,6 +399,7 @@ class Controller implements ControllerInterface
             $user->save();
         }
 
+        // Establecer el usuario en la sesión actual
         Session::set('user', $user);
         return true;
     }
