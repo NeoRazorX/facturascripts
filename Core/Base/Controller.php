@@ -378,8 +378,13 @@ class Controller implements ControllerInterface
         }
 
         $user = new DinUser();
-        if (false === $user->loadFromCode($cookieNick) && $user->enabled) {
+        if (false === $user->loadFromCode($cookieNick)) {
             Tools::log()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
+            return false;
+        }
+
+        if (false === $user->enabled) {
+            Tools::log()->warning('login-user-disabled', ['%nick%' => $cookieNick]);
             return false;
         }
 

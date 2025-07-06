@@ -184,16 +184,18 @@ abstract class SalesDocument extends TransformerDocument
             return parent::delete();
         }
 
-        if (parent::delete()) {
-            // update customer risk
+        if (false === parent::delete()) {
+            return false;
+        }
+
+        // actualizamos el riesgo del cliente
+        if (!empty($this->codcliente)) {
             $customer = $this->getSubject();
             $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
             $customer->save();
-
-            return true;
         }
 
-        return false;
+        return true;
     }
 
     /**
