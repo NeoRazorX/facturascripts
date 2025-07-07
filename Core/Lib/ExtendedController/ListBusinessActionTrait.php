@@ -67,7 +67,7 @@ trait ListBusinessActionTrait
      * @param string $viewName
      * @param string|null $code
      */
-    protected function addButtonGenerateAccountingInvoices(string $viewName, string $code = null): void
+    protected function addButtonGenerateAccountingInvoices(string $viewName, ?string $code = null): void
     {
         $model = $this->views[$viewName]->model;
         if (false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {

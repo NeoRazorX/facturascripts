@@ -550,7 +550,7 @@
     "error-checking-vat-number": "Błąd podczas sprawdzania numeru VAT '%vat-number%' w systemie VIES",
     "error-connecting-memcache": "Błąd połączenia z serwerem Memcache.",
     "error-deleting-lines": "Błąd podczas usuwania linii",
-    "error-generating-qr-code": "Nie można wygenerować QR: %message%, %url%",
+    "error-generating-qr-code": "Nie można wygenerować kodu QR: %message%, %url%",
     "error-no-name-in-settings": "Error en la vista %viewName%. Falta informar el 'name' en alguna columna del xml",
     "error-on-xml-file": "Błąd w pliku XML %fileName%",
     "error-processing-xmlview": "Błąd przetwarzania XML widoku, plik '%fileName%' nie istnieje lub jest źle sformułowany",

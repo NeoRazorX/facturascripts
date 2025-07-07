@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@ trait LogErrorsTrait
     {
         if ($this->getStatus() > 1) {
             foreach (MiniLog::read('', ['critical', 'error', 'warning']) as $item) {
-                error_log($item['message']);
+                error_log($item['message'] . ' ' . print_r($item['context'], true));
             }
         }
 
