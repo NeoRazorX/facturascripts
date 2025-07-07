@@ -21,9 +21,11 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Model\AlbaranCliente;
 use FacturaScripts\Core\Model\AlbaranProveedor;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -229,6 +231,48 @@ final class AlbaranProveedorTest extends TestCase
 
         // eliminamos el producto
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
+    }
+
+    public function testPropertiesLength(): void
+    {
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer-1');
+
+
+        // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
+        $campos = [
+            'apartado'      => [10, 11],
+            'cifnif'        => [30, 31],
+            'ciudad'        => [100, 101],
+            'codpais'       => [20, 21],
+            'codpostal'     => [10, 11],
+            'direccion'     => [200, 201],
+            'nombrecliente' => [100, 101],
+            'numero2'       => [50, 51],
+            'provincia'     => [100, 101],
+        ];
+
+        foreach ($campos as $campo => [$valido, $invalido]) {
+            // Creamos un nuevo albarán
+            $doc = new AlbaranCliente();
+            $doc->setSubject($subject);
+
+            // Asignamos el valor inválido en el campo a probar
+            $doc->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($doc->save(), "can-save-albaranProveedor-bad-{$campo}");
+
+            // Corregimos el campo y comprobamos que ahora sí se puede guardar
+            $doc->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($doc->save(), "cannot-save-albaranProveedor-fixed-{$campo}");
+
+            // Limpiar
+            $this->assertTrue($doc->delete(), "cannot-delete-albaranProveedor-{$campo}");
+        }
+
+        // Eliminamos el cliente
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
     }
 
     public function testSecondCompany()

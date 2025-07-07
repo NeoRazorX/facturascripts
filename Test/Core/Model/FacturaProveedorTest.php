@@ -29,6 +29,7 @@ use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\FacturaProveedor;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -572,6 +573,41 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($invoice->delete());
         $this->assertTrue($supplier->getDefaultAddress()->delete());
         $this->assertTrue($supplier->delete());
+    }
+
+    public function testPropertiesLength(): void
+    {
+        // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
+        $campos = [
+            'cifnif'        => [30, 31],
+            'codigo'        => [20, 21],
+            'codigorect'    => [20, 21],
+            'nombre'        => [100, 101],
+            'operacion'     => [20, 21],
+        ];
+
+        // creamos un cliente
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
+
+        foreach ($campos as $campo => [$valido, $invalido]) {
+            // Creamos un nuevo almacén
+            $invoice = new FacturaProveedor();
+
+            // campo obligatorio (not null)
+            $invoice->setSubject($supplier);
+
+            // Asignamos el valor inválido en el campo a probar
+            $invoice->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($invoice->save(), "can-save-facturaProveedor-bad-{$campo}");
+
+            // Corregimos el campo y comprobamos que ahora sí se puede guardar
+            $invoice->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($invoice->save(), "cannot-save-facturaProveedor-fixed-{$campo}");
+
+            // Limpiar
+            $this->assertTrue($invoice->delete(), "cannot-delete-facturaProveedor-{$campo}");
+        }
     }
 
     public function testSetIntraCommunity(): void
