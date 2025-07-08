@@ -608,6 +608,8 @@ final class FacturaProveedorTest extends TestCase
             // Limpiar
             $this->assertTrue($invoice->delete(), "cannot-delete-facturaProveedor-{$campo}");
         }
+
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
     public function testSetIntraCommunity(): void
