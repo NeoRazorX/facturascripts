@@ -21,7 +21,6 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Calculator;
-use FacturaScripts\Core\Model\AlbaranCliente;
 use FacturaScripts\Core\Model\AlbaranProveedor;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
@@ -235,27 +234,23 @@ final class AlbaranProveedorTest extends TestCase
 
     public function testPropertiesLength(): void
     {
-        // creamos un cliente
-        $subject = $this->getRandomCustomer();
+        // creamos un proveedor
+        $subject = $this->getRandomSupplier();
         $this->assertTrue($subject->save(), 'can-not-save-customer-1');
 
 
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
         $campos = [
-            'apartado'      => [10, 11],
-            'cifnif'        => [30, 31],
-            'ciudad'        => [100, 101],
-            'codpais'       => [20, 21],
-            'codpostal'     => [10, 11],
-            'direccion'     => [200, 201],
-            'nombrecliente' => [100, 101],
-            'numero2'       => [50, 51],
-            'provincia'     => [100, 101],
+            'cifnif'       => [30, 31],
+            'codigo'       => [20, 21],
+            'nombre'       => [100, 101],
+            'numproveedor' => [50, 51],
+            'operacion'    => [20, 21],
         ];
 
         foreach ($campos as $campo => [$valido, $invalido]) {
             // Creamos un nuevo albarán
-            $doc = new AlbaranCliente();
+            $doc = new AlbaranProveedor();
             $doc->setSubject($subject);
 
             // Asignamos el valor inválido en el campo a probar

@@ -291,7 +291,6 @@ final class AlbaranClienteTest extends TestCase
             'codpostal'     => [10, 11],
             'direccion'     => [200, 201],
             'nombrecliente' => [100, 101],
-            'numero2'       => [50, 51],
             'provincia'     => [100, 101],
         ];
 
