@@ -219,6 +219,7 @@ abstract class ComercialContactController extends EditController
      */
     private function createListView(string $viewName, string $model, string $label, array $fields): void
     {
+        // create view
         $this->addListView($viewName, $model, $label, 'fa-solid fa-copy')
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['fecha', 'hora'], 'date', 2)
@@ -231,8 +232,6 @@ abstract class ComercialContactController extends EditController
         $this->listView($viewName)->disableColumn($fields['linkfield'], true);
 
         // filters
-        $this->listView($viewName)->addFilterPeriod('period', 'date', 'fecha');
-
         $this->addCommonViewFilters($viewName, $model);
     }
 
