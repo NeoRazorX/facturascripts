@@ -157,14 +157,14 @@ final class Calculator
             $subtotals['iva'][$ivaKey]['netosindto'] += $line->pvptotal;
 
             // IVA
-            if ($line->iva > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
+            if ($line->iva > 0 && !InvoiceOperation::isReverseChargeOperation($doc->operacion ?? '')) {
                 $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
                     $pvpTotal * $line->iva :
                     $pvpTotal * $line->iva / 100;
             }
 
             // recargo de equivalencia
-            if ($line->recargo > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
+            if ($line->recargo > 0 && !InvoiceOperation::isReverseChargeOperation($doc->operacion ?? '')) {
                 $subtotals['iva'][$ivaKey]['totalrecargo'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
                     $pvpTotal * $line->recargo :
                     $pvpTotal * $line->recargo / 100;
