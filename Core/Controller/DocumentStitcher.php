@@ -107,6 +107,10 @@ class DocumentStitcher extends Controller
         $this->loadDocuments();
         $this->loadMoreDocuments();
 
+        if (false === $this->validatedQuantities()) {
+            return;
+        }
+
         $statusCode = $this->request->request->get('status', '');
         if ($statusCode) {
             // validate form request?
@@ -424,5 +428,29 @@ class DocumentStitcher extends Controller
                 $this->moreDocuments[] = $doc;
             }
         }
+    }
+
+    /**
+     * Validamos que, en cada línea, la cantidad aprobada
+     * no supere a la cantidad de la línea.
+     */
+    protected function validatedQuantities(): bool
+    {
+        foreach ($this->documents as $document) {
+            foreach ($document->getLines() as $line) {
+                $quantity = (float)$this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
+
+                if ($quantity > $line->cantidad) {
+                    static::toolBox()::i18nLog()->error('error-more-quant-than-line', [
+                        '%description%' => $line->descripcion,
+                        '%quantity%' => $line->cantidad,
+                        '%selected_quantity%' => $quantity,
+                    ]);
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
