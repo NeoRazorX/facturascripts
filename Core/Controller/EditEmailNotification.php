@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -54,5 +55,32 @@ class EditEmailNotification extends EditController
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnOptions', false);
         $this->setSettings($viewName, 'btnPrint', false);
+
+        // añadimos la pestaña de emails
+        $this->createViewListMails();
+
+        // colocamos las pestañas abajo
+        $this->setTabsPosition('bottom');
+    }
+
+    protected function createViewListMails(string $viewName = 'ListEmailSent')
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-paper-plane');
+        $this->tab($viewName)
+            ->setSettings('btnNew', false)
+            ->setSettings('btnDelete', false);
+    }
+
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListEmailSent':
+                $notificationName = $this->getModel()->name;
+                $where = [new DataBaseWhere('notification', $notificationName)];
+                $view->loadData('', $where);
+                break;
+            default:
+                parent::loadData($viewName, $view);
+        }
     }
 }

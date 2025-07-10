@@ -72,6 +72,9 @@ class EmailSent extends ModelClass
     /** @var string */
     public $verificode;
 
+    /** @var string */
+    public $notification;
+
     public function clear()
     {
         parent::clear();
