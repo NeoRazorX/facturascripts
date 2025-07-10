@@ -204,7 +204,7 @@ class PurchasesFooterHTML
                 return self::observaciones($model);
 
             case 'total':
-                return self::column($model, 'total', 'total', true);
+                return self::column($model, 'total', 'total');
 
             case 'totalirpf':
                 return self::column($model, 'totalirpf', 'irpf', true);
