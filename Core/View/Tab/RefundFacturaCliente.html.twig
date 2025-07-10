@@ -166,7 +166,7 @@
                                 {% set refunded = line.refundedQuantity() %}
                                 <tr>
                                     <td class="align-middle">
-                                        <a href="{{ line.getProducto().url() }}">{{ line.referencia }}</a>
+                                        <a href="{{ line.producto.url() }}">{{ line.referencia }}</a>
                                         {{ line.descripcion | raw }}
                                     </td>
                                     <td class="align-middle text-end">
