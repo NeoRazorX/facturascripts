@@ -335,6 +335,7 @@ final class AlbaranClienteTest extends TestCase
 
         // creamos un albarán
         $doc = new AlbaranCliente();
+        $doc->codpago = $company2->getPaymentMethods()[0]->codpago;
         $doc->setSubject($subject);
         $doc->codalmacen = $warehouse->codalmacen;
         $this->assertTrue($doc->save(), 'albaran-cant-save');
