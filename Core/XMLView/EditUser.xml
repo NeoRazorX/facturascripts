@@ -49,13 +49,13 @@
             </column>
             <column name="company" titleurl="ListEmpresa" level="99" order="120">
                 <widget type="select" fieldname="idempresa" icon="fa-solid fa-building" onclick="EditEmpresa"
-                        required="true">
+                        required="false">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
                 </widget>
             </column>
             <column name="warehouse" titleurl="ListAlmacen" level="99" order="130">
                 <widget type="select" fieldname="codalmacen" parent="idempresa" icon="fa-solid fa-warehouse"
-                        onclick="EditAlmacen" required="true">
+                        onclick="EditAlmacen" required="false">
                     <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" fieldfilter="idempresa"/>
                 </widget>
             </column>
