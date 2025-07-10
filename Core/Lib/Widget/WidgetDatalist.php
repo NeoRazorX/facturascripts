@@ -64,7 +64,7 @@ class WidgetDatalist extends WidgetSelect
         $html .= '<datalist id="' . $list . '">';
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
-            $html .= '<option value="' . $title . '" />';
+            $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
         }
         $html .= '</datalist>';
         return $html;
