@@ -52,7 +52,7 @@ function widgetSelectGetData(select, parent) {
 $(document).ready(function () {
     $('select.select2').select2({
         width: 'style',
-        theme: 'bootstrap4'
+        theme: 'bootstrap-5'
     });
 
     $('.parentSelect').each(function () {
