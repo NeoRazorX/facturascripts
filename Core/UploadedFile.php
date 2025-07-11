@@ -132,6 +132,9 @@ final class UploadedFile
 
     public function move(string $destiny, string $destinyName): bool
     {
+        if (substr($destiny, -1) !== DIRECTORY_SEPARATOR) {
+            $destiny .= DIRECTORY_SEPARATOR;
+        }
         return move_uploaded_file($this->tmp_name, $destiny . $destinyName);
     }
 
