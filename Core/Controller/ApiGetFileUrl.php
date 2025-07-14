@@ -6,8 +6,10 @@ use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\UploadedFile;
 use FacturaScripts\Dinamic\Model\AttachedFile;
+use FacturaScripts\Dinamic\Model\AttachedFileRelation;
+use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Lib\MyFilesToken;
 
 class ApiGetFileUrl extends ApiController
 {
@@ -22,9 +24,44 @@ class ApiGetFileUrl extends ApiController
             return;
         }
 
-        $archivos = AttachedFile::all();
-        $this->response->setContent(json_encode([
-            $archivos
-        ]));
+        $id = $this->getUriParam(3);
+        $isProduct = false;
+
+        $archivos = new AttachedFile();
+        $archivos->loadFromCode($id);
+        $permanentUrl = $archivos->path . '?myft=' . MyFilesToken::get($archivos->path, true);
+        $url = $archivos->path . '?myft=' . MyFilesToken::get($archivos->path, false);
+
+        $idFile = $archivos->idfile;
+
+        $fileRelation = new AttachedFileRelation();
+        $fileRelations = $fileRelation->all([new DataBaseWhere('idfile', $idFile)]);
+        if ($fileRelations[0]->model === 'Producto') {
+            $isProduct = true;
+        }
+
+        $productoId = $fileRelations[0]->modelid;
+        $productos = new Producto();
+        $relationProducto = $productos->all([new DataBaseWhere('idproducto', $productoId)]);
+
+        if ($isProduct){
+            $this->response->setContent(json_encode([
+                'idproducto' => $relationProducto[0]->idproducto,
+                'referencia' => $relationProducto[0]->referencia,
+                'descripcion' => $relationProducto[0]->descripcion,
+                'idfile' => $idFile,
+                'path' => $archivos->path,
+                'url' => $url,
+                'urlpermanente' => $permanentUrl
+            ]));
+        }
+        else {
+            $this->response->setContent(json_encode([
+                'idfile' => $idFile,
+                'path' => $archivos->path,
+                'url' => $url,
+                'urlpermanente' => $permanentUrl
+            ]));
+        }
     }
 }
