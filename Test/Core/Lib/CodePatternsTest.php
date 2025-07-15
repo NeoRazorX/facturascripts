@@ -94,6 +94,18 @@ final class CodePatternsTest extends TestCase
         $this->assertEquals('A-Marzo-123', $code, 'different-code');
     }
 
+    public function testAnyo2MesDiaNum()
+    {
+        $order = new PedidoCliente();
+        $order->codejercicio = '2022';
+        $order->codserie = 'C';
+        $order->fecha = '23-11-2021';
+        $order->numero = '777';
+
+        $code = CodePatterns::trans('{ANYO2}-{MES}-{DIA}-{NUM}', $order);
+        $this->assertEquals('21-11-23-777', $code, 'different-code');
+    }
+
     public function testDateNum()
     {
         $order = new PedidoCliente();
