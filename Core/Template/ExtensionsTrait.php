@@ -31,7 +31,7 @@ trait ExtensionsTrait
      *
      * @var array
      */
-    protected static $extensions = [];
+    public static $extensions = [];
 
     /**
      * Executes the first matched extension.
