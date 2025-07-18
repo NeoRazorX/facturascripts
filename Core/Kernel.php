@@ -293,6 +293,8 @@ final class Kernel
             '/api/3/exportarFacturaCliente/*' => 'ApiExportFacturaCliente',
             '/api/3/attachedfiles' => 'ApiAttachedFiles',
             '/api/3/attachedfiles/*' => 'ApiAttachedFiles',
+            '/api/3/productoimagen' => 'ApiProductoImagen',
+            '/api/3/productoimagen/*' => 'ApiProductoImagen',
             '/api/3/uploadFiles' => 'ApiUploadFiles',
             '/api/*' => 'ApiRoot',
             '/Core/Assets/*' => 'Files',

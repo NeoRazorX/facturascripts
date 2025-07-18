@@ -7,16 +7,13 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Model\AttachedFile;
+use FacturaScripts\Dinamic\Model\ProductoImagen;
 
-class ApiAttachedFiles extends ApiController
+class ApiProductoImagen extends ApiController
 {
-
-    private $model;
-
     protected function runResource(): void
     {
-        $this->model = new AttachedFile();
+        $this->model = new ProductoImagen();
         try {
             switch ($this->request->method()) {
                 case 'DELETE':
@@ -29,8 +26,8 @@ class ApiAttachedFiles extends ApiController
 
                 case 'PATCH':
                 case 'PUT':
-                   $this->doPUT();
-                   break;
+                    $this->doPUT();
+                    break;
 
                 case 'POST':
                     $this->doPOST();
@@ -284,6 +281,7 @@ class ApiAttachedFiles extends ApiController
         $this->response->setContent(json_encode($res));
         $this->response->setHttpCode($status);
     }
+
     protected function setOk(string $message, ?array $data = null)
     {
         Tools::log('api')->notice($message);
