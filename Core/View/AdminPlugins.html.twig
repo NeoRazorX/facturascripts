@@ -166,10 +166,10 @@
                     existingModal.remove();
                 }
 
-                const editListViewDeleteCancel = "{{ trans('cancel') }}";
-                const editListViewDeleteConfirm = "{{ trans('delete') }}";
-                const editListViewDeleteMessage = "{{ trans('are-you-sure') }}";
-                const editListViewDeleteTitle = "{{ trans('confirm-delete')|raw }}";
+                const adminPluginsDeleteCancel = "{{ trans('cancel') }}";
+                const adminPluginsDeleteConfirm = "{{ trans('delete') }}";
+                const adminPluginsDeleteMessage = "{{ trans('are-you-sure') }}";
+                const adminPluginsDeleteTitle = "{{ trans('confirm-delete')|raw }}";
 
                 // Crear el HTML del modal como string usando los parámetros
                 const modalHTML = `
@@ -177,15 +177,15 @@
                       <div class="modal-dialog">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="dynamicAdminPluginsDeleteModal">${editListViewDeleteTitle}</h5>
+                            <h5 class="modal-title" id="dynamicAdminPluginsDeleteModalLabel">${adminPluginsDeleteTitle}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                            ${editListViewDeleteMessage}
+                            ${adminPluginsDeleteMessage}
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary btn-spin-action" data-bs-dismiss="modal">${editListViewDeleteCancel}</button>
-                            <button type="button" id="saveDynamicAdminPluginsDeleteModalBtn" class="btn btn-danger btn-spin-action">${editListViewDeleteConfirm}</button>
+                            <button type="button" class="btn btn-secondary btn-spin-action" data-bs-dismiss="modal">${adminPluginsDeleteCancel}</button>
+                            <button type="button" id="saveDynamicAdminPluginsDeleteModalBtn" class="btn btn-danger btn-spin-action">${adminPluginsDeleteConfirm}</button>
                           </div>
                         </div>
                       </div>
