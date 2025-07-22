@@ -961,6 +961,72 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($product->delete());
         $this->assertTrue($company->delete());
     }
+    public function testItMustUpdatingCompanyByChangingTheWarehouse(): void
+    {
+        // creamos el cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // Creamos nueva empresa
+        $company = $this->getRandomCompany();
+        $this->assertTrue($company->save());
+
+        // Creamos nuevo almacen y asignamos nueva empresa
+        $warehouse = $this->getRandomWarehouse();
+        $warehouse->idempresa = $company->idempresa;
+        $this->assertTrue($warehouse->save());
+
+        // creamos la factura
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->numero2 = self::INVOICE_REF;
+        $invoice->observaciones = self::INVOICE_NOTES;
+        $invoice->codalmacen = $warehouse->codalmacen;
+        $invoice->idempresa = $company->idempresa;
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+        $this->assertTrue($invoice->exists(), 'invoice-not-exists');
+
+        // añadimos una línea
+        $firstLine = $invoice->getNewLine();
+        $firstLine->cantidad = self::PRODUCT1_QUANTITY;
+        $firstLine->descripcion = 'Test';
+        $firstLine->pvpunitario = self::PRODUCT1_PRICE;
+        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
+        $this->assertTrue($firstLine->exists(), 'first-invoice-line-does-not-exists');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+        $neto = round(self::PRODUCT1_PRICE * self::PRODUCT1_QUANTITY, FS_NF0);
+        $this->assertEquals($neto, $invoice->neto, 'bad-invoice-neto');
+
+
+        // Cambiamos el almacen a la factura.
+        // Creamos nueva empresa
+        $company2 = $this->getRandomCompany();
+        $this->assertTrue($company2->save());
+
+        // Creamos nuevo almacen y asignamos nueva empresa
+        $warehouse2 = $this->getRandomWarehouse();
+        $warehouse2->idempresa = $company2->idempresa;
+        $this->assertTrue($warehouse2->save());
+
+        // Asigamos nuevo almacen a la factura
+        $invoice->setWarehouse($warehouse2->codalmacen);
+        $this->assertTrue($invoice->save());
+
+        // Verificamos que al cambiar el almacen se cambia la empresa asociada a este.
+        $this->assertEquals($warehouse2->codalmacen, $invoice->codalmacen);
+        $this->assertEquals($company2->idempresa, $invoice->idempresa);
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertFalse($firstLine->exists(), 'invoice-line-not-deleted');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($warehouse2->delete(), 'cant-delete-warehouse2');
+        $this->assertTrue($company2->delete(), 'cant-delete-company2');
+    }
 
     protected function tearDown(): void
     {
