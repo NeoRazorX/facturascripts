@@ -134,9 +134,9 @@
                                 {{ trans('select-plugin-zip-file') }}<br/>
                                 <input type="file" name="plugin[]" accept="application/zip" multiple required/>
                                 {% if fsc.getMaxFileUpload() >= 99 %}
-                                    <small class="form-text text-muted">
+                                    <div class="form-text">
                                         {{ trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}
-                                    </small>
+                                    </div>
                                 {% endif %}
                             </div>
                             <div class="text-end mt-5">
