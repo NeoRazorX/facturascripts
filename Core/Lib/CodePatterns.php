@@ -67,6 +67,7 @@ class CodePatterns
             '{HORA}' => Tools::hour($hora),
             '{FECHAHORA}' => Tools::dateTime($fecha . ' ' . $hora),
             '{ANYO}' => date('Y', strtotime($fecha)),
+            '{ANYO2}' => date('y', strtotime($fecha)),
             '{DIA}' => date('d', strtotime($fecha)),
             '{EJE}' => $ejercicio,
             '{EJE2}' => substr($ejercicio, -2),
