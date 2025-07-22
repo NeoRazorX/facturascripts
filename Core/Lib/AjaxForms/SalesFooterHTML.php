@@ -206,7 +206,7 @@ class SalesFooterHTML
                 return self::observaciones($model);
 
             case 'total':
-                return self::column($model, 'total', 'total', true);
+                return self::column($model, 'total', 'total');
 
             case 'totalbeneficio':
                 return self::column($model, 'totalbeneficio', 'profits', true, Tools::settings('default', 'levelbenefitsales', 0));
