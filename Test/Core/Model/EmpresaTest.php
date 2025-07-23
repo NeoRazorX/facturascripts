@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
 final class EmpresaTest extends TestCase
@@ -45,5 +46,49 @@ final class EmpresaTest extends TestCase
 
         // el almacén también se ha eliminado
         $this->assertFalse($warehouse->exists(), 'warehouse-still-exists');
+    }
+
+    public function testPropertiesLength(): void
+    {
+        // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
+        $campos = [
+            'administrador'  => [100, 101],
+            'apartado'       => [10, 11],
+            'cifnif'         => [30, 31],
+            'ciudad'         => [100, 101],
+            'codpais'        => [20, 21],
+            'codpostal'      => [10, 11],
+            'direccion'      => [200, 201],
+            'excepcioniva'   => [20, 21],
+            //'email'          => [100, 101],
+            'fax'            => [30, 31],
+            'nombre'         => [100, 101],
+            'nombrecorto'    => [32, 33],
+            'provincia'      => [100, 101],
+            'regimeniva'     => [20, 21],
+            'telefono1'      => [30, 31],
+            'telefono2'      => [30, 31],
+            'tipoidfiscal'   => [25, 26],
+            //'web'            => [100, 101],
+        ];
+
+        foreach ($campos as $campo => [$valido, $invalido]) {
+            // Creamos un nuevo almacén
+            $company = new Empresa();
+
+            // campo obligatorio (not null)
+            $company->nombre = 'Test';
+
+            // Asignamos el valor inválido en el campo a probar
+            $company->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($company->save(), "can-save-empresa-bad-{$campo}");
+
+            // Corregimos el campo y comprobamos que ahora sí se puede guardar
+            $company->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($company->save(), "cannot-save-empresa-fixed-{$campo}");
+
+            // Limpiar
+            $this->assertTrue($company->delete(), "cannot-delete-empresa-{$campo}");
+        }
     }
 }

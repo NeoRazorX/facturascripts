@@ -57,20 +57,37 @@
     </script>
 </head>
 <body>
-<nav class="navbar bg-dark" data-bs-theme="dark">
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="" onclick="location.reload();">
             <img src="Core/Assets/Images/logo.png" width="30" height="30" class="align-top me-2" alt="FacturaScripts"/>
             FacturaScripts {{ version }}
         </a>
-        <ul class="nav navbar-nav me-auto"></ul>
-        <ul class="navbar-nav flex-row ms-md-auto d-none d-md-flex">
-            <li class="nav-item">
-                <a class="nav-link" href="?phpinfo=TRUE">
-                    <i class="fa-solid fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
+        
+        <div class="navbar-nav ms-auto">
+            <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-question-circle fa-fw" aria-hidden="true"></i> {{ trans('help') }}
                 </a>
-            </li>
-        </ul>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="https://facturascripts.com/ayuda" rel="nofollow" target="_blank">
+                            <i class="fa-solid fa-book fa-fw me-2" aria-hidden="true"></i> {{ trans('user-guide') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="?phpinfo=TRUE">
+                            <i class="fa-solid fa-info-circle fa-fw me-2" aria-hidden="true"></i> phpinfo
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="https://facturascripts.com/contacto" rel="nofollow" target="_blank">
+                            <i class="fa-solid fa-comment-dots fa-fw me-2" aria-hidden="true"></i> {{ trans('support') }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </nav>
 <div class="container-fluid">
@@ -84,17 +101,17 @@
         </div>
     </div>
 </div>
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <h1 class="h2 mt-sm-5 mb-1">
+<div class="container-fluid">
+    <div class="row align-items-center">
+        <div class="col-lg-6 col-md-5 text-center mb-4 mb-md-0">
+            <img src="Core/Assets/Images/install.png" alt="{{ trans('installer') }}" class="img-fluid"
+                 style="max-width: 100%; height: auto;">
+        </div>
+        <div class="col-lg-6 col-md-7">
+            <h1 class="h2 mb-3">
                 <i class="fa-solid fa-wand-magic-sparkles me-2"></i> {{ trans('installer') }}
             </h1>
-            <p>{{ trans('installer-p') }}</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
+            <p class="mb-4">{{ trans('installer-p') }}</p>
             <form name="fs_install" method="post" class="form">
                 <div class="card shadow mb-5">
                     <div class="card-header">
@@ -116,8 +133,8 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" id="preferencias">
-                                <div class="row">
-                                    <div class="col-sm-4">
+                                <div class="row gx-2">
+                                    <div class="col-md-12 col-lg-6">
                                         <div class="mb-3">
                                             {{ trans('language') }}:
                                             <div class="input-group">
@@ -138,7 +155,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-md-12 col-lg-6">
                                         <div class="mb-3">
                                             {{ trans('timezone') }}:
                                             <div class="input-group">
@@ -153,7 +170,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-md-12 col-lg-6">
                                         <div class="mb-3">
                                             {{ trans('db-type') }}:
                                             <select id="db_type" name="fs_db_type" class="form-select">
@@ -167,21 +184,21 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-md-12 col-lg-6">
                                         <div class="mb-3">
                                             {{ trans('db-host') }}:
                                             <input type="text" name="fs_db_host" value="{{ fsc.db_host }}"
                                                    class="form-control" required/>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-md-12 col-lg-6">
                                         <div class="mb-3">
                                             {{ trans('db-port') }}:
                                             <input type="number" id="db_port" name="fs_db_port"
                                                    value="{{ fsc.db_port }}" class="form-control" required/>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-md-12 col-lg-6">
                                         <div class="mb-3">
                                             {{ trans('db-name') }}:
                                             <div class="input-group">
@@ -193,14 +210,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-md-12 col-lg-6">
                                         <div class="mb-3">
                                             {{ trans('db-user') }}:
                                             <input type="text" id="db_user" name="fs_db_user" value="{{ fsc.db_user }}"
                                                    class="form-control" required/>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-md-12 col-lg-6">
                                         <div class="mb-3">
                                             {{ trans('db-password') }}:
                                             <div class="input-group">
@@ -212,15 +229,15 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mysql_socket_div" class="col-sm-4">
+                                    <div id="mysql_socket_div" class="col-md-12">
                                         <div class="mb-3">
                                             {{ trans('mysql-socket') }}:
                                             <input type="text" name="mysql_socket" class="form-control"
                                                    placeholder="{{ trans('optional') }}"/>
-                                            <small class="form-text text-muted">{{ trans('mysql-socket-p') }}</small>
+                                            <div class="form-text">{{ trans('mysql-socket-p') }}</div>
                                         </div>
                                     </div>
-                                    <div id="pgsql_ssl_div" class="col-sm-4">
+                                    <div id="pgsql_ssl_div" class="col-md-12 col-lg-6">
                                         <div class="mb-3">
                                             {{ trans('pgsql-ssl-mode') }}:
                                             <select name="pgsql_ssl_mode" class="form-select">
@@ -232,17 +249,17 @@
                                             </select>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row align-items-center">
-                                    <div id="pgsql_endpoint" class="col-sm-4">
+                                    <div id="pgsql_endpoint" class="col-md-12 col-lg-6">
                                         <div class="mb-3">
                                             {{ trans('pgsql-endpoint') }}:
                                             <input type="text" name="pgsql_endpoint" class="form-control"
                                                    placeholder="{{ trans('optional') }}"/>
                                         </div>
                                     </div>
-                                    <div class="col-sm-auto">
-                                        <div class="form-check mb-2 mb-sm-0">
+                                </div>
+                                <div class="row align-items-center gx-2">
+                                    <div class="col-md-12 col-lg-6">
+                                        <div class="form-check">
                                             <label class="form-check-label">
                                                 <input class="form-check-input" type="checkbox" name="fs_debug"
                                                        value="true"/>
@@ -250,8 +267,8 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="col-sm">
-                                        <div class="form-check mb-2 mb-sm-0">
+                                    <div class="col-md-12 col-lg-6">
+                                        <div class="form-check">
                                             <label class="form-check-label">
                                                 <input class="form-check-input" type="checkbox" name="fs_gtm"
                                                        value="true"/>
@@ -264,7 +281,7 @@
                             <div role="tabpanel" class="tab-pane" id="licencia">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <div class="mb-3">
+                                        <div class="mb-3" style="max-height: 420px; overflow-y: auto;">
                                             <pre>{{ license }}</pre>
                                         </div>
                                     </div>
@@ -272,49 +289,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <div class="row">
-                            <div class="col-sm">
-                                &COPY; 2013-{{ 'now' | date('Y') }}
-                                <a href="https://facturascripts.com" rel="nofollow" target="_blank">FacturaScripts</a>
-                            </div>
-                            <div class="col-sm-auto">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa-solid fa-check me-1" aria-hidden="true"></i> {{ trans('accept') }}
-                                </button>
-                            </div>
-                        </div>
+                    <div class="card-footer text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-check me-1" aria-hidden="true"></i> {{ trans('accept') }}
+                        </button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm">
-            <div class="card shadow mb-3">
-                <div class="card-body text-center">
-                    <i class="fa-solid fa-book fa-3x text-primary"></i>
-                </div>
-                <div class="card-footer">
-                    <a class="btn btn-lg btn-link w-100" href="https://facturascripts.com/ayuda" rel="nofollow"
-                       target="_blank">{{ trans('help') }}
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm">
-            <div class="card shadow mb-3">
-                <div class="card-body text-center">
-                    <i class="fa-solid fa-comment-dots fa-3x text-info"></i>
-                </div>
-                <div class="card-footer">
-                    <a class="btn btn-lg btn-link w-100" href="https://facturascripts.com/contacto"
-                       rel="nofollow" target="_blank">{{ trans('support') }}
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
+<footer class="mt-5 py-3 text-center text-muted">
+    <div class="container-fluid">
+        &COPY; 2013-{{ 'now' | date('Y') }}
+        <a href="https://facturascripts.com" rel="nofollow" target="_blank" class="text-muted">FacturaScripts</a>
+    </div>
+</footer>
 </body>
 </html>

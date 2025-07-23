@@ -132,6 +132,29 @@
             </div>
         </div>
     </div>
+
+    {# -- Delete Options Confirmation Modal -- #}
+    <div class="modal fade" id="deleteOptionsModal" tabindex="-1" aria-labelledby="deleteOptionsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteOptionsModalLabel">{{ trans('confirm-delete') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ trans('are-you-sure') }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-times"></i> {{ trans('cancel') }}
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteOptionsBtn">
+                        <i class="fa-solid fa-check"></i> {{ trans('delete') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block css %}
@@ -147,27 +170,15 @@
     {{ parent() }}
     <script>
         function deleteOptions() {
-            bootbox.confirm({
-                title: "{{ trans('confirm-delete')|raw }}",
-                message: "{{ trans('are-you-sure') }}",
-                closeButton: false,
-                buttons: {
-                    cancel: {
-                        label: "<i class='fa-solid fa-times'></i> {{ trans('cancel') }}"
-                    },
-                    confirm: {
-                        label: "<i class='fa-solid fa-check'></i> {{ trans('delete') }}",
-                        className: 'btn-danger'
-                    }
-                },
-                callback: function (result) {
-                    if (result) {
-                        animateSpinner('add');
-                        document.main_form.action.value = 'delete';
-                        document.main_form.submit();
-                    }
-                }
-            });
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteOptionsModal'));
+            
+            document.getElementById('confirmDeleteOptionsBtn').onclick = function() {
+                animateSpinner('add');
+                document.main_form.action.value = 'delete';
+                document.main_form.submit();
+            };
+            
+            deleteModal.show();
         }
     </script>
 {% endblock %}
