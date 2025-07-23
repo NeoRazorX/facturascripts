@@ -68,6 +68,9 @@ class NewMail
     /** @var PHPMailer */
     protected $mail;
 
+    /** @var array */
+    private static $mailer = ['mail' => 'Mail', 'sendmail' => 'SendMail', 'smtp' => 'SMTP'];
+
     /** @var BaseBlock[] */
     protected $mainBlocks = [];
 
@@ -126,6 +129,15 @@ class NewMail
 
         $this->signature = Tools::settings('email', 'signature', '');
         $this->verificode = Tools::randomString(20);
+    }
+
+    public static function addMailer(string $key, string $name): void
+    {
+        if (array_key_exists($key, self::$mailer)) {
+            return;
+        }
+
+        self::$mailer[$key] = $name;
     }
 
     /**
@@ -279,6 +291,19 @@ class NewMail
         }
 
         return $addresses;
+    }
+
+    public static function getMailer(): array
+    {
+        if (false === function_exists('mail')) {
+            unset(self::$mailer['mail']);
+        }
+
+        if (false === ini_get('sendmail_path')) {
+            unset(self::$mailer['sendmail']);
+        }
+
+        return self::$mailer;
     }
 
     public static function getTemplate(): string

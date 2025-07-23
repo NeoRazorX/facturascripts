@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,7 +48,7 @@ class ListFacturaCliente extends ListBusinessDocument
         return $data;
     }
 
-    protected function createViews()
+    protected function createViews(): void
     {
         // listado de facturas de cliente
         $this->createViewSales('ListFacturaCliente', 'FacturaCliente', 'invoices');
@@ -68,7 +68,7 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->createViewRefunds();
     }
 
-    protected function createViewReceipts(string $viewName = 'ListReciboCliente')
+    protected function createViewReceipts(string $viewName = 'ListReciboCliente'): void
     {
         $this->addView($viewName, 'ReciboCliente', 'receipts', 'fa-solid fa-dollar-sign')
             ->addOrderBy(['codcliente'], 'customer-code')
@@ -76,7 +76,8 @@ class ListFacturaCliente extends ListBusinessDocument
             ->addOrderBy(['fechapago'], 'payment-date')
             ->addOrderBy(['vencimiento'], 'expiration', 2)
             ->addOrderBy(['importe'], 'amount')
-            ->addSearchFields(['codigofactura', 'observaciones']);
+            ->addSearchFields(['codigofactura', 'observaciones'])
+            ->setSettings('btnNew', false);
 
         // filtros
         $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
@@ -105,17 +106,16 @@ class ListFacturaCliente extends ListBusinessDocument
 
         // botones
         $this->addButtonPayReceipt($viewName);
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
     }
 
-    protected function createViewRefunds(string $viewName = 'ListFacturaCliente-rect')
+    protected function createViewRefunds(string $viewName = 'ListFacturaCliente-rect'): void
     {
         $this->addView($viewName, 'FacturaCliente', 'refunds', 'fa-solid fa-share-square')
             ->addSearchFields(['codigo', 'codigorect', 'numero2', 'observaciones'])
             ->addOrderBy(['fecha', 'idfactura'], 'date', 2)
-            ->addOrderBy(['total'], 'total');
+            ->addOrderBy(['total'], 'total')
+            ->disableColumn('original', false)
+            ->setSettings('btnNew', false);
 
         // filtro de fecha
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
@@ -127,19 +127,15 @@ class ListFacturaCliente extends ListBusinessDocument
                 'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
             ]
         ]);
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
-
-        // mostramos la columna original
-        $this->views[$viewName]->disableColumn('original', false);
     }
 
-    protected function createViewSales(string $viewName, string $modelName, string $label)
+    protected function createViewSales(string $viewName, string $modelName, string $label): void
     {
         parent::createViewSales($viewName, $modelName, $label);
 
-        $this->addSearchFields($viewName, ['codigorect']);
+        $this->listView($viewName)
+            ->addOrderBy(['idfactura'], 'id')
+            ->addSearchFields(['codigorect']);
 
         // filtros
         $i18n = Tools::lang();

@@ -29,7 +29,7 @@
                 <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
             </column>
             <column name="address" numcolumns="6" order="120">
-                <widget type="text" fieldname="direccion" maxlength="100" icon="fa-solid fa-map-marked"/>
+                <widget type="text" fieldname="direccion" maxlength="200" icon="fa-solid fa-map-marked"/>
             </column>
             <column name="phone" numcolumns="2" order="130">
                 <widget type="text" fieldname="telefono" maxlength="30" icon="fa-solid fa-phone"/>
