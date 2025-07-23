@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -76,6 +76,48 @@ class EditUser extends EditController
         return $user->nick === $this->user->nick;
     }
 
+    protected function authentication2factorAction(): bool
+    {
+        $user = $this->getModel();
+        if (false === $this->validateFormToken()) {
+            return false;
+        } elseif (false === $this->allowUpdate()) {
+            Tools::log()->error('not-allowed-modify');
+            return false;
+        } elseif (false === $user->loadFromCode($this->request->get('code'))) {
+            Tools::log()->error('record-not-found');
+            return false;
+        } elseif ($user->two_factor_enabled) {
+            Tools::log()->error('two-factor-authentication-already-enabled', ['%nick%' => $user->nick]);
+            return false;
+        }
+
+        // Obtener el código TOTP enviado en la solicitud
+        $totpCode = $this->request->request->get('code_totp');
+        if (empty($totpCode)) {
+            Tools::log()->error('totp-code-not-received');
+            return false;
+        }
+
+        // Validar el código TOTP
+        if (false === TwoFactorManager::verifyCode($user->two_factor_secret_key, $totpCode)) {
+            Tools::log()->error('incorrect-totp-code');
+            return false;
+        }
+
+        // Activar la autenticación de dos factores y guardar el estado
+        $user->two_factor_enabled = true;
+        if (false === $user->save()) {
+            Tools::log()->error("error-saving two-factor-status-for-user", ['%nick%' => $user->nick]);
+            return false;
+        }
+
+        Tools::log()->info("totp-code-correct-two-step-authentication-has-been-activated-for-the-user", [
+            '%nick%' => $user->nick
+        ]);
+        return true;
+    }
+
     /**
      * Load views
      */
@@ -146,11 +188,49 @@ class EditUser extends EditController
             ->disableColumn('user', true);
     }
 
+    protected function deauthentication2factorAction(): bool
+    {
+        $user = $this->getModel();
+        if (false === $this->validateFormToken()) {
+            return false;
+        } elseif (false === $this->allowUpdate()) {
+            Tools::log()->error('not-allowed-modify');
+            return false;
+        } elseif (false === $user->loadFromCode($this->request->get('code'))) {
+            Tools::log()->error('record-not-found');
+            return false;
+        } elseif (false === $user->two_factor_enabled) {
+            Tools::log()->error('two-factor-authentication-already-disabled', ['%nick%' => $user->nick]);
+            return false;
+        }
+
+        // Disable two-factor authentication
+        $user->two_factor_enabled = false;
+        if (false === $user->save()) {
+            Tools::log()->error("error-saving two-factor-status-for-user", ['%nick%' => $user->nick]);
+            return false;
+        }
+
+        Tools::log()->info("two-step-authentication-has-been-deactivated-for-the-user", ['%nick%' => $user->nick]);
+        return true;
+    }
+
     protected function deleteAction(): bool
     {
         // only admin can delete users
         $this->permissions->allowDelete = $this->user->admin;
         return parent::deleteAction();
+    }
+
+    protected function execPreviousAction($action)
+    {
+        if ($action === 'authentication2factor') {
+            return $this->authentication2factorAction();
+        } elseif ($action === 'deauthentication2factor') {
+            return $this->deauthentication2factorAction();
+        }
+
+        return parent::execPreviousAction($action);
     }
 
     protected function editAction(): bool
@@ -178,13 +258,6 @@ class EditUser extends EditController
         }
 
         return $result;
-    }
-
-    protected function insertAction(): bool
-    {
-        // only admin can create users
-        $this->permissions->allowUpdate = $this->user->admin;
-        return parent::insertAction();
     }
 
     /**
@@ -225,53 +298,11 @@ class EditUser extends EditController
         return $pageList;
     }
 
-    protected function execAfterAction($action)
+    protected function insertAction(): bool
     {
-        if ($action === 'modal2fa') {
-            // Obtener el código TOTP enviado en la solicitud
-            $totpCode = $this->request->request->get('codetime');
-
-            // Validar que el código no esté vacío
-            if (empty($totpCode)) {
-                Tools::log()->error('totp-code-not-received');
-                return parent::execAfterAction($action);
-            }
-
-            // Obtener el modelo de usuario para validar el TOTP
-            $userModel = $this->views['EditUser']->model;
-
-            // Validar el código TOTP
-            if ($this->validateTotpCode($userModel, $totpCode)) {
-                // Activar la autenticación de dos factores y guardar el estado
-                $userModel->two_factor_enabled = true;
-                if ($userModel->save()) {
-                    Tools::log()->info("totp-code-correct-two-step-authentication-has-been-activated-for-the-user", ['%nick%' => $userModel->nick]);
-                } else {
-                    Tools::log()->error("error-saving two-factor-status-for-user", ['%nick%' => $userModel->nick]);
-                }
-            } else {
-                Tools::log()->error('incorrect-totp-code.');
-            }
-        }
-
-        return parent::execAfterAction($action);
-    }
-
-    /**
-     * Valida el código TOTP proporcionado por el usuario.
-     *
-     * @param User $userModel El modelo del usuario.
-     * @param string $totpCode El código TOTP introducido.
-     * @return bool Verdadero si el código es válido, falso en caso contrario.
-     */
-    private function validateTotpCode(User $userModel, string $totpCode): bool
-    {
-        if (empty($userModel->two_factor_secret_key)) {
-            Tools::log()->error("El usuario con nick {$userModel->nick} no tiene una clave secreta de TOTP configurada.");
-            return false;
-        }
-
-        return TwoFactorManager::verifyCode($userModel->two_factor_secret_key, $totpCode);
+        // only admin can create users
+        $this->permissions->allowUpdate = $this->user->admin;
+        return parent::insertAction();
     }
 
     /**
@@ -298,7 +329,7 @@ class EditUser extends EditController
                 $this->loadLanguageValues();
 
                 // guarda el usuario si no tiene clave secreta de dos factores
-                if (empty($view->model->two_factor_secret_key)) {
+                if ($view->model->exists() && empty($view->model->two_factor_secret_key)) {
                     $view->model->save();
                 }
 
@@ -326,6 +357,12 @@ class EditUser extends EditController
                     new DataBaseWhere('nick', null, 'IS', 'OR'),
                 ];
                 $view->loadData('', $where);
+                break;
+
+            case 'UserTwoFactor':
+                if (empty($this->getViewModelValue($mvn, 'two_factor_secret_key'))) {
+                    $this->tab($viewName)->setSettings('active', false);
+                }
                 break;
         }
     }
