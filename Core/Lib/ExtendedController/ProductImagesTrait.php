@@ -65,7 +65,9 @@ trait ProductImagesTrait
             }
 
             try {
-                $uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName());
+                $folder = Tools::folder('MyFiles');
+                Tools::folderCheckOrCreate($folder);
+                $uploadFile->move($folder, $uploadFile->getClientOriginalName());
                 $idfile = $this->createAttachedFile($uploadFile->getClientOriginalName());
                 if (empty($idfile)) {
                     Tools::log()->error('record-save-error');
