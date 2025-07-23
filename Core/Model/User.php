@@ -26,8 +26,12 @@ use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Agente as DinAgente;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
+use FacturaScripts\Dinamic\Model\Role as DinRole;
+use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
+use FacturaScripts\Dinamic\Model\RoleUser as DinRoleUser;
 
 /**
  * Usuario de FacturaScripts.
@@ -107,17 +111,30 @@ class User extends ModelClass
             return false;
         }
 
-        $roleUser = new RoleUser();
-        $roleUser->codrole = $code;
-        $roleUser->nick = $this->nick;
-        if (false === $roleUser->save()) {
+        // comprobamos si el usuario ya tiene el rol
+        foreach ($this->getRoles() as $role) {
+            if ($role->codrole === $code) {
+                return true;
+            }
+        }
+
+        // comprobamos si el rol existe
+        $role = new DinRole();
+        if (false === $role->loadFromCode($code)) {
+            Tools::log()->error('role-not-found', ['%code%' => $code]);
+            return false;
+        }
+
+        // añadimos el rol al usuario
+        if (false === $role->addUser($this->nick)) {
+            Tools::log()->error('cant-add-role-to-user', ['%nick%' => $this->nick, '%role%' => $code]);
             return false;
         }
 
         // si el usuario no tiene página de inicio, la ponemos
         if (empty($this->homepage)) {
-            foreach ($roleUser->getRoleAccess() as $roleAccess) {
-                $this->homepage = $roleAccess->pagename;
+            foreach ($role->getAccesses() as $access) {
+                $this->homepage = $access->pagename;
                 if ('List' == substr($this->homepage, 0, 4)) {
                     break;
                 }
@@ -151,7 +168,7 @@ class User extends ModelClass
         }
 
         // si no es admin, comprobamos si tiene acceso a la página
-        foreach (RoleAccess::allFromUser($this->nick, $pageName) as $access) {
+        foreach (DinRoleAccess::allFromUser($this->nick, $pageName) as $access) {
             if ($access->can($permission)) {
                 return true;
             }
@@ -184,12 +201,17 @@ class User extends ModelClass
         return parent::delete();
     }
 
+    /**
+     * Devuelve los roles asignados al usuario.
+     *
+     * @return Role[]
+     */
     public function getRoles(): array
     {
         $roles = [];
 
         $where = [new DataBaseWhere('nick', $this->nick)];
-        foreach (RoleUser::all($where, [], 0, 0) as $role) {
+        foreach (DinRoleUser::all($where, [], 0, 0) as $role) {
             $roles[] = $role->getRole();
         }
 
@@ -210,6 +232,51 @@ class User extends ModelClass
         return $this->two_factor_enabled && !empty($this->two_factor_secret_key) ?
             TwoFactorManager::getQRCodeImage($this->getTwoFactorUrl()) :
             '';
+    }
+
+    /**
+     * Activa la autenticación de dos factores para el usuario.
+     *
+     * @return string La clave secreta generada para configurar la aplicación TOTP.
+     */
+    public function enableTwoFactor(): string
+    {
+        if ($this->two_factor_enabled) {
+            return $this->two_factor_secret_key;
+        }
+
+        $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
+        $this->two_factor_enabled = true;
+
+        return $this->two_factor_secret_key;
+    }
+
+    /**
+     * Desactiva la autenticación de dos factores para el usuario.
+     *
+     * @return bool Verdadero si se desactivó correctamente.
+     */
+    public function disableTwoFactor(): bool
+    {
+        $this->two_factor_enabled = false;
+        $this->two_factor_secret_key = null;
+
+        return $this->save();
+    }
+
+    /**
+     * Verifica un código TOTP proporcionado por el usuario.
+     *
+     * @param string $code El código TOTP a verificar.
+     * @return bool Verdadero si el código es válido.
+     */
+    public function verifyTwoFactorCode(string $code): bool
+    {
+        if (!$this->two_factor_enabled || empty($this->two_factor_secret_key)) {
+            return false;
+        }
+
+        return TwoFactorManager::verifyCode($this->two_factor_secret_key, $code);
     }
 
     public function install(): string
@@ -243,6 +310,24 @@ class User extends ModelClass
         return 'nick';
     }
 
+    public function removeRole(?string $code): bool
+    {
+        if (empty($code)) {
+            return false;
+        }
+
+        // comprobamos si el usuario tiene el rol
+        foreach ($this->getRoles() as $role) {
+            if ($role->codrole === $code) {
+                // eliminamos el rol del usuario
+                return $role->removeUser($this->nick);
+            }
+        }
+
+        Tools::log()->error('role-not-found', ['%code%' => $code]);
+        return false;
+    }
+
     public function setPassword($value): bool
     {
         // si la contraseña tiene menos de 8 caracteres, o no tiene números o no tiene letras, devolvemos false
@@ -262,7 +347,7 @@ class User extends ModelClass
 
     public function test(): bool
     {
-        $this->nick = trim($this->nick);
+        $this->nick = trim($this->nick ?? '');
         if (1 !== preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
             Tools::log()->error(
                 'invalid-alphanumeric-code',
@@ -365,7 +450,7 @@ class User extends ModelClass
             return true;
         }
 
-        $agent = new Agente();
+        $agent = new DinAgente();
         if (false === $agent->loadFromCode($this->codagente)) {
             $this->codagente = null;
         }
