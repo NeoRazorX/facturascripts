@@ -114,7 +114,7 @@ class Calculator
             }
 
             $pvpTotal = $line->pvptotal * (100 - $doc->dtopor1) / 100 * (100 - $doc->dtopor2) / 100;
-            if (empty($pvpTotal)) {
+            if (empty($line->pvptotal)) {
                 continue;
             }
 

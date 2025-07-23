@@ -27,10 +27,10 @@ use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\Divisa;
-use FacturaScripts\Dinamic\Model\User;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Dinamic\Model\User;
 
 /**
  * Description of BusinessDocument
@@ -314,12 +314,12 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public function install(): string
     {
         // needed dependencies
-        new User();
         new Serie();
         new Ejercicio();
         new Almacen();
         new Divisa();
         new FormaPago();
+        new User();
 
         return parent::install();
     }

@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -64,6 +65,41 @@ final class AlmacenTest extends TestCase
                 $this->assertFalse($row->delete(), 'warehouse-default-cant-delete');
                 break;
             }
+        }
+    }
+
+    public function testPropertiesLength(): void
+    {
+        // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
+        $campos = [
+            'apartado'   => [10, 11],
+            'ciudad'     => [100, 101],
+            'codpais'    => [20, 21],
+            'codalmacen' => [4, 5],
+            'codpostal'  => [10, 11],
+            'direccion'  => [200, 201],
+            'nombre'     => [100, 101],
+            'provincia'  => [100, 101],
+            'telefono'   => [30, 31],
+        ];
+
+        foreach ($campos as $campo => [$valido, $invalido]) {
+            // Creamos un nuevo almacén
+            $warehouse = new Almacen();
+
+            // campo obligatorio (not null)
+            $warehouse->nombre = 'Test Warehouse with new code';
+
+            // Asignamos el valor inválido en el campo a probar
+            $warehouse->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($warehouse->save(), "can-save-almacen-bad-{$campo}");
+
+            // Corregimos el campo y comprobamos que ahora sí se puede guardar
+            $warehouse->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($warehouse->save(), "cannot-save-almacen-fixed-{$campo}");
+
+            // Limpiar
+            $this->assertTrue($warehouse->delete(), "cannot-delete-almacen-{$campo}");
         }
     }
 
