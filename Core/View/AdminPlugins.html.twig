@@ -134,9 +134,9 @@
                                 {{ trans('select-plugin-zip-file') }}<br/>
                                 <input type="file" name="plugin[]" accept="application/zip" multiple required/>
                                 {% if fsc.getMaxFileUpload() >= 99 %}
-                                    <small class="form-text text-muted">
+                                    <div class="form-text">
                                         {{ trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}
-                                    </small>
+                                    </div>
                                 {% endif %}
                             </div>
                             <div class="text-end mt-5">
@@ -160,26 +160,59 @@
     {% if config('disable_rm_plugins', false) == false %}
         <script>
             function deletePlugin(pluginName) {
-                bootbox.confirm({
-                    title: "{{ trans('confirm-delete')|raw }}",
-                    message: "{{ trans('are-you-sure') }}",
-                    closeButton: false,
-                    buttons: {
-                        cancel: {
-                            label: "<i class='fa-solid fa-times'></i> {{ trans('cancel') }}"
-                        },
-                        confirm: {
-                            label: "<i class='fa-solid fa-check'></i> {{ trans('delete') }}",
-                            className: 'btn-danger'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            animateSpinner('add');
-                            window.location = "{{ fsc.url() }}?action=remove" + "\u0026" + "plugin=" + pluginName
-                                + "\u0026" + "multireqtoken={{ formToken(false) }}";
-                        }
-                    }
+                // Si ya existe un modal con el ID 'dynamicAdminPluginsDeleteModal', lo eliminamos
+                const existingModal = document.getElementById('dynamicAdminPluginsDeleteModal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+
+                const adminPluginsDeleteCancel = "{{ trans('cancel') }}";
+                const adminPluginsDeleteConfirm = "{{ trans('delete') }}";
+                const adminPluginsDeleteMessage = "{{ trans('are-you-sure') }}";
+                const adminPluginsDeleteTitle = "{{ trans('confirm-delete')|raw }}";
+
+                // Crear el HTML del modal como string usando los parámetros
+                const modalHTML = `
+                    <div class="modal fade" id="dynamicAdminPluginsDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="dynamicAdminPluginsDeleteModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="dynamicAdminPluginsDeleteModalLabel">${adminPluginsDeleteTitle}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            ${adminPluginsDeleteMessage}
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-spin-action" data-bs-dismiss="modal">${adminPluginsDeleteCancel}</button>
+                            <button type="button" id="saveDynamicAdminPluginsDeleteModalBtn" class="btn btn-danger btn-spin-action">${adminPluginsDeleteConfirm}</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+
+                // Insertar el modal en el body
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+                // Crear una instancia del modal y mostrarlo
+                const myModal = new bootstrap.Modal(document.getElementById('dynamicAdminPluginsDeleteModal'));
+                myModal.show();
+
+                // Añadir comportamiento al botón de "Guardar cambios"
+                document.getElementById('saveDynamicAdminPluginsDeleteModalBtn').addEventListener('click', function () {
+                    // Ejecutar la acción de eliminar
+                    animateSpinner('add');
+                    window.location = "{{ fsc.url() }}?action=remove" + "\u0026" + "plugin=" + pluginName
+                        + "\u0026" + "multireqtoken={{ formToken(false) }}";
+
+                    // Cierra el modal
+                    myModal.hide();
+                });
+
+                // Eliminar el modal del DOM cuando se cierra
+                document.getElementById('dynamicAdminPluginsDeleteModal').addEventListener('hidden.bs.modal', function () {
+                    document.getElementById('dynamicAdminPluginsDeleteModal').remove();
                 });
             }
 
