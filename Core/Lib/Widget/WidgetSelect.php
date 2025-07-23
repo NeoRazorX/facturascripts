@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-5 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -338,7 +338,7 @@ class WidgetSelect extends BaseWidget
         $this->fieldcode = $child['fieldcode'] ?? 'id';
         $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
-        $this->limit = $child['limit'] ?? CodeModel::ALL_LIMIT;
+        $this->limit = $child['limit'] ?? CodeModel::getlimit();
         if ($loadData && $this->source) {
             static::$codeModel::setLimit($this->limit);
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
