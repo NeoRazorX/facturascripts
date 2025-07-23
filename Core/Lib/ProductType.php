@@ -48,8 +48,8 @@ class ProductType
             self::NORMAL => 'normal',
             self::SECOND_HAND => 'second-hand',
             self::SERVICE => 'service',
-            self::TRAVEL => 'travel',
             self::LOCAL_BUSINESS_RENTAL => 'local-business-rental',
+            self::TRAVEL => 'travel',
         ];
 
         return array_merge($defaultTypes, self::$all);
