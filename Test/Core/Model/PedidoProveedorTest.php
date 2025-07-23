@@ -25,6 +25,7 @@ use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoProveedor;
 use FacturaScripts\Core\Model\Stock;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -232,6 +233,43 @@ final class PedidoProveedorTest extends TestCase
 
         // eliminamos el producto
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
+    }
+
+    public function testPropertiesLength(): void
+    {
+        // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
+        $campos = [
+            'cifnif'       => [30, 31],
+            'codigo'       => [20, 21],
+            'nombre'       => [100, 101],
+            'numproveedor' => [50, 51],
+            'operacion'    => [20, 21],
+        ];
+
+        // creamos un proveedor
+        $subject = $this->getRandomSupplier();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        foreach ($campos as $campo => [$valido, $invalido]) {
+            // Creamos un nuevo almacén
+            $doc = new PedidoProveedor();
+
+            // campo obligatorio (not null)
+            $doc->setSubject($subject);
+
+            // Asignamos el valor inválido en el campo a probar
+            $doc->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($doc->save(), "can-save-pedidoCliente-bad-{$campo}");
+
+            // Corregimos el campo y comprobamos que ahora sí se puede guardar
+            $doc->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($doc->save(), "cannot-save-pedidoCliente-fixed-{$campo}");
+
+            // Limpiar
+            $this->assertTrue($doc->delete(), "cannot-delete-pedidoCliente-{$campo}");
+        }
+
+        $this->assertTrue($subject->delete(), 'can-not-delete-cliente');
     }
 
     public function testSecondCompany()

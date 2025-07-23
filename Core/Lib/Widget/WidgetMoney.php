@@ -31,9 +31,13 @@ class WidgetMoney extends WidgetNumber
 {
     protected $coddivisa;
 
-    public function showTableTotals(): bool
+    /** @param array $data */
+    public function __construct($data)
     {
-        return true;
+        parent::__construct($data);
+        if (false === isset($data['totals'])) {
+            $this->showTotals = true;
+        }
     }
 
     /** @param object $model */

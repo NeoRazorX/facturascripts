@@ -163,7 +163,7 @@ abstract class ListBusinessDocument extends ListController
         $this->setSettings($viewName, 'megasearch', false);
     }
 
-    protected function createViewPurchases(string $viewName, string $modelName, string $label)
+    protected function createViewPurchases(string $viewName, string $modelName, string $label): void
     {
         $this->addView($viewName, $modelName, $label, 'fa-solid fa-copy')
             ->addOrderBy(['codigo'], 'code')
@@ -183,7 +183,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addColorStatus($viewName, $modelName);
     }
 
-    protected function createViewSales(string $viewName, string $modelName, string $label)
+    protected function createViewSales(string $viewName, string $modelName, string $label): void
     {
         $this->addView($viewName, $modelName, $label, 'fa-solid fa-copy')
             ->addOrderBy(['codigo'], 'code')

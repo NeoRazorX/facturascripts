@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
 use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Core\Model\Base\ModelClass;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
-use FacturaScripts\Core\Lib\TwoFactorManager;
 
 /**
  * Usuario de FacturaScripts.
@@ -188,9 +188,8 @@ class User extends ModelClass
     {
         $roles = [];
 
-        $roleUser = new RoleUser();
         $where = [new DataBaseWhere('nick', $this->nick)];
-        foreach ($roleUser->all($where, [], 0, 0) as $role) {
+        foreach (RoleUser::all($where, [], 0, 0) as $role) {
             $roles[] = $role->getRole();
         }
 
@@ -199,8 +198,8 @@ class User extends ModelClass
 
     public function getTwoFactorUrl(): string
     {
-        if (empty($this->two_factor_secret_key)) {
-            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
+        if (!$this->two_factor_enabled || empty($this->two_factor_secret_key)) {
+            return '';
         }
 
         return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->two_factor_secret_key);
@@ -208,7 +207,9 @@ class User extends ModelClass
 
     public function getTwoFactorQR(): string
     {
-        return TwoFactorManager::getQRCodeImage($this->getTwoFactorUrl());
+        return $this->two_factor_enabled && !empty($this->two_factor_secret_key) ?
+            TwoFactorManager::getQRCodeImage($this->getTwoFactorUrl()) :
+            '';
     }
 
     public function install(): string
@@ -295,10 +296,6 @@ class User extends ModelClass
             $this->level = 99;
         } elseif ($this->level === null) {
             $this->level = 0;
-        }
-
-        if (empty($this->two_factor_secret_key)) {
-            $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
         }
 
         return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();
