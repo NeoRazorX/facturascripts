@@ -200,7 +200,7 @@ class EditUser extends EditController
             Tools::log()->error('record-not-found');
             return false;
         } elseif (false === $user->two_factor_enabled) {
-            Tools::log()->error('two-factor-authentication-already-enabled', ['%nick%' => $user->nick]);
+            Tools::log()->error('two-factor-authentication-already-disabled', ['%nick%' => $user->nick]);
             return false;
         }
 
