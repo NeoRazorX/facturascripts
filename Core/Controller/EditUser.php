@@ -101,7 +101,7 @@ class EditUser extends EditController
 
         // Validar el código TOTP
         if (false === TwoFactorManager::verifyCode($user->two_factor_secret_key, $totpCode)) {
-            Tools::log()->error('incorrect-totp-code.');
+            Tools::log()->error('incorrect-totp-code');
             return false;
         }
 
