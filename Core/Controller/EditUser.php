@@ -22,7 +22,6 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Page;
@@ -39,8 +38,7 @@ class EditUser extends EditController
 {
     public function getImageUrl(): string
     {
-        $mvn = $this->getMainViewName();
-        return $this->views[$mvn]->model->gravatar();
+        return $this->getModel()->gravatar();
     }
 
     public function getModelClassName(): string
@@ -76,74 +74,14 @@ class EditUser extends EditController
         return $user->nick === $this->user->nick;
     }
 
-    protected function authentication2factorAction(): bool
-    {
-        $user = $this->getModel();
-        if (false === $this->validateFormToken()) {
-            return false;
-        } elseif (false === $this->allowUpdate()) {
-            Tools::log()->error('not-allowed-modify');
-            return false;
-        } elseif (false === $user->loadFromCode($this->request->get('code'))) {
-            Tools::log()->error('record-not-found');
-            return false;
-        } elseif ($user->two_factor_enabled) {
-            Tools::log()->error('two-factor-authentication-already-enabled', ['%nick%' => $user->nick]);
-            return false;
-        }
-
-        // Obtener el código TOTP enviado en la solicitud
-        $totpCode = $this->request->request->get('code_totp');
-        if (empty($totpCode)) {
-            Tools::log()->error('totp-code-not-received');
-            return false;
-        }
-
-        // Validar el código TOTP
-        if (false === TwoFactorManager::verifyCode($user->two_factor_secret_key, $totpCode)) {
-            Tools::log()->error('incorrect-totp-code');
-            return false;
-        }
-
-        // Activar la autenticación de dos factores y guardar el estado
-        $user->two_factor_enabled = true;
-        if (false === $user->save()) {
-            Tools::log()->error("error-saving two-factor-status-for-user", ['%nick%' => $user->nick]);
-            return false;
-        }
-
-        Tools::log()->info("totp-code-correct-two-step-authentication-has-been-activated-for-the-user", [
-            '%nick%' => $user->nick
-        ]);
-        return true;
-    }
-
     /**
      * Load views
      */
     protected function createViews()
     {
         parent::createViews();
+
         $this->setTabsPosition('top');
-
-        // disable company column if there is only one company
-        $mvn = $this->getMainViewName();
-        if ($this->empresa->count() < 2) {
-            $this->views[$mvn]->disableColumn('company');
-        }
-
-        // disable warehouse column if there is only one company
-        $almacen = new Almacen();
-        if ($almacen->count() < 2) {
-            $this->views[$mvn]->disableColumn('warehouse');
-        }
-
-        // disable options and print buttons
-        $this->setSettings($mvn, 'btnOptions', false);
-        $this->setSettings($mvn, 'btnPrint', false);
-
-        // add two-factor authentication tab
-        $this->createViewsTwoFactor();
 
         // add roles tab
         if ($this->user->admin) {
@@ -155,11 +93,6 @@ class EditUser extends EditController
 
         // add emails tab
         $this->createViewsEmails();
-    }
-
-    protected function createViewsTwoFactor(string $viewName = 'UserTwoFactor'): void
-    {
-        $this->addHtmlView($viewName, 'Tab\UserTwoFactor', 'User', 'two-factor-auth', 'fa-solid fa-key');
     }
 
     protected function createViewsEmails(string $viewName = 'ListEmailSent'): void
@@ -188,49 +121,12 @@ class EditUser extends EditController
             ->disableColumn('user', true);
     }
 
-    protected function deauthentication2factorAction(): bool
-    {
-        $user = $this->getModel();
-        if (false === $this->validateFormToken()) {
-            return false;
-        } elseif (false === $this->allowUpdate()) {
-            Tools::log()->error('not-allowed-modify');
-            return false;
-        } elseif (false === $user->loadFromCode($this->request->get('code'))) {
-            Tools::log()->error('record-not-found');
-            return false;
-        } elseif (false === $user->two_factor_enabled) {
-            Tools::log()->error('two-factor-authentication-already-disabled', ['%nick%' => $user->nick]);
-            return false;
-        }
-
-        // Disable two-factor authentication
-        $user->two_factor_enabled = false;
-        if (false === $user->save()) {
-            Tools::log()->error("error-saving two-factor-status-for-user", ['%nick%' => $user->nick]);
-            return false;
-        }
-
-        Tools::log()->info("two-step-authentication-has-been-deactivated-for-the-user", ['%nick%' => $user->nick]);
-        return true;
-    }
-
     protected function deleteAction(): bool
     {
         // only admin can delete users
         $this->permissions->allowDelete = $this->user->admin;
+
         return parent::deleteAction();
-    }
-
-    protected function execPreviousAction($action)
-    {
-        if ($action === 'authentication2factor') {
-            return $this->authentication2factorAction();
-        } elseif ($action === 'deauthentication2factor') {
-            return $this->deauthentication2factorAction();
-        }
-
-        return parent::execPreviousAction($action);
     }
 
     protected function editAction(): bool
@@ -260,6 +156,32 @@ class EditUser extends EditController
         return $result;
     }
 
+    protected function execAfterAction($action)
+    {
+        switch ($action) {
+            case 'two-factor-enable':
+                $this->twoFactorEnableAction();
+                return;
+        }
+
+        parent::execAfterAction($action);
+    }
+
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'two-factor-disable':
+                $this->twoFactorDisableAction();
+                return true;
+
+            case 'two-factor-verify':
+                $this->twoFactorVerifyAction();
+                return true;
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
     /**
      * Return a list of pages where user has access.
      *
@@ -270,9 +192,9 @@ class EditUser extends EditController
     protected function getUserPages(User $user): array
     {
         $pageList = [];
+
         if ($user->admin) {
-            $pageModel = new Page();
-            foreach ($pageModel->all([], ['name' => 'ASC'], 0, 0) as $page) {
+            foreach (Page::all([], ['name' => 'ASC'], 0, 0) as $page) {
                 if (false === $page->showonmenu) {
                     continue;
                 }
@@ -283,8 +205,7 @@ class EditUser extends EditController
             return $pageList;
         }
 
-        $roleUserModel = new RoleUser();
-        foreach ($roleUserModel->all([new DataBaseWhere('nick', $user->nick)]) as $roleUser) {
+        foreach (RoleUser::all([new DataBaseWhere('nick', $user->nick)]) as $roleUser) {
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
                 $page = $roleAccess->getPage();
                 if (false === $page->exists() || false === $page->showonmenu) {
@@ -302,6 +223,7 @@ class EditUser extends EditController
     {
         // only admin can create users
         $this->permissions->allowUpdate = $this->user->admin;
+
         return parent::insertAction();
     }
 
@@ -325,19 +247,51 @@ class EditUser extends EditController
 
             case 'EditUser':
                 parent::loadData($viewName, $view);
-                $this->loadHomepageValues();
-                $this->loadLanguageValues();
-
-                // guarda el usuario si no tiene clave secreta de dos factores
-                if ($view->model->exists() && empty($view->model->two_factor_secret_key)) {
-                    $view->model->save();
-                }
 
                 if (false === $this->allowUpdate()) {
                     $this->setTemplate('Error/AccessDenied');
-                } elseif ($view->model->nick == $this->user->nick) {
+                    break;
+                }
+
+                $this->loadHomepageValues();
+                $this->loadLanguageValues();
+
+                // disable company column if there is only one company
+                if ($this->empresa->count() < 2) {
+                    $view->disableColumn('company');
+                }
+
+                // disable warehouse column if there is only one company
+                $almacen = new Almacen();
+                if ($almacen->count() < 2) {
+                    $view->disableColumn('warehouse');
+                }
+
+                // disable options and print buttons
+                $view->setSettings('btnOptions', false)
+                    ->setSettings('btnPrint', false);
+
+                if ($view->model->nick == $this->user->nick) {
                     // prevent user self-destruction
-                    $this->setSettings($viewName, 'btnDelete', false);
+                    $view->setSettings('btnDelete', false);
+                }
+
+                // two-factor authentication
+                if ($view->model->two_factor_enabled) {
+                    $this->addButton($viewName, [
+                        'action' => 'two-factor-disable',
+                        'color' => 'warning',
+                        'confirm' => true,
+                        'icon' => 'fa-solid fa-shield-halved',
+                        'label' => 'two-factor-auth-disable',
+                    ]);
+                } else {
+                    $this->addButton($viewName, [
+                        'action' => 'two-factor-enable',
+                        'color' => 'info',
+                        'icon' => 'fa-solid fa-shield-halved',
+                        'label' => 'two-factor-auth-enable',
+                    ]);
                 }
 
                 // if the user is admin, hide the EditRoleUser tab
@@ -357,12 +311,6 @@ class EditUser extends EditController
                     new DataBaseWhere('nick', null, 'IS', 'OR'),
                 ];
                 $view->loadData('', $where);
-                break;
-
-            case 'UserTwoFactor':
-                if (empty($this->getViewModelValue($mvn, 'two_factor_secret_key'))) {
-                    $this->tab($viewName)->setSettings('active', false);
-                }
                 break;
         }
     }
@@ -398,5 +346,95 @@ class EditUser extends EditController
 
             $columnLangCode->widget->setValuesFromArray($langs, false);
         }
+    }
+
+    protected function twoFactorDisableAction(): void
+    {
+        if (!$this->allowUpdate()) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (!$this->validateFormToken()) {
+            return;
+        }
+
+        // load user from code
+        $user = new User();
+        $code = $this->request->request->get('code');
+        if (false === $user->loadFromCode($code)) {
+            Tools::log()->error('record-not-found');
+            return;
+        }
+
+        // disable two-factor authentication
+        if (false === $user->disableTwoFactor()) {
+            Tools::log()->error('record-save-error');
+            return;
+        }
+
+        Tools::log()->notice('two-factor-auth-disabled');
+    }
+
+    protected function twoFactorEnableAction(): void
+    {
+        if (!$this->allowUpdate()) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (!$this->validateFormToken()) {
+            return;
+        }
+
+        $user = $this->getModel();
+        if (false === $user->exists()) {
+            Tools::log()->error('record-not-found');
+            return;
+        }
+
+        if (empty($user->enableTwoFactor())) {
+            Tools::log()->error('record-save-error');
+            return;
+        }
+
+        // load the two-factor setup template
+        $this->setTemplate('EditUserTwoFactor');
+    }
+
+    protected function twoFactorVerifyAction(): void
+    {
+        if (!$this->allowUpdate()) {
+            Tools::log()->warning('not-allowed-update');
+            return;
+        } elseif (!$this->validateFormToken()) {
+            return;
+        }
+
+        // load user from code
+        $user = new User();
+        $code = $this->request->get('code');
+        if (false === $user->loadFromCode($code)) {
+            Tools::log()->error('record-not-found');
+            return;
+        }
+
+        // set the two-factor secret key
+        $secretKey = $this->request->request->get('two_factor_secret_key', '');
+        if (empty($user->enableTwoFactor($secretKey))) {
+            Tools::log()->error('two-factor-secret-key-empty');
+            return;
+        }
+
+        // verify the two-factor code
+        $twoFactorCode = $this->request->request->get('two_factor_code', '');
+        if (false === $user->verifyTwoFactorCode($twoFactorCode)) {
+            Tools::log()->error('two-factor-code-invalid');
+            return;
+        }
+
+        // save the user with two-factor enabled
+        if (false === $user->save()) {
+            Tools::log()->error('record-save-error');
+            return;
+        }
+
+        Tools::log()->notice('two-factor-auth-enabled');
     }
 }

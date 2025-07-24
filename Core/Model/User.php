@@ -185,7 +185,7 @@ class User extends ModelClass
         $this->creationdate = Tools::date();
         $this->enabled = true;
         $this->idempresa = Tools::settings('default', 'idempresa', 1);
-        $this->langcode = FS_LANG;
+        $this->langcode = Tools::config('lang');
         $this->level = self::DEFAULT_LEVEL;
         $this->two_factor_enabled = false;
     }
@@ -199,6 +199,34 @@ class User extends ModelClass
         }
 
         return parent::delete();
+    }
+
+    /**
+     * Desactiva la autenticación de dos factores para el usuario.
+     */
+    public function disableTwoFactor(): void
+    {
+        $this->two_factor_enabled = false;
+        $this->two_factor_secret_key = null;
+    }
+
+    /**
+     * Activa la autenticación de dos factores para el usuario.
+     *
+     * @return string La clave secreta generada para configurar la aplicación TOTP.
+     */
+    public function enableTwoFactor(string $key = ''): string
+    {
+        if ($this->two_factor_enabled) {
+            return $this->two_factor_secret_key;
+        }
+
+        $this->two_factor_enabled = true;
+        $this->two_factor_secret_key = empty($key) ?
+            TwoFactorManager::getSecretKey() :
+            $key;
+
+        return $this->two_factor_secret_key;
     }
 
     /**
@@ -220,7 +248,11 @@ class User extends ModelClass
 
     public function getTwoFactorUrl(): string
     {
-        return TwoFactorManager::getQRCodeUrl('FacturaScripts', $this->email, $this->two_factor_secret_key);
+        return TwoFactorManager::getQRCodeUrl(
+            $this->getCompany()->nombrecorto ?? 'FacturaScripts',
+            $this->email,
+            $this->two_factor_secret_key
+        );
     }
 
     public function getTwoFactorQR(): string
@@ -228,51 +260,6 @@ class User extends ModelClass
         return $this->two_factor_enabled && !empty($this->two_factor_secret_key) ?
             TwoFactorManager::getQRCodeImage($this->getTwoFactorUrl()) :
             '';
-    }
-
-    /**
-     * Activa la autenticación de dos factores para el usuario.
-     *
-     * @return string La clave secreta generada para configurar la aplicación TOTP.
-     */
-    public function enableTwoFactor(): string
-    {
-        if ($this->two_factor_enabled) {
-            return $this->two_factor_secret_key;
-        }
-
-        $this->two_factor_secret_key = TwoFactorManager::getSecretKey();
-        $this->two_factor_enabled = true;
-
-        return $this->two_factor_secret_key;
-    }
-
-    /**
-     * Desactiva la autenticación de dos factores para el usuario.
-     *
-     * @return bool Verdadero si se desactivó correctamente.
-     */
-    public function disableTwoFactor(): bool
-    {
-        $this->two_factor_enabled = false;
-        $this->two_factor_secret_key = null;
-
-        return $this->save();
-    }
-
-    /**
-     * Verifica un código TOTP proporcionado por el usuario.
-     *
-     * @param string $code El código TOTP a verificar.
-     * @return bool Verdadero si el código es válido.
-     */
-    public function verifyTwoFactorCode(string $code): bool
-    {
-        if (!$this->two_factor_enabled || empty($this->two_factor_secret_key)) {
-            return false;
-        }
-
-        return TwoFactorManager::verifyCode($this->two_factor_secret_key, $code);
     }
 
     public function install(): string
@@ -286,12 +273,13 @@ class User extends ModelClass
         $email = filter_var($this->nick, FILTER_VALIDATE_EMAIL) ?
             $this->nick :
             Tools::config('initial_email', '');
+        $lang = Tools::config('lang');
 
         Tools::log()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
 
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,email,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
             . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT) . "','" . $email
-            . "',TRUE,TRUE,'1','1','" . FS_LANG . "','Wizard','99');";
+            . "',TRUE,TRUE,'1','1','" . $lang . "','Wizard','99');";
     }
 
     public function newLogkey(string $ipAddress, string $browser = ''): string
@@ -405,6 +393,21 @@ class User extends ModelClass
         }
 
         return false;
+    }
+
+    /**
+     * Verifica un código TOTP proporcionado por el usuario.
+     *
+     * @param string $code El código TOTP a verificar.
+     * @return bool Verdadero si el código es válido.
+     */
+    public function verifyTwoFactorCode(string $code): bool
+    {
+        if (!$this->two_factor_enabled || empty($this->two_factor_secret_key)) {
+            return false;
+        }
+
+        return TwoFactorManager::verifyCode($this->two_factor_secret_key, $code);
     }
 
     protected function testPassword(): bool
