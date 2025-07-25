@@ -230,7 +230,7 @@ abstract class ModelClass
             new static($data);
     }
 
-    public function getOriginal(string $key = null)
+    public function getOriginal(?string $key = null)
     {
         if ($key === null) {
             return $this->original;
@@ -249,7 +249,7 @@ abstract class ModelClass
         return CSVImport::importTableSQL(static::tableName());
     }
 
-    public function isDirty(string $key = null): bool
+    public function isDirty(?string $key = null): bool
     {
         if ($key === null) {
             return $this->attributes !== $this->original;
@@ -597,6 +597,11 @@ abstract class ModelClass
         $inserted = static::table()->insert($this->toArray());
         if (false === $inserted) {
             return false;
+        }
+
+        // Update the attributes with the new id
+        if (empty($this->id())) {
+            $this->{$this->primaryColumn()} = static::$dataBase->lastval();
         }
 
         WorkQueue::send(
