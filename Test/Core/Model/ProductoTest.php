@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Model\Base\ModelCore;
@@ -666,6 +667,34 @@ final class ProductoTest extends TestCase
 
         // comprobamos que se haya actualizado la referencia en el producto
         $this->assertEquals('01', $product->referencia);
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+    }
+
+    public function testExceptionVat()
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // intentamos añadir una excepción de IVA
+        $product->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E1;
+        $this->assertFalse($product->save(), 'product-can-save-with-exception-iva-e1');
+
+        // cambiamos el iva a 0 con una excepción de iva
+        $product->codimpuesto = 'IVA0';
+        $product->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E1;
+        $this->assertTrue($product->save(), 'product-cant-save-with-iva-0');
+
+        // intentamos quitar el impuesto
+        $product->codimpuesto = null;
+        $this->assertFalse($product->save(), 'product-can-save-without-iva');
+
+        // quitamos la excepción de IVA y cambiamos el impuesto
+        $product->excepcioniva = null;
+        $product->codimpuesto = 'IVA21';
+        $this->assertTrue($product->save(), 'product-cant-save-with-iva-21');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');

@@ -33,6 +33,10 @@ class RegimenIVA
     const ES_TAX_EXCEPTION_E4 = 'ES_23_24';
     const ES_TAX_EXCEPTION_E5 = 'ES_25';
     const ES_TAX_EXCEPTION_E6 = 'ES_OTHER';
+    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = 'ES_PASSIVE_SUBJECT';
+    const ES_TAX_EXCEPTION_ART_7 = 'ES_ART_7';
+    const ES_TAX_EXCEPTION_ART_14 = 'ES_ART_14';
+    const ES_TAX_EXCEPTION_LOCATION_RULES = 'ES_LOCATION_RULES';
 
     const TAX_SYSTEM_AGRARIAN = 'Agrario';
     const TAX_SYSTEM_CASH_CRITERIA = 'Caja';
@@ -92,6 +96,10 @@ class RegimenIVA
             self::ES_TAX_EXCEPTION_E4 => 'es-tax-exception-e4',
             self::ES_TAX_EXCEPTION_E5 => 'es-tax-exception-e5',
             self::ES_TAX_EXCEPTION_E6 => 'es-tax-exception-e6',
+            self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT => 'es-tax-exception-passive-subject',
+            self::ES_TAX_EXCEPTION_ART_7 => 'es-tax-exception-art-7',
+            self::ES_TAX_EXCEPTION_ART_14 => 'es-tax-exception-art-14',
+            self::ES_TAX_EXCEPTION_LOCATION_RULES => 'es-tax-exception-location-rules',
         ];
 
         return array_merge($defaultExceptions, self::$exceptions);

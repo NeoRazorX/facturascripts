@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -360,7 +360,38 @@ class Producto extends ModelClass
 
         $this->actualizado = Tools::dateTime();
 
-        return parent::test();
+        return $this->testTax() && parent::test();
+    }
+
+    protected function testTax(): bool
+    {
+        $tax = $this->getTax();
+
+        // si el producto tiene impuesto, y el impuesto es 0, debe tener una excepción de iva
+        if (!empty($this->codimpuesto) && $tax->iva == 0 && empty($this->excepcioniva)) {
+            Tools::log()->warning('product-without-tax-exception', ['%reference%' => $this->referencia]);
+            return false;
+        }
+
+        // si el producto tiene una excepción de iva, debe tener un impuesto a 0
+        if (!empty($this->excepcioniva) && empty($this->codimpuesto) && $tax->iva != 0) {
+            Tools::log()->warning('product-with-tax-exception', ['%reference%' => $this->referencia]);
+            return false;
+        }
+
+        // si el producto tiene una excepción de iva, no puede tener un impuesto distinto a 0
+        if (!empty($this->excepcioniva) && !empty($this->codimpuesto) && $tax->iva != 0) {
+            Tools::log()->warning('product-with-tax-exception-distinct-cero', ['%reference%' => $this->referencia]);
+            return false;
+        }
+
+        // si el producto no tiene una excepción de iva, debe tener un impuesto
+        if (!empty($this->excepcioniva) && empty($this->codimpuesto)) {
+            Tools::log()->warning('product-without-tax', ['%reference%' => $this->referencia]);
+            return false;
+        }
+
+        return true;
     }
 
     /**
