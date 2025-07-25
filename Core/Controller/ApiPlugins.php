@@ -24,8 +24,8 @@ class ApiPlugins extends ApiController
         $plugins = Plugins::list();
         $filter = $this->request->getArray('filter');
         $plugins = $this->applyFilter($plugins, $filter);
-        $orden = $this->request->getArray('sort');
-        $plugins = $this->applyShort($plugins, $orden);
+        $order = $this->request->getArray('sort');
+        $plugins = $this->applyShort($plugins, $order);
 
 
         $this->response->setContent(json_encode(
@@ -33,46 +33,46 @@ class ApiPlugins extends ApiController
         ));
     }
 
-    private function applyFilter(array $plugins, $filtro): array
+    private function applyFilter(array $plugins, $filter): array
     {
-        if (empty($filtro)) {
+        if (empty($filter)) {
             return $plugins;
         }
 
-        $plugins = array_filter($plugins, function ($plugin) use ($filtro) {
+        $plugins = array_filter($plugins, function ($plugin) use ($filter) {
 
-            foreach ($filtro as $filter => $value) {
+            foreach ($filter as $key => $value) {
                 $operator = '=';
-                $field = $filter;
-                if (substr($filter, -3) === '_gt') {
-                    $field = substr($filter, 0, -3);
+                $field = $key;
+                if (substr($key, -3) === '_gt') {
+                    $field = substr($key, 0, -3);
                     $operator = '>';
-                } elseif (substr($filter, -3) === '_lt') {
-                    $field = substr($filter, 0, -3);
+                } elseif (substr($key, -3) === '_lt') {
+                    $field = substr($key, 0, -3);
                     $operator = '<';
-                } elseif (substr($filter, -4) === '_gte') {
-                    $field = substr($filter, 0, -4);
+                } elseif (substr($key, -4) === '_gte') {
+                    $field = substr($key, 0, -4);
                     $operator = '>=';
-                } elseif (substr($filter, -4) === '_lte') {
-                    $field = substr($filter, 0, -4);
+                } elseif (substr($key, -4) === '_lte') {
+                    $field = substr($key, 0, -4);
                     $operator = '<=';
-                } elseif (substr($filter, -4) === '_neq') {
-                    $field = substr($filter, 0, -4);
+                } elseif (substr($key, -4) === '_neq') {
+                    $field = substr($key, 0, -4);
                     $operator = '!=';
-                } elseif (substr($filter, -5) === '_like') {
-                    $field = substr($filter, 0, -5);
+                } elseif (substr($key, -5) === '_like') {
+                    $field = substr($key, 0, -5);
                     $operator = 'LIKE';
-                } elseif (substr($filter, -5) === '_null') {
-                    $field = substr($filter, 0, -5);
+                } elseif (substr($key, -5) === '_null') {
+                    $field = substr($key, 0, -5);
                     $operator = 'IS';
                     $value = null;
-                } elseif (substr($filter, -8) === '_notnull') {
-                    $field = substr($filter, 0, -8);
+                } elseif (substr($key, -8) === '_notnull') {
+                    $field = substr($key, 0, -8);
                     $operator = 'IS NOT';
                     $value = null;
                 }
                 $pluginValue = $plugin->{$field} ?? null;
-                if (!$this->comparar($pluginValue, $value, $operator)) {
+                if (!$this->compare($pluginValue, $value, $operator)) {
                     return false;
                 }
             }
@@ -81,7 +81,7 @@ class ApiPlugins extends ApiController
         return $plugins;
     }
 
-    private function comparar($a, $b, string $operator): bool
+    private function compare($a, $b, string $operator): bool
     {
         switch ($operator) {
             case '>':
@@ -105,16 +105,16 @@ class ApiPlugins extends ApiController
         }
     }
 
-    private function applyShort($plugins, $filtro): array
+    private function applyShort($plugins, $filter): array
     {
-        if (empty($filtro)) {
+        if (empty($filter)) {
             return $plugins;
         }
 
-        usort($plugins, function ($a, $b) use ($filtro) {
-            foreach ($filtro as $filter => $value) {
-                $plugin1 = $a->{$filter};
-                $plugin2 = $b->{$filter};
+        usort($plugins, function ($a, $b) use ($filter) {
+            foreach ($filter as $key => $value) {
+                $plugin1 = $a->{$key};
+                $plugin2 = $b->{$key};
                 if ($plugin1 === $plugin2) {
                     return 0;
                 }
