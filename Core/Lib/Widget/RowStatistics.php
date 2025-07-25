@@ -77,7 +77,8 @@ class RowStatistics extends VisualItem
             return ' ERROR';
         }
 
-        $value = method_exists($controller, $data['function']) ? $controller->{$data['function']}() : '-';
+        $funciones_extensiones = array_column($controller::$extensions, 'name');
+        $value = method_exists($controller, $data['function']) || in_array($data['function'], $funciones_extensiones) ? $controller->{$data['function']}() : '-';
         return ' <a href="' . $link . '"' . $divID . ' class="btn ' . $color . ' ' . $class . ' mb-2">' . $icon . $label . ' ' . $value . '</a>';
     }
 }
