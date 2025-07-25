@@ -26,10 +26,10 @@ namespace FacturaScripts\Core\Lib;
  */
 class OperacionIVA
 {
-    const OPERATION_01 = 'Valor añadido';
-    const OPERATION_02 = 'Ceuta y Melilla';
-    const OPERATION_03 = 'IGIC';
-    const OPERATION_04 = 'Otros';
+    const ES_OPERATION_01 = 'ES_01'; // valor añadido
+    const ES_OPERATION_02 = 'ES_02'; // Ceuta y Melilla
+    const ES_OPERATION_03 = 'ES_03'; // IGIC
+    const ES_OPERATION_99 = 'ES_99'; // otro
 
     /** @var array */
     private static $values = [];
@@ -43,10 +43,10 @@ class OperacionIVA
     public static function all(): array
     {
         $defaultValues = [
-            self::OPERATION_01 => 'es-operation-tax-added-value',
-            self::OPERATION_02 => 'es-operation-tax-ceuta-melilla',
-            self::OPERATION_03 => 'es-operation-tax-igic',
-            self::OPERATION_04 => 'es-operation-tax-other',
+            self::ES_OPERATION_01 => 'es-operation-tax-added-value',
+            self::ES_OPERATION_02 => 'es-operation-tax-ceuta-melilla',
+            self::ES_OPERATION_03 => 'es-operation-tax-igic',
+            self::ES_OPERATION_99 => 'es-operation-tax-other',
         ];
 
         return array_merge($defaultValues, self::$values);
@@ -54,6 +54,6 @@ class OperacionIVA
 
     public static function default(): string
     {
-        return self::OPERATION_01;
+        return self::ES_OPERATION_01;
     }
 }

@@ -1,7 +1,7 @@
 codimpuesto;descripcion;iva;recargo;codsubcuentarep;codsubcuentasop;operacion
-"IVA0";"IVA 0%";"0";"0";;;"Valor añadido"
-"IVA10";"IVA 10%";"10";"1.4";"4770000010";"4720000010";"Valor añadido"
-"IVA21";"IVA 21%";"21";"5.2";"4770000021";"4720000021";"Valor añadido"
-"IVA4";"IVA 4%";"4";"0.5";"4770000004";"4720000004";"Valor añadido"
-"IGIC3";"IGIC 3%";"3";"0";;;"IGIC"
-"IGIC7";"IGIC 7%";"7";"0";;;"IGIC"
+"IVA0";"IVA 0%";"0";"0";;;"ES_01"
+"IVA10";"IVA 10%";"10";"1.4";"4770000010";"4720000010";"ES_01"
+"IVA21";"IVA 21%";"21";"5.2";"4770000021";"4720000021";"ES_01"
+"IVA4";"IVA 4%";"4";"0.5";"4770000004";"4720000004";"ES_01"
+"IGIC3";"IGIC 3%";"3";"0";;;"ES_03"
+"IGIC7";"IGIC 7%";"7";"0";;;"ES_03"
