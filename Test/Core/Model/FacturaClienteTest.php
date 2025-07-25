@@ -29,6 +29,7 @@ use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\Stock;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -798,6 +799,49 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($invoice->delete());
         $this->assertTrue($customer->getDefaultAddress()->delete());
         $this->assertTrue($customer->delete());
+    }
+
+    public function testPropertiesLength(): void
+    {
+        // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
+        $campos = [
+            'apartado'       => [10, 11],
+            'cifnif'         => [30, 31],
+            'ciudad'         => [100, 101],
+            'codigo'         => [20, 21],
+            'codigoenv'      => [200, 201],
+            'codigorect'     => [20, 21],
+            'codpais'        => [20, 21],
+            'codpostal'      => [10, 11],
+            'direccion'      => [200, 201],
+            'nombrecliente'  => [100, 101],
+            'provincia'      => [100, 101],
+        ];
+
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        foreach ($campos as $campo => [$valido, $invalido]) {
+            // Creamos un nuevo almacén
+            $invoice = new FacturaCliente();
+
+            // campo obligatorio (not null)
+            $invoice->setSubject($customer);
+
+            // Asignamos el valor inválido en el campo a probar
+            $invoice->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($invoice->save(), "can-save-facturaCliente-bad-{$campo}");
+
+            // Corregimos el campo y comprobamos que ahora sí se puede guardar
+            $invoice->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($invoice->save(), "cannot-save-facturaCliente-fixed-{$campo}");
+
+            // Limpiar
+            $this->assertTrue($invoice->delete(), "cannot-delete-facturaCliente-{$campo}");
+        }
+
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');;
     }
 
     public function testSetIntraCommunity(): void

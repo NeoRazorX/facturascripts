@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -103,14 +103,14 @@ class ListCliente extends ListController
         $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', Paises::codeModel());
 
         $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
-        if (count($provinces) >= CodeModel::ALL_LIMIT) {
+        if (count($provinces) >= CodeModel::getlimit()) {
             $this->addFilterAutocomplete($viewName, 'provincia', 'province', 'provincia', 'contactos', 'provincia');
         } else {
             $this->addFilterSelect($viewName, 'provincia', 'province', 'provincia', $provinces);
         }
 
         $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
-        if (count($cities) >= CodeModel::ALL_LIMIT) {
+        if (count($cities) >= CodeModel::getlimit()) {
             $this->addFilterAutocomplete($viewName, 'ciudad', 'city', 'ciudad', 'contactos', 'ciudad');
         } else {
             $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);

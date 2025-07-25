@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023  Carlos García Gómez    <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025  Carlos García Gómez    <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson             <joenilson at gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
 use FacturaScripts\Dinamic\Model\RoleUser as DinRoleUser;
@@ -56,9 +57,38 @@ class Role extends Base\ModelClass
         return $roleUser->save();
     }
 
+    public function getAccesses(): array
+    {
+        $where = [new DataBaseWhere('codrole', $this->codrole)];
+        $orderBy = ['pagename' => 'ASC'];
+        return DinRoleAccess::all($where, $orderBy, 0, 0);
+    }
+
+    public function getUsers(): array
+    {
+        $where = [new DataBaseWhere('codrole', $this->codrole)];
+        $orderBy = ['nick' => 'ASC'];
+        return DinRoleUser::all($where, $orderBy, 0, 0);
+    }
+
     public static function primaryColumn(): string
     {
         return 'codrole';
+    }
+
+    public function removeUser(string $nick): bool
+    {
+        $roleUser = new DinRoleUser();
+        $where = [
+            new DataBaseWhere('codrole', $this->codrole),
+            new DataBaseWhere('nick', $nick),
+        ];
+        if (!$roleUser->loadFromCode('', $where)) {
+            Tools::log()->warning('role-user-not-found', ['%codrole%' => $this->codrole, '%nick%' => $nick]);
+            return false;
+        }
+
+        return $roleUser->delete();
     }
 
     public static function tableName(): string

@@ -40,6 +40,15 @@ final class DbUpdater
     /** @var DataBaseQueries */
     private static $sql_tool;
 
+    public static function createOrUpdateTable(string $table_name, array $structure = [], string $sql_after = ''): bool
+    {
+        if (self::db()->tableExists($table_name)) {
+            return self::updateTable($table_name, $structure);
+        }
+        
+        return self::createTable($table_name, $structure, $sql_after);
+    }
+
     public static function createTable(string $table_name, array $structure = [], string $sql_after = ''): bool
     {
         if (self::isTableChecked($table_name)) {

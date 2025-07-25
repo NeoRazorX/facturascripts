@@ -24,7 +24,6 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
-use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
@@ -86,8 +85,8 @@ class Login implements ControllerInterface
                 $this->logoutAction($request);
                 break;
 
-            case 'valid-totp':
-                $this->validCodeAction($request);
+            case 'two-factor-validation':
+                $this->twoFactorValidationAction($request);
                 break;
         }
 
@@ -204,6 +203,12 @@ class Login implements ControllerInterface
         }
 
         $user->setPassword($password);
+
+        // desactivamos el 2FA si estaba activado
+        if ($user->two_factor_enabled) {
+            $user->disableTwoFactor();
+        }
+
         if (false === $user->save()) {
             Tools::log()->warning('login-user-not-saved');
             $this->saveIncident(Session::getClientIp(), $username);
@@ -320,15 +325,18 @@ class Login implements ControllerInterface
         $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
     }
 
-    protected function validCodeAction(Request $request): void
+    protected function twoFactorValidationAction(Request $request): void
     {
         $user = new User();
         if (!$user->loadFromCode($request->request->get('fsNick'))) {
             Tools::log()->warning('user-not-found');
+            $this->saveIncident(Session::getClientIp());
+            return;
         }
 
-        if (!TwoFactorManager::verifyCode($user->two_factor_secret_key, $request->request->get('fsCode'))) {
-            Tools::log()->warning('login-2fa-fail');
+        if (!$user->verifyTwoFactorCode($request->request->get('fsTwoFactorCode'))) {
+            Tools::log()->warning('two-factor-code-invalid');
+            $this->saveIncident(Session::getClientIp(), $user->nick);
             return;
         }
 
