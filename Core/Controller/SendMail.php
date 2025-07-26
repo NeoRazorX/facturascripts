@@ -194,7 +194,16 @@ class SendMail extends Controller
         ];
         if ($notificationModel->loadFromCode('', $where)) {
             $shortCodes = ['{code}', '{name}', '{date}', '{total}', '{number2}'];
-            $shortValues = [$model->codigo, $model->nombrecliente, $model->fecha, $model->total, $model->numero2];
+            $shortValues = [$model->codigo, '', $model->fecha, $model->total, ''];
+
+            $shortValues[1] = property_exists($model, 'nombrecliente')
+                ? $model->nombrecliente
+                : $model->nombre;
+
+            $shortValues[4] = property_exists($model, 'numero2')
+                ? $model->numero2
+                : $model->numproveedor;
+
             $this->newMail->title = str_replace($shortCodes, $shortValues, $notificationModel->subject);
             $this->newMail->text = str_replace($shortCodes, $shortValues, $notificationModel->body);
             return;
