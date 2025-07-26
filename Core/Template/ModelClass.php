@@ -664,8 +664,10 @@ abstract class ModelClass
         }
 
         // Update the attributes with the new id
-        if (empty($this->id())) {
+        if (null === $this->id()) {
             $this->{$this->primaryColumn()} = static::$dataBase->lastval();
+        } else {
+            static::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
         }
 
         WorkQueue::send(

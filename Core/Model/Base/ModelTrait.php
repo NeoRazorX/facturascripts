@@ -27,6 +27,7 @@ use FacturaScripts\Core\Template\ExtensionsTrait;
  * The class from which all models inherit, connects to the database,
  * check the structure of the table and if necessary create or adapt.
  *
+ * @deprecated Use FacturaScripts\Core\Template\ModelTrait instead
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 trait ModelTrait
