@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,20 +19,23 @@
 
 namespace FacturaScripts\Test\Traits;
 
-use FacturaScripts\Core\Lib\Calculator;
-use FacturaScripts\Core\Model\Agente;
-use FacturaScripts\Core\Model\Almacen;
-use FacturaScripts\Core\Model\Cliente;
-use FacturaScripts\Core\Model\Contacto;
-use FacturaScripts\Core\Model\Cuenta;
-use FacturaScripts\Core\Model\Ejercicio;
-use FacturaScripts\Core\Model\Empresa;
-use FacturaScripts\Core\Model\FacturaCliente;
-use FacturaScripts\Core\Model\FacturaProveedor;
-use FacturaScripts\Core\Model\Producto;
-use FacturaScripts\Core\Model\Proveedor;
-use FacturaScripts\Core\Model\Serie;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Dinamic\Lib\Calculator;
+use FacturaScripts\Dinamic\Model\Agente;
+use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Dinamic\Model\Ciudad;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\FacturaProveedor;
+use FacturaScripts\Dinamic\Model\Pais;
+use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Provincia;
+use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Dinamic\Model\User;
 
 trait RandomDataTrait
 {
@@ -42,6 +45,7 @@ trait RandomDataTrait
         $account->codcuenta = '9999';
         $account->codejercicio = $codejercicio;
         $account->descripcion = 'Test';
+
         return $account;
     }
 
@@ -49,7 +53,18 @@ trait RandomDataTrait
     {
         $agente = new Agente();
         $agente->nombre = 'Pepe ' . mt_rand(1, 9999);
+
         return $agente;
+    }
+
+    protected function getRandomCity(int $id_provincia): Ciudad
+    {
+        $city = new Ciudad();
+        $city->ciudad = 'Test City ' . mt_rand(1, 99);
+        $city->alias = 'TC' . mt_rand(1, 999);
+        $city->idprovincia = $id_provincia;
+
+        return $city;
     }
 
     protected function getRandomCompany(): Empresa
@@ -59,6 +74,7 @@ trait RandomDataTrait
         $company->cifnif = 'B' . mt_rand(1, 999999);
         $company->nombre = 'Company ' . mt_rand(1, 99999);
         $company->nombrecorto = 'Comp' . mt_rand(1, 99999);
+
         return $company;
     }
 
@@ -69,7 +85,17 @@ trait RandomDataTrait
         $contact->nombre = 'Contact Rand ' . mt_rand(1, 99999);
         $contact->empresa = 'Empresa ' . mt_rand(1, 99999);
         $contact->observaciones = $test_name;
+
         return $contact;
+    }
+
+    protected function getRandomCountry(): Pais
+    {
+        $country = new Pais();
+        $country->nombre = 'Test Country ' . mt_rand(1, 99);
+        $country->codpais = 'T' . mt_rand(1, 99);
+
+        return $country;
     }
 
     protected function getRandomCustomer(string $test_name = ''): Cliente
@@ -79,6 +105,7 @@ trait RandomDataTrait
         $cliente->nombre = 'Customer Rand ' . mt_rand(1, 99999);
         $cliente->observaciones = $test_name;
         $cliente->razonsocial = 'Empresa ' . mt_rand(1, 99999);
+
         return $cliente;
     }
 
@@ -127,7 +154,18 @@ trait RandomDataTrait
         $product = new Producto();
         $product->referencia = 'test' . $num;
         $product->descripcion = 'Test Product ' . $num;
+
         return $product;
+    }
+
+    protected function getRandomProvince(string $codpais): Provincia
+    {
+        $province = new Provincia();
+        $province->provincia = 'Test Province ' . mt_rand(1, 99);
+        $province->codpais = $codpais;
+        $province->alias = 'TP' . mt_rand(1, 999);
+
+        return $province;
     }
 
     protected function getRandomSerie(): Serie
@@ -135,6 +173,7 @@ trait RandomDataTrait
         $serie = new Serie();
         $serie->codserie = 'T' . mt_rand(1, 999);
         $serie->descripcion = 'Test Serie';
+
         return $serie;
     }
 
@@ -145,6 +184,7 @@ trait RandomDataTrait
         $proveedor->nombre = 'Proveedor Rand ' . mt_rand(1, 999);
         $proveedor->observaciones = $test_name;
         $proveedor->razonsocial = 'Empresa ' . mt_rand(1, 999);
+
         return $proveedor;
     }
 
@@ -181,6 +221,7 @@ trait RandomDataTrait
         $user->nick = 'user_' . mt_rand(1, 999);
         $user->email = $user->nick . '@facturascripts.com';
         $user->setPassword(mt_rand(1, 999999));
+
         return $user;
     }
 
@@ -188,6 +229,7 @@ trait RandomDataTrait
     {
         $warehouse = new Almacen();
         $warehouse->nombre = 'Warehouse ' . mt_rand(1, 99);
+
         return $warehouse;
     }
 }

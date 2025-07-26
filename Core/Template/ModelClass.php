@@ -658,7 +658,13 @@ abstract class ModelClass
             return false;
         }
 
-        $inserted = static::table()->insert($this->toArray());
+        $data = $this->toArray();
+        // Remove primary key if it is not set, to allow the database to generate it
+        if (null === $this->id()) {
+            unset($data[static::primaryColumn()]);
+        }
+
+        $inserted = static::table()->insert($data);
         if (false === $inserted) {
             return false;
         }
