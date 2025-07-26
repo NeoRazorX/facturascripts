@@ -279,6 +279,15 @@ abstract class ModelClass
         return true;
     }
 
+    public function loadFromCode($code, array $where = [], array $order = []): bool
+    {
+        if (!empty($where)) {
+            return $this->loadWhere($where, $order);
+        }
+
+        return $this->load($code);
+    }
+
     public function loadFromData(array $data = [], array $exclude = []): void
     {
         $fields = $this->getModelFields();
