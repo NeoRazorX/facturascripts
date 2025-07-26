@@ -23,6 +23,7 @@ use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Tools;
@@ -186,11 +187,61 @@ abstract class ModelCore
      */
     public function clear()
     {
-        foreach (array_keys($this->getModelFields()) as $fieldName) {
-            $this->{$fieldName} = null;
+        foreach ($this->getModelFields() as $key => $value) {
+            try {
+                $this->{$key} = $this->getClearValue($value);
+            } catch (Exception $e) {
+                throw new Exception('Error clearing property' . $key . ' in model ' . $this->modelClassName(), 0, $e);
+            }
         }
 
         $this->pipe('clear');
+    }
+
+    public function getClearValue(array $value)
+    {
+        // si la columna es la clave primaria, la ponemos a null
+        if ($value['name'] === static::primaryColumn()) {
+            return null;
+        }
+
+        $type = strpos($value['type'], '(') === false ?
+            $value['type'] :
+            substr($value['type'], 0, strpos($value['type'], '('));
+
+        // si es nullable y no es booleano, devolvemos null
+        if ($value['is_nullable'] === 'YES' && false === in_array($type, ['tinyint', 'boolean'])) {
+            return null;
+        }
+
+        switch ($type) {
+            case 'tinyint':
+            case 'boolean':
+                return false;
+
+            case 'integer':
+            case 'int':
+                return 0;
+
+            case 'decimal':
+            case 'double':
+            case 'double precision':
+            case 'float':
+                return 0.0;
+
+            case 'date':
+                return date(self::DATE_STYLE);
+
+            case 'datetime':
+            case 'timestamp':
+                return date(self::DATETIME_STYLE);
+
+            case 'time':
+                return date(self::HOUR_STYLE);
+
+            default:
+                return '';
+        }
     }
 
     /**
