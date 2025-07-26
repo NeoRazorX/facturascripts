@@ -58,11 +58,10 @@ class PuntoInteresCiudad extends ModelClass
     /** @var string */
     public $nick;
 
-    public function getCity(): Ciudad
+    /** @return Ciudad|null */
+    public function getCity(): ?Ciudad
     {
-        $city = new Ciudad();
-        $city->loadFromCode($this->idciudad);
-        return $city;
+        return $this->belongsTo(Ciudad::class, 'idciudad');
     }
 
     public function install(): string

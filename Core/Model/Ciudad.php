@@ -67,11 +67,16 @@ class Ciudad extends ModelClass
     /** @var string */
     public $nick;
 
-    public function getProvince(): Provincia
+    /** @return Provincia|null */
+    public function getProvince(): ?Provincia
     {
-        $province = new Provincia();
-        $province->loadFromCode($this->idprovincia);
-        return $province;
+        return $this->belongsTo(Provincia::class, 'idprovincia');
+    }
+
+    /** @return PuntoInteresCiudad[] */
+    public function getPuntosInteres(): array
+    {
+        return $this->hasMany(PuntoInteresCiudad::class, 'idciudad');
     }
 
     public function install(): string

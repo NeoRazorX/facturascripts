@@ -215,6 +215,9 @@ abstract class ModelClass
                 ->count() > 0;
     }
 
+    /**
+     * @deprecated Use find() instead
+     */
     public function get($code)
     {
         if (null === $code) {
@@ -279,6 +282,9 @@ abstract class ModelClass
         return true;
     }
 
+    /**
+     * @deprecated Use load() or loadWhere() instead
+     */
     public function loadFromCode($code, array $where = [], array $order = []): bool
     {
         if (!empty($where)) {
@@ -385,6 +391,9 @@ abstract class ModelClass
         return 'id';
     }
 
+    /**
+     * @deprecated Use id() instead
+     */
     public function primaryColumnValue()
     {
         return $this->{static::primaryColumn()};
@@ -554,6 +563,30 @@ abstract class ModelClass
         return empty($value) ? $list . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
     }
 
+    /**
+     * Define a one-to-one relationship.
+     *
+     * @param string $modelName
+     * @param string $foreignKey
+     * @return object|null
+     */
+    protected function belongsTo(string $modelName, string $foreignKey): ?object
+    {
+        if (empty($this->{$foreignKey})) {
+            return null;
+        }
+
+        // Extract class name if full class path is provided
+        if (strpos($modelName, '\\') !== false) {
+            $parts = explode('\\', $modelName);
+            $modelName = end($parts);
+        }
+
+        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
+        $model = new $modelClass();
+        return $model->load($this->{$foreignKey}) ? $model : null;
+    }
+
     protected function db(): DataBase
     {
         if (self::$dataBase === null) {
@@ -595,6 +628,28 @@ abstract class ModelClass
         }
 
         return $field['is_nullable'] === 'NO' ? 0.0 : null;
+    }
+
+    /**
+     * Define a one-to-many relationship.
+     *
+     * @param string $modelName
+     * @param string $foreignKey
+     * @param array $where
+     * @param array $order
+     * @return array
+     */
+    protected function hasMany(string $modelName, string $foreignKey, array $where = [], array $order = []): array
+    {
+        // Extract class name if full class path is provided
+        if (strpos($modelName, '\\') !== false) {
+            $parts = explode('\\', $modelName);
+            $modelName = end($parts);
+        }
+
+        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
+        $where[] = Where::eq($foreignKey, $this->id());
+        return $modelClass::all($where, $order);
     }
 
     protected function saveInsert(): bool
