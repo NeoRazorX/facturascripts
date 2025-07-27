@@ -34,12 +34,12 @@ final class CronJobTest extends TestCase
         $this->assertTrue($job->save());
 
         // comprobamos que existe
-        $this->assertNotNull($job->primaryColumnValue());
+        $this->assertNotNull($job->id());
         $this->assertTrue($job->exists());
 
         // lo cargamos desde otro objeto
         $job2 = new CronJob();
-        $job2->loadFromCode($job->primaryColumnValue());
+        $job2->load($job->id());
         $this->assertEquals('TestName', $job2->jobname);
         $this->assertEquals('TestPlugin', $job2->pluginname);
         $this->assertTrue($job2->enabled);
