@@ -72,11 +72,6 @@ class PuntoInteresCiudad extends ModelClass
         return parent::install();
     }
 
-    public static function primaryColumn(): string
-    {
-        return "id";
-    }
-
     public static function tableName(): string
     {
         return "puntos_interes_ciudades";
@@ -94,7 +89,7 @@ class PuntoInteresCiudad extends ModelClass
 
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
-        if ('list' === $type && !empty($this->primaryColumnValue())) {
+        if ('list' === $type && !empty($this->id())) {
             return $this->getCity()->url() . '&activetab=List' . $this->modelClassName();
         }
 

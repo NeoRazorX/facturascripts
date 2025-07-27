@@ -61,11 +61,6 @@ class CodigoPostal extends ModelClass
         $this->codpais = Tools::settings('default', 'codpais', 'ESP');
     }
 
-    public static function primaryColumn(): string
-    {
-        return "id";
-    }
-
     public static function tableName(): string
     {
         return "codigos_postales";

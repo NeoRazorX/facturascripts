@@ -20,30 +20,42 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Ciudad;
+use FacturaScripts\Core\Model\Pais;
 use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Core\Model\PuntoInteresCiudad;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class PuntoInteresCiudadTest extends TestCase
 {
     use LogErrorsTrait;
+    use RandomDataTrait;
 
     private static $ciudad;
+    private static $pais;
     private static $provincia;
 
     public static function setUpBeforeClass(): void
     {
+        $num = rand(1, 99);
+
+        // Creamos un país para las pruebas
+        self::$pais = new Pais();
+        self::$pais->codpais = 'T' . $num;
+        self::$pais->nombre = 'Test Country ' . $num;
+        self::$pais->save();
+
         // Crear provincia para las pruebas
         self::$provincia = new Provincia();
-        self::$provincia->provincia = 'Test Province';
-        self::$provincia->codpais = 'ESP';
+        self::$provincia->provincia = 'Test Province ' . $num;
+        self::$provincia->codpais = self::$pais->codpais;
         self::$provincia->save();
 
         // Crear ciudad para las pruebas
         self::$ciudad = new Ciudad();
-        self::$ciudad->ciudad = 'Test City';
+        self::$ciudad->ciudad = 'Test City ' . $num;
         self::$ciudad->idprovincia = self::$provincia->idprovincia;
         self::$ciudad->save();
     }
@@ -56,6 +68,9 @@ final class PuntoInteresCiudadTest extends TestCase
         }
         if (self::$provincia) {
             self::$provincia->delete();
+        }
+        if (self::$pais) {
+            self::$pais->delete();
         }
     }
 
@@ -142,7 +157,7 @@ final class PuntoInteresCiudadTest extends TestCase
         $city = $puntoInteres->getCity();
         $this->assertNotNull($city, 'punto-interes-city-null');
         $this->assertEquals(self::$ciudad->idciudad, $city->idciudad, 'punto-interes-wrong-city');
-        $this->assertEquals('Test City', $city->ciudad, 'punto-interes-wrong-city-name');
+        $this->assertEquals(self::$ciudad->ciudad, $city->ciudad, 'punto-interes-wrong-city-name');
 
         // Eliminar
         $this->assertTrue($puntoInteres->delete(), 'punto-interes-cant-delete');
@@ -228,6 +243,26 @@ final class PuntoInteresCiudadTest extends TestCase
         // Eliminar
         $this->assertTrue($punto1->delete(), 'first-punto-interes-cant-delete');
         $this->assertTrue($punto2->delete(), 'second-punto-interes-cant-delete');
+    }
+
+    public function testDeleteCity(): void
+    {
+        // creamos una ciudad para probar
+        $ciudad = $this->getRandomCity(self::$provincia->idprovincia);
+        $this->assertTrue($ciudad->save());
+
+        // creamos un punto de interes para esa ciudad
+        $puntoInteres = new PuntoInteresCiudad();
+        $puntoInteres->name = 'Test Point of Interest';
+        $puntoInteres->alias = 'test-point';
+        $puntoInteres->idciudad = $ciudad->idciudad;
+        $this->assertTrue($puntoInteres->save());
+
+        // eliminamos la ciudad
+        $this->assertTrue($ciudad->delete());
+
+        // verificamos que el punto de interes ha sido eliminado
+        $this->assertFalse($puntoInteres->exists());
     }
 
     protected function tearDown(): void

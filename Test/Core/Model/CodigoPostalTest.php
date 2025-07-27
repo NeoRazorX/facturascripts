@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Ciudad;
 use FacturaScripts\Core\Model\CodigoPostal;
+use FacturaScripts\Core\Model\Pais;
 use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -31,19 +32,28 @@ final class CodigoPostalTest extends TestCase
     use LogErrorsTrait;
 
     private static $ciudad;
+    private static $pais;
     private static $provincia;
 
     public static function setUpBeforeClass(): void
     {
+        $num = rand(1, 99);
+
+        // Crear país para las pruebas
+        self::$pais = new Pais();
+        self::$pais->codpais = 'T' . $num;
+        self::$pais->nombre = 'Test Country ' . $num;
+        self::$pais->save();
+
         // Crear provincia para las pruebas
         self::$provincia = new Provincia();
-        self::$provincia->provincia = 'Test Province';
-        self::$provincia->codpais = 'ESP';
+        self::$provincia->provincia = 'Test Province ' . $num;
+        self::$provincia->codpais = self::$pais->codpais;
         self::$provincia->save();
 
         // Crear ciudad para las pruebas
         self::$ciudad = new Ciudad();
-        self::$ciudad->ciudad = 'Test City';
+        self::$ciudad->ciudad = 'Test City ' . $num;
         self::$ciudad->idprovincia = self::$provincia->idprovincia;
         self::$ciudad->save();
     }
@@ -56,6 +66,9 @@ final class CodigoPostalTest extends TestCase
         }
         if (self::$provincia) {
             self::$provincia->delete();
+        }
+        if (self::$pais) {
+            self::$pais->delete();
         }
     }
 
@@ -95,7 +108,7 @@ final class CodigoPostalTest extends TestCase
         $codigoPostal->number = 28002;
         $codigoPostal->idciudad = self::$ciudad->idciudad;
         $codigoPostal->idprovincia = self::$provincia->idprovincia;
-        $codigoPostal->codpais = 'ESP';
+        $codigoPostal->codpais = self::$pais->codpais;
         $this->assertTrue($codigoPostal->save(), 'codigo-postal-cant-save');
 
         $originalDate = $codigoPostal->creation_date;
@@ -136,7 +149,7 @@ final class CodigoPostalTest extends TestCase
         $codigoPostal1->number = 28006;
         $codigoPostal1->idciudad = self::$ciudad->idciudad;
         $codigoPostal1->idprovincia = self::$provincia->idprovincia;
-        $codigoPostal1->codpais = 'ESP';
+        $codigoPostal1->codpais = self::$pais->codpais;
         $this->assertTrue($codigoPostal1->save(), 'first-codigo-postal-cant-save');
 
         // Crear segundo código postal para la misma ciudad
@@ -144,7 +157,7 @@ final class CodigoPostalTest extends TestCase
         $codigoPostal2->number = 28007;
         $codigoPostal2->idciudad = self::$ciudad->idciudad;
         $codigoPostal2->idprovincia = self::$provincia->idprovincia;
-        $codigoPostal2->codpais = 'ESP';
+        $codigoPostal2->codpais = self::$pais->codpais;
         $this->assertTrue($codigoPostal2->save(), 'second-codigo-postal-cant-save');
 
         // Verificar que ambos existen
