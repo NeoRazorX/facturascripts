@@ -164,6 +164,29 @@ final class ApiKeyTest extends TestCase
         $this->assertTrue($key->delete());
     }
 
+    public function testDeleteAccess(): void
+    {
+        // creamos una api key
+        $key = new ApiKey();
+        $key->description = 'test';
+        $this->assertTrue($key->save());
+
+        // le damos permiso para un recurso
+        $access = new ApiAccess();
+        $access->idapikey = $key->id;
+        $access->resource = 'divisas';
+        $this->assertTrue($access->save());
+
+        // comprobamos que tiene acceso
+        $this->assertTrue($key->hasAccess('divisas'));
+
+        // eliminamos la clave
+        $this->assertTrue($key->delete());
+
+        // comprobamos que el acceso al recurso ya no existe
+        $this->assertFalse($access->exists());
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

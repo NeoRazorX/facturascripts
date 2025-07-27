@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 
 /**
@@ -92,7 +92,7 @@ class ApiKey extends Base\ModelClass
 
     public function getAccesses(): array
     {
-        $where = [new DataBaseWhere('idapikey', $this->id)];
+        $where = [Where::eq('idapikey', $this->id)];
         return ApiAccess::all($where, [], 0, 0);
     }
 
@@ -109,10 +109,10 @@ class ApiKey extends Base\ModelClass
     {
         $apiAccess = new ApiAccess();
         $where = [
-            new DataBaseWhere('idapikey', $this->id),
-            new DataBaseWhere('resource', $resource)
+            Where::eq('idapikey', $this->id),
+            Where::eq('resource', $resource)
         ];
-        if ($apiAccess->loadFromCode('', $where)) {
+        if ($apiAccess->loadWhere($where)) {
             return $apiAccess;
         }
 
