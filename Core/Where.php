@@ -332,7 +332,7 @@ final class Where
                 case '>=':
                 case '<=':
                 case 'REGEXP':
-                    $sql .= self::sqlColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value);
+                    $sql .= self::sqlColumn($field) . ' ' . self::db()->getOperator($this->operator) . ' ' . self::sqlValue($this->value);
                     break;
 
                 case 'IS':
