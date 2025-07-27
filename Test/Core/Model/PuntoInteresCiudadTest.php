@@ -44,18 +44,18 @@ final class PuntoInteresCiudadTest extends TestCase
         // Creamos un país para las pruebas
         self::$pais = new Pais();
         self::$pais->codpais = 'T' . $num;
-        self::$pais->nombre = 'Test Country ' . $num;
+        self::$pais->nombre = 'País ' . $num;
         self::$pais->save();
 
         // Crear provincia para las pruebas
         self::$provincia = new Provincia();
-        self::$provincia->provincia = 'Test Province ' . $num;
+        self::$provincia->provincia = 'Provincia ' . $num;
         self::$provincia->codpais = self::$pais->codpais;
         self::$provincia->save();
 
         // Crear ciudad para las pruebas
         self::$ciudad = new Ciudad();
-        self::$ciudad->ciudad = 'Test City ' . $num;
+        self::$ciudad->ciudad = 'Ciudad ' . $num;
         self::$ciudad->idprovincia = self::$provincia->idprovincia;
         self::$ciudad->save();
     }
