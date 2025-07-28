@@ -34,7 +34,7 @@ trait ModelTrait
      */
     protected static $fields = [];
 
-    abstract protected function db(): DataBase;
+    abstract protected static function db(): DataBase;
 
     abstract public static function primaryColumn(): string;
 

@@ -597,7 +597,7 @@ abstract class ModelClass
         return $model->load($this->{$foreignKey}) ? $model : null;
     }
 
-    protected function db(): DataBase
+    protected static function db(): DataBase
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
