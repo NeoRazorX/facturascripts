@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2023 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
@@ -30,9 +32,9 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class GrupoClientes extends Base\ModelClass
+class GrupoClientes extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /** @var string */
     public $codgrupo;
@@ -113,6 +115,7 @@ class GrupoClientes extends Base\ModelClass
         }
 
         $this->nombre = Tools::noHtml($this->nombre);
+
         return parent::test();
     }
 
@@ -121,12 +124,12 @@ class GrupoClientes extends Base\ModelClass
         return parent::url($type, $list);
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codgrupo)) {
             $this->codgrupo = (string)$this->newCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 }
