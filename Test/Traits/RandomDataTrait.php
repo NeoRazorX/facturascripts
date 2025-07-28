@@ -30,6 +30,7 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
+use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -213,6 +214,15 @@ trait RandomDataTrait
         }
 
         return $invoice;
+    }
+
+    protected function getRandomTax(): Impuesto
+    {
+        $tax = new Impuesto();
+        $tax->descripcion = 'Test Tax ' . mt_rand(1, 99);
+        $tax->iva = mt_rand(1, 21); // IVA rates in Spain range from 0% to 21%
+
+        return $tax;
     }
 
     protected function getRandomUser(): User
