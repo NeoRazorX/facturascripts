@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Paises;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -77,6 +77,12 @@ class Pais extends ModelClass
     /** @var string */
     public $telephone_prefix;
 
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Paises::clear();
+    }
+
     public function delete(): bool
     {
         if ($this->isDefault()) {
@@ -84,13 +90,13 @@ class Pais extends ModelClass
             return false;
         }
 
-        if (parent::delete()) {
-            // limpiamos la caché
-            Paises::clear();
-            return true;
-        }
+        return parent::delete();
+    }
 
-        return false;
+    public function getProvinces(): array
+    {
+        $order = ['provincia' => 'ASC'];
+        return $this->hasMany(Provincia::class, 'codpais', [], $order);
     }
 
     /**
@@ -111,17 +117,6 @@ class Pais extends ModelClass
     public function primaryDescriptionColumn(): string
     {
         return 'nombre';
-    }
-
-    public function save(): bool
-    {
-        if (parent::save()) {
-            // limpiamos la caché
-            Paises::clear();
-            return true;
-        }
-
-        return false;
     }
 
     public static function tableName(): string
@@ -145,13 +140,15 @@ class Pais extends ModelClass
         $this->alias = Tools::noHtml($this->alias);
         $this->telephone_prefix = Tools::noHtml($this->telephone_prefix);
         $this->nombre = Tools::noHtml($this->nombre);
+
         return parent::test();
     }
 
-    protected function saveUpdate(array $values = []): bool
+    protected function saveUpdate(): bool
     {
         $this->last_nick = Session::user()->nick;
         $this->last_update = Tools::dateTime();
-        return parent::saveUpdate($values);
+
+        return parent::saveUpdate();
     }
 }
