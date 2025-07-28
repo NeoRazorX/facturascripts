@@ -160,6 +160,16 @@ abstract class ModelClass
         return $this->pipeFalse('changePrimaryColumnValueAfter');
     }
 
+    /**
+     * @param $new_id
+     * @return bool
+     * @deprecated replace with changeId()
+     */
+    public function changePrimaryColumnValue($new_id): bool
+    {
+        return $this->changeId($new_id);
+    }
+
     public function clear(): void
     {
         foreach (array_keys($this->getModelFields()) as $field_name) {
