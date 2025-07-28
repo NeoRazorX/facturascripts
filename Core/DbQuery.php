@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Permite realizar consultas a la base de datos de forma sencilla.
@@ -133,7 +134,7 @@ final class DbQuery
         $sql = 'DELETE FROM ' . self::db()->escapeColumn($this->table);
 
         if (!empty($this->where)) {
-            $sql .= ' WHERE ' . Where::multiSql($this->where);
+            $sql .= Where::multiSqlLegacy($this->where);
         }
 
         return self::db()->exec($sql);
@@ -235,7 +236,7 @@ final class DbQuery
     {
         $max = $this->maxString($field);
         return is_null($decimals) ?
-            (float)$max:
+            (float)$max :
             round((float)$max, $decimals);
     }
 
@@ -256,7 +257,7 @@ final class DbQuery
     {
         $min = $this->minString($field);
         return is_null($decimals) ?
-            (float)$min:
+            (float)$min :
             round((float)$min, $decimals);
     }
 
@@ -332,7 +333,7 @@ final class DbQuery
         $sql = 'SELECT ' . $this->fields . ' FROM ' . self::db()->escapeColumn($this->table);
 
         if (!empty($this->where)) {
-            $sql .= ' WHERE ' . Where::multiSql($this->where);
+            $sql .= Where::multiSqlLegacy($this->where);
         }
 
         if (!empty($this->groupBy)) {
@@ -386,7 +387,7 @@ final class DbQuery
         $sql = 'UPDATE ' . self::db()->escapeColumn($this->table) . ' SET ' . implode(', ', $fields);
 
         if (!empty($this->where)) {
-            $sql .= ' WHERE ' . Where::multiSql($this->where);
+            $sql .= Where::multiSqlLegacy($this->where);
         }
 
         return self::db()->exec($sql);
@@ -405,8 +406,8 @@ final class DbQuery
         }
 
         foreach ($where as $value) {
-            // si no es una instancia de Where, lanzamos una excepción
-            if (!($value instanceof Where)) {
+            // si no es una instancia de Where o DataBaseWhere, lanzamos una excepción
+            if (!($value instanceof Where) && !($value instanceof DataBaseWhere)) {
                 throw new Exception('Invalid where clause ' . print_r($value, true));
             }
 

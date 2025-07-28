@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -61,7 +61,7 @@ class AttachedFile extends ModelOnChangeClass
     /** @var int */
     public $size;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->date = Tools::date();
