@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Traits;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Calculator;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\Almacen;
@@ -230,7 +231,7 @@ trait RandomDataTrait
         $user = new User();
         $user->nick = 'user_' . mt_rand(1, 999);
         $user->email = $user->nick . '@facturascripts.com';
-        $user->setPassword(mt_rand(1, 999999));
+        $user->setPassword(Tools::password());
 
         return $user;
     }
