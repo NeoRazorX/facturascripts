@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,7 +39,7 @@ final class RegularizacionImpuestoTest extends TestCase
         self::installAccountingPlan();
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         // creamos una regularización
         $reg = new RegularizacionImpuesto();
@@ -52,7 +52,7 @@ final class RegularizacionImpuestoTest extends TestCase
         $this->assertTrue($reg->delete());
     }
 
-    public function testAnotherCompany()
+    public function testAnotherCompany(): void
     {
         // creamos una nueva empresa
         $empresa = $this->getRandomCompany();
@@ -79,7 +79,7 @@ final class RegularizacionImpuestoTest extends TestCase
         $this->assertTrue($empresa->delete());
     }
 
-    public function testDifferentCompanyAndExercise()
+    public function testDifferentCompanyAndExercise(): void
     {
         // creamos una nueva empresa
         $empresa = $this->getRandomCompany();
@@ -104,7 +104,7 @@ final class RegularizacionImpuestoTest extends TestCase
         $this->assertTrue($empresa->delete());
     }
 
-    public function testCreateOnClosedExercise()
+    public function testCreateOnClosedExercise(): void
     {
         // creamos una empresa
         $empresa = $this->getRandomCompany();
