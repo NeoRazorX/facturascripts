@@ -204,6 +204,7 @@ abstract class ModelClass
         }
 
         $this->onDelete();
+        $this->syncOriginal();
         $this->clearCache();
 
         WorkQueue::send(
@@ -266,10 +267,14 @@ abstract class ModelClass
     public function isDirty(?string $key = null): bool
     {
         if ($key === null) {
-            return $this->attributes !== $this->original;
+            $current = [];
+            foreach (array_keys($this->getModelFields()) as $key) {
+                $current[$key] = $this->{$key};
+            }
+            return $current !== $this->original;
         }
 
-        $current = $this->attributes[$key] ?? null;
+        $current = $this->{$key} ?? null;
         $original = $this->original[$key] ?? null;
 
         return $current !== $original;
@@ -473,7 +478,11 @@ abstract class ModelClass
 
     public function syncOriginal(): void
     {
-        $this->original = $this->attributes;
+        $this->original = [];
+
+        foreach (array_keys($this->getModelFields()) as $key) {
+            $this->original[$key] = $this->{$key};
+        }
     }
 
     public function test(): bool
@@ -740,7 +749,7 @@ abstract class ModelClass
 
     protected function saveUpdate(): bool
     {
-        foreach (array_keys($this->attributes) as $field) {
+        foreach (array_keys($this->original) as $field) {
             if ($this->isDirty($field) && !$this->onChange($field)) {
                 return false;
             }

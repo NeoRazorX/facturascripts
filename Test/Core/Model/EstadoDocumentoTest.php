@@ -109,8 +109,14 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertTrue($status->save(), 'estado-documento-cant-save');
         $this->assertFalse($status->delete(), 'estado-documento-lock-can-delete');
 
+        $this->assertTrue($status->bloquear);
+        $this->assertFalse($status->isDirty());
+        $this->assertFalse($status->isDirty('editable'));
+
         // change properties
         $status->editable = false;
+        $this->assertTrue($status->isDirty());
+        $this->assertTrue($status->isDirty('editable'));
         $this->assertFalse($status->save(), 'estado-documento-lock-cant-save');
 
         // unlock
