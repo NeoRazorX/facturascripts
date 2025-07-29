@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Dinamic\Model\LineaFacturaProveedor as DinLineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboProveedor as DinReciboProveedor;
 
@@ -74,6 +75,8 @@ class FacturaProveedor extends Base\PurchaseDocument
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
         $newLine->loadFromData($data, $exclude);
+
+        Calculator::calculateLine($this, $newLine);
 
         // allow extensions
         $this->pipe('getNewLine', $newLine, $data, $exclude);

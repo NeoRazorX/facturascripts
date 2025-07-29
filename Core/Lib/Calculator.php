@@ -23,7 +23,6 @@ use FacturaScripts\Core\Contract\CalculatorModInterface;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
-use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\ImpuestoZona;
 
 /**
@@ -85,6 +84,20 @@ class Calculator
         return $save && self::save($doc, $lines);
     }
 
+    public static function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): void
+    {
+        $line->pvpsindto = $line->cantidad * $line->pvpunitario;
+        $line->pvptotal = $line->pvpsindto * (100 - $line->dtopor) / 100 * (100 - $line->dtopor2) / 100;
+
+        // turno para que los mods apliquen cambios
+        foreach (self::$mods as $mod) {
+            // si el mod devuelve false, terminamos
+            if (false === $mod->calculateLine($doc, $line)) {
+                break;
+            }
+        }
+    }
+
     /**
      * @param BusinessDocument $doc
      * @param BusinessDocumentLine[] $lines
@@ -142,28 +155,9 @@ class Calculator
                 ];
             }
 
-            /*// si es una venta de segunda mano, calculamos el beneficio y el IVA
-            if (self::applyUsedGoods($subtotals, $doc, $line, $ivaKey, $pvpTotal, $totalCoste)) {
-                continue;
-            }*/
-
             // neto
             $subtotals['iva'][$ivaKey]['neto'] += $pvpTotal;
             $subtotals['iva'][$ivaKey]['netosindto'] += $line->pvptotal;
-
-            /*// IVA
-            if ($line->iva > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
-                $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
-                    $pvpTotal * $line->iva :
-                    $pvpTotal * $line->iva / 100;
-            }
-
-            // recargo de equivalencia
-            if ($line->recargo > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
-                $subtotals['iva'][$ivaKey]['totalrecargo'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
-                    $pvpTotal * $line->recargo :
-                    $pvpTotal * $line->recargo / 100;
-            }*/
         }
 
         // turno para que los mods apliquen cambios
@@ -217,8 +211,7 @@ class Calculator
         $subject = $doc->getSubject();
         $noTax = $doc->getSerie()->siniva;
         $taxException = $subject->excepcioniva ?? null;
-        //$regimen = $subject->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
-        //$company = $doc->getCompany();
+        $regimen = $subject->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
 
         // cargamos las zonas de impuestos
         $taxZones = [];
@@ -236,15 +229,6 @@ class Calculator
         }
 
         foreach ($lines as $line) {
-            /*// Si es una compra de bienes usados, no aplicamos impuestos
-            if ($doc->subjectColumn() === 'codproveedor' &&
-                $company->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS &&
-                $line->getProducto()->tipo === ProductType::SECOND_HAND) {
-                $line->codimpuesto = null;
-                $line->iva = $line->recargo = 0.0;
-                continue;
-            }*/
-
             // aplicamos las excepciones de impuestos
             foreach ($taxZones as $taxZone) {
                 if ($line->codimpuesto === $taxZone->codimpuesto) {
@@ -256,76 +240,17 @@ class Calculator
             }
 
             // ¿La serie es sin impuestos o el régimen exento?
-            if ($noTax /*|| $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT*/) {
+            if ($noTax || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
                 $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
                 $line->iva = $line->recargo = 0.0;
                 $line->excepcioniva = $taxException;
-                continue;
             }
-
-            /*// ¿El régimen IVA es sin recargo de equivalencia?
-            if ($regimen != RegimenIVA::TAX_SYSTEM_SURCHARGE) {
-                $line->recargo = 0.0;
-            }*/
         }
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
             // si el mod devuelve false, terminamos
             if (false === $mod->apply($doc, $lines)) {
-                break;
-            }
-        }
-    }
-
-    /*private static function applyUsedGoods(array &$subtotals, BusinessDocument $doc, BusinessDocumentLine $line, string $ivaKey, float $pvpTotal, float $totalCoste): bool
-    {
-        if ($doc->subjectColumn() === 'codcliente' &&
-            $doc->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS &&
-            $line->getProducto()->tipo === ProductType::SECOND_HAND) {
-            // IVA 0%
-            $ivaKey0 = '0|0';
-            if (false === array_key_exists($ivaKey0, $subtotals['iva'])) {
-                $subtotals['iva'][$ivaKey0] = [
-                    'codimpuesto' => null,
-                    'iva' => 0.0,
-                    'neto' => 0.0,
-                    'netosindto' => 0.0,
-                    'recargo' => 0.0,
-                    'totaliva' => 0.0,
-                    'totalrecargo' => 0.0
-                ];
-            }
-            $subtotals['iva'][$ivaKey0]['neto'] += $totalCoste;
-            $subtotals['iva'][$ivaKey0]['netosindto'] += $totalCoste;
-
-            // si el beneficio es negativo y la serie no es rectificativa, no hay IVA
-            $beneficio = $pvpTotal - $totalCoste;
-            if ($beneficio <= 0 && $doc->getSerie()->tipo !== 'R') {
-                return true;
-            }
-
-            // IVA seleccionado
-            $subtotals['iva'][$ivaKey]['neto'] += $beneficio;
-            $subtotals['iva'][$ivaKey]['netosindto'] += $beneficio;
-            $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
-                $beneficio * $line->iva :
-                $beneficio * $line->iva / 100;
-            return true;
-        }
-
-        return false;
-    }*/
-
-    private static function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): void
-    {
-        $line->pvpsindto = $line->cantidad * $line->pvpunitario;
-        $line->pvptotal = $line->pvpsindto * (100 - $line->dtopor) / 100 * (100 - $line->dtopor2) / 100;
-
-        // turno para que los mods apliquen cambios
-        foreach (self::$mods as $mod) {
-            // si el mod devuelve false, terminamos
-            if (false === $mod->calculateLine($doc, $line)) {
                 break;
             }
         }

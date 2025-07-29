@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,6 +27,7 @@ namespace FacturaScripts\Core\Lib;
 class InvoiceOperation
 {
     const INTRA_COMMUNITY = 'intracomunitaria';
+    const EXPORT = 'exportacion';
 
     /** @var array */
     private static $all = [];
@@ -40,7 +41,8 @@ class InvoiceOperation
     public static function all(): array
     {
         $defaults = [
-            self::INTRA_COMMUNITY => 'intra-community'
+            self::INTRA_COMMUNITY => 'intra-community',
+            self::EXPORT => 'operation-export',
         ];
 
         return array_merge($defaults, self::$all);
