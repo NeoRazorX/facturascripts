@@ -75,6 +75,9 @@ class Impuesto extends ModelClass
     /** @var string */
     public $descripcion;
 
+    /** @var string */
+    public $operacion;
+
     /** @var int */
     public $tipo;
 
