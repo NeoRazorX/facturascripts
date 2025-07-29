@@ -203,6 +203,7 @@ abstract class ModelClass
             return false;
         }
 
+        $this->onDelete();
         $this->clearCache();
 
         WorkQueue::send(
@@ -662,6 +663,46 @@ abstract class ModelClass
         return $modelClass::all($where, $order);
     }
 
+    /**
+     * This method is called before save (update) when some field has changed.
+     *
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange(string $field): bool
+    {
+        if (false === $this->pipe('onChange', $field)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * This method is called after a record is removed from the database.
+     */
+    protected function onDelete(): void
+    {
+        $this->pipe('onDelete');
+    }
+
+    /**
+     * This method is called after a new record is saved on the database (saveInsert).
+     */
+    protected function onInsert(): void
+    {
+        $this->pipe('onInsert');
+    }
+
+    /**
+     * This method is called after a record is updated on the database (saveUpdate).
+     */
+    protected function onUpdate(): void
+    {
+        $this->pipe('onUpdate');
+    }
+
     protected function saveInsert(): bool
     {
         if (false === $this->pipeFalse('saveInsertBefore')) {
@@ -686,6 +727,8 @@ abstract class ModelClass
             static::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
         }
 
+        $this->onInsert();
+
         WorkQueue::send(
             'Model.' . $this->modelClassName() . '.Insert',
             $this->id(),
@@ -697,6 +740,12 @@ abstract class ModelClass
 
     protected function saveUpdate(): bool
     {
+        foreach (array_keys($this->attributes) as $field) {
+            if ($this->isDirty($field) && !$this->onChange($field)) {
+                return false;
+            }
+        }
+
         if (false === $this->pipeFalse('saveUpdateBefore')) {
             return false;
         }
@@ -707,6 +756,8 @@ abstract class ModelClass
         if (false === $updated) {
             return false;
         }
+
+        $this->onUpdate();
 
         WorkQueue::send(
             'Model.' . $this->modelClassName() . '.Update',
