@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,7 @@ use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Empresa;
 
-class Controller implements ControllerInterface
+abstract class Controller implements ControllerInterface
 {
     /** @var string */
     private $className;
@@ -75,8 +75,7 @@ class Controller implements ControllerInterface
         $this->title = empty($pageData) ? $className : Tools::lang()->trans($pageData['title']);
     }
 
-    /** @param mixed $extension */
-    public static function addExtension($extension): void
+    public static function addExtension($extension, int $priority = 100): void
     {
         Tools::log()->error('no-extension-support', ['%className%' => static::class]);
     }
@@ -104,24 +103,12 @@ class Controller implements ControllerInterface
         return $this->template;
     }
 
-    /**
-     * @param string $name
-     * @param array $arguments
-     *
-     * @return mixed
-     */
     public function pipe(string $name, ...$arguments)
     {
         Tools::log()->error('no-extension-support', ['%className%' => static::class]);
         return null;
     }
 
-    /**
-     * @param string $name
-     * @param array $arguments
-     *
-     * @return bool
-     */
     public function pipeFalse(string $name, ...$arguments): bool
     {
         Tools::log()->error('no-extension-support', ['%className%' => static::class]);

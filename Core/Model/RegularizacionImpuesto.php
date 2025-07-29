@@ -19,9 +19,13 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
+use FacturaScripts\Core\Model\Base\AccEntryRelationTrait;
+use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
@@ -33,11 +37,11 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class RegularizacionImpuesto extends Base\ModelClass
+class RegularizacionImpuesto extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\AccEntryRelationTrait;
-    use Base\ExerciseRelationTrait;
+    use ModelTrait;
+    use AccEntryRelationTrait;
+    use ExerciseRelationTrait;
 
     /** @var bool */
     public $bloquear;
@@ -75,7 +79,7 @@ class RegularizacionImpuesto extends Base\ModelClass
     /** @var string */
     public $periodo;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->bloquear = false;
@@ -113,10 +117,10 @@ class RegularizacionImpuesto extends Base\ModelClass
 
     public function loadFechaInside(string $fecha): bool
     {
-        return $this->loadFromCode('', [
-            new DataBaseWhere('fechainicio', $fecha, '<='),
-            new DataBaseWhere('fechafin', $fecha, '>='),
-            new DataBaseWhere('idempresa', $this->idempresa),
+        return $this->loadWhere([
+            Where::lte('fechainicio', $fecha),
+            Where::gte('fechafin', $fecha),
+            Where::eq('idempresa', $this->idempresa),
         ]);
     }
 

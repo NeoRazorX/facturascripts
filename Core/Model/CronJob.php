@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Model;
 
 use Closure;
 use Exception;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 
 /**
  * Class to store log information when a plugin is executed from cron.
@@ -69,7 +69,7 @@ class CronJob extends ModelClass
     /** @var float */
     private $start;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->date = Tools::dateTime();
@@ -157,11 +157,6 @@ class CronJob extends ModelClass
         return $this->ready && false === $this->overlapping;
     }
 
-    public static function primaryColumn(): string
-    {
-        return 'id';
-    }
-
     public function run(Closure $function): bool
     {
         if (false === $this->isReady()) {
@@ -224,14 +219,14 @@ class CronJob extends ModelClass
     {
         // comprobamos la lista de trabajos en ejecución
         $whereRunning = [
-            new DataBaseWhere('done', false),
-            new DataBaseWhere('enabled', true),
+            Where::eq('done', false),
+            Where::eq('enabled', true),
         ];
 
         if (count($jobs) > 0) {
-            $whereRunning[] = new DataBaseWhere('jobname', implode(',', $jobs), 'IN');
+            $whereRunning[] = Where::in('jobname', $jobs);
         } else {
-            $whereRunning[] = new DataBaseWhere('jobname', $this->jobname, '!=');
+            $whereRunning[] = Where::notEq('jobname', $this->jobname);
         }
 
         $this->overlapping = $this->count($whereRunning) > 0;

@@ -34,7 +34,9 @@ trait ModelTrait
      */
     protected static $fields = [];
 
-    abstract protected function db(): DataBase;
+    abstract protected static function db(): DataBase;
+
+    abstract public static function primaryColumn(): string;
 
     abstract public static function tableName(): string;
 
@@ -62,11 +64,10 @@ trait ModelTrait
             ->count();
     }
 
-    public static function create(array $data): static
+    public static function create(array $data): ?static
     {
         $model = new static($data);
-        $model->save();
-        return $model;
+        return $model->save() ? $model : null;
     }
 
     public static function deleteWhere(array $where): bool
@@ -76,26 +77,26 @@ trait ModelTrait
             ->delete();
     }
 
-    public static function find($code): static
+    public static function find($code): ?static
     {
         $data = self::table()
             ->whereEq(static::primaryColumn(), $code)
             ->first();
 
-        return new static($data);
+        return $data ? new static($data) : null;
     }
 
-    public static function findWhere(array $where, array $order): static
+    public static function findWhere(array $where, array $order = []): ?static
     {
         $data = self::table()
             ->where($where)
             ->orderMulti($order)
             ->first();
 
-        return new static($data);
+        return $data ? new static($data) : null;
     }
 
-    public static function firstOrCreate(array $where, array $data = []): static
+    public static function findOrCreate(array $where, array $data = []): ?static
     {
         $row = self::table()
             ->where($where)
@@ -106,8 +107,7 @@ trait ModelTrait
 
         $data = array_merge($where, $data);
         $model = new static($data);
-        $model->save();
-        return $model;
+        return $model->save() ? $model : null;
     }
 
     /**
@@ -143,7 +143,7 @@ trait ModelTrait
             ->sum($field);
     }
 
-    public static function updateOrCreate(array $where, array $data): static
+    public static function updateOrCreate(array $where, array $data): ?static
     {
         $row = self::table()
             ->where($where)
@@ -151,14 +151,12 @@ trait ModelTrait
         if ($row) {
             $model = new static($row);
             $model->loadFromData($data);
-            $model->save();
-            return $model;
+            return $model->save() ? $model : null;
         }
 
         $data = array_merge($where, $data);
         $model = new static($data);
-        $model->save();
-        return $model;
+        return $model->save() ? $model : null;
     }
 
     protected function loadModelFields(): void

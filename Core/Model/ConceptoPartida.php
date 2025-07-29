@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -26,9 +28,9 @@ use FacturaScripts\Core\Tools;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ConceptoPartida extends Base\ModelClass
+class ConceptoPartida extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Primary key.
@@ -71,12 +73,12 @@ class ConceptoPartida extends Base\ModelClass
         return parent::url($type, $list);
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codconcepto)) {
             $this->codconcepto = $this->newCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 }

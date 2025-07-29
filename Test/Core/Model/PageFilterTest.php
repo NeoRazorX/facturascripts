@@ -19,36 +19,39 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Model\GrupoClientes;
+use FacturaScripts\Core\Model\PageFilter;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
-final class GrupoClientesTest extends TestCase
+final class PageFilterTest extends TestCase
 {
     use LogErrorsTrait;
+    use RandomDataTrait;
 
     public function testCreate(): void
     {
-        // creamos un grupo de clientes
-        $group = new GrupoClientes();
-        $group->codgrupo = 'Test';
-        $group->nombre = 'Test Customer Group';
-        $this->assertTrue($group->save(), 'customer-group-cant-save');
+        // creamos un usuario
+        $user = $this->getRandomUser();
+        $this->assertTrue($user->save());
 
-        // comprobamos que se ha guardado correctamente
-        $this->assertNotNull($group->id(), 'customer-group-not-stored');
-        $this->assertTrue($group->exists(), 'customer-group-cant-persist');
+        // creamos un filtro de página
+        $pageFilter = new PageFilter();
+        $pageFilter->name = 'TestController';
+        $pageFilter->nick = $user->nick;
+        $pageFilter->description = 'Test Filter';
+        $pageFilter->filters = ['field1' => 'value1', 'field2' => 'value2'];
+        $this->assertTrue($pageFilter->save(), 'Error saving PageFilter');
+
+        // comprobamos que existe en la base de datos
+        $this->assertTrue($pageFilter->exists());
+
+        // comprobamos que se ha asignado un id
+        $this->assertNotNull($pageFilter->id);
 
         // eliminamos
-        $this->assertTrue($group->delete(), 'customer-group-cant-delete');
-    }
-
-    public function testCreateWithNoCode(): void
-    {
-        $group = new GrupoClientes();
-        $group->nombre = 'Test Customer Group';
-        $this->assertTrue($group->save(), 'customer-group-cant-save');
-        $this->assertTrue($group->delete(), 'customer-group-cant-delete');
+        $this->assertTrue($pageFilter->delete(), 'Error deleting PageFilter');
+        $this->assertTrue($user->delete());
     }
 
     protected function tearDown(): void

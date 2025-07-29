@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
 
@@ -43,7 +42,12 @@ class Atributo extends ModelClass
     /** @var int */
     public $num_selector;
 
-    public function clear()
+    public function addValue(string $value): bool
+    {
+        return $this->getNewValue($value)->save();
+    }
+
+    public function clear(): void
     {
         parent::clear();
         $this->num_selector = 0;
@@ -60,18 +64,47 @@ class Atributo extends ModelClass
 
     /**
      * @return AtributoValor[]
+     * @deprecated replace with getValues()
      */
     public function getValores(): array
     {
-        $valor = new DinAtributoValor();
-        $where = [new DataBaseWhere('codatributo', $this->codatributo)];
+        return $this->getValues();
+    }
+
+    /**
+     * @return AtributoValor[]
+     */
+    public function getValues(): array
+    {
         $orderBy = ['orden' => 'ASC'];
-        return $valor->all($where, $orderBy, 0, 0);
+        return $this->hasMany(AtributoValor::class, 'codatributo', [], $orderBy);
+    }
+
+    public function hasValue(string $value): bool
+    {
+        foreach ($this->getValues() as $val) {
+            if ($val->valor === $value) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static function primaryColumn(): string
     {
         return 'codatributo';
+    }
+
+    public function removeValue(string $value): bool
+    {
+        foreach ($this->getValues() as $val) {
+            if ($val->valor === $value) {
+                return $val->delete();
+            }
+        }
+
+        return false;
     }
 
     public static function tableName(): string
@@ -96,12 +129,12 @@ class Atributo extends ModelClass
         return parent::test();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codatributo)) {
             $this->codatributo = (string)$this->newCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 }

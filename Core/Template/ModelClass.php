@@ -52,21 +52,21 @@ abstract class ModelClass
      */
     protected $original = [];
 
-    abstract public static function addExtension($extension);
+    abstract public static function addExtension($extension, int $priority = 100): void;
 
     abstract public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 0): array;
 
     abstract public static function count(array $where = []): int;
 
-    abstract public static function create(array $data): static;
+    abstract public static function create(array $data): ?static;
 
     abstract public static function deleteWhere(array $where): bool;
 
-    abstract public static function find($code): static;
+    abstract public static function find($code): ?static;
 
-    abstract public static function findWhere(array $where, array $order): static;
+    abstract public static function findWhere(array $where, array $order = []): ?static;
 
-    abstract public static function firstOrCreate(array $where, array $data = []): static;
+    abstract public static function findOrCreate(array $where, array $data = []): ?static;
 
     abstract public function getModelFields(): array;
 
@@ -86,7 +86,7 @@ abstract class ModelClass
 
     abstract public static function totalSum(string $field, array $where = []): float;
 
-    abstract public static function updateOrCreate(array $where, array $data): static;
+    abstract public static function updateOrCreate(array $where, array $data): ?static;
 
     public function __construct(array $data = [])
     {
@@ -106,6 +106,7 @@ abstract class ModelClass
         }
 
         $this->loadModelFields();
+
         if (empty($data)) {
             $this->clear();
         } else {
@@ -133,24 +134,56 @@ abstract class ModelClass
         unset($this->attributes[$key]);
     }
 
-    public function changePrimaryColumnValue($newValue): bool
+    public function changeId($new_id): bool
     {
-        if (empty($newValue) || $newValue === $this->id()) {
+        if (empty($new_id) || $new_id === $this->id()) {
             return false;
         }
 
-        return static::table()
+        if (false === $this->pipeFalse('changePrimaryColumnValueBefore')) {
+            return false;
+        }
+
+        $changed = static::table()
             ->whereEq($this->primaryColumn(), $this->id())
-            ->update([$this->primaryColumn() => $newValue]);
+            ->update([$this->primaryColumn() => $new_id]);
+        if (false === $changed) {
+            return false;
+        }
+
+        // Update the attributes with the new id
+        $this->{$this->primaryColumn()} = $new_id;
+
+        $this->syncOriginal();
+        $this->clearCache();
+
+        return $this->pipeFalse('changePrimaryColumnValueAfter');
+    }
+
+    /**
+     * @param $new_id
+     * @return bool
+     * @deprecated replace with changeId()
+     */
+    public function changePrimaryColumnValue($new_id): bool
+    {
+        return $this->changeId($new_id);
     }
 
     public function clear(): void
     {
-        foreach (array_keys($this->getModelFields()) as $fieldName) {
-            $this->{$fieldName} = null;
+        foreach (array_keys($this->getModelFields()) as $field_name) {
+            $this->{$field_name} = null;
         }
 
-        $this->pipe('clear');
+        $this->pipeFalse('clear');
+    }
+
+    public function clearCache(): void
+    {
+        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
+        Cache::deleteMulti('join-model-');
+        Cache::deleteMulti('table-' . static::tableName() . '-');
     }
 
     public function delete(): bool
@@ -159,7 +192,7 @@ abstract class ModelClass
             return true;
         }
 
-        if ($this->pipeFalse('deleteBefore') === false) {
+        if (false === $this->pipeFalse('deleteBefore')) {
             return false;
         }
 
@@ -170,9 +203,7 @@ abstract class ModelClass
             return false;
         }
 
-        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
-        Cache::deleteMulti('join-model-');
-        Cache::deleteMulti('table-' . static::tableName() . '-');
+        $this->clearCache();
 
         WorkQueue::send(
             'Model.' . $this->modelClassName() . '.Delete',
@@ -194,20 +225,25 @@ abstract class ModelClass
                 ->count() > 0;
     }
 
-    public function get($code): ?static
+    /**
+     * @deprecated Use find() instead
+     */
+    public function get($code)
     {
-        if (null === $this->id()) {
-            return null;
+        if (null === $code) {
+            return false;
         }
 
         $data = static::table()
-            ->whereEq(static::primaryColumn(), $this->id())
+            ->whereEq(static::primaryColumn(), $code)
             ->first();
 
-        return new static($data);
+        return empty($data) ?
+            false :
+            new static($data);
     }
 
-    public function getOriginal(string $key = null)
+    public function getOriginal(?string $key = null)
     {
         if ($key === null) {
             return $this->original;
@@ -226,7 +262,7 @@ abstract class ModelClass
         return CSVImport::importTableSQL(static::tableName());
     }
 
-    public function isDirty(string $key = null): bool
+    public function isDirty(?string $key = null): bool
     {
         if ($key === null) {
             return $this->attributes !== $this->original;
@@ -240,12 +276,12 @@ abstract class ModelClass
 
     public function load($code): bool
     {
-        if (null === $this->id()) {
+        if (null === $code) {
             return false;
         }
 
         $data = static::table()
-            ->whereEq(static::primaryColumn(), $this->id())
+            ->whereEq(static::primaryColumn(), $code)
             ->first();
         if (empty($data)) {
             $this->clear();
@@ -254,6 +290,18 @@ abstract class ModelClass
 
         $this->loadFromData($data);
         return true;
+    }
+
+    /**
+     * @deprecated Use load() or loadWhere() instead
+     */
+    public function loadFromCode($code, array $where = [], array $order = []): bool
+    {
+        if (!empty($where)) {
+            return $this->loadWhere($where, $order);
+        }
+
+        return $this->load($code);
     }
 
     public function loadFromData(array $data = [], array $exclude = []): void
@@ -332,10 +380,10 @@ abstract class ModelClass
         }
 
         // get fields list
-        $modelFields = $this->getModelFields();
+        $model_fields = $this->getModelFields();
 
         // Set Cast to Integer if field it's not
-        if (false === in_array($modelFields[$field]['type'], ['integer', 'int', 'serial'])) {
+        if (false === in_array($model_fields[$field]['type'], ['integer', 'int', 'serial'])) {
             // Set Where to Integers values only
             $where[] = Where::regexp($field, '^-?[0-9]+$');
             $field = self::$dataBase->getEngine()->getSQL()->sql2Int($field);
@@ -353,6 +401,9 @@ abstract class ModelClass
         return 'id';
     }
 
+    /**
+     * @deprecated Use id() instead
+     */
     public function primaryColumnValue()
     {
         return $this->{static::primaryColumn()};
@@ -360,7 +411,7 @@ abstract class ModelClass
 
     public function primaryDescription()
     {
-        return $this->{static::primaryDescription()} ?? $this->{static::primaryColumn()};
+        return $this->{$this->primaryDescriptionColumn()};
     }
 
     public function primaryDescriptionColumn(): string
@@ -377,7 +428,19 @@ abstract class ModelClass
 
     public function reload(): bool
     {
-        return $this->load($this->id());
+        if (null === $this->id()) {
+            return false;
+        }
+
+        if (false === $this->pipeFalse('reloadBefore')) {
+            return false;
+        }
+
+        if (false === $this->load($this->id())) {
+            return false;
+        }
+
+        return $this->pipeFalse('reload');
     }
 
     public function save(): bool
@@ -395,9 +458,12 @@ abstract class ModelClass
             return false;
         }
 
+        $this->syncOriginal();
+        $this->clearCache();
+
         WorkQueue::send(
             'Model.' . $this->modelClassName() . '.Save',
-            $this->primaryColumnValue(),
+            $this->id(),
             $this->toArray()
         );
 
@@ -439,18 +505,47 @@ abstract class ModelClass
     public function toArray(): array
     {
         $data = [];
-        foreach (array_keys($this->getModelFields()) as $fieldName) {
-            $data[$fieldName] = $this->{$fieldName} ?? null;
+        foreach (array_keys($this->getModelFields()) as $field_name) {
+            $data[$field_name] = $this->{$field_name} ?? null;
         }
+
+        $data = $this->pipe('toArray', $data) ?? $data;
 
         return $data;
     }
 
     public function update(array $values): bool
     {
-        return static::table()
+        if (null === $this->id()) {
+            return false;
+        }
+
+        if (false === $this->pipeFalse('updateBefore')) {
+            return false;
+        }
+
+        $updated = static::table()
             ->whereEq(static::primaryColumn(), $this->id())
             ->update($values);
+        if (false === $updated) {
+            return false;
+        }
+
+        // Update the attributes with the new values
+        foreach ($values as $key => $value) {
+            $this->{$key} = $value;
+        }
+
+        $this->syncOriginal();
+        $this->clearCache();
+
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Update',
+            $this->id(),
+            $values
+        );
+
+        return $this->pipeFalse('update');
     }
 
     public function url(string $type = 'auto', string $list = 'List'): string
@@ -478,7 +573,31 @@ abstract class ModelClass
         return empty($value) ? $list . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
     }
 
-    protected function db(): DataBase
+    /**
+     * Define a one-to-one relationship.
+     *
+     * @param string $modelName
+     * @param string $foreignKey
+     * @return object|null
+     */
+    protected function belongsTo(string $modelName, string $foreignKey): ?object
+    {
+        if (empty($this->{$foreignKey})) {
+            return null;
+        }
+
+        // Extract class name if full class path is provided
+        if (strpos($modelName, '\\') !== false) {
+            $parts = explode('\\', $modelName);
+            $modelName = end($parts);
+        }
+
+        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
+        $model = new $modelClass();
+        return $model->load($this->{$foreignKey}) ? $model : null;
+    }
+
+    protected static function db(): DataBase
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
@@ -521,24 +640,55 @@ abstract class ModelClass
         return $field['is_nullable'] === 'NO' ? 0.0 : null;
     }
 
+    /**
+     * Define a one-to-many relationship.
+     *
+     * @param string $modelName
+     * @param string $foreignKey
+     * @param array $where
+     * @param array $order
+     * @return array
+     */
+    protected function hasMany(string $modelName, string $foreignKey, array $where = [], array $order = []): array
+    {
+        // Extract class name if full class path is provided
+        if (strpos($modelName, '\\') !== false) {
+            $parts = explode('\\', $modelName);
+            $modelName = end($parts);
+        }
+
+        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
+        $where[] = Where::eq($foreignKey, $this->id());
+        return $modelClass::all($where, $order);
+    }
+
     protected function saveInsert(): bool
     {
         if (false === $this->pipeFalse('saveInsertBefore')) {
             return false;
         }
 
-        $inserted = static::table()->insert($this->toArray());
+        $data = $this->toArray();
+        // Remove primary key if it is not set, to allow the database to generate it
+        if (null === $this->id()) {
+            unset($data[static::primaryColumn()]);
+        }
+
+        $inserted = static::table()->insert($data);
         if (false === $inserted) {
             return false;
         }
 
-        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
-        Cache::deleteMulti('join-model-');
-        Cache::deleteMulti('table-' . static::tableName() . '-');
+        // Update the attributes with the new id
+        if (null === $this->id()) {
+            $this->{$this->primaryColumn()} = static::$dataBase->lastval();
+        } else {
+            static::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
+        }
 
         WorkQueue::send(
             'Model.' . $this->modelClassName() . '.Insert',
-            $this->primaryColumnValue(),
+            $this->id(),
             $this->toArray()
         );
 
@@ -558,13 +708,9 @@ abstract class ModelClass
             return false;
         }
 
-        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
-        Cache::deleteMulti('join-model-');
-        Cache::deleteMulti('table-' . static::tableName() . '-');
-
         WorkQueue::send(
             'Model.' . $this->modelClassName() . '.Update',
-            $this->primaryColumnValue(),
+            $this->id(),
             $this->toArray()
         );
 

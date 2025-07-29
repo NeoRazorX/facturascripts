@@ -23,8 +23,8 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
 use FacturaScripts\Core\Model\Base\GravatarTrait;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Agente as DinAgente;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
@@ -120,7 +120,7 @@ class User extends ModelClass
 
         // comprobamos si el rol existe
         $role = new DinRole();
-        if (false === $role->loadFromCode($code)) {
+        if (false === $role->load($code)) {
             Tools::log()->error('role-not-found', ['%code%' => $code]);
             return false;
         }
@@ -164,7 +164,7 @@ class User extends ModelClass
         if ($this->admin) {
             // comprobamos si la página existe y si el permiso a comprobar no es only-owner-data
             $page = new DinPage();
-            return $page->loadFromCode($pageName) && $permission != 'only-owner-data';
+            return $page->load($pageName) && $permission != 'only-owner-data';
         }
 
         // si no es admin, comprobamos si tiene acceso a la página
@@ -177,7 +177,7 @@ class User extends ModelClass
         return false;
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->admin = false;
@@ -427,9 +427,9 @@ class User extends ModelClass
         return true;
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
-        if (false === parent::saveInsert($values)) {
+        if (false === parent::saveInsert()) {
             return false;
         }
 

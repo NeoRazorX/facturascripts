@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
 
@@ -28,9 +30,9 @@ use FacturaScripts\Core\Validator;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class AgenciaTransporte extends Base\ModelClass
+class AgenciaTransporte extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Contains True if is enabled.
@@ -63,7 +65,7 @@ class AgenciaTransporte extends Base\ModelClass
      */
     public $web;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->activo = true;
@@ -102,12 +104,12 @@ class AgenciaTransporte extends Base\ModelClass
         return parent::test();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codtrans)) {
             $this->codtrans = (string)$this->newCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 }

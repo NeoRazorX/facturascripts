@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,7 +44,7 @@ final class DivisaTest extends TestCase
         $currency->coddivisa = 'Tes';
         $currency->descripcion = 'Test Currency';
         $this->assertTrue($currency->save(), 'currency-cant-save');
-        $this->assertNotNull($currency->primaryColumnValue(), 'currency-not-stored');
+        $this->assertNotNull($currency->id(), 'currency-not-stored');
         $this->assertTrue($currency->exists(), 'currency-cant-persist');
 
         // eliminamos
