@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
@@ -31,10 +34,10 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Cuenta extends Base\ModelClass
+class Cuenta extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\ExerciseRelationTrait;
+    use ModelTrait;
+    use ExerciseRelationTrait;
 
     /** @var string */
     public $codcuenta;
@@ -66,7 +69,7 @@ class Cuenta extends Base\ModelClass
     /** @var float */
     public $saldo;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->debe = 0.0;

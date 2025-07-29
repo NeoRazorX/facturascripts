@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cuenta as DinCuenta;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
@@ -31,10 +34,10 @@ use FacturaScripts\Dinamic\Model\Partida as DinPartida;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Subcuenta extends Base\ModelClass
+class Subcuenta extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\ExerciseRelationTrait;
+    use ModelTrait;
+    use ExerciseRelationTrait;
 
     /**
      * Account code.
@@ -104,7 +107,7 @@ class Subcuenta extends Base\ModelClass
      */
     public $saldo;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->debe = 0.0;
