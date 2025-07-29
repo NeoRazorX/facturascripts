@@ -69,6 +69,12 @@ class SalesHeaderHTML
             $model->setAuthor($user);
             if (isset($formData['codcliente']) && $formData['codcliente'] && $cliente->loadFromCode($formData['codcliente'])) {
                 $model->setSubject($cliente);
+
+                $model->codalmacen = $model->getSubject()->getSettings($model->idempresa)['codalmacen'] ?? $model->getCompany()->getSettings()['codalmacen'] ?? $model->codalmacen;
+                $model->codpago = $model->getSubject()->getSettings($model->idempresa)['codpago'] ?? $model->getCompany()->getSettings()['codpago'] ?? $model->codpago;
+                $model->codserie = $model->getSubject()->getSettings($model->idempresa)['codserie'] ?? $model->getCompany()->getSettings()['codserie'] ?? $model->codserie;
+                $model->coddivisa = $model->getSubject()->getSettings($model->idempresa)['$this->coddivisa'] ?? $model->getCompany()->getSettings()['$this->coddivisa'] ?? $model->coddivisa;
+
                 if (empty($formData['action']) || $formData['action'] === 'set-customer') {
                     return;
                 }
@@ -86,6 +92,12 @@ class SalesHeaderHTML
             $cliente->loadFromCode($formData['codcliente'])) {
             // existing record and change customer
             $model->setSubject($cliente);
+
+            $model->codalmacen = $model->getSubject()->getSettings($model->idempresa)['codalmacen'] ?? $model->getCompany()->getSettings()['codalmacen'] ?? $model->codalmacen;
+            $model->codpago = $model->getSubject()->getSettings($model->idempresa)['codpago'] ?? $model->getCompany()->getSettings()['codpago'] ?? $model->codpago;
+            $model->codserie = $model->getSubject()->getSettings($model->idempresa)['codserie'] ?? $model->getCompany()->getSettings()['codserie'] ?? $model->codserie;
+            $model->coddivisa = $model->getSubject()->getSettings($model->idempresa)['$this->coddivisa'] ?? $model->getCompany()->getSettings()['$this->coddivisa'] ?? $model->coddivisa;
+
             return;
         }
 

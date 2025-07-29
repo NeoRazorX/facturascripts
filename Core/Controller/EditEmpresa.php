@@ -24,6 +24,8 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Dinamic\Model\SettingsModel;
 
 /**
  * Controller to edit a single item from the  Empresa model
@@ -69,6 +71,7 @@ class EditEmpresa extends EditController
         $this->createViewBankAccounts();
         $this->createViewPaymentMethods();
         $this->createViewExercises();
+        $this->createViewSettings();
     }
 
     protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco'): void
@@ -95,8 +98,39 @@ class EditEmpresa extends EditController
             ->disableColumn('company');
     }
 
+    protected function createViewSettings(string $viewName = 'EditSettingsModel'): void
+    {
+        $this->addEditView($viewName, 'SettingsModel', 'settings', 'fas fa-wrench');
+    }
+
     protected function execPreviousAction($action): bool
     {
+        if ($this->active === 'EditSettingsModel' && in_array($action, ['edit', 'insert'])){
+
+            /** @var Empresa $empresa */
+            $empresa = $this->getModel();
+            $empresa->loadFromCode($this->request->get('code'));
+            $this->request->request->set('idempresa', $empresa->primaryColumnValue());
+
+            /** @var SettingsModel $settingsModel */
+            $settingsModel = $this->views[$this->active]->model;
+            $settingsModel->loadFromCode('', [
+                new DataBaseWhere('classnamemodel', get_class($empresa)),
+                new DataBaseWhere('idmodel', $empresa->primaryColumnValue()),
+                new DataBaseWhere('idempresa', $empresa->primaryColumnValue()),
+            ]);
+
+            $settingsModel->classnamemodel = get_class($empresa);
+            $settingsModel->idmodel = $empresa->primaryColumnValue();
+            $settingsModel->idempresa = $empresa->primaryColumnValue();
+            $settingsModel->settings = json_encode([
+                'codalmacen' => empty($this->request->request->get('codalmacen')) ? null : $this->request->request->get('codalmacen'),
+                'codserie' => empty($this->request->request->get('codserie')) ? null : $this->request->request->get('codserie'),
+                'coddivisa' => empty($this->request->request->get('coddivisa')) ? null : $this->request->request->get('coddivisa'),
+                'codpago' => empty($this->request->request->get('codpago')) ? null : $this->request->request->get('codpago'),
+            ]);
+        }
+
         switch ($action) {
             case 'check-vies':
                 return $this->checkViesAction();
@@ -124,6 +158,28 @@ class EditEmpresa extends EditController
                 $id = $this->getViewModelValue($this->getMainViewName(), 'idempresa');
                 $where = [new DataBaseWhere('idempresa', $id)];
                 $view->loadData('', $where);
+                break;
+            case 'EditSettingsModel':
+                /** @var Empresa $empresa */
+                $empresa = $this->getModel();
+                $empresa->loadFromCode($this->request->get('code'));
+
+                /** @var SettingsModel $settingsModel */
+                $settingsModel = $this->views[$viewName]->model;
+                $where = [
+                    new DataBaseWhere('classnamemodel', get_class($empresa)),
+                    new DataBaseWhere('idempresa', $empresa->idempresa),
+                ];
+                $settingsModel->loadFromCode('', $where);
+
+                if($settingsModel->exists()){
+                    // agregamos al modelo las propiedades que hay dentro de settings
+                    // para conservar la clase con todas las propiedades y que detecte si el modelo existe o no.
+                    foreach ($this->views[$viewName]->model->settings as $key => $value) {
+                        $this->views[$viewName]->model->{$key} = $value;
+                    }
+                }
+
                 break;
 
             case $mvn:

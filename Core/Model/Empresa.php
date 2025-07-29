@@ -239,4 +239,21 @@ class Empresa extends Base\Contact
 
         return parent::saveInsert($values) && $this->createPaymentMethods() && $this->createWarehouse();
     }
+
+    /**
+     * Devuelve las settings de la empresa
+     *
+     * @return array
+     */
+    public function getSettings()
+    {
+        $settingsModel = new SettingsModel();
+        $settingsModel->loadFromCode('', [
+            new DataBaseWhere('classnamemodel', static::class),
+            new DataBaseWhere('idmodel', $this->primaryColumnValue()),
+            new DataBaseWhere('idempresa', $this->primaryColumnValue()),
+        ]);
+
+        return $settingsModel->settings ?? [];
+    }
 }

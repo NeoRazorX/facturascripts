@@ -318,4 +318,22 @@ class Cliente extends Base\ComercialContact
 
         return $return;
     }
+
+    /**
+     * Devuelve las settings de la empresa
+     *
+     * @param string $idCompany
+     * @return array
+     */
+    public function getSettings(string $idCompany)
+    {
+        $settingsModel = new SettingsModel();
+        $settingsModel->loadFromCode('', [
+            new DataBaseWhere('classnamemodel', static::class),
+            new DataBaseWhere('idmodel', $this->primaryColumnValue()),
+            new DataBaseWhere('idempresa', $idCompany),
+        ]);
+
+        return $settingsModel->settings ?? [];
+    }
 }
