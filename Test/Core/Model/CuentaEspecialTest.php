@@ -28,13 +28,13 @@ final class CuentaEspecialTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testDataInstalled()
+    public function testDataInstalled(): void
     {
         $account = new CuentaEspecial();
         $this->assertNotEmpty($account->all(), 'account-special-data-not-installed-from-csv');
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         // creamos una cuenta
         $account = new CuentaEspecial();
@@ -47,7 +47,7 @@ final class CuentaEspecialTest extends TestCase
         $this->assertTrue($account->delete(), 'account-special-cant-delete');
     }
 
-    public function testCreateHTMLDescription()
+    public function testCreateHTMLDescription(): void
     {
         // creamos una cuenta con html en la descripción
         $account = new CuentaEspecial();
@@ -63,7 +63,7 @@ final class CuentaEspecialTest extends TestCase
         $this->assertTrue($account->delete(), 'account-special-cant-delete');
     }
 
-    public function testCreateWithoutCode()
+    public function testCreateWithoutCode(): void
     {
         $account = new CuentaEspecial();
         $account->descripcion = 'Test Special Account';
