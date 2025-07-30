@@ -72,15 +72,15 @@ final class AlmacenTest extends TestCase
     {
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
         $campos = [
-            'apartado'   => [10, 11],
-            'ciudad'     => [100, 101],
-            'codpais'    => [20, 21],
+            'apartado' => [10, 11],
+            'ciudad' => [100, 101],
+            'codpais' => [20, 21],
             'codalmacen' => [4, 5],
-            'codpostal'  => [10, 11],
-            'direccion'  => [200, 201],
-            'nombre'     => [100, 101],
-            'provincia'  => [100, 101],
-            'telefono'   => [30, 31],
+            'codpostal' => [10, 11],
+            'direccion' => [200, 201],
+            'nombre' => [100, 101],
+            'provincia' => [100, 101],
+            'telefono' => [30, 31],
         ];
 
         foreach ($campos as $campo => [$valido, $invalido]) {
