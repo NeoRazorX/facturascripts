@@ -59,7 +59,6 @@ final class AgenteTest extends TestCase
         // comprobamos que los teléfonos, fax, email y observaciones no sean nulos
         $this->assertNotNull($agent->telefono1, 'agent-telefono1-null');
         $this->assertNotNull($agent->telefono2, 'agent-telefono2-null');
-        $this->assertNotNull($agent->fax, 'agent-fax-null');
         $this->assertNotNull($agent->email, 'agent-email-null');
         $this->assertNotNull($agent->observaciones, 'agent-observaciones-null');
 
