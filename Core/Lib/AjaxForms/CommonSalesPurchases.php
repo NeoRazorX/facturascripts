@@ -46,11 +46,6 @@ trait CommonSalesPurchases
     {
         $user = Session::user();
 
-        // si el usuario no existe, devolvemos false
-        if (false === $user->exists()) {
-            return false;
-        }
-
         // si el usuario es administrador, devolvemos true
         if ($user->admin) {
             return true;
