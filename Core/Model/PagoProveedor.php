@@ -40,7 +40,7 @@ class PagoProveedor extends ModelClass
     use PaymentRelationTrait;
 
     /** @var bool */
-    protected static $disable_accounting_generation = false;
+    protected $disable_accounting_generation = false;
 
     /** @var string */
     public $fecha;
@@ -84,13 +84,13 @@ class PagoProveedor extends ModelClass
 
     public function disableAccountingGeneration(bool $value = true): void
     {
-        self::$disable_accounting_generation = $value;
+        $this->disable_accounting_generation = $value;
     }
 
     public function getReceipt(): DinReciboProveedor
     {
         $receipt = new DinReciboProveedor();
-        $receipt->loadFromCode($this->idrecibo);
+        $receipt->load($this->idrecibo);
         return $receipt;
     }
 
@@ -120,7 +120,7 @@ class PagoProveedor extends ModelClass
 
     protected function saveInsert(): bool
     {
-        if (empty($this->idasiento) && !self::$disable_accounting_generation) {
+        if (empty($this->idasiento) && !$this->disable_accounting_generation) {
             $tool = new PaymentToAccounting();
             $tool->generate($this);
         }
