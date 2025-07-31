@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\InvoiceLineTrait;
-use FacturaScripts\Core\Model\Base\ModelTrait;
-use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\FacturaProveedor as DinFacturaProveedor;
 
 /**
@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor as DinFacturaProveedor;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaFacturaProveedor extends PurchaseDocumentLine
+class LineaFacturaProveedor extends BusinessDocumentLine
 {
     use ModelTrait;
     use InvoiceLineTrait;
@@ -70,6 +70,7 @@ class LineaFacturaProveedor extends PurchaseDocumentLine
     {
         // needed dependency
         new FacturaProveedor();
+
         return parent::install();
     }
 
@@ -82,11 +83,14 @@ class LineaFacturaProveedor extends PurchaseDocumentLine
     {
         // servido will always be 0 to prevent stock problems when removing rectified invoices
         $this->servido = 0.0;
+
         return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'List'): string
     {
-        return $this->idfactura ? 'EditFacturaProveedor?code=' . $this->idfactura : parent::url($type, $list);
+        return $this->idfactura ?
+            'EditFacturaProveedor?code=' . $this->idfactura :
+            parent::url($type, $list);
     }
 }
