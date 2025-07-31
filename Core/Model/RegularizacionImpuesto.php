@@ -53,7 +53,7 @@ class RegularizacionImpuesto extends ModelClass
     public $codsubcuentadeu;
 
     /** @var bool */
-    private $disableAdditionalTest = false;
+    private $disable_additional_test = false;
 
     /** @var string */
     public $fechaasiento;
@@ -102,7 +102,7 @@ class RegularizacionImpuesto extends ModelClass
 
     public function disableAdditionalTest(bool $value): void
     {
-        $this->disableAdditionalTest = $value;
+        $this->disable_additional_test = $value;
     }
 
     public function install(): string
@@ -155,7 +155,7 @@ class RegularizacionImpuesto extends ModelClass
             return false;
         }
 
-        if ($this->getExercise()->isOpened() === false && $this->disableAdditionalTest === false) {
+        if ($this->getExercise()->isOpened() === false && $this->disable_additional_test === false) {
             Tools::log()->warning('closed-exercise', ['%exerciseName%' => $this->codejercicio]);
             return false;
         }

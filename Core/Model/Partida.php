@@ -99,7 +99,7 @@ class Partida extends ModelClass
     /**
      * @var bool
      */
-    private $disableAdditionalTest = false;
+    private $disable_additional_test = false;
 
     /**
      * Document of departure.
@@ -215,7 +215,7 @@ class Partida extends ModelClass
 
     public function disableAdditionalTest(bool $value): void
     {
-        $this->disableAdditionalTest = $value;
+        $this->disable_additional_test = $value;
     }
 
     /**
@@ -272,12 +272,12 @@ class Partida extends ModelClass
     public function save(): bool
     {
         $entry = $this->getAccountingEntry();
-        if (false === $this->disableAdditionalTest && false === $entry->editable) {
+        if (false === $this->disable_additional_test && false === $entry->editable) {
             return false;
         }
 
         $exercise = $entry->getExercise();
-        if (false === $this->disableAdditionalTest && false === $exercise->isOpened()) {
+        if (false === $this->disable_additional_test && false === $exercise->isOpened()) {
             Tools::log()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
             return false;
         }
