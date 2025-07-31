@@ -214,7 +214,13 @@ class MysqlEngine extends DataBaseEngine
      */
     public function escapeColumn($link, $name): string
     {
-        return '`' . $name . '`';
+        if (preg_match('/\w+\s*\(.*\)/', $name)) {
+            // Si $name tiene parentesis como una función (e.g., lower(menu)), no la escapamos con comillas invertidas.
+            return $name;
+        } else {
+            // Si es un nombre de columna simple, lo escapamos con comillas invertidas.
+            return '`' . str_replace('`', '``', $name) . '`';
+        }
     }
 
     /**
