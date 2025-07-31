@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,13 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Settings;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class SettingsTest extends TestCase
 {
+    use LogErrorsTrait;
+
     public function testCreate(): void
     {
         // creamos un registro
@@ -43,19 +46,24 @@ final class SettingsTest extends TestCase
         // creamos un registro con valores que contienen código html
         $settings = new Settings();
         $settings->name = '"> <img/src=x onerror=alert(1)>';
-        $settings->property1 = '<script>alert("test1");</script>';
-        $settings->property2 = '<script>alert("test2");</script>';
+        $settings->setProperty('property1', '<script>alert("test1");</script>');
+        $settings->setProperty('property2', '<script>alert("test2");</script>');
         $this->assertTrue($settings->save());
 
         // recargamos el registro
-        $settings->loadFromCode($settings->name);
+        $this->assertTrue($settings->load($settings->name));
 
         // comprobamos que se han escapado los valores
         $this->assertEquals('&quot;&gt; &lt;img/src=x onerror=alert(1)&gt;', $settings->name);
-        $this->assertEquals('&lt;script&gt;alert(&quot;test1&quot;);&lt;/script&gt;', $settings->property1);
-        $this->assertEquals('&lt;script&gt;alert(&quot;test2&quot;);&lt;/script&gt;', $settings->property2);
+        $this->assertEquals('&lt;script&gt;alert(&quot;test1&quot;);&lt;/script&gt;', $settings->getProperty('property1'));
+        $this->assertEquals('&lt;script&gt;alert(&quot;test2&quot;);&lt;/script&gt;', $settings->getProperty('property2'));
 
         // lo eliminamos
         $this->assertTrue($settings->delete());
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

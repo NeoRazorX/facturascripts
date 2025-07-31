@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -221,7 +221,7 @@ class Tools
         }
 
         // eliminamos barras al incio y al final
-        $folders = array_map(function($folder) {
+        $folders = array_map(function ($folder) {
             return ltrim(rtrim($folder, '/\\'), '/\\');
         }, $folders);
 
@@ -380,25 +380,25 @@ class Tools
     {
         // Convertir a ASCII para eliminar acentos y caracteres especiales
         $text = self::ascii($text);
-        
+
         // Insertar guiones antes de mayúsculas precedidas por minúsculas o números
         $text = preg_replace('/([a-z0-9])([A-Z])/', '$1-$2', $text);
-        
+
         // Insertar guiones entre mayúsculas consecutivas y la siguiente minúscula (ej: HTMLParser -> HTML-Parser)
         $text = preg_replace('/([A-Z])([A-Z][a-z])/', '$1-$2', $text);
-        
+
         // Convertir a minúsculas
         $text = strtolower($text);
-        
+
         // Reemplazar espacios y caracteres no alfanuméricos con guiones
         $text = preg_replace('/[^a-z0-9]+/', '-', $text);
-        
+
         // Eliminar guiones duplicados
         $text = preg_replace('/-{2,}/', '-', $text);
-        
+
         // Eliminar guiones al inicio y final
         $text = trim($text, '-');
-        
+
         return $text;
     }
 
@@ -570,7 +570,7 @@ class Tools
         foreach (self::$settings as $key => $properties) {
             $model = new Settings();
             $model->name = $key;
-            $model->properties = $properties;
+            $model->setProperties($properties);
             if (false === $model->save()) {
                 return false;
             }
@@ -632,29 +632,29 @@ class Tools
     {
         // Convertir a ASCII y a minúsculas
         $text = strtolower(self::ascii($text));
-        
+
         // Reemplazar caracteres no alfanuméricos con el separador
         $text = preg_replace('/[^a-z0-9]+/', $separator, $text);
-        
+
         // Escapar el separador para usar en regex y eliminar separadores consecutivos
         $escapedSeparator = preg_quote($separator, '/');
         $text = preg_replace('/' . $escapedSeparator . '{2,}/', $separator, $text);
-        
+
         // Eliminar separadores al inicio y final
         $text = trim($text, $separator);
-        
+
         // Si queda una cadena vacía, devolver una cadena vacía
         if ($text === '') {
             return '';
         }
-        
+
         // Aplicar límite de longitud si se especifica
         if ($maxLength > 0 && strlen($text) > $maxLength) {
             $text = substr($text, 0, $maxLength);
             // Limpiar separadores finales que puedan haber quedado tras el corte
             $text = rtrim($text, $separator);
         }
-        
+
         return $text;
     }
 
@@ -752,9 +752,8 @@ class Tools
         self::$settings = Cache::remember('tools-settings', function () {
             $settings = [];
 
-            $model = new Settings();
-            foreach ($model->all([], [], 0, 0) as $item) {
-                $settings[$item->name] = $item->properties;
+            foreach (Settings::all([], [], 0, 0) as $item) {
+                $settings[$item->name] = $item->getProperties();
             }
 
             return $settings;

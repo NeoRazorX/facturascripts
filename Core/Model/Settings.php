@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -27,9 +29,9 @@ use FacturaScripts\Core\Tools;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Settings extends Base\ModelClass
+class Settings extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Identifier of the group of values.
@@ -41,64 +43,38 @@ class Settings extends Base\ModelClass
     /**
      * Set of configuration values
      *
-     * @var array
+     * @var string
      */
-    public $properties;
+    protected $properties;
 
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function __get($name)
+    public function clearCache(): void
     {
-        if (!is_array($this->properties) || !array_key_exists($name, $this->properties)) {
-            return null;
-        }
-
-        // si contiene html, lo limpiamos
-        if (is_string($this->properties[$name]) && strpos($this->properties[$name], '<') !== false) {
-            return Tools::noHtml($this->properties[$name]);
-        }
-
-        return $this->properties[$name];
-    }
-
-    public function delete(): bool
-    {
-        if (false === parent::delete()) {
-            return false;
-        }
-
+        parent::clearCache();
         Tools::settingsClear();
-        return true;
     }
 
-    /**
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set($name, $value)
+    public function getProperties(): array
     {
-        $this->properties[$name] = $value;
+        $data = json_decode($this->properties ?? '', true);
+        if (!is_array($data)) {
+            return [];
+        }
+
+        foreach ($data as $property => $value) {
+            // si contiene html, lo limpiamos
+            if (is_string($value) && strpos($value, '<') !== false) {
+                $data[$property] = Tools::noHtml($value);
+            }
+        }
+
+        return $data;
     }
 
-    public function clear()
+    public function getProperty(string $key): ?string
     {
-        parent::clear();
-        $this->properties = [];
-    }
+        $properties = $this->getProperties();
 
-    /**
-     * Load data from array
-     *
-     * @param array $data
-     * @param array $exclude
-     */
-    public function loadFromData(array $data = [], array $exclude = [])
-    {
-        parent::loadFromData($data, ['properties', 'action']);
-        $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
+        return $properties[$key] ?? null;
     }
 
     public static function primaryColumn(): string
@@ -106,17 +82,16 @@ class Settings extends Base\ModelClass
         return 'name';
     }
 
-    public function save(): bool
+    public function setProperties(array $properties): void
     {
-        // escapamos el html
-        $this->name = Tools::noHtml($this->name);
+        $this->properties = json_encode($properties, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
 
-        if (false === parent::save()) {
-            return false;
-        }
-
-        Tools::settingsClear();
-        return true;
+    public function setProperty(string $key, string $value): void
+    {
+        $properties = $this->getProperties();
+        $properties[$key] = $value;
+        $this->setProperties($properties);
     }
 
     public static function tableName(): string
@@ -124,18 +99,16 @@ class Settings extends Base\ModelClass
         return 'settings';
     }
 
+    public function test(): bool
+    {
+        // escapamos el html
+        $this->name = Tools::noHtml($this->name);
+
+        return parent::test();
+    }
+
     public function url(string $type = 'auto', string $list = 'Edit'): string
     {
         return parent::url($type, $list);
-    }
-
-    protected function saveInsert(array $values = []): bool
-    {
-        return parent::saveInsert(['properties' => json_encode($this->properties)]);
-    }
-
-    protected function saveUpdate(array $values = []): bool
-    {
-        return parent::saveUpdate(['properties' => json_encode($this->properties)]);
     }
 }
