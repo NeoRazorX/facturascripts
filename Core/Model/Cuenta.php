@@ -162,7 +162,7 @@ class Cuenta extends ModelClass
                 new DataBaseWhere('codejercicio', $this->codejercicio),
                 new DataBaseWhere('codsubcuenta', $newCode)
             ];
-            if (false === $subcuenta->loadFromCode('', $where)) {
+            if (false === $subcuenta->loadWhere($where)) {
                 return $newCode;
             }
         }
@@ -188,7 +188,7 @@ class Cuenta extends ModelClass
         }
 
         // parent id?
-        if (!empty($this->parent_idcuenta) && $parent->loadFromCode($this->parent_idcuenta) && $parent->codejercicio === $this->codejercicio) {
+        if (!empty($this->parent_idcuenta) && $parent->load($this->parent_idcuenta) && $parent->codejercicio === $this->codejercicio) {
             return $parent;
         }
 
@@ -196,7 +196,7 @@ class Cuenta extends ModelClass
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codcuenta', $this->parent_codcuenta)
         ];
-        $parent->loadFromCode('', $where);
+        $parent->loadWhere($where);
         return $parent;
     }
 
@@ -207,9 +207,8 @@ class Cuenta extends ModelClass
      */
     public function getSubcuentas(): array
     {
-        $subcuenta = new DinSubcuenta();
         $where = [new DataBaseWhere('idcuenta', $this->idcuenta)];
-        return $subcuenta->all($where, ['codsubcuenta' => 'ASC'], 0, 0);
+        return DinSubcuenta::all($where, ['codsubcuenta' => 'ASC'], 0, 0);
     }
 
     public function install(): string

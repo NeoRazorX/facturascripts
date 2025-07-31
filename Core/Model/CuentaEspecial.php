@@ -50,7 +50,7 @@ class CuentaEspecial extends ModelClass
             new DataBaseWhere('codcuentaesp', $this->codcuentaesp),
             new DataBaseWhere('codejercicio', $codejercicio)
         ];
-        if ($cuenta->loadFromCode('', $where)) {
+        if ($cuenta->loadWhere($where)) {
             return $cuenta;
         }
 
@@ -66,13 +66,13 @@ class CuentaEspecial extends ModelClass
             new DataBaseWhere('codcuentaesp', $this->codcuentaesp),
             new DataBaseWhere('codejercicio', $codejercicio)
         ];
-        if ($subcuenta->loadFromCode('', $where)) {
+        if ($subcuenta->loadWhere($where)) {
             return $subcuenta;
         }
 
         // buscamos la primera cuenta relacionada
         $cuenta = new DinCuenta();
-        if ($cuenta->loadFromCode('', $where)) {
+        if ($cuenta->loadWhere($where)) {
             // devolvemos su primera subcuenta
             foreach ($cuenta->getSubcuentas() as $sub) {
                 return $sub;

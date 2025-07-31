@@ -54,7 +54,7 @@ class Subcuenta extends ModelClass
     public $codcuentaesp;
 
     /**
-     * Sub-account code.
+     * Subaccount code.
      *
      * @var string
      */
@@ -140,7 +140,7 @@ class Subcuenta extends ModelClass
         $account = new DinCuenta();
 
         // find account by id
-        if (!empty($this->idcuenta) && $account->loadFromCode($this->idcuenta) && $account->codejercicio === $this->codejercicio) {
+        if (!empty($this->idcuenta) && $account->load($this->idcuenta) && $account->codejercicio === $this->codejercicio) {
             return $account;
         }
 
@@ -149,7 +149,7 @@ class Subcuenta extends ModelClass
             new DataBaseWhere('codcuenta', $this->codcuenta),
             new DataBaseWhere('codejercicio', $this->codejercicio)
         ];
-        $account->loadFromCode('', $where);
+        $account->loadWhere($where);
         return $account;
     }
 
