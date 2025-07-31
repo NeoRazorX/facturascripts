@@ -52,7 +52,7 @@ class Cuenta extends ModelClass
     public $descripcion;
 
     /** @var bool */
-    private $disableAdditionalTest = false;
+    private $disable_additional_test = false;
 
     /** @var float */
     public $haber;
@@ -92,7 +92,7 @@ class Cuenta extends ModelClass
 
     public function delete(): bool
     {
-        if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
+        if ($this->getExercise()->isOpened() || $this->disable_additional_test) {
             return parent::delete();
         }
 
@@ -102,7 +102,7 @@ class Cuenta extends ModelClass
 
     public function disableAdditionalTest(bool $value): void
     {
-        $this->disableAdditionalTest = $value;
+        $this->disable_additional_test = $value;
     }
 
     /**
@@ -233,7 +233,7 @@ class Cuenta extends ModelClass
 
     public function save(): bool
     {
-        if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
+        if ($this->getExercise()->isOpened() || $this->disable_additional_test) {
             return parent::save();
         }
 

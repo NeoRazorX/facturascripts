@@ -77,7 +77,7 @@ class Subcuenta extends ModelClass
     /**
      * @var bool
      */
-    private $disableAdditionalTest = false;
+    private $disable_additional_test = false;
 
     /**
      * Amount of credit.
@@ -117,7 +117,7 @@ class Subcuenta extends ModelClass
 
     public function delete(): bool
     {
-        if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
+        if ($this->getExercise()->isOpened() || $this->disable_additional_test) {
             return parent::delete();
         }
 
@@ -127,7 +127,7 @@ class Subcuenta extends ModelClass
 
     public function disableAdditionalTest(bool $value): void
     {
-        $this->disableAdditionalTest = $value;
+        $this->disable_additional_test = $value;
     }
 
     /**
@@ -191,7 +191,7 @@ class Subcuenta extends ModelClass
 
     public function save(): bool
     {
-        if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
+        if ($this->getExercise()->isOpened() || $this->disable_additional_test) {
             return parent::save();
         }
 
@@ -225,7 +225,7 @@ class Subcuenta extends ModelClass
 
         // check exercise
         $exercise = $this->getExercise();
-        if (false === $this->disableAdditionalTest && strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
+        if (false === $this->disable_additional_test && strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
             Tools::log()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
             return false;
         }
