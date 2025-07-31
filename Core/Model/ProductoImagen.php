@@ -40,7 +40,7 @@ class ProductoImagen extends ModelClass
 
     const THUMBNAIL_PATH = '/MyFiles/Tmp/Thumbnails/';
 
-    /** @var int; */
+    /** @var int */
     public $id;
 
     /** @var int */
