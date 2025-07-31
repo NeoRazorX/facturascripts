@@ -283,9 +283,20 @@ final class DbQuery
 
     public function orderBy(string $field, string $order = 'ASC'): self
     {
+        // si lleva paréntesis, no escapamos
+        if (strpos($field, '(') !== false && strpos($field, ')') !== false) {
+            $this->orderBy[] = $field . ' ' . $order;
+            return $this;
+        }
+
         // si el campo comienza por integer: hacemos el cast a integer
         if (0 === strpos($field, 'integer:')) {
             $field = self::db()->castInteger(substr($field, 8));
+        }
+
+        // si empieza por lower, hacemos el lower
+        if (0 === strpos($field, 'lower:')) {
+            $field = 'LOWER(' . self::db()->escapeColumn(substr($field, 6)) . ')';
         }
 
         $this->orderBy[] = self::db()->escapeColumn($field) . ' ' . $order;
