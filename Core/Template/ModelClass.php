@@ -480,6 +480,11 @@ abstract class ModelClass
     {
         $this->original = [];
 
+        if (null === $this->id()) {
+            // If the model has no ID, we do not sync original values
+            return;
+        }
+
         foreach (array_keys($this->getModelFields()) as $key) {
             $this->original[$key] = $this->{$key};
         }
