@@ -25,7 +25,7 @@ use PHP_IBAN\IBAN;
 trait IbanTrait
 {
     /** @var bool */
-    private static $disable_iban_test = false;
+    private $disable_iban_test = false;
 
     /** @var string */
     public $iban;
@@ -59,7 +59,7 @@ trait IbanTrait
 
     public function setDisableIbanTest(bool $value): void
     {
-        self::$disable_iban_test = $value;
+        $this->disable_iban_test = $value;
     }
 
     public function verifyIBAN(string $iban): bool
@@ -76,7 +76,7 @@ trait IbanTrait
     {
         $this->iban = Tools::noHtml($this->iban);
 
-        if (empty($this->iban) || self::$disable_iban_test || $this->verifyIBAN($this->getIban())) {
+        if (empty($this->iban) || $this->disable_iban_test || $this->verifyIBAN($this->getIban())) {
             return true;
         }
 
