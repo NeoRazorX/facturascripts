@@ -106,7 +106,11 @@ final class Telemetry
 
         $params = $this->collectData(true);
         $this->calculateHash($params);
-        return $url . '?' . http_build_query($params);
+
+        // si la url contiene un ? se añade un & en lugar de un ?
+        $separator = strpos($url, '?') === false ? '?' : '&';
+
+        return $url . $separator . http_build_query($params);
     }
 
     public function unlink(): bool
@@ -161,7 +165,8 @@ final class Telemetry
             'idinstall' => $this->id_install,
             'langcode' => FS_LANG,
             'phpversion' => (float)PHP_VERSION,
-            'randomnum' => mt_rand()
+            'randomnum' => mt_rand(),
+            'uuid_install' => Tools::settings('default', 'uuid_install'),
         ];
 
         if (false === $minimum) {
