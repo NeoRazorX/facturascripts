@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\ImpuestoZona;
+use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
@@ -158,6 +159,20 @@ class Calculator
             // neto
             $subtotals['iva'][$ivaKey]['neto'] += $pvpTotal;
             $subtotals['iva'][$ivaKey]['netosindto'] += $line->pvptotal;
+
+            // IVA
+            if ($line->iva > 0) {
+                $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
+                    $pvpTotal * $line->iva :
+                    $pvpTotal * $line->iva / 100;
+            }
+
+            // recargo de equivalencia
+            if ($line->recargo > 0) {
+                $subtotals['iva'][$ivaKey]['totalrecargo'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
+                    $pvpTotal * $line->recargo :
+                    $pvpTotal * $line->recargo / 100;
+            }
         }
 
         // turno para que los mods apliquen cambios
