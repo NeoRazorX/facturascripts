@@ -20,8 +20,8 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PresupuestoCliente;
@@ -343,17 +343,17 @@ final class PresupuestoClienteTest extends TestCase
     {
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
         $campos = [
-            'apartado'       => [10, 11],
-            'cifnif'         => [30, 31],
-            'ciudad'         => [100, 101],
-            'codigo'         => [20, 21],
-            'codigoenv'      => [200, 201],
-            'codpais'        => [20, 21],
-            'codpostal'      => [10, 11],
-            'direccion'      => [200, 201],
-            'nombrecliente'  => [100, 101],
-            'operacion'      => [20, 21],
-            'provincia'      => [100, 101],
+            'apartado' => [10, 11],
+            'cifnif' => [30, 31],
+            'ciudad' => [100, 101],
+            'codigo' => [20, 21],
+            'codigoenv' => [200, 201],
+            'codpais' => [20, 21],
+            'codpostal' => [10, 11],
+            'direccion' => [200, 201],
+            'nombrecliente' => [100, 101],
+            'operacion' => [20, 21],
+            'provincia' => [100, 101],
         ];
 
         // creamos un cliente

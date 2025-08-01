@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014       Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Model\Base\SalesDocument;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaPedidoCliente as LineaPedido;
 
@@ -49,14 +49,14 @@ class PedidoCliente extends SalesDocument
      */
     public $idpedido;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
 
         // set default expiration
         $expirationDays = Tools::settings('default', 'finofertadays');
         if ($expirationDays) {
-            $this->finoferta = date(self::DATE_STYLE, strtotime('+' . $expirationDays . ' days'));
+            $this->finoferta = Tools::date('+' . $expirationDays . ' days');
         }
     }
 
@@ -67,11 +67,9 @@ class PedidoCliente extends SalesDocument
      */
     public function getLines(): array
     {
-        $lineaModel = new LineaPedido();
         $where = [new DataBaseWhere('idpedido', $this->idpedido)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-
-        return $lineaModel->all($where, $order, 0, 0);
+        return LineaPedido::all($where, $order, 0, 0);
     }
 
     /**

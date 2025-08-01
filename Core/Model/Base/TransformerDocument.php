@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\LogMessage;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\DocTransformation;
@@ -67,12 +68,11 @@ abstract class TransformerDocument extends BusinessDocument
     {
         $children = [];
         $keys = [];
-        $docTransformation = new DocTransformation();
         $where = [
             new DataBaseWhere('model1', $this->modelClassName()),
             new DataBaseWhere('iddoc1', $this->primaryColumnValue())
         ];
-        foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
+        foreach (DocTransformation::all($where, [], 0, 0) as $docTrans) {
             // we use this key to load documents only once
             $key = $docTrans->model2 . '|' . $docTrans->iddoc2;
             if (in_array($key, $keys, true)) {
@@ -97,9 +97,10 @@ abstract class TransformerDocument extends BusinessDocument
     /**
      * Reset the values of all model properties.
      */
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
+
         $this->editable = true;
 
         // select default status
@@ -167,7 +168,7 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->warning('deleted-model', [
+        Tools::log(LogMessage::AUDIT_CHANNEL)->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
@@ -179,6 +180,7 @@ abstract class TransformerDocument extends BusinessDocument
         if ($newTransaction) {
             self::$dataBase->commit();
         }
+
         return true;
     }
 
@@ -190,8 +192,7 @@ abstract class TransformerDocument extends BusinessDocument
     public function getAvailableStatus(): array
     {
         if (null === self::$estados) {
-            $statusModel = new EstadoDocumento();
-            self::$estados = $statusModel->all([], ['idestado' => 'ASC'], 0, 0);
+            self::$estados = EstadoDocumento::all([], ['idestado' => 'ASC'], 0, 0);
         }
 
         $available = [];
@@ -212,7 +213,7 @@ abstract class TransformerDocument extends BusinessDocument
     public function getStatus(): EstadoDocumento
     {
         $status = new EstadoDocumento();
-        $status->loadFromCode($this->idestado);
+        $status->load($this->idestado);
         return $status;
     }
 
@@ -233,12 +234,11 @@ abstract class TransformerDocument extends BusinessDocument
     {
         $parents = [];
         $keys = [];
-        $docTransformation = new DocTransformation();
         $where = [
             new DataBaseWhere('model2', $this->modelClassName()),
             new DataBaseWhere('iddoc2', $this->primaryColumnValue())
         ];
-        foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
+        foreach (DocTransformation::all($where, [], 0, 0) as $docTrans) {
             // we use this key to load documents only once
             $key = $docTrans->model1 . '|' . $docTrans->iddoc1;
             if (in_array($key, $keys, true)) {
@@ -269,10 +269,11 @@ abstract class TransformerDocument extends BusinessDocument
     {
         // match editable with status
         $this->editable = $this->getStatus()->editable;
+
         return parent::save();
     }
 
-    public function setDocumentGeneration(bool $value)
+    public function setDocumentGeneration(bool $value): void
     {
         self::$documentGeneration = $value;
     }
@@ -284,9 +285,9 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
-        if (false === $this->editable && false === $this->previousData['editable'] && $field != 'idestado') {
+        if (false === $this->editable && false === $this->getOriginal('editable') && $field != 'idestado') {
             Tools::log()->warning('non-editable-document');
             return false;
         } elseif ($field !== 'idestado') {
@@ -331,16 +332,5 @@ abstract class TransformerDocument extends BusinessDocument
 
         // no pending lines to generate a new document
         return true;
-    }
-
-    /**
-     * Sets fields to be watched.
-     *
-     * @param array $fields
-     */
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['editable', 'idestado'];
-        parent::setPreviousData(array_merge($more, $fields));
     }
 }
