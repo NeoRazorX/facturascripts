@@ -258,7 +258,7 @@ class AttachedFile extends ModelClass
             case 'path':
                 if ($this->getOriginal('path')) {
                     // remove old file
-                    unlink(FS_FOLDER . '/' . $this->previousData['path']);
+                    unlink(FS_FOLDER . '/' . $this->getOriginal('path'));
                 }
                 return $this->setFile();
 
