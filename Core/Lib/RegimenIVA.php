@@ -44,7 +44,11 @@ class RegimenIVA
     const TAX_SYSTEM_GENERAL = 'General';
     const TAX_SYSTEM_GOLD = 'Oro';
     const TAX_SYSTEM_GROUP_ENTITIES = 'Grupo entidades';
+    const TAX_SYSTEM_ONE_STOP_SHOP_OSS = 'One Stop Shop (OSS)';
+    const TAX_SYSTEM_ONE_STOP_SHOP_IOSS = 'One Stop Shop (IOSS)';
     const TAX_SYSTEM_SIMPLIFIED = 'Simplificado';
+    const TAX_SYSTEM_SPECIAL_RETAIL_TRADERS = 'Comerciante minorista';
+    const TAX_SYSTEM_SPECIAL_SMALL_BUSINESS = 'Pequeño empresario';
     const TAX_SYSTEM_SURCHARGE = 'Recargo';
     const TAX_SYSTEM_TELECOM = 'Telecom';
     const TAX_SYSTEM_TRAVEL = 'Agencias de viaje';
@@ -82,6 +86,10 @@ class RegimenIVA
             self::TAX_SYSTEM_TRAVEL => 'es-tax-regime-travel',
             self::TAX_SYSTEM_TELECOM => 'es-tax-regime-telecom',
             self::TAX_SYSTEM_USED_GOODS => 'es-tax-regime-used-goods',
+            self::TAX_SYSTEM_SPECIAL_RETAIL_TRADERS => 'es-tax-regime-special-retail-traders',
+            self::TAX_SYSTEM_SPECIAL_SMALL_BUSINESS => 'es-tax-regime-special-small-business',
+            self::TAX_SYSTEM_ONE_STOP_SHOP_OSS => 'es-tax-regime-one-stop-shop-oss',
+            self::TAX_SYSTEM_ONE_STOP_SHOP_IOSS => 'es-tax-regime-one-stop-shop-ioss',
         ];
 
         return array_merge($defaultValues, self::$values);
