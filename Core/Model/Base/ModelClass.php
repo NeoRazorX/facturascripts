@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DbUpdater;
@@ -316,7 +317,11 @@ abstract class ModelClass extends ModelCore
         $return = true;
         foreach ($fields as $key => $value) {
             if ($key == static::primaryColumn()) {
-                $this->{$key} = empty($this->{$key}) ? null : $this->{$key};
+                try {
+                    $this->{$key} = empty($this->{$key}) ? null : $this->{$key};
+                } catch (Exception $e) {
+                    throw new Exception('Error test property' . $key . ' in model ' . $this->modelClassName(), 0, $e);
+                }
             } elseif (null === $value['default'] && $value['is_nullable'] === 'NO' && $this->{$key} === null) {
                 Tools::log()->warning('field-can-not-be-null', ['%fieldName%' => $key, '%tableName%' => static::tableName()]);
                 $return = false;

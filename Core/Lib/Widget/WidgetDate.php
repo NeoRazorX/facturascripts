@@ -48,7 +48,8 @@ class WidgetDate extends BaseWidget
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
         $value = empty($this->value) ? '' : date('Y-m-d', strtotime($this->value));
-        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $value
+        $name = $this->readonly() ? '' : 'name="' . $this->fieldname . '"';
+        return '<input type="' . $type . '" ' . $name . ' value="' . $value
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
 

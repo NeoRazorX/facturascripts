@@ -48,7 +48,8 @@ class WidgetDatalist extends WidgetSelect
         }
 
         $list = $this->fieldname . '-list-' . $this->getUniqueId();
-        $html = '<input type="text" name="' . $this->fieldname . '" value="' . $this->value . '"'
+        $name = $this->readonly() ? '' : 'name="' . $this->fieldname . '"';
+        $html = '<input type="text" ' . $name . ' value="' . $this->value . '"'
             . ' class="' . $class . '"'
             . ' list="' . $list . '"'
             . $this->inputHtmlExtraParams()
