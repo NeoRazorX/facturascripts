@@ -65,6 +65,16 @@ class InvoiceToAccounting extends AccountingClass
     protected $subtotals;
 
     /**
+     * Check if the current document operation requires reverse charge (inversión de sujeto pasivo).
+     *
+     * @return bool
+     */
+    protected function isReverseChargeOperation(): bool
+    {
+        return InvoiceOperation::isReverseChargeOperation($this->document->operacion ?? '');
+    }
+
+    /**
      * Method to launch the accounting process
      *
      * @param FacturaCliente|FacturaProveedor $model
@@ -254,8 +264,8 @@ class InvoiceToAccounting extends AccountingClass
                 return false;
             }
 
-            // si la operación es intracomunitaria, añadimos también la línea de IVA repercutido
-            if ($this->document->operacion === InvoiceOperation::INTRA_COMMUNITY) {
+            // si la operación requiere inversión de sujeto pasivo, añadimos también la línea de IVA repercutido
+            if ($this->isReverseChargeOperation()) {
                 // calculamos el importe del IVA
                 $value['totaliva'] = round($value['neto'] * $value['iva'] / 100, 2);
                 $value['totalrecargo'] = round($value['neto'] * $value['recargo'] / 100, 2);
@@ -363,7 +373,7 @@ class InvoiceToAccounting extends AccountingClass
                 return false;
             }
 
-            if ($this->document->operacion === InvoiceOperation::INTRA_COMMUNITY) {
+            if ($this->isReverseChargeOperation()) {
                 $value['totaliva'] = round($value['neto'] * $value['iva'] / 100, 2);
                 $value['totalrecargo'] = round($value['neto'] * $value['recargo'] / 100, 2);
                 $done = $this->addTaxLine($entry, $subAccOut, $this->counterpart, false, $value) &&
