@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,11 @@ namespace FacturaScripts\Core\Lib;
  */
 class InvoiceOperation
 {
+    const BENEFIT_THIRD_PARTIES = 'benefit-3-parties';
+    const EXPORT = 'exportacion';
     const INTRA_COMMUNITY = 'intracomunitaria';
+    const SUCCESSIVE_TRACT = 'successive-tract';
+    const WORK_CERTIFICATION = 'work-certification';
 
     /** @var array */
     private static $all = [];
@@ -40,7 +44,11 @@ class InvoiceOperation
     public static function all(): array
     {
         $defaults = [
-            self::INTRA_COMMUNITY => 'intra-community'
+            self::INTRA_COMMUNITY => 'intra-community',
+            self::EXPORT => 'operation-export',
+            self::WORK_CERTIFICATION => 'work-certification',
+            self::BENEFIT_THIRD_PARTIES => 'benefit-3-parties',
+            self::SUCCESSIVE_TRACT => 'successive-tract',
         ];
 
         return array_merge($defaults, self::$all);
