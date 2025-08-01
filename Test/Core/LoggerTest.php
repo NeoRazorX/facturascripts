@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Logger;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LogMessage;
 use PHPUnit\Framework\TestCase;
 
@@ -116,7 +117,12 @@ final class LoggerTest extends TestCase
         $logger->debug($message);
 
         $data = Logger::readChannel(self::TEST_CHANNEL);
-        $this->assertEmpty($data);
+
+        if (Tools::config('debug')) {
+            $this->assertCount(1, $data);
+        } else {
+            $this->assertEmpty($data);
+        }
     }
 
     public function testMultipleChannels(): void
@@ -141,28 +147,28 @@ final class LoggerTest extends TestCase
     {
         $logger1 = Logger::channel('channel1');
         $logger2 = Logger::channel('channel2');
-        
+
         $message1 = 'message-for-channel1';
         $message2 = 'message-for-channel2';
-        
+
         $logger1->info($message1);
         $logger2->error($message2);
-        
+
         // Verificar que cada canal solo contiene su mensaje
         $data1 = Logger::readChannel('channel1');
         $this->assertCount(1, $data1);
         $this->assertEquals($message1, $data1[0]['message']);
         $this->assertEquals(Logger::LEVEL_INFO, $data1[0]['level']);
-        
+
         $data2 = Logger::readChannel('channel2');
         $this->assertCount(1, $data2);
         $this->assertEquals($message2, $data2[0]['message']);
         $this->assertEquals(Logger::LEVEL_ERROR, $data2[0]['level']);
-        
+
         // Verificar que un canal no contiene mensajes del otro
         $this->assertNotEquals($message2, $data1[0]['message']);
         $this->assertNotEquals($message1, $data2[0]['message']);
-        
+
         // Verificar que leer un canal inexistente devuelve vacío
         $this->assertEmpty(Logger::readChannel('nonexistent-channel'));
     }
