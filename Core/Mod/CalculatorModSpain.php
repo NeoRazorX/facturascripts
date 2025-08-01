@@ -119,6 +119,18 @@ class CalculatorModSpain implements CalculatorModInterface
             return true;
         }
 
+        $subtotals = [
+            'irpf' => 0.0,
+            'iva' => [],
+            'neto' => 0.0,
+            'netosindto' => 0.0,
+            'totalcoste' => 0.0,
+            'totalirpf' => 0.0,
+            'totaliva' => 0.0,
+            'totalrecargo' => 0.0,
+            'totalsuplidos' => 0.0
+        ];
+
         $subject = $doc->getSubject();
         $addressShipping = new Contacto();
         if (property_exists($doc, 'idcontactoenv')) {
@@ -159,25 +171,62 @@ class CalculatorModSpain implements CalculatorModInterface
             if (!empty($line->excepcioniva) && $line->excepcioniva !== RegimenIVA::ES_TAX_EXCEPTION_E4) $allE4 = false;
             if (!empty($line->excepcioniva) && $line->excepcioniva !== RegimenIVA::ES_TAX_EXCEPTION_E2) $allE2 = false;
 
-            // si la key no existe, no hay nada que hacer
-            $ivaKey = $line->iva . '|' . $line->recargo;
-            if (!isset($subtotals[$ivaKey])) {
+            // coste
+            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
+            if (isset($line->coste)) {
+                $subtotals['totalcoste'] += $totalCoste;
+            }
+
+            $pvpTotal = $line->pvptotal * (100 - $doc->dtopor1) / 100 * (100 - $doc->dtopor2) / 100;
+            if (empty($line->pvptotal)) {
                 continue;
             }
 
-            // cálculos generales
-            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
-            $pvpTotal = $line->pvptotal * (100 - $doc->dtopor1) / 100 * (100 - $doc->dtopor2) / 100;
+            // los suplidos no tienen IVA ni IRPF
+            if ($line->suplido) {
+                $subtotals['totalsuplidos'] += $pvpTotal;
+                continue;
+            }
+
+            // IRPF
+            $subtotals['irpf'] = max([$line->irpf, $subtotals['irpf']]);
+            $subtotals['totalirpf'] += $pvpTotal * $line->irpf / 100;
+
+            // IVA
+            $ivaKey = $line->iva . '|' . $line->recargo;
+            if (false === array_key_exists($ivaKey, $subtotals['iva'])) {
+                $subtotals['iva'][$ivaKey] = [
+                    'codimpuesto' => $line->codimpuesto,
+                    'iva' => $line->iva,
+                    'neto' => 0.0,
+                    'netosindto' => 0.0,
+                    'recargo' => $line->recargo,
+                    'totaliva' => 0.0,
+                    'totalrecargo' => 0.0
+                ];
+            }
 
             // si es una venta de segunda mano, calculamos el beneficio y el IVA
             if (self::applyUsedGoods($subtotals, $doc, $line, $ivaKey, $pvpTotal, $totalCoste)) {
                 continue;
             }
 
-            // IVA y recargo de equivalencia
-            if ($doc->operacion === InvoiceOperation::INTRA_COMMUNITY) {
-                $subtotals['iva'][$ivaKey]['totaliva'] = 0;
-                $subtotals['iva'][$ivaKey]['totalrecargo'] = 0;
+            // neto
+            $subtotals['iva'][$ivaKey]['neto'] += $pvpTotal;
+            $subtotals['iva'][$ivaKey]['netosindto'] += $line->pvptotal;
+
+            // IVA
+            if ($line->iva > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
+                $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
+                    $pvpTotal * $line->iva :
+                    $pvpTotal * $line->iva / 100;
+            }
+
+            // recargo de equivalencia
+            if ($line->recargo > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
+                $subtotals['iva'][$ivaKey]['totalrecargo'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
+                    $pvpTotal * $line->recargo :
+                    $pvpTotal * $line->recargo / 100;
             }
         }
 
