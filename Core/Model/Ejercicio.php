@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,8 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
@@ -30,9 +32,9 @@ use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Ejercicio extends Base\ModelClass
+class Ejercicio extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     const EXERCISE_STATUS_OPEN = 'ABIERTO';
     const EXERCISE_STATUS_CLOSED = 'CERRADO';
@@ -107,7 +109,7 @@ class Ejercicio extends Base\ModelClass
      */
     public $nombre;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->estado = self::EXERCISE_STATUS_OPEN;
@@ -117,15 +119,10 @@ class Ejercicio extends Base\ModelClass
         $this->nombre = '';
     }
 
-    public function delete(): bool
+    public function clearCache(): void
     {
-        if (parent::delete()) {
-            // limpiamos la caché de ejercicios
-            Ejercicios::clear();
-            return true;
-        }
-
-        return false;
+        parent::clearCache();
+        Ejercicios::clear();
     }
 
     /**
@@ -263,17 +260,6 @@ class Ejercicio extends Base\ModelClass
         return 'codejercicio';
     }
 
-    public function save(): bool
-    {
-        if (parent::save()) {
-            // limpiamos la caché de ejercicios
-            Ejercicios::clear();
-            return true;
-        }
-
-        return false;
-    }
-
     public static function tableName(): string
     {
         return 'ejercicios';
@@ -354,7 +340,7 @@ class Ejercicio extends Base\ModelClass
         return $this->save();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         $where = [new DataBaseWhere('idempresa', $this->idempresa)];
         foreach ($this->all($where, [], 0, 0) as $ejercicio) {
@@ -366,6 +352,6 @@ class Ejercicio extends Base\ModelClass
             }
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 }

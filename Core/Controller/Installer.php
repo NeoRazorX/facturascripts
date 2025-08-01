@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -363,8 +363,8 @@ class Installer implements ControllerInterface
         }
 
         // try to connect to the database
-        $connection = pg_connect($connectionStr . ' dbname=' . $dbData['name']);
-        if (is_resource($connection)) {
+        $connection = @pg_connect($connectionStr . ' dbname=' . $dbData['name']);
+        if ($connection !== false) {
             // if postgresql version is too old, we can't continue
             if ($this->versionPostgres($connection) < 10) {
                 Tools::log()->critical('postgresql-version-too-old');
@@ -376,7 +376,7 @@ class Installer implements ControllerInterface
 
         // can't connect to the database, try to connect to the default database
         $connection = pg_connect($connectionStr . ' dbname=postgres');
-        if (is_resource($connection)) {
+        if ($connection !== false) {
             // if postgresql version is too old, we can't continue
             if ($this->versionPostgres($connection) < 10) {
                 Tools::log()->critical('postgresql-version-too-old');

@@ -20,12 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Model\Base\TaxRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Model\Fabricante as DinFabricante;
-use FacturaScripts\Dinamic\Model\Familia as DinFamilia;
 use FacturaScripts\Dinamic\Model\ProductoImagen as DinProductoImagen;
 use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
@@ -181,16 +179,20 @@ class Producto extends ModelClass
      */
     public $ventasinstock;
 
-    public function __get($name)
+    public function __get($key)
     {
-        if ($name === 'precio_iva') {
+        if (isset($this->attributes[$key])) {
+            return $this->attributes[$key];
+        }
+
+        if ($key === 'precio_iva') {
             return $this->priceWithTax();
         }
 
         return null;
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->actualizado = Tools::dateTime();
@@ -227,18 +229,14 @@ class Producto extends ModelClass
         return parent::delete();
     }
 
-    public function getFabricante(): Fabricante
+    public function getFabricante(): ?Fabricante
     {
-        $fabricante = new DinFabricante();
-        $fabricante->loadFromCode($this->codfabricante);
-        return $fabricante;
+        return $this->belongsTo(Fabricante::class, 'codfabricante');
     }
 
-    public function getFamilia(): Familia
+    public function getFamilia(): ?Familia
     {
-        $familia = new DinFamilia();
-        $familia->loadFromCode($this->codfamilia);
-        return $familia;
+        return $this->belongsTo(Familia::class, 'codfamilia');
     }
 
     /**
@@ -246,7 +244,6 @@ class Producto extends ModelClass
      */
     public function getImages(bool $imgVariant = true): array
     {
-        $image = new DinProductoImagen();
         $where = [new DataBaseWhere('idproducto', $this->idproducto)];
 
         // solo si queremos lás imágenes del producto y no de las variantes
@@ -255,7 +252,7 @@ class Producto extends ModelClass
         }
 
         $orderBy = ['orden' => 'ASC'];
-        return $image->all($where, $orderBy, 0, 0);
+        return DinProductoImagen::all($where, $orderBy, 0, 0);
     }
 
     /**
@@ -263,9 +260,7 @@ class Producto extends ModelClass
      */
     public function getVariants(): array
     {
-        $variantModel = new DinVariante();
-        $where = [new DataBaseWhere('idproducto', $this->idproducto)];
-        return $variantModel->all($where, [], 0, 0);
+        return $this->hasMany(Variante::class, 'idproducto');
     }
 
     public function install(): string
@@ -295,7 +290,7 @@ class Producto extends ModelClass
         return 'referencia';
     }
 
-    public function setPriceWithTax(float $price)
+    public function setPriceWithTax(float $price): bool
     {
         $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
         foreach ($this->getVariants() as $variant) {
@@ -306,6 +301,8 @@ class Producto extends ModelClass
         }
 
         $this->precio = round($newPrice, self::ROUND_DECIMALS);
+
+        return true;
     }
 
     public static function tableName(): string
@@ -397,7 +394,7 @@ class Producto extends ModelClass
     /**
      * Updated product price or reference if any change in variants.
      */
-    public function update(): void
+    public function updateInfo(): void
     {
         $newPrecio = 0.0;
         $newReferencia = null;
@@ -424,7 +421,7 @@ class Producto extends ModelClass
         }
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         // comprobamos si la referencia ya existe
         $where = [new DataBaseWhere('referencia', $this->referencia)];
@@ -433,7 +430,7 @@ class Producto extends ModelClass
             return false;
         }
 
-        if (false === parent::saveInsert($values)) {
+        if (false === parent::saveInsert()) {
             return false;
         }
 
@@ -442,11 +439,11 @@ class Producto extends ModelClass
         $variant->precio = $this->precio;
         $variant->referencia = $this->referencia;
         $variant->stockfis = $this->stockfis;
-        if ($variant->save()) {
-            return true;
+        if (false === $variant->save()) {
+            $this->delete();
+            return false;
         }
 
-        $this->delete();
-        return false;
+        return true;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,9 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Diario as DinDiario;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
@@ -33,10 +36,10 @@ use FacturaScripts\Dinamic\Model\RegularizacionImpuesto as DinRegularizacionImpu
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Asiento extends Base\ModelOnChangeClass
+class Asiento extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\ExerciseRelationTrait;
+    use ModelTrait;
+    use ExerciseRelationTrait;
 
     const OPERATION_GENERAL = null;
     const OPERATION_OPENING = 'A';
@@ -141,7 +144,7 @@ class Asiento extends Base\ModelOnChangeClass
         $this->importe += round($haber, FS_NF0);
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->editable = true;
@@ -169,7 +172,7 @@ class Asiento extends Base\ModelOnChangeClass
         }
 
         // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->warning('deleted-model', [
+        Tools::log(LogMessage::AUDIT_CHANNEL)->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
@@ -177,6 +180,7 @@ class Asiento extends Base\ModelOnChangeClass
             'model-code' => $this->primaryColumnValue(),
             'model-data' => $this->toArray()
         ]);
+
         return true;
     }
 
@@ -195,7 +199,7 @@ class Asiento extends Base\ModelOnChangeClass
             return false;
         }
 
-        return $this->editable || $this->previousData['editable'];
+        return $this->editable || $this->getOriginal('editable');
     }
 
     /**
@@ -337,7 +341,7 @@ class Asiento extends Base\ModelOnChangeClass
         }
 
         // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->info('updated-model', [
+        Tools::log(LogMessage::AUDIT_CHANNEL)->info('updated-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
@@ -345,6 +349,7 @@ class Asiento extends Base\ModelOnChangeClass
             'model-code' => $this->primaryColumnValue(),
             'model-data' => $this->toArray()
         ]);
+
         return true;
     }
 
@@ -352,13 +357,14 @@ class Asiento extends Base\ModelOnChangeClass
     {
         $exercise = new DinEjercicio();
         $exercise->idempresa = $this->idempresa;
-        if ($exercise->loadFromDate($date)) {
-            $this->codejercicio = $exercise->codejercicio;
-            $this->fecha = $date;
-            return true;
+        if (false === $exercise->loadFromDate($date)) {
+            return false;
         }
 
-        return false;
+        $this->codejercicio = $exercise->codejercicio;
+        $this->fecha = $date;
+
+        return true;
     }
 
     public static function tableName(): string
@@ -385,12 +391,7 @@ class Asiento extends Base\ModelOnChangeClass
         return parent::test();
     }
 
-    /**
-     * @param string $field
-     *
-     * @return bool
-     */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'codejercicio':
@@ -399,7 +400,7 @@ class Asiento extends Base\ModelOnChangeClass
 
             case 'fecha':
                 $this->setDate($this->fecha);
-                if ($this->codejercicio != $this->previousData['codejercicio']) {
+                if ($this->codejercicio != $this->getOriginal('codejercicio')) {
                     Tools::log()->warning('cant-change-accounting-entry-exercise');
                     return false;
                 }
@@ -431,15 +432,10 @@ class Asiento extends Base\ModelOnChangeClass
         return empty($sql) || self::$dataBase->exec($sql);
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         $this->numero = $this->newCode('numero');
-        return parent::saveInsert($values);
-    }
 
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['codejercicio', 'editable', 'fecha'];
-        parent::setPreviousData(array_merge($more, $fields));
+        return parent::saveInsert();
     }
 }

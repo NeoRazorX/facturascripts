@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,8 +22,8 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\MyFilesToken;
-use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use finfo;
 
@@ -33,7 +33,7 @@ use finfo;
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class AttachedFile extends ModelOnChangeClass
+class AttachedFile extends ModelClass
 {
     use ModelTrait;
 
@@ -252,16 +252,11 @@ class AttachedFile extends ModelOnChangeClass
         return $this->newCode();
     }
 
-    /**
-     * @param string $field
-     *
-     * @return bool
-     */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'path':
-                if ($this->previousData['path']) {
+                if ($this->getOriginal('path')) {
                     // remove old file
                     unlink(FS_FOLDER . '/' . $this->previousData['path']);
                 }
@@ -309,11 +304,5 @@ class AttachedFile extends ModelOnChangeClass
         }
 
         return true;
-    }
-
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['path'];
-        parent::setPreviousData(array_merge($more, $fields));
     }
 }

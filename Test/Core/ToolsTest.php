@@ -166,8 +166,8 @@ final class ToolsTest extends TestCase
 
         // comprobamos que se ha cambiado
         $settings = new Settings();
-        $this->assertTrue($settings->loadFromCode('default'));
-        $this->assertEquals('222', $settings->properties['codpais']);
+        $this->assertTrue($settings->load('default'));
+        $this->assertEquals('222', $settings->getProperty('codpais'));
 
         // volvemos a poner el valor original
         Tools::settingsSet('default', 'codpais', $value);
@@ -176,8 +176,8 @@ final class ToolsTest extends TestCase
         $this->assertTrue(Tools::settingsSave());
 
         // comprobamos que se ha cambiado
-        $settings->loadFromCode('default');
-        $this->assertEquals($value, $settings->properties['codpais']);
+        $this->assertTrue($settings->load('default'));
+        $this->assertEquals($value, $settings->getProperty('codpais'));
     }
 
     public function testSettingsClear(): void
@@ -206,12 +206,12 @@ final class ToolsTest extends TestCase
         $this->assertEquals('mi-variable', Tools::kebab('miVariable'));
         $this->assertEquals('html-parser', Tools::kebab('HTMLParser'));
         $this->assertEquals('nombre-completo', Tools::kebab('NombreCompleto'));
-        
+
         // casos con espacios y caracteres especiales
         $this->assertEquals('mi-clase-especial', Tools::kebab('Mi Clase Especial'));
         $this->assertEquals('texto-con-acentos-aeiou', Tools::kebab('Texto Con Acentos áéíóú'));
         $this->assertEquals('texto-123', Tools::kebab('Texto 123'));
-        
+
         // casos edge
         $this->assertEquals('', Tools::kebab(''));
         $this->assertEquals('a', Tools::kebab('A'));

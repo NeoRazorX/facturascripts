@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,21 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Model\Base\EmailAndPhonesTrait;
+use FacturaScripts\Core\Model\Base\FiscalNumberTrait;
+use FacturaScripts\Core\Model\Base\GravatarTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoCliente as DinCuentaBancoCliente;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
+use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\GrupoClientes as DinGrupoClientes;
+use FacturaScripts\Dinamic\Model\Retencion;
+use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
@@ -34,9 +44,12 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Cliente extends Base\ComercialContact
+class Cliente extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
+    use EmailAndPhonesTrait;
+    use FiscalNumberTrait;
+    use GravatarTrait;
 
     const SPECIAL_ACCOUNT = 'CLIENT';
 
@@ -44,10 +57,31 @@ class Cliente extends Base\ComercialContact
     public $codagente;
 
     /** @var string */
+    public $codcliente;
+
+    /** @var string */
     public $codgrupo;
 
     /** @var string */
+    public $codpago;
+
+    /** @var string */
+    public $codproveedor;
+
+    /** @var string */
+    public $codretencion;
+
+    /** @var string */
+    public $codserie;
+
+    /** @var string */
+    public $codsubcuenta;
+
+    /** @var string */
     public $codtarifa;
+
+    /** @var bool */
+    public $debaja;
 
     /** @var string */
     public $diaspago;
@@ -55,11 +89,38 @@ class Cliente extends Base\ComercialContact
     /** @var string */
     public $excepcioniva;
 
+    /** @var string */
+    public $fax;
+
+    /** @var string */
+    public $fechaalta;
+
+    /** @var string */
+    public $fechabaja;
+
     /** @var integer */
     public $idcontactoenv;
 
     /** @var integer */
     public $idcontactofact;
+
+    /** @var string */
+    public $langcode;
+
+    /** @var string */
+    public $nombre;
+
+    /** @var string */
+    public $observaciones;
+
+    /** @var bool */
+    public $personafisica;
+
+    /** @var string */
+    public $razonsocial;
+
+    /** @var string */
+    public $regimeniva;
 
     /** @var float */
     public $riesgoalcanzado;
@@ -67,16 +128,24 @@ class Cliente extends Base\ComercialContact
     /** @var float */
     public $riesgomax;
 
+    /** @var string */
+    public $web;
+
     public function checkVies(bool $msg = true): bool
     {
         $codiso = Paises::get($this->getDefaultAddress()->codpais)->codiso ?? '';
         return Vies::check($this->cifnif ?? '', $codiso, $msg) === 1;
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->codretencion = Tools::settings('default', 'codretencion');
+        $this->debaja = false;
+        $this->fechaalta = Tools::date();
+        $this->personafisica = true;
+        $this->regimeniva = RegimenIVA::defaultValue();
+        $this->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
     }
 
     /**
@@ -102,9 +171,8 @@ class Cliente extends Base\ComercialContact
      */
     public function getAddresses(): array
     {
-        $contactModel = new DinContacto();
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
-        return $contactModel->all($where, [], 0, 0);
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        return DinContacto::all($where, [], 0, 0);
     }
 
     /**
@@ -114,9 +182,8 @@ class Cliente extends Base\ComercialContact
      */
     public function getBankAccounts(): array
     {
-        $contactAccounts = new DinCuentaBancoCliente();
-        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
-        return $contactAccounts->all($where, [], 0, 0);
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
+        return DinCuentaBancoCliente::all($where, [], 0, 0);
     }
 
     /**
@@ -124,18 +191,18 @@ class Cliente extends Base\ComercialContact
      *
      * @return DinContacto
      */
-    public function getDefaultAddress($type = 'billing'): Contacto
+    public function getDefaultAddress(string $type = 'billing'): Contacto
     {
         $contact = new DinContacto();
-        $idcontacto = $type === 'shipping' ? $this->idcontactoenv : $this->idcontactofact;
-        $contact->loadFromCode($idcontacto);
+        $id = $type === 'shipping' ? $this->idcontactoenv : $this->idcontactofact;
+        $contact->load($id);
         return $contact;
     }
 
     public function getGroup(): GrupoClientes
     {
         $group = new DinGrupoClientes();
-        $group->loadFromCode($this->codgrupo);
+        $group->load($this->codgrupo);
         return $group;
     }
 
@@ -166,7 +233,7 @@ class Cliente extends Base\ComercialContact
                 new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
                 new DataBaseWhere('codejercicio', $codejercicio),
             ];
-            if ($subAccount->loadFromCode('', $where)) {
+            if ($subAccount->loadWhere($where)) {
                 return $subAccount;
             }
 
@@ -178,7 +245,7 @@ class Cliente extends Base\ComercialContact
 
             // buscamos la cuenta especial
             $special = new DinCuentaEspecial();
-            if (false === $special->loadFromCode(static::SPECIAL_ACCOUNT)) {
+            if (false === $special->load(static::SPECIAL_ACCOUNT)) {
                 return new DinSubcuenta();
             }
 
@@ -203,9 +270,26 @@ class Cliente extends Base\ComercialContact
         // we need exits Contacto before, but we can't check it because it would create a cyclic check
         // we need to check Agente and GrupoClientes models before
         new Agente();
+        new FormaPago();
         new GrupoClientes();
+        new Retencion();
+        new Serie();
 
         return parent::install();
+    }
+
+    public function irpf(): float
+    {
+        if (empty($this->codretencion)) {
+            return 0.0;
+        }
+
+        $retention = new Retencion();
+        if ($retention->load($this->codretencion)) {
+            return $retention->porcentaje;
+        }
+
+        return 0.0;
     }
 
     public static function primaryColumn(): string
@@ -225,13 +309,13 @@ class Cliente extends Base\ComercialContact
 
     public function test(): bool
     {
-        if (empty($this->nombre)) {
-            Tools::log()->warning(
-                'field-can-not-be-null',
-                ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]
-            );
-            return false;
-        }
+        $this->debaja = !empty($this->fechabaja);
+        $this->fax = Tools::noHtml($this->fax) ?? '';
+        $this->langcode = Tools::noHtml($this->langcode);
+        $this->nombre = Tools::noHtml($this->nombre);
+        $this->observaciones = Tools::noHtml($this->observaciones) ?? '';
+        $this->razonsocial = Tools::noHtml($this->razonsocial);
+        $this->web = Tools::noHtml($this->web);
 
         if (!empty($this->codcliente) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcliente)) {
             Tools::log()->error(
@@ -241,22 +325,32 @@ class Cliente extends Base\ComercialContact
             return false;
         }
 
-        // we validate the days of payment
-        $arrayDias = [];
-        foreach (explode(',', $this->diaspago ?? '') as $day) {
-            if ((int)$day >= 1 && (int)$day <= 31) {
-                $arrayDias[] = (int)$day;
-            }
+        if (empty($this->nombre)) {
+            Tools::log()->warning(
+                'field-can-not-be-null',
+                ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]
+            );
+            return false;
         }
-        $this->diaspago = empty($arrayDias) ? null : implode(',', $arrayDias);
-        return parent::test();
+
+        if (empty($this->razonsocial)) {
+            $this->razonsocial = $this->nombre;
+        }
+
+        // check if the web is a valid url
+        if (!empty($this->web) && false === Validator::url($this->web)) {
+            Tools::log()->warning('invalid-web', ['%web%' => $this->web]);
+            return false;
+        }
+
+        return parent::test() && $this->testFiscalNumber() && $this->testEmailAndPhones() && $this->testDiasPago();
     }
 
     protected function createSubcuenta(string $codejercicio): Subcuenta
     {
         // buscamos la cuenta especial
         $special = new DinCuentaEspecial();
-        if (false === $special->loadFromCode(static::SPECIAL_ACCOUNT)) {
+        if (false === $special->load(static::SPECIAL_ACCOUNT)) {
             return new DinSubcuenta();
         }
 
@@ -285,13 +379,13 @@ class Cliente extends Base\ComercialContact
         return $subAccount;
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codcliente)) {
             $this->codcliente = (string)$this->newCode();
         }
 
-        $return = parent::saveInsert($values);
+        $return = parent::saveInsert();
         if ($return && empty($this->idcontactofact)) {
             $parts = explode(' ', $this->nombre);
 
@@ -317,5 +411,18 @@ class Cliente extends Base\ComercialContact
         }
 
         return $return;
+    }
+
+    protected function testDiasPago(): bool
+    {
+        $arrayDias = [];
+        foreach (explode(',', $this->diaspago ?? '') as $day) {
+            if ((int)$day >= 1 && (int)$day <= 31) {
+                $arrayDias[] = (int)$day;
+            }
+        }
+        $this->diaspago = empty($arrayDias) ? null : implode(',', $arrayDias);
+
+        return true;
     }
 }

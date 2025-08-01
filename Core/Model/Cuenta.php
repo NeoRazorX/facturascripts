@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
@@ -31,10 +34,10 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Cuenta extends Base\ModelClass
+class Cuenta extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\ExerciseRelationTrait;
+    use ModelTrait;
+    use ExerciseRelationTrait;
 
     /** @var string */
     public $codcuenta;
@@ -49,7 +52,7 @@ class Cuenta extends Base\ModelClass
     public $descripcion;
 
     /** @var bool */
-    private $disableAdditionalTest = false;
+    private $disable_additional_test = false;
 
     /** @var float */
     public $haber;
@@ -66,7 +69,7 @@ class Cuenta extends Base\ModelClass
     /** @var float */
     public $saldo;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->debe = 0.0;
@@ -89,7 +92,7 @@ class Cuenta extends Base\ModelClass
 
     public function delete(): bool
     {
-        if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
+        if ($this->getExercise()->isOpened() || $this->disable_additional_test) {
             return parent::delete();
         }
 
@@ -99,7 +102,7 @@ class Cuenta extends Base\ModelClass
 
     public function disableAdditionalTest(bool $value): void
     {
-        $this->disableAdditionalTest = $value;
+        $this->disable_additional_test = $value;
     }
 
     /**
@@ -159,7 +162,7 @@ class Cuenta extends Base\ModelClass
                 new DataBaseWhere('codejercicio', $this->codejercicio),
                 new DataBaseWhere('codsubcuenta', $newCode)
             ];
-            if (false === $subcuenta->loadFromCode('', $where)) {
+            if (false === $subcuenta->loadWhere($where)) {
                 return $newCode;
             }
         }
@@ -185,7 +188,7 @@ class Cuenta extends Base\ModelClass
         }
 
         // parent id?
-        if (!empty($this->parent_idcuenta) && $parent->loadFromCode($this->parent_idcuenta) && $parent->codejercicio === $this->codejercicio) {
+        if (!empty($this->parent_idcuenta) && $parent->load($this->parent_idcuenta) && $parent->codejercicio === $this->codejercicio) {
             return $parent;
         }
 
@@ -193,7 +196,7 @@ class Cuenta extends Base\ModelClass
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codcuenta', $this->parent_codcuenta)
         ];
-        $parent->loadFromCode('', $where);
+        $parent->loadWhere($where);
         return $parent;
     }
 
@@ -204,9 +207,8 @@ class Cuenta extends Base\ModelClass
      */
     public function getSubcuentas(): array
     {
-        $subcuenta = new DinSubcuenta();
         $where = [new DataBaseWhere('idcuenta', $this->idcuenta)];
-        return $subcuenta->all($where, ['codsubcuenta' => 'ASC'], 0, 0);
+        return DinSubcuenta::all($where, ['codsubcuenta' => 'ASC'], 0, 0);
     }
 
     public function install(): string
@@ -230,7 +232,7 @@ class Cuenta extends Base\ModelClass
 
     public function save(): bool
     {
-        if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
+        if ($this->getExercise()->isOpened() || $this->disable_additional_test) {
             return parent::save();
         }
 

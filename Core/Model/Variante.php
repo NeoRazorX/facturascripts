@@ -21,6 +21,9 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\Model\Base\ProductRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ProductType;
 use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
@@ -34,10 +37,10 @@ use FacturaScripts\Dinamic\Model\Stock as DinStock;
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
-class Variante extends Base\ModelClass
+class Variante extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\ProductRelationTrait;
+    use ModelTrait;
+    use ProductRelationTrait;
 
     /**
      * Barcode. Maximum 20 characters.
@@ -114,7 +117,7 @@ class Variante extends Base\ModelClass
      */
     public $stockfis;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->coste = 0.0;
@@ -344,7 +347,7 @@ class Variante extends Base\ModelClass
         }
 
         if (parent::save()) {
-            $this->getProducto()->update();
+            $this->getProducto()->updateInfo();
             return true;
         }
 
@@ -396,7 +399,7 @@ class Variante extends Base\ModelClass
         return $this->getProducto()->url($type);
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         // comprobamos si la referencia ya existe
         $where = [new DataBaseWhere('referencia', $this->referencia)];
@@ -405,7 +408,7 @@ class Variante extends Base\ModelClass
             return false;
         }
 
-        if (false === parent::saveInsert($values)) {
+        if (false === parent::saveInsert()) {
             return false;
         }
 

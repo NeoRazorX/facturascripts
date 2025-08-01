@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\AccEntryRelationTrait;
-use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
@@ -35,7 +35,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
-class Partida extends ModelOnChangeClass
+class Partida extends ModelClass
 {
     use ModelTrait;
     use AccEntryRelationTrait;
@@ -99,7 +99,7 @@ class Partida extends ModelOnChangeClass
     /**
      * @var bool
      */
-    private $disableAdditionalTest = false;
+    private $disable_additional_test = false;
 
     /**
      * Document of departure.
@@ -183,7 +183,7 @@ class Partida extends ModelOnChangeClass
      */
     public $tasaconv;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->baseimponible = 0.0;
@@ -215,7 +215,7 @@ class Partida extends ModelOnChangeClass
 
     public function disableAdditionalTest(bool $value): void
     {
-        $this->disableAdditionalTest = $value;
+        $this->disable_additional_test = $value;
     }
 
     /**
@@ -272,12 +272,12 @@ class Partida extends ModelOnChangeClass
     public function save(): bool
     {
         $entry = $this->getAccountingEntry();
-        if (false === $this->disableAdditionalTest && false === $entry->editable) {
+        if (false === $this->disable_additional_test && false === $entry->editable) {
             return false;
         }
 
         $exercise = $entry->getExercise();
-        if (false === $this->disableAdditionalTest && false === $exercise->isOpened()) {
+        if (false === $this->disable_additional_test && false === $exercise->isOpened()) {
             Tools::log()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
             return false;
         }
@@ -351,15 +351,7 @@ class Partida extends ModelOnChangeClass
         return $this->getAccountingEntry()->url($type, $list);
     }
 
-    /**
-     * This method is called before this record is saved (update) in the database
-     * when some field value is changed.
-     *
-     * @param string $field
-     *
-     * @return bool
-     */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'codcontrapartida':
@@ -372,11 +364,5 @@ class Partida extends ModelOnChangeClass
         }
 
         return parent::onChange($field);
-    }
-
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['codcontrapartida', 'codsubcuenta', 'debe', 'haber', 'idcontrapartida', 'idsubcuenta'];
-        parent::setPreviousData(array_merge($more, $fields));
     }
 }
