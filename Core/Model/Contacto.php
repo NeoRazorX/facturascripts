@@ -297,4 +297,19 @@ class Contacto extends ModelClass
     {
         return parent::url($type, $list);
     }
+
+    public function delete(): bool
+    {
+        $deleted = parent::delete();
+
+        if ($deleted){
+            $sql = 'UPDATE ' . Cliente::tableName() . ' SET idcontactoenv = NULL WHERE idcontactoenv = ' . $this->idcontacto . ';';
+            $sql .= 'UPDATE ' . Cliente::tableName() . ' SET idcontactofact = NULL WHERE idcontactofact = ' . $this->idcontacto . ';';
+            $sql .= 'UPDATE ' . Proveedor::tableName() . ' SET idcontacto = NULL WHERE idcontacto = ' . $this->idcontacto;
+
+            return self::$dataBase->exec($sql);
+        }
+
+        return $deleted;
+    }
 }
