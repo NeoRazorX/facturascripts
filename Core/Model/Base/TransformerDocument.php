@@ -38,7 +38,7 @@ abstract class TransformerDocument extends BusinessDocument
     /**
      * @var bool
      */
-    private static $documentGeneration = true;
+    private static $document_generation = true;
 
     /**
      * Indicates whether the document can be modified
@@ -70,7 +70,7 @@ abstract class TransformerDocument extends BusinessDocument
         $keys = [];
         $where = [
             new DataBaseWhere('model1', $this->modelClassName()),
-            new DataBaseWhere('iddoc1', $this->primaryColumnValue())
+            new DataBaseWhere('iddoc1', $this->id())
         ];
         foreach (DocTransformation::all($where, [], 0, 0) as $docTrans) {
             // we use this key to load documents only once
@@ -151,13 +151,12 @@ abstract class TransformerDocument extends BusinessDocument
             return false;
         }
 
-        // load parents, remove relations and update servido column
-        $parents = $this->parentDocuments();
+        // remove relations and update servido column
         $docTransformation = new DocTransformation();
-        $docTransformation->deleteFrom($this->modelClassName(), $this->primaryColumnValue(), true);
+        $docTransformation->deleteFrom($this->modelClassName(), $this->id(), true);
 
         // change parent doc status
-        foreach ($parents as $parent) {
+        foreach ($this->parentDocuments() as $parent) {
             foreach ($parent->getAvailableStatus() as $status) {
                 if ($status->predeterminado) {
                     $parent->idestado = $status->idestado;
@@ -170,10 +169,10 @@ abstract class TransformerDocument extends BusinessDocument
         // add audit log
         Tools::log(LogMessage::AUDIT_CHANNEL)->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
-            '%key%' => $this->primaryColumnValue(),
+            '%key%' => $this->id(),
             '%desc%' => $this->primaryDescription(),
             'model-class' => $this->modelClassName(),
-            'model-code' => $this->primaryColumnValue(),
+            'model-code' => $this->id(),
             'model-data' => $this->toArray()
         ]);
 
@@ -236,7 +235,7 @@ abstract class TransformerDocument extends BusinessDocument
         $keys = [];
         $where = [
             new DataBaseWhere('model2', $this->modelClassName()),
-            new DataBaseWhere('iddoc2', $this->primaryColumnValue())
+            new DataBaseWhere('iddoc2', $this->id())
         ];
         foreach (DocTransformation::all($where, [], 0, 0) as $docTrans) {
             // we use this key to load documents only once
@@ -275,7 +274,7 @@ abstract class TransformerDocument extends BusinessDocument
 
     public function setDocumentGeneration(bool $value): void
     {
-        self::$documentGeneration = $value;
+        self::$document_generation = $value;
     }
 
     /**
@@ -295,7 +294,7 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         $status = $this->getStatus();
-        if (empty($status->generadoc) || false === self::$documentGeneration) {
+        if (empty($status->generadoc) || false === self::$document_generation) {
             // update lines to update stock
             foreach ($this->getLines() as $line) {
                 $line->actualizastock = $status->actualizastock;
