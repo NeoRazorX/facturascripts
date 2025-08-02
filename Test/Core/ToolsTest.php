@@ -124,6 +124,17 @@ final class ToolsTest extends TestCase
 
         // comprobamos que no existen los archivos
         $this->assertFalse(file_exists(Tools::folder('MyFiles', 'Test')));
+
+        // test para llamadas anidadas de Tools::folder()
+        $expected = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . 'CRM';
+        $this->assertEquals($expected, Tools::folder('Plugins', 'CRM'));
+        $this->assertEquals($expected, Tools::folder(Tools::folder('Plugins'), 'CRM'));
+        
+        // test con múltiples niveles de anidación
+        $expected2 = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . 'CRM' . DIRECTORY_SEPARATOR . 'Config';
+        $this->assertEquals($expected2, Tools::folder('Plugins', 'CRM', 'Config'));
+        $this->assertEquals($expected2, Tools::folder(Tools::folder('Plugins'), 'CRM', 'Config'));
+        $this->assertEquals($expected2, Tools::folder(Tools::folder('Plugins', 'CRM'), 'Config'));
     }
 
     public function testHtmlFunctions(): void

@@ -220,12 +220,33 @@ class Tools
             return self::config('folder') ?? '';
         }
 
-        // eliminamos barras al incio y al final
+        $baseFolder = self::config('folder') ?? '';
+        
+        // verificamos si el primer parámetro ya contiene la ruta base (antes de limpiar barras)
+        $firstFolder = $folders[0] ?? '';
+        $baseFolderNormalized = rtrim($baseFolder, '/\\');
+        if (!empty($baseFolder) && !empty($firstFolder) && strpos($firstFolder, $baseFolderNormalized) === 0) {
+            // el primer parámetro ya contiene la ruta base, procesamos el resto sin añadir la base
+            $result = $firstFolder;
+            
+            // procesamos el resto de parámetros si los hay
+            for ($i = 1; $i < count($folders); $i++) {
+                $folder = ltrim(rtrim($folders[$i], '/\\'), '/\\');
+                if (!empty($folder)) {
+                    $result .= DIRECTORY_SEPARATOR . $folder;
+                }
+            }
+            
+            return $result;
+        }
+
+        // eliminamos barras al inicio y al final
         $folders = array_map(function ($folder) {
             return ltrim(rtrim($folder, '/\\'), '/\\');
         }, $folders);
 
-        array_unshift($folders, self::config('folder'));
+        // añadimos la ruta base al inicio
+        array_unshift($folders, $baseFolder);
         return implode(DIRECTORY_SEPARATOR, $folders);
     }
 
