@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Model\LogMessage;
 use FacturaScripts\Core\Template\ModelClass as NewModelClass;
@@ -438,7 +437,7 @@ abstract class BusinessDocument extends NewModelClass
 
         // check total
         $total = $this->neto + $this->totalsuplidos + $this->totaliva - $this->totalirpf + $this->totalrecargo;
-        if (false === Utils::floatcmp($this->total, $total, FS_NF0, true)) {
+        if (false === Tools::floatCmp($this->total, $total, FS_NF0, true)) {
             Tools::log()->error('bad-total-error');
             return false;
         }

@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
@@ -259,7 +258,7 @@ class Asiento extends ModelClass
             $haber += $line->haber;
         }
 
-        return Utils::floatcmp($debe, $haber, FS_NF0, true);
+        return Tools::floatCmp($debe, $haber, FS_NF0, true);
     }
 
     /**

@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Tools;
@@ -206,7 +205,7 @@ class ReceiptGenerator
      */
     protected function isCero($amount): bool
     {
-        return Utils::floatcmp($amount, 0.0, FS_NF0, true);
+        return Tools::floatCmp($amount, 0.0, FS_NF0, true);
     }
 
     /**
