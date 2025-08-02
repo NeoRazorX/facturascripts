@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Model\Base;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Tools;
@@ -268,11 +267,6 @@ abstract class ModelCore
     public function primaryColumnValue()
     {
         return $this->{$this->primaryColumn()};
-    }
-
-    public static function table(): DbQuery
-    {
-        return DbQuery::table(static::tableName());
     }
 
     /**
