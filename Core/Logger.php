@@ -62,6 +62,13 @@ final class Logger
     private static $disabled = false;
 
     /**
+     * El nombre del último archivo de registro guardado.
+     *
+     * @var string|null
+     */
+    private static $last_log_filename;
+
+    /**
      * El modo de guardado actual para los mensajes de registro.
      *
      * @var string
@@ -110,7 +117,7 @@ final class Logger
             }
         }
 
-        self::$data = array_values(self::$data); // Reindex the array
+        self::$data = array_values(self::$data); // reindexar el array
     }
 
     /**
@@ -158,6 +165,26 @@ final class Logger
     public function error(string $message, array $context = []): self
     {
         return $this->log(self::LEVEL_ERROR, $message, $context);
+    }
+
+    /**
+     * Devuelve los canales únicos utilizados en los mensajes de registro.
+     *
+     * @return array
+     */
+    public static function getChannels(): array
+    {
+        return self::$data ? array_unique(array_column(self::$data, 'channel')) : [];
+    }
+
+    /**
+     * Devuelve el nombre del último archivo de registro guardado.
+     *
+     * @return string|null
+     */
+    public static function getLastLogFilename(): ?string
+    {
+        return self::$last_log_filename;
     }
 
     public function info(string $message, array $context = []): self
@@ -277,13 +304,13 @@ final class Logger
             return false;
         }
 
-        if (self::$save_method === self::SAVE_METHOD_DB) {
-            return self::saveToDB();
-        } elseif (self::$save_method === self::SAVE_METHOD_FILE) {
-            return self::saveToFile();
+        // Guardamos en la base de datos si el modo es 'db'
+        if (self::$save_method === self::SAVE_METHOD_DB && self::saveToDB()) {
+            return true;
         }
 
-        return false;
+        // En otro caso o error, guardamos en un archivo
+        return self::saveToFile();
     }
 
     /**
@@ -298,30 +325,31 @@ final class Logger
             return false;
         }
 
-        // temporarily disable logging to avoid infinite loops
-        $previousState = self::$disabled;
+        // Deshabilitamos temporalmente el logging para evitar bucles infinitos
+        $previous_state = self::$disabled;
         self::$disabled = true;
 
         $saved = true;
-        $savedKeys = [];
+        $saved_keys = [];
 
         foreach (self::$data as $key => $value) {
             if ($value['channel'] === $channel) {
                 $log = self::createLogMessage($value);
-                if (false === $log->save()) {
-                    $saved = false;
-                } else {
-                    $savedKeys[] = $key;
+                if ($log->save()) {
+                    $saved_keys[] = $key;
+                    continue;
                 }
+
+                $saved = false;
             }
         }
 
-        // restore previous logging state
-        self::$disabled = $previousState;
+        // Restauramos el estado anterior del logging
+        self::$disabled = $previous_state;
 
-        // remove only successfully saved messages
-        if (!empty($savedKeys)) {
-            foreach ($savedKeys as $key) {
+        // Eliminamos solo los mensajes guardados exitosamente
+        if (!empty($saved_keys)) {
+            foreach ($saved_keys as $key) {
                 unset(self::$data[$key]);
             }
             self::$data = array_values(self::$data);
@@ -342,19 +370,19 @@ final class Logger
             return false;
         }
 
-        $logDir = Tools::folder('MyFiles');
-        if (!is_dir($logDir) && !mkdir($logDir, 0755, true)) {
+        $log_dir = Tools::folder('MyFiles');
+        if (!is_dir($log_dir) && !mkdir($log_dir, 0755, true)) {
             return false;
         }
 
-        $filename = $logDir . '/log_' . $channel . '_' . date('Y-m-d_H-m-s') . '_' . uniqid() . '.json';
+        self::$last_log_filename = $log_dir . '/log_' . Tools::slug($channel) . '_' . date('Y-m-d_H-i-s') . '_' . uniqid() . '.json';
 
         // Preparar datos para JSON del canal específico
-        $jsonData = [];
+        $json_data = [];
 
         foreach (self::$data as $value) {
             if ($value['channel'] === $channel) {
-                $jsonData[] = [
+                $json_data[] = [
                     'timestamp' => Tools::timeToDateTime((int)$value['time']),
                     'level' => $value['level'],
                     'channel' => $value['channel'],
@@ -366,13 +394,13 @@ final class Logger
             }
         }
 
-        if (empty($jsonData)) {
+        if (empty($json_data)) {
             return false;
         }
 
         // Guarda el contenido en el archivo JSON
-        $content = json_encode($jsonData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        $result = file_put_contents($filename, $content, LOCK_EX) !== false;
+        $content = json_encode($json_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $result = file_put_contents(self::$last_log_filename, $content, LOCK_EX) !== false;
 
         if ($result) {
             // Eliminar mensajes guardados del canal
@@ -409,30 +437,37 @@ final class Logger
             return false;
         }
 
-        // temporarily disable logging to avoid infinite loops
-        $previousState = self::$disabled;
+        // Deshabilitamos temporalmente el logging para evitar bucles infinitos
+        $previous_state = self::$disabled;
         self::$disabled = true;
 
         $saved = true;
+        $saved_keys = [];
 
-        foreach (self::$data as $value) {
-            // del canal master excluimos los que no sean error o critical
+        foreach (self::$data as $key => $value) {
+            // Del canal master excluimos los que no sean error o critical
             if ($value['channel'] === 'master' && !in_array($value['level'], ['critical', 'error'])) {
                 continue;
             }
 
             $log = self::createLogMessage($value);
-            if (false === $log->save()) {
-                $saved = false;
+            if ($log->save()) {
+                $saved_keys[] = $key;
+                continue;
             }
+
+            $saved = false;
         }
 
-        // restore previous logging state
-        self::$disabled = $previousState;
+        // Restauramos el estado anterior del logging
+        self::$disabled = $previous_state;
 
-        if ($saved) {
-            // limpia los mensajes guardados
-            self::clear();
+        // Eliminamos solo los mensajes guardados exitosamente
+        if (!empty($saved_keys)) {
+            foreach ($saved_keys as $key) {
+                unset(self::$data[$key]);
+            }
+            self::$data = array_values(self::$data);
         }
 
         return $saved;
@@ -449,17 +484,22 @@ final class Logger
             return false;
         }
 
-        $logDir = Tools::folder('MyFiles');
-        if (!is_dir($logDir) && !mkdir($logDir, 0755, true)) {
+        $log_dir = Tools::folder('MyFiles');
+        if (!is_dir($log_dir) && !mkdir($log_dir, 0755, true)) {
             return false;
         }
 
-        $filename = $logDir . '/log_' . date('Y-m-d_H-m-s') . '_' . uniqid() . '.json';
+        self::$last_log_filename = $log_dir . '/log_' . date('Y-m-d_H-i-s') . '_' . uniqid() . '.json';
 
         // Preparar datos para JSON
-        $jsonData = [];
+        $json_data = [];
         foreach (self::$data as $value) {
-            $jsonData[] = [
+            // Del canal master excluimos los que no sean error o critical
+            if ($value['channel'] === 'master' && !in_array($value['level'], ['critical', 'error'])) {
+                continue;
+            }
+
+            $json_data[] = [
                 'timestamp' => Tools::timeToDateTime((int)$value['time']),
                 'level' => $value['level'],
                 'channel' => $value['channel'],
@@ -471,8 +511,8 @@ final class Logger
         }
 
         // Guarda el contenido en el archivo JSON
-        $content = json_encode($jsonData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        $result = file_put_contents($filename, $content, LOCK_EX) !== false;
+        $content = json_encode($json_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $result = file_put_contents(self::$last_log_filename, $content, LOCK_EX) !== false;
 
         if ($result) {
             // Limpia los mensajes guardados
@@ -546,16 +586,18 @@ final class Logger
         $trans_message = is_null($this->translator) ? $message : $this->translator->trans($message, $context);
 
         foreach ($this->current_channels as $channel) {
-            // if we find this message in the log, we increase the counter
+            // Si encontramos este mensaje en el log, incrementamos el contador
             foreach (self::$data as $key => $value) {
                 if ($value['channel'] === $channel && $value['level'] === $level &&
-                    $value['message'] === $trans_message && $value['context'] === $final_context) {
+                    $value['message'] === $trans_message &&
+                    empty(array_diff_assoc($value['context'], $final_context)) &&
+                    empty(array_diff_assoc($final_context, $value['context']))) {
                     self::$data[$key]['count']++;
                     continue 2;
                 }
             }
 
-            // add message
+            // Añadir mensaje
             self::$data[] = [
                 'channel' => $channel,
                 'context' => $final_context,

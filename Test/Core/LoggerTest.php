@@ -173,6 +173,29 @@ final class LoggerTest extends TestCase
         $this->assertEmpty(Logger::readChannel('nonexistent-channel'));
     }
 
+    public function testGetChannels(): void
+    {
+        // Test with no channels
+        $this->assertEmpty(Logger::getChannels());
+
+        // Log to a single channel
+        Logger::channel('channel1')->info('message1');
+        $this->assertEquals(['channel1'], Logger::getChannels());
+
+        // Log to multiple channels
+        Logger::channel('channel2')->info('message2');
+        Logger::channel('channel3')->info('message3');
+        $channels = Logger::getChannels();
+        sort($channels);
+        $this->assertEquals(['channel1', 'channel2', 'channel3'], $channels);
+
+        // Log to an existing channel again, should not duplicate
+        Logger::channel('channel1')->error('another message');
+        $channels = Logger::getChannels();
+        sort($channels);
+        $this->assertEquals(['channel1', 'channel2', 'channel3'], $channels);
+    }
+
     public function testMessageDeduplication(): void
     {
         $logger = Logger::channel(self::TEST_CHANNEL);
@@ -372,6 +395,50 @@ final class LoggerTest extends TestCase
 
         $data = Logger::readChannel(self::TEST_CHANNEL);
         $this->assertLessThanOrEqual(Logger::MAX_ITEMS, count($data));
+    }
+
+    public function testSaveChannelToFileWithSpecialChars(): void
+    {
+        $channel = 'test/channel/with/slashes';
+
+        $logger = Logger::channel($channel);
+        $logger->info('test-message');
+
+        $this->assertTrue(Logger::saveChannelToFile($channel));
+
+        $filename = Logger::getLastLogFilename();
+        $this->assertNotNull($filename);
+        $this->assertFileExists($filename);
+
+        // check the filename does not contain slashes
+        $this->assertStringNotContainsString('/', basename($filename));
+
+        unlink($filename);
+    }
+
+    public function testLargeContext(): void
+    {
+        $channel = 'large-context-channel';
+        $logger = Logger::channel($channel);
+
+        // Create a large context array
+        $largeContext = [];
+        for ($i = 0; $i < 2000; $i++) {
+            $largeContext['key' . $i] = 'value' . $i;
+        }
+
+        $logger->error('test-large-context', $largeContext);
+
+        // save to DB should fail
+        if (!Logger::saveToDB()) {
+            // save to file should work
+            $this->assertTrue(Logger::saveToFile());
+
+            $filename = Logger::getLastLogFilename();
+            $this->assertNotNull($filename);
+            $this->assertFileExists($filename);
+            unlink($filename);
+        }
     }
 
     protected function tearDown(): void
