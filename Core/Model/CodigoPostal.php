@@ -68,7 +68,7 @@ class CodigoPostal extends ModelClass
 
     public function test(): bool
     {
-        $this->creation_date = $this->creationdate ?? Tools::dateTime();
+        $this->creation_date = $this->creation_date ?? Tools::dateTime();
         $this->nick = $this->nick ?? Session::user()->nick;
 
         return parent::test();

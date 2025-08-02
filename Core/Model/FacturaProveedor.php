@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\LineaFacturaProveedor as DinLineaFactura;
+use FacturaScripts\Core\Model\Base\InvoiceTrait;
+use FacturaScripts\Core\Model\Base\PurchaseDocument;
+use FacturaScripts\Core\Template\ModelTrait;
+use FacturaScripts\Dinamic\Model\LineaFacturaProveedor as LineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboProveedor as DinReciboProveedor;
 
 /**
@@ -28,18 +31,19 @@ use FacturaScripts\Dinamic\Model\ReciboProveedor as DinReciboProveedor;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class FacturaProveedor extends Base\PurchaseDocument
+class FacturaProveedor extends PurchaseDocument
 {
-    use Base\ModelTrait;
-    use Base\InvoiceTrait;
+    use ModelTrait;
+    use InvoiceTrait;
 
     public function __construct(array $data = [])
     {
         parent::__construct($data);
+
         self::$dont_copy_fields[] = 'fechadevengo';
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->pagada = false;
@@ -49,14 +53,13 @@ class FacturaProveedor extends Base\PurchaseDocument
     /**
      * Returns the lines associated with the invoice.
      *
-     * @return DinLineaFactura[]
+     * @return LineaFactura[]
      */
     public function getLines(): array
     {
-        $lineaModel = new DinLineaFactura();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-        return $lineaModel->all($where, $order, 0, 0);
+        return LineaFactura::all($where, $order, 0, 0);
     }
 
     /**
@@ -65,11 +68,11 @@ class FacturaProveedor extends Base\PurchaseDocument
      * @param array $data
      * @param array $exclude
      *
-     * @return DinLineaFactura
+     * @return LineaFactura
      */
     public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idfactura', 'servido'])
     {
-        $newLine = new DinLineaFactura();
+        $newLine = new LineaFactura();
         $newLine->idfactura = $this->idfactura;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
@@ -88,9 +91,8 @@ class FacturaProveedor extends Base\PurchaseDocument
      */
     public function getReceipts(): array
     {
-        $receipt = new DinReciboProveedor();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
-        return $receipt->all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
+        return DinReciboProveedor::all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
     }
 
     public static function tableName(): string

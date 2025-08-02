@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Model\Base\SalesDocumentLine;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\AlbaranCliente as DinAlbaranCliente;
 
 /**
@@ -26,10 +28,9 @@ use FacturaScripts\Dinamic\Model\AlbaranCliente as DinAlbaranCliente;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaAlbaranCliente extends Base\SalesDocumentLine
+class LineaAlbaranCliente extends SalesDocumentLine
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Delivery note ID of this line.

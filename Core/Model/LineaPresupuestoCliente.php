@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2022    Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025    Carlos Garcia Gomez       <carlos@facturascripts.com>
  * Copyright (C) 2014         Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Model\Base\SalesDocumentLine;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\PresupuestoCliente as DinPresupuestoCliente;
 
 /**
@@ -27,10 +29,9 @@ use FacturaScripts\Dinamic\Model\PresupuestoCliente as DinPresupuestoCliente;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaPresupuestoCliente extends Base\SalesDocumentLine
+class LineaPresupuestoCliente extends SalesDocumentLine
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Estimation ID.

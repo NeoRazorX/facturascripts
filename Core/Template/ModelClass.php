@@ -254,6 +254,16 @@ abstract class ModelClass
         return $this->original[$key] ?? null;
     }
 
+    /**
+     * @param string $field
+     * @return bool
+     * @deprecated replace with isDirty()
+     */
+    public function hasChanged(string $field): bool
+    {
+        return $this->isDirty($field);
+    }
+
     public function id()
     {
         return $this->{static::primaryColumn()};
@@ -479,6 +489,11 @@ abstract class ModelClass
     public function syncOriginal(): void
     {
         $this->original = [];
+
+        if (null === $this->id()) {
+            // If the model has no ID, we do not sync original values
+            return;
+        }
 
         foreach (array_keys($this->getModelFields()) as $key) {
             $this->original[$key] = $this->{$key};

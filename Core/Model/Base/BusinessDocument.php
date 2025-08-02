@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,8 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\Model\LogMessage;
+use FacturaScripts\Core\Template\ModelClass as NewModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
@@ -37,7 +39,7 @@ use FacturaScripts\Dinamic\Model\User;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class BusinessDocument extends ModelOnChangeClass
+abstract class BusinessDocument extends NewModelClass
 {
     use CompanyRelationTrait;
     use CurrencyRelationTrait;
@@ -243,7 +245,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     /**
      * Reset the values of all model properties.
      */
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
 
@@ -281,12 +283,12 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
     public function getAttachedFiles(): array
     {
-        $relationModel = new AttachedFileRelation();
         $where = [new DataBaseWhere('model', $this->modelClassName())];
-        $where[] = is_numeric($this->primaryColumnValue()) ?
-            new DataBaseWhere('modelid|modelcode', $this->primaryColumnValue()) :
-            new DataBaseWhere('modelcode', $this->primaryColumnValue());
-        return $relationModel->all($where, ['creationdate' => 'DESC'], 0, 0);
+        $where[] = is_numeric($this->id()) ?
+            new DataBaseWhere('modelid|modelcode', $this->id()) :
+            new DataBaseWhere('modelcode', $this->id());
+
+        return AttachedFileRelation::all($where, ['creationdate' => 'DESC'], 0, 0);
     }
 
     /**
@@ -294,7 +296,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return float
      */
-    public function getEUDiscount()
+    public function getEUDiscount(): float
     {
         $eud = 1.0;
         foreach ([$this->dtopor1, $this->dtopor2] as $dto) {
@@ -408,12 +410,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
         return false;
     }
 
-    /**
-     * @return string
-     */
-    public function subjectColumnValue()
+    public function subjectColumnValue(): string
     {
-        return $this->{$this->subjectColumn()};
+        return $this->{$this->subjectColumn()} ?? '';
     }
 
     /**
@@ -432,7 +431,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         }
 
         // check exercise and date
-        if (false === $this->hasChanged('fecha') && false === $this->getExercise()->inRange($this->fecha)) {
+        if ((empty($this->id()) || !$this->isDirty('fecha')) && false === $this->getExercise()->inRange($this->fecha)) {
             Tools::log()->error('date-out-of-exercise-range', ['%exerciseName%' => $this->codejercicio]);
             return false;
         }
@@ -461,12 +460,12 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'codalmacen':
                 foreach ($this->getLines() as $line) {
-                    $line->transfer($this->previousData['codalmacen'], $this->codalmacen);
+                    $line->transfer($this->getOriginal('codalmacen'), $this->codalmacen);
                 }
                 break;
 
@@ -495,40 +494,22 @@ abstract class BusinessDocument extends ModelOnChangeClass
         return parent::onChange($field);
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveUpdate(array $values = []): bool
+    protected function saveUpdate(): bool
     {
-        if (false === parent::saveUpdate($values)) {
+        if (false === parent::saveUpdate()) {
             return false;
         }
 
         // add audit log
-        Tools::log(self::AUDIT_CHANNEL)->info('updated-model', [
+        Tools::log(LogMessage::AUDIT_CHANNEL)->info('updated-model', [
             '%model%' => $this->modelClassName(),
-            '%key%' => $this->primaryColumnValue(),
+            '%key%' => $this->id(),
             '%desc%' => $this->primaryDescription(),
             'model-class' => $this->modelClassName(),
-            'model-code' => $this->primaryColumnValue(),
+            'model-code' => $this->id(),
             'model-data' => $this->toArray()
         ]);
-        return true;
-    }
 
-    /**
-     * Sets fields to be watched.
-     *
-     * @param array $fields
-     */
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = [
-            'codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'numero',
-            'operacion', 'total'
-        ];
-        parent::setPreviousData(array_merge($more, $fields));
+        return true;
     }
 }

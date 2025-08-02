@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Template;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\DbUpdater;
 
 trait ModelTrait
 {
@@ -133,6 +134,11 @@ trait ModelTrait
 
     public static function table(): DbQuery
     {
+        // check if the table exists
+        if (!DbUpdater::isTableChecked(static::tableName())) {
+            new static();
+        }
+
         return DbQuery::table(static::tableName());
     }
 
