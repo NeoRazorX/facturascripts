@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
@@ -295,14 +294,5 @@ abstract class ExportBase
         if (empty($this->fileName)) {
             $this->fileName = str_replace([' ', '"', "'", '/', '\\', ','], '_', Tools::fixHtml($name));
         }
-    }
-
-    /**
-     * @return ToolBox
-     * @deprecated since 2023.1
-     */
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 }

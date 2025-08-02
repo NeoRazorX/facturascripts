@@ -339,15 +339,6 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * @return ToolBox
-     * @deprecated since version 2023.1
-     */
-    public static function toolBox(): ToolBox
-    {
-        return new ToolBox();
-    }
-
-    /**
      * Return the URL of the actual controller.
      *
      * @return string

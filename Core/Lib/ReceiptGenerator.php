@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Tools;
@@ -260,14 +259,6 @@ class ReceiptGenerator
         $newReceipt->setPaymentMethod($invoice->codpago);
         $newReceipt->disableInvoiceUpdate(true);
         return $newReceipt->save();
-    }
-
-    /**
-     * @return ToolBox
-     */
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 
     /**

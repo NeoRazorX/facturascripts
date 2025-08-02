@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Model\Base;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\DbUpdater;
 use FacturaScripts\Core\Lib\Import\CSVImport;
@@ -346,16 +345,5 @@ abstract class ModelCore
         }
 
         return $field['is_nullable'] === 'NO' ? 0 : null;
-    }
-
-    /**
-     * Returns a new instance of the ToolBox class.
-     *
-     * @return ToolBox
-     * @deprecated since version 2023.1
-     */
-    protected static function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 }
