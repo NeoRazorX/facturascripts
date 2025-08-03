@@ -132,13 +132,51 @@ final class PluginsDeploy
             Tools::folder($place, $pluginName, $folder, $fileName);
 
         if (!file_exists($path)) {
-            throw new Exception("Unable to locate plugin class: " . $fileName . " on " . $path);
+            throw new Exception('Unable to locate plugin class: ' . $fileName . ' on ' . $path);
         }
 
-        $txt = file_get_contents($path);
-        return strpos($txt, 'abstract class ') === false ?
-            'class' :
-            'abstract class';
+        if (!is_file($path)) {
+            throw new Exception('Path is not a file: ' . $path);
+        }
+
+        if (!is_readable($path)) {
+            throw new Exception('File is not readable: ' . $path);
+        }
+
+        $content = file_get_contents($path);
+        $tokens = token_get_all($content);
+
+        $isAbstract = false;
+        $foundClass = false;
+
+        foreach ($tokens as $i => $token) {
+            // Ignorar tokens que no son arrays (como ; o {)
+            if (!is_array($token)) {
+                continue;
+            }
+
+            // Si encontramos abstract
+            if ($token[0] === T_ABSTRACT) {
+                $isAbstract = true;
+            }
+
+            // Si encontramos class después de abstract (o sin abstract)
+            if ($token[0] === T_CLASS) {
+                $foundClass = true;
+                break;
+            }
+
+            // Si encontramos otra palabra clave estructural, reset abstract
+            if (in_array($token[0], [T_FUNCTION, T_INTERFACE, T_TRAIT])) {
+                $isAbstract = false;
+            }
+        }
+
+        if (!$foundClass) {
+            return '';
+        }
+
+        return $isAbstract ? 'abstract class' : 'class';
     }
 
     private static function linkFile(string $fileName, string $folder, string $filePath): void
@@ -146,8 +184,7 @@ final class PluginsDeploy
         $path = Tools::folder('Dinamic', $folder, $fileName);
 
         if (!copy($filePath, $path)) {
-            Tools::log()->error('Failed to copy file: ' . $filePath . ' to ' . $path);
-            return;
+            throw new Exception('Failed to copy file: ' . $filePath . ' to ' . $path);
         }
 
         self::$fileList[$folder][$fileName] = $fileName;
@@ -171,8 +208,6 @@ final class PluginsDeploy
                 Tools::folderCheckOrCreate(Tools::folder('Dinamic', $folder, $fileName));
                 continue;
             } elseif ($fileInfo['filename'] === '' || !is_file($filePath)) {
-                continue;
-            } elseif ('Trait.php' === substr($fileName, -9)) {
                 continue;
             }
 
@@ -204,19 +239,25 @@ final class PluginsDeploy
             $newNamespace .= '\\' . $paths[$key];
         }
 
+        $classType = self::getClassType($fileName, $folder, $place, $pluginName);
+        if (empty($classType)) {
+            // No es un archivo de clase, lo ignoramos
+            return;
+        }
+
         $className = basename($fileName, '.php');
         $txt = '<?php namespace ' . $newNamespace . ";\n\n"
             . '/**' . "\n"
             . ' * Class created by Core/Internal/PluginsDeploy' . "\n"
             . ' * @author FacturaScripts <carlos@facturascripts.com>' . "\n"
             . ' */' . "\n"
-            . self::getClassType($fileName, $folder, $place, $pluginName) . ' ' . $className . ' extends \\' . $namespace . '\\' . $className;
+            . $classType . ' ' . $className . ' extends \\' . $namespace . '\\' . $className;
 
         $txt .= self::extensionSupport($newNamespace) ? "\n{\n\tuse \FacturaScripts\Core\Template\ExtensionsTrait;\n}\n" : "\n{\n}\n";
 
         $destinationPath = Tools::folder('Dinamic', $folder, $fileName);
         if (file_put_contents($destinationPath, $txt) === false) {
-            throw new Exception("Unable to write file: " . $destinationPath . ' to ' . $folder . ' ' . $fileName);
+            throw new Exception('Unable to write file: ' . $destinationPath);
         }
 
         self::$fileList[$folder][$fileName] = $fileName;
@@ -236,13 +277,17 @@ final class PluginsDeploy
         // Merge XML files
         $xml = simplexml_load_file($originPath);
         if (false === $xml) {
-            return;
+            $errors = libxml_get_errors();
+            $errorMsg = !empty($errors) ? $errors[0]->message : 'Unknown error';
+            throw new Exception('Unable to load XML file: ' . $originPath . ' - ' . $errorMsg);
         }
 
         foreach ($extensions as $extension) {
             $xmlExtension = simplexml_load_file($extension);
             if ($xmlExtension === false) {
-                throw new Exception("Unable to load XML extension file: " . $extension);
+                $errors = libxml_get_errors();
+                $errorMsg = !empty($errors) ? $errors[0]->message : 'Unknown error';
+                throw new Exception('Unable to load XML extension file: ' . $extension . ' - ' . $errorMsg);
             }
 
             self::mergeXMLDocs($xml, $xmlExtension);
@@ -250,7 +295,7 @@ final class PluginsDeploy
 
         $destinationPath = Tools::folder('Dinamic', $folder, $fileName);
         if ($xml->asXML($destinationPath) === false) {
-            throw new Exception("Unable to write file: " . $destinationPath . ' to ' . $folder . ' ' . $fileName);
+            throw new Exception('Unable to write XML file: ' . $destinationPath);
         }
 
         self::$fileList[$folder][$fileName] = $fileName;
@@ -275,12 +320,24 @@ final class PluginsDeploy
                 // Element found. Overwrite or append children? Only for parents example group, etc.
                 $found = true;
                 $extDom = dom_import_simplexml($extChild);
+                if ($extDom === false) {
+                    throw new Exception('Failed to convert SimpleXML to DOM');
+                }
 
                 switch (mb_strtolower($extDom->getAttribute('overwrite'))) {
                     case 'true':
                         $sourceDom = dom_import_simplexml($source);
+                        if ($sourceDom === false) {
+                            throw new Exception('Failed to convert SimpleXML source to DOM');
+                        }
+
                         $newElement = $sourceDom->ownerDocument->importNode($extDom, true);
-                        $sourceDom->replaceChild($newElement, $sourceDom->getElementsByTagName($newElement->nodeName)->item($num));
+                        $targetNode = $sourceDom->getElementsByTagName($newElement->nodeName)->item($num);
+                        if ($targetNode === null) {
+                            throw new Exception('Target node not found for replacement');
+                        }
+
+                        $sourceDom->replaceChild($newElement, $targetNode);
                         break;
 
                     default:
@@ -292,12 +349,24 @@ final class PluginsDeploy
             // Elemento not found. Append all or Replace child, Only for child example widget, etc.
             if (!$found) {
                 $sourceDom = dom_import_simplexml($source);
+                if ($sourceDom === false) {
+                    throw new Exception('Failed to convert SimpleXML source to DOM');
+                }
+
                 $extDom = dom_import_simplexml($extChild);
+                if ($extDom === false) {
+                    throw new Exception('Failed to convert SimpleXML extension to DOM');
+                }
+
                 $newElement = $sourceDom->ownerDocument->importNode($extDom, true);
 
                 switch (mb_strtolower($extDom->getAttribute('overwrite'))) {
                     case 'true':
-                        $sourceDom->replaceChild($newElement, $sourceDom->getElementsByTagName('*')->item($num));
+                        $targetNode = $sourceDom->getElementsByTagName('*')->item($num);
+                        if ($targetNode === null) {
+                            throw new Exception('No target node found at position ' . $num);
+                        }
+                        $sourceDom->replaceChild($newElement, $targetNode);
                         break;
 
                     default:
