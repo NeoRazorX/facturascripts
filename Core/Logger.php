@@ -80,7 +80,17 @@ final class Logger
 
     public function __construct(array $channels = [])
     {
-        $this->current_channels = empty($channels) ? ['master'] : $channels;
+        if (empty($channels)) {
+            $this->current_channels = ['master'];
+        } else {
+            // Filtrar canales vacíos y reemplazarlos con 'master'
+            $mapped_channels = array_map(function ($channel) {
+                return empty($channel) ? 'master' : $channel;
+            }, $channels);
+            // Eliminar duplicados
+            $this->current_channels = array_values(array_unique($mapped_channels));
+        }
+
         $this->translator = new Translator();
     }
 

@@ -423,6 +423,45 @@ final class LoggerTest extends TestCase
         $this->assertLessThanOrEqual(Logger::MAX_ITEMS, count($data));
     }
 
+    public function testEmptyChannel(): void
+    {
+        // Test con canal vacío
+        $logger = Logger::channel('');
+        $message = 'test-empty-channel';
+        $logger->info($message);
+
+        // Debería escribir en el canal 'master' en lugar de un canal vacío
+        $data = Logger::readChannel('master');
+        $this->assertCount(1, $data);
+        $this->assertEquals($message, $data[0]['message']);
+        $this->assertEquals('master', $data[0]['channel']);
+
+        // No debería haber nada en un canal con nombre vacío
+        $this->assertEmpty(Logger::readChannel(''));
+    }
+
+    public function testStackWithEmptyChannels(): void
+    {
+        // Test con múltiples canales incluyendo vacíos
+        $logger = Logger::stack(['channel1', '', 'channel2', '']);
+        $message = 'test-stack-empty';
+        $logger->info($message);
+
+        // Debería escribir en channel1, channel2 y master (por los canales vacíos)
+        $this->assertCount(1, Logger::readChannel('channel1'));
+        $this->assertCount(1, Logger::readChannel('channel2'));
+        $this->assertCount(1, Logger::readChannel('master'));
+        
+        // No debería duplicar en master si ya está en la lista
+        Logger::clear();
+        $logger2 = Logger::stack(['', 'master', '']);
+        $logger2->info($message);
+        
+        // Solo debería haber un mensaje en master, no duplicado
+        $masterData = Logger::readChannel('master');
+        $this->assertCount(1, $masterData);
+    }
+
     public function testSaveChannelToFileWithSpecialChars(): void
     {
         $channel = 'test/channel/with/slashes';
