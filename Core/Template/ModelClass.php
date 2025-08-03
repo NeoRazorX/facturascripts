@@ -101,7 +101,7 @@ abstract class ModelClass
 
         if (DbUpdater::isTableChecked(static::tableName())) {
             // none
-        } elseif (false === DbUpdater::createOrUpdateTable(static::tableName(), [], $this->install())) {
+        } elseif (false === DbUpdater::createOrUpdateTable(static::tableName(), [], $this)) {
             throw new Exception('Error creating or updating the table ' . static::tableName() . ' in model ' . $this->modelClassName());
         }
 
