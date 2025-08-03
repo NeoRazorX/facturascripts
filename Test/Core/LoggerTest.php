@@ -42,6 +42,32 @@ final class LoggerTest extends TestCase
         Logger::saveMethod('db');
     }
 
+    public function testNew(): void
+    {
+        $logger = new Logger();
+        $message = 'test-message';
+        $logger->notice($message);
+
+        $data = Logger::read();
+        $this->assertCount(1, $data);
+        $this->assertEquals($message, $data[0]['message']);
+    }
+
+    public function testMaster(): void
+    {
+        $logger = new Logger();
+        $message = 'test-master-message';
+        $logger->info($message);
+
+        $dataMaster = Logger::readChannel('master');
+        $this->assertCount(1, $dataMaster);
+        $this->assertEquals($message, $dataMaster[0]['message']);
+
+        $data = Logger::read();
+        $this->assertCount(1, $data);
+        $this->assertEquals($message, $data[0]['message']);
+    }
+
     public function testCritical(): void
     {
         $logger = Logger::channel(self::TEST_CHANNEL);

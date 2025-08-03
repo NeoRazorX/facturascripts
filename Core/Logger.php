@@ -78,9 +78,9 @@ final class Logger
     /** @var Translator */
     private $translator;
 
-    public function __construct(array $channels)
+    public function __construct(array $channels = [])
     {
-        $this->current_channels = $channels;
+        $this->current_channels = empty($channels) ? ['master'] : $channels;
         $this->translator = new Translator();
     }
 
