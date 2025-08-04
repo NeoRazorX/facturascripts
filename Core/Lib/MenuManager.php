@@ -30,31 +30,31 @@ use FacturaScripts\Dinamic\Model\Page;
 class MenuManager
 {
     /**
-     * Contains the structure of the menu for the user.
+     * Contiene la estructura del menú para el usuario.
      *
      * @var MenuItem[]
      */
-    private static $menu;
+    private $menu;
 
     /**
-     * True when there is a menu active. Only for optimization purpose.
+     * Verdadero cuando hay un menú activo. Solo para propósitos de optimización.
      *
      * @var bool
      */
-    private static $menuActive;
+    private $menuActive;
 
     public function __construct()
     {
         if (Session::user()->nick) {
             $this->loadUserMenu(Session::user());
         } else {
-            self::$menu = [];
+            $this->menu = [];
         }
     }
 
     public function getMenu(): array
     {
-        return self::$menu ?? [];
+        return $this->menu ?? [];
     }
 
     public static function init(): self
@@ -68,9 +68,9 @@ class MenuManager
             return $this;
         }
 
-        if (self::$menu !== null && self::$menuActive !== true) {
+        if (!empty($this->menu) && $this->menuActive !== true) {
             $this->setActiveMenu($data);
-            self::$menuActive = true;
+            $this->menuActive = true;
         }
 
         return $this;
@@ -119,10 +119,9 @@ class MenuManager
         }
 
         // ahora agrupamos las páginas por menú y submenú
-        self::$menu = [];
+        $this->menu = [];
         $menuValue = null;
         $submenuValue = null;
-        $menuItem = null;
         $i18n = new Translator();
 
         foreach ($allPages as $page) {
@@ -130,48 +129,51 @@ class MenuManager
                 continue;
             }
 
-            // Menu break control
+            // Control de cambio de menú
             if ($menuValue !== $page->menu) {
                 $menuValue = $page->menu;
                 $submenuValue = null;
-                self::$menu[$menuValue] = new MenuItem($menuValue, $i18n->trans($menuValue), '#');
-                $menuItem = &self::$menu[$menuValue]->menu;
+                $this->menu[$menuValue] = new MenuItem($menuValue, $i18n->trans($menuValue), '#');
             }
 
-            // Submenu break control
+            // Control de cambio de submenú
             if ($submenuValue !== $page->submenu) {
                 $submenuValue = $page->submenu;
-                $menuItem = &self::$menu[$menuValue]->menu;
                 if (!empty($submenuValue)) {
-                    $menuItem[$submenuValue] = new MenuItem($submenuValue, $i18n->trans($submenuValue), '#');
-                    $menuItem = &$menuItem[$submenuValue]->menu;
+                    $this->menu[$menuValue]->menu[$submenuValue] = new MenuItem($submenuValue, $i18n->trans($submenuValue), '#');
                 }
             }
-            $menuItem[$page->name] = new MenuItem($page->name, $i18n->trans($page->title), $page->url(), $page->icon);
+
+            // Añadir página en la ubicación apropiada del menú
+            if (!empty($submenuValue)) {
+                $this->menu[$menuValue]->menu[$submenuValue]->menu[$page->name] = new MenuItem($page->name, $i18n->trans($page->title), $page->url(), $page->icon);
+            } else {
+                $this->menu[$menuValue]->menu[$page->name] = new MenuItem($page->name, $i18n->trans($page->title), $page->url(), $page->icon);
+            }
         }
 
-        // sort the menu
-        $this->sortMenu(self::$menu);
+        // ordenar el menú
+        $this->sortMenu($this->menu);
     }
 
     /**
-     * Set the active menu.
+     * Establece el menú activo.
      *
      * @param array $data
      */
     protected function setActiveMenu(array $data): void
     {
-        foreach (self::$menu as $key => $menuItem) {
+        foreach ($this->menu as $key => $menuItem) {
             if ($menuItem->name === $data['menu']) {
-                self::$menu[$key]->active = true;
-                $this->setActiveMenuItem(self::$menu[$key]->menu, $data);
+                $this->menu[$key]->active = true;
+                $this->setActiveMenuItem($this->menu[$key]->menu, $data);
                 break;
             }
         }
     }
 
     /**
-     * Assign active menu item.
+     * Asigna el elemento de menú activo.
      *
      * @param MenuItem[] $menu
      * @param array $data
@@ -192,20 +194,18 @@ class MenuManager
         }
     }
 
-    protected function sortMenu(array &$result): array
+    protected function sortMenu(array &$result): void
     {
-        // sort this menu
+        // ordenar este menú
         uasort($result, function ($menu1, $menu2) {
             return strcasecmp($menu1->title, $menu2->title);
         });
 
-        // sort submenus
+        // ordenar submenús
         foreach ($result as $key => $value) {
             if (!empty($value->menu)) {
-                $result[$key]->menu = $this->sortMenu($value->menu);
+                $this->sortMenu($result[$key]->menu);
             }
         }
-
-        return $result;
     }
 }
