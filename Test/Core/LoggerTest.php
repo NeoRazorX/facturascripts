@@ -451,12 +451,12 @@ final class LoggerTest extends TestCase
         $this->assertCount(1, Logger::readChannel('channel1'));
         $this->assertCount(1, Logger::readChannel('channel2'));
         $this->assertCount(1, Logger::readChannel('master'));
-        
+
         // No debería duplicar en master si ya está en la lista
         Logger::clear();
         $logger2 = Logger::stack(['', 'master', '']);
         $logger2->info($message);
-        
+
         // Solo debería haber un mensaje en master, no duplicado
         $masterData = Logger::readChannel('master');
         $this->assertCount(1, $masterData);
@@ -506,9 +506,70 @@ final class LoggerTest extends TestCase
         }
     }
 
+    public function testRead(): void
+    {
+        Logger::channel('channel1')->info('info-message-1');
+        Logger::channel('channel1')->error('error-message-1');
+        Logger::channel('channel2')->warning('warning-message-2');
+        Logger::channel('channel2')->info('info-message-2');
+
+        // Test filtering by channel
+        $channel1_messages = Logger::read('channel1');
+        $this->assertCount(2, $channel1_messages);
+        $this->assertEquals('info-message-1', $channel1_messages[0]['message']);
+        $this->assertEquals('error-message-1', $channel1_messages[1]['message']);
+
+        // Test filtering by level
+        $info_messages = Logger::read('', [Logger::LEVEL_INFO]);
+        $this->assertCount(2, $info_messages);
+        $this->assertEquals('info-message-1', $info_messages[0]['message']);
+        $this->assertEquals('info-message-2', $info_messages[1]['message']);
+
+        // Test filtering by channel and level
+        $channel2_warning_messages = Logger::read('channel2', [Logger::LEVEL_WARNING]);
+        $this->assertCount(1, $channel2_warning_messages);
+        $this->assertEquals('warning-message-2', $channel2_warning_messages[0]['message']);
+
+        // Test with limit
+        $limited_messages = Logger::read('', [], 1);
+        $this->assertCount(1, $limited_messages);
+        $this->assertEquals('info-message-1', $limited_messages[0]['message']);
+
+        // Test with negative limit
+        $last_messages = Logger::read('', [], -2);
+        $this->assertCount(2, $last_messages);
+        $this->assertEquals('warning-message-2', $last_messages[0]['message']);
+        $this->assertEquals('info-message-2', $last_messages[1]['message']);
+    }
+
+    public function testReadAll(): void
+    {
+        Logger::channel('channel1')->info('message1');
+        Logger::channel('channel2')->error('message2');
+        Logger::channel('channel1')->warning('message3');
+
+        // Test read all without limit
+        $all_messages = Logger::readAll();
+        $this->assertCount(3, $all_messages);
+        $this->assertEquals('message1', $all_messages[0]['message']);
+        $this->assertEquals('message2', $all_messages[1]['message']);
+        $this->assertEquals('message3', $all_messages[2]['message']);
+
+        // Test read all with positive limit
+        $first_two = Logger::readAll(2);
+        $this->assertCount(2, $first_two);
+        $this->assertEquals('message1', $first_two[0]['message']);
+        $this->assertEquals('message2', $first_two[1]['message']);
+
+        // Test read all with negative limit
+        $last_two = Logger::readAll(-2);
+        $this->assertCount(2, $last_two);
+        $this->assertEquals('message2', $last_two[0]['message']);
+        $this->assertEquals('message3', $last_two[1]['message']);
+    }
+
     protected function tearDown(): void
     {
         Logger::clear();
-        Logger::clearContext();
     }
 }

@@ -208,6 +208,44 @@ final class Logger
     }
 
     /**
+     * Devuelve los mensajes de registro filtrados por canal y niveles.
+     * Si $num es 0, devuelve todos los mensajes. Si es mayor que 0, devuelve los primeros mensajes.
+     * Y si es negativo, devuelve los últimos mensajes.
+     *
+     * @param string $channel
+     * @param array $levels
+     * @param int $num
+     * @return array
+     */
+    public static function read(string $channel = '', array $levels = [], int $num = 0): array
+    {
+        if (empty(self::$data)) {
+            return [];
+        }
+
+        $filtered = [];
+        foreach (self::$data as $item) {
+            if ($channel && $item['channel'] != $channel) {
+                continue;
+            }
+
+            if (empty($levels) || in_array($item['level'], $levels)) {
+                $filtered[] = $item;
+            }
+        }
+
+        if ($num === 0) {
+            return $filtered;
+        }
+
+        if ($num > 0) {
+            return array_slice($filtered, 0, $num);
+        }
+
+        return array_slice($filtered, $num);
+    }
+
+    /**
      * Devuelve los mensajes de registro.
      * Si $num es 0, devuelve todos los mensajes. Si es mayor que 0, devuelve los primeros mensajes.
      * Y si es negativo, devuelve los últimos mensajes.
@@ -215,7 +253,7 @@ final class Logger
      * @param int $num
      * @return array
      */
-    public static function read(int $num = 0): array
+    public static function readAll(int $num = 0): array
     {
         if (empty(self::$data)) {
             return [];
