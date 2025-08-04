@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Lib\MenuManager as NewMenuManager;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
@@ -289,16 +290,11 @@ class Controller implements ControllerInterface
 
             // renderizamos la plantilla
             if ($this->template) {
-                // carga el menú
-                $menu = new MenuManager();
-                $menu->setUser(Session::user());
-                $menu->selectPage($this->getPageData());
-
                 Kernel::startTimer('Controller::html-render');
                 $response->setContent(Html::render($this->template, [
                     'controllerName' => $this->className,
                     'fsc' => $this,
-                    'menuManager' => $menu,
+                    'menuManager' => NewMenuManager::init()->selectPage($this->getPageData()),
                     'template' => $this->template,
                 ]));
                 Kernel::stopTimer('Controller::html-render');
