@@ -21,6 +21,7 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Template\MigrationClass;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\LogMessage;
@@ -40,6 +41,35 @@ final class Migrations
         self::runMigration('fixAgenciasTransporte', [self::class, 'fixAgenciasTransporte']);
         self::runMigration('fixFormasPago', [self::class, 'fixFormasPago']);
         self::runMigration('fixRectifiedInvoices', [self::class, 'fixRectifiedInvoices']);
+    }
+
+    /**
+     * Execute a plugin migration
+     * 
+     * @param MigrationClass $migration The migration instance
+     */
+    public static function runPluginMigration(MigrationClass $migration): void
+    {
+        $migrationName = $migration->getFullMigrationName();
+        
+        if (self::isMigrationExecuted($migrationName)) {
+            return;
+        }
+
+        $migration->run();
+        self::markMigrationAsExecuted($migrationName);
+    }
+
+    /**
+     * Execute multiple plugin migrations
+     * 
+     * @param array<MigrationClass> $migrations Array of migration instances
+     */
+    public static function runPluginMigrations(array $migrations): void
+    {
+        foreach ($migrations as $migration) {
+            self::runPluginMigration($migration);
+        }
     }
 
     private static function clearLogs(): void
