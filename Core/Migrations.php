@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,32 +17,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\LogMessage;
 use FacturaScripts\Dinamic\Model\Serie;
 
-/**
- * Description of Migrations
- *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * @deprecated Use FacturaScripts\Core\Migrations instead
- */
 final class Migrations
 {
+    const FILE_NAME = 'migrations.json';
+
     /** @var DataBase */
     private static $database;
 
-    /**
-     * @deprecated Use FacturaScripts\Core\Migrations::run() instead
-     */
     public static function run(): void
     {
-        \FacturaScripts\Core\Migrations::run();
+        self::runMigration('clearLogs', [self::class, 'clearLogs']);
+        self::runMigration('fixSeries', [self::class, 'fixSeries']);
+        self::runMigration('fixAgenciasTransporte', [self::class, 'fixAgenciasTransporte']);
+        self::runMigration('fixFormasPago', [self::class, 'fixFormasPago']);
+        self::runMigration('fixRectifiedInvoices', [self::class, 'fixRectifiedInvoices']);
     }
 
     private static function clearLogs(): void
@@ -153,5 +150,53 @@ final class Migrations
 
         $sqlUpdate = "UPDATE series SET tipo = 'R' WHERE codserie = " . self::db()->var2str($serieRectifying) . ";";
         self::db()->exec($sqlUpdate);
+    }
+
+    private static function getExecutedMigrations(): array
+    {
+        $file = Tools::folder('MyFiles', self::FILE_NAME);
+        if (!file_exists($file)) {
+            return [];
+        }
+
+        $content = file_get_contents($file);
+        if ($content === false) {
+            return [];
+        }
+
+        $data = json_decode($content, true);
+        return is_array($data) ? $data : [];
+    }
+
+    private static function isMigrationExecuted(string $migrationName): bool
+    {
+        $executed = self::getExecutedMigrations();
+        return in_array($migrationName, $executed, true);
+    }
+
+    private static function markMigrationAsExecuted(string $migrationName): void
+    {
+        $executed = self::getExecutedMigrations();
+        if (in_array($migrationName, $executed, true)) {
+            return;
+        }
+
+        $executed[] = $migrationName;
+
+        Tools::folderCheckOrCreate(Tools::folder('MyFiles'));
+        file_put_contents(
+            Tools::folder('MyFiles', self::FILE_NAME),
+            json_encode($executed, JSON_PRETTY_PRINT)
+        );
+    }
+
+    private static function runMigration(string $migrationName, callable $callback): void
+    {
+        if (self::isMigrationExecuted($migrationName)) {
+            return;
+        }
+
+        call_user_func($callback);
+        self::markMigrationAsExecuted($migrationName);
     }
 }
