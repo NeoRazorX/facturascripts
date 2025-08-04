@@ -20,9 +20,9 @@
 namespace FacturaScripts\Core\Internal;
 
 use Exception;
-use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator;
+use FacturaScripts\Dinamic\Model\Page;
 
 final class PluginsDeploy
 {
@@ -32,12 +32,11 @@ final class PluginsDeploy
     /** @var array */
     private static $fileList = [];
 
+    /** @var array */
+    private static $pages = [];
+
     public static function initControllers(): void
     {
-        $menuManager = new MenuManager();
-        $menuManager->init();
-        $pageNames = [];
-
         $files = Tools::folderScan(Tools::folder('Dinamic', 'Controller'), false);
         foreach ($files as $fileName) {
             if (substr($fileName, -4) !== '.php') {
@@ -50,7 +49,7 @@ final class PluginsDeploy
                 continue;
             }
 
-            // validate controller name to prevent path traversal
+            // validamos el nombre del controlador para evitar el path traversal
             if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $controllerName)) {
                 Tools::log()->warning('Invalid controller name: ' . $controllerName);
                 continue;
@@ -60,29 +59,30 @@ final class PluginsDeploy
             Tools::log()->debug('Loading controller: ' . $controllerName);
 
             if (!class_exists($controllerNamespace)) {
-                // we force the loading of the file because at this point the autoloader will not find it
+                // forzamos la carga del archivo porque en este punto el autoloader no lo encontrará
                 require Tools::folder('Dinamic', 'Controller', $controllerName . '.php');
             }
 
             try {
                 $controller = new $controllerNamespace($controllerName);
-                $menuManager->selectPage($controller->getPageData());
-                $pageNames[] = $controllerName;
+                self::loadPage($controller->getPageData());
             } catch (Exception $exc) {
                 Tools::log()->critical('cant-load-controller', ['%controllerName%' => $controllerName]);
                 Tools::log()->critical($exc->getMessage());
             }
         }
 
-        $menuManager->removeOld($pageNames);
-        $menuManager->reload();
+        self::removeOldPages();
 
-        // checks app homepage
+        // comprobamos la página de inicio de la aplicación
         $saveSettings = false;
-        if (!in_array(Tools::settings('default', 'homepage', ''), $pageNames)) {
+
+        $homePage = Tools::settings('default', 'homepage', '');
+        if (!in_array($homePage, self::$pages)) {
             Tools::settingsSet('default', 'homepage', 'AdminPlugins');
             $saveSettings = true;
         }
+
         if ($saveSettings) {
             Tools::settingsSave();
         }
@@ -101,21 +101,21 @@ final class PluginsDeploy
 
             Tools::folderCheckOrCreate(Tools::folder('Dinamic', $folder));
 
-            // examine the plugins
+            // examinamos los plugins
             foreach (self::$enabledPlugins as $pluginName) {
-                // link files from the plugin, if it exists
+                // enlazamos los archivos del plugin, si existe
                 if (file_exists(Tools::folder('Plugins', $pluginName, $folder))) {
                     self::linkFiles($folder, 'Plugins', $pluginName);
                 }
             }
 
-            // examine the core
+            // examinamos el núcleo
             if (file_exists(Tools::folder('Core', $folder))) {
                 self::linkFiles($folder);
             }
         }
 
-        // reload translations
+        // recargamos las traducciones
         Translator::deploy();
         Translator::reload();
     }
@@ -150,23 +150,23 @@ final class PluginsDeploy
         $foundClass = false;
 
         foreach ($tokens as $i => $token) {
-            // Ignorar tokens que no son arrays (como ; o {)
+            // Ignoramos los tokens que no son arrays (como ; o {)
             if (!is_array($token)) {
                 continue;
             }
 
-            // Si encontramos abstract
+            // Si encontramos la palabra clave abstract
             if ($token[0] === T_ABSTRACT) {
                 $isAbstract = true;
             }
 
-            // Si encontramos class después de abstract (o sin abstract)
+            // Si encontramos la palabra clave class después de abstract (o sin abstract)
             if ($token[0] === T_CLASS) {
                 $foundClass = true;
                 break;
             }
 
-            // Si encontramos otra palabra clave estructural, reset abstract
+            // Si encontramos otra palabra clave estructural, reseteamos la variable abstract
             if (in_array($token[0], [T_FUNCTION, T_INTERFACE, T_TRAIT])) {
                 $isAbstract = false;
             }
@@ -265,7 +265,7 @@ final class PluginsDeploy
 
     private static function linkXMLFile(string $fileName, string $folder, string $originPath): void
     {
-        // Find extensions
+        // Buscamos las extensiones
         $extensions = [];
         foreach (self::$enabledPlugins as $pluginName) {
             $extensionPath = Tools::folder('Plugins', $pluginName, 'Extension', $folder, $fileName);
@@ -274,7 +274,7 @@ final class PluginsDeploy
             }
         }
 
-        // Merge XML files
+        // Fusionamos los archivos XML
         $xml = simplexml_load_file($originPath);
         if (false === $xml) {
             $errors = libxml_get_errors();
@@ -301,10 +301,41 @@ final class PluginsDeploy
         self::$fileList[$folder][$fileName] = $fileName;
     }
 
+    private static function loadPage(array $data): void
+    {
+        if (empty($data)) {
+            return;
+        }
+
+        // añadimos a la lista de páginas
+        self::$pages[] = $data['name'];
+
+        // comprobamos si ya existe la página
+        $page = new Page();
+        if (false === $page->load($data['name'])) {
+            $data['ordernum'] = 100;
+            $page->loadFromData($data);
+            $page->save();
+            return;
+        }
+
+        // comprobamos si hay que actualizar la página
+        $need = $page->menu !== $data['menu'] ||
+            $page->submenu !== $data['submenu'] ||
+            $page->title !== $data['title'] ||
+            $page->icon !== $data['icon'] ||
+            $page->showonmenu !== $data['showonmenu'];
+
+        if ($need) {
+            $page->loadFromData($data);
+            $page->save();
+        }
+    }
+
     private static function mergeXMLDocs(&$source, $extension): void
     {
         foreach ($extension->children() as $extChild) {
-            // we need $num to know which dom element number to overwrite
+            // necesitamos $num para saber qué número de elemento del dom sobreescribir
             $num = -1;
 
             $found = false;
@@ -317,7 +348,7 @@ final class PluginsDeploy
                     continue;
                 }
 
-                // Element found. Overwrite or append children? Only for parents example group, etc.
+                // Elemento encontrado. ¿Sobrescribir o añadir hijos? Solo para padres, por ejemplo, group, etc.
                 $found = true;
                 $extDom = dom_import_simplexml($extChild);
                 if ($extDom === false) {
@@ -346,7 +377,7 @@ final class PluginsDeploy
                 break;
             }
 
-            // Elemento not found. Append all or Replace child, Only for child example widget, etc.
+            // Elemento no encontrado. Añadir todo o reemplazar hijo, solo para hijos, por ejemplo, widget, etc.
             if (!$found) {
                 $sourceDom = dom_import_simplexml($source);
                 if ($sourceDom === false) {
@@ -384,7 +415,7 @@ final class PluginsDeploy
         }
 
         foreach ($extension->attributes() as $extAttr => $extAttrValue) {
-            // We use name as identifier except with row, which is identified by type
+            // Usamos el nombre como identificador excepto con la fila, que se identifica por el tipo
             if ($extAttr != 'name' && $extension->getName() != 'row') {
                 continue;
             } elseif ($extAttr != 'type' && $extension->getName() == 'row') {
@@ -399,5 +430,15 @@ final class PluginsDeploy
         }
 
         return in_array($extension->getName(), ['columns', 'modals', 'rows']);
+    }
+
+    private static function removeOldPages(): void
+    {
+        // eliminamos las páginas que ya no existen
+        foreach (Page::all() as $page) {
+            if (false === in_array($page->name, self::$pages, true)) {
+                $page->delete();
+            }
+        }
     }
 }
