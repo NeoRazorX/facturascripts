@@ -28,6 +28,7 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
+use JetBrains\PhpStorm\Deprecated;
 
 abstract class ModelClass
 {
@@ -420,6 +421,10 @@ abstract class ModelClass
     /**
      * @deprecated Use id() instead
      */
+    #[Deprecated(
+        reason: 'Use id() instead',
+        replacement: '%class%->id()',
+    )]
     public function primaryColumnValue()
     {
         return $this->{static::primaryColumn()};
