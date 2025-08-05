@@ -4,8 +4,6 @@
   </a>
 </p>
 
-<h1 align="center">FacturaScripts</h1>
-
 <p align="center">
   <strong>Open Source ERP & Accounting Software</strong><br>
   Built with modern PHP and Bootstrap 5
@@ -20,7 +18,7 @@
 
 <p align="center">
   <a href="https://facturascripts.com/probar-online">🚀 Try Demo</a> •
-  <a href="https://facturascripts.com/ayuda">📚 Documentation</a> •
+  <a href="#-documentation">📚 Documentation</a> •
   <a href="https://discord.gg/qKm7j9AaJT">💬 Discord</a> •
   <a href="README_ES.md">🇪🇸 Español</a>
 </p>
@@ -69,6 +67,25 @@ composer install
 # Install JavaScript dependencies
 npm install
 ```
+
+### Running the Application
+
+**Option 1: PHP Built-in Server (Development)**
+```bash
+# Start the development server
+php -S localhost:8000 index.php
+```
+Then visit http://localhost:8000 in your browser.
+
+**Option 2: Apache**
+- Copy the project to your Apache document root (e.g., `/var/www/html/`)
+- Ensure mod_rewrite is enabled
+- Configure virtual host pointing to the project directory
+
+**Option 3: Nginx**
+- Configure your Nginx server block to point to the project directory
+- Ensure PHP-FPM is properly configured
+- Set the document root to the project folder
 
 ## 📚 Documentation
 

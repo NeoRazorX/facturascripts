@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,8 +26,8 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
-use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -78,13 +78,13 @@ abstract class PurchasesController extends PanelController
 
     /**
      * @param PurchaseDocument $model
-     * @param PurchaseDocumentLine[] $lines
+     * @param BusinessDocumentLine[] $lines
      *
      * @return string
      */
     public function renderPurchasesForm(PurchaseDocument $model, array $lines): string
     {
-        $url = empty($model->primaryColumnValue()) ? $this->url() : $model->url();
+        $url = empty($model->id()) ? $this->url() : $model->url();
 
         return '<div id="purchasesFormHeader">' . PurchasesHeaderHTML::render($model) . '</div>'
             . '<div id="purchasesFormLines">' . PurchasesLineHTML::render($lines, $model) . '</div>'
@@ -127,7 +127,7 @@ abstract class PurchasesController extends PanelController
         }
 
         if (empty($list)) {
-            $list[] = ['key' => null, 'value' => Tools::lang()->trans('no-data')];
+            $list[] = ['key' => null, 'value' => Tools::trans('no-data')];
         }
 
         $this->response->setContent(json_encode($list));
@@ -142,7 +142,7 @@ abstract class PurchasesController extends PanelController
         $this->createViewLogAudit();
     }
 
-    protected function createViewsDoc()
+    protected function createViewsDoc(): void
     {
         $pageData = $this->getPageData();
         $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fa-solid fa-file');

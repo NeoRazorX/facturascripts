@@ -155,7 +155,7 @@ class SalesLineHTML
         }
         if (empty($html)) {
             $html .= '<div class="container-fluid"><div class="row g-3 table-warning"><div class="col p-3 text-center">'
-                . Tools::lang()->trans('new-invoice-line-p') . '</div></div></div>';
+                . Tools::trans('new-invoice-line-p') . '</div></div></div>';
         }
         return empty($model->codcliente) ? '' : self::renderTitles($model) . $html;
     }
@@ -217,7 +217,7 @@ class SalesLineHTML
     {
         if (false === $model->editable) {
             return '<div class="col-sm-2 col-lg-1 order-3">'
-                . '<div class="d-lg-none mt-2 small">' . Tools::lang()->trans('quantity') . '</div>'
+                . '<div class="d-lg-none mt-2 small">' . Tools::trans('quantity') . '</div>'
                 . '<div class="input-group input-group-sm">'
                 . self::cantidadRestante($line, $model)
                 . '<input type="number" class="form-control text-lg-end border-0" value="' . $line->cantidad . '" disabled=""/>'
@@ -226,7 +226,7 @@ class SalesLineHTML
         }
 
         return '<div class="col-sm-2 col-lg-1 order-3">'
-            . '<div class="d-lg-none mt-2 small">' . Tools::lang()->trans('quantity') . '</div>'
+            . '<div class="d-lg-none mt-2 small">' . Tools::trans('quantity') . '</div>'
             . '<div class="input-group input-group-sm">'
             . self::cantidadRestante($line, $model)
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
@@ -266,7 +266,7 @@ class SalesLineHTML
         }
 
         return empty($html) ? $html :
-            '<div class="input-group-prepend" title="' . Tools::lang()->trans('stock') . '">' . $html . '</div>';
+            '<div class="input-group-prepend" title="' . Tools::trans('stock') . '">' . $html . '</div>';
     }
 
     private static function coste(string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): string
@@ -280,7 +280,7 @@ class SalesLineHTML
             'disabled=""';
 
         return '<div class="col-6">'
-            . '<div class="mb-2">' . Tools::lang()->trans('cost')
+            . '<div class="mb-2">' . Tools::trans('cost')
             . '<input type="number" ' . $attributes . ' value="' . $line->{$field} . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -293,9 +293,8 @@ class SalesLineHTML
         }
 
         // buscamos el código de barras en las variantes
-        $variantModel = new Variante();
         $whereBarcode = [new DataBaseWhere('codbarras', $formData['fastli'])];
-        foreach ($variantModel->all($whereBarcode) as $variante) {
+        foreach (Variante::all($whereBarcode) as $variante) {
             return $model->getNewProductLine($variante->referencia);
         }
 
@@ -315,14 +314,14 @@ class SalesLineHTML
     {
         if (false === $model->editable) {
             return '<div class="col-sm col-lg-1 order-4">'
-                . '<span class="d-lg-none small">' . Tools::lang()->trans('price') . '</span>'
+                . '<span class="d-lg-none small">' . Tools::trans('price') . '</span>'
                 . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-end border-0" disabled/>'
                 . '</div>';
         }
 
         $attributes = 'name="pvpunitario_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"';
         return '<div class="col-sm col-lg-1 order-4">'
-            . '<span class="d-lg-none small">' . Tools::lang()->trans('price') . '</span>'
+            . '<span class="d-lg-none small">' . Tools::trans('price') . '</span>'
             . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-end border-0"/>'
             . '</div>';
     }
@@ -415,8 +414,8 @@ class SalesLineHTML
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Tools::lang()->trans('close') . '</button>'
-            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . Tools::lang()->trans('accept') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Tools::trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . Tools::trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'

@@ -1,5 +1,6 @@
 {
   "name": "facturascripts/facturascripts",
+  "type": "project",
   "description": "Open source ERP software. Built on modern PHP and bootstrap 5. Easy and powerful.",
   "homepage": "https://facturascripts.com",
   "license": "LGPL-3.0-or-later",
@@ -59,5 +60,25 @@
     "crm",
     "billing",
     "accounting"
-  ]
+  ],
+  "support": {
+    "issues": "https://facturascripts.com/crear-issue",
+    "source": "https://github.com/NeoRazorX/facturascripts",
+    "docs": "https://facturascripts.com/ayuda",
+    "chat": "https://discord.gg/qKm7j9AaJT"
+  },
+  "funding": [
+    {
+      "type": "other",
+      "url": "https://facturascripts.com/patrocinar"
+    }
+  ],
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "test:coverage": "vendor/bin/phpunit --coverage-html coverage",
+    "phpstan": "vendor/bin/phpstan analyse Core",
+    "cs-check": "vendor/bin/phpcs",
+    "cs-fix": "vendor/bin/phpcbf",
+    "dev-server": "php -S localhost:8000 index.php"
+  }
 }

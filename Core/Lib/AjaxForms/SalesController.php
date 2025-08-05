@@ -85,7 +85,7 @@ abstract class SalesController extends PanelController
      */
     public function renderSalesForm(SalesDocument $model, array $lines): string
     {
-        $url = empty($model->primaryColumnValue()) ? $this->url() : $model->url();
+        $url = empty($model->id()) ? $this->url() : $model->url();
 
         return '<div id="salesFormHeader">' . SalesHeaderHTML::render($model) . '</div>'
             . '<div id="salesFormLines">' . SalesLineHTML::render($lines, $model) . '</div>'
@@ -128,7 +128,7 @@ abstract class SalesController extends PanelController
         }
 
         if (empty($list)) {
-            $list[] = ['key' => null, 'value' => Tools::lang()->trans('no-data')];
+            $list[] = ['key' => null, 'value' => Tools::trans('no-data')];
         }
 
         $this->response->setContent(json_encode($list));
@@ -143,7 +143,7 @@ abstract class SalesController extends PanelController
         $this->createViewLogAudit();
     }
 
-    protected function createViewsDoc()
+    protected function createViewsDoc(): void
     {
         $pageData = $this->getPageData();
         $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fa-solid fa-file');
@@ -346,7 +346,7 @@ abstract class SalesController extends PanelController
         $model = $this->getModel();
         $lines = $model->getLines();
         $formData = json_decode($this->request->request->get('data'), true);
-        SalesHeaderHTML::apply($model, $formData,);
+        SalesHeaderHTML::apply($model, $formData);
         SalesFooterHTML::apply($model, $formData);
         SalesLineHTML::apply($model, $lines, $formData);
         Calculator::calculate($model, $lines, false);
@@ -457,7 +457,7 @@ abstract class SalesController extends PanelController
         foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
             // si no está pagado, actualizamos fechapago y codpago
-            if (false == $receipt->pagado){
+            if (false == $receipt->pagado) {
                 $receipt->fechapago = $formData['fechapagorecibo'] ?? Tools::date();
                 $receipt->codpago = $model->codpago;
             }
