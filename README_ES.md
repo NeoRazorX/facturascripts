@@ -4,8 +4,6 @@
   </a>
 </p>
 
-<h1 align="center">FacturaScripts</h1>
-
 <p align="center">
   <strong>Software ERP y Contabilidad de Código Abierto</strong><br>
   Construido con PHP moderno y Bootstrap 5

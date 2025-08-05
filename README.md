@@ -4,8 +4,6 @@
   </a>
 </p>
 
-<h1 align="center">FacturaScripts</h1>
-
 <p align="center">
   <strong>Open Source ERP & Accounting Software</strong><br>
   Built with modern PHP and Bootstrap 5
