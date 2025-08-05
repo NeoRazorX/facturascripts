@@ -228,6 +228,9 @@ final class AlbaranClienteTest extends TestCase
         // comprobamos que precio y coste se han asignado correctamente
         $this->assertEquals(10, $line->pvpunitario, 'albaran-cliente-bad-pvpunitario-3');
         $this->assertEquals(5, $line->coste, 'albaran-cliente-bad-coste-3');
+        $this->assertEquals(-1, $line->actualizastock, 'albaran-cliente-bad-actualizastock-3');
+        $this->assertEquals(0, $line->servido, 'albaran-cliente-bad-servido-3');
+        $this->assertEquals($product->referencia, $line->referencia, 'albaran-cliente-bad-referencia-3');
 
         // guardamos la línea
         $this->assertFalse($line->save(), 'can-add-product-without-stock');
@@ -284,14 +287,14 @@ final class AlbaranClienteTest extends TestCase
 
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
         $campos = [
-            'apartado'      => [10, 11],
-            'cifnif'        => [30, 31],
-            'ciudad'        => [100, 101],
-            'codpais'       => [20, 21],
-            'codpostal'     => [10, 11],
-            'direccion'     => [200, 201],
+            'apartado' => [10, 11],
+            'cifnif' => [30, 31],
+            'ciudad' => [100, 101],
+            'codpais' => [20, 21],
+            'codpostal' => [10, 11],
+            'direccion' => [200, 201],
             'nombrecliente' => [100, 101],
-            'provincia'     => [100, 101],
+            'provincia' => [100, 101],
         ];
 
         foreach ($campos as $campo => [$valido, $invalido]) {

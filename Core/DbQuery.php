@@ -289,6 +289,12 @@ final class DbQuery
             return $this;
         }
 
+        // si contiene espacios, no escapamos
+        if (strpos($field, ' ') !== false) {
+            $this->orderBy[] = $field . ' ' . $order;
+            return $this;
+        }
+
         // si el campo comienza por integer: hacemos el cast a integer
         if (0 === strpos($field, 'integer:')) {
             $field = self::db()->castInteger(substr($field, 8));

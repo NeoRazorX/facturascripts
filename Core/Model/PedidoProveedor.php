@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\PurchaseDocument;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Dinamic\Model\LineaPedidoProveedor as LineaPedido;
 
@@ -29,10 +31,9 @@ use FacturaScripts\Dinamic\Model\LineaPedidoProveedor as LineaPedido;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class PedidoProveedor extends Base\PurchaseDocument
+class PedidoProveedor extends PurchaseDocument
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Primary key.
@@ -48,11 +49,9 @@ class PedidoProveedor extends Base\PurchaseDocument
      */
     public function getLines(): array
     {
-        $lineaModel = new LineaPedido();
         $where = [new DataBaseWhere('idpedido', $this->idpedido)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-
-        return $lineaModel->all($where, $order, 0, 0);
+        return LineaPedido::all($where, $order, 0, 0);
     }
 
     /**

@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Template\ExtensionsTrait;
 
 /**
@@ -41,6 +42,9 @@ trait ModelTrait
      */
     protected static $fields = [];
 
+
+    abstract public static function tableName(): string;
+
     /**
      * Returns the list of fields in the table.
      *
@@ -60,6 +64,11 @@ trait ModelTrait
     {
         $result = explode('\\', $this->modelName());
         return end($result);
+    }
+
+    public static function table(): DbQuery
+    {
+        return DbQuery::table(static::tableName());
     }
 
     /**

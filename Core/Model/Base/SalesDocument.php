@@ -157,9 +157,10 @@ abstract class SalesDocument extends TransformerDocument
     /**
      * Reset the values of all model properties.
      */
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
+
         $this->direccion = '';
         $this->totalbeneficio = 0.0;
         $this->totalcoste = 0.0;
@@ -172,7 +173,7 @@ abstract class SalesDocument extends TransformerDocument
     public function country(): string
     {
         $country = new Pais();
-        if ($country->loadFromCode($this->codpais)) {
+        if ($country->load($this->codpais)) {
             return Tools::fixHtml($country->nombre) ?? '';
         }
 
@@ -192,9 +193,9 @@ abstract class SalesDocument extends TransformerDocument
         if (!empty($this->codcliente)) {
             // update customer risk
             $customer = $this->getSubject();
-            $customer->riesgoalcanzado = empty($customer->primaryColumnValue()) ?
+            $customer->riesgoalcanzado = empty($customer->id()) ?
                 0.00 :
-                CustomerRiskTools::getCurrent($customer->primaryColumnValue());
+                CustomerRiskTools::getCurrent($customer->id());
             $customer->save();
         }
 
@@ -220,7 +221,7 @@ abstract class SalesDocument extends TransformerDocument
         $variant = new Variante();
         $where1 = [new DataBaseWhere('referencia', Tools::noHtml($reference))];
         $where2 = [new DataBaseWhere('codbarras', Tools::noHtml($reference))];
-        if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
+        if ($variant->loadWhere($where1) || $variant->loadWhere($where2)) {
             $product = $variant->getProducto();
 
             $newLine->codimpuesto = $product->getTax()->codimpuesto;
@@ -245,13 +246,13 @@ abstract class SalesDocument extends TransformerDocument
     {
         $rate = new Tarifa();
         $subject = $this->getSubject();
-        if ($subject->codtarifa && $rate->loadFromCode($subject->codtarifa)) {
+        if ($subject->codtarifa && $rate->load($subject->codtarifa)) {
             return $rate;
         }
 
         $group = new GrupoClientes();
-        if ($subject->codgrupo && $group->loadFromCode($subject->codgrupo) && $group->codtarifa) {
-            $rate->loadFromCode($group->codtarifa);
+        if ($subject->codgrupo && $group->load($subject->codgrupo) && $group->codtarifa) {
+            $rate->load($group->codtarifa);
         }
 
         return $rate;
@@ -263,7 +264,7 @@ abstract class SalesDocument extends TransformerDocument
     public function getSubject()
     {
         $cliente = new Cliente();
-        $cliente->loadFromCode($this->codcliente);
+        $cliente->load($this->codcliente);
         return $cliente;
     }
 
@@ -291,21 +292,23 @@ abstract class SalesDocument extends TransformerDocument
         if ($customer->riesgomax && $customer->riesgoalcanzado > $customer->riesgomax) {
             Tools::log()->warning('customer-reached-maximum-risk');
             return false;
-        } elseif (empty($customer->primaryColumnValue())) {
+        } elseif (empty($customer->id())) {
             return parent::save();
         }
 
-        if (parent::save()) {
-            // reload customer after save
-            $updatedCustomer = $this->getSubject();
-
-            // update customer risk
-            $updatedCustomer->riesgoalcanzado = CustomerRiskTools::getCurrent($updatedCustomer->primaryColumnValue());
-            $updatedCustomer->save();
-            return true;
+        if (false === parent::save()) {
+            return false;
         }
 
-        return false;
+        // reload customer after save
+        $updatedCustomer = $this->getSubject();
+        if ($updatedCustomer->id() !== null) {
+            // update customer risk
+            $updatedCustomer->riesgoalcanzado = CustomerRiskTools::getCurrent($updatedCustomer->id());
+            $updatedCustomer->save();
+        }
+
+        return true;
     }
 
     /**
@@ -328,6 +331,7 @@ abstract class SalesDocument extends TransformerDocument
 
         // allow extensions
         $this->pipe('setAuthor', $user);
+
         return true;
     }
 
@@ -353,6 +357,7 @@ abstract class SalesDocument extends TransformerDocument
 
         // allow extensions
         $this->pipe('setSubject', $subject);
+
         return $return;
     }
 
@@ -388,15 +393,10 @@ abstract class SalesDocument extends TransformerDocument
     public function updateSubject(): bool
     {
         $cliente = new Cliente();
-        return $this->codcliente && $cliente->loadFromCode($this->codcliente) && $this->setSubject($cliente);
+        return $this->codcliente && $cliente->load($this->codcliente) && $this->setSubject($cliente);
     }
 
-    /**
-     * @param string $field
-     *
-     * @return bool
-     */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         if (false === parent::onChange($field)) {
             return false;
@@ -411,7 +411,7 @@ abstract class SalesDocument extends TransformerDocument
         switch ($field) {
             case 'direccion':
                 // if address is changed and customer billing address is empty, then save new values
-                if ($this->direccion && $contact->loadFromCode($this->idcontactofact) && empty($contact->direccion)) {
+                if ($this->direccion && $contact->load($this->idcontactofact) && empty($contact->direccion)) {
                     $contact->apartado = $this->apartado;
                     $contact->ciudad = $this->ciudad;
                     $contact->codpais = $this->codpais;
@@ -424,7 +424,7 @@ abstract class SalesDocument extends TransformerDocument
 
             case 'idcontactofact':
                 // if billing address is changed, then change all billing fields
-                if ($contact->loadFromCode($this->idcontactofact)) {
+                if ($contact->load($this->idcontactofact)) {
                     $this->apartado = $contact->apartado;
                     $this->ciudad = $contact->ciudad;
                     $this->codpais = $contact->codpais;
@@ -439,11 +439,11 @@ abstract class SalesDocument extends TransformerDocument
         return true;
     }
 
-    protected function onInsert()
+    protected function onInsert(): void
     {
         // if billing address is empty, then save new values
         $contact = new Contacto();
-        if ($this->direccion && $contact->loadFromCode($this->idcontactofact) && empty($contact->direccion)) {
+        if ($this->direccion && $contact->load($this->idcontactofact) && empty($contact->direccion)) {
             $contact->apartado = $this->apartado;
             $contact->ciudad = $this->ciudad;
             $contact->codpais = $this->codpais;
@@ -459,15 +459,16 @@ abstract class SalesDocument extends TransformerDocument
     /**
      * This method is called after a record is updated on the database (saveUpdate).
      */
-    protected function onUpdate()
+    protected function onUpdate(): void
     {
-        if ($this->previousData['codcliente'] !== $this->codcliente) {
+        if ($this->isDirty('codcliente')) {
             $customer = new Cliente();
-            if ($customer->loadFromCode($this->previousData['codcliente'])) {
-                $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
+            if ($customer->load($this->getOriginal('codcliente'))) {
+                $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->id());
                 $customer->save();
             }
         }
+
         parent::onUpdate();
     }
 
@@ -489,6 +490,7 @@ abstract class SalesDocument extends TransformerDocument
         $this->idcontactofact = $subject->idcontacto;
         $this->nombrecliente = empty($subject->empresa) ? $subject->fullName() : $subject->empresa;
         $this->provincia = $subject->provincia;
+
         return true;
     }
 
@@ -504,7 +506,7 @@ abstract class SalesDocument extends TransformerDocument
         $this->nombrecliente = $subject->razonsocial;
 
         // commercial data
-        if (empty($this->primaryColumnValue())) {
+        if (empty($this->id())) {
             $this->codagente = $this->codagente ?? $subject->codagente;
             $this->codpago = $subject->codpago ?? $this->codpago;
             $this->codserie = $subject->codserie ?? $this->codserie;
@@ -523,12 +525,7 @@ abstract class SalesDocument extends TransformerDocument
 
         // shipping address
         $this->idcontactoenv = $subject->getDefaultAddress('shipping')->idcontacto;
-        return true;
-    }
 
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['codagente', 'codcliente', 'direccion', 'idcontactofact'];
-        parent::setPreviousData(array_merge($more, $fields));
+        return true;
     }
 }

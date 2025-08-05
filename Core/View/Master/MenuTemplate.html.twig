@@ -105,9 +105,9 @@
                             {% for includeView in getIncludeViews('MenuTemplate', 'MenuIconBefore') %}
                                 {% include includeView['path'] %}
                             {% endfor %}
-                            <li class="nav-item{{ template == 'MegaSearch.html.twig' ? ' active' : '' }}"
+                            <li class="nav-item"
                                 title="{{ trans('search') }}">
-                                <a class="nav-link" href="MegaSearch" id="menuIconSearch">
+                                <a class="nav-link{{ template == 'MegaSearch.html.twig' ? ' active' : '' }}" href="MegaSearch" id="menuIconSearch">
                                     <i class="fa-solid fa-search" aria-hidden="true"></i>
                                 </a>
                             </li>
@@ -182,7 +182,7 @@
     <br/>
     <br/>
     <br/>
-    <!-- execution time: {{ executionTime() }} s -->
     </body>
 {% endblock %}
 </html>
+<!-- execution time: {{ executionTime() }} s -->

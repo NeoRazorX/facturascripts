@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UploadedFile;
@@ -78,20 +77,18 @@ class WidgetFile extends BaseWidget
      */
     public function processFormData(&$model, $request)
     {
-        $logger = new MiniLog();
-
         // get file uploads
         foreach ($request->files->all() as $key => $uploadFile) {
             if ($key != $this->fieldname || is_null($uploadFile)) {
                 continue;
             } elseif (false === $uploadFile->isValid()) {
-                $logger->error($uploadFile->getErrorMessage());
+                Tools::log()->error($uploadFile->getErrorMessage());
                 continue;
             }
 
             // exclude php files
             if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-                $logger->error(Tools::lang()->trans('php-files-blocked'));
+                Tools::log()->error('php-files-blocked');
                 continue;
             }
 
@@ -108,7 +105,7 @@ class WidgetFile extends BaseWidget
                 continue;
             }
 
-            $logger->error('file-not-found');
+            Tools::log()->error('file-not-found');
         }
     }
 

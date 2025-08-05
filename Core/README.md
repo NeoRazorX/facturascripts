@@ -3,11 +3,6 @@ En esta carpeta se encuentra la mayor parte del código de la aplicación.
 En ella se encuentran los modelos, las vistas, los controladores y otras
 clases de la aplicación.
 
-## App
-Aquí están las clases encargadas de iniciar la aplicación, el cron, la API y el instalador.
-**No es posible sobreescribir** estas clases **mediante plugins**.
-**Será eliminada en 2023** cuando reemplacemos estas clases por un nuevo Kernel.
-
 ## Assets
 En esta carpeta se encuentran los archivos estáticos de la aplicación: CSS, JavaScript, imágenes, etc.
 Todos estos archivos pueden ser reemplazados en los plugins.
@@ -15,7 +10,7 @@ Todos estos archivos pueden ser reemplazados en los plugins.
 ## Base
 Aquí están las clases críticas de la aplicación que **no pueden ser reemplazadas mediante plugins**.
 Estas clases se moverán paulatinamente a la carpeta Core durante el proceso de refactorización
-y la carpeta será eliminada en 2024.
+y la carpeta será eliminada en 2026.
 
 ## Controller
 En esta carpeta se encuentran los controladores de la aplicación. Todos los controladores

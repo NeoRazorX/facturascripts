@@ -414,7 +414,7 @@ class User extends ModelClass
     {
         if (isset($this->newPassword, $this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
             if ($this->newPassword !== $this->newPassword2) {
-                Tools::log()->warning('different-passwords', ['%userNick%' => $this->primaryColumnValue()]);
+                Tools::log()->warning('different-passwords', ['%userNick%' => $this->nick]);
                 return false;
             }
 
@@ -450,7 +450,7 @@ class User extends ModelClass
         }
 
         $agent = new DinAgente();
-        if (false === $agent->loadFromCode($this->codagente)) {
+        if (false === $agent->load($this->codagente)) {
             $this->codagente = null;
         }
 
@@ -466,7 +466,7 @@ class User extends ModelClass
         }
 
         $warehouse = new Almacen();
-        if (false === $warehouse->loadFromCode($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
+        if (false === $warehouse->load($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
             $this->codalmacen = Tools::settings('default', 'codalmacen');
             $this->idempresa = Tools::settings('default', 'idempresa');
         }

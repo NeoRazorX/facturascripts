@@ -101,7 +101,7 @@ abstract class ModelClass
 
         if (DbUpdater::isTableChecked(static::tableName())) {
             // none
-        } elseif (false === DbUpdater::createOrUpdateTable(static::tableName(), [], $this->install())) {
+        } elseif (false === DbUpdater::createOrUpdateTable(static::tableName(), [], $this)) {
             throw new Exception('Error creating or updating the table ' . static::tableName() . ' in model ' . $this->modelClassName());
         }
 
@@ -252,6 +252,16 @@ abstract class ModelClass
         }
 
         return $this->original[$key] ?? null;
+    }
+
+    /**
+     * @param string $field
+     * @return bool
+     * @deprecated replace with isDirty()
+     */
+    public function hasChanged(string $field): bool
+    {
+        return $this->isDirty($field);
     }
 
     public function id()
