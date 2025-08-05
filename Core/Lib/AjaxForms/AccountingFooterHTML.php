@@ -61,13 +61,13 @@ class AccountingFooterHTML
         if ($model->editable) {
             $lockBtn .= '<div class="col-sm-auto">'
                 . '<button type="button" class="btn w-100 btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
-                . '<i class="fa-solid fa-lock fa-fw"></i> ' . Tools::lang()->trans('lock-entry') . '</button>'
+                . '<i class="fa-solid fa-lock fa-fw"></i> ' . Tools::trans('lock-entry') . '</button>'
                 . '</div>';
         }
 
         return '<div class="col-sm-auto">'
             . '<button type="button" class="btn w-100 btn-danger btn-spin-action mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
-            . '<i class="fa-solid fa-trash-alt fa-fw"></i> ' . Tools::lang()->trans('delete') . '</button>'
+            . '<i class="fa-solid fa-trash-alt fa-fw"></i> ' . Tools::trans('delete') . '</button>'
             . '</div>'
             . $lockBtn
             . '<div class="modal fade" id="deleteDocModal" tabindex="-1" aria-hidden="true">'
@@ -81,12 +81,12 @@ class AccountingFooterHTML
             . '</div>'
             . '<div class="modal-body text-center">'
             . '<i class="fa-solid fa-trash-alt fa-3x"></i>'
-            . '<h5 class="mt-3 mb-1">' . Tools::lang()->trans('confirm-delete') . '</h5>'
-            . '<p class="mb-0">' . Tools::lang()->trans('are-you-sure') . '</p>'
+            . '<h5 class="mt-3 mb-1">' . Tools::trans('confirm-delete') . '</h5>'
+            . '<p class="mb-0">' . Tools::trans('are-you-sure') . '</p>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Tools::lang()->trans('cancel') . '</button>'
-            . '<button type="button" class="btn btn-danger btn-spin-action" onclick="return accEntryFormSave(\'delete-doc\', \'0\');">' . Tools::lang()->trans('delete') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Tools::trans('cancel') . '</button>'
+            . '<button type="button" class="btn btn-danger btn-spin-action" onclick="return accEntryFormSave(\'delete-doc\', \'0\');">' . Tools::trans('delete') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -105,7 +105,7 @@ class AccountingFooterHTML
 
         return '<div class="col-sm-3 col-md-2 mb-3">'
             . '<div class="input-group">'
-            . '<span class="input-group-text text-danger">' . Tools::lang()->trans('unbalance') . '</span>'
+            . '<span class="input-group-text text-danger">' . Tools::trans('unbalance') . '</span>'
             . '<input type="number" value="' . $unbalance . '" class="form-control" step="any" readonly>'
             . '</div></div>';
     }
@@ -117,7 +117,7 @@ class AccountingFooterHTML
     {
         return '<div class="col-sm-3 col-md-2 mb-3">'
             . '<div class="input-group">'
-            . '<span class="input-group-text">' . Tools::lang()->trans('amount') . '</span>'
+            . '<span class="input-group-text">' . Tools::trans('amount') . '</span>'
             . '<input type="number" value="' . $model->importe . '" class="form-control" step="any" tabindex="-1" readonly>'
             . '</div></div>';
     }
@@ -130,14 +130,14 @@ class AccountingFooterHTML
 
         return '<div class="col-sm-6 col-md-2 mb-3">'
             . '<div class="input-group">'
-            . '<input type="text" class="form-control" maxlength="15" autocomplete="off" placeholder="' . Tools::lang()->trans('subaccount')
+            . '<input type="text" class="form-control" maxlength="15" autocomplete="off" placeholder="' . Tools::trans('subaccount')
             . '" id="new_subaccount" name="new_subaccount" onchange="return newLineAction(this.value);"/>'
-            . '<button class="btn btn-info" type="button" title="' . Tools::lang()->trans('subaccounts') . '"'
+            . '<button class="btn btn-info" type="button" title="' . Tools::trans('subaccounts') . '"'
             . ' onclick="$(\'#findSubaccountModal\').modal(\'show\'); $(\'#findSubaccountInput\').focus();"><i class="fa-solid fa-book"></i></button>'
             . '</div>'
             . '</div>'
             . '<div class="col-sm">'
-            . '<p class="text-muted">' . Tools::lang()->trans('account-dot-code') . '</p>'
+            . '<p class="text-muted">' . Tools::trans('account-dot-code') . '</p>'
             . '</div>';
     }
 
@@ -146,13 +146,13 @@ class AccountingFooterHTML
         if (false === $model->editable) {
             return '<div class="col-sm-auto">'
                 . '<button type="button" class="btn w-100 btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\');">'
-                . '<i class="fa-solid fa-lock-open fa-fw"></i> ' . Tools::lang()->trans('unlock-entry') . '</button>'
+                . '<i class="fa-solid fa-lock-open fa-fw"></i> ' . Tools::trans('unlock-entry') . '</button>'
                 . '</div>';
         }
 
         return '<div class="col-sm-auto">'
             . '<button type="button" class="btn w-100 btn-primary btn-spin-action mb-3" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
-            . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::lang()->trans('save') . '</button>'
+            . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::trans('save') . '</button>'
             . '</div>';
     }
 
@@ -164,7 +164,7 @@ class AccountingFooterHTML
 
         return '<div class="col-sm-auto">'
             . '<button type="button" class="btn btn-light mb-3" id="sortableBtn">'
-            . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . Tools::lang()->trans('move-lines')
+            . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . Tools::trans('move-lines')
             . '</button>'
             . '</div>';
     }

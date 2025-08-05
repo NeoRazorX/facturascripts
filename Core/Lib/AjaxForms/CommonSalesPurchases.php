@@ -64,7 +64,7 @@ trait CommonSalesPurchases
     {
         $attributes = $model->editable ? 'name="cifnif" maxlength="30" autocomplete="off"' : 'disabled';
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">' . Tools::lang()->trans('cifnif')
+            . '<div class="mb-3">' . Tools::trans('cifnif')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->cifnif) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -72,7 +72,7 @@ trait CommonSalesPurchases
 
     protected static function children(TransformerDocument $model): string
     {
-        if (empty($model->primaryColumnValue())) {
+        if (empty($model->id())) {
             return '';
         }
 
@@ -94,7 +94,7 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="mb-3">'
-            . '<button class="btn w-100 btn-info" type="button" title="' . Tools::lang()->trans('documents-generated')
+            . '<button class="btn w-100 btn-info" type="button" title="' . Tools::trans('documents-generated')
             . '" data-bs-toggle="modal" data-bs-target="#childrenModal"><i class="fa-solid fa-forward fa-fw" aria-hidden="true"></i> '
             . count($children) . ' </button>'
             . '</div>'
@@ -132,7 +132,7 @@ trait CommonSalesPurchases
 
         return empty($model->subjectColumnValue()) || $warehouses <= 1 ? '' : '<div class="col-sm-2 col-lg">'
             . '<div class="mb-3">'
-            . '<a href="' . Almacenes::get($model->codalmacen)->url() . '">' . Tools::lang()->trans('company-warehouse') . '</a>'
+            . '<a href="' . Almacenes::get($model->codalmacen)->url() . '">' . Tools::trans('company-warehouse') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
@@ -150,7 +150,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="coddivisa" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="mb-3">'
-            . '<a href="' . Divisas::get($model->coddivisa)->url() . '">' . Tools::lang()->trans('currency') . '</a>'
+            . '<a href="' . Divisas::get($model->coddivisa)->url() . '">' . Tools::trans('currency') . '</a>'
             . '<select ' . $attributes . ' class="form-select">'
             . implode('', $options) . '</select>'
             . '</div>'
@@ -179,7 +179,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="codpago" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
             . '<div id="payment-methods" class="mb-3">'
-            . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . Tools::lang()->trans('payment-method') . '</a>'
+            . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . Tools::trans('payment-method') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
@@ -215,7 +215,7 @@ trait CommonSalesPurchases
             'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
             . '<div class="mb-3">'
-            . '<a href="' . Series::get($model->codserie)->url() . '">' . Tools::lang()->trans('serie') . '</a>'
+            . '<a href="' . Series::get($model->codserie)->url() . '">' . Tools::trans('serie') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
@@ -227,16 +227,16 @@ trait CommonSalesPurchases
             return '';
         }
 
-        return empty($model->{$colName}) && $autoHide ? '' : '<div class="col-sm"><div class="mb-3">' . Tools::lang()->trans($label)
+        return empty($model->{$colName}) && $autoHide ? '' : '<div class="col-sm"><div class="mb-3">' . Tools::trans($label)
             . '<input type="text" value="' . number_format($model->{$colName}, FS_NF0, FS_NF1, '')
             . '" class="form-control" disabled/></div></div>';
     }
 
     protected static function deleteBtn(BusinessDocument $model, string $jsName): string
     {
-        return $model->primaryColumnValue() && $model->editable ?
+        return $model->id() && $model->editable ?
             '<button type="button" class="btn btn-spin-action btn-danger mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
-            . '<i class="fa-solid fa-trash-alt fa-fw"></i> ' . Tools::lang()->trans('delete')
+            . '<i class="fa-solid fa-trash-alt fa-fw"></i> ' . Tools::trans('delete')
             . '</button>'
             . '<div class="modal fade" id="deleteDocModal" tabindex="-1" aria-hidden="true">'
             . '<div class="modal-dialog">'
@@ -249,13 +249,13 @@ trait CommonSalesPurchases
             . '</div>'
             . '<div class="modal-body text-center">'
             . '<i class="fa-solid fa-trash-alt fa-3x"></i>'
-            . '<h5 class="mt-3 mb-1">' . Tools::lang()->trans('confirm-delete') . '</h5>'
-            . '<p class="mb-0">' . Tools::lang()->trans('are-you-sure') . '</p>'
+            . '<h5 class="mt-3 mb-1">' . Tools::trans('confirm-delete') . '</h5>'
+            . '<p class="mb-0">' . Tools::trans('are-you-sure') . '</p>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-spin-action btn-secondary" data-bs-dismiss="modal">' . Tools::lang()->trans('cancel') . '</button>'
+            . '<button type="button" class="btn btn-spin-action btn-secondary" data-bs-dismiss="modal">' . Tools::trans('cancel') . '</button>'
             . '<button type="button" class="btn btn-spin-action btn-danger" onclick="return ' . $jsName . '(\'delete-doc\', \'0\');">'
-            . Tools::lang()->trans('delete') . '</button>'
+            . Tools::trans('delete') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -271,7 +271,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ?
             'max="100" min="0" name="dtopor1" required step="any" onkeyup="return ' . $jsName . '(\'recalculate\', \'0\', event);"' :
             'disabled';
-        return '<div class="col-sm"><div class="mb-3">' . Tools::lang()->trans('global-dto')
+        return '<div class="col-sm"><div class="mb-3">' . Tools::trans('global-dto')
             . '<div class="input-group">'
             . '<span class="input-group-text"><i class="fa-solid fa-percentage"></i></span>'
             . '<input type="number" ' . $attributes . ' value="' . floatval($model->dtopor1) . '" class="form-control"/>'
@@ -287,7 +287,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ?
             'max="100" min="0" name="dtopor2" required step="any" onkeyup="return ' . $jsName . '(\'recalculate\', \'0\', event);"' :
             'disabled';
-        return '<div class="col-sm-2 col-md"><div class="mb-3">' . Tools::lang()->trans('global-dto-2')
+        return '<div class="col-sm-2 col-md"><div class="mb-3">' . Tools::trans('global-dto-2')
             . '<div class="input-group">'
             . ''
             . '<span class="input-group-text"><i class="fa-solid fa-percentage"></i></span>'
@@ -300,7 +300,7 @@ trait CommonSalesPurchases
     {
         return empty($model->femail) ? '' : '<div class="col-sm-auto">'
             . '<div class="mb-3">'
-            . '<button class="btn btn-outline-info" type="button" title="' . Tools::lang()->trans('email-sent')
+            . '<button class="btn btn-outline-info" type="button" title="' . Tools::trans('email-sent')
             . '" data-bs-toggle="modal" data-bs-target="#headerModal"><i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i> '
             . $model->femail . ' </button></div></div>';
     }
@@ -310,7 +310,7 @@ trait CommonSalesPurchases
         return $model->editable ? '<div class="col-8 col-md">'
             . '<div class="input-group mb-3">'
             . '<span class="input-group-text"><i class="fa-solid fa-barcode"></i></span>'
-            . '<input type="text" name="fastli" class="form-control" placeholder="' . Tools::lang()->trans('barcode')
+            . '<input type="text" name="fastli" class="form-control" placeholder="' . Tools::trans('barcode')
             . '" onkeyup="' . $jsName . '(event)"/>'
             . '</div></div>' : '<div class="col"></div>';
     }
@@ -319,7 +319,7 @@ trait CommonSalesPurchases
     {
         $attributes = $model->editable && $enabled ? 'name="fecha" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
-            . '<div id="document-date" class="mb-3">' . Tools::lang()->trans('date')
+            . '<div id="document-date" class="mb-3">' . Tools::trans('date')
             . '<input type="date" ' . $attributes . ' value="' . date('Y-m-d', strtotime($model->fecha)) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -334,7 +334,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="fechadevengo" required' : 'disabled';
         $value = empty($model->fechadevengo) ? '' : date('Y-m-d', strtotime($model->fechadevengo));
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
-            . '<div class="mb-3">' . Tools::lang()->trans('accrual-date')
+            . '<div class="mb-3">' . Tools::trans('accrual-date')
             . '<input type="date" ' . $attributes . ' value="' . $value . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -342,14 +342,14 @@ trait CommonSalesPurchases
 
     protected static function femail(BusinessDocument $model): string
     {
-        if (empty($model->primaryColumnValue())) {
+        if (empty($model->id())) {
             return '';
         }
 
         $attributes = empty($model->femail) && $model->editable ? 'name="femail" ' : 'disabled';
         $value = empty($model->femail) ? '' : date('Y-m-d', strtotime($model->femail));
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">' . Tools::lang()->trans('email-sent')
+            . '<div class="mb-3">' . Tools::trans('email-sent')
             . '<input type="date" ' . $attributes . ' value="' . $value . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -359,7 +359,7 @@ trait CommonSalesPurchases
     {
         $attributes = $model->editable ? 'name="hora" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
-            . '<div class="mb-3">' . Tools::lang()->trans('hour')
+            . '<div class="mb-3">' . Tools::trans('hour')
             . '<input type="time" ' . $attributes . ' value="' . date('H:i:s', strtotime($model->hora)) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -368,7 +368,7 @@ trait CommonSalesPurchases
     protected static function idestado(TransformerDocument $model, string $jsName): string
     {
         // Si no se ha guardado no se puede cambiar el estado. Mantenemos el predeterminado
-        if (empty($model->primaryColumnValue())) {
+        if (empty($model->id())) {
             return '';
         }
 
@@ -406,7 +406,7 @@ trait CommonSalesPurchases
         if ($model->editable && false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
             $options[] = '<div class="dropdown-divider"></div>'
                 . '<a class="dropdown-item" href="DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $model->primaryColumnValue() . '">'
-                . '<i class="fa-solid fa-magic fa-fw" aria-hidden="true"></i> ' . Tools::lang()->trans('group-or-split')
+                . '<i class="fa-solid fa-magic fa-fw" aria-hidden="true"></i> ' . Tools::trans('group-or-split')
                 . '</a>';
         }
 
@@ -448,7 +448,7 @@ trait CommonSalesPurchases
         $sum = 0;
         foreach ($documents as $doc) {
             $list .= '<tr>'
-                . '<td><a href="' . $doc->url() . '">' . Tools::lang()->trans($doc->modelClassName()) . ' ' . $doc->codigo . '</a></td>'
+                . '<td><a href="' . $doc->url() . '">' . Tools::trans($doc->modelClassName()) . ' ' . $doc->codigo . '</a></td>'
                 . '<td>' . $doc->observaciones . '</td>'
                 . '<td class="text-end text-nowrap">' . Tools::money($doc->total) . '</td>'
                 . '<td class="text-end text-nowrap">' . $doc->fecha . ' ' . $doc->hora . '</td>'
@@ -459,7 +459,7 @@ trait CommonSalesPurchases
         // añadimos el total
         $list .= '<tr class="table-warning">'
             . '<td class="text-end text-nowrap" colspan="3">'
-            . Tools::lang()->trans('total') . ' <b>' . Tools::money($sum) . '</b></td>'
+            . Tools::trans('total') . ' <b>' . Tools::money($sum) . '</b></td>'
             . '<td></td>'
             . '</tr>';
 
@@ -467,8 +467,8 @@ trait CommonSalesPurchases
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fa-solid fa-copy fa-fw" aria-hidden="true"></i> ' . Tools::lang()->trans($title) . '</h5>'
-            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' . Tools::lang()->trans('close') . '">'
+            . '<h5 class="modal-title"><i class="fa-solid fa-copy fa-fw" aria-hidden="true"></i> ' . Tools::trans($title) . '</h5>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' . Tools::trans('close') . '">'
             . ''
             . '</button>'
             . '</div>'
@@ -476,10 +476,10 @@ trait CommonSalesPurchases
             . '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
-            . '<th>' . Tools::lang()->trans('document') . '</th>'
-            . '<th>' . Tools::lang()->trans('observations') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('total') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('date') . '</th>'
+            . '<th>' . Tools::trans('document') . '</th>'
+            . '<th>' . Tools::trans('observations') . '</th>'
+            . '<th class="text-end">' . Tools::trans('total') . '</th>'
+            . '<th class="text-end">' . Tools::trans('date') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $list . '</tbody>'
@@ -492,7 +492,7 @@ trait CommonSalesPurchases
 
     protected static function netosindto(BusinessDocument $model): string
     {
-        return empty($model->dtopor1) && empty($model->dtopor2) ? '' : '<div class="col-sm-2"><div class="mb-3">' . Tools::lang()->trans('subtotal')
+        return empty($model->dtopor1) && empty($model->dtopor2) ? '' : '<div class="col-sm-2"><div class="mb-3">' . Tools::trans('subtotal')
             . '<input type="text" value="' . number_format($model->netosindto, FS_NF0, FS_NF1, '')
             . '" class="form-control" disabled/></div></div>';
     }
@@ -501,7 +501,7 @@ trait CommonSalesPurchases
     {
         return $model->editable ? '<div class="col-3 col-md-auto">'
             . '<a href="#" class="btn btn-success w-100 btn-spin-action mb-3" onclick="return ' . $jsName . '(\'new-line\', \'0\');">'
-            . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::lang()->trans('line') . '</a></div>' : '';
+            . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::trans('line') . '</a></div>' : '';
     }
 
     protected static function observaciones(BusinessDocument $model): string
@@ -512,8 +512,8 @@ trait CommonSalesPurchases
             $rows += mb_strlen($desLine) < 140 ? 1 : ceil(mb_strlen($desLine) / 140);
         }
 
-        return '<div class="col-sm-12"><div class="mb-3">' . Tools::lang()->trans('observations')
-            . '<textarea ' . $attributes . ' class="form-control" placeholder="' . Tools::lang()->trans('observations')
+        return '<div class="col-sm-12"><div class="mb-3">' . Tools::trans('observations')
+            . '<textarea ' . $attributes . ' class="form-control" placeholder="' . Tools::trans('observations')
             . '" rows="' . $rows . '">' . Tools::noHtml($model->observaciones) . '</textarea>'
             . '</div></div>';
     }
@@ -523,13 +523,13 @@ trait CommonSalesPurchases
         $options = ['<option value="">------</option>'];
         foreach (InvoiceOperation::all() as $key => $value) {
             $options[] = ($key === $model->operacion) ?
-                '<option value="' . $key . '" selected>' . Tools::lang()->trans($value) . '</option>' :
-                '<option value="' . $key . '">' . Tools::lang()->trans($value) . '</option>';
+                '<option value="' . $key . '" selected>' . Tools::trans($value) . '</option>' :
+                '<option value="' . $key . '">' . Tools::trans($value) . '</option>';
         }
 
         $attributes = $model->editable ? ' name="operacion"' : ' disabled';
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">' . Tools::lang()->trans('operation')
+            . '<div class="mb-3">' . Tools::trans('operation')
             . '<select' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
@@ -537,7 +537,7 @@ trait CommonSalesPurchases
 
     protected static function paid(BusinessDocument $model, string $jsName): string
     {
-        if (empty($model->primaryColumnValue()) || false === method_exists($model, 'getReceipts')) {
+        if (empty($model->id()) || false === method_exists($model, 'getReceipts')) {
             return '';
         }
 
@@ -545,9 +545,9 @@ trait CommonSalesPurchases
             return '<div class="col-sm-auto">'
                 . '<div class="mb-3">'
                 . '<button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
-                . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::lang()->trans('paid') . '</button>'
+                . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::trans('paid') . '</button>'
                 . '<div class="dropdown-menu"><a class="dropdown-item text-danger" href="#" onclick="return ' . $jsName . '(\'save-paid\', \'0\');">'
-                . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::lang()->trans('unpaid') . '</a></div>'
+                . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::trans('unpaid') . '</a></div>'
                 . '</div>'
                 . '</div>';
         }
@@ -555,16 +555,16 @@ trait CommonSalesPurchases
         return '<div class="col-sm-auto">'
             . '<div class="mb-3">'
             . '<button class="btn btn-spin-action btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
-            . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::lang()->trans('unpaid') . '</button>'
+            . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::trans('unpaid') . '</button>'
             . '<div class="dropdown-menu"><a class="dropdown-item text-success" href="#" onclick="showModalPaymentConditions(' . $jsName . ')">'
-            . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::lang()->trans('paid') . '</a></div>'
+            . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::trans('paid') . '</a></div>'
             . '</div>'
             . '</div>';
     }
 
     protected static function parents(TransformerDocument $model): string
     {
-        if (empty($model->primaryColumnValue())) {
+        if (empty($model->id())) {
             return '';
         }
 
@@ -586,7 +586,7 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="mb-3">'
-            . '<button class="btn w-100 btn-warning" type="button" title="' . Tools::lang()->trans('previous-documents')
+            . '<button class="btn w-100 btn-warning" type="button" title="' . Tools::trans('previous-documents')
             . '" data-bs-toggle="modal" data-bs-target="#parentsModal"><i class="fa-solid fa-backward fa-fw" aria-hidden="true"></i> '
             . count($parents) . ' </button>'
             . '</div>'
@@ -598,7 +598,7 @@ trait CommonSalesPurchases
     {
         return $model->editable ? '<div class="col-9 col-md col-lg-2">'
             . '<div class="input-group mb-3">'
-            . '<input type="text" id="findProductInput" class="form-control" placeholder="' . Tools::lang()->trans('reference') . '"/>'
+            . '<input type="text" id="findProductInput" class="form-control" placeholder="' . Tools::trans('reference') . '"/>'
             . '<button class="btn btn-info" type="button" onclick="$(\'#findProductModal\').modal(\'show\');'
             . ' $(\'#productModalInput\').select();"><i class="fa-solid fa-book fa-fw"></i></button>'
             . '</div>'
@@ -609,7 +609,7 @@ trait CommonSalesPurchases
     {
         return $model->subjectColumnValue() && $model->editable ? '<button type="button" class="btn btn-primary btn-spin-action"'
             . ' load-after="true" onclick="return ' . $jsName . '(\'save-doc\', \'0\');">'
-            . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::lang()->trans('save')
+            . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::trans('save')
             . '</button>' : '';
     }
 
@@ -617,7 +617,7 @@ trait CommonSalesPurchases
     {
         return $model->editable ? '<div class="col-4 col-md-auto">'
             . '<button type="button" class="btn w-100 btn-light mb-3" id="sortableBtn">'
-            . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . Tools::lang()->trans('move-lines')
+            . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . Tools::trans('move-lines')
             . '</button>'
             . '</div>' : '';
     }
@@ -629,14 +629,14 @@ trait CommonSalesPurchases
 
         if ('subtotal' === self::$columnView) {
             $html .= '<button type="button" class="btn btn-light" data-column="neto" onclick="changeColumn(this)">'
-                . Tools::lang()->trans('net') . '</button>'
+                . Tools::trans('net') . '</button>'
                 . '<button type="button" class="btn btn-light active" data-column="subtotal" onclick="changeColumn(this)">'
-                . Tools::lang()->trans('subtotal') . '</button>';
+                . Tools::trans('subtotal') . '</button>';
         } else {
             $html .= '<button type="button" class="btn btn-light active" data-column="neto" onclick="changeColumn(this)">'
-                . Tools::lang()->trans('net') . '</button>'
+                . Tools::trans('net') . '</button>'
                 . '<button type="button" class="btn btn-light" data-column="subtotal" onclick="changeColumn(this)">'
-                . Tools::lang()->trans('subtotal') . '</button>';
+                . Tools::trans('subtotal') . '</button>';
         }
 
         $html .= '</div></div>';
@@ -647,7 +647,7 @@ trait CommonSalesPurchases
     {
         $attributes = $model->editable ? 'name="tasaconv" step="any" autocomplete="off"' : 'disabled';
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">' . Tools::lang()->trans('conversion-rate')
+            . '<div class="mb-3">' . Tools::trans('conversion-rate')
             . '<input type="number" ' . $attributes . ' value="' . floatval($model->tasaconv) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -655,12 +655,12 @@ trait CommonSalesPurchases
 
     protected static function total(BusinessDocument $model, string $jsName): string
     {
-        return empty($model->total) ? '' : '<div class="col-sm"><div class="mb-3">' . Tools::lang()->trans('total')
+        return empty($model->total) ? '' : '<div class="col-sm"><div class="mb-3">' . Tools::trans('total')
             . '<div class="input-group">'
             . '<input type="text" value="' . number_format($model->total, FS_NF0, FS_NF1, '')
             . '" class="form-control" disabled/>'
             . '<button class="btn btn-primary btn-spin-action" onclick="return ' . $jsName
-            . '(\'save-doc\', \'0\');" title="' . Tools::lang()->trans('save') . '" type="button">'
+            . '(\'save-doc\', \'0\');" title="' . Tools::trans('save') . '" type="button">'
             . '<i class="fa-solid fa-save fa-fw"></i></button>'
             . '</div></div></div>';
     }
@@ -668,7 +668,7 @@ trait CommonSalesPurchases
     protected static function undoBtn(BusinessDocument $model): string
     {
         return $model->subjectColumnValue() && $model->editable ? '<a href="' . $model->url() . '" class="btn btn-secondary me-2">'
-            . '<i class="fa-solid fa-undo fa-fw"></i> ' . Tools::lang()->trans('undo')
+            . '<i class="fa-solid fa-undo fa-fw"></i> ' . Tools::trans('undo')
             . '</a>' : '';
     }
 
@@ -676,7 +676,7 @@ trait CommonSalesPurchases
     {
         $attributes = 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
-            . '<div class="mb-3">' . Tools::lang()->trans('user')
+            . '<div class="mb-3">' . Tools::trans('user')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nick) . '" class="form-control"/>'
             . '</div>'
             . '</div>';

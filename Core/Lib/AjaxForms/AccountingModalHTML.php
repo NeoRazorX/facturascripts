@@ -32,14 +32,10 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 class AccountingModalHTML
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $orden;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $query;
 
     public static function apply(Asiento &$model, array $formData): void
@@ -68,14 +64,14 @@ class AccountingModalHTML
         }
 
         if (empty($tbody)) {
-            $tbody .= '<tr class="table-warning"><td colspan="3">' . Tools::lang()->trans('no-data') . '</td></tr>';
+            $tbody .= '<tr class="table-warning"><td colspan="3">' . Tools::trans('no-data') . '</td></tr>';
         }
 
         return '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
-            . '<th>' . Tools::lang()->trans('subaccount') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('balance') . '</th>'
+            . '<th>' . Tools::trans('subaccount') . '</th>'
+            . '<th class="text-end">' . Tools::trans('balance') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -84,7 +80,6 @@ class AccountingModalHTML
 
     protected static function getSubaccounts(Asiento $model): array
     {
-        $subaccount = new Subcuenta();
         if (empty($model->codejercicio)) {
             $model->setDate($model->fecha);
         }
@@ -107,7 +102,7 @@ class AccountingModalHTML
                 break;
         }
 
-        return $subaccount->all($where, $order);
+        return Subcuenta::all($where, $order);
     }
 
     protected static function modalSubaccount(Asiento $model): string
@@ -116,7 +111,7 @@ class AccountingModalHTML
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fa-solid fa-book fa-fw"></i> ' . Tools::lang()->trans('subaccounts') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-book fa-fw"></i> ' . Tools::trans('subaccounts') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . ''
             . '</button>'
@@ -125,7 +120,7 @@ class AccountingModalHTML
             . '<div class="row g-3">'
             . '<div class="col-sm">'
             . '<div class="input-group">'
-            . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . Tools::lang()->trans('search')
+            . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . Tools::trans('search')
             . '" onkeyup="return findSubaccountSearch(\'find-subaccount\', \'0\', this);"/>'
             . '<div class="input-group-apend">'
             . '<button class="btn btn-primary" type="button" onclick="return accEntryFormAction(\'find-subaccount\', \'0\');"'
@@ -148,9 +143,9 @@ class AccountingModalHTML
             . '<div class="input-group">'
             . '<span class="input-group-text"><i class="fa-solid fa-sort-amount-down-alt"></i></span>'
             . '<select name="fp_orden" class="form-select" onchange="return accEntryFormAction(\'find-subaccount\', \'0\');">'
-            . '<option value="code_asc">' . Tools::lang()->trans('code') . '</option>'
-            . '<option value="desc_asc">' . Tools::lang()->trans('description') . '</option>'
-            . '<option value="saldo_desc">' . Tools::lang()->trans('balance') . '</option>'
+            . '<option value="code_asc">' . Tools::trans('code') . '</option>'
+            . '<option value="desc_asc">' . Tools::trans('description') . '</option>'
+            . '<option value="saldo_desc">' . Tools::trans('balance') . '</option>'
             . '</select>'
             . '</div>'
             . '</div>';

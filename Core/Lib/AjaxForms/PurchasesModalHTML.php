@@ -109,16 +109,16 @@ class PurchasesModalHTML
         }
 
         if (empty($tbody)) {
-            $tbody .= '<tr class="table-warning"><td colspan="4">' . Tools::lang()->trans('no-data') . '</td></tr>';
+            $tbody .= '<tr class="table-warning"><td colspan="4">' . Tools::trans('no-data') . '</td></tr>';
         }
 
         return '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
-            . '<th>' . Tools::lang()->trans('product') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('cost-price') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('price') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('stock') . '</th>'
+            . '<th>' . Tools::trans('product') . '</th>'
+            . '<th class="text-end">' . Tools::trans('cost-price') . '</th>'
+            . '<th class="text-end">' . Tools::trans('price') . '</th>'
+            . '<th class="text-end">' . Tools::trans('stock') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -127,10 +127,9 @@ class PurchasesModalHTML
 
     protected static function fabricantes(): string
     {
-        $fabricante = new Fabricante();
-        $options = '<option value="">' . Tools::lang()->trans('manufacturer') . '</option>'
+        $options = '<option value="">' . Tools::trans('manufacturer') . '</option>'
             . '<option value="">------</option>';
-        foreach ($fabricante->all([], ['nombre' => 'ASC'], 0, 0) as $man) {
+        foreach (Fabricante::all([], ['nombre' => 'ASC'], 0, 0) as $man) {
             $options .= '<option value="' . $man->codfabricante . '">' . $man->nombre . '</option>';
         }
 
@@ -140,13 +139,12 @@ class PurchasesModalHTML
 
     protected static function familias(): string
     {
-        $options = '<option value="">' . Tools::lang()->trans('family') . '</option>'
+        $options = '<option value="">' . Tools::trans('family') . '</option>'
             . '<option value="">------</option>';
 
-        $familia = new Familia();
         $where = [new DataBaseWhere('madre', null, 'IS')];
         $orderBy = ['descripcion' => 'ASC'];
-        foreach ($familia->all($where, $orderBy, 0, 0) as $fam) {
+        foreach (Familia::all($where, $orderBy, 0, 0) as $fam) {
             $options .= '<option value="' . $fam->codfamilia . '">' . $fam->descripcion . '</option>';
 
             // añadimos las subfamilias de forma recursiva
@@ -180,7 +178,7 @@ class PurchasesModalHTML
 
             // buscamos las subfamilias
             $familia = new Familia();
-            if ($familia->loadFromCode(self::$codfamilia)) {
+            if ($familia->load(self::$codfamilia)) {
                 foreach ($familia->getSubfamilias() as $fam) {
                     $codFamilias[] = $dataBase->var2str($fam->codfamilia);
                 }
@@ -241,7 +239,7 @@ class PurchasesModalHTML
 
         if (!isset(self::$idatributovalores[$id])) {
             $attValor = new AtributoValor();
-            $attValor->loadFromCode($id);
+            $attValor->load($id);
             self::$idatributovalores[$id] = $attValor->descripcion;
         }
 
@@ -254,7 +252,7 @@ class PurchasesModalHTML
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fa-solid fa-cubes fa-fw"></i> ' . Tools::lang()->trans('products') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-cubes fa-fw"></i> ' . Tools::trans('products') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . ''
             . '</button>'
@@ -263,7 +261,7 @@ class PurchasesModalHTML
             . '<div class="row g-3">'
             . '<div class="col-sm mb-2">'
             . '<div class="input-group">'
-            . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . Tools::lang()->trans('search')
+            . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . Tools::trans('search')
             . '" onkeyup="return purchasesFormActionWait(\'find-product\', \'0\', event);"/>'
             . ''
             . '<button class="btn btn-primary btn-spin-action" type="button" onclick="return purchasesFormAction(\'find-product\', \'0\');">'
@@ -279,7 +277,7 @@ class PurchasesModalHTML
             . '<div class="col-sm">'
             . '<div class="form-check">'
             . '<input type="checkbox" name="fp_comprado" value="1" class="form-check-input" id="comprado" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
-            . '<label class="form-check-label" for="comprado">' . Tools::lang()->trans('previously-purchased-from-supplier') . '</label>'
+            . '<label class="form-check-label" for="comprado">' . Tools::trans('previously-purchased-from-supplier') . '</label>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -307,14 +305,14 @@ class PurchasesModalHTML
             . '<div class="modal-dialog modal-dialog-scrollable">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title"><i class="fa-solid fa-users fa-fw"></i> ' . Tools::lang()->trans('suppliers') . '</h5>'
+            . '<h5 class="modal-title"><i class="fa-solid fa-users fa-fw"></i> ' . Tools::trans('suppliers') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . '</button>'
             . '</div>'
             . '<div class="modal-body p-0">'
             . '<div class="p-3">'
             . '<div class="input-group">'
-            . '<input type="text" id="findSupplierInput" class="form-control" placeholder="' . Tools::lang()->trans('search') . '" />'
+            . '<input type="text" id="findSupplierInput" class="form-control" placeholder="' . Tools::trans('search') . '" />'
             . '<div class="input-group-apend">'
             . '<button type="button" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>'
             . '</div>'
@@ -323,7 +321,7 @@ class PurchasesModalHTML
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
             . '<div class="modal-footer bg-light">'
             . '<a href="EditProveedor?return=' . urlencode($url) . '" class="btn w-100 btn-success">'
-            . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::lang()->trans('new')
+            . '<i class="fa-solid fa-plus fa-fw"></i> ' . Tools::trans('new')
             . '</a>'
             . '</div>'
             . '</div>'
@@ -336,12 +334,12 @@ class PurchasesModalHTML
         return '<div class="input-group">'
             . '<span class="input-group-text"><i class="fa-solid fa-sort-amount-down-alt"></i></span>'
             . '<select name="fp_orden" class="form-select" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
-            . '<option value="">' . Tools::lang()->trans('sort') . '</option>'
+            . '<option value="">' . Tools::trans('sort') . '</option>'
             . '<option value="">------</option>'
-            . '<option value="ref_asc">' . Tools::lang()->trans('reference') . '</option>'
-            . '<option value="desc_asc">' . Tools::lang()->trans('description') . '</option>'
-            . '<option value="price_desc">' . Tools::lang()->trans('price') . '</option>'
-            . '<option value="stock_desc">' . Tools::lang()->trans('stock') . '</option>'
+            . '<option value="ref_asc">' . Tools::trans('reference') . '</option>'
+            . '<option value="desc_asc">' . Tools::trans('description') . '</option>'
+            . '<option value="price_desc">' . Tools::trans('price') . '</option>'
+            . '<option value="stock_desc">' . Tools::trans('stock') . '</option>'
             . '</select>'
             . '</div>';
     }
