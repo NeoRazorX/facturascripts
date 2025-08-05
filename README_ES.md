@@ -18,7 +18,7 @@
 
 <p align="center">
   <a href="https://facturascripts.com/probar-online">🚀 Probar Demo</a> •
-  <a href="https://facturascripts.com/ayuda">📚 Documentación</a> •
+  <a href="#-documentación">📚 Documentación</a> •
   <a href="https://discord.gg/qKm7j9AaJT">💬 Discord</a> •
   <a href="README.md">🇬🇧 English</a>
 </p>
@@ -67,6 +67,25 @@ composer install
 # Instalar dependencias de JavaScript
 npm install
 ```
+
+### Ejecutar la Aplicación
+
+**Opción 1: Servidor PHP Integrado (Desarrollo)**
+```bash
+# Iniciar el servidor de desarrollo
+php -S localhost:8000 index.php
+```
+Luego visita http://localhost:8000 en tu navegador.
+
+**Opción 2: Apache**
+- Copia el proyecto a la raíz de documentos de Apache (ej. `/var/www/html/`)
+- Asegúrate de que mod_rewrite esté habilitado
+- Configura un virtual host que apunte al directorio del proyecto
+
+**Opción 3: Nginx**
+- Configura tu bloque de servidor Nginx para que apunte al directorio del proyecto
+- Asegúrate de que PHP-FPM esté configurado correctamente
+- Establece la raíz del documento en la carpeta del proyecto
 
 ## 📚 Documentación
 
