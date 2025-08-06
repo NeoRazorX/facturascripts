@@ -366,6 +366,57 @@ final class DbQueryTest extends TestCase
         $this->assertTrue($done);
     }
 
+    public function testHaving(): void
+    {
+        // si no existe la tabla de impuestos, saltamos el test
+        if (false === $this->db()->tableExists('impuestos')) {
+            $this->markTestSkipped('Table impuestos does not exist.');
+        }
+
+        // limpiamos e insertamos datos
+        $done = DbQuery::table('impuestos')
+            ->whereIn('codimpuesto', ['test_h1', 'test_h2', 'test_h3'])
+            ->delete();
+        $this->assertTrue($done);
+        $data = [
+            ['codimpuesto' => 'test_h1', 'descripcion' => 'test_h1', 'iva' => 20, 'recargo' => 0],
+            ['codimpuesto' => 'test_h2', 'descripcion' => 'test_h2', 'iva' => 5, 'recargo' => 0],
+            ['codimpuesto' => 'test_h3', 'descripcion' => 'test_h3', 'iva' => 30, 'recargo' => 0],
+        ];
+
+        // insertamos los impuestos
+        $done = DbQuery::table('impuestos')->insert($data);
+        $this->assertTrue($done);
+
+        // construimos la consulta con groupBy y having
+        $query = DbQuery::table('impuestos')
+            ->selectRaw('`codimpuesto`, SUM(`iva`) as total_iva')
+            ->groupBy('descripcion')
+            ->having('total_iva > 25')
+            ->where([
+                Where::like('codimpuesto', 'test_h%')
+            ]);
+
+        // comprobamos que la consulta es correcta
+        $sql = 'SELECT ' . $this->db()->escapeColumn('codimpuesto') . ', SUM(' . $this->db()->escapeColumn('iva') . ') as total_iva'
+            . ' FROM ' . $this->db()->escapeColumn('impuestos')
+            . ' WHERE ' . Where::like('codimpuesto', 'test_h%')->sql()
+            . ' GROUP BY ' . $this->db()->escapeColumn('descripcion')
+            . ' HAVING total_iva > 25';
+        $this->assertEquals($sql, $query->sql());
+
+        $results = $query->get();
+        $this->assertCount(1, $results);
+        $this->assertEquals('test_h3', $results[0]['codimpuesto']);
+        $this->assertEquals(30, $results[0]['total_iva']);
+
+        // limpiamos los impuestos
+        $done = DbQuery::table('impuestos')
+            ->whereIn('codimpuesto', ['test_h1', 'test_h2', 'test_h3'])
+            ->delete();
+        $this->assertTrue($done);
+    }
+
     private function db(): DataBase
     {
         if (null === $this->db) {
