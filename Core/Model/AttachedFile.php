@@ -79,9 +79,8 @@ class AttachedFile extends ModelClass
         }
 
         // eliminamos las relaciones con los productos
-        $productoImageModel = new ProductoImagen();
         $where = [new DataBaseWhere('idfile', $this->idfile)];
-        foreach ($productoImageModel->all($where, [], 0, 0) as $productoImage) {
+        foreach (ProductoImagen::all($where, [], 0, 0) as $productoImage) {
             $productoImage->delete();
         }
 
