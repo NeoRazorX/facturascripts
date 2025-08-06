@@ -21,7 +21,6 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseQueries;
-use FacturaScripts\Core\Template\ModelClass;
 
 /**
  * Actualiza la estructura de la base de datos.
@@ -41,13 +40,12 @@ final class DbUpdater
     /** @var DataBaseQueries */
     private static $sql_tool;
 
-    public static function createOrUpdateTable(string $table_name, array $structure = [], ?ModelClass $model = null): bool
+    public static function createOrUpdateTable(string $table_name, array $structure = [], string $sql_after = ''): bool
     {
         if (self::db()->tableExists($table_name)) {
             return self::updateTable($table_name, $structure);
         }
 
-        $sql_after = is_null($model) ? '' : $model->install();
         return self::createTable($table_name, $structure, $sql_after);
     }
 

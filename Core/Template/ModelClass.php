@@ -99,10 +99,11 @@ abstract class ModelClass
             throw new Exception('The table name is not defined in the model ' . $this->modelClassName());
         }
 
-        if (DbUpdater::isTableChecked(static::tableName())) {
-            // none
-        } elseif (false === DbUpdater::createOrUpdateTable(static::tableName(), [], $this)) {
-            throw new Exception('Error creating or updating the table ' . static::tableName() . ' in model ' . $this->modelClassName());
+        if (!DbUpdater::isTableChecked(static::tableName())) {
+            $sql_insert = self::$dataBase->tableExists(static::tableName()) ? '' : $this->install();
+            if (!DbUpdater::createOrUpdateTable(static::tableName(), [], $sql_insert)) {
+                throw new Exception('Error creating or updating the table ' . static::tableName() . ' in model ' . $this->modelClassName());
+            }
         }
 
         $this->loadModelFields();
