@@ -21,11 +21,14 @@ namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DbQuery;
-use FacturaScripts\Core\Model\LogMessage;
-use FacturaScripts\Core\Model\Pais;
+use FacturaScripts\Dinamic\Model\LogMessage;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Pais;
+use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -581,6 +584,17 @@ final class DbQueryTest extends TestCase
         }
 
         return $this->db;
+    }
+
+    protected function setUp(): void
+    {
+        new Serie();
+        new Cliente();
+        new Pais();
+        new Impuesto();
+        new Producto();
+        new Familia();
+
     }
 
     protected function tearDown(): void
