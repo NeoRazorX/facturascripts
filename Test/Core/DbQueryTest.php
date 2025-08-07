@@ -24,6 +24,8 @@ use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Model\LogMessage;
 use FacturaScripts\Core\Model\Pais;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Familia;
+use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -368,51 +370,71 @@ final class DbQueryTest extends TestCase
 
     public function testHaving(): void
     {
-        // si no existe la tabla de impuestos, saltamos el test
-        if (false === $this->db()->tableExists('impuestos')) {
-            $this->markTestSkipped('Table impuestos does not exist.');
+        // si no existe la tabla productos, saltamos el test
+        if (false === $this->db()->tableExists('productos')) {
+            $this->markTestSkipped('Table productos does not exist.');
         }
 
-        // limpiamos e insertamos datos
-        $done = DbQuery::table('impuestos')
-            ->whereIn('codimpuesto', ['test_h1', 'test_h2', 'test_h3'])
+        // Limpiamos los productos y familias creados por este test en ejecuciones anteriores
+        $done = DbQuery::table('productos')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
             ->delete();
         $this->assertTrue($done);
-        $data = [
-            ['codimpuesto' => 'test_h1', 'descripcion' => 'test_h1', 'iva' => 20, 'recargo' => 0],
-            ['codimpuesto' => 'test_h2', 'descripcion' => 'test_h2', 'iva' => 5, 'recargo' => 0],
-            ['codimpuesto' => 'test_h3', 'descripcion' => 'test_h3', 'iva' => 30, 'recargo' => 0],
-        ];
-
-        // insertamos los impuestos
-        $done = DbQuery::table('impuestos')->insert($data);
+        $done = DbQuery::table('familias')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
+            ->delete();
         $this->assertTrue($done);
 
-        // construimos la consulta con groupBy y having
-        $query = DbQuery::table('impuestos')
-            ->selectRaw('`codimpuesto`, SUM(`iva`) as total_iva')
-            ->groupBy('descripcion')
-            ->having('total_iva > 25')
-            ->where([
-                Where::like('codimpuesto', 'test_h%')
-            ]);
+        $data = [
+            ['referencia' => 'PROD_FAM1_A', 'descripcion' => 'Producto Familia 1 A', 'codfamilia' => 'FAM1', 'precio' => 10],
+            ['referencia' => 'PROD_FAM1_B', 'descripcion' => 'Producto Familia 1 B', 'codfamilia' => 'FAM1', 'precio' => 20],
+            ['referencia' => 'PROD_FAM2_A', 'descripcion' => 'Producto Familia 2 A', 'codfamilia' => 'FAM2', 'precio' => 5],
+            ['referencia' => 'PROD_FAM3_A', 'descripcion' => 'Producto Familia 3 A', 'codfamilia' => 'FAM3', 'precio' => 30],
+        ];
 
-        // comprobamos que la consulta es correcta
-        $sql = 'SELECT ' . $this->db()->escapeColumn('codimpuesto') . ', SUM(' . $this->db()->escapeColumn('iva') . ') as total_iva'
-            . ' FROM ' . $this->db()->escapeColumn('impuestos')
-            . ' WHERE ' . Where::like('codimpuesto', 'test_h%')->sql()
-            . ' GROUP BY ' . $this->db()->escapeColumn('descripcion')
-            . ' HAVING total_iva > 25';
+        // insertamos los productos
+        foreach ($data as $item) {
+            $familia = new Familia();
+            if(!$familia->loadFromCode($item['codfamilia'])) {
+                $familia->codfamilia = $item['codfamilia'];
+                $familia->descripcion = $item['codfamilia'];
+                $this->assertTrue($familia->save());
+            }
+
+            $producto = new Producto();
+            $producto->referencia = $item['referencia'];
+            $producto->descripcion = $item['descripcion'];
+            $producto->codfamilia = $item['codfamilia'];
+            $producto->precio = $item['precio'];
+            $this->assertTrue($producto->save());
+        }
+
+        // construimos la consulta con groupBy y having
+        $query = DbQuery::table('productos')
+            ->selectRaw('`codfamilia`, SUM(`precio`) as total_precio')
+            ->groupBy('codfamilia')
+            ->having('total_precio > 25');
+
+        $sql = 'SELECT ' . $this->db()->escapeColumn('codfamilia') . ', SUM(' . $this->db()->escapeColumn('precio') . ') as total_precio'
+            . ' FROM ' . $this->db()->escapeColumn('productos')
+            . ' GROUP BY ' . $this->db()->escapeColumn('codfamilia')
+            . ' HAVING total_precio > 25';
         $this->assertEquals($sql, $query->sql());
 
         $results = $query->get();
-        $this->assertCount(1, $results);
-        $this->assertEquals('test_h3', $results[0]['codimpuesto']);
-        $this->assertEquals(30, $results[0]['total_iva']);
+        $this->assertCount(2, $results);
+        $this->assertEquals('FAM1', $results[0]['codfamilia']);
+        $this->assertEquals(30, $results[0]['total_precio']);
+        $this->assertEquals('FAM3', $results[1]['codfamilia']);
+        $this->assertEquals(30, $results[1]['total_precio']);
 
-        // limpiamos los impuestos
-        $done = DbQuery::table('impuestos')
-            ->whereIn('codimpuesto', ['test_h1', 'test_h2', 'test_h3'])
+        // Limpiamos los productos y familias
+        $done = DbQuery::table('productos')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
+            ->delete();
+        $this->assertTrue($done);
+        $done = DbQuery::table('familias')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
             ->delete();
         $this->assertTrue($done);
     }
