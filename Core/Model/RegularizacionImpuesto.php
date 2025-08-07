@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\Model\Base\AccEntryRelationTrait;
 use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
 use FacturaScripts\Core\Template\ModelClass;
@@ -92,9 +91,9 @@ class RegularizacionImpuesto extends ModelClass
         }
 
         // eliminamos el asiento
-        $accEntry = $this->getAccountingEntry();
-        if ($accEntry->exists()) {
-            $accEntry->delete();
+        $entry = $this->getAccountingEntry();
+        if ($entry->exists()) {
+            $entry->delete();
         }
 
         return true;
@@ -142,7 +141,7 @@ class RegularizacionImpuesto extends ModelClass
     public function test(): bool
     {
         if (empty($this->codejercicio)) {
-            foreach (Ejercicios::all() as $ejercicio) {
+            foreach (DinEjercicio::all() as $ejercicio) {
                 $this->codejercicio = $ejercicio->codejercicio;
                 $this->idempresa = $ejercicio->idempresa;
                 break;
@@ -278,11 +277,11 @@ class RegularizacionImpuesto extends ModelClass
         // buscamos la subcuenta de acreedores
         $subcuentaAcr = $accounts->getSpecialSubAccount('IVAACR');
         $this->codsubcuentaacr = $subcuentaAcr->codsubcuenta;
-        $this->idsubcuentaacr = $subcuentaAcr->primaryColumnValue();
+        $this->idsubcuentaacr = $subcuentaAcr->id();
 
         // buscamos la subcuenta de deudores
         $subcuentaDeu = $accounts->getSpecialSubAccount('IVADEU');
         $this->codsubcuentadeu = $subcuentaDeu->codsubcuenta;
-        $this->idsubcuentadeu = $subcuentaDeu->primaryColumnValue();
+        $this->idsubcuentadeu = $subcuentaDeu->id();
     }
 }
