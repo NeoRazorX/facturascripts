@@ -156,7 +156,8 @@ class PostgresqlEngine extends DataBaseEngine
     }
 
     /**
-     * Escapes the column name.
+     * Escapes the column name for PostgreSQL.
+     * Supports "table.column" syntax.
      *
      * @param resource $link
      * @param string $name
@@ -165,6 +166,14 @@ class PostgresqlEngine extends DataBaseEngine
      */
     public function escapeColumn($link, $name): string
     {
+        // Si el nombre contiene un punto, asumimos que es 'tabla.columna'
+        if (strpos($name, '.') !== false) {
+            $parts = explode('.', $name);
+            // Escapamos cada parte individualmente con comillas dobles
+            return '"' . implode('"."', $parts) . '"';
+        }
+
+        // Si no hay punto, escapamos el nombre completo
         return '"' . $name . '"';
     }
 
