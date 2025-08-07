@@ -25,6 +25,7 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\AlbaranProveedor;
@@ -121,10 +122,10 @@ END;
     {
         $job = new CronJob();
         $where = [
-            new DataBaseWhere('jobname', $name),
-            new DataBaseWhere('pluginname', null, 'IS')
+            Where::eq('jobname', $name),
+            Where::isNull('pluginname')
         ];
-        if (false === $job->loadFromCode('', $where)) {
+        if (false === $job->loadWhere($where)) {
             // no se había ejecutado nunca, lo creamos
             $job->jobname = $name;
         }

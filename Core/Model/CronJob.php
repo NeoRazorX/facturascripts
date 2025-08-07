@@ -20,11 +20,12 @@
 namespace FacturaScripts\Core\Model;
 
 use Closure;
-use Exception;
+use Error;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
+use Throwable;
 
 /**
  * Class to store log information when a plugin is executed from cron.
@@ -52,10 +53,16 @@ class CronJob extends ModelClass
     public $failed;
 
     /** @var int */
+    public $fails;
+
+    /** @var int */
     public $id;
 
     /** @var string */
     public $jobname;
+
+    /** @var float */
+    public $last_duration;
 
     /** @var bool */
     private $overlapping = false;
@@ -65,6 +72,9 @@ class CronJob extends ModelClass
 
     /** @var bool */
     private $ready = false;
+
+    /** @var int */
+    public $running;
 
     /** @var float */
     private $start;
@@ -77,6 +87,9 @@ class CronJob extends ModelClass
         $this->duration = 0.0;
         $this->enabled = true;
         $this->failed = false;
+        $this->fails = 0;
+        $this->last_duration = 0.0;
+        $this->running = 0;
     }
 
     public function every(string $period): self
@@ -166,6 +179,8 @@ class CronJob extends ModelClass
         $this->start = microtime(true);
         $this->done = false;
         $this->failed = false;
+        $this->running++;
+        $this->last_duration = $this->duration;
         $this->duration = 0.0;
         $this->date = Tools::dateTime();
         if (false === $this->save()) {
@@ -178,22 +193,42 @@ class CronJob extends ModelClass
 
         try {
             $function();
-        } catch (Exception $e) {
-            Tools::log('cron')->error($e->getMessage(), [
+        } catch (Throwable $e) {
+            $logData = [
                 'jobname' => $this->jobname,
                 'pluginname' => $this->pluginname,
-            ]);
+            ];
+
+            if ($e instanceof Error) {
+                $logData['type'] = 'fatal_error';
+            }
+
+            Tools::log('cron')->critical($e->getMessage(), $logData);
+
+            $start = $this->start;
+            $this->reload();
+            $this->start = $start;
 
             $this->duration = round(microtime(true) - $this->start, 5);
             $this->done = true;
             $this->failed = true;
+            $this->fails++;
+            $this->running--;
             $this->save();
+
             return false;
         }
 
+        $start = $this->start;
+        $this->reload();
+        $this->start = $start;
+
         $this->duration = round(microtime(true) - $this->start, 5);
         $this->done = true;
+        $this->failed = false;
+        $this->running--;
         $this->save();
+
         return true;
     }
 
@@ -206,6 +241,12 @@ class CronJob extends ModelClass
     {
         $this->jobname = Tools::noHtml($this->jobname);
         $this->pluginname = Tools::noHtml($this->pluginname);
+
+        if ($this->running < 0) {
+            $this->running = 0;
+        } elseif ($this->running > 0) {
+            $this->done = false;
+        }
 
         return parent::test();
     }
@@ -223,11 +264,9 @@ class CronJob extends ModelClass
             Where::eq('enabled', true),
         ];
 
-        if (count($jobs) > 0) {
-            $whereRunning[] = Where::in('jobname', $jobs);
-        } else {
-            $whereRunning[] = Where::notEq('jobname', $this->jobname);
-        }
+        $whereRunning[] = count($jobs) > 0 ?
+            Where::in('jobname', $jobs) :
+            Where::notEq('jobname', $this->jobname);
 
         $this->overlapping = $this->count($whereRunning) > 0;
 

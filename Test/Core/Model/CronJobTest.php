@@ -22,10 +22,13 @@ namespace FacturaScripts\Test\Core\Model;
 use Exception;
 use FacturaScripts\Core\Model\CronJob;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CronJobTest extends TestCase
 {
+    use LogErrorsTrait;
+
     public function testCreate(): void
     {
         $job = new CronJob();
@@ -241,5 +244,10 @@ final class CronJobTest extends TestCase
         // eliminamos
         $this->assertTrue($job1->delete());
         $this->assertTrue($job2->delete());
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }
