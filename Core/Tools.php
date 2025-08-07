@@ -94,7 +94,7 @@ class Tools
 
     /**
      * Obtiene el valor de la configuración basada en una clave dada.
-     * Normalmente estas contantes se definen en el config.php
+     * Normalmente, estas contantes se definen en el config.php
      *
      * Esta función busca una constante de configuración que coincida con una clave
      * específica en tres posibles formas: la clave tal cual, la clave en mayúsculas,

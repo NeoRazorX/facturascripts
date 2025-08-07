@@ -2,7 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta http-equiv="refresh" content="3; url=login">
     <title>{{ trans('installer') }}</title>
     <meta name="description" content="{{ trans('meta-description') }}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -14,30 +13,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png"/>
     <style>
         body {
-            background-color: #FCF9FA;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .main-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .success-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            border: 1px solid rgba(0, 0, 0, 0.125);
-        }
-        .success-icon {
-            color: #198754;
-            font-size: 4rem;
-        }
-        .spinner-border-sm {
-            width: 1rem;
-            height: 1rem;
+            background-color: #333A40;
         }
     </style>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
@@ -45,47 +21,27 @@
     <script src="node_modules/@fortawesome/fontawesome-free/js/all.min.js"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="">
-                <img src="Core/Assets/Images/logo.png" width="30" height="30" class="align-top me-2" alt="FacturaScripts"/>
-                FacturaScripts
-            </a>
-        </div>
-    </nav>
-
-    <div class="main-content">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-6 col-md-8">
-                    <div class="success-card p-5 text-center">
-                        <div class="success-icon mb-4">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <h1 class="h2 mb-3">
-                            <i class="fa-solid fa-wand-magic-sparkles me-2"></i>
-                            {{ trans('installation-completed') }}
-                        </h1>
-                        <p class="mb-4 text-muted">
-                            {{ trans('installation-success-message') }}
-                        </p>
-                        <p class="mb-4">
-                            <i class="fas fa-spinner fa-spin me-2"></i>
-                            {{ trans('redirecting-to-login') }}
-                        </p>
-                        <a href="login" class="btn btn-primary btn-lg">
-                            <i class="fas fa-sign-in-alt me-2"></i>
-                            {{ trans('access-now') }}
-                        </a>
-                    </div>
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <img src="Core/Assets/Images/installed.png" class="card-img-top" alt="installation-completed"
+                     loading="lazy"/>
+                <div class="card-body">
+                    <p class="lead text-center mb-4">
+                        {{ trans('created-default-admin-account', {'%nick%': initial_user, '%pass%': initial_pass}) }}
+                    </p>
+                    <a href="login" class="btn btn-primary btn-lg w-100">
+                        <i class="fa-solid fa-sign-in-alt me-2"></i> {{ trans('login') }}
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-
-    <footer class="text-center pt-5 pb-3">
-        &copy; 2013-{{ 'now' | date('Y') }}
-        <a href="https://facturascripts.com" rel="nofollow" target="_blank" class="text-muted">FacturaScripts</a>
-    </footer>
+</div>
+<footer class="text-center pt-5 pb-3">
+    &COPY; 2013-{{ 'now' | date('Y') }}
+    <a href="https://facturascripts.com" rel="nofollow" target="_blank" class="text-muted">FacturaScripts</a>
+</footer>
 </body>
 </html>
