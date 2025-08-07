@@ -104,6 +104,7 @@ abstract class ModelClass
             if (!DbUpdater::createOrUpdateTable(static::tableName(), [], $sql_insert)) {
                 throw new Exception('Error creating or updating the table ' . static::tableName() . ' in model ' . $this->modelClassName());
             }
+            $this->clearCache();
         }
 
         $this->loadModelFields();

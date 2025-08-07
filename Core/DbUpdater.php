@@ -67,15 +67,16 @@ final class DbUpdater
         }
 
         $sql = self::sqlTool()->sqlCreateTable($table_name, $structure['columns'], $structure['constraints'], $structure['indexes']) . $sql_after;
-        if (self::db()->exec($sql)) {
+        if (false === self::db()->exec($sql)) {
+            Tools::log()->critical('Failed to create table ' . $table_name, ['sql' => $sql]);
             self::save($table_name);
-            Tools::log()->debug('table-checked', ['%tableName%' => $table_name]);
-            return true;
+            return false;
         }
 
-        Tools::log()->critical('Failed to create table ' . $table_name, ['sql' => $sql]);
         self::save($table_name);
-        return false;
+        Tools::log()->debug('table-checked', ['%tableName%' => $table_name]);
+
+        return true;
     }
 
     public static function dropTable(string $table_name): bool
@@ -236,6 +237,7 @@ final class DbUpdater
 
         self::save($table_name);
         Tools::log()->debug('table-checked', ['%tableName%' => $table_name]);
+
         return true;
     }
 
