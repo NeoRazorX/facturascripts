@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Users;
 use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
 use FacturaScripts\Core\Model\Base\GravatarTrait;
@@ -188,6 +189,12 @@ class User extends ModelClass
         $this->langcode = Tools::config('lang');
         $this->level = self::DEFAULT_LEVEL;
         $this->two_factor_enabled = false;
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Users::clear();
     }
 
     public function delete(): bool

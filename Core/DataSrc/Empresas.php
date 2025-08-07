@@ -77,6 +77,6 @@ final class Empresas implements DataSrcInterface
             }
         }
 
-        return new Empresa();
+        return Empresa::find($code) ?? new Empresa();
     }
 }

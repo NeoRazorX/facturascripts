@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\GruposClientes;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -48,6 +49,12 @@ class GrupoClientes extends ModelClass
     /** @var string */
     public $nombre;
 
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        GruposClientes::clear();
+    }
+
     public function getSubcuenta(string $codejercicio, bool $crear): Subcuenta
     {
         // si no tiene una subcuenta asignada, devolvemos una vacía
@@ -61,7 +68,7 @@ class GrupoClientes extends ModelClass
             new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
             new DataBaseWhere('codejercicio', $codejercicio),
         ];
-        if ($subAccount->loadFromCode('', $where)) {
+        if ($subAccount->load('', $where)) {
             return $subAccount;
         }
 
@@ -73,7 +80,7 @@ class GrupoClientes extends ModelClass
 
         // buscamos la cuenta especial
         $special = new DinCuentaEspecial();
-        if (false === $special->loadFromCode(DinCliente::SPECIAL_ACCOUNT)) {
+        if (false === $special->load(DinCliente::SPECIAL_ACCOUNT)) {
             return new DinSubcuenta();
         }
 

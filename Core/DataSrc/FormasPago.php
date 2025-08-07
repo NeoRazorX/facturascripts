@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,21 +19,23 @@
 
 namespace FacturaScripts\Core\DataSrc;
 
+use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
 final class FormasPago implements DataSrcInterface
 {
+    /** @var FormaPago[] */
     private static $list;
 
-    /**
-     * @return FormaPago[]
-     */
+    /** @return FormaPago[] */
     public static function all(): array
     {
         if (!isset(self::$list)) {
-            $model = new FormaPago();
-            self::$list = $model->all([], [], 0, 0);
+            self::$list = Cache::remember('model-FormaPago-list', function () {
+                return FormaPago::all([], ['codpago' => 'ASC'], 0, 0);
+            });
         }
 
         return self::$list;
@@ -44,11 +46,6 @@ final class FormasPago implements DataSrcInterface
         self::$list = null;
     }
 
-    /**
-     * @param bool $addEmpty
-     *
-     * @return array
-     */
     public static function codeModel(bool $addEmpty = true): array
     {
         $codes = [];
@@ -59,6 +56,12 @@ final class FormasPago implements DataSrcInterface
         return CodeModel::array2codeModel($codes, $addEmpty);
     }
 
+    public static function default(): FormaPago
+    {
+        $code = Tools::settings('default', 'codimpuesto');
+        return self::get($code);
+    }
+
     /**
      * @param string $code
      *
@@ -67,11 +70,11 @@ final class FormasPago implements DataSrcInterface
     public static function get($code): FormaPago
     {
         foreach (self::all() as $item) {
-            if ($item->primaryColumnValue() === $code) {
+            if ($item->id() === $code) {
                 return $item;
             }
         }
 
-        return new FormaPago();
+        return FormaPago::find($code) ?? new FormaPago();
     }
 }
