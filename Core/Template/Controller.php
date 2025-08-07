@@ -69,6 +69,7 @@ abstract class Controller implements ControllerInterface
         $this->className = $className;
         $this->dataBase = new DataBase();
         $this->empresa = Empresas::default();
+        $this->request = Request::createFromGlobals();
         $this->template = $className . '.html.twig';
         $this->url = $url;
 
