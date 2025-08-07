@@ -368,6 +368,60 @@ final class DbQueryTest extends TestCase
         $this->assertTrue($done);
     }
 
+    public function testJoinProductsAndFamilies(): void
+    {
+        // si no existe la tabla productos o familias, saltamos el test
+        if (false === $this->db()->tableExists('productos') || false === $this->db()->tableExists('familias')) {
+            $this->markTestSkipped('Table productos or familias does not exist.');
+        }
+
+        // Limpiamos los datos de prueba de ejecuciones anteriores
+        DbQuery::table('productos')->whereEq('referencia', 'ProJNTest')->delete();
+        DbQuery::table('familias')->whereEq('codfamilia', 'FaJNTest')->delete();
+
+        // Insertar datos de prueba usando objetos Familia y Producto
+        $familia = new Familia();
+        $familia->codfamilia = 'FaJNTest';
+        $familia->descripcion = 'Familia para Join Test';
+        $this->assertTrue($familia->save());
+
+        $producto = new Producto();
+        $producto->referencia = 'ProJNTest';
+        $producto->descripcion = 'Producto para Join Test';
+        $producto->codfamilia = 'FaJNTest';
+        $producto->precio = 100.00;
+        $this->assertTrue($producto->save());
+
+        // Construir la consulta con JOIN
+        $query = DbQuery::table('productos')
+            ->select('productos.referencia, productos.descripcion as productoDesc, familias.descripcion AS familiaDesc')
+            ->join('familias', 'codfamilia', 'codfamilia')
+            ->where([Where::like('productos.referencia', 'ProJN%')]);
+
+        // Verificar la consulta SQL generada
+        $expectedSql = 'SELECT ' . $this->db()->escapeColumn('productos.referencia')
+            . ', ' . $this->db()->escapeColumn('productos.descripcion') . ' AS ' . $this->db()->escapeColumn('productoDesc')
+            . ', ' . $this->db()->escapeColumn('familias.descripcion') . ' AS ' . $this->db()->escapeColumn('familiaDesc')
+            . ' FROM ' . $this->db()->escapeColumn('productos')
+            . ' JOIN ' . $this->db()->escapeColumn('familias') . ' ON ' . $this->db()->escapeColumn('productos.codfamilia') . ' = ' . $this->db()->escapeColumn('familias.codfamilia')
+            . ' WHERE ' . Where::like('productos.referencia', 'ProJN%')->sql();
+
+        $this->assertEquals($expectedSql, $query->sql());
+
+        // Ejecutar la consulta y verificar los resultados
+        $results = $query->get();
+        $this->assertCount(1, $results);
+
+        // Verificar el resultado
+        $this->assertEquals('ProJNTest', $results[0]['referencia']);
+        $this->assertEquals('Producto para Join Test', $results[0]['productoDesc']);
+        $this->assertEquals('Familia para Join Test', $results[0]['familiaDesc']);
+
+        // Limpiar los datos de prueba
+        DbQuery::table('productos')->whereEq('referencia', 'ProJNTest')->delete();
+        DbQuery::table('familias')->whereEq('codfamilia', 'FaJNTest')->delete();
+    }
+
     public function testHaving(): void
     {
         // si no existe la tabla productos, saltamos el test
