@@ -591,6 +591,88 @@ final class CronJobTest extends TestCase
         $this->assertTrue($job2->delete());
     }
 
+    public function testEveryYearAtFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName21';
+        $job->pluginname = 'TestPlugin21';
+
+        // probamos el 31 de diciembre - NO se debe ejecutar (día anterior al 1 de enero)
+        $job->setMockDateTime('2025-12-31 10:00:00');
+        $this->assertFalse($job->everyYearAt(1, 1, 10)->isReady());
+
+        // probamos el 1 de enero - SÍ se debe ejecutar
+        $job->setMockDateTime('2025-01-01 10:00:00');
+        $this->assertTrue($job->everyYearAt(1, 1, 10)->isReady());
+        $this->assertTrue($job->save());
+
+        // ya se ha ejecutado hoy, no se ejecutará de nuevo
+        $this->assertFalse($job->everyYearAt(1, 1, 10)->isReady());
+
+        // probamos el 2 de enero - NO se debe ejecutar (día posterior)
+        $job->setMockDateTime('2025-01-02 10:00:00');
+        $this->assertFalse($job->everyYearAt(1, 1, 10)->isReady());
+
+        // probamos una fecha en medio del año - NO se debe ejecutar
+        $job->setMockDateTime('2025-06-15 10:00:00');
+        $this->assertFalse($job->everyYearAt(1, 1, 10)->isReady());
+
+        // avanzamos al siguiente año - SÍ se debe ejecutar
+        $job->date = '2025-01-01 10:00:00'; // resetear última ejecución al año anterior
+        $job->setMockDateTime('2026-01-01 10:00:00');
+        $this->assertTrue($job->everyYearAt(1, 1, 10)->isReady());
+
+        // probamos con otra fecha anual: 25 de diciembre (Navidad)
+        $job2 = new CronJob();
+        $job2->jobname = 'TestName22';
+        $job2->pluginname = 'TestPlugin22';
+
+        // probamos el 24 de diciembre - NO se debe ejecutar
+        $job2->setMockDateTime('2025-12-24 15:00:00');
+        $this->assertFalse($job2->everyYearAt(12, 25, 15)->isReady());
+
+        // probamos el 25 de diciembre - SÍ se debe ejecutar
+        $job2->setMockDateTime('2025-12-25 15:00:00');
+        $this->assertTrue($job2->everyYearAt(12, 25, 15)->isReady());
+        $this->assertTrue($job2->save());
+
+        // ya se ha ejecutado hoy, no se ejecutará de nuevo
+        $this->assertFalse($job2->everyYearAt(12, 25, 15)->isReady());
+
+        // probamos el 26 de diciembre - NO se debe ejecutar
+        $job2->setMockDateTime('2025-12-26 15:00:00');
+        $this->assertFalse($job2->everyYearAt(12, 25, 15)->isReady());
+
+        // probamos con modo estricto - fecha 29 de febrero (año bisiesto)
+        $job3 = new CronJob();
+        $job3->jobname = 'TestName23';
+        $job3->pluginname = 'TestPlugin23';
+
+        // año 2024 es bisiesto - probamos 29 de febrero a las 12:00
+        $job3->setMockDateTime('2024-02-29 12:00:00');
+        $this->assertTrue($job3->everyYearAt(2, 29, 12)->isReady());
+        $this->assertTrue($job3->save());
+
+        // modo estricto - hora incorrecta
+        $job4 = new CronJob();
+        $job4->jobname = 'TestName24';
+        $job4->pluginname = 'TestPlugin24';
+        $job4->setMockDateTime('2025-01-01 10:00:00');
+
+        // no se ejecutará porque no es la hora exacta
+        $this->assertFalse($job4->everyYearAt(1, 1, 11, true)->isReady());
+
+        // se ejecutará porque es la hora exacta
+        $this->assertTrue($job4->everyYearAt(1, 1, 10, true)->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+        $this->assertTrue($job2->delete());
+        $this->assertTrue($job3->delete());
+        $this->assertTrue($job4->save());
+        $this->assertTrue($job4->delete());
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

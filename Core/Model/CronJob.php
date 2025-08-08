@@ -185,6 +185,13 @@ class CronJob extends ModelClass
         return $this->everyDayAux($date, $hour, $strict);
     }
 
+    public function everyYearAt(int $month, int $day, int $hour, bool $strict = false): self
+    {
+        $currentYear = date('Y', $this->getCurrentTimestamp());
+        $date = sprintf('%s-%02d-%02d', $currentYear, $month, $day);
+        return $this->everyDayAux($date, $hour, $strict);
+    }
+
     public function isReady(): bool
     {
         return $this->ready && false === $this->overlapping;
