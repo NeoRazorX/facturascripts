@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,6 +43,9 @@ final class Response
     /** @var int */
     private $http_code;
 
+    /** @var bool */
+    private $send_disabled = false;
+
     public function __construct(int $http_code = 200)
     {
         $this->content = '';
@@ -51,18 +54,32 @@ final class Response
         $this->http_code = $http_code;
     }
 
-    public function cookie(string $name, string $value, int $expire = 0): self
+    public function cookie(string $name, string $value, int $expire = 0, bool $httpOnly = true, bool $secure = null, string $sameSite = 'Lax'): self
     {
         if (empty($expire)) {
             $expire = time() + (int)Tools::config('cookies_expire');
+        }
+
+        // Si no se especifica secure, detectar si estamos en HTTPS
+        if ($secure === null) {
+            $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
         }
 
         $this->cookies[$name] = [
             'name' => $name,
             'value' => $value,
             'expire' => $expire,
+            'httponly' => $httpOnly,
+            'secure' => $secure,
+            'samesite' => $sameSite,
         ];
 
+        return $this;
+    }
+
+    public function disableSend(bool $disable = true): self
+    {
+        $this->send_disabled = $disable;
         return $this;
     }
 
@@ -73,17 +90,51 @@ final class Response
 
     public function file(string $file_path, string $file_name = '', string $disposition = 'inline'): void
     {
-        if ($file_name) {
-            $disposition .= '; filename="' . $file_name . '"';
+        // Validar que el archivo existe y es legible
+        if (!file_exists($file_path) || !is_readable($file_path)) {
+            $this->setHttpCode(self::HTTP_NOT_FOUND);
+            $this->sendHeaders();
+            return;
         }
 
-        $this->headers->set('Content-Type', 'application/octet-stream');
+        // Obtener la ruta real y validar que no salga del directorio permitido
+        $real_path = realpath($file_path);
+        if ($real_path === false) {
+            $this->setHttpCode(self::HTTP_FORBIDDEN);
+            $this->sendHeaders();
+            return;
+        }
+
+        // Verificar que no es un directorio
+        if (is_dir($real_path)) {
+            $this->setHttpCode(self::HTTP_FORBIDDEN);
+            $this->sendHeaders();
+            return;
+        }
+
+        // Sanitizar el nombre del archivo si se proporciona
+        if ($file_name) {
+            // Eliminar caracteres peligrosos del nombre del archivo
+            $safe_name = preg_replace('/[^a-zA-Z0-9._-]/', '', $file_name);
+            // Si después de sanitizar el nombre está vacío, usar un nombre por defecto
+            if (empty($safe_name)) {
+                $safe_name = 'file_' . uniqid();
+            }
+            $disposition .= '; filename="' . $safe_name . '"';
+        }
+
+        // Detectar el tipo MIME del archivo
+        $mime_type = mime_content_type($real_path) ?: 'application/octet-stream';
+        
+        $this->headers->set('Content-Type', $mime_type);
         $this->headers->set('Content-Disposition', $disposition);
-        $this->headers->set('Content-Length', (int)filesize($file_path));
+        $this->headers->set('Content-Length', (int)filesize($real_path));
 
         $this->sendHeaders();
 
-        readfile($file_path);
+        if (!$this->send_disabled) {
+            readfile($real_path);
+        }
     }
 
     public function getContent(): string
@@ -116,6 +167,12 @@ final class Response
         // si no tenemos nombre, generamos uno
         if (empty($file_name)) {
             $file_name = 'doc_' . uniqid() . '.pdf';
+        } else {
+            // Sanitizar el nombre del archivo para prevenir header injection
+            $file_name = preg_replace('/[^a-zA-Z0-9._-]/', '', $file_name);
+            if (empty($file_name)) {
+                $file_name = 'doc_' . uniqid() . '.pdf';
+            }
         }
 
         $this->headers->set('Content-Type', 'application/pdf');
@@ -128,17 +185,103 @@ final class Response
 
     public function redirect(string $url, int $delay = 0): self
     {
+        // Validar y sanitizar la URL para prevenir open redirects
+        $safe_url = $this->validateRedirectUrl($url);
+        
         if ($delay > 0) {
-            $this->headers->set('Refresh', $delay . '; url=' . $url);
+            $this->headers->set('Refresh', $delay . '; url=' . $safe_url);
             return $this;
         }
 
-        $this->headers->set('Location', $url);
+        $this->headers->set('Location', $safe_url);
         return $this;
+    }
+    
+    private function validateRedirectUrl(string $url): string
+    {
+        // Eliminar espacios en blanco y caracteres de control
+        $url = trim($url);
+        $url = preg_replace('/[\x00-\x1F\x7F]/', '', $url);
+        
+        // Si la URL está vacía después de limpiar, usar la raíz
+        if (empty($url)) {
+            return '/';
+        }
+        
+        // Parsear la URL
+        $parsed = parse_url($url);
+        
+        // Si no se puede parsear, redirigir a la raíz
+        if ($parsed === false) {
+            return '/';
+        }
+        
+        // Si es una URL relativa (no tiene scheme), es segura
+        if (!isset($parsed['scheme'])) {
+            // Asegurar que las URLs relativas empiecen con /
+            if (!str_starts_with($url, '/')) {
+                return '/' . $url;
+            }
+            return $url;
+        }
+        
+        // Si tiene scheme, validar que sea http o https
+        if (!in_array(strtolower($parsed['scheme']), ['http', 'https'])) {
+            return '/';
+        }
+        
+        // Si tiene host, validar contra una lista blanca de dominios permitidos
+        if (isset($parsed['host'])) {
+            $allowed_hosts = $this->getAllowedRedirectHosts();
+            
+            // Si no hay hosts permitidos configurados, solo permitir el host actual
+            if (empty($allowed_hosts)) {
+                $current_host = $_SERVER['HTTP_HOST'] ?? '';
+                // Si no hay host actual (ej: CLI/tests) o el host es diferente, denegar
+                if (empty($current_host) || $parsed['host'] !== $current_host) {
+                    // URL externa no permitida, redirigir a la raíz
+                    return '/';
+                }
+            } else {
+                // Verificar contra la lista blanca
+                $host_allowed = false;
+                foreach ($allowed_hosts as $allowed_host) {
+                    if ($parsed['host'] === $allowed_host || 
+                        (str_starts_with($allowed_host, '.') && str_ends_with($parsed['host'], $allowed_host))) {
+                        $host_allowed = true;
+                        break;
+                    }
+                }
+                
+                if (!$host_allowed) {
+                    return '/';
+                }
+            }
+        }
+        
+        return $url;
+    }
+    
+    private function getAllowedRedirectHosts(): array
+    {
+        // Obtener hosts permitidos de la configuración
+        // Por defecto, solo permitir el host actual
+        $config_hosts = Tools::config('allowed_redirect_hosts', '');
+        
+        if (empty($config_hosts)) {
+            return [];
+        }
+        
+        // Convertir string separado por comas en array
+        return array_map('trim', explode(',', $config_hosts));
     }
 
     public function send(): void
     {
+        if ($this->send_disabled) {
+            return;
+        }
+
         $this->sendHeaders();
 
         echo $this->content;
@@ -184,6 +327,10 @@ final class Response
 
     private function sendHeaders(): void
     {
+        if ($this->send_disabled) {
+            return;
+        }
+
         http_response_code($this->http_code);
 
         foreach ($this->headers->all() as $name => $value) {
@@ -191,7 +338,17 @@ final class Response
         }
 
         foreach ($this->cookies as $cookie) {
-            setcookie($cookie['name'], $cookie['value'], $cookie['expire'], Tools::config('route', '/'));
+            // Preparar opciones de cookie con flags de seguridad
+            $options = [
+                'expires' => $cookie['expire'],
+                'path' => Tools::config('route', '/'),
+                'domain' => '',
+                'secure' => $cookie['secure'] ?? false,
+                'httponly' => $cookie['httponly'] ?? true,
+                'samesite' => $cookie['samesite'] ?? 'Lax'
+            ];
+            
+            setcookie($cookie['name'], $cookie['value'], $options);
         }
     }
 }
