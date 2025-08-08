@@ -539,17 +539,41 @@ final class CronJobTest extends TestCase
         $job->jobname = 'TestName19';
         $job->pluginname = 'TestPlugin19';
 
-        // establecemos la fecha al último día del mes: 2025-03-31 15:00:00
-        $job->setMockDateTime('2025-03-31 15:00:00');
+        // probamos el día 30 de marzo - NO se debe ejecutar (no es el último día)
+        $job->setMockDateTime('2025-03-30 15:00:00');
+        $this->assertFalse($job->everyLastDayOfMonthAt(15)->isReady());
 
-        // como nunca se ha ejecutado, se ejecutará
+        // probamos el día 31 de marzo - SÍ se debe ejecutar (último día del mes)
+        $job->setMockDateTime('2025-03-31 15:00:00');
         $this->assertTrue($job->everyLastDayOfMonthAt(15)->isReady());
         $this->assertTrue($job->save());
 
         // ya se ha ejecutado hoy, no se ejecutará de nuevo
         $this->assertFalse($job->everyLastDayOfMonthAt(15)->isReady());
 
-        // probamos con modo estricto en hora incorrecta
+        // probamos el día 1 de abril - NO se debe ejecutar (primer día del siguiente mes)
+        $job->setMockDateTime('2025-04-01 15:00:00');
+        $this->assertFalse($job->everyLastDayOfMonthAt(15)->isReady());
+
+        // probamos el día 29 de abril - NO se debe ejecutar (no es el último día)
+        $job->setMockDateTime('2025-04-29 15:00:00');
+        $this->assertFalse($job->everyLastDayOfMonthAt(15)->isReady());
+
+        // probamos el día 30 de abril - SÍ se debe ejecutar (último día de abril)
+        $job->date = '2025-03-31 15:00:00'; // resetear última ejecución
+        $job->setMockDateTime('2025-04-30 15:00:00');
+        $this->assertTrue($job->everyLastDayOfMonthAt(15)->isReady());
+
+        // probamos febrero (mes corto) - día 27 - NO se debe ejecutar
+        $job->date = '2025-01-31 15:00:00'; // resetear última ejecución a enero
+        $job->setMockDateTime('2025-02-27 15:00:00');
+        $this->assertFalse($job->everyLastDayOfMonthAt(15)->isReady());
+
+        // probamos febrero - día 28 - SÍ se debe ejecutar (último día de febrero 2025)
+        $job->setMockDateTime('2025-02-28 15:00:00');
+        $this->assertTrue($job->everyLastDayOfMonthAt(15)->isReady());
+
+        // probamos con modo estricto
         $job2 = new CronJob();
         $job2->jobname = 'TestName20';
         $job2->pluginname = 'TestPlugin20';
