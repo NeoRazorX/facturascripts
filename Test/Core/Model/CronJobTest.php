@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,6 +35,7 @@ final class CronJobTest extends TestCase
         $job = new CronJob();
         $job->jobname = 'TestName';
         $job->pluginname = 'TestPlugin';
+        $this->assertNull($job->date);
         $this->assertTrue($job->enabled);
         $this->assertTrue($job->save());
 
@@ -165,7 +166,6 @@ final class CronJobTest extends TestCase
         $job = new CronJob();
         $job->jobname = 'TestName6';
         $job->pluginname = 'TestPlugin5';
-        $job->date = Tools::dateTime('2025-01-01 12:00:00');
 
         // establecemos la fecha de hoy a 2025-03-05 12:00:00
         $job->setMockDateTime('2025-03-05 12:00:00');
@@ -175,6 +175,13 @@ final class CronJobTest extends TestCase
 
         // si decimos de ejecutar hoy a las 12, se ejecutará
         $this->assertTrue($job->everyDay(5, 12, true)->isReady());
+        $this->assertTrue($job->save());
+
+        // si decimos de volver a ejecutar hoy a las 12, no se ejecutará
+        $this->assertFalse($job->everyDay(5, 12, true)->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
     }
 
     public function testEveryDayAtFunction(): void

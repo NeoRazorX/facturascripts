@@ -88,7 +88,6 @@ class CronJob extends ModelClass
     public function clear(): void
     {
         parent::clear();
-        $this->date = $this->getCurrentDateTime();
         $this->done = false;
         $this->duration = 0.0;
         $this->enabled = true;
@@ -268,6 +267,10 @@ class CronJob extends ModelClass
         $this->jobname = Tools::noHtml($this->jobname);
         $this->pluginname = Tools::noHtml($this->pluginname);
 
+        if (empty($this->date)) {
+            $this->date = $this->getCurrentDateTime();
+        }
+
         if ($this->running < 0) {
             $this->running = 0;
         } elseif ($this->running > 0) {
@@ -306,29 +309,29 @@ class CronJob extends ModelClass
             return $this;
         }
 
-        if (false === $this->exists() && false === $strict) {
-            $this->ready = true;
-            return $this;
-        }
-
-        // si strict es true, solamente devolvemos true si es la hora exacta
+        $last = strtotime($this->date ?? '-99 years');
+        $start = strtotime($date . ' +' . $hour . ' hours');
         $end = $strict ?
             strtotime($date . ' +' . $hour . ' hours +59 minutes') :
             strtotime($date . ' +23 hours +59 minutes');
-
-        // devolvemos true si la última ejecución es anterior a hoy a la hora indicada
-        $last = strtotime($this->date);
-        $start = strtotime($date . ' +' . $hour . ' hours');
         $this->start = $this->getCurrentMicrotime();
-        if ($last <= $start && $this->start >= $start && $this->start <= $end) {
-            $this->ready = true;
-            return $this;
-        }
 
         Tools::log()->error(
             'current: ' . Tools::timeToDateTime((int)$this->start) . ', last: ' . Tools::timeToDateTime($last) .
             ', start: ' . Tools::timeToDateTime($start) . ', end: ' . Tools::timeToDateTime($end)
         );
+
+        // si se ha ejecutado antes, comprobamos que no sea pasada la fecha de inicio
+        if (!empty($this->date) && $last >= $start) {
+            $this->ready = false;
+            return $this;
+        }
+
+        // comprobamos que la fecha de inicio esté dentro del rango
+        if ($this->start >= $start && $this->start <= $end) {
+            $this->ready = true;
+            return $this;
+        }
 
         $this->ready = false;
         return $this;
