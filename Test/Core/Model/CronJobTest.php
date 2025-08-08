@@ -207,6 +207,29 @@ final class CronJobTest extends TestCase
         $this->assertTrue($job->delete());
     }
 
+    public function testEveryDayAtStrictFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName7';
+        $job->pluginname = 'TestPlugin7';
+
+        // establecemos la fecha de hoy a 2025-03-05 12:00:00
+        $job->setMockDateTime('2025-03-05 12:00:00');
+
+        // si decimos de ejecutar hoy estrictamente a la 1, no se ejecutará
+        $this->assertFalse($job->everyDayAt(1, true)->isReady());
+
+        // si decimos de ejecutar hoy a las 12, se ejecutará
+        $this->assertTrue($job->everyDayAt(12, true)->isReady());
+        $this->assertTrue($job->save());
+
+        // si decimos de volver a ejecutar hoy a las 12, no se ejecutará
+        $this->assertFalse($job->everyDayAt(12, true)->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
     public function testRunFunction(): void
     {
         $job = new CronJob();
@@ -286,6 +309,261 @@ final class CronJobTest extends TestCase
 
         // eliminamos
         $this->assertTrue($job1->delete());
+        $this->assertTrue($job2->delete());
+    }
+
+    public function testEveryMondayAtFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName12';
+        $job->pluginname = 'TestPlugin12';
+
+        // probamos en domingo - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-02 14:00:00'); // domingo
+        $this->assertFalse($job->everyMondayAt(14)->isReady());
+
+        // probamos en lunes - SÍ se debe ejecutar
+        $job->setMockDateTime('2025-03-03 14:00:00'); // lunes
+        $this->assertTrue($job->everyMondayAt(14)->isReady());
+        $this->assertTrue($job->save());
+
+        // ya se ha ejecutado hoy, no se ejecutará de nuevo
+        $this->assertFalse($job->everyMondayAt(14)->isReady());
+
+        // probamos en martes - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-04 14:00:00'); // martes
+        $this->assertFalse($job->everyMondayAt(14)->isReady());
+
+        // probamos en miércoles - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-05 14:00:00'); // miércoles
+        $this->assertFalse($job->everyMondayAt(14)->isReady());
+
+        // avanzamos una semana al siguiente lunes - SÍ se debe ejecutar
+        $job->date = '2025-03-03 14:00:00'; // resetear última ejecución al lunes anterior
+        $job->setMockDateTime('2025-03-10 14:00:00'); // siguiente lunes
+        $this->assertTrue($job->everyMondayAt(14)->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
+    public function testEveryTuesdayAtFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName13';
+        $job->pluginname = 'TestPlugin13';
+
+        // probamos en lunes - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-03 10:00:00'); // lunes
+        $this->assertFalse($job->everyTuesdayAt(10)->isReady());
+
+        // probamos en martes - SÍ se debe ejecutar
+        $job->setMockDateTime('2025-03-04 10:00:00'); // martes
+        $this->assertTrue($job->everyTuesdayAt(10)->isReady());
+        $this->assertTrue($job->save());
+
+        // ya se ha ejecutado hoy, no se ejecutará de nuevo
+        $this->assertFalse($job->everyTuesdayAt(10)->isReady());
+
+        // probamos en miércoles - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-05 10:00:00'); // miércoles
+        $this->assertFalse($job->everyTuesdayAt(10)->isReady());
+
+        // avanzamos una semana al siguiente martes - SÍ se debe ejecutar
+        $job->date = '2025-03-04 10:00:00'; // resetear última ejecución al martes anterior
+        $job->setMockDateTime('2025-03-11 10:00:00'); // siguiente martes
+        $this->assertTrue($job->everyTuesdayAt(10)->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
+    public function testEveryWednesdayAtFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName14';
+        $job->pluginname = 'TestPlugin14';
+
+        // probamos en martes - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-04 16:00:00'); // martes
+        $this->assertFalse($job->everyWednesdayAt(16)->isReady());
+
+        // probamos en miércoles - SÍ se debe ejecutar
+        $job->setMockDateTime('2025-03-05 16:00:00'); // miércoles
+        $this->assertTrue($job->everyWednesdayAt(16)->isReady());
+        $this->assertTrue($job->save());
+
+        // ya se ha ejecutado hoy, no se ejecutará de nuevo
+        $this->assertFalse($job->everyWednesdayAt(16)->isReady());
+
+        // probamos en jueves - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-06 16:00:00'); // jueves
+        $this->assertFalse($job->everyWednesdayAt(16)->isReady());
+
+        // avanzamos una semana al siguiente miércoles - SÍ se debe ejecutar
+        $job->date = '2025-03-05 16:00:00'; // resetear última ejecución al miércoles anterior
+        $job->setMockDateTime('2025-03-12 16:00:00'); // siguiente miércoles
+        $this->assertTrue($job->everyWednesdayAt(16)->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
+    public function testEveryThursdayAtFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName15';
+        $job->pluginname = 'TestPlugin15';
+
+        // probamos en miércoles - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-05 09:00:00'); // miércoles
+        $this->assertFalse($job->everyThursdayAt(9)->isReady());
+
+        // probamos en jueves - SÍ se debe ejecutar
+        $job->setMockDateTime('2025-03-06 09:00:00'); // jueves
+        $this->assertTrue($job->everyThursdayAt(9)->isReady());
+        $this->assertTrue($job->save());
+
+        // ya se ha ejecutado hoy, no se ejecutará de nuevo
+        $this->assertFalse($job->everyThursdayAt(9)->isReady());
+
+        // probamos en viernes - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-07 09:00:00'); // viernes
+        $this->assertFalse($job->everyThursdayAt(9)->isReady());
+
+        // avanzamos una semana al siguiente jueves - SÍ se debe ejecutar
+        $job->date = '2025-03-06 09:00:00'; // resetear última ejecución al jueves anterior
+        $job->setMockDateTime('2025-03-13 09:00:00'); // siguiente jueves
+        $this->assertTrue($job->everyThursdayAt(9)->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
+    public function testEveryFridayAtFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName16';
+        $job->pluginname = 'TestPlugin16';
+
+        // probamos en jueves - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-06 18:00:00'); // jueves
+        $this->assertFalse($job->everyFridayAt(18)->isReady());
+
+        // probamos en viernes - SÍ se debe ejecutar
+        $job->setMockDateTime('2025-03-07 18:00:00'); // viernes
+        $this->assertTrue($job->everyFridayAt(18)->isReady());
+        $this->assertTrue($job->save());
+
+        // ya se ha ejecutado hoy, no se ejecutará de nuevo
+        $this->assertFalse($job->everyFridayAt(18)->isReady());
+
+        // probamos en sábado - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-08 18:00:00'); // sábado
+        $this->assertFalse($job->everyFridayAt(18)->isReady());
+
+        // avanzamos una semana al siguiente viernes - SÍ se debe ejecutar
+        $job->date = '2025-03-07 18:00:00'; // resetear última ejecución al viernes anterior
+        $job->setMockDateTime('2025-03-14 18:00:00'); // siguiente viernes
+        $this->assertTrue($job->everyFridayAt(18)->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
+    public function testEverySaturdayAtFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName17';
+        $job->pluginname = 'TestPlugin17';
+
+        // probamos en viernes - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-07 08:00:00'); // viernes
+        $this->assertFalse($job->everySaturdayAt(8)->isReady());
+
+        // probamos en sábado - SÍ se debe ejecutar
+        $job->setMockDateTime('2025-03-08 08:00:00'); // sábado
+        $this->assertTrue($job->everySaturdayAt(8)->isReady());
+        $this->assertTrue($job->save());
+
+        // ya se ha ejecutado hoy, no se ejecutará de nuevo
+        $this->assertFalse($job->everySaturdayAt(8)->isReady());
+
+        // probamos en domingo - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-09 08:00:00'); // domingo
+        $this->assertFalse($job->everySaturdayAt(8)->isReady());
+
+        // avanzamos una semana al siguiente sábado - SÍ se debe ejecutar
+        $job->date = '2025-03-08 08:00:00'; // resetear última ejecución al sábado anterior
+        $job->setMockDateTime('2025-03-15 08:00:00'); // siguiente sábado
+        $this->assertTrue($job->everySaturdayAt(8)->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
+    public function testEverySundayAtFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName18';
+        $job->pluginname = 'TestPlugin18';
+
+        // probamos en sábado - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-08 20:00:00'); // sábado
+        $this->assertFalse($job->everySundayAt(20)->isReady());
+
+        // probamos en domingo - SÍ se debe ejecutar
+        $job->setMockDateTime('2025-03-09 20:00:00'); // domingo
+        $this->assertTrue($job->everySundayAt(20)->isReady());
+        $this->assertTrue($job->save());
+
+        // ya se ha ejecutado hoy, no se ejecutará de nuevo
+        $this->assertFalse($job->everySundayAt(20)->isReady());
+
+        // probamos en lunes - NO se debe ejecutar
+        $job->setMockDateTime('2025-03-10 20:00:00'); // lunes
+        $this->assertFalse($job->everySundayAt(20)->isReady());
+
+        // avanzamos una semana al siguiente domingo - SÍ se debe ejecutar
+        $job->date = '2025-03-09 20:00:00'; // resetear última ejecución al domingo anterior
+        $job->setMockDateTime('2025-03-16 20:00:00'); // siguiente domingo
+        $this->assertTrue($job->everySundayAt(20)->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
+    public function testEveryLastDayOfMonthAtFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName19';
+        $job->pluginname = 'TestPlugin19';
+
+        // establecemos la fecha al último día del mes: 2025-03-31 15:00:00
+        $job->setMockDateTime('2025-03-31 15:00:00');
+
+        // como nunca se ha ejecutado, se ejecutará
+        $this->assertTrue($job->everyLastDayOfMonthAt(15)->isReady());
+        $this->assertTrue($job->save());
+
+        // ya se ha ejecutado hoy, no se ejecutará de nuevo
+        $this->assertFalse($job->everyLastDayOfMonthAt(15)->isReady());
+
+        // probamos con modo estricto en hora incorrecta
+        $job2 = new CronJob();
+        $job2->jobname = 'TestName20';
+        $job2->pluginname = 'TestPlugin20';
+        $job2->setMockDateTime('2025-03-31 15:00:00');
+
+        // no se ejecutará porque no es la hora exacta
+        $this->assertFalse($job2->everyLastDayOfMonthAt(16, true)->isReady());
+
+        // se ejecutará porque es la hora exacta
+        $this->assertTrue($job2->everyLastDayOfMonthAt(15, true)->isReady());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+        $this->assertTrue($job2->save());
         $this->assertTrue($job2->delete());
     }
 

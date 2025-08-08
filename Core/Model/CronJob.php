@@ -133,47 +133,56 @@ class CronJob extends ModelClass
 
     public function everyDayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('today', $hour, $strict);
+        $date = date('Y-m-d', $this->getCurrentTimestamp());
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyFridayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('friday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('friday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyLastDayOfMonthAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('last day of this month', $hour, $strict);
+        $date = date('Y-m-d', strtotime('last day of this month', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyMondayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('monday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('monday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everySaturdayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('saturday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('saturday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everySundayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('sunday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('sunday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyThursdayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('thursday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('thursday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyTuesdayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('tuesday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('tuesday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyWednesdayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('wednesday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('wednesday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function isReady(): bool
