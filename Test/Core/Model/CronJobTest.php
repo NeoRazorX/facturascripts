@@ -31,9 +31,11 @@ final class CronJobTest extends TestCase
 
     public function testCreate(): void
     {
+        // creamos un trabajo
         $job = new CronJob();
         $job->jobname = 'TestName';
         $job->pluginname = 'TestPlugin';
+        $this->assertTrue($job->enabled);
         $this->assertTrue($job->save());
 
         // comprobamos que existe
@@ -60,7 +62,7 @@ final class CronJobTest extends TestCase
     public function testCantCreateWithoutName(): void
     {
         $job = new CronJob();
-        $job->pluginname = 'TestPlugin';
+        $job->pluginname = 'TestPlugin1';
         $this->assertFalse($job->save());
     }
 
@@ -68,8 +70,25 @@ final class CronJobTest extends TestCase
     {
         // creamos un trabajo sin plugin
         $job = new CronJob();
-        $job->jobname = 'TestName';
+        $job->jobname = 'TestName2';
         $this->assertTrue($job->save());
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
+    public function testDisabled(): void
+    {
+        // creamos un trabajo que no se ejecuta
+        $job = new CronJob();
+        $job->jobname = 'TestName3';
+        $job->pluginname = 'TestPlugin3';
+        $job->enabled = false;
+        $this->assertTrue($job->save());
+
+        // comprobamos que no se puede ejecutar
+        $this->assertFalse($job->every('1 day')->isReady());
+        $this->assertFalse($job->every('1 hour')->isReady());
 
         // eliminamos
         $this->assertTrue($job->delete());
@@ -77,13 +96,15 @@ final class CronJobTest extends TestCase
 
     public function testEveryFunction(): void
     {
+        // creamos un trabajo que se ejecuta cada día
         $job = new CronJob();
-        $job->jobname = 'TestName';
-        $job->pluginname = 'TestPlugin';
+        $job->jobname = 'TestName4';
+        $job->pluginname = 'TestPlugin4';
         $this->assertTrue($job->every('1 day')->isReady());
         $this->assertTrue($job->save());
-        $this->assertFalse($job->every('1 day')->isReady());
 
+        // comprobamos que se ha guardado y que no se puede volver a ejecutar hoy
+        $this->assertFalse($job->every('1 day')->isReady());
         $this->assertFalse($job->done);
 
         // ahora ponemos fecha de hace un día
@@ -93,7 +114,6 @@ final class CronJobTest extends TestCase
         $this->assertTrue($job->every('6 hours')->isReady());
         $this->assertTrue($job->every('1 hour')->isReady());
         $this->assertTrue($job->every('30 minutes')->isReady());
-
         $this->assertFalse($job->done);
 
         // ahora ponemos fecha de hace una hora
@@ -102,17 +122,15 @@ final class CronJobTest extends TestCase
         $this->assertFalse($job->every('2 hours')->isReady());
         $this->assertTrue($job->every('1 hour')->isReady());
         $this->assertTrue($job->every('30 minutes')->isReady());
-
         $this->assertFalse($job->done);
 
         // desactivamos
-        $job->enabled = true;
-        $job->date = Tools::dateTime('-1 hour');
+        $job->enabled = false;
+        $job->date = Tools::dateTime('-2 days');
         $this->assertFalse($job->every('1 day')->isReady());
         $this->assertFalse($job->every('2 hours')->isReady());
-        $this->assertTrue($job->every('1 hour')->isReady());
-        $this->assertTrue($job->every('30 minutes')->isReady());
-
+        $this->assertFalse($job->every('1 hour')->isReady());
+        $this->assertFalse($job->every('30 minutes')->isReady());
         $this->assertFalse($job->done);
 
         // eliminamos
@@ -121,31 +139,49 @@ final class CronJobTest extends TestCase
 
     public function testEveryDayFunction(): void
     {
-        $currentDay = date('d') < 28 ? (int)date('d') : 10;
-
         $job = new CronJob();
-        $job->jobname = 'TestName';
-        $job->pluginname = 'TestPlugin';
+        $job->jobname = 'TestName5';
+        $job->pluginname = 'TestPlugin5';
+
+        // establecemos la fecha de hoy a 2025-03-05 12:00:00
+        $job->setMockDateTime('2025-03-05 12:00:00');
 
         // como nunca se ha ejecutado, si decimos de ejecutar hoy, se ejecutará
-        $this->assertTrue($job->everyDay($currentDay, 1)->isReady());
+        $this->assertTrue($job->everyDay(5, 1)->isReady());
         $this->assertTrue($job->save());
 
         // como ya se ha ejecutado, si decimos de ejecutar hoy, no se ejecutará
-        $this->assertFalse($job->everyDayAt($currentDay, 1)->isReady());
+        $this->assertFalse($job->everyDay(5, 1)->isReady());
 
         // como ya se ha ejecutado, si decimos de ejecutar mañana, no se ejecutará
-        $this->assertFalse($job->everyDayAt($currentDay + 1, 1)->isReady());
+        $this->assertFalse($job->everyDay(6, 1)->isReady());
 
         // eliminamos
         $this->assertTrue($job->delete());
     }
 
+    public function testEveryDayStrictFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName6';
+        $job->pluginname = 'TestPlugin5';
+        $job->date = Tools::dateTime('2025-01-01 12:00:00');
+
+        // establecemos la fecha de hoy a 2025-03-05 12:00:00
+        $job->setMockDateTime('2025-03-05 12:00:00');
+
+        // si decimos de ejecutar hoy estrictamente a la 1, no se ejecutará
+        $this->assertFalse($job->everyDay(5, 1, true)->isReady());
+
+        // si decimos de ejecutar hoy a las 12, se ejecutará
+        $this->assertTrue($job->everyDay(5, 12, true)->isReady());
+    }
+
     public function testEveryDayAtFunction(): void
     {
         $job = new CronJob();
-        $job->jobname = 'TestName';
-        $job->pluginname = 'TestPlugin';
+        $job->jobname = 'TestName6';
+        $job->pluginname = 'TestPlugin6';
         $this->assertTrue($job->everyDayAt(0)->isReady());
         $this->assertTrue($job->save());
         $this->assertFalse($job->everyDayAt(0)->isReady());
@@ -167,8 +203,8 @@ final class CronJobTest extends TestCase
     public function testRunFunction(): void
     {
         $job = new CronJob();
-        $job->jobname = 'TestName';
-        $job->pluginname = 'TestPlugin';
+        $job->jobname = 'TestName7';
+        $job->pluginname = 'TestPlugin7';
         $this->assertTrue($job->everyDayAt(0)->isReady());
 
         $this->assertTrue(
@@ -190,8 +226,8 @@ final class CronJobTest extends TestCase
     public function testRunFailFunction(): void
     {
         $job = new CronJob();
-        $job->jobname = 'TestName';
-        $job->pluginname = 'TestPlugin';
+        $job->jobname = 'TestName8';
+        $job->pluginname = 'TestPlugin8';
         $this->assertTrue($job->everyDayAt(0)->isReady());
 
         $this->assertFalse(
@@ -214,14 +250,14 @@ final class CronJobTest extends TestCase
     {
         // creamos un trabajo en ejecución
         $job1 = new CronJob();
-        $job1->jobname = 'TestName';
-        $job1->pluginname = 'TestPlugin';
+        $job1->jobname = 'TestName9';
+        $job1->pluginname = 'TestPlugin9';
         $this->assertTrue($job1->save());
 
         // creamos un segundo trabajo que no se ejecutará
         $job2 = new CronJob();
-        $job2->jobname = 'TestName2';
-        $job2->pluginname = 'TestPlugin';
+        $job2->jobname = 'TestName10';
+        $job2->pluginname = 'TestPlugin9';
         $job2->date = Tools::dateTime('-10 minutes');
         $job2->done = true;
         $this->assertTrue($job2->save());
@@ -229,8 +265,8 @@ final class CronJobTest extends TestCase
 
         // creamos un tercer trabajo que si se ejecutará
         $job3 = new CronJob();
-        $job3->jobname = 'TestName3';
-        $job3->pluginname = 'TestPlugin';
+        $job3->jobname = 'TestName11';
+        $job3->pluginname = 'TestPlugin9';
         $job3->date = Tools::dateTime('-1 hour');
         $this->assertTrue($job3->withoutOverlapping('TestName2')->every('1 minute')->isReady());
 
