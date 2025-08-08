@@ -22,13 +22,14 @@ namespace FacturaScripts\Core\Template;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
-use FacturaScripts\Dinamic\Model\User as DinUser;
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Dinamic\Model\User;
 
 abstract class Controller implements ControllerInterface
 {
@@ -56,7 +57,7 @@ abstract class Controller implements ControllerInterface
     /** @var string */
     public $url;
 
-    /** @var ?DinUser */
+    /** @var ?User */
     public $user;
 
     public function __construct(string $className, string $url = '')
@@ -68,6 +69,7 @@ abstract class Controller implements ControllerInterface
         $this->className = $className;
         $this->dataBase = new DataBase();
         $this->empresa = Empresas::default();
+        $this->request = Request::createFromGlobals();
         $this->template = $className . '.html.twig';
         $this->url = $url;
 
@@ -117,6 +119,10 @@ abstract class Controller implements ControllerInterface
 
     public function run(): void
     {
+        if (!$this->auth()) {
+            throw new KernelException('AccessDenied', 'access-denied');
+        }
+
         AssetManager::clear();
         AssetManager::setAssetsForPage($this->className);
 
@@ -148,6 +154,54 @@ abstract class Controller implements ControllerInterface
     public function setTemplate($template): void
     {
         $this->template = empty($template) ? '' : $template . '.html.twig';
+    }
+
+    protected function auth(): bool
+    {
+        // Obtener el nick del usuario de la cookie
+        $cookieNick = $this->request->cookies->get('fsNick', '');
+        if (empty($cookieNick)) {
+            // Si no hay nick en la cookie, no se puede autenticar
+            return false;
+        }
+
+        // Cargar el usuario desde la base de datos usando el nick
+        $user = new User();
+        if (false === $user->load($cookieNick)) {
+            // Si el usuario no se encuentra, registrar advertencia y fallar autenticación
+            Tools::log()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
+            return false;
+        }
+
+        // Verificar si el usuario está activado
+        $cookiesExpire = time() + Tools::config('cookies_expire');
+        if (false === $user->enabled) {
+            // Si el usuario está desactivado, registrar advertencia, eliminar cookie y fallar autenticación
+            Tools::log()->warning('login-user-disabled', ['%nick%' => $cookieNick]);
+            setcookie('fsNick', '', $cookiesExpire, '/');
+            return false;
+        }
+
+        // Verificar la logkey del usuario desde la cookie
+        $logKey = $this->request->cookies->get('fsLogkey', '') ?? '';
+        if (false === $user->verifyLogkey($logKey)) {
+            // Si la logkey no es válida, registrar advertencia, eliminar cookie y fallar autenticación
+            Tools::log()->warning('login-cookie-fail');
+            setcookie('fsNick', '', $cookiesExpire, '/');
+            return false;
+        }
+
+        // Actualizar la última actividad del usuario si ha pasado el período definido
+        if (time() - strtotime($user->lastactivity) > User::UPDATE_ACTIVITY_PERIOD) {
+            $ip = Session::getClientIp();
+            $browser = $this->request->headers->get('User-Agent');
+            $user->updateActivity($ip, $browser);
+            $user->save();
+        }
+
+        // Establecer el usuario en la sesión actual
+        Session::set('user', $user);
+        return true;
     }
 
     protected function validateFormToken(): bool

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Series;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\Cliente;
-use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -110,7 +110,7 @@ abstract class ComercialContactController extends EditController
      *
      * @param string $viewName
      */
-    abstract protected function setCustomWidgetValues(string $viewName);
+    abstract protected function setCustomWidgetValues(string $viewName): void;
 
     /**
      * Check that the subaccount length is correct.
@@ -123,8 +123,7 @@ abstract class ComercialContactController extends EditController
             return;
         }
 
-        $exercise = new Ejercicio();
-        foreach ($exercise->all([], [], 0, 0) as $exe) {
+        foreach (Ejercicios::all() as $exe) {
             if ($exe->isOpened() && strlen($code) != $exe->longsubcuenta) {
                 Tools::log()->warning('account-length-error', ['%code%' => $code]);
             }
@@ -391,7 +390,7 @@ abstract class ComercialContactController extends EditController
             case $mvn:
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($viewName);
-                if ($view->model->exists() && $view->model->cifnif) {
+                if ($view->model->exists() && !empty($view->model->cifnif)) {
                     $this->addButton($viewName, [
                         'action' => 'check-vies',
                         'color' => 'info',

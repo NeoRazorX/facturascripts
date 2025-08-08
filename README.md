@@ -74,6 +74,9 @@ npm install
 ```bash
 # Start the development server
 php -S localhost:8000 index.php
+
+# Or using Composer script
+composer dev-server
 ```
 Then visit http://localhost:8000 in your browser.
 

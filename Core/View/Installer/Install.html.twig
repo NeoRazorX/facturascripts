@@ -99,12 +99,11 @@
     </div>
 </nav>
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-6 col-md-5 text-center mb-4 mb-md-0">
-            <img src="Core/Assets/Images/install.png" alt="{{ trans('installer') }}" class="img-fluid"
-                 style="max-width: 100%; height: auto;">
+    <div class="row align-items-center">
+        <div class="col-md-5 text-center mb-4 mb-md-0">
+            <img src="Core/Assets/Images/install.png" alt="{{ trans('installer') }}" class="img-fluid" loading="lazy">
         </div>
-        <div class="col-lg-6 col-md-7 bg-white">
+        <div class="col-md-7 bg-white px-5">
             <br/>
             {% from 'Macro/Utils.html.twig' import message as show_message %}
             {{ show_message(log, ['error', 'critical'], 'danger') }}
@@ -115,145 +114,209 @@
             </h1>
             <p class="mb-4">{{ trans('installer-p') }}</p>
             <form name="fs_install" method="post" class="form">
-                <div class="row gx-2">
-                    <div class="col-md-12 col-lg-6">
-                        <div class="mb-3">
-                            {{ trans('language') }}:
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fa-solid fa-language"></i>
-                                </span>
-                                <select id="fs_lang" name="fs_lang" class="form-select">
-                                    {% for langCode, langName in i18n.getAvailableLanguages() %}
-                                        {% if langCode == i18n.getLang() %}
-                                            <option value="{{ langCode }}" selected>{{ langName }}</option>
-                                        {% else %}
-                                            <option value="{{ langCode }}">{{ langName }}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
+                <!-- Configuración -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fa-solid fa-cog me-2"></i>{{ trans('configuration') }}</h5>
+                    </div>
+                    <div class="card-body pb-0">
+                        <div class="row gx-2">
+                            <div class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('language') }}:
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fa-solid fa-language"></i>
+                                        </span>
+                                        <select id="fs_lang" name="fs_lang" class="form-select">
+                                            {% for langCode, langName in i18n.getAvailableLanguages() %}
+                                                {% if langCode == i18n.getLang() %}
+                                                    <option value="{{ langCode }}" selected>{{ langName }}</option>
+                                                {% else %}
+                                                    <option value="{{ langCode }}">{{ langName }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-lg-6">
-                        <div class="mb-3">
-                            {{ trans('timezone') }}:
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="far fa-clock"></i>
-                                </span>
-                                <select name="fs_timezone" class="form-select">
-                                    {% for tz in timezones %}
-                                        <option value="{{ tz }}">{{ tz }}</option>
-                                    {% endfor %}
-                                </select>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('timezone') }}:
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="far fa-clock"></i>
+                                        </span>
+                                        <select name="fs_timezone" class="form-select">
+                                            {% for tz in timezones %}
+                                                <option value="{{ tz }}">{{ tz }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-lg-6">
-                        <div class="mb-3">
-                            {{ trans('db-type') }}:
-                            <select id="db_type" name="fs_db_type" class="form-select">
-                                {% if fsc.db_type == 'mysql' %}
-                                    <option value="mysql" selected>MySQL</option>
-                                    <option value="postgresql">PostgreSQL</option>
-                                {% else %}
-                                    <option value="mysql">MySQL</option>
-                                    <option value="postgresql" selected>PostgreSQL</option>
-                                {% endif %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-lg-6">
-                        <div class="mb-3">
-                            {{ trans('db-host') }}:
-                            <input type="text" name="fs_db_host" value="{{ fsc.db_host }}"
-                                   class="form-control" required/>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-lg-6">
-                        <div class="mb-3">
-                            {{ trans('db-port') }}:
-                            <input type="number" id="db_port" name="fs_db_port"
-                                   value="{{ fsc.db_port }}" class="form-control" required/>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-lg-6">
-                        <div class="mb-3">
-                            {{ trans('db-name') }}:
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fa-solid fa-database"></i>
-                                </span>
-                                <input type="text" name="fs_db_name" value="{{ fsc.db_name }}"
-                                       class="form-control" required/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-lg-6">
-                        <div class="mb-3">
-                            {{ trans('db-user') }}:
-                            <input type="text" id="db_user" name="fs_db_user" value="{{ fsc.db_user }}"
-                                   class="form-control" required/>
-                        </div>
-                    </div>
-                    <div class="col-md-12 col-lg-6">
-                        <div class="mb-3">
-                            {{ trans('db-password') }}:
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fa-solid fa-key"></i>
-                                </span>
-                                <input type="password" name="fs_db_pass" value="{{ fsc.db_pass }}"
-                                       class="form-control"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="mysql_socket_div" class="col-md-12">
-                        <div class="mb-3">
-                            {{ trans('mysql-socket') }}:
-                            <input type="text" name="mysql_socket" class="form-control"
-                                   placeholder="{{ trans('optional') }}"/>
-                            <div class="form-text">{{ trans('mysql-socket-p') }}</div>
-                        </div>
-                    </div>
-                    <div id="pgsql_ssl_div" class="col-md-12 col-lg-6">
-                        <div class="mb-3">
-                            {{ trans('pgsql-ssl-mode') }}:
-                            <select name="pgsql_ssl_mode" class="form-select">
-                                <option value="" selected>------</option>
-                                <option value="disable">disable</option>
-                                <option value="allow">allow</option>
-                                <option value="prefer">prefer</option>
-                                <option value="require">require</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div id="pgsql_endpoint" class="col-md-12 col-lg-6">
-                        <div class="mb-3">
-                            {{ trans('pgsql-endpoint') }}:
-                            <input type="text" name="pgsql_endpoint" class="form-control"
-                                   placeholder="{{ trans('optional') }}"/>
                         </div>
                     </div>
                 </div>
-                <div class="row align-items-center gx-2">
-                    <div class="col-md-12 col-lg-6">
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="fs_debug"
-                                       value="true"/>
-                                {{ trans('debug-mode') }}
-                            </label>
+
+                <!-- Usuario administrador -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fa-solid fa-user-shield me-2"></i>{{ trans('admin') }}</h5>
+                    </div>
+                    <div class="card-body pb-0">
+                        <div class="row gx-2">
+                            <div class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('user') }}:
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fa-solid fa-user"></i>
+                                        </span>
+                                        <input type="text" name="fs_initial_user" value="{{ fsc.initial_user }}"
+                                               class="form-control"
+                                               placeholder="admin" maxlength="50"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('password') }}:
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fa-solid fa-lock"></i>
+                                        </span>
+                                        <input type="password" name="fs_initial_pass" value="{{ fsc.initial_pass }}"
+                                               class="form-control" placeholder="admin" maxlength="32"/>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-12 col-lg-6">
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="fs_gtm"
-                                       value="true"/>
-                                {{ trans('send-anonymous-data') }}
-                            </label>
+                </div>
+
+                <!-- Base de datos -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fa-solid fa-database me-2"></i>{{ trans('database') }}</h5>
+                    </div>
+                    <div class="card-body pb-0">
+                        <div class="row gx-2">
+                            <div class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('db-type') }}:
+                                    <select id="db_type" name="fs_db_type" class="form-select">
+                                        {% if fsc.db_type == 'mysql' %}
+                                            <option value="mysql" selected>MySQL</option>
+                                            <option value="postgresql">PostgreSQL</option>
+                                        {% else %}
+                                            <option value="mysql">MySQL</option>
+                                            <option value="postgresql" selected>PostgreSQL</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('db-host') }}:
+                                    <input type="text" name="fs_db_host" value="{{ fsc.db_host }}"
+                                           class="form-control" required/>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('db-port') }}:
+                                    <input type="number" id="db_port" name="fs_db_port"
+                                           value="{{ fsc.db_port }}" class="form-control" required/>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('db-name') }}:
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fa-solid fa-database"></i>
+                                        </span>
+                                        <input type="text" name="fs_db_name" value="{{ fsc.db_name }}"
+                                               class="form-control" required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('db-user') }}:
+                                    <input type="text" id="db_user" name="fs_db_user" value="{{ fsc.db_user }}"
+                                           class="form-control" required/>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('db-password') }}:
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fa-solid fa-key"></i>
+                                        </span>
+                                        <input type="password" name="fs_db_pass" value="{{ fsc.db_pass }}"
+                                               class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="mysql_socket_div" class="col-md-12">
+                                <div class="mb-3">
+                                    {{ trans('mysql-socket') }}:
+                                    <input type="text" name="mysql_socket" class="form-control"
+                                           placeholder="{{ trans('optional') }}"/>
+                                    <div class="form-text">{{ trans('mysql-socket-p') }}</div>
+                                </div>
+                            </div>
+                            <div id="pgsql_ssl_div" class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('pgsql-ssl-mode') }}:
+                                    <select name="pgsql_ssl_mode" class="form-select">
+                                        <option value="" selected>------</option>
+                                        <option value="disable">disable</option>
+                                        <option value="allow">allow</option>
+                                        <option value="prefer">prefer</option>
+                                        <option value="require">require</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="pgsql_endpoint" class="col-md-12 col-lg-6">
+                                <div class="mb-3">
+                                    {{ trans('pgsql-endpoint') }}:
+                                    <input type="text" name="pgsql_endpoint" class="form-control"
+                                           placeholder="{{ trans('optional') }}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avanzado -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fa-solid fa-cogs me-2"></i>{{ trans('advanced') }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row align-items-center gx-2">
+                            <div class="col-md-12 col-lg-6">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="fs_debug"
+                                               value="true"/>
+                                        {{ trans('debug-mode') }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="fs_gtm"
+                                               value="true"/>
+                                        {{ trans('send-anonymous-data') }}
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -292,12 +355,14 @@
                     </div>
                 </div>
             </div>
+
+            <footer class="text-center pt-5 pb-3">
+                &COPY; 2013-{{ 'now' | date('Y') }}
+                <a href="https://facturascripts.com" rel="nofollow" target="_blank"
+                   class="text-muted">FacturaScripts</a>
+            </footer>
         </div>
     </div>
 </div>
-<footer class="text-center pt-5 pb-3">
-    &COPY; 2013-{{ 'now' | date('Y') }}
-    <a href="https://facturascripts.com" rel="nofollow" target="_blank" class="text-muted">FacturaScripts</a>
-</footer>
 </body>
 </html>

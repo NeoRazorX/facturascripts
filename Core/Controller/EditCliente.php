@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -92,7 +92,7 @@ class EditCliente extends ComercialContactController
         return $data;
     }
 
-    protected function createDocumentView(string $viewName, string $model, string $label)
+    protected function createDocumentView(string $viewName, string $model, string $label): void
     {
         $this->createCustomerListView($viewName, $model, $label);
 
@@ -102,7 +102,7 @@ class EditCliente extends ComercialContactController
         $this->addButtonApproveDocument($viewName);
     }
 
-    protected function createInvoiceView(string $viewName)
+    protected function createInvoiceView(string $viewName): void
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
 
@@ -117,6 +117,7 @@ class EditCliente extends ComercialContactController
     protected function createViews()
     {
         parent::createViews();
+
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fa-solid fa-piggy-bank');
 
@@ -145,10 +146,7 @@ class EditCliente extends ComercialContactController
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function editAction()
+    protected function editAction(): bool
     {
         $return = parent::editAction();
         if ($return && $this->active === $this->getMainViewName()) {
@@ -161,10 +159,7 @@ class EditCliente extends ComercialContactController
         return $return;
     }
 
-    /**
-     * @return bool
-     */
-    protected function insertAction()
+    protected function insertAction(): bool
     {
         if (false === parent::insertAction()) {
             return false;
@@ -248,7 +243,7 @@ class EditCliente extends ComercialContactController
     /**
      * Load the available language values from translator.
      */
-    protected function loadLanguageValues(string $viewName)
+    protected function loadLanguageValues(string $viewName): void
     {
         $columnLangCode = $this->views[$viewName]->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
@@ -261,7 +256,7 @@ class EditCliente extends ComercialContactController
         }
     }
 
-    protected function setCustomWidgetValues(string $viewName)
+    protected function setCustomWidgetValues(string $viewName): void
     {
         // Load values option to VAT Type select input
         $columnVATType = $this->views[$viewName]->columnForName('vat-regime');

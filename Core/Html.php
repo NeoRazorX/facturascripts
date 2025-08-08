@@ -99,7 +99,7 @@ final class Html
                 return '';
             }
 
-            $path = FS_ROUTE . '/';
+            $path = Tools::config('route') . '/';
             return substr($string, 0, strlen($path)) == $path ?
                 $string :
                 str_replace('//', '/', $path . $string);

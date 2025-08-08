@@ -103,7 +103,7 @@ class EditSettings extends PanelController
         // find current default tax
         $taxModel = new Impuesto();
         $codimpuesto = Tools::settings('default', 'codimpuesto');
-        if ($taxModel->loadFromCode($codimpuesto)) {
+        if ($taxModel->load($codimpuesto)) {
             return true;
         }
 
@@ -221,7 +221,7 @@ class EditSettings extends PanelController
 
         // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
-            $this->views[$viewName]->disableColumn('company');
+            $this->listView($viewName)->disableColumn('company');
         } else {
             // Filters with various companies
             $this->listView($viewName)->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());

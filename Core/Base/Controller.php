@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -145,7 +145,7 @@ class Controller implements ControllerInterface
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
 
-        $this->checkPhpVersion(8.1);
+        $this->checkPhpVersion(8.0);
     }
 
     /**
@@ -233,14 +233,15 @@ class Controller implements ControllerInterface
         $this->multiRequestProtection->addSeed($user->nick);
 
         // Have this user a default page?
+        $cookiesExpire = time() + Tools::config('cookies_expire');
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE);
+            $this->response->cookie('fsHomepage', $this->user->homepage, $cookiesExpire);
             $this->user->save();
         } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;
-            $this->response->cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE);
+            $this->response->cookie('fsHomepage', $this->user->homepage, $cookiesExpire);
             $this->user->save();
         }
     }
@@ -355,17 +356,18 @@ class Controller implements ControllerInterface
 
         // Cargar el usuario desde la base de datos usando el nick
         $user = new DinUser();
-        if (false === $user->loadFromCode($cookieNick)) {
+        if (false === $user->load($cookieNick)) {
             // Si el usuario no se encuentra, registrar advertencia y fallar autenticación
             Tools::log()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
             return false;
         }
 
         // Verificar si el usuario está activado
+        $cookiesExpire = time() + Tools::config('cookies_expire');
         if (false === $user->enabled) {
             // Si el usuario está desactivado, registrar advertencia, eliminar cookie y fallar autenticación
             Tools::log()->warning('login-user-disabled', ['%nick%' => $cookieNick]);
-            setcookie('fsNick', '', time() - FS_COOKIES_EXPIRE, '/');
+            setcookie('fsNick', '', $cookiesExpire, '/');
             return false;
         }
 
@@ -374,7 +376,7 @@ class Controller implements ControllerInterface
         if (false === $user->verifyLogkey($logKey)) {
             // Si la logkey no es válida, registrar advertencia, eliminar cookie y fallar autenticación
             Tools::log()->warning('login-cookie-fail');
-            setcookie('fsNick', '', time() - FS_COOKIES_EXPIRE, '/');
+            setcookie('fsNick', '', $cookiesExpire, '/');
             return false;
         }
 

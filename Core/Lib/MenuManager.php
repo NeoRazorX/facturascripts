@@ -79,7 +79,7 @@ class MenuManager
     protected function getAllPages(): array
     {
         return Cache::remember('model-Page-Show-Menu', function () {
-            $whereShowOnMenu = [Where::eq('showOnMenu', true)];
+            $whereShowOnMenu = [Where::eq('showonmenu', true)];
             $orderBy = [
                 'lower(menu)' => 'ASC',
                 'lower(submenu)' => 'ASC',

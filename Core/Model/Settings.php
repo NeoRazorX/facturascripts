@@ -47,6 +47,42 @@ class Settings extends ModelClass
      */
     protected $properties;
 
+    public function __get(string $key)
+    {
+        $properties = $this->getProperties();
+        if (array_key_exists($key, $properties)) {
+            return $properties[$key];
+        }
+
+        return parent::__get($key);
+    }
+
+    public function __isset(string $key): bool
+    {
+        $properties = $this->getProperties();
+        if (array_key_exists($key, $properties)) {
+            return true;
+        }
+
+        return parent::__isset($key);
+    }
+
+    public function __unset(string $key): void
+    {
+        $properties = $this->getProperties();
+        if (array_key_exists($key, $properties)) {
+            $this->removeProperty($key);
+            return;
+        }
+
+        parent::__unset($key);
+    }
+
+    public function __set(string $key, $value): void
+    {
+        $this->setProperty($key, $value);
+    }
+
     public function clearCache(): void
     {
         parent::clearCache();
@@ -82,16 +118,29 @@ class Settings extends ModelClass
         return 'name';
     }
 
+    public function removeProperty(string $key): self
+    {
+        $properties = $this->getProperties();
+        if (array_key_exists($key, $properties)) {
+            unset($properties[$key]);
+            $this->setProperties($properties);
+        }
+
+        return $this;
+    }
+
     public function setProperties(array $properties): void
     {
         $this->properties = json_encode($properties, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
-    public function setProperty(string $key, string $value): void
+    public function setProperty(string $key, ?string $value): self
     {
         $properties = $this->getProperties();
         $properties[$key] = $value;
         $this->setProperties($properties);
+
+        return $this;
     }
 
     public static function tableName(): string

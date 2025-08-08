@@ -172,8 +172,8 @@ class Empresa extends ModelClass
         new AttachedFile();
 
         $num = mt_rand(1, 9999);
-        $name = defined('FS_INITIAL_EMPRESA') ? FS_INITIAL_EMPRESA : 'E-' . $num;
-        $codpais = defined('FS_INITIAL_CODPAIS') ? FS_INITIAL_CODPAIS : 'ESP';
+        $name = Tools::config('initial_empresa', 'E-' . $num);
+        $codpais = Tools::config('initial_codpais', 'ESP');
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,direccion,administrador,cifnif,nombre,'
             . 'nombrecorto,personafisica,regimeniva) '
             . "VALUES (1,'','" . $codpais . "','','','00000014Z','" . Tools::textBreak($name, 100)

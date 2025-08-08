@@ -50,6 +50,12 @@ class Installer implements ControllerInterface
     /** @var string */
     public $db_user;
 
+    /** @var string */
+    public $initial_pass;
+
+    /** @var string */
+    public $initial_user;
+
     /** @var Request */
     protected $request;
 
@@ -84,6 +90,8 @@ class Installer implements ControllerInterface
         $this->db_port = (int)$this->request->get('fs_db_port', 3306);
         $this->db_type = $this->request->get('fs_db_type', 'mysql');
         $this->db_user = strtolower(trim($this->request->get('fs_db_user', 'root')));
+        $this->initial_user = $this->request->get('fs_initial_user', '');
+        $this->initial_pass = $this->request->get('fs_initial_pass', '');
 
         $installed = $this->searchErrors() &&
             $this->request->method() === 'POST' &&
@@ -98,7 +106,10 @@ class Installer implements ControllerInterface
                 return;
             }
 
-            echo Html::render('Installer/Redir.html.twig');
+            echo Html::render('Installer/Redir.html.twig', [
+                'initial_user' => empty($this->initial_user) ? 'admin' : $this->initial_user,
+                'initial_pass' => empty($this->initial_pass) ? 'admin' : $this->initial_pass,
+            ]);
             return;
         }
 
@@ -253,6 +264,16 @@ class Installer implements ControllerInterface
 
         if ($this->request->request->get('fs_gtm', false)) {
             fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
+        }
+
+        $initialUser = $this->request->request->get('fs_initial_user', '');
+        if (!empty($initialUser)) {
+            fwrite($file, "define('FS_INITIAL_USER', '" . $initialUser . "');\n");
+        }
+
+        $initialPass = $this->request->request->get('fs_initial_pass', '');
+        if (!empty($initialPass)) {
+            fwrite($file, "define('FS_INITIAL_PASS', '" . $initialPass . "');\n");
         }
 
         fclose($file);
