@@ -247,6 +247,17 @@ abstract class ModelClass
             new static($data);
     }
 
+    public function getDirty(): array
+    {
+        $dirty = [];
+        foreach (array_keys($this->getModelFields()) as $key) {
+            if ($this->isDirty($key)) {
+                $dirty[$key] = $this->{$key};
+            }
+        }
+        return $dirty;
+    }
+
     public function getOriginal(?string $key = null)
     {
         if ($key === null) {
