@@ -74,7 +74,7 @@ final class Request
         if (stripos($userAgent, 'chrome') !== false) {
             return 'chrome';
         }
-        if (stripos($userAgent, 'edge') !== false) {
+        if (stripos($userAgent, 'edg/') !== false || stripos($userAgent, 'edge') !== false) {
             return 'edge';
         }
         if (stripos($userAgent, 'firefox') !== false) {
