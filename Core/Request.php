@@ -366,7 +366,7 @@ final class Request
         $url = explode('?', $_SERVER['REQUEST_URI'])[0];
 
         // si el principio coincide con FS_ROUTE, lo quitamos
-        $route = FS_ROUTE;
+        $route = Tools::config('route');
         if (substr($url, 0, strlen($route)) === $route) {
             $url = substr($url, strlen($route));
         }
