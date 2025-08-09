@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Cliente as CoreCliente;
 use FacturaScripts\Core\Model\Contacto as CoreContacto;
 use FacturaScripts\Core\Model\User;
@@ -231,6 +232,8 @@ abstract class SalesDocument extends TransformerDocument
             $newLine->pvpunitario = $this->getRate()->applyTo($variant, $product);
             $newLine->recargo = $product->getTax()->recargo;
             $newLine->referencia = $variant->referencia;
+
+            Calculator::calculateLine($this, $newLine);
 
             // allow extensions
             $this->pipe('getNewProductLine', $newLine, $variant, $product);
