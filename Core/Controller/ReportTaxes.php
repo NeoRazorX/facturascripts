@@ -279,7 +279,7 @@ class ReportTaxes extends Controller
             $code = $row['codigo'] . '-' . $row['iva'] . '-' . $row['recargo'] . '-' . $row['irpf'] . '-' . $row['suplido'];
             if (isset($data[$code])) {
                 $data[$code]['neto'] += $row['suplido'] ? 0 : $pvpTotal;
-                $data[$code]['totaliva'] += $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float)$row['iva'] * $pvpTotal / 100;
+                $data[$code]['totaliva'] += $row['suplido'] || InvoiceOperation::isReverseChargeOperation($row['operacion'] ?? '') ? 0 : (float)$row['iva'] * $pvpTotal / 100;
                 $data[$code]['totalrecargo'] += $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100;
                 $data[$code]['totalirpf'] += $row['suplido'] ? 0 : (float)$row['irpf'] * $pvpTotal / 100;
                 $data[$code]['suplidos'] += $row['suplido'] ? $pvpTotal : 0;
@@ -299,7 +299,7 @@ class ReportTaxes extends Controller
                 'cifnif' => $row['cifnif'],
                 'neto' => $row['suplido'] ? 0 : $pvpTotal,
                 'iva' => $row['suplido'] ? 0 : (float)$row['iva'],
-                'totaliva' => $row['suplido'] || $row['operacion'] === InvoiceOperation::INTRA_COMMUNITY ? 0 : (float)$row['iva'] * $pvpTotal / 100,
+                'totaliva' => $row['suplido'] || InvoiceOperation::isReverseChargeOperation($row['operacion'] ?? '') ? 0 : (float)$row['iva'] * $pvpTotal / 100,
                 'recargo' => $row['suplido'] ? 0 : (float)$row['recargo'],
                 'totalrecargo' => $row['suplido'] ? 0 : (float)$row['recargo'] * $pvpTotal / 100,
                 'irpf' => $row['suplido'] ? 0 : (float)$row['irpf'],
