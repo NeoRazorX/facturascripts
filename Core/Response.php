@@ -125,7 +125,7 @@ final class Response
 
         // Detectar el tipo MIME del archivo
         $mime_type = mime_content_type($real_path) ?: 'application/octet-stream';
-        
+
         $this->headers->set('Content-Type', $mime_type);
         $this->headers->set('Content-Disposition', $disposition);
         $this->headers->set('Content-Length', (int)filesize($real_path));
@@ -185,95 +185,13 @@ final class Response
 
     public function redirect(string $url, int $delay = 0): self
     {
-        // Validar y sanitizar la URL para prevenir open redirects
-        $safe_url = $this->validateRedirectUrl($url);
-        
         if ($delay > 0) {
-            $this->headers->set('Refresh', $delay . '; url=' . $safe_url);
-            return $this;
+            $this->headers->set('Refresh', $delay . '; url=' . $url);
+        } else {
+            $this->headers->set('Location', $url);
         }
 
-        $this->headers->set('Location', $safe_url);
         return $this;
-    }
-    
-    private function validateRedirectUrl(string $url): string
-    {
-        // Eliminar espacios en blanco y caracteres de control
-        $url = trim($url);
-        $url = preg_replace('/[\x00-\x1F\x7F]/', '', $url);
-        
-        // Si la URL está vacía después de limpiar, usar la raíz
-        if (empty($url)) {
-            return '/';
-        }
-        
-        // Parsear la URL
-        $parsed = parse_url($url);
-        
-        // Si no se puede parsear, redirigir a la raíz
-        if ($parsed === false) {
-            return '/';
-        }
-        
-        // Si es una URL relativa (no tiene scheme), es segura
-        if (!isset($parsed['scheme'])) {
-            // Asegurar que las URLs relativas empiecen con /
-            if (!str_starts_with($url, '/')) {
-                return '/' . $url;
-            }
-            return $url;
-        }
-        
-        // Si tiene scheme, validar que sea http o https
-        if (!in_array(strtolower($parsed['scheme']), ['http', 'https'])) {
-            return '/';
-        }
-        
-        // Si tiene host, validar contra una lista blanca de dominios permitidos
-        if (isset($parsed['host'])) {
-            $allowed_hosts = $this->getAllowedRedirectHosts();
-            
-            // Si no hay hosts permitidos configurados, solo permitir el host actual
-            if (empty($allowed_hosts)) {
-                $current_host = $_SERVER['HTTP_HOST'] ?? '';
-                // Si no hay host actual (ej: CLI/tests) o el host es diferente, denegar
-                if (empty($current_host) || $parsed['host'] !== $current_host) {
-                    // URL externa no permitida, redirigir a la raíz
-                    return '/';
-                }
-            } else {
-                // Verificar contra la lista blanca
-                $host_allowed = false;
-                foreach ($allowed_hosts as $allowed_host) {
-                    if ($parsed['host'] === $allowed_host || 
-                        (str_starts_with($allowed_host, '.') && str_ends_with($parsed['host'], $allowed_host))) {
-                        $host_allowed = true;
-                        break;
-                    }
-                }
-                
-                if (!$host_allowed) {
-                    return '/';
-                }
-            }
-        }
-        
-        return $url;
-    }
-    
-    private function getAllowedRedirectHosts(): array
-    {
-        // Obtener hosts permitidos de la configuración
-        // Por defecto, solo permitir el host actual
-        $config_hosts = Tools::config('allowed_redirect_hosts', '');
-        
-        if (empty($config_hosts)) {
-            return [];
-        }
-        
-        // Convertir string separado por comas en array
-        return array_map('trim', explode(',', $config_hosts));
     }
 
     public function send(): void
@@ -347,7 +265,7 @@ final class Response
                 'httponly' => $cookie['httponly'] ?? true,
                 'samesite' => $cookie['samesite'] ?? 'Lax'
             ];
-            
+
             setcookie($cookie['name'], $cookie['value'], $options);
         }
     }

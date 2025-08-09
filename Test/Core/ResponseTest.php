@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Response;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 final class ResponseTest extends TestCase
 {
@@ -48,61 +49,33 @@ final class ResponseTest extends TestCase
     public function testCookieWithSecurityFlags(): void
     {
         $response = new Response();
-        
+
         // Test que los valores por defecto de seguridad se aplican
-        $reflection = new \ReflectionClass($response);
+        $reflection = new ReflectionClass($response);
         $cookiesProperty = $reflection->getProperty('cookies');
         $cookiesProperty->setAccessible(true);
-        
+
         $response->cookie('test', 'value');
         $cookies = $cookiesProperty->getValue($response);
-        
+
         $this->assertTrue($cookies['test']['httponly']);
         $this->assertEquals('Lax', $cookies['test']['samesite']);
-    }
-
-    public function testRedirectValidation(): void
-    {
-        $response = new Response();
-        
-        // Test redirección relativa (segura)
-        $reflection = new \ReflectionClass($response);
-        $method = $reflection->getMethod('validateRedirectUrl');
-        $method->setAccessible(true);
-        
-        // URL relativa normal
-        $this->assertEquals('/dashboard', $method->invoke($response, '/dashboard'));
-        
-        // URL relativa sin /
-        $this->assertEquals('/admin', $method->invoke($response, 'admin'));
-        
-        // URL con caracteres de control (debe limpiarlos)
-        $this->assertEquals('/clean', $method->invoke($response, "/clean\x00\x01"));
-        
-        // URL externa no permitida (debe redirigir a /)
-        $this->assertEquals('/', $method->invoke($response, 'http://evil.com'));
-        
-        // Esquema no permitido (debe redirigir a /)
-        $this->assertEquals('/', $method->invoke($response, 'javascript:alert(1)'));
-        
-        // URL vacía
-        $this->assertEquals('/', $method->invoke($response, ''));
     }
 
     public function testPdfFileNameSanitization(): void
     {
         $response = new Response();
         $response->disableSend(); // Deshabilitar envío para tests
-        
-        $reflection = new \ReflectionClass($response);
+
+        $reflection = new ReflectionClass($response);
         $headersProperty = $reflection->getProperty('headers');
         $headersProperty->setAccessible(true);
-        
+
         $response->pdf('PDF content', 'file<script>.pdf');
-        
+
         $headers = $headersProperty->getValue($response);
         $headerData = $headers->all();
-        
+
         // Verificar que el nombre del archivo fue sanitizado
         $this->assertStringContainsString('filename="filescript.pdf"', $headerData['Content-Disposition']);
     }
@@ -111,16 +84,16 @@ final class ResponseTest extends TestCase
     {
         $response = new Response();
         $response->disableSend(); // Deshabilitar envío para tests
-        
+
         // Test archivo que no existe
         $tempFile = sys_get_temp_dir() . '/test_file_' . uniqid() . '.txt';
-        
-        $reflection = new \ReflectionClass($response);
+
+        $reflection = new ReflectionClass($response);
         $httpCodeProperty = $reflection->getProperty('http_code');
         $httpCodeProperty->setAccessible(true);
-        
+
         $response->file($tempFile);
-        
+
         // Debe establecer código 404 para archivo no encontrado
         $this->assertEquals(Response::HTTP_NOT_FOUND, $httpCodeProperty->getValue($response));
     }
@@ -129,23 +102,23 @@ final class ResponseTest extends TestCase
     {
         $response = new Response();
         $response->disableSend(); // Deshabilitar envío para tests
-        
+
         // Crear archivo temporal para el test
         $tempFile = tempnam(sys_get_temp_dir(), 'test');
         file_put_contents($tempFile, 'test content');
-        
-        $reflection = new \ReflectionClass($response);
+
+        $reflection = new ReflectionClass($response);
         $headersProperty = $reflection->getProperty('headers');
         $headersProperty->setAccessible(true);
-        
+
         $response->file($tempFile, 'file<>"|*.txt');
-        
+
         $headers = $headersProperty->getValue($response);
         $headerData = $headers->all();
-        
+
         // Verificar que el nombre fue sanitizado
         $this->assertStringContainsString('filename="file.txt"', $headerData['Content-Disposition']);
-        
+
         // Limpiar
         unlink($tempFile);
     }
