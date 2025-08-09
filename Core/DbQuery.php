@@ -51,6 +51,9 @@ final class DbQuery
     /** @var array */
     public $orderBy = [];
 
+    /** @var array */
+    private $joins = [];
+
     /** @var string */
     private $table;
 
@@ -76,6 +79,23 @@ final class DbQuery
         }
 
         return $this->$method(...$parameters);
+    }
+
+    /**
+     * Añade una cláusula JOIN a la consulta.
+     *
+     * @param string $table Nombre de la tabla a unir.
+     * @param string $key1 Clave de la tabla principal para la unión.
+     * @param string $key2 Clave de la tabla unida para la unión.
+     * @return $this
+     */
+    public function join(string $table, string $key1, string $key2): self
+    {
+        $this->joins[] = 'JOIN ' . self::db()->escapeColumn($table) . ' ON ' .
+            self::db()->escapeColumn($this->table) . '.' . self::db()->escapeColumn($key1) . ' = ' .
+            self::db()->escapeColumn($table) . '.' . self::db()->escapeColumn($key2);
+
+        return $this;
     }
 
     public function array(string $key, string $value): array
@@ -326,11 +346,29 @@ final class DbQuery
         return $this;
     }
 
+    /**
+     * Establece los campos a seleccionar en la consulta.
+     * Permite el uso de la cláusula AS para alias de columnas, tanto en mayúsculas como en minúsculas.
+     *
+     * @param string $fields Cadena de campos separados por comas (ej. 'id, name AS full_name, date as creation_date').
+     * @return $this
+     */
     public function select(string $fields): self
     {
         $list = [];
         foreach (explode(',', $fields) as $field) {
-            $list[] = self::db()->escapeColumn(trim($field));
+            $trimmedField = trim($field);
+            $parts = preg_split('/\s+AS\s+/i', $trimmedField);
+
+            if (count($parts) > 1) {
+                // Si hay un 'AS', escapamos la columna original y mantenemos el alias
+                $originalColumn = trim($parts[0]);
+                $alias = trim($parts[1]);
+                $list[] = self::db()->escapeColumn($originalColumn) . ' AS ' . self::db()->escapeColumn($alias);
+            } else {
+                // Si no hay 'AS', solo escapamos la columna
+                $list[] = self::db()->escapeColumn($trimmedField);
+            }
         }
 
         $this->fields = implode(', ', $list);
@@ -348,6 +386,10 @@ final class DbQuery
     public function sql(): string
     {
         $sql = 'SELECT ' . $this->fields . ' FROM ' . self::db()->escapeColumn($this->table);
+
+        if (!empty($this->joins)) {
+            $sql .= ' ' . implode(' ', $this->joins);
+        }
 
         if (!empty($this->where)) {
             $sql .= Where::multiSqlLegacy($this->where);
