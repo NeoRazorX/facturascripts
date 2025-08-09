@@ -76,6 +76,7 @@ class FacturaProveedor extends PurchaseDocument
         $newLine->idfactura = $this->idfactura;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
+        $newLine->orden = $newLine->getOrder();
         $newLine->loadFromData($data, $exclude);
 
         // allow extensions
