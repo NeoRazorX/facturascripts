@@ -152,7 +152,7 @@ trait RandomDataTrait
 
     protected function getRandomProduct(): Producto
     {
-        $num = mt_rand(1, 9999);
+        $num = mt_rand(1, 99999);
         $product = new Producto();
         $product->referencia = 'test' . $num;
         $product->descripcion = 'Test Product ' . $num;
