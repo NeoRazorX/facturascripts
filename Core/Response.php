@@ -114,13 +114,8 @@ final class Response
         }
 
         // Sanitizar el nombre del archivo si se proporciona
-        if ($file_name) {
-            // Eliminar caracteres peligrosos del nombre del archivo
-            $safe_name = preg_replace('/[^a-zA-Z0-9._-]/', '', $file_name);
-            // Si después de sanitizar el nombre está vacío, usar un nombre por defecto
-            if (empty($safe_name)) {
-                $safe_name = 'file_' . uniqid();
-            }
+        if (false === empty($file_name)) {
+            $safe_name = $this->sanitizeFileName($file_name);
             $disposition .= '; filename="' . $safe_name . '"';
         }
 
@@ -168,20 +163,12 @@ final class Response
 
     public function pdf(string $content, string $file_name = ''): void
     {
-        // si no tenemos nombre, generamos uno
-        if (empty($file_name)) {
-            $file_name = 'doc_' . uniqid() . '.pdf';
-        } else {
-            // Sanitizar el nombre del archivo para prevenir header injection
-            $file_name = preg_replace('/[^a-zA-Z0-9._-]/', '', $file_name);
-            if (empty($file_name)) {
-                $file_name = 'doc_' . uniqid() . '.pdf';
-            }
-        }
+        $safe_name = $this->sanitizeFileName($file_name, 'doc_', '.pdf');
 
         $this->headers->set('Content-Type', 'application/pdf');
-        $this->headers->set('Content-Disposition', 'inline; filename="' . $file_name . '"');
+        $this->headers->set('Content-Disposition', 'inline; filename="' . $safe_name . '"');
         $this->headers->set('Content-Length', strlen($content));
+
         $this->content = $content;
 
         $this->send();
@@ -272,5 +259,19 @@ final class Response
 
             setcookie($cookie['name'], $cookie['value'], $options);
         }
+    }
+
+    private function sanitizeFileName(string $fileName, string $prefix = 'file_', string $suffix = ''): string
+    {
+        if (empty($fileName)) {
+            return $prefix . uniqid() . $suffix;
+        }
+
+        $sanitizedName = preg_replace('/[^a-zA-Z0-9._-]/', '', $fileName);
+        if (empty($sanitizedName)) {
+            return $prefix . uniqid() . $suffix;
+        }
+
+        return $sanitizedName;
     }
 }
