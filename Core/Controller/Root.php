@@ -40,11 +40,11 @@ class Root extends Controller
 
         // si el usuario tiene homepage y es distinta de Root, redirigimos
         if (!empty($this->user->homepage) && $this->user->homepage !== 'Root') {
-            $this->response()->redirect($this->user->homepage);
+            $this->response()->redirect($this->user->homepage)->send();
             return;
         }
 
         // si no tiene homepage, redireccionamos al Dashboard
-        $this->response()->redirect('Dashboard');
+        $this->response()->redirect('Dashboard')->send();
     }
 }

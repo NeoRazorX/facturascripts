@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,12 +22,16 @@ namespace FacturaScripts\Core\Template;
 use Exception;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
 use FacturaScripts\Core\CrashReport;
+use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 
 abstract class ErrorController implements ErrorControllerInterface
 {
     /** @var Exception */
     protected $exception;
+
+    /** @var Response */
+    private $response;
 
     /** @var bool */
     protected $save_crash = false;
@@ -112,6 +116,15 @@ abstract class ErrorController implements ErrorControllerInterface
             . '</div>';
 
         return $this->html($title, $body, $bodyCss);
+    }
+
+    protected function response(): Response
+    {
+        if (null === $this->response) {
+            $this->response = new Response();
+        }
+
+        return $this->response;
     }
 
     protected function setSaveCrash(bool $save): void
