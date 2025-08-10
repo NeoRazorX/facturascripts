@@ -159,7 +159,7 @@ class OpenAi
         return $response->json()['text'] ?? '';
     }
 
-    public function chat(array $messages, string $user = '', string $model = 'gpt-4o-mini'): string
+    public function chat(array $messages, string $user = '', string $model = 'gpt-5-mini'): string
     {
         $params = new stdClass();
         $params->model = $model;
