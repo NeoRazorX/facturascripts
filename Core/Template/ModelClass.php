@@ -448,8 +448,12 @@ abstract class ModelClass
         $fields = $this->getModelFields();
         if (isset($fields['description'])) {
             return 'description';
+        } elseif (isset($fields['descripcion'])) {
+            return 'descripcion';
         } elseif (isset($fields['name'])) {
             return 'name';
+        } elseif (isset($fields['nombre'])) {
+            return 'nombre';
         }
 
         return static::primaryColumn();
