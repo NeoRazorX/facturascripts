@@ -80,6 +80,7 @@ final class Response
     public function disableSend(bool $disable = true): self
     {
         $this->send_disabled = $disable;
+
         return $this;
     }
 
@@ -130,11 +131,13 @@ final class Response
         $this->headers->set('Content-Disposition', $disposition);
         $this->headers->set('Content-Length', (int)filesize($real_path));
 
+        if ($this->send_disabled) {
+            return;
+        }
+
         $this->sendHeaders();
 
-        if (!$this->send_disabled) {
-            readfile($real_path);
-        }
+        readfile($real_path);
     }
 
     public function getContent(): string
@@ -157,6 +160,7 @@ final class Response
     public function json(array $data): void
     {
         $this->headers->set('Content-Type', 'application/json');
+
         $this->content = json_encode($data);
 
         $this->send();
