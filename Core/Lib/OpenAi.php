@@ -191,31 +191,7 @@ class OpenAi
         return $json['choices'][0]['message']['content'];
     }
 
-    /** @deprecated since 2024.9 and replaced with chat() */
-    public function chatGpt35turbo(array $messages, string $user = ''): string
-    {
-        return $this->chat($messages, $user, 'gpt-3.5-turbo');
-    }
-
-    /** @deprecated since 2024.9 and replaced with chat() */
-    public function chatGpt4(array $messages, string $user = ''): string
-    {
-        return $this->chat($messages, $user, 'gpt-4');
-    }
-
-    /** @deprecated since 2024.9 and replaced with chat() */
-    public function chatGpt4o(array $messages, string $user = ''): string
-    {
-        return $this->chat($messages, $user, 'gpt-4o');
-    }
-
-    /** @deprecated since 2024.9 and replaced with chat() */
-    public function chatGpt4turbo(array $messages, string $user = ''): string
-    {
-        return $this->chat($messages, $user, 'gpt-4-turbo');
-    }
-
-    public function chatJson(array $messages, array $response_format, string $user = '', string $model = 'gpt-4o-2024-08-06'): array
+    public function chatJson(array $messages, array $response_format, string $user = '', string $model = 'gpt-5-mini'): array
     {
         $params = new stdClass();
         $params->model = $model;
