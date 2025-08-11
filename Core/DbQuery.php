@@ -188,6 +188,14 @@ final class DbQuery
         return $this;
     }
 
+    /**
+     * Añade una cláusula HAVING a la consulta.
+     * 
+     * CUIDADO: Se deben de escapar los campos manualmente y colocar la condición (posgre SQL no soporta aliases en having)
+     * 
+     * Modo de uso:
+     * $query->having('FUNC(' . $db->escapeColumn($field) ' . ') > 0');
+     */
     public function having(string $having): self
     {
         $this->having = $having;

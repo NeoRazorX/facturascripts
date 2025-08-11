@@ -473,14 +473,14 @@ final class DbQueryTest extends TestCase
                 .' SUM(' . $this->db()->escapeColumn('precio') . ') as total_precio'
             )
             ->groupBy('codfamilia')
-            ->having('total_precio > 25')
+            ->having('SUM(' . $this->db()->escapeColumn('precio') . ') > 25')
             ->whereLike('codfamilia', 'FAM%');
 
         $sql = 'SELECT ' . $this->db()->escapeColumn('codfamilia') . ', SUM(' . $this->db()->escapeColumn('precio') . ') AS ' . $this->db()->escapeColumn('total_precio')
             . ' FROM ' . $this->db()->escapeColumn('productos')
             . ' WHERE ' . Where::like('codfamilia', 'FAM%')->sql()
             . ' GROUP BY ' . $this->db()->escapeColumn('codfamilia')
-            . ' HAVING total_precio > 25';
+            . ' HAVING SUM(' . $this->db()->escapeColumn('precio') . ') > 25';
         $this->assertEquals($sql, $query->sql());
 
         $results = $query->get();
