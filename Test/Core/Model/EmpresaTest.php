@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -65,7 +65,7 @@ final class EmpresaTest extends TestCase
             'nombre'         => [100, 101],
             'nombrecorto'    => [32, 33],
             'provincia'      => [100, 101],
-            'regimeniva'     => [20, 21],
+            'regimeniva'     => [20, 51],
             'telefono1'      => [30, 31],
             'telefono2'      => [30, 31],
             'tipoidfiscal'   => [25, 26],

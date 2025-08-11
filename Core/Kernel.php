@@ -23,6 +23,8 @@ use Closure;
 use Exception;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
 use FacturaScripts\Core\Error\DefaultError;
+use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Mod\CalculatorModSpain;
 
 /**
  * El corazón de FacturaScripts. Se encarga de gestionar las rutas y ejecutar los controladores.
@@ -112,6 +114,9 @@ final class Kernel
         // cargamos el idioma almacenado en la cookie o el predeterminado
         $lang = $_COOKIE['fsLang'] ?? Tools::config('lang', 'es_ES');
         Translator::setDefaultLang($lang);
+
+        // cargamos los mods
+        Calculator::addMod(new CalculatorModSpain());
 
         // workers
         WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Delete');

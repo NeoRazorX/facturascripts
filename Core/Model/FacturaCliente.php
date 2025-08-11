@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\InvoiceTrait;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Template\ModelTrait;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as LineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
@@ -78,6 +79,8 @@ class FacturaCliente extends SalesDocument
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
         $newLine->loadFromData($data, $exclude);
+
+        Calculator::calculateLine($this, $newLine);
 
         // allow extensions
         $this->pipe('getNewLine', $newLine, $data, $exclude);
