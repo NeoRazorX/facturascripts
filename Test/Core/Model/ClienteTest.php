@@ -199,10 +199,16 @@ final class ClienteTest extends TestCase
 
         // asignamos un cifnif incorrecto
         $cliente->cifnif = '12345678A';
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
         $this->assertFalse($cliente->checkVies());
 
         // asignamos un cifnif correcto
         $cliente->cifnif = '503297887';
+        if (Vies::getLastError() != '') {
+            $this->markTestSkipped('Vies service error: ' . Vies::getLastError());
+        }
         $this->assertTrue($cliente->checkVies());
 
         // eliminamos

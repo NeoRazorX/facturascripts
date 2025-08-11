@@ -28,6 +28,7 @@ use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
+use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
 
@@ -37,19 +38,22 @@ abstract class Controller implements ControllerInterface
     private $className;
 
     /** @var DataBase */
-    protected $dataBase;
+    private $dataBase;
 
     /** @var Empresa */
     public $empresa;
 
+    /** @var MultiRequestProtection */
+    private $multiRequestProtection;
+
     /** @var Request */
-    public $request;
+    private $request;
+
+    /** @var bool */
+    protected $requiresAuth = true;
 
     /** @var Response */
     private $response;
-
-    /** @var string */
-    private $template;
 
     /** @var string */
     public $title;
@@ -62,19 +66,11 @@ abstract class Controller implements ControllerInterface
 
     public function __construct(string $className, string $url = '')
     {
-        Session::set('controllerName', $className);
-        Session::set('pageName', $className);
-        Session::set('uri', $url);
-
         $this->className = $className;
-        $this->dataBase = new DataBase();
-        $this->empresa = Empresas::default();
-        $this->request = Request::createFromGlobals();
-        $this->template = $className . '.html.twig';
         $this->url = $url;
 
         $pageData = $this->getPageData();
-        $this->title = empty($pageData) ? $className : Tools::lang()->trans($pageData['title']);
+        $this->title = empty($pageData) ? $className : Tools::trans($pageData['title']);
     }
 
     public static function addExtension($extension, int $priority = 100): void
@@ -100,28 +96,44 @@ abstract class Controller implements ControllerInterface
         ];
     }
 
-    public function getTemplate(): string
-    {
-        return $this->template;
-    }
-
     public function pipe(string $name, ...$arguments)
     {
         Tools::log()->error('no-extension-support', ['%className%' => static::class]);
+
         return null;
     }
 
     public function pipeFalse(string $name, ...$arguments): bool
     {
         Tools::log()->error('no-extension-support', ['%className%' => static::class]);
+
         return true;
+    }
+
+    public function request(): Request
+    {
+        if (null === $this->request) {
+            $this->request = Request::createFromGlobals();
+        }
+
+        return $this->request;
     }
 
     public function run(): void
     {
-        if (!$this->auth()) {
-            throw new KernelException('AccessDenied', 'access-denied');
+        Session::set('controllerName', $this->className);
+        Session::set('pageName', $this->className);
+        Session::set('uri', $this->url);
+
+        // Intentar autenticar al usuario siempre
+        $authenticated = $this->auth();
+
+        // Si el controlador requiere autenticación y no está autenticado, lanzar excepción
+        if ($this->requiresAuth && !$authenticated) {
+            throw new KernelException('AuthenticationRequired', 'authentication-required');
         }
+
+        $this->empresa = Empresas::default();
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($this->className);
@@ -134,32 +146,10 @@ abstract class Controller implements ControllerInterface
         return $this->className;
     }
 
-    protected function checkPhpVersion(float $min): void
-    {
-        $current = (float)substr(phpversion(), 0, 3);
-        if ($current < $min) {
-            Tools::log()->warning('php-support-end', ['%current%' => $current, '%min%' => $min]);
-        }
-    }
-
-    protected function response(): Response
-    {
-        if (null === $this->response) {
-            $this->response = new Response();
-        }
-
-        return $this->response;
-    }
-
-    public function setTemplate($template): void
-    {
-        $this->template = empty($template) ? '' : $template . '.html.twig';
-    }
-
     protected function auth(): bool
     {
         // Obtener el nick del usuario de la cookie
-        $cookieNick = $this->request->cookies->get('fsNick', '');
+        $cookieNick = $this->request()->cookie('fsNick', '');
         if (empty($cookieNick)) {
             // Si no hay nick en la cookie, no se puede autenticar
             return false;
@@ -178,34 +168,80 @@ abstract class Controller implements ControllerInterface
         if (false === $user->enabled) {
             // Si el usuario está desactivado, registrar advertencia, eliminar cookie y fallar autenticación
             Tools::log()->warning('login-user-disabled', ['%nick%' => $cookieNick]);
-            setcookie('fsNick', '', $cookiesExpire, '/');
+            $this->response()->cookie('fsNick', '', $cookiesExpire);
             return false;
         }
 
         // Verificar la logkey del usuario desde la cookie
-        $logKey = $this->request->cookies->get('fsLogkey', '') ?? '';
+        $logKey = $this->request()->cookie('fsLogkey', '') ?? '';
         if (false === $user->verifyLogkey($logKey)) {
             // Si la logkey no es válida, registrar advertencia, eliminar cookie y fallar autenticación
             Tools::log()->warning('login-cookie-fail');
-            setcookie('fsNick', '', $cookiesExpire, '/');
+            $this->response()->cookie('fsLogkey', $logKey);
             return false;
         }
 
         // Actualizar la última actividad del usuario si ha pasado el período definido
         if (time() - strtotime($user->lastactivity) > User::UPDATE_ACTIVITY_PERIOD) {
-            $ip = Session::getClientIp();
-            $browser = $this->request->headers->get('User-Agent');
+            $ip = $this->request()->ip();
+            $browser = $this->request()->browser();
             $user->updateActivity($ip, $browser);
             $user->save();
         }
 
         // Establecer el usuario en la sesión actual
         Session::set('user', $user);
+        $this->user = $user;
+
         return true;
+    }
+
+    protected function db(): DataBase
+    {
+        if (null === $this->dataBase) {
+            $this->dataBase = new DataBase();
+        }
+
+        return $this->dataBase;
+    }
+
+    protected function checkPhpVersion(float $min): void
+    {
+        $current = (float)substr(phpversion(), 0, 3);
+        if ($current < $min) {
+            Tools::log()->warning('php-support-end', ['%current%' => $current, '%min%' => $min]);
+        }
+    }
+
+
+    protected function response(): Response
+    {
+        if (null === $this->response) {
+            $this->response = new Response();
+        }
+
+        return $this->response;
     }
 
     protected function validateFormToken(): bool
     {
+        if (null === $this->multiRequestProtection) {
+            $this->multiRequestProtection = new MultiRequestProtection();
+        }
+
+        // valid request?
+        $token = $this->request()->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+            Tools::log()->warning('invalid-request');
+            return false;
+        }
+
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($token)) {
+            Tools::log()->warning('duplicated-request');
+            return false;
+        }
+
         return true;
     }
 }

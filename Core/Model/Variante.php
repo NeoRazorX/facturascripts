@@ -140,13 +140,24 @@ class Variante extends ModelClass
         $find = Tools::noHtml(mb_strtolower($query, 'UTF8'));
 
         // añadimos opciones al inicio del where
-        array_unshift(
-            $where,
-            new DataBaseWhere('LOWER(v.referencia)', $find . '%', 'LIKE'),
-            new DataBaseWhere('LOWER(v.referencia)', '%' . $find, 'LIKE', 'OR'),
-            new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
-            new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
-        );
+        if (str_contains($find, '%')) {
+            // si ya contiene %, usamos directamente sin añadir más %
+            array_unshift(
+                $where,
+                new DataBaseWhere('LOWER(v.referencia)', $find, 'LIKE'),
+                new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
+                new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
+            );
+        } else {
+            // búsqueda normal con % automático
+            array_unshift(
+                $where,
+                new DataBaseWhere('LOWER(v.referencia)', $find . '%', 'LIKE'),
+                new DataBaseWhere('LOWER(v.referencia)', '%' . $find, 'LIKE', 'OR'),
+                new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
+                new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
+            );
+        }
 
         $sql = "SELECT v." . $field . " AS code, p.descripcion AS description, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4"
             . " FROM " . static::tableName() . " v"

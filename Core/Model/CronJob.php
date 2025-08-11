@@ -64,6 +64,12 @@ class CronJob extends ModelClass
     /** @var float */
     public $last_duration;
 
+    /** @var string|null */
+    private $mock_date_time;
+
+    /** @var float|null */
+    private $mock_microtime;
+
     /** @var bool */
     private $overlapping = false;
 
@@ -82,7 +88,6 @@ class CronJob extends ModelClass
     public function clear(): void
     {
         parent::clear();
-        $this->date = Tools::dateTime();
         $this->done = false;
         $this->duration = 0.0;
         $this->enabled = true;
@@ -90,6 +95,12 @@ class CronJob extends ModelClass
         $this->fails = 0;
         $this->last_duration = 0.0;
         $this->running = 0;
+    }
+
+    public function clearMocks(): void
+    {
+        $this->mock_date_time = null;
+        $this->mock_microtime = null;
     }
 
     public function every(string $period): self
@@ -104,7 +115,7 @@ class CronJob extends ModelClass
             return $this;
         }
 
-        $this->start = microtime(true);
+        $this->start = $this->getCurrentMicrotime();
         if (strtotime($this->date) <= strtotime('-' . $period)) {
             $this->ready = true;
             return $this;
@@ -116,53 +127,69 @@ class CronJob extends ModelClass
 
     public function everyDay(int $day, int $hour, bool $strict = false): self
     {
-        $date = date('Y-m-' . $day);
+        $date = date('Y-m-' . $day, $this->getCurrentTimestamp());
         return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyDayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('today', $hour, $strict);
+        $date = date('Y-m-d', $this->getCurrentTimestamp());
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyFridayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('friday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('friday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyLastDayOfMonthAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('last day of this month', $hour, $strict);
+        $date = date('Y-m-d', strtotime('last day of this month', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyMondayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('monday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('monday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everySaturdayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('saturday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('saturday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everySundayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('sunday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('sunday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyThursdayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('thursday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('thursday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyTuesdayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('tuesday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('tuesday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function everyWednesdayAt(int $hour, bool $strict = false): self
     {
-        return $this->everyDayAux('wednesday', $hour, $strict);
+        $date = date('Y-m-d', strtotime('wednesday', $this->getCurrentTimestamp()));
+        return $this->everyDayAux($date, $hour, $strict);
+    }
+
+    public function everyYearAt(int $month, int $day, int $hour, bool $strict = false): self
+    {
+        $currentYear = date('Y', $this->getCurrentTimestamp());
+        $date = sprintf('%s-%02d-%02d', $currentYear, $month, $day);
+        return $this->everyDayAux($date, $hour, $strict);
     }
 
     public function isReady(): bool
@@ -176,13 +203,13 @@ class CronJob extends ModelClass
             return false;
         }
 
-        $this->start = microtime(true);
+        $this->start = $this->getCurrentMicrotime();
         $this->done = false;
         $this->failed = false;
         $this->running++;
         $this->last_duration = $this->duration;
         $this->duration = 0.0;
-        $this->date = Tools::dateTime();
+        $this->date = $this->getCurrentDateTime();
         if (false === $this->save()) {
             Tools::log('cron')->error('Error saving cronjob', [
                 'jobname' => $this->jobname,
@@ -209,7 +236,7 @@ class CronJob extends ModelClass
             $this->reload();
             $this->start = $start;
 
-            $this->duration = round(microtime(true) - $this->start, 5);
+            $this->duration = round($this->getCurrentMicrotime() - $this->start, 5);
             $this->done = true;
             $this->failed = true;
             $this->fails++;
@@ -223,13 +250,27 @@ class CronJob extends ModelClass
         $this->reload();
         $this->start = $start;
 
-        $this->duration = round(microtime(true) - $this->start, 5);
+        $this->duration = round($this->getCurrentMicrotime() - $this->start, 5);
         $this->done = true;
         $this->failed = false;
         $this->running--;
         $this->save();
 
         return true;
+    }
+
+    public function setMockDateTime(?string $dateTime, bool $update_microtime = true): void
+    {
+        $this->mock_date_time = $dateTime;
+
+        if ($update_microtime) {
+            $this->mock_microtime = strtotime($dateTime);
+        }
+    }
+
+    public function setMockMicrotime(?float $microtime): void
+    {
+        $this->mock_microtime = $microtime;
     }
 
     public static function tableName(): string
@@ -241,6 +282,10 @@ class CronJob extends ModelClass
     {
         $this->jobname = Tools::noHtml($this->jobname);
         $this->pluginname = Tools::noHtml($this->pluginname);
+
+        if (empty($this->date)) {
+            $this->date = $this->getCurrentDateTime();
+        }
 
         if ($this->running < 0) {
             $this->running = 0;
@@ -273,33 +318,65 @@ class CronJob extends ModelClass
         return $this;
     }
 
-    private function everyDayAux(string $day, int $hour, bool $strict): self
+    private function everyDayAux(string $date, int $hour, bool $strict): self
     {
         if (false === $this->enabled) {
             $this->ready = false;
             return $this;
         }
 
-        if (false === $this->exists()) {
-            $this->ready = true;
+        $last = strtotime($this->date ?? '-99 years');
+        $start = strtotime($date . ' +' . $hour . ' hours');
+        $end = $strict ?
+            strtotime($date . ' +' . $hour . ' hours +59 minutes') :
+            strtotime($date . ' +23 hours +59 minutes');
+        $this->start = $this->getCurrentMicrotime();
+
+        Tools::log()->error(
+            'current: ' . Tools::timeToDateTime((int)$this->start) . ', last: ' . Tools::timeToDateTime($last) .
+            ', start: ' . Tools::timeToDateTime($start) . ', end: ' . Tools::timeToDateTime($end)
+        );
+
+        // si se ha ejecutado antes, comprobamos que no sea pasada la fecha de inicio
+        if (!empty($this->date) && $last >= $start) {
+            $this->ready = false;
             return $this;
         }
 
-        // si strict es true, solamente devolvemos true si es la hora exacta
-        $end = $strict ?
-            strtotime($day . ' +' . $hour . ' hours +59 minutes') :
-            strtotime($day . ' +23 hours +59 minutes');
-
-        // devolvemos true si la última ejecución es anterior a hoy a la hora indicada
-        $last = strtotime($this->date);
-        $start = strtotime($day . ' +' . $hour . ' hours');
-        $this->start = microtime(true);
-        if ($last <= $start && $this->start >= $start && $this->start <= $end) {
+        // comprobamos que la fecha de inicio esté dentro del rango
+        if ($this->start >= $start && $this->start <= $end) {
             $this->ready = true;
             return $this;
         }
 
         $this->ready = false;
         return $this;
+    }
+
+    protected function getCurrentDateTime(?string $date = null): string
+    {
+        if ($this->mock_date_time !== null && $date === null) {
+            return $this->mock_date_time;
+        }
+
+        return Tools::dateTime($date);
+    }
+
+    protected function getCurrentMicrotime(): float
+    {
+        if ($this->mock_microtime !== null) {
+            return $this->mock_microtime;
+        }
+
+        return microtime(true);
+    }
+
+    protected function getCurrentTimestamp(): int
+    {
+        if ($this->mock_microtime !== null) {
+            return (int)$this->mock_microtime;
+        }
+
+        return time();
     }
 }

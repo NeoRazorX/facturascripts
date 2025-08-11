@@ -59,6 +59,11 @@ final class Kernel
         ];
     }
 
+    public static function clearRoutes(): void
+    {
+        self::$routes = [];
+    }
+
     public static function addRoutes(Closure $closure): void
     {
         self::$routesCallbacks[] = $closure;
@@ -135,8 +140,9 @@ final class Kernel
             // si tiene más de 8 horas, lo eliminamos
             if (filemtime($lockFile) < time() - 28800) {
                 unlink($lockFile);
+            } else {
+                return false;
             }
-            return false;
         }
 
         return false !== file_put_contents($lockFile, $processName);
@@ -206,7 +212,7 @@ final class Kernel
 
         $filePath = Tools::folder('MyFiles', 'routes.json');
         $content = json_encode(self::$routes, JSON_PRETTY_PRINT);
-        return false === file_put_contents($filePath, $content);
+        return false !== file_put_contents($filePath, $content);
     }
 
     public static function startTimer(string $name): void
@@ -262,6 +268,12 @@ final class Kernel
 
     private static function getRelativeUrl(string $url): string
     {
+        // sanitizamos la URL de entrada para prevenir path traversal
+        $url = filter_var($url, FILTER_SANITIZE_URL);
+        if ($url === false) {
+            throw new KernelException('InvalidUrl', 'Invalid URL provided');
+        }
+
         // obtenemos la ruta base de la configuración
         $route = Tools::config('route');
         if ($route === null) {

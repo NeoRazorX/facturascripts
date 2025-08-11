@@ -247,6 +247,17 @@ abstract class ModelClass
             new static($data);
     }
 
+    public function getDirty(): array
+    {
+        $dirty = [];
+        foreach (array_keys($this->getModelFields()) as $key) {
+            if ($this->isDirty($key)) {
+                $dirty[$key] = $this->{$key};
+            }
+        }
+        return $dirty;
+    }
+
     public function getOriginal(?string $key = null)
     {
         if ($key === null) {
@@ -437,8 +448,12 @@ abstract class ModelClass
         $fields = $this->getModelFields();
         if (isset($fields['description'])) {
             return 'description';
+        } elseif (isset($fields['descripcion'])) {
+            return 'descripcion';
         } elseif (isset($fields['name'])) {
             return 'name';
+        } elseif (isset($fields['nombre'])) {
+            return 'nombre';
         }
 
         return static::primaryColumn();

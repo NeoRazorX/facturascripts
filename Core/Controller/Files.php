@@ -68,7 +68,7 @@ class Files implements ControllerInterface
         $parts = explode('.', $filePath);
         $safe = [
             'accdb', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'html', 'ico', 'jpeg', 'jpg', 'js',
-            'json', 'map', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png', 'pptx', 'sql', 'svg',
+            'json', 'map', 'md', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png', 'pptx', 'sql', 'svg',
             'ttf', 'txt', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
         ];
         return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
@@ -117,6 +117,9 @@ class Files implements ControllerInterface
 
             case 'js':
                 return 'application/javascript';
+
+            case 'md':
+                return 'text/markdown';
 
             case 'xml':
             case 'xsig':

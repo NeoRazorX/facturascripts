@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,6 +43,9 @@ final class Response
     /** @var int */
     private $http_code;
 
+    /** @var bool */
+    private $send_disabled = false;
+
     public function __construct(int $http_code = 200)
     {
         $this->content = '';
@@ -51,17 +54,32 @@ final class Response
         $this->http_code = $http_code;
     }
 
-    public function cookie(string $name, string $value, int $expire = 0): self
+    public function cookie(string $name, string $value, int $expire = 0, bool $httpOnly = true, ?bool $secure = null, string $sameSite = 'Lax'): self
     {
         if (empty($expire)) {
             $expire = time() + (int)Tools::config('cookies_expire');
+        }
+
+        // Si no se especifica secure, detectar si estamos en HTTPS
+        if ($secure === null) {
+            $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
         }
 
         $this->cookies[$name] = [
             'name' => $name,
             'value' => $value,
             'expire' => $expire,
+            'httponly' => $httpOnly,
+            'secure' => $secure,
+            'samesite' => $sameSite,
         ];
+
+        return $this;
+    }
+
+    public function disableSend(bool $disable = true): self
+    {
+        $this->send_disabled = $disable;
 
         return $this;
     }
@@ -73,17 +91,48 @@ final class Response
 
     public function file(string $file_path, string $file_name = '', string $disposition = 'inline'): void
     {
-        if ($file_name) {
-            $disposition .= '; filename="' . $file_name . '"';
+        // Validar que el archivo existe y es legible
+        if (!file_exists($file_path) || !is_readable($file_path)) {
+            $this->setHttpCode(self::HTTP_NOT_FOUND);
+            $this->sendHeaders();
+            return;
         }
 
-        $this->headers->set('Content-Type', 'application/octet-stream');
+        // Obtener la ruta real y validar que no salga del directorio permitido
+        $real_path = realpath($file_path);
+        if ($real_path === false) {
+            $this->setHttpCode(self::HTTP_FORBIDDEN);
+            $this->sendHeaders();
+            return;
+        }
+
+        // Verificar que no es un directorio
+        if (is_dir($real_path)) {
+            $this->setHttpCode(self::HTTP_FORBIDDEN);
+            $this->sendHeaders();
+            return;
+        }
+
+        // Sanitizar el nombre del archivo si se proporciona
+        if (false === empty($file_name)) {
+            $safe_name = $this->sanitizeFileName($file_name);
+            $disposition .= '; filename="' . $safe_name . '"';
+        }
+
+        // Detectar el tipo MIME del archivo
+        $mime_type = mime_content_type($real_path) ?: 'application/octet-stream';
+
+        $this->headers->set('Content-Type', $mime_type);
         $this->headers->set('Content-Disposition', $disposition);
-        $this->headers->set('Content-Length', (int)filesize($file_path));
+        $this->headers->set('Content-Length', (int)filesize($real_path));
+
+        if ($this->send_disabled) {
+            return;
+        }
 
         $this->sendHeaders();
 
-        readfile($file_path);
+        readfile($real_path);
     }
 
     public function getContent(): string
@@ -106,6 +155,7 @@ final class Response
     public function json(array $data): void
     {
         $this->headers->set('Content-Type', 'application/json');
+
         $this->content = json_encode($data);
 
         $this->send();
@@ -113,14 +163,12 @@ final class Response
 
     public function pdf(string $content, string $file_name = ''): void
     {
-        // si no tenemos nombre, generamos uno
-        if (empty($file_name)) {
-            $file_name = 'doc_' . uniqid() . '.pdf';
-        }
+        $safe_name = $this->sanitizeFileName($file_name, 'doc_', '.pdf');
 
         $this->headers->set('Content-Type', 'application/pdf');
-        $this->headers->set('Content-Disposition', 'inline; filename="' . $file_name . '"');
+        $this->headers->set('Content-Disposition', 'inline; filename="' . $safe_name . '"');
         $this->headers->set('Content-Length', strlen($content));
+
         $this->content = $content;
 
         $this->send();
@@ -130,15 +178,19 @@ final class Response
     {
         if ($delay > 0) {
             $this->headers->set('Refresh', $delay . '; url=' . $url);
-            return $this;
+        } else {
+            $this->headers->set('Location', $url);
         }
 
-        $this->headers->set('Location', $url);
         return $this;
     }
 
     public function send(): void
     {
+        if ($this->send_disabled) {
+            return;
+        }
+
         $this->sendHeaders();
 
         echo $this->content;
@@ -184,6 +236,10 @@ final class Response
 
     private function sendHeaders(): void
     {
+        if ($this->send_disabled) {
+            return;
+        }
+
         http_response_code($this->http_code);
 
         foreach ($this->headers->all() as $name => $value) {
@@ -191,7 +247,31 @@ final class Response
         }
 
         foreach ($this->cookies as $cookie) {
-            setcookie($cookie['name'], $cookie['value'], $cookie['expire'], Tools::config('route', '/'));
+            // Preparar opciones de cookie con flags de seguridad
+            $options = [
+                'expires' => $cookie['expire'],
+                'path' => Tools::config('route', '/'),
+                'domain' => '',
+                'secure' => $cookie['secure'] ?? false,
+                'httponly' => $cookie['httponly'] ?? true,
+                'samesite' => $cookie['samesite'] ?? 'Lax'
+            ];
+
+            setcookie($cookie['name'], $cookie['value'], $options);
         }
+    }
+
+    private function sanitizeFileName(string $fileName, string $prefix = 'file_', string $suffix = ''): string
+    {
+        if (empty($fileName)) {
+            return $prefix . uniqid() . $suffix;
+        }
+
+        $sanitizedName = preg_replace('/[^a-zA-Z0-9._-]/', '', $fileName);
+        if (empty($sanitizedName)) {
+            return $prefix . uniqid() . $suffix;
+        }
+
+        return $sanitizedName;
     }
 }
