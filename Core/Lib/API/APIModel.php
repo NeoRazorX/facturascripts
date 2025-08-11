@@ -273,13 +273,12 @@ class APIModel extends APIResourceClass
                 $field = substr($key, 0, -5);
                 $operator = 'IS';
                 $value = null;
-            }
-            elseif (substr($key, -8) == '_notnull') {
+            } elseif (substr($key, -8) == '_notnull') {
                 $field = substr($key, 0, -8);
                 $operator = 'IS NOT';
                 $value = null;
             }
-            
+
             if (substr($key, -5) == '_like') {
                 $field = substr($key, 0, -5);
                 $operator = 'LIKE';
