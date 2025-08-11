@@ -331,6 +331,11 @@ final class DbQuery
     /**
      * Establece los campos a seleccionar en la consulta.
      * Permite el uso de la cláusula AS para alias de columnas, tanto en mayúsculas como en minúsculas.
+     * CUIDADO: Si se detecta una función en el campo, NO se escapa el contenido de la función,
+     * se recomienda escapar manualmente los contenidos de la función usando db()->escapeColumn(...).
+     * 
+     * Ejemplo de uso: 
+     * `"select('id, name AS full_name, COUNT(*) as count, SUM(" . db()->escapeColumn('amount') . ") as total_amount')"`
      *
      * @param string $fields Cadena de campos separados por comas (ej. 'id, name AS full_name, date as creation_date').
      * @return $this
@@ -340,13 +345,20 @@ final class DbQuery
         $list = [];
         foreach (explode(',', $fields) as $field) {
             $trimmedField = trim($field);
+            $isFunction = strpos($trimmedField, '(') !== false;
+
+            // Buscamos el 'AS'
             $parts = preg_split('/\s+AS\s+/i', $trimmedField);
 
             if (count($parts) > 1) {
                 // Si hay un 'AS', escapamos la columna original y mantenemos el alias
                 $originalColumn = trim($parts[0]);
                 $alias = trim($parts[1]);
-                $list[] = self::db()->escapeColumn($originalColumn) . ' AS ' . self::db()->escapeColumn($alias);
+                if($isFunction) {
+                    $list[] = $originalColumn . ' AS ' . self::db()->escapeColumn($alias);
+                } else {
+                    $list[] = self::db()->escapeColumn($originalColumn) . ' AS ' . self::db()->escapeColumn($alias);
+                }
             } else {
                 // Si no hay 'AS', solo escapamos la columna
                 $list[] = self::db()->escapeColumn($trimmedField);

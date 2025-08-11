@@ -468,12 +468,15 @@ final class DbQueryTest extends TestCase
 
         // construimos la consulta con groupBy y having
         $query = DbQuery::table('productos')
-            ->selectRaw('`codfamilia`, SUM(`precio`) as total_precio')
+            ->select(
+                'codfamilia,'
+                .' SUM(' . $this->db()->escapeColumn('precio') . ') as total_precio'
+            )
             ->groupBy('codfamilia')
             ->having('total_precio > 25')
             ->whereLike('codfamilia', 'FAM%');
 
-        $sql = 'SELECT ' . $this->db()->escapeColumn('codfamilia') . ', SUM(' . $this->db()->escapeColumn('precio') . ') as total_precio'
+        $sql = 'SELECT ' . $this->db()->escapeColumn('codfamilia') . ', SUM(' . $this->db()->escapeColumn('precio') . ') AS ' . $this->db()->escapeColumn('total_precio')
             . ' FROM ' . $this->db()->escapeColumn('productos')
             . ' WHERE ' . Where::like('codfamilia', 'FAM%')->sql()
             . ' GROUP BY ' . $this->db()->escapeColumn('codfamilia')
@@ -541,11 +544,11 @@ final class DbQueryTest extends TestCase
 
         // construimos la consulta con groupBy
         $query = DbQuery::table('productos')
-            ->selectRaw('`codfamilia`, COUNT(*) as total_productos')
+            ->select('codfamilia, COUNT(*) AS total_productos')
             ->groupBy('codfamilia')
             ->whereLike('codfamilia', 'FAM%');
 
-        $sql = 'SELECT ' . $this->db()->escapeColumn('codfamilia') . ', COUNT(*) as total_productos'
+        $sql = 'SELECT ' . $this->db()->escapeColumn('codfamilia') . ', COUNT(*) AS ' . $this->db()->escapeColumn('total_productos')
             . ' FROM ' . $this->db()->escapeColumn('productos')
             . ' WHERE ' . Where::like('codfamilia', 'FAM%')->sql()
             . ' GROUP BY ' . $this->db()->escapeColumn('codfamilia');
