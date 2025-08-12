@@ -206,8 +206,9 @@ final class AlbaranClienteTest extends TestCase
         $subject = $this->getRandomCustomer();
         $this->assertTrue($subject->save(), 'can-not-save-customer-2');
 
-        // creamos un producto
+        // creamos un producto sin stock
         $product = $this->getRandomProduct();
+        $product->ventasinstock = false;
         $this->assertTrue($product->save(), 'can-not-save-product-3');
 
         // modificamos el precio y coste del producto
