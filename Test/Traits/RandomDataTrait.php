@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Traits;
 
+use Exception;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Calculator;
 use FacturaScripts\Dinamic\Model\Agente;
@@ -38,6 +39,7 @@ use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Provincia;
 use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\User;
+use FacturaScripts\Dinamic\Model\Variante;
 
 trait RandomDataTrait
 {
@@ -115,7 +117,9 @@ trait RandomDataTrait
     {
         // creamos el cliente
         $subject = $this->getRandomCustomer('RandomDataTrait');
-        $subject->save();
+        if (false === $subject->save()) {
+            throw new Exception('Failed to save random customer');
+        }
 
         $invoice = new FacturaCliente();
         $invoice->setSubject($subject);
@@ -125,15 +129,17 @@ trait RandomDataTrait
         if ($date) {
             $invoice->setDate($date, $invoice->hora);
         }
-        if ($invoice->save()) {
-            $line = $invoice->getNewLine();
-            $line->cantidad = 1;
-            $line->pvpunitario = mt_rand(100, 9999);
-            $line->save();
-
-            $lines = $invoice->getLines();
-            Calculator::calculate($invoice, $lines, true);
+        if (false === $invoice->save()) {
+            throw new Exception('Failed to save random invoice');
         }
+
+        $line = $invoice->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = mt_rand(100, 9999);
+        $line->save();
+
+        $lines = $invoice->getLines();
+        Calculator::calculate($invoice, $lines, true);
 
         return $invoice;
     }
@@ -147,6 +153,7 @@ trait RandomDataTrait
 
         // no hemos encontrado ninguno, creamos uno
         $model->loadFromDate(date('d-m-Y'));
+
         return $model;
     }
 
@@ -194,7 +201,9 @@ trait RandomDataTrait
     {
         // creamos el proveedor
         $subject = $this->getRandomSupplier('RandomDataTrait');
-        $subject->save();
+        if (false === $subject->save()) {
+            throw new Exception('Failed to save random supplier');
+        }
 
         $invoice = new FacturaProveedor();
         $invoice->setSubject($subject);
@@ -204,15 +213,17 @@ trait RandomDataTrait
         if ($date) {
             $invoice->setDate($date, $invoice->hora);
         }
-        if ($invoice->save()) {
-            $line = $invoice->getNewLine();
-            $line->cantidad = 1;
-            $line->pvpunitario = mt_rand(100, 9999);
-            $line->save();
-
-            $lines = $invoice->getLines();
-            Calculator::calculate($invoice, $lines, true);
+        if (false === $invoice->save()) {
+            throw new Exception('Failed to save random supplier invoice');
         }
+
+        $line = $invoice->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = mt_rand(100, 9999);
+        $line->save();
+
+        $lines = $invoice->getLines();
+        Calculator::calculate($invoice, $lines, true);
 
         return $invoice;
     }
@@ -234,6 +245,21 @@ trait RandomDataTrait
         $user->setPassword(Tools::password());
 
         return $user;
+    }
+
+    protected function getRandomVariant(): Variante
+    {
+        $product = $this->getRandomProduct();
+        if (false === $product->save()) {
+            throw new Exception('Failed to save product for variant');
+        }
+
+        $variant = new Variante();
+        $variant->idproducto = $product->idproducto;
+        $variant->referencia = 'V' . mt_rand(1, 9999999);
+        $variant->precio = mt_rand(1, 999);
+
+        return $variant;
     }
 
     protected function getRandomWarehouse(): Almacen

@@ -93,7 +93,9 @@ class CodeModel
         if (class_exists($modelClass)) {
             $model = new $modelClass();
             if ($model->modelClassName() === $tableName) {
-                return array_merge($result, $model->codeModelAll($fieldCode));
+                return method_exists($model, 'codeModelAll') ?
+                    array_merge($result, $model->codeModelAll($fieldCode)) :
+                    array_merge($result, self::codeModelAll($model, $fieldCode));
             }
         }
 
@@ -139,6 +141,28 @@ class CodeModel
         }
 
         return $result;
+    }
+
+    private static function codeModelAll(mixed $model, string $fieldCode): array
+    {
+        $results = [];
+        $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
+
+        $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $model->primaryDescriptionColumn() . ' AS description '
+            . 'FROM ' . $model::tableName() . ' ORDER BY 2 ASC';
+        foreach (self::$dataBase->selectLimit($sql, self::getlimit()) as $d) {
+            $results[] = new static($d);
+        }
+
+        return $results;
+    }
+
+    private static function codeModelSearch(mixed $model, string $query, string $fieldCode, array $where): array
+    {
+        $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
+        $fields = $field . '|' . $model->primaryDescriptionColumn();
+        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
+        return self::all($model::tableName(), $field, $model->primaryDescriptionColumn(), false, $where);
     }
 
     /**
@@ -214,7 +238,9 @@ class CodeModel
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {
             $model = new $modelClass();
-            return $model->codeModelSearch($query, $fieldCode, $where);
+            return method_exists($model, 'codeModelSearch') ?
+                $model->codeModelSearch($query, $fieldCode, $where) :
+                self::codeModelSearch($model, $query, $fieldCode, $where);
         }
 
         $fields = $fieldCode . '|' . $fieldDescription;
