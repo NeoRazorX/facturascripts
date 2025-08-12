@@ -126,7 +126,7 @@ final class Plugins
         }
     }
 
-    public static function disable(string $pluginName): bool
+    public static function disable(string $pluginName, bool $runPostDisable = true): bool
     {
         // si el plugin no existe o ya está desactivado, no hacemos nada
         $plugin = self::get($pluginName);
@@ -141,7 +141,7 @@ final class Plugins
             if ($value->name === $pluginName) {
                 self::$plugins[$key]->enabled = false;
                 self::$plugins[$key]->post_enable = false;
-                self::$plugins[$key]->post_disable = true;
+                self::$plugins[$key]->post_disable = $runPostDisable;
                 break;
             }
         }
