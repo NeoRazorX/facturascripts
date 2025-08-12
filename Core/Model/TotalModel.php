@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Where;
 
 /**
  * Auxiliary model to load a list of totals
@@ -30,7 +30,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class TotalModel
 {
-
     /**
      * It provides direct access to the database.
      *
@@ -75,21 +74,20 @@ class TotalModel
      * Load a list of TotalModel (code and fields of statistics) for the indicated table.
      *
      * @param string $tableName
-     * @param DataBaseWhere[] $where
+     * @param array $where
      * @param array $fieldList (['key' => 'SUM(total)', 'key2' => 'MAX(total)' ...])
-     * @param string $fieldCode (for multiples rows agruped by field code)
+     * @param string $fieldCode (for multiples rows grouped by field code)
      *
      * @return static[]
      */
-    public static function all($tableName, $where, $fieldList, $fieldCode = ''): array
+    public static function all(string $tableName, array $where, array $fieldList, string $fieldCode = ''): array
     {
         $result = [];
         if (static::dataBase()->tableExists($tableName)) {
             $sql = 'SELECT ' . static::getFieldSQL($fieldCode, $fieldList);
             $groupby = empty($fieldCode) ? ';' : ' GROUP BY 1 ORDER BY 1;';
 
-            $sqlWhere = DataBaseWhere::getSQLWhere($where);
-            $sql .= ' FROM ' . $tableName . $sqlWhere . $groupby;
+            $sql .= ' FROM ' . $tableName . Where::multiSqlLegacy($where) . $groupby;
             $data = static::dataBase()->select($sql);
             foreach ($data as $row) {
                 $result[] = new static($row);
@@ -99,7 +97,7 @@ class TotalModel
         // if it is empty we are obliged to always return a record with the totals to zero
         if (empty($result)) {
             $item = new static();
-            $item->clearTotals(\array_keys($fieldList));
+            $item->clearTotals(array_keys($fieldList));
             return [$item];
         }
 
@@ -111,7 +109,7 @@ class TotalModel
      *
      * @param array $totalFields
      */
-    public function clearTotals(array $totalFields)
+    public function clearTotals(array $totalFields): void
     {
         foreach ($totalFields as $fieldName) {
             $this->totals[$fieldName] = 0.0;
@@ -125,7 +123,7 @@ class TotalModel
         }
 
         $sql = 'SELECT SUM(' . static::dataBase()->escapeColumn($fieldName) . ') as sum'
-            . ' FROM ' . static::dataBase()->escapeColumn($tableName) . DataBaseWhere::getSQLWhere($where);
+            . ' FROM ' . static::dataBase()->escapeColumn($tableName) . Where::multiSqlLegacy($where);
         foreach (static::dataBase()->select($sql) as $row) {
             return (float)$row['sum'];
         }
