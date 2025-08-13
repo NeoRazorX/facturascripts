@@ -99,6 +99,14 @@ class Pais extends ModelClass
         return $this->hasMany(Provincia::class, 'codpais', [], $order);
     }
 
+    public function install(): string
+    {
+        // dependencias
+        new User();
+
+        return parent::install();
+    }
+
     /**
      * Returns True if this the default country.
      *
