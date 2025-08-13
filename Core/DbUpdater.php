@@ -99,12 +99,10 @@ final class DbUpdater
 
     public static function getTableXmlLocation(string $table_name): string
     {
-        $fileName = Tools::folder('Dinamic', 'Table', $table_name . '.xml');
-        if (Tools::config('debug') && false === file_exists($fileName)) {
-            return Tools::folder('Core', 'Table', $table_name . '.xml');
-        }
+        $dinFile = Tools::folder('Dinamic', 'Table', $table_name . '.xml');
+        $coreFile = Tools::folder('Core', 'Table', $table_name . '.xml');
 
-        return $fileName;
+        return file_exists($dinFile) ? $dinFile : $coreFile;
     }
 
     public static function isTableChecked(string $table_name): bool
