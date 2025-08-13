@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -291,9 +291,8 @@ class PurchasesModalHTML
     protected static function modalProveedores(string $url): string
     {
         $trs = '';
-        $proveedor = new Proveedor();
         $where = [new DataBaseWhere('fechabaja', null, 'IS')];
-        foreach ($proveedor->all($where, ['LOWER(nombre)' => 'ASC']) as $pro) {
+        foreach (Proveedor::all($where, ['LOWER(nombre)' => 'ASC'], 0, 50) as $pro) {
             $name = ($pro->nombre === $pro->razonsocial) ? $pro->nombre : $pro->nombre . ' <small>(' . $pro->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'purchasesForm\'][\'codproveedor\'].value = \''
                 . $pro->codproveedor . '\'; $(\'#findSupplierModal\').modal(\'hide\'); purchasesFormAction(\'set-supplier\', \'0\'); return false;">'

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -158,33 +158,25 @@ class SalesModalHTML
 
     protected static function getClientes(User $user, ControllerPermissions $permissions): array
     {
-        // buscamos en caché
         $cacheKey = 'model-Cliente-sales-modal-' . $user->nick;
-        $clientes = Cache::get($cacheKey);
-        if (is_array($clientes)) {
-            return $clientes;
-        }
 
-        // ¿El usuario tiene permiso para ver todos los clientes?
-        $showAll = false;
-        foreach (RoleAccess::allFromUser($user->nick, 'EditCliente') as $access) {
-            if (false === $access->onlyownerdata) {
-                $showAll = true;
+        return Cache::remember($cacheKey, function () use ($user, $permissions) {
+            // ¿El usuario tiene permiso para ver todos los clientes?
+            $showAll = false;
+            foreach (RoleAccess::allFromUser($user->nick, 'EditCliente') as $access) {
+                if (false === $access->onlyownerdata) {
+                    $showAll = true;
+                }
             }
-        }
 
-        // consultamos la base de datos
-        $where = [new DataBaseWhere('fechabaja', null, 'IS')];
-        if ($permissions->onlyOwnerData && !$showAll) {
-            $where[] = new DataBaseWhere('codagente', $user->codagente);
-            $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
-        }
-        $clientes = Cliente::all($where, ['LOWER(nombre)' => 'ASC']);
-
-        // guardamos en caché
-        Cache::set($cacheKey, $clientes);
-
-        return $clientes;
+            // consultamos la base de datos
+            $where = [new DataBaseWhere('fechabaja', null, 'IS')];
+            if ($permissions->onlyOwnerData && !$showAll) {
+                $where[] = new DataBaseWhere('codagente', $user->codagente);
+                $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
+            }
+            return Cliente::all($where, ['LOWER(nombre)' => 'ASC'], 0, 50);
+        });
     }
 
     protected static function getProducts(): array
