@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Lib\ControllerPermissions;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
@@ -45,6 +46,9 @@ abstract class Controller implements ControllerInterface
 
     /** @var MultiRequestProtection */
     private $multiRequestProtection;
+
+    /** @var ControllerPermissions */
+    public $permissions;
 
     /** @var Request */
     private $request;
@@ -131,6 +135,13 @@ abstract class Controller implements ControllerInterface
         // Si el controlador requiere autenticación y no está autenticado, lanzar excepción
         if ($this->requiresAuth && !$authenticated) {
             throw new KernelException('AuthenticationRequired', 'authentication-required');
+        }
+
+        // Cargamos y comprobamos los permisos del usuario
+        $this->permissions = new ControllerPermissions(Session::user(), $this->className);
+        if ($this->requiresAuth && !$this->permissions->allowAccess) {
+            // Si el usuario no tiene acceso, lanzar excepción
+            throw new KernelException('AccessDenied', 'access-denied');
         }
 
         $this->empresa = Empresas::default();

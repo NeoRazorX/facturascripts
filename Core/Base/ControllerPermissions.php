@@ -25,6 +25,8 @@ use FacturaScripts\Core\Model\User;
 /**
  * Description of ControllerPermissionsTest
  *
+ * @deprecated since version 2025.01 - Use \FacturaScripts\Core\Lib\ControllerPermissions instead
+ * @see \FacturaScripts\Core\Lib\ControllerPermissions
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 final class ControllerPermissions
