@@ -36,6 +36,9 @@ final class UploadedFile
     /** @var string */
     public $type;
 
+    /** @var bool */
+    public $test = false;
+
     public function __construct(array $data = [])
     {
         foreach ($data as $key => $value) {
@@ -122,7 +125,7 @@ final class UploadedFile
 
     public function isUploaded(): bool
     {
-        return is_uploaded_file($this->tmp_name);
+        return $this->test || is_uploaded_file($this->tmp_name);
     }
 
     public function isValid(): bool
@@ -132,15 +135,24 @@ final class UploadedFile
 
     public function move(string $destiny, string $destinyName): bool
     {
+        if (!$this->isValid()) {
+            return false;
+        }
+
         if (substr($destiny, -1) !== DIRECTORY_SEPARATOR) {
             $destiny .= DIRECTORY_SEPARATOR;
         }
-        return move_uploaded_file($this->tmp_name, $destiny . $destinyName);
+
+        return $this->test ? rename($this->tmp_name, $destiny . $destinyName) : move_uploaded_file($this->tmp_name, $destiny . $destinyName);
     }
 
     public function moveTo(string $targetPath): bool
     {
-        return move_uploaded_file($this->tmp_name, $targetPath);
+        if (!$this->isValid()) {
+            return false;
+        }
+
+        return $this->test ? rename($this->tmp_name, $targetPath) : move_uploaded_file($this->tmp_name, $targetPath);
     }
 
     private static function parseFilesize(string $size): int
