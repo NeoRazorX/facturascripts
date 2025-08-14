@@ -1616,6 +1616,7 @@
     "try-again-later": "Try again later",
     "tuesday": "Tuesday",
     "two-factor-auth": "2-step authentication",
+    "two-factor-auth-disable": "Desactivar autenticación en 2 pasos",
     "two-factor-auth-disabled": "Two-factor authentication disabled",
     "two-factor-auth-enable": "Activar autenticación en 2 pasos",
     "two-factor-auth-enabled": "Two-factor authentication enabled",

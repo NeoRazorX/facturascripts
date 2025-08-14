@@ -1616,6 +1616,7 @@
     "try-again-later": "Veuillez réessayer plus tard",
     "tuesday": "Mardi",
     "two-factor-auth": "Authentification à deux facteurs",
+    "two-factor-auth-disable": "Desactivar autenticación en 2 pasos",
     "two-factor-auth-disabled": "Authentification à deux facteurs désactivée",
     "two-factor-auth-enable": "Activer l'authentification à deux facteurs",
     "two-factor-auth-enabled": "Authentification en 2 étapes activée",
