@@ -38,8 +38,6 @@ use FacturaScripts\Dinamic\Model\User as DinUser;
 /**
  * Class from which all FacturaScripts controllers must inherit.
  *
- * @deprecated since version 2025.01 - Use \FacturaScripts\Core\Template\Controller instead
- * @see \FacturaScripts\Core\Template\Controller
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Controller implements ControllerInterface
