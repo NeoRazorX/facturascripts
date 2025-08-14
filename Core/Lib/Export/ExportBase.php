@@ -232,12 +232,12 @@ abstract class ExportBase
     }
 
     /**
-     * @param ModelClass $model
+     * @param mixed $model
      * @param array $columns
      *
      * @return array
      */
-    protected function getModelColumnsData(ModelClass $model, array $columns): array
+    protected function getModelColumnsData(mixed $model, array $columns): array
     {
         $data = [];
         foreach ($columns as $col) {
