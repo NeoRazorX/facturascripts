@@ -58,9 +58,9 @@ class EditUser extends EditController
     private function allowUpdate(): bool
     {
         // preload user data
-        $code = $this->request->request->get('code', $this->request->query->get('code'));
+        $code = $this->request->get('code');
         $user = new User();
-        if (false === $user->loadFromCode($code)) {
+        if (false === $user->load($code)) {
             // user not found, maybe it is a new user, so only admin can create it
             return $this->user->admin;
         }
@@ -146,11 +146,11 @@ class EditUser extends EditController
         $result = parent::editAction();
 
         // Are we changing user language?
-        if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
-            Tools::lang()->setLang($this->views['EditUser']->model->langcode);
+        if ($result && $this->tab('EditUser')->model->nick === $this->user->nick) {
+            Tools::lang()->setLang($this->tab('EditUser')->model->langcode);
 
-            $expire = time() + FS_COOKIES_EXPIRE;
-            $this->response->cookie('fsLang', $this->views['EditUser']->model->langcode, $expire);
+            $expire = time() + Tools::config('cookies_expire');
+            $this->response->cookie('fsLang', $this->tab('EditUser')->model->langcode, $expire);
         }
 
         return $result;
@@ -320,14 +320,14 @@ class EditUser extends EditController
      */
     protected function loadHomepageValues(): void
     {
-        if (false === $this->views['EditUser']->model->exists()) {
-            $this->views['EditUser']->disableColumn('homepage');
+        if (false === $this->tab('EditUser')->model->exists()) {
+            $this->tab('EditUser')->disableColumn('homepage');
             return;
         }
 
-        $columnHomepage = $this->views['EditUser']->columnForName('homepage');
+        $columnHomepage = $this->tab('EditUser')->columnForName('homepage');
         if ($columnHomepage && $columnHomepage->widget->getType() === 'select') {
-            $userPages = $this->getUserPages($this->views['EditUser']->model);
+            $userPages = $this->getUserPages($this->tab('EditUser')->model);
             $columnHomepage->widget->setValuesFromArray($userPages, false, true);
         }
     }
@@ -337,7 +337,7 @@ class EditUser extends EditController
      */
     protected function loadLanguageValues(): void
     {
-        $columnLangCode = $this->views['EditUser']->columnForName('language');
+        $columnLangCode = $this->tab('EditUser')->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
             foreach (Tools::lang()->getAvailableLanguages() as $key => $value) {
@@ -360,13 +360,19 @@ class EditUser extends EditController
         // load user from code
         $user = new User();
         $code = $this->request->request->get('code');
-        if (false === $user->loadFromCode($code)) {
+        if (false === $user->load($code)) {
             Tools::log()->error('record-not-found');
             return;
         }
 
         // disable two-factor authentication
         if (false === $user->disableTwoFactor()) {
+            Tools::log()->error('record-save-error');
+            return;
+        }
+
+        // save the user with two-factor disabled
+        if (false === $user->save()) {
             Tools::log()->error('record-save-error');
             return;
         }
@@ -410,7 +416,7 @@ class EditUser extends EditController
         // load user from code
         $user = new User();
         $code = $this->request->get('code');
-        if (false === $user->loadFromCode($code)) {
+        if (false === $user->load($code)) {
             Tools::log()->error('record-not-found');
             return;
         }
