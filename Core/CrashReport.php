@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,8 @@
  */
 
 namespace FacturaScripts\Core;
+
+use FacturaScripts\Core\Base\MiniLog;
 
 /**
  * La clase que se encarga de gestionar los errores fatales.
@@ -119,18 +121,18 @@ final class CrashReport
             . '<head>'
             . '<meta charset="utf-8">'
             . '<meta name="viewport" content="width=device-width, initial-scale=1">'
-            . '<title>Fatal error #' . $info['code'] . '</title>'
+            . '<title>🚨 Fatal error ' . $info['hash'] . '</title>'
             . '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"'
             . ' integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">'
             . '</head>'
             . '<body class="bg-danger">'
             . '<div class="container mt-5 mb-5">'
             . '<div class="row justify-content-center">'
-            . '<div class="col-sm-6">'
-            . '<div class="card shadow">'
+            . '<div class="col-sm-8">'
+            . '<div class="card shadow mb-4">'
             . '<div class="card-body">'
-            . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-end">'
-            . '<h1 class="mt-0">Fatal error #' . $info['code'] . '</h1>'
+            . '<h1 class="h3 mt-0">🚨 Fatal error ' . $info['hash'] . '</h1>'
+            . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-start pt-3 pe-3 pb-3">'
             . '<p>' . nl2br($messageParts[0]) . '</p>'
             . '<p class="mb-0"><b>Url</b>: ' . $info['url'] . '</p>';
 
@@ -145,7 +147,8 @@ final class CrashReport
                 . ', <b>plugins</b>: ' . implode(', ', Plugins::enabled()) . '<br/>'
                 . '<b>PHP</b>: ' . $info['php_version'] . ', <b>OS</b>: ' . $info['os'] . '</p>';
 
-            echo '<pre style="border: solid 1px grey; margin: 2px; padding: 5px">' . htmlspecialchars_decode($info['fragment']) . '</pre>';
+            echo '<pre style="border: solid 1px grey; margin-top: 10px; margin-bottom: 0; padding: 5px">'
+                . htmlspecialchars_decode($info['fragment']) . '</pre>';
         }
 
         echo '</div>';
@@ -200,7 +203,12 @@ final class CrashReport
 
         echo '</div>'
             . '</div>'
-            . '</div>'
+            . '</div>';
+
+        // Añadimos el card con los últimos mensajes del log
+        echo self::getLogCard();
+
+        echo '</div>'
             . '</div>'
             . '</div>'
             . '</body>'
@@ -229,6 +237,63 @@ final class CrashReport
         return implode("\nStack trace:", $messageParts);
     }
 
+    private static function getLogCard(): string
+    {
+        $logMessages = MiniLog::read();
+        if (empty($logMessages)) {
+            return '';
+        }
+
+        // Obtenemos solo los últimos 10 mensajes
+        $lastMessages = array_slice($logMessages, -10);
+
+        $html = '<div class="card shadow mb-4">'
+            . '<div class="card-body">'
+            . '<h2 class="h4 mb-0">📃 ' . self::trans('recent-log-messages') . '</h2>'
+            . '</div>'
+            . '<div class="table-responsive">'
+            . '<table class="table table-sm table-striped mb-0">'
+            . '<thead>'
+            . '<tr>'
+            . '<th>' . self::trans('channel') . '</th>'
+            . '<th>' . self::trans('level') . '</th>'
+            . '<th>' . self::trans('message') . '</th>'
+            . '</tr>'
+            . '</thead>'
+            . '<tbody>';
+
+        foreach ($lastMessages as $logEntry) {
+            $levelClass = '';
+            switch ($logEntry['level']) {
+                case 'critical':
+                case 'error':
+                    $levelClass = 'text-danger';
+                    break;
+                case 'warning':
+                    $levelClass = 'text-warning';
+                    break;
+                case 'info':
+                    $levelClass = 'text-info';
+                    break;
+                case 'debug':
+                    $levelClass = 'text-secondary';
+                    break;
+            }
+
+            $html .= '<tr>'
+                . '<td><small>' . $logEntry['channel'] . '</small></td>'
+                . '<td class="' . $levelClass . '"><small><b>' . strtoupper($logEntry['level']) . '</b></small></td>'
+                . '<td><small>' . Tools::noHtml($logEntry['message']) . '</small></td>'
+                . '</tr>';
+        }
+
+        $html .= '</tbody></table>'
+            . '</div>'
+            . '</div>';
+
+        return $html;
+    }
+
     private static function trans(string $code): string
     {
         $translations = [
@@ -236,10 +301,15 @@ final class CrashReport
                 'to-report' => 'Enviar informe',
                 'disable-plugins' => 'Desactivar plugins',
                 'rebuild' => 'Reconstruir',
+                'recent-log-messages' => 'Últimos mensajes del log',
+                'level' => 'Nivel',
+                'message' => 'Mensaje',
+                'channel' => 'Canal',
             ],
         ];
 
-        return $translations[FS_LANG][$code] ?? $code;
+        $lang = Tools::config('lang', 'es_ES');
+        return $translations[$lang][$code] ?? $code;
     }
 
     protected static function getErrorFragment($file, $line, $linesToShow = 10): string
@@ -254,19 +324,20 @@ final class CrashReport
         $length = $linesToShow + 1;
 
         $errorFragment = array_slice($lines, $start, $length, true);
+        $result = [];
         foreach ($errorFragment as $index => $value) {
-            $index++;
+            $lineNumber = $index + 1;
 
             // marcamos la línea del error
-            if ($index === $line) {
-                $errorFragment[$index] = '<spam style="padding-top: 0.1rem; padding-bottom: 0.1rem; '
-                    . 'background-color: red; color: white">' . $index . $value . '</spam>';
+            if ($lineNumber === $line) {
+                $result[] = '<span style="padding-top: 0.1rem; padding-bottom: 0.1rem; '
+                    . 'background-color: yellow">' . str_pad($lineNumber, 3, ' ', STR_PAD_LEFT) . '    ' . htmlspecialchars($value) . '</span>';
                 continue;
             }
 
-            $errorFragment[$index] = $index . $value;
+            $result[] = str_pad($lineNumber, 3, ' ', STR_PAD_LEFT) . '    ' . htmlspecialchars($value);
         }
 
-        return implode("\n", $errorFragment);
+        return implode("\n", $result);
     }
 }
