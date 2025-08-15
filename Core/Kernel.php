@@ -243,7 +243,25 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2025.1;
+        return 2025.11;
+    }
+
+    private static function checkControllerClass(string $controller): array
+    {
+        $class = explode('\\', $controller);
+        $name = end($class);
+
+        // si la clase no tiene namespace, lo añadimos
+        if (count($class) === 1) {
+            $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . $controller;
+        }
+
+        // si el controlador no existe, lo buscamos en la carpeta Core
+        if (!class_exists($controller)) {
+            $controller = '\\FacturaScripts\\Core\\Controller\\' . end($class);
+        }
+
+        return [$controller, $name];
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
@@ -366,29 +384,26 @@ final class Kernel
         });
     }
 
+    private static function matchesRoute(string $url, string $route): bool
+    {
+        // coincidencia exacta
+        if ($url === $route) {
+            return true;
+        }
+
+        // coincidencia con comodín
+        if (str_ends_with($route, '*')) {
+            return 0 === strncmp($url, $route, strlen($route) - 1);
+        }
+
+        return false;
+    }
+
     private static function runController(string $url): void
     {
         foreach (self::$routes as $route => $info) {
-            $controller = $info['controller'];
-            $class = explode('\\', $controller);
-
-            // si la ruta no tiene namespace, lo añadimos
-            if (count($class) === 1) {
-                $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . $controller;
-                $class = explode('\\', $controller);
-            }
-
-            $name = end($class);
-
-            // coincidencia exacta
-            if ($url === $route) {
-                $app = new $controller($name, $url);
-                $app->run();
-                return;
-            }
-
-            // coincidencia con comodín
-            if (substr($route, -1) === '*' && 0 === strncmp($url, $route, strlen($route) - 1)) {
+            if (self::matchesRoute($url, $route)) {
+                [$controller, $name] = self::checkControllerClass($info['controller']);
                 $app = new $controller($name, $url);
                 $app->run();
                 return;
