@@ -22,12 +22,12 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\FileManager;
-use FacturaScripts\Core\Migrations;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\Migrations;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Telemetry;
@@ -53,6 +53,16 @@ class Updater extends Controller
 
     /** @var array */
     public $updaterItems = [];
+
+    public function __construct(string $className, string $uri = '')
+    {
+        // si no existe la clase Empresa en Dinamic, reconstruimos
+        if (!class_exists('FacturaScripts\Dinamic\Model\Empresa')) {
+            Plugins::deploy(true, false);
+        }
+
+        parent::__construct($className, $uri);
+    }
 
     public function getPageData(): array
     {
