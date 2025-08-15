@@ -56,8 +56,8 @@ class Updater extends Controller
 
     public function __construct(string $className, string $uri = '')
     {
-        // si no existe la clase Empresa en Dinamic, reconstruimos
-        if (!class_exists('FacturaScripts\Dinamic\Model\Empresa')) {
+        // si no existe el archivo Empresa en Dinamic, reconstruimos
+        if (!file_exists(Tools::folder('Dinamic', 'Model', 'Empresa.php'))) {
             Plugins::deploy(true, false);
         }
 
