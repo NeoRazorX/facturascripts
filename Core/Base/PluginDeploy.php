@@ -30,4 +30,8 @@ final class PluginDeploy
     {
         PluginsDeploy::run($enabledPlugins, $clean);
     }
+
+    public function initControllers(): void
+    {
+    }
 }
