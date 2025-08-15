@@ -1620,7 +1620,7 @@
     "two-factor-auth-disabled": "Autenticación en 2 pasos desactivada",
     "two-factor-auth-enable": "Activar autenticación en 2 pasos",
     "two-factor-auth-enabled": "Bi pausoko autentifikazioa aktibatuta",
-    "two-factor-auth-p": "Configura la app Google Authenticator usando el QR, introduce aquí el código y pulsa verificar para completar el proceso de activación.",
+    "two-factor-auth-p": "Google Authenticator aplikazioa QR erabiliz konfiguratu, hemen kodea sartu eta prozesuaren aktibazioari amaiera emateko balidatu.",
     "two-factor-enabled": "Bi pausoetako autentifikazioa aktibatu",
     "type": "Mota",
     "type-alert": "Alerta mota",

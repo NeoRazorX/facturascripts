@@ -100,15 +100,14 @@ class CodeModel
         }
 
         // check table
-        self::initDataBase();
-        if (!self::$dataBase->tableExists($tableName)) {
+        if (!self::db()->tableExists($tableName)) {
             Tools::log()->error('table-not-found', ['%tableName%' => $tableName]);
             return $result;
         }
 
         $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description '
             . 'FROM ' . $tableName . Where::multiSqlLegacy($where) . ' ORDER BY 2 ASC';
-        foreach (self::$dataBase->selectLimit($sql, self::getLimit()) as $row) {
+        foreach (self::db()->selectLimit($sql, self::getLimit()) as $row) {
             $result[] = new static($row);
         }
 
@@ -150,7 +149,7 @@ class CodeModel
 
         $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $model->primaryDescriptionColumn() . ' AS description '
             . 'FROM ' . $model::tableName() . ' ORDER BY 2 ASC';
-        foreach (self::$dataBase->selectLimit($sql, self::getlimit()) as $d) {
+        foreach (self::db()->selectLimit($sql, self::getlimit()) as $d) {
             $results[] = new static($d);
         }
 
@@ -189,11 +188,10 @@ class CodeModel
             return new static();
         }
 
-        self::initDataBase();
-        if ($tableName && self::$dataBase->tableExists($tableName)) {
+        if ($tableName && self::db()->tableExists($tableName)) {
             $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
-                . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::$dataBase->var2str($code);
-            $data = self::$dataBase->selectLimit($sql, 1);
+                . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::db()->var2str($code);
+            $data = self::db()->selectLimit($sql, 1);
             return empty($data) ? new static() : new static($data[0]);
         }
 
@@ -253,13 +251,12 @@ class CodeModel
         self::$limit = $newLimit;
     }
 
-    /**
-     * Inits database connection.
-     */
-    protected static function initDataBase(): void
+    protected static function db(): DataBase
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
         }
+
+        return self::$dataBase;
     }
 }

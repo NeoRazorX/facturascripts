@@ -1617,7 +1617,7 @@
     "tuesday": "Martedì",
     "two-factor-auth": "Autenticazione a due fattori",
     "two-factor-auth-disable": "Desactivar autenticación en 2 pasos",
-    "two-factor-auth-disabled": "Autenticación en 2 pasos desactivada",
+    "two-factor-auth-disabled": "Autenticazione a due fattori disattivata",
     "two-factor-auth-enable": "Attivare l'autenticazione a due fattori",
     "two-factor-auth-enabled": "Autenticación en 2 pasos activada",
     "two-factor-auth-p": "Configura la app Google Authenticator usando el QR, introduce aquí el código y pulsa verificar para completar el proceso de activación.",
