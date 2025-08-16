@@ -402,6 +402,8 @@ abstract class ModelClass extends ModelCore
                 $fieldName = $field['name'];
                 $fieldValue = $values[$fieldName] ?? $this->{$fieldName};
 
+                $fieldValue = $this->ajustarLongitudCampo($field['type'], $fieldValue);
+
                 $insertFields[] = self::$dataBase->escapeColumn($fieldName);
                 $insertValues[] = self::$dataBase->var2str($fieldValue);
             }
@@ -452,6 +454,9 @@ abstract class ModelClass extends ModelCore
             if ($field['name'] !== static::primaryColumn()) {
                 $fieldName = $field['name'];
                 $fieldValue = $values[$fieldName] ?? $this->{$fieldName};
+
+                $fieldValue = $this->ajustarLongitudCampo($field['type'], $fieldValue);
+
                 $sql .= $coma . ' ' . self::$dataBase->escapeColumn($fieldName) . ' = ' . self::$dataBase->var2str($fieldValue);
                 $coma = ', ';
             }
@@ -511,5 +516,31 @@ abstract class ModelClass extends ModelCore
             DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . self::getOrderBy($order);
         return empty($code) && empty($where) ? [] : self::$dataBase->selectLimit($sql, 1);
+    }
+
+    /**
+     * Corta un texto a una longitud específica.
+     *
+     * @param string $fieldType
+     * @param mixed $fieldValue
+     *
+     * @return mixed
+     */
+    private function ajustarLongitudCampo(string $fieldType, $fieldValue)
+    {
+        if (strpos($fieldType, 'varchar') !== false || strpos($fieldType, 'varying') !== false) {
+            $patron = '/\(\s*(\d+)\s*\)/';
+            preg_match($patron, $fieldType, $coincidencias);
+            $longitudMaxima = $coincidencias[1] ?? null;
+
+            if ($longitudMaxima && is_string($fieldValue)) {
+                $longitudActual = mb_strlen($fieldValue);
+                if ($longitudActual > $longitudMaxima) {
+                    return substr($fieldValue, 0, $longitudMaxima);
+                }
+            }
+        }
+
+        return $fieldValue;
     }
 }
