@@ -436,8 +436,9 @@ abstract class BusinessDocument extends NewModelClass
         }
 
         // check total
+        $decimals = Tools::settings('default', 'decimales', 2);
         $total = $this->neto + $this->totalsuplidos + $this->totaliva - $this->totalirpf + $this->totalrecargo;
-        if (false === Tools::floatCmp($this->total, $total, FS_NF0, true)) {
+        if (false === Tools::floatCmp($this->total, $total, $decimals, true)) {
             Tools::log()->error('bad-total-error');
             return false;
         }

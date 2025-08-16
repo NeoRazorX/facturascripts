@@ -212,6 +212,16 @@ class Proveedor extends ModelClass
             new DinSubcuenta();
     }
 
+    public function install(): string
+    {
+        // dependencias
+        new FormaPago();
+        new Retencion();
+        new Serie();
+
+        return parent::install();
+    }
+
     public function irpf(): float
     {
         if (empty($this->codretencion)) {
