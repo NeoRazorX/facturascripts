@@ -1619,7 +1619,7 @@
     "two-factor-auth-disable": "Desactivar autenticación en 2 pasos",
     "two-factor-auth-disabled": "Autenticação em 2 passos desativada",
     "two-factor-auth-enable": "Activar autenticación en 2 pasos",
-    "two-factor-auth-enabled": "Autenticación en 2 pasos activada",
+    "two-factor-auth-enabled": "Autenticação em 2 etapas ativada",
     "two-factor-auth-p": "Configura la app Google Authenticator usando el QR, introduce aquí el código y pulsa verificar para completar el proceso de activación.",
     "two-factor-code": "Código de doble factor",
     "two-factor-enabled": "Ativar autenticação em 2 passos",
