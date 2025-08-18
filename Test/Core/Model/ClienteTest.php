@@ -21,6 +21,8 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\Contacto;
+use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -214,6 +216,73 @@ final class ClienteTest extends TestCase
         // eliminamos
         $this->assertTrue($address->delete());
         $this->assertTrue($cliente->delete());
+    }
+
+    /**
+     * Comprobamos que al eliminar un contacto,
+     * se desvincula de todos los clientes y proveedores.
+     */
+    public function testUnlinkCustomerContact()
+    {
+        // creamos un contacto
+        $contacto = new Contacto();
+        $contacto->nombre = 'Test Contacto';
+        $this->assertTrue($contacto->save(), 'contact-cant-save');
+
+        // creamos un cliente y vinculamos al contacto
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '12345677A';
+        $cliente->idcontactoenv = $contacto->idcontacto;
+        $cliente->idcontactofact = $contacto->idcontacto;
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+
+        // creamos otro cliente y vinculamos al contacto
+        $cliente2 = new Cliente();
+        $cliente2->nombre = 'Test 2';
+        $cliente2->cifnif = '12345678A';
+        $cliente2->idcontactoenv = $contacto->idcontacto;
+        $cliente2->idcontactofact = $contacto->idcontacto;
+        $this->assertTrue($cliente2->save(), 'cliente-cant-save');
+
+        // creamos un proveedor y vinculamos al contacto
+        $proveedor = new Proveedor();
+        $proveedor->nombre = 'Test 3';
+        $proveedor->cifnif = '12345679A';
+        $proveedor->idcontacto = $contacto->idcontacto;
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-save');
+
+
+        // comprobamos que el contacto creado se encuentra asociado
+        $this->assertEquals($cliente->idcontactoenv, $contacto->idcontacto);
+        $this->assertEquals($cliente->idcontactofact, $contacto->idcontacto);
+
+        $this->assertEquals($cliente2->idcontactoenv, $contacto->idcontacto);
+        $this->assertEquals($cliente2->idcontactofact, $contacto->idcontacto);
+
+        $this->assertEquals($proveedor->idcontacto, $contacto->idcontacto);
+
+        // eliminamos contacto
+        $this->assertTrue($contacto->delete(), 'contact-cant-delete');
+
+        // refrescamos los datos desde la base de datos.
+        $cliente->loadFromCode($cliente->codcliente);
+        $cliente2->loadFromCode($cliente2->codcliente);
+        $proveedor->loadFromCode($proveedor->codproveedor);
+
+        // comprobamos que el contacto creado, NO se encuentra asociado
+        $this->assertNotEquals($cliente->idcontactoenv, $contacto->idcontacto);
+        $this->assertNotEquals($cliente->idcontactofact, $contacto->idcontacto);
+
+        $this->assertNotEquals($cliente2->idcontactoenv, $contacto->idcontacto);
+        $this->assertNotEquals($cliente2->idcontactofact, $contacto->idcontacto);
+
+        $this->assertNotEquals($proveedor->idcontacto, $contacto->idcontacto);
+
+        // eliminamos
+        $this->assertTrue($cliente->delete());
+        $this->assertTrue($cliente2->delete());
+        $this->assertTrue($proveedor->delete());
     }
 
     protected function tearDown(): void
