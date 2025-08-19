@@ -216,6 +216,24 @@ final class ClienteTest extends TestCase
         $this->assertTrue($cliente->delete());
     }
 
+    public function testHasColumn(): void
+    {
+        $cliente = new Cliente();
+        
+        // comprobamos que tiene las columnas esperadas
+        $this->assertTrue($cliente->hasColumn('nombre'), 'cliente-should-have-nombre-column');
+        $this->assertTrue($cliente->hasColumn('cifnif'), 'cliente-should-have-cifnif-column');
+        $this->assertTrue($cliente->hasColumn('codcliente'), 'cliente-should-have-codcliente-column');
+        $this->assertTrue($cliente->hasColumn('email'), 'cliente-should-have-email-column');
+        $this->assertTrue($cliente->hasColumn('telefono1'), 'cliente-should-have-telefono1-column');
+        $this->assertTrue($cliente->hasColumn('razonsocial'), 'cliente-should-have-razonsocial-column');
+        
+        // comprobamos que no tiene columnas que no existen
+        $this->assertFalse($cliente->hasColumn('columna_inexistente'), 'cliente-should-not-have-columna_inexistente');
+        $this->assertFalse($cliente->hasColumn('total'), 'cliente-should-not-have-total-column');
+        $this->assertFalse($cliente->hasColumn(''), 'cliente-should-not-have-empty-column');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

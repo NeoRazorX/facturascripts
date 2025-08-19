@@ -278,6 +278,12 @@ abstract class ModelClass
         return $this->isDirty($field);
     }
 
+    public function hasColumn(string $columnName): bool
+    {
+        $fields = $this->getModelFields();
+        return isset($fields[$columnName]);
+    }
+
     public function id()
     {
         return $this->{static::primaryColumn()};
