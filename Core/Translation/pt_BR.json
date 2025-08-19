@@ -1064,7 +1064,7 @@
     "not-enough-stock": "Não há estoque suficiente de %reference%",
     "not-passed-integrity-check": "Some files have not passed the integrity check...<br\/>You can <a class='alert-link' target='_blank' href='IntegritySystemCheck'>obter mais detalhes aqui<\/a>.",
     "not-public": "Não público",
-    "not-registered": "No registrada",
+    "not-registered": "Não registrada",
     "not-sent": "Não enviado",
     "not-stored-content": "Conteúdo não armazenado",
     "not-valid-email": "%email% não é um email válido",
