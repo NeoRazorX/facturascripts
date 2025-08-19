@@ -110,18 +110,28 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
 function setModalParentForm(modal, form) {
     if (form.code) {
         // asignamos al formulario del modal el code del formulario donde sale el botón
-        $("#" + modal).parent().find('input[name="code"]').val(form.code.value);
-    } else if (form.elements['code[]']) {
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'code';
+        input.value = code;
+        $("#" + modal).parent().append(input);
+    } else if (form.elements['codes[]']) {
         let codes = [];
 
         // recorremos los checkboxes del formulario donde sale el botón
-        let checkboxes = document.querySelectorAll('input[name="code[]"]:checked');
+        let checkboxes = document.querySelectorAll('input[name="codes[]"]:checked');
         checkboxes.forEach((checkbox) => {
             codes.push(checkbox.value);
         });
 
-        // asignamos al formulario del modal los checkboxes marcados del formulario donde sale el botón
-        $("#" + modal).parent().find('input[name="code"]').val(codes.join());
+        // añadimos un input de codes[] con los códigos recogidos
+        codes.forEach((code) => {
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'codes[]';
+            input.value = code;
+            $("#" + modal).parent().append(input);
+        });
         console.log(codes);
     }
 }
