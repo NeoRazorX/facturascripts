@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -136,7 +136,7 @@ class SendMail extends Controller
         }
 
         $invoice = new FacturaCliente();
-        if ($invoice->loadFromCode($this->request->query->getAlnum('modelCode')) && $invoice->editable) {
+        if ($invoice->load($this->request->query->getAlnum('modelCode')) && $invoice->editable) {
             Tools::log()->warning('sketch-invoice-warning');
         }
     }
@@ -192,7 +192,7 @@ class SendMail extends Controller
             new DataBaseWhere('name', 'sendmail-' . $model->modelClassName()),
             new DataBaseWhere('enabled', true)
         ];
-        if ($notificationModel->loadFromCode('', $where)) {
+        if ($notificationModel->loadWhere($where)) {
             $shortCodes = ['{code}', '{name}', '{date}', '{total}', '{number2}'];
             $shortValues = [$model->codigo, $model->nombrecliente, $model->fecha, $model->total, $model->numero2];
             $this->newMail->title = str_replace($shortCodes, $shortValues, $notificationModel->subject);
@@ -235,7 +235,7 @@ class SendMail extends Controller
 
         $model = new $className();
         $modelCode = $this->request->get('modelCode');
-        if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
+        if ($model->loadFromCode($modelCode) && $model->hasColumn('femail')) {
             Tools::log()->notice('reloading');
             $this->redirect($model->url(), 3);
         }
@@ -342,25 +342,25 @@ class SendMail extends Controller
         $model->loadFromCode($this->request->get('modelCode', ''));
         $this->loadDataDefault($model);
 
-        if (property_exists($model, 'email') && $model->email) {
+        if ($model->hasColumn('email') && $model->email) {
             $this->newMail->to($model->email);
             return;
         }
 
         $proveedor = new Proveedor();
-        if (property_exists($model, 'codproveedor') && $proveedor->loadFromCode($model->codproveedor) && $proveedor->email) {
+        if ($model->hasColumn('codproveedor') && $proveedor->load($model->codproveedor) && $proveedor->email) {
             $this->newMail->to($proveedor->email, $proveedor->razonsocial);
             return;
         }
 
         $contact = new Contacto();
-        if (property_exists($model, 'idcontactofact') && $contact->loadFromCode($model->idcontactofact) && $contact->email) {
+        if ($model->hasColumn('idcontactofact') && $contact->load($model->idcontactofact) && $contact->email) {
             $this->newMail->to($contact->email, $contact->fullName());
             return;
         }
 
         $cliente = new Cliente();
-        if (property_exists($model, 'codcliente') && $cliente->loadFromCode($model->codcliente) && $cliente->email) {
+        if ($model->hasColumn('codcliente') && $cliente->load($model->codcliente) && $cliente->email) {
             $this->newMail->to($cliente->email, $cliente->razonsocial);
         }
     }
@@ -378,7 +378,7 @@ class SendMail extends Controller
         // marcamos la fecha del envío del email
         $model = new $className();
         $modelCode = $this->request->get('modelCode');
-        if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
+        if ($model->loadFromCode($modelCode) && $model->hasColumn('femail')) {
             $model->femail = Tools::date();
             if (false === $model->save()) {
                 Tools::log()->error('record-save-error');
@@ -399,7 +399,7 @@ class SendMail extends Controller
         // si hay más documentos, marcamos también la fecha de envío
         $modelCodes = $this->request->get('modelCodes', '');
         foreach (explode(',', $modelCodes) as $modelCode) {
-            if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
+            if ($model->loadFromCode($modelCode) && $model->hasColumn('femail')) {
                 $model->femail = Tools::date();
                 $model->save();
             }
