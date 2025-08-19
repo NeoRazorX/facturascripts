@@ -113,7 +113,7 @@ function setModalParentForm(modal, form) {
         let input = document.createElement('input');
         input.type = 'hidden';
         input.name = 'code';
-        input.value = code;
+        input.value = form.code.value;
         $("#" + modal).parent().append(input);
     } else if (form.elements['codes[]']) {
         let codes = [];
