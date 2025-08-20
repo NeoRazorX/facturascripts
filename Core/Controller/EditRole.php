@@ -120,12 +120,12 @@ class EditRole extends EditController
             return true;
         }
 
-        $show = $this->request->request->get('show', []);
-        $onlyOwner = $this->request->request->get('onlyOwner', []);
-        $update = $this->request->request->get('update', []);
-        $delete = $this->request->request->get('delete', []);
-        $export = $this->request->request->get('export', []);
-        $import = $this->request->request->get('import', []);
+        $show = $this->request->request->getArray('show', false);
+        $onlyOwner = $this->request->request->getArray('onlyOwner', false);
+        $update = $this->request->request->getArray('update', false);
+        $delete = $this->request->request->getArray('delete', false);
+        $export = $this->request->request->getArray('export', false);
+        $import = $this->request->request->getArray('import', false);
 
         // actualizamos los permisos del rol
         $roleAccessModel = new RoleAccess();
@@ -233,7 +233,7 @@ class EditRole extends EditController
         $orphanPages = array_diff($roleAccessPageNames, $pageNames);
         foreach ($orphanPages as $pageName) {
             $page = new RoleAccess();
-            $page->loadFromCode('', [new DataBaseWhere('pagename', $pageName)]);
+            $page->loadWhere([new DataBaseWhere('pagename', $pageName)]);
             $page->delete();
 
             // si el rol ya no tiene permisos, lo eliminamos.
@@ -241,7 +241,7 @@ class EditRole extends EditController
 
             if ($rolesLength === 0) {
                 $role = new Role();
-                $role->loadFromCode('', [new DataBaseWhere('codrole', $page->codrole)]);
+                $role->loadWhere([new DataBaseWhere('codrole', $page->codrole)]);
                 $role->delete();
 
                 // redireccionamos al listado, ya que el rol lo hemos borrado
