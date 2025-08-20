@@ -1621,7 +1621,7 @@
     "two-factor-auth-enable": "Ativar autenticação em 2 passos",
     "two-factor-auth-enabled": "Autenticação em 2 etapas ativada",
     "two-factor-auth-p": "Configura la app Google Authenticator usando el QR, introduce aquí el código y pulsa verificar para completar el proceso de activación.",
-    "two-factor-code": "Código de doble factor",
+    "two-factor-code": "Código de dupla autenticação",
     "two-factor-enabled": "Ativar autenticação em 2 passos",
     "type": "Tipo",
     "type-alert": "Tipo de alerta",

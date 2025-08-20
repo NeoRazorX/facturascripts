@@ -1621,7 +1621,7 @@
     "two-factor-auth-enable": "Aktivovat dvoufaktorové ověření",
     "two-factor-auth-enabled": "Dvoufázové ověření je aktivováno",
     "two-factor-auth-p": "Configura la app Google Authenticator usando el QR, introduce aquí el código y pulsa verificar para completar el proceso de activación.",
-    "two-factor-code": "Código de doble factor",
+    "two-factor-code": "Kód dvoufaktorového ověření",
     "two-factor-enabled": "Aktivovat dvoufázovou autentizaci",
     "type": "Tipo",
     "type-alert": "Tipo alert",
