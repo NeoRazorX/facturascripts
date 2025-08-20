@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Base\DataBase;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * Class that gathers all the needed SQL sentences by the database engine
  *
@@ -27,7 +29,6 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class PostgresqlQueries implements DataBaseQueries
 {
-
     /**
      * Returns the needed SQL to convert a column to integer
      *
@@ -51,6 +52,9 @@ class PostgresqlQueries implements DataBaseQueries
      */
     public function sqlAddConstraint(string $tableName, string $constraintName, string $sql): string
     {
+        // reemplazamos (user) por ("user") para evitar problemas
+        $sql = str_replace('(user)', '("user")', $sql);
+
         return 'ALTER TABLE ' . $tableName . ' ADD CONSTRAINT ' . $constraintName . ' ' . $sql . ';';
     }
 
@@ -97,6 +101,15 @@ class PostgresqlQueries implements DataBaseQueries
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . ';';
     }
 
+    /**
+     * Returns the SQL needed to add an index to a table
+     *
+     * @param string $tableName
+     * @param string $indexName
+     * @param string $columns
+     *
+     * @return string
+     */
     public function sqlAddIndex(string $tableName, string $indexName, string $columns): string
     {
         return 'CREATE INDEX ' . $indexName . ' ON ' . $tableName . ' (' . $columns . ');';
@@ -146,7 +159,7 @@ class PostgresqlQueries implements DataBaseQueries
             . 'character_maximum_length, column_default as default,'
             . 'is_nullable'
             . ' FROM information_schema.columns'
-            . " WHERE table_catalog = '" . FS_DB_NAME . "'"
+            . " WHERE table_catalog = '" . Tools::config('db_name') . "'"
             . " AND table_name = '" . $tableName . "'"
             . ' ORDER BY 1 ASC;';
     }
@@ -324,7 +337,10 @@ class PostgresqlQueries implements DataBaseQueries
                 continue;
             }
 
-            if (FS_DB_FOREIGN_KEYS || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
+            if (Tools::config('db_foreign_keys') || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
+                // reemplazamos (user) por ("user") para evitar problemas
+                $res['constraint'] = str_replace('(user)', '("user")', $res['constraint']);
+
                 $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
             }
         }
@@ -332,7 +348,15 @@ class PostgresqlQueries implements DataBaseQueries
         return $sql;
     }
 
-    private function sqlTableIndexes(string $tableName, array $xmlIndexes)
+    /**
+     * Generates the needed SQL to create the indexes in a table
+     *
+     * @param string $tableName
+     * @param array $xmlIndexes
+     *
+     * @return string
+     */
+    private function sqlTableIndexes(string $tableName, array $xmlIndexes): string
     {
         $sql = '';
         foreach ($xmlIndexes as $idx) {
