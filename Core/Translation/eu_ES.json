@@ -1064,7 +1064,7 @@
     "not-enough-stock": "%reference% artikuluaren stock nahikoa ez dago",
     "not-passed-integrity-check": "Fitxategi batzuk ez dute gainditu integritate egiaztapena ...  <br\/>Hemen <a class='alert-link' target='_blank' href='IntegritySystemCheck'> begiratu xehetasunak<\/a>.",
     "not-public": "Ez da publikoa",
-    "not-registered": "No registrada",
+    "not-registered": "Ez da erregistratuta",
     "not-sent": "Ez da bidalia",
     "not-stored-content": "Ezin da edukia biltegi egin",
     "not-valid-email": "%email% eposta baliogabea",

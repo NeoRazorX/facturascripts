@@ -332,11 +332,6 @@ class CronJob extends ModelClass
             strtotime($date . ' +23 hours +59 minutes');
         $this->start = $this->getCurrentMicrotime();
 
-        Tools::log()->error(
-            'current: ' . Tools::timeToDateTime((int)$this->start) . ', last: ' . Tools::timeToDateTime($last) .
-            ', start: ' . Tools::timeToDateTime($start) . ', end: ' . Tools::timeToDateTime($end)
-        );
-
         // si se ha ejecutado antes, comprobamos que no sea pasada la fecha de inicio
         if (!empty($this->date) && $last >= $start) {
             $this->ready = false;
