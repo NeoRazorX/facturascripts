@@ -41,7 +41,7 @@
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span class="input-group-text">{{ trans('from') }}</span>
-                                    <select class="custom-select" name="email-from">
+                                    <select class="form-select" name="email-from">
                                         {% for emailFrom in fsc.newMail.getAvailableMailboxes() %}
                                             <option value="{{ emailFrom }}">{{ emailFrom }}</option>
                                         {% endfor %}
