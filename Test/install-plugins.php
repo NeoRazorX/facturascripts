@@ -2,7 +2,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,40 +34,39 @@ if (!file_exists($config)) {
 
 require_once $config;
 
-// connect to database
+// conectamos a la base de datos
 $db = new DataBase();
 $db->connect();
 
-// clean cache
+// limpiamos la caché
 Cache::clear();
 
 // iniciamos el kernel
 Kernel::init();
 
-// deploy
-Plugins::deploy();
+// inicializamos los plugins
+Plugins::init();
 
-// disable all plugins
-foreach (Plugins::enabled() as $plugin) {
-    Plugins::disable($plugin);
-}
-
-// get the list of plugins to install
+// leemos la lista de plugins a instalar
 $listPath = __DIR__ . '/Plugins/install-plugins.txt';
 if (file_exists($listPath)) {
     $content = file_get_contents($listPath);
-    $list = explode(',', $content);
+    $list = array_map('trim', explode(',', $content));
     foreach ($list as $plugin) {
-        if (Plugins::enable($plugin)) {
-            echo 'Plugin ' . $plugin . ' enabled.' . PHP_EOL . PHP_EOL;
+        if (empty($plugin) || Plugins::isEnabled($plugin)) {
             continue;
         }
 
-        echo 'Plugin ' . $plugin . ' not found.' . PHP_EOL . PHP_EOL;
+        // activamos el plugin
+        if (Plugins::enable($plugin)) {
+            echo '-> Plugin ' . $plugin . ' enabled.' . PHP_EOL;
+            exit(0);
+        }
+
+        echo '-> Plugin ' . $plugin . ' not found.' . PHP_EOL;
         exit(2);
     }
-    unlink($listPath);
 }
 
-// disconnect from database
+// desconectamos de la base de datos
 $db->close();
