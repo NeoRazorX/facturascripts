@@ -522,6 +522,7 @@ final class DbQuery
     {
         if (null === self::$db) {
             self::$db = new DataBase();
+            self::$db->connect();
         }
 
         return self::$db;
