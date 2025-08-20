@@ -235,7 +235,7 @@ class SendMail extends Controller
 
         $model = new $className();
         $modelCode = $this->request->get('modelCode');
-        if ($model->loadFromCode($modelCode) && $model->hasColumn('femail')) {
+        if ($model->load($modelCode) && $model->hasColumn('femail')) {
             Tools::log()->notice('reloading');
             $this->redirect($model->url(), 3);
         }
@@ -299,7 +299,6 @@ class SendMail extends Controller
         }
 
         $this->setAttachment();
-
         return $this->newMail->send();
     }
 
@@ -339,7 +338,7 @@ class SendMail extends Controller
         }
 
         $model = new $className();
-        $model->loadFromCode($this->request->get('modelCode', ''));
+        $model->load($this->request->get('modelCode', ''));
         $this->loadDataDefault($model);
 
         if ($model->hasColumn('email') && $model->email) {
@@ -378,7 +377,7 @@ class SendMail extends Controller
         // marcamos la fecha del envío del email
         $model = new $className();
         $modelCode = $this->request->get('modelCode');
-        if ($model->loadFromCode($modelCode) && $model->hasColumn('femail')) {
+        if ($model->load($modelCode) && $model->hasColumn('femail')) {
             $model->femail = Tools::date();
             if (false === $model->save()) {
                 Tools::log()->error('record-save-error');
@@ -399,7 +398,7 @@ class SendMail extends Controller
         // si hay más documentos, marcamos también la fecha de envío
         $modelCodes = $this->request->get('modelCodes', '');
         foreach (explode(',', $modelCodes) as $modelCode) {
-            if ($model->loadFromCode($modelCode) && $model->hasColumn('femail')) {
+            if ($model->load($modelCode) && $model->hasColumn('femail')) {
                 $model->femail = Tools::date();
                 $model->save();
             }
