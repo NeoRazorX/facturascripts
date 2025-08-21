@@ -144,7 +144,7 @@ final class CrashReport
             . '<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">'
             . '<div class="container mt-5 mb-5">'
             . '<div class="row justify-content-center">'
-            . '<div class="col-sm-8">'
+            . '<div class="col-sm-12">'
             . '<h1 class="h3 text-white mb-4">🚨 Error ' . $info['hash'] . '</h1>'
             . '<div class="card shadow mb-4">'
             . '<div class="card-body">'

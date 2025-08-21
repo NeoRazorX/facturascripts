@@ -102,8 +102,7 @@ class Dashboard extends Controller
         $this->loadExtensions();
 
         // comprobamos si la instalación está registrada
-        $telemetry = new Telemetry();
-        $this->registered = $telemetry->ready();
+        $this->registered = Telemetry::init()->ready();
 
         // comprobamos si hay actualizaciones disponibles
         $this->updated = Forja::canUpdateCore() === false;
