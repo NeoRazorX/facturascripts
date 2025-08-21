@@ -91,7 +91,6 @@ trait DocFilesTrait
                 Tools::log()->error('fail-relation');
                 return true;
             }
-
         }
 
         // Si se trata de un documento, actualizamos el número de documentos adjuntos.

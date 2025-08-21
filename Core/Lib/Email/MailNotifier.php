@@ -55,7 +55,7 @@ class MailNotifier
     {
         // ¿La notificación existe?
         $notification = new EmailNotification();
-        if (false === $notification->loadFromCode($notificationName)) {
+        if (false === $notification->load($notificationName)) {
             Tools::log()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
             return false;
         }
