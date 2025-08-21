@@ -182,6 +182,8 @@ class SalesModalHTML
     protected static function getProducts(): array
     {
         $dataBase = new DataBase();
+        $dataBase->connect();
+
         $sql = 'SELECT v.referencia, p.descripcion, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3,'
             . ' v.idatributovalor4, v.precio, COALESCE(s.disponible, 0) as disponible, p.nostock'
             . ' FROM variantes v'

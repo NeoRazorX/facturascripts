@@ -134,6 +134,7 @@ class TotalModel
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
+            self::$dataBase->connect();
         }
 
         return self::$dataBase;

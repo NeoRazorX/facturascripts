@@ -158,6 +158,8 @@ class PurchasesModalHTML
     protected static function getProducts(): array
     {
         $dataBase = new DataBase();
+        $dataBase->connect();
+
         $sql = 'SELECT v.referencia, pp.refproveedor, p.descripcion, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3,'
             . ' v.idatributovalor4, v.coste, v.precio, pp.neto, COALESCE(s.disponible, 0) as disponible, p.nostock'
             . ' FROM variantes v'

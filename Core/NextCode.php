@@ -42,6 +42,8 @@ final class NextCode
     public static function get(string $table, string $column, string $type = 'int'): ?int
     {
         $db = new DataBase();
+        $db->connect();
+
         $where = [];
 
         if (false === in_array($type, ['integer', 'int', 'serial'])) {

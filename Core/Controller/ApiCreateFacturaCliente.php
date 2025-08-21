@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
@@ -33,10 +32,10 @@ class ApiCreateFacturaCliente extends ApiController
         // si el método no es POST o PUT, devolvemos un error
         if (!in_array($this->request->method(), ['POST', 'PUT'])) {
             $this->response->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED);
-            $this->response->setContent(json_encode([
+            $this->response->json([
                 'status' => 'error',
                 'message' => 'Method not allowed',
-            ]));
+            ]);
             return;
         }
 
@@ -44,19 +43,19 @@ class ApiCreateFacturaCliente extends ApiController
         $codcliente = $this->request->get('codcliente');
         if (empty($codcliente)) {
             $this->response->setHttpCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
+            $this->response->json([
                 'status' => 'error',
                 'message' => 'codcliente field is required',
-            ]));
+            ]);
             return;
         }
         $cliente = new Cliente();
-        if (!$cliente->loadFromCode($codcliente)) {
+        if (!$cliente->load($codcliente)) {
             $this->response->setHttpCode(Response::HTTP_NOT_FOUND);
-            $this->response->setContent(json_encode([
+            $this->response->json([
                 'status' => 'error',
                 'message' => 'Customer not found',
-            ]));
+            ]);
             return;
         }
 
@@ -68,10 +67,10 @@ class ApiCreateFacturaCliente extends ApiController
         $codalmacen = $this->request->get('codalmacen');
         if ($codalmacen && false === $factura->setWarehouse($codalmacen)) {
             $this->response->setHttpCode(Response::HTTP_NOT_FOUND);
-            $this->response->setContent(json_encode([
+            $this->response->json([
                 'status' => 'error',
                 'message' => 'Warehouse not found',
-            ]));
+            ]);
             return;
         }
 
@@ -80,10 +79,10 @@ class ApiCreateFacturaCliente extends ApiController
         $hora = $this->request->get('hora', $factura->hora);
         if ($fecha && false === $factura->setDate($fecha, $hora)) {
             $this->response->setHttpCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
+            $this->response->json([
                 'status' => 'error',
                 'message' => 'Invalid date',
-            ]));
+            ]);
             return;
         }
 
@@ -100,23 +99,22 @@ class ApiCreateFacturaCliente extends ApiController
             }
         }
 
-        $db = new DataBase();
-        $db->beginTransaction();
+        $this->db()->beginTransaction();
 
         // guardamos la factura
         if (false === $factura->save()) {
             $this->response->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->response->setContent(json_encode([
+            $this->response->json([
                 'status' => 'error',
                 'message' => 'Error saving the invoice',
-            ]));
-            $db->rollback();
+            ]);
+            $this->db()->rollback();
             return;
         }
 
         // guardamos las líneas
         if (false === $this->saveLines($factura)) {
-            $db->rollback();
+            $this->db()->rollback();
             return;
         }
 
@@ -128,26 +126,26 @@ class ApiCreateFacturaCliente extends ApiController
             }
 
             // recargamos la factura
-            $factura->loadFromCode($factura->idfactura);
+            $factura->reload();
         }
 
-        $db->commit();
+        $this->db()->commit();
 
         // devolvemos la respuesta
-        $this->response->setContent(json_encode([
+        $this->response->json([
             'doc' => $factura->toArray(),
             'lines' => $factura->getLines(),
-        ]));
+        ]);
     }
 
     protected function saveLines(FacturaCliente &$factura): bool
     {
         if (!$this->request->request->has('lineas')) {
             $this->response->setHttpCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
+            $this->response->json([
                 'status' => 'error',
                 'message' => 'lineas field is required',
-            ]));
+            ]);
             return false;
         }
 
@@ -155,10 +153,10 @@ class ApiCreateFacturaCliente extends ApiController
         $lineas = json_decode($lineData, true);
         if (!is_array($lineas)) {
             $this->response->setHttpCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
+            $this->response->json([
                 'status' => 'error',
                 'message' => 'Invalid lines',
-            ]));
+            ]);
             return false;
         }
 
@@ -204,10 +202,10 @@ class ApiCreateFacturaCliente extends ApiController
         // actualizamos los totales y guardamos
         if (false === Calculator::calculate($factura, $newLines, true)) {
             $this->response->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->response->setContent(json_encode([
+            $this->response->json([
                 'status' => 'error',
                 'message' => 'Error calculating the invoice',
-            ]));
+            ]);
             return false;
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -89,12 +89,14 @@ class ReceiptGenerator
 
         // actualizamos la factura por sql
         $dataBase = new DataBase();
-        $sql = 'UPDATE ' . $invoice::tableName() . ' SET pagada = ' . $dataBase->var2str($invoice->pagada)
+        $dataBase->connect();
+        $sql = 'UPDATE ' . $invoice::tableName()
+            . ' SET pagada = ' . $dataBase->var2str($invoice->pagada)
             . ', vencida = ' . $dataBase->var2str($invoice->vencida)
-            . ' WHERE ' . $invoice::primaryColumn() . ' = ' . $dataBase->var2str($invoice->primaryColumnValue()) . ';';
+            . ' WHERE ' . $invoice::primaryColumn() . ' = ' . $dataBase->var2str($invoice->id()) . ';';
         $dataBase->exec($sql);
 
-        WorkQueue::send('Model.' . $invoice->modelClassName() . '.Paid', $invoice->primaryColumnValue(), $invoice->toArray());
+        WorkQueue::send('Model.' . $invoice->modelClassName() . '.Paid', $invoice->id(), $invoice->toArray());
     }
 
     /**
@@ -124,7 +126,8 @@ class ReceiptGenerator
         }
 
         // create new receipts
-        $partialAmount = $number > 1 ? round($amount / $number, FS_NF0) : $amount;
+        $nf0 = Tools::settings('default', 'decimals', 2);
+        $partialAmount = $number > 1 ? round($amount / $number, $nf0) : $amount;
         while (false === $this->isCero($amount)) {
             $receiptAmount = $amount > self::PARTIAL_AMOUNT_MULTIPLIER * $partialAmount ? $partialAmount : $amount;
             if (false === $this->newCustomerReceipt($invoice, $newNum, $receiptAmount)) {
@@ -165,7 +168,8 @@ class ReceiptGenerator
         }
 
         // create new receipts
-        $partialAmount = $number > 1 ? round($amount / $number, FS_NF0) : $amount;
+        $nf0 = Tools::settings('default', 'decimals', 2);
+        $partialAmount = $number > 1 ? round($amount / $number, $nf0) : $amount;
         while (false === $this->isCero($amount)) {
             $receiptAmount = $amount > self::PARTIAL_AMOUNT_MULTIPLIER * $partialAmount ? $partialAmount : $amount;
             if (false === $this->newSupplierReceipt($invoice, $newNum, $receiptAmount)) {
@@ -192,7 +196,8 @@ class ReceiptGenerator
             $pending -= $receipt->importe;
         }
 
-        return round($pending, FS_NF0);
+        $nf0 = Tools::settings('default', 'decimals', 2);
+        return round($pending, $nf0);
     }
 
     /**
@@ -204,7 +209,8 @@ class ReceiptGenerator
      */
     protected function isCero($amount): bool
     {
-        return Tools::floatCmp($amount, 0.0, FS_NF0, true);
+        $nf0 = Tools::settings('default', 'decimals', 2);
+        return Tools::floatCmp($amount, 0.0, $nf0, true);
     }
 
     /**
