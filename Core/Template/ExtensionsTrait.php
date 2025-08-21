@@ -32,7 +32,7 @@ trait ExtensionsTrait
      * @var array
      */
     protected static $extensions = [];
-    
+
     /**
      * Cache for extension lookups by method name.
      *
@@ -56,7 +56,7 @@ trait ExtensionsTrait
         if (!isset(static::$extensionCache[$name])) {
             $this->buildExtensionCache($name);
         }
-        
+
         // Execute first extension found (respecting priority)
         if (!empty(static::$extensionCache[$name])) {
             return call_user_func_array(static::$extensionCache[$name][0]->bindTo($this, static::class), $arguments);
@@ -77,22 +77,22 @@ trait ExtensionsTrait
             if (strpos($method->name, '__') === 0) {
                 continue;
             }
-            
+
             $method->setAccessible(true);
             $result = $method->invoke($extension);
-            
+
             // Validate that the method returns a closure
             if (!$result instanceof Closure) {
                 throw new BadMethodCallException('Method ' . $method->name . ' in extension ' . get_class($extension) . ' must return a Closure.');
             }
-            
+
             self::$extensions[] = [
                 'name' => $method->name,
                 'function' => $result,
                 'priority' => max(0, min(1000, $priority)) // Ensure priority is between 0-1000
             ];
         }
-        
+
         // Clear cache when adding new extensions
         static::$extensionCache = [];
     }
@@ -105,7 +105,7 @@ trait ExtensionsTrait
         static::$extensions = [];
         static::$extensionCache = [];
     }
-    
+
     /**
      * Returns a list of all registered extension names.
      *
@@ -125,7 +125,7 @@ trait ExtensionsTrait
         if (!isset(static::$extensionCache[$name])) {
             $this->buildExtensionCache($name);
         }
-        
+
         return !empty(static::$extensionCache[$name]);
     }
 
@@ -141,7 +141,7 @@ trait ExtensionsTrait
         if (!isset(static::$extensionCache[$name])) {
             $this->buildExtensionCache($name);
         }
-        
+
         foreach (static::$extensionCache[$name] as $function) {
             $return = call_user_func_array($function->bindTo($this, static::class), $arguments);
             if ($return !== null) {
@@ -164,7 +164,7 @@ trait ExtensionsTrait
         if (!isset(static::$extensionCache[$name])) {
             $this->buildExtensionCache($name);
         }
-        
+
         foreach (static::$extensionCache[$name] as $function) {
             $return = call_user_func_array($function->bindTo($this, static::class), $arguments);
             if ($return === false) {
@@ -184,18 +184,18 @@ trait ExtensionsTrait
     public static function removeExtension(string $name): bool
     {
         $originalCount = count(static::$extensions);
-        
-        static::$extensions = array_filter(static::$extensions, function($ext) use ($name) {
+
+        static::$extensions = array_filter(static::$extensions, function ($ext) use ($name) {
             return $ext['name'] !== $name;
         });
-        
+
         $removed = count(static::$extensions) < $originalCount;
-        
+
         // Clear cache when removing extensions
         if ($removed) {
             unset(static::$extensionCache[$name]);
         }
-        
+
         return $removed;
     }
 
@@ -207,15 +207,15 @@ trait ExtensionsTrait
     private function buildExtensionCache(string $name): void
     {
         // Filter extensions by name
-        $extensions = array_filter(static::$extensions, function($ext) use ($name) {
+        $extensions = array_filter(static::$extensions, function ($ext) use ($name) {
             return $ext['name'] === $name;
         });
-        
+
         // Sort by priority (higher priority first)
-        usort($extensions, function($a, $b) {
+        usort($extensions, function ($a, $b) {
             return $b['priority'] - $a['priority'];
         });
-        
+
         // Store sorted functions in cache
         static::$extensionCache[$name] = array_column($extensions, 'function');
     }

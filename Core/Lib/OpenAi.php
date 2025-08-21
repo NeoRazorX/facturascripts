@@ -639,7 +639,6 @@ class OpenAi
             }
 
             imagedestroy($image);
-
         } catch (Throwable $th) {
             Tools::log()->error($th->getMessage());
             return '';
