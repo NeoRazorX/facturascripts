@@ -73,6 +73,9 @@ final class DbUpdater
             return false;
         }
 
+        // actualizamos las secuencias (PostgreSQL)
+        self::$db->updateSequence($table_name, self::db()->getColumns($table_name));
+
         self::save($table_name);
         Tools::log()->debug('table-checked', ['%tableName%' => $table_name]);
 
