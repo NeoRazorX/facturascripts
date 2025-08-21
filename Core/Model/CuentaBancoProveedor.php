@@ -122,9 +122,9 @@ class CuentaBancoProveedor extends ModelClass
             // If this account is the main one, we demarcate the others
             $sql = 'UPDATE ' . static::tableName()
                 . ' SET principal = false'
-                . ' WHERE codproveedor = ' . self::$dataBase->var2str($this->codproveedor)
-                . ' AND codcuenta <> ' . self::$dataBase->var2str($this->codcuenta) . ';';
-            self::$dataBase->exec($sql);
+                . ' WHERE codproveedor = ' . self::db()->var2str($this->codproveedor)
+                . ' AND codcuenta <> ' . self::db()->var2str($this->codcuenta) . ';';
+            self::db()->exec($sql);
         }
     }
 

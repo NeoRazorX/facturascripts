@@ -168,8 +168,8 @@ class Ejercicio extends ModelClass
         new DinEmpresa();
 
         $code = $year = "'" . date('Y') . "'";
-        $start = self::$dataBase->var2str(date('01-01-Y'));
-        $end = self::$dataBase->var2str(date('31-12-Y'));
+        $start = self::db()->var2str(date('01-01-Y'));
+        $end = self::db()->var2str(date('31-12-Y'));
         $state = "'" . self::EXERCISE_STATUS_OPEN . "'";
         return 'INSERT INTO ' . static::tableName()
             . ' (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,idempresa)'

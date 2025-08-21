@@ -165,7 +165,7 @@ class Variante extends ModelClass
             . DataBaseWhere::getSQLWhere($where)
             . " ORDER BY v." . $field . " ASC";
 
-        foreach (self::$dataBase->selectLimit($sql, CodeModel::getlimit()) as $data) {
+        foreach (self::db()->selectLimit($sql, CodeModel::getlimit()) as $data) {
             $data['description'] = $this->getAttributeDescription(
                 $data['idatributovalor1'],
                 $data['idatributovalor2'],

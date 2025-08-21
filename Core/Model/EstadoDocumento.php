@@ -171,9 +171,9 @@ class EstadoDocumento extends ModelClass
         if ($this->predeterminado) {
             $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
                 . " WHERE predeterminado = true"
-                . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
-                . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
-            return self::$dataBase->exec($sql);
+                . " AND tipodoc = " . self::db()->var2str($this->tipodoc)
+                . " AND idestado != " . self::db()->var2str($this->idestado) . ";";
+            return self::db()->exec($sql);
         }
 
         // establecemos el primer estado como predeterminado
@@ -183,8 +183,8 @@ class EstadoDocumento extends ModelClass
         ];
         foreach ($this->all($where) as $item) {
             $sql = "UPDATE " . static::tableName() . " SET predeterminado = true"
-                . " WHERE idestado = " . self::$dataBase->var2str($item->idestado) . ";";
-            return self::$dataBase->exec($sql);
+                . " WHERE idestado = " . self::db()->var2str($item->idestado) . ";";
+            return self::db()->exec($sql);
         }
 
         return false;
@@ -199,8 +199,8 @@ class EstadoDocumento extends ModelClass
             ];
             foreach ($this->all($where) as $item) {
                 $sql = "UPDATE " . static::tableName() . " SET predeterminado = true"
-                    . " WHERE idestado = " . self::$dataBase->var2str($item->idestado) . ";";
-                self::$dataBase->exec($sql);
+                    . " WHERE idestado = " . self::db()->var2str($item->idestado) . ";";
+                self::db()->exec($sql);
                 break;
             }
         }
@@ -211,9 +211,9 @@ class EstadoDocumento extends ModelClass
         if ($this->predeterminado) {
             $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
                 . " WHERE predeterminado = true"
-                . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
-                . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
-            self::$dataBase->exec($sql);
+                . " AND tipodoc = " . self::db()->var2str($this->tipodoc)
+                . " AND idestado != " . self::db()->var2str($this->idestado) . ";";
+            self::db()->exec($sql);
         }
     }
 

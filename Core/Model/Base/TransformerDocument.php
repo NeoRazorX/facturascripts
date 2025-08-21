@@ -130,7 +130,7 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         // we check if there is already an open transaction so as not to break it
-        $newTransaction = false === static::$dataBase->inTransaction() && self::$dataBase->beginTransaction();
+        $newTransaction = false === static::db()->inTransaction() && self::db()->beginTransaction();
 
         // remove lines to update stock
         foreach ($this->getLines() as $line) {
@@ -138,7 +138,7 @@ abstract class TransformerDocument extends BusinessDocument
                 continue;
             }
             if ($newTransaction) {
-                self::$dataBase->rollback();
+                self::db()->rollback();
             }
             return false;
         }
@@ -146,7 +146,7 @@ abstract class TransformerDocument extends BusinessDocument
         // remove this model
         if (false === parent::delete()) {
             if ($newTransaction) {
-                self::$dataBase->rollback();
+                self::db()->rollback();
             }
             return false;
         }
@@ -177,7 +177,7 @@ abstract class TransformerDocument extends BusinessDocument
         ]);
 
         if ($newTransaction) {
-            self::$dataBase->commit();
+            self::db()->commit();
         }
 
         return true;

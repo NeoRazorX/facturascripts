@@ -308,10 +308,10 @@ class Asiento extends ModelClass
         $offset = 0;
         $number = 1;
         $sql = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
-            . ' WHERE codejercicio = ' . self::$dataBase->var2str($exercise->codejercicio)
+            . ' WHERE codejercicio = ' . self::db()->var2str($exercise->codejercicio)
             . " ORDER BY fecha ASC, CASE WHEN operacion = 'A' THEN 1 ELSE 2 END ASC, idasiento ASC";
 
-        $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
+        $rows = self::db()->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
         while (!empty($rows)) {
             if (false === $this->renumberAccEntries($rows, $number)) {
                 Tools::log()->warning('renumber-accounting-error', ['%exerciseCode%' => $codejercicio]);
@@ -319,7 +319,7 @@ class Asiento extends ModelClass
             }
 
             $offset += self::RENUMBER_LIMIT;
-            $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
+            $rows = self::db()->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
         }
         return true;
     }
@@ -421,14 +421,14 @@ class Asiento extends ModelClass
     {
         $sql = '';
         foreach ($entries as $row) {
-            if (self::$dataBase->var2str($row['numero']) !== self::$dataBase->var2str($number)) {
+            if (self::db()->var2str($row['numero']) !== self::db()->var2str($number)) {
                 $sql .= 'UPDATE ' . static::tableName()
-                    . ' SET numero = ' . self::$dataBase->var2str($number)
-                    . ' WHERE idasiento = ' . self::$dataBase->var2str($row['idasiento']) . ';';
+                    . ' SET numero = ' . self::db()->var2str($number)
+                    . ' WHERE idasiento = ' . self::db()->var2str($row['idasiento']) . ';';
             }
             ++$number;
         }
-        return empty($sql) || self::$dataBase->exec($sql);
+        return empty($sql) || self::db()->exec($sql);
     }
 
     protected function saveInsert(): bool

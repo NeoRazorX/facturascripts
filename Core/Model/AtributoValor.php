@@ -81,7 +81,7 @@ class AtributoValor extends ModelClass
 
         $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $this->primaryDescriptionColumn() . ' AS description, codatributo, orden '
             . 'FROM ' . static::tableName() . ' ORDER BY codatributo ASC, orden ASC';
-        foreach (self::$dataBase->selectLimit($sql, CodeModel::getlimit()) as $d) {
+        foreach (self::db()->selectLimit($sql, CodeModel::getlimit()) as $d) {
             $results[] = new CodeModel($d);
         }
 

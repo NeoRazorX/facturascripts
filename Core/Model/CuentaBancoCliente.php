@@ -124,9 +124,9 @@ class CuentaBancoCliente extends ModelClass
             // If this account is the main one, we demarcate the others
             $sql = 'UPDATE ' . static::tableName()
                 . ' SET principal = false'
-                . ' WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente)
-                . ' AND codcuenta != ' . self::$dataBase->var2str($this->codcuenta) . ';';
-            self::$dataBase->exec($sql);
+                . ' WHERE codcliente = ' . self::db()->var2str($this->codcliente)
+                . ' AND codcuenta != ' . self::db()->var2str($this->codcuenta) . ';';
+            self::db()->exec($sql);
         }
     }
 

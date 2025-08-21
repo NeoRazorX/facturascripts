@@ -225,13 +225,13 @@ class Stock extends ModelClass
     public function totalFromProduct(int $idproducto, string $referencia = ''): float
     {
         $sql = 'SELECT SUM(cantidad) AS total FROM ' . static::tableName()
-            . ' WHERE idproducto = ' . self::$dataBase->var2str($idproducto);
+            . ' WHERE idproducto = ' . self::db()->var2str($idproducto);
 
         if (!empty($referencia)) {
-            $sql .= ' AND referencia = ' . self::$dataBase->var2str($referencia);
+            $sql .= ' AND referencia = ' . self::db()->var2str($referencia);
         }
 
-        $data = self::$dataBase->select($sql);
+        $data = self::db()->select($sql);
         return empty($data) ? 0.0 : round((float)$data[0]['total'], self::MAX_DECIMALS);
     }
 
@@ -243,14 +243,14 @@ class Stock extends ModelClass
     protected function updateProductStock(): bool
     {
         $total = $this->totalFromProduct($this->idproducto);
-        $sql = "UPDATE " . DinProducto::tableName() . " SET stockfis = " . self::$dataBase->var2str($total)
-            . ", actualizado = " . self::$dataBase->var2str(Tools::dateTime())
-            . " WHERE idproducto = " . self::$dataBase->var2str($this->idproducto) . ';';
+        $sql = "UPDATE " . DinProducto::tableName() . " SET stockfis = " . self::db()->var2str($total)
+            . ", actualizado = " . self::db()->var2str(Tools::dateTime())
+            . " WHERE idproducto = " . self::db()->var2str($this->idproducto) . ';';
 
         $totalVariant = $this->totalFromProduct($this->idproducto, $this->referencia);
-        $sql .= "UPDATE " . DinVariante::tableName() . " SET stockfis = " . self::$dataBase->var2str($totalVariant)
-            . " WHERE referencia = " . self::$dataBase->var2str($this->referencia) . ';';
+        $sql .= "UPDATE " . DinVariante::tableName() . " SET stockfis = " . self::db()->var2str($totalVariant)
+            . " WHERE referencia = " . self::db()->var2str($this->referencia) . ';';
 
-        return self::$dataBase->exec($sql);
+        return self::db()->exec($sql);
     }
 }

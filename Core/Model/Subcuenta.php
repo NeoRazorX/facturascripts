@@ -278,9 +278,9 @@ class Subcuenta extends ModelClass
         // calculamos el saldo de la subcuenta
         $sql = "SELECT COALESCE(SUM(debe), 0) as debe, COALESCE(SUM(haber), 0) as haber"
             . " FROM " . DinPartida::tableName()
-            . " WHERE idsubcuenta = " . self::$dataBase->var2str($this->idsubcuenta) . ";";
+            . " WHERE idsubcuenta = " . self::db()->var2str($this->idsubcuenta) . ";";
 
-        foreach (self::$dataBase->select($sql) as $row) {
+        foreach (self::db()->select($sql) as $row) {
             $decimals = Tools::settings('default', 'decimals');
             $debe = round($row['debe'], $decimals);
             $haber = round($row['haber'], $decimals);
