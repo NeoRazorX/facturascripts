@@ -112,6 +112,7 @@ abstract class MigrationClass
     {
         if (self::$database === null) {
             self::$database = new DataBase();
+            self::$database->connect();
         }
 
         return self::$database;
