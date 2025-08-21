@@ -211,6 +211,7 @@ abstract class Controller implements ControllerInterface
     {
         if (null === $this->dataBase) {
             $this->dataBase = new DataBase();
+            $this->dataBase->connect();
         }
 
         return $this->dataBase;
