@@ -37,6 +37,9 @@ final class DbUpdater
     /** @var DataBase */
     private static $db;
 
+    /** @var string */
+    private static $last_error;
+
     /** @var DataBaseQueries */
     private static $sql_tool;
 
@@ -68,7 +71,7 @@ final class DbUpdater
 
         $sql = self::sqlTool()->sqlCreateTable($table_name, $structure['columns'], $structure['constraints'], $structure['indexes']) . $sql_after;
         if (false === self::db()->exec($sql)) {
-            Tools::log()->critical('Failed to create table ' . $table_name, ['sql' => $sql]);
+            self::$last_error = 'Error creating table ' . $table_name . ': ' . $sql;
             self::save($table_name);
             return false;
         }
@@ -98,6 +101,11 @@ final class DbUpdater
 
         self::rebuild();
         return false;
+    }
+
+    public static function getLastError(): string
+    {
+        return self::$last_error;
     }
 
     public static function getTableXmlLocation(string $table_name): string
@@ -228,11 +236,8 @@ final class DbUpdater
         }
 
         if (false === self::db()->exec($sql)) {
+            self::$last_error = 'Error updating table ' . $table_name . ': ' . $sql;
             self::save($table_name);
-            Tools::log()->critical('error-updating-table', [
-                '%tableName%' => $table_name,
-                'sql' => $sql
-            ]);
             return false;
         }
 
