@@ -53,11 +53,12 @@ final class CrashReport
                     . '    ' . htmlspecialchars($value) . '</span>';
                 continue;
             } elseif ($lineNumber === $line) {
-                $result[] = str_pad($lineNumber, 3, ' ', STR_PAD_LEFT) . '    ' . htmlspecialchars($value);
+                $result[] = str_pad($lineNumber, 3, ' ', STR_PAD_LEFT) . '    ' . $value;
                 continue;
             }
 
-            $result[] = str_pad($lineNumber, 3, ' ', STR_PAD_LEFT) . '    ' . htmlspecialchars($value);
+            $result[] = str_pad($lineNumber, 3, ' ', STR_PAD_LEFT) . '    '
+                . ($html ? htmlspecialchars($value) : $value);
         }
 
         return implode("\n", $result);
@@ -273,7 +274,7 @@ final class CrashReport
             }
 
             $html .= '<tr>'
-                . '<td><small>' . $logEntry['channel'] . '</small></td>'
+                . '<td><small>' . Tools::noHtml($logEntry['channel']) . '</small></td>'
                 . '<td class="' . $levelClass . '"><small><b>' . strtoupper($logEntry['level']) . '</b></small></td>'
                 . '<td><small>' . Tools::noHtml($logEntry['message']) . '</small></td>'
                 . '</tr>';
@@ -397,17 +398,17 @@ final class CrashReport
             . '<div class="card-footer p-2">'
             . '<div class="row">'
             . '<div class="col">'
-            . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
-            . '<input type="hidden" name="error_code" value="' . $info['code'] . '">'
+            . '<form method="post" action="' . Tools::noHtml($info['report_url']) . '" target="_blank">'
+            . '<input type="hidden" name="error_code" value="' . Tools::noHtml($info['code']) . '">'
             . '<input type="hidden" name="error_message" value="' . Tools::noHtml($info['message']) . '">'
-            . '<input type="hidden" name="error_file" value="' . $info['file'] . '">'
-            . '<input type="hidden" name="error_line" value="' . $info['line'] . '">'
-            . '<input type="hidden" name="error_hash" value="' . $info['hash'] . '">'
-            . '<input type="hidden" name="error_url" value="' . $info['url'] . '">'
-            . '<input type="hidden" name="error_core_version" value="' . $info['core_version'] . '">'
-            . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">'
-            . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">'
-            . '<input type="hidden" name="error_os" value="' . $info['os'] . '">'
+            . '<input type="hidden" name="error_file" value="' . Tools::noHtml($info['file']) . '">'
+            . '<input type="hidden" name="error_line" value="' . Tools::noHtml($info['line']) . '">'
+            . '<input type="hidden" name="error_hash" value="' . Tools::noHtml($info['hash']) . '">'
+            . '<input type="hidden" name="error_url" value="' . Tools::noHtml($info['url']) . '">'
+            . '<input type="hidden" name="error_core_version" value="' . Tools::noHtml($info['core_version']) . '">'
+            . '<input type="hidden" name="error_plugin_list" value="' . Tools::noHtml($info['plugin_list']) . '">'
+            . '<input type="hidden" name="error_php_version" value="' . Tools::noHtml($info['php_version']) . '">'
+            . '<input type="hidden" name="error_os" value="' . Tools::noHtml($info['os']) . '">'
             . '<button type="submit" class="btn btn-secondary">' . self::trans('to-report') . '</button>'
             . '</form>'
             . '</div>';

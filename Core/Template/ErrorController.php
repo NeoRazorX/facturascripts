@@ -100,6 +100,7 @@ abstract class ErrorController implements ErrorControllerInterface
             . $fragment . '</pre>'
             . '</div>';
 
+        $messageParts = explode("\nStack trace:\n", Tools::noHtml($this->info['message']));
         if (isset($messageParts[1])) {
             $html .= '<div class="table-responsive">'
                 . '<table class="table table-striped mb-0">'
@@ -130,17 +131,17 @@ abstract class ErrorController implements ErrorControllerInterface
     {
         $form = '';
         if ($report_btn) {
-            $form = '<form method="post" action="' . $this->info['report_url'] . '" target="_blank">'
-                . '<input type="hidden" name="error_code" value="' . $this->info['code'] . '">'
+            $form = '<form method="post" action="' . Tools::noHtml($this->info['report_url']) . '" target="_blank">'
+                . '<input type="hidden" name="error_code" value="' . Tools::noHtml($this->info['code']) . '">'
                 . '<input type="hidden" name="error_message" value="' . Tools::noHtml($this->info['message']) . '">'
-                . '<input type="hidden" name="error_file" value="' . $this->info['file'] . '">'
-                . '<input type="hidden" name="error_line" value="' . $this->info['line'] . '">'
-                . '<input type="hidden" name="error_hash" value="' . $this->info['hash'] . '">'
-                . '<input type="hidden" name="error_url" value="' . $this->info['url'] . '">'
-                . '<input type="hidden" name="error_core_version" value="' . $this->info['core_version'] . '">'
-                . '<input type="hidden" name="error_plugin_list" value="' . $this->info['plugin_list'] . '">'
-                . '<input type="hidden" name="error_php_version" value="' . $this->info['php_version'] . '">'
-                . '<input type="hidden" name="error_os" value="' . $this->info['os'] . '">'
+                . '<input type="hidden" name="error_file" value="' . Tools::noHtml($this->info['file']) . '">'
+                . '<input type="hidden" name="error_line" value="' . Tools::noHtml($this->info['line']) . '">'
+                . '<input type="hidden" name="error_hash" value="' . Tools::noHtml($this->info['hash']) . '">'
+                . '<input type="hidden" name="error_url" value="' . Tools::noHtml($this->info['url']) . '">'
+                . '<input type="hidden" name="error_core_version" value="' . Tools::noHtml($this->info['core_version']) . '">'
+                . '<input type="hidden" name="error_plugin_list" value="' . Tools::noHtml($this->info['plugin_list']) . '">'
+                . '<input type="hidden" name="error_php_version" value="' . Tools::noHtml($this->info['php_version']) . '">'
+                . '<input type="hidden" name="error_os" value="' . Tools::noHtml($this->info['os']) . '">'
                 . '<button type="submit" class="btn btn-secondary">' . Tools::trans('to-report') . '</button>'
                 . '</form>';
         }
@@ -232,7 +233,7 @@ abstract class ErrorController implements ErrorControllerInterface
             }
 
             $html .= '<tr>'
-                . '<td><small>' . $logEntry['channel'] . '</small></td>'
+                . '<td><small>' . Tools::noHtml($logEntry['channel']) . '</small></td>'
                 . '<td class="' . $levelClass . '"><small><b>' . strtoupper($logEntry['level']) . '</b></small></td>'
                 . '<td><small>' . Tools::noHtml($logEntry['message']) . '</small></td>'
                 . '</tr>';
