@@ -29,6 +29,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseQueries;
  */
 final class DbUpdater
 {
+    const CHANGELOG_FILE = 'db-changelog.json';
     const FILE_NAME = 'db-updater.json';
 
     /** @var array */
@@ -73,6 +74,7 @@ final class DbUpdater
         if (false === self::db()->exec($sql)) {
             self::$last_error = 'Error creating table ' . $table_name . ': ' . $sql;
             self::save($table_name);
+            self::saveChangeLog('create-table', $sql);
             return false;
         }
 
@@ -80,6 +82,8 @@ final class DbUpdater
         self::$db->updateSequence($table_name, self::db()->getColumns($table_name));
 
         self::save($table_name);
+        self::saveChangeLog('create-table', $sql);
+
         Tools::log()->debug('table-checked', ['%tableName%' => $table_name]);
 
         return true;
@@ -93,11 +97,14 @@ final class DbUpdater
 
         $sql = self::sqlTool()->sqlDropTable($table_name);
         if (self::db()->exec($sql)) {
-            self::rebuild();
-
+            self::saveChangeLog('drop-table', $sql);
             Tools::log()->debug('table-deleted', ['%tableName%' => $table_name]);
+
+            self::rebuild();
             return true;
         }
+
+        self::saveChangeLog('drop-table', $sql);
 
         self::rebuild();
         return false;
@@ -119,7 +126,7 @@ final class DbUpdater
     public static function isTableChecked(string $table_name): bool
     {
         if (null === self::$checked_tables) {
-            // read the file
+            // leemos el fichero
             $file = Tools::folder('MyFiles', self::FILE_NAME);
             if (false === file_exists($file)) {
                 self::$checked_tables = [];
@@ -152,7 +159,7 @@ final class DbUpdater
             return $structure;
         }
 
-        // if no column, return empty structure
+        // si no hay columnas, devolvemos la estructura vacía
         if (false === isset($xml->column)) {
             return $structure;
         }
@@ -203,7 +210,7 @@ final class DbUpdater
     {
         self::$checked_tables = [];
 
-        // remove the file
+        // eliminamos el fichero
         $file = Tools::folder('MyFiles', self::FILE_NAME);
         if (file_exists($file)) {
             unlink($file);
@@ -222,7 +229,7 @@ final class DbUpdater
             $structure = self::readTableXml($file_path);
         }
 
-        // compare table columns and constraints against xml definition
+        // comparamos las columnas, restricciones y los índices de la tabla con los del XML
         $db_cols = self::db()->getColumns($table_name);
         $db_cons = self::db()->getConstraints($table_name);
         $db_indexes = self::db()->getIndexes($table_name);
@@ -264,22 +271,30 @@ final class DbUpdater
         foreach ($xml_cols as $xml_col) {
             $column = self::searchInArray($db_cols, 'name', $xml_col['name']);
             if (empty($column)) {
-                $sql .= self::needRename($db_cols, $xml_col) ?
+                $sql_part = self::needRename($db_cols, $xml_col) ?
                     self::sqlTool()->sqlRenameColumn($table_name, $xml_col['rename'], $xml_col['name']) :
                     self::sqlTool()->sqlAlterAddColumn($table_name, $xml_col);
+                $sql .= $sql_part;
+                self::saveChangeLog('new-column', $sql_part, $xml_col);
                 continue;
             }
 
             if (false === self::compareDataTypes($column['type'], $xml_col['type'])) {
-                $sql .= self::sqlTool()->sqlAlterModifyColumn($table_name, $xml_col);
+                $sql_part = self::sqlTool()->sqlAlterModifyColumn($table_name, $xml_col);
+                $sql .= $sql_part;
+                self::saveChangeLog('change-column-type', $sql_part, ['db' => $column, 'xml' => $xml_col]);
             }
 
             if ($column['default'] === null && $xml_col['default'] !== '') {
-                $sql .= self::sqlTool()->sqlAlterColumnDefault($table_name, $xml_col);
+                $sql_part = self::sqlTool()->sqlAlterColumnDefault($table_name, $xml_col);
+                $sql .= $sql_part;
+                self::saveChangeLog('change-column-default', $sql_part, ['db' => $column, 'xml' => $xml_col]);
             }
 
             if ($column['is_nullable'] !== $xml_col['null']) {
-                $sql .= self::sqlTool()->sqlAlterColumnNull($table_name, $xml_col);
+                $sql_part = self::sqlTool()->sqlAlterColumnNull($table_name, $xml_col);
+                $sql .= $sql_part;
+                self::saveChangeLog('change-column-null', $sql_part, ['db' => $column, 'xml' => $xml_col]);
             }
         }
 
@@ -292,17 +307,17 @@ final class DbUpdater
             return '';
         }
 
-        // if you have to delete a constraint, it is better to delete them all
+        // si hay que borrar alguna restricción, es mejor borrar todas
         $delete_cons = false;
         $sql_delete = '';
         $sql_delete_fk = '';
 
         foreach ($db_cons as $db_con) {
             if ($db_con['type'] === 'PRIMARY KEY') {
-                // exclude primary key
+                // excluimos las claves primarias
                 continue;
             } elseif ($db_con['type'] === 'FOREIGN KEY') {
-                // it is better to delete the foreign keys before the rest
+                // es mejor borrar las claves foráneas antes que el resto
                 $sql_delete_fk .= self::sqlTool()->sqlDropConstraint($table_name, $db_con);
             } else {
                 $sql_delete .= self::sqlTool()->sqlDropConstraint($table_name, $db_con);
@@ -314,10 +329,10 @@ final class DbUpdater
             }
         }
 
-        // add new constraints
+        // añadimos las nuevas restricciones
         $sql = '';
         foreach ($xml_cons as $xml_con) {
-            // exclude primary keys because they have no name
+            // excluimos las claves primarias
             if (0 === strpos($xml_con['constraint'], 'PRIMARY')) {
                 continue;
             }
@@ -328,6 +343,10 @@ final class DbUpdater
             }
         }
 
+        if (!empty($sql)) {
+            self::saveChangeLog('constraints', $sql);
+        }
+
         return $delete_cons ?
             $sql_delete_fk . $sql_delete . $sql :
             $sql;
@@ -336,7 +355,7 @@ final class DbUpdater
     private static function compareIndexes(string $table_name, array $xml_indexes, array $db_indexes): string
     {
         // Agregamos fs_ al inicio del 'name'
-        // Así la comparación es correcta al buscar los indices
+        // Así la comparación es correcta al buscar los índices
         foreach ($xml_indexes as $key => $value) {
             if (isset($value['name'])) {
                 $xml_indexes[$key]['name'] = 'fs_' . $value['name'];
@@ -350,25 +369,30 @@ final class DbUpdater
             foreach ($db_indexes as $db_idx) {
                 $sql .= self::sqlTool()->sqlDropIndex($table_name, $db_idx);
             }
+            if (!empty($sql)) {
+                self::saveChangeLog('drop-all-indexes', $sql);
+            }
             return $sql;
         }
 
-        // remove new indexes
+        // eliminamos los índices que no estén en el XML
         foreach ($db_indexes as $db_idx) {
-            // delete if not found
             $column = self::searchInArray($xml_indexes, 'name', $db_idx['name']);
             if (empty($column)) {
                 $sql .= self::sqlTool()->sqlDropIndex($table_name, $db_idx);
             }
         }
 
-        // add new indexes
+        // añadimos los índices que no estén en la base de datos
         foreach ($xml_indexes as $xml_idx) {
-            // add if not found
             $column = self::searchInArray($db_indexes, 'name', $xml_idx['name']);
             if (empty($column)) {
                 $sql .= self::sqlTool()->sqlAddIndex($table_name, $xml_idx['name'], $xml_idx['columns']);
             }
+        }
+
+        if (!empty($sql)) {
+            self::saveChangeLog('indexes', $sql);
         }
 
         return $sql;
@@ -411,6 +435,32 @@ final class DbUpdater
         }
 
         return [];
+    }
+
+    private static function saveChangeLog(string $reason, string $sql, array $context = []): void
+    {
+        if (empty($sql)) {
+            return;
+        }
+
+        // leemos el fichero
+        $file = Tools::folder('MyFiles', self::CHANGELOG_FILE);
+        $changelog = [];
+        if (file_exists($file)) {
+            $file_data = file_get_contents($file);
+            $changelog = json_decode($file_data, true) ?? [];
+        }
+
+        // añadimos la nueva entrada
+        $changelog[] = [
+            'date' => date('Y-m-d H:i:s'),
+            'reason' => $reason,
+            'sql' => $sql,
+            'context' => $context
+        ];
+
+        // guardamos el fichero
+        file_put_contents($file, json_encode($changelog, JSON_PRETTY_PRINT));
     }
 
     private static function sqlTool(): DataBaseQueries
