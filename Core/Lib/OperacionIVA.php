@@ -27,6 +27,10 @@ namespace FacturaScripts\Core\Lib;
  */
 class RegimenIVA
 {
+    const ES_OPERATION_01 = 'ES_01'; // valor añadido
+    const ES_OPERATION_02 = 'ES_02'; // Ceuta y Melilla
+    const ES_OPERATION_03 = 'ES_03'; // IGIC
+    const ES_OPERATION_99 = 'ES_99'; // otro
     const ES_TAX_EXCEPTION_E1 = 'ES_20';
     const ES_TAX_EXCEPTION_E2 = 'ES_21';
     const ES_TAX_EXCEPTION_E3 = 'ES_22';
