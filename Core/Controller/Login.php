@@ -41,13 +41,13 @@ class Login implements ControllerInterface
     public $empresa;
 
     /** @var string */
+    private $template = 'Login/Login.html.twig';
+
+    /** @var string */
     public $title = 'Login';
 
     /** @var string */
     public $two_factor_user;
-
-    /** @var boolean */
-    private $two_factor_view = false;
 
     public function __construct(string $className, string $url = '')
     {
@@ -70,7 +70,7 @@ class Login implements ControllerInterface
         $this->title = $this->empresa->nombrecorto;
 
         $request = Request::createFromGlobals();
-        $action = $request->request->get('action', $request->query->get('action', ''));
+        $action = $request->get('action', '');
 
         switch ($action) {
             case 'change-password':
@@ -90,21 +90,11 @@ class Login implements ControllerInterface
                 break;
         }
 
-        if ($this->two_factor_view) {
-            echo Html::render('Login/TwoFactor.html.twig', [
-                'controllerName' => 'Login',
-                'debugBarRender' => false,
-                'fsc' => $this,
-                'template' => 'Login/TwoFactor.html.twig',
-            ]);
-            return;
-        }
-
-        echo Html::render('Login/Login.html.twig', [
+        echo Html::render($this->template, [
             'controllerName' => 'Login',
             'debugBarRender' => false,
             'fsc' => $this,
-            'template' => 'Login/Login.html.twig',
+            'template' => $this->template,
         ]);
     }
 
@@ -191,7 +181,7 @@ class Login implements ControllerInterface
         }
 
         $user = new User();
-        if (false === $user->loadFromCode($username)) {
+        if (false === $user->load($username)) {
             Tools::log()->warning('login-user-not-found');
             $this->saveIncident(Session::getClientIp(), $username);
             return;
@@ -299,7 +289,7 @@ class Login implements ControllerInterface
         }
 
         $user = new User();
-        if (false === $user->loadFromCode($userName)) {
+        if (false === $user->load($userName)) {
             Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($userName)]);
             $this->saveIncident(Session::getClientIp());
             return;
@@ -318,7 +308,7 @@ class Login implements ControllerInterface
 
         if ($user->two_factor_enabled) {
             $this->two_factor_user = $user->nick;
-            $this->two_factor_view = true;
+            $this->template = 'Login/TwoFactor.html.twig';
             return;
         }
 
@@ -328,7 +318,7 @@ class Login implements ControllerInterface
     protected function twoFactorValidationAction(Request $request): void
     {
         $user = new User();
-        if (!$user->loadFromCode($request->request->get('fsNick'))) {
+        if (!$user->load($request->request->get('fsNick'))) {
             Tools::log()->warning('user-not-found');
             $this->saveIncident(Session::getClientIp());
             return;
