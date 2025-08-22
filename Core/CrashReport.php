@@ -153,168 +153,19 @@ final class CrashReport
         return $token === self::newToken();
     }
 
-    private static function showJsonError(array $info): void
+    private static function canShowDebugInfo(): bool
     {
-        header('Content-Type: application/json');
-        echo json_encode(['error' => $info['message'], 'info' => $info]);
+        return Tools::config('debug', false);
     }
 
-    private static function showTextError(array $info): void
+    private static function canShowDeployButtons(): bool
     {
-        header('Content-Type: text/plain');
-        echo $info['message'];
-    }
-
-    private static function showHtmlError(array $info, array $error): void
-    {
-        $messageParts = explode("\nStack trace:\n", Tools::noHtml($info['message']));
-
-        echo '<!doctype html>'
-            . '<html lang="en">'
-            . '<head>'
-            . '<meta charset="utf-8">'
-            . '<meta name="viewport" content="width=device-width, initial-scale=1">'
-            . '<title>🚨 Error ' . $info['hash'] . '</title>'
-            . '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"'
-            . ' integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">'
-            . '</head>'
-            . '<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">'
-            . '<div class="container mt-5 mb-5">'
-            . '<div class="row justify-content-center">'
-            . '<div class="col-sm-12">'
-            . '<h1 class="h3 text-white mb-4">🚨 Error ' . $info['hash'] . '</h1>'
-            . '<div class="card shadow mb-4">'
-            . '<div class="card-body">'
-            . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-end">'
-            . '<p>' . nl2br($messageParts[0]) . '</p>'
-            . '<p class="mb-0"><b>Url</b>: ' . $info['url'] . '</p>';
-
-        if (Tools::config('debug', false)) {
-            echo '<p class="mb-0"><b>File</b>: ' . $info['file'] . ', <b>line</b>: ' . $info['line'] . '</p>'
-                . '<p class="mb-0"><b>Core</b>: ' . $info['core_version']
-                . ', <b>plugins</b>: ' . implode(', ', Plugins::enabled()) . '<br/>'
-                . '<b>PHP</b>: ' . $info['php_version'] . ', <b>OS</b>: ' . $info['os'] . '</p>';
+        if (Tools::config('disable_deploy_actions', false)) {
+            return false;
         }
 
-        echo '</div>'
-            . '<div class="card-footer p-2">'
-            . '<div class="row">'
-            . '<div class="col">'
-            . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
-            . '<input type="hidden" name="error_code" value="' . $info['code'] . '">'
-            . '<input type="hidden" name="error_message" value="' . Tools::noHtml($info['message']) . '">'
-            . '<input type="hidden" name="error_file" value="' . $info['file'] . '">'
-            . '<input type="hidden" name="error_line" value="' . $info['line'] . '">'
-            . '<input type="hidden" name="error_hash" value="' . $info['hash'] . '">'
-            . '<input type="hidden" name="error_url" value="' . $info['url'] . '">'
-            . '<input type="hidden" name="error_core_version" value="' . $info['core_version'] . '">'
-            . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">'
-            . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">'
-            . '<input type="hidden" name="error_os" value="' . $info['os'] . '">'
-            . '<button type="submit" class="btn btn-secondary">' . self::trans('to-report') . '</button>'
-            . '</form>'
-            . '</div>';
-
-        if (false === Tools::config('disable_deploy_actions', false)) {
-            echo '<div class="col-auto">'
-                . '<a href="' . Tools::config('route') . '/deploy?action=disable-plugins&token=' . self::newToken()
-                . '" class="btn btn-light">' . self::trans('disable-plugins') . '</a> '
-                . '<a href="' . Tools::config('route') . '/deploy?action=rebuild&token=' . self::newToken()
-                . '" class="btn btn-light">' . self::trans('rebuild') . '</a> '
-                . '</div>';
-        }
-
-        echo '</div>'
-            . '</div>'
-            . '</div>';
-
-        // Añadimos el card con el fragmento de código y la traza
-        echo self::getCodeFragmentCard($info, $messageParts, $error);
-
-        // Añadimos el card con los últimos mensajes del log
-        echo self::getLogCard();
-
-        echo '</div>'
-            . '</div>'
-            . '</div>'
-            . '</body>'
-            . '</html>';
-    }
-
-    private static function showCliError(array $info, array $error): void
-    {
-        // Separador para mejor legibilidad
-        $separator = str_repeat('=', 80);
-        $shortSeparator = str_repeat('-', 80);
-
-        echo "\n" . $separator . "\n";
-        echo "🚨 ERROR " . $info['hash'] . "\n";
-        echo $separator . "\n\n";
-
-        // Mensaje de error principal
-        $messageParts = explode("\nStack trace:\n", $info['message']);
-        echo $messageParts[0] . "\n\n";
-
-        // Información del archivo y línea
-        echo "📍 UBICACIÓN:\n";
-        echo "   Archivo: " . $info['file'] . "\n";
-        echo "   Línea: " . $info['line'] . "\n";
-        echo "   URL: " . $info['url'] . "\n\n";
-
-        // Fragmento de código si está en modo debug
-        $fragment = self::getErrorFragment($error['file'], $error['line']);
-        if (Tools::config('debug', false) && !empty($fragment)) {
-            echo "📄 FRAGMENTO DE CÓDIGO:\n";
-            echo $shortSeparator . "\n";
-            echo $fragment . "\n";
-            echo $shortSeparator . "\n\n";
-        }
-
-        // Stack trace si está disponible
-        if (isset($messageParts[1]) && Tools::config('debug', false)) {
-            echo "📚 STACK TRACE:\n";
-            echo $shortSeparator . "\n";
-            $trace = explode("\n", $messageParts[1]);
-            $num = 1;
-            foreach (array_reverse($trace) as $value) {
-                if (trim($value) === 'thrown' || substr($value, 3) === '{main}') {
-                    continue;
-                }
-                echo "  #" . $num . " " . substr($value, 3) . "\n";
-                $num++;
-            }
-            echo "  #" . $num . " " . $info['file'] . ':' . $info['line'] . "\n";
-            echo $shortSeparator . "\n\n";
-        }
-
-        // Información del sistema
-        echo "ℹ️  INFORMACIÓN DEL SISTEMA:\n";
-        echo "   Core: " . $info['core_version'] . "\n";
-        echo "   PHP: " . $info['php_version'] . "\n";
-        echo "   OS: " . $info['os'] . "\n";
-        if (!empty($info['plugin_list'])) {
-            echo "   Plugins: " . $info['plugin_list'] . "\n";
-        }
-        echo "\n";
-
-        // Últimos mensajes del log
-        $logMessages = MiniLog::read();
-        if (!empty($logMessages)) {
-            $lastMessages = array_slice($logMessages, -10);
-            echo "📃 ÚLTIMOS MENSAJES DEL LOG:\n";
-            echo $shortSeparator . "\n";
-            foreach ($lastMessages as $logEntry) {
-                $level = strtoupper($logEntry['level']);
-                $levelFormatted = str_pad($level, 8);
-                echo "  [" . $levelFormatted . "] " . $logEntry['channel'] . ": " . $logEntry['message'] . "\n";
-            }
-            echo $shortSeparator . "\n\n";
-        }
-
-        // URL de reporte
-        echo "🔗 REPORTE DE ERROR:\n";
-        echo "   " . $info['report_url'] . "\n";
-        echo "\n" . $separator . "\n\n";
+        // comprobamos si existen las cookies de login
+        return isset($_COOKIE['fsNick']) && isset($_COOKIE['fsLogkey']);
     }
 
     private static function formatErrorMessage(string $message): string
@@ -337,13 +188,13 @@ final class CrashReport
     private static function getCodeFragmentCard(array $info, array $messageParts, array $error): string
     {
         $fragment = self::getErrorFragment($error['file'], $error['line'], 10, true);
-        if (!Tools::config('debug', false) || empty($fragment)) {
+        if (!self::canShowDebugInfo() || empty($fragment)) {
             return '';
         }
 
         $html = '<div class="card shadow mb-4">'
             . '<div class="card-body">'
-            . '<h2 class="h4 mb-3">📄 ' . self::trans('code-fragment') . '</h2>'
+            . '<h2 class="h5 mb-3">📑 ' . $info['file'] . '</h2>'
             . '<pre style="border: solid 1px #dee2e6; margin-bottom: 0; padding: 10px; background-color: #f8f9fa; border-radius: 4px; overflow-x: auto">'
             . htmlspecialchars_decode($fragment) . '</pre>'
             . '</div>';
@@ -376,7 +227,7 @@ final class CrashReport
 
     private static function getLogCard(): string
     {
-        if (!Tools::config('debug', false)) {
+        if (!self::canShowDebugInfo()) {
             return '';
         }
 
@@ -390,7 +241,7 @@ final class CrashReport
 
         $html = '<div class="card shadow mb-4">'
             . '<div class="card-body">'
-            . '<h2 class="h4 mb-0">📃 ' . self::trans('recent-log-messages') . '</h2>'
+            . '<h2 class="h5 mb-0">📃 ' . self::trans('recent-log-messages') . '</h2>'
             . '</div>'
             . '<div class="table-responsive">'
             . '<table class="table table-sm table-striped mb-0">'
@@ -433,6 +284,172 @@ final class CrashReport
             . '</div>';
 
         return $html;
+    }
+
+    private static function showCliError(array $info, array $error): void
+    {
+        // Separador para mejor legibilidad
+        $separator = str_repeat('=', 80);
+        $shortSeparator = str_repeat('-', 80);
+
+        echo "\n" . $separator . "\n";
+        echo "🚨 ERROR " . $info['hash'] . "\n";
+        echo $separator . "\n\n";
+
+        // Mensaje de error principal
+        $messageParts = explode("\nStack trace:\n", $info['message']);
+        echo $messageParts[0] . "\n\n";
+
+        // Información del archivo y línea
+        echo "📍 UBICACIÓN:\n";
+        echo "   Archivo: " . $info['file'] . "\n";
+        echo "   Línea: " . $info['line'] . "\n";
+        echo "   URL: " . $info['url'] . "\n\n";
+
+        // Fragmento de código si está en modo debug
+        $fragment = self::getErrorFragment($error['file'], $error['line']);
+        if (!empty($fragment) && self::canShowDebugInfo()) {
+            echo "📄 FRAGMENTO DE CÓDIGO:\n";
+            echo $shortSeparator . "\n";
+            echo $fragment . "\n";
+            echo $shortSeparator . "\n\n";
+        }
+
+        // Stack trace si está disponible
+        if (isset($messageParts[1]) && self::canShowDebugInfo()) {
+            echo "📚 STACK TRACE:\n";
+            echo $shortSeparator . "\n";
+            $trace = explode("\n", $messageParts[1]);
+            $num = 1;
+            foreach (array_reverse($trace) as $value) {
+                if (trim($value) === 'thrown' || substr($value, 3) === '{main}') {
+                    continue;
+                }
+                echo "  #" . $num . " " . substr($value, 3) . "\n";
+                $num++;
+            }
+            echo "  #" . $num . " " . $info['file'] . ':' . $info['line'] . "\n";
+            echo $shortSeparator . "\n\n";
+        }
+
+        // Información del sistema
+        echo "ℹ️  INFORMACIÓN DEL SISTEMA:\n";
+        echo "   Core: " . $info['core_version'] . "\n";
+        echo "   PHP: " . $info['php_version'] . "\n";
+        echo "   OS: " . $info['os'] . "\n";
+        if (!empty($info['plugin_list'])) {
+            echo "   Plugins: " . $info['plugin_list'] . "\n";
+        }
+        echo "\n";
+
+        // Últimos mensajes del log
+        $logMessages = MiniLog::read();
+        if (!empty($logMessages) && self::canShowDebugInfo()) {
+            $lastMessages = array_slice($logMessages, -10);
+            echo "📃 ÚLTIMOS MENSAJES DEL LOG:\n";
+            echo $shortSeparator . "\n";
+            foreach ($lastMessages as $logEntry) {
+                $level = strtoupper($logEntry['level']);
+                $levelFormatted = str_pad($level, 8);
+                echo "  [" . $levelFormatted . "] " . $logEntry['channel'] . ": " . $logEntry['message'] . "\n";
+            }
+            echo $shortSeparator . "\n\n";
+        }
+
+        // URL de reporte
+        echo "🔗 REPORTE DE ERROR:\n";
+        echo "   " . $info['report_url'] . "\n";
+        echo "\n" . $separator . "\n\n";
+    }
+
+    private static function showHtmlError(array $info, array $error): void
+    {
+        $messageParts = explode("\nStack trace:\n", Tools::noHtml($info['message']));
+
+        echo '<!doctype html>'
+            . '<html lang="en">'
+            . '<head>'
+            . '<meta charset="utf-8">'
+            . '<meta name="viewport" content="width=device-width, initial-scale=1">'
+            . '<title>🚨 Error ' . $info['hash'] . '</title>'
+            . '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"'
+            . ' integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">'
+            . '</head>'
+            . '<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">'
+            . '<div class="container mt-5 mb-5">'
+            . '<div class="row justify-content-center">'
+            . '<div class="col-sm-12">'
+            . '<h1 class="h3 text-white mb-4">🚨 Error ' . $info['hash'] . '</h1>'
+            . '<div class="card shadow mb-4">'
+            . '<div class="card-body">'
+            . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-end">'
+            . '<p>' . nl2br($messageParts[0]) . '</p>'
+            . '<p class="mb-0"><b>Url</b>: ' . $info['url'] . '</p>';
+
+        if (self::canShowDebugInfo()) {
+            echo '<p class="mb-0"><b>File</b>: ' . $info['file'] . ', <b>line</b>: ' . $info['line'] . '</p>'
+                . '<p class="mb-0"><b>Core</b>: ' . $info['core_version']
+                . ', <b>plugins</b>: ' . implode(', ', Plugins::enabled()) . '<br/>'
+                . '<b>PHP</b>: ' . $info['php_version'] . ', <b>OS</b>: ' . $info['os'] . '</p>';
+        }
+
+        echo '</div>'
+            . '<div class="card-footer p-2">'
+            . '<div class="row">'
+            . '<div class="col">'
+            . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
+            . '<input type="hidden" name="error_code" value="' . $info['code'] . '">'
+            . '<input type="hidden" name="error_message" value="' . Tools::noHtml($info['message']) . '">'
+            . '<input type="hidden" name="error_file" value="' . $info['file'] . '">'
+            . '<input type="hidden" name="error_line" value="' . $info['line'] . '">'
+            . '<input type="hidden" name="error_hash" value="' . $info['hash'] . '">'
+            . '<input type="hidden" name="error_url" value="' . $info['url'] . '">'
+            . '<input type="hidden" name="error_core_version" value="' . $info['core_version'] . '">'
+            . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">'
+            . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">'
+            . '<input type="hidden" name="error_os" value="' . $info['os'] . '">'
+            . '<button type="submit" class="btn btn-secondary">' . self::trans('to-report') . '</button>'
+            . '</form>'
+            . '</div>';
+
+        if (self::canShowDeployButtons()) {
+            echo '<div class="col-auto">'
+                . '<a href="' . Tools::config('route') . '/deploy?action=disable-plugins&token=' . self::newToken()
+                . '" class="btn btn-outline-secondary">' . self::trans('disable-plugins') . '</a> '
+                . '</div>'
+                . '<div class="col-auto">'
+                . '<a href="' . Tools::config('route') . '/deploy?action=rebuild&token=' . self::newToken()
+                . '" class="btn btn-outline-secondary">' . self::trans('rebuild') . '</a> '
+                . '</div>';
+        }
+
+        echo '</div>'
+            . '</div>'
+            . '</div>';
+
+        // Añadimos el card con el fragmento de código y la traza
+        echo self::getCodeFragmentCard($info, $messageParts, $error);
+
+        // Añadimos el card con los últimos mensajes del log
+        echo self::getLogCard();
+
+        echo '</div>'
+            . '</div>'
+            . '</div>'
+            . '</body>'
+            . '</html>';
+    }
+
+    private static function showJsonError(array $info): void
+    {
+        header('Content-Type: application/json');
+        echo json_encode(['error' => $info['message'], 'info' => $info]);
+    }
+
+    private static function showTextError(array $info): void
+    {
+        header('Content-Type: text/plain');
+        echo $info['message'];
     }
 
     private static function trans(string $code): string
