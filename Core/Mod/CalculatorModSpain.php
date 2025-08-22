@@ -88,11 +88,20 @@ class CalculatorModSpain implements CalculatorModInterface
             return true;
         }
 
-        // si el documento es intracomunitario, aplicamos IVA 0% y exención E3
+        // (servicios intracomunitarios B2B emitidos → no sujeta por reglas de localización (N2), sin IVA
+        // (Se detecta por tipo de producto SERVICIO y operacion global INTRA_COMMUNITY; no usar E5 en servicios)
+        if ($doc->operacion === InvoiceOperation::INTRA_COMMUNITY && $line->getProducto()->tipo === ProductType::SERVICE) {
+            $line->iva = 0.0;
+            $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
+            $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_LOCATION_RULES;
+            return true;
+        }
+
+        // si el documento es intracomunitario (entrega de BIENES B2B UE), aplicamos IVA 0% y exención E5 (art. 25 LIVA)
         if ($doc->operacion === InvoiceOperation::INTRA_COMMUNITY) {
             $line->iva = 0.0;
             $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
-            $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E3;
+            $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E5; //(entrega intracomunitaria de bienes, art. 25)
             return true;
         }
 
@@ -143,7 +152,7 @@ class CalculatorModSpain implements CalculatorModInterface
         $firstEx = null;
         $exenciones = [];
         $hasIva = false;
-        $allE3 = $allE4 = $allE2 = true;
+        $allE3 = $allE4 = $allE2 = $allE5 = true;
         $allLinesSaved = true;
 
         foreach ($lines as $line) {
@@ -166,10 +175,11 @@ class CalculatorModSpain implements CalculatorModInterface
             }
 
             // 4. Acumular para sugerencia de global
-            if ($line->iva > 0) $allE3 = $allE4 = $allE2 = false;
+            if ($line->iva > 0) $allE3 = $allE4 = $allE2  = $allE5 = false;
             if (!empty($line->excepcioniva) && $line->excepcioniva !== RegimenIVA::ES_TAX_EXCEPTION_E3) $allE3 = false;
             if (!empty($line->excepcioniva) && $line->excepcioniva !== RegimenIVA::ES_TAX_EXCEPTION_E4) $allE4 = false;
             if (!empty($line->excepcioniva) && $line->excepcioniva !== RegimenIVA::ES_TAX_EXCEPTION_E2) $allE2 = false;
+            if (!empty($line->excepcioniva) && $line->excepcioniva !== RegimenIVA::ES_TAX_EXCEPTION_E5) $allE5 = false;
 
             // coste
             $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
@@ -331,8 +341,17 @@ class CalculatorModSpain implements CalculatorModInterface
             return;
         }
 
-        if ($allE3 || $allE4) {
-            Tools::log()->info('Sugerencia: Puedes marcar la factura como intracomunitarias porque todas las líneas son E3 o E4.');
+        // NUEVO: comprobar si todas las líneas son E5 (sin IVA)
+        $allE5 = true;
+        foreach ($lines as $l) {
+            if ($l->iva > 0 || (!empty($l->excepcioniva) && $l->excepcioniva !== RegimenIVA::ES_TAX_EXCEPTION_E5)) {
+                $allE5 = false;
+                break;
+            }
+        }
+
+        if ($allE3 || $allE4 || $allE5) {
+            Tools::log()->info('Sugerencia: Puedes marcar la factura como intracomunitarias porque todas las líneas son E3, E4 o E5.');
         } elseif ($allE2) {
             Tools::log()->info('Sugerencia: Puedes marcar la factura como de exportación porque todas las líneas son E2.');
         }
@@ -351,7 +370,15 @@ class CalculatorModSpain implements CalculatorModInterface
 
         // si todas las líneas tienen IVA, no puede ser una operación exenta
         if ($globalEx === InvoiceOperation::INTRA_COMMUNITY) {
-            if (!$allZeroIva || (count($exenciones) && !isset($exenciones[RegimenIVA::ES_TAX_EXCEPTION_E3]) && !isset($exenciones[RegimenIVA::ES_TAX_EXCEPTION_E4]))) {
+            if (
+                !$allZeroIva ||
+                (
+                    count($exenciones)
+                    && !isset($exenciones[RegimenIVA::ES_TAX_EXCEPTION_E3])
+                    && !isset($exenciones[RegimenIVA::ES_TAX_EXCEPTION_E4])
+                    && !isset($exenciones[RegimenIVA::ES_TAX_EXCEPTION_E5]) 
+                )
+            ) {
                 Tools::log()->warning('Las líneas no pueden tener IVA si la operación es intracomunitaria.');
                 return false;
             }
@@ -393,14 +420,15 @@ class CalculatorModSpain implements CalculatorModInterface
             return false;
         }
 
-        // E4: ES_23_24 solo si cliente UE, NIF-IVA válido, servicio
+        // E4: ES_23_24 (arts. 23–24 LIVA: zonas francas, depósitos aduaneros y regímenes asimilados).
+        // Nota: no es específico de "servicios"; se aplica a supuestos especiales de bienes/servicios vinculados a estos regímenes.
         if ($line->excepcioniva === RegimenIVA::ES_TAX_EXCEPTION_E4 && $line->iva > 0 && !Paises::miembroUE($doc->codpais)
             && (!FiscalNumberValidator::validate($subjectFiscalID, $doc->cifnif, true) || $line->getProducto()->tipo !== ProductType::SERVICE)) {
             Tools::log()->warning('Excepción fiscal ES_23_24 no puede tener IVA si el cliente es de la UE y el NIF-IVA no es válido o el producto de la línea no es un servicio.');
             return false;
         }
 
-        // E5: ES_25 solo si transporte internacional
+        // E5: ES_25 Venta de bienes intracomunitarios E5
         if ($line->excepcioniva === RegimenIVA::ES_TAX_EXCEPTION_E5 && $line->iva > 0 && !empty($addressShipping->primaryColumnValue()) && $addressShipping->codpais === 'ESP') {
             Tools::log()->warning('Excepción fiscal ES_25 no puede tener IVA si el transporte no es internacional.');
             return false;
@@ -412,17 +440,33 @@ class CalculatorModSpain implements CalculatorModInterface
             return false;
         }
 
-        // Sujeto pasivo, art 7, art 14, location rules: nunca con IVA
+        // Sujeto pasivo, art 7,( art 14, location rules: nunca con IVA (Location Rules es cuando nosotros facturamos como proveedor de servicios a otro cliente intracomunitario sin IVA) 
+        // Aclaración: Inversión del sujeto pasivo (art. 84), no sujetas art. 7, exentas art. 14 y "location rules" (N2) nunca deben llevar IVA.
         if (in_array($line->excepcioniva, [RegimenIVA::ES_TAX_EXCEPTION_PASSIVE_SUBJECT, RegimenIVA::ES_TAX_EXCEPTION_ART_7, RegimenIVA::ES_TAX_EXCEPTION_ART_14, RegimenIVA::ES_TAX_EXCEPTION_LOCATION_RULES])
             && $line->iva > 0) {
             Tools::log()->warning("Excepción fiscal $line->excepcioniva no puede tener IVA.");
             return false;
         }
 
-        // Si hay global de intracomunitaria, la línea debe ser E3, E4 o no tener IVA
-        if ($globalEx === InvoiceOperation::INTRA_COMMUNITY && !in_array($line->excepcioniva, [RegimenIVA::ES_TAX_EXCEPTION_E3, RegimenIVA::ES_TAX_EXCEPTION_E4])) {
-            Tools::log()->warning('La línea debe ser E3 (ES_22) o E4 (ES_23_24) si la operación global es intracomunitaria.');
-            return false;
+        // Si hay global intracomunitaria, cada línea debe ir sin IVA y ser E3/E4/E5 o "location rules" si es SERVICIO
+        if ($globalEx === InvoiceOperation::INTRA_COMMUNITY) {
+            if ($line->iva > 0) {
+                Tools::log()->warning('Las líneas no pueden tener IVA si la operación es intracomunitaria.');
+                return false;
+            }
+            if (!in_array($line->excepcioniva, [
+                RegimenIVA::ES_TAX_EXCEPTION_E3,
+                RegimenIVA::ES_TAX_EXCEPTION_E4,
+                RegimenIVA::ES_TAX_EXCEPTION_E5,
+                RegimenIVA::ES_TAX_EXCEPTION_LOCATION_RULES
+            ], true)) {
+                Tools::log()->warning('La línea debe ser E3, E4, E5 o LOCATION_RULES si la operación global es intracomunitaria.');
+                return false;
+            }
+            if ($line->excepcioniva === RegimenIVA::ES_TAX_EXCEPTION_LOCATION_RULES && $line->getProducto()->tipo !== ProductType::SERVICE) {
+                Tools::log()->warning('No sujeta (N2) – Reglas de localización solo es válido para SERVICIOS intracomunitarios.');
+                return false;
+            }
         }
 
         // Si hay global de exportación, la línea debe ser E2 o no tener IVA
