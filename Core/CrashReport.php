@@ -196,7 +196,7 @@ final class CrashReport
             . '<div class="card-body">'
             . '<h2 class="h5 mb-3">📑 ' . $info['file'] . '</h2>'
             . '<pre style="border: solid 1px #dee2e6; margin-bottom: 0; padding: 10px; background-color: #f8f9fa; border-radius: 4px; overflow-x: auto">'
-            . htmlspecialchars_decode($fragment) . '</pre>'
+            . $fragment . '</pre>'
             . '</div>';
 
         if (isset($messageParts[1])) {

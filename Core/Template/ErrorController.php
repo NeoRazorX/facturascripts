@@ -97,7 +97,7 @@ abstract class ErrorController implements ErrorControllerInterface
             . '<div class="card-body">'
             . '<h2 class="h5 mb-3">📑 ' . $this->info['file'] . '</h2>'
             . '<pre style="border: solid 1px #dee2e6; margin-bottom: 0; padding: 10px; background-color: #f8f9fa; border-radius: 4px; overflow-x: auto">'
-            . htmlspecialchars_decode($fragment) . '</pre>'
+            . $fragment . '</pre>'
             . '</div>';
 
         if (isset($messageParts[1])) {
@@ -132,7 +132,7 @@ abstract class ErrorController implements ErrorControllerInterface
         if ($report_btn) {
             $form = '<form method="post" action="' . $this->info['report_url'] . '" target="_blank">'
                 . '<input type="hidden" name="error_code" value="' . $this->info['code'] . '">'
-                . '<input type="hidden" name="error_message" value="' . $this->info['message'] . '">'
+                . '<input type="hidden" name="error_message" value="' . Tools::noHtml($this->info['message']) . '">'
                 . '<input type="hidden" name="error_file" value="' . $this->info['file'] . '">'
                 . '<input type="hidden" name="error_line" value="' . $this->info['line'] . '">'
                 . '<input type="hidden" name="error_hash" value="' . $this->info['hash'] . '">'
