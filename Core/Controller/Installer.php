@@ -71,7 +71,7 @@ class Installer implements ControllerInterface
 
         // si ya hay configuración de base de datos, lanzamos error de que ya está instalado
         if (Tools::config('db_name')) {
-            throw new KernelException('AlreadyInstalled', Tools::lang()->trans('already-installed'));
+            throw new KernelException('AlreadyInstalled', Tools::trans('already-installed-p'));
         }
 
         Html::disablePlugins();

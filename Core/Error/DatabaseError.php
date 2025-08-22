@@ -29,10 +29,24 @@ class DatabaseError extends ErrorController
         ob_clean();
         http_response_code(500);
 
-        $title = Tools::lang()->trans('database-error');
-        $body = '<h1>' . $title . '</h1>'
-            . '<p class="mb-0">' . $this->exception->getMessage() . '</p>';
+        $title = '⚠️ ' . Tools::trans('database-error');
+        $content = '<div class="card shadow mb-4">'
+            . '<div class="card-body">'
+            . '<h1 class="h3">' . $title . '</h1>'
+            . '<p>' . $this->exception->getMessage() . '</p>'
+            . '<p>' . Tools::trans('database-error-pc') . '</p>'
+            . '<p class="mb-0">' . Tools::trans('database-error-server') . '</p>'
+            . '</div>'
+            . '<div class="card-footer">'
+            . '<a href="https://facturascripts.com/publicaciones/error-al-conectar-a-la-base-de-datos" class="btn btn-secondary" target="_blank" rel="nofollow">'
+            . Tools::trans('read-more')
+            . '</a>'
+            . '</div>'
+            . '</div>';
 
-        echo $this->htmlCard($title, $body, 'bg-danger');
+        echo $this->html(
+            $title,
+            $this->htmlContainer($content),
+        );
     }
 }

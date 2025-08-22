@@ -26,6 +26,43 @@ use FacturaScripts\Core\Base\MiniLog;
  */
 final class CrashReport
 {
+    public static function getErrorFragment(string $file, int $line, int $linesToShow = 10, bool $html = false): string
+    {
+        if (!is_readable($file)) {
+            return '';
+        }
+
+        // leemos el archivo
+        $content = file_get_contents($file);
+        $lines = explode("\n", $content);
+
+        // calculamos el fragmento
+        $startLine = ($line - ($linesToShow / 2)) - 1;
+        $start = max($startLine, 0);
+        $length = $linesToShow + 1;
+
+        $errorFragment = array_slice($lines, $start, $length, true);
+        $result = [];
+        foreach ($errorFragment as $index => $value) {
+            $lineNumber = $index + 1;
+
+            // marcamos la línea del error
+            if ($lineNumber === $line && $html) {
+                $result[] = '<span style="padding-top: 0.1rem; padding-bottom: 0.1rem; '
+                    . 'background-color: pink">' . str_pad($lineNumber, 3, ' ', STR_PAD_LEFT)
+                    . '    ' . htmlspecialchars($value) . '</span>';
+                continue;
+            } elseif ($lineNumber === $line) {
+                $result[] = str_pad($lineNumber, 3, ' ', STR_PAD_LEFT) . '    ' . htmlspecialchars($value);
+                continue;
+            }
+
+            $result[] = str_pad($lineNumber, 3, ' ', STR_PAD_LEFT) . '    ' . htmlspecialchars($value);
+        }
+
+        return implode("\n", $result);
+    }
+
     public static function getErrorInfo(int $code, string $message, string $file, int $line): array
     {
         // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
@@ -209,21 +246,21 @@ final class CrashReport
         // Separador para mejor legibilidad
         $separator = str_repeat('=', 80);
         $shortSeparator = str_repeat('-', 80);
-        
+
         echo "\n" . $separator . "\n";
         echo "🚨 ERROR " . $info['hash'] . "\n";
         echo $separator . "\n\n";
-        
+
         // Mensaje de error principal
         $messageParts = explode("\nStack trace:\n", $info['message']);
         echo $messageParts[0] . "\n\n";
-        
+
         // Información del archivo y línea
         echo "📍 UBICACIÓN:\n";
         echo "   Archivo: " . $info['file'] . "\n";
         echo "   Línea: " . $info['line'] . "\n";
         echo "   URL: " . $info['url'] . "\n\n";
-        
+
         // Fragmento de código si está en modo debug
         $fragment = self::getErrorFragment($error['file'], $error['line']);
         if (Tools::config('debug', false) && !empty($fragment)) {
@@ -232,7 +269,7 @@ final class CrashReport
             echo $fragment . "\n";
             echo $shortSeparator . "\n\n";
         }
-        
+
         // Stack trace si está disponible
         if (isset($messageParts[1]) && Tools::config('debug', false)) {
             echo "📚 STACK TRACE:\n";
@@ -249,7 +286,7 @@ final class CrashReport
             echo "  #" . $num . " " . $info['file'] . ':' . $info['line'] . "\n";
             echo $shortSeparator . "\n\n";
         }
-        
+
         // Información del sistema
         echo "ℹ️  INFORMACIÓN DEL SISTEMA:\n";
         echo "   Core: " . $info['core_version'] . "\n";
@@ -259,7 +296,7 @@ final class CrashReport
             echo "   Plugins: " . $info['plugin_list'] . "\n";
         }
         echo "\n";
-        
+
         // Últimos mensajes del log
         $logMessages = MiniLog::read();
         if (!empty($logMessages)) {
@@ -273,7 +310,7 @@ final class CrashReport
             }
             echo $shortSeparator . "\n\n";
         }
-        
+
         // URL de reporte
         echo "🔗 REPORTE DE ERROR:\n";
         echo "   " . $info['report_url'] . "\n";
@@ -339,6 +376,10 @@ final class CrashReport
 
     private static function getLogCard(): string
     {
+        if (!Tools::config('debug', false)) {
+            return '';
+        }
+
         $logMessages = MiniLog::read();
         if (empty($logMessages)) {
             return '';
@@ -411,37 +452,5 @@ final class CrashReport
 
         $lang = Tools::config('lang', 'es_ES');
         return $translations[$lang][$code] ?? $code;
-    }
-
-    protected static function getErrorFragment(string $file, int $line, int $linesToShow = 10, bool $html = false): string
-    {
-        // leemos el archivo
-        $content = file_get_contents($file);
-        $lines = explode("\n", $content);
-
-        // calculamos el fragmento
-        $startLine = ($line - ($linesToShow / 2)) - 1;
-        $start = max($startLine, 0);
-        $length = $linesToShow + 1;
-
-        $errorFragment = array_slice($lines, $start, $length, true);
-        $result = [];
-        foreach ($errorFragment as $index => $value) {
-            $lineNumber = $index + 1;
-
-            // marcamos la línea del error
-            if ($lineNumber === $line && $html) {
-                $result[] = '<span style="padding-top: 0.1rem; padding-bottom: 0.1rem; '
-                    . 'background-color: pink">' . str_pad($lineNumber, 3, ' ', STR_PAD_LEFT) . '    ' . htmlspecialchars($value) . '</span>';
-                continue;
-            } elseif ($lineNumber === $line) {
-                $result[] = str_pad($lineNumber, 3, ' ', STR_PAD_LEFT) . '    ' . htmlspecialchars($value);
-                continue;
-            }
-
-            $result[] = str_pad($lineNumber, 3, ' ', STR_PAD_LEFT) . '    ' . htmlspecialchars($value);
-        }
-
-        return implode("\n", $result);
     }
 }

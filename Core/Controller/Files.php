@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,16 +45,16 @@ class Files implements ControllerInterface
         if (false === is_file($this->filePath)) {
             throw new KernelException(
                 'FileNotFound',
-                Tools::lang()->trans('file-not-found', ['%fileName%' => $url])
+                Tools::trans('file-not-found', ['%fileName%' => $url])
             );
         }
 
         if (false === $this->isFolderSafe($url)) {
-            throw new KernelException('UnsafeFolder', 'Folder not safe: ' . $url);
+            throw new KernelException('UnsafeFolder', $url);
         }
 
         if (false === $this->isFileSafe($this->filePath)) {
-            throw new KernelException('UnsafeFile', 'File not safe: ' . $url);
+            throw new KernelException('UnsafeFile', $url);
         }
     }
 

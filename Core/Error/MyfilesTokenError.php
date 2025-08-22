@@ -26,14 +26,17 @@ class MyfilesTokenError extends ErrorController
 {
     public function run(): void
     {
-        $this->setSaveCrash(false);
-
         http_response_code(403);
 
-        $title = Tools::lang()->trans('invalid-token');
-        $body = '<h1>' . $title . '</h1>'
-            . '<p>' . $this->exception->getMessage() . '</p>';
+        $title = '🔐 ' . Tools::trans('invalid-token');
+        $content = '<h1>' . $title . '</h1>'
+            . '<p>' . Tools::trans('invalid-token-p', ['%file%' => $this->exception->getMessage()]) . '</p>';
 
-        echo $this->htmlCard($title, $body, 'bg-danger');
+        echo $this->html(
+            $title,
+            $this->htmlContainer(
+                $this->htmlErrorCard($content)
+            ),
+        );
     }
 }
