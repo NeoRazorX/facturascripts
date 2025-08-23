@@ -36,7 +36,7 @@ class LineaPresupuestoProveedor extends BusinessDocumentLine
     /**
      * Order ID.
      *
-     * @var integer
+     * @var int
      */
     public $idpresupuesto;
 
@@ -48,7 +48,7 @@ class LineaPresupuestoProveedor extends BusinessDocumentLine
     public function getDocument(): DinPresupuestoProveedor
     {
         $presupuesto = new DinPresupuestoProveedor();
-        $presupuesto->loadFromCode($this->idpresupuesto);
+        $presupuesto->load($this->idpresupuesto);
         return $presupuesto;
     }
 

@@ -36,7 +36,7 @@ class LineaPedidoCliente extends SalesDocumentLine
     /**
      * Order ID.
      *
-     * @var integer
+     * @var int
      */
     public $idpedido;
 
@@ -48,7 +48,7 @@ class LineaPedidoCliente extends SalesDocumentLine
     public function getDocument(): DinPedidoCliente
     {
         $pedido = new DinPedidoCliente();
-        $pedido->loadFromCode($this->idpedido);
+        $pedido->load($this->idpedido);
         return $pedido;
     }
 

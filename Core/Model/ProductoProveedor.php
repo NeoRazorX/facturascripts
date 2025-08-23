@@ -122,14 +122,14 @@ class ProductoProveedor extends ModelClass
     {
         $variant = new DinVariante();
         $where = [new DataBaseWhere('referencia', $this->referencia)];
-        $variant->loadFromCode('', $where);
+        $variant->loadWhere($where);
         return $variant;
     }
 
     public function getSupplier(): DinProveedor
     {
         $supplier = new DinProveedor();
-        $supplier->loadFromCode($this->codproveedor);
+        $supplier->load($this->codproveedor);
         return $supplier;
     }
 

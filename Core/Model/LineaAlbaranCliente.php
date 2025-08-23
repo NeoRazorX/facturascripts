@@ -46,9 +46,9 @@ class LineaAlbaranCliente extends SalesDocumentLine
 
     public function getDocument(): DinAlbaranCliente
     {
-        $albaran = new DinAlbaranCliente();
-        $albaran->loadFromCode($this->idalbaran);
-        return $albaran;
+        $doc = new DinAlbaranCliente();
+        $doc->load($this->idalbaran);
+        return $doc;
     }
 
     public function install(): string

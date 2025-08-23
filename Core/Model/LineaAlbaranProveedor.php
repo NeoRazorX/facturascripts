@@ -46,9 +46,9 @@ class LineaAlbaranProveedor extends BusinessDocumentLine
 
     public function getDocument(): DinAlbaranProveedor
     {
-        $albaran = new DinAlbaranProveedor();
-        $albaran->loadFromCode($this->idalbaran);
-        return $albaran;
+        $doc = new DinAlbaranProveedor();
+        $doc->load($this->idalbaran);
+        return $doc;
     }
 
     public function install(): string

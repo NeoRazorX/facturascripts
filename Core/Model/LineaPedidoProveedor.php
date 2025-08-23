@@ -36,7 +36,7 @@ class LineaPedidoProveedor extends BusinessDocumentLine
     /**
      * Order ID.
      *
-     * @var integer
+     * @var int
      */
     public $idpedido;
 
@@ -48,7 +48,7 @@ class LineaPedidoProveedor extends BusinessDocumentLine
     public function getDocument(): DinPedidoProveedor
     {
         $pedido = new DinPedidoProveedor();
-        $pedido->loadFromCode($this->idpedido);
+        $pedido->load($this->idpedido);
         return $pedido;
     }
 

@@ -187,7 +187,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codcuentaesp', $codcuentaesp),
         ];
-        if ($subcuenta->loadFromCode('', $whereSubcuenta)) {
+        if ($subcuenta->loadWhere($whereSubcuenta)) {
             return $subcuenta;
         }
 
@@ -197,7 +197,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codcuentaesp', $codcuentaesp),
         ];
-        if ($cuenta->loadFromCode('', $whereCuenta)) {
+        if ($cuenta->loadWhere($whereCuenta)) {
             foreach ($cuenta->getSubcuentas() as $subcuenta) {
                 return $subcuenta;
             }
@@ -214,7 +214,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codsubcuenta', $codsubcuenta),
         ];
-        if ($subcuenta->loadFromCode('', $whereSubcuenta)) {
+        if ($subcuenta->loadWhere($whereSubcuenta)) {
             return $subcuenta;
         }
 
@@ -224,7 +224,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codcuentaesp', $codcuentaesp),
         ];
-        if ($cuenta->loadFromCode('', $whereCuenta)) {
+        if ($cuenta->loadWhere($whereCuenta)) {
             // creamos la subcuenta
             $subcuenta->codejercicio = $codejercicio;
             $subcuenta->codcuenta = $cuenta->codcuenta;

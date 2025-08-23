@@ -297,7 +297,7 @@ class Asiento extends ModelClass
     public function renumber(string $codejercicio): bool
     {
         $exercise = new DinEjercicio();
-        if (false === $exercise->loadFromCode($codejercicio)) {
+        if (false === $exercise->load($codejercicio)) {
             Tools::log()->error('exercise-not-found', ['%code%' => $codejercicio]);
             return false;
         } elseif (false === $exercise->isOpened()) {

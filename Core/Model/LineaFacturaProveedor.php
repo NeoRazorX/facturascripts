@@ -51,7 +51,7 @@ class LineaFacturaProveedor extends BusinessDocumentLine
     public function getDocument(): DinFacturaProveedor
     {
         $factura = new DinFacturaProveedor();
-        $factura->loadFromCode($this->idfactura);
+        $factura->load($this->idfactura);
         return $factura;
     }
 

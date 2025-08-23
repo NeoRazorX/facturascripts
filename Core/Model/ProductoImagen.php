@@ -92,7 +92,7 @@ class ProductoImagen extends ModelClass
     public function getFile(): AttachedFile
     {
         $file = new DinAttachedFile();
-        $file->loadFromCode($this->idfile);
+        $file->load($this->idfile);
         return $file;
     }
 
@@ -104,7 +104,7 @@ class ProductoImagen extends ModelClass
     public function getProducto(): Producto
     {
         $producto = new DinProducto();
-        $producto->loadFromCode($this->idproducto);
+        $producto->load($this->idproducto);
         return $producto;
     }
 

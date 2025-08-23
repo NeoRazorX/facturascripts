@@ -98,7 +98,7 @@ class FormaPago extends ModelClass
     public function getBankAccount(): CuentaBanco
     {
         $bank = new DinCuentaBanco();
-        $bank->loadFromCode($this->codcuentabanco);
+        $bank->load($this->codcuentabanco);
         return $bank;
     }
 

@@ -144,7 +144,7 @@ class ReciboCliente extends ModelClass
     public function getInvoice(): DinFacturaCliente
     {
         $invoice = new DinFacturaCliente();
-        $invoice->loadFromCode($this->idfactura);
+        $invoice->load($this->idfactura);
         return $invoice;
     }
 

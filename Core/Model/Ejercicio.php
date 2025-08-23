@@ -225,7 +225,7 @@ class Ejercicio extends ModelClass
         ];
 
         $order = [$this->primaryColumn() => 'DESC'];
-        if ($this->loadFromCode('', $where, $order) && ($this->isOpened() || !$onlyOpened)) {
+        if ($this->loadWhere($where, $order) && ($this->isOpened() || !$onlyOpened)) {
             return true;
         }
 
@@ -326,7 +326,7 @@ class Ejercicio extends ModelClass
             $new = new static();
             for ($num = 1; $num < 1000; $num++) {
                 $code = sprintf('%04s', (int)$num);
-                if (false === $new->loadFromCode($code)) {
+                if (false === $new->load($code)) {
                     $this->codejercicio = $code;
                     break;
                 }

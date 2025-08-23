@@ -36,7 +36,7 @@ class LineaPresupuestoCliente extends SalesDocumentLine
     /**
      * Estimation ID.
      *
-     * @var integer
+     * @var int
      */
     public $idpresupuesto;
 
@@ -48,7 +48,7 @@ class LineaPresupuestoCliente extends SalesDocumentLine
     public function getDocument(): DinPresupuestoCliente
     {
         $presupuesto = new DinPresupuestoCliente();
-        $presupuesto->loadFromCode($this->idpresupuesto);
+        $presupuesto->load($this->idpresupuesto);
         return $presupuesto;
     }
 

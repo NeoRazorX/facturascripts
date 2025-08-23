@@ -139,7 +139,7 @@ class ReciboProveedor extends ModelClass
     public function getInvoice(): DinFacturaProveedor
     {
         $invoice = new DinFacturaProveedor();
-        $invoice->loadFromCode($this->idfactura);
+        $invoice->load($this->idfactura);
         return $invoice;
     }
 

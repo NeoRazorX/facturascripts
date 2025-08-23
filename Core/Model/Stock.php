@@ -206,7 +206,7 @@ class Stock extends ModelClass
         if (empty($this->idproducto)) {
             $variante = new DinVariante();
             $whereRef = [new DataBaseWhere('referencia', $this->referencia)];
-            if ($variante->loadFromCode('', $whereRef)) {
+            if ($variante->loadWhere($whereRef)) {
                 $this->idproducto = $variante->idproducto;
             }
         }

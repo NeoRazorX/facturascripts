@@ -235,21 +235,21 @@ class Familia extends ModelClass
         $subAccount = new DinSubcuenta();
         if ($this->codsubcuentacom) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentacom)];
-            if (false === $subAccount->loadFromCode('', $where)) {
+            if (false === $subAccount->loadWhere($where)) {
                 Tools::log()->warning('purchases-subaccount-not-found');
                 return false;
             }
         }
         if (false === empty($this->codsubcuentairpfcom)) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentairpfcom)];
-            if (false === $subAccount->loadFromCode('', $where)) {
+            if (false === $subAccount->loadWhere($where)) {
                 Tools::log()->warning('irpf-subaccount-not-found');
                 return false;
             }
         }
         if (false === empty($this->codsubcuentaven)) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentaven)];
-            if (false === $subAccount->loadFromCode('', $where)) {
+            if (false === $subAccount->loadWhere($where)) {
                 Tools::log()->warning('sales-subaccount-not-found');
                 return false;
             }

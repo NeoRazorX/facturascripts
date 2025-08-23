@@ -140,7 +140,7 @@ class Controller implements ControllerInterface
         $this->uri = $uri;
 
         $pageData = $this->getPageData();
-        $this->title = empty($pageData) ? $this->className : Tools::lang()->trans($pageData['title']);
+        $this->title = empty($pageData) ? $this->className : Tools::trans($pageData['title']);
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);

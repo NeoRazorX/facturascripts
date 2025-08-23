@@ -112,7 +112,7 @@ class AtributoValor extends ModelClass
 
         // combine attribute name + value
         $attribute = new DinAtributo();
-        if ($attribute->loadFromCode($this->codatributo)) {
+        if ($attribute->load($this->codatributo)) {
             $this->descripcion = $attribute->nombre . ' ' . $this->valor;
         }
 

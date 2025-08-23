@@ -234,13 +234,13 @@ class Partida extends ModelClass
                 new DataBaseWhere('codejercicio', $accEntry->codejercicio),
                 new DataBaseWhere('codsubcuenta', $codsubcuenta)
             ];
-            $subCta->loadFromCode('', $where);
+            $subCta->loadWhere($where);
             return $subCta;
         }
 
         // get by id
         if (!empty($this->idsubcuenta) &&
-            $subCta->loadFromCode($this->idsubcuenta) &&
+            $subCta->load($this->idsubcuenta) &&
             $subCta->codsubcuenta === $this->codsubcuenta &&
             $subCta->codejercicio === $accEntry->codejercicio) {
             return $subCta;
@@ -251,7 +251,7 @@ class Partida extends ModelClass
             new DataBaseWhere('codejercicio', $accEntry->codejercicio),
             new DataBaseWhere('codsubcuenta', $this->codsubcuenta)
         ];
-        $subCta->loadFromCode('', $where2);
+        $subCta->loadWhere($where2);
         return $subCta;
     }
 

@@ -51,7 +51,7 @@ class LineaFacturaCliente extends SalesDocumentLine
     public function getDocument(): DinFacturaCliente
     {
         $factura = new DinFacturaCliente();
-        $factura->loadFromCode($this->idfactura);
+        $factura->load($this->idfactura);
         return $factura;
     }
 
