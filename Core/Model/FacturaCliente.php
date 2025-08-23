@@ -20,10 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\InvoiceTrait;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Template\ModelTrait;
-use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as LineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
@@ -112,7 +112,8 @@ class FacturaCliente extends SalesDocument
     protected function testDate(): bool
     {
         // prevent form using old dates
-        $numColumn = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
+        $db_type = Tools::config('db_type');
+        $numColumn = strtolower($db_type) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
         $whereOld = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codserie', $this->codserie),

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,8 +47,9 @@ class DebugBar
 
     public function renderHead(): string
     {
-        return '<link rel="stylesheet" href="' . FS_ROUTE . '/Dinamic/Assets/CSS/debugbar.css"/>'
-            . '<script src="' . FS_ROUTE . '/Dinamic/Assets/JS/DebugBar.js"></script>';
+        $route = Tools::config('route');
+        return '<link rel="stylesheet" href="' . $route . '/Dinamic/Assets/CSS/debugbar.css"/>'
+            . '<script src="' . $route . '/Dinamic/Assets/JS/DebugBar.js"></script>';
     }
 
     private function addItem(array &$items, string $label, array $data, bool $counter = false): void

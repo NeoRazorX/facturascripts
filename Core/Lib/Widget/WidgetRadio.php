@@ -290,7 +290,8 @@ class WidgetRadio extends BaseWidget
             }
 
             $nameImg = str_replace(' ', '-', $title);
-            $url = FS_ROUTE . DIRECTORY_SEPARATOR . $this->imagesPath . DIRECTORY_SEPARATOR . $nameImg . '.png';
+            $route = Tools::config('route');
+            $url = $route . '/' . $this->imagesPath . '/' . $nameImg . '.png';
             $html .= '<div class="widget-radio d-inline-block p-2">'
                 . '<input type="radio" id="' . $nameImg . '" class="d-none imgbgchk" name="' . $this->fieldname
                 . '" value="' . $option['value'] . '" ' . $check . ' ' . $readOnly . '>'

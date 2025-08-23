@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\SecuenciaDocumento;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento as DinSecuenciaDocumento;
 
 /**
@@ -198,7 +199,8 @@ class BusinessDocumentCode
                 $where[] = new DataBaseWhere('codejercicio', $other, 'NOT IN');
             }
         }
-        $orderBy = strtolower(FS_DB_TYPE) == 'postgresql' ?
+        $db_type = Tools::config('db_type');
+        $orderBy = strtolower($db_type) == 'postgresql' ?
             ['CAST(numero as integer)' => 'DESC'] :
             ['CAST(numero as unsigned)' => 'DESC'];
         return $document->all($where, $orderBy, 0, self::GAP_LIMIT);

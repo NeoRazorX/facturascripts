@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of WidgetDatalist
@@ -29,9 +30,10 @@ use FacturaScripts\Core\Model\CodeModel;
  */
 class WidgetDatalist extends WidgetSelect
 {
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetDatalist.js');
+        $route = Tools::config('route');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetDatalist.js');
     }
 
     /**
