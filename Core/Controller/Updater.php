@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
@@ -113,7 +112,7 @@ class Updater extends Controller
         $this->telemetryManager = new Telemetry();
 
         // Folders writable?
-        $folders = FileManager::notWritableFolders();
+        $folders = $this->notWritableFolders();
         if ($folders) {
             Tools::log()->warning('folder-not-writable');
             foreach ($folders as $folder) {
@@ -139,6 +138,18 @@ class Updater extends Controller
 
         Tools::log()->notice('reloading');
         $this->redirect($this->getClassName() . '?action=post-update', 3);
+    }
+
+    private function disableBetaUpdatesAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        Tools::settingsSet('default', 'enableupdatesbeta', false);
+        Tools::settingsSave();
+
+        Tools::log()->notice('record-updated-correctly');
     }
 
     /**
@@ -188,6 +199,10 @@ class Updater extends Controller
 
             case 'claim-install':
                 $this->redirect($this->telemetryManager->claimUrl());
+                return;
+
+            case 'disable-beta':
+                $this->disableBetaUpdatesAction();
                 return;
 
             case 'download':
@@ -292,6 +307,18 @@ class Updater extends Controller
         }
 
         return [];
+    }
+
+    private function notWritableFolders(): array
+    {
+        $notWritable = [];
+        foreach (Tools::folderScan(Tools::folder(), true) as $folder) {
+            if (is_dir($folder) && !is_writable($folder)) {
+                $notWritable[] = $folder;
+            }
+        }
+
+        return $notWritable;
     }
 
     private function postUpdateAction(): void
@@ -410,8 +437,8 @@ class Updater extends Controller
                 return false;
             }
 
-            FileManager::delTree($dest);
-            if (false === FileManager::recurseCopy($origin, $dest)) {
+            Tools::folderDelete($dest);
+            if (false === Tools::folderCopy($origin, $dest)) {
                 Tools::log()->critical('COPY ERROR2: ' . $origin);
                 return false;
             }
@@ -425,7 +452,7 @@ class Updater extends Controller
         }
 
         // remove zip folder
-        FileManager::delTree(Tools::folder(self::CORE_ZIP_FOLDER));
+        Tools::folderDelete(Tools::folder(self::CORE_ZIP_FOLDER));
         return true;
     }
 
