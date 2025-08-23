@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -106,7 +106,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     protected function getConcept(): string
     {
-        return Tools::lang()->trans('closing-opening-concept', [
+        return Tools::trans('closing-opening-concept', [
             '%exercise%' => $this->newExercise->nombre
         ]);
     }
@@ -138,7 +138,8 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     protected function getSQL(): string
     {
-        if (FS_DB_TYPE == 'postgresql') {
+        $db_type = Tools::config('db_type');
+        if ($db_type == 'postgresql') {
             return "SELECT COALESCE(t1.canal, 0) AS channel,"
                 . "t2.idsubcuenta AS id,"
                 . "t2.codsubcuenta AS code,"
@@ -216,7 +217,7 @@ class AccountingClosingOpening extends AccountingClosingBase
     private function copySubAccount($idSubAccount): ?int
     {
         $subAccount = new Subcuenta();
-        $subAccount->loadFromCode($idSubAccount);
+        $subAccount->load($idSubAccount);
 
         $accounting = new AccountingCreation();
         $newSubaccount = $accounting->copySubAccountToExercise($subAccount, $this->newExercise->codejercicio);
@@ -237,9 +238,8 @@ class AccountingClosingOpening extends AccountingClosingBase
         $this->newExercise->save();
 
         // copy accounts
-        $accountModel = new Cuenta();
         $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
-        foreach ($accountModel->all($where, ['codcuenta' => 'ASC'], 0, 0) as $account) {
+        foreach (Cuenta::all($where, ['codcuenta' => 'ASC']) as $account) {
             $newAccount = $accounting->copyAccountToExercise($account, $this->newExercise->codejercicio);
             if (!$newAccount->exists()) {
                 return false;
@@ -247,8 +247,7 @@ class AccountingClosingOpening extends AccountingClosingBase
         }
 
         // copy subaccounts
-        $subaccountModel = new Subcuenta();
-        foreach ($subaccountModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subaccount) {
+        foreach (Subcuenta::all($where, ['codsubcuenta' => 'ASC']) as $subaccount) {
             $newSubaccount = $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
             if (!$newSubaccount->exists()) {
                 return false;

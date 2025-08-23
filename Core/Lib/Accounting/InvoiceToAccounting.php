@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,7 +97,7 @@ class InvoiceToAccounting extends AccountingClass
     protected function addCustomerLine(Asiento $entry): bool
     {
         $customer = new Cliente();
-        if (false === $customer->loadFromCode($this->document->codcliente)) {
+        if (false === $customer->load($this->document->codcliente)) {
             Tools::log()->warning('customer-not-found');
             $this->counterpart = null;
             return false;
@@ -394,7 +394,7 @@ class InvoiceToAccounting extends AccountingClass
     protected function addSupplierLine(Asiento $entry): bool
     {
         $supplier = new Proveedor();
-        if (false === $supplier->loadFromCode($this->document->codproveedor)) {
+        if (false === $supplier->load($this->document->codproveedor)) {
             Tools::log()->warning('supplier-not-found');
             $this->counterpart = null;
             return false;
@@ -443,9 +443,8 @@ class InvoiceToAccounting extends AccountingClass
             return false;
         }
 
-        $cuenta = new Cuenta();
         $where = [new DataBaseWhere('codejercicio', $this->document->codejercicio)];
-        if (0 === $cuenta->count($where)) {
+        if (0 === Cuenta::count($where)) {
             Tools::log()->warning('accounting-data-missing', ['%exerciseName%' => $this->document->codejercicio]);
             return false;
         }
@@ -464,7 +463,7 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function purchaseAccountingEntry()
     {
-        $concept = Tools::lang()->trans('supplier-invoice') . ' ' . $this->document->codigo;
+        $concept = Tools::trans('supplier-invoice') . ' ' . $this->document->codigo;
         $concept .= $this->document->numproveedor ? ' (' . $this->document->numproveedor . ') - ' . $this->document->nombre :
             ' - ' . $this->document->nombre;
 
@@ -494,7 +493,7 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function salesAccountingEntry()
     {
-        $concept = Tools::lang()->trans('customer-invoice') . ' ' . $this->document->codigo;
+        $concept = Tools::trans('customer-invoice') . ' ' . $this->document->codigo;
         $concept .= $this->document->numero2 ? ' (' . $this->document->numero2 . ') - ' . $this->document->nombrecliente :
             ' - ' . $this->document->nombrecliente;
 
@@ -511,7 +510,7 @@ class InvoiceToAccounting extends AccountingClass
             $this->addSalesSuppliedLines($entry) &&
             $this->addGoodsSalesLine($entry) &&
             $entry->isBalanced()) {
-            $this->document->idasiento = $entry->primaryColumnValue();
+            $this->document->idasiento = $entry->id();
             return;
         }
 
@@ -536,7 +535,7 @@ class InvoiceToAccounting extends AccountingClass
 
         // Assign analytical data defined in Serie model
         $serie = new Serie();
-        $serie->loadFromCode($this->document->codserie);
+        $serie->load($this->document->codserie);
 
         $entry->iddiario = $serie->iddiario;
         $entry->canal = $serie->canal;
