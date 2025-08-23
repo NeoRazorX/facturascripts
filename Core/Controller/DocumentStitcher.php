@@ -190,8 +190,8 @@ class DocumentStitcher extends Controller
     {
         $full = true;
         foreach ($docLines as $line) {
-            $quantity = (float)$this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
-            $quantities[$line->primaryColumnValue()] = $quantity;
+            $quantity = (float)$this->request->request->get('approve_quant_' . $line->id(), '0');
+            $quantities[$line->id()] = $quantity;
 
             if (empty($quantity) && $line->cantidad) {
                 $full = $full && $line->servido >= $line->cantidad;
@@ -216,7 +216,7 @@ class DocumentStitcher extends Controller
 
         // we get the lines again in case they have been updated
         foreach ($doc->getLines() as $line) {
-            $line->servido += $quantities[$line->primaryColumnValue()];
+            $line->servido += $quantities[$line->id()];
             if (false === $line->save()) {
                 $this->dataBase->rollback();
                 Tools::log()->error('record-save-error');
@@ -356,7 +356,7 @@ class DocumentStitcher extends Controller
     protected function getGenerateClass(int $idestado): ?string
     {
         $estado = new EstadoDocumento();
-        $estado->loadFromCode($idestado);
+        $estado->load($idestado);
         return $estado->generadoc;
     }
 
@@ -420,7 +420,7 @@ class DocumentStitcher extends Controller
         ];
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
         foreach ($model->all($where, $orderBy, 0, 0) as $doc) {
-            if (false === in_array($doc->primaryColumnValue(), $this->getCodes())) {
+            if (false === in_array($doc->id(), $this->getCodes())) {
                 $this->moreDocuments[] = $doc;
             }
         }

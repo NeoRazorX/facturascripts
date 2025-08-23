@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
@@ -141,7 +141,7 @@ class EditFacturaCliente extends SalesController
     private function generateAccountingAction(): bool
     {
         $invoice = new FacturaCliente();
-        if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
+        if (false === $invoice->load($this->request->query->get('code'))) {
             Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
@@ -170,7 +170,7 @@ class EditFacturaCliente extends SalesController
     private function generateReceiptsAction(): bool
     {
         $invoice = new FacturaCliente();
-        if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
+        if (false === $invoice->load($this->request->query->get('code'))) {
             Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
@@ -234,7 +234,7 @@ class EditFacturaCliente extends SalesController
     protected function newRefundAction(): bool
     {
         $invoice = new FacturaCliente();
-        if (false === $invoice->loadFromCode($this->request->request->get('idfactura'))) {
+        if (false === $invoice->load($this->request->request->get('idfactura'))) {
             Tools::log()->warning('record-not-found');
             return true;
         } elseif (false === $this->permissions->allowUpdate) {
@@ -246,7 +246,7 @@ class EditFacturaCliente extends SalesController
 
         $lines = [];
         foreach ($invoice->getLines() as $line) {
-            $quantity = (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
+            $quantity = (float)$this->request->request->get('refund_' . $line->id(), '0');
             if (!empty($quantity)) {
                 $lines[] = $line;
             }
@@ -280,7 +280,7 @@ class EditFacturaCliente extends SalesController
         $newRefund->idfacturarect = $invoice->idfactura;
         $newRefund->nick = $this->user->nick;
         $newRefund->observaciones = $this->request->request->get('observaciones');
-        $newRefund->setDate($this->request->request->get('fecha'), date(FacturaCliente::HOUR_STYLE));
+        $newRefund->setDate($this->request->request->get('fecha'), date(Tools::HOUR_STYLE));
         if (false === $newRefund->save()) {
             Tools::log()->error('record-save-error');
             $this->dataBase->rollback();
@@ -289,7 +289,7 @@ class EditFacturaCliente extends SalesController
 
         foreach ($lines as $line) {
             $newLine = $newRefund->getNewLine($line->toArray());
-            $newLine->cantidad = 0 - (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
+            $newLine->cantidad = 0 - (float)$this->request->request->get('refund_' . $line->id(), '0');
             $newLine->idlinearect = $line->idlinea;
             if (false === $newLine->save()) {
                 Tools::log()->error('record-save-error');

@@ -173,9 +173,9 @@ class EditCliente extends ComercialContactController
 
         $model = $this->views[$this->active]->model;
         if (strpos($return_url, '?') === false) {
-            $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+            $this->redirect($return_url . '?' . $model->primaryColumn() . '=' . $model->id());
         } else {
-            $this->redirect($return_url . '&' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+            $this->redirect($return_url . '&' . $model->primaryColumn() . '=' . $model->id());
         }
 
         return true;

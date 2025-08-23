@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,7 +57,7 @@ class EditAsiento extends PanelController
     public function getModel(): Asiento
     {
         // loaded record? just return it
-        if ($this->views[static::MAIN_VIEW_NAME]->model->primaryColumnValue()) {
+        if ($this->views[static::MAIN_VIEW_NAME]->model->id()) {
             return $this->views[static::MAIN_VIEW_NAME]->model;
         }
 
@@ -152,9 +152,10 @@ class EditAsiento extends PanelController
         $this->setSettings(static::MAIN_VIEW_NAME, 'btnPrint', true);
 
         // cargamos css y javascript
-        AssetManager::addCss(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
-        AssetManager::addJs(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
+        AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
     }
 
     /**
@@ -309,7 +310,7 @@ class EditAsiento extends PanelController
 
                 $this->title .= ' ' . $view->model->primaryDescription();
                 $this->addButton($viewName, [
-                    'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
+                    'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->id(),
                     'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',
                     'type' => 'link'

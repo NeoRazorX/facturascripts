@@ -289,9 +289,9 @@ END;
         while (!empty($documents)) {
             foreach ($documents as $doc) {
                 $where = [new DataBaseWhere('model', $doc->modelClassName())];
-                $where[] = is_numeric($doc->primaryColumnValue()) ?
-                    new DataBaseWhere('modelid|modelcode', $doc->primaryColumnValue()) :
-                    new DataBaseWhere('modelcode', $doc->primaryColumnValue());
+                $where[] = is_numeric($doc->id()) ?
+                    new DataBaseWhere('modelid|modelcode', $doc->id()) :
+                    new DataBaseWhere('modelcode', $doc->id());
 
                 $num = $relationModel->count($where);
                 if ($num == $doc->numdocs) {
@@ -302,7 +302,7 @@ END;
                 if (false === $doc->save()) {
                     Tools::log('cron')->error('record-save-error', [
                         '%model%' => $doc->modelClassName(),
-                        '%id%' => $doc->primaryColumnValue()
+                        '%id%' => $doc->id()
                     ]);
                     break;
                 }
