@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -107,7 +107,7 @@ class DocumentStitcher extends Controller
         $this->loadDocuments();
         $this->loadMoreDocuments();
 
-        $statusCode = $this->request->request->get('status', '');
+        $statusCode = $this->request->input('status', '');
         if ($statusCode) {
             // validate form request?
             if (false === $this->validateFormToken()) {
@@ -190,7 +190,7 @@ class DocumentStitcher extends Controller
     {
         $full = true;
         foreach ($docLines as $line) {
-            $quantity = (float)$this->request->request->get('approve_quant_' . $line->id(), '0');
+            $quantity = (float)$this->request->input('approve_quant_' . $line->id(), '0');
             $quantities[$line->id()] = $quantity;
 
             if (empty($quantity) && $line->cantidad) {
@@ -254,7 +254,7 @@ class DocumentStitcher extends Controller
 
         // group needed data
         $newLines = [];
-        $properties = ['fecha' => $this->request->request->get('fecha', '')];
+        $properties = ['fecha' => $this->request->input('fecha', '')];
         $prototype = null;
         $quantities = [];
         foreach ($this->documents as $doc) {
@@ -262,12 +262,12 @@ class DocumentStitcher extends Controller
 
             if (null === $prototype) {
                 $prototype = clone $doc;
-                $prototype->codserie = $this->request->request->get('codserie', $doc->codserie);
-            } elseif ('true' === $this->request->request->get('extralines', '') && !empty($lines)) {
+                $prototype->codserie = $this->request->input('codserie', $doc->codserie);
+            } elseif ('true' === $this->request->input('extralines', '') && !empty($lines)) {
                 $this->addBlankLine($newLines, $doc);
             }
 
-            if ('true' === $this->request->request->get('extralines', '') && !empty($lines)) {
+            if ('true' === $this->request->input('extralines', '') && !empty($lines)) {
                 $this->addInfoLine($newLines, $doc);
             }
 
@@ -368,7 +368,7 @@ class DocumentStitcher extends Controller
     protected function getModelName(): string
     {
         $model = $this->request->get('model', '');
-        return $this->request->request->get('model', $model);
+        return $this->request->input('model', $model);
     }
 
     /**

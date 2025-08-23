@@ -159,9 +159,9 @@ class ListLogMessage extends ListController
             return;
         }
 
-        $from = $this->request->request->get('delete_from', '');
-        $to = $this->request->request->get('delete_to', '');
-        $channel = $this->request->request->get('delete_channel', '');
+        $from = $this->request->input('delete_from', '');
+        $to = $this->request->input('delete_to', '');
+        $channel = $this->request->input('delete_channel', '');
 
         $query = LogMessage::table()
             ->whereGte('time', $from)

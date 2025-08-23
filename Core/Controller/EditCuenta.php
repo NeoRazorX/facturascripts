@@ -105,7 +105,7 @@ class EditCuenta extends EditController
                 return true;
             }
 
-            $code = $this->request->query->get('code');
+            $code = $this->request->query('code');
             if (!empty($code)) {
                 $this->setTemplate(false);
                 $this->ledgerReport($code);
@@ -211,7 +211,7 @@ class EditCuenta extends EditController
     protected function prepareCuenta(BaseView $view): void
     {
         $cuenta = new Cuenta();
-        $idcuenta = $this->request->query->get('parent_idcuenta', '');
+        $idcuenta = $this->request->query('parent_idcuenta', '');
         if (!empty($idcuenta) && $cuenta->loadFromCode($idcuenta)) {
             $view->model->codejercicio = $cuenta->codejercicio;
         }

@@ -134,11 +134,11 @@ class EditUser extends EditController
         $this->permissions->allowUpdate = $this->allowUpdate();
 
         // prevent some user changes
-        if ($this->request->request->get('code', '') === $this->user->nick) {
-            if ($this->user->admin != (bool)$this->request->request->get('admin')) {
+        if ($this->request->input('code', '') === $this->user->nick) {
+            if ($this->user->admin != (bool)$this->request->input('admin')) {
                 // prevent user from becoming admin
                 $this->permissions->allowUpdate = false;
-            } elseif ($this->user->enabled != (bool)$this->request->request->get('enabled')) {
+            } elseif ($this->user->enabled != (bool)$this->request->input('enabled')) {
                 // prevent user from disabling himself
                 $this->permissions->allowUpdate = false;
             }
@@ -359,7 +359,7 @@ class EditUser extends EditController
 
         // load user from code
         $user = new User();
-        $code = $this->request->request->get('code');
+        $code = $this->request->input('code');
         if (false === $user->load($code)) {
             Tools::log()->error('record-not-found');
             return;
@@ -422,14 +422,14 @@ class EditUser extends EditController
         }
 
         // set the two-factor secret key
-        $secretKey = $this->request->request->get('two_factor_secret_key', '');
+        $secretKey = $this->request->input('two_factor_secret_key', '');
         if (empty($user->enableTwoFactor($secretKey))) {
             Tools::log()->error('two-factor-secret-key-empty');
             return;
         }
 
         // verify the two-factor code
-        $twoFactorCode = $this->request->request->get('two_factor_code', '');
+        $twoFactorCode = $this->request->input('two_factor_code', '');
         if (false === $user->verifyTwoFactorCode($twoFactorCode)) {
             Tools::log()->error('two-factor-code-invalid');
             return;

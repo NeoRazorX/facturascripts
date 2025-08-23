@@ -131,7 +131,7 @@ class SendMail extends Controller
 
     protected function checkInvoices(): void
     {
-        if ($this->request->query->get('modelClassName') != 'FacturaCliente') {
+        if ($this->request->query('modelClassName') != 'FacturaCliente') {
             return;
         }
 
@@ -181,7 +181,7 @@ class SendMail extends Controller
 
     protected function getEmails(string $field): array
     {
-        return NewMail::splitEmails($this->request->request->get($field, ''));
+        return NewMail::splitEmails($this->request->input($field, ''));
     }
 
     protected function loadDataDefault($model): void
@@ -280,13 +280,13 @@ class SendMail extends Controller
      */
     protected function send(): bool
     {
-        if ($this->newMail->fromEmail != $this->user->email && $this->request->request->get('replyto', '0')) {
+        if ($this->newMail->fromEmail != $this->user->email && $this->request->input('replyto', '0')) {
             $this->newMail->replyTo($this->user->email, $this->user->nick);
         }
 
-        $this->newMail->title = $this->request->request->get('subject', '');
-        $this->newMail->text = $this->request->request->get('body', '');
-        $this->newMail->setMailbox($this->request->request->get('email-from', ''));
+        $this->newMail->title = $this->request->input('subject', '');
+        $this->newMail->text = $this->request->input('body', '');
+        $this->newMail->setMailbox($this->request->input('email-from', ''));
 
         foreach ($this->getEmails('email') as $email) {
             $this->newMail->to($email);

@@ -135,9 +135,9 @@ class Installer implements ControllerInterface
             'user' => $this->db_user,
             'pass' => $this->db_pass,
             'name' => $this->db_name,
-            'socket' => $this->request->request->get('mysql_socket', ''),
-            'pgsql-ssl' => $this->request->request->get('pgsql_ssl_mode', ''),
-            'pgsql-endpoint' => $this->request->request->get('pgsql_endpoint', '')
+            'socket' => $this->request->input('mysql_socket', ''),
+            'pgsql-ssl' => $this->request->input('pgsql_ssl_mode', ''),
+            'pgsql-endpoint' => $this->request->input('pgsql_endpoint', '')
         ];
 
         if ('postgresql' == $this->db_type && strtolower($dbData['name']) != $dbData['name']) {
@@ -201,7 +201,7 @@ class Installer implements ControllerInterface
         $contentFile = file_get_contents($samplePath);
 
         // reemplazamos la ruta de la instalación
-        $route = $this->request->request->get('fs_route', $this->getUri());
+        $route = $this->request->input('fs_route', $this->getUri());
         if (!empty($route)) {
             $contentFile = str_replace('RewriteBase /', 'RewriteBase ' . $route, $contentFile);
         }
@@ -220,8 +220,8 @@ class Installer implements ControllerInterface
         }
 
         fwrite($file, "<?php\n");
-        fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 31536000) . ");\n");
-        fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
+        fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->input('fs_cookie_expire', 31536000) . ");\n");
+        fwrite($file, "define('FS_ROUTE', '" . $this->request->input('fs_route', $this->getUri()) . "');\n");
         fwrite($file, "define('FS_DB_TYPE', '" . $this->db_type . "');\n");
         fwrite($file, "define('FS_DB_HOST', '" . $this->db_host . "');\n");
         fwrite($file, "define('FS_DB_PORT', " . $this->db_port . ");\n");
@@ -241,11 +241,11 @@ class Installer implements ControllerInterface
             fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
         }
 
-        if ($this->db_type === 'mysql' && $this->request->request->get('mysql_socket') !== '') {
-            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
+        if ($this->db_type === 'mysql' && $this->request->input('mysql_socket') !== '') {
+            fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->input('mysql_socket') . "');\n");
         } elseif ($this->db_type === 'postgresql') {
-            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->request->request->get('pgsql_ssl_mode') . "');\n");
-            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->request->request->get('pgsql_endpoint') . "');\n");
+            fwrite($file, "define('FS_PGSQL_SSL', '" . $this->request->input('pgsql_ssl_mode') . "');\n");
+            fwrite($file, "define('FS_PGSQL_ENDPOINT', '" . $this->request->input('pgsql_endpoint') . "');\n");
         }
 
         $fields = [
@@ -254,24 +254,24 @@ class Installer implements ControllerInterface
             'hidden_plugins' => ''
         ];
         foreach ($fields as $field => $default) {
-            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, $default) . "');\n");
+            fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->input('fs_' . $field, $default) . "');\n");
         }
 
         $booleanFields = ['debug', 'disable_add_plugins', 'disable_rm_plugins'];
         foreach ($booleanFields as $field) {
-            fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->request->get('fs_' . $field, 'false') . ");\n");
+            fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->input('fs_' . $field, 'false') . ");\n");
         }
 
-        if ($this->request->request->get('fs_gtm', false)) {
+        if ($this->request->input('fs_gtm', false)) {
             fwrite($file, "define('GOOGLE_TAG_MANAGER', 'GTM-53H8T9BL');\n");
         }
 
-        $initialUser = $this->request->request->get('fs_initial_user', '');
+        $initialUser = $this->request->input('fs_initial_user', '');
         if (!empty($initialUser)) {
             fwrite($file, "define('FS_INITIAL_USER', '" . $initialUser . "');\n");
         }
 
-        $initialPass = $this->request->request->get('fs_initial_pass', '');
+        $initialPass = $this->request->input('fs_initial_pass', '');
         if (!empty($initialPass)) {
             fwrite($file, "define('FS_INITIAL_PASS', '" . $initialPass . "');\n");
         }

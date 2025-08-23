@@ -249,7 +249,7 @@ class ListAsiento extends ListController
         }
 
         $this->dataBase->beginTransaction();
-        $codejercicio = $this->request->request->get('exercise');
+        $codejercicio = $this->request->input('exercise');
         if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
             Tools::log()->notice('renumber-accounting-ok');
             $this->dataBase->commit();
@@ -262,8 +262,8 @@ class ListAsiento extends ListController
 
     private function getSelectExercise(): array
     {
-        $companyFilter = $this->request->request->get('filteridempresa', 0);
-        $exerciseFilter = $this->request->request->get('filtercodejercicio', '');
+        $companyFilter = $this->request->input('filteridempresa', 0);
+        $exerciseFilter = $this->request->input('filtercodejercicio', '');
         $where = empty($companyFilter) ? [] : [new DataBaseWhere('idempresa', $companyFilter)];
         $result = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre', true, $where);
         if (empty($exerciseFilter)) {

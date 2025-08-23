@@ -31,11 +31,12 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
     {
         // si el método no es POST o PUT, devolvemos un error
         if (!in_array($this->request->method(), ['POST', 'PUT'])) {
-            $this->response->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED);
-            $this->response->json([
-                'status' => 'error',
-                'message' => 'Method not allowed',
-            ]);
+            $this->response
+                ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'Method not allowed',
+                ]);
             return;
         }
 
@@ -44,11 +45,12 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         foreach ($required_fields as $field) {
             $value = $this->request->get($field);
             if (empty($value)) {
-                $this->response->setHttpCode(Response::HTTP_BAD_REQUEST);
-                $this->response->json([
-                    'status' => 'error',
-                    'message' => $field . ' field is required',
-                ]);
+                $this->response
+                    ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                    ->json([
+                        'status' => 'error',
+                        'message' => $field . ' field is required',
+                    ]);
                 return;
             }
         }
@@ -65,7 +67,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
     protected function newRefundAction(): ?FacturaCliente
     {
         $invoice = new FacturaCliente();
-        $code = $this->request->request->get('idfactura');
+        $code = $this->request->input('idfactura');
         if (empty($code) || false === $invoice->load($code)) {
             $this->sendError('record-not-found', Response::HTTP_NOT_FOUND);
             return null;
@@ -74,7 +76,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         $lines = [];
         $invoiceLines = $invoice->getLines();
         foreach ($invoiceLines as $line) {
-            $quantity = (float)$this->request->request->get('refund_' . $line->id(), '0');
+            $quantity = (float)$this->request->input('refund_' . $line->id(), '0');
             if (!empty($quantity)) {
                 $lines[] = $line;
             }
@@ -106,13 +108,13 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         $newRefund = new FacturaCliente();
         $newRefund->loadFromData($invoice->toArray(), $invoice::dontCopyFields());
         $newRefund->codigorect = $invoice->codigo;
-        $newRefund->codserie = $this->request->request->get('codserie') ?? $invoice->codserie;
+        $newRefund->codserie = $this->request->input('codserie') ?? $invoice->codserie;
         $newRefund->idfacturarect = $invoice->idfactura;
-        $newRefund->nick = $this->request->request->get('nick');
-        $newRefund->observaciones = $this->request->request->get('observaciones');
+        $newRefund->nick = $this->request->input('nick');
+        $newRefund->observaciones = $this->request->input('observaciones');
 
-        $date = $this->request->request->get('fecha');
-        $hour = $this->request->request->get('hora');
+        $date = $this->request->input('fecha');
+        $hour = $this->request->input('hora');
         if (false === $newRefund->setDate($date, $hour)) {
             $this->sendError('error-set-date', Response::HTTP_BAD_REQUEST);
             $this->db()->rollback();
@@ -127,7 +129,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
 
         foreach ($lines as $line) {
             $newLine = $newRefund->getNewLine($line->toArray());
-            $newLine->cantidad = 0 - (float)$this->request->request->get('refund_' . $line->id(), $line->cantidad);
+            $newLine->cantidad = 0 - (float)$this->request->input('refund_' . $line->id(), $line->cantidad);
             $newLine->idlinearect = $line->idlinea;
             if (false === $newLine->save()) {
                 $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -153,7 +155,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         }
 
         // asignamos el estado de la factura
-        $newRefund->idestado = $this->request->request->get('idestado');
+        $newRefund->idestado = $this->request->input('idestado');
         if (false === $newRefund->save()) {
             $this->sendError('record-save-error', Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->db()->rollback();
@@ -168,10 +170,11 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
 
     private function sendError(string $message, int $http_code): void
     {
-        $this->response->setHttpCode($http_code);
-        $this->response->json([
-            'status' => 'error',
-            'message' => Tools::lang()->trans($message),
-        ]);
+        $this->response
+            ->setHttpCode($http_code)
+            ->json([
+                'status' => 'error',
+                'message' => Tools::lang()->trans($message),
+            ]);
     }
 }

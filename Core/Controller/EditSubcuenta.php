@@ -124,7 +124,7 @@ class EditSubcuenta extends EditController
                     return true;
                 }
 
-                $code = (int)$this->request->query->get('code');
+                $code = (int)$this->request->query('code');
                 if (!empty($code)) {
                     $this->setTemplate(false);
                     $this->ledgerReport($code);
@@ -228,7 +228,7 @@ class EditSubcuenta extends EditController
     protected function prepareSubcuenta(BaseView $view): void
     {
         $cuenta = new Cuenta();
-        $idcuenta = $this->request->query->get('idcuenta', '');
+        $idcuenta = $this->request->query('idcuenta', '');
         if (!empty($idcuenta) && $cuenta->loadFromCode($idcuenta)) {
             $view->model->codcuenta = $cuenta->codcuenta;
             $view->model->codejercicio = $cuenta->codejercicio;

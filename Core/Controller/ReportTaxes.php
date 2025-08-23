@@ -104,7 +104,7 @@ class ReportTaxes extends Controller
         $this->initFilters();
         $this->initColumns();
 
-        if ('export' === $this->request->request->get('action')) {
+        if ('export' === $this->request->input('action')) {
             $this->exportAction();
         }
     }
@@ -372,24 +372,24 @@ class ReportTaxes extends Controller
 
     protected function initFilters(): void
     {
-        $this->coddivisa = $this->request->request->get(
+        $this->coddivisa = $this->request->input(
             'coddivisa',
             Tools::settings('default', 'coddivisa')
         );
 
-        $this->codpais = $this->request->request->get('codpais', '');
-        $this->codserie = $this->request->request->get('codserie', '');
-        $this->datefrom = $this->request->request->get('datefrom', $this->getQuarterDate(true));
-        $this->dateto = $this->request->request->get('dateto', $this->getQuarterDate(false));
+        $this->codpais = $this->request->input('codpais', '');
+        $this->codserie = $this->request->input('codserie', '');
+        $this->datefrom = $this->request->input('datefrom', $this->getQuarterDate(true));
+        $this->dateto = $this->request->input('dateto', $this->getQuarterDate(false));
 
-        $this->idempresa = (int)$this->request->request->get(
+        $this->idempresa = (int)$this->request->input(
             'idempresa',
             Tools::settings('default', 'idempresa')
         );
 
-        $this->format = $this->request->request->get('format');
-        $this->source = $this->request->request->get('source');
-        $this->typeDate = $this->request->request->get('type-date');
+        $this->format = $this->request->input('format');
+        $this->source = $this->request->input('source');
+        $this->typeDate = $this->request->input('type-date');
     }
 
     protected function processLayout(array &$lines, array &$totals): void

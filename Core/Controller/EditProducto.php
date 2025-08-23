@@ -349,7 +349,7 @@ class EditProducto extends EditController
 
     protected function sortImagesAction(): bool
     {
-        $idsOrdenadas = $this->request->request->get('orden');
+        $idsOrdenadas = $this->request->input('orden');
 
         if (empty($idsOrdenadas)){
             return true;

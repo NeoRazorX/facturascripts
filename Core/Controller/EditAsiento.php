@@ -47,6 +47,7 @@ class EditAsiento extends PanelController
     const MAIN_VIEW_NAME = 'main';
     const MAIN_VIEW_TEMPLATE = 'Tab/AccountingEntry';
 
+    /** @var array */
     private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
 
     /**
@@ -62,8 +63,8 @@ class EditAsiento extends PanelController
         }
 
         // get the record identifier
-        $primaryKey = $this->request->request->get($this->views[static::MAIN_VIEW_NAME]->model->primaryColumn());
-        $code = $this->request->query->get('code', $primaryKey);
+        $primaryKey = $this->request->input($this->views[static::MAIN_VIEW_NAME]->model->primaryColumn());
+        $code = $this->request->query('code', $primaryKey);
         if (empty($code)) {
             // new record
             return $this->views[static::MAIN_VIEW_NAME]->model;
@@ -113,9 +114,9 @@ class EditAsiento extends PanelController
      * @param Partida[] $lines
      * @param bool $applyModal
      */
-    private function applyMainFormData(Asiento &$model, array &$lines, bool $applyModal = false)
+    private function applyMainFormData(Asiento &$model, array &$lines, bool $applyModal = false): void
     {
-        $formData = json_decode($this->request->request->get('data'), true);
+        $formData = json_decode($this->request->input('data'), true);
         AccountingHeaderHTML::apply($model, $formData);
         AccountingFooterHTML::apply($model, $formData);
         AccountingLineHTML::apply($model, $lines, $formData);
@@ -138,7 +139,7 @@ class EditAsiento extends PanelController
     /**
      * Add main view (Accounting)
      */
-    private function createViewsMain()
+    private function createViewsMain(): void
     {
         $this->addHtmlView(
             static::MAIN_VIEW_NAME,
@@ -240,8 +241,8 @@ class EditAsiento extends PanelController
             $this->getModel(),
             $this->request->get('option', ''),
             $this->title,
-            (int)$this->request->request->get('idformat', ''),
-            $this->request->request->get('langcode', ''),
+            (int)$this->request->input('idformat', ''),
+            $this->request->input('langcode', ''),
             $this->response
         );
     }
@@ -276,8 +277,8 @@ class EditAsiento extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $primaryKey = $this->request->request->get($view->model->primaryColumn());
-        $code = $this->request->query->get('code', $primaryKey);
+        $primaryKey = $this->request->input($view->model->primaryColumn());
+        $code = $this->request->query('code', $primaryKey);
 
         switch ($viewName) {
             case 'docfiles':
@@ -296,7 +297,7 @@ class EditAsiento extends PanelController
 
                 // data not found?
                 $view->loadData($code);
-                $action = $this->request->request->get('action', '');
+                $action = $this->request->input('action', '');
                 if ('' === $action && false === $view->model->exists()) {
                     Tools::log()->warning('record-not-found');
                     break;

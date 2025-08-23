@@ -184,7 +184,7 @@ class ListFacturaProveedor extends ListBusinessDocument
             return;
         }
 
-        $codejercicio = $this->request->request->get('exercise');
+        $codejercicio = $this->request->input('exercise');
         if (FacturaProveedorRenumber::run($codejercicio)) {
             Tools::log('facturasprov')->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);
             Tools::log()->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);

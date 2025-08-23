@@ -172,7 +172,7 @@ class EditProveedor extends ComercialContactController
         }
 
         // redirect to return_url if return is defined
-        $return_url = $this->request->query->get('return');
+        $return_url = $this->request->query('return');
         if (empty($return_url)) {
             return true;
         }
