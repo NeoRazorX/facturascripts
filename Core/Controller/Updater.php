@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -233,7 +233,7 @@ class Updater extends Controller
             }
 
             $item = [
-                'description' => Tools::lang()->trans('core-update', ['%version%' => $build['version']]),
+                'description' => Tools::trans('core-update', ['%version%' => $build['version']]),
                 'downloaded' => file_exists(Tools::folder($fileName)),
                 'filename' => $fileName,
                 'id' => Forja::CORE_PROJECT_ID,
@@ -267,7 +267,7 @@ class Updater extends Controller
             }
 
             $item = [
-                'description' => Tools::lang()->trans('plugin-update', [
+                'description' => Tools::trans('plugin-update', [
                     '%pluginName%' => $plugin->name,
                     '%version%' => $build['version']
                 ]),
@@ -334,13 +334,13 @@ class Updater extends Controller
 
             // ¿Hay actualización para el nuevo core?
             if ($plugin->forja('maxcore', 0) >= $newCore) {
-                $this->coreUpdateWarnings[$plugin->name] = Tools::lang()->trans('plugin-need-update', [
+                $this->coreUpdateWarnings[$plugin->name] = Tools::trans('plugin-need-update', [
                     '%plugin%' => $plugin->name
                 ]);
                 continue;
             }
 
-            $this->coreUpdateWarnings[$plugin->name] = Tools::lang()->trans('plugin-need-update-but', [
+            $this->coreUpdateWarnings[$plugin->name] = Tools::trans('plugin-need-update-but', [
                 '%plugin%' => $plugin->name
             ]);
         }

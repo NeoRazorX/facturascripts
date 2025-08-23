@@ -148,7 +148,7 @@ class CopyModel extends Controller
             ];
         }
 
-        $this->response->setContent(json_encode($results));
+        $this->response->json($results);
     }
 
     protected function loadModel(): bool

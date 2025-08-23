@@ -152,7 +152,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         // añadimos un filtro select where para forzar las que tienen idfacturarect
         $this->addFilterSelectWhere($viewName, 'idfacturarect', [
             [
-                'label' => Tools::lang()->trans('rectified-invoices'),
+                'label' => Tools::trans('rectified-invoices'),
                 'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
             ]
         ]);

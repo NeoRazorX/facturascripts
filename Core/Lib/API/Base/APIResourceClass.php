@@ -180,10 +180,11 @@ abstract class APIResourceClass
      *
      * @param array $data
      */
-    protected function returnResult(array $data)
+    protected function returnResult(array $data): void
     {
-        $this->response->setContent(json_encode($data));
-        $this->response->setHttpCode(Response::HTTP_OK);
+        $this->response
+            ->setHttpCode(Response::HTTP_OK)
+            ->json($data);
     }
 
     /**
@@ -193,7 +194,7 @@ abstract class APIResourceClass
      * @param string $message is an informative text of the confirmation message
      * @param ?array $data with additional information.
      */
-    protected function setOk(string $message, ?array $data = null)
+    protected function setOk(string $message, ?array $data = null): void
     {
         Tools::log('api')->notice($message);
 
@@ -202,8 +203,9 @@ abstract class APIResourceClass
             $res['data'] = $data;
         }
 
-        $this->response->setContent(json_encode($res));
-        $this->response->setHttpCode(Response::HTTP_OK);
+        $this->response
+            ->setHttpCode(Response::HTTP_OK)
+            ->json($res);
     }
 
     /**
@@ -214,7 +216,7 @@ abstract class APIResourceClass
      * @param ?array $data
      * @param int $status
      */
-    protected function setError(string $message, ?array $data = null, int $status = Response::HTTP_BAD_REQUEST)
+    protected function setError(string $message, ?array $data = null, int $status = Response::HTTP_BAD_REQUEST): void
     {
         Tools::log('api')->error($message);
 
@@ -223,7 +225,8 @@ abstract class APIResourceClass
             $res['data'] = $data;
         }
 
-        $this->response->setContent(json_encode($res));
-        $this->response->setHttpCode($status);
+        $this->response
+            ->setHttpCode($status)
+            ->json($res);
     }
 }

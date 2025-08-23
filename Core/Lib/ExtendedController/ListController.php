@@ -59,7 +59,7 @@ abstract class ListController extends BaseController
         parent::privateCore($response, $user, $permissions);
 
         // Get action to execute
-        $action = $this->request->request->get('action', $this->request->query->get('action', ''));
+        $action = $this->request->get('action', '');
 
         // Execute actions before loading data
         if (false === $this->execPreviousAction($action) || false === $this->pipeFalse('execPreviousAction', $action)) {
@@ -270,7 +270,7 @@ abstract class ListController extends BaseController
      */
     protected function deleteFilterAction(): void
     {
-        $id_filter = $this->request->request->get('loadfilter', 0);
+        $id_filter = $this->request->input('loadfilter', 0);
         if ($this->listView($this->active)->deletePageFilter($id_filter)) {
             Tools::log()->notice('record-deleted-correctly');
             $this->request->request->remove('loadfilter');
@@ -315,7 +315,7 @@ abstract class ListController extends BaseController
             case 'autocomplete':
                 $this->setTemplate(false);
                 $results = $this->autocompleteAction();
-                $this->response->setContent(json_encode($results));
+                $this->response->json($results);
                 return false;
 
             case 'delete':
@@ -424,7 +424,7 @@ abstract class ListController extends BaseController
             }
         }
 
-        $this->response->setContent(json_encode($json));
+        $this->response->json($json);
     }
 
     /**

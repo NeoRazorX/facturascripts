@@ -97,8 +97,8 @@ abstract class BaseController extends Controller
     public function __construct(string $className, string $uri = '')
     {
         parent::__construct($className, $uri);
-        $activeTabGet = $this->request->query->get('activetab', '');
-        $this->active = $this->request->request->get('activetab', $activeTabGet);
+        $activeTabGet = $this->request->query('activetab', '');
+        $this->active = $this->request->input('activetab', $activeTabGet);
         $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
     }
@@ -349,7 +349,7 @@ abstract class BaseController extends Controller
 
         $model = $this->views[$this->active]->model;
         $codes = $this->request->request->getArray('codes');
-        $code = $this->request->request->get('code');
+        $code = $this->request->input('code');
         if (empty($codes) && empty($code)) {
             Tools::log()->warning('no-selected-item');
             return false;
@@ -401,8 +401,8 @@ abstract class BaseController extends Controller
         $this->exportManager->newDoc(
             $this->request->get('option', ''),
             $this->title,
-            (int)$this->request->request->get('idformat', ''),
-            $this->request->request->get('langcode', '')
+            (int)$this->request->input('idformat', ''),
+            $this->request->input('langcode', '')
         );
 
         foreach ($this->views as $selectedView) {

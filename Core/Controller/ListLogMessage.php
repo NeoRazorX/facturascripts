@@ -66,8 +66,8 @@ class ListLogMessage extends ListController
 
         $this->addFilterSelect($viewName, 'enabled', 'status', 'enabled', [
             '' => '------',
-            '0' => Tools::lang()->trans('disabled'),
-            '1' => Tools::lang()->trans('enabled'),
+            '0' => Tools::trans('disabled'),
+            '1' => Tools::trans('enabled'),
         ]);
 
         // desactivamos el botón nuevo
@@ -140,8 +140,8 @@ class ListLogMessage extends ListController
         // filtros
         $this->addFilterSelect($viewName, 'done', 'status', 'done', [
             '' => '------',
-            '0' => Tools::lang()->trans('pending'),
-            '1' => Tools::lang()->trans('done'),
+            '0' => Tools::trans('pending'),
+            '1' => Tools::trans('done'),
         ]);
 
         $events = $this->codeModel->all('work_events', 'name', 'name');

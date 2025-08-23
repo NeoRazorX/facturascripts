@@ -153,7 +153,7 @@ class SendMail extends Controller
             case 'autocomplete':
                 $this->setTemplate(false);
                 $data = $this->autocompleteAction();
-                $this->response->setContent(json_encode($data));
+                $this->response->json($data);
                 break;
 
             case 'send':
@@ -203,23 +203,23 @@ class SendMail extends Controller
         // si no hay notificación, usamos los datos de las traducciones
         switch ($model->modelClassName()) {
             case 'AlbaranCliente':
-                $this->newMail->title = Tools::lang()->trans('delivery-note-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = Tools::lang()->trans('delivery-note-email-text', ['%code%' => $model->codigo]);
+                $this->newMail->title = Tools::trans('delivery-note-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = Tools::trans('delivery-note-email-text', ['%code%' => $model->codigo]);
                 break;
 
             case 'FacturaCliente':
-                $this->newMail->title = Tools::lang()->trans('invoice-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = Tools::lang()->trans('invoice-email-text', ['%code%' => $model->codigo]);
+                $this->newMail->title = Tools::trans('invoice-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = Tools::trans('invoice-email-text', ['%code%' => $model->codigo]);
                 break;
 
             case 'PedidoCliente':
-                $this->newMail->title = Tools::lang()->trans('order-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = Tools::lang()->trans('order-email-text', ['%code%' => $model->codigo]);
+                $this->newMail->title = Tools::trans('order-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = Tools::trans('order-email-text', ['%code%' => $model->codigo]);
                 break;
 
             case 'PresupuestoCliente':
-                $this->newMail->title = Tools::lang()->trans('estimation-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = Tools::lang()->trans('estimation-email-text', ['%code%' => $model->codigo]);
+                $this->newMail->title = Tools::trans('estimation-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = Tools::trans('estimation-email-text', ['%code%' => $model->codigo]);
                 break;
         }
     }

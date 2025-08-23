@@ -68,11 +68,11 @@ class ListProveedor extends ListController
         // filtros
         $values = [
             [
-                'label' => Tools::lang()->trans('suppliers'),
+                'label' => Tools::trans('suppliers'),
                 'where' => [new DataBaseWhere('codproveedor', null, 'IS NOT')]
             ],
             [
-                'label' => Tools::lang()->trans('all'),
+                'label' => Tools::trans('all'),
                 'where' => []
             ]
         ];
@@ -111,14 +111,14 @@ class ListProveedor extends ListController
 
         // filtros
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => Tools::lang()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => Tools::lang()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
-            ['label' => Tools::lang()->trans('all'), 'where' => []]
+            ['label' => Tools::trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => Tools::trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => Tools::trans('all'), 'where' => []]
         ]);
         $this->addFilterSelectWhere($viewName, 'type', [
-            ['label' => Tools::lang()->trans('all'), 'where' => []],
-            ['label' => Tools::lang()->trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
-            ['label' => Tools::lang()->trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
+            ['label' => Tools::trans('all'), 'where' => []],
+            ['label' => Tools::trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
+            ['label' => Tools::trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
         ]);
 
         $fiscalIds = $this->codeModel->all('proveedores', 'tipoidfiscal', 'tipoidfiscal');

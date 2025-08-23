@@ -234,7 +234,8 @@ class ReportTaxes extends Controller
     protected function getReportData(): array
     {
         $sql = '';
-        $numCol = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(f.numero as integer)' : 'CAST(f.numero as unsigned)';
+        $db_type = Tools::config('db_type');
+        $numCol = strtolower($db_type) == 'postgresql' ? 'CAST(f.numero as integer)' : 'CAST(f.numero as unsigned)';
         $columnDate = $this->typeDate === 'create' ? 'f.fecha' : 'COALESCE(f.fechadevengo, f.fecha)';
         switch ($this->source) {
             case 'purchases':
@@ -310,12 +311,13 @@ class ReportTaxes extends Controller
         }
 
         // round
+        $nf0 = Tools::settings('default', 'decimals', 2);
         foreach ($data as $key => $value) {
-            $data[$key]['neto'] = round($value['neto'], FS_NF0);
-            $data[$key]['totaliva'] = round($value['totaliva'], FS_NF0);
-            $data[$key]['totalrecargo'] = round($value['totalrecargo'], FS_NF0);
-            $data[$key]['totalirpf'] = round($value['totalirpf'], FS_NF0);
-            $data[$key]['suplidos'] = round($value['suplidos'], FS_NF0);
+            $data[$key]['neto'] = round($value['neto'], $nf0);
+            $data[$key]['totaliva'] = round($value['totaliva'], $nf0);
+            $data[$key]['totalrecargo'] = round($value['totalrecargo'], $nf0);
+            $data[$key]['totalirpf'] = round($value['totalirpf'], $nf0);
+            $data[$key]['suplidos'] = round($value['suplidos'], $nf0);
         }
 
         return $data;
@@ -361,7 +363,7 @@ class ReportTaxes extends Controller
             $column = str_replace('_', '-', $column);
 
             // traducimos la columna
-            $column = Tools::lang()->trans($column);
+            $column = Tools::trans($column);
 
             // si la key empieza por column_ y no está en el array de columnas, la añadimos
             if (strpos($key, 'column_') === 0 && !in_array($column, $this->columns)) {

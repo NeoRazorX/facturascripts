@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,7 +57,7 @@ class Wizard extends Controller
     {
         $list = [];
         foreach (RegimenIVA::all() as $key => $value) {
-            $list[$key] = Tools::lang()->trans($value);
+            $list[$key] = Tools::trans($value);
         }
         return $list;
     }

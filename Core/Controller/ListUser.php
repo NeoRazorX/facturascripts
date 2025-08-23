@@ -86,7 +86,7 @@ class ListUser extends ListController
         $this->listView($viewName)
             ->addFilterSelectWhere('type', [
                 [
-                    'label' => Tools::lang()->trans('all'),
+                    'label' => Tools::trans('all'),
                     'where' => []
                 ],
                 [
@@ -94,17 +94,17 @@ class ListUser extends ListController
                     'where' => []
                 ],
                 [
-                    'label' => Tools::lang()->trans('admin'),
+                    'label' => Tools::trans('admin'),
                     'where' => [new DataBaseWhere('admin', true)]
                 ],
                 [
-                    'label' => Tools::lang()->trans('no-admin'),
+                    'label' => Tools::trans('no-admin'),
                     'where' => [new DataBaseWhere('admin', false)]
                 ]
             ])
             ->addFilterSelectWhere('2fa', [
                 [
-                    'label' => Tools::lang()->trans('two-factor-auth'),
+                    'label' => Tools::trans('two-factor-auth'),
                     'where' => []
                 ],
                 [
@@ -112,11 +112,11 @@ class ListUser extends ListController
                     'where' => []
                 ],
                 [
-                    'label' => Tools::lang()->trans('two-factor-auth-enabled'),
+                    'label' => Tools::trans('two-factor-auth-enabled'),
                     'where' => [new DataBaseWhere('two_factor_enabled', true)]
                 ],
                 [
-                    'label' => Tools::lang()->trans('two-factor-auth-disabled'),
+                    'label' => Tools::trans('two-factor-auth-disabled'),
                     'where' => [new DataBaseWhere('two_factor_enabled', false)]
                 ]
             ]);

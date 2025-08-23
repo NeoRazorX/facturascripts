@@ -174,7 +174,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
             ->setHttpCode($http_code)
             ->json([
                 'status' => 'error',
-                'message' => Tools::lang()->trans($message),
+                'message' => Tools::trans($message),
             ]);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -144,7 +144,7 @@ class EditSubcuenta extends EditController
     protected function ledgerReport(int $idSubAccount)
     {
         $subAccount = new Subcuenta();
-        $subAccount->loadFromCode($idSubAccount);
+        $subAccount->load($idSubAccount);
         $request = $this->request->request->all();
 
         $ledger = new Ledger();
@@ -154,17 +154,17 @@ class EditSubcuenta extends EditController
             'grouped' => $request['groupingtype'] ?? false,
             'subaccount-from' => $subAccount->codsubcuenta
         ]);
-        $title = Tools::lang()->trans('ledger') . ' ' . $subAccount->codsubcuenta;
+        $title = Tools::trans('ledger') . ' ' . $subAccount->codsubcuenta;
         $this->exportManager->newDoc($request['format'], $title);
         $this->exportManager->setCompany($subAccount->getExercise()->idempresa);
 
         // añadimos la tabla de cabecera con la info del informe
         if ($request['format'] === 'PDF') {
             $titles = [[
-                Tools::lang()->trans('subaccount') => $subAccount->codsubcuenta,
-                Tools::lang()->trans('exercise') => $subAccount->codejercicio,
-                Tools::lang()->trans('from-date') => $request['dateFrom'],
-                Tools::lang()->trans('until-date') => $request['dateTo']
+                Tools::trans('subaccount') => $subAccount->codsubcuenta,
+                Tools::trans('exercise') => $subAccount->codejercicio,
+                Tools::trans('from-date') => $request['dateFrom'],
+                Tools::trans('until-date') => $request['dateTo']
             ]];
             $this->exportManager->addTablePage(array_keys($titles[0]), $titles);
         }
@@ -229,7 +229,7 @@ class EditSubcuenta extends EditController
     {
         $cuenta = new Cuenta();
         $idcuenta = $this->request->query('idcuenta', '');
-        if (!empty($idcuenta) && $cuenta->loadFromCode($idcuenta)) {
+        if (!empty($idcuenta) && $cuenta->load($idcuenta)) {
             $view->model->codcuenta = $cuenta->codcuenta;
             $view->model->codejercicio = $cuenta->codejercicio;
             $view->model->idcuenta = $cuenta->idcuenta;
@@ -252,8 +252,7 @@ class EditSubcuenta extends EditController
         }
 
         $where = [new DataBaseWhere('idpartida', implode(',', $ids), 'IN')];
-        $partida = new Partida();
-        foreach ($partida->all($where) as $row) {
+        foreach (Partida::all($where) as $row) {
             $row->setDottedStatus($value);
         }
 
@@ -277,7 +276,7 @@ class EditSubcuenta extends EditController
     {
         $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();
-        $exercise->loadFromCode($codeExercise);
+        $exercise->load($codeExercise);
 
         $model = $this->views[$viewName]->model;
         $model->dateFrom = $exercise->fechainicio;

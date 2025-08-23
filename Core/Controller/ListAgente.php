@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,9 +49,9 @@ class ListAgente extends ListController
 
         // Filters
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => Tools::lang()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => Tools::lang()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
-            ['label' => Tools::lang()->trans('all'), 'where' => []]
+            ['label' => Tools::trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => Tools::trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => Tools::trans('all'), 'where' => []]
         ]);
 
         $cargos = $this->codeModel->all('agentes', 'cargo', 'cargo');

@@ -123,7 +123,7 @@ class ListFacturaCliente extends ListBusinessDocument
         // añadimos un filtro select where para forzar las que tienen idfacturarect
         $this->addFilterSelectWhere($viewName, 'idfacturarect', [
             [
-                'label' => Tools::lang()->trans('rectified-invoices'),
+                'label' => Tools::trans('rectified-invoices'),
                 'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
             ]
         ]);
@@ -175,7 +175,6 @@ class ListFacturaCliente extends ListBusinessDocument
         $number = $sequence->inicio;
 
         // buscamos todas las facturas de cliente de la secuencia
-        $invoiceModel = new FacturaCliente();
         $where = [
             new DataBaseWhere('codserie', $sequence->codserie),
             new DataBaseWhere('idempresa', $sequence->idempresa)
@@ -183,10 +182,11 @@ class ListFacturaCliente extends ListBusinessDocument
         if ($sequence->codejercicio) {
             $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
         }
-        $orderBy = strtolower(FS_DB_TYPE) == 'postgresql' ?
+        $db_type = Tools::config('db_type');
+        $orderBy = strtolower($db_type) == 'postgresql' ?
             ['CAST(numero as integer)' => 'ASC'] :
             ['CAST(numero as unsigned)' => 'ASC'];
-        foreach ($invoiceModel->all($where, $orderBy, 0, 0) as $invoice) {
+        foreach (FacturaCliente::all($where, $orderBy, 0, 0) as $invoice) {
             // si el número de la factura es menor que el de la secuencia, saltamos
             if ($invoice->numero < $sequence->inicio) {
                 continue;
@@ -219,12 +219,11 @@ class ListFacturaCliente extends ListBusinessDocument
         $gaps = [];
 
         // buscamos todas las secuencias de facturas de cliente que usen huecos
-        $sequenceModel = new SecuenciaDocumento();
         $where = [
             new DataBaseWhere('tipodoc', 'FacturaCliente'),
             new DataBaseWhere('usarhuecos', true)
         ];
-        foreach ($sequenceModel->all($where, [], 0, 0) as $sequence) {
+        foreach (SecuenciaDocumento::all($where) as $sequence) {
             $gaps = array_merge($gaps, $this->lookForGaps($sequence));
         }
 

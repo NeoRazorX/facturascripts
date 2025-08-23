@@ -90,11 +90,11 @@ class ListCliente extends ListController
         // filtros
         $values = [
             [
-                'label' => Tools::lang()->trans('customers'),
+                'label' => Tools::trans('customers'),
                 'where' => [new DataBaseWhere('codcliente', null, 'IS NOT')]
             ],
             [
-                'label' => Tools::lang()->trans('all'),
+                'label' => Tools::trans('all'),
                 'where' => []
             ]
         ];
@@ -136,14 +136,14 @@ class ListCliente extends ListController
 
         // filtros
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => Tools::lang()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => Tools::lang()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
-            ['label' => Tools::lang()->trans('all'), 'where' => []]
+            ['label' => Tools::trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => Tools::trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => Tools::trans('all'), 'where' => []]
         ]);
         $this->addFilterSelectWhere($viewName, 'type', [
-            ['label' => Tools::lang()->trans('all'), 'where' => []],
-            ['label' => Tools::lang()->trans('is-person'), 'where' => [new DataBaseWhere('personafisica', true)]],
-            ['label' => Tools::lang()->trans('company'), 'where' => [new DataBaseWhere('personafisica', false)]]
+            ['label' => Tools::trans('all'), 'where' => []],
+            ['label' => Tools::trans('is-person'), 'where' => [new DataBaseWhere('personafisica', true)]],
+            ['label' => Tools::trans('company'), 'where' => [new DataBaseWhere('personafisica', false)]]
         ]);
 
         $fiscalIds = $this->codeModel->all('clientes', 'tipoidfiscal', 'tipoidfiscal');

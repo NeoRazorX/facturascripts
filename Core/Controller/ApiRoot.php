@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,7 +43,7 @@ class ApiRoot extends ApiController
         // ordenamos
         sort($json['resources']);
 
-        $this->response->setContent(json_encode($json));
+        $this->response->json($json);
     }
 
     public static function getCustomResources(): array
@@ -92,7 +92,7 @@ class ApiRoot extends ApiController
         }
 
         if (!isset($map[$resourceName]['API'])) {
-            throw new KernelException('InvalidApiResource', Tools::lang()->trans('api-resource-invalid'));
+            throw new KernelException('InvalidApiResource', Tools::trans('api-resource-invalid'));
         }
 
         // get params

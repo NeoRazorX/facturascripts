@@ -63,7 +63,7 @@ class EditAsiento extends PanelController
         }
 
         // get the record identifier
-        $primaryKey = $this->request->input($this->views[static::MAIN_VIEW_NAME]->model->primaryColumn());
+        $primaryKey = $this->request->input($this->views[static::MAIN_VIEW_NAME]->model->id());
         $code = $this->request->query('code', $primaryKey);
         if (empty($code)) {
             // new record
@@ -71,7 +71,7 @@ class EditAsiento extends PanelController
         }
 
         // existing record
-        $this->views[static::MAIN_VIEW_NAME]->model->loadFromCode($code);
+        $this->views[static::MAIN_VIEW_NAME]->model->load($code);
         return $this->views[static::MAIN_VIEW_NAME]->model;
     }
 
@@ -179,7 +179,7 @@ class EditAsiento extends PanelController
             return $this->sendJsonError();
         }
 
-        $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url('list')]));
+        $this->response->json(['ok' => true, 'newurl' => $model->url('list')]);
         return false;
     }
 
@@ -265,7 +265,7 @@ class EditAsiento extends PanelController
             'list' => AccountingModalHTML::renderSubaccountList($model),
             'messages' => Tools::log()::read('', $this->logLevels)
         ];
-        $this->response->setContent(json_encode($content));
+        $this->response->json($content);
         return false;
     }
 
@@ -341,7 +341,7 @@ class EditAsiento extends PanelController
             'list' => '',
             'messages' => Tools::log()::read('', $this->logLevels)
         ];
-        $this->response->setContent(json_encode($content));
+        $this->response->json($content);
         return false;
     }
 
@@ -383,14 +383,14 @@ class EditAsiento extends PanelController
             }
         }
 
-        $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']));
+        $this->response->json(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         $this->dataBase->commit();
         return false;
     }
 
     protected function sendJsonError(): bool
     {
-        $this->response->setContent(json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]));
+        $this->response->json(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]);
         return false;
     }
 
@@ -410,7 +410,7 @@ class EditAsiento extends PanelController
             return $this->sendJsonError();
         }
 
-        $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']));
+        $this->response->json(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
     }
 }

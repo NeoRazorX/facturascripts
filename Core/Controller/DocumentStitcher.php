@@ -22,7 +22,6 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -181,7 +180,7 @@ class DocumentStitcher extends Controller
 
     /**
      * @param TransformerDocument $doc
-     * @param BusinessDocumentLine $docLines
+     * @param array $docLines
      * @param array $newLines
      * @param array $quantities
      * @param int $idestado
@@ -334,7 +333,7 @@ class DocumentStitcher extends Controller
      */
     protected function getDocInfoLineDescription($doc): string
     {
-        $description = Tools::lang()->trans($doc->modelClassName() . '-min') . ' ' . $doc->codigo;
+        $description = Tools::trans($doc->modelClassName() . '-min') . ' ' . $doc->codigo;
 
         if (isset($doc->numero2) && $doc->numero2) {
             $description .= ' (' . $doc->numero2 . ')';
