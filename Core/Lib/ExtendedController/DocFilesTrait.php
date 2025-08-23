@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -54,7 +54,7 @@ trait DocFilesTrait
 
             // exclude php files
             if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-                Tools::log()->error(Tools::lang()->trans('php-files-blocked'));
+                Tools::log()->error(Tools::trans('php-files-blocked'));
                 continue;
             }
 
@@ -67,7 +67,7 @@ trait DocFilesTrait
 
             // move the file to the MyFiles folder
             if (false === $uploadFile->move($destiny, $destinyName)) {
-                Tools::log()->error(Tools::lang()->trans('file-not-found'));
+                Tools::log()->error(Tools::trans('file-not-found'));
                 continue;
             }
 
@@ -154,7 +154,7 @@ trait DocFilesTrait
 
         $fileRelation = new AttachedFileRelation();
         $id = $this->request->request->get('id');
-        if (false === $fileRelation->loadFromCode($id)) {
+        if (false === $fileRelation->load($id)) {
             Tools::log()->warning('record-not-found');
             return true;
         }
@@ -202,7 +202,7 @@ trait DocFilesTrait
 
         $fileRelation = new AttachedFileRelation();
         $id = $this->request->request->get('id');
-        if ($fileRelation->loadFromCode($id)) {
+        if ($fileRelation->load($id)) {
             $fileRelation->delete();
         }
 

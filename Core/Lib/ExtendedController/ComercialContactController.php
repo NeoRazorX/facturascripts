@@ -84,7 +84,7 @@ abstract class ComercialContactController extends EditController
         foreach (InvoiceOperation::all() as $key => $value) {
             $operations[] = [
                 'code' => $key,
-                'description' => Tools::lang()->trans($value)
+                'description' => Tools::trans($value)
             ];
         }
         $listView->addFilterSelect('operacion', 'operation', 'operacion', $operations);

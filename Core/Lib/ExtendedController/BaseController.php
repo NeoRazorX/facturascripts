@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -270,7 +270,7 @@ abstract class BaseController extends Controller
         if (empty($results) && '0' == $data['strict']) {
             $results[] = ['key' => $data['term'], 'value' => $data['term']];
         } elseif (empty($results)) {
-            $results[] = ['key' => null, 'value' => Tools::lang()->trans('no-data')];
+            $results[] = ['key' => null, 'value' => Tools::trans('no-data')];
         }
 
         return $results;
@@ -432,7 +432,7 @@ abstract class BaseController extends Controller
         $column = $this->views[$viewName]->columnForField($fieldName);
         if (!empty($column)) {
             foreach ($column->widget->values as $value) {
-                $result[] = ['key' => Tools::lang()->trans($value['title']), 'value' => $value['value']];
+                $result[] = ['key' => Tools::trans($value['title']), 'value' => $value['value']];
             }
         }
         return $result;
