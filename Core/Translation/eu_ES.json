@@ -670,6 +670,7 @@
     "fixed-value": "Balio finkoa",
     "flag": "Ikurra",
     "folder-not-writable": "FacturaScripts karpetan ezin da idatzi.",
+    "folders-not-writable": "No se puede escribir sobre la carpeta de FacturaScripts: %folders%",
     "font": "Letra-mota",
     "font-size": "Letra-tipoaren tamaina",
     "footer": "Orri oina",

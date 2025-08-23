@@ -670,6 +670,7 @@
     "fixed-value": "Festwert",
     "flag": "Flagge",
     "folder-not-writable": "Sie können nicht über FacturaScripts Ordner schreiben.",
+    "folders-not-writable": "No se puede escribir sobre la carpeta de FacturaScripts: %folders%",
     "font": "Schriftart",
     "font-size": "Schriftgröße",
     "footer": "Fußzeile",

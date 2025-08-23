@@ -114,10 +114,9 @@ class Updater extends Controller
         // Folders writable?
         $folders = $this->notWritableFolders();
         if ($folders) {
-            Tools::log()->warning('folder-not-writable');
-            foreach ($folders as $folder) {
-                Tools::log()->warning($folder);
-            }
+            Tools::log()->warning('folders-not-writable', [
+                '%folders%' => implode(', ', $folders)
+            ]);
             return;
         }
 
@@ -312,9 +311,30 @@ class Updater extends Controller
     private function notWritableFolders(): array
     {
         $notWritable = [];
-        foreach (Tools::folderScan(Tools::folder(), true) as $folder) {
-            if (is_dir($folder) && !is_writable($folder)) {
-                $notWritable[] = $folder;
+
+        // Solo verificamos las carpetas que FacturaScripts necesita actualizar
+        $foldersToCheck = ['Core', 'Dinamic', 'MyFiles', 'Plugins', 'vendor', 'node_modules'];
+
+        foreach ($foldersToCheck as $folderName) {
+            $folderPath = Tools::folder($folderName);
+
+            // Si no es un directorio, pasamos al siguiente
+            if (!is_dir($folderPath)) {
+                continue;
+            }
+
+            // Verificamos si la carpeta principal es escribible
+            if (!is_writable($folderPath)) {
+                $notWritable[] = $folderName;
+                continue;
+            }
+
+            // Verificamos las subcarpetas
+            foreach (Tools::folderScan($folderPath, true) as $subFolder) {
+                $subFolderPath = Tools::folder($folderName, $subFolder);
+                if (is_dir($subFolderPath) && !is_writable($subFolderPath)) {
+                    $notWritable[] = $folderName . DIRECTORY_SEPARATOR . $subFolder;
+                }
             }
         }
 

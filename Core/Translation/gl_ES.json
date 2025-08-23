@@ -670,6 +670,7 @@
     "fixed-value": "Valor fixo",
     "flag": "Bandeira",
     "folder-not-writable": "Non pode escribir sobre cartafol FacturaScripts.",
+    "folders-not-writable": "No se puede escribir sobre la carpeta de FacturaScripts: %folders%",
     "font": "Fonte",
     "font-size": "Tamaño de fonte",
     "footer": "Pe de páxina",
