@@ -27,7 +27,6 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\ProductoImagen;
-use FacturaScripts\Core\Response;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -179,11 +178,11 @@ class EditProducto extends EditController
             case 'edit-file':
                 return $this->editFileAction();
 
-            case 'unlink-file':
-                return $this->unlinkFileAction();
-
             case 'sort-images':
                 return $this->sortImagesAction();
+
+            case 'unlink-file':
+                return $this->unlinkFileAction();
         }
 
         return parent::execPreviousAction($action);
@@ -350,26 +349,22 @@ class EditProducto extends EditController
     protected function sortImagesAction(): bool
     {
         $idsOrdenadas = $this->request->request->getArray('orden', false);
-        if (empty($idsOrdenadas)) {
-            return true;
-        }
-
-        $orden = 1;
-        foreach ($idsOrdenadas as $idImagen) {
-            $productoImagen = new ProductoImagen();
-            $productoImagen->load($idImagen);
-            $productoImagen->orden = $orden;
-            if ($productoImagen->save()) {
-                $orden++;
+        if (!empty($idsOrdenadas) && is_array($idsOrdenadas)) {
+            $orden = 1;
+            foreach ($idsOrdenadas as $idImagen) {
+                $productoImagen = new ProductoImagen();
+                $productoImagen->load($idImagen);
+                $productoImagen->orden = $orden;
+                if ($productoImagen->save()) {
+                    $orden++;
+                }
             }
         }
 
         $this->setTemplate(false);
 
-        $this->response
-            ->setHttpCode(Response::HTTP_OK)
-            ->json(['status' => 'ok']);
+        $this->response->json(['status' => 'ok']);
 
-        return true;
+        return false;
     }
 }

@@ -46,6 +46,9 @@ final class Response
     /** @var bool */
     private $send_disabled = false;
 
+    /** @var bool */
+    private $sent = false;
+
     public function __construct(int $http_code = 200)
     {
         $this->content = '';
@@ -187,13 +190,15 @@ final class Response
 
     public function send(): void
     {
-        if ($this->send_disabled) {
+        if ($this->send_disabled || $this->sent) {
             return;
         }
 
         $this->sendHeaders();
 
         echo $this->content;
+
+        $this->sent = true;
     }
 
     public function setContent(string $content): self
