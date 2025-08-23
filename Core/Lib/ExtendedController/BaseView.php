@@ -360,7 +360,7 @@ abstract class BaseView
 
         $orderBy = ['nick' => 'ASC'];
         $where = $this->getPageWhere($user);
-        if ($this->pageOption->load('', $where, $orderBy)) {
+        if ($this->pageOption->loadWhere($where, $orderBy)) {
             $this->settings['customized'] = true;
         } else {
             $viewName = explode('-', $this->name)[0];
