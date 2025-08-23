@@ -123,7 +123,8 @@ trait DocFilesTrait
             return true;
         }
 
-        if ($fileRelation->modelcode != $this->request->query('code') ||
+        $modelId = $fileRelation->modelid ?? $fileRelation->modelcode;
+        if ($modelId != $this->request->query('code') ||
             $fileRelation->model !== $this->getModelClassName()) {
             Tools::log()->warning('not-allowed-delete');
             return true;
