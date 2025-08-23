@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,10 +62,10 @@ class RowButton extends VisualItem
         $this->color = $data['color'] ?? '';
         $this->confirm = isset($data['confirm']);
         $this->icon = $data['icon'] ?? '';
-        $this->label = isset($data['label']) ? Tools::lang()->trans($data['label']) : '';
+        $this->label = isset($data['label']) ? Tools::trans($data['label']) : '';
         $this->level = isset($data['level']) ? (int)$data['level'] : 0;
         $this->target = $data['target'] ?? '';
-        $this->title = isset($data['title']) ? Tools::lang()->trans($data['title']) : '';
+        $this->title = isset($data['title']) ? Tools::trans($data['title']) : '';
         $this->type = $data['type'] ?? 'action';
     }
 
@@ -156,7 +156,7 @@ class RowButton extends VisualItem
 
     protected function asset(string $url): string
     {
-        $path = FS_ROUTE . '/';
+        $path = Tools::config('route') . '/';
         if (substr($url, 0, strlen($path)) == $path) {
             return $url;
         }
@@ -174,12 +174,12 @@ class RowButton extends VisualItem
     {
         if ($this->confirm) {
             return 'confirmAction(\'' . $viewName . '\',\'' . $this->action . '\',\''
-                . $this->label . '\',\'' . Tools::lang()->trans('are-you-sure-action') . '\',\''
-                . Tools::lang()->trans('cancel') . '\',\'' . Tools::lang()->trans('confirm') . '\');';
+                . $this->label . '\',\'' . Tools::trans('are-you-sure-action') . '\',\''
+                . Tools::trans('cancel') . '\',\'' . Tools::trans('confirm') . '\');';
         }
 
         if (empty($jsFunction)) {
-            $onsubmit = $this->action  === 'download' ? '' : 'this.form.onsubmit();';
+            $onsubmit = $this->action === 'download' ? '' : 'this.form.onsubmit();';
             return 'this.form.action.value=\'' . $this->action . '\';' . $onsubmit . 'this.form.submit();';
         }
 

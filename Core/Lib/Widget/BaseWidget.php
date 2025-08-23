@@ -108,8 +108,8 @@ class BaseWidget extends VisualItem
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
-        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
-        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(Tools::lang()->trans($title), $titleurl) . '</label>';
+        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . Tools::trans($description) . '</small>';
+        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(Tools::trans($title), $titleurl) . '</label>';
 
         if (empty($this->icon)) {
             return '<div class="mb-3">'
@@ -246,7 +246,7 @@ class BaseWidget extends VisualItem
     /**
      * @param array $children
      */
-    protected function loadOptions($children)
+    protected function loadOptions($children): void
     {
         foreach ($children as $child) {
             if ($child['tag'] === 'option') {
@@ -269,14 +269,14 @@ class BaseWidget extends VisualItem
         }
 
         $params = strpos($this->onclick, '?') !== false ? '&' : '?';
-        return '<a href="' . FS_ROUTE . '/' . $this->onclick . $params . 'code=' . rawurlencode($this->value)
+        return '<a href="' . Tools::config('route') . '/' . $this->onclick . $params . 'code=' . rawurlencode($this->value)
             . '" class="cancelClickable">' . $inside . '</a>';
     }
 
     /**
      * @return bool
      */
-    protected function readonly()
+    protected function readonly(): bool
     {
         if ($this->readonly === 'dinamic') {
             return !empty($this->value);

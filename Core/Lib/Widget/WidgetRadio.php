@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -117,7 +117,7 @@ class WidgetRadio extends BaseWidget
     /**
      * Loads the value list from a given array.
      * The array must have one of the two following structures:
-     * - If it's a value array, it must uses the value of each element as title and value
+     * - If it's a value array, it must use the value of each element as title and value
      * - If it's a multidimensional array, the indexes value and title must be set for each element
      *
      * @param array $items
@@ -207,7 +207,7 @@ class WidgetRadio extends BaseWidget
                 continue;
             }
 
-            $this->values[$key]['title'] = Tools::lang()->trans($value['title']);
+            $this->values[$key]['title'] = Tools::trans($value['title']);
         }
     }
 
@@ -216,7 +216,8 @@ class WidgetRadio extends BaseWidget
      */
     protected function assets(): void
     {
-        AssetManager::addCss(FS_ROUTE . '/Dinamic/Assets/CSS/WidgetRadio.css', 2);
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/Dinamic/Assets/CSS/WidgetRadio.css', 2);
     }
 
     protected function clearImagesPath(): void

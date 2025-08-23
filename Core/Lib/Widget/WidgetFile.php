@@ -56,13 +56,13 @@ class WidgetFile extends BaseWidget
     {
         $this->setValue($model);
 
-        $additionalDesc = Tools::lang()->trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]);
-        $finalDesc = empty($description) ? $additionalDesc : Tools::lang()->trans($description) . ' ' . $additionalDesc;
+        $additionalDesc = Tools::trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]);
+        $finalDesc = empty($description) ? $additionalDesc : Tools::trans($description) . ' ' . $additionalDesc;
 
         if ($this->readonly()) {
             $class = $this->combineClasses($this->css('form-control'), $this->class);
             return '<div class="mb-3">'
-                . '<label class="mb-0">' . $this->onclickHtml(Tools::lang()->trans($title), $titleurl) . '</label>'
+                . '<label class="mb-0">' . $this->onclickHtml(Tools::trans($title), $titleurl) . '</label>'
                 . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
                 . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>'
                 . '</div>';
