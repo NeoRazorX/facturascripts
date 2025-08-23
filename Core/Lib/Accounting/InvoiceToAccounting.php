@@ -480,7 +480,7 @@ class InvoiceToAccounting extends AccountingClass
             $this->addPurchaseSuppliedLines($entry) &&
             $this->addGoodsPurchaseLine($entry) &&
             $entry->isBalanced()) {
-            $this->document->idasiento = $entry->primaryColumnValue();
+            $this->document->idasiento = $entry->id();
             return;
         }
 

@@ -109,7 +109,7 @@ class Ciudad extends ModelClass
 
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
-        if ('list' === $type && !empty($this->primaryColumnValue())) {
+        if ('list' === $type && !empty($this->id())) {
             return $this->getProvince()->url() . '&activetab=List' . $this->modelClassName();
         }
 

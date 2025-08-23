@@ -406,7 +406,7 @@ class SalesHeaderHTML
 
     private static function finoferta(SalesDocument $model): string
     {
-        if (false === property_exists($model, 'finoferta') || empty($model->primaryColumnValue())) {
+        if (false === $model->hasColumn('finoferta') || empty($model->id())) {
             return '';
         }
 

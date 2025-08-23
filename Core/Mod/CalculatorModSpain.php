@@ -84,7 +84,7 @@ class CalculatorModSpain implements CalculatorModInterface
         }
 
         // si la línea no es nueva, no hacemos nada
-        if (!empty($line->primaryColumnValue())) {
+        if (!empty($line->id())) {
             return true;
         }
 

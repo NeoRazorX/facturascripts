@@ -304,7 +304,7 @@ class Partida extends ModelClass
     public function setDottedStatus(bool $value): Partida
     {
         $sql = 'UPDATE ' . self::tableName() . ' SET punteada = ' . self::db()->var2str($value)
-            . ' WHERE ' . self::primaryColumn() . ' = ' . self::db()->var2str($this->primaryColumnValue());
+            . ' WHERE ' . self::primaryColumn() . ' = ' . self::db()->var2str($this->id());
 
         if ($value !== $this->punteada && self::db()->exec($sql)) {
             $this->punteada = $value;

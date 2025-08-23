@@ -119,7 +119,7 @@ class Cuenta extends ModelClass
     public function getFreeSubjectAccountCode($subject): string
     {
         // nos quedamos solamente con los números del código
-        $code = preg_replace('/[^0-9]/', '', $subject->primaryColumnValue());
+        $code = preg_replace('/[^0-9]/', '', $subject->id());
         if (strlen($code) === $this->getExercise()->longsubcuenta) {
             // si el código ya tiene la longitud de una subcuenta, lo usamos como subcuenta
             return $code;

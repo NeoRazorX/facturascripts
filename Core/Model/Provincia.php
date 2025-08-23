@@ -128,7 +128,7 @@ class Provincia extends ModelClass
 
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
-        if ('list' === $type && !empty($this->primaryColumnValue())) {
+        if ('list' === $type && !empty($this->id())) {
             return $this->getCountry()->url() . '&activetab=List' . $this->modelClassName();
         }
 

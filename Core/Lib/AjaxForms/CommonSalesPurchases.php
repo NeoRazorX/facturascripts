@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -227,8 +227,11 @@ trait CommonSalesPurchases
             return '';
         }
 
+        $nf0 = Tools::settings('default', 'decimals', 2);
+        $nf1 = Tools::settings('default', 'decimal_separator', ',');
+
         return empty($model->{$colName}) && $autoHide ? '' : '<div class="col-sm"><div class="mb-3">' . Tools::trans($label)
-            . '<input type="text" value="' . number_format($model->{$colName}, FS_NF0, FS_NF1, '')
+            . '<input type="text" value="' . number_format($model->{$colName}, $nf0, $nf1, '')
             . '" class="form-control" disabled/></div></div>';
     }
 
@@ -405,7 +408,7 @@ trait CommonSalesPurchases
         // añadimos la opción de agrupar o partir (excepto facturas y documentos no editables)
         if ($model->editable && false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
             $options[] = '<div class="dropdown-divider"></div>'
-                . '<a class="dropdown-item" href="DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $model->primaryColumnValue() . '">'
+                . '<a class="dropdown-item" href="DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $model->id() . '">'
                 . '<i class="fa-solid fa-magic fa-fw" aria-hidden="true"></i> ' . Tools::trans('group-or-split')
                 . '</a>';
         }
@@ -492,8 +495,11 @@ trait CommonSalesPurchases
 
     protected static function netosindto(BusinessDocument $model): string
     {
+        $nf0 = Tools::settings('default', 'decimals', 2);
+        $nf1 = Tools::settings('default', 'decimal_separator', ',');
+
         return empty($model->dtopor1) && empty($model->dtopor2) ? '' : '<div class="col-sm-2"><div class="mb-3">' . Tools::trans('subtotal')
-            . '<input type="text" value="' . number_format($model->netosindto, FS_NF0, FS_NF1, '')
+            . '<input type="text" value="' . number_format($model->netosindto, $nf0, $nf1, '')
             . '" class="form-control" disabled/></div></div>';
     }
 
@@ -655,9 +661,12 @@ trait CommonSalesPurchases
 
     protected static function total(BusinessDocument $model, string $jsName): string
     {
+        $nf0 = Tools::settings('default', 'decimals', 2);
+        $nf1 = Tools::settings('default', 'decimal_separator', ',');
+
         return empty($model->total) ? '' : '<div class="col-sm"><div class="mb-3">' . Tools::trans('total')
             . '<div class="input-group">'
-            . '<input type="text" value="' . number_format($model->total, FS_NF0, FS_NF1, '')
+            . '<input type="text" value="' . number_format($model->total, $nf0, $nf1, '')
             . '" class="form-control" disabled/>'
             . '<button class="btn btn-primary btn-spin-action" onclick="return ' . $jsName
             . '(\'save-doc\', \'0\');" title="' . Tools::trans('save') . '" type="button">'

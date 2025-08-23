@@ -139,8 +139,9 @@ class Asiento extends ModelClass
      */
     public function accumulateAmounts(array &$detail)
     {
+        $nf0 = Tools::settings('default', 'decimals', 2);
         $haber = isset($detail['haber']) ? (float)$detail['haber'] : 0.0;
-        $this->importe += round($haber, FS_NF0);
+        $this->importe += round($haber, $nf0);
     }
 
     public function clear(): void
@@ -173,10 +174,10 @@ class Asiento extends ModelClass
         // add audit log
         Tools::log(LogMessage::AUDIT_CHANNEL)->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
-            '%key%' => $this->primaryColumnValue(),
+            '%key%' => $this->id(),
             '%desc%' => $this->primaryDescription(),
             'model-class' => $this->modelClassName(),
-            'model-code' => $this->primaryColumnValue(),
+            'model-code' => $this->id(),
             'model-data' => $this->toArray()
         ]);
 
@@ -219,7 +220,7 @@ class Asiento extends ModelClass
         $partida = new DinPartida();
         $partida->concepto = $this->concepto;
         $partida->documento = $this->documento;
-        $partida->idasiento = $this->primaryColumnValue();
+        $partida->idasiento = $this->id();
 
         if ($subcuenta) {
             $partida->setAccount($subcuenta);
@@ -258,7 +259,8 @@ class Asiento extends ModelClass
             $haber += $line->haber;
         }
 
-        return Tools::floatCmp($debe, $haber, FS_NF0, true);
+        $nf0 = Tools::settings('default', 'decimals', 2);
+        return Tools::floatCmp($debe, $haber, $nf0, true);
     }
 
     /**
@@ -342,10 +344,10 @@ class Asiento extends ModelClass
         // add audit log
         Tools::log(LogMessage::AUDIT_CHANNEL)->info('updated-model', [
             '%model%' => $this->modelClassName(),
-            '%key%' => $this->primaryColumnValue(),
+            '%key%' => $this->id(),
             '%desc%' => $this->primaryDescription(),
             'model-class' => $this->modelClassName(),
-            'model-code' => $this->primaryColumnValue(),
+            'model-code' => $this->id(),
             'model-data' => $this->toArray()
         ]);
 

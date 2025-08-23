@@ -58,7 +58,7 @@ abstract class SalesController extends PanelController
         }
 
         // loaded record? just return it
-        if ($this->views[static::MAIN_VIEW_NAME]->model->primaryColumnValue()) {
+        if ($this->views[static::MAIN_VIEW_NAME]->model->id()) {
             return $this->views[static::MAIN_VIEW_NAME]->model;
         }
 
