@@ -440,7 +440,7 @@ abstract class SalesController extends PanelController
 
         // si la factura es de 0 €, la marcamos como pagada
         $model = $this->getModel();
-        if (empty($model->total) && property_exists($model, 'pagada')) {
+        if (empty($model->total) && $model->hasColumn('pagada')) {
             $model->pagada = (bool)$this->request->request->get('selectedLine');
             $model->save();
             $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);

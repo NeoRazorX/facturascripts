@@ -188,7 +188,7 @@ trait CommonSalesPurchases
     protected static function codserie(BusinessDocument $model, string $jsFunc): string
     {
         // es una factura rectificativa?
-        $rectificativa = property_exists($model, 'idfacturarect') && $model->idfacturarect;
+        $rectificativa = $model->hasColumn('idfacturarect') && $model->idfacturarect;
 
         $options = [];
         foreach (Series::all() as $row) {
@@ -330,7 +330,7 @@ trait CommonSalesPurchases
 
     protected static function fechadevengo(BusinessDocument $model): string
     {
-        if (false === property_exists($model, 'fechadevengo')) {
+        if (false === $model->hasColumn('fechadevengo')) {
             return '';
         }
 
