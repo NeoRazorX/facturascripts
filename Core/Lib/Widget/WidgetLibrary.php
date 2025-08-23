@@ -178,7 +178,7 @@ class WidgetLibrary extends BaseWidget
             $info = '<p class="card-text small">'
                 . Tools::bytes($file->size) . ', ' . $file->date . ' ' . $file->hour
                 . '<a href="' . $file->url() . '" target="_blank" class="ms-2">'
-                . '<i class="fa-solid fa-up-end-from-square"></i>'
+                . '<i class="fa-solid fa-up-right-and-down-left-from-center"></i>'
                 . '</a>'
                 . '</p>';
 
