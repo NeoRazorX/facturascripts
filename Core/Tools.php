@@ -772,12 +772,12 @@ class Tools
      * Esta función utiliza una instancia de `Translator` para traducir el texto proporcionado,
      * aplicando el contexto opcional si se proporciona.
      *
-     * @param string $text El texto que se debe traducir.
+     * @param ?string $text El texto que se debe traducir.
      * @param array $context Contexto opcional para la traducción. Por defecto es un array vacío.
      *
      * @return string El texto traducido.
      */
-    public static function trans(string $text, array $context = []): string
+    public static function trans(?string $text, array $context = []): string
     {
         if (null === self::$translator) {
             self::$translator = new Translator();
