@@ -119,7 +119,7 @@ class AttachedFile extends ModelClass
             if ($exclude) {
                 $sql .= ' WHERE idfile NOT IN (' . implode(',', $exclude) . ')';
             }
-            foreach (static::$dataBase->select($sql) as $row) {
+            foreach (static::db()->select($sql) as $row) {
                 $size = (int)$row['size'];
                 break;
             }
@@ -235,14 +235,14 @@ class AttachedFile extends ModelClass
             case 'mysql':
                 $sql = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . Tools::config('db_name')
                     . "' AND TABLE_NAME = '" . static::tableName() . "';";
-                foreach (static::$dataBase->select($sql) as $row) {
+                foreach (static::db()->select($sql) as $row) {
                     return max($this->newCode(), $row['AUTO_INCREMENT']);
                 }
                 break;
 
             case 'postgresql':
                 $sql = "SELECT nextval('" . static::tableName() . "_idfile_seq');";
-                foreach (static::$dataBase->select($sql) as $row) {
+                foreach (static::db()->select($sql) as $row) {
                     return max($this->newCode(), $row['nextval']);
                 }
                 break;
