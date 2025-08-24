@@ -37,7 +37,7 @@ Esto incluye subcarpetas y archivos en su interior. Cualquier artefacto temporal
 - Las pruebas deben cubrir casos felices, errores esperados y bordes relevantes.
 
 ## Restricciones
-- No modificar ni depender del contenido en `Dinamic`, `Asset`, `Plugins` y `MyFiles`.
+- No modificar ni depender del contenido en `Dinamic`, `Plugins` y `MyFiles`.
 - No introducir cambios fuera de `Code` y `Test` salvo documentación.
 
 ## Comunicación
