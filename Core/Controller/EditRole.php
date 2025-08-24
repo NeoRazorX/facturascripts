@@ -40,12 +40,11 @@ class EditRole extends EditController
     public function getAccessRules(): array
     {
         $rules = [];
-        $i18n = Tools::lang();
         foreach ($this->getAllPages() as $page) {
             $rules[$page->name] = [
-                'menu' => $i18n->trans($page->menu),
-                'submenu' => $i18n->trans($page->submenu),
-                'page' => $i18n->trans($page->title),
+                'menu' => Tools::trans($page->menu),
+                'submenu' => Tools::trans($page->submenu),
+                'page' => Tools::trans($page->title),
                 'show' => false,
                 'onlyOwner' => false,
                 'update' => false,

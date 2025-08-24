@@ -1113,6 +1113,7 @@
     "only-closed": "Solamente cerrados",
     "only-insert": "Sólo añadir",
     "only-owner-data": "Mostrar solamente registros del usuario",
+    "only-owner-data-p": "Marcando la opción de mostrar solamente registros del usuario, solamente podrá ver registros que haya creado él o que tenga asignados (como usuario o agente)",
     "only-pending": "Sólo Pendientes",
     "only-suspended": "Solamente suspendidos",
     "open": "Abrir",
