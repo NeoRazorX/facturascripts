@@ -1113,7 +1113,7 @@
     "only-closed": "Solament tancats",
     "only-insert": "Només afegir",
     "only-owner-data": "Mostrar només registres de l'usuari",
-    "only-owner-data-p": "El usuario solamente podrá ver registros que haya creado él o que tenga asignados (como usuario o agente)",
+    "only-owner-data-p": "Marcant l'opció de mostrar només registres de l'usuari, només podrà veure registres que hagi creat ell o que tingui assignats (com a usuari o agent)",
     "only-pending": "Només Pendents",
     "only-suspended": "Només suspès",
     "open": "Obrir",
