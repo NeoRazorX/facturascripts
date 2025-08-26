@@ -80,10 +80,12 @@ class AccountingLineHTML
                 return;
             }
 
+            $nf0 = Tools::settings('default', 'decimals', 2);
+
             $newLine = $model->getNewLine();
             $newLine->setAccount($subcuenta);
-            $newLine->debe = ($model->debe < $model->haber) ? round($model->haber - $model->debe, FS_NF0) : 0.00;
-            $newLine->haber = ($model->debe > $model->haber) ? round($model->debe - $model->haber, FS_NF0) : 0.00;
+            $newLine->debe = ($model->debe < $model->haber) ? round($model->haber - $model->debe, $nf0) : 0.00;
+            $newLine->haber = ($model->debe > $model->haber) ? round($model->debe - $model->haber, $nf0) : 0.00;
             $lines[] = $newLine;
 
             static::calculateUnbalance($model, $lines);
@@ -279,7 +281,7 @@ class AccountingLineHTML
             new DataBaseWhere('codejercicio', $model->codejercicio),
             new DataBaseWhere('codsubcuenta', $subcuenta->transformCodsubcuenta($code, $model->codejercicio))
         ];
-        $subcuenta->load('', $where);
+        $subcuenta->loadWhere($where);
         return $subcuenta;
     }
 
@@ -290,8 +292,9 @@ class AccountingLineHTML
             ? 'name="haber_' . $idlinea . '" step="1" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
+        $nf0 = Tools::settings('default', 'decimals', 2);
         return '<div class="col pb-2 small">' . Tools::trans('credit')
-            . '<input type="number" class="form-control" ' . $attributes . ' value="' . round($line->haber, FS_NF0) . '"/>'
+            . '<input type="number" class="form-control" ' . $attributes . ' value="' . round($line->haber, $nf0) . '"/>'
             . '</div>';
     }
 

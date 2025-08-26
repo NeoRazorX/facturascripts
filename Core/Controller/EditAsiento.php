@@ -63,7 +63,7 @@ class EditAsiento extends PanelController
         }
 
         // get the record identifier
-        $primaryKey = $this->request->input($this->views[static::MAIN_VIEW_NAME]->model->id());
+        $primaryKey = $this->request->input($this->views[static::MAIN_VIEW_NAME]->model->primaryColumn());
         $code = $this->request->query('code', $primaryKey);
         if (empty($code)) {
             // new record
