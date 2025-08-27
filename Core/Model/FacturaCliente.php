@@ -104,9 +104,9 @@ class FacturaCliente extends SalesDocument
         return 'facturascli';
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
-        return $this->testDate() && parent::saveInsert($values);
+        return $this->testDate() && parent::saveInsert();
     }
 
     protected function testDate(): bool
