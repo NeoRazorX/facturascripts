@@ -1227,7 +1227,7 @@
     "plugin-update": "a",
     "plugins": "Plugins",
     "plugins-p": "Os plugins permitem adicionar novas funções. Ative os que precisar agora, ou quando quiser, a partir do menu administrador.",
-    "plugins-required": "Plugins requeridos",
+    "plugins-required": "Plugins exigidos",
     "points": "Pontos",
     "points-of-interest": "Pontos de interesse",
     "port": "Porta",
