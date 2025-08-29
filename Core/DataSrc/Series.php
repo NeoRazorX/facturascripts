@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\DataSrc;
 
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Serie;
 
@@ -53,6 +54,12 @@ final class Series implements DataSrcInterface
         }
 
         return CodeModel::array2codeModel($codes, $addEmpty);
+    }
+
+    public static function default(): Serie
+    {
+        $code = Tools::settings('default', 'codserie', 'A');
+        return self::get($code);
     }
 
     /**

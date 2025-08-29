@@ -58,7 +58,7 @@ final class FormasPago implements DataSrcInterface
 
     public static function default(): FormaPago
     {
-        $code = Tools::settings('default', 'codimpuesto');
+        $code = Tools::settings('default', 'codpago');
         return self::get($code);
     }
 

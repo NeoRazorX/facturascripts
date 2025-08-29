@@ -58,7 +58,7 @@ final class Impuestos implements DataSrcInterface
 
     public static function default(): Impuesto
     {
-        $code = Tools::settings('default', 'codimpuesto', '');
+        $code = Tools::settings('default', 'codimpuesto', 'IVA21');
         return self::get($code);
     }
 

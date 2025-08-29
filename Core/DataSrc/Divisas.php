@@ -58,7 +58,7 @@ final class Divisas implements DataSrcInterface
 
     public static function default(): Divisa
     {
-        $code = Tools::settings('default', 'coddivisa');
+        $code = Tools::settings('default', 'coddivisa', 'EUR');
         return self::get($code);
     }
 

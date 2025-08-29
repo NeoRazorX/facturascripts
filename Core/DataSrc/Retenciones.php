@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\DataSrc;
 
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Retencion;
 
@@ -53,6 +54,12 @@ final class Retenciones implements DataSrcInterface
         }
 
         return CodeModel::array2codeModel($codes, $addEmpty);
+    }
+
+    public static function default(): Retencion
+    {
+        $code = Tools::settings('default', 'codretencion', '');
+        return self::get($code);
     }
 
     /**
