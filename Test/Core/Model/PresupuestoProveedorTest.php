@@ -307,6 +307,7 @@ final class PresupuestoProveedorTest extends TestCase
 
         // creamos un presupuesto en la empresa 2 y le asignamos el proveedor
         $doc = new PresupuestoProveedor();
+        $doc->codpago = $company2->getPaymentMethods()[0]->codpago;
         $doc->setSubject($subject);
         $doc->codalmacen = $warehouse->codalmacen;
         $this->assertTrue($doc->save(), 'presupuesto-cant-save');
