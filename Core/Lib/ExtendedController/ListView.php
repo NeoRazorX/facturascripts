@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Request;
@@ -359,12 +360,29 @@ class ListView extends BaseView
             return;
         }
 
+        // si el metodo de la request es GET, obtenemos los filtros desde la cache
+        $cacheKeyFiltros = 'filtros-' . $request->cookie('fsNick') . '-' . trim(str_replace('/', '', $request->header('PATH_INFO')));
+        if($request->isMethod('GET')){
+            $filtrosCache = Cache::get($cacheKeyFiltros);
+            if ($filtrosCache){
+                // creamos valores de filtros en la request para aprovechar los metodos ya existentes
+                foreach ($filtrosCache as $filtro){
+                    $request->request->set('filter' . $filtro->key, $filtro->getValue());
+                }
+            }
+        }
+
         // filters
         foreach ($this->filters as $filter) {
             $filter->setValueFromRequest($request);
             if ($filter->getDataBaseWhere($this->where)) {
                 $this->showFilters = true;
             }
+        }
+
+        if($request->isMethod('POST')) {
+            // guardamos los filtros en cache
+            Cache::set($cacheKeyFiltros, $this->filters);
         }
     }
 
