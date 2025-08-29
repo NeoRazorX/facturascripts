@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -294,8 +294,12 @@ class SalesLineHTML
 
         // buscamos el código de barras en las variantes
         $whereBarcode = [new DataBaseWhere('codbarras', $formData['fastli'])];
-        foreach (Variante::all($whereBarcode) as $variante) {
-            return $model->getNewProductLine($variante->referencia);
+        foreach (Variante::all($whereBarcode, [], 0, 5) as $variante) {
+            // comprobamos que el producto se pueda vender
+            $product = $variante->getProducto();
+            if (!$product->bloqueado && $product->sevende) {
+                return $model->getNewProductLine($variante->referencia);
+            }
         }
 
         // buscamos el código de barras con los mods

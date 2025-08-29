@@ -41,6 +41,15 @@ trait ModelTrait
 
     abstract public static function tableName(): string;
 
+    /**
+     * Devuelve todos los registros que cumplen las condiciones.
+     *
+     * @param array $where
+     * @param array $order
+     * @param int $offset
+     * @param int $limit
+     * @return static[]
+     */
     public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 0): array
     {
         $data = self::table()
