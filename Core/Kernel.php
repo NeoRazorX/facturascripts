@@ -243,7 +243,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2025.21;
+        return 2025.3;
     }
 
     private static function checkControllerClass(string $controller): array
