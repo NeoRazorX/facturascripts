@@ -218,14 +218,15 @@ trait CommonLineHTML
             ' onclick="' . $jsNeto . '(\'' . $idlinea . '\')"' :
             '';
 
+        $nf0 = Tools::settings('default', 'decimals', 2);
         $subtotal = self::subtotalValue($line, $model);
         return '<div class="col col-lg-1 order-7 columSubtotal ' . $cssSubtotal . '">'
             . '<div class="d-lg-none mt-2 small">' . Tools::trans('subtotal') . '</div>'
-            . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($subtotal, FS_NF0, '.', '')
+            . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($subtotal, $nf0, '.', '')
             . '" class="form-control form-control-sm text-lg-end border-0"' . $onclickSubtotal . ' readonly/></div>'
             . '<div class="col col-lg-1 order-7 columNeto ' . $cssNeto . '">'
             . '<div class="d-lg-none mt-2 small">' . Tools::trans('net') . '</div>'
-            . '<input type="number" name="lineneto_' . $idlinea . '"  value="' . number_format($line->pvptotal, FS_NF0, '.', '')
+            . '<input type="number" name="lineneto_' . $idlinea . '"  value="' . number_format($line->pvptotal, $nf0, '.', '')
             . '" class="form-control form-control-sm text-lg-end border-0"' . $onclickNeto . ' readonly/></div>';
     }
 

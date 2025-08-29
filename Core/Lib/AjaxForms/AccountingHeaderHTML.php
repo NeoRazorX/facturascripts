@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,7 +51,7 @@ class AccountingHeaderHTML
     public static function render(Asiento $model): string
     {
         return '<div class="container-fluid">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . static::idempresa($model)
             . static::fecha($model)
             . static::concepto($model)
@@ -66,7 +66,7 @@ class AccountingHeaderHTML
     {
         $attributes = $model->editable ? 'name="canal"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
-            . '<div class="mb-3">' . Tools::trans('channel')
+            . '<div class="mb-2">' . Tools::trans('channel')
             . '<input type="number" ' . $attributes . ' value="' . $model->canal . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -76,7 +76,7 @@ class AccountingHeaderHTML
     {
         $attributes = $model->editable ? 'name="concepto" autocomplete="off" required' : 'disabled';
         return '<div class="col-sm-6 col-md">'
-            . '<div class="mb-3">' . Tools::trans('concept')
+            . '<div class="mb-2">' . Tools::trans('concept')
             . '<input type="text" list="concept-items" ' . $attributes . ' value="' . Tools::noHtml($model->concepto) . '" class="form-control"/>'
             . '<datalist id="concept-items">' . static::getConceptItems($model) . '</datalist>'
             . '</div>'
@@ -106,7 +106,7 @@ class AccountingHeaderHTML
 
         if ($link) {
             return '<div class="col-sm-3 col-md-2">'
-                . '<div class="mb-3">' . Tools::trans('document')
+                . '<div class="mb-2">' . Tools::trans('document')
                 . '<div class="input-group">'
                 . ''
                 . '<a class="btn btn-outline-primary" href="' . $link . '"><i class="far fa-eye"></i></a>'
@@ -118,7 +118,7 @@ class AccountingHeaderHTML
         }
 
         return '<div class="col-sm-3 col-md-2 mb-2">'
-            . '<div class="mb-3">' . Tools::trans('document')
+            . '<div class="mb-2">' . Tools::trans('document')
             . '<input type="text" value="' . Tools::noHtml($model->documento) . '" class="form-control" readonly/>'
             . '</div></div>';
     }
@@ -133,7 +133,7 @@ class AccountingHeaderHTML
 
         $attributes = $model->editable ? 'name="iddiario"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
-            . '<div class="mb-3">' . Tools::trans('daily')
+            . '<div class="mb-2">' . Tools::trans('daily')
             . '<select ' . $attributes . ' class="form-select">' . $options . '</select>'
             . '</div>'
             . '</div>';
@@ -143,7 +143,7 @@ class AccountingHeaderHTML
     {
         $attributes = $model->editable ? 'name="fecha" required' : 'disabled';
         return '<div class="col-sm-3 col-md-2">'
-            . '<div class="mb-3">' . Tools::trans('date')
+            . '<div class="mb-2">' . Tools::trans('date')
             . '<input type="date" ' . $attributes . ' value="' . date('Y-m-d', strtotime($model->fecha)) . '" class="form-control" />'
             . '</div>'
             . '</div>';
@@ -181,7 +181,7 @@ class AccountingHeaderHTML
         $attributes = $model->id() ? 'readonly' : 'required';
 
         return '<div class="col-sm-3 col-md-2">'
-            . '<div class="mb-3">' . Tools::trans('company')
+            . '<div class="mb-2">' . Tools::trans('company')
             . '<select name="idempresa" class="form-select" ' . $attributes . '>'
             . static::getItems($companyList, 'idempresa', 'nombre', $model->idempresa)
             . '</select>'
@@ -193,7 +193,7 @@ class AccountingHeaderHTML
     {
         $attributes = $model->editable ? 'name="operacion"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
-            . '<div class="mb-3">' . Tools::trans('operation')
+            . '<div class="mb-2">' . Tools::trans('operation')
             . '<select ' . $attributes . ' class="form-select">'
             . '<option value="">------</option>'
             . '<option value="A" ' . ($model->operacion === 'A' ? 'selected' : '') . '>' . Tools::trans('opening-operation') . '</option>'

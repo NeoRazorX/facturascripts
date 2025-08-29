@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
@@ -124,7 +125,7 @@ class AccountingLineHTML
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $cssClass = static::$num % 2 == 0 ? 'bg-white border-top' : 'bg-light border-top';
         return '<div class="' . $cssClass . ' line ps-2 pe-2">'
-            . '<div class="row g-3 align-items-end">'
+            . '<div class="row g-2 align-items-end">'
             . static::subcuenta($line, $model)
             . static::debe($line, $model)
             . static::haber($line, $model)
@@ -146,16 +147,17 @@ class AccountingLineHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . static::iva($line, $model)
             . static::recargo($line, $model)
             . '</div>'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . static::baseimponible($line, $model)
             . static::cifnif($line, $model)
             . '</div>'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . static::documento($line, $model)
+            . static::codserie($line, $model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
@@ -175,6 +177,7 @@ class AccountingLineHTML
     {
         $line->baseimponible = (float)($formData['baseimponible_' . $id] ?? '0');
         $line->cifnif = $formData['cifnif_' . $id] ?? '';
+        $line->codserie = $formData['codserie_' . $id] ?? '';
         $line->concepto = $formData['concepto_' . $id] ?? '';
         $line->codcontrapartida = $formData['codcontrapartida_' . $id] ?? '';
         $line->codsubcuenta = $formData['codsubcuenta_' . $id] ?? '';
@@ -220,6 +223,26 @@ class AccountingLineHTML
         return '<div class="col pb-2 small">' . Tools::trans('cifnif')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($line->cifnif)
             . '" class="form-control" maxlength="30" autocomplete="off"/>'
+            . '</div>';
+    }
+
+    protected static function codserie(Partida $line, Asiento $model): string
+    {
+        $options = ['<option value="">------</option>'];
+        foreach (Series::all() as $row) {
+            // es la serie seleccionada
+            if ($row->codserie === $line->codserie) {
+                $options[] = '<option value="' . $row->codserie . '" selected>' . $row->descripcion . '</option>';
+                continue;
+            }
+
+            $options[] = '<option value="' . $row->codserie . '">' . $row->descripcion . '</option>';
+        }
+
+        $idlinea = $line->idpartida ?? 'n' . static::$num;
+        $attributes = $model->editable ? 'name="codserie_' . $idlinea . '"' : 'disabled';
+        return '<div class="col pb-2 small"><a href="ListSerie">' . Tools::trans('serie') . '</a>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>';
     }
 

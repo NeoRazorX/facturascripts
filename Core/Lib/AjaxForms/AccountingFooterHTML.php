@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,13 +37,13 @@ class AccountingFooterHTML
     public static function render(Asiento $model): string
     {
         return '<div class="container-fluid">'
-            . '<div class="row g-3 align-items-center mt-3">'
+            . '<div class="row g-2 align-items-center mt-3">'
             . static::newSubaccount($model)
             . static::moveBtn($model)
             . static::importe($model)
             . static::descuadre($model)
             . '</div>'
-            . '<div class="row g-3 mt-3">'
+            . '<div class="row g-2 mt-3">'
             . static::deleteBtn($model)
             . '<div class="col-sm"></div>'
             . static::saveBtn($model)
@@ -60,13 +60,13 @@ class AccountingFooterHTML
         $lockBtn = '';
         if ($model->editable) {
             $lockBtn .= '<div class="col-sm-auto">'
-                . '<button type="button" class="btn w-100 btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
+                . '<button type="button" class="btn w-100 btn-warning btn-spin-action mb-2" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
                 . '<i class="fa-solid fa-lock fa-fw"></i> ' . Tools::trans('lock-entry') . '</button>'
                 . '</div>';
         }
 
         return '<div class="col-sm-auto">'
-            . '<button type="button" class="btn w-100 btn-danger btn-spin-action mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
+            . '<button type="button" class="btn w-100 btn-danger btn-spin-action mb-2" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
             . '<i class="fa-solid fa-trash-alt fa-fw"></i> ' . Tools::trans('delete') . '</button>'
             . '</div>'
             . $lockBtn
@@ -98,12 +98,13 @@ class AccountingFooterHTML
      */
     protected static function descuadre(Asiento $model): string
     {
-        $unbalance = isset($model->debe, $model->haber) ? round($model->debe - $model->haber, FS_NF0) : 0.0;
+        $nf0 = Tools::settings('default', 'decimals', 2);
+        $unbalance = isset($model->debe, $model->haber) ? round($model->debe - $model->haber, $nf0) : 0.0;
         if (empty($unbalance)) {
             return '';
         }
 
-        return '<div class="col-sm-3 col-md-2 mb-3">'
+        return '<div class="col-sm-3 col-md-2 mb-2">'
             . '<div class="input-group">'
             . '<span class="input-group-text text-danger">' . Tools::trans('unbalance') . '</span>'
             . '<input type="number" value="' . $unbalance . '" class="form-control" step="any" readonly>'
@@ -115,7 +116,7 @@ class AccountingFooterHTML
      */
     protected static function importe(Asiento $model): string
     {
-        return '<div class="col-sm-3 col-md-2 mb-3">'
+        return '<div class="col-sm-3 col-md-2 mb-2">'
             . '<div class="input-group">'
             . '<span class="input-group-text">' . Tools::trans('amount') . '</span>'
             . '<input type="number" value="' . $model->importe . '" class="form-control" step="any" tabindex="-1" readonly>'
@@ -128,7 +129,7 @@ class AccountingFooterHTML
             return '<div class="col-sm"></div>';
         }
 
-        return '<div class="col-sm-6 col-md-2 mb-3">'
+        return '<div class="col-sm-6 col-md-2 mb-2">'
             . '<div class="input-group">'
             . '<input type="text" class="form-control" maxlength="15" autocomplete="off" placeholder="' . Tools::trans('subaccount')
             . '" id="new_subaccount" name="new_subaccount" onchange="return newLineAction(this.value);"/>'
@@ -145,13 +146,13 @@ class AccountingFooterHTML
     {
         if (false === $model->editable) {
             return '<div class="col-sm-auto">'
-                . '<button type="button" class="btn w-100 btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\');">'
+                . '<button type="button" class="btn w-100 btn-warning btn-spin-action mb-2" onclick="return accEntryFormSave(\'unlock-doc\', \'0\');">'
                 . '<i class="fa-solid fa-lock-open fa-fw"></i> ' . Tools::trans('unlock-entry') . '</button>'
                 . '</div>';
         }
 
         return '<div class="col-sm-auto">'
-            . '<button type="button" class="btn w-100 btn-primary btn-spin-action mb-3" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
+            . '<button type="button" class="btn w-100 btn-primary btn-spin-action mb-2" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
             . '<i class="fa-solid fa-save fa-fw"></i> ' . Tools::trans('save') . '</button>'
             . '</div>';
     }
@@ -163,7 +164,7 @@ class AccountingFooterHTML
         }
 
         return '<div class="col-sm-auto">'
-            . '<button type="button" class="btn btn-light mb-3" id="sortableBtn">'
+            . '<button type="button" class="btn btn-light mb-2" id="sortableBtn">'
             . '<i class="fa-solid fa-arrows-alt-v fa-fw"></i> ' . Tools::trans('move-lines')
             . '</button>'
             . '</div>';
