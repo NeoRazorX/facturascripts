@@ -80,14 +80,14 @@ class PurchasesFooterHTML
         }
 
         return '<div class="container-fluid mt-3">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . self::renderField($model, '_productBtn')
             . self::renderField($model, '_newLineBtn')
             . self::renderField($model, '_sortableBtn')
             . self::renderField($model, '_fastLineInput')
             . self::renderField($model, '_subtotalNetoBtn')
             . '</div>'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . self::renderField($model, 'observaciones')
             . self::renderNewFields($model)
             . self::renderField($model, 'netosindto')
@@ -99,7 +99,7 @@ class PurchasesFooterHTML
             . self::renderField($model, 'totalirpf')
             . self::renderField($model, 'total')
             . '</div>'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . '<div class="col-auto">'
             . self::renderField($model, '_deleteBtn')
             . '</div>'
@@ -138,7 +138,7 @@ class PurchasesFooterHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . $htmlModal
             . '</div>'
             . '</div>'

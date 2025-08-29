@@ -163,7 +163,7 @@ class SalesHeaderHTML
     public static function render(SalesDocument $model): string
     {
         return '<div class="container-fluid">'
-            . '<div class="row g-3 align-items-end">'
+            . '<div class="row g-2 align-items-end">'
             . self::renderField($model, 'codcliente')
             . self::renderField($model, 'codalmacen')
             . self::renderField($model, 'codserie')
@@ -174,7 +174,7 @@ class SalesHeaderHTML
             . self::renderField($model, 'finoferta')
             . self::renderField($model, 'total')
             . '</div>'
-            . '<div class="row g-3 align-items-end">'
+            . '<div class="row g-2 align-items-end">'
             . self::renderField($model, '_detail')
             . self::renderField($model, '_parents')
             . self::renderField($model, '_children')
@@ -193,7 +193,7 @@ class SalesHeaderHTML
             'disabled=""';
 
         return '<div class="col-sm-' . $size . '">'
-            . '<div class="mb-3">' . Tools::trans($label)
+            . '<div class="mb-2">' . Tools::trans($label)
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->{$field}) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -219,7 +219,7 @@ class SalesHeaderHTML
         }
 
         return '<div class="col-sm-' . $size . '">'
-            . '<div class="mb-3">' . Tools::trans('city')
+            . '<div class="mb-2">' . Tools::trans('city')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->ciudad) . '" ' . $list . ' class="form-control"/>'
             . $dataList
             . '</div>'
@@ -247,7 +247,7 @@ class SalesHeaderHTML
 
         $attributes = $model->editable ? 'name="codagente"' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
-            . '<div class="mb-3">'
+            . '<div class="mb-2">'
             . '<a href="' . Agentes::get($model->codagente)->url() . '">' . Tools::trans('agent') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
@@ -259,7 +259,7 @@ class SalesHeaderHTML
         self::$cliente = new Cliente();
         if (empty($model->codcliente) || false === self::$cliente->loadFromCode($model->codcliente)) {
             return '<div class="col-sm-3">'
-                . '<div class="mb-3">' . Tools::trans('customer')
+                . '<div class="mb-2">' . Tools::trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
                 . '<a href="#" id="btnFindCustomerModal" class="btn w-100 btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
                 . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw"></i> '
@@ -275,7 +275,7 @@ class SalesHeaderHTML
             '<button class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-lock"></i></button>';
 
         $html = '<div class="col-sm-3 col-lg">'
-            . '<div class="mb-3">'
+            . '<div class="mb-2">'
             . '<a href="' . self::$cliente->url() . '">' . Tools::trans('customer') . '</a>'
             . '<input type="hidden" name="codcliente" value="' . $model->codcliente . '"/>'
             . '<div class="input-group">'
@@ -296,7 +296,7 @@ class SalesHeaderHTML
     {
         $attributes = $model->editable ? 'name="codigoenv" maxlength="200" autocomplete="off"' : 'disabled=""';
         return '<div class="col-sm-4">'
-            . '<div class="mb-3">' . Tools::trans('tracking-code')
+            . '<div class="mb-2">' . Tools::trans('tracking-code')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->codigoenv) . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -316,7 +316,7 @@ class SalesHeaderHTML
             'name="codpais"' :
             'disabled=""';
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">'
+            . '<div class="mb-2">'
             . '<a href="' . $pais->url() . '">' . Tools::trans('country') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
@@ -335,7 +335,7 @@ class SalesHeaderHTML
 
         $attributes = $model->editable ? 'name="codtrans"' : 'disabled=""';
         return '<div class="col-sm-4">'
-            . '<div class="mb-3">'
+            . '<div class="mb-2">'
             . '<a href="' . $agenciaTransporte->url() . '">' . Tools::trans('carrier') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
@@ -351,7 +351,7 @@ class SalesHeaderHTML
 
         $css = $new ? 'col-sm-auto' : 'col-sm';
         return '<div class="' . $css . '">'
-            . '<div class="mb-3">'
+            . '<div class="mb-2">'
             . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#headerModal">'
             . '<i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . Tools::trans('detail') . ' </button>'
             . '</div>'
@@ -371,7 +371,7 @@ class SalesHeaderHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . self::renderField($model, 'nombrecliente')
             . self::renderField($model, 'cifnif')
             . self::renderField($model, 'idcontactofact')
@@ -417,7 +417,7 @@ class SalesHeaderHTML
         $attributes = $model->editable ? 'name="finoferta"' : 'disabled=""';
         $value = empty($model->finoferta) ? '' : 'value="' . date('Y-m-d', strtotime($model->finoferta)) . '"';
         return '<div class="col-sm">'
-            . '<div class="mb-3">' . $label
+            . '<div class="mb-2">' . $label
             . '<input type="date" ' . $attributes . ' ' . $value . ' class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -445,7 +445,7 @@ class SalesHeaderHTML
         $attributes = $model->editable ? 'name="idcontactoenv"' : 'disabled=""';
         $options = self::getAddressOptions($model->idcontactoenv, true);
         return '<div class="col-sm-4">'
-            . '<div class="mb-3">'
+            . '<div class="mb-2">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">'
             . Tools::trans('shipping-address') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
@@ -462,7 +462,7 @@ class SalesHeaderHTML
         $attributes = $model->editable ? 'name="idcontactofact" onchange="return salesFormActionWait(\'recalculate-line\', \'0\', event);"' : 'disabled=""';
         $options = self::getAddressOptions($model->idcontactofact, true);
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">'
+            . '<div class="mb-2">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">' . Tools::trans('billing-address') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
@@ -473,7 +473,7 @@ class SalesHeaderHTML
     {
         $attributes = $model->editable ? 'name="nombrecliente" required="" maxlength="100" autocomplete="off"' : 'disabled=""';
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">'
+            . '<div class="mb-2">'
             . Tools::trans('business-name')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nombrecliente) . '" class="form-control"/>'
             . '</div>'
@@ -484,7 +484,7 @@ class SalesHeaderHTML
     {
         $attributes = $model->editable ? 'name="numero2" maxlength="50" placeholder="' . Tools::trans('optional') . '"' : 'disabled=""';
         return empty($model->codcliente) ? '' : '<div class="col-sm">'
-            . '<div class="mb-3">'
+            . '<div class="mb-2">'
             . Tools::trans('number2')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->numero2) . '" class="form-control"/>'
             . '</div>'
@@ -511,7 +511,7 @@ class SalesHeaderHTML
         }
 
         return '<div class="col-sm-' . $size . '">'
-            . '<div class="mb-3">' . Tools::trans('province')
+            . '<div class="mb-2">' . Tools::trans('province')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->provincia) . '" ' . $list . ' class="form-control"/>'
             . $dataList
             . '</div>'

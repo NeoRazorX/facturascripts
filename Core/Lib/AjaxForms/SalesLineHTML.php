@@ -154,7 +154,7 @@ class SalesLineHTML
             $html .= self::renderLine($line, $model);
         }
         if (empty($html)) {
-            $html .= '<div class="container-fluid"><div class="row g-3 table-warning"><div class="col p-3 text-center">'
+            $html .= '<div class="container-fluid"><div class="row g-2"><div class="col p-3 table-warning text-center">'
                 . Tools::trans('new-invoice-line-p') . '</div></div></div>';
         }
         return empty($model->codcliente) ? '' : self::renderTitles($model) . $html;
@@ -164,7 +164,7 @@ class SalesLineHTML
     {
         self::$num++;
         $idlinea = $line->idlinea ?? 'n' . self::$num;
-        return '<div class="container-fluid fs-line"><div class="row g-3 align-items-center border-bottom pb-3 pb-lg-0">'
+        return '<div class="container-fluid fs-line"><div class="row g-2 align-items-center border-bottom pb-3 pb-lg-0">'
             . self::renderField($idlinea, $line, $model, 'referencia')
             . self::renderField($idlinea, $line, $model, 'descripcion')
             . self::renderField($idlinea, $line, $model, 'cantidad')
@@ -404,7 +404,7 @@ class SalesLineHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . self::renderField($idlinea, $line, $model, 'dtopor2')
             . self::renderField($idlinea, $line, $model, 'recargo')
             . self::renderField($idlinea, $line, $model, 'irpf')
@@ -544,7 +544,7 @@ class SalesLineHTML
 
     private static function renderTitles(SalesDocument $model): string
     {
-        return '<div class="container-fluid d-none d-lg-block titles"><div class="row g-3 border-bottom">'
+        return '<div class="container-fluid d-none d-lg-block titles pt-3"><div class="row g-2 border-bottom">'
             . self::renderTitle($model, 'referencia')
             . self::renderTitle($model, 'descripcion')
             . self::renderTitle($model, 'cantidad')

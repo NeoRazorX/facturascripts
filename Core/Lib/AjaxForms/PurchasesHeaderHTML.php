@@ -106,7 +106,7 @@ class PurchasesHeaderHTML
     public static function render(PurchaseDocument $model): string
     {
         return '<div class="container-fluid">'
-            . '<div class="row g-3 align-items-end">'
+            . '<div class="row g-2 align-items-end">'
             . self::renderField($model, 'codproveedor')
             . self::renderField($model, 'codalmacen')
             . self::renderField($model, 'codserie')
@@ -116,7 +116,7 @@ class PurchasesHeaderHTML
             . self::renderField($model, 'codpago')
             . self::renderField($model, 'total')
             . '</div>'
-            . '<div class="row g-3 align-items-end">'
+            . '<div class="row g-2 align-items-end">'
             . self::renderField($model, '_detail')
             . self::renderField($model, '_parents')
             . self::renderField($model, '_children')
@@ -133,7 +133,7 @@ class PurchasesHeaderHTML
         $proveedor = new Proveedor();
         if (empty($model->codproveedor) || false === $proveedor->load($model->codproveedor)) {
             return '<div class="col-sm-3">'
-                . '<div class="mb-3">' . Tools::trans('supplier')
+                . '<div class="mb-2">' . Tools::trans('supplier')
                 . '<input type="hidden" name="codproveedor" />'
                 . '<a href="#" id="btnFindSupplierModal" class="btn btn-primary w-100" onclick="$(\'#findSupplierModal\').modal(\'show\');'
                 . ' $(\'#findSupplierInput\').focus(); return false;"><i class="fa-solid fa-users fa-fw"></i> '
@@ -149,7 +149,7 @@ class PurchasesHeaderHTML
             '<button class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-lock"></i></button>';
 
         $html = '<div class="col-sm-3 col-lg">'
-            . '<div class="mb-3">'
+            . '<div class="mb-2">'
             . '<a href="' . $proveedor->url() . '">' . Tools::trans('supplier') . '</a>'
             . '<input type="hidden" name="codproveedor" value="' . $model->codproveedor . '" />'
             . '<div class="input-group">'
@@ -175,7 +175,7 @@ class PurchasesHeaderHTML
 
         $css = $new ? 'col-sm-auto' : 'col-sm';
         return '<div class="' . $css . '">'
-            . '<div class="mb-3">'
+            . '<div class="mb-2">'
             . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#headerModal">'
             . '<i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i> ' . Tools::trans('detail') . ' </button>'
             . '</div>'
@@ -195,7 +195,7 @@ class PurchasesHeaderHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . self::renderField($model, 'nombre')
             . self::renderField($model, 'cifnif')
             . self::renderField($model, 'fechadevengo')
@@ -219,19 +219,19 @@ class PurchasesHeaderHTML
 
     private static function nombre(PurchaseDocument $model): string
     {
-        $attributes = $model->editable ? 'name="nombre" required=""' : 'disabled=""';
+        $attributes = $model->editable ? 'name="nombre" required' : 'disabled';
         return '<div class="col-sm-6">'
-            . '<div class="mb-3">' . Tools::trans('business-name')
-            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nombre) . '" class="form-control" maxlength="100" autocomplete="off" />'
+            . '<div class="mb-2">' . Tools::trans('business-name')
+            . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->nombre) . '" class="form-control" maxlength="100" autocomplete="off"/>'
             . '</div>'
             . '</div>';
     }
 
     private static function numproveedor(PurchaseDocument $model): string
     {
-        $attributes = $model->editable ? 'name="numproveedor"' : 'disabled=""';
+        $attributes = $model->editable ? 'name="numproveedor"' : 'disabled';
         return empty($model->codproveedor) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
-            . '<div class="mb-3">' . Tools::trans('numsupplier')
+            . '<div class="mb-2">' . Tools::trans('numsupplier')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->numproveedor) . '" class="form-control" maxlength="50"'
             . ' placeholder="' . Tools::trans('optional') . '" />'
             . '</div>'

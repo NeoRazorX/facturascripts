@@ -332,7 +332,7 @@ class SalesModalHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . '<div class="col-sm mb-2">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . Tools::trans('search')
@@ -345,7 +345,7 @@ class SalesModalHTML
             . '<div class="col-sm mb-2">' . static::familias() . '</div>'
             . '<div class="col-sm mb-2">' . static::orden() . '</div>'
             . '</div>'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . '<div class="col-sm">'
             . '<div class="form-check">'
             . '<input type="checkbox" name="fp_vendido" value="1" class="form-check-input" id="vendido" onchange="return salesFormAction(\'find-product\', \'0\');">'
