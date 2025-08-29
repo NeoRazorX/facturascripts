@@ -65,9 +65,10 @@ class AccountingHeaderHTML
     protected static function canal(Asiento $model): string
     {
         $attributes = $model->editable ? 'name="canal"' : 'disabled';
-        return '<div class="col-sm-2 col-md">'
+        return '<div class="col-sm-2">'
             . '<div class="mb-2">' . Tools::trans('channel')
-            . '<input type="number" ' . $attributes . ' value="' . $model->canal . '" class="form-control"/>'
+            . '<input type="number" ' . $attributes . ' value="' . $model->canal . '" placeholder="'
+            . Tools::trans('optional') . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -125,14 +126,15 @@ class AccountingHeaderHTML
 
     protected static function diario(Asiento $model): string
     {
-        $options = '<option value="">------</option>';
+        $options = '<option value="">' . Tools::trans('optional') . '</option>'
+            . '<option value="">------</option>';
         foreach (Diario::all([], [], 0, 0) as $diario) {
             $check = $diario->iddiario === $model->iddiario ? 'selected' : '';
             $options .= '<option value="' . $diario->iddiario . '" ' . $check . '>' . $diario->descripcion . '</option>';
         }
 
         $attributes = $model->editable ? 'name="iddiario"' : 'disabled';
-        return '<div class="col-sm-2 col-md">'
+        return '<div class="col-sm-2">'
             . '<div class="mb-2">' . Tools::trans('daily')
             . '<select ' . $attributes . ' class="form-select">' . $options . '</select>'
             . '</div>'
@@ -192,9 +194,10 @@ class AccountingHeaderHTML
     protected static function operacion(Asiento $model): string
     {
         $attributes = $model->editable ? 'name="operacion"' : 'disabled';
-        return '<div class="col-sm-2 col-md">'
+        return '<div class="col-sm-2">'
             . '<div class="mb-2">' . Tools::trans('operation')
             . '<select ' . $attributes . ' class="form-select">'
+            . '<option value="">' . Tools::trans('optional') . '</option>'
             . '<option value="">------</option>'
             . '<option value="A" ' . ($model->operacion === 'A' ? 'selected' : '') . '>' . Tools::trans('opening-operation') . '</option>'
             . '<option value="C" ' . ($model->operacion === 'C' ? 'selected' : '') . '>' . Tools::trans('closing-operation') . '</option>'
