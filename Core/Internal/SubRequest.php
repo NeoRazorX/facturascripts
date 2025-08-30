@@ -74,7 +74,7 @@ final class SubRequest
             return $value;
         }
 
-        return (array)$value;
+        return $allowNull ? null : [];
     }
 
     public function getAlnum(string $key): string
@@ -116,7 +116,7 @@ final class SubRequest
     {
         $value = $this->get($key);
         if (Validator::email($value ?? '')) {
-            return $value;
+            return strtolower($value);
         }
 
         return $allowNull ? null : '';

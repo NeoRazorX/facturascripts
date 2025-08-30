@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,11 +29,12 @@ class ApiUploadFiles extends ApiController
     protected function runResource(): void
     {
         if (!in_array($this->request->method(), ['POST', 'PUT'])) {
-            $this->response->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Method not allowed',
-            ]));
+            $this->response
+                ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'Method not allowed',
+                ]);
             return;
         }
 
@@ -47,9 +48,9 @@ class ApiUploadFiles extends ApiController
         }
 
         // devolvemos la respuesta
-        $this->response->setContent(json_encode([
+        $this->response->json([
             'files' => $uploadedFiles,
-        ]));
+        ]);
     }
 
     private function uploadFile(UploadedFile $uploadFile): ?AttachedFile

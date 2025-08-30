@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\DataSrc;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 
@@ -32,9 +33,10 @@ final class GruposClientes implements DataSrcInterface
      */
     public static function all(): array
     {
-        if (null === self::$list) {
-            $model = new GrupoClientes();
-            self::$list = $model->all([], [], 0, 0);
+        if (!isset(self::$list)) {
+            self::$list = Cache::remember('model-GrupoClientes-list', function () {
+                return GrupoClientes::all([], ['nombre' => 'ASC'], 0, 0);
+            });
         }
 
         return self::$list;
@@ -63,11 +65,11 @@ final class GruposClientes implements DataSrcInterface
     public static function get($code): GrupoClientes
     {
         foreach (self::all() as $item) {
-            if ($item->primaryColumnValue() === $code) {
+            if ($item->id() === $code) {
                 return $item;
             }
         }
 
-        return new GrupoClientes();
+        return GrupoClientes::find($code) ?? new GrupoClientes();
     }
 }

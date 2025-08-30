@@ -56,7 +56,7 @@ abstract class PurchaseDocument extends TransformerDocument
      */
     public $numproveedor;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
 
@@ -84,7 +84,7 @@ abstract class PurchaseDocument extends TransformerDocument
         $variant = new Variante();
         $where1 = [new DataBaseWhere('referencia', Tools::noHtml($reference))];
         $where2 = [new DataBaseWhere('codbarras', Tools::noHtml($reference))];
-        if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
+        if ($variant->loadWhere($where1) || $variant->loadWhere($where2)) {
             $product = $variant->getProducto();
 
             $newLine->codimpuesto = $product->getTax()->codimpuesto;
@@ -110,7 +110,7 @@ abstract class PurchaseDocument extends TransformerDocument
     public function getSubject()
     {
         $proveedor = new Proveedor();
-        $proveedor->loadFromCode($this->codproveedor);
+        $proveedor->load($this->codproveedor);
         return $proveedor;
     }
 
@@ -144,6 +144,7 @@ abstract class PurchaseDocument extends TransformerDocument
 
         // allow extensions
         $this->pipe('setAuthor', $user);
+
         return true;
     }
 
@@ -166,7 +167,7 @@ abstract class PurchaseDocument extends TransformerDocument
         $this->cifnif = $subject->cifnif ?? '';
 
         // commercial data
-        if (empty($this->primaryColumnValue())) {
+        if (empty($this->id())) {
             $this->codpago = $subject->codpago ?? $this->codpago;
             $this->codserie = $subject->codserie ?? $this->codserie;
             $this->irpf = $subject->irpf() ?? $this->irpf;
@@ -174,6 +175,7 @@ abstract class PurchaseDocument extends TransformerDocument
 
         // allow extensions
         $this->pipe('setSubject', $subject);
+
         return true;
     }
 
@@ -203,7 +205,7 @@ abstract class PurchaseDocument extends TransformerDocument
     public function updateSubject(): bool
     {
         $proveedor = new Proveedor();
-        return $this->codproveedor && $proveedor->loadFromCode($this->codproveedor) && $this->setSubject($proveedor);
+        return $this->codproveedor && $proveedor->load($this->codproveedor) && $this->setSubject($proveedor);
     }
 
     /**
@@ -211,16 +213,15 @@ abstract class PurchaseDocument extends TransformerDocument
      *
      * @param BusinessDocumentLine $newLine
      */
-    protected function setLastSupplierPrice(&$newLine)
+    protected function setLastSupplierPrice(&$newLine): void
     {
-        $supplierProd = new ProductoProveedor();
         $where = [
             new DataBaseWhere('codproveedor', $this->codproveedor),
             new DataBaseWhere('referencia', $newLine->referencia),
             new DataBaseWhere('precio', 0, '>')
         ];
         $orderBy = ['coddivisa' => 'DESC'];
-        foreach ($supplierProd->all($where, $orderBy) as $prod) {
+        foreach (ProductoProveedor::all($where, $orderBy) as $prod) {
             if ($prod->coddivisa === $this->coddivisa || $prod->coddivisa === null) {
                 $newLine->dtopor = $prod->dtopor;
                 $newLine->dtopor2 = $prod->dtopor2;
@@ -228,11 +229,5 @@ abstract class PurchaseDocument extends TransformerDocument
                 return;
             }
         }
-    }
-
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['codproveedor'];
-        parent::setPreviousData(array_merge($more, $fields));
     }
 }

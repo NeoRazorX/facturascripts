@@ -2,13 +2,46 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta http-equiv="refresh" content="1">
     <title>{{ trans('installer') }}</title>
     <meta name="description" content="{{ trans('meta-description') }}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="generator" content="{{ trans('facturascripts') }}"/>
+    <meta name="generator" content="FacturaScripts"/>
+    <meta name="robots" content="noindex"/>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css"/>
+    <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png"/>
+    <style>
+        body {
+            background-color: #333A40;
+        }
+    </style>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="node_modules/@fortawesome/fontawesome-free/js/all.min.js"></script>
 </head>
 <body>
-<h1>{{ trans('reloading') }}</h1>
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <img src="Core/Assets/Images/installed.png" class="card-img-top m-auto w-50" alt="installation-completed"
+                     loading="lazy"/>
+                <div class="card-body">
+                    <p class="lead text-center mb-4">
+                        {{ trans('created-default-admin-account', {'%nick%': initial_user, '%pass%': initial_pass}) }}
+                    </p>
+                    <a href="login" class="btn btn-primary btn-lg w-100">
+                        <i class="fa-solid fa-sign-in-alt me-2"></i> {{ trans('login') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="text-center pt-5 pb-3">
+    &COPY; 2013-{{ 'now' | date('Y') }}
+    <a href="https://facturascripts.com" rel="nofollow" target="_blank" class="text-muted">FacturaScripts</a>
+</footer>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
@@ -84,7 +85,7 @@ class Familia extends ModelClass
      */
     public $numproductos;
 
-    public function changePrimaryColumnValue($newValue): bool
+    public function changeId($new_id): bool
     {
         // nos guardamos las subfamilias
         $subFamilias = $this->getSubFamilias();
@@ -95,7 +96,7 @@ class Familia extends ModelClass
             $subFamilia->save();
         }
 
-        if (false === parent::changePrimaryColumnValue($newValue)) {
+        if (false === parent::changeId($new_id)) {
             // les volvemos a poner la madre
             foreach ($subFamilias as $subFamilia) {
                 $subFamilia->madre = $this->codfamilia;
@@ -106,14 +107,14 @@ class Familia extends ModelClass
 
         // actualizamos las subfamilias
         foreach ($subFamilias as $subFamilia) {
-            $subFamilia->madre = $newValue;
+            $subFamilia->madre = $new_id;
             $subFamilia->save();
         }
 
         return true;
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->numproductos = 0;
@@ -124,9 +125,9 @@ class Familia extends ModelClass
      */
     public function getSubFamilias(): array
     {
-        $where = [new DataBaseWhere('madre', $this->codfamilia)];
+        $where = [Where::eq('madre', $this->codfamilia)];
         $orderBy = ['descripcion' => 'ASC'];
-        return $this->all($where, $orderBy, 0, 0);
+        return static::all($where, $orderBy, 0, 0);
     }
 
     public static function primaryColumn(): string
@@ -210,7 +211,7 @@ class Familia extends ModelClass
             $model = new Familia();
         }
 
-        if (false === $model->loadFromCode($code)) {
+        if (false === $model->load($code)) {
             return '';
         }
 
@@ -219,13 +220,13 @@ class Familia extends ModelClass
             (string)$model->{$field};
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codfamilia)) {
             $this->codfamilia = $this->newCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 
     protected function testAccounting(): bool
@@ -234,21 +235,21 @@ class Familia extends ModelClass
         $subAccount = new DinSubcuenta();
         if ($this->codsubcuentacom) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentacom)];
-            if (false === $subAccount->loadFromCode('', $where)) {
+            if (false === $subAccount->loadWhere($where)) {
                 Tools::log()->warning('purchases-subaccount-not-found');
                 return false;
             }
         }
         if (false === empty($this->codsubcuentairpfcom)) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentairpfcom)];
-            if (false === $subAccount->loadFromCode('', $where)) {
+            if (false === $subAccount->loadWhere($where)) {
                 Tools::log()->warning('irpf-subaccount-not-found');
                 return false;
             }
         }
         if (false === empty($this->codsubcuentaven)) {
             $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentaven)];
-            if (false === $subAccount->loadFromCode('', $where)) {
+            if (false === $subAccount->loadWhere($where)) {
                 Tools::log()->warning('sales-subaccount-not-found');
                 return false;
             }
@@ -273,7 +274,7 @@ class Familia extends ModelClass
         $ancestros = [$this->codfamilia];
         $fam = new static();
         $fam->madre = $this->madre;
-        while ($fam->madre && $fam->loadFromCode($fam->madre)) {
+        while ($fam->madre && $fam->load($fam->madre)) {
             if (in_array($fam->codfamilia, $ancestros)) {
                 return false;
             }

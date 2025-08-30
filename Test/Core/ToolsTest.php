@@ -124,6 +124,17 @@ final class ToolsTest extends TestCase
 
         // comprobamos que no existen los archivos
         $this->assertFalse(file_exists(Tools::folder('MyFiles', 'Test')));
+
+        // test para llamadas anidadas de Tools::folder()
+        $expected = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . 'CRM';
+        $this->assertEquals($expected, Tools::folder('Plugins', 'CRM'));
+        $this->assertEquals($expected, Tools::folder(Tools::folder('Plugins'), 'CRM'));
+        
+        // test con múltiples niveles de anidación
+        $expected2 = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . 'CRM' . DIRECTORY_SEPARATOR . 'Config';
+        $this->assertEquals($expected2, Tools::folder('Plugins', 'CRM', 'Config'));
+        $this->assertEquals($expected2, Tools::folder(Tools::folder('Plugins'), 'CRM', 'Config'));
+        $this->assertEquals($expected2, Tools::folder(Tools::folder('Plugins', 'CRM'), 'Config'));
     }
 
     public function testHtmlFunctions(): void
@@ -166,8 +177,8 @@ final class ToolsTest extends TestCase
 
         // comprobamos que se ha cambiado
         $settings = new Settings();
-        $this->assertTrue($settings->loadFromCode('default'));
-        $this->assertEquals('222', $settings->properties['codpais']);
+        $this->assertTrue($settings->load('default'));
+        $this->assertEquals('222', $settings->getProperty('codpais'));
 
         // volvemos a poner el valor original
         Tools::settingsSet('default', 'codpais', $value);
@@ -176,8 +187,8 @@ final class ToolsTest extends TestCase
         $this->assertTrue(Tools::settingsSave());
 
         // comprobamos que se ha cambiado
-        $settings->loadFromCode('default');
-        $this->assertEquals($value, $settings->properties['codpais']);
+        $this->assertTrue($settings->load('default'));
+        $this->assertEquals($value, $settings->getProperty('codpais'));
     }
 
     public function testSettingsClear(): void
@@ -206,12 +217,12 @@ final class ToolsTest extends TestCase
         $this->assertEquals('mi-variable', Tools::kebab('miVariable'));
         $this->assertEquals('html-parser', Tools::kebab('HTMLParser'));
         $this->assertEquals('nombre-completo', Tools::kebab('NombreCompleto'));
-        
+
         // casos con espacios y caracteres especiales
         $this->assertEquals('mi-clase-especial', Tools::kebab('Mi Clase Especial'));
         $this->assertEquals('texto-con-acentos-aeiou', Tools::kebab('Texto Con Acentos áéíóú'));
         $this->assertEquals('texto-123', Tools::kebab('Texto 123'));
-        
+
         // casos edge
         $this->assertEquals('', Tools::kebab(''));
         $this->assertEquals('a', Tools::kebab('A'));

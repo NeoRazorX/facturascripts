@@ -290,7 +290,7 @@ final class ProductoImagenTest extends TestCase
     {
         $source_path = FS_FOLDER . '/Test/__files/' . $file_name;
         if (false === file_exists($source_path)) {
-            throw new Exception("File $source_path not found");
+            throw new Exception('File ' . $source_path . ' not found');
         }
 
         $dest_path = FS_FOLDER . '/MyFiles/' . $file_name;

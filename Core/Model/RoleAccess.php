@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025  Carlos García Gómez <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson          <joenilson@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,8 +20,10 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
 use FacturaScripts\Dinamic\Model\Role as DinRole;
 use FacturaScripts\Dinamic\Model\User as DinUser;
@@ -32,9 +34,9 @@ use FacturaScripts\Dinamic\Model\User as DinUser;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Joe Nilson           <joenilson@gmail.com>
  */
-class RoleAccess extends Base\ModelClass
+class RoleAccess extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /** @var bool */
     public $allowdelete;
@@ -73,10 +75,10 @@ class RoleAccess extends Base\ModelClass
         foreach ($pages as $page) {
             $roleAccess = new static();
             $where = [
-                new DataBaseWhere('codrole', $codrole),
-                new DataBaseWhere('pagename', $page->name)
+                Where::eq('codrole', $codrole),
+                Where::eq('pagename', $page->name)
             ];
-            if ($roleAccess->loadFromCode('', $where)) {
+            if ($roleAccess->loadWhere($where)) {
                 continue;
             }
 
@@ -92,18 +94,17 @@ class RoleAccess extends Base\ModelClass
 
     /**
      * @param string $nick
-     * @param string $pageName
+     * @param string $page_name
      * @return RoleAccess[]
      */
-    public static function allFromUser(string $nick, string $pageName): array
+    public static function allFromUser(string $nick, string $page_name): array
     {
-        $sqlIn = 'SELECT codrole FROM ' . RoleUser::tableName() . ' WHERE nick = ' . self::$dataBase->var2str($nick);
+        $sql_in = 'SELECT codrole FROM ' . RoleUser::tableName() . ' WHERE nick = ' . static::db()->var2str($nick);
         $where = [
-            new DataBaseWhere('codrole', $sqlIn, 'IN'),
-            new DataBaseWhere('pagename', $pageName)
+            Where::in('codrole', $sql_in),
+            Where::eq('pagename', $page_name)
         ];
-        $roleAccess = new static();
-        return $roleAccess->all($where, [], 0, 0);
+        return static::all($where, [], 0, 0);
     }
 
     public function can(string $permission): bool
@@ -133,7 +134,7 @@ class RoleAccess extends Base\ModelClass
         }
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->allowdelete = true;
@@ -145,9 +146,12 @@ class RoleAccess extends Base\ModelClass
 
     public function getPage(): DinPage
     {
-        $page = new DinPage();
-        $page->loadFromCode($this->pagename);
-        return $page;
+        return $this->belongsTo(Page::class, 'pagename');
+    }
+
+    public function getRole(): DinRole
+    {
+        return $this->belongsTo(Role::class, 'codrole');
     }
 
     public function install(): string
@@ -157,11 +161,6 @@ class RoleAccess extends Base\ModelClass
         new DinUser();
 
         return parent::install();
-    }
-
-    public static function primaryColumn(): string
-    {
-        return 'id';
     }
 
     public static function tableName(): string

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,12 +20,12 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Model\Role;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 
@@ -40,12 +40,11 @@ class EditRole extends EditController
     public function getAccessRules(): array
     {
         $rules = [];
-        $i18n = Tools::lang();
         foreach ($this->getAllPages() as $page) {
             $rules[$page->name] = [
-                'menu' => $i18n->trans($page->menu),
-                'submenu' => $i18n->trans($page->submenu),
-                'page' => $i18n->trans($page->title),
+                'menu' => Tools::trans($page->menu),
+                'submenu' => Tools::trans($page->submenu),
+                'page' => Tools::trans($page->title),
                 'show' => false,
                 'onlyOwner' => false,
                 'update' => false,
@@ -53,9 +52,8 @@ class EditRole extends EditController
             ];
         }
 
-        $roleAccessModel = new RoleAccess();
-        $where = [new DataBaseWhere('codrole', $this->getModel()->primaryColumnValue())];
-        foreach ($roleAccessModel->all($where, [], 0, 0) as $roleAccess) {
+        $where = [Where::eq('codrole', $this->getModel()->id())];
+        foreach (RoleAccess::all($where) as $roleAccess) {
             $rules[$roleAccess->pagename]['show'] = true;
             $rules[$roleAccess->pagename]['onlyOwner'] = $roleAccess->onlyownerdata;
             $rules[$roleAccess->pagename]['update'] = $roleAccess->allowupdate;
@@ -87,12 +85,13 @@ class EditRole extends EditController
     protected function createViews()
     {
         parent::createViews();
+
         $this->setTabsPosition('bottom');
 
         // desactivamos los botones de opciones e imprimir
-        $mvn = $this->getMainViewName();
-        $this->setSettings($mvn, 'btnOptions', false);
-        $this->setSettings($mvn, 'btnPrint', false);
+        $this->tab($this->getMainViewName())
+            ->setSettings('btnOptions', false)
+            ->setSettings('btnPrint', false);
 
         $this->createViewsAccess();
         $this->createViewsUsers();
@@ -120,17 +119,16 @@ class EditRole extends EditController
             return true;
         }
 
-        $show = $this->request->request->get('show', []);
-        $onlyOwner = $this->request->request->get('onlyOwner', []);
-        $update = $this->request->request->get('update', []);
-        $delete = $this->request->request->get('delete', []);
-        $export = $this->request->request->get('export', []);
-        $import = $this->request->request->get('import', []);
+        $show = $this->request->request->getArray('show', false);
+        $onlyOwner = $this->request->request->getArray('onlyOwner', false);
+        $update = $this->request->request->getArray('update', false);
+        $delete = $this->request->request->getArray('delete', false);
+        $export = $this->request->request->getArray('export', false);
+        $import = $this->request->request->getArray('import', false);
 
         // actualizamos los permisos del rol
-        $roleAccessModel = new RoleAccess();
-        $where = [new DataBaseWhere('codrole', $this->request->query->get('code'))];
-        $rules = $roleAccessModel->all($where, [], 0, 0);
+        $where = [Where::eq('codrole', $this->request->query('code'))];
+        $rules = RoleAccess::all($where);
         foreach ($rules as $roleAccess) {
             // eliminamos la regla?
             if (false === is_array($show) || false === in_array($roleAccess->pagename, $show)) {
@@ -158,7 +156,7 @@ class EditRole extends EditController
 
             // añadimos la regla
             $newRoleAccess = new RoleAccess();
-            $newRoleAccess->codrole = $this->request->query->get('code');
+            $newRoleAccess->codrole = $this->request->query('code');
             $newRoleAccess->pagename = $pageName;
             $newRoleAccess->onlyownerdata = is_array($onlyOwner) && in_array($pageName, $onlyOwner);
             $newRoleAccess->allowupdate = is_array($update) && in_array($pageName, $update);
@@ -198,9 +196,8 @@ class EditRole extends EditController
      */
     protected function getAllPages(): array
     {
-        $page = new Page();
         $orderBy = ['menu' => 'ASC', 'submenu' => 'ASC', 'title' => 'ASC'];
-        return $page->all([], $orderBy, 0, 0);
+        return Page::all([], $orderBy);
     }
 
     /**
@@ -225,23 +222,23 @@ class EditRole extends EditController
 
     protected function removeOrphanAccess(): void
     {
-        $pages = Page::all([], [], 0, 0);
-        $roleAccess = RoleAccess::all([], [], 0, 0);
+        $pages = Page::all();
+        $roleAccess = RoleAccess::all();
         $pageNames = array_column($pages, 'name');
         $roleAccessPageNames = array_column($roleAccess, 'pagename');
 
         $orphanPages = array_diff($roleAccessPageNames, $pageNames);
         foreach ($orphanPages as $pageName) {
             $page = new RoleAccess();
-            $page->loadFromCode('', [new DataBaseWhere('pagename', $pageName)]);
+            $page->loadWhere([new DataBaseWhere('pagename', $pageName)]);
             $page->delete();
 
             // si el rol ya no tiene permisos, lo eliminamos.
-            $rolesLength = DbQuery::table(RoleAccess::tableName())->whereEq('codrole', $page->codrole)->count();
+            $rolesLength = RoleAccess::count([Where::eq('codrole', $page->codrole)]);
 
             if ($rolesLength === 0) {
                 $role = new Role();
-                $role->loadFromCode('', [new DataBaseWhere('codrole', $page->codrole)]);
+                $role->loadWhere([new DataBaseWhere('codrole', $page->codrole)]);
                 $role->delete();
 
                 // redireccionamos al listado, ya que el rol lo hemos borrado

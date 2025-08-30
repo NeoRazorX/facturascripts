@@ -352,7 +352,7 @@ class NewMail
         $this->renderHTML();
         $this->mail->msgHTML($this->html);
 
-        if ('smtp' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
+        if ('SMTP' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
             Tools::log()->warning('mail-server-error');
             return false;
         }
@@ -451,7 +451,7 @@ class NewMail
     public function test(): bool
     {
         switch ($this->mail->Mailer) {
-            case 'smtp':
+            case 'SMTP':
                 $this->mail->SMTPDebug = 3;
                 return $this->mail->smtpConnect($this->smtpOptions());
 

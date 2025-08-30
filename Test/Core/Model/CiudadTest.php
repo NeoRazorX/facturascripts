@@ -20,53 +20,71 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Ciudad;
-use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CiudadTest extends TestCase
 {
     use LogErrorsTrait;
+    use RandomDataTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
-        $provinceModel = new Provincia();
-        foreach ($provinceModel->all() as $provincia) {
-            // creamos una ciudad
-            $city = new Ciudad();
-            $city->ciudad = 'Test';
-            $city->idprovincia = $provincia->idprovincia;
-            $this->assertTrue($city->save(), 'city-cant-save');
+        // creamos un país
+        $country = $this->getRandomCountry();
+        $this->assertTrue($country->save());
 
-            // comprobamos que existe en la base de datos
-            $this->assertTrue($city->exists(), 'city-cant-persist');
+        // creamos una provincia
+        $province = $this->getRandomProvince($country->codpais);
+        $this->assertTrue($province->save());
 
-            // eliminamos
-            $this->assertTrue($city->delete(), 'city-cant-delete');
-        }
+        // creamos una ciudad
+        $city = new Ciudad();
+        $city->ciudad = 'Test';
+        $city->idprovincia = $province->idprovincia;
+        $this->assertTrue($city->save());
+
+        // comprobamos que existe en la base de datos
+        $this->assertTrue($city->exists());
+
+        // comprobamos que la provincia es la correcta
+        $this->assertEquals($province->idprovincia, $city->getProvince()->idprovincia);
+
+        // eliminamos
+        $this->assertTrue($city->delete());
+        $this->assertTrue($province->delete());
+        $this->assertTrue($country->delete());
     }
 
-    public function testCreateHtml()
+    public function testCreateHtml(): void
     {
-        $provinceModel = new Provincia();
-        foreach ($provinceModel->all() as $provincia) {
-            // creamos una ciudad con un nombre con html
-            $city = new Ciudad();
-            $city->ciudad = '<b>Test</b>';
-            $city->idprovincia = $provincia->idprovincia;
-            $this->assertTrue($city->save(), 'city-cant-save');
+        // creamos un país
+        $country = $this->getRandomCountry();
+        $this->assertTrue($country->save());
 
-            // comprobamos que el html ha sido escapado
-            $noHtml = Tools::noHtml('<b>Test</b>');
-            $this->assertEquals($noHtml, $city->ciudad, 'city-wrong-html');
+        // creamos una provincia
+        $province = $this->getRandomProvince($country->codpais);
+        $this->assertTrue($province->save());
 
-            // eliminamos
-            $this->assertTrue($city->delete(), 'city-cant-delete');
-        }
+        // creamos una ciudad con un nombre con html
+        $city = new Ciudad();
+        $city->ciudad = '<b>Test</b>';
+        $city->idprovincia = $province->idprovincia;
+        $this->assertTrue($city->save());
+
+        // comprobamos que el html ha sido escapado
+        $noHtml = Tools::noHtml('<b>Test</b>');
+        $this->assertEquals($noHtml, $city->ciudad);
+
+        // eliminamos
+        $this->assertTrue($city->delete());
+        $this->assertTrue($province->delete());
+        $this->assertTrue($country->delete());
     }
 
-    public function testCreateWithoutProvince()
+    public function testCreateWithoutProvince(): void
     {
         // creamos una ciudad sin provincia
         $city = new Ciudad();
@@ -76,6 +94,32 @@ final class CiudadTest extends TestCase
         // asignamos una provincia que no existe
         $city->idprovincia = -1;
         $this->assertFalse($city->save(), 'city-must-exist-province');
+    }
+
+    public function testDeleteProvince(): void
+    {
+        // creamos un país
+        $country = $this->getRandomCountry();
+        $this->assertTrue($country->save());
+
+        // creamos una provincia
+        $province = $this->getRandomProvince($country->codpais);
+        $this->assertTrue($province->save());
+
+        // creamos una ciudad
+        $city = new Ciudad();
+        $city->ciudad = 'Test';
+        $city->idprovincia = $province->idprovincia;
+        $this->assertTrue($city->save());
+
+        // eliminamos la provincia
+        $this->assertTrue($province->delete());
+
+        // comprobamos que la ciudad ya no existe
+        $this->assertFalse($city->exists());
+
+        // eliminamos
+        $this->assertTrue($country->delete());
     }
 
     protected function tearDown(): void

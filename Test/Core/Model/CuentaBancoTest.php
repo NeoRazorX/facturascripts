@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,7 +28,7 @@ final class CuentaBancoTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
         // creamos una cuenta bancaria
         $cuenta = new CuentaBanco();
@@ -37,14 +37,14 @@ final class CuentaBancoTest extends TestCase
         $this->assertTrue($cuenta->save(), 'cuenta-cant-save');
 
         // comprobamos que se ha guardado correctamente
-        $this->assertNotNull($cuenta->primaryColumnValue(), 'cuenta-not-stored');
+        $this->assertNotNull($cuenta->id(), 'cuenta-not-stored');
         $this->assertTrue($cuenta->exists(), 'cuenta-cant-persist');
 
         // eliminamos la cuenta bancaria
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
     }
 
-    public function testCreateWithoutCode()
+    public function testCreateWithoutCode(): void
     {
         // creamos una cuenta sin código
         $cuenta = new CuentaBanco();
@@ -55,7 +55,7 @@ final class CuentaBancoTest extends TestCase
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
     }
 
-    public function testHtmlOnFields()
+    public function testHtmlOnFields(): void
     {
         // desactivamos la validación de IBAN
         Tools::settingsSet('default', 'validate_iban', '0');
@@ -80,7 +80,7 @@ final class CuentaBancoTest extends TestCase
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
     }
 
-    public function testCreateEmptyWithIbanValidation()
+    public function testCreateEmptyWithIbanValidation(): void
     {
         // activamos la validación de IBAN
         Tools::settingsSet('default', 'validate_iban', '1');
@@ -94,7 +94,7 @@ final class CuentaBancoTest extends TestCase
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
     }
 
-    public function testValidateGoodIban()
+    public function testValidateGoodIban(): void
     {
         $list = [
             'ES9121000418450200051332', 'ES79 2100 0813 6101 2345 6789', 'PT50002700000001234567833',
@@ -122,7 +122,7 @@ final class CuentaBancoTest extends TestCase
         }
     }
 
-    public function testValidateWrongIban()
+    public function testValidateWrongIban(): void
     {
         $list = [
             '-', 'ES9121000418450200051332X', 'ES79 2100 0813 6101 2345 6789X', 'PT50002700000001234567833X',

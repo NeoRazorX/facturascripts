@@ -28,37 +28,33 @@ class PageNotFound extends ErrorController
     {
         http_response_code(404);
 
-        $title = Tools::lang()->trans('page-not-found');
-        $bodyCss = 'bg-info';
-        $bodyHtml = '<div class="container">'
-            . '<div class="row justify-content-center">'
-            . '<div class="col-sm-6">'
-            . '<div class="card shadow mt-5 mb-5">'
+        $title = '🔍 ' . Tools::trans('page-not-found');
+        $card = '<div class="card shadow mt-5 mb-5">'
             . '<div class="card-body text-center">'
             . '<div class="display-1 text-info">404</div>'
             . '<h1 class="card-title">' . $title . '</h1>'
-            . '<p class="mb-0">' . Tools::lang()->trans('page-not-found-p') . '</p>'
+            . '<p class="mb-0">' . Tools::trans('page-not-found-p') . '</p>'
             . '</div>'
             . '<div class="card-footer">'
             . '<div class="row">'
             . '<div class="col">'
             . '<a href="' . Tools::config('route') . '/" class="btn btn-secondary">'
-            . Tools::lang()->trans('homepage') . '</a>'
+            . Tools::trans('homepage') . '</a>'
             . '</div>';
 
-        if (false === Tools::config('disable_deploy_actions', false)) {
-            $bodyHtml .= '<div class="col-auto">'
-                . '<a href="' . Tools::config('route') . '/AdminPlugins" class="btn btn-warning">' . Tools::lang()->trans('plugins') . '</a>'
+        if ($this->canShowDeployButtons()) {
+            $card .= '<div class="col-auto">'
+                . '<a href="' . Tools::config('route') . '/AdminPlugins" class="btn btn-warning">' . Tools::trans('plugins') . '</a>'
                 . '</div>';
         }
 
-        $bodyHtml .= '</div>'
-            . '</div>'
-            . '</div>'
-            . '</div>'
+        $card .= '</div>'
             . '</div>'
             . '</div>';
 
-        echo $this->html($title, $bodyHtml, $bodyCss);
+        echo $this->html(
+            $title,
+            $this->htmlContainer($card),
+        );
     }
 }

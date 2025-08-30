@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\PurchaseDocument;
+use FacturaScripts\Core\Template\ModelTrait;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor as LineaAlbaran;
 
 /**
@@ -29,10 +32,9 @@ use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor as LineaAlbaran;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AlbaranProveedor extends Base\PurchaseDocument
+class AlbaranProveedor extends PurchaseDocument
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Primary key. Integer
@@ -48,11 +50,9 @@ class AlbaranProveedor extends Base\PurchaseDocument
      */
     public function getLines(): array
     {
-        $lineaModel = new LineaAlbaran();
         $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-
-        return $lineaModel->all($where, $order, 0, 0);
+        return LineaAlbaran::all($where, $order, 0, 0);
     }
 
     /**
@@ -70,6 +70,8 @@ class AlbaranProveedor extends Base\PurchaseDocument
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
         $newLine->loadFromData($data, $exclude);
+
+        Calculator::calculateLine($this, $newLine);
 
         // allow extensions
         $this->pipe('getNewLine', $newLine, $data, $exclude);

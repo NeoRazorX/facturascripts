@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,13 +27,13 @@ final class PaisTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testDataInstalled()
+    public function testDataInstalled(): void
     {
         $pais = new Pais();
         $this->assertNotEmpty($pais->all(), 'pais-data-not-installed-from-csv');
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $pais = new Pais();
         $pais->codpais = 'YOL';
@@ -43,7 +43,7 @@ final class PaisTest extends TestCase
         $this->assertTrue($pais->delete(), 'pais-can-not-delete');
     }
 
-    public function testCreateNoCode()
+    public function testCreateNoCode(): void
     {
         $pais = new Pais();
         $pais->nombre = 'Wolandia';

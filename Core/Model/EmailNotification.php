@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -26,9 +28,9 @@ use FacturaScripts\Core\Tools;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class EmailNotification extends Base\ModelClass
+class EmailNotification extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * @var string
@@ -55,7 +57,7 @@ class EmailNotification extends Base\ModelClass
      */
     public $subject;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->creationdate = Tools::date();

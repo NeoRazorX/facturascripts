@@ -177,6 +177,7 @@ class CustomerRiskTools
     {
         if (null === self::$dataBase) {
             self::$dataBase = new DataBase();
+            self::$dataBase->connect();
         }
 
         return self::$dataBase;

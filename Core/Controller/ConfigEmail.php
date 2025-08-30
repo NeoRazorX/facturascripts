@@ -180,7 +180,7 @@ class ConfigEmail extends PanelController
                 $view->loadData('email');
                 $view->model->name = 'email';
                 $this->loadMailerValues($viewName);
-                if ($view->model->mailer === 'smtp') {
+                if ($view->model->mailer === 'SMTP') {
                     // añadimos el botón test
                     $this->addButton($viewName, [
                         'action' => 'testmail',

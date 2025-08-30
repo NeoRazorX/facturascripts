@@ -19,8 +19,10 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 
 /**
@@ -30,9 +32,9 @@ use FacturaScripts\Dinamic\Model\ApiAccess;
  * @author Joe Nilson           <joenilson at gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-class ApiKey extends Base\ModelClass
+class ApiKey extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /** @var string */
     public $apikey;
@@ -78,6 +80,7 @@ class ApiKey extends Base\ModelClass
         $apiAccess->allowget = $state;
         $apiAccess->allowpost = $state;
         $apiAccess->allowput = $state;
+
         return $apiAccess->save();
     }
 
@@ -92,7 +95,7 @@ class ApiKey extends Base\ModelClass
 
     public function getAccesses(): array
     {
-        $where = [new DataBaseWhere('idapikey', $this->id)];
+        $where = [Where::eq('idapikey', $this->id)];
         return ApiAccess::all($where, [], 0, 0);
     }
 
@@ -109,10 +112,10 @@ class ApiKey extends Base\ModelClass
     {
         $apiAccess = new ApiAccess();
         $where = [
-            new DataBaseWhere('idapikey', $this->id),
-            new DataBaseWhere('resource', $resource)
+            Where::eq('idapikey', $this->id),
+            Where::eq('resource', $resource)
         ];
-        if ($apiAccess->loadFromCode('', $where)) {
+        if ($apiAccess->loadWhere($where)) {
             return $apiAccess;
         }
 
@@ -137,11 +140,6 @@ class ApiKey extends Base\ModelClass
             'put' => $access->allowput ?? false,
             default => false,
         };
-    }
-
-    public static function primaryColumn(): string
-    {
-        return 'id';
     }
 
     public function primaryDescriptionColumn(): string

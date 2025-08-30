@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ApiKey as DinApiKey;
 
 /**
@@ -28,9 +30,9 @@ use FacturaScripts\Dinamic\Model\ApiKey as DinApiKey;
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda@x-netdigital.com>
  */
-class ApiAccess extends Base\ModelClass
+class ApiAccess extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Permission to delete.
@@ -95,10 +97,10 @@ class ApiAccess extends Base\ModelClass
         $apiAccess = new static();
         foreach ($resources as $resource) {
             $where = [
-                new DataBaseWhere('idapikey', $idApiKey),
-                new DataBaseWhere('resource', $resource)
+                Where::eq('idapikey', $idApiKey),
+                Where::eq('resource', $resource)
             ];
-            if ($apiAccess->loadFromCode('', $where)) {
+            if ($apiAccess->loadWhere($where)) {
                 continue;
             }
 
@@ -108,6 +110,7 @@ class ApiAccess extends Base\ModelClass
             $apiAccess->allowget = $state;
             $apiAccess->allowpost = $state;
             $apiAccess->allowput = $state;
+
             if (false === $apiAccess->save()) {
                 return false;
             }
@@ -116,7 +119,7 @@ class ApiAccess extends Base\ModelClass
         return true;
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->allowdelete = true;
@@ -125,17 +128,17 @@ class ApiAccess extends Base\ModelClass
         $this->allowput = true;
     }
 
+    public function getKey(): ApiKey
+    {
+        return $this->belongsTo(ApiKey::class, 'idapikey');
+    }
+
     public function install(): string
     {
         // needed dependencies
         new DinApiKey();
 
         return parent::install();
-    }
-
-    public static function primaryColumn(): string
-    {
-        return 'id';
     }
 
     /**

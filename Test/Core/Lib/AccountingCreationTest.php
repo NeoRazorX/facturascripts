@@ -58,6 +58,7 @@ final class AccountingCreationTest extends TestCase
         // obtenemos la cuenta de clientes
         $accounts = new AccountingAccounts();
         $accounts->exercise = $this->getCurrentExercise();
+        $this->assertTrue($accounts->exercise->exists());
         $customersAccount = $accounts->getSpecialAccount(AccountingAccounts::SPECIAL_CUSTOMER_ACCOUNT);
         $this->assertTrue($customersAccount->exists(), 'cant-get-customer-account');
 

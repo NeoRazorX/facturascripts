@@ -1,8 +1,13 @@
 {
   "name": "facturascripts",
+  "version": "2025.0.0",
   "description": "Open source ERP software. Built on modern PHP and bootstrap 5. Easy and powerful.",
   "main": "index.php",
   "scripts": {
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "echo \"CSS build - Add your CSS build process here\"",
+    "build:js": "echo \"JS build - Add your JS build process here\"",
+    "watch": "echo \"Watch mode - Add your watch process here\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,11 +24,19 @@
     "accounting"
   ],
   "author": "Carlos García Gómez",
-  "license": "LGPL-3.0",
+  "license": "LGPL-3.0-or-later",
   "bugs": {
-    "url": "https://facturascripts.com/contacto"
+    "url": "https://facturascripts.com/crear-issue"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://facturascripts.com/patrocinar"
   },
   "homepage": "https://facturascripts.com",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
   "dependencies": {
     "@eastdesire/jscolor": "^2.5.2",
     "@fortawesome/fontawesome-free": "^6.6.0",

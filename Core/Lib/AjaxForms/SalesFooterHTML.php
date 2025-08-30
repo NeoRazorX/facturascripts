@@ -79,14 +79,14 @@ class SalesFooterHTML
         }
 
         return '<div class="container-fluid mt-3">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . self::renderField($model, '_productBtn')
             . self::renderField($model, '_newLineBtn')
             . self::renderField($model, '_sortableBtn')
             . self::renderField($model, '_fastLineInput')
             . self::renderField($model, '_subtotalNetoBtn')
             . '</div>'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . self::renderField($model, 'observaciones')
             . self::renderNewFields($model)
             . self::renderField($model, 'netosindto')
@@ -101,7 +101,7 @@ class SalesFooterHTML
             . self::renderField($model, 'totalbeneficio')
             . self::renderField($model, 'total')
             . '</div>'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . '<div class="col-auto">'
             . self::renderField($model, '_deleteBtn')
             . '</div>'
@@ -134,19 +134,19 @@ class SalesFooterHTML
             . '<div class="modal-dialog modal-dialog-centered modal-lg">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">' . Tools::lang()->trans('detail') . ' ' . Tools::lang()->trans('footer') . '</h5>'
+            . '<h5 class="modal-title">' . Tools::trans('detail') . ' ' . Tools::trans('footer') . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . $htmlModal
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Tools::lang()->trans('close') . '</button>'
-            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . Tools::lang()->trans('accept') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Tools::trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . Tools::trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'

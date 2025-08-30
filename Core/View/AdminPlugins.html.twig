@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -93,11 +93,12 @@
         <div class="tab-pane fade show active" id="installed" role="tabpanel">
             {{ _self.showInstalledPlugins(fsc) }}
             {% if fsc.updated == false %}
-                <div class="ms-2 mt-3 me-2 mb-3">
+                <div class="ms-2 mt-4 me-2 mb-3">
                     {{ Utils.updateInstall() }}
                 </div>
             {% elseif fsc.registered == false %}
-                <div class="ms-2 mt-3 me-2 mb-3">
+                <hr/>
+                <div class="ms-2 mt-4 me-2 mb-3">
                     {{ Utils.registerInstall() }}
                 </div>
             {% endif %}
@@ -329,7 +330,7 @@
         {{ _self.tablePlugins(fsc.pluginList | filter(plugin => plugin.enabled)|sort((a, b) => a.order <=> b.order), fsc.url()) }}
     </div>
 
-    <div class="card border-dark m-2">
+    <div class="card border-dark m-2 mb-4">
         <div class="card-header border-dark">{{ trans('disabled-plugins') }}</div>
         {{ _self.tablePlugins(fsc.pluginList | filter(plugin => plugin.enabled == false), fsc.url()) }}
     </div>

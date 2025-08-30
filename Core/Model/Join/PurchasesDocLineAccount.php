@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\JoinModel;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Familia;
 
@@ -87,7 +87,7 @@ class PurchasesDocLineAccount extends JoinModel
         }
 
         // fix occasional penny mismatch
-        if (!Utils::floatcmp($document->neto, $sum, FS_NF0, true)) {
+        if (!Tools::floatCmp($document->neto, $sum, FS_NF0, true)) {
             $diff = round($document->neto - $sum, FS_NF0);
             $totals[$defaultSubacode] = isset($totals[$defaultSubacode]) ? $totals[$defaultSubacode] + $diff : $diff;
         }

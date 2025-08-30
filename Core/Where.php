@@ -332,7 +332,7 @@ final class Where
                 case '>=':
                 case '<=':
                 case 'REGEXP':
-                    $sql .= self::sqlColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value);
+                    $sql .= self::sqlColumn($field) . ' ' . self::db()->getOperator($this->operator) . ' ' . self::sqlValue($this->value);
                     break;
 
                 case 'IS':
@@ -395,9 +395,19 @@ final class Where
 
     private static function sqlColumn(string $field): string
     {
-        // si empieza por integer: hacemos el cast
+        // si lleva paréntesis, no escapamos
+        if (strpos($field, '(') !== false && strpos($field, ')') !== false) {
+            return $field;
+        }
+
+        // si empieza por integer, hacemos el cast
         if (substr($field, 0, 8) === 'integer:') {
             return self::db()->castInteger(substr($field, 8));
+        }
+
+        // si empieza por lower, hacemos el lower
+        if (substr($field, 0, 6) === 'lower:') {
+            return 'LOWER(' . self::db()->escapeColumn(substr($field, 6)) . ')';
         }
 
         return self::db()->escapeColumn($field);

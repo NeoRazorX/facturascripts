@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,37 +32,40 @@ class ApiExportFacturaCliente extends ApiController
     {
         // si el método no es GET, devolvemos un error
         if (false === $this->request->isMethod(Request::METHOD_GET)) {
-            $this->response->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Method not allowed',
-            ]));
+            $this->response
+                ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'Method not allowed',
+                ]);
             return;
         }
 
         $code = $this->getUriParam(3);
         if (empty($code)) {
-            $this->response->setHttpCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'No invoice selected',
-            ]));
+            $this->response
+                ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'No invoice selected',
+                ]);
             return;
         }
 
         $facturaCliente = new FacturaCliente();
-        if (false === $facturaCliente->loadFromCode($code)) {
-            $this->response->setHttpCode(Response::HTTP_NOT_FOUND);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Invoice not found',
-            ]));
+        if (false === $facturaCliente->load($code)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_NOT_FOUND)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'Invoice not found',
+                ]);
             return;
         }
 
-        $type = $this->request->query->get('type', 'PDF');
-        $format = (int)$this->request->query->get('format', 0);
-        $lang = $this->request->query->get('lang', $facturaCliente->getSubject()->langcode) ?? '';
+        $type = $this->request->query('type', 'PDF');
+        $format = (int)$this->request->query('format', 0);
+        $lang = $this->request->query('lang', $facturaCliente->getSubject()->langcode) ?? '';
         $title = Tools::lang($lang)->trans('invoice') . ' ' . $facturaCliente->primaryDescription();
 
         $exportManager = new ExportManager();

@@ -109,15 +109,15 @@ class EditEjercicio extends EditController
 
     protected function closeExerciseAction(): bool
     {
-        $code = $this->request->request->get('codejercicio');
+        $code = $this->request->input('codejercicio');
         if (false === $this->checkAndLoad($code)) {
             return true;
         }
 
         $data = [
-            'journalClosing' => $this->request->request->get('iddiario-closing'),
-            'journalOpening' => $this->request->request->get('iddiario-opening'),
-            'copySubAccounts' => (bool)$this->request->request->get('copysubaccounts', false)
+            'journalClosing' => $this->request->input('iddiario-closing'),
+            'journalOpening' => $this->request->input('iddiario-opening'),
+            'copySubAccounts' => (bool)$this->request->input('copysubaccounts', false)
         ];
 
         $model = $this->getModel();
@@ -235,7 +235,7 @@ class EditEjercicio extends EditController
             return true;
         }
 
-        $codejercicio = $this->request->request->get('codejercicio', '');
+        $codejercicio = $this->request->input('codejercicio', '');
         if (empty($codejercicio)) {
             Tools::log()->error('exercise-not-found');
             return true;
@@ -336,14 +336,14 @@ class EditEjercicio extends EditController
      */
     protected function openExerciseAction(): bool
     {
-        $code = $this->request->request->get('codejercicio');
+        $code = $this->request->input('codejercicio');
         if (false === $this->checkAndLoad($code)) {
             return true;
         }
 
         $data = [
-            'deleteClosing' => (bool)$this->request->request->get('delete-closing'),
-            'deleteOpening' => (bool)$this->request->request->get('delete-opening')
+            'deleteClosing' => (bool)$this->request->input('delete-closing'),
+            'deleteOpening' => (bool)$this->request->input('delete-opening')
         ];
         $model = $this->getModel();
 

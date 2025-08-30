@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Base;
 
 /**
  * Utils give us some basic and common methods.
- * @deprecated since version 2024.92
+ * @deprecated replaced by Tools
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Utils
@@ -104,13 +104,13 @@ class Utils
     /**
      * Compare two floating point numbers with an accuracy of $precision,
      * returns True if they are equal, False otherwise.
-     * @deprecated since version 2024.92 replaced by Tools::floatcmp
      * @param double $f1
      * @param double $f2
      * @param int $precision
      * @param bool $round
      *
      * @return bool
+     * @deprecated since version 2024.92 replaced by Tools::floatcmp
      */
     public static function floatcmp($f1, $f2, $precision = 10, $round = false): bool
     {

@@ -77,7 +77,7 @@ class MegaSearch extends Controller
         $this->results = [];
         $this->sections = [];
 
-        $query = $this->request->request->get('query', '');
+        $query = $this->request->input('query', '');
         $this->query = Tools::noHtml(mb_strtolower($query, 'UTF8'));
         if ($this->query !== '') {
             $this->search();

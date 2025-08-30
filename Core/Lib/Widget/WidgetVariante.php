@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -50,14 +50,14 @@ class WidgetVariante extends WidgetText
 
         $descriptionHtml = empty($description) ?
             '' :
-            '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
-        $label = Tools::lang()->trans($title);
+            '<small class="form-text text-muted">' . Tools::trans($description) . '</small>';
+        $label = Tools::trans($title);
         $labelHtml = $this->onclickHtml($label, $titleurl);
         $icon = empty($this->icon) ? 'fa-solid fa-cubes' : $this->icon;
 
         // hay que cargar el producto para mostrar su referencia
         $variante = new Variante();
-        $variante->loadFromCode('', [
+        $variante->loadWhere([
             new DataBaseWhere($this->match, $this->value)
         ]);
 
@@ -66,7 +66,7 @@ class WidgetVariante extends WidgetText
                 . '<input type="hidden" id="' . $this->id . '" name="' . $this->fieldname . '" value="' . $this->value . '">'
                 . $labelHtml
                 . '<a href="' . $variante->url() . '" class="btn btn-outline-secondary">'
-                . '<i class="' . $icon . ' fa-fw"></i> ' . ($variante->referencia ?? Tools::lang()->trans('select'))
+                . '<i class="' . $icon . ' fa-fw"></i> ' . ($variante->referencia ?? Tools::trans('select'))
                 . '</a>'
                 . $descriptionHtml
                 . '</div>';
@@ -77,7 +77,7 @@ class WidgetVariante extends WidgetText
             . $labelHtml
             . '<a href="#" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal_' . $this->id . '">'
             . '<i class="' . $icon . ' fa-fw"></i> '
-            . '<span id="modal_span_' . $this->id . '">' . ($variante->referencia ?? Tools::lang()->trans('select')) . '</span>'
+            . '<span id="modal_span_' . $this->id . '">' . ($variante->referencia ?? Tools::trans('select')) . '</span>'
             . '</a>'
             . $descriptionHtml
             . '</div>'
@@ -101,7 +101,7 @@ class WidgetVariante extends WidgetText
 
         // hay que cargar el producto para mostrar su referencia
         $variante = new Variante();
-        $variante->loadFromCode('', [
+        $variante->loadWhere([
             new DataBaseWhere($this->match, $this->value)
         ]);
 
@@ -124,7 +124,7 @@ class WidgetVariante extends WidgetText
 
         // cargamos y añadimos la variante seleccionada
         $model = new Variante();
-        if ($this->value && $model->loadFromCode($this->value)) {
+        if ($this->value && $model->load($this->value)) {
             $list[] = $model;
             $where[] = new DataBaseWhere('variantes.referencia', $model->referencia, '<>');
         }
@@ -159,20 +159,20 @@ class WidgetVariante extends WidgetText
         return $list;
     }
 
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetVariante.js');
+        $route = Tools::config('route');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetVariante.js');
     }
 
     protected function renderFamilyFilter(): string
     {
         $options = [
-            '<option value="">' . Tools::lang()->trans('family') . '</option>',
+            '<option value="">' . Tools::trans('family') . '</option>',
             '<option value="">------</option>',
         ];
 
-        $model = new Familia();
-        foreach ($model->all([], ['descripcion' => 'ASC'], 0, 0) as $item) {
+        foreach (Familia::all([], ['descripcion' => 'ASC']) as $item) {
             $options[] = '<option value="' . $item->codfamilia . '">' . $item->descripcion . '</option>';
         }
 
@@ -184,12 +184,11 @@ class WidgetVariante extends WidgetText
     protected function renderManufacturerFilter(): string
     {
         $options = [
-            '<option value="">' . Tools::lang()->trans('manufacturer') . '</option>',
+            '<option value="">' . Tools::trans('manufacturer') . '</option>',
             '<option value="">------</option>',
         ];
 
-        $model = new Fabricante();
-        foreach ($model->all([], ['nombre' => 'ASC'], 0, 0) as $item) {
+        foreach (Fabricante::all([], ['nombre' => 'ASC']) as $item) {
             $options[] = '<option value="' . $item->codfabricante . '">' . $item->nombre . '</option>';
         }
 
@@ -231,12 +230,10 @@ class WidgetVariante extends WidgetText
     {
         return '<div class="input-group mb-2">'
             . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
-            . Tools::lang()->trans('search') . '" onkeydown="widgetVarianteSearchKp(\'' . $this->id . '\', event);" autofocus>'
-            . ''
+            . Tools::trans('search') . '" onkeydown="widgetVarianteSearchKp(\'' . $this->id . '\', event);" autofocus>'
             . '<button type="button" class="btn btn-primary" onclick="widgetVarianteSearch(\'' . $this->id . '\');">'
             . '<i class="fa-solid fa-search"></i>'
             . '</button>'
-            . ''
             . '</div>';
     }
 
@@ -247,15 +244,15 @@ class WidgetVariante extends WidgetText
         }
 
         return '<a href="#" class="btn btn-secondary" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'\');">'
-            . '<i class="fa-solid fa-times me-1"></i>' . Tools::lang()->trans('none')
+            . '<i class="fa-solid fa-times me-1"></i>' . Tools::trans('none')
             . '</a>';
     }
 
     protected function renderSortFilter(): string
     {
         return '<select class="form-select mb-2" id="modal_' . $this->id . '_s" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
-            . '<option value="ref-asc" selected>' . Tools::lang()->trans('sort-by-ref-asc') . '</option>'
-            . '<option value="ref-desc">' . Tools::lang()->trans('sort-by-ref-desc') . '</option>'
+            . '<option value="ref-asc" selected>' . Tools::trans('sort-by-ref-asc') . '</option>'
+            . '<option value="ref-desc">' . Tools::trans('sort-by-ref-desc') . '</option>'
             . '</select>';
     }
 
@@ -276,9 +273,9 @@ class WidgetVariante extends WidgetText
             . '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
-            . '<th>' . Tools::lang()->trans('product') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('price') . '</th>'
-            . '<th class="text-end">' . Tools::lang()->trans('stock') . '</th>'
+            . '<th>' . Tools::trans('product') . '</th>'
+            . '<th class="text-end">' . Tools::trans('price') . '</th>'
+            . '<th class="text-end">' . Tools::trans('stock') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody id="list_' . $this->id . '">' . implode('', $items) . '</tbody>'
