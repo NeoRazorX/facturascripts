@@ -328,6 +328,8 @@ final class Kernel
             '/api/3/exportarFacturaCliente/*' => 'ApiExportFacturaCliente',
             '/api/3/plugins' => 'ApiPlugins',
             '/api/3/uploadFiles' => 'ApiUploadFiles',
+            '/api/3/PagarFacturaProveedor/*' => 'ApiPagarFacturaProveedor',
+            '/api/3/PagarFacturaCliente/*' => 'ApiPagarFacturaCliente',
             '/api/*' => 'ApiRoot',
             '/Core/Assets/*' => 'Files',
             '/cron' => 'Cron',
