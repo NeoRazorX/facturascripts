@@ -1,4 +1,21 @@
 <?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 namespace FacturaScripts\Core\Controller;
 
@@ -11,69 +28,122 @@ class ApiPagarFacturaCliente extends ApiController
 {
     protected function runResource(): void
     {
-        // si el método no es POST o PUT, devolvemos un error
         if (!in_array($this->request->method(), ['POST', 'PUT'])) {
-            $this->response->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Method not allowed',
-            ]));
+            $this->response
+                ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'method-not-allowed',
+                ]);
             return;
         }
 
-        $pagada = $this->request->get('pagada');
+        // comprobamos los parámetros
+        if ($this->getUriParam(3) === null) {
+            $this->response
+                ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'missing-id-parameter',
+                ]);
+            return;
+        } elseif (!$this->request->request->has('pagada')) {
+            $this->response
+                ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'missing-pagada-parameter',
+                ]);
+            return;
+        }
+
+        // cargamos la factura
+        $factura = new FacturaCliente();
         $id = $this->getUriParam(3);
-
-        if (empty($pagada)) {
-            $this->setError(Tools::lang()->trans('no-data-received-form'));
+        if (!$factura->load($id)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_NOT_FOUND)
+                ->json([
+                    'status' => 'error',
+                    'message' => Tools::trans('record-not-found'),
+                ]);
+            return;
         }
-        else if($pagada === 'true') {
-            $facturascli = new FacturaCliente();
-            $facturascli->loadFromCode($id);
-            foreach ($facturascli->getReceipts() as $receipt) {
-                $receipt->pagado = true;
-                $receipt->save();
-            }
-            $facturascli->loadFromCode($id);
 
-            $this->setOk(Tools::lang()->trans('record-updated-correctly'), $facturascli->toArray());
+        // comprobamos si hay cambios
+        $pagada = $this->request->request->getBool('pagada');
+        if ($factura->pagada === $pagada) {
+            $this->response
+                ->setHttpCode(Response::HTTP_OK)
+                ->json([
+                    'ok' => Tools::trans('no-changes'),
+                    'data' => $factura->toArray(),
+                ]);
+            return;
+        } elseif ($pagada) {
+            $this->payReceipts($factura);
+            return;
         }
-        else if ($pagada === 'false') {
-            $facturascli = new FacturaCliente();
-            $facturascli->loadFromCode($id);
-            foreach ($facturascli->getReceipts() as $receipt) {
-                $receipt->pagado = false;
-                $receipt->save();
-            }
-            $facturascli->loadFromCode($id);
 
-            $this->setOk(Tools::lang()->trans('record-updated-correctly'), $facturascli->toArray());
-        }
+        $this->unpayReceipts($factura);
     }
 
-    protected function setOk(string $message, ?array $data = null)
+    protected function payReceipts(FacturaCliente &$factura): void
     {
-        Tools::log('api')->notice($message);
-
-        $res = ['ok' => $message];
-        if ($data !== null) {
-            $res['data'] = $data;
+        // marcamos todos los recibos como pagados
+        foreach ($factura->getReceipts() as $receipt) {
+            $receipt->pagado = true;
+            $receipt->fechapago = $this->request->request->getDate('fechapago', $receipt->fechapago);
+            $receipt->codpago = $this->request->request->get('codpago', $receipt->codpago);
+            if (false === $receipt->save()) {
+                $this->response
+                    ->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR)
+                    ->json([
+                        'status' => 'error',
+                        'message' => Tools::trans('record-save-error'),
+                    ]);
+                return;
+            }
         }
 
-        $this->response->setContent(json_encode($res));
-        $this->response->setHttpCode(Response::HTTP_OK);
+        // recargamos la factura
+        $factura->reload();
+
+        // devolvemos la factura actualizada
+        $this->response
+            ->setHttpCode(Response::HTTP_OK)
+            ->json([
+                'ok' => Tools::trans('record-updated-correctly'),
+                'data' => $factura->toArray(),
+            ]);
     }
 
-    protected function setError(string $message, ?array $data = null, int $status = Response::HTTP_BAD_REQUEST)
+    protected function unpayReceipts(FacturaCliente &$factura): void
     {
-        Tools::log('api')->error($message);
-
-        $res = ['error' => $message];
-        if ($data !== null) {
-            $res['data'] = $data;
+        // marcamos todos los recibos como no pagados
+        foreach ($factura->getReceipts() as $receipt) {
+            $receipt->pagado = false;
+            $receipt->fechapago = null;
+            if (false === $receipt->save()) {
+                $this->response
+                    ->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR)
+                    ->json([
+                        'status' => 'error',
+                        'message' => Tools::trans('record-save-error'),
+                    ]);
+                return;
+            }
         }
 
-        $this->response->setContent(json_encode($res));
-        $this->response->setHttpCode($status);
+        // recargamos la factura
+        $factura->reload();
+
+        // devolvemos la factura actualizada
+        $this->response
+            ->setHttpCode(Response::HTTP_OK)
+            ->json([
+                'ok' => Tools::trans('record-updated-correctly'),
+                'data' => $factura->toArray(),
+            ]);
     }
 }

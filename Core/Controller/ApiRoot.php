@@ -26,7 +26,10 @@ use FacturaScripts\Core\Tools;
 class ApiRoot extends ApiController
 {
     /** @var array */
-    private static $custom_resources = ['crearFacturaCliente', 'crearFacturaRectificativaCliente', 'exportarFacturaCliente', 'PagarFacturaCliente', 'PagarFacturaProveedor', 'plugins', 'uploadFiles'];
+    private static $custom_resources = [
+        'crearFacturaCliente', 'crearFacturaRectificativaCliente', 'exportarFacturaCliente', 'pagarFacturaCliente',
+        'pagarFacturaProveedor', 'plugins', 'uploadFiles'
+    ];
 
     public static function addCustomResource(string $name): void
     {
