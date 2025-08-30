@@ -1,4 +1,21 @@
 <?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 namespace FacturaScripts\Core\Controller;
 
@@ -11,26 +28,25 @@ class ApiPlugins extends ApiController
 {
     protected function runResource(): void
     {
-        // si el método no es GET, devolvemos un error
         if (false === $this->request->isMethod(Request::METHOD_GET)) {
-            $this->response->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Method not allowed',
-            ]));
+            $this->response
+                ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'Method not allowed',
+                ]);
             return;
         }
 
         $plugins = Plugins::list();
+
         $filter = $this->request->getArray('filter');
         $plugins = $this->applyFilter($plugins, $filter);
+
         $order = $this->request->getArray('sort');
-        $plugins = $this->applyShort($plugins, $order);
+        $plugins = $this->applySort($plugins, $order);
 
-
-        $this->response->setContent(json_encode(
-            $plugins
-        ));
+        $this->response->json($plugins);
     }
 
     private function applyFilter(array $plugins, $filter): array
@@ -39,8 +55,7 @@ class ApiPlugins extends ApiController
             return $plugins;
         }
 
-        $plugins = array_filter($plugins, function ($plugin) use ($filter) {
-
+        return array_filter($plugins, function ($plugin) use ($filter) {
             foreach ($filter as $key => $value) {
                 $operator = '=';
                 $field = $key;
@@ -71,59 +86,60 @@ class ApiPlugins extends ApiController
                     $operator = 'IS NOT';
                     $value = null;
                 }
-                $pluginValue = $plugin->{$field} ?? null;
+                if (!property_exists($plugin, $field)) {
+                    return false;
+                }
+                $pluginValue = $plugin->{$field};
                 if (!$this->compare($pluginValue, $value, $operator)) {
                     return false;
                 }
             }
             return true;
         });
-        return $plugins;
     }
 
     private function compare($a, $b, string $operator): bool
     {
-        switch ($operator) {
-            case '>':
-                return $a > $b;
-            case '<':
-                return $a < $b;
-            case '>=':
-                return $a >= $b;
-            case '<=':
-                return $a <= $b;
-            case '!=':
-                return $a != $b;
-            case 'LIKE':
-                return stripos((string) $a, (string) $b) !== false;
-            case 'IS':
-                return $a === null;
-            case 'IS NOT':
-                return $a !== null;
-            default:
-                return $a == $b;
-        }
+        return match ($operator) {
+            '>' => $a > $b,
+            '<' => $a < $b,
+            '>=' => $a >= $b,
+            '<=' => $a <= $b,
+            '!=' => $a != $b,
+            'LIKE' => stripos((string)$a, (string)$b) !== false,
+            'IS' => $a === null,
+            'IS NOT' => $a !== null,
+            default => $a == $b,
+        };
     }
 
-    private function applyShort($plugins, $filter): array
+    private function applySort($plugins, $sort): array
     {
-        if (empty($filter)) {
+        if (empty($sort)) {
             return $plugins;
         }
 
-        usort($plugins, function ($a, $b) use ($filter) {
-            foreach ($filter as $key => $value) {
+        usort($plugins, function ($a, $b) use ($sort) {
+            foreach ($sort as $key => $value) {
+                if (!property_exists($a, $key) || !property_exists($b, $key)) {
+                    continue;
+                }
+
                 $plugin1 = $a->{$key};
                 $plugin2 = $b->{$key};
+
                 if ($plugin1 === $plugin2) {
-                    return 0;
+                    continue;
                 }
+
                 if ($value === 'DESC') {
                     return ($plugin1 < $plugin2) ? 1 : -1;
                 }
                 return ($plugin1 < $plugin2) ? -1 : 1;
             }
+            return 0;
         });
+
         return $plugins;
     }
 }
