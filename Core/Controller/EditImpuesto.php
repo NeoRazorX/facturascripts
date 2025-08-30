@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Lib\OperacionIVA;
 
 /**
  * Controller to edit a single item from the Impuesto model
@@ -133,7 +134,16 @@ class EditImpuesto extends EditController
 
             default:
                 parent::loadData($viewName, $view);
+                $this->loadOperations($viewName);
                 break;
+        }
+    }
+
+    protected function loadOperations(string $viewName): void
+    {
+        $column = $this->views[$viewName]->columnForName('operation');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(OperacionIVA::all(), true, true);
         }
     }
 }

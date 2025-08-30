@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,21 +25,25 @@ use PHPUnit\Framework\TestCase;
 
 final class GrupoClientesTest extends TestCase
 {
-
     use LogErrorsTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
+        // creamos un grupo de clientes
         $group = new GrupoClientes();
         $group->codgrupo = 'Test';
         $group->nombre = 'Test Customer Group';
         $this->assertTrue($group->save(), 'customer-group-cant-save');
-        $this->assertNotNull($group->primaryColumnValue(), 'customer-group-not-stored');
+
+        // comprobamos que se ha guardado correctamente
+        $this->assertNotNull($group->id(), 'customer-group-not-stored');
         $this->assertTrue($group->exists(), 'customer-group-cant-persist');
+
+        // eliminamos
         $this->assertTrue($group->delete(), 'customer-group-cant-delete');
     }
 
-    public function testCreateWithNoCode()
+    public function testCreateWithNoCode(): void
     {
         $group = new GrupoClientes();
         $group->nombre = 'Test Customer Group';

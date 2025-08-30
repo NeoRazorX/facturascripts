@@ -43,7 +43,7 @@ final class AgenciaTransporteTest extends TestCase
         $agency->codtrans = 'Test';
         $agency->nombre = 'Test Agency';
         $this->assertTrue($agency->save(), 'agency-cant-save');
-        $this->assertNotNull($agency->primaryColumnValue(), 'agency-not-stored');
+        $this->assertNotNull($agency->id(), 'agency-not-stored');
         $this->assertTrue($agency->exists(), 'agency-cant-persist');
         $this->assertTrue($agency->delete(), 'agency-cant-delete');
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2022  Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025  Carlos Garcia Gomez       <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Dinamic\Model\PresupuestoProveedor as DinPresupuestoProveedor;
 
 /**
@@ -27,15 +29,14 @@ use FacturaScripts\Dinamic\Model\PresupuestoProveedor as DinPresupuestoProveedor
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaPresupuestoProveedor extends Base\PurchaseDocumentLine
+class LineaPresupuestoProveedor extends BusinessDocumentLine
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Order ID.
      *
-     * @var integer
+     * @var int
      */
     public $idpresupuesto;
 
@@ -47,7 +48,7 @@ class LineaPresupuestoProveedor extends Base\PurchaseDocumentLine
     public function getDocument(): DinPresupuestoProveedor
     {
         $presupuesto = new DinPresupuestoProveedor();
-        $presupuesto->loadFromCode($this->idpresupuesto);
+        $presupuesto->load($this->idpresupuesto);
         return $presupuesto;
     }
 

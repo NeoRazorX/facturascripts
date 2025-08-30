@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,12 @@
 
 namespace FacturaScripts\Test\Core\Lib;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Core\Lib\Accounting\AccountingCreation;
+use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Model\Subcuenta;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -41,8 +44,13 @@ final class AccountingCreationTest extends TestCase
         self::installAccountingPlan();
     }
 
-    public function testCreateCustomer()
+    public function testCreateCustomer(): void
     {
+        // comprobamos que las tablas existen
+        $db = new DataBase();
+        $this->assertTrue($db->tableExists(Cuenta::tableName()));
+        $this->assertTrue($db->tableExists(Subcuenta::tableName()));
+
         // creamos un cliente
         $customer = $this->getRandomCustomer();
         $this->assertTrue($customer->save(), 'cant-create-customer');
@@ -50,6 +58,7 @@ final class AccountingCreationTest extends TestCase
         // obtenemos la cuenta de clientes
         $accounts = new AccountingAccounts();
         $accounts->exercise = $this->getCurrentExercise();
+        $this->assertTrue($accounts->exercise->exists());
         $customersAccount = $accounts->getSpecialAccount(AccountingAccounts::SPECIAL_CUSTOMER_ACCOUNT);
         $this->assertTrue($customersAccount->exists(), 'cant-get-customer-account');
 
@@ -83,12 +92,12 @@ final class AccountingCreationTest extends TestCase
 
     protected function tearDown(): void
     {
+        $this->logErrors();
+
         // eliminamos las subcuentas creadas
         foreach (self::$subaccounts as $key => $subaccount) {
             $subaccount->delete();
             unset(self::$subaccounts[$key]);
         }
-
-        $this->logErrors();
     }
 }

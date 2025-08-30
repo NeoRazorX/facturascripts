@@ -224,6 +224,7 @@ class ClosingToAcounting
             foreach ($customerInvoice->all($where, [], 0, 0) as $invoice) {
                 $invoice->idestado = $stat->idestado;
                 if (false === $invoice->save()) {
+                    Tools::log()->error('cant-close-invoice-' . $invoice->idfactura);
                     return false;
                 }
             }
@@ -247,6 +248,7 @@ class ClosingToAcounting
             foreach ($supplierInvoice->all($where, [], 0, 0) as $invoice) {
                 $invoice->idestado = $stat->idestado;
                 if (false === $invoice->save()) {
+                    Tools::log()->error('cant-close-supplier-invoice-' . $invoice->idfactura);
                     return false;
                 }
             }
@@ -293,7 +295,7 @@ class ClosingToAcounting
     /**
      * Update special accounts from data file.
      */
-    protected function updateSpecialAccounts()
+    protected function updateSpecialAccounts(): void
     {
         $sql = CSVImport::updateTableSQL(CuentaEspecial::tableName());
         if (!empty($sql) && self::$dataBase->tableExists(CuentaEspecial::tableName())) {

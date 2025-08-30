@@ -305,7 +305,7 @@ class EditPageOption extends Controller
      */
     private function setColumnOption(&$column, string $name, string $key, bool $isWidget, bool $allowEmpty)
     {
-        $newValue = Tools::noHtml($this->request->request->get($name . '-' . $key));
+        $newValue = Tools::noHtml($this->request->input($name . '-' . $key));
         if ($isWidget) {
             if (!empty($newValue) || $allowEmpty) {
                 $column['children'][0][$key] = $newValue;

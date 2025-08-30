@@ -25,12 +25,11 @@ class InvalidApiResource extends ErrorController
 {
     public function run(): void
     {
-        http_response_code(404);
-        header('content-type: application/json');
-
-        echo json_encode([
-            'status' => 'error',
-            'message' => $this->exception->getMessage(),
-        ]);
+        $this->response()
+            ->setHttpCode(404)
+            ->json([
+                'status' => 'error',
+                'message' => $this->exception->getMessage(),
+            ]);
     }
 }

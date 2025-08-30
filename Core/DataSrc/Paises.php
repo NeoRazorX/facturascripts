@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\DataSrc;
 
+use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Pais;
 
@@ -29,16 +31,16 @@ final class Paises implements DataSrcInterface
         'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'GB', 'ES'
     ];
 
+    /** @var Pais[] */
     private static $list;
 
-    /**
-     * @return Pais[]
-     */
+    /** @return Pais[] */
     public static function all(): array
     {
         if (!isset(self::$list)) {
-            $model = new Pais();
-            self::$list = $model->all([], ['nombre' => 'ASC'], 0, 0);
+            self::$list = Cache::remember('model-Pais-list', function () {
+                return Pais::all([], ['nombre' => 'ASC'], 0, 0);
+            });
         }
 
         return self::$list;
@@ -49,11 +51,6 @@ final class Paises implements DataSrcInterface
         self::$list = null;
     }
 
-    /**
-     * @param bool $addEmpty
-     *
-     * @return array
-     */
     public static function codeModel(bool $addEmpty = true): array
     {
         $codes = [];
@@ -64,6 +61,12 @@ final class Paises implements DataSrcInterface
         return CodeModel::array2codeModel($codes, $addEmpty);
     }
 
+    public static function default(): Pais
+    {
+        $code = Tools::settings('default', 'codpais', 'ESP');
+        return self::get($code);
+    }
+
     /**
      * @param string $code
      *
@@ -72,12 +75,12 @@ final class Paises implements DataSrcInterface
     public static function get($code): Pais
     {
         foreach (self::all() as $item) {
-            if ($item->primaryColumnValue() === $code) {
+            if ($item->id() === $code) {
                 return $item;
             }
         }
 
-        return new Pais();
+        return Pais::find($code) ?? new Pais();
     }
 
     public static function miembroUE($codpais): bool

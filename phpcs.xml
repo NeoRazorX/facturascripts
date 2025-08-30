@@ -50,9 +50,6 @@
         <severity>0</severity>
     </rule>
 
-    <rule ref="Generic.Functions.CallTimePassByReference">
-        <severity>0</severity>
-    </rule>
 
     <rule ref="Generic.NamingConventions.UpperCaseConstantName">
         <severity>0</severity>
@@ -225,5 +222,10 @@
     <!-- The testing bootstrap file uses string concats to stop IDEs seeing the class aliases -->
     <rule ref="Generic.Strings.UnnecessaryStringConcat">
         <exclude-pattern>Test/bootstrap.php</exclude-pattern>
+    </rule>
+
+    <!-- Exclude PSR1.Files.SideEffects for test files that mix declarations and side effects -->
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude-pattern>Test/*.php</exclude-pattern>
     </rule>
 </ruleset>

@@ -68,6 +68,9 @@ class NewMail
     /** @var PHPMailer */
     protected $mail;
 
+    /** @var array */
+    private static $mailer = ['mail' => 'Mail', 'sendmail' => 'SendMail', 'smtp' => 'SMTP'];
+
     /** @var BaseBlock[] */
     protected $mainBlocks = [];
 
@@ -94,6 +97,11 @@ class NewMail
         $this->fromName = $this->empresa->nombrecorto;
 
         $this->mail = new PHPMailer();
+
+        $this->mail->Debugoutput = function ($str) {
+            Tools::log()->warning($str);
+        };
+
         $this->mail->CharSet = PHPMailer::CHARSET_UTF8;
         $this->mail->Mailer = Tools::settings('email', 'mailer');
 
@@ -121,6 +129,15 @@ class NewMail
 
         $this->signature = Tools::settings('email', 'signature', '');
         $this->verificode = Tools::randomString(20);
+    }
+
+    public static function addMailer(string $key, string $name): void
+    {
+        if (array_key_exists($key, self::$mailer)) {
+            return;
+        }
+
+        self::$mailer[$key] = $name;
     }
 
     /**
@@ -276,6 +293,19 @@ class NewMail
         return $addresses;
     }
 
+    public static function getMailer(): array
+    {
+        if (false === function_exists('mail')) {
+            unset(self::$mailer['mail']);
+        }
+
+        if (false === ini_get('sendmail_path')) {
+            unset(self::$mailer['sendmail']);
+        }
+
+        return self::$mailer;
+    }
+
     public static function getTemplate(): string
     {
         return static::$template;
@@ -322,7 +352,7 @@ class NewMail
         $this->renderHTML();
         $this->mail->msgHTML($this->html);
 
-        if ('smtp' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
+        if ('SMTP' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
             Tools::log()->warning('mail-server-error');
             return false;
         }
@@ -421,7 +451,7 @@ class NewMail
     public function test(): bool
     {
         switch ($this->mail->Mailer) {
-            case 'smtp':
+            case 'SMTP':
                 $this->mail->SMTPDebug = 3;
                 return $this->mail->smtpConnect($this->smtpOptions());
 

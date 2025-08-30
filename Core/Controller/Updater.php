@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,13 +21,12 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\FileManager;
-use FacturaScripts\Core\Base\Migrations;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\Migrations;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Telemetry;
@@ -53,6 +52,16 @@ class Updater extends Controller
 
     /** @var array */
     public $updaterItems = [];
+
+    public function __construct(string $className, string $uri = '')
+    {
+        // si no existe el archivo Empresa en Dinamic, reconstruimos
+        if (!file_exists(Tools::folder('Dinamic', 'Model', 'Empresa.php'))) {
+            Plugins::deploy(true, false);
+        }
+
+        parent::__construct($className, $uri);
+    }
 
     public function getPageData(): array
     {
@@ -103,12 +112,11 @@ class Updater extends Controller
         $this->telemetryManager = new Telemetry();
 
         // Folders writable?
-        $folders = FileManager::notWritableFolders();
+        $folders = $this->notWritableFolders();
         if ($folders) {
-            Tools::log()->warning('folder-not-writable');
-            foreach ($folders as $folder) {
-                Tools::log()->warning($folder);
-            }
+            Tools::log()->warning('folders-not-writable', [
+                '%folders%' => implode(', ', $folders)
+            ]);
             return;
         }
 
@@ -129,6 +137,18 @@ class Updater extends Controller
 
         Tools::log()->notice('reloading');
         $this->redirect($this->getClassName() . '?action=post-update', 3);
+    }
+
+    private function disableBetaUpdatesAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        Tools::settingsSet('default', 'enableupdatesbeta', false);
+        Tools::settingsSave();
+
+        Tools::log()->notice('record-updated-correctly');
     }
 
     /**
@@ -180,6 +200,10 @@ class Updater extends Controller
                 $this->redirect($this->telemetryManager->claimUrl());
                 return;
 
+            case 'disable-beta':
+                $this->disableBetaUpdatesAction();
+                return;
+
             case 'download':
                 $this->downloadAction();
                 return;
@@ -223,7 +247,7 @@ class Updater extends Controller
             }
 
             $item = [
-                'description' => Tools::lang()->trans('core-update', ['%version%' => $build['version']]),
+                'description' => Tools::trans('core-update', ['%version%' => $build['version']]),
                 'downloaded' => file_exists(Tools::folder($fileName)),
                 'filename' => $fileName,
                 'id' => Forja::CORE_PROJECT_ID,
@@ -257,7 +281,7 @@ class Updater extends Controller
             }
 
             $item = [
-                'description' => Tools::lang()->trans('plugin-update', [
+                'description' => Tools::trans('plugin-update', [
                     '%pluginName%' => $plugin->name,
                     '%version%' => $build['version']
                 ]),
@@ -282,6 +306,39 @@ class Updater extends Controller
         }
 
         return [];
+    }
+
+    private function notWritableFolders(): array
+    {
+        $notWritable = [];
+
+        // Solo verificamos las carpetas que FacturaScripts necesita actualizar
+        $foldersToCheck = ['Core', 'Dinamic', 'MyFiles', 'Plugins', 'vendor', 'node_modules'];
+
+        foreach ($foldersToCheck as $folderName) {
+            $folderPath = Tools::folder($folderName);
+
+            // Si no es un directorio, pasamos al siguiente
+            if (!is_dir($folderPath)) {
+                continue;
+            }
+
+            // Verificamos si la carpeta principal es escribible
+            if (!is_writable($folderPath)) {
+                $notWritable[] = $folderName;
+                continue;
+            }
+
+            // Verificamos las subcarpetas
+            foreach (Tools::folderScan($folderPath, true) as $subFolder) {
+                $subFolderPath = Tools::folder($folderName, $subFolder);
+                if (is_dir($subFolderPath) && !is_writable($subFolderPath)) {
+                    $notWritable[] = $folderName . DIRECTORY_SEPARATOR . $subFolder;
+                }
+            }
+        }
+
+        return $notWritable;
     }
 
     private function postUpdateAction(): void
@@ -324,13 +381,13 @@ class Updater extends Controller
 
             // ¿Hay actualización para el nuevo core?
             if ($plugin->forja('maxcore', 0) >= $newCore) {
-                $this->coreUpdateWarnings[$plugin->name] = Tools::lang()->trans('plugin-need-update', [
+                $this->coreUpdateWarnings[$plugin->name] = Tools::trans('plugin-need-update', [
                     '%plugin%' => $plugin->name
                 ]);
                 continue;
             }
 
-            $this->coreUpdateWarnings[$plugin->name] = Tools::lang()->trans('plugin-need-update-but', [
+            $this->coreUpdateWarnings[$plugin->name] = Tools::trans('plugin-need-update-but', [
                 '%plugin%' => $plugin->name
             ]);
         }
@@ -400,8 +457,8 @@ class Updater extends Controller
                 return false;
             }
 
-            FileManager::delTree($dest);
-            if (false === FileManager::recurseCopy($origin, $dest)) {
+            Tools::folderDelete($dest);
+            if (false === Tools::folderCopy($origin, $dest)) {
                 Tools::log()->critical('COPY ERROR2: ' . $origin);
                 return false;
             }
@@ -415,7 +472,7 @@ class Updater extends Controller
         }
 
         // remove zip folder
-        FileManager::delTree(Tools::folder(self::CORE_ZIP_FOLDER));
+        Tools::folderDelete(Tools::folder(self::CORE_ZIP_FOLDER));
         return true;
     }
 

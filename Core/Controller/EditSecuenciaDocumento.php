@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\BusinessDocumentCode;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to edit a single item from the SecuenciaDocumento model.
@@ -136,7 +137,8 @@ class EditSecuenciaDocumento extends EditController
 
     private function tableColToNumber(string $name): string
     {
-        return strtolower(FS_DB_TYPE) == 'postgresql' ?
+        $db_type = Tools::config('db_type');
+        return strtolower($db_type) == 'postgresql' ?
             'CAST(' . $name . ' as integer)' :
             'CAST(' . $name . ' as unsigned)';
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,17 +32,13 @@ final class SubRequest
         $this->data = $data;
     }
 
-    public function add(array $parameters = [])
+    public function add(array $parameters = []): void
     {
         foreach ($parameters as $key => $value) {
             $this->set($key, $value);
         }
     }
 
-    /**
-     * @param string ...$key
-     * @return array
-     */
     public function all(string ...$key): array
     {
         if (empty($key)) {
@@ -58,10 +54,6 @@ final class SubRequest
 
     public function get(string $key, $default = null): ?string
     {
-        if ($key === 'User-Agent') {
-            return $this->data['HTTP_USER_AGENT'] ?? $default;
-        }
-
         $value = $this->data[$key] ?? $default;
 
         if (is_array($value)) {
@@ -82,7 +74,7 @@ final class SubRequest
             return $value;
         }
 
-        return (array)$value;
+        return $allowNull ? null : [];
     }
 
     public function getAlnum(string $key): string
@@ -124,7 +116,7 @@ final class SubRequest
     {
         $value = $this->get($key);
         if (Validator::email($value ?? '')) {
-            return $value;
+            return strtolower($value);
         }
 
         return $allowNull ? null : '';

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -89,7 +89,7 @@ class ColumnItem extends VisualItem
         $this->description = $data['description'] ?? '';
 
         $this->display = $data['display'] ?? 'start';
-        switch ($this->display){
+        switch ($this->display) {
             case 'left':
                 $this->display = 'start';
                 break;
@@ -122,6 +122,10 @@ class ColumnItem extends VisualItem
         $colAuto = $this->widget->getType() === 'checkbox' ? 'col-sm-auto' : 'col-sm';
 
         $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css($colAuto);
+        if (false === empty($this->class)) {
+            $divClass .= ' ' . $this->class;
+        }
+
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
         $editHtml = $onlyField ? $this->widget->edit($model) : $this->widget->edit($model, $this->title, $this->description, $this->titleurl);
         return '<div' . $divID . ' class="' . $divClass . '">'
@@ -202,24 +206,24 @@ class ColumnItem extends VisualItem
         switch ($orderMode) {
             case '-':
                 $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
-                    . $orderKey . '\');" title="' . Tools::lang()->trans('sort-by-column') . '"><i class="fa-solid fa-sort"></i> '
-                    . Tools::lang()->trans($this->title) . '</a>';
+                    . $orderKey . '\');" title="' . Tools::trans('sort-by-column') . '"><i class="fa-solid fa-sort"></i> '
+                    . Tools::trans($this->title) . '</a>';
                 break;
 
             case 'ASC':
                 $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
-                    . $orderKey . '\');" title="' . Tools::lang()->trans('sorted-asc') . '"><i class="fa-solid fa-angles-up"></i> '
-                    . Tools::lang()->trans($this->title) . '</a>';
+                    . $orderKey . '\');" title="' . Tools::trans('sorted-asc') . '"><i class="fa-solid fa-angles-up"></i> '
+                    . Tools::trans($this->title) . '</a>';
                 break;
 
             case 'DESC':
                 $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
-                    . $orderKey . '\');" title="' . Tools::lang()->trans('sorted-desc') . '"><i class="fa-solid fa-angles-down"></i> '
-                    . Tools::lang()->trans($this->title) . '</a>';
+                    . $orderKey . '\');" title="' . Tools::trans('sorted-desc') . '"><i class="fa-solid fa-angles-down"></i> '
+                    . Tools::trans($this->title) . '</a>';
                 break;
 
             default:
-                $content .= Tools::lang()->trans($this->title);
+                $content .= Tools::trans($this->title);
                 break;
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,8 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Lib\MenuManager as NewMenuManager;
+use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
@@ -31,7 +33,6 @@ use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
-use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User as DinUser;
 
 /**
@@ -139,12 +140,12 @@ class Controller implements ControllerInterface
         $this->uri = $uri;
 
         $pageData = $this->getPageData();
-        $this->title = empty($pageData) ? $this->className : Tools::lang()->trans($pageData['title']);
+        $this->title = empty($pageData) ? $this->className : Tools::trans($pageData['title']);
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
 
-        $this->checkPhpVersion(8.1);
+        $this->checkPhpVersion(8.0);
     }
 
     /**
@@ -232,14 +233,15 @@ class Controller implements ControllerInterface
         $this->multiRequestProtection->addSeed($user->nick);
 
         // Have this user a default page?
+        $cookiesExpire = time() + Tools::config('cookies_expire');
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE);
+            $this->response->cookie('fsHomepage', $this->user->homepage, $cookiesExpire);
             $this->user->save();
         } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;
-            $this->response->cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE);
+            $this->response->cookie('fsHomepage', $this->user->homepage, $cookiesExpire);
             $this->user->save();
         }
     }
@@ -277,10 +279,6 @@ class Controller implements ControllerInterface
     {
         // creamos la respuesta
         $response = new Response();
-        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
-        $response->headers->set('X-XSS-Protection', '1; mode=block');
-        $response->headers->set('X-Content-Type-Options', 'nosniff');
-        $response->headers->set('Strict-Transport-Security', 'max-age=31536000');
 
         // si se ha podido autenticar, ejecutamos la parte privada
         if ($this->auth()) {
@@ -289,16 +287,11 @@ class Controller implements ControllerInterface
 
             // renderizamos la plantilla
             if ($this->template) {
-                // carga el menú
-                $menu = new MenuManager();
-                $menu->setUser(Session::user());
-                $menu->selectPage($this->getPageData());
-
                 Kernel::startTimer('Controller::html-render');
                 $response->setContent(Html::render($this->template, [
                     'controllerName' => $this->className,
                     'fsc' => $this,
-                    'menuManager' => $menu,
+                    'menuManager' => NewMenuManager::init()->selectPage($this->getPageData()),
                     'template' => $this->template,
                 ]));
                 Kernel::stopTimer('Controller::html-render');
@@ -339,15 +332,6 @@ class Controller implements ControllerInterface
     }
 
     /**
-     * @return ToolBox
-     * @deprecated since version 2023.1
-     */
-    public static function toolBox(): ToolBox
-    {
-        return new ToolBox();
-    }
-
-    /**
      * Return the URL of the actual controller.
      *
      * @return string
@@ -359,26 +343,40 @@ class Controller implements ControllerInterface
 
     private function auth(): bool
     {
+        // Obtener el nick del usuario de la cookie
         $cookieNick = $this->request->cookies->get('fsNick', '');
         if (empty($cookieNick)) {
+            // Si no hay nick en la cookie, no se puede autenticar
             return false;
         }
 
+        // Cargar el usuario desde la base de datos usando el nick
         $user = new DinUser();
-        if (false === $user->loadFromCode($cookieNick) && $user->enabled) {
+        if (false === $user->load($cookieNick)) {
+            // Si el usuario no se encuentra, registrar advertencia y fallar autenticación
             Tools::log()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
             return false;
         }
 
-        $logKey = $this->request->cookies->get('fsLogkey', '') ?? '';
-        if (false === $user->verifyLogkey($logKey)) {
-            Tools::log()->warning('login-cookie-fail');
-            // eliminamos la cookie
-            setcookie('fsNick', '', time() - FS_COOKIES_EXPIRE, '/');
+        // Verificar si el usuario está activado
+        $cookiesExpire = time() + Tools::config('cookies_expire');
+        if (false === $user->enabled) {
+            // Si el usuario está desactivado, registrar advertencia, eliminar cookie y fallar autenticación
+            Tools::log()->warning('login-user-disabled', ['%nick%' => $cookieNick]);
+            setcookie('fsNick', '', $cookiesExpire, '/');
             return false;
         }
 
-        // actualizamos la actividad del usuario
+        // Verificar la logkey del usuario desde la cookie
+        $logKey = $this->request->cookies->get('fsLogkey', '') ?? '';
+        if (false === $user->verifyLogkey($logKey)) {
+            // Si la logkey no es válida, registrar advertencia, eliminar cookie y fallar autenticación
+            Tools::log()->warning('login-cookie-fail');
+            setcookie('fsNick', '', $cookiesExpire, '/');
+            return false;
+        }
+
+        // Actualizar la última actividad del usuario si ha pasado el período definido
         if (time() - strtotime($user->lastactivity) > User::UPDATE_ACTIVITY_PERIOD) {
             $ip = Session::getClientIp();
             $browser = $this->request->headers->get('User-Agent');
@@ -386,6 +384,7 @@ class Controller implements ControllerInterface
             $user->save();
         }
 
+        // Establecer el usuario en la sesión actual
         Session::set('user', $user);
         return true;
     }

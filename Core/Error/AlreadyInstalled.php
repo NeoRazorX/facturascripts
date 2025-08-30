@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,7 +28,15 @@ class AlreadyInstalled extends ErrorController
     {
         http_response_code(403);
 
-        echo '<h1>' . Tools::lang()->trans('already-installed') . '</h1>';
-        echo '<p>' . $this->exception->getMessage() . '</p>';
+        $title = '✅ ' . Tools::trans('already-installed');
+        $content = '<h1 class="h3">' . $title . '</h1>'
+            . '<p>' . $this->exception->getMessage() . '</p>';
+
+        echo $this->html(
+            $title,
+            $this->htmlContainer(
+                $this->htmlErrorCard($content)
+            )
+        );
     }
 }

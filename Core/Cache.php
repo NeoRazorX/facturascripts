@@ -61,6 +61,10 @@ final class Cache
     {
         // buscamos los archivos que contengan el prefijo y los borramos
         $folder = FS_FOLDER . self::FILE_PATH;
+        if (false === file_exists($folder)) {
+            return;
+        }
+        
         foreach (scandir($folder) as $fileName) {
             // si no es un archivo, continuamos
             if (!str_ends_with($fileName, '.cache')) {
@@ -79,6 +83,10 @@ final class Cache
     {
         // borramos todos los archivos que hayan expirado
         $folder = FS_FOLDER . self::FILE_PATH;
+        if (false === file_exists($folder)) {
+            return;
+        }
+        
         foreach (scandir($folder) as $fileName) {
             if (filemtime($folder . '/' . $fileName) < time() - self::EXPIRATION) {
                 unlink($folder . '/' . $fileName);

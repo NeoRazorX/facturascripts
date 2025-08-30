@@ -20,8 +20,8 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PresupuestoCliente;
@@ -337,6 +337,49 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-cliente-2');
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');
+    }
+
+    public function testPropertiesLength(): void
+    {
+        // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
+        $campos = [
+            'apartado' => [10, 11],
+            'cifnif' => [30, 31],
+            'ciudad' => [100, 101],
+            'codigo' => [20, 21],
+            'codigoenv' => [200, 201],
+            'codpais' => [20, 21],
+            'codpostal' => [10, 11],
+            'direccion' => [200, 201],
+            'nombrecliente' => [100, 101],
+            'operacion' => [20, 21],
+            'provincia' => [100, 101],
+        ];
+
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        foreach ($campos as $campo => [$valido, $invalido]) {
+            // Creamos un nuevo almacén
+            $doc = new PresupuestoCliente();
+
+            // campo obligatorio (not null)
+            $doc->setSubject($subject);
+
+            // Asignamos el valor inválido en el campo a probar
+            $doc->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($doc->save(), "can-save-pedidoCliente-bad-{$campo}");
+
+            // Corregimos el campo y comprobamos que ahora sí se puede guardar
+            $doc->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($doc->save(), "cannot-save-pedidoCliente-fixed-{$campo}");
+
+            // Limpiar
+            $this->assertTrue($doc->delete(), "cannot-delete-pedidoCliente-{$campo}");
+        }
+
+        $this->assertTrue($subject->delete(), 'can-not-delete-cliente');
     }
 
     public function testSplitDocument(): void

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,6 +52,13 @@ class WidgetAutocomplete extends WidgetSelect
      */
     public $strict = true;
 
+    public function __construct(array $data)
+    {
+        parent::__construct($data);
+
+        $this->strict = isset($data['strict']) ? ($data['strict'] == 'true') : true;
+    }
+
     /**
      * @param object $model
      * @param string $title
@@ -63,9 +70,9 @@ class WidgetAutocomplete extends WidgetSelect
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
-        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
+        $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . Tools::trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
-        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(Tools::lang()->trans($title), $titleurl) . '</label>';
+        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(Tools::trans($title), $titleurl) . '</label>';
 
         if ('' === $this->value || null === $this->value) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
@@ -113,11 +120,12 @@ class WidgetAutocomplete extends WidgetSelect
     /**
      * Adds assets to the asset manager.
      */
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::addCss(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
-        AssetManager::addJs(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
+        AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
     }
 
     /**
@@ -129,7 +137,8 @@ class WidgetAutocomplete extends WidgetSelect
             return '<span class="input-group-text"><i class="fa-solid fa-search fa-fw"></i></span>';
         }
 
-        return '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
+        return '<button class="btn btn-spin-action btn-warning" type="button" onclick="this.form.' . $this->fieldname
+            . '.value = \'\'; this.form.onsubmit(); this.form.submit();">'
             . '<i class="fa-solid fa-times" aria-hidden="true"></i>'
             . '</button>';
     }
@@ -162,7 +171,6 @@ class WidgetAutocomplete extends WidgetSelect
         // according to the information entered by the user.
         parent::setSourceData($child, false);
         $this->fieldfilter = $child['fieldfilter'] ?? '';
-        $this->strict = isset($child['strict']) ? ($child['strict'] == 'true') : true;
     }
 
     /**

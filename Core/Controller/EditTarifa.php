@@ -230,7 +230,7 @@ class EditTarifa extends EditController
     protected function setCustomerRate()
     {
         $customer = new Cliente();
-        $code = $this->request->request->get('setcustomerrate');
+        $code = $this->request->input('setcustomerrate');
         if (empty($code) || false === $customer->loadFromCode($code)) {
             Tools::log()->warning('customer-not-found');
             return;
@@ -248,7 +248,7 @@ class EditTarifa extends EditController
     protected function setGroupRate()
     {
         $group = new GrupoClientes();
-        $code = $this->request->request->get('setgrouprate');
+        $code = $this->request->input('setgrouprate');
         if (empty($code) || false === $group->loadFromCode($code)) {
             Tools::log()->warning('group-not-found');
             return;

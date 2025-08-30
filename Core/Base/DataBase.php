@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -223,9 +223,10 @@ final class DataBase
             // adds the sql query to the history
             self::$miniLog->debug($sql, ['duration' => $stop - $start]);
 
-
-            if (!$result) {
+            // check errors
+            if (!$result || self::$engine->hasError()) {
                 self::$miniLog->error(self::$engine->errorMessage(self::$link), ['sql' => $sql]);
+                self::$engine->clearError();
             }
 
             if ($inTransaction) {
@@ -296,13 +297,34 @@ final class DataBase
      *
      * @return array
      */
-    public function getIndexes(string $tableName): array
+    public function getAllIndexes(string $tableName): array
     {
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
         foreach ($data as $row) {
-            $result[] = ['name' => $row['Key_name'] ?? $row['key_name'] ?? ''];
+            $result[] = [
+                'name' => $row['Key_name'] ?? $row['key_name'] ?? '',
+                'column' => $row['Column_name'] ?? $row['column_name'] ?? '',
+            ];
         }
+
+        return $result;
+    }
+
+    /**
+     * Returns an array with the FacturaScripts indexes of a given table.
+     *
+     * @param string $tableName
+     *
+     * @return array
+     */
+    public function getIndexes(string $tableName): array
+    {
+        $result =  array_filter($this->getAllIndexes($tableName), function ($dbIdx) {
+            return false !== strpos($dbIdx['name'], 'fs_');
+        });
+
+        $result = array_values($result);
 
         return $result;
     }

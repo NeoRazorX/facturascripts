@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,11 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Almacenes;
-use FacturaScripts\Core\Model\Base\Address;
 use FacturaScripts\Core\Model\Base\CompanyRelationTrait;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
 /**
  * The warehouse where the items are physically.
@@ -32,7 +31,7 @@ use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Almacen extends Address
+class Almacen extends ModelClass
 {
     use ModelTrait;
     use CompanyRelationTrait;
@@ -41,18 +40,43 @@ class Almacen extends Address
     public $activo;
 
     /** @var string */
+    public $apartado;
+
+    /** @var string */
+    public $ciudad;
+
+    /** @var string */
     public $codalmacen;
+
+    /** @var string */
+    public $codpais;
+
+    /** @var string */
+    public $codpostal;
+
+    /** @var string */
+    public $direccion;
 
     /** @var string */
     public $nombre;
 
     /** @var string */
+    public $provincia;
+
+    /** @var string */
     public $telefono;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->activo = true;
+        $this->codpais = Tools::settings('default', 'codpais');
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Almacenes::clear();
     }
 
     public function delete(): bool
@@ -62,19 +86,14 @@ class Almacen extends Address
             return false;
         }
 
-        if (false === parent::delete()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        Almacenes::clear();
-        return true;
+        return parent::delete();
     }
 
     public function install(): string
     {
         // needed dependencies
-        new DinEmpresa();
+        new Empresa();
+        new Pais();
 
         return parent::install();
     }
@@ -99,17 +118,6 @@ class Almacen extends Address
         return 'nombre';
     }
 
-    public function save(): bool
-    {
-        if (false === parent::save()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        Almacenes::clear();
-        return true;
-    }
-
     public static function tableName(): string
     {
         return 'almacenes';
@@ -117,6 +125,9 @@ class Almacen extends Address
 
     public function test(): bool
     {
+        $this->nombre = Tools::noHtml($this->nombre);
+        $this->telefono = Tools::noHtml($this->telefono);
+
         if (!empty($this->codalmacen) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
             Tools::log()->error(
                 'invalid-alphanumeric-code',
@@ -129,18 +140,15 @@ class Almacen extends Address
             $this->idempresa = Tools::settings('default', 'idempresa');
         }
 
-        $this->nombre = Tools::noHtml($this->nombre);
-        $this->telefono = Tools::noHtml($this->telefono);
-
         return parent::test();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codalmacen)) {
             $this->codalmacen = (string)$this->newCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 }

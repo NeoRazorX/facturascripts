@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,15 +18,15 @@
 
 $(document).ready(function () {
     $(".calc-cost").change(function () {
-        var coste = parseFloat($(this).val());
-        var margen = parseFloat($(this.form.margen).val());
+        const coste = parseFloat($(this).val());
+        const margen = parseFloat($(this.form.margen).val());
         if (margen > 0) {
             $(this.form.precio).val(coste * (100 + margen) / 100);
         }
     });
     $(".calc-margin").change(function () {
-        var coste = parseFloat($(this.form.coste).val());
-        var margen = parseFloat($(this).val());
+        const coste = parseFloat($(this.form.coste).val());
+        const margen = parseFloat($(this).val());
         if (margen > 0) {
             $(this.form.precio).val(coste * (100 + margen) / 100);
         }
@@ -53,6 +53,11 @@ $(document).ready(function () {
                     url,
                     data: {orden},
                     dataType: "json",
+                    success: function (data) {
+                        if (data.status !== 'ok') {
+                            alert(data.message);
+                        }
+                    },
                     error: function (msg) {
                         alert(msg.status + " " + msg.responseText);
                     }

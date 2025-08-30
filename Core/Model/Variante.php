@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,9 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DbQuery;
+use FacturaScripts\Core\Model\Base\ProductRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ProductType;
 use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
@@ -34,10 +37,10 @@ use FacturaScripts\Dinamic\Model\Stock as DinStock;
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
-class Variante extends Base\ModelClass
+class Variante extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\ProductRelationTrait;
+    use ModelTrait;
+    use ProductRelationTrait;
 
     /**
      * Barcode. Maximum 20 characters.
@@ -114,7 +117,7 @@ class Variante extends Base\ModelClass
      */
     public $stockfis;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->coste = 0.0;
@@ -137,13 +140,24 @@ class Variante extends Base\ModelClass
         $find = Tools::noHtml(mb_strtolower($query, 'UTF8'));
 
         // añadimos opciones al inicio del where
-        array_unshift(
-            $where,
-            new DataBaseWhere('LOWER(v.referencia)', $find . '%', 'LIKE'),
-            new DataBaseWhere('LOWER(v.referencia)', '%' . $find, 'LIKE', 'OR'),
-            new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
-            new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
-        );
+        if (str_contains($find, '%')) {
+            // si ya contiene %, usamos directamente sin añadir más %
+            array_unshift(
+                $where,
+                new DataBaseWhere('LOWER(v.referencia)', $find, 'LIKE'),
+                new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
+                new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
+            );
+        } else {
+            // búsqueda normal con % automático
+            array_unshift(
+                $where,
+                new DataBaseWhere('LOWER(v.referencia)', $find . '%', 'LIKE'),
+                new DataBaseWhere('LOWER(v.referencia)', '%' . $find, 'LIKE', 'OR'),
+                new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
+                new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
+            );
+        }
 
         $sql = "SELECT v." . $field . " AS code, p.descripcion AS description, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4"
             . " FROM " . static::tableName() . " v"
@@ -151,7 +165,7 @@ class Variante extends Base\ModelClass
             . DataBaseWhere::getSQLWhere($where)
             . " ORDER BY v." . $field . " ASC";
 
-        foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $data) {
+        foreach (self::db()->selectLimit($sql, CodeModel::getlimit()) as $data) {
             $data['description'] = $this->getAttributeDescription(
                 $data['idatributovalor1'],
                 $data['idatributovalor2'],
@@ -344,7 +358,7 @@ class Variante extends Base\ModelClass
         }
 
         if (parent::save()) {
-            $this->getProducto()->update();
+            $this->getProducto()->updateInfo();
             return true;
         }
 
@@ -396,7 +410,7 @@ class Variante extends Base\ModelClass
         return $this->getProducto()->url($type);
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         // comprobamos si la referencia ya existe
         $where = [new DataBaseWhere('referencia', $this->referencia)];
@@ -405,7 +419,7 @@ class Variante extends Base\ModelClass
             return false;
         }
 
-        if (false === parent::saveInsert($values)) {
+        if (false === parent::saveInsert()) {
             return false;
         }
 

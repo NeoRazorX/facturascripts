@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,7 +59,7 @@ class PostgresqlEngine extends DataBaseEngine
         return $this->exec($link, 'BEGIN TRANSACTION;');
     }
 
-    public function castInteger($link, $column)
+    public function castInteger($link, $column): string
     {
         return 'CAST(' . $this->escapeColumn($link, $column) . ' AS unsigned)';
     }
@@ -295,10 +295,10 @@ class PostgresqlEngine extends DataBaseEngine
      * @param string $tableName
      * @param array $fields
      */
-    public function updateSequence($link, $tableName, $fields)
+    public function updateSequence($link, $tableName, $fields): void
     {
         foreach ($fields as $colName => $field) {
-            /// serial type
+            // serial type
             if (!empty($field['default']) && stripos($field['default'], 'nextval(') !== false) {
                 $sql = "SELECT setval('" . $tableName . "_" . $colName . "_seq', (SELECT MAX(" . $colName . ") from " . $tableName . "));";
                 $this->exec($link, $sql);

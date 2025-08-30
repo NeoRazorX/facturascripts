@@ -28,14 +28,14 @@ use FacturaScripts\Dinamic\Model\RoleUser;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
- * Manage the use of the Facturascripts menu.
+ * Manage the use of the FacturaScripts menu.
  *
+ * @deprecated replaced by FacturaScripts\Dinamic\Lib\MenuManager
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class MenuManager
 {
-
     /**
      * Contains the structure of the menu for the user.
      *
