@@ -1,4 +1,21 @@
 <?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 namespace FacturaScripts\Core\Controller;
 
@@ -11,12 +28,13 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
 
 class ApiAttachedFiles extends ApiController
 {
-
+    /** @var AttachedFile */
     private $model;
 
     protected function runResource(): void
     {
         $this->model = new AttachedFile();
+
         try {
             switch ($this->request->method()) {
                 case 'DELETE':
@@ -29,8 +47,8 @@ class ApiAttachedFiles extends ApiController
 
                 case 'PATCH':
                 case 'PUT':
-                   $this->doPUT();
-                   break;
+                    $this->doPUT();
+                    break;
 
                 case 'POST':
                     $this->doPOST();
@@ -199,8 +217,7 @@ class ApiAttachedFiles extends ApiController
                 $field = substr($key, 0, -5);
                 $operator = 'IS';
                 $value = null;
-            }
-            elseif (substr($key, -8) == '_notnull') {
+            } elseif (substr($key, -8) == '_notnull') {
                 $field = substr($key, 0, -8);
                 $operator = 'IS NOT';
                 $value = null;
@@ -284,6 +301,7 @@ class ApiAttachedFiles extends ApiController
         $this->response->setContent(json_encode($res));
         $this->response->setHttpCode($status);
     }
+
     protected function setOk(string $message, ?array $data = null)
     {
         Tools::log('api')->notice($message);
