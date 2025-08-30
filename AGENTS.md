@@ -1,12 +1,11 @@
 ## Estructura de carpetas relevante
-- Carpeta de código: `Code`
+- Carpeta de código: `Code` y `Dinamic`
 - Carpeta de pruebas: `Test`
 
 Nota: Todas las implementaciones y cambios de lógica deben ubicarse bajo `Code`. Las pruebas unitarias e integraciones deben residir bajo `Test`.
 
 ## Carpetas que deben ignorar los agentes
 Los agentes deben ignorar por completo el contenido de las siguientes carpetas (no leer, no modificar, no mover, no borrar y no usar como fuente de verdad):
-- `Dinamic`
 - `MyFiles`
 - `Plugins`
 
@@ -37,7 +36,8 @@ Esto incluye subcarpetas y archivos en su interior. Cualquier artefacto temporal
 - Las pruebas deben cubrir casos felices, errores esperados y bordes relevantes.
 
 ## Restricciones
-- No modificar ni depender del contenido en `Dinamic`, `Plugins` y `MyFiles`.
+- No modificar ni depender del contenido en `Plugins` y `MyFiles`.
+- El directorio `Dinamic` es de solo lectura, no modificar ningún archivo.
 - No introducir cambios fuera de `Code` y `Test` salvo documentación.
 
 ## Comunicación
