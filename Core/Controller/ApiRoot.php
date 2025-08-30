@@ -27,7 +27,7 @@ class ApiRoot extends ApiController
 {
     /** @var array */
     private static $custom_resources = [
-        'attachedfiles', 'crearFacturaCliente', 'crearFacturaRectificativaCliente', 'exportarFacturaCliente',
+        'attachedfiles', 'crearDocumento', 'crearFacturaCliente', 'crearFacturaRectificativaCliente', 'exportarFacturaCliente',
         'pagarFacturaCliente', 'pagarFacturaProveedor', 'plugins', 'productoimagenes', 'uploadFiles'
     ];
 

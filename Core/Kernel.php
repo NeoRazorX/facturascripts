@@ -323,6 +323,7 @@ final class Kernel
             '/' => 'Root',
             '/AdminPlugins' => 'AdminPlugins',
             '/api' => 'ApiRoot',
+            '/api/3/crearDocumento' => 'ApiCreateDocument',
             '/api/3/attachedfiles' => 'ApiAttachedFiles',
             '/api/3/attachedfiles/*' => 'ApiAttachedFiles',
             '/api/3/crearFacturaCliente' => 'ApiCreateFacturaCliente',
