@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -82,7 +82,7 @@ class ImpuestoZona extends ModelClass
      */
     protected $provincia;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->codimpuesto = Tools::settings('default', 'codimpuesto');
@@ -90,16 +90,11 @@ class ImpuestoZona extends ModelClass
         $this->prioridad = 1;
     }
 
-    public static function primaryColumn(): string
-    {
-        return 'id';
-    }
-
     public function provincia(): ?string
     {
         if (!isset($this->provincia)) {
             $provincia = new Provincia();
-            $provincia->loadFromCode($this->codisopro);
+            $provincia->load($this->codisopro);
             $this->provincia = $provincia->provincia;
         }
 

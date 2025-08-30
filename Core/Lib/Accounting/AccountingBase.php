@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 
 /**
@@ -114,13 +113,5 @@ abstract class AccountingBase
     protected function addToDate($date, $add)
     {
         return date('d-m-Y', strtotime($add, strtotime($date)));
-    }
-
-    /**
-     * @return ToolBox
-     */
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 }

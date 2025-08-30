@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,9 +48,9 @@ class WidgetCheckbox extends BaseWidget
 
         $inputHtml = '<input type="checkbox" name="' . $this->fieldname . '" value="TRUE" id="' . $id
             . '" class="' . $class . '"' . $checked . $readonly . $tabindex . '/>';
-        $labelHtml = '<label for="' . $id . '">' . Tools::lang()->trans($title) . '</label>';
+        $labelHtml = '<label for="' . $id . '">' . Tools::trans($title) . '</label>';
         $descriptionHtml = empty($description) ? '' :
-            '<small class="form-text text-muted">' . Tools::lang()->trans($description) . '</small>';
+            '<small class="form-text text-muted">' . Tools::trans($description) . '</small>';
 
         return '<div class="form-check pe-3 mb-3">'
             . $inputHtml
@@ -102,7 +102,7 @@ class WidgetCheckbox extends BaseWidget
             return '-';
         }
 
-        return $this->value ? Tools::lang()->trans('yes') : Tools::lang()->trans('no');
+        return $this->value ? Tools::trans('yes') : Tools::trans('no');
     }
 
     /**

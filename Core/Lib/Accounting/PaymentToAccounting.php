@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -94,8 +94,8 @@ class PaymentToAccounting
         $entry = new DinAsiento();
 
         $concept = $this->payment->importe > 0 ?
-            Tools::lang()->trans('customer-payment-concept', ['%document%' => $this->receipt->getCode()]) :
-            Tools::lang()->trans('refund-payment-concept', ['%document%' => $this->receipt->getCode()]);
+            Tools::trans('customer-payment-concept', ['%document%' => $this->receipt->getCode()]) :
+            Tools::trans('refund-payment-concept', ['%document%' => $this->receipt->getCode()]);
 
         $invoice = $this->receipt->getInvoice();
         $concept .= $invoice->numero2 ?
@@ -114,7 +114,7 @@ class PaymentToAccounting
             && $this->customerPaymentBankLine($entry)
             && $this->customerPaymentExpenseLine($entry)
             && $entry->isBalanced()) {
-            $this->payment->idasiento = $entry->primaryColumnValue();
+            $this->payment->idasiento = $entry->id();
             return true;
         }
 
@@ -147,7 +147,7 @@ class PaymentToAccounting
         $account = $this->payment->getPaymentMethod()->getSubcuentaGastos($this->exercise->codejercicio, true);
 
         $expLine = $entry->getNewLine($account);
-        $expLine->concepto = Tools::lang()->trans('receipt-expense-account', ['%document%' => $entry->documento]);
+        $expLine->concepto = Tools::trans('receipt-expense-account', ['%document%' => $entry->documento]);
         $expLine->haber = abs($this->payment->gastos);
         return $expLine->save();
     }
@@ -171,8 +171,8 @@ class PaymentToAccounting
         $entry = new DinAsiento();
 
         $concept = $this->payment->importe > 0 ?
-            Tools::lang()->trans('supplier-payment-concept', ['%document%' => $this->receipt->getCode()]) :
-            Tools::lang()->trans('refund-payment-concept', ['%document%' => $this->receipt->getCode()]);
+            Tools::trans('supplier-payment-concept', ['%document%' => $this->receipt->getCode()]) :
+            Tools::trans('refund-payment-concept', ['%document%' => $this->receipt->getCode()]);
 
         $invoice = $this->receipt->getInvoice();
         $concept .= $invoice->numproveedor ?
@@ -189,7 +189,7 @@ class PaymentToAccounting
         if ($this->supplierPaymentLine($entry)
             && $this->supplierPaymentBankLine($entry)
             && $entry->isBalanced()) {
-            $this->payment->idasiento = $entry->primaryColumnValue();
+            $this->payment->idasiento = $entry->id();
             return true;
         }
 

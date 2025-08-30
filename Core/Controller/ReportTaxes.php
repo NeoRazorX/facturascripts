@@ -104,7 +104,7 @@ class ReportTaxes extends Controller
         $this->initFilters();
         $this->initColumns();
 
-        if ('export' === $this->request->request->get('action')) {
+        if ('export' === $this->request->input('action')) {
             $this->exportAction();
         }
     }
@@ -234,7 +234,8 @@ class ReportTaxes extends Controller
     protected function getReportData(): array
     {
         $sql = '';
-        $numCol = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(f.numero as integer)' : 'CAST(f.numero as unsigned)';
+        $db_type = Tools::config('db_type');
+        $numCol = strtolower($db_type) == 'postgresql' ? 'CAST(f.numero as integer)' : 'CAST(f.numero as unsigned)';
         $columnDate = $this->typeDate === 'create' ? 'f.fecha' : 'COALESCE(f.fechadevengo, f.fecha)';
         switch ($this->source) {
             case 'purchases':
@@ -310,12 +311,13 @@ class ReportTaxes extends Controller
         }
 
         // round
+        $nf0 = Tools::settings('default', 'decimals', 2);
         foreach ($data as $key => $value) {
-            $data[$key]['neto'] = round($value['neto'], FS_NF0);
-            $data[$key]['totaliva'] = round($value['totaliva'], FS_NF0);
-            $data[$key]['totalrecargo'] = round($value['totalrecargo'], FS_NF0);
-            $data[$key]['totalirpf'] = round($value['totalirpf'], FS_NF0);
-            $data[$key]['suplidos'] = round($value['suplidos'], FS_NF0);
+            $data[$key]['neto'] = round($value['neto'], $nf0);
+            $data[$key]['totaliva'] = round($value['totaliva'], $nf0);
+            $data[$key]['totalrecargo'] = round($value['totalrecargo'], $nf0);
+            $data[$key]['totalirpf'] = round($value['totalirpf'], $nf0);
+            $data[$key]['suplidos'] = round($value['suplidos'], $nf0);
         }
 
         return $data;
@@ -361,7 +363,7 @@ class ReportTaxes extends Controller
             $column = str_replace('_', '-', $column);
 
             // traducimos la columna
-            $column = Tools::lang()->trans($column);
+            $column = Tools::trans($column);
 
             // si la key empieza por column_ y no está en el array de columnas, la añadimos
             if (strpos($key, 'column_') === 0 && !in_array($column, $this->columns)) {
@@ -372,24 +374,24 @@ class ReportTaxes extends Controller
 
     protected function initFilters(): void
     {
-        $this->coddivisa = $this->request->request->get(
+        $this->coddivisa = $this->request->input(
             'coddivisa',
             Tools::settings('default', 'coddivisa')
         );
 
-        $this->codpais = $this->request->request->get('codpais', '');
-        $this->codserie = $this->request->request->get('codserie', '');
-        $this->datefrom = $this->request->request->get('datefrom', $this->getQuarterDate(true));
-        $this->dateto = $this->request->request->get('dateto', $this->getQuarterDate(false));
+        $this->codpais = $this->request->input('codpais', '');
+        $this->codserie = $this->request->input('codserie', '');
+        $this->datefrom = $this->request->input('datefrom', $this->getQuarterDate(true));
+        $this->dateto = $this->request->input('dateto', $this->getQuarterDate(false));
 
-        $this->idempresa = (int)$this->request->request->get(
+        $this->idempresa = (int)$this->request->input(
             'idempresa',
             Tools::settings('default', 'idempresa')
         );
 
-        $this->format = $this->request->request->get('format');
-        $this->source = $this->request->request->get('source');
-        $this->typeDate = $this->request->request->get('type-date');
+        $this->format = $this->request->input('format');
+        $this->source = $this->request->input('source');
+        $this->typeDate = $this->request->input('type-date');
     }
 
     protected function processLayout(array &$lines, array &$totals): void

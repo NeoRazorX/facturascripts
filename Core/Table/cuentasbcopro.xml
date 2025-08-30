@@ -25,12 +25,12 @@
         <type>character varying(34)</type>
     </column>
     <column>
-        <name>swift</name>
-        <type>character varying(11)</type>
-    </column>
-    <column>
         <name>principal</name>
         <type>boolean</type>
+    </column>
+    <column>
+        <name>swift</name>
+        <type>character varying(11)</type>
     </column>
     <constraint>
         <name>cuentasbcopro_pkey</name>

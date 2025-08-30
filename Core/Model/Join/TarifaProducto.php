@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -72,7 +72,7 @@ class TarifaProducto extends JoinModel
         }
 
         $rate = new Tarifa();
-        if ($rate->loadFromCode($this->codtarifa)) {
+        if ($rate->load($this->codtarifa)) {
             self::$rates[$this->codtarifa] = $rate;
         }
 
@@ -84,7 +84,7 @@ class TarifaProducto extends JoinModel
         // intentamos obtener la variante para aplicar mejor la tarifa
         $variant = new Variante();
         $where = [new DataBaseWhere('referencia', $this->referencia)];
-        if ($variant->loadFromCode('', $where)) {
+        if ($variant->loadWhere($where)) {
             $product = $variant->getProducto();
             return $this->getRate()->applyTo($variant, $product);
         }
@@ -112,7 +112,7 @@ class TarifaProducto extends JoinModel
             'precio' => 'variantes.precio',
             'referencia' => 'variantes.referencia',
             'stockfis' => 'variantes.stockfis',
-            'preciotarifa'=> 0,
+            'preciotarifa' => 0,
         ];
     }
 

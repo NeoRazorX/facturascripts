@@ -28,20 +28,20 @@ final class FamiliaTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $family = new Familia();
         $family->codfamilia = 'Test';
         $family->descripcion = 'Test Family';
         $this->assertTrue($family->save(), 'family-cant-save');
-        $this->assertNotNull($family->primaryColumnValue(), 'family-not-stored');
+        $this->assertNotNull($family->id(), 'family-not-stored');
         $this->assertTrue($family->exists(), 'family-cant-persist');
 
         // eliminamos
         $this->assertTrue($family->delete(), 'family-cant-delete');
     }
 
-    public function testCreateWithoutCode()
+    public function testCreateWithoutCode(): void
     {
         $family = new Familia();
         $family->descripcion = 'Test without code';
@@ -51,7 +51,7 @@ final class FamiliaTest extends TestCase
         $this->assertTrue($family->delete(), 'family-cant-delete');
     }
 
-    public function testCreateSpaceCode()
+    public function testCreateSpaceCode(): void
     {
         $family = new Familia();
         $family->codfamilia = 'Te st';
@@ -59,7 +59,7 @@ final class FamiliaTest extends TestCase
         $this->assertFalse($family->save(), 'family-can-save');
     }
 
-    public function testCreateHtml()
+    public function testCreateHtml(): void
     {
         // creamos contenido con html
         $family = new Familia();
@@ -75,7 +75,7 @@ final class FamiliaTest extends TestCase
         $this->assertTrue($family->delete(), 'family-cant-delete');
     }
 
-    public function testCreateMother()
+    public function testCreateMother(): void
     {
         $family = new Familia();
         $family->codfamilia = 'Test';
@@ -88,7 +88,7 @@ final class FamiliaTest extends TestCase
         $this->assertTrue($family->delete(), 'family-cant-delete');
     }
 
-    public function testFamiliesMother()
+    public function testFamiliesMother(): void
     {
         $family1 = new Familia();
         $family1->codfamilia = 'Test1';
@@ -109,7 +109,7 @@ final class FamiliaTest extends TestCase
         $this->assertTrue($family2->delete(), 'family1-cant-delete');
     }
 
-    public function testCreateSubaccount()
+    public function testCreateSubaccount(): void
     {
         $family = new Familia();
         $family->codfamilia = 'Test';

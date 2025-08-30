@@ -25,12 +25,11 @@ class IpBannedOnApi extends ErrorController
 {
     public function run(): void
     {
-        http_response_code(429);
-        header('content-type: application/json');
-
-        echo json_encode([
-            'status' => 'error',
-            'message' => $this->exception->getMessage(),
-        ]);
+        $this->response()
+            ->setHttpCode(429)
+            ->json([
+                'status' => 'error',
+                'message' => $this->exception->getMessage(),
+            ]);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,8 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 
 /**
  * A model to manage the transformations of documents. For example aprove order to delivery note.
@@ -29,10 +31,9 @@ use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
  * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
-class DocTransformation extends Base\ModelClass
+class DocTransformation extends ModelClass
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * @var float
@@ -88,7 +89,7 @@ class DocTransformation extends Base\ModelClass
      */
     public $model2;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->cantidad = 0.0;
@@ -101,7 +102,7 @@ class DocTransformation extends Base\ModelClass
      * @param int $idDoc
      * @param bool $updateServido
      */
-    public function deleteFrom(string $tipoDoc, int $idDoc, bool $updateServido = false)
+    public function deleteFrom(string $tipoDoc, int $idDoc, bool $updateServido = false): void
     {
         $options = [
             [new DataBaseWhere('model1', $tipoDoc), new DataBaseWhere('iddoc1', $idDoc)],
@@ -123,7 +124,7 @@ class DocTransformation extends Base\ModelClass
     /**
      * @return BusinessDocumentLine
      */
-    public function getParentLine()
+    public function getParentLine(): BusinessDocumentLine
     {
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\Linea' . $this->model1;
         if (class_exists($modelClass)) {
@@ -133,11 +134,6 @@ class DocTransformation extends Base\ModelClass
         }
 
         return new LineaAlbaranCliente();
-    }
-
-    public static function primaryColumn(): string
-    {
-        return 'id';
     }
 
     public static function tableName(): string

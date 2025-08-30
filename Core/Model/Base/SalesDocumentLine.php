@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Model\Base;
  */
 abstract class SalesDocumentLine extends BusinessDocumentLine
 {
-
     /**
      * Line cost amount.
      *
@@ -58,9 +57,10 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
     /**
      * Reset the values of all model properties.
      */
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
+
         $this->coste = 0.00;
         $this->mostrar_cantidad = true;
         $this->mostrar_precio = true;

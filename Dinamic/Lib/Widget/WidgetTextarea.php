@@ -1,7 +1,7 @@
 <?php namespace FacturaScripts\Dinamic\Lib\Widget;
 
 /**
- * Class created by Core/Base/PluginDeploy
+ * Class created by Core/Internal/PluginsDeploy
  * @author FacturaScripts <carlos@facturascripts.com>
  */
 class WidgetTextarea extends \FacturaScripts\Core\Lib\Widget\WidgetTextarea

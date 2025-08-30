@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,13 +97,12 @@ class Dashboard extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-        $this->title = Tools::lang()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
+        $this->title = Tools::trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
 
         $this->loadExtensions();
 
         // comprobamos si la instalación está registrada
-        $telemetry = new Telemetry();
-        $this->registered = $telemetry->ready();
+        $this->registered = Telemetry::init()->ready();
 
         // comprobamos si hay actualizaciones disponibles
         $this->updated = Forja::canUpdateCore() === false;
@@ -235,9 +234,8 @@ class Dashboard extends Controller
         $minDate = Tools::date('-2 days');
         $minDateTime = Tools::dateTime('-2 days');
 
-        $customerModel = new Cliente();
         $whereCustomer = [new DataBaseWhere('fechaalta', $minDate, '>=')];
-        foreach ($customerModel->all($whereCustomer, ['fechaalta' => 'DESC'], 0, 3) as $customer) {
+        foreach (Cliente::all($whereCustomer, ['fechaalta' => 'DESC'], 0, 3) as $customer) {
             $this->openLinks[] = [
                 'type' => 'customer',
                 'url' => $customer->url(),
@@ -246,9 +244,8 @@ class Dashboard extends Controller
             ];
         }
 
-        $contactModel = new Contacto();
         $whereContact = [new DataBaseWhere('fechaalta', $minDate, '>=')];
-        foreach ($contactModel->all($whereContact, ['fechaalta' => 'DESC'], 0, 3) as $contact) {
+        foreach (Contacto::all($whereContact, ['fechaalta' => 'DESC'], 0, 3) as $contact) {
             $this->openLinks[] = [
                 'type' => 'contact',
                 'url' => $contact->url(),
@@ -257,9 +254,8 @@ class Dashboard extends Controller
             ];
         }
 
-        $productModel = new Producto();
         $whereProd = [new DataBaseWhere('actualizado', $minDateTime, '>=')];
-        foreach ($productModel->all($whereProd, ['actualizado' => 'DESC'], 0, 3) as $product) {
+        foreach (Producto::all($whereProd, ['actualizado' => 'DESC'], 0, 3) as $product) {
             $this->openLinks[] = [
                 'type' => 'product',
                 'url' => $product->url(),
@@ -276,13 +272,12 @@ class Dashboard extends Controller
      */
     private function loadReceiptSection(): void
     {
-        $receiptModel = new ReciboCliente();
         $where = [
             new DataBaseWhere('pagado', false),
             new DataBaseWhere('vencimiento', Tools::date(), '<'),
             new DataBaseWhere('vencimiento', date('Y-m-d', strtotime('-1 year')), '>'),
         ];
-        $this->receipts = $receiptModel->all($where, ['vencimiento' => 'DESC']);
+        $this->receipts = ReciboCliente::all($where, ['vencimiento' => 'DESC']);
 
         if (count($this->receipts) > 0) {
             $this->sections[] = 'receipts';

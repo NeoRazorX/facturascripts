@@ -181,12 +181,12 @@ abstract class BaseView
             'checkBoxes' => true,
             'clickable' => true,
             'customized' => false,
-            'itemLimit' => FS_ITEM_LIMIT,
+            'itemLimit' => Tools::settings('default', 'item_limit', 50),
             'megasearch' => false,
             'saveFilters' => false,
         ];
         $this->template = static::DEFAULT_TEMPLATE;
-        $this->title = Tools::lang()->trans($title);
+        $this->title = Tools::trans($title);
         $this->assets();
     }
 
@@ -360,7 +360,7 @@ abstract class BaseView
 
         $orderBy = ['nick' => 'ASC'];
         $where = $this->getPageWhere($user);
-        if ($this->pageOption->loadFromCode('', $where, $orderBy)) {
+        if ($this->pageOption->loadWhere($where, $orderBy)) {
             $this->settings['customized'] = true;
         } else {
             $viewName = explode('-', $this->name)[0];

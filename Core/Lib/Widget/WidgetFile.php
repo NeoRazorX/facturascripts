@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UploadedFile;
@@ -57,13 +56,13 @@ class WidgetFile extends BaseWidget
     {
         $this->setValue($model);
 
-        $additionalDesc = Tools::lang()->trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]);
-        $finalDesc = empty($description) ? $additionalDesc : Tools::lang()->trans($description) . ' ' . $additionalDesc;
+        $additionalDesc = Tools::trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]);
+        $finalDesc = empty($description) ? $additionalDesc : Tools::trans($description) . ' ' . $additionalDesc;
 
         if ($this->readonly()) {
             $class = $this->combineClasses($this->css('form-control'), $this->class);
             return '<div class="mb-3">'
-                . '<label class="mb-0">' . $this->onclickHtml(Tools::lang()->trans($title), $titleurl) . '</label>'
+                . '<label class="mb-0">' . $this->onclickHtml(Tools::trans($title), $titleurl) . '</label>'
                 . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
                 . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>'
                 . '</div>';
@@ -78,20 +77,18 @@ class WidgetFile extends BaseWidget
      */
     public function processFormData(&$model, $request)
     {
-        $logger = new MiniLog();
-
         // get file uploads
         foreach ($request->files->all() as $key => $uploadFile) {
             if ($key != $this->fieldname || is_null($uploadFile)) {
                 continue;
             } elseif (false === $uploadFile->isValid()) {
-                $logger->error($uploadFile->getErrorMessage());
+                Tools::log()->error($uploadFile->getErrorMessage());
                 continue;
             }
 
             // exclude php files
             if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-                $logger->error(Tools::lang()->trans('php-files-blocked'));
+                Tools::log()->error('php-files-blocked');
                 continue;
             }
 
@@ -108,7 +105,7 @@ class WidgetFile extends BaseWidget
                 continue;
             }
 
-            $logger->error('file-not-found');
+            Tools::log()->error('file-not-found');
         }
     }
 

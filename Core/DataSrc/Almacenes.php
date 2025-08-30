@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,21 +19,23 @@
 
 namespace FacturaScripts\Core\DataSrc;
 
+use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 final class Almacenes implements DataSrcInterface
 {
+    /** @var Almacen[] */
     private static $list;
 
-    /**
-     * @return Almacen[]
-     */
+    /** @return Almacen[] */
     public static function all(): array
     {
         if (!isset(self::$list)) {
-            $model = new Almacen();
-            self::$list = $model->all([], [], 0, 0);
+            self::$list = Cache::remember('model-Almacen-list', function () {
+                return Almacen::all([], ['nombre' => 'ASC'], 0, 0);
+            });
         }
 
         return self::$list;
@@ -44,11 +46,6 @@ final class Almacenes implements DataSrcInterface
         self::$list = null;
     }
 
-    /**
-     * @param bool $addEmpty
-     *
-     * @return array
-     */
     public static function codeModel(bool $addEmpty = true): array
     {
         $codes = [];
@@ -59,6 +56,12 @@ final class Almacenes implements DataSrcInterface
         return CodeModel::array2codeModel($codes, $addEmpty);
     }
 
+    public static function default(): Almacen
+    {
+        $code = Tools::settings('default', 'codalmacen');
+        return self::get($code);
+    }
+
     /**
      * @param string $code
      *
@@ -67,11 +70,11 @@ final class Almacenes implements DataSrcInterface
     public static function get($code): Almacen
     {
         foreach (self::all() as $item) {
-            if ($item->primaryColumnValue() === $code) {
+            if ($item->id() === $code) {
                 return $item;
             }
         }
 
-        return new Almacen();
+        return Almacen::find($code) ?? new Almacen();
     }
 }

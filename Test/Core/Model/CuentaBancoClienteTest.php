@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,11 +21,13 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\CuentaBancoCliente;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CuentaBancoClienteTest extends TestCase
 {
+    use LogErrorsTrait;
     use RandomDataTrait;
 
     public function testCreate(): void
@@ -160,5 +162,10 @@ final class CuentaBancoClienteTest extends TestCase
         $this->assertTrue($cuenta2->delete(), 'cuenta2-cant-delete');
         $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

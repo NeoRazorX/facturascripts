@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -198,14 +197,5 @@ abstract class AccountingClass extends AccountingAccounts
         $line->debe = $total < 0 ? abs($total) : 0;
         $line->haber = max($total, 0);
         return $line;
-    }
-
-    /**
-     * @return ToolBox
-     * @deprecated since version 2023.1
-     */
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 }

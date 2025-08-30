@@ -23,6 +23,10 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\UploadedFile;
+use FacturaScripts\Dinamic\Model\User;
+use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
 
 class About extends Controller
 {
@@ -71,6 +75,9 @@ class About extends Controller
         // Obtener la lista de plugins
         $plugins = Plugins::list();
 
+        // Calcular los límites actuales
+        $limits = $this->getLimits();
+
         return compact(
             'core_version',
             'php_version',
@@ -79,7 +86,34 @@ class About extends Controller
             'os_info',
             'database_version',
             'max_filesize',
-            'plugins'
+            'plugins',
+            'limits'
         );
+    }
+
+    private function getLimits(): array
+    {
+        // Contar usuarios
+        $userModel = new User();
+        $users = $userModel->count();
+
+        // Contar productos
+        $productoModel = new Producto();
+        $products = $productoModel->count();
+
+        // Contar clientes
+        $clienteModel = new Cliente();
+        $customers = $clienteModel->count();
+
+        // Contar facturas de cliente
+        $facturaModel = new FacturaCliente();
+        $invoices = $facturaModel->count();
+
+        return [
+            'users' => $users,
+            'products' => $products,
+            'customers' => $customers,
+            'invoices' => $invoices
+        ];
     }
 }
