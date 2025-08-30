@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Atributo as DinAtributo;
 
@@ -27,9 +29,9 @@ use FacturaScripts\Dinamic\Model\Atributo as DinAtributo;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AtributoValor extends Base\ModelClass
+class AtributoValor extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Code of the related attribute.
@@ -66,7 +68,7 @@ class AtributoValor extends Base\ModelClass
      */
     public $valor;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->orden = 100;
@@ -79,7 +81,7 @@ class AtributoValor extends Base\ModelClass
 
         $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $this->primaryDescriptionColumn() . ' AS description, codatributo, orden '
             . 'FROM ' . static::tableName() . ' ORDER BY codatributo ASC, orden ASC';
-        foreach (self::$dataBase->selectLimit($sql, CodeModel::getlimit()) as $d) {
+        foreach (self::db()->selectLimit($sql, CodeModel::getlimit()) as $d) {
             $results[] = new CodeModel($d);
         }
 
@@ -88,9 +90,7 @@ class AtributoValor extends Base\ModelClass
 
     public function getAtributo(): Atributo
     {
-        $atributo = new DinAtributo();
-        $atributo->loadFromCode($this->codatributo);
-        return $atributo;
+        return $this->belongsTo(Atributo::class, 'codatributo');
     }
 
     public function install(): string
@@ -99,11 +99,6 @@ class AtributoValor extends Base\ModelClass
         new DinAtributo();
 
         return parent::install();
-    }
-
-    public static function primaryColumn(): string
-    {
-        return 'id';
     }
 
     public static function tableName(): string
@@ -117,7 +112,7 @@ class AtributoValor extends Base\ModelClass
 
         // combine attribute name + value
         $attribute = new DinAtributo();
-        if ($attribute->loadFromCode($this->codatributo)) {
+        if ($attribute->load($this->codatributo)) {
             $this->descripcion = $attribute->nombre . ' ' . $this->valor;
         }
 

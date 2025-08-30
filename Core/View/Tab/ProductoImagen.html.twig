@@ -69,7 +69,7 @@
     {# -- Attached files -- #}
     <div class="row row-cols-1 row-cols-md-5" id="images-container">
         {% for counter, image in currentView.cursor %}
-            <div class="col mb-4 images-item" data-image-id="{{ image.id }}" title="{{ trans('you-can-drag-and-drop-to-sort-the-images') }}">
+            <div class="col mb-4 images-item" data-image-id="{{ image.id }}">
                 {% set border = image.referencia ? '' : 'border-primary' %}
                 <div class="card {{ border }} shadow">
                     <img src="{{ asset(image.url('download')) }}" class="card-img-top"
@@ -98,6 +98,9 @@
             </div>
         {% endfor %}
     </div>
+    {% if currentView.count > 1 %}
+        <div class="alert alert-info">{{ trans('you-can-sort-images') }}</div>
+    {% endif %}
 </div>
 
 {% macro buttonDelete(formName) %}

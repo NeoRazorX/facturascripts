@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -29,9 +31,9 @@ use FacturaScripts\Core\Tools;
  * @author Francesc Pineda Segarra <francesc.pìneda.segarra@gmail.com>
  * @author Carlos García Gómez     <carlos@facturascripts.com>
  */
-class EstadoDocumento extends Base\ModelOnChangeClass
+class EstadoDocumento extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /** @var bool */
     public $activo;
@@ -66,7 +68,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
     /** @var string */
     public $tipodoc;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->activo = true;
@@ -150,14 +152,9 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::url($type, $list);
     }
 
-    /**
-     * @param string $field
-     *
-     * @return bool
-     */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
-        if ($this->bloquear && $this->previousData['bloquear']) {
+        if ($this->bloquear && $this->getOriginal('bloquear')) {
             Tools::log()->warning('locked');
             return false;
         }
@@ -174,9 +171,9 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         if ($this->predeterminado) {
             $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
                 . " WHERE predeterminado = true"
-                . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
-                . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
-            return self::$dataBase->exec($sql);
+                . " AND tipodoc = " . self::db()->var2str($this->tipodoc)
+                . " AND idestado != " . self::db()->var2str($this->idestado) . ";";
+            return self::db()->exec($sql);
         }
 
         // establecemos el primer estado como predeterminado
@@ -186,14 +183,14 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         ];
         foreach ($this->all($where) as $item) {
             $sql = "UPDATE " . static::tableName() . " SET predeterminado = true"
-                . " WHERE idestado = " . self::$dataBase->var2str($item->idestado) . ";";
-            return self::$dataBase->exec($sql);
+                . " WHERE idestado = " . self::db()->var2str($item->idestado) . ";";
+            return self::db()->exec($sql);
         }
 
         return false;
     }
 
-    protected function onDelete()
+    protected function onDelete(): void
     {
         if ($this->predeterminado) {
             $where = [
@@ -202,25 +199,25 @@ class EstadoDocumento extends Base\ModelOnChangeClass
             ];
             foreach ($this->all($where) as $item) {
                 $sql = "UPDATE " . static::tableName() . " SET predeterminado = true"
-                    . " WHERE idestado = " . self::$dataBase->var2str($item->idestado) . ";";
-                self::$dataBase->exec($sql);
+                    . " WHERE idestado = " . self::db()->var2str($item->idestado) . ";";
+                self::db()->exec($sql);
                 break;
             }
         }
     }
 
-    protected function onInsert()
+    protected function onInsert(): void
     {
         if ($this->predeterminado) {
             $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
                 . " WHERE predeterminado = true"
-                . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
-                . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
-            self::$dataBase->exec($sql);
+                . " AND tipodoc = " . self::db()->var2str($this->tipodoc)
+                . " AND idestado != " . self::db()->var2str($this->idestado) . ";";
+            self::db()->exec($sql);
         }
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->idestado)) {
             /**
@@ -230,12 +227,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
             $this->idestado = $this->newCode();
         }
 
-        return parent::saveInsert($values);
-    }
-
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['actualizastock', 'bloquear', 'editable', 'generadoc', 'predeterminado', 'tipodoc'];
-        parent::setPreviousData(array_merge($more, $fields));
+        return parent::saveInsert();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cuenta as DinCuenta;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
@@ -75,6 +75,9 @@ class Impuesto extends ModelClass
     /** @var string */
     public $descripcion;
 
+    /** @var string */
+    public $operacion;
+
     /** @var int */
     public $tipo;
 
@@ -84,13 +87,19 @@ class Impuesto extends ModelClass
     /** @var float */
     public $recargo;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->activo = true;
         $this->iva = 0.0;
         $this->recargo = 0.0;
         $this->tipo = self::TYPE_PERCENTAGE;
+    }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        Impuestos::clear();
     }
 
     public function delete(): bool
@@ -100,13 +109,7 @@ class Impuesto extends ModelClass
             return false;
         }
 
-        if (false === parent::delete()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        Impuestos::clear();
-        return true;
+        return parent::delete();
     }
 
     public function getInputSurchargeAccount(string $codejercicio): DinSubcuenta
@@ -151,17 +154,6 @@ class Impuesto extends ModelClass
         return 'codimpuesto';
     }
 
-    public function save(): bool
-    {
-        if (false === parent::save()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        Impuestos::clear();
-        return true;
-    }
-
     public static function tableName(): string
     {
         return 'impuestos';
@@ -195,7 +187,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codcuentaesp', $codcuentaesp),
         ];
-        if ($subcuenta->loadFromCode('', $whereSubcuenta)) {
+        if ($subcuenta->loadWhere($whereSubcuenta)) {
             return $subcuenta;
         }
 
@@ -205,7 +197,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codcuentaesp', $codcuentaesp),
         ];
-        if ($cuenta->loadFromCode('', $whereCuenta)) {
+        if ($cuenta->loadWhere($whereCuenta)) {
             foreach ($cuenta->getSubcuentas() as $subcuenta) {
                 return $subcuenta;
             }
@@ -222,7 +214,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codsubcuenta', $codsubcuenta),
         ];
-        if ($subcuenta->loadFromCode('', $whereSubcuenta)) {
+        if ($subcuenta->loadWhere($whereSubcuenta)) {
             return $subcuenta;
         }
 
@@ -232,7 +224,7 @@ class Impuesto extends ModelClass
             new DataBaseWhere('codejercicio', $codejercicio),
             new DataBaseWhere('codcuentaesp', $codcuentaesp),
         ];
-        if ($cuenta->loadFromCode('', $whereCuenta)) {
+        if ($cuenta->loadWhere($whereCuenta)) {
             // creamos la subcuenta
             $subcuenta->codejercicio = $codejercicio;
             $subcuenta->codcuenta = $cuenta->codcuenta;
@@ -246,13 +238,13 @@ class Impuesto extends ModelClass
         return $subcuenta;
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         // si no se ha asignado un código, lo generamos
         if (empty($this->codimpuesto)) {
             $this->codimpuesto = (string)$this->newCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 }

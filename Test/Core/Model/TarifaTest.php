@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,14 +22,16 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\Model\GrupoClientes;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\Tarifa;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class TarifaTest extends TestCase
 {
+    use LogErrorsTrait;
     use RandomDataTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
         // creamos una tarifa
         $tarifa = new Tarifa();
@@ -50,7 +52,7 @@ final class TarifaTest extends TestCase
         $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
     }
 
-    public function testHtmlOnFields()
+    public function testHtmlOnFields(): void
     {
         // creamos una tarifa con html en los campos
         $tarifa = new Tarifa();
@@ -75,7 +77,7 @@ final class TarifaTest extends TestCase
         $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
     }
 
-    public function testApplyToCustomer()
+    public function testApplyToCustomer(): void
     {
         // creamos una tarifa
         $tarifa = new Tarifa();
@@ -116,7 +118,7 @@ final class TarifaTest extends TestCase
         $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
     }
 
-    public function testApplyToGroup()
+    public function testApplyToGroup(): void
     {
         // creamos una tarifa
         $tarifa = new Tarifa();
@@ -163,7 +165,7 @@ final class TarifaTest extends TestCase
         $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
     }
 
-    public function testApplyCustomerAndGroup()
+    public function testApplyCustomerAndGroup(): void
     {
         // creamos una tarifa
         $tarifa = new Tarifa();
@@ -219,7 +221,7 @@ final class TarifaTest extends TestCase
         $this->assertTrue($tarifa2->delete(), 'tarifa-can-not-delete');
     }
 
-    public function testDoNotApplyToWrongCustomer()
+    public function testDoNotApplyToWrongCustomer(): void
     {
         // creamos una tarifa
         $tarifa = new Tarifa();
@@ -257,5 +259,50 @@ final class TarifaTest extends TestCase
         $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-can-not-delete');
         $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
+    }
+
+    public function testDelete(): void
+    {
+        // creamos una tarifa
+        $tarifa = new Tarifa();
+        $tarifa->nombre = 'Tarifa de prueba';
+        $tarifa->valorx = 10;
+        $tarifa->valory = 1;
+        $this->assertTrue($tarifa->save(), 'tarifa-can-not-save');
+
+        // creamos un cliente y le asignamos la tarifa
+        $cliente = $this->getRandomCustomer();
+        $cliente->codgrupo = null;
+        $cliente->codtarifa = $tarifa->codtarifa;
+        $this->assertTrue($cliente->save(), 'cliente-can-not-save');
+
+        // creamos un grupo y le asignamos la tarifa
+        $grupo = new GrupoClientes();
+        $grupo->codtarifa = $tarifa->codtarifa;
+        $grupo->nombre = 'Grupo de prueba';
+        $this->assertTrue($grupo->save(), 'grupo-can-not-save');
+
+        // eliminamos la tarifa
+        $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
+
+        // comprobamos que el cliente sigue existiendo sin tarifa
+        $this->assertTrue($cliente->exists(), 'cliente-does-not-exist');
+        $this->assertTrue($cliente->loadFromCode($cliente->codcliente), 'cliente-does-not-exist');
+        $this->assertNull($cliente->codtarifa, 'cliente-codtarifa-is-not-null');
+
+        // comprobamos que el grupo sigue existiendo sin tarifa
+        $this->assertTrue($grupo->exists(), 'grupo-does-not-exist');
+        $this->assertTrue($grupo->reload(), 'grupo-does-not-exist');
+        $this->assertNull($grupo->codtarifa, 'grupo-codtarifa-is-not-null');
+
+        // eliminamos el cliente y el grupo
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($cliente->delete(), 'cliente-can-not-delete');
+        $this->assertTrue($grupo->delete(), 'grupo-can-not-delete');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

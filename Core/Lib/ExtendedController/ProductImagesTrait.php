@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -116,9 +116,9 @@ trait ProductImagesTrait
             return false;
         }
 
-        $id = $this->request->request->get('idimage');
+        $id = $this->request->input('idimage');
         $productImage = new ProductoImagen();
-        if (false === $productImage->loadFromCode($id)) {
+        if (false === $productImage->load($id)) {
             return true;
         }
 
@@ -159,10 +159,10 @@ trait ProductImagesTrait
     protected function createProductImage(int $idfile): ?int
     {
         $productImage = new ProductoImagen();
-        $productImage->idproducto = $this->request->request->get('idproducto');
+        $productImage->idproducto = $this->request->input('idproducto');
         $productImage->idfile = $idfile;
 
-        $reference = $this->request->request->get('referencia', '');
+        $reference = $this->request->input('referencia', '');
         $productImage->referencia = empty($reference) ? null : $reference;
         return $productImage->save() ? $productImage->idproducto : null;
     }

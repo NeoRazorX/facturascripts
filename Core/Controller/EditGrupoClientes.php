@@ -66,7 +66,7 @@ class EditGrupoClientes extends EditController
                 return;
             }
 
-            $cliente->codgrupo = $this->request->query->get('code');
+            $cliente->codgrupo = $this->request->query('code');
             if ($cliente->save()) {
                 $num++;
             }

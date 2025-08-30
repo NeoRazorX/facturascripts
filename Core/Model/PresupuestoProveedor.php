@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\PurchaseDocument;
+use FacturaScripts\Core\Template\ModelTrait;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Dinamic\Model\LineaPresupuestoProveedor as LineaPresupuesto;
 
 /**
@@ -28,10 +31,9 @@ use FacturaScripts\Dinamic\Model\LineaPresupuestoProveedor as LineaPresupuesto;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class PresupuestoProveedor extends Base\PurchaseDocument
+class PresupuestoProveedor extends PurchaseDocument
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Primary key.
@@ -47,11 +49,9 @@ class PresupuestoProveedor extends Base\PurchaseDocument
      */
     public function getLines(): array
     {
-        $lineaModel = new LineaPresupuesto();
         $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-
-        return $lineaModel->all($where, $order, 0, 0);
+        return LineaPresupuesto::all($where, $order, 0, 0);
     }
 
     /**
@@ -69,6 +69,8 @@ class PresupuestoProveedor extends Base\PurchaseDocument
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
         $newLine->loadFromData($data, $exclude);
+
+        Calculator::calculateLine($this, $newLine);
 
         // allow extensions
         $this->pipe('getNewLine', $newLine, $data, $exclude);

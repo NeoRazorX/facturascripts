@@ -12,6 +12,11 @@
     }
 
     function newLineAction(code) {
+        if (!document.forms['accEntryForm']['concepto'].value.trim()) {
+            alert('{{ trans("acc-concept-required") }}');
+            document.forms['accEntryForm']['concepto'].focus();
+            return false;
+        }
         document.getElementById("new_subaccount").value = code;
         return accEntryFormAction('new-line', '0');
     }

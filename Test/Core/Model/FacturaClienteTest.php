@@ -805,17 +805,17 @@ final class FacturaClienteTest extends TestCase
     {
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
         $campos = [
-            'apartado'       => [10, 11],
-            'cifnif'         => [30, 31],
-            'ciudad'         => [100, 101],
-            'codigo'         => [20, 21],
-            'codigoenv'      => [200, 201],
-            'codigorect'     => [20, 21],
-            'codpais'        => [20, 21],
-            'codpostal'      => [10, 11],
-            'direccion'      => [200, 201],
-            'nombrecliente'  => [100, 101],
-            'provincia'      => [100, 101],
+            'apartado' => [10, 11],
+            'cifnif' => [30, 31],
+            'ciudad' => [100, 101],
+            'codigo' => [20, 21],
+            'codigoenv' => [200, 201],
+            'codigorect' => [20, 21],
+            'codpais' => [20, 21],
+            'codpostal' => [10, 11],
+            'direccion' => [200, 201],
+            'nombrecliente' => [100, 101],
+            'provincia' => [100, 101],
         ];
 
         // creamos un cliente

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -131,15 +131,13 @@ class GroupItem extends VisualItem
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         $html = '<form id="formModal' . $this->getUniqueId() . '" method="post" enctype="multipart/form-data" onsubmit="animateSpinner(\'add\')">'
             . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
-            . '<input type="hidden" name="code" value=""/>'
             . '<input type="hidden" name="multireqtoken" value="' . static::getToken() . '"/>'
             . '<div class="modal" id="modal' . $this->name . '" tabindex="-1" role="dialog">'
             . '<div class="modal-dialog ' . $this->class . '" role="document">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">' . $icon . Tools::lang()->trans($this->title) . '</h5>'
+            . '<h5 class="modal-title">' . $icon . Tools::trans($this->title) . '</h5>'
             . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
-            . ''
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
@@ -153,11 +151,11 @@ class GroupItem extends VisualItem
             . '</div>'
             . '<div class="modal-footer">'
             . '<button type="button" class="btn btn-spin-action btn-secondary" data-bs-dismiss="modal">'
-            . Tools::lang()->trans('cancel')
+            . Tools::trans('cancel')
             . '</button>'
             . '<input type="hidden" name="action" value="' . $this->name . '"/>'
             . '<button type="submit" class="btn-spin-action btn btn-primary">'
-            . Tools::lang()->trans('accept')
+            . Tools::trans('accept')
             . '</button>'
             . '</div>'
             . '</div>'
@@ -203,17 +201,17 @@ class GroupItem extends VisualItem
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         if (empty($this->description)) {
-            return '<legend class="text-info mt-2 mb-0">' . $icon . Tools::lang()->trans($this->title) . '</legend>';
+            return '<legend class="text-info mt-2 mb-0">' . $icon . Tools::trans($this->title) . '</legend>';
         }
 
-        return '<legend class="text-info mt-2 mb-1">' . $icon . Tools::lang()->trans($this->title) . '</legend>'
-            . '<small class="form-text text-muted w-100 mb-2">' . Tools::lang()->trans($this->description) . '</small>';
+        return '<legend class="text-info mt-2 mb-1">' . $icon . Tools::trans($this->title) . '</legend>'
+            . '<small class="form-text text-muted w-100 mb-2">' . Tools::trans($this->description) . '</small>';
     }
 
     /**
      * @param array $children
      */
-    protected function loadColumns(array $children)
+    protected function loadColumns(array $children): void
     {
         $columnClass = VisualItemLoadEngine::getNamespace() . 'ColumnItem';
         foreach ($children as $child) {

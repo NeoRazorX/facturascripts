@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,9 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\AttachedFile;
-use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Fabricante;
 use FacturaScripts\Core\Model\Familia;
@@ -48,9 +48,8 @@ final class ProductoTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        $productModel = new Producto();
         $where = [new DataBaseWhere('referencia', self::TEST_REFERENCE)];
-        foreach ($productModel->all($where, [], 0, 0) as $product) {
+        foreach (Producto::all($where, [], 0, 0) as $product) {
             $product->delete();
         }
     }
@@ -60,7 +59,7 @@ final class ProductoTest extends TestCase
         // creamos un producto
         $product = $this->getTestProduct();
         $this->assertTrue($product->save(), 'product-cant-save');
-        $this->assertNotNull($product->primaryColumnValue(), 'estado-product-not-stored');
+        $this->assertNotNull($product->id(), 'estado-product-not-stored');
         $this->assertTrue($product->exists(), 'product-cant-persist');
 
         // lo eliminamos
@@ -86,7 +85,7 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->save(), 'product-cant-save-with-null-description');
 
         // recargamos el producto para comprobar que se ha guardado correctamente
-        $product->loadFromCode($product->primaryColumnValue());
+        $product->reload();
 
         // comprobamos que la descripción no es nula
         $this->assertNotNull($product->descripcion, 'product-description-is-null');
@@ -104,7 +103,7 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->save(), 'product-cant-save-with-null-observations');
 
         // recargamos el producto para comprobar que se ha guardado correctamente
-        $product->loadFromCode($product->primaryColumnValue());
+        $product->reload();
 
         // comprobamos que las observaciones no son nulas
         $this->assertNotNull($product->observaciones, 'product-observations-is-null');
@@ -124,7 +123,7 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->save(), 'product-cant-save');
 
         // leemos de la base de datos y comprobamos los valores guardados
-        $product->loadFromCode($product->primaryColumnValue());
+        $product->reload();
         $this->assertFalse($product->publico, 'product-blocked-can-public');
         $this->assertFalse($product->secompra, 'product-blocked-can-buy');
         $this->assertFalse($product->sevende, 'product-blocked-can-sale');
@@ -142,14 +141,14 @@ final class ProductoTest extends TestCase
 
         // creamos un producto con esta familia
         $product = $this->getTestProduct();
-        $product->codfamilia = $family->primaryColumnValue();
+        $product->codfamilia = $family->id();
         $this->assertTrue($product->save(), 'product-cant-save');
 
         // eliminamos la familia
         $this->assertTrue($family->delete(), 'product-cant-delete');
 
         // recargamos el producto para ver que se ha desvinculado la familia
-        $product->loadFromCode($product->primaryColumnValue());
+        $product->reload();
         $this->assertNull($product->codfamilia, 'product-family-not-empty');
 
         // lo eliminamos
@@ -165,14 +164,14 @@ final class ProductoTest extends TestCase
 
         // creamos un producto con este fabricante
         $product = $this->getTestProduct();
-        $product->codfabricante = $manufacturer->primaryColumnValue();
+        $product->codfabricante = $manufacturer->id();
         $this->assertTrue($product->save(), 'product-cant-save');
 
         // eliminamos el fabricante
         $this->assertTrue($manufacturer->delete(), 'manufacturer-cant-delete');
 
         // recargamos el producto para ver que se ha desvinculado el fabricante
-        $product->loadFromCode($product->primaryColumnValue());
+        $product->reload();
         $this->assertNull($product->codfabricante, 'product-manufacturer-not-empty');
 
         // lo eliminamos
@@ -189,14 +188,14 @@ final class ProductoTest extends TestCase
 
         // creamos un producto con este impuesto
         $product = $this->getTestProduct();
-        $product->codimpuesto = $tax->primaryColumnValue();
+        $product->codimpuesto = $tax->id();
         $this->assertTrue($product->save(), 'product-cant-save');
 
         // eliminamos el impuesto
         $this->assertTrue($tax->delete(), 'tax-cant-delete');
 
         // recargamos el producto para ver que se ha desvinculado el impuesto
-        $product->loadFromCode($product->primaryColumnValue());
+        $product->reload();
         $this->assertNull($product->codimpuesto, 'product-tax-not-empty');
 
         // lo eliminamos
@@ -228,10 +227,11 @@ final class ProductoTest extends TestCase
         $this->assertTrue($supplierProduct->save(), 'supplier-product-cant-save');
 
         // recargamos la variante para comprobar que NO se ha actualizado el coste, ya que no hay política asignada
-        $variant->loadFromCode($variant->primaryColumnValue());
+        $variant->reload();
         $this->assertEquals(66, $variant->coste, 'variant-cost-should-not-change');
 
         // eliminamos
+        $this->assertTrue($supplierProduct->delete(), 'supplier-product-cant-delete');
         $this->assertTrue($product->delete(), 'product-cant-delete');
         $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'supplier-cant-delete');
@@ -259,7 +259,7 @@ final class ProductoTest extends TestCase
         $supplierProduct1->referencia = $product->referencia;
         $supplierProduct1->idproducto = $product->idproducto;
         $supplierProduct1->precio = 100;
-        $supplierProduct1->actualizado = date(ModelCore::DATETIME_STYLE, strtotime("- 1 days"));
+        $supplierProduct1->actualizado = Tools::dateTime("- 1 days");
         $this->assertTrue($supplierProduct1->save(), 'supplier-product-1-cant-save');
 
         // creamos el proveedor 2
@@ -275,10 +275,12 @@ final class ProductoTest extends TestCase
         $this->assertTrue($supplierProduct2->save(), 'supplier-product-2-cant-save');
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
-        $variant->loadFromCode($variant->primaryColumnValue());
+        $variant->reload();
         $this->assertEquals(200, $variant->coste, 'variant-cost-not-last');
 
         // eliminamos
+        $this->assertTrue($supplierProduct1->delete(), 'supplier-product-1-cant-delete');
+        $this->assertTrue($supplierProduct2->delete(), 'supplier-product-2-cant-delete');
         $this->assertTrue($product->delete(), 'product-cant-delete');
         $this->assertTrue($supplier1->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
@@ -308,7 +310,7 @@ final class ProductoTest extends TestCase
         $supplierProduct1->referencia = $product->referencia;
         $supplierProduct1->idproducto = $product->idproducto;
         $supplierProduct1->precio = 200;
-        $supplierProduct1->actualizado = date(ModelCore::DATETIME_STYLE, strtotime("- 1 days"));
+        $supplierProduct1->actualizado = Tools::dateTime("- 1 days");
         $this->assertTrue($supplierProduct1->save(), 'supplier-product-1-cant-save');
 
         // creamos el proveedor 2
@@ -324,10 +326,12 @@ final class ProductoTest extends TestCase
         $this->assertTrue($supplierProduct2->save(), 'supplier-product-2-cant-save');
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
-        $variant->loadFromCode($variant->primaryColumnValue());
+        $variant->reload();
         $this->assertEquals(200, $variant->coste, 'variant-cost-not-last');
 
         // eliminamos
+        $this->assertTrue($supplierProduct1->delete(), 'supplier-product-1-cant-delete');
+        $this->assertTrue($supplierProduct2->delete(), 'supplier-product-2-cant-delete');
         $this->assertTrue($product->delete(), 'product-cant-delete');
         $this->assertTrue($supplier1->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
@@ -372,10 +376,12 @@ final class ProductoTest extends TestCase
         $this->assertTrue($supplierProduct2->save(), 'supplier-product-cant-save');
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
-        $variant->loadFromCode($variant->primaryColumnValue());
+        $variant->reload();
         $this->assertEquals(150, $variant->coste, 'variant-cost-not-average');
 
         // eliminamos
+        $this->assertTrue($supplierProduct1->delete(), 'supplier-product-1-cant-delete');
+        $this->assertTrue($supplierProduct2->delete(), 'supplier-product-2-cant-delete');
         $this->assertTrue($product->delete(), 'product-cant-delete');
         $this->assertTrue($supplier1->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
@@ -397,7 +403,7 @@ final class ProductoTest extends TestCase
         $this->assertTrue($stock->save(), 'stock-cant-save');
 
         // recargamos el producto para comprobar que el stock se ha actualizado
-        $product->loadFromCode($product->primaryColumnValue());
+        $product->reload();
         $variant = $product->getVariants()[0];
         $this->assertTrue($product->stockfis == $stock->cantidad, 'product-different-stock');
         $this->assertTrue($variant->stockfis == $stock->cantidad, 'variant-different-stock');
@@ -407,13 +413,13 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->save(), 'product-cant-save');
 
         // recargamos el producto para comprobar que el stock se ha actualizado
-        $product->loadFromCode($product->primaryColumnValue());
+        $product->reload();
         $this->assertEquals(0, $product->stockfis, 'product-cant-stock');
-        $variant->loadFromCode($variant->primaryColumnValue());
+        $variant->reload();
         $this->assertEquals(0, $variant->stockfis, 'variant-cant-stock');
 
         // Comprobamos que el stock ha sido eliminado
-        $this->assertFalse($stock->loadFromCode($stock->primaryColumnValue()), 'stock-cant-load-after-delete');
+        $this->assertFalse($stock->load($stock->id()), 'stock-cant-load-after-delete');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -442,7 +448,7 @@ final class ProductoTest extends TestCase
         $this->assertTrue($variants[0]->save(), 'variant-cant-save');
 
         // recargamos producto y comprobamos que se ha actualizado el precio
-        $this->assertTrue($product->loadFromCode($product->idproducto));
+        $this->assertTrue($product->load($product->idproducto));
         $this->assertEquals(133, $product->precio, 'product-price-not-updated');
 
         // comprobamos que el precio se calcula a partir de coste y margen
@@ -451,11 +457,11 @@ final class ProductoTest extends TestCase
         $this->assertTrue($variants[0]->save(), 'variant-cant-save');
 
         // recargamos variante y comprobamos precio
-        $this->assertTrue($variants[0]->loadFromCode($variants[0]->primaryColumnValue()), 'cant-reload-variant');
+        $this->assertTrue($variants[0]->load($variants[0]->id()), 'cant-reload-variant');
         $this->assertEquals(120, $variants[0]->precio, 'variant-difference-price');
 
         // recargamos producto y comprobamos precio
-        $this->assertTrue($product->loadFromCode($product->idproducto));
+        $this->assertTrue($product->load($product->idproducto));
         $this->assertEquals(120, $product->precio, 'product-price-not-updated');
 
         // eliminamos
@@ -493,7 +499,7 @@ final class ProductoTest extends TestCase
 
         // comprobamos que la referencia del producto no se ha modificado
         $ref = $product->referencia;
-        $this->assertTrue($product->loadFromCode($product->idproducto), 'cant-reload-product');
+        $this->assertTrue($product->load($product->idproducto), 'cant-reload-product');
         $this->assertEquals($ref, $product->referencia, 'product-reference-changed');
 
         // eliminamos variante
@@ -502,7 +508,7 @@ final class ProductoTest extends TestCase
 
         // comprobamos que no podemos eliminar la única variante
         $where = [new DataBaseWhere('referencia', $product->referencia)];
-        $this->assertTrue($variant->loadFromCode('', $where), 'cant-reload-variant');
+        $this->assertTrue($variant->loadWhere($where), 'cant-reload-variant');
         $this->assertFalse($variant->delete(), 'can-delete-only-variant');
 
         // eliminamos el producto
@@ -518,7 +524,7 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->save(), 'product-cant-save');
 
         // comprobamos que no se ha alterado el precio
-        $product->loadFromCode($product->primaryColumnValue());
+        $product->reload();
         $this->assertEquals(-10, $product->precio, 'product-negative-price-error');
 
         // creamos un cliente
@@ -662,10 +668,38 @@ final class ProductoTest extends TestCase
         $variante->save();
 
         // refrescamos los datos desde la base de datos
-        $product->loadFromCode($product->idproducto);
+        $product->load($product->idproducto);
 
         // comprobamos que se haya actualizado la referencia en el producto
         $this->assertEquals('01', $product->referencia);
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+    }
+
+    public function testExceptionVat()
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // intentamos añadir una excepción de IVA
+        $product->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E1;
+        $this->assertFalse($product->save(), 'product-can-save-with-exception-iva-e1');
+
+        // cambiamos el iva a 0 con una excepción de iva
+        $product->codimpuesto = 'IVA0';
+        $product->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E1;
+        $this->assertTrue($product->save(), 'product-cant-save-with-iva-0');
+
+        // intentamos quitar el impuesto
+        $product->codimpuesto = null;
+        $this->assertFalse($product->save(), 'product-can-save-without-iva');
+
+        // quitamos la excepción de IVA y cambiamos el impuesto
+        $product->excepcioniva = null;
+        $product->codimpuesto = 'IVA21';
+        $this->assertTrue($product->save(), 'product-cant-save-with-iva-21');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -676,6 +710,7 @@ final class ProductoTest extends TestCase
         $product = new Producto();
         $product->referencia = self::TEST_REFERENCE;
         $product->descripcion = 'Test Product';
+
         return $product;
     }
 
@@ -686,6 +721,7 @@ final class ProductoTest extends TestCase
         $supplier->codproveedor = 'TEST' . $num;
         $supplier->nombre = 'Test Supplier ' . $num;
         $supplier->cifnif = $num . '345678A';
+
         return $supplier;
     }
 

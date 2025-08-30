@@ -19,9 +19,8 @@
 
 namespace FacturaScripts\Core\Lib;
 
-use Endroid\QrCode\Color\Color;
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use PragmaRX\Google2FA\Google2FA;
 use Exception;
 use FacturaScripts\Core\Tools;
@@ -83,14 +82,16 @@ class TwoFactorManager
     public static function getQRCodeImage(string $url): string
     {
         try {
-            $qrCode = QrCode::create($url)
-                ->setSize(self::QR_CODE_SIZE)
-                ->setForegroundColor(new Color(0, 0, 0))
-                ->setBackgroundColor(new Color(255, 255, 255));
+            $options = new QROptions([
+                'version' => QRCode::VERSION_AUTO,
+                'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+                'eccLevel' => QRCode::ECC_L,
+                'scale' => 10,
+                'imageBase64' => true,
+            ]);
 
-            $writer = new PngWriter();
-            $result = $writer->write($qrCode);
-            return $result->getDataUri();
+            $qrcode = new QRCode($options);
+            return $qrcode->render($url);
         } catch (Exception $e) {
             Tools::log()->error('error-generating-qr-code', [
                 '%message%' => $e->getMessage(),

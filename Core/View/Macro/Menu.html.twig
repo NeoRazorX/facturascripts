@@ -18,15 +18,15 @@
      */
 #}
 
-{% macro showMenu(menuItem, parent) %}
+{% macro showMenu(menuItem, parent = '') %}
     {% import _self as macros %}
     {% set active = menuItem.active ? ' active' : '' %}
-    {% set menuId = parent is empty ? 'menu_' ~ menuItem.name : parent ~ menuItem.name %}
+    {% set menuId = parent ? parent ~ menuItem.name : 'menu_' ~ menuItem.name %}
 
-    {% if parent is empty %}
+    {% if not parent %}
         {# Main level menu/submenu #}
-        <li id="{{ menuId | lower }}" class="fs-menu-item nav-item dropdown{{ active }}">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <li id="{{ menuId | lower }}" class="fs-menu-item nav-item dropdown">
+            <a class="nav-link dropdown-toggle{{ active }}" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {% set title = menuItem.title %}
                 <span class="d-md-none">{{ title | slice(0, 2) }}</span>
                 <span class="d-none d-md-inline-block">{{ title }}</span>

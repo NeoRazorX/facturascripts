@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,12 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Model\Base\InvoiceTrait;
+use FacturaScripts\Core\Model\Base\SalesDocument;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Model\LineaFacturaCliente as DinLineaFactura;
+use FacturaScripts\Dinamic\Model\LineaFacturaCliente as LineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
 
 /**
@@ -29,18 +33,19 @@ use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class FacturaCliente extends Base\SalesDocument
+class FacturaCliente extends SalesDocument
 {
-    use Base\ModelTrait;
-    use Base\InvoiceTrait;
+    use ModelTrait;
+    use InvoiceTrait;
 
     public function __construct(array $data = [])
     {
         parent::__construct($data);
+
         self::$dont_copy_fields[] = 'fechadevengo';
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->pagada = false;
@@ -50,14 +55,13 @@ class FacturaCliente extends Base\SalesDocument
     /**
      * Returns the lines associated with the invoice.
      *
-     * @return DinLineaFactura[]
+     * @return LineaFactura[]
      */
     public function getLines(): array
     {
-        $lineaModel = new DinLineaFactura();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-        return $lineaModel->all($where, $order, 0, 0);
+        return LineaFactura::all($where, $order, 0, 0);
     }
 
     /**
@@ -66,15 +70,17 @@ class FacturaCliente extends Base\SalesDocument
      * @param array $data
      * @param array $exclude
      *
-     * @return DinLineaFactura
+     * @return LineaFactura
      */
     public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idfactura', 'servido'])
     {
-        $newLine = new DinLineaFactura();
+        $newLine = new LineaFactura();
         $newLine->idfactura = $this->idfactura;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
         $newLine->loadFromData($data, $exclude);
+
+        Calculator::calculateLine($this, $newLine);
 
         // allow extensions
         $this->pipe('getNewLine', $newLine, $data, $exclude);
@@ -89,9 +95,8 @@ class FacturaCliente extends Base\SalesDocument
      */
     public function getReceipts(): array
     {
-        $receipt = new DinReciboCliente();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
-        return $receipt->all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
+        return DinReciboCliente::all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
     }
 
     public static function tableName(): string
@@ -99,15 +104,16 @@ class FacturaCliente extends Base\SalesDocument
         return 'facturascli';
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
-        return $this->testDate() && parent::saveInsert($values);
+        return $this->testDate() && parent::saveInsert();
     }
 
     protected function testDate(): bool
     {
         // prevent form using old dates
-        $numColumn = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
+        $db_type = Tools::config('db_type');
+        $numColumn = strtolower($db_type) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
         $whereOld = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codserie', $this->codserie),

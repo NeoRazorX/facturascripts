@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,6 +48,9 @@ class Tools
     /** @var array */
     private static $settings;
 
+    /** @var Translator */
+    private static $translator;
+
     /**
      * Convierte los caracteres especiales de una cadena en sus equivalentes ASCII.
      *
@@ -91,7 +94,7 @@ class Tools
 
     /**
      * Obtiene el valor de la configuración basada en una clave dada.
-     * Normalmente estas contantes se definen en el config.php
+     * Normalmente, estas contantes se definen en el config.php
      *
      * Esta función busca una constante de configuración que coincida con una clave
      * específica en tres posibles formas: la clave tal cual, la clave en mayúsculas,
@@ -198,7 +201,7 @@ class Tools
             str_replace(self::HTML_REPLACEMENTS, self::HTML_CHARS, trim($text));
     }
 
-    public static function floatcmp($f1, $f2, $precision = 10, $round = false): bool
+    public static function floatCmp($f1, $f2, $precision = 10, $round = false): bool
     {
         if ($round || false === function_exists('bccomp')) {
             return abs($f1 - $f2) < 6 / 10 ** ($precision + 1);
@@ -220,12 +223,33 @@ class Tools
             return self::config('folder') ?? '';
         }
 
-        // eliminamos barras al incio y al final
-        $folders = array_map(function($folder) {
+        $baseFolder = self::config('folder') ?? '';
+
+        // verificamos si el primer parámetro ya contiene la ruta base (antes de limpiar barras)
+        $firstFolder = $folders[0] ?? '';
+        $baseFolderNormalized = rtrim($baseFolder, '/\\');
+        if (!empty($baseFolder) && !empty($firstFolder) && strpos($firstFolder, $baseFolderNormalized) === 0) {
+            // el primer parámetro ya contiene la ruta base, procesamos el resto sin añadir la base
+            $result = $firstFolder;
+
+            // procesamos el resto de parámetros si los hay
+            for ($i = 1; $i < count($folders); $i++) {
+                $folder = ltrim(rtrim($folders[$i], '/\\'), '/\\');
+                if (!empty($folder)) {
+                    $result .= DIRECTORY_SEPARATOR . $folder;
+                }
+            }
+
+            return $result;
+        }
+
+        // eliminamos barras al inicio y al final
+        $folders = array_map(function ($folder) {
             return ltrim(rtrim($folder, '/\\'), '/\\');
         }, $folders);
 
-        array_unshift($folders, self::config('folder'));
+        // añadimos la ruta base al inicio
+        array_unshift($folders, $baseFolder);
         return implode(DIRECTORY_SEPARATOR, $folders);
     }
 
@@ -290,41 +314,10 @@ class Tools
     }
 
     /**
-     * Calcula el tamaño total de una carpeta y su contenido, excluyendo archivos y carpetas especificados.
-     *
-     * @param string $folder La ruta de la carpeta cuyo tamaño se desea calcular.
-     * @param array $exclude Lista de archivos y carpetas a excluir del cálculo. Por defecto, incluye `.DS_Store` y `.well-known`.
-     *
-     * @return int El tamaño total de la carpeta y su contenido en bytes.
-     */
-    public static function folderSize(string $folder, array $exclude = ['.DS_Store', '.well-known']): int
-    {
-        $size = 0;
-        $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
-        if (false === is_array($scan)) {
-            return $size;
-        }
-
-        $exclude[] = '.';
-        $exclude[] = '..';
-        $files = array_diff($scan, $exclude);
-        foreach ($files as $file) {
-            $newFile = $folder . DIRECTORY_SEPARATOR . $file;
-            if (is_dir($newFile)) {
-                $size += static::folderSize($newFile, $exclude);
-            } else {
-                $size += filesize($newFile);
-            }
-        }
-
-        return $size;
-    }
-
-    /**
-     * Escanea el contenido de una carpeta y opcionalmente sus subcarpetas, excluyendo archivos y carpetas especificados.
+     * Escanea el contenido de una carpeta y opcionalmente sus sub-carpetas, excluyendo archivos y carpetas especificados.
      *
      * @param string $folder La ruta de la carpeta que se debe escanear.
-     * @param bool $recursive Indica si se debe realizar una búsqueda recursiva en las subcarpetas. Por defecto es `false`.
+     * @param bool $recursive Indica si se debe realizar una búsqueda recursiva en las sub-carpetas. Por defecto es `false`.
      * @param array $exclude Lista de archivos y carpetas a excluir del resultado. Por defecto incluye `.DS_Store` y `.well-known`.
      *
      * @return array Un array con los nombres de archivos y carpetas encontrados, incluyendo rutas relativas si se busca recursivamente.
@@ -358,6 +351,37 @@ class Tools
     }
 
     /**
+     * Calcula el tamaño total de una carpeta y su contenido, excluyendo archivos y carpetas especificados.
+     *
+     * @param string $folder La ruta de la carpeta cuyo tamaño se desea calcular.
+     * @param array $exclude Lista de archivos y carpetas a excluir del cálculo. Por defecto, incluye `.DS_Store` y `.well-known`.
+     *
+     * @return int El tamaño total de la carpeta y su contenido en bytes.
+     */
+    public static function folderSize(string $folder, array $exclude = ['.DS_Store', '.well-known']): int
+    {
+        $size = 0;
+        $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
+        if (false === is_array($scan)) {
+            return $size;
+        }
+
+        $exclude[] = '.';
+        $exclude[] = '..';
+        $files = array_diff($scan, $exclude);
+        foreach ($files as $file) {
+            $newFile = $folder . DIRECTORY_SEPARATOR . $file;
+            if (is_dir($newFile)) {
+                $size += static::folderSize($newFile, $exclude);
+            } else {
+                $size += filesize($newFile);
+            }
+        }
+
+        return $size;
+    }
+
+    /**
      * Obtiene la hora actual o la hora de una fecha específica en formato determinado.
      *
      * @param string|null $date La fecha y hora a formatear. Si se proporciona, se usa para obtener la hora correspondiente. Si es nulo o vacío, se usa la hora actual.
@@ -380,25 +404,25 @@ class Tools
     {
         // Convertir a ASCII para eliminar acentos y caracteres especiales
         $text = self::ascii($text);
-        
+
         // Insertar guiones antes de mayúsculas precedidas por minúsculas o números
         $text = preg_replace('/([a-z0-9])([A-Z])/', '$1-$2', $text);
-        
+
         // Insertar guiones entre mayúsculas consecutivas y la siguiente minúscula (ej: HTMLParser -> HTML-Parser)
         $text = preg_replace('/([A-Z])([A-Z][a-z])/', '$1-$2', $text);
-        
+
         // Convertir a minúsculas
         $text = strtolower($text);
-        
+
         // Reemplazar espacios y caracteres no alfanuméricos con guiones
         $text = preg_replace('/[^a-z0-9]+/', '-', $text);
-        
+
         // Eliminar guiones duplicados
         $text = preg_replace('/-{2,}/', '-', $text);
-        
+
         // Eliminar guiones al inicio y final
         $text = trim($text, '-');
-        
+
         return $text;
     }
 
@@ -526,6 +550,27 @@ class Tools
     }
 
     /**
+     * Genera una cadena de caracteres aleatorios de una longitud especificada.
+     *
+     * Esta función crea una cadena de caracteres aleatorios usando números y letras mayúsculas y minúsculas.
+     * La longitud de la cadena generada es determinada por el parámetro `$length`.
+     *
+     * @param int $length La longitud deseada para la cadena aleatoria. Por defecto es 10.
+     *
+     * @return string La cadena aleatoria generada.
+     */
+    public static function randomString(int $length = 10): string
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    /**
      * Obtiene el valor de una configuración específica de un grupo, con un valor predeterminado si no está definido.
      *
      * @param string $group El nombre del grupo de configuración.
@@ -570,7 +615,7 @@ class Tools
         foreach (self::$settings as $key => $properties) {
             $model = new Settings();
             $model->name = $key;
-            $model->properties = $properties;
+            $model->setProperties($properties);
             if (false === $model->save()) {
                 return false;
             }
@@ -632,51 +677,30 @@ class Tools
     {
         // Convertir a ASCII y a minúsculas
         $text = strtolower(self::ascii($text));
-        
+
         // Reemplazar caracteres no alfanuméricos con el separador
         $text = preg_replace('/[^a-z0-9]+/', $separator, $text);
-        
+
         // Escapar el separador para usar en regex y eliminar separadores consecutivos
         $escapedSeparator = preg_quote($separator, '/');
         $text = preg_replace('/' . $escapedSeparator . '{2,}/', $separator, $text);
-        
+
         // Eliminar separadores al inicio y final
         $text = trim($text, $separator);
-        
+
         // Si queda una cadena vacía, devolver una cadena vacía
         if ($text === '') {
             return '';
         }
-        
+
         // Aplicar límite de longitud si se especifica
         if ($maxLength > 0 && strlen($text) > $maxLength) {
             $text = substr($text, 0, $maxLength);
             // Limpiar separadores finales que puedan haber quedado tras el corte
             $text = rtrim($text, $separator);
         }
-        
-        return $text;
-    }
 
-    /**
-     * Genera una cadena de caracteres aleatorios de una longitud especificada.
-     *
-     * Esta función crea una cadena de caracteres aleatorios usando números y letras mayúsculas y minúsculas.
-     * La longitud de la cadena generada es determinada por el parámetro `$length`.
-     *
-     * @param int $length La longitud deseada para la cadena aleatoria. Por defecto es 10.
-     *
-     * @return string La cadena aleatoria generada.
-     */
-    public static function randomString(int $length = 10): string
-    {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        return $randomString;
+        return $text;
     }
 
     /**
@@ -684,7 +708,7 @@ class Tools
      *
      * @param string|null $text El texto que se debe truncar. Puede ser nulo.
      * @param int $length La longitud máxima permitida para el texto truncado. Por defecto es 50.
-     * @param string $break El marcador de truncamiento que se añadirá al final del texto truncado. Por defecto es '...'.
+     * @param string $break El marcador de truncamiento que se añadirá al final del texto truncado. Por defecto es '...' .
      *
      * @return string El texto truncado con el marcador de truncamiento añadido si es necesario.
      */
@@ -742,6 +766,26 @@ class Tools
         return date(self::DATETIME_STYLE, $time);
     }
 
+    /**
+     * Traduce un texto utilizando el traductor configurado.
+     *
+     * Esta función utiliza una instancia de `Translator` para traducir el texto proporcionado,
+     * aplicando el contexto opcional si se proporciona.
+     *
+     * @param ?string $text El texto que se debe traducir.
+     * @param array $context Contexto opcional para la traducción. Por defecto es un array vacío.
+     *
+     * @return string El texto traducido.
+     */
+    public static function trans(?string $text, array $context = []): string
+    {
+        if (null === self::$translator) {
+            self::$translator = new Translator();
+        }
+
+        return self::$translator->trans($text, $context);
+    }
+
     private static function settingsLoad(): void
     {
         if ('' === Tools::config('db_name', '')) {
@@ -752,9 +796,8 @@ class Tools
         self::$settings = Cache::remember('tools-settings', function () {
             $settings = [];
 
-            $model = new Settings();
-            foreach ($model->all([], [], 0, 0) as $item) {
-                $settings[$item->name] = $item->properties;
+            foreach (Settings::all([], [], 0, 0) as $item) {
+                $settings[$item->name] = $item->getProperties();
             }
 
             return $settings;

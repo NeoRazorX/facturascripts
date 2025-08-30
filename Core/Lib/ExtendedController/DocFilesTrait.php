@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -54,7 +54,7 @@ trait DocFilesTrait
 
             // exclude php files
             if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-                Tools::log()->error(Tools::lang()->trans('php-files-blocked'));
+                Tools::log()->error(Tools::trans('php-files-blocked'));
                 continue;
             }
 
@@ -67,7 +67,7 @@ trait DocFilesTrait
 
             // move the file to the MyFiles folder
             if (false === $uploadFile->move($destiny, $destinyName)) {
-                Tools::log()->error(Tools::lang()->trans('file-not-found'));
+                Tools::log()->error(Tools::trans('file-not-found'));
                 continue;
             }
 
@@ -81,17 +81,16 @@ trait DocFilesTrait
             $fileRelation = new AttachedFileRelation();
             $fileRelation->idfile = $newFile->idfile;
             $fileRelation->model = $this->getModelClassName();
-            $fileRelation->modelcode = $this->request->query->get('code');
+            $fileRelation->modelcode = $this->request->query('code');
             $fileRelation->modelid = (int)$fileRelation->modelcode;
             $fileRelation->nick = $this->user->nick;
-            $fileRelation->observations = $this->request->request->get('observations');
+            $fileRelation->observations = $this->request->input('observations');
             $this->pipeFalse('addFileAction', $fileRelation, $this->request);
 
             if (false === $fileRelation->save()) {
                 Tools::log()->error('fail-relation');
                 return true;
             }
-
         }
 
         // Si se trata de un documento, actualizamos el número de documentos adjuntos.
@@ -103,7 +102,7 @@ trait DocFilesTrait
         return true;
     }
 
-    protected function createViewDocFiles(string $viewName = 'docfiles', string $template = 'Tab/DocFiles')
+    protected function createViewDocFiles(string $viewName = 'docfiles', string $template = 'Tab/DocFiles'): void
     {
         $this->addHtmlView($viewName, $template, 'AttachedFileRelation', 'files', 'fa-solid fa-paperclip');
     }
@@ -118,13 +117,14 @@ trait DocFilesTrait
         }
 
         $fileRelation = new AttachedFileRelation();
-        $id = $this->request->request->get('id');
-        if (false === $fileRelation->loadFromCode($id)) {
+        $id = $this->request->input('id');
+        if (false === $fileRelation->load($id)) {
             Tools::log()->warning('record-not-found');
             return true;
         }
 
-        if ($fileRelation->modelcode != $this->request->query->get('code') ||
+        $modelId = $fileRelation->modelid ?? $fileRelation->modelcode;
+        if ($modelId != $this->request->query('code') ||
             $fileRelation->model !== $this->getModelClassName()) {
             Tools::log()->warning('not-allowed-delete');
             return true;
@@ -154,19 +154,19 @@ trait DocFilesTrait
         }
 
         $fileRelation = new AttachedFileRelation();
-        $id = $this->request->request->get('id');
-        if (false === $fileRelation->loadFromCode($id)) {
+        $id = $this->request->input('id');
+        if (false === $fileRelation->load($id)) {
             Tools::log()->warning('record-not-found');
             return true;
         }
 
-        if ($fileRelation->modelcode != $this->request->query->get('code') ||
+        if ($fileRelation->modelcode != $this->request->query('code') ||
             $fileRelation->model !== $this->getModelClassName()) {
             Tools::log()->warning('not-allowed-modify');
             return true;
         }
 
-        $fileRelation->observations = $this->request->request->get('observations');
+        $fileRelation->observations = $this->request->input('observations');
         $this->pipeFalse('editFileAction', $fileRelation, $this->request);
 
         if (false === $fileRelation->save()) {
@@ -183,7 +183,7 @@ trait DocFilesTrait
      * @param string $model
      * @param string $modelid
      */
-    private function loadDataDocFiles($view, $model, $modelid)
+    private function loadDataDocFiles($view, $model, $modelid): void
     {
         $where = [new DataBaseWhere('model', $model)];
         $where[] = is_numeric($modelid) ?
@@ -202,8 +202,8 @@ trait DocFilesTrait
         }
 
         $fileRelation = new AttachedFileRelation();
-        $id = $this->request->request->get('id');
-        if ($fileRelation->loadFromCode($id)) {
+        $id = $this->request->input('id');
+        if ($fileRelation->load($id)) {
             $fileRelation->delete();
         }
 
@@ -222,28 +222,24 @@ trait DocFilesTrait
      */
     protected function updateNumDocs(): void
     {
-        $attachedFileRelation = new AttachedFileRelation();
         $where = [
             new DataBaseWhere('model', $this->getModelClassName()),
             new DataBaseWhere('modelid', $this->request->get('code'))
         ];
-        $numDocs = count($attachedFileRelation->all($where, [], 0, 0));
+        $numDocs = count(AttachedFileRelation::all($where));
 
         $model = $this->getModel();
         $model->numdocs = $numDocs;
 
         if (false === $model->save()) {
-            $this->response->setContent(json_encode([
-                'ok' => false,
-                'messages' => Tools::log()::read('', $this->logLevels)
-            ]));
+            Tools::log()->error('record-save-error');
         }
     }
 
     private function validateFileActionToken(): bool
     {
         // valid request?
-        $token = $this->request->request->get('multireqtoken', '');
+        $token = $this->request->input('multireqtoken', '');
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
             Tools::log()->warning('invalid-request');
             return false;

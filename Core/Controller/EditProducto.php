@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,6 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Model\ProductoImagen;
-use FacturaScripts\Core\Response;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -44,6 +43,7 @@ class EditProducto extends EditController
     use DocFilesTrait;
     use ProductImagesTrait;
 
+    /** @var array */
     private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
 
     public function getModelClassName(): string
@@ -178,11 +178,11 @@ class EditProducto extends EditController
             case 'edit-file':
                 return $this->editFileAction();
 
-            case 'unlink-file':
-                return $this->unlinkFileAction();
-
             case 'sort-images':
                 return $this->sortImagesAction();
+
+            case 'unlink-file':
+                return $this->unlinkFileAction();
         }
 
         return parent::execPreviousAction($action);
@@ -208,14 +208,13 @@ class EditProducto extends EditController
             $column = $this->views[$viewName]->columnForName($colName);
             if ($column && $column->widget->getType() === 'select') {
                 // Obtenemos los atributos con número de selector ($key + 1)
-                $atributoModel = new Atributo();
-                $atributos = $atributoModel->all([
+                $atributos = Atributo::all([
                     new DataBaseWhere('num_selector', ($key + 1)),
                 ]);
 
                 // si no hay ninguno, obtenemos los que tienen número de selector 0
                 if (count($atributos) === 0) {
-                    $atributos = $atributoModel->all([
+                    $atributos = Atributo::all([
                         new DataBaseWhere('num_selector', 0),
                     ]);
                 }
@@ -349,27 +348,23 @@ class EditProducto extends EditController
 
     protected function sortImagesAction(): bool
     {
-        $idsOrdenadas = $this->request->request->get('orden');
-
-        if (empty($idsOrdenadas)){
-            return true;
-        }
-
-        $orden = 1;
-        foreach ($idsOrdenadas as $idImagen) {
-            $productoImagen = new ProductoImagen();
-            $productoImagen->loadFromCode($idImagen);
-            $productoImagen->orden = $orden;
-            if($productoImagen->save()){
-                $orden++;
+        $idsOrdenadas = $this->request->request->getArray('orden', false);
+        if (!empty($idsOrdenadas) && is_array($idsOrdenadas)) {
+            $orden = 1;
+            foreach ($idsOrdenadas as $idImagen) {
+                $productoImagen = new ProductoImagen();
+                $productoImagen->load($idImagen);
+                $productoImagen->orden = $orden;
+                if ($productoImagen->save()) {
+                    $orden++;
+                }
             }
         }
 
         $this->setTemplate(false);
-        $this->response->setHttpCode(Response::HTTP_OK);
-        $this->response->setContent(json_encode(['status' => 'ok']));
-        $this->response->headers->set('Content-Type', 'application/json');
 
-        return true;
+        $this->response->json(['status' => 'ok']);
+
+        return false;
     }
 }

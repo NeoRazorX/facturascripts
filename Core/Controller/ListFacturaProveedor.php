@@ -152,7 +152,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         // añadimos un filtro select where para forzar las que tienen idfacturarect
         $this->addFilterSelectWhere($viewName, 'idfacturarect', [
             [
-                'label' => Tools::lang()->trans('rectified-invoices'),
+                'label' => Tools::trans('rectified-invoices'),
                 'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
             ]
         ]);
@@ -184,7 +184,7 @@ class ListFacturaProveedor extends ListBusinessDocument
             return;
         }
 
-        $codejercicio = $this->request->request->get('exercise');
+        $codejercicio = $this->request->input('exercise');
         if (FacturaProveedorRenumber::run($codejercicio)) {
             Tools::log('facturasprov')->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);
             Tools::log()->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);

@@ -21,10 +21,13 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class AttachedFileTest extends TestCase
 {
+    use LogErrorsTrait;
+
     public function testSaveFile(): void
     {
         $original = 'xss_img_src_onerror_alert(123).jpeg';
@@ -93,5 +96,10 @@ final class AttachedFileTest extends TestCase
 
         // eliminamos el archivo
         $this->assertTrue($att2->delete(), 'can-not-delete-file');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

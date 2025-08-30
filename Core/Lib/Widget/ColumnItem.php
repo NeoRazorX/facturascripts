@@ -206,24 +206,24 @@ class ColumnItem extends VisualItem
         switch ($orderMode) {
             case '-':
                 $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
-                    . $orderKey . '\');" title="' . Tools::lang()->trans('sort-by-column') . '"><i class="fa-solid fa-sort"></i> '
-                    . Tools::lang()->trans($this->title) . '</a>';
+                    . $orderKey . '\');" title="' . Tools::trans('sort-by-column') . '"><i class="fa-solid fa-sort"></i> '
+                    . Tools::trans($this->title) . '</a>';
                 break;
 
             case 'ASC':
                 $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
-                    . $orderKey . '\');" title="' . Tools::lang()->trans('sorted-asc') . '"><i class="fa-solid fa-angles-up"></i> '
-                    . Tools::lang()->trans($this->title) . '</a>';
+                    . $orderKey . '\');" title="' . Tools::trans('sorted-asc') . '"><i class="fa-solid fa-angles-up"></i> '
+                    . Tools::trans($this->title) . '</a>';
                 break;
 
             case 'DESC':
                 $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
-                    . $orderKey . '\');" title="' . Tools::lang()->trans('sorted-desc') . '"><i class="fa-solid fa-angles-down"></i> '
-                    . Tools::lang()->trans($this->title) . '</a>';
+                    . $orderKey . '\');" title="' . Tools::trans('sorted-desc') . '"><i class="fa-solid fa-angles-down"></i> '
+                    . Tools::trans($this->title) . '</a>';
                 break;
 
             default:
-                $content .= Tools::lang()->trans($this->title);
+                $content .= Tools::trans($this->title);
                 break;
         }
 

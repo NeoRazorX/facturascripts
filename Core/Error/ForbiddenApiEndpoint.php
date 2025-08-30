@@ -25,12 +25,11 @@ class ForbiddenApiEndpoint extends ErrorController
 {
     public function run(): void
     {
-        http_response_code(403);
-        header('content-type: application/json');
-
-        echo json_encode([
-            'status' => 'error',
-            'message' => $this->exception->getMessage(),
-        ]);
+        $this->response()
+            ->setHttpCode(403)
+            ->json([
+                'status' => 'error',
+                'message' => $this->exception->getMessage(),
+            ]);
     }
 }

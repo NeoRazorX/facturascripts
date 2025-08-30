@@ -63,7 +63,7 @@ class EditFamilia extends EditController
                 continue;
             }
 
-            $product->codfamilia = $this->request->query->get('code');
+            $product->codfamilia = $this->request->query('code');
             if ($product->save()) {
                 $num++;
             }

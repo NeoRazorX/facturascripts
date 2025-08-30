@@ -1,7 +1,7 @@
 <?php namespace FacturaScripts\Dinamic\Lib\ExtendedController;
 
 /**
- * Class created by Core/Base/PluginDeploy
+ * Class created by Core/Internal/PluginsDeploy
  * @author FacturaScripts <carlos@facturascripts.com>
  */
 class ListView extends \FacturaScripts\Core\Lib\ExtendedController\ListView

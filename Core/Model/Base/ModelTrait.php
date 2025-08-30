@@ -21,12 +21,14 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Template\ExtensionsTrait;
 
 /**
  * The class from which all models inherit, connects to the database,
  * check the structure of the table and if necessary create or adapt.
  *
+ * @deprecated Use FacturaScripts\Core\Template\ModelTrait instead
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 trait ModelTrait
@@ -39,6 +41,9 @@ trait ModelTrait
      * @var array
      */
     protected static $fields = [];
+
+
+    abstract public static function tableName(): string;
 
     /**
      * Returns the list of fields in the table.
@@ -59,6 +64,11 @@ trait ModelTrait
     {
         $result = explode('\\', $this->modelName());
         return end($result);
+    }
+
+    public static function table(): DbQuery
+    {
+        return DbQuery::table(static::tableName());
     }
 
     /**

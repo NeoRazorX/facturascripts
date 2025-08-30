@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,16 +45,16 @@ class Files implements ControllerInterface
         if (false === is_file($this->filePath)) {
             throw new KernelException(
                 'FileNotFound',
-                Tools::lang()->trans('file-not-found', ['%fileName%' => $url])
+                Tools::trans('file-not-found', ['%fileName%' => $url])
             );
         }
 
         if (false === $this->isFolderSafe($url)) {
-            throw new KernelException('UnsafeFolder', 'Folder not safe: ' . $url);
+            throw new KernelException('UnsafeFolder', $url);
         }
 
         if (false === $this->isFileSafe($this->filePath)) {
-            throw new KernelException('UnsafeFile', 'File not safe: ' . $url);
+            throw new KernelException('UnsafeFile', $url);
         }
     }
 
@@ -68,7 +68,7 @@ class Files implements ControllerInterface
         $parts = explode('.', $filePath);
         $safe = [
             'accdb', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'html', 'ico', 'jpeg', 'jpg', 'js',
-            'json', 'map', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png', 'pptx', 'sql', 'svg',
+            'json', 'map', 'md', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png', 'pptx', 'sql', 'svg',
             'ttf', 'txt', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
         ];
         return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
@@ -117,6 +117,9 @@ class Files implements ControllerInterface
 
             case 'js':
                 return 'application/javascript';
+
+            case 'md':
+                return 'text/markdown';
 
             case 'xml':
             case 'xsig':

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -99,9 +99,9 @@ class ListAsiento extends ListController
         // filtro de operación
         $operaciones = [
             '' => '------',
-            Asiento::OPERATION_OPENING => Tools::lang()->trans('opening-operation'),
-            Asiento::OPERATION_CLOSING => Tools::lang()->trans('closing-operation'),
-            Asiento::OPERATION_REGULARIZATION => Tools::lang()->trans('regularization-operation')
+            Asiento::OPERATION_OPENING => Tools::trans('opening-operation'),
+            Asiento::OPERATION_CLOSING => Tools::trans('closing-operation'),
+            Asiento::OPERATION_REGULARIZATION => Tools::trans('regularization-operation')
         ];
         $this->addFilterSelect($viewName, 'operacion', 'operation', 'operacion', $operaciones);
 
@@ -173,7 +173,7 @@ class ListAsiento extends ListController
         // filter
         $this->addFilterSelectWhere($viewName, 'status', [
             [
-                'label' => Tools::lang()->trans('unbalance'),
+                'label' => Tools::trans('unbalance'),
                 'where' => [new DataBaseWhere('idasiento', join(',', $ids), 'IN')]
             ]
         ]);
@@ -249,7 +249,7 @@ class ListAsiento extends ListController
         }
 
         $this->dataBase->beginTransaction();
-        $codejercicio = $this->request->request->get('exercise');
+        $codejercicio = $this->request->input('exercise');
         if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
             Tools::log()->notice('renumber-accounting-ok');
             $this->dataBase->commit();
@@ -262,8 +262,8 @@ class ListAsiento extends ListController
 
     private function getSelectExercise(): array
     {
-        $companyFilter = $this->request->request->get('filteridempresa', 0);
-        $exerciseFilter = $this->request->request->get('filtercodejercicio', '');
+        $companyFilter = $this->request->input('filteridempresa', 0);
+        $exerciseFilter = $this->request->input('filtercodejercicio', '');
         $where = empty($companyFilter) ? [] : [new DataBaseWhere('idempresa', $companyFilter)];
         $result = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre', true, $where);
         if (empty($exerciseFilter)) {

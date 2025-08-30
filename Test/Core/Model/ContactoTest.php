@@ -150,7 +150,6 @@ final class ContactoTest extends TestCase
         $contact->cifnif = '<test>';
         $contact->telefono1 = '<test>';
         $contact->telefono2 = '<test>';
-        $contact->fax = '<test>';
         $contact->observaciones = '<script>alert("test");</script>';
         $this->assertTrue($contact->save(), 'contact-cant-save-html');
 
@@ -165,7 +164,6 @@ final class ContactoTest extends TestCase
         $this->assertEquals('&lt;test&gt;', $contact->cifnif);
         $this->assertEquals('&lt;test&gt;', $contact->telefono1);
         $this->assertEquals('&lt;test&gt;', $contact->telefono2);
-        $this->assertEquals('&lt;test&gt;', $contact->fax);
         $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $contact->observaciones);
 
         // eliminamos
@@ -179,7 +177,7 @@ final class ContactoTest extends TestCase
         $contact->nombre = 'Test';
         $this->assertTrue($contact->save(), 'contact-cant-save');
 
-        // comprobamos que apellidos, cargo, dirección, teléfonos, fax, email y observaciones no sean nulos
+        // comprobamos que apellidos, cargo, dirección, teléfonos, email y observaciones no sean nulos
         $this->assertNotNull($contact->apellidos, 'contact-apellidos-null');
         $this->assertNotNull($contact->cargo, 'contact-cargo-null');
         $this->assertNotNull($contact->empresa, 'contact-empresa-null');
@@ -188,7 +186,6 @@ final class ContactoTest extends TestCase
         $this->assertNotNull($contact->provincia, 'contact-provincia-null');
         $this->assertNotNull($contact->telefono1, 'contact-telefono1-null');
         $this->assertNotNull($contact->telefono2, 'contact-telefono2-null');
-        $this->assertNotNull($contact->fax, 'contact-fax-null');
         $this->assertNotNull($contact->email, 'contact-email-null');
         $this->assertNotNull($contact->observaciones, 'contact-observaciones-null');
 

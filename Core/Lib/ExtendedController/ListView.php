@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -88,14 +88,14 @@ class ListView extends BaseView
         $key1 = count($this->orderOptions);
         $this->orderOptions[$key1] = [
             'fields' => $fields,
-            'label' => Tools::lang()->trans($label),
+            'label' => Tools::trans($label),
             'type' => 'ASC'
         ];
 
         $key2 = count($this->orderOptions);
         $this->orderOptions[$key2] = [
             'fields' => $fields,
-            'label' => Tools::lang()->trans($label),
+            'label' => Tools::trans($label),
             'type' => 'DESC'
         ];
 
@@ -283,9 +283,10 @@ class ListView extends BaseView
     /**
      * Adds assets to the asset manager.
      */
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/ListView.js?v=2');
+        $route = Tools::config('route');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/ListView.js?v=2');
     }
 
     private function loadTotalAmounts(): void

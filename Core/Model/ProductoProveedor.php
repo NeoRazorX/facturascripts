@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
-use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Model\Base\ProductRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CostPriceTools;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
@@ -36,7 +36,7 @@ use FacturaScripts\Dinamic\Model\Variante as DinVariante;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class ProductoProveedor extends ModelOnChangeClass
+class ProductoProveedor extends ModelClass
 {
     use ModelTrait;
     use ProductRelationTrait;
@@ -77,14 +77,20 @@ class ProductoProveedor extends ModelOnChangeClass
     /** @var float */
     public $stock;
 
-    public function __get($name)
+    public function __get($key)
     {
-        if ($name == 'descripcion') {
+        if (isset($this->attributes[$key])) {
+            return $this->attributes[$key];
+        }
+
+        if ($key == 'descripcion') {
             return $this->getVariant()->getProducto()->descripcion;
         }
+
+        return null;
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->actualizado = Tools::dateTime();
@@ -116,14 +122,14 @@ class ProductoProveedor extends ModelOnChangeClass
     {
         $variant = new DinVariante();
         $where = [new DataBaseWhere('referencia', $this->referencia)];
-        $variant->loadFromCode('', $where);
+        $variant->loadWhere($where);
         return $variant;
     }
 
     public function getSupplier(): DinProveedor
     {
         $supplier = new DinProveedor();
-        $supplier->loadFromCode($this->codproveedor);
+        $supplier->load($this->codproveedor);
         return $supplier;
     }
 
@@ -134,11 +140,6 @@ class ProductoProveedor extends ModelOnChangeClass
         new DinProveedor();
 
         return parent::install();
-    }
-
-    public static function primaryColumn(): string
-    {
-        return 'id';
     }
 
     public static function tableName(): string
@@ -181,34 +182,32 @@ class ProductoProveedor extends ModelOnChangeClass
     /**
      * This method is called after a record is deleted on the database (delete).
      */
-    protected function onDelete()
+    protected function onDelete(): void
     {
         CostPriceTools::update($this->getVariant());
+
         parent::onDelete();
     }
 
     /**
      * This method is called after a new record is saved on the database (saveInsert).
      */
-    protected function onInsert()
+    protected function onInsert(): void
     {
         CostPriceTools::update($this->getVariant());
+
         parent::onInsert();
     }
 
     /**
      * This method is called after a record is updated on the database (saveUpdate).
      */
-    protected function onUpdate()
+    protected function onUpdate(): void
     {
-        if ($this->previousData['neto'] !== $this->neto) {
+        if ($this->isDirty('neto')) {
             CostPriceTools::update($this->getVariant());
         }
-        parent::onUpdate();
-    }
 
-    protected function setPreviousData(array $fields = [])
-    {
-        parent::setPreviousData(array_merge(['neto'], $fields));
+        parent::onUpdate();
     }
 }
