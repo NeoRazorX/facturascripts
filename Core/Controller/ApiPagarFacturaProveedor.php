@@ -93,7 +93,7 @@ class ApiPagarFacturaProveedor extends ApiController
         // marcamos todos los recibos como pagados
         foreach ($factura->getReceipts() as $receipt) {
             $receipt->pagado = true;
-            $receipt->fechapago = $this->request->request->getDate('fechapago', $receipt->fechapago);
+            $receipt->fechapago = $this->request->request->get('fechapago', $receipt->fechapago);
             $receipt->codpago = $this->request->request->get('codpago', $receipt->codpago);
             if (false === $receipt->save()) {
                 $this->response
