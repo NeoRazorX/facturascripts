@@ -33,7 +33,7 @@ class ApiPlugins extends ApiController
                 ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
                 ->json([
                     'status' => 'error',
-                    'message' => 'Method not allowed',
+                    'message' => 'method-not-allowed',
                 ]);
             return;
         }

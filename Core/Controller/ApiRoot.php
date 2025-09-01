@@ -27,8 +27,11 @@ class ApiRoot extends ApiController
 {
     /** @var array */
     private static $custom_resources = [
-        'attachedfiles', 'crearDocumento', 'crearFacturaCliente', 'crearFacturaRectificativaCliente', 'exportarFacturaCliente',
-        'pagarFacturaCliente', 'pagarFacturaProveedor', 'plugins', 'productoimagenes', 'uploadFiles'
+        'attachedfiles', 'crearAlbaranCliente', 'crearAlbaranProveedor', 'crearFacturaCliente', 'crearFacturaProveedor',
+        'crearFacturaRectificativaCliente', 'crearPedidoCliente', 'crearPedidoProveedor', 'crearPresupuestoCliente',
+        'crearPresupuestoProveedor', 'exportarAlbaranCliente', 'exportarFacturaCliente', 'exportarPedidoCliente',
+        'exportarPresupuestoCliente', 'pagarFacturaCliente', 'pagarFacturaProveedor', 'plugins', 'productoimagenes',
+        'uploadFiles'
     ];
 
     public static function addCustomResource(string $name): void

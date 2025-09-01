@@ -1115,7 +1115,7 @@
     "only-closed": "Tylko zamknięte",
     "only-insert": "Tylko dodaj",
     "only-owner-data": "Wyświetl tylko rekordy właściciela",
-    "only-owner-data-p": "El usuario solamente podrá ver registros que haya creado él o que tenga asignados (como usuario o agente)",
+    "only-owner-data-p": "Zaznaczając opcję wyświetlania tylko rekordów użytkownika, użytkownik będzie mógł zobaczyć tylko rekordy, które utworzył lub które zostały mu przypisane (jako użytkownik lub agent)",
     "only-pending": "Tylko oczekujące",
     "only-suspended": "Tylko zawieszeni",
     "open": "Otwórz",

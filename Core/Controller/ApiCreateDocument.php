@@ -19,175 +19,348 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 class ApiCreateDocument extends ApiController
 {
+    /** @var string */
+    protected $purchases_model;
+
+    /** @var string */
+    protected $sales_model;
+
     protected function runResource(): void
     {
-        // si el método no es POST o PUT, devolvemos un error
-        if (!in_array($this->request->getMethod(), ['POST', 'PUT'])) {
-            $this->response->setStatusCode(Response::HTTP_METHOD_NOT_ALLOWED);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Method not allowed',
-            ]));
+        if (!in_array($this->request->method(), ['POST', 'PUT'])) {
+            $this->response
+                ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'method-not-allowed',
+                ]);
             return;
         }
 
-        // documentos existentes
-        $documents = [
-            'PresupuestoCliente',
-            'PedidoCliente',
-            'AlbaranCliente',
-            'FacturaCliente',
-            'PresupuestoProveedor',
-            'PedidoProveedor',
-            'AlbaranProveedor',
-            'FacturaProveedor',
-        ];
+        $this->loadModel();
 
-        // comprobamos que el nombre del documento es válido
-        $documentName = $this->request->get('documentname');
-        $documentNamespace = '\\FacturaScripts\\Dinamic\\Model\\' . $documentName;
-        if (isset($documents[$documentName]) && !class_exists($documentNamespace)) {
-            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Document type not found (' . $documentName . '). Document types available: ' . implode(', ', $documents) . '.',
-            ]));
-        }
-
-        // cargamos el subject
-        $codsubject = $this->request->get('codsubject');
-        if (empty($codsubject)) {
-            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'codsubject field is required',
-            ]));
-            return;
-        }
-
-        if (str_contains($documentName, 'Cliente')) {
-            $subject = new Cliente();
+        if (!empty($this->purchases_model)) {
+            $this->createPurchase();
+        } elseif (!empty($this->sales_model)) {
+            $this->createSale();
         } else {
-            $subject = new Proveedor();
+            $this->response
+                ->setHttpCode(Response::HTTP_UNPROCESSABLE_ENTITY)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'invalid-model',
+                ]);
         }
+    }
 
-        if (!$subject->loadFromCode($codsubject)) {
-            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Subject not found',
-            ]));
+    protected function createPurchase(): void
+    {
+        // cargamos el proveedor
+        $codproveedor = $this->request->get('codproveedor');
+        if (empty($codproveedor)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'codproveedor field is required',
+                ]);
+            return;
+        }
+        $proveedor = new Proveedor();
+        if (!$proveedor->load($codproveedor)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_NOT_FOUND)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'supplier-not-found',
+                ]);
             return;
         }
 
         // creamos el documento
-        $documento = new $documentNamespace();
-        $documento->setSubject($subject);
+        $class = '\\FacturaScripts\\Dinamic\\Model\\' . $this->purchases_model;
+        $doc = new $class();
+
+        // asignamos el sujeto
+        if (false === $doc->setSubject($proveedor)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'error-assigning-subject',
+                ]);
+            return;
+        }
 
         // asignamos el almacén
         $codalmacen = $this->request->get('codalmacen');
-        if ($codalmacen && false === $documento->setWarehouse($codalmacen)) {
-            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Warehouse not found',
-            ]));
+        if ($codalmacen && false === $doc->setWarehouse($codalmacen)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_NOT_FOUND)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'warehouse-not-found',
+                ]);
             return;
         }
 
         // asignamos la fecha
         $fecha = $this->request->get('fecha');
-        $hora = $this->request->get('hora', $documento->hora);
-        if ($fecha && false === $documento->setDate($fecha, $hora)) {
-            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Invalid date',
-            ]));
+        $hora = $this->request->get('hora', $doc->hora);
+        if ($fecha && false === $doc->setDate($fecha, $hora)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                ->json([
+                    'status' => 'error',
+                    'message' => Tools::trans('invalid-date'),
+                ]);
             return;
         }
 
         // asignamos la divisa
         $coddivisa = $this->request->get('coddivisa');
         if ($coddivisa) {
-            $documento->setCurrency($coddivisa);
+            $doc->setCurrency($coddivisa);
         }
 
         // asignamos el resto de campos del modelo
-        foreach ($documento->getModelFields() as $key => $field) {
+        foreach ($doc->getModelFields() as $key => $field) {
             if ($this->request->request->has($key)) {
-                $documento->{$key} = $this->request->request->get($key);
+                $doc->{$key} = $this->request->request->get($key);
             }
         }
 
-        $db = new DataBase();
-        $db->beginTransaction();
+        $this->db()->beginTransaction();
 
-        // guardamos la factura
-        if (false === $documento->save()) {
-            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Error saving the invoice',
-            ]));
-            $db->rollback();
+        // guardamos el documento
+        if (false === $doc->save()) {
+            $this->db()->rollBack();
+
+            $this->response
+                ->setHttpCode(Response::HTTP_UNPROCESSABLE_ENTITY)
+                ->json([
+                    'status' => 'error',
+                    'message' => Tools::trans('record-save-error'),
+                ]);
             return;
         }
 
         // guardamos las líneas
-        if (false === $this->saveLines($documento)) {
-            $db->rollback();
+        if (false === $this->saveLines($doc)) {
+            $this->db()->rollBack();
             return;
         }
 
-        // ¿Está pagada?
-        if ($this->request->get('pagada', false)) {
-            foreach ($documento->getReceipts() as $receipt) {
+        // ¿Factura pagada?
+        if ($doc->hasColumn('idfactura') && $doc->hasColumn('pagada') && $this->request->getBool('pagada', false)) {
+            foreach ($doc->getReceipts() as $receipt) {
                 $receipt->pagado = true;
                 $receipt->save();
             }
 
             // recargamos la factura
-            $documento->loadFromCode($documento->idfactura);
+            $doc->reload();
         }
 
-        $db->commit();
+        // confirmamos la transacción
+        $this->db()->commit();
 
         // devolvemos la respuesta
-        $this->response->setContent(json_encode([
-            'doc' => $documento->toArray(),
-            'lines' => $documento->getLines(),
-        ]));
+        $this->response
+            ->json([
+                'doc' => $doc->toArray(),
+                'lines' => $doc->getLines(),
+            ]);
     }
 
-    protected function saveLines(&$documento): bool
+    protected function createSale(): void
+    {
+        // cargamos el cliente
+        $codcliente = $this->request->get('codcliente');
+        if (empty($codcliente)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'codcliente field is required',
+                ]);
+            return;
+        }
+        $cliente = new Cliente();
+        if (!$cliente->load($codcliente)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_NOT_FOUND)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'customer-not-found',
+                ]);
+            return;
+        }
+
+        // creamos el documento
+        $class = '\\FacturaScripts\\Dinamic\\Model\\' . $this->sales_model;
+        $doc = new $class();
+
+        // asignamos el sujeto
+        if (false === $doc->setSubject($cliente)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_INTERNAL_SERVER_ERROR)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'error-assigning-subject',
+                ]);
+            return;
+        }
+
+        // asignamos el almacén
+        $codalmacen = $this->request->get('codalmacen');
+        if ($codalmacen && false === $doc->setWarehouse($codalmacen)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_NOT_FOUND)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'warehouse-not-found',
+                ]);
+            return;
+        }
+
+        // asignamos la fecha
+        $fecha = $this->request->get('fecha');
+        $hora = $this->request->get('hora', $doc->hora);
+        if ($fecha && false === $doc->setDate($fecha, $hora)) {
+            $this->response
+                ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                ->json([
+                    'status' => 'error',
+                    'message' => Tools::trans('invalid-date'),
+                ]);
+            return;
+        }
+
+        // asignamos la divisa
+        $coddivisa = $this->request->get('coddivisa');
+        if ($coddivisa) {
+            $doc->setCurrency($coddivisa);
+        }
+
+        // asignamos el resto de campos del modelo
+        foreach ($doc->getModelFields() as $key => $field) {
+            if ($this->request->request->has($key)) {
+                $doc->{$key} = $this->request->request->get($key);
+            }
+        }
+
+        $this->db()->beginTransaction();
+
+        // guardamos el documento
+        if (false === $doc->save()) {
+            $this->db()->rollBack();
+
+            $this->response
+                ->setHttpCode(Response::HTTP_UNPROCESSABLE_ENTITY)
+                ->json([
+                    'status' => 'error',
+                    'message' => Tools::trans('record-save-error'),
+                ]);
+            return;
+        }
+
+        // guardamos las líneas
+        if (false === $this->saveLines($doc)) {
+            $this->db()->rollBack();
+            return;
+        }
+
+        // ¿Factura pagada?
+        if ($doc->hasColumn('idfactura') && $doc->hasColumn('pagada') && $this->request->getBool('pagada', false)) {
+            foreach ($doc->getReceipts() as $receipt) {
+                $receipt->pagado = true;
+                $receipt->save();
+            }
+
+            // recargamos la factura
+            $doc->reload();
+        }
+
+        // confirmamos la transacción
+        $this->db()->commit();
+
+        // devolvemos la respuesta
+        $this->response
+            ->json([
+                'doc' => $doc->toArray(),
+                'lines' => $doc->getLines(),
+            ]);
+    }
+
+    protected function loadModel(): void
+    {
+        switch ($this->getUriParam(2)) {
+            case 'crearAlbaranCliente':
+                $this->sales_model = 'AlbaranCliente';
+                break;
+
+            case 'crearAlbaranProveedor':
+                $this->purchases_model = 'AlbaranProveedor';
+                break;
+
+            case 'crearFacturaCliente':
+                $this->sales_model = 'FacturaCliente';
+                break;
+
+            case 'crearFacturaProveedor':
+                $this->purchases_model = 'FacturaProveedor';
+                break;
+
+            case 'crearPedidoCliente':
+                $this->sales_model = 'PedidoCliente';
+                break;
+
+            case 'crearPedidoProveedor':
+                $this->purchases_model = 'PedidoProveedor';
+                break;
+
+            case 'crearPresupuestoCliente':
+                $this->sales_model = 'PresupuestoCliente';
+                break;
+
+            case 'crearPresupuestoProveedor':
+                $this->purchases_model = 'PresupuestoProveedor';
+                break;
+        }
+    }
+
+    protected function saveLines(BusinessDocument &$documento): bool
     {
         if (!$this->request->request->has('lineas')) {
-            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'lineas field is required',
-            ]));
+            $this->response
+                ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'lineas field is required',
+                ]);
             return false;
         }
 
         $lineData = $this->request->request->get('lineas');
         $lineas = json_decode($lineData, true);
         if (!is_array($lineas)) {
-            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Invalid lines',
-            ]));
+            $this->response
+                ->setHttpCode(Response::HTTP_BAD_REQUEST)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'Invalid lines',
+                ]);
             return false;
         }
 
@@ -232,11 +405,12 @@ class ApiCreateDocument extends ApiController
 
         // actualizamos los totales y guardamos
         if (false === Calculator::calculate($documento, $newLines, true)) {
-            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->response->setContent(json_encode([
-                'status' => 'error',
-                'message' => 'Error calculating the invoice',
-            ]));
+            $this->response
+                ->setHttpCode(Response::HTTP_UNPROCESSABLE_ENTITY)
+                ->json([
+                    'status' => 'error',
+                    'message' => Tools::trans('error-calculating-totals'),
+                ]);
             return false;
         }
 

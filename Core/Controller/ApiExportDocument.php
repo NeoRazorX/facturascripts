@@ -24,19 +24,30 @@ use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
-use FacturaScripts\Dinamic\Model\FacturaCliente;
 
-class ApiExportFacturaCliente extends ApiController
+class ApiExportDocument extends ApiController
 {
+    /** @var string */
+    protected $model;
+
     protected function runResource(): void
     {
-        // si el método no es GET, devolvemos un error
         if (false === $this->request->isMethod(Request::METHOD_GET)) {
             $this->response
                 ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
                 ->json([
                     'status' => 'error',
-                    'message' => 'Method not allowed',
+                    'message' => 'method-not-allowed',
+                ]);
+            return;
+        }
+
+        if (false === $this->loadModel()) {
+            $this->response
+                ->setHttpCode(Response::HTTP_NOT_FOUND)
+                ->json([
+                    'status' => 'error',
+                    'message' => 'resource-not-found',
                 ]);
             return;
         }
@@ -47,32 +58,72 @@ class ApiExportFacturaCliente extends ApiController
                 ->setHttpCode(Response::HTTP_BAD_REQUEST)
                 ->json([
                     'status' => 'error',
-                    'message' => 'No invoice selected',
+                    'message' => 'record-not-specified',
                 ]);
             return;
         }
 
-        $facturaCliente = new FacturaCliente();
-        if (false === $facturaCliente->load($code)) {
+        $class = '\\FacturaScripts\\Dinamic\\Model\\' . $this->model;
+        $doc = new $class();
+        if (false === $doc->load($code)) {
             $this->response
                 ->setHttpCode(Response::HTTP_NOT_FOUND)
                 ->json([
                     'status' => 'error',
-                    'message' => 'Invoice not found',
+                    'message' => 'record-not-found',
                 ]);
             return;
         }
 
         $type = $this->request->query('type', 'PDF');
         $format = (int)$this->request->query('format', 0);
-        $lang = $this->request->query('lang', $facturaCliente->getSubject()->langcode) ?? '';
-        $title = Tools::lang($lang)->trans('invoice') . ' ' . $facturaCliente->primaryDescription();
+        $lang = $this->request->query('lang', $doc->getSubject()->langcode) ?? '';
+        $title = Tools::lang($lang)->trans('invoice') . ' ' . $doc->id();
 
         $exportManager = new ExportManager();
         $exportManager->newDoc($type, $title, $format, $lang);
-        $exportManager->addBusinessDocPage($facturaCliente);
+        $exportManager->addBusinessDocPage($doc);
 
         // devolvemos la respuesta
         $exportManager->show($this->response);
+    }
+
+    protected function loadModel(): bool
+    {
+        switch ($this->getUriParam(2)) {
+            case 'exportarAlbaranCliente':
+                $this->model = 'AlbaranCliente';
+                return true;
+
+            case 'exportarAlbaranProveedor':
+                $this->model = 'AlbaranProveedor';
+                return true;
+
+            case 'exportarFacturaCliente':
+                $this->model = 'FacturaCliente';
+                return true;
+
+            case 'exportarFacturaProveedor':
+                $this->model = 'FacturaProveedor';
+                return true;
+
+            case 'exportarPedidoCliente':
+                $this->model = 'PedidoCliente';
+                return true;
+
+            case 'exportarPedidoProveedor':
+                $this->model = 'PedidoProveedor';
+                return true;
+
+            case 'exportarPresupuestoCliente':
+                $this->model = 'PresupuestoCliente';
+                return true;
+
+            case 'exportarPresupuestoProveedor':
+                $this->model = 'PresupuestoProveedor';
+                return true;
+        }
+
+        return false;
     }
 }

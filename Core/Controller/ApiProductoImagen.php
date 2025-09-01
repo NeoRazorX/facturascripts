@@ -57,29 +57,36 @@ class ApiProductoImagen extends ApiController
         } catch (Exception $exc) {
             $this->setError('API-ERROR: ' . $exc->getMessage(), null, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+
+        $this->response
+            ->setHttpCode(Response::HTTP_METHOD_NOT_ALLOWED)
+            ->json([
+                'status' => 'error',
+                'message' => 'method-not-allowed',
+            ]);
     }
 
-    public function doDELETE(): bool
+    public function doDELETE(): void
     {
-        if (empty($this->getUriParam(3)) || false === $this->model->loadFromCode($this->getUriParam(3))) {
+        if (empty($this->getUriParam(3)) || false === $this->model->load($this->getUriParam(3))) {
             $this->setError(Tools::lang()->trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
-            return false;
+            return;
         }
 
-        if ($this->model->delete()) {
-            $this->setOk(Tools::lang()->trans('record-deleted-correctly'), $this->model->toArray());
-            return true;
+        if (false === $this->model->delete()) {
+            $this->setError(Tools::lang()->trans('record-deleted-error'));
+            return;
         }
 
-        $this->setError(Tools::lang()->trans('record-deleted-error'));
-        return false;
+        $this->setOk(Tools::lang()->trans('record-deleted-correctly'), $this->model->toArray());
     }
 
-    public function doGET(): bool
+    public function doGET(): void
     {
         // all records
         if (empty($this->getUriParam(3))) {
-            return $this->listAll();
+            $this->listAll();
+            return;
         }
 
         // model schema
@@ -93,24 +100,22 @@ class ApiProductoImagen extends ApiController
                 ];
             }
             $this->returnResult($data);
-            return true;
+            return;
         }
 
-
         // record not found
-        if (false === $this->model->loadFromCode($this->getUriParam(3))) {
+        if (false === $this->model->load($this->getUriParam(3))) {
             $this->setError(Tools::lang()->trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
-            return false;
+            return;
         }
 
         $data = $this->model->toArray();
         $data['download'] = $this->model->url('download');
         $data['download-permanent'] = $this->model->url('download-permanent');
         $this->returnResult($data);
-        return true;
     }
 
-    public function doPOST(): bool
+    public function doPOST(): void
     {
         $field = $this->model->primaryColumn();
         $values = $this->request->request->all();
@@ -118,19 +123,20 @@ class ApiProductoImagen extends ApiController
 
         $param0 = empty($this->getUriParam(3)) ? '' : $this->getUriParam(3);
         $code = $values[$field] ?? $param0;
-        if ($this->model->loadFromCode($code)) {
+        if ($this->model->load($code)) {
             $this->setError(Tools::lang()->trans('duplicate-record'), $this->model->toArray());
-            return false;
+            return;
         } elseif (empty($values) && empty($files)) {
             $this->setError(Tools::lang()->trans('no-data-received-form'));
-            return false;
+            return;
         }
-        //recorremos los archivos recibidos
+
+        // recorremos los archivos recibidos
         foreach ($this->request->files->all() as $file) {
             if (!$file->isValid()) {
                 continue;
             }
-            //si el archivo es php saltamos
+            // si el archivo es php saltamos
             if ($file->extension() === 'php') {
                 continue;
             }
@@ -141,29 +147,29 @@ class ApiProductoImagen extends ApiController
             $this->model->{$key} = $value;
         }
 
-        return $this->saveResource();
+        $this->saveResource();
     }
 
-    public function doPUT(): bool
+    public function doPUT(): void
     {
         $field = $this->model->primaryColumn();
         $values = $this->request->request->all();
 
         $param0 = empty($this->getUriParam(3)) ? '' : $this->getUriParam(3);
         $code = $values[$field] ?? $param0;
-        if (false === $this->model->loadFromCode($code)) {
+        if (false === $this->model->load($code)) {
             $this->setError(Tools::lang()->trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
-            return false;
+            return;
         } elseif (empty($values)) {
             $this->setError(Tools::lang()->trans('no-data-received-form'));
-            return false;
+            return;
         }
 
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }
 
-        return $this->saveResource();
+        $this->saveResource();
     }
 
     private function getRequestArray($key, $default = ''): array
@@ -241,7 +247,7 @@ class ApiProductoImagen extends ApiController
         return $where;
     }
 
-    protected function listAll(): bool
+    protected function listAll(): void
     {
         $filter = $this->getRequestArray('filter');
         $limit = (int)$this->request->get('limit', 50);
@@ -264,20 +270,20 @@ class ApiProductoImagen extends ApiController
         $this->response->headers->set('X-Total-Count', $count);
 
         $this->returnResult($data);
-        return true;
     }
 
-    protected function returnResult(array $data)
+    protected function returnResult(array $data): void
     {
-        $this->response->setContent(json_encode($data));
-        $this->response->setHttpCode(Response::HTTP_OK);
+        $this->response
+            ->setHttpCode(Response::HTTP_OK)
+            ->json($data);
     }
 
-    private function saveResource(): bool
+    private function saveResource(): void
     {
         if ($this->model->save()) {
             $this->setOk(Tools::lang()->trans('record-updated-correctly'), $this->model->toArray());
-            return true;
+            return;
         }
 
         $message = Tools::lang()->trans('record-save-error');
@@ -286,10 +292,9 @@ class ApiProductoImagen extends ApiController
         }
 
         $this->setError($message, $this->model->toArray());
-        return false;
     }
 
-    protected function setError(string $message, ?array $data = null, int $status = Response::HTTP_BAD_REQUEST)
+    protected function setError(string $message, ?array $data = null, int $status = Response::HTTP_BAD_REQUEST): void
     {
         Tools::log('api')->error($message);
 
@@ -298,11 +303,12 @@ class ApiProductoImagen extends ApiController
             $res['data'] = $data;
         }
 
-        $this->response->setContent(json_encode($res));
-        $this->response->setHttpCode($status);
+        $this->response
+            ->setHttpCode($status)
+            ->json($res);
     }
 
-    protected function setOk(string $message, ?array $data = null)
+    protected function setOk(string $message, ?array $data = null): void
     {
         Tools::log('api')->notice($message);
 
@@ -311,7 +317,8 @@ class ApiProductoImagen extends ApiController
             $res['data'] = $data;
         }
 
-        $this->response->setContent(json_encode($res));
-        $this->response->setHttpCode(Response::HTTP_OK);
+        $this->response
+            ->setHttpCode(Response::HTTP_OK)
+            ->json($res);
     }
 }
