@@ -360,13 +360,13 @@ class ListView extends BaseView
             return;
         }
 
-        // si el metodo de la request es GET, obtenemos los filtros desde la cache
+        // si el método de la request es GET, obtenemos los filtros desde la cache
         $cacheKeyFiltros = 'filtros-' . $request->cookie('fsNick') . '-' . trim(str_replace('/', '', $request->header('PATH_INFO')));
-        if($request->isMethod('GET')){
+        if ($request->isMethod('GET')) {
             $filtrosCache = Cache::get($cacheKeyFiltros);
-            if ($filtrosCache){
+            if ($filtrosCache) {
                 // creamos valores de filtros en la request para aprovechar los metodos ya existentes
-                foreach ($filtrosCache as $filtro){
+                foreach ($filtrosCache as $filtro) {
                     $request->request->set('filter' . $filtro->key, $filtro->getValue());
                 }
             }
@@ -380,8 +380,8 @@ class ListView extends BaseView
             }
         }
 
-        if($request->isMethod('POST')) {
-            // guardamos los filtros en cache
+        if ($request->isMethod('POST')) {
+            // guardamos los filtros en caché
             Cache::set($cacheKeyFiltros, $this->filters);
         }
     }
