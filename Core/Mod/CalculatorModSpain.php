@@ -374,41 +374,47 @@ class CalculatorModSpain implements CalculatorModInterface
      */
     private function validateLineExemptions(BusinessDocument $doc, BusinessDocumentLine $line, string $subjectFiscalID, Contacto $addressShipping, ?string $globalEx): bool
     {
+        // obtenemos y traducimos excepciones
+        $exceptions = RegimenIVA::allExceptions();
+        foreach ($exceptions as $key => $translationKey) {
+            $exceptions[$key] = Tools::trans($translationKey);
+        }
+
         // E1: ES_20 solo si global es exenta E1 o la línea lo justifica
         if ($line->excepcioniva === RegimenIVA::ES_TAX_EXCEPTION_E1 && $line->iva > 0) {
-            Tools::log()->warning('Excepción fiscal ES_20 no puede tener IVA.');
+            Tools::log()->warning('Excepción fiscal "' . $exceptions['ES_20'] . '" no puede tener IVA.');
             return false;
         }
 
         // E2: ES_21 solo si cliente fuera UE
         if ($line->excepcioniva === RegimenIVA::ES_TAX_EXCEPTION_E2 && $line->iva > 0 && Paises::miembroUE($doc->codpais)) {
-            Tools::log()->warning('Excepción fiscal ES_21 no puede tener IVA si el cliente es de la UE.');
+            Tools::log()->warning('Excepción fiscal "' . $exceptions['ES_21'] . '" no puede tener IVA si el cliente es de la UE.');
             return false;
         }
 
         // E3: ES_22 solo si cliente UE, NIF-IVA válido, país != España
         if ($line->excepcioniva === RegimenIVA::ES_TAX_EXCEPTION_E3 && $line->iva > 0 && !Paises::miembroUE($doc->codpais)
             && (!FiscalNumberValidator::validate($subjectFiscalID, $doc->cifnif, true) || $doc->codpais === 'ESP')) {
-            Tools::log()->warning('Excepción fiscal ES_22 no puede tener IVA si el cliente es de la UE y el NIF-IVA no es válido o el país es España.');
+            Tools::log()->warning('Excepción fiscal "' . $exceptions['ES_22'] . '" no puede tener IVA si el cliente es de la UE y el NIF-IVA no es válido o el país es España.');
             return false;
         }
 
         // E4: ES_23_24 solo si cliente UE, NIF-IVA válido, servicio
         if ($line->excepcioniva === RegimenIVA::ES_TAX_EXCEPTION_E4 && $line->iva > 0 && !Paises::miembroUE($doc->codpais)
             && (!FiscalNumberValidator::validate($subjectFiscalID, $doc->cifnif, true) || $line->getProducto()->tipo !== ProductType::SERVICE)) {
-            Tools::log()->warning('Excepción fiscal ES_23_24 no puede tener IVA si el cliente es de la UE y el NIF-IVA no es válido o el producto de la línea no es un servicio.');
+            Tools::log()->warning('Excepción fiscal "' . $exceptions['ES_23_24'] . '" no puede tener IVA si el cliente es de la UE y el NIF-IVA no es válido o el producto de la línea no es un servicio.');
             return false;
         }
 
         // E5: ES_25 solo si transporte internacional
         if ($line->excepcioniva === RegimenIVA::ES_TAX_EXCEPTION_E5 && $line->iva > 0 && !empty($addressShipping->primaryColumnValue()) && $addressShipping->codpais === 'ESP') {
-            Tools::log()->warning('Excepción fiscal ES_25 no puede tener IVA si el transporte no es internacional.');
+            Tools::log()->warning('Excepción fiscal "' . $exceptions['ES_25'] . '" no puede tener IVA si el transporte no es internacional.');
             return false;
         }
 
         // E6: ES_OTHER solo si justificado
         if ($line->excepcioniva === RegimenIVA::ES_TAX_EXCEPTION_E6 && $line->iva > 0) {
-            Tools::log()->warning('Excepción fiscal ES_OTHER no puede tener IVA.');
+            Tools::log()->warning('Excepción fiscal "' . $exceptions['ES_OTHER'] . '" no puede tener IVA.');
             return false;
         }
 
@@ -421,13 +427,13 @@ class CalculatorModSpain implements CalculatorModInterface
 
         // Si hay global de intracomunitaria, la línea debe ser E3, E4 o no tener IVA
         if ($globalEx === InvoiceOperation::INTRA_COMMUNITY && !in_array($line->excepcioniva, [RegimenIVA::ES_TAX_EXCEPTION_E3, RegimenIVA::ES_TAX_EXCEPTION_E4])) {
-            Tools::log()->warning('La línea debe ser E3 (ES_22) o E4 (ES_23_24) si la operación global es intracomunitaria.');
+            Tools::log()->warning('La línea debe ser "' . $exceptions['ES_22'] . '" o "' . $exceptions['ES_23_24'] . '" si la operación global es intracomunitaria.');
             return false;
         }
 
         // Si hay global de exportación, la línea debe ser E2 o no tener IVA
         if ($globalEx === InvoiceOperation::EXPORT && $line->excepcioniva !== RegimenIVA::ES_TAX_EXCEPTION_E2) {
-            Tools::log()->warning('La línea debe ser E2 (ES_21) si la operación global es de exportación.');
+            Tools::log()->warning('La línea debe ser "' . $exceptions['ES_21'] . '" si la operación global es de exportación.');
             return false;
         }
 
