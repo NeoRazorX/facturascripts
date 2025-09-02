@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Template;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
@@ -39,6 +40,9 @@ abstract class ApiController implements ControllerInterface
 
     /** @var ApiKey */
     protected $apiKey;
+
+    /** @var DataBase */
+    private $dataBase;
 
     /** @var Request */
     protected $request;
@@ -72,10 +76,10 @@ abstract class ApiController implements ControllerInterface
             throw new KernelException('DisabledApi', Tools::lang()->trans('api-disabled'));
         }
 
-        if ($this->request->server->get('REQUEST_METHOD') == 'OPTIONS') {
+        if ($this->request->headers->get('REQUEST_METHOD') == 'OPTIONS') {
             $this->response->headers->set('Access-Control-Allow-Origin', '*');
             $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-            $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
+            $allowHeaders = $this->request->headers->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
             $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
             $this->response->headers->set('Content-Type', 'application/json');
             $this->response->send();
@@ -120,6 +124,16 @@ abstract class ApiController implements ControllerInterface
         $this->response->send();
     }
 
+    protected function db(): DataBase
+    {
+        if (null === $this->dataBase) {
+            $this->dataBase = new DataBase();
+            $this->dataBase->connect();
+        }
+
+        return $this->dataBase;
+    }
+
     private function clientHasManyIncidents(): bool
     {
         // get ip count on the list
@@ -130,7 +144,7 @@ abstract class ApiController implements ControllerInterface
                 $ipCount++;
             }
         }
-        return $ipCount > self::MAX_INCIDENT_COUNT;
+        return $ipCount >= self::MAX_INCIDENT_COUNT;
     }
 
     private function getIpList(): array
@@ -167,8 +181,8 @@ abstract class ApiController implements ControllerInterface
             new DataBaseWhere('idapikey', $this->apiKey->id),
             new DataBaseWhere('resource', $resource)
         ];
-        if ($apiAccess->loadFromCode('', $where)) {
-            switch ($this->request->getMethod()) {
+        if ($apiAccess->loadWhere($where)) {
+            switch ($this->request->method()) {
                 case 'DELETE':
                     return $apiAccess->allowdelete;
 
@@ -217,6 +231,6 @@ abstract class ApiController implements ControllerInterface
             new DataBaseWhere('apikey', $token),
             new DataBaseWhere('enabled', true)
         ];
-        return $this->apiKey->loadFromCode('', $where);
+        return $this->apiKey->loadWhere($where);
     }
 }

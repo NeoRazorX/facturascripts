@@ -12,54 +12,201 @@
     <div class="container" style="margin-top: -70px;">
         <div class="row">
             <div class="col-sm">
-                <div class="card shadow mb-4">
-                    <div class="card-body">
-                        <h3>
-                            <i class="fa-solid fa-circle-info mr-2"></i> {{ trans('installation') }}
-                        </h3>
-                        <hr>
-                        <p>FacturaScripts Versión: <strong>{{ fsc.data.facturascripts_version }}</strong></p>
-                        <p>PHP Versión: <strong>{{ fsc.data.php_version }}</strong></p>
-                        <p>Extensiones activas: <strong>{{ fsc.data.extensions | join(', ') }}</strong></p>
-                        <p>Tamaño Máximo de Subida de Archivo: <strong>{{ bytes(fsc.data.max_filesize) }}</strong></p>
-                        <p>Software del Servidor: <strong>{{ fsc.data.server_software }}</strong></p>
-                        <p>Sistema Operativo: <strong>{{ fsc.data.os_info }}</strong></p>
-                        <p>Base de Datos: <strong>{{ fsc.data.database_version }}</strong></p>
+                {% for includeView in getIncludeViews('About', 'start') %}
+                    {% include includeView['path'] %}
+                {% endfor %}
+
+                {# Software Section #}
+                {% block software %}
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <h3>
+                                <i class="fa-solid fa-code me-2"></i> {{ trans('software') }}
+                            </h3>
+                            <hr>
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">FacturaScripts</h5>
+                                    <p class="mb-1"><strong>{{ trans('version') }}:</strong> {{ fsc.data.core_version }}
+                                    </p>
+                                    <p class="mb-1"><strong>{{ trans('license') }}:</strong> LGPL v3</p>
+                                    <p class="mb-1"><strong>{{ trans('website') }}:</strong>
+                                        <a href="https://facturascripts.com" target="_blank" rel="nofollow">facturascripts.com</a>
+                                    </p>
+                                    <p class="mb-0">
+                                        <strong>{{ trans('installation') }}:</strong>
+                                        {% if settings('default', 'telemetryinstall') %}
+                                            <span class="badge bg-success">{{ trans('registered') }}</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">{{ trans('not-registered') }}</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <img src="Core/Assets/Images/horizontal-logo.png" alt="FacturaScripts"
+                                         class="img-fluid" style="max-height: 80px;">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="card shadow mb-4">
-                    <div class="card-body">
-                        <h3>
-                            <i class="fa-solid fa-plug mr-2"></i> {{ trans('plugins') }}
-                        </h3>
+                {% endblock %}
+
+
+                {# Limits Section #}
+                {% block limits %}
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <h3>
+                                <i class="fa-solid fa-chart-line me-2"></i> {{ trans('limits') }}
+                            </h3>
+                            <hr>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="text-center p-3">
+                                        <i class="fa-solid fa-users fa-2x text-primary mb-2"></i>
+                                        <h6 class="mb-1">{{ trans('users') }}</h6>
+                                        <p class="mb-0">
+                                            {% set userCount = fsc.data.limits.users is defined ? fsc.data.limits.users : 0 %}
+                                            {% set userLimit = config('max_users') %}
+                                            <strong>{{ userCount }}</strong>
+                                            / {% if userLimit %}{{ userLimit }}{% else %}∞{% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="text-center p-3">
+                                        <i class="fa-solid fa-box fa-2x text-success mb-2"></i>
+                                        <h6 class="mb-1">{{ trans('products') }}</h6>
+                                        <p class="mb-0">
+                                            {% set productCount = fsc.data.limits.products is defined ? fsc.data.limits.products : 0 %}
+                                            {% set productLimit = config('max_products') %}
+                                            <strong>{{ productCount }}</strong>
+                                            / {% if productLimit %}{{ productLimit }}{% else %}∞{% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="text-center p-3">
+                                        <i class="fa-solid fa-user-tie fa-2x text-info mb-2"></i>
+                                        <h6 class="mb-1">{{ trans('customers') }}</h6>
+                                        <p class="mb-0">
+                                            {% set customerCount = fsc.data.limits.customers is defined ? fsc.data.limits.customers : 0 %}
+                                            {% set customerLimit = config('max_customers') %}
+                                            <strong>{{ customerCount }}</strong>
+                                            / {% if customerLimit %}{{ customerLimit }}{% else %}∞{% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="text-center p-3">
+                                        <i class="fa-solid fa-file-invoice fa-2x text-warning mb-2"></i>
+                                        <h6 class="mb-1">{{ trans('invoices') }}</h6>
+                                        <p class="mb-0">
+                                            {% set invoiceCount = fsc.data.limits.invoices is defined ? fsc.data.limits.invoices : 0 %}
+                                            {% set invoiceLimit = config('max_invoices') %}
+                                            <strong>{{ invoiceCount }}</strong>
+                                            / {% if invoiceLimit %}{{ invoiceLimit }}{% else %}∞{% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <table class="table table-hover mb-0">
-                        <thead>
-                        <tr>
-                            <th scope="col">{{ trans('name') }}</th>
-                            <th scope="col">{{ trans('enabled') }}</th>
-                            <th scope="col">{{ trans('min-php-version') }}</th>
-                            <th scope="col">{{ trans('min-fs-version') }}</th>
-                            <th scope="col">{{ trans('plugins-required') }}</th>
-                            <th scope="col">{{ trans('php-extensions-required') }}</th>
-                            <th scope="col">{{ trans('priority') }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for plugin in fsc.data.plugins %}
-                            <tr>
-                                <td>{{ plugin.name }} - v{{ plugin.version }}</td>
-                                <td>{{ plugin.enabled ? trans('yes') : trans('no') }}</td>
-                                <td>{{ plugin.min_php }}</td>
-                                <td>{{ plugin.min_version }}</td>
-                                <td>{{ plugin.require | join(', ') }}</td>
-                                <td>{{ plugin.require_php | join(', ') }}</td>
-                                <td>{{ plugin.order }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                {% endblock %}
+
+                {# Plugins Section #}
+                {% block plugins %}
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <h3>
+                                <i class="fa-solid fa-plug me-2"></i> {{ trans('plugins') }}
+                                {% if fsc.data.plugins | length > 0 %}
+                                    <span class="badge bg-secondary">{{ fsc.data.plugins | length }}</span>
+                                {% endif %}
+                            </h3>
+                        </div>
+                        {% if fsc.data.plugins | length > 0 %}
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">{{ trans('name') }}</th>
+                                        <th scope="col">{{ trans('min-fs-version') }}</th>
+                                        <th scope="col">{{ trans('plugins-required') }}</th>
+                                        <th scope="col">{{ trans('min-php-version') }}</th>
+                                        <th scope="col">{{ trans('php-extensions-required') }}</th>
+                                        <th scope="col">{{ trans('enabled') }}</th>
+                                        <th class="text-end" scope="col">{{ trans('priority') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for plugin in fsc.data.plugins %}
+                                        <tr class="{{ plugin.enabled ? 'table-success' : 'table-secondary' }}">
+                                            <td>
+                                                <strong>{{ plugin.name }}</strong>
+                                                <small class="text-muted">v{{ plugin.version }}</small>
+                                            </td>
+                                            <td>{{ plugin.min_version }}</td>
+                                            <td>{{ plugin.require | join(', ') }}</td>
+                                            <td>{{ plugin.min_php }}</td>
+                                            <td>{{ plugin.require_php | join(', ') }}</td>
+                                            <td>
+                                                {% if plugin.enabled %}
+                                                    <span class="badge bg-success">{{ trans('yes') }}</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ trans('no') }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-end">{{ plugin.order }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="card-body text-center text-muted">
+                                <i class="fa-solid fa-puzzle-piece fa-3x mb-3"></i>
+                                <p class="mb-0">{{ trans('no-plugins-installed') }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endblock %}
+
+                {# Server Section #}
+                {% block server %}
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <h3>
+                                <i class="fa-solid fa-server me-2"></i> {{ trans('server') }}
+                            </h3>
+                            <hr>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6 class="text-primary mb-2">{{ trans('environment') }}</h6>
+                                    <p class="mb-1"><strong>{{ trans('server-software') }}
+                                            :</strong> {{ fsc.data.server_software }}</p>
+                                    <p class="mb-1"><strong>{{ trans('operating-system') }}
+                                            :</strong> {{ fsc.data.os_info }}</p>
+                                    <p class="mb-3"><strong>{{ trans('server-accepts-filesize') }}
+                                            :</strong> {{ bytes(fsc.data.max_filesize) }}</p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h6 class="text-success mb-2">PHP & Database</h6>
+                                    <p class="mb-1"><strong>PHP:</strong> {{ fsc.data.php_version }}</p>
+                                    <p class="mb-1"><strong>{{ trans('database') }}
+                                            :</strong> {{ fsc.data.database_version }}</p>
+                                    <p class="mb-0"><strong>{{ trans('php-extensions') }}:</strong>
+                                        <small class="text-muted">{{ fsc.data.extensions | join(', ') }}</small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endblock %}
+
+                {% for includeView in getIncludeViews('About', 'end') %}
+                    {% include includeView['path'] %}
+                {% endfor %}
             </div>
         </div>
     </div>

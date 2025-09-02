@@ -49,7 +49,7 @@ final class Translator
         $this->load($langCode);
 
         $key = $this->getTransKey($txt) . '@' . $langCode;
-        $translation = self::$translations[$key] ?? $txt;
+        $translation = self::$translations[$key] ?? $txt ?? '';
 
         if (false === array_key_exists($key, self::$translations)) {
             self::$notFound[$key] = $txt;

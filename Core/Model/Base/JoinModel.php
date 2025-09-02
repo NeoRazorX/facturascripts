@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Cache;
 
 /**
@@ -493,14 +492,5 @@ abstract class JoinModel
     protected function setMasterModel($model)
     {
         $this->masterModel = $model;
-    }
-
-    /**
-     * @return ToolBox
-     * @deprecated since version 2023.1
-     */
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
     }
 }

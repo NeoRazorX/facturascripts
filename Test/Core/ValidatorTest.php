@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -160,5 +160,90 @@ final class ValidatorTest extends TestCase
         $this->assertFalse(Validator::url('javascript://alert("test")'));
         $this->assertFalse(Validator::url('jAvAsCriPt://alert("test")'));
         $this->assertFalse(Validator::url('data:text/html;base64,PHNjcmlwdD5hbGVydCgiVGVzdCIpOzwvc2NyaXB0Pg=='));
+    }
+
+    public function testValidDates(): void
+    {
+        $validDates = [
+            // Formato d-m-Y
+            '15-01-2023',
+            '31-12-2024',
+            '29-02-2020', // Año bisiesto
+            // Formato Y-m-d
+            '2023-01-15',
+            '2024-12-31',
+            '2020-02-29', // Año bisiesto
+        ];
+
+        foreach ($validDates as $date) {
+            $this->assertTrue(Validator::date($date));
+        }
+    }
+
+    public function testInvalidDates(): void
+    {
+        $invalidDates = [
+            '15/01/2023',   // Separador incorrecto
+            '29-02-2023',   // No es año bisiesto (formato d-m-Y)
+            '2023-02-29',   // No es año bisiesto (formato Y-m-d)
+            '32-01-2023',   // Día inválido (formato d-m-Y)
+            '2023-01-32',   // Día inválido (formato Y-m-d)
+            '15-13-2023',   // Mes inválido (formato d-m-Y)
+            '2023-13-15',   // Mes inválido (formato Y-m-d)
+            '01-01-23',     // Formato corto de año
+            '23-01-01',     // Formato corto de año
+            '2023/01/15',   // Separador incorrecto en formato Y-m-d
+            '',
+            'not-a-date',
+        ];
+
+        foreach ($invalidDates as $date) {
+            $this->assertFalse(Validator::date($date));
+        }
+    }
+
+    public function testValidDateTimes(): void
+    {
+        $validDateTimes = [
+            // Formato d-m-Y H:i:s
+            '15-01-2023 14:30:00',
+            '31-12-2024 23:59:59',
+            '29-02-2020 00:00:00', // Año bisiesto
+            // Formato Y-m-d H:i:s
+            '2023-01-15 14:30:00',
+            '2024-12-31 23:59:59',
+            '2020-02-29 00:00:00', // Año bisiesto
+            // Formato ISO 8601 con T
+            '2023-01-15T14:30:00',
+            '2024-12-31T23:59:59',
+            '2020-02-29T00:00:00', // Año bisiesto
+        ];
+
+        foreach ($validDateTimes as $datetime) {
+            $this->assertTrue(Validator::datetime($datetime));
+        }
+    }
+
+    public function testInvalidDateTimes(): void
+    {
+        $invalidDateTimes = [
+            '29-02-2023 14:30:00',     // Fecha inválida (d-m-Y)
+            '2023-02-29 14:30:00',     // Fecha inválida (Y-m-d)
+            '2023-02-29T14:30:00',     // Fecha inválida (Y-m-d) con T
+            '15-01-2023 24:00:00',     // Hora inválida
+            '2023-01-15 24:00:00',     // Hora inválida
+            '2023-01-15T24:00:00',     // Hora inválida con T
+            '15-01-2023 14:60:00',     // Minutos inválidos
+            '15-01-2023 14:30:60',     // Segundos inválidos
+            '15/01/2023 14:30:00',     // Separador de fecha incorrecto
+            '2023/01/15 14:30:00',     // Separador de fecha incorrecto
+            '2023/01/15T14:30:00',     // Separador de fecha incorrecto con T
+            '',
+            'not-a-datetime',
+        ];
+
+        foreach ($invalidDateTimes as $datetime) {
+            $this->assertFalse(Validator::datetime($datetime));
+        }
     }
 }

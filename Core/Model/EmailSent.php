@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\MyFilesToken;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 
 /**
@@ -72,7 +72,7 @@ class EmailSent extends ModelClass
     /** @var string */
     public $verificode;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->date = Tools::dateTime();
@@ -105,11 +105,6 @@ class EmailSent extends ModelClass
         return $files;
     }
 
-    public static function primaryColumn(): string
-    {
-        return 'id';
-    }
-
     public static function tableName(): string
     {
         return 'emails_sent';
@@ -118,7 +113,7 @@ class EmailSent extends ModelClass
     public function test(): bool
     {
         $body = Tools::noHtml($this->body);
-        $this->body = strlen($body) > 5000 ? substr($body, 0, 4997) . '...' : $body;
+        $this->body = strlen($body ?? '') > 5000 ? substr($body, 0, 4997) . '...' : $body;
 
         $this->html = Tools::noHtml($this->html);
         $this->subject = Tools::noHtml($this->subject);
@@ -133,13 +128,12 @@ class EmailSent extends ModelClass
 
     public static function verify(string $verificode, string $addressee = ''): bool
     {
-        $model = new static();
-        $where = [new DataBaseWhere('verificode', $verificode)];
+        $where = [Where::eq('verificode', $verificode)];
         if (!empty($addressee)) {
-            $where[] = new DataBaseWhere('addressee', $addressee);
+            $where[] = Where::eq('addressee', $addressee);
         }
 
-        foreach ($model->all($where) as $item) {
+        foreach (static::all($where) as $item) {
             $item->opened = true;
             $item->save();
 

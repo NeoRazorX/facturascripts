@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -27,9 +29,9 @@ use FacturaScripts\Core\Tools;
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class PageFilter extends Base\ModelClass
+class PageFilter extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Human description
@@ -66,7 +68,7 @@ class PageFilter extends Base\ModelClass
      */
     public $nick;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->filters = [];
@@ -86,7 +88,7 @@ class PageFilter extends Base\ModelClass
      * @param array $data
      * @param array $exclude
      */
-    public function loadFromData(array $data = [], array $exclude = [])
+    public function loadFromData(array $data = [], array $exclude = []): void
     {
         array_push($exclude, 'filters', 'code', 'action');
         parent::loadFromData($data, $exclude);
@@ -94,9 +96,17 @@ class PageFilter extends Base\ModelClass
         $this->filters = isset($data['filters']) ? json_decode($data['filters'], true) : [];
     }
 
-    public static function primaryColumn(): string
+    public function save(): bool
     {
-        return 'id';
+        // Encode the filters values to JSON format
+        $this->filters = $this->getEncodeValues()['filters'];
+
+        $saved = parent::save();
+
+        // decode the filters values back to array format
+        $this->filters = json_decode($this->filters, true);
+
+        return $saved;
     }
 
     public static function tableName(): string
@@ -125,15 +135,5 @@ class PageFilter extends Base\ModelClass
         return [
             'filters' => json_encode($this->filters)
         ];
-    }
-
-    protected function saveInsert(array $values = []): bool
-    {
-        return parent::saveInsert($this->getEncodeValues());
-    }
-
-    protected function saveUpdate(array $values = []): bool
-    {
-        return parent::saveUpdate($this->getEncodeValues());
     }
 }

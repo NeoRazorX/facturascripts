@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,6 +36,8 @@ class EditContacto extends EditController
 {
     use DocFilesTrait;
 
+    private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
+
     public function getImageUrl(): string
     {
         $mvn = $this->getMainViewName();
@@ -56,7 +58,7 @@ class EditContacto extends EditController
         return $data;
     }
 
-    protected function addConversionButtons(string $viewName, BaseView $view)
+    protected function addConversionButtons(string $viewName, BaseView $view): void
     {
         $accessClient = $this->getRolePermissions('EditCliente');
         if (empty($view->model->codcliente) && $accessClient['allowupdate']) {
@@ -90,7 +92,7 @@ class EditContacto extends EditController
         return true;
     }
 
-    protected function createCustomerAction()
+    protected function createCustomerAction(): void
     {
         $access = $this->getRolePermissions('EditCliente');
         if (false === $access['allowupdate']) {
@@ -125,7 +127,7 @@ class EditContacto extends EditController
             ->addSearchFields(['codigo', 'numero2', 'observaciones']);
     }
 
-    protected function createSupplierAction()
+    protected function createSupplierAction(): void
     {
         $access = $this->getRolePermissions('EditProveedor');
         if (false === $access['allowupdate']) {
@@ -150,6 +152,7 @@ class EditContacto extends EditController
     protected function createViews()
     {
         parent::createViews();
+
         $this->createEmailsView();
         $this->createViewDocFiles();
 
@@ -158,10 +161,7 @@ class EditContacto extends EditController
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function editAction()
+    protected function editAction(): bool
     {
         $return = parent::editAction();
         if ($return && $this->active === $this->getMainViewName()) {
@@ -250,7 +250,7 @@ class EditContacto extends EditController
 
         switch ($viewName) {
             case 'docfiles':
-                $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->primaryColumnValue());
+                $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->id());
                 break;
 
             case 'ListEmailSent':
@@ -288,12 +288,14 @@ class EditContacto extends EditController
                 if ($this->permissions->allowUpdate) {
                     $this->addConversionButtons($viewName, $view);
                 }
-                $this->addButton($viewName, [
-                    'action' => 'check-vies',
-                    'color' => 'info',
-                    'icon' => 'fa-solid fa-check-double',
-                    'label' => 'check-vies'
-                ]);
+                if (!empty($view->model->cifnif)) {
+                    $this->addButton($viewName, [
+                        'action' => 'check-vies',
+                        'color' => 'info',
+                        'icon' => 'fa-solid fa-check-double',
+                        'label' => 'check-vies'
+                    ]);
+                }
                 break;
         }
     }
@@ -301,7 +303,7 @@ class EditContacto extends EditController
     /**
      * Load the available language values from translator.
      */
-    protected function loadLanguageValues(string $viewName)
+    protected function loadLanguageValues(string $viewName): void
     {
         $columnLangCode = $this->views[$viewName]->columnForName('language');
         if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
@@ -317,7 +319,7 @@ class EditContacto extends EditController
     /**
      * @param Contacto $contact
      */
-    protected function updateRelations($contact)
+    protected function updateRelations($contact): void
     {
         $customer = $contact->getCustomer(false);
         if ($customer->idcontactofact == $contact->idcontacto && $customer->exists()) {

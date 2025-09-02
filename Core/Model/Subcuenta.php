@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ExerciseRelationTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cuenta as DinCuenta;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
@@ -31,10 +34,10 @@ use FacturaScripts\Dinamic\Model\Partida as DinPartida;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Subcuenta extends Base\ModelClass
+class Subcuenta extends ModelClass
 {
-    use Base\ModelTrait;
-    use Base\ExerciseRelationTrait;
+    use ModelTrait;
+    use ExerciseRelationTrait;
 
     /**
      * Account code.
@@ -51,7 +54,7 @@ class Subcuenta extends Base\ModelClass
     public $codcuentaesp;
 
     /**
-     * Sub-account code.
+     * Subaccount code.
      *
      * @var string
      */
@@ -74,7 +77,7 @@ class Subcuenta extends Base\ModelClass
     /**
      * @var bool
      */
-    private $disableAdditionalTest = false;
+    private $disable_additional_test = false;
 
     /**
      * Amount of credit.
@@ -104,7 +107,7 @@ class Subcuenta extends Base\ModelClass
      */
     public $saldo;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->debe = 0.0;
@@ -114,7 +117,7 @@ class Subcuenta extends Base\ModelClass
 
     public function delete(): bool
     {
-        if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
+        if ($this->getExercise()->isOpened() || $this->disable_additional_test) {
             return parent::delete();
         }
 
@@ -122,9 +125,9 @@ class Subcuenta extends Base\ModelClass
         return false;
     }
 
-    public function disableAdditionalTest(bool $value)
+    public function disableAdditionalTest(bool $value): void
     {
-        $this->disableAdditionalTest = $value;
+        $this->disable_additional_test = $value;
     }
 
     /**
@@ -137,7 +140,7 @@ class Subcuenta extends Base\ModelClass
         $account = new DinCuenta();
 
         // find account by id
-        if (!empty($this->idcuenta) && $account->loadFromCode($this->idcuenta) && $account->codejercicio === $this->codejercicio) {
+        if (!empty($this->idcuenta) && $account->load($this->idcuenta) && $account->codejercicio === $this->codejercicio) {
             return $account;
         }
 
@@ -146,7 +149,7 @@ class Subcuenta extends Base\ModelClass
             new DataBaseWhere('codcuenta', $this->codcuenta),
             new DataBaseWhere('codejercicio', $this->codejercicio)
         ];
-        $account->loadFromCode('', $where);
+        $account->loadWhere($where);
         return $account;
     }
 
@@ -188,7 +191,7 @@ class Subcuenta extends Base\ModelClass
 
     public function save(): bool
     {
-        if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
+        if ($this->getExercise()->isOpened() || $this->disable_additional_test) {
             return parent::save();
         }
 
@@ -203,7 +206,7 @@ class Subcuenta extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->saldo = $this->debe - $this->haber;
+        $this->saldo = round($this->debe - $this->haber, FS_NF0);
 
         // escape html
         foreach (['codcuenta', 'codsubcuenta', 'descripcion', 'codcuentaesp'] as $field) {
@@ -222,7 +225,7 @@ class Subcuenta extends Base\ModelClass
 
         // check exercise
         $exercise = $this->getExercise();
-        if (false === $this->disableAdditionalTest && strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
+        if (false === $this->disable_additional_test && strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
             Tools::log()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
             return false;
         }
@@ -275,9 +278,9 @@ class Subcuenta extends Base\ModelClass
         // calculamos el saldo de la subcuenta
         $sql = "SELECT COALESCE(SUM(debe), 0) as debe, COALESCE(SUM(haber), 0) as haber"
             . " FROM " . DinPartida::tableName()
-            . " WHERE idsubcuenta = " . self::$dataBase->var2str($this->idsubcuenta) . ";";
+            . " WHERE idsubcuenta = " . self::db()->var2str($this->idsubcuenta) . ";";
 
-        foreach (self::$dataBase->select($sql) as $row) {
+        foreach (self::db()->select($sql) as $row) {
             $decimals = Tools::settings('default', 'decimals');
             $debe = round($row['debe'], $decimals);
             $haber = round($row['haber'], $decimals);

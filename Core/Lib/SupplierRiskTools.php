@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class SupplierRiskTools
 {
-
     /**
      * Provides direct access to the database.
      *
@@ -37,9 +37,9 @@ class SupplierRiskTools
 
     /**
      * Returns the current supplier's risk.
-     * 
+     *
      * @param string $codproveedor
-     * @param int    $idempresa
+     * @param int $idempresa
      *
      * @return float
      */
@@ -52,9 +52,9 @@ class SupplierRiskTools
 
     /**
      * Returns the sum of the supplier's pending delivery notes.
-     * 
+     *
      * @param string $codproveedor
-     * @param int    $idempresa
+     * @param int $idempresa
      *
      * @return float
      */
@@ -68,7 +68,7 @@ class SupplierRiskTools
         }
 
         foreach (static::dataBase()->select($sql) as $item) {
-            return (float) $item['total'];
+            return (float)$item['total'];
         }
 
         return 0.0;
@@ -76,9 +76,9 @@ class SupplierRiskTools
 
     /**
      * Returns the sum of the supplier's unpaid invoices receipts.
-     * 
+     *
      * @param string $codproveedor
-     * @param int    $idempresa
+     * @param int $idempresa
      *
      * @return float
      */
@@ -92,7 +92,7 @@ class SupplierRiskTools
         }
 
         foreach (static::dataBase()->select($sql) as $item) {
-            return (float) $item['total'];
+            return (float)$item['total'];
         }
 
         return 0.0;
@@ -100,9 +100,9 @@ class SupplierRiskTools
 
     /**
      * Returns the sum of the supplier's pending orders.
-     * 
+     *
      * @param string $codproveedor
-     * @param int    $idempresa
+     * @param int $idempresa
      *
      * @return float
      */
@@ -116,20 +116,17 @@ class SupplierRiskTools
         }
 
         foreach (static::dataBase()->select($sql) as $item) {
-            return (float) $item['total'];
+            return (float)$item['total'];
         }
 
         return 0.0;
     }
 
-    /**
-     *
-     * @return DataBase
-     */
-    protected static function database()
+    protected static function database(): DataBase
     {
         if (null === self::$dataBase) {
             self::$dataBase = new DataBase();
+            self::$dataBase->connect();
         }
 
         return self::$dataBase;

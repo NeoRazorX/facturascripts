@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,16 +49,16 @@ class APIModel extends APIResourceClass
     public function doDELETE(): bool
     {
         if (empty($this->params) || false === $this->model->loadFromCode($this->params[0])) {
-            $this->setError(Tools::lang()->trans('record-not-found'));
+            $this->setError(Tools::trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
             return false;
         }
 
         if ($this->model->delete()) {
-            $this->setOk(Tools::lang()->trans('record-deleted-correctly'), $this->model->toArray());
+            $this->setOk(Tools::trans('record-deleted-correctly'), $this->model->toArray());
             return true;
         }
 
-        $this->setError(Tools::lang()->trans('record-deleted-error'));
+        $this->setError(Tools::trans('record-deleted-error'));
         return false;
     }
 
@@ -90,7 +90,7 @@ class APIModel extends APIResourceClass
 
         // record not found
         if (false === $this->model->loadFromCode($this->params[0])) {
-            $this->setError(Tools::lang()->trans('record-not-found'));
+            $this->setError(Tools::trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
             return false;
         }
 
@@ -111,10 +111,10 @@ class APIModel extends APIResourceClass
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
         if ($this->model->loadFromCode($code)) {
-            $this->setError(Tools::lang()->trans('duplicate-record'), $this->model->toArray());
+            $this->setError(Tools::trans('duplicate-record'), $this->model->toArray());
             return false;
         } elseif (empty($values)) {
-            $this->setError(Tools::lang()->trans('no-data-received-form'));
+            $this->setError(Tools::trans('no-data-received-form'));
             return false;
         }
 
@@ -138,10 +138,10 @@ class APIModel extends APIResourceClass
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
         if (false === $this->model->loadFromCode($code)) {
-            $this->setError(Tools::lang()->trans('record-not-found'));
+            $this->setError(Tools::trans('record-not-found'), null, Response::HTTP_NOT_FOUND);
             return false;
         } elseif (empty($values)) {
-            $this->setError(Tools::lang()->trans('no-data-received-form'));
+            $this->setError(Tools::trans('no-data-received-form'));
             return false;
         }
 
@@ -194,7 +194,7 @@ class APIModel extends APIResourceClass
      */
     private function getRequestArray($key, $default = ''): array
     {
-        $array = $this->request->get($key, $default);
+        $array = $this->request->getArray($key, $default);
         return is_array($array) ? $array : []; // if is string has bad format
     }
 
@@ -269,6 +269,16 @@ class APIModel extends APIResourceClass
                     break;
             }
 
+            if (substr($key, -5) == '_null') {
+                $field = substr($key, 0, -5);
+                $operator = 'IS';
+                $value = null;
+            } elseif (substr($key, -8) == '_notnull') {
+                $field = substr($key, 0, -8);
+                $operator = 'IS NOT';
+                $value = null;
+            }
+
             if (substr($key, -5) == '_like') {
                 $field = substr($key, 0, -5);
                 $operator = 'LIKE';
@@ -334,11 +344,11 @@ class APIModel extends APIResourceClass
     private function saveResource(): bool
     {
         if ($this->model->save()) {
-            $this->setOk(Tools::lang()->trans('record-updated-correctly'), $this->model->toArray());
+            $this->setOk(Tools::trans('record-updated-correctly'), $this->model->toArray());
             return true;
         }
 
-        $message = Tools::lang()->trans('record-save-error');
+        $message = Tools::trans('record-save-error');
         foreach (Tools::log()->read('', ['critical', 'error', 'info', 'notice', 'warning']) as $log) {
             $message .= ' - ' . $log['message'];
         }

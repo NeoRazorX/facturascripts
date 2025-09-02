@@ -47,6 +47,7 @@ abstract class SalesController extends PanelController
     const MAIN_VIEW_NAME = 'main';
     const MAIN_VIEW_TEMPLATE = 'Tab/SalesDocument';
 
+    /** @var array */
     private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
 
     abstract public function getModelClassName();
@@ -58,7 +59,7 @@ abstract class SalesController extends PanelController
         }
 
         // loaded record? just return it
-        if ($this->views[static::MAIN_VIEW_NAME]->model->primaryColumnValue()) {
+        if ($this->views[static::MAIN_VIEW_NAME]->model->id()) {
             return $this->views[static::MAIN_VIEW_NAME]->model;
         }
 
@@ -85,7 +86,7 @@ abstract class SalesController extends PanelController
      */
     public function renderSalesForm(SalesDocument $model, array $lines): string
     {
-        $url = empty($model->primaryColumnValue()) ? $this->url() : $model->url();
+        $url = empty($model->id()) ? $this->url() : $model->url();
 
         return '<div id="salesFormHeader">' . SalesHeaderHTML::render($model) . '</div>'
             . '<div id="salesFormLines">' . SalesLineHTML::render($lines, $model) . '</div>'
@@ -128,10 +129,10 @@ abstract class SalesController extends PanelController
         }
 
         if (empty($list)) {
-            $list[] = ['key' => null, 'value' => Tools::lang()->trans('no-data')];
+            $list[] = ['key' => null, 'value' => Tools::trans('no-data')];
         }
 
-        $this->response->setContent(json_encode($list));
+        $this->response->json($list);
         return false;
     }
 
@@ -143,12 +144,15 @@ abstract class SalesController extends PanelController
         $this->createViewLogAudit();
     }
 
-    protected function createViewsDoc()
+    protected function createViewsDoc(): void
     {
         $pageData = $this->getPageData();
         $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fa-solid fa-file');
-        AssetManager::addCss(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
-        AssetManager::addJs(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
+        AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+
         SalesHeaderHTML::assets();
         SalesLineHTML::assets();
         SalesFooterHTML::assets();
@@ -238,13 +242,13 @@ abstract class SalesController extends PanelController
         $this->setTemplate(false);
 
         $subjectLang = $this->views[static::MAIN_VIEW_NAME]->model->getSubject()->langcode;
-        $requestLang = $this->request->request->get('langcode');
+        $requestLang = $this->request->input('langcode');
         $langCode = $requestLang ?? $subjectLang ?? '';
 
         $this->exportManager->newDoc(
             $this->request->get('option', ''),
             $this->title,
-            (int)$this->request->request->get('idformat', ''),
+            (int)$this->request->input('idformat', ''),
             $langCode
         );
         $this->exportManager->addBusinessDocPage($this->views[static::MAIN_VIEW_NAME]->model);
@@ -274,7 +278,7 @@ abstract class SalesController extends PanelController
         foreach ($customer->codeModelSearch($term, '', $where) as $item) {
             $list[$item->code] = $item->code . ' | ' . Tools::fixHtml($item->description);
         }
-        $this->response->setContent(json_encode($list));
+        $this->response->json($list);
         return false;
     }
 
@@ -282,7 +286,7 @@ abstract class SalesController extends PanelController
     {
         $this->setTemplate(false);
         $model = $this->getModel();
-        $formData = json_decode($this->request->request->get('data'), true);
+        $formData = json_decode($this->request->input('data'), true);
         SalesHeaderHTML::apply($model, $formData);
         SalesFooterHTML::apply($model, $formData);
         SalesModalHTML::apply($model, $formData);
@@ -322,7 +326,7 @@ abstract class SalesController extends PanelController
 
                 // data not found?
                 $view->loadData($code);
-                $action = $this->request->request->get('action', '');
+                $action = $this->request->input('action', '');
                 if ('' === $action && empty($view->model->primaryColumnValue())) {
                     Tools::log()->warning('record-not-found');
                     break;
@@ -345,8 +349,8 @@ abstract class SalesController extends PanelController
         $this->setTemplate(false);
         $model = $this->getModel();
         $lines = $model->getLines();
-        $formData = json_decode($this->request->request->get('data'), true);
-        SalesHeaderHTML::apply($model, $formData,);
+        $formData = json_decode($this->request->input('data'), true);
+        SalesHeaderHTML::apply($model, $formData);
         SalesFooterHTML::apply($model, $formData);
         SalesLineHTML::apply($model, $lines, $formData);
         Calculator::calculate($model, $lines, false);
@@ -376,7 +380,7 @@ abstract class SalesController extends PanelController
         $this->dataBase->beginTransaction();
 
         $model = $this->getModel();
-        $formData = json_decode($this->request->request->get('data'), true);
+        $formData = json_decode($this->request->input('data'), true);
         SalesHeaderHTML::apply($model, $formData);
         SalesFooterHTML::apply($model, $formData);
 
@@ -437,8 +441,8 @@ abstract class SalesController extends PanelController
 
         // si la factura es de 0 €, la marcamos como pagada
         $model = $this->getModel();
-        if (empty($model->total) && property_exists($model, 'pagada')) {
-            $model->pagada = (bool)$this->request->request->get('selectedLine');
+        if (empty($model->total) && $model->hasColumn('pagada')) {
+            $model->pagada = (bool)$this->request->input('selectedLine');
             $model->save();
             $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
             return false;
@@ -453,15 +457,15 @@ abstract class SalesController extends PanelController
         }
 
         // marcamos los recibos como pagados, eso marca la factura como pagada
-        $formData = json_decode($this->request->request->get('data'), true);
+        $formData = json_decode($this->request->input('data'), true);
         foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
             // si no está pagado, actualizamos fechapago y codpago
-            if (false == $receipt->pagado){
+            if (false == $receipt->pagado) {
                 $receipt->fechapago = $formData['fechapagorecibo'] ?? Tools::date();
                 $receipt->codpago = $model->codpago;
             }
-            $receipt->pagado = (bool)$this->request->request->get('selectedLine');
+            $receipt->pagado = (bool)$this->request->input('selectedLine');
             if (false === $receipt->save()) {
                 $this->sendJsonWithLogs(['ok' => false]);
                 return false;
@@ -488,7 +492,7 @@ abstract class SalesController extends PanelController
         }
 
         $model = $this->getModel();
-        $model->idestado = (int)$this->request->request->get('selectedLine');
+        $model->idestado = (int)$this->request->input('selectedLine');
         if (false === $model->save()) {
             $this->sendJsonWithLogs(['ok' => false]);
             return false;
@@ -507,6 +511,6 @@ abstract class SalesController extends PanelController
             }
         }
 
-        $this->response->setContent(json_encode($data));
+        $this->response->json($data);
     }
 }

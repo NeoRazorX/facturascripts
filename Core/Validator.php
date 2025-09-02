@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,8 @@
  */
 
 namespace FacturaScripts\Core;
+
+use DateTime;
 
 /**
  * Permite validar distintos tipos de datos.
@@ -83,5 +85,98 @@ class Validator
         }
 
         return filter_var($url, FILTER_VALIDATE_URL) !== false;
+    }
+
+    /**
+     * Valída una fecha en formato ESTRICTO 'd-m-Y' o 'Y-m-d'
+     * Ejemplos válidos: "31-12-2023", "01-01-2024", "2023-12-31", "2024-01-01"
+     *
+     * @param string $date Fecha a validar (formatos: 'd-m-Y' o 'Y-m-d')
+     * @return bool True si es válida y tiene el formato correcto
+     */
+    public static function date(string $date): bool
+    {
+        if (empty($date)) {
+            return false;
+        }
+
+        // Intentar formato 'd-m-Y'
+        $dateObj = DateTime::createFromFormat('d-m-Y', $date);
+        if ($dateObj && $dateObj->format('d-m-Y') === $date) {
+            return checkdate(
+                (int)$dateObj->format('m'),
+                (int)$dateObj->format('d'),
+                (int)$dateObj->format('Y')
+            );
+        }
+
+        // Intentar formato 'Y-m-d'
+        $dateObj = DateTime::createFromFormat('Y-m-d', $date);
+        if ($dateObj && $dateObj->format('Y-m-d') === $date) {
+            return checkdate(
+                (int)$dateObj->format('m'),
+                (int)$dateObj->format('d'),
+                (int)$dateObj->format('Y')
+            );
+        }
+
+        return false;
+    }
+
+    /**
+     * Valída fecha y hora con:
+     * - Fecha ESTRICTA en formato 'd-m-Y' o 'Y-m-d'
+     * - Tiempo en formato 'H:i:s' O 'H:i'
+     * - Separador: espacio o T (ISO 8601)
+     *
+     * Ejemplos válidos:
+     * "31-12-2023 23:59:59", "01-01-2024 00:00", "15-06-2023 14:30"
+     * "2023-12-31 23:59:59", "2024-01-01 00:00", "2023-06-15 14:30"
+     * "2023-12-31T23:59:59", "2024-01-01T00:00", "2023-06-15T14:30"
+     *
+     * @param string $datetime Fecha y hora a validar
+     * @return bool True si es válido y tiene el formato correcto
+     */
+    public static function datetime(string $datetime): bool
+    {
+        if (empty($datetime)) {
+            return false;
+        }
+
+        // Separar fecha y tiempo usando espacio o T (ISO 8601)
+        $parts = preg_split('/[\sT]/', $datetime);
+        if (count($parts) !== 2) {
+            return false;
+        }
+
+        // Validar la parte de la fecha (estricto)
+        if (!static::date($parts[0])) {
+            return false;
+        }
+
+        // Validar la parte del tiempo (flexible)
+        return static::hour($parts[1]);
+    }
+
+    /**
+     * Valída un tiempo en formato 'H:i:s' o 'H:i'
+     *
+     * @param string $time Tiempo a validar
+     * @return bool True si es válido
+     */
+    public static function hour(string $time): bool
+    {
+        // Aceptar HH:MM:SS o HH:MM
+        if (!preg_match('/^([01]?\d|2[0-3]):([0-5]?\d)(?::([0-5]?\d))?$/', $time)) {
+            return false;
+        }
+
+        // Validación adicional para segundos si existen
+        $parts = explode(':', $time);
+        if (count($parts) === 3 && ($parts[2] < 0 || $parts[2] > 59)) {
+            return false;
+        }
+
+        return true;
     }
 }

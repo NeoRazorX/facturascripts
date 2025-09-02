@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Contacto;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -149,7 +150,6 @@ final class ContactoTest extends TestCase
         $contact->cifnif = '<test>';
         $contact->telefono1 = '<test>';
         $contact->telefono2 = '<test>';
-        $contact->fax = '<test>';
         $contact->observaciones = '<script>alert("test");</script>';
         $this->assertTrue($contact->save(), 'contact-cant-save-html');
 
@@ -164,7 +164,6 @@ final class ContactoTest extends TestCase
         $this->assertEquals('&lt;test&gt;', $contact->cifnif);
         $this->assertEquals('&lt;test&gt;', $contact->telefono1);
         $this->assertEquals('&lt;test&gt;', $contact->telefono2);
-        $this->assertEquals('&lt;test&gt;', $contact->fax);
         $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $contact->observaciones);
 
         // eliminamos
@@ -178,7 +177,7 @@ final class ContactoTest extends TestCase
         $contact->nombre = 'Test';
         $this->assertTrue($contact->save(), 'contact-cant-save');
 
-        // comprobamos que apellidos, cargo, dirección, teléfonos, fax, email y observaciones no sean nulos
+        // comprobamos que apellidos, cargo, dirección, teléfonos, email y observaciones no sean nulos
         $this->assertNotNull($contact->apellidos, 'contact-apellidos-null');
         $this->assertNotNull($contact->cargo, 'contact-cargo-null');
         $this->assertNotNull($contact->empresa, 'contact-empresa-null');
@@ -187,12 +186,56 @@ final class ContactoTest extends TestCase
         $this->assertNotNull($contact->provincia, 'contact-provincia-null');
         $this->assertNotNull($contact->telefono1, 'contact-telefono1-null');
         $this->assertNotNull($contact->telefono2, 'contact-telefono2-null');
-        $this->assertNotNull($contact->fax, 'contact-fax-null');
         $this->assertNotNull($contact->email, 'contact-email-null');
         $this->assertNotNull($contact->observaciones, 'contact-observaciones-null');
 
         // eliminamos
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
+    }
+
+    public function testPropertiesLength(): void
+    {
+        // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
+        $campos = [
+            'apellidos'     => [150, 151],
+            'apartado'      => [10, 11],
+            'cargo'         => [100, 101],
+            'cifnif'        => [30, 31],
+            'ciudad'        => [100, 101],
+            'codpais'       => [20, 21],
+            'codpostal'     => [10, 11],
+            'descripcion'   => [100, 101],
+            'direccion'     => [200, 201],
+            //'email'         => [100, 101],
+            'empresa'       => [100, 101],
+            'langcode'      => [10, 11],
+            'nombre'        => [100, 101],
+            'provincia'     => [100, 101],
+            'telefono1'     => [30, 31],
+            'telefono2'     => [30, 31],
+            'tipoidfiscal'  => [25, 26],
+            //'web'           => [100, 101],
+        ];
+
+        foreach ($campos as $campo => [$valido, $invalido]) {
+            // Creamos un nuevo almacén
+            $contact = new Contacto();
+
+            // campo obligatorio (not null)
+            $contact->nombre = 'Test';
+            $contact->descripcion = 'Test'; // evitar autorellenado
+
+            // Asignamos el valor inválido en el campo a probar
+            $contact->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($contact->save(), "can-save-contacto-bad-{$campo}");
+
+            // Corregimos el campo y comprobamos que ahora sí se puede guardar
+            $contact->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($contact->save(), "cannot-save-contacto-fixed-{$campo}");
+
+            // Limpiar
+            $this->assertTrue($contact->delete(), "cannot-delete-contacto-{$campo}");
+        }
     }
 
     public function testVies(): void

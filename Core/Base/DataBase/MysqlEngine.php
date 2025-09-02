@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,7 +69,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function beginTransaction($link)
+    public function beginTransaction($link): bool
     {
         $result = $this->exec($link, 'START TRANSACTION;');
         if ($result) {
@@ -79,7 +79,7 @@ class MysqlEngine extends DataBaseEngine
         return $result;
     }
 
-    public function castInteger($link, $column)
+    public function castInteger($link, $column): string
     {
         return 'CAST(' . $this->escapeColumn($link, $column) . ' AS unsigned)';
     }
@@ -91,7 +91,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function close($link)
+    public function close($link): bool
     {
         $this->rollbackTransactions();
         return $link->close();
@@ -104,7 +104,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return array
      */
-    public function columnFromData($colData)
+    public function columnFromData($colData): array
     {
         $result = array_change_key_case($colData);
         $result['is_nullable'] = $result['null'];
@@ -120,7 +120,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function commit($link)
+    public function commit($link): bool
     {
         $result = $this->exec($link, 'COMMIT;');
         if ($result && in_array($link, $this->transactions, false)) {
@@ -138,7 +138,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function compareDataTypes($dbType, $xmlType)
+    public function compareDataTypes($dbType, $xmlType): bool
     {
         if (parent::compareDataTypes($dbType, $xmlType)) {
             return true;
@@ -199,7 +199,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function errorMessage($link)
+    public function errorMessage($link): string
     {
         return empty($link->error) ? $this->lastErrorMsg : $link->error;
     }
@@ -212,7 +212,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function escapeColumn($link, $name)
+    public function escapeColumn($link, $name): string
     {
         return '`' . $name . '`';
     }
@@ -225,7 +225,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function escapeString($link, $str)
+    public function escapeString($link, $str): string
     {
         return $link->escape_string($str);
     }
@@ -238,7 +238,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function exec($link, $sql)
+    public function exec($link, $sql): bool
     {
         try {
             if ($link->multi_query($sql)) {
@@ -246,7 +246,11 @@ class MysqlEngine extends DataBaseEngine
                     $more = $link->more_results() && $link->next_result();
                 } while ($more);
             }
-            return $link->errno === 0;
+            if ($link->errno !== 0) {
+                $this->lastErrorMsg = $link->error;
+                return false;
+            }
+            return true;
         } catch (Exception $err) {
             $this->lastErrorMsg = $err->getMessage();
         }
@@ -271,7 +275,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function inTransaction($link)
+    public function inTransaction($link): bool
     {
         return in_array($link, $this->transactions, false);
     }
@@ -283,7 +287,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return array
      */
-    public function listTables($link)
+    public function listTables($link): array
     {
         $tables = [];
         foreach ($this->select($link, 'SHOW TABLES;') as $row) {
@@ -303,7 +307,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return bool
      */
-    public function rollback($link)
+    public function rollback($link): bool
     {
         $result = $this->exec($link, 'ROLLBACK;');
         if (in_array($link, $this->transactions, false)) {
@@ -322,7 +326,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return array
      */
-    public function select($link, $sql)
+    public function select($link, $sql): array
     {
         $result = [];
         try {
@@ -333,6 +337,9 @@ class MysqlEngine extends DataBaseEngine
                     $result[] = $row;
                 }
                 $aux->free();
+            }
+            if ($link->errno !== 0) {
+                $this->lastErrorMsg = $link->error;
             }
         } catch (Exception $err) {
             $this->lastErrorMsg = $err->getMessage();
@@ -349,15 +356,15 @@ class MysqlEngine extends DataBaseEngine
      *
      * @return string
      */
-    public function version($link)
+    public function version($link): string
     {
-        return 'MYSQL ' . $link->server_version;
+        return $link->server_info;
     }
 
     /**
      * Rollback all active transactions.
      */
-    private function rollbackTransactions()
+    private function rollbackTransactions(): void
     {
         foreach ($this->transactions as $link) {
             $this->rollback($link);
@@ -369,7 +376,7 @@ class MysqlEngine extends DataBaseEngine
      *
      * @param mysqli $link
      */
-    private function unsetTransaction($link)
+    private function unsetTransaction($link): void
     {
         $count = 0;
         foreach ($this->transactions as $trans) {

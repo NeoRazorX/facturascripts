@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Tools;
 
 class Myfiles implements ControllerInterface
@@ -45,12 +45,12 @@ class Myfiles implements ControllerInterface
         if (false === is_file($this->filePath)) {
             throw new KernelException(
                 'FileNotFound',
-                Tools::lang()->trans('file-not-found', ['%fileName%' => $url])
+                Tools::trans('file-not-found', ['%fileName%' => $url])
             );
         }
 
         if (false === $this->isFileSafe($this->filePath)) {
-            throw new KernelException('UnsafeFile', 'File not safe: ' . $url);
+            throw new KernelException('UnsafeFile', $url);
         }
 
         // if the folder is MyFiles/Public, then we don't need to check the token
@@ -62,7 +62,7 @@ class Myfiles implements ControllerInterface
         $fixedFilePath = substr(urldecode($url), 1);
         $token = filter_input(INPUT_GET, 'myft');
         if (empty($token) || false === MyFilesToken::validate($fixedFilePath, $token)) {
-            throw new KernelException('MyfilesTokenError', 'Invalid token for file: ' . $fixedFilePath);
+            throw new KernelException('MyfilesTokenError', $fixedFilePath);
         }
     }
 
@@ -76,11 +76,12 @@ class Myfiles implements ControllerInterface
         $parts = explode('.', $filePath);
         $safe = [
             '7z', 'accdb', 'ai', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'dxf', 'dwg', 'eot', 'gif', 'gz', 'html',
-            'ico', 'jfif', 'jpeg', 'jpg', 'js', 'json', 'map', 'md', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt',
+            'ico', 'jfif', 'jpeg', 'jpg', 'js', 'json', 'map', 'md', 'mdb', 'mkv', 'mov', 'mp3', 'mp4', 'ndg', 'ods', 'odt',
             'ogg', 'pdf', 'png', 'pptx', 'rar', 'sql', 'step', 'svg', 'ttf', 'txt', 'webm', 'webp', 'woff', 'woff2',
             'xls', 'xlsm', 'xlsx', 'xml', 'xsig', 'zip'
         ];
-        return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
+        $extension = strtolower(end($parts));
+        return empty($parts) || count($parts) === 1 || in_array($extension, $safe, true);
     }
 
     public function run(): void

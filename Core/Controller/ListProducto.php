@@ -184,7 +184,7 @@ class ListProducto extends ListController
 
         $this->addFilterSelectWhere($viewName, 'type', [
             [
-                'label' => Tools::lang()->trans('all'),
+                'label' => Tools::trans('all'),
                 'where' => []
             ],
             [
@@ -192,11 +192,11 @@ class ListProducto extends ListController
                 'where' => []
             ],
             [
-                'label' => Tools::lang()->trans('under-minimums'),
+                'label' => Tools::trans('under-minimums'),
                 'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmin', '<')]
             ],
             [
-                'label' => Tools::lang()->trans('excess'),
+                'label' => Tools::trans('excess'),
                 'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmax', '>')]
             ]
         ]);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -48,6 +49,9 @@ class ReportTaxes extends Controller
 
     /** @var string */
     public $codserie;
+
+    /** @var array */
+    protected $columns = [];
 
     /** @var string */
     public $datefrom;
@@ -98,35 +102,51 @@ class ReportTaxes extends Controller
         $this->pais = new Pais();
         $this->serie = new Serie();
         $this->initFilters();
+        $this->initColumns();
 
-        if ('export' === $this->request->request->get('action')) {
+        if ('export' === $this->request->input('action')) {
             $this->exportAction();
         }
     }
 
     protected function exportAction(): void
     {
-        $i18n = Tools::lang();
+        // si no hay columnas, terminamos
+        if (empty($this->columns)) {
+            return;
+        }
+
+        // si no hay datos, terminamos
         $data = $this->getReportData();
         if (empty($data)) {
             Tools::log()->warning('no-data');
             return;
         }
 
-        // prepare lines
+        // preparamos las líneas
+        $i18n = Tools::lang();
         $lastCode = '';
         $lines = [];
         foreach ($data as $row) {
             $hide = $row['codigo'] === $lastCode && $this->format === 'PDF';
-            $num2title = $this->source === 'sales' ? 'number2' : 'numproveedor';
+
+            // en ventas usamos la columna numero2, en compras numproveedor
+            if ($this->source === 'sales') {
+                $number2title = $i18n->trans('number2');
+                $number2value = $hide ? '' : $row['numero2'];
+            } else {
+                $number2title = $i18n->trans('numsupplier');
+                $number2value = $hide ? '' : $row['numproveedor'];
+            }
 
             $lines[] = [
                 $i18n->trans('serie') => $hide ? '' : $row['codserie'],
                 $i18n->trans('code') => $hide ? '' : $row['codigo'],
-                $i18n->trans($num2title) => $hide ? '' : $row['numero2'],
+                $number2title => $number2value,
                 $i18n->trans('date') => $hide ? '' : Tools::date($row['fecha']),
                 $i18n->trans('name') => $hide ? '' : Tools::fixHtml($row['nombre']),
                 $i18n->trans('cifnif') => $hide ? '' : $row['cifnif'],
+                $i18n->trans('country') => $hide ? '' : ($row['codpais'] ? Paises::get($row['codpais'])->nombre : ''),
                 $i18n->trans('net') => $this->exportFieldFormat('number', $row['neto']),
                 $i18n->trans('pct-tax') => $this->exportFieldFormat('number', $row['iva']),
                 $i18n->trans('tax') => $this->exportFieldFormat('number', $row['totaliva']),
@@ -146,7 +166,7 @@ class ReportTaxes extends Controller
             return;
         }
 
-        // prepare totals
+        // preparamos los totales
         $totals = [];
         foreach ($totalsData as $row) {
             $total = $row['neto'] + $row['totaliva'] + $row['totalrecargo'] - $row['totalirpf'] - $row['suplidos'];
@@ -214,11 +234,12 @@ class ReportTaxes extends Controller
     protected function getReportData(): array
     {
         $sql = '';
-        $numCol = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(f.numero as integer)' : 'CAST(f.numero as unsigned)';
+        $db_type = Tools::config('db_type');
+        $numCol = strtolower($db_type) == 'postgresql' ? 'CAST(f.numero as integer)' : 'CAST(f.numero as unsigned)';
         $columnDate = $this->typeDate === 'create' ? 'f.fecha' : 'COALESCE(f.fechadevengo, f.fecha)';
         switch ($this->source) {
             case 'purchases':
-                $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor AS numero2, f.fecha, f.fechadevengo, f.nombre, f.cifnif, l.pvptotal,'
+                $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor, f.fecha, f.fechadevengo, f.nombre, f.cifnif, l.pvptotal,'
                     . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion'
                     . ' FROM lineasfacturasprov AS l'
                     . ' LEFT JOIN facturasprov AS f ON l.idfactura = f.idfactura '
@@ -231,7 +252,7 @@ class ReportTaxes extends Controller
 
             case 'sales':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numero2, f.fecha, f.fechadevengo, f.nombrecliente AS nombre, f.cifnif, l.pvptotal,'
-                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion'
+                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion, f.codpais'
                     . ' FROM lineasfacturascli AS l'
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
@@ -267,9 +288,11 @@ class ReportTaxes extends Controller
             }
 
             $data[$code] = [
+                'codpais' => $row['codpais'] ?? null,
                 'codserie' => $row['codserie'],
                 'codigo' => $row['codigo'],
                 'numero2' => $row['numero2'],
+                'numproveedor' => $row['numproveedor'],
                 'fecha' => $this->typeDate == 'create' ?
                     $row['fecha'] :
                     $row['fechadevengo'] ?? $row['fecha'],
@@ -288,12 +311,13 @@ class ReportTaxes extends Controller
         }
 
         // round
+        $nf0 = Tools::settings('default', 'decimals', 2);
         foreach ($data as $key => $value) {
-            $data[$key]['neto'] = round($value['neto'], FS_NF0);
-            $data[$key]['totaliva'] = round($value['totaliva'], FS_NF0);
-            $data[$key]['totalrecargo'] = round($value['totalrecargo'], FS_NF0);
-            $data[$key]['totalirpf'] = round($value['totalirpf'], FS_NF0);
-            $data[$key]['suplidos'] = round($value['suplidos'], FS_NF0);
+            $data[$key]['neto'] = round($value['neto'], $nf0);
+            $data[$key]['totaliva'] = round($value['totaliva'], $nf0);
+            $data[$key]['totalrecargo'] = round($value['totalrecargo'], $nf0);
+            $data[$key]['totalirpf'] = round($value['totalirpf'], $nf0);
+            $data[$key]['suplidos'] = round($value['suplidos'], $nf0);
         }
 
         return $data;
@@ -328,26 +352,46 @@ class ReportTaxes extends Controller
         return $totals;
     }
 
+    protected function initColumns(): void
+    {
+        // recorremos los datos recibidos
+        foreach ($this->request->request->all() as $key => $value) {
+            // obtenemos la key sin el column_
+            $column = substr($key, 7);
+
+            // reemplazamos _ por -
+            $column = str_replace('_', '-', $column);
+
+            // traducimos la columna
+            $column = Tools::trans($column);
+
+            // si la key empieza por column_ y no está en el array de columnas, la añadimos
+            if (strpos($key, 'column_') === 0 && !in_array($column, $this->columns)) {
+                $this->columns[] = $column;
+            }
+        }
+    }
+
     protected function initFilters(): void
     {
-        $this->coddivisa = $this->request->request->get(
+        $this->coddivisa = $this->request->input(
             'coddivisa',
             Tools::settings('default', 'coddivisa')
         );
 
-        $this->codpais = $this->request->request->get('codpais', '');
-        $this->codserie = $this->request->request->get('codserie', '');
-        $this->datefrom = $this->request->request->get('datefrom', $this->getQuarterDate(true));
-        $this->dateto = $this->request->request->get('dateto', $this->getQuarterDate(false));
+        $this->codpais = $this->request->input('codpais', '');
+        $this->codserie = $this->request->input('codserie', '');
+        $this->datefrom = $this->request->input('datefrom', $this->getQuarterDate(true));
+        $this->dateto = $this->request->input('dateto', $this->getQuarterDate(false));
 
-        $this->idempresa = (int)$this->request->request->get(
+        $this->idempresa = (int)$this->request->input(
             'idempresa',
             Tools::settings('default', 'idempresa')
         );
 
-        $this->format = $this->request->request->get('format');
-        $this->source = $this->request->request->get('source');
-        $this->typeDate = $this->request->request->get('type-date');
+        $this->format = $this->request->input('format');
+        $this->source = $this->request->input('source');
+        $this->typeDate = $this->request->input('type-date');
     }
 
     protected function processLayout(array &$lines, array &$totals): void
@@ -356,6 +400,7 @@ class ReportTaxes extends Controller
         $exportManager = new ExportManager();
         $exportManager->setOrientation('landscape');
         $exportManager->newDoc($this->format, $i18n->trans('taxes'));
+        $exportManager->setCompany($this->idempresa);
 
         // add information table
         $exportManager->addTablePage(
@@ -366,13 +411,15 @@ class ReportTaxes extends Controller
                 $i18n->trans('from-date'),
                 $i18n->trans('until-date')
             ],
-            [[
-                $i18n->trans('report') => $i18n->trans('taxes') . ' ' . $i18n->trans($this->source),
-                $i18n->trans('currency') => Divisas::get($this->coddivisa)->descripcion,
-                $i18n->trans('date') => $i18n->trans($this->typeDate === 'create' ? 'creation-date' : 'accrual-date'),
-                $i18n->trans('from-date') => Tools::date($this->datefrom),
-                $i18n->trans('until-date') => Tools::date($this->dateto)
-            ]]
+            [
+                [
+                    $i18n->trans('report') => $i18n->trans('taxes') . ' ' . $i18n->trans($this->source),
+                    $i18n->trans('currency') => Divisas::get($this->coddivisa)->descripcion,
+                    $i18n->trans('date') => $i18n->trans($this->typeDate === 'create' ? 'creation-date' : 'accrual-date'),
+                    $i18n->trans('from-date') => Tools::date($this->datefrom),
+                    $i18n->trans('until-date') => Tools::date($this->dateto)
+                ]
+            ]
         );
 
         $options = [
@@ -396,63 +443,22 @@ class ReportTaxes extends Controller
         $headTotals = empty($totals) ? [] : array_keys(end($totals));
         $exportManager->addTablePage($headTotals, $totals, $options);
 
+        // clear output buffer to avoid errors
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
+
         $exportManager->show($this->response);
     }
 
     protected function reduceLines(array &$lines): void
     {
-        $i18n = Tools::lang();
-        $zero = Tools::number(0);
-        $numero2 = $recargo = $totalRecargo = $irpf = $totalIrpf = $suplidos = false;
-        foreach ($lines as $row) {
-            if (!empty($row[$i18n->trans('number2')])) {
-                $numero2 = true;
-            }
-
-            if ($row[$i18n->trans('pct-surcharge')] !== $zero) {
-                $recargo = true;
-            }
-
-            if ($row[$i18n->trans('surcharge')] !== $zero) {
-                $totalRecargo = true;
-            }
-
-            if ($row[$i18n->trans('pct-irpf')] !== $zero) {
-                $irpf = true;
-            }
-
-            if ($row[$i18n->trans('irpf')] !== $zero) {
-                $totalIrpf = true;
-            }
-
-            if ($row[$i18n->trans('supplied-amount')] !== $zero) {
-                $suplidos = true;
-            }
-        }
-
-        foreach (array_keys($lines) as $key) {
-            if (false === $numero2) {
-                unset($lines[$key][$i18n->trans('number2')]);
-            }
-
-            if (false === $recargo) {
-                unset($lines[$key][$i18n->trans('pct-surcharge')]);
-            }
-
-            if (false === $totalRecargo) {
-                unset($lines[$key][$i18n->trans('surcharge')]);
-            }
-
-            if (false === $irpf) {
-                unset($lines[$key][$i18n->trans('pct-irpf')]);
-            }
-
-            if (false === $totalIrpf) {
-                unset($lines[$key][$i18n->trans('irpf')]);
-            }
-
-            if (false === $suplidos) {
-                unset($lines[$key][$i18n->trans('supplied-amount')]);
+        // recorremos las líneas y buscamos la key de cada línea en el array de columnas, si no existe, eliminamos la columna
+        foreach ($lines as $key => $line) {
+            foreach ($line as $column => $value) {
+                if (!in_array($column, $this->columns)) {
+                    unset($lines[$key][$column]);
+                }
             }
         }
     }
@@ -503,7 +509,8 @@ class ReportTaxes extends Controller
 
         if (abs($totalRecargo - $totalRecargo2) > self::MAX_TOTAL_DIFF) {
             Tools::log()->error('calculated-surcharge-diff', [
-                '%surcharge%' => $totalRecargo, '%surcharge2%' => $totalRecargo2
+                '%surcharge%' => $totalRecargo,
+                '%surcharge2%' => $totalRecargo2
             ]);
             $result = false;
         }

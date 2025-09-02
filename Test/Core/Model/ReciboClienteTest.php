@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,7 +42,7 @@ final class ReciboClienteTest extends TestCase
         self::installAccountingPlan();
     }
 
-    public function testCreateInvoiceCreateReceipt()
+    public function testCreateInvoiceCreateReceipt(): void
     {
         // creamos una factura
         $invoice = $this->getRandomCustomerInvoice();
@@ -68,7 +68,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testCreateInvoiceOnPastDate()
+    public function testCreateInvoiceOnPastDate(): void
     {
         // creamos una factura de ayer
         $yesterday = date(ModelCore::DATE_STYLE, strtotime('-1 day'));
@@ -91,7 +91,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testCreatePaidInvoiceOnPastDate()
+    public function testCreatePaidInvoiceOnPastDate(): void
     {
         // creamos una forma de pago pagada
         $payMethod = new FormaPago();
@@ -142,7 +142,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
-    public function testCustomerPaymentDays()
+    public function testCustomerPaymentDays(): void
     {
         // creamos una forma de pago con vencimiento de 0 días
         $payMethod = new FormaPago();
@@ -206,7 +206,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
-    public function testReceiptsTotalGreaterThanInvoice()
+    public function testReceiptsTotalGreaterThanInvoice(): void
     {
         // creamos una factura
         $invoice = $this->getRandomCustomerInvoice();
@@ -234,7 +234,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testUpdateAndCreateReceipts()
+    public function testUpdateAndCreateReceipts(): void
     {
         // creamos una factura
         $invoice = $this->getRandomCustomerInvoice();
@@ -271,7 +271,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testUpdateReceiptsUpdateInvoice()
+    public function testUpdateReceiptsUpdateInvoice(): void
     {
         // creamos una factura
         $invoice = $this->getRandomCustomerInvoice();
@@ -339,7 +339,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testUpdateInvoiceWithPaidReceipt()
+    public function testUpdateInvoiceWithPaidReceipt(): void
     {
         // creamos una factura
         $invoice = $this->getRandomCustomerInvoice();
@@ -384,7 +384,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
-    public function testPayReceiptUpdatesCustomerRisk()
+    public function testPayReceiptUpdatesCustomerRisk(): void
     {
         // creamos una factura
         $invoice = $this->getRandomCustomerInvoice();

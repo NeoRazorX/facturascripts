@@ -1,0 +1,10 @@
+"codfamilia";"codimpuesto";"codsubcuentacom";"descripcion";"idproducto";"nostock";"observaciones";"precio";"publico";"referencia";"secompra";"sevende";"stockfis";"tipo";"ventasinstock"
+"CONTA";"IVA21";"6210000000";"Alquiler de oficina/local";3;1;"";0;0;"CONTA621";1;0;0;"";1
+"CONTA";"IVA21";"6220000000";"Reparaciones y conservación";4;1;"";0;0;"CONTA622";1;0;0;"";1
+"CONTA";"IVA21";"6230000000";"Publicidad y propaganda";5;1;"";0;0;"CONTA623";1;0;0;"";1
+"CONTA";"IVA21";"6240000000";"Transportes";6;1;"";0;0;"CONTA624";1;0;0;"";1
+"CONTA";"IVA21";"6250000000";"Primas de seguros";9;1;"";0;0;"CONTA625";1;0;0;"";1
+"CONTA";"IVA21";"6260000000";"Servicios profesionales independientes (abogados, auditores, etc.)";7;1;"";0;0;"CONTA626";1;0;0;"";1
+"CONTA";"IVA21";"6270000000";"Servicios bancarios y similares";8;1;"";0;0;"CONTA627";1;0;0;"";1
+"CONTA";"IVA21";"6280000000";"Suministros (gasto)";1;1;"";0;0;"CONTA628";1;0;0;"";1
+"CONTA";"IVA21";"6290000000";"Otros servicios";2;1;"";0;0;"CONTA629";1;0;0;"";1

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,9 +21,10 @@ namespace FacturaScripts\Core;
 
 use Closure;
 use Exception;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
 use FacturaScripts\Core\Error\DefaultError;
+use FacturaScripts\Core\Lib\Calculator;
+use FacturaScripts\Core\Mod\CalculatorModSpain;
 
 /**
  * El corazón de FacturaScripts. Se encarga de gestionar las rutas y ejecutar los controladores.
@@ -56,6 +57,11 @@ final class Kernel
             'customId' => $customId,
             'position' => $position,
         ];
+    }
+
+    public static function clearRoutes(): void
+    {
+        self::$routes = [];
     }
 
     public static function addRoutes(Closure $closure): void
@@ -109,8 +115,8 @@ final class Kernel
         $lang = $_COOKIE['fsLang'] ?? Tools::config('lang', 'es_ES');
         Translator::setDefaultLang($lang);
 
-        // inicializamos el antiguo traductor
-        ToolBox::i18n()->setDefaultLang($lang);
+        // cargamos los mods
+        Calculator::addMod(new CalculatorModSpain());
 
         // workers
         WorkQueue::addWorker('CuentaWorker', 'Model.Cuenta.Delete');
@@ -134,8 +140,9 @@ final class Kernel
             // si tiene más de 8 horas, lo eliminamos
             if (filemtime($lockFile) < time() - 28800) {
                 unlink($lockFile);
+            } else {
+                return false;
             }
-            return false;
         }
 
         return false !== file_put_contents($lockFile, $processName);
@@ -205,7 +212,7 @@ final class Kernel
 
         $filePath = Tools::folder('MyFiles', 'routes.json');
         $content = json_encode(self::$routes, JSON_PRETTY_PRINT);
-        return false === file_put_contents($filePath, $content);
+        return false !== file_put_contents($filePath, $content);
     }
 
     public static function startTimer(string $name): void
@@ -231,12 +238,30 @@ final class Kernel
     public static function unlock(string $processName): bool
     {
         $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
-        return file_exists($lockFile) && unlink($lockFile);
+        return file_exists($lockFile) && @unlink($lockFile);
     }
 
     public static function version(): float
     {
-        return 2024.93;
+        return 2025.3;
+    }
+
+    private static function checkControllerClass(string $controller): array
+    {
+        $class = explode('\\', $controller);
+        $name = end($class);
+
+        // si la clase no tiene namespace, lo añadimos
+        if (count($class) === 1) {
+            $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . $controller;
+        }
+
+        // si el controlador no existe, lo buscamos en la carpeta Core
+        if (!class_exists($controller)) {
+            $controller = '\\FacturaScripts\\Core\\Controller\\' . end($class);
+        }
+
+        return [$controller, $name];
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
@@ -261,6 +286,12 @@ final class Kernel
 
     private static function getRelativeUrl(string $url): string
     {
+        // sanitizamos la URL de entrada para prevenir path traversal
+        $url = filter_var($url, FILTER_SANITIZE_URL);
+        if ($url === false) {
+            throw new KernelException('InvalidUrl', 'Invalid URL provided');
+        }
+
         // obtenemos la ruta base de la configuración
         $route = Tools::config('route');
         if ($route === null) {
@@ -292,8 +323,31 @@ final class Kernel
             '/' => 'Root',
             '/AdminPlugins' => 'AdminPlugins',
             '/api' => 'ApiRoot',
-            '/api/3/crearFacturaCliente' => 'ApiCreateFacturaCliente',
-            '/api/3/exportarFacturaCliente/*' => 'ApiExportFacturaCliente',
+            '/api/3/attachedfiles' => 'ApiAttachedFiles',
+            '/api/3/attachedfiles/*' => 'ApiAttachedFiles',
+            '/api/3/crearAlbaranCliente' => 'ApiCreateDocument',
+            '/api/3/crearAlbaranProveedor' => 'ApiCreateDocument',
+            '/api/3/crearFacturaCliente' => 'ApiCreateDocument',
+            '/api/3/crearFacturaProveedor' => 'ApiCreateDocument',
+            '/api/3/crearFacturaRectificativaCliente' => 'ApiCreateFacturaRectificativaCliente',
+            '/api/3/crearPedidoCliente' => 'ApiCreateDocument',
+            '/api/3/crearPedidoProveedor' => 'ApiCreateDocument',
+            '/api/3/crearPresupuestoCliente' => 'ApiCreateDocument',
+            '/api/3/crearPresupuestoProveedor' => 'ApiCreateDocument',
+            '/api/3/exportarAlbaranCliente/*' => 'ApiExportDocument',
+            '/api/3/exportarAlbaranProveedor/*' => 'ApiExportDocument',
+            '/api/3/exportarFacturaCliente/*' => 'ApiExportDocument',
+            '/api/3/exportarFacturaProveedor/*' => 'ApiExportDocument',
+            '/api/3/exportarPedidoCliente/*' => 'ApiExportDocument',
+            '/api/3/exportarPedidoProveedor/*' => 'ApiExportDocument',
+            '/api/3/exportarPresupuestoCliente/*' => 'ApiExportDocument',
+            '/api/3/exportarPresupuestoProveedor/*' => 'ApiExportDocument',
+            '/api/3/pagarFacturaCliente/*' => 'ApiPagarFacturaCliente',
+            '/api/3/pagarFacturaProveedor/*' => 'ApiPagarFacturaProveedor',
+            '/api/3/plugins' => 'ApiPlugins',
+            '/api/3/productoimagenes' => 'ApiProductoImagen',
+            '/api/3/productoimagenes/*' => 'ApiProductoImagen',
+            '/api/3/uploadFiles' => 'ApiUploadFiles',
             '/api/*' => 'ApiRoot',
             '/Core/Assets/*' => 'Files',
             '/cron' => 'Cron',
@@ -351,29 +405,26 @@ final class Kernel
         });
     }
 
+    private static function matchesRoute(string $url, string $route): bool
+    {
+        // coincidencia exacta
+        if ($url === $route) {
+            return true;
+        }
+
+        // coincidencia con comodín
+        if (str_ends_with($route, '*')) {
+            return 0 === strncmp($url, $route, strlen($route) - 1);
+        }
+
+        return false;
+    }
+
     private static function runController(string $url): void
     {
         foreach (self::$routes as $route => $info) {
-            $controller = $info['controller'];
-            $class = explode('\\', $controller);
-
-            // si la ruta no tiene namespace, lo añadimos
-            if (count($class) === 1) {
-                $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . $controller;
-                $class = explode('\\', $controller);
-            }
-
-            $name = end($class);
-
-            // coincidencia exacta
-            if ($url === $route) {
-                $app = new $controller($name, $url);
-                $app->run();
-                return;
-            }
-
-            // coincidencia con comodín
-            if (str_ends_with($route, '*') && 0 === strncmp($url, $route, strlen($route) - 1)) {
+            if (self::matchesRoute($url, $route)) {
+                [$controller, $name] = self::checkControllerClass($info['controller']);
                 $app = new $controller($name, $url);
                 $app->run();
                 return;

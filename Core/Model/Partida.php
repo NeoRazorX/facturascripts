@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\AccEntryRelationTrait;
-use FacturaScripts\Core\Model\Base\ModelOnChangeClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
@@ -35,7 +35,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
-class Partida extends ModelOnChangeClass
+class Partida extends ModelClass
 {
     use ModelTrait;
     use AccEntryRelationTrait;
@@ -95,6 +95,11 @@ class Partida extends ModelOnChangeClass
      * @var float|int
      */
     public $debe;
+
+    /**
+     * @var bool
+     */
+    private $disable_additional_test = false;
 
     /**
      * Document of departure.
@@ -178,7 +183,7 @@ class Partida extends ModelOnChangeClass
      */
     public $tasaconv;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->baseimponible = 0.0;
@@ -208,6 +213,11 @@ class Partida extends ModelOnChangeClass
         return parent::delete();
     }
 
+    public function disableAdditionalTest(bool $value): void
+    {
+        $this->disable_additional_test = $value;
+    }
+
     /**
      * @param string $codsubcuenta
      *
@@ -224,13 +234,13 @@ class Partida extends ModelOnChangeClass
                 new DataBaseWhere('codejercicio', $accEntry->codejercicio),
                 new DataBaseWhere('codsubcuenta', $codsubcuenta)
             ];
-            $subCta->loadFromCode('', $where);
+            $subCta->loadWhere($where);
             return $subCta;
         }
 
         // get by id
         if (!empty($this->idsubcuenta) &&
-            $subCta->loadFromCode($this->idsubcuenta) &&
+            $subCta->load($this->idsubcuenta) &&
             $subCta->codsubcuenta === $this->codsubcuenta &&
             $subCta->codejercicio === $accEntry->codejercicio) {
             return $subCta;
@@ -241,7 +251,7 @@ class Partida extends ModelOnChangeClass
             new DataBaseWhere('codejercicio', $accEntry->codejercicio),
             new DataBaseWhere('codsubcuenta', $this->codsubcuenta)
         ];
-        $subCta->loadFromCode('', $where2);
+        $subCta->loadWhere($where2);
         return $subCta;
     }
 
@@ -262,12 +272,12 @@ class Partida extends ModelOnChangeClass
     public function save(): bool
     {
         $entry = $this->getAccountingEntry();
-        if (false === $entry->editable) {
+        if (false === $this->disable_additional_test && false === $entry->editable) {
             return false;
         }
 
         $exercise = $entry->getExercise();
-        if (false === $exercise->isOpened()) {
+        if (false === $this->disable_additional_test && false === $exercise->isOpened()) {
             Tools::log()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
             return false;
         }
@@ -293,10 +303,10 @@ class Partida extends ModelOnChangeClass
 
     public function setDottedStatus(bool $value): Partida
     {
-        $sql = 'UPDATE ' . self::tableName() . ' SET punteada = ' . self::$dataBase->var2str($value)
-            . ' WHERE ' . self::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue());
+        $sql = 'UPDATE ' . self::tableName() . ' SET punteada = ' . self::db()->var2str($value)
+            . ' WHERE ' . self::primaryColumn() . ' = ' . self::db()->var2str($this->id());
 
-        if ($value !== $this->punteada && self::$dataBase->exec($sql)) {
+        if ($value !== $this->punteada && self::db()->exec($sql)) {
             $this->punteada = $value;
         }
 
@@ -341,15 +351,7 @@ class Partida extends ModelOnChangeClass
         return $this->getAccountingEntry()->url($type, $list);
     }
 
-    /**
-     * This method is called before this record is saved (update) in the database
-     * when some field value is changed.
-     *
-     * @param string $field
-     *
-     * @return bool
-     */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'codcontrapartida':
@@ -362,11 +364,5 @@ class Partida extends ModelOnChangeClass
         }
 
         return parent::onChange($field);
-    }
-
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['codcontrapartida', 'codsubcuenta', 'debe', 'haber', 'idcontrapartida', 'idsubcuenta'];
-        parent::setPreviousData(array_merge($more, $fields));
     }
 }

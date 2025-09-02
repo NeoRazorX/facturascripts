@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,21 +21,20 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Description of AccountingClossing
+ * Description of AccountingClosing
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class AccountingClosingBase
 {
-
     /**
      * It provides direct access to the database.
      *
@@ -111,12 +110,13 @@ abstract class AccountingClosingBase
      *
      * @return bool
      */
-    public function exec($exercise, $idjournal)
+    public function exec($exercise, $idjournal): bool
     {
         $this->exercise = $exercise;
         $accountEntry = null;
         foreach ($this->getBalance() as $channel => $balance) {
             if (!$this->newAccountEntry($accountEntry, $channel, $idjournal)) {
+                Tools::log()->warning("Failed to create new accounting entry: " . $accountEntry->concepto);
                 return false;
             }
 
@@ -162,7 +162,7 @@ abstract class AccountingClosingBase
      *
      * @param Asiento $entry
      */
-    protected function setData(&$entry)
+    protected function setData(&$entry): void
     {
         $entry->codejercicio = $this->exercise->codejercicio;
         $entry->idempresa = $this->exercise->idempresa;
@@ -179,7 +179,7 @@ abstract class AccountingClosingBase
      * @param Partida $line
      * @param array $data
      */
-    protected function setDataLine(&$line, $data)
+    protected function setDataLine(&$line, $data): void
     {
         $line->idsubcuenta = $data['id'];
         $line->codsubcuenta = $data['code'];
@@ -230,14 +230,6 @@ abstract class AccountingClosingBase
     }
 
     /**
-     * @return ToolBox
-     */
-    protected function toolBox(): ToolBox
-    {
-        return new ToolBox();
-    }
-
-    /**
      * Delete accounting entry of type indicated.
      *
      * @param Ejercicio $exercise
@@ -250,10 +242,10 @@ abstract class AccountingClosingBase
             new DataBaseWhere('operacion', $type),
         ];
 
-        $accountEntry = new Asiento();
-        foreach ($accountEntry->all($where) as $row) {
+        foreach (Asiento::all($where) as $row) {
             $row->editable = true;
             if (!$row->delete()) {
+                Tools::log()->warning("Failed to delete account entry: " . $row->idasiento);
                 return false;
             }
         }
@@ -272,7 +264,7 @@ abstract class AccountingClosingBase
      *
      * @return array
      */
-    private function getBalance()
+    private function getBalance(): array
     {
         $result = [];
         foreach (self::$dataBase->selectLimit($this->getSQL(), 0) as $data) {

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,9 +43,7 @@ use FacturaScripts\Dinamic\Model\Variante;
 class TarifaProducto extends JoinModel
 {
 
-    /**
-     * @var Tarifa[]
-     */
+    /** @var Tarifa[] */
     private static $rates = [];
 
     public function __construct(array $data = [])
@@ -74,22 +72,19 @@ class TarifaProducto extends JoinModel
         }
 
         $rate = new Tarifa();
-        if ($rate->loadFromCode($this->codtarifa)) {
+        if ($rate->load($this->codtarifa)) {
             self::$rates[$this->codtarifa] = $rate;
         }
 
         return $rate;
     }
 
-    /**
-     * @return float
-     */
-    public function priceInRate()
+    public function priceInRate(): float
     {
         // intentamos obtener la variante para aplicar mejor la tarifa
         $variant = new Variante();
         $where = [new DataBaseWhere('referencia', $this->referencia)];
-        if ($variant->loadFromCode('', $where)) {
+        if ($variant->loadWhere($where)) {
             $product = $variant->getProducto();
             return $this->getRate()->applyTo($variant, $product);
         }
@@ -116,7 +111,8 @@ class TarifaProducto extends JoinModel
             'margen' => 'variantes.margen',
             'precio' => 'variantes.precio',
             'referencia' => 'variantes.referencia',
-            'stockfis' => 'variantes.stockfis'
+            'stockfis' => 'variantes.stockfis',
+            'preciotarifa' => 0,
         ];
     }
 

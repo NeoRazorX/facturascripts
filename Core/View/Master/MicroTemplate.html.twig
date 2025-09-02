@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -36,8 +36,8 @@
             <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('Dinamic/Assets/Images/apple-icon-180x180.png') }}" />
         {% endblock %}
         {% block css %}
-            <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" />
-            <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}"/>
+            <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}?v=5" />
+            <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}?v=6"/>
             <style>
                 .btn-link {
                     text-decoration: none;
@@ -50,8 +50,8 @@
         {% endfor %}
         {% block javascripts %}
             <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
-            <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
-            <script src="{{ asset('node_modules/@fortawesome/fontawesome-free/js/all.min.js') }}"></script>
+            <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js') }}?v=5"></script>
+            <script src="{{ asset('node_modules/@fortawesome/fontawesome-free/js/all.min.js') }}?v=6"></script>
         {% endblock %}
         {# Adds custom JS assets #}
         {% for js in assetManager.get('js') %}
@@ -67,10 +67,12 @@
             {% block messages %}
                 {% include 'Macro/Toasts.html.twig' %}
                 {% from 'Macro/Utils.html.twig' import message as showMessage %}
-                {{ showMessage(log, ['error', 'critical'], 'danger') }}
-                {{ showMessage(log, ['warning'], 'warning') }}
-                {{ showMessage(log, ['notice'], 'success') }}
-                {{ showMessage(log, ['info'], 'info') }}
+                <div class="px-2 pt-2">
+                    {{ showMessage(log, ['error', 'critical'], 'danger') }}
+                    {{ showMessage(log, ['warning'], 'warning') }}
+                    {{ showMessage(log, ['notice'], 'success') }}
+                    {{ showMessage(log, ['info'], 'info') }}
+                </div>
             {% endblock %}
             {% block body %}
             {% endblock %}

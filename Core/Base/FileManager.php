@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Base;
 /**
  * Class to manage the actions with folders and files.
  *
+ * @deprecated replaced by \FacturaScripts\Core\Tools
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Francesc Pineda Segarra      <francesc.pineda@x-netdigital.com>

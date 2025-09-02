@@ -4,15 +4,15 @@
         bootstrap="Test/test-plugins.php"
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
-        stopOnError="false"
-        stopOnFailure="false"
+        stopOnError="true"
+        stopOnFailure="true"
         stopOnIncomplete="false"
         stopOnSkipped="false">
     <testsuites>
         <testsuite name="Plugins test suite">
             <directory
                     suffix="Test.php"
-                    phpVersion="7.3"
+                    phpVersion="8.0"
                     phpVersionOperator=">=">
                 Test/Plugins/
             </directory>

@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 /**
  * ModelOnChangeClass is a class with methods to model the changes of values in the properties of the model.
  *
+ * @deprecated Use FacturaScripts\Core\Template\ModelClass instead
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 abstract class ModelOnChangeClass extends ModelClass

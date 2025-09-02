@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -129,7 +129,7 @@ final class SecuenciaDocumentoTest extends TestCase
 
         // comprobamos que se creó la secuencia
         $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
-        $sequence->loadFromCode('', $where);
+        $sequence->loadWhere($where);
         $this->assertTrue($sequence->exists(), 'document-sequence-not-created');
 
         // comprobamos que el número de inicio de la secuencia es 1
@@ -179,7 +179,7 @@ final class SecuenciaDocumentoTest extends TestCase
 
         // comprobamos que el siguiente número para la secuencia es 32
         $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
-        $sequence->loadFromCode('', $where);
+        $sequence->loadWhere($where);
         $this->assertEquals(32, $sequence->numero, 'document-sequence-next-not-thirty-two');
 
         // eliminamos
@@ -220,7 +220,7 @@ final class SecuenciaDocumentoTest extends TestCase
 
         // comprobamos que el siguiente número para la secuencia es 22
         $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
-        $sequence->loadFromCode('', $where);
+        $sequence->loadWhere($where);
         $this->assertEquals(22, $sequence->numero, 'document-sequence-next-not-twenty-two');
 
         // eliminamos
@@ -317,7 +317,7 @@ final class SecuenciaDocumentoTest extends TestCase
 
         // comprobamos que el siguiente número para la secuencia es 8
         $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
-        $sequence->loadFromCode('', $where);
+        $sequence->loadWhere($where);
         $this->assertEquals(8, $sequence->numero, 'document-sequence-next-not-eight');
 
         // eliminamos

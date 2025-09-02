@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,19 +19,20 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\ApiKey as DinApiKey;
 
 /**
- * Defines the individual permissions for each resrouce within an api key.
+ * Defines the individual permissions for each resource within an api key.
  *
  * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda@x-netdigital.com>
  */
-class ApiAccess extends Base\ModelClass
+class ApiAccess extends ModelClass
 {
-
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Permission to delete.
@@ -94,13 +95,12 @@ class ApiAccess extends Base\ModelClass
     public static function addResourcesToApiKey(int $idApiKey, array $resources, bool $state = false): bool
     {
         $apiAccess = new static();
-
         foreach ($resources as $resource) {
             $where = [
-                new DataBaseWhere('idapikey', $idApiKey),
-                new DataBaseWhere('resource', $resource)
+                Where::eq('idapikey', $idApiKey),
+                Where::eq('resource', $resource)
             ];
-            if ($apiAccess->loadFromCode('', $where)) {
+            if ($apiAccess->loadWhere($where)) {
                 continue;
             }
 
@@ -110,12 +110,27 @@ class ApiAccess extends Base\ModelClass
             $apiAccess->allowget = $state;
             $apiAccess->allowpost = $state;
             $apiAccess->allowput = $state;
+
             if (false === $apiAccess->save()) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    public function clear(): void
+    {
+        parent::clear();
+        $this->allowdelete = true;
+        $this->allowget = true;
+        $this->allowpost = true;
+        $this->allowput = true;
+    }
+
+    public function getKey(): ApiKey
+    {
+        return $this->belongsTo(ApiKey::class, 'idapikey');
     }
 
     public function install(): string
@@ -126,9 +141,24 @@ class ApiAccess extends Base\ModelClass
         return parent::install();
     }
 
-    public static function primaryColumn(): string
+    /**
+     * Update HTTP method permissions for this API resource and save the changes.
+     *
+     * @param bool $get Whether GET is allowed.
+     * @param bool $post Whether POST is allowed.
+     * @param bool $put Whether PUT is allowed.
+     * @param bool $delete Whether DELETE is allowed.
+     *
+     * @return bool True if saved successfully, false otherwise.
+     */
+    public function setAllowed(bool $get, bool $post, bool $put, bool $delete): bool
     {
-        return 'id';
+        $this->allowget = $get;
+        $this->allowpost = $post;
+        $this->allowput = $put;
+        $this->allowdelete = $delete;
+
+        return $this->save();
     }
 
     public static function tableName(): string

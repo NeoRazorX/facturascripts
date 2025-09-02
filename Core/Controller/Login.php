@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,13 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
-use FacturaScripts\Core\Lib\TwoFactorManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
@@ -43,11 +41,13 @@ class Login implements ControllerInterface
     public $empresa;
 
     /** @var string */
+    private $template = 'Login/Login.html.twig';
+
+    /** @var string */
     public $title = 'Login';
 
-    /** @var boolean */
-    private $two_factor_view = false;
-
+    /** @var string */
+    public $two_factor_user;
 
     public function __construct(string $className, string $url = '')
     {
@@ -70,7 +70,7 @@ class Login implements ControllerInterface
         $this->title = $this->empresa->nombrecorto;
 
         $request = Request::createFromGlobals();
-        $action = $request->request->get('action', $request->query->get('action', ''));
+        $action = $request->get('action', '');
 
         switch ($action) {
             case 'change-password':
@@ -85,26 +85,16 @@ class Login implements ControllerInterface
                 $this->logoutAction($request);
                 break;
 
-            case 'valid-totp':
-                $this->validCodeAction($request);
+            case 'two-factor-validation':
+                $this->twoFactorValidationAction($request);
                 break;
         }
 
-        if ($this->two_factor_view) {
-            echo Html::render('Login/TwoFactor.html.twig', [
-                'controllerName' => 'Login',
-                'debugBarRender' => false,
-                'fsc' => $this,
-                'template' => 'Login/TwoFactor.html.twig',
-            ]);
-            return;
-        }
-
-        echo Html::render('Login/Login.html.twig', [
+        echo Html::render($this->template, [
             'controllerName' => 'Login',
             'debugBarRender' => false,
             'fsc' => $this,
-            'template' => 'Login/Login.html.twig',
+            'template' => $this->template,
         ]);
     }
 
@@ -159,7 +149,7 @@ class Login implements ControllerInterface
         return $userCount >= self::MAX_INCIDENT_COUNT;
     }
 
-    private function changePasswordAction(Request $request): void
+    protected function changePasswordAction(Request $request): void
     {
         if (false === $this->validateFormToken($request)) {
             return;
@@ -191,7 +181,7 @@ class Login implements ControllerInterface
         }
 
         $user = new User();
-        if (false === $user->loadFromCode($username)) {
+        if (false === $user->load($username)) {
             Tools::log()->warning('login-user-not-found');
             $this->saveIncident(Session::getClientIp(), $username);
             return;
@@ -203,6 +193,12 @@ class Login implements ControllerInterface
         }
 
         $user->setPassword($password);
+
+        // desactivamos el 2FA si estaba activado
+        if ($user->two_factor_enabled) {
+            $user->disableTwoFactor();
+        }
+
         if (false === $user->save()) {
             Tools::log()->warning('login-user-not-saved');
             $this->saveIncident(Session::getClientIp(), $username);
@@ -212,7 +208,7 @@ class Login implements ControllerInterface
         Tools::log()->notice('login-password-changed');
     }
 
-    private function validateFormToken(Request $request): bool
+    protected function validateFormToken(Request $request): bool
     {
         $multiRequestProtection = new MultiRequestProtection();
 
@@ -239,7 +235,7 @@ class Login implements ControllerInterface
         return true;
     }
 
-    private function getIpList(): array
+    protected function getIpList(): array
     {
         $ipList = Cache::get(self::IP_LIST);
         if (false === is_array($ipList)) {
@@ -256,7 +252,7 @@ class Login implements ControllerInterface
         return $newList;
     }
 
-    private function getUserList(): array
+    protected function getUserList(): array
     {
         $userList = Cache::get(self::USER_LIST);
         if (false === is_array($userList)) {
@@ -273,7 +269,7 @@ class Login implements ControllerInterface
         return $newList;
     }
 
-    private function loginAction(Request $request): void
+    protected function loginAction(Request $request): void
     {
         if (false === $this->validateFormToken($request)) {
             return;
@@ -293,7 +289,7 @@ class Login implements ControllerInterface
         }
 
         $user = new User();
-        if (false === $user->loadFromCode($userName)) {
+        if (false === $user->load($userName)) {
             Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($userName)]);
             $this->saveIncident(Session::getClientIp());
             return;
@@ -310,32 +306,38 @@ class Login implements ControllerInterface
             return;
         }
 
-        if($user->two_factor_enabled){
-            $this->two_factor_view = true;
-            $this->user = $user;
+        if ($user->two_factor_enabled) {
+            $this->two_factor_user = $user->nick;
+            $this->template = 'Login/TwoFactor.html.twig';
             return;
         }
 
-        $this->updateUserAndRedirect($user, Session::getClientIp(), $request->headers->get('User-Agent'));
+        $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
     }
 
-    private function validCodeAction(Request $request): void
+    protected function twoFactorValidationAction(Request $request): void
     {
         $user = new User();
-        $user->loadFromCode($request->request->get('fsNick'));
-
-        if(!TwoFactorManager::verifyCode($user->two_factor_secret_key, $request->request->get('fsCode'))){
-            Tools::log()->warning('login-2fa-fail');
+        if (!$user->load($request->request->get('fsNick'))) {
+            Tools::log()->warning('user-not-found');
+            $this->saveIncident(Session::getClientIp());
             return;
         }
 
-        $this->updateUserAndRedirect($user, Session::getClientIp(), $request->headers->get('User-Agent'));
+        if (!$user->verifyTwoFactorCode($request->request->get('fsTwoFactorCode'))) {
+            Tools::log()->warning('two-factor-code-invalid');
+            $this->saveIncident(Session::getClientIp(), $user->nick);
+            return;
+        }
+
+        $this->updateUserAndRedirect($user, Session::getClientIp(), $request);
     }
 
-    private function updateUserAndRedirect(User $user, string $ip, string $browser): void
+    protected function updateUserAndRedirect(User $user, string $ip, Request $request): void
     {
         // update user data
         Session::set('user', $user);
+        $browser = $request->headers->get('User-Agent');
         $user->newLogkey($ip, $browser);
         if (false === $user->save()) {
             Tools::log()->warning('login-user-not-saved');
@@ -343,10 +345,7 @@ class Login implements ControllerInterface
         }
 
         // save cookies
-        $expiration = time() + (int)Tools::config('cookies_expire', 31536000);
-        setcookie('fsNick', $user->nick, $expiration, Tools::config('route', '/'));
-        setcookie('fsLogkey', $user->logkey, $expiration, Tools::config('route', '/'));
-        setcookie('fsLang', $user->langcode, $expiration, Tools::config('route', '/'));
+        $this->saveCookies($user, $request);
 
         // redirect to the user's main page
         if (empty($user->homepage)) {
@@ -355,21 +354,33 @@ class Login implements ControllerInterface
         header('Location: ' . $user->homepage);
     }
 
-    private function logoutAction(Request $request): void
+    protected function logoutAction(Request $request): void
     {
         if (false === $this->validateFormToken($request)) {
             return;
         }
 
         // remove cookies
-        setcookie('fsNick', '', time() - 3600, Tools::config('route', '/'));
-        setcookie('fsLogkey', '', time() - 3600, Tools::config('route', '/'));
-        setcookie('fsLang', '', time() - 3600, Tools::config('route', '/'));
+        $path = Tools::config('route', '/');
+        setcookie('fsNick', '', time() - 3600, $path);
+        setcookie('fsLogkey', '', time() - 3600, $path);
+        setcookie('fsLang', '', time() - 3600, $path);
 
         // restart token
         $multiRequestProtection = new MultiRequestProtection();
         $multiRequestProtection->clearSeed();
 
         Tools::log()->notice('logout-ok');
+    }
+
+    protected function saveCookies(User $user, Request $request): void
+    {
+        $expiration = time() + (int)Tools::config('cookies_expire', 31536000);
+        $path = Tools::config('route', '/');
+        $secure = $request->isSecure();
+
+        setcookie('fsNick', $user->nick, $expiration, $path, '', $secure, true);
+        setcookie('fsLogkey', $user->logkey, $expiration, $path, '', $secure, true);
+        setcookie('fsLang', $user->langcode, $expiration, $path, '', $secure, true);
     }
 }

@@ -26,27 +26,14 @@
 
 <script>
     function editViewDelete(viewName) {
-        bootbox.confirm({
-            title: "{{ trans('confirm-delete') }}",
-            message: "{{ trans('are-you-sure') }}",
-            closeButton: false,
-            buttons: {
-                cancel: {
-                    label: '<i class="fa-solid fa-times"></i> {{ trans('cancel') }}'
-                },
-                confirm: {
-                    label: '<i class="fa-solid fa-check"></i> {{ trans('confirm') }}',
-                    className: "btn-danger"
-                }
-            },
-            callback: function (result) {
-                if (result) {
-                    $("#form" + viewName + " :input[name=\"action\"]").val("delete");
-                    $("#form" + viewName).submit();
-                }
-            }
-        });
-
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal' + viewName));
+        
+        document.getElementById('confirmDeleteBtn' + viewName).onclick = function() {
+            document.querySelector("#form" + viewName + " input[name='action']").value = "delete";
+            document.getElementById("form" + viewName).submit();
+        };
+        
+        deleteModal.show();
         return false;
     }
 </script>
@@ -131,3 +118,26 @@
 {% for group in currentView.getModals() %}
     {{ group.modal(currentView.model, currentView.getViewName()) | raw }}
 {% endfor %}
+
+{# -- Delete Confirmation Modal -- #}
+<div class="modal fade" id="deleteConfirmModal{{ currentView.getViewName() }}" tabindex="-1" aria-labelledby="deleteConfirmModalLabel{{ currentView.getViewName() }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel{{ currentView.getViewName() }}">{{ trans('confirm-delete') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ trans('are-you-sure') }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-times"></i> {{ trans('cancel') }}
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn{{ currentView.getViewName() }}">
+                    <i class="fa-solid fa-check"></i> {{ trans('confirm') }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

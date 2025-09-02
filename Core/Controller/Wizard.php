@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,7 +57,7 @@ class Wizard extends Controller
     {
         $list = [];
         foreach (RegimenIVA::all() as $key => $value) {
-            $list[$key] = Tools::lang()->trans($value);
+            $list[$key] = Tools::trans($value);
         }
         return $list;
     }
@@ -199,19 +199,19 @@ class Wizard extends Controller
      */
     private function saveAddress(string $codpais): void
     {
-        $this->empresa->apartado = $this->request->request->get('apartado', '');
-        $this->empresa->cifnif = $this->request->request->get('cifnif', '');
-        $this->empresa->ciudad = $this->request->request->get('ciudad', '');
+        $this->empresa->apartado = $this->request->input('apartado', '');
+        $this->empresa->cifnif = $this->request->input('cifnif', '');
+        $this->empresa->ciudad = $this->request->input('ciudad', '');
         $this->empresa->codpais = $codpais;
-        $this->empresa->codpostal = $this->request->request->get('codpostal', '');
-        $this->empresa->direccion = $this->request->request->get('direccion', '');
-        $this->empresa->nombre = $this->request->request->get('empresa', '');
+        $this->empresa->codpostal = $this->request->input('codpostal', '');
+        $this->empresa->direccion = $this->request->input('direccion', '');
+        $this->empresa->nombre = $this->request->input('empresa', '');
         $this->empresa->nombrecorto = Tools::textBreak($this->empresa->nombre, 32);
-        $this->empresa->personafisica = (bool)$this->request->request->get('personafisica', '0');
-        $this->empresa->provincia = $this->request->request->get('provincia', '');
-        $this->empresa->telefono1 = $this->request->request->get('telefono1', '');
-        $this->empresa->telefono2 = $this->request->request->get('telefono2', '');
-        $this->empresa->tipoidfiscal = $this->request->request->get('tipoidfiscal', '');
+        $this->empresa->personafisica = (bool)$this->request->input('personafisica', '0');
+        $this->empresa->provincia = $this->request->input('provincia', '');
+        $this->empresa->telefono1 = $this->request->input('telefono1', '');
+        $this->empresa->telefono2 = $this->request->input('telefono2', '');
+        $this->empresa->tipoidfiscal = $this->request->input('tipoidfiscal', '');
         if (empty($this->empresa->tipoidfiscal)) {
             $this->empresa->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
         }
@@ -254,7 +254,7 @@ class Wizard extends Controller
     private function saveNewPassword(string $pass): bool
     {
         $this->user->newPassword = $pass;
-        $this->user->newPassword2 = $this->request->request->get('repassword', '');
+        $this->user->newPassword2 = $this->request->input('repassword', '');
         return $this->user->save();
     }
 
@@ -264,7 +264,7 @@ class Wizard extends Controller
             return;
         }
 
-        $codpais = $this->request->request->get('codpais', $this->empresa->codpais);
+        $codpais = $this->request->input('codpais', $this->empresa->codpais);
         $this->preSetAppSettings($codpais);
 
         $this->initModels(['AttachedFile', 'Diario', 'EstadoDocumento', 'FormaPago',
@@ -272,13 +272,13 @@ class Wizard extends Controller
         $this->saveAddress($codpais);
 
         // change password
-        $pass = $this->request->request->get('password', '');
+        $pass = $this->request->input('password', '');
         if ('' !== $pass && false === $this->saveNewPassword($pass)) {
             return;
         }
 
         // change email
-        $email = $this->request->request->get('email', '');
+        $email = $this->request->input('email', '');
         if ('' !== $email && false === $this->saveEmail($email)) {
             return;
         }
@@ -293,20 +293,20 @@ class Wizard extends Controller
             return;
         }
 
-        $this->empresa->regimeniva = $this->request->request->get('regimeniva');
+        $this->empresa->regimeniva = $this->request->input('regimeniva');
         $this->empresa->save();
 
         foreach (['codimpuesto', 'costpricepolicy'] as $key) {
-            $value = $this->request->request->get($key);
+            $value = $this->request->input($key);
             $finalValue = empty($value) ? null : $value;
             Tools::settingsSet('default', $key, $finalValue);
         }
-        Tools::settingsSet('default', 'updatesupplierprices', (bool)$this->request->request->get('updatesupplierprices', '0'));
-        Tools::settingsSet('default', 'ventasinstock', (bool)$this->request->request->get('ventasinstock', '0'));
+        Tools::settingsSet('default', 'updatesupplierprices', (bool)$this->request->input('updatesupplierprices', '0'));
+        Tools::settingsSet('default', 'ventasinstock', (bool)$this->request->input('ventasinstock', '0'));
         Tools::settingsSet('default', 'site_url', Tools::siteUrl());
         Tools::settingsSave();
 
-        if ($this->request->request->get('defaultplan', '0')) {
+        if ($this->request->input('defaultplan', '0')) {
             $this->loadDefaultAccountingPlan($this->empresa->codpais);
         }
 

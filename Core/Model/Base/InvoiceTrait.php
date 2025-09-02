@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -61,7 +61,7 @@ trait InvoiceTrait
     /** @return bool */
     public $vencida;
 
-    abstract public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array;
+    abstract public static function all(array $where = [], array $order = [], int $offset = 0, int $limit = 0): array;
 
     abstract public function getReceipts(): array;
 
@@ -127,6 +127,7 @@ trait InvoiceTrait
     public function install(): string
     {
         $sql = parent::install();
+
         new Asiento();
 
         return $sql;
@@ -160,22 +161,12 @@ trait InvoiceTrait
         return $parents;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'idfactura';
     }
 
-    /**
-     * @param string $field
-     *
-     * @return bool
-     */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         if (false === parent::onChange($field)) {
             return false;
@@ -241,11 +232,5 @@ trait InvoiceTrait
         $generator->update($this);
 
         return true;
-    }
-
-    protected function setPreviousData(array $fields = [])
-    {
-        $more = ['fechadevengo'];
-        parent::setPreviousData(array_merge($more, $fields));
     }
 }

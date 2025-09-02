@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Model\User;
@@ -69,6 +68,9 @@ class NewMail
     /** @var PHPMailer */
     protected $mail;
 
+    /** @var array */
+    private static $mailer = ['mail' => 'Mail', 'sendmail' => 'SendMail', 'smtp' => 'SMTP'];
+
     /** @var BaseBlock[] */
     protected $mainBlocks = [];
 
@@ -95,6 +97,11 @@ class NewMail
         $this->fromName = $this->empresa->nombrecorto;
 
         $this->mail = new PHPMailer();
+
+        $this->mail->Debugoutput = function ($str) {
+            Tools::log()->warning($str);
+        };
+
         $this->mail->CharSet = PHPMailer::CHARSET_UTF8;
         $this->mail->Mailer = Tools::settings('email', 'mailer');
 
@@ -122,6 +129,15 @@ class NewMail
 
         $this->signature = Tools::settings('email', 'signature', '');
         $this->verificode = Tools::randomString(20);
+    }
+
+    public static function addMailer(string $key, string $name): void
+    {
+        if (array_key_exists($key, self::$mailer)) {
+            return;
+        }
+
+        self::$mailer[$key] = $name;
     }
 
     /**
@@ -277,6 +293,19 @@ class NewMail
         return $addresses;
     }
 
+    public static function getMailer(): array
+    {
+        if (false === function_exists('mail')) {
+            unset(self::$mailer['mail']);
+        }
+
+        if (false === ini_get('sendmail_path')) {
+            unset(self::$mailer['sendmail']);
+        }
+
+        return self::$mailer;
+    }
+
     public static function getTemplate(): string
     {
         return static::$template;
@@ -317,17 +346,13 @@ class NewMail
             return false;
         }
 
-        if (false === $this->checkHourlyLimit()) {
-            return false;
-        }
-
         $this->mail->setFrom($this->fromEmail, $this->fromName);
         $this->mail->Subject = $this->title;
 
         $this->renderHTML();
         $this->mail->msgHTML($this->html);
 
-        if ('smtp' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
+        if ('SMTP' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
             Tools::log()->warning('mail-server-error');
             return false;
         }
@@ -426,7 +451,7 @@ class NewMail
     public function test(): bool
     {
         switch ($this->mail->Mailer) {
-            case 'smtp':
+            case 'SMTP':
                 $this->mail->SMTPDebug = 3;
                 return $this->mail->smtpConnect($this->smtpOptions());
 
@@ -441,22 +466,6 @@ class NewMail
         $this->mail->addAddress($email, $name);
 
         return $this;
-    }
-
-    protected function checkHourlyLimit(): bool
-    {
-        // calculamos cuantos emails se han enviado en la última hora
-        $model = new EmailSent();
-        $whereLastHour = [new DataBaseWhere('date', Tools::dateTime('-1 hour'), '>=')];
-        $total = $model->count($whereLastHour);
-
-        // si se ha superado el límite, no enviamos el email
-        if ($total >= Tools::config('max_emails_hour', 1000)) {
-            Tools::log()->warning('hourly-email-limit-reached');
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -556,10 +565,24 @@ class NewMail
             }
 
             // si el adjunto está fuera de la carpeta temporal, lo copiamos
+            $currentPath = FS_FOLDER . '/MyFiles/' . $attach[0];
+            if (file_exists($currentPath)) {
+                copy($currentPath, $newPath);
+                continue;
+            }
+
             $currentPath = FS_FOLDER . '/' . $attach[0];
             if (file_exists($currentPath)) {
                 copy($currentPath, $newPath);
+                continue;
             }
+
+            if (file_exists($attach[0])) {
+                copy($attach[0], $newPath);
+                continue;
+            }
+
+            Tools::log('NewMail')->warning('attachment-not-found', ['%file%' => $attach[0]]);
         }
     }
 

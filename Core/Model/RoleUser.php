@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025  Carlos García Gómez <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson          <joenilson at gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,9 +20,10 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Model\Role as DinRole;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
 
 /**
@@ -31,9 +32,9 @@ use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <carlos@facturascripts.com>
  */
-class RoleUser extends Base\ModelClass
+class RoleUser extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /** @var string */
     public $codrole;
@@ -46,34 +47,36 @@ class RoleUser extends Base\ModelClass
 
     public function getRole(): Role
     {
-        $role = new DinRole();
-        $role->loadFromCode($this->codrole);
-        return $role;
+        return $this->belongsTo(Role::class, 'codrole');
+    }
+
+    public function getUser(): User
+    {
+        return $this->belongsTo(User::class, 'nick');
     }
 
     /**
      * Devuelve la lista de permisos de acceso para el usuario.
      * Si se proporciona un $pageName, devuelve el permiso para esa página.
      *
-     * @param string $pageName
+     * @param string $page_name
      *
      * @return DinRoleAccess[]
      */
-    public function getRoleAccess(string $pageName = ''): array
+    public function getRoleAccess(string $page_name = ''): array
     {
         if (empty($this->nick)) {
             return [];
         }
 
-        $filter = [new DataBaseWhere('codrole', $this->codrole)];
-        if (!empty($pageName)) {
-            $filter[] = new DataBaseWhere('pagename', $pageName);
+        $filter = [Where::eq('codrole', $this->codrole)];
+        if (!empty($page_name)) {
+            $filter[] = Where::eq('pagename', $page_name);
         }
 
         $accesses = [];
-        $roleAccessModel = new DinRoleAccess();
-        foreach ($roleAccessModel->all($filter, ['pagename' => 'ASC'], 0, 0) as $roleAccess) {
-            $accesses[] = $roleAccess;
+        foreach (DinRoleAccess::all($filter, ['pagename' => 'ASC'], 0, 0) as $access) {
+            $accesses[] = $access;
         }
 
         return $accesses;
@@ -86,11 +89,6 @@ class RoleUser extends Base\ModelClass
         new User();
 
         return parent::install();
-    }
-
-    public static function primaryColumn(): string
-    {
-        return 'id';
     }
 
     public static function tableName(): string

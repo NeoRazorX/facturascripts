@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -26,9 +28,9 @@ use FacturaScripts\Core\Tools;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Tarifa extends Base\ModelClass
+class Tarifa extends ModelClass
 {
-    use Base\ModelTrait;
+    use ModelTrait;
 
     const APPLY_COST = 'coste';
     const APPLY_PRICE = 'pvp';
@@ -85,7 +87,7 @@ class Tarifa extends Base\ModelClass
      *
      * @return float
      */
-    public function apply(float $cost, float $price)
+    public function apply(float $cost, float $price): float
     {
         $finalPrice = 0.0;
 
@@ -97,6 +99,11 @@ class Tarifa extends Base\ModelClass
             case self::APPLY_PRICE:
                 $finalPrice += $price - ($price * $this->valorx / 100) - $this->valory;
                 break;
+        }
+
+        $ext = $this->pipe('apply', $finalPrice, $cost, $price);
+        if ($ext && is_numeric($ext)) {
+            $finalPrice = $ext;
         }
 
         if ($this->maxpvp && $finalPrice > $price) {
@@ -114,12 +121,12 @@ class Tarifa extends Base\ModelClass
      *
      * @return float
      */
-    public function applyTo($variant, $product)
+    public function applyTo($variant, $product): float
     {
         return $this->apply((float)$variant->coste, (float)$variant->precio);
     }
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->aplicar = self::APPLY_PRICE;
@@ -146,7 +153,7 @@ class Tarifa extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->codtarifa = trim($this->codtarifa);
+        $this->codtarifa = trim($this->codtarifa ?? '');
         if ($this->codtarifa && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
             Tools::log()->error(
                 'invalid-alphanumeric-code',
@@ -160,12 +167,12 @@ class Tarifa extends Base\ModelClass
         return parent::test();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codtarifa)) {
             $this->codtarifa = $this->newCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 }

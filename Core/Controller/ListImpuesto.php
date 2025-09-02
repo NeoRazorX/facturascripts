@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Lib\OperacionIVA;
 
 /**
  * Controller to list the items in the Impuesto model
@@ -62,5 +63,21 @@ class ListImpuesto extends ListController
             ->addOrderBy(['codimpuesto'], 'code')
             ->addOrderBy(['descripcion'], 'description')
             ->addSearchFields(['descripcion', 'codimpuesto']);
+    }
+
+    protected function loadData($viewName, $view)
+    {
+        parent::loadData($viewName, $view);
+        if ($viewName === $this->getMainViewName()) {
+            $this->loadOperations($viewName);
+        }
+    }
+
+    protected function loadOperations(string $viewName): void
+    {
+        $column = $this->views[$viewName]->columnForName('operation');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(OperacionIVA::all(), true, true);
+        }
     }
 }

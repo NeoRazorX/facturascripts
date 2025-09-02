@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@
                         readonly="dinamic"/>
             </column>
             <column name="email" order="110">
-                <widget type="email" fieldname="email" icon="fa-solid fa-envelope" required="true"/>
+                <widget type="email" fieldname="email" icon="fa-solid fa-envelope"/>
             </column>
             <column name="new-password" order="120">
                 <widget type="password" fieldname="newPassword" icon="fa-solid fa-key"/>
@@ -65,27 +65,29 @@
                 </widget>
             </column>
         </group>
-        <group name="advanced" title="advanced" numcolumns="12" valign="bottom">
+        <group name="advanced" title="advanced" icon="fa-solid fa-sliders" numcolumns="12" valign="bottom">
             <column name="is-admin" level="99" numcolumns="3" order="100">
                 <widget type="checkbox" fieldname="admin"/>
             </column>
             <column name="enabled" level="99" numcolumns="3" order="110">
                 <widget type="checkbox" fieldname="enabled"/>
             </column>
-            <column name="two-factor-enabled" level="99" numcolumns="6" order="110">
-                <widget type="checkbox" fieldname="two_factor_enabled"/>
-            </column>
-            <column name="level" level="99" order="120">
+        </group>
+        <group name="info" numcolumns="12" valign="bottom">
+            <column name="level" level="99" order="100">
                 <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fa-solid fa-low-vision"/>
             </column>
-            <column name="creation-date" order="130">
+            <column name="creation-date" order="110">
                 <widget type="date" fieldname="creationdate" readonly="true"/>
             </column>
-            <column name="last-activity" order="140">
+            <column name="last-activity" order="120">
                 <widget type="datetime" fieldname="lastactivity" readonly="true"/>
             </column>
-            <column name="last-ip" level="99" order="150">
+            <column name="last-ip" level="99" order="130">
                 <widget type="text" fieldname="lastip" readonly="true"/>
+            </column>
+            <column name="browser" level="99" numcolumns="12" order="140">
+                <widget type="textarea" fieldname="lastbrowser" readonly="true"/>
             </column>
         </group>
     </columns>

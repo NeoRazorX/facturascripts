@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,6 +30,7 @@ use FacturaScripts\Dinamic\Model\CodeModel;
  * The class from which all models inherit, connects to the database,
  * check the structure of the table and if necessary create or adapt.
  *
+ * @deprecated Use FacturaScripts\Core\Template\ModelClass instead
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 abstract class ModelClass extends ModelCore
@@ -74,7 +75,7 @@ abstract class ModelClass extends ModelCore
 
         $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $this->primaryDescriptionColumn() . ' AS description '
             . 'FROM ' . static::tableName() . ' ORDER BY 2 ASC';
-        foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $d) {
+        foreach (self::$dataBase->selectLimit($sql, CodeModel::getlimit()) as $d) {
             $results[] = new CodeModel($d);
         }
 

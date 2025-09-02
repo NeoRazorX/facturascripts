@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 
 /**
@@ -66,7 +66,7 @@ class SecuenciaDocumento extends ModelClass
     /** @var bool */
     public $usarhuecos;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->idempresa = Tools::settings('default', 'idempresa');
@@ -138,6 +138,7 @@ class SecuenciaDocumento extends ModelClass
             '{HORA}' => Tools::hour(),
             '{FECHAHORA}' => Tools::dateTime(Tools::date() . ' ' . Tools::hour()),
             '{ANYO}' => date('Y'),
+            '{ANYO2}' => date('y'),
             '{DIA}' => date('d'),
             '{EJE}' => $this->codejercicio,
             '{EJE2}' => substr($this->codejercicio ?? '', -2),
@@ -168,7 +169,7 @@ class SecuenciaDocumento extends ModelClass
         }
 
         // si el patrón no tiene ejercicio o fecha, mostramos un aviso
-        $codes = ['{EJE}', '{EJE2}', '{ANYO}', '{FECHA}', '{FECHAHORA}'];
+        $codes = ['{EJE}', '{EJE2}', '{ANYO}', '{ANYO2}', '{FECHA}', '{FECHAHORA}'];
         $found = false;
         foreach ($codes as $code) {
             if (false !== strpos($this->patron, $code)) {

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -223,9 +223,10 @@ final class DataBase
             // adds the sql query to the history
             self::$miniLog->debug($sql, ['duration' => $stop - $start]);
 
-
-            if (!$result) {
+            // check errors
+            if (!$result || self::$engine->hasError()) {
                 self::$miniLog->error(self::$engine->errorMessage(self::$link), ['sql' => $sql]);
+                self::$engine->clearError();
             }
 
             if ($inTransaction) {
@@ -296,13 +297,34 @@ final class DataBase
      *
      * @return array
      */
-    public function getIndexes(string $tableName): array
+    public function getAllIndexes(string $tableName): array
     {
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
         foreach ($data as $row) {
-            $result[] = ['name' => $row['Key_name'] ?? $row['key_name'] ?? ''];
+            $result[] = [
+                'name' => $row['Key_name'] ?? $row['key_name'] ?? '',
+                'column' => $row['Column_name'] ?? $row['column_name'] ?? '',
+            ];
         }
+
+        return $result;
+    }
+
+    /**
+     * Returns an array with the FacturaScripts indexes of a given table.
+     *
+     * @param string $tableName
+     *
+     * @return array
+     */
+    public function getIndexes(string $tableName): array
+    {
+        $result =  array_filter($this->getAllIndexes($tableName), function ($dbIdx) {
+            return false !== strpos($dbIdx['name'], 'fs_');
+        });
+
+        $result = array_values($result);
 
         return $result;
     }
@@ -478,12 +500,18 @@ final class DataBase
 
         // If it's a date
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
-            return "'" . date(self::$engine->dateStyle(), strtotime($val)) . "'";
+            $date = date(self::$engine->dateStyle(), strtotime($val));
+            return $date === '1970-01-01' ?
+                "'" . $this->escapeString($val) . "'" :
+                "'" . $date . "'";
         }
 
         // If it's a date time
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
-            return "'" . date(self::$engine->dateStyle() . ' H:i:s', strtotime($val)) . "'";
+            $date = date(self::$engine->dateStyle() . ' H:i:s', strtotime($val));
+            return $date === '1970-01-01 00:00:00' ?
+                "'" . $this->escapeString($val) . "'" :
+                "'" . $date . "'";
         }
 
         return "'" . $this->escapeString($val) . "'";

@@ -1,6 +1,7 @@
 {
   "name": "facturascripts/facturascripts",
-  "description": "Open source ERP software. Built on modern PHP and bootstrap 4. Easy and powerful.",
+  "type": "project",
+  "description": "Open source ERP software. Built on modern PHP and bootstrap 5. Easy and powerful.",
   "homepage": "https://facturascripts.com",
   "license": "LGPL-3.0-or-later",
   "authors": [
@@ -11,31 +12,30 @@
   ],
   "config": {
     "platform": {
-      "php": "7.4"
+      "php": "8.0"
     }
   },
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0",
+    "ext-bcmath": "*",
+    "ext-curl": "*",
+    "ext-dom": "*",
+    "ext-fileinfo": "*",
+    "ext-gd": "*",
+    "ext-json": "*",
+    "ext-mysqli": "*",
+    "ext-pgsql": "*",
+    "ext-simplexml": "*",
+    "ext-zip": "*",
     "mk-j/php_xlsxwriter": "0.39",
     "parsecsv/php-parsecsv": "1.*",
     "phpmailer/phpmailer": "6.*",
     "rospdf/pdf-php": "0.12.*",
-    "symfony/translation": "4.4.*",
     "twig/twig": "3.*",
     "tavo1987/ec-validador-cedula-ruc": "1.0.2",
-    "filp/whoops": "2.*",
     "globalcitizen/php-iban": "4.*",
-    "ext-json": "*",
-    "ext-fileinfo": "*",
-    "ext-simplexml": "*",
-    "ext-zip": "*",
-    "ext-dom": "*",
-    "ext-mysqli": "*",
-    "ext-bcmath": "*",
-    "ext-gd": "*",
-    "ext-curl": "*",
     "pragmarx/google2fa": "^8.0",
-    "endroid/qr-code": "^4.3"
+    "chillerlan/php-qrcode": "^4.0"
   },
   "require-dev": {
     "phpunit/phpunit": "9.*",
@@ -58,5 +58,25 @@
     "crm",
     "billing",
     "accounting"
-  ]
+  ],
+  "support": {
+    "issues": "https://facturascripts.com/crear-issue",
+    "source": "https://github.com/NeoRazorX/facturascripts",
+    "docs": "https://facturascripts.com/ayuda",
+    "chat": "https://discord.gg/qKm7j9AaJT"
+  },
+  "funding": [
+    {
+      "type": "other",
+      "url": "https://facturascripts.com/patrocinar"
+    }
+  ],
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "test:coverage": "vendor/bin/phpunit --coverage-html coverage",
+    "phpstan": "vendor/bin/phpstan analyse Core",
+    "cs-check": "vendor/bin/phpcs",
+    "cs-fix": "vendor/bin/phpcbf",
+    "dev-server": "php -S localhost:8000 index.php"
+  }
 }
