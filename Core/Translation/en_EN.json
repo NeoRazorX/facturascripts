@@ -1201,7 +1201,7 @@
     "phones": "Phones",
     "php-extension-needed": "The extension %extension% is required in the PHP configuration",
     "php-extension-not-found": "You don't have the %extension% PHP extension installed.",
-    "php-extensions": "PHP extensions",
+    "php-extensions": "PHP Extensions",
     "php-extensions-required": "Required PHP extensions",
     "php-support-end": "Support for PHP %current% will end soon. Please update PHP to version %min% or higher.",
     "php-version-too-new": "It is recommended to use a PHP version between %min_version% and %max_version%. You currently have %version%.",

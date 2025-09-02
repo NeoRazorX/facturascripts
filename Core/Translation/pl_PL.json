@@ -1202,7 +1202,7 @@
     "php-extension-needed": "Se requiere la extensión %extension% en la configuración de PHP",
     "php-extension-not-found": "Nie masz zainstalowanego rozszerzenia %extension% PHP.",
     "php-extensions": "Rozszerzenia PHP",
-    "php-extensions-required": "Extensiones PHP requeridas",
+    "php-extensions-required": "Wymagane rozszerzenia PHP",
     "php-support-end": "Wsparcie dla PHP %current% wkrótce się kończy. Proszę zaktualizować PHP do wersji %min% lub wyższej.",
     "php-version-too-new": "Zaleca się użycie wersji PHP pomiędzy %min_version% a %max_version%. Obecnie masz %version%",
     "physical-stock": "Alyz fizyczny",
