@@ -78,7 +78,7 @@ class DateFilter extends BaseFilter
             . ''
             . '<span class="input-group-text">' . $this->operation . ''
             . '</span>'
-            . '<input type="date" name="' . $this->name() . '" value="' . $value . '" class="form-control"'
+            . '<input type="date" name="' . $this->name() . '" value="' . $value . '" class="form-control' . ($this->value ? ' is-valid' : '') . '"'
             . ' autocomplete="off"' . $this->onChange() . $this->readonly() . '/>'
             . '</div>'
             . '</div>'

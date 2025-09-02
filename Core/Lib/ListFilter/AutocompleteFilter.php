@@ -107,7 +107,7 @@ class AutocompleteFilter extends BaseFilter
                 . '</button>';
         }
 
-        $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control filter-autocomplete"'
+        $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control filter-autocomplete' . ($this->value ? ' is-valid' : '') . '"'
             . ' data-name="' . $this->name() . '" data-field="' . $this->field . '" data-source="' . $this->table . '" data-fieldcode="' . $this->fieldcode
             . '" data-fieldtitle="' . $this->fieldtitle . '" placeholder = "' . $label . '" autocomplete="off" ' . $this->readonly() . '/>'
             . '</div>'
