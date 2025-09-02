@@ -24,6 +24,7 @@ use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -360,13 +361,12 @@ class ListView extends BaseView
             return;
         }
 
-        // si el método de la request es GET, obtenemos los filtros desde la cache
-        $cacheKeyFiltros = 'filtros-' . $request->cookie('fsNick') . '-'
-            . trim(str_replace('/', '', $request->header('PATH_INFO', '')));
+        // si la request es GET, obtenemos los filtros desde la caché
+        $cacheKeyFiltros = 'filters-' . Session::get('controllerName') . '-' . $this->getViewName() . '-' . $request->cookie('fsNick');
         if ($request->isMethod('GET')) {
             $filtrosCache = Cache::get($cacheKeyFiltros);
             if ($filtrosCache) {
-                // creamos valores de filtros en la request para aprovechar los metodos ya existentes
+                // creamos valores de filtros en la request para aprovechar los métodos ya existentes
                 foreach ($filtrosCache as $filtro) {
                     $request->request->set('filter' . $filtro->key, $filtro->getValue());
                 }
