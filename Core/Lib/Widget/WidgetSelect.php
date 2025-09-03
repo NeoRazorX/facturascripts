@@ -232,7 +232,7 @@ class WidgetSelect extends BaseWidget
     /**
      *  Translate the fixed titles, if they exist
      */
-    private function applyTranslations()
+    private function applyTranslations(): void
     {
         foreach ($this->values as $key => $value) {
             if (empty($value['title']) || '------' === $value['title']) {
@@ -246,10 +246,10 @@ class WidgetSelect extends BaseWidget
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addCss($route . '/node_modules/select2/dist/css/select2.min.css');
-        AssetManager::addCss($route . '/node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css');
-        AssetManager::addJs($route . '/node_modules/select2/dist/js/select2.min.js', 2);
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSelect.js');
+        AssetManager::addCss($route . '/node_modules/select2/dist/css/select2.min.css?v=5');
+        AssetManager::addCss($route . '/node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css?v=5');
+        AssetManager::addJs($route . '/node_modules/select2/dist/js/select2.min.js?v=5', 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSelect.js?v=5');
     }
 
     /**
