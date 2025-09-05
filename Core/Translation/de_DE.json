@@ -1695,7 +1695,7 @@
     "updater": "Updater",
     "updates-available": "Verfügbare Updates",
     "updates-available-p": "Es gibt verfügbare Updates für FacturaScripts. Bitte klicken Sie auf den Aktualisierer und laden Sie die neue Version herunter. Die Updates beheben Fehler und fügen neue Funktionen hinzu.",
-    "updates-beta-warning": "Actualizaciones beta activadas",
+    "updates-beta-warning": "Beta-Updates aktiviert",
     "updates-beta-warning-p": "⚠️ Beta-Updates sind aktiviert. Diese Updates wurden nicht getestet und werden nur in Testinstallationen empfohlen.",
     "updating-attached-relations": "Aktualisierung der Zähler für angehängte Dateien",
     "upload-file": "Datei hochladen",

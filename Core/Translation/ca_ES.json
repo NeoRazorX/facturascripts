@@ -1386,7 +1386,7 @@
     "roles": "Grups",
     "rules": "Regles",
     "run": "Executar",
-    "running": "Ejecutando",
+    "running": "Executant",
     "running-plugin-cron": "S'està executant FacturaScripts cron per al connector %pluginName%",
     "running-work-queue": "Executant la cua d'esdeveniments de treball",
     "sales": "Vendes",

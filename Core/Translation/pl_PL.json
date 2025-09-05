@@ -1682,7 +1682,7 @@
     "unlock-entry": "Odblokować",
     "unpaid": "Nieopłacone",
     "unsafe-file": "Archivo no seguro",
-    "unsafe-file-p": "Por motivos de seguridad impedimos las descargas de algunos tipos de archivos, como este: %file%",
+    "unsafe-file-p": "Z powodów bezpieczeństwa uniemożliwiamy pobieranie niektórych typów plików, takich jak ten: %file%",
     "until-accounting-entry": "Do wpisu księgowego",
     "until-date": "Do",
     "until-subaccount": "Do subkonta",
