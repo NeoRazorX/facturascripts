@@ -1117,7 +1117,7 @@
     "only-closed": "Nur geschlossen",
     "only-insert": "Nur hinzufügen",
     "only-owner-data": "Nur Benutzerdaten anzeigen",
-    "only-owner-data-p": "Mit der Option, nur Benutzerdaten anzuzeigen, kann der Benutzer nur die von ihm erstellten oder ihm zugewiesenen Datensätze sehen (als Benutzer oder Agent).",
+    "only-owner-data-p": "Wenn die Option zum Anzeigen von Benutzerdaten aktiviert ist, kann der Benutzer nur die von ihm erstellten oder ihm zugewiesenen Datensätze sehen (als Benutzer oder Agent).",
     "only-pending": "Nur ausstehend",
     "only-suspended": "Nur ausgesetzt",
     "open": "öffnen",

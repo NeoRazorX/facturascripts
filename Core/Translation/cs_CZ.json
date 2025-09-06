@@ -394,7 +394,7 @@
     "data-source": "Datos de origen",
     "database": "Base de datos",
     "database-error": "Chyba při připojení k databázi",
-    "database-error-pc": "🖥️ Si el programa está instalado en tu PC, probablemente se te haya olvidado activar MySQL o tenga problemas para activarse.",
+    "database-error-pc": "🖥️ Pokud je program nainstalován na vašem PC, pravděpodobně jste zapomněli aktivovat MySQL nebo má problémy s aktivací.",
     "database-error-server": "🌎 pokud je program nainstalován na serveru nebo hostingu, pravděpodobně jste změnili uživatelské jméno nebo heslo k databázi, nebo jste dosáhli nějakého limitu použití hostingu.",
     "database-name-must-be-lowercase": "El nombre de la base de datos debe ser en minúsculas",
     "date": "Fecha",
