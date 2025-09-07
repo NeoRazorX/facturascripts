@@ -1695,7 +1695,7 @@
     "updater": "Processus de mise à jour",
     "updates-available": "Mises à jour disponibles",
     "updates-available-p": "Des mises à jour d'InfacturaScripts sont disponibles. Veuillez cliquer sur le programme de mise à jour et télécharger la nouvelle version. Les mises à jour corrigent les bugs et ajoutent de nouvelles fonctionnalités.",
-    "updates-beta-warning": "Actualizaciones beta activadas",
+    "updates-beta-warning": "Mises à jour bêta activées",
     "updates-beta-warning-p": "⚠️ Les mises à jour bêta sont activées. Ces mises à jour n'ont pas été testées et ne sont recommandées que pour les installations de test.",
     "updating-attached-relations": "Mise à jour des compteurs de pièces jointes",
     "upload-file": "Subir archivo",
