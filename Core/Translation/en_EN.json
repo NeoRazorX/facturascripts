@@ -1002,7 +1002,7 @@
     "method-payment": "Method of payment",
     "mime-type": "Mime Type",
     "min-fs-version": "Min. Core version",
-    "min-php-version": "Min. v. PHP",
+    "min-php-version": "Min. PHP version",
     "minimum-amount-with-cifnif": "Minimum amount with CIF\/NIF",
     "minimum-amount-without-cifnif": "Minimum amount without CIF\/NIF",
     "minimum-stock": "Minimum stock",

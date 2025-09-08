@@ -1386,7 +1386,7 @@
     "roles": "Roles",
     "rules": "Regras",
     "run": "executar",
-    "running": "Ejecutando",
+    "running": "Executando",
     "running-plugin-cron": "Executando o cron do plugin %pluginName%",
     "running-work-queue": "Executando a fila de eventos de trabalho",
     "sales": "Vendas",
