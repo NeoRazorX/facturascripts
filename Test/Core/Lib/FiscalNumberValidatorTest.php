@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 class FiscalNumberValidatorTest extends TestCase
 {
-    public function testValidateCif(): void
+    public function testValidate(): void
     {
         $results = [
             ['type' => '', 'number' => '45678', 'expected' => true],
@@ -46,6 +46,32 @@ class FiscalNumberValidatorTest extends TestCase
                 FiscalNumberValidator::validate($item['type'], $item['number'], true),
                 sprintf('Error validating %s %s', $item['type'], $item['number'])
             );
+        }
+    }
+
+    public function testValidateSpainCif(): void
+    {
+        $valid = ['P4698162G', 'B43359165', 'B85461424', 'A82744681', 'R2200465I'];
+        foreach ($valid as $number) {
+            $this->assertTrue(FiscalNumberValidator::isValidSpainCIF($number));
+        }
+
+        $invalid = ['P4698162E', 'P4698162G1', 'P4698162G2', 'P4698162G3', 'P4698162G4'];
+        foreach ($invalid as $number) {
+            $this->assertFalse(FiscalNumberValidator::isValidSpainCIF($number));
+        }
+    }
+
+    public function testValidateSpainDni(): void
+    {
+        $valid = ['25296158E', '74003828V', '36155837K'];
+        foreach ($valid as $number) {
+            $this->assertTrue(FiscalNumberValidator::isValidSpainDNI($number));
+        }
+
+        $invalid = ['25296158S', '74003828J', '12345678B', '12345678C'];
+        foreach ($invalid as $number) {
+            $this->assertFalse(FiscalNumberValidator::isValidSpainDNI($number));
         }
     }
 }
