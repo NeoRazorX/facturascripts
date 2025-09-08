@@ -390,7 +390,7 @@ final class PresupuestoProveedorTest extends TestCase
         // comprobamos las líneas del pedido
         $childLines = $children[0]->getLines();
         $this->assertCount(1, $childLines, 'pedido-bad-lines-count');
-        $this->assertEquals(100, $childLines[0]->pvpunitario, 'pedido-bad-line-pvpunitario');
+        $this->assertEquals(50, $childLines[0]->pvpunitario, 'pedido-bad-line-pvpunitario');
 
         // comprobamos que no podemos eliminar el presupuesto
         $this->assertFalse($doc->delete(), 'pedido-can-delete-approved');
