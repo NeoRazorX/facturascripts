@@ -152,11 +152,12 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         // remove relations and update servido column
+        $parents = $this->parentDocuments();
         $docTransformation = new DocTransformation();
         $docTransformation->deleteFrom($this->modelClassName(), $this->id(), true);
 
         // change parent doc status
-        foreach ($this->parentDocuments() as $parent) {
+        foreach ($parents as $parent) {
             foreach ($parent->getAvailableStatus() as $status) {
                 if ($status->predeterminado) {
                     $parent->idestado = $status->idestado;

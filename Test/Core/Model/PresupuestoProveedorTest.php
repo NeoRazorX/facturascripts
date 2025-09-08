@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,7 +41,7 @@ final class PresupuestoProveedorTest extends TestCase
         self::setDefaultSettings();
     }
 
-    public function testDefaultValues()
+    public function testDefaultValues(): void
     {
         // creamos un presupuesto
         $doc = new PresupuestoProveedor();
@@ -54,11 +54,11 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertNotEmpty($doc->hora, 'empty-time');
     }
 
-    public function testSetAuthor()
+    public function testSetAuthor(): void
     {
         // creamos un almacén
         $warehouse = $this->getRandomWarehouse();
-        $this->assertTrue($warehouse->save(), 'can-not-create-warehouse');
+        $this->assertTrue($warehouse->save());
 
         // creamos un usuario y le asignamos el almacén
         $user = $this->getRandomUser();
@@ -76,11 +76,11 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
     }
 
-    public function testSetSubject()
+    public function testSetSubject(): void
     {
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
-        $this->assertTrue($subject->save(), 'can-not-save-supplier-1');
+        $this->assertTrue($subject->save());
 
         // creamos un presupuesto y le asignamos el proveedor
         $doc = new PresupuestoProveedor();
@@ -96,11 +96,11 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
     }
 
-    public function testCreateEmpty()
+    public function testCreateEmpty(): void
     {
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
-        $this->assertTrue($subject->save(), 'can-not-save-supplier-1');
+        $this->assertTrue($subject->save());
 
         // creamos un presupuesto y le asignamos el proveedor
         $doc = new PresupuestoProveedor();
@@ -125,17 +125,17 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
     }
 
-    public function testCreateWithoutSubject()
+    public function testCreateWithoutSubject(): void
     {
         $doc = new PresupuestoProveedor();
         $this->assertFalse($doc->save(), 'can-create-presupuesto-proveedor-without-subject');
     }
 
-    public function testCreateOneLine()
+    public function testCreateOneLine(): void
     {
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
-        $this->assertTrue($subject->save(), 'can-not-save-supplier-2');
+        $this->assertTrue($subject->save());
 
         // creamos un presupuesto y le asignamos el proveedor
         $doc = new PresupuestoProveedor();
@@ -168,15 +168,15 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-2');
     }
 
-    public function testCreateProductLine()
+    public function testCreateProductLine(): void
     {
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
-        $this->assertTrue($subject->save(), 'can-not-save-supplier-3');
+        $this->assertTrue($subject->save());
 
         // creamos un producto
         $product = $this->getRandomProduct();
-        $this->assertTrue($product->save(), 'can-not-save-supplier-3');
+        $this->assertTrue($product->save());
 
         // creamos un presupuesto y le asignamos el proveedor
         $doc = new PresupuestoProveedor();
@@ -218,15 +218,15 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
     }
 
-    public function testCreateProductNotFoundLine()
+    public function testCreateProductNotFoundLine(): void
     {
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
-        $this->assertTrue($subject->save(), 'can-not-save-supplier-3');
+        $this->assertTrue($subject->save());
 
         // creamos un producto
         $product = $this->getRandomProduct();
-        $this->assertTrue($product->save(), 'can-not-save-supplier-3');
+        $this->assertTrue($product->save());
 
         // eliminamos el producto para asegurar que no existe
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
@@ -255,16 +255,16 @@ final class PresupuestoProveedorTest extends TestCase
     {
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
         $campos = [
-            'cifnif'       => [30, 31],
-            'codigo'       => [20, 21],
-            'nombre'       => [100, 101],
+            'cifnif' => [30, 31],
+            'codigo' => [20, 21],
+            'nombre' => [100, 101],
             'numproveedor' => [50, 51],
-            'operacion'    => [20, 21],
+            'operacion' => [20, 21],
         ];
 
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
-        $this->assertTrue($subject->save(), 'can-not-save-customer');
+        $this->assertTrue($subject->save());
 
         foreach ($campos as $campo => [$valido, $invalido]) {
             // Creamos un nuevo almacén
@@ -288,22 +288,22 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente');
     }
 
-    public function testSecondCompany()
+    public function testSecondCompany(): void
     {
         // creamos la empresa 2
         $company2 = new Empresa();
         $company2->nombre = 'Company 2';
         $company2->nombrecorto = 'Company-2';
-        $this->assertTrue($company2->save(), 'company-cant-save');
+        $this->assertTrue($company2->save());
 
         // obtenemos el almacén de la empresa 2
         $warehouse = new Almacen();
         $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadFromCode('', $where);
+        $warehouse->loadWhere($where);
 
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+        $this->assertTrue($subject->save());
 
         // creamos un presupuesto en la empresa 2 y le asignamos el proveedor
         $doc = new PresupuestoProveedor();
@@ -347,6 +347,68 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
         $this->assertTrue($company2->delete(), 'empresa-cant-delete');
+    }
+
+    public function testApprove(): void
+    {
+        // creamos un proveedor
+        $subject = $this->getRandomSupplier();
+        $this->assertTrue($subject->save());
+
+        // creamos un presupuesto y le asignamos el proveedor
+        $doc = new PresupuestoProveedor();
+        $this->assertTrue($doc->setSubject($subject));
+        $this->assertTrue($doc->save(), 'can-not-create-presupuesto-proveedor-4');
+
+        // añadimos una línea
+        $line = $doc->getNewLine();
+        $line->cantidad = 2;
+        $line->descripcion = 'Presupuesto de proveedor';
+        $line->pvpunitario = 50;
+        $this->assertTrue($line->save(), 'can-not-save-line-4');
+
+        // actualizamos los totales
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-presupuesto-proveedor-4');
+
+        // aprobamos
+        foreach ($doc->getAvailableStatus() as $status) {
+            if (empty($status->generadoc)) {
+                continue;
+            }
+
+            // al cambiar el estado genera un nuevo pedido
+            $doc->idestado = $status->idestado;
+            $this->assertTrue($doc->save(), 'pedido-cant-save');
+        }
+
+        // comprobamos que el pedido se ha creado
+        $children = $doc->childrenDocuments();
+        $this->assertCount(1, $children);
+        $this->assertEquals(100, $children[0]->neto, 'pedido-bad-neto');
+
+        // comprobamos las líneas del pedido
+        $childLines = $children[0]->getLines();
+        $this->assertCount(1, $childLines, 'pedido-bad-lines-count');
+        $this->assertEquals(100, $childLines[0]->pvpunitario, 'pedido-bad-line-pvpunitario');
+
+        // comprobamos que no podemos eliminar el presupuesto
+        $this->assertFalse($doc->delete(), 'pedido-can-delete-approved');
+
+        // eliminamos
+        $this->assertTrue($children[0]->delete(), 'pedido-cant-delete');
+
+        // recargamos el presupuesto
+        $this->assertTrue($doc->reload());
+
+        // comprobamos que el presupuesto sigue existiendo y es editable
+        $this->assertTrue($doc->exists());
+        $this->assertTrue($doc->editable);
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'presupuesto-cant-delete');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
     }
 
     protected function setUp(): void

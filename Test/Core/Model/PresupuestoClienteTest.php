@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,11 +59,11 @@ final class PresupuestoClienteTest extends TestCase
     {
         // creamos un agente
         $agent = $this->getRandomAgent();
-        $this->assertTrue($agent->save(), 'can-not-create-agent');
+        $this->assertTrue($agent->save());
 
         // creamos un almacén
         $warehouse = $this->getRandomWarehouse();
-        $this->assertTrue($warehouse->save(), 'can-not-create-warehouse');
+        $this->assertTrue($warehouse->save());
 
         // creamos un usuario y le asignamos el agente y el almacén
         $user = $this->getRandomUser();
@@ -89,11 +89,11 @@ final class PresupuestoClienteTest extends TestCase
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-1');
+        $this->assertTrue($subject->save());
 
         // creamos un presupuesto y le asignamos el cliente
         $doc = new PresupuestoCliente();
-        $doc->setSubject($subject);
+        $this->assertTrue($doc->setSubject($subject));
         $this->assertTrue($doc->save(), 'can-not-create-presupuesto-cliente-1');
 
         // comprobamos que se le han asignado los datos del cliente
@@ -130,11 +130,11 @@ final class PresupuestoClienteTest extends TestCase
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+        $this->assertTrue($subject->save());
 
         // creamos un presupuesto y le asignamos el cliente
         $doc = new PresupuestoCliente();
-        $doc->setSubject($subject);
+        $this->assertTrue($doc->setSubject($subject));
         $this->assertTrue($doc->save(), 'can-not-create-presupuesto-cliente-2');
 
         // añadimos una línea
@@ -168,11 +168,11 @@ final class PresupuestoClienteTest extends TestCase
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+        $this->assertTrue($subject->save());
 
         // creamos un producto
         $product = $this->getRandomProduct();
-        $this->assertTrue($product->save(), 'can-not-save-supplier-3');
+        $this->assertTrue($product->save());
 
         // modificamos el precio y coste del producto
         foreach ($product->getVariants() as $variant) {
@@ -183,7 +183,7 @@ final class PresupuestoClienteTest extends TestCase
 
         // creamos un presupuesto y le asignamos el cliente
         $doc = new PresupuestoCliente();
-        $doc->setSubject($subject);
+        $this->assertTrue($doc->setSubject($subject));
         $this->assertTrue($doc->save(), 'can-not-create-presupuesto-cliente-2');
 
         // añadimos el producto sin stock
@@ -218,18 +218,18 @@ final class PresupuestoClienteTest extends TestCase
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+        $this->assertTrue($subject->save());
 
         // creamos un producto
         $product = $this->getRandomProduct();
-        $this->assertTrue($product->save(), 'can-not-save-supplier-3');
+        $this->assertTrue($product->save());
 
         // eliminamos el producto para asegurarnos de que no existe
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
 
         // creamos un presupuesto y le asignamos el cliente
         $doc = new PresupuestoCliente();
-        $doc->setSubject($subject);
+        $this->assertTrue($doc->setSubject($subject));
         $this->assertTrue($doc->save(), 'can-not-create-presupuesto-cliente-2');
 
         // añadimos el producto que ya no existe
@@ -253,20 +253,20 @@ final class PresupuestoClienteTest extends TestCase
         $company2 = new Empresa();
         $company2->nombre = 'Company 2';
         $company2->nombrecorto = 'Company-2';
-        $this->assertTrue($company2->save(), 'company-cant-save');
+        $this->assertTrue($company2->save());
 
         // obtenemos el almacén de la empresa 2
         $warehouse = new Almacen();
         $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadFromCode('', $where);
+        $warehouse->loadWhere($where);
 
         // creamos un cliente
         $subject = $this->getRandomCustomer();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+        $this->assertTrue($subject->save());
 
         // creamos un presupuesto y le asignamos el cliente y el almacén
         $doc = new PresupuestoCliente();
-        $doc->setSubject($subject);
+        $this->assertTrue($doc->setSubject($subject));
         $doc->codalmacen = $warehouse->codalmacen;
         $this->assertTrue($doc->save(), 'presupuesto-cant-save');
 
@@ -312,11 +312,11 @@ final class PresupuestoClienteTest extends TestCase
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+        $this->assertTrue($subject->save());
 
         // creamos un presupuesto y le asignamos el cliente
         $doc = new PresupuestoCliente();
-        $doc->setSubject($subject);
+        $this->assertTrue($doc->setSubject($subject));
         $this->assertTrue($doc->save(), 'can-not-create-presupuesto-cliente-2');
 
         // añadimos una línea
@@ -358,7 +358,7 @@ final class PresupuestoClienteTest extends TestCase
 
         // creamos un cliente
         $subject = $this->getRandomCustomer();
-        $this->assertTrue($subject->save(), 'can-not-save-customer');
+        $this->assertTrue($subject->save());
 
         foreach ($campos as $campo => [$valido, $invalido]) {
             // Creamos un nuevo almacén
@@ -382,11 +382,74 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente');
     }
 
+    public function testApprove(): void
+    {
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save());
+
+        // creamos un presupuesto y le asignamos el cliente
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setSubject($subject));
+        $this->assertTrue($doc->save());
+
+        // añadimos una línea
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->descripcion = 'Linea de prueba';
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save());
+
+        // actualizamos los totales
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true));
+        $this->assertEquals(100, $doc->neto);
+
+        // aprobamos
+        foreach ($doc->getAvailableStatus() as $status) {
+            if (empty($status->generadoc)) {
+                continue;
+            }
+
+            // al cambiar el estado genera un nuevo pedido
+            $doc->idestado = $status->idestado;
+            $this->assertTrue($doc->save(), 'pedido-cant-save');
+        }
+
+        // comprobamos que el pedido se ha creado
+        $children = $doc->childrenDocuments();
+        $this->assertCount(1, $children);
+        $this->assertEquals(100, $children[0]->neto, 'pedido-bad-neto');
+
+        // comprobamos las líneas del pedido
+        $childLines = $children[0]->getLines();
+        $this->assertCount(1, $childLines, 'pedido-bad-lines-count');
+        $this->assertEquals(100, $childLines[0]->pvpunitario, 'pedido-bad-line-pvpunitario');
+
+        // comprobamos que no podemos eliminar el presupuesto
+        $this->assertFalse($doc->delete(), 'pedido-can-delete-approved');
+
+        // eliminamos
+        $this->assertTrue($children[0]->delete(), 'pedido-cant-delete');
+
+        // recargamos el presupuesto
+        $this->assertTrue($doc->reload());
+
+        // comprobamos que el presupuesto sigue existiendo y es editable
+        $this->assertTrue($doc->exists());
+        $this->assertTrue($doc->editable);
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'presupuesto-cant-delete');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
+    }
+
     public function testSplitDocument(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+        $this->assertTrue($subject->save());
 
         // creamos un presupuesto y le asignamos el cliente
         $doc = new PresupuestoCliente();
