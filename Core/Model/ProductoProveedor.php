@@ -90,6 +90,19 @@ class ProductoProveedor extends ModelClass
         return null;
     }
 
+    public function __isset(string $key): bool
+    {
+        if (isset($this->attributes[$key])) {
+            return true;
+        }
+
+        if ($key === 'descripcion') {
+            return true;
+        }
+
+        return false;
+    }
+
     public function clear(): void
     {
         parent::clear();
