@@ -500,15 +500,17 @@ abstract class BusinessDocument extends NewModelClass
             return false;
         }
 
-        // add audit log
-        Tools::log(LogMessage::AUDIT_CHANNEL)->info('updated-model', [
-            '%model%' => $this->modelClassName(),
-            '%key%' => $this->id(),
-            '%desc%' => $this->primaryDescription(),
-            'model-class' => $this->modelClassName(),
-            'model-code' => $this->id(),
-            'model-data' => $this->toArray()
-        ]);
+        if ($this->isDirty()) {
+            // add audit log
+            Tools::log(LogMessage::AUDIT_CHANNEL)->info('updated-model', [
+                '%model%' => $this->modelClassName(),
+                '%key%' => $this->id(),
+                '%desc%' => $this->primaryDescription(),
+                'model-class' => $this->modelClassName(),
+                'model-code' => $this->id(),
+                'model-data' => $this->toArray()
+            ]);
+        }
 
         return true;
     }
