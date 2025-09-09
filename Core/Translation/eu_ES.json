@@ -1117,7 +1117,7 @@
     "only-closed": "Itxita daudenak bakarrik",
     "only-insert": "Gehitu bakarrik",
     "only-owner-data": "Erabiltzaileen erregistroak bakarrik erakutsi",
-    "only-owner-data-p": "El usuario solamente podrá ver registros que haya creado él o que tenga asignados (como usuario o agente)",
+    "only-owner-data-p": "Aukera hau markatuz, erabiltzaileak sortu dituen edo bere izenean esleitutako erregistroak baino ezin izango ditu ikusi.",
     "only-pending": "Falta direnak bakarrik",
     "only-suspended": "Baliogabetuak bakarrik",
     "open": "Ireki",
