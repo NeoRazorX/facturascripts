@@ -25,8 +25,11 @@ use FacturaScripts\Core\Model\Base\InvoiceTrait;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as LineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
+use FacturaScripts\Dinamic\Model\Serie;
 
 /**
  * Customer's invoice.
@@ -97,6 +100,19 @@ class FacturaCliente extends SalesDocument
     {
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
         return DinReciboCliente::all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
+    }
+
+    public function install(): string
+    {
+        // we need to call parent first
+        $result = parent::install();
+
+        // needed dependencies
+        new Serie();
+        new Asiento();
+        new Empresa();
+
+        return $result;
     }
 
     public static function tableName(): string
