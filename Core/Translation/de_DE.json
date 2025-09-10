@@ -394,7 +394,7 @@
     "data-source": "Datenquelle",
     "database": "Datenbank",
     "database-error": "Fehler bei der Verbindung zur Datenbank",
-    "database-error-pc": "🖥️ Si el programa está instalado en tu PC, probablemente se te haya olvidado activar MySQL o tenga problemas para activarse.",
+    "database-error-pc": "🖥️ Wenn das Programm auf Ihrem PC installiert ist, haben Sie möglicherweise vergessen, MySQL zu aktivieren oder es gibt Probleme bei der Aktivierung.",
     "database-error-server": "🌎 Wenn das Programm auf einem Server oder Hosting installiert ist, haben Sie wahrscheinlich den Benutzernamen oder das Passwort der Datenbank geändert oder das Nutzungslimit des Hostings erreicht.",
     "database-name-must-be-lowercase": "Der Dateiname muss in Kleinbuchstaben sein",
     "date": "Datum",
