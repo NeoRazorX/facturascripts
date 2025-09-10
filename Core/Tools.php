@@ -119,6 +119,16 @@ class Tools
     }
 
     /**
+     * Obtiene el número de decimales configurado en el sistema.
+     *
+     * @return int El número de decimales configurado, por defecto 2.
+     */
+    public static function decimals(): int
+    {
+        return self::settings('default', 'decimals', 2);
+    }
+
+    /**
      * Formatea una fecha según el estilo de fecha definido en la clase.
      *
      * Esta función devuelve una fecha formateada de acuerdo con el formato
@@ -466,7 +476,7 @@ class Tools
             $coddivisa = self::settings('default', 'coddivisa', '');
         }
         if ($decimals === null) {
-            $decimals = self::settings('default', 'decimals', 2);
+            $decimals = self::decimals();
         }
 
         $symbol = Divisas::get($coddivisa)->simbolo;
@@ -504,7 +514,7 @@ class Tools
     public static function number(?float $number, ?int $decimals = null): string
     {
         if ($decimals === null) {
-            $decimals = self::settings('default', 'decimals', 2);
+            $decimals = self::decimals();
         }
 
         // cargamos la configuración
@@ -512,6 +522,22 @@ class Tools
         $thousandsSeparator = self::settings('default', 'thousands_separator', ' ');
 
         return number_format($number ?? 0, $decimals, $decimalSeparator, $thousandsSeparator);
+    }
+
+    /**
+     * Redondea un número utilizando el número de decimales configurado en el sistema.
+     *
+     * @param float|null $num El número que se debe redondear. Si es null, se devuelve 0.0.
+     *
+     * @return float El número redondeado con los decimales configurados.
+     */
+    public static function round(?float $num): float
+    {
+        if ($num === null) {
+            return 0.0;
+        }
+
+        return round($num, self::decimals());
     }
 
     /**
