@@ -18,15 +18,46 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ['8.3']
-        database:
-          - type: mysql
-            version: '8.0'
-            port: 3306
-        lang: ['es_ES', 'en_EN', 'fr_FR', 'de_DE', 'it_IT', 'pt_PT', 'pt_BR', 'ca_ES', 'gl_ES']
+        include:
+          - php-version: '8.3'
+            lang: 'es_ES'
+            database:
+              type: mysql
+              version: '8.0'
+              port: 3306
+          - php-version: '8.3'
+            lang: 'pt_PT'
+            database:
+              type: mariadb
+              version: '11.0'
+              port: 3306
+          - php-version: '8.3'
+            lang: 'es_MX'
+            database:
+              type: postgresql
+              version: '13'
+              port: 5432
+          - php-version: '8.3'
+            lang: 'es_CO'
+            database:
+              type: mysql
+              version: '8.0'
+              port: 3306
+          - php-version: '8.3'
+            lang: 'es_EC'
+            database:
+              type: mariadb
+              version: '11.0'
+              port: 3306
+          - php-version: '8.3'
+            lang: 'en_EN'
+            database:
+              type: postgresql
+              version: '13'
+              port: 5432
       fail-fast: false
 
-    name: PHP ${{ matrix.php-version }} - MySQL ${{ matrix.database.version }} - Lang ${{ matrix.lang }}
+    name: PHP ${{ matrix.php-version }} - ${{ matrix.database.type }} ${{ matrix.database.version }} - Lang ${{ matrix.lang }}
 
     services:
       mysql:
@@ -41,6 +72,34 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
+
+      mariadb:
+        image: ${{ matrix.database.type == 'mariadb' && format('mariadb:{0}', matrix.database.version) || '' }}
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: facturascripts_test
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: false
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+      postgres:
+        image: ${{ matrix.database.type == 'postgresql' && format('postgres:{0}', matrix.database.version) || '' }}
+        env:
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: facturascripts_test
+          POSTGRES_USER: root
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U root -d facturascripts_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout repository
@@ -72,13 +131,20 @@ jobs:
 
       - name: Verify database connection
         run: |
-          echo "Testing ${{ matrix.database.type }} ${{ matrix.database.version }} connection..."
-          mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SHOW DATABASES;"
-          mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SELECT VERSION();"
+          if [ "${{ matrix.database.type }}" = "mysql" ] || [ "${{ matrix.database.type }}" = "mariadb" ]; then
+            echo "Testing ${{ matrix.database.type }} ${{ matrix.database.version }} connection..."
+            mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SHOW DATABASES;"
+            mysql --host=${{ env.DB_HOST }} --user=${{ env.DB_USER }} --password=${{ env.DB_PASS }} -e "SELECT VERSION();"
+          else
+            echo "Testing PostgreSQL ${{ matrix.database.version }} connection..."
+            PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -c "\\l"
+            PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -c "SELECT version();"
+          fi
 
       - name: Create application config (lang=${{ matrix.lang }})
         run: |
-          cat > config.php << 'EOF'
+          if [ "${{ matrix.database.type }}" = "mysql" ] || [ "${{ matrix.database.type }}" = "mariadb" ]; then
+            cat > config.php << 'EOF'
           <?php
           define('FS_COOKIES_EXPIRE', 31536000);
           define('FS_ROUTE', '');
@@ -99,6 +165,27 @@ jobs:
           define('FS_DISABLE_ADD_PLUGINS', false);
           define('FS_DISABLE_RM_PLUGINS', false);
           EOF
+          else
+            cat > config.php << 'EOF'
+          <?php
+          define('FS_COOKIES_EXPIRE', 31536000);
+          define('FS_ROUTE', '');
+          define('FS_DB_TYPE', 'postgresql');
+          define('FS_DB_HOST', '${{ env.DB_HOST }}');
+          define('FS_DB_PORT', 5432);
+          define('FS_DB_NAME', '${{ env.DB_NAME }}');
+          define('FS_DB_USER', '${{ env.DB_USER }}');
+          define('FS_DB_PASS', '${{ env.DB_PASS }}');
+          define('FS_DB_FOREIGN_KEYS', true);
+          define('FS_DB_TYPE_CHECK', true);
+          define('FS_LANG', '${{ matrix.lang }}');
+          define('FS_TIMEZONE', 'Europe/Madrid');
+          define('FS_HIDDEN_PLUGINS', '');
+          define('FS_DEBUG', true);
+          define('FS_DISABLE_ADD_PLUGINS', false);
+          define('FS_DISABLE_RM_PLUGINS', false);
+          EOF
+          fi
 
       - name: Run PHPUnit tests
         run: |
@@ -108,4 +195,3 @@ jobs:
             echo "No PHPUnit configuration found. Running with default settings..."
             vendor/bin/phpunit --bootstrap vendor/autoload.php tests/
           fi
-
