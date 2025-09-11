@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Almacen;
@@ -149,10 +150,15 @@ final class PresupuestoClienteTest extends TestCase
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-presupuesto-cliente-2');
 
+        // obtenemos el impuesto predeterminado
+        $default_tax = Impuestos::default();
+        $total_iva = (100 * $default_tax->iva / 100);
+        $total = 100 + $total_iva;
+
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'presupuesto-cliente-bad-neto-2');
-        $this->assertEquals(121, $doc->total, 'presupuesto-cliente-bad-total-2');
-        $this->assertEquals(21, $doc->totaliva, 'presupuesto-cliente-bad-totaliva-2');
+        $this->assertEquals($total, $doc->total, 'presupuesto-cliente-bad-total-2');
+        $this->assertEquals($total_iva, $doc->totaliva, 'presupuesto-cliente-bad-totaliva-2');
         $this->assertEquals(0, $doc->totalrecargo, 'presupuesto-cliente-bad-totalrecargo-2');
         $this->assertEquals(0, $doc->totalirpf, 'presupuesto-cliente-bad-totalirpf-2');
         $this->assertEquals(0, $doc->totalsuplidos, 'presupuesto-cliente-bad-totalsuplidos-2');
@@ -200,10 +206,15 @@ final class PresupuestoClienteTest extends TestCase
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-presupuesto-cliente-3');
 
+        // obtenemos el impuesto predeterminado
+        $default_tax = Impuestos::default();
+        $total_iva = (10 * $default_tax->iva / 100);
+        $total = 10 + $total_iva;
+
         // comprobamos
         $this->assertEquals(10, $doc->neto, 'presupuesto-cliente-bad-neto-3');
-        $this->assertEquals(12.1, $doc->total, 'presupuesto-cliente-bad-total-3');
-        $this->assertEquals(2.1, $doc->totaliva, 'presupuesto-cliente-bad-totaliva-3');
+        $this->assertEquals($total, $doc->total, 'presupuesto-cliente-bad-total-3');
+        $this->assertEquals($total_iva, $doc->totaliva, 'presupuesto-cliente-bad-totaliva-3');
         $this->assertEquals(5, $doc->totalcoste, 'presupuesto-cliente-bad-totalcoste-3');
 
         // eliminamos
@@ -482,9 +493,14 @@ final class PresupuestoClienteTest extends TestCase
         $pedidos = $generator->getLastDocs();
         $this->assertCount(1, $pedidos, 'pedido-no-creado');
 
+        // obtenemos el impuesto predeterminado
+        $default_tax = Impuestos::default();
+        $total_iva = (50 * $default_tax->iva / 100);
+        $total = 50 + $total_iva;
+
         // comprobamos los totales
         $this->assertEquals(50, $pedidos[0]->neto, 'pedido-bad-neto');
-        $this->assertEquals(60.5, $pedidos[0]->total, 'pedido-bad-total');
+        $this->assertEquals($total, $pedidos[0]->total, 'pedido-bad-total');
 
         // eliminamos
         $this->assertTrue($pedidos[0]->delete(), 'pedido-cant-delete');

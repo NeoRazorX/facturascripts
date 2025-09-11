@@ -97,8 +97,9 @@ final class Kernel
         self::startTimer('kernel::init');
 
         // cargamos algunas constantes para dar soporte a versiones antiguas
+        $initial_codpais = Tools::config('initial_codpais', 'ESP');
         $constants = [
-            'FS_CODPAIS' => ['property' => 'codpais', 'default' => 'ESP'],
+            'FS_CODPAIS' => ['property' => 'codpais', 'default' => $initial_codpais],
             'FS_CURRENCY_POS' => ['property' => 'currency_position', 'default' => 'right'],
             'FS_ITEM_LIMIT' => ['property' => 'item_limit', 'default' => 50],
             'FS_NF0' => ['property' => 'decimals', 'default' => 2],

@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -34,7 +35,7 @@ final class ProveedorTest extends TestCase
         $proveedor->nombre = 'Test';
         $proveedor->cifnif = '12345678A';
         $this->assertTrue($proveedor->save(), 'proveedor-cant-save');
-        $this->assertNotNull($proveedor->primaryColumnValue(), 'proveedor-not-stored');
+        $this->assertNotNull($proveedor->id(), 'proveedor-not-stored');
         $this->assertTrue($proveedor->exists(), 'proveedor-cant-persist');
 
         // razón social es igual a nombre
@@ -154,6 +155,11 @@ final class ProveedorTest extends TestCase
 
     public function testVies(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un proveedor sin cif/nif
         $proveedor = new Proveedor();
         $proveedor->nombre = 'Test';

@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
@@ -153,10 +154,15 @@ final class PresupuestoProveedorTest extends TestCase
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-presupuesto-proveedor-2');
 
+        // obtenemos el impuesto predeterminado
+        $default_tax = Impuestos::default();
+        $total_iva = (100 * $default_tax->iva / 100);
+        $total = 100 + $total_iva;
+
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'presupuesto-proveedor-bad-neto-2');
-        $this->assertEquals(121, $doc->total, 'presupuesto-proveedor-bad-total-2');
-        $this->assertEquals(21, $doc->totaliva, 'presupuesto-proveedor-bad-totaliva-2');
+        $this->assertEquals($total, $doc->total, 'presupuesto-proveedor-bad-total-2');
+        $this->assertEquals($total_iva, $doc->totaliva, 'presupuesto-proveedor-bad-totaliva-2');
         $this->assertEquals(0, $doc->totalrecargo, 'presupuesto-proveedor-bad-totalrecargo-2');
         $this->assertEquals(0, $doc->totalirpf, 'presupuesto-proveedor-bad-totalirpf-2');
         $this->assertEquals(0, $doc->totalsuplidos, 'presupuesto-proveedor-bad-totalsuplidos-2');
@@ -192,10 +198,15 @@ final class PresupuestoProveedorTest extends TestCase
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-presupuesto-proveedor-3');
 
+        // obtenemos el impuesto predeterminado
+        $default_tax = Impuestos::default();
+        $total_iva = (10 * $default_tax->iva / 100);
+        $total = 10 + $total_iva;
+
         // comprobamos
         $this->assertEquals(10, $doc->neto, 'presupuesto-proveedor-bad-neto-3');
-        $this->assertEquals(12.1, $doc->total, 'presupuesto-proveedor-bad-total-3');
-        $this->assertEquals(2.1, $doc->totaliva, 'presupuesto-proveedor-bad-totaliva-3');
+        $this->assertEquals($total, $doc->total, 'presupuesto-proveedor-bad-total-3');
+        $this->assertEquals($total_iva, $doc->totaliva, 'presupuesto-proveedor-bad-totaliva-3');
 
         // modificamos la cantidad de la línea
         $line->cantidad = 10;
@@ -205,10 +216,14 @@ final class PresupuestoProveedorTest extends TestCase
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-presupuesto-proveedor-3');
 
+        // obtenemos el impuesto predeterminado
+        $total_iva = (100 * $default_tax->iva / 100);
+        $total = 100 + $total_iva;
+
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'presupuesto-proveedor-bad-neto-3');
-        $this->assertEquals(121, $doc->total, 'presupuesto-proveedor-bad-total-3');
-        $this->assertEquals(21, $doc->totaliva, 'presupuesto-proveedor-bad-totaliva-3');
+        $this->assertEquals($total, $doc->total, 'presupuesto-proveedor-bad-total-3');
+        $this->assertEquals($total_iva, $doc->totaliva, 'presupuesto-proveedor-bad-totaliva-3');
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-proveedor-3');

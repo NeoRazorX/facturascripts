@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\AlbaranCliente;
 use FacturaScripts\Core\Model\Almacen;
@@ -148,10 +149,15 @@ final class AlbaranClienteTest extends TestCase
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-albaran-cliente-2');
 
+        // obtenemos el impuesto predeterminado
+        $default_tax = Impuestos::default();
+        $total_iva = (100 * $default_tax->iva / 100);
+        $total = 100 + $total_iva;
+
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'albaran-cliente-bad-neto-2');
-        $this->assertEquals(121, $doc->total, 'albaran-cliente-bad-total-2');
-        $this->assertEquals(21, $doc->totaliva, 'albaran-cliente-bad-totaliva-2');
+        $this->assertEquals($total, $doc->total, 'albaran-cliente-bad-total-2');
+        $this->assertEquals($total_iva, $doc->totaliva, 'albaran-cliente-bad-totaliva-2');
         $this->assertEquals(0, $doc->totalrecargo, 'albaran-cliente-bad-totalrecargo-2');
         $this->assertEquals(0, $doc->totalirpf, 'albaran-cliente-bad-totalirpf-2');
         $this->assertEquals(0, $doc->totalsuplidos, 'albaran-cliente-bad-totalsuplidos-2');
@@ -165,6 +171,11 @@ final class AlbaranClienteTest extends TestCase
 
     public function testCreatePriceWithTax(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un cliente
         $subject = $this->getRandomCustomer();
         $this->assertTrue($subject->save(), 'can-not-save-customer-2');
@@ -247,8 +258,8 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($line->save(), 'can-not-save-line-3');
 
         // recargamos producto y comprobamos el stock
-        $product->loadFromCode($product->idproducto);
-        $stock->loadFromCode($stock->idstock);
+        $product->reload();
+        $stock->reload();
         $this->assertEquals(1, $stock->cantidad, 'albaran-cliente-do-not-update-stock');
         $this->assertEquals(1, $stock->disponible, 'albaran-cliente-do-not-update-stock');
         $this->assertEquals(1, $product->stockfis, 'albaran-cliente-product-do-not-update-stock');
@@ -257,10 +268,15 @@ final class AlbaranClienteTest extends TestCase
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-albaran-cliente-3');
 
+        // obtenemos el impuesto predeterminado
+        $default_tax = Impuestos::default();
+        $total_iva = (10 * $default_tax->iva / 100);
+        $total = 10 + $total_iva;
+
         // comprobamos
         $this->assertEquals(10, $doc->neto, 'albaran-cliente-bad-neto-3');
-        $this->assertEquals(12.1, $doc->total, 'albaran-cliente-bad-total-3');
-        $this->assertEquals(2.1, $doc->totaliva, 'albaran-cliente-bad-totaliva-3');
+        $this->assertEquals($total, $doc->total, 'albaran-cliente-bad-total-3');
+        $this->assertEquals($total_iva, $doc->totaliva, 'albaran-cliente-bad-totaliva-3');
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-albaran-cliente-3');
@@ -269,8 +285,8 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-3');
 
         // recargamos producto y comprobamos el stock
-        $product->loadFromCode($product->idproducto);
-        $stock->loadFromCode($stock->idstock);
+        $product->reload();
+        $stock->reload();
         $this->assertEquals(2, $stock->cantidad, 'albaran-cliente-do-not-update-stock');
         $this->assertEquals(2, $stock->disponible, 'albaran-cliente-do-not-update-stock');
         $this->assertEquals(2, $product->stockfis, 'albaran-cliente-product-do-not-update-stock');
@@ -284,7 +300,6 @@ final class AlbaranClienteTest extends TestCase
         // creamos un cliente
         $subject = $this->getRandomCustomer();
         $this->assertTrue($subject->save(), 'can-not-save-customer-1');
-
 
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
         $campos = [
@@ -331,7 +346,7 @@ final class AlbaranClienteTest extends TestCase
         // obtenemos el almacén de la empresa 2
         $warehouse = new Almacen();
         $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadFromCode('', $where);
+        $warehouse->loadWhere($where);
 
         // creamos un cliente
         $subject = $this->getRandomCustomer();

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Lib;
 use FacturaScripts\Core\Lib\CodePatterns;
 use FacturaScripts\Core\Model\PedidoCliente;
 use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
 final class CodePatternsTest extends TestCase
@@ -91,7 +92,7 @@ final class CodePatternsTest extends TestCase
         $order->numero = '123';
 
         $code = CodePatterns::trans('{SERIE}-{NOMBREMES}-{NUM}', $order);
-        $this->assertEquals('A-Marzo-123', $code, 'different-code');
+        $this->assertEquals('A-' . Tools::trans('march') . '-123', $code, 'different-code');
     }
 
     public function testAnyo2MesDiaNum(): void

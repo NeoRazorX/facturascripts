@@ -677,8 +677,13 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
-    public function testExceptionVat()
+    public function testExceptionVat(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un producto
         $product = $this->getTestProduct();
         $this->assertTrue($product->save(), 'product-cant-save');
