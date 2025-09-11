@@ -21,43 +21,49 @@ jobs:
         include:
           - php-version: '8.3'
             lang: 'es_ES'
+            pais: 'ESP'
             database:
               type: mysql
               version: '8.0'
               port: 3306
           - php-version: '8.3'
             lang: 'pt_PT'
+            pais: 'PRT'
             database:
               type: mariadb
               version: '11.0'
               port: 3306
           - php-version: '8.3'
             lang: 'es_MX'
+            pais: 'MEX'
             database:
               type: postgresql
               version: '13'
               port: 5432
           - php-version: '8.3'
             lang: 'es_CO'
+            pais: 'COL'
             database:
               type: mysql
               version: '8.0'
               port: 3306
           - php-version: '8.3'
             lang: 'es_EC'
+            pais: 'ECU'
             database:
               type: mariadb
               version: '11.0'
               port: 3306
           - php-version: '8.3'
             lang: 'en_EN'
+            pais: 'USA'
             database:
               type: postgresql
               version: '13'
               port: 5432
       fail-fast: false
 
-    name: PHP ${{ matrix.php-version }} - ${{ matrix.database.type }} ${{ matrix.database.version }} - Lang ${{ matrix.lang }}
+    name: PHP ${{ matrix.php-version }} - ${{ matrix.database.type }} ${{ matrix.database.version }} - Lang ${{ matrix.lang }} - Pais ${{ matrix.pais }}
 
     services:
       mysql:
@@ -141,7 +147,7 @@ jobs:
             PGPASSWORD=${{ env.DB_PASS }} psql -h ${{ env.DB_HOST }} -U ${{ env.DB_USER }} -d ${{ env.DB_NAME }} -c "SELECT version();"
           fi
 
-      - name: Create application config (lang=${{ matrix.lang }})
+      - name: Create application config (lang=${{ matrix.lang }}, pais=${{ matrix.pais }})
         run: |
           if [ "${{ matrix.database.type }}" = "mysql" ] || [ "${{ matrix.database.type }}" = "mariadb" ]; then
             cat > config.php << 'EOF'
@@ -159,6 +165,7 @@ jobs:
           define('FS_MYSQL_CHARSET', 'utf8mb4');
           define('FS_MYSQL_COLLATE', 'utf8mb4_unicode_520_ci');
           define('FS_LANG', '${{ matrix.lang }}');
+          define('FS_CODPAIS', '${{ matrix.pais }}');
           define('FS_TIMEZONE', 'Europe/Madrid');
           define('FS_HIDDEN_PLUGINS', '');
           define('FS_DEBUG', true);
@@ -179,6 +186,7 @@ jobs:
           define('FS_DB_FOREIGN_KEYS', true);
           define('FS_DB_TYPE_CHECK', true);
           define('FS_LANG', '${{ matrix.lang }}');
+          define('FS_INITIAL_CODPAIS', '${{ matrix.pais }}');
           define('FS_TIMEZONE', 'Europe/Madrid');
           define('FS_HIDDEN_PLUGINS', '');
           define('FS_DEBUG', true);

@@ -33,7 +33,8 @@ trait DefaultSettingsTrait
     protected static function installAccountingPlan(): void
     {
         // ¿Existe el archivo del plan contable?
-        $filePath = FS_FOLDER . '/Core/Data/Codpais/ESP/defaultPlan.csv';
+        $codpais = Tools::config('codpais');
+        $filePath = FS_FOLDER . "/Core/Data/Codpais/$codpais/defaultPlan.csv";
         if (false === file_exists($filePath)) {
             return;
         }
@@ -75,7 +76,8 @@ trait DefaultSettingsTrait
 
     protected static function setDefaultSettings(): void
     {
-        $fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/ESP/default.json');
+        $codpais = Tools::config('codpais');
+        $fileContent = file_get_contents(FS_FOLDER . "/Core/Data/Codpais/$codpais/default.json");
         $defaultValues = json_decode($fileContent, true) ?? [];
         foreach ($defaultValues as $group => $values) {
             foreach ($values as $key => $value) {
