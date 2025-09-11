@@ -31,6 +31,14 @@ jobs:
             name: Ecuador
             lang: es_EC
             timezone: America/Guayaquil
+          - code: GTM
+            name: Guatemala
+            lang: es_GT
+            timezone: America/Guatemala
+          - code: MEX
+            name: Mexico
+            lang: es_MX
+            timezone: America/Mexico_City
         database:
           - type: mysql
             version: '8.0'
