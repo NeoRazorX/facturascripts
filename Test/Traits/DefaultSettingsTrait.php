@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Traits;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cuenta;
@@ -33,8 +34,7 @@ trait DefaultSettingsTrait
     protected static function installAccountingPlan(): void
     {
         // ¿Existe el archivo del plan contable?
-        $codpais = Tools::settings('default', 'codpais', 'ESP');
-        $filePath = FS_FOLDER . '/Core/Data/Codpais/' . $codpais . '/defaultPlan.csv';
+        $filePath = FS_FOLDER . '/Core/Data/Codpais/' . Paises::default()->codpais . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
             return;
         }
@@ -70,8 +70,7 @@ trait DefaultSettingsTrait
 
     protected static function setDefaultSettings(): void
     {
-        $codpais = Tools::settings('default', 'codpais', 'ESP');
-        $fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/' . $codpais . '/default.json');
+        $fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/' . Paises::default()->codpais . '/default.json');
         $defaultValues = json_decode($fileContent, true) ?? [];
         foreach ($defaultValues as $group => $values) {
             foreach ($values as $key => $value) {
