@@ -25,11 +25,13 @@ use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class LedgerTest extends TestCase
 {
     use DefaultSettingsTrait;
+    use LogErrorsTrait;
 
     public static function setUpBeforeClass(): void
     {
@@ -88,5 +90,10 @@ final class LedgerTest extends TestCase
         }
 
         return null;
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

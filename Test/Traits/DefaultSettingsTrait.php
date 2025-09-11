@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,12 +47,6 @@ trait DefaultSettingsTrait
             if (false === $exercise->isOpened()) {
                 $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
                 $exercise->save();
-            }
-
-            // si el ejercicio no tiene 10 dígitos en las subcuentas, lo eliminamos
-            if ($exercise->longsubcuenta != 10) {
-                $exercise->delete();
-                continue;
             }
 
             $where = [new DataBaseWhere('codejercicio', $exercise->codejercicio)];
