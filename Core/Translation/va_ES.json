@@ -395,7 +395,7 @@
     "database": "base de dades",
     "database-error": "Error al connectar a la base de dades",
     "database-error-pc": "🖥️ Si el programa està instal·lat en el teu PC, probablement se t'haja oblidat activar MySQL o tinga problemes per activar-se.",
-    "database-error-server": "🌎 si el programa está instalado en un servidor o hosting, probablemente hayas cambiado el usuario o contraseña de la base de datos, o hayas llegado a algún límite de uso del hosting.",
+    "database-error-server": "🌎 si el programa està instal·lat en un servidor o hosting, probablement hagis canviat l'usuari o contrasenya de la base de dades, o hagis arribat a algun límit d'ús del hosting.",
     "database-name-must-be-lowercase": "El nom de la base de senyes deu estar en minúscules",
     "date": "Data",
     "date-in": "Data d'entrada",
