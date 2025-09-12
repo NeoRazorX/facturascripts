@@ -136,6 +136,10 @@
         <type>character varying(100)</type>
     </column>
     <constraint>
+        <name>cifnif_ukey</name>
+        <type>UNIQUE (cifnif)</type>
+    </constraint>
+    <constraint>
         <name>clientes_pkey</name>
         <type>PRIMARY KEY (codcliente)</type>
     </constraint>
