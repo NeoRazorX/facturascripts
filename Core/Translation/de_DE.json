@@ -1204,7 +1204,7 @@
     "php-extension-needed": "PHP-Erweiterung benötigt: %extension%",
     "php-extension-not-found": "Sie haben die PHP-Erweiterung %extension% nicht installiert.",
     "php-extensions": "PHP-Erweiterungen",
-    "php-extensions-required": "Extensiones PHP requeridas",
+    "php-extensions-required": "Erforderliche PHP-Erweiterungen",
     "php-support-end": "PHP-Endsupport",
     "php-version-too-new": "Es wird empfohlen, eine PHP-Version zwischen %min_version% und %max_version% zu verwenden. Derzeit haben Sie die Version %version%.",
     "physical-stock": "Physischer Bestand",

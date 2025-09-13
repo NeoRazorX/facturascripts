@@ -1002,7 +1002,7 @@
     "method-payment": "Ordainketa mota",
     "mime-type": "Mime Mota",
     "min-fs-version": "Bertsio min. Core",
-    "min-php-version": "Min. v. PHP",
+    "min-php-version": "Min. b. PHP",
     "minimum-amount-with-cifnif": "Gutxieneko zenbatekoa IFK\/IFZrekin",
     "minimum-amount-without-cifnif": "Gutxieneko zenbatekoa IFK\/IFZ gabe",
     "minimum-stock": "Stock minimoa",

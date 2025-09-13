@@ -1203,7 +1203,7 @@
     "phones": "Teléfons",
     "php-extension-needed": "Es requereix l'extensió %extension% en la configuració de PHP",
     "php-extension-not-found": "No tens instalada l'extensió PHP %extension%.",
-    "php-extensions": "Extensiones PHP",
+    "php-extensions": "Extensions PHP",
     "php-extensions-required": "Extensiones PHP requerides",
     "php-support-end": "El suport per a PHP  %current% acabarà pronte. Per favor, actualitza PHP a la versió %min% o superior.",
     "php-version-too-new": "Es recomana usar una versió de PHP entre la %min_version% i la %max_version%. Actualment tens la %version%",
