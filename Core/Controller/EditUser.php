@@ -194,7 +194,7 @@ class EditUser extends EditController
         $pageList = [];
 
         if ($user->admin) {
-            foreach (Page::all([], ['name' => 'ASC'], 0, 0) as $page) {
+            foreach (Page::all([], ['name' => 'ASC']) as $page) {
                 if (false === $page->showonmenu) {
                     continue;
                 }
