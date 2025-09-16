@@ -209,6 +209,26 @@ class FiscalNumberValidator
         return true;
     }
 
+    public function validarRucNatural(?string $number): bool
+    {
+        if (!$this->validarInicial($number, 13)) {
+            return false;
+        }
+        if (!$this->validarProvincia(substr($number, 0, 2))) {
+            return false;
+        }
+        if (!$this->validarTercerDigito($number[2], 'ruc_natural')) {
+            return false;
+        }
+        if (!$this->calcularDigito10(substr($number, 0, 9), $number[9])) {
+            return false;
+        }
+        if (substr($number, 10, 3) < 1) {
+            return false;
+        }
+        return true;
+    }
+
     public function validarInicial(string $number, int $characters) : bool 
     {
         $num = (string)$number;
