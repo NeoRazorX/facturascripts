@@ -166,7 +166,17 @@ final class CrashReport
         }
 
         // comprobamos si existen las cookies de login
-        return isset($_COOKIE['fsNick']) && isset($_COOKIE['fsLogkey']);
+        if (isset($_COOKIE['fsNick']) && isset($_COOKIE['fsLogkey'])) {
+            return true;
+        }
+
+        // si el dominio es localhost, también mostramos los botones
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        if (strpos($host, 'localhost') !== false) {
+            return true;
+        }
+
+        return false;
     }
 
     private static function formatErrorMessage(string $message): string
