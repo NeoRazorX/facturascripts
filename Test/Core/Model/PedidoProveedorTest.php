@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoProveedor;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -76,6 +77,79 @@ final class PedidoProveedorTest extends TestCase
 
         // eliminamos
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
+    }
+
+    public function testUserSerieOnSupplierSelection(): void
+    {
+        // creamos dos series: una para el usuario y otra para el proveedor
+        $serieUser = new Serie();
+        $serieUser->codserie = 'UP' . mt_rand(10, 99);
+        $serieUser->descripcion = 'Serie Usuario';
+        $this->assertTrue($serieUser->save(), 'can-not-save-user-serie');
+
+        $serieSupplier = new Serie();
+        $serieSupplier->codserie = 'SP' . mt_rand(10, 99);
+        $serieSupplier->descripcion = 'Serie Proveedor';
+        $this->assertTrue($serieSupplier->save(), 'can-not-save-supplier-serie');
+
+        // creamos un usuario con la serie del usuario
+        $user = $this->getRandomUser();
+        $user->codserie = $serieUser->codserie;
+        $this->assertTrue($user->save(), 'can-not-save-user');
+
+        // creamos un proveedor con su propia serie
+        $supplier = $this->getRandomSupplier();
+        $supplier->codserie = $serieSupplier->codserie;
+        $this->assertTrue($supplier->save(), 'can-not-save-supplier');
+
+        // creamos un pedido, asignamos autor y luego el proveedor
+        $doc = new PedidoProveedor();
+        $this->assertTrue($doc->setAuthor($user), 'can-not-set-author');
+        $this->assertTrue($doc->setSubject($supplier), 'can-not-set-supplier');
+
+        // debe prevalecer la serie del supplier
+        $this->assertEquals($supplier->codserie, $doc->codserie, 'user-serie-not-applied-on-supplier-selection');
+
+        // limpieza
+        $this->assertTrue($doc->delete(), 'can-not-delete-pedido');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($supplier->delete(), 'can-not-delete-supplier');
+        $this->assertTrue($user->delete(), 'can-not-delete-user');
+        $this->assertTrue($serieUser->delete(), 'can-not-delete-serie-user');
+        $this->assertTrue($serieSupplier->delete(), 'can-not-delete-serie-supplier');
+    }
+
+    public function testUserSerieSelection(): void
+    {
+        // creamos una serie para el usuario
+        $serieUser = new Serie();
+        $serieUser->codserie = 'UP' . mt_rand(10, 99);
+        $serieUser->descripcion = 'Serie Usuario';
+        $this->assertTrue($serieUser->save(), 'can-not-save-user-serie');
+
+        // creamos un usuario con la serie del usuario
+        $user = $this->getRandomUser();
+        $user->codserie = $serieUser->codserie;
+        $this->assertTrue($user->save(), 'can-not-save-user');
+
+        // creamos un proveedor con su propia serie
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save(), 'can-not-save-supplier');
+
+        // creamos un pedido, asignamos autor y luego el proveedor
+        $doc = new PedidoProveedor();
+        $this->assertTrue($doc->setAuthor($user), 'can-not-set-author');
+        $this->assertTrue($doc->setSubject($supplier), 'can-not-set-supplier');
+
+        // debe prevalecer la serie del supplier
+        $this->assertEquals($user->codserie, $doc->codserie, 'user-serie-not-applied-on-supplier-selection');
+
+        // limpieza
+        $this->assertTrue($doc->delete(), 'can-not-delete-pedido');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($supplier->delete(), 'can-not-delete-supplier');
+        $this->assertTrue($user->delete(), 'can-not-delete-user');
+        $this->assertTrue($serieUser->delete(), 'can-not-delete-serie-user');
     }
 
     public function testSetSubject(): void
