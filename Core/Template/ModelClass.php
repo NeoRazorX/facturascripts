@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\DbUpdater;
+use FacturaScripts\Core\Internal\CacheWithMemory;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
@@ -184,9 +185,9 @@ abstract class ModelClass
 
     public function clearCache(): void
     {
-        Cache::deleteMulti('model-' . $this->modelClassName() . '-');
-        Cache::deleteMulti('join-model-');
-        Cache::deleteMulti('table-' . static::tableName() . '-');
+        CacheWithMemory::deleteMulti('model-' . $this->modelClassName() . '-');
+        CacheWithMemory::deleteMulti('join-model-');
+        CacheWithMemory::deleteMulti('table-' . static::tableName() . '-');
     }
 
     public function delete(): bool
@@ -645,9 +646,15 @@ abstract class ModelClass
             $modelName = end($parts);
         }
 
-        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
-        $model = new $modelClass();
-        return $model->load($this->{$foreignKey}) ? $model : null;
+        // Cache key for this relationship
+        $key = $this->{$foreignKey};
+        $cacheKey = 'model-' . $modelName . '-' . $key;
+
+        return Cache::withMemory()->remember($cacheKey, function () use ($modelName, $key) {
+            $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
+            $model = new $modelClass();
+            return $model->load($key) ? $model : null;
+        });
     }
 
     protected static function db(): DataBase

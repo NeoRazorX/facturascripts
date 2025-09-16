@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core;
 
 use Closure;
+use FacturaScripts\Core\Internal\CacheWithMemory;
 use Throwable;
 
 /**
@@ -64,7 +65,7 @@ final class Cache
         if (false === file_exists($folder)) {
             return;
         }
-        
+
         foreach (scandir($folder) as $fileName) {
             // si no es un archivo, continuamos
             if (!str_ends_with($fileName, '.cache')) {
@@ -86,7 +87,7 @@ final class Cache
         if (false === file_exists($folder)) {
             return;
         }
-        
+
         foreach (scandir($folder) as $fileName) {
             if (filemtime($folder . '/' . $fileName) < time() - self::EXPIRATION) {
                 unlink($folder . '/' . $fileName);
@@ -111,6 +112,24 @@ final class Cache
         return null;
     }
 
+    /**
+     * Obtenemos el valor almacenado si existe o, por el contrario, almacenamos lo que devuelva la función callback.
+     *
+     * @param string $key
+     * @param Closure $callback
+     * @return mixed
+     */
+    public static function remember(string $key, Closure $callback)
+    {
+        if (!is_null($value = self::get($key))) {
+            return $value;
+        }
+
+        $value = $callback();
+        self::set($key, $value);
+        return $value;
+    }
+
     public static function set(string $key, $value): void
     {
         // si no existe la carpeta, la creamos
@@ -132,28 +151,20 @@ final class Cache
         }
     }
 
+    /**
+     * Devuelve una instancia que combina caché de archivos con memoria
+     *
+     * @return CacheWithMemory
+     */
+    public static function withMemory(): CacheWithMemory
+    {
+        return new CacheWithMemory();
+    }
+
     private static function filename(string $key): string
     {
         // reemplazamos / y \ por _
         $name = str_replace(['/', '\\'], '_', $key);
         return FS_FOLDER . self::FILE_PATH . '/' . $name . '.cache';
-    }
-
-    /**
-     * Obtenemos el valor almacenado si existe o, por el contrario, almacenamos lo que devuelva la función callback.
-     *
-     * @param string $key
-     * @param Closure $callback
-     * @return mixed
-     */
-    public static function remember(string $key, Closure $callback)
-    {
-        if (!is_null($value = self::get($key))) {
-            return $value;
-        }
-
-        $value = $callback();
-        self::set($key, $value);
-        return $value;
     }
 }
