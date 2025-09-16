@@ -1440,6 +1440,7 @@
     "sequences": "Sequences",
     "serial-number": "Serial Number",
     "serie": "Serie",
+    "serie-not-found": "Serie %serie% not found",
     "serieb": "Serie B",
     "serier": "Serie R",
     "serierb": "Serie RB",
