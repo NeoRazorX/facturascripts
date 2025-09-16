@@ -184,7 +184,7 @@ class FiscalNumberValidator
 
             case 'ruc':
                 $validatorEC = new ValidadorEc();
-                return $validatorEC->validarRucPersonaNatural($upperNumber)
+                return static::validarRucNatural($upperNumber)
                     || $validatorEC->validarRucSociedadPrivada($upperNumber)
                     || $validatorEC->validarRucSociedadPublica($upperNumber);
         }
