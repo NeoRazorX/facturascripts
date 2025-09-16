@@ -45,7 +45,7 @@ class CacheWithMemory
         Cache::delete($key);
     }
 
-    public function deleteMulti(string $prefix): void
+    public static function deleteMulti(string $prefix): void
     {
         // Eliminamos de memoria todos los que empiecen con el prefijo
         foreach (self::$memoryStorage as $key => $item) {
