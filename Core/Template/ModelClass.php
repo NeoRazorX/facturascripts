@@ -409,6 +409,11 @@ abstract class ModelClass
         return true;
     }
 
+    public function loadWhereEq(string $field, $value): bool
+    {
+        return $this->loadWhere([Where::eq($field, $value)]);
+    }
+
     public function newCode(string $field = '', array $where = [])
     {
         // if not field value take PK Field
