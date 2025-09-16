@@ -186,7 +186,7 @@ class FiscalNumberValidator
                 $validatorEC = new ValidadorEc();
                 return static::validarRucNatural($upperNumber)
                     || static::validarRucPrivada($upperNumber)
-                    || $validatorEC->validarRucSociedadPublica($upperNumber);
+                    || static::validarRucPublica($upperNumber);
         }
 
         return true;
@@ -244,6 +244,26 @@ class FiscalNumberValidator
             return false;
         }
         if (substr($number, 10, 3) < 1) {
+            return false;
+        }
+        return true;
+    }
+
+    public function validarRucPublica(?string $number): bool
+    {
+        if (!$this->validarInicial($number, 13)) {
+            return false;
+        }
+        if (!$this->validarProvincia(substr($number, 0, 2))) {
+            return false;
+        }
+        if (!$this->validarTercerDigito($number[2], 'ruc_publica')) {
+            return false;
+        }
+        if (!$this->calcularModulo11(substr($number, 0, 8), $number[8], 'ruc_publica')) {
+            return false;
+        }
+        if (substr($number, 9, 4) < 1) {
             return false;
         }
         return true;
