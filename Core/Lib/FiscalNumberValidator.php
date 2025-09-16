@@ -166,7 +166,7 @@ class FiscalNumberValidator
         switch (strtolower($type)) {
             case 'ci':
                 $validatorEC = new ValidadorEc();
-                return $validatorEC->validarCedula($upperNumber);
+                return static::validarCedula($upperNumber);
 
             case 'cif':
                 return static::isValidSpainCIF($upperNumber);
@@ -187,6 +187,99 @@ class FiscalNumberValidator
                 return $validatorEC->validarRucPersonaNatural($upperNumber)
                     || $validatorEC->validarRucSociedadPrivada($upperNumber)
                     || $validatorEC->validarRucSociedadPublica($upperNumber);
+        }
+
+        return true;
+    }
+
+    public function validarCedula(?string $number): bool
+    {
+        if (!$this->validarInicial($number, 10)) {
+            return false;
+        }
+        if (!$this->validarProvincia(substr($number, 0, 2))) {
+            return false;
+        }
+        if (!$this->validarTercerDigito($number[2], 'cedula')) {
+            return false;
+        }
+        if (!$this->calcularDigito10(substr($number, 0, 9), $number[9])) {
+            return false;
+        }
+        return true;
+    }
+
+    public function validarInicial(string $number, int $characters) : bool 
+    {
+        $num = (string)$number;
+        if (!empty($num) && strlen($num) === $characters && ctype_digit($num)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function validarProvincia(string $number): bool
+    {
+        if ($number < 0 || $number > 24) {
+            return false;
+        }
+        return true;
+    }
+
+    protected function validarTercerDigito($numero, $tipo)
+    {
+        switch ($tipo) {
+            case 'cedula':
+            case 'ruc_natural':
+                if ($numero < 0 || $numero > 5) {
+                    return false;
+                }
+                break;
+            case 'ruc_privada':
+                if ($numero != 9) {
+                    return false;
+                }
+                break;
+
+            case 'ruc_publica':
+                if ($numero != 6) {
+                    return false;
+                }
+                break;
+            default:
+                return false;
+                break;
+        }
+
+        return true;
+    }
+
+    public function calcularDigito10(string $number, int $digitoVerificador): int
+    {
+        $arrayCoeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+
+        $digitoVerificador = (int) $digitoVerificador;
+        $digitosIniciales = str_split($number);
+
+        $total = 0;
+        foreach ($digitosIniciales as $key => $value) {
+            $valorPosicion = ((int) $value * $arrayCoeficientes[$key]);
+
+            if ($valorPosicion >= 10) {
+                $valorPosicion = str_split($valorPosicion);
+                $valorPosicion = array_sum($valorPosicion);
+                $valorPosicion = (int) $valorPosicion;
+            }
+
+            $total = $total + $valorPosicion;
+        }
+
+        $residuo = $total % 10;
+
+        $resultado = ($residuo == 0) ? 0 : 10 - $residuo;
+
+        if ($resultado != $digitoVerificador) {
+            return false;
         }
 
         return true;
