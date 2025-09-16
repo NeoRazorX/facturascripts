@@ -185,7 +185,7 @@ class FiscalNumberValidator
             case 'ruc':
                 $validatorEC = new ValidadorEc();
                 return static::validarRucNatural($upperNumber)
-                    || $validatorEC->validarRucSociedadPrivada($upperNumber)
+                    || static::validarRucPrivada($upperNumber)
                     || $validatorEC->validarRucSociedadPublica($upperNumber);
         }
 
@@ -221,6 +221,26 @@ class FiscalNumberValidator
             return false;
         }
         if (!$this->calcularDigito10(substr($number, 0, 9), $number[9])) {
+            return false;
+        }
+        if (substr($number, 10, 3) < 1) {
+            return false;
+        }
+        return true;
+    }
+
+    public function validarRucPrivada(?string $number): bool
+    {
+        if (!$this->validarInicial($number, 13)) {
+            return false;
+        }
+        if (!$this->validarProvincia(substr($number, 0, 2))) {
+            return false;
+        }
+        if (!$this->validarTercerDigito($number[2], 'ruc_privada')) {
+            return false;
+        }
+        if (!$this->calcularModulo11(substr($number, 0, 9), $number[9], 'ruc_privada')) {
             return false;
         }
         if (substr($number, 10, 3) < 1) {
@@ -297,6 +317,40 @@ class FiscalNumberValidator
         $residuo = $total % 10;
 
         $resultado = ($residuo == 0) ? 0 : 10 - $residuo;
+
+        if ($resultado != $digitoVerificador) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function calcularModulo11($number, $digitoVerificador, $tipo)
+    {
+        switch ($tipo) {
+            case 'ruc_privada':
+                $arrayCoeficientes = [4, 3, 2, 7, 6, 5, 4, 3, 2];
+                break;
+            case 'ruc_publica':
+                $arrayCoeficientes = [3, 2, 7, 6, 5, 4, 3, 2];
+                break;
+            default:
+                return false;
+                break;
+        }
+
+        $digitoVerificador = (int) $digitoVerificador;
+        $digitosIniciales = str_split($number);
+
+        $total = 0;
+        foreach ($digitosIniciales as $key => $value) {
+            $valorPosicion = ((int) $value * $arrayCoeficientes[$key]);
+            $total = $total + $valorPosicion;
+        }
+
+        $residuo = $total % 11;
+
+        $resultado = ($residuo == 0) ? 0 : 11 - $residuo;
 
         if ($resultado != $digitoVerificador) {
             return false;
