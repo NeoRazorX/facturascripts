@@ -661,6 +661,36 @@ final class RequestTest extends TestCase
         }
     }
 
+    public function testInputOrQuery(): void
+    {
+        $request = $this->createRequest([
+            'query' => ['param1' => 'query_value', 'shared' => 'query_shared'],
+            'request' => ['param2' => 'request_value', 'shared' => 'request_shared']
+        ]);
+
+        // Prioridad a request sobre query
+        $this->assertEquals('request_value', $request->inputOrQuery('param2'));
+        $this->assertEquals('query_value', $request->inputOrQuery('param1'));
+        $this->assertEquals('request_shared', $request->inputOrQuery('shared'));
+        $this->assertNull($request->inputOrQuery('nonexistent'));
+        $this->assertEquals('default', $request->inputOrQuery('nonexistent', 'default'));
+    }
+
+    public function testQueryOrInput(): void
+    {
+        $request = $this->createRequest([
+            'query' => ['param1' => 'query_value', 'shared' => 'query_shared'],
+            'request' => ['param2' => 'request_value', 'shared' => 'request_shared']
+        ]);
+
+        // Prioridad a query sobre request
+        $this->assertEquals('query_value', $request->queryOrInput('param1'));
+        $this->assertEquals('request_value', $request->queryOrInput('param2'));
+        $this->assertEquals('query_shared', $request->queryOrInput('shared'));
+        $this->assertNull($request->queryOrInput('nonexistent'));
+        $this->assertEquals('default', $request->queryOrInput('nonexistent', 'default'));
+    }
+
     public function testConstants(): void
     {
         $this->assertEquals('GET', Request::METHOD_GET);

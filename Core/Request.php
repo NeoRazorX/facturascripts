@@ -26,10 +26,9 @@ use FacturaScripts\Core\Internal\SubRequest;
 final class Request
 {
     const METHOD_GET = 'GET';
+    const METHOD_PATCH = 'PATCH';
     const METHOD_POST = 'POST';
     const METHOD_PUT = 'PUT';
-    const METHOD_PATCH = 'PATCH';
-
 
     /** @var SubRequest */
     public $cookies;
@@ -118,6 +117,9 @@ final class Request
         return $this->protocol() . '://' . $this->host() . $this->urlWithQuery();
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function get(string $key, $default = null): ?string
     {
         if ($this->request->has($key)) {
@@ -127,6 +129,9 @@ final class Request
         return $this->query->get($key, $default);
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getArray(string $key, bool $allowNull = true): ?array
     {
         if ($this->request->has($key)) {
@@ -136,6 +141,9 @@ final class Request
         return $this->query->getArray($key, $allowNull);
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getAlnum(string $key): string
     {
         if ($this->request->has($key)) {
@@ -145,6 +153,9 @@ final class Request
         return $this->query->getAlnum($key);
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getBool(string $key, bool $allowNull = true): ?bool
     {
         if ($this->request->has($key)) {
@@ -154,6 +165,9 @@ final class Request
         return $this->query->getBool($key, $allowNull);
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getDate(string $key, bool $allowNull = true): ?string
     {
         if ($this->request->has($key)) {
@@ -163,6 +177,9 @@ final class Request
         return $this->query->getDate($key, $allowNull);
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getDateTime(string $key, bool $allowNull = true): ?string
     {
         if ($this->request->has($key)) {
@@ -172,6 +189,9 @@ final class Request
         return $this->query->getDateTime($key, $allowNull);
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getEmail(string $key, bool $allowNull = true): ?string
     {
         if ($this->request->has($key)) {
@@ -181,6 +201,9 @@ final class Request
         return $this->query->getEmail($key, $allowNull);
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getFloat(string $key, bool $allowNull = true): ?float
     {
         if ($this->request->has($key)) {
@@ -190,6 +213,9 @@ final class Request
         return $this->query->getFloat($key, $allowNull);
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getHour(string $key, bool $allowNull = true): ?string
     {
         if ($this->request->has($key)) {
@@ -199,6 +225,9 @@ final class Request
         return $this->query->getHour($key, $allowNull);
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getInt(string $key, bool $allowNull = true): ?int
     {
         if ($this->request->has($key)) {
@@ -217,6 +246,9 @@ final class Request
         return $this->method();
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getOnly(string $key, array $values): ?string
     {
         if ($this->request->has($key)) {
@@ -226,6 +258,9 @@ final class Request
         return $this->query->getOnly($key, $values);
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getString(string $key, bool $allowNull = true): ?string
     {
         if ($this->request->has($key)) {
@@ -235,6 +270,9 @@ final class Request
         return $this->query->getString($key, $allowNull);
     }
 
+    /**
+     * @deprecated use inputOrQuery() or queryOrInput() instead
+     */
     public function getUrl(string $key, bool $allowNull = true): ?string
     {
         if ($this->request->has($key)) {
@@ -279,6 +317,13 @@ final class Request
     public function input(string $key, $default = null): ?string
     {
         return $this->request->get($key, $default);
+    }
+
+    public function inputOrQuery(string $key, $default = null): ?string
+    {
+        return $this->request->has($key) ?
+            $this->request->get($key) :
+            $this->query->get($key, $default);
     }
 
     public function ip(): string
@@ -353,6 +398,13 @@ final class Request
     public function query(string $key, $default = null): ?string
     {
         return $this->query->get($key, $default);
+    }
+
+    public function queryOrInput(string $key, $default = null): ?string
+    {
+        return $this->query->has($key) ?
+            $this->query->get($key) :
+            $this->request->get($key, $default);
     }
 
     public function isSecure(): bool
