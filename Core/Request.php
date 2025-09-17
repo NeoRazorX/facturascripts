@@ -42,6 +42,9 @@ final class Request
     /** @var SubRequest */
     public $query;
 
+    /** @var string|null */
+    private $rawInput;
+
     /** @var SubRequest */
     public $request;
 
@@ -51,6 +54,7 @@ final class Request
         $this->files = new RequestFiles($data['files'] ?? []);
         $this->headers = new Headers($data['headers'] ?? []);
         $this->query = new SubRequest($data['query'] ?? []);
+        $this->rawInput = $data['input'] ?? null;
         $this->request = new SubRequest($data['request'] ?? []);
     }
 
@@ -410,6 +414,18 @@ final class Request
     public function isSecure(): bool
     {
         return $this->protocol() === 'https';
+    }
+
+    public function json(string $key = null, $default = null)
+    {
+        $input = $this->rawInput ?? file_get_contents('php://input');
+        $data = json_decode($input, true);
+
+        if ($key === null) {
+            return $data;
+        }
+
+        return $data[$key] ?? $default;
     }
 
     public function url(?int $position = null): string

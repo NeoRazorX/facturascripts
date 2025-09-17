@@ -691,6 +691,44 @@ final class RequestTest extends TestCase
         $this->assertEquals('default', $request->queryOrInput('nonexistent', 'default'));
     }
 
+    public function testJson(): void
+    {
+        // Test con JSON válido
+        $jsonData = '{"name":"John","age":30,"active":true,"tags":["user","admin"]}';
+        $request = $this->createRequest(['input' => $jsonData]);
+
+        // Test obtener todo el JSON
+        $allData = $request->json();
+        $this->assertEquals('John', $allData['name']);
+        $this->assertEquals(30, $allData['age']);
+        $this->assertTrue($allData['active']);
+        $this->assertEquals(['user', 'admin'], $allData['tags']);
+
+        // Test obtener campos específicos
+        $this->assertEquals('John', $request->json('name'));
+        $this->assertEquals(30, $request->json('age'));
+        $this->assertTrue($request->json('active'));
+        $this->assertEquals(['user', 'admin'], $request->json('tags'));
+
+        // Test campo inexistente
+        $this->assertNull($request->json('nonexistent'));
+        $this->assertEquals('default', $request->json('nonexistent', 'default'));
+    }
+
+    public function testJsonInvalid(): void
+    {
+        // Test con JSON inválido
+        $request = $this->createRequest(['input' => '{"invalid": json}']);
+        $this->assertNull($request->json());
+        $this->assertNull($request->json('any'));
+        $this->assertEquals('default', $request->json('any', 'default'));
+
+        // Test con input vacío
+        $request = $this->createRequest(['input' => '']);
+        $this->assertNull($request->json());
+        $this->assertNull($request->json('any'));
+    }
+
     public function testConstants(): void
     {
         $this->assertEquals('GET', Request::METHOD_GET);
