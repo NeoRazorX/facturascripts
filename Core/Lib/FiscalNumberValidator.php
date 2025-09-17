@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
-use Tavo\ValidadorEc;
 
 /**
  * Verify numbers of fiscal identity
@@ -165,7 +164,6 @@ class FiscalNumberValidator
 
         switch (strtolower($type)) {
             case 'ci':
-                $validatorEC = new ValidadorEc();
                 return static::validarCedula($upperNumber);
 
             case 'cif':
@@ -183,7 +181,6 @@ class FiscalNumberValidator
                 return static::isValidRNC($upperNumber);
 
             case 'ruc':
-                $validatorEC = new ValidadorEc();
                 return static::validarRucNatural($upperNumber)
                     || static::validarRucPrivada($upperNumber)
                     || static::validarRucPublica($upperNumber);

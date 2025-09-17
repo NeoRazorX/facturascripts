@@ -32,7 +32,6 @@
     "phpmailer/phpmailer": "6.*",
     "rospdf/pdf-php": "0.12.*",
     "twig/twig": "3.*",
-    "tavo1987/ec-validador-cedula-ruc": "1.0.2",
     "globalcitizen/php-iban": "4.*",
     "pragmarx/google2fa": "^8.0",
     "chillerlan/php-qrcode": "^4.0"
