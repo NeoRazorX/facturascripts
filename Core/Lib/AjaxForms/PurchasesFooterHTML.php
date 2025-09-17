@@ -98,6 +98,7 @@ class PurchasesFooterHTML
             . self::renderField($model, 'totalrecargo')
             . self::renderField($model, 'totalirpf')
             . self::renderField($model, 'total')
+            . self::renderField($model, 'total_pendiente')
             . '</div>'
             . '<div class="row g-2">'
             . '<div class="col-auto">'
@@ -205,6 +206,9 @@ class PurchasesFooterHTML
 
             case 'total':
                 return self::column($model, 'total', 'total');
+
+            case 'total_pendiente':
+                return self::column($model, 'total_pendiente', 'pending-total');
 
             case 'totalirpf':
                 return self::column($model, 'totalirpf', 'irpf', true);
