@@ -729,6 +729,22 @@ final class RequestTest extends TestCase
         $this->assertNull($request->json('any'));
     }
 
+    public function testRawInput(): void
+    {
+        // Test con contenido inyectado
+        $rawData = '{"test":"value","xml":"<tag>content</tag>"}';
+        $request = $this->createRequest(['input' => $rawData]);
+        $this->assertEquals($rawData, $request->rawInput());
+
+        // Test con input vacío
+        $request = $this->createRequest(['input' => '']);
+        $this->assertEquals('', $request->rawInput());
+
+        // Test sin input inyectado (usaría php://input)
+        $request = $this->createRequest();
+        $this->assertIsString($request->rawInput());
+    }
+
     public function testConstants(): void
     {
         $this->assertEquals('GET', Request::METHOD_GET);

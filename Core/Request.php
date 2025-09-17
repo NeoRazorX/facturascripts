@@ -416,9 +416,9 @@ final class Request
         return $this->protocol() === 'https';
     }
 
-    public function json(string $key = null, $default = null)
+    public function json(?string $key = null, $default = null)
     {
-        $input = $this->rawInput ?? file_get_contents('php://input');
+        $input = $this->rawInput();
         $data = json_decode($input, true);
 
         if ($key === null) {
@@ -426,6 +426,11 @@ final class Request
         }
 
         return $data[$key] ?? $default;
+    }
+
+    public function rawInput(): string
+    {
+        return $this->rawInput ?? file_get_contents('php://input');
     }
 
     public function url(?int $position = null): string
