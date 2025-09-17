@@ -106,6 +106,15 @@ trait ModelTrait
         return $data ? new static($data) : null;
     }
 
+    public static function findWhereEq(string $field, $value): ?static
+    {
+        $data = self::table()
+            ->whereEq($field, $value)
+            ->first();
+
+        return $data ? new static($data) : null;
+    }
+
     public static function findOrCreate(array $where, array $data = []): ?static
     {
         $row = self::table()
