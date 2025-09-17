@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Lib;
 
 use FacturaScripts\Core\Lib\FiscalNumberValidator;
+use FacturaScripts\Dinamic\Lib\ValidadorEcuador;
 use PHPUnit\Framework\TestCase;
 
 class FiscalNumberValidatorTest extends TestCase
@@ -90,12 +91,12 @@ class FiscalNumberValidatorTest extends TestCase
     {
         $valid = ['1718137159', '0102039849', '1104680135'];
         foreach ($valid as $number) {
-            $this->assertTrue(FiscalNumberValidator::validarCedula($number));
+            $this->assertTrue(ValidadorEcuador::validarCedula($number));
         }
 
         $invalid = ['1784567890', '1234567890', '1718137158'];
         foreach ($invalid as $number) {
-            $this->assertFalse(FiscalNumberValidator::validarCedula($number));
+            $this->assertFalse(ValidadorEcuador::validarCedula($number));
         }
     }
 
@@ -103,12 +104,12 @@ class FiscalNumberValidatorTest extends TestCase
     {
         $valid = ['0102039849001', '0926687856001', '1710034065001'];
         foreach ($valid as $number) {
-            $this->assertTrue(FiscalNumberValidator::validarRucNatural($number));
+            $this->assertTrue(ValidadorEcuador::validarRucNatural($number));
         }
 
         $invalid = ['0102030405001', '0926687856000', '2512345678001'];
         foreach ($invalid as $number) {
-            $this->assertFalse(FiscalNumberValidator::validarRucNatural($number));
+            $this->assertFalse(ValidadorEcuador::validarRucNatural($number));
         }
     }
 
@@ -116,12 +117,12 @@ class FiscalNumberValidatorTest extends TestCase
     {
         $valid = ['1760001550001', '1760000150001', '0160000000001'];
         foreach ($valid as $number) {
-            $this->assertTrue(FiscalNumberValidator::validarRucPublica($number));
+            $this->assertTrue(ValidadorEcuador::validarRucPublica($number));
         }
 
         $invalid = ['2560001234001', '1760001230001', '2560001550001'];
         foreach ($invalid as $number) {
-            $this->assertFalse(FiscalNumberValidator::validarRucPublica($number));
+            $this->assertFalse(ValidadorEcuador::validarRucPublica($number));
         }
     }
 
@@ -129,12 +130,12 @@ class FiscalNumberValidatorTest extends TestCase
     {
         $valid = ['0190000001001', '0190000036001', '0190000028001'];
         foreach ($valid as $number) {
-            $this->assertTrue(FiscalNumberValidator::validarRucPrivada($number));
+            $this->assertTrue(ValidadorEcuador::validarRucPrivada($number));
         }
 
         $invalid = ['2598765432001', '2590001234001', '1790012345001'];
         foreach ($invalid as $number) {
-            $this->assertFalse(FiscalNumberValidator::validarRucPrivada($number));
+            $this->assertFalse(ValidadorEcuador::validarRucPrivada($number));
         }
     }
 }
