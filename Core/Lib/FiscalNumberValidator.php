@@ -192,35 +192,35 @@ class FiscalNumberValidator
         return true;
     }
 
-    public function validarCedula(?string $number): bool
+    public static function validarCedula(?string $number): bool
     {
-        if (!$this->validarInicial($number, 10)) {
+        if (!static::validarInicial($number, 10)) {
             return false;
         }
-        if (!$this->validarProvincia(substr($number, 0, 2))) {
+        if (!static::validarProvincia(substr($number, 0, 2))) {
             return false;
         }
-        if (!$this->validarTercerDigito($number[2], 'cedula')) {
+        if (!static::validarTercerDigito($number[2], 'cedula')) {
             return false;
         }
-        if (!$this->calcularDigito10(substr($number, 0, 9), $number[9])) {
+        if (!static::calcularDigito10(substr($number, 0, 9), $number[9])) {
             return false;
         }
         return true;
     }
 
-    public function validarRucNatural(?string $number): bool
+    public static function validarRucNatural(?string $number): bool
     {
-        if (!$this->validarInicial($number, 13)) {
+        if (!static::validarInicial($number, 13)) {
             return false;
         }
-        if (!$this->validarProvincia(substr($number, 0, 2))) {
+        if (!static::validarProvincia(substr($number, 0, 2))) {
             return false;
         }
-        if (!$this->validarTercerDigito($number[2], 'ruc_natural')) {
+        if (!static::validarTercerDigito($number[2], 'ruc_natural')) {
             return false;
         }
-        if (!$this->calcularDigito10(substr($number, 0, 9), $number[9])) {
+        if (!static::calcularDigito10(substr($number, 0, 9), $number[9])) {
             return false;
         }
         if (substr($number, 10, 3) < 1) {
@@ -229,18 +229,18 @@ class FiscalNumberValidator
         return true;
     }
 
-    public function validarRucPrivada(?string $number): bool
+    public static function validarRucPrivada(?string $number): bool
     {
-        if (!$this->validarInicial($number, 13)) {
+        if (!static::validarInicial($number, 13)) {
             return false;
         }
-        if (!$this->validarProvincia(substr($number, 0, 2))) {
+        if (!static::validarProvincia(substr($number, 0, 2))) {
             return false;
         }
-        if (!$this->validarTercerDigito($number[2], 'ruc_privada')) {
+        if (!static::validarTercerDigito($number[2], 'ruc_privada')) {
             return false;
         }
-        if (!$this->calcularModulo11(substr($number, 0, 9), $number[9], 'ruc_privada')) {
+        if (!static::calcularModulo11(substr($number, 0, 9), $number[9], 'ruc_privada')) {
             return false;
         }
         if (substr($number, 10, 3) < 1) {
@@ -249,18 +249,18 @@ class FiscalNumberValidator
         return true;
     }
 
-    public function validarRucPublica(?string $number): bool
+    public static function validarRucPublica(?string $number): bool
     {
-        if (!$this->validarInicial($number, 13)) {
+        if (!static::validarInicial($number, 13)) {
             return false;
         }
-        if (!$this->validarProvincia(substr($number, 0, 2))) {
+        if (!static::validarProvincia(substr($number, 0, 2))) {
             return false;
         }
-        if (!$this->validarTercerDigito($number[2], 'ruc_publica')) {
+        if (!static::validarTercerDigito($number[2], 'ruc_publica')) {
             return false;
         }
-        if (!$this->calcularModulo11(substr($number, 0, 8), $number[8], 'ruc_publica')) {
+        if (!static::calcularModulo11(substr($number, 0, 8), $number[8], 'ruc_publica')) {
             return false;
         }
         if (substr($number, 9, 4) < 1) {
@@ -269,7 +269,7 @@ class FiscalNumberValidator
         return true;
     }
 
-    public function validarInicial(string $number, int $characters) : bool 
+    public static function validarInicial(string $number, int $characters) : bool 
     {
         $num = (string)$number;
         if (!empty($num) && strlen($num) === $characters && ctype_digit($num)) {
@@ -278,7 +278,7 @@ class FiscalNumberValidator
         return false;
     }
 
-    public function validarProvincia(string $number): bool
+    public static function validarProvincia(string $number): bool
     {
         if ($number < 0 || $number > 24) {
             return false;
@@ -286,7 +286,7 @@ class FiscalNumberValidator
         return true;
     }
 
-    protected function validarTercerDigito($numero, $tipo)
+    protected static function validarTercerDigito($numero, $tipo)
     {
         switch ($tipo) {
             case 'cedula':
@@ -314,7 +314,7 @@ class FiscalNumberValidator
         return true;
     }
 
-    public function calcularDigito10(string $number, int $digitoVerificador): int
+    public static function calcularDigito10(string $number, int $digitoVerificador): bool
     {
         $arrayCoeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
 
@@ -345,7 +345,7 @@ class FiscalNumberValidator
         return true;
     }
 
-    public function calcularModulo11($number, $digitoVerificador, $tipo)
+    public static function calcularModulo11($number, $digitoVerificador, $tipo): bool
     {
         switch ($tipo) {
             case 'ruc_privada':
