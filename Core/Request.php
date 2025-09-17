@@ -179,6 +179,11 @@ final class Request
         return $this->request->getBool($key, $default);
     }
 
+    public function getContent(): string
+    {
+        return $this->rawInput ?? file_get_contents('php://input');
+    }
+
     /**
      * @deprecated use request->getDate() or query->getDate() instead
      */
@@ -349,6 +354,18 @@ final class Request
         return $this->method() === $method;
     }
 
+    public function json(?string $key = null, $default = null)
+    {
+        $input = $this->getContent();
+        $data = json_decode($input, true);
+
+        if ($key === null) {
+            return $data;
+        }
+
+        return $data[$key] ?? $default;
+    }
+
     public function method(): string
     {
         return $_SERVER['REQUEST_METHOD'];
@@ -417,23 +434,6 @@ final class Request
     public function isSecure(): bool
     {
         return $this->protocol() === 'https';
-    }
-
-    public function json(?string $key = null, $default = null)
-    {
-        $input = $this->rawInput();
-        $data = json_decode($input, true);
-
-        if ($key === null) {
-            return $data;
-        }
-
-        return $data[$key] ?? $default;
-    }
-
-    public function rawInput(): string
-    {
-        return $this->rawInput ?? file_get_contents('php://input');
     }
 
     public function url(?int $position = null): string
