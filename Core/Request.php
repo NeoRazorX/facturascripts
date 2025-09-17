@@ -64,7 +64,7 @@ final class Request
     public function all(string ...$key): array
     {
         if (empty($key)) {
-            return array_merge($this->query->all(), $this->request->all());
+            return array_merge($this->request->all(), $this->query->all());
         }
 
         $result = [];
@@ -129,11 +129,11 @@ final class Request
      */
     public function get(string $key, $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->get($key);
+        if ($this->query->has($key)) {
+            return $this->query->get($key);
         }
 
-        return $this->query->get($key, $default);
+        return $this->request->get($key, $default);
     }
 
     /**
@@ -141,11 +141,11 @@ final class Request
      */
     public function getArray(string $key, bool $allowNull = true): ?array
     {
-        if ($this->request->has($key)) {
-            return $this->request->getArray($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getArray($key, $allowNull);
         }
 
-        return $this->query->getArray($key, $allowNull);
+        return $this->request->getArray($key, $allowNull);
     }
 
     /**
@@ -153,11 +153,11 @@ final class Request
      */
     public function getAlnum(string $key): string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getAlnum($key);
+        if ($this->query->has($key)) {
+            return $this->query->getAlnum($key);
         }
 
-        return $this->query->getAlnum($key);
+        return $this->request->getAlnum($key);
     }
 
     public function getBasePath(): string
@@ -172,11 +172,11 @@ final class Request
      */
     public function getBool(string $key, bool $allowNull = true): ?bool
     {
-        if ($this->request->has($key)) {
-            return $this->request->getBool($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getBool($key, $allowNull);
         }
 
-        return $this->query->getBool($key, $allowNull);
+        return $this->request->getBool($key, $allowNull);
     }
 
     /**
@@ -184,11 +184,11 @@ final class Request
      */
     public function getDate(string $key, bool $allowNull = true): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getDate($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getDate($key, $allowNull);
         }
 
-        return $this->query->getDate($key, $allowNull);
+        return $this->request->getDate($key, $allowNull);
     }
 
     /**
@@ -196,11 +196,11 @@ final class Request
      */
     public function getDateTime(string $key, bool $allowNull = true): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getDateTime($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getDateTime($key, $allowNull);
         }
 
-        return $this->query->getDateTime($key, $allowNull);
+        return $this->request->getDateTime($key, $allowNull);
     }
 
     /**
@@ -208,11 +208,11 @@ final class Request
      */
     public function getEmail(string $key, bool $allowNull = true): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getEmail($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getEmail($key, $allowNull);
         }
 
-        return $this->query->getEmail($key, $allowNull);
+        return $this->request->getEmail($key, $allowNull);
     }
 
     /**
@@ -220,11 +220,11 @@ final class Request
      */
     public function getFloat(string $key, bool $allowNull = true): ?float
     {
-        if ($this->request->has($key)) {
-            return $this->request->getFloat($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getFloat($key, $allowNull);
         }
 
-        return $this->query->getFloat($key, $allowNull);
+        return $this->request->getFloat($key, $allowNull);
     }
 
     /**
@@ -232,11 +232,11 @@ final class Request
      */
     public function getHour(string $key, bool $allowNull = true): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getHour($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getHour($key, $allowNull);
         }
 
-        return $this->query->getHour($key, $allowNull);
+        return $this->request->getHour($key, $allowNull);
     }
 
     /**
@@ -244,11 +244,11 @@ final class Request
      */
     public function getInt(string $key, bool $allowNull = true): ?int
     {
-        if ($this->request->has($key)) {
-            return $this->request->getInt($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getInt($key, $allowNull);
         }
 
-        return $this->query->getInt($key, $allowNull);
+        return $this->request->getInt($key, $allowNull);
     }
 
     /**
@@ -265,11 +265,11 @@ final class Request
      */
     public function getOnly(string $key, array $values): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getOnly($key, $values);
+        if ($this->query->has($key)) {
+            return $this->query->getOnly($key, $values);
         }
 
-        return $this->query->getOnly($key, $values);
+        return $this->request->getOnly($key, $values);
     }
 
     /**
@@ -277,11 +277,11 @@ final class Request
      */
     public function getString(string $key, bool $allowNull = true): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getString($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getString($key, $allowNull);
         }
 
-        return $this->query->getString($key, $allowNull);
+        return $this->request->getString($key, $allowNull);
     }
 
     /**
@@ -289,11 +289,11 @@ final class Request
      */
     public function getUrl(string $key, bool $allowNull = true): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getUrl($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getUrl($key, $allowNull);
         }
 
-        return $this->query->getUrl($key, $allowNull);
+        return $this->request->getUrl($key, $allowNull);
     }
 
     public function has(string ...$key): bool
