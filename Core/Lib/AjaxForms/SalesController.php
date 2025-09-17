@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -64,7 +64,7 @@ abstract class SalesController extends PanelController
         }
 
         // get the record identifier
-        $code = $this->request->get('code');
+        $code = $this->request->queryOrInput('code');
         if (empty($code)) {
             // empty identifier? Then sets initial parameters to the new record and return it
             $formData = $this->request->query->all();
@@ -116,7 +116,7 @@ abstract class SalesController extends PanelController
 
         $list = [];
         $variante = new Variante();
-        $query = (string)$this->request->get('term');
+        $query = (string)$this->request->queryOrInput('term');
         $where = [
             new DataBaseWhere('p.bloqueado', 0),
             new DataBaseWhere('p.sevende', 1)
@@ -246,7 +246,7 @@ abstract class SalesController extends PanelController
         $langCode = $requestLang ?? $subjectLang ?? '';
 
         $this->exportManager->newDoc(
-            $this->request->get('option', ''),
+            $this->request->queryOrInput('option', ''),
             $this->title,
             (int)$this->request->input('idformat', ''),
             $langCode
@@ -274,7 +274,7 @@ abstract class SalesController extends PanelController
 
         $list = [];
         $customer = new Cliente();
-        $term = $this->request->get('term');
+        $term = $this->request->queryOrInput('term');
         foreach ($customer->codeModelSearch($term, '', $where) as $item) {
             $list[$item->code] = $item->code . ' | ' . Tools::fixHtml($item->description);
         }
@@ -307,7 +307,7 @@ abstract class SalesController extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $code = $this->request->get('code');
+        $code = $this->request->queryOrInput('code');
 
         switch ($viewName) {
             case 'docfiles':

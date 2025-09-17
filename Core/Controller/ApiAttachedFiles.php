@@ -172,12 +172,6 @@ class ApiAttachedFiles extends ApiController
         $this->saveResource();
     }
 
-    private function getRequestArray($key, $default = ''): array
-    {
-        $array = $this->request->getArray($key, $default);
-        return is_array($array) ? $array : []; // if is string has bad format
-    }
-
     private function getWhereValues($filter, $operation, $defaultOperation = 'AND'): array
     {
         $where = [];
@@ -249,11 +243,11 @@ class ApiAttachedFiles extends ApiController
 
     protected function listAll(): void
     {
-        $filter = $this->getRequestArray('filter');
-        $limit = (int)$this->request->get('limit', 50);
-        $offset = (int)$this->request->get('offset', 0);
-        $operation = $this->getRequestArray('operation');
-        $order = $this->getRequestArray('sort');
+        $filter = $this->request->query->getArray('filter');
+        $limit = $this->request->query->getInt('limit', 50);
+        $offset = $this->request->query->getInt('offset', 0);
+        $operation = $this->request->query->getArray('operation');
+        $order = $this->request->query->getArray('sort');
 
         // obtenemos los registros
         $where = $this->getWhereValues($filter, $operation);
@@ -267,7 +261,7 @@ class ApiAttachedFiles extends ApiController
 
         // obtenemos el count y lo ponemos en el header
         $count = $this->model->count($where);
-        $this->response->headers->set('X-Total-Count', $count);
+        $this->response->header('X-Total-Count', $count);
 
         $this->returnResult($data);
     }

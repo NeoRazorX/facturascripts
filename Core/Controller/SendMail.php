@@ -84,7 +84,7 @@ class SendMail extends Controller
             Tools::log()->warning('email-not-configured');
         }
 
-        $action = $this->request->get('action', '');
+        $action = $this->request->inputOrQuery('action', '');
         $this->execAction($action);
     }
 
@@ -95,16 +95,16 @@ class SendMail extends Controller
      */
     public function url(): string
     {
-        $sendParams = ['fileName' => $this->request->get('fileName', '')];
+        $sendParams = ['fileName' => $this->request->queryOrInput('fileName', '')];
         if (empty($sendParams['fileName'])) {
             return parent::url();
         }
 
-        if ($this->request->get('modelClassName') && $this->request->get('modelCode')) {
-            $sendParams['modelClassName'] = $this->request->get('modelClassName');
-            $sendParams['modelCode'] = $this->request->get('modelCode');
-            if ($this->request->get('modelCodes')) {
-                $sendParams['modelCodes'] = urldecode($this->request->get('modelCodes'));
+        if ($this->request->has('modelClassName') && $this->request->has('modelCode')) {
+            $sendParams['modelClassName'] = $this->request->queryOrInput('modelClassName');
+            $sendParams['modelCode'] = $this->request->queryOrInput('modelCode');
+            if ($this->request->has('modelCodes')) {
+                $sendParams['modelCodes'] = urldecode($this->request->queryOrInput('modelCodes'));
             }
         }
 
@@ -226,7 +226,7 @@ class SendMail extends Controller
 
     protected function redirAfter(): void
     {
-        $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName');
+        $className = self::MODEL_NAMESPACE . $this->request->queryOrInput('modelClassName');
         if (false === class_exists($className)) {
             Tools::log()->notice('reloading');
             $this->redirect('SendMail', 3);
@@ -234,7 +234,7 @@ class SendMail extends Controller
         }
 
         $model = new $className();
-        $modelCode = $this->request->get('modelCode');
+        $modelCode = $this->request->queryOrInput('modelCode');
         if ($model->load($modelCode) && $model->hasColumn('femail')) {
             Tools::log()->notice('reloading');
             $this->redirect($model->url(), 3);
@@ -266,7 +266,7 @@ class SendMail extends Controller
     {
         $result = [];
         foreach ($keys as $value) {
-            $result[$value] = $this->request->get($value);
+            $result[$value] = $this->request->queryOrInput($value);
         }
 
         return $result;
@@ -307,7 +307,7 @@ class SendMail extends Controller
      */
     protected function setAttachment(): void
     {
-        $fileName = $this->request->get('fileName', '');
+        $fileName = $this->request->queryOrInput('fileName', '');
         Tools::folderCheckOrCreate(NewMail::ATTACHMENTS_TMP_PATH);
         $this->newMail->addAttachment(FS_FOLDER . '/' . NewMail::ATTACHMENTS_TMP_PATH . $fileName, $fileName);
 
@@ -326,19 +326,19 @@ class SendMail extends Controller
      */
     protected function setEmailAddress(): void
     {
-        $email = $this->request->get('email', '');
+        $email = $this->request->queryOrInput('email', '');
         if (!empty($email)) {
             $this->newMail->to($email);
             return;
         }
 
-        $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName', '');
+        $className = self::MODEL_NAMESPACE . $this->request->queryOrInput('modelClassName', '');
         if (false === class_exists($className)) {
             return;
         }
 
         $model = new $className();
-        $model->load($this->request->get('modelCode', ''));
+        $model->load($this->request->queryOrInput('modelCode', ''));
         $this->loadDataDefault($model);
 
         if ($model->hasColumn('email') && $model->email) {
@@ -369,14 +369,14 @@ class SendMail extends Controller
      */
     protected function updateFemail(): void
     {
-        $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName');
+        $className = self::MODEL_NAMESPACE . $this->request->queryOrInput('modelClassName');
         if (false === class_exists($className)) {
             return;
         }
 
         // marcamos la fecha del envío del email
         $model = new $className();
-        $modelCode = $this->request->get('modelCode');
+        $modelCode = $this->request->queryOrInput('modelCode');
         if ($model->load($modelCode) && $model->hasColumn('femail')) {
             $model->femail = Tools::date();
             if (false === $model->save()) {
@@ -396,7 +396,7 @@ class SendMail extends Controller
         }
 
         // si hay más documentos, marcamos también la fecha de envío
-        $modelCodes = $this->request->get('modelCodes', '');
+        $modelCodes = $this->request->queryOrInput('modelCodes', '');
         foreach (explode(',', $modelCodes) as $modelCode) {
             if ($model->load($modelCode) && $model->hasColumn('femail')) {
                 $model->femail = Tools::date();

@@ -43,7 +43,7 @@ class ApiCreateFacturaRectificativaCliente extends ApiController
         // comprobamos que los datos obligatorios nos llegan en la request
         $required_fields = ['idfactura', 'fecha'];
         foreach ($required_fields as $field) {
-            $value = $this->request->get($field);
+            $value = $this->request->input($field);
             if (empty($value)) {
                 $this->response
                     ->setHttpCode(Response::HTTP_BAD_REQUEST)

@@ -84,7 +84,8 @@ class EditContacto extends EditController
     protected function checkViesAction(): bool
     {
         $model = $this->getModel();
-        if (false === $model->loadFromCode($this->request->get('code'))) {
+        $code = $this->request->input('code');
+        if (false === $model->loadFromCode($code)) {
             return true;
         }
 

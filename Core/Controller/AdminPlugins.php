@@ -74,7 +74,7 @@ class AdminPlugins extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-        $action = $this->request->get('action', '');
+        $action = $this->request->inputOrQuery('action', '');
         switch ($action) {
             case 'disable':
                 $this->disablePluginAction();
@@ -127,7 +127,7 @@ class AdminPlugins extends Controller
             return;
         }
 
-        $pluginName = $this->request->get('plugin', '');
+        $pluginName = $this->request->queryOrInput('plugin', '');
         Plugins::disable($pluginName);
         Cache::clear();
     }
@@ -141,7 +141,7 @@ class AdminPlugins extends Controller
             return;
         }
 
-        $pluginName = $this->request->get('plugin', '');
+        $pluginName = $this->request->queryOrInput('plugin', '');
         Plugins::enable($pluginName);
         Cache::clear();
     }
@@ -171,7 +171,7 @@ class AdminPlugins extends Controller
 
     private function loadRemotePluginList(): void
     {
-        if (defined('FS_DISABLE_ADD_PLUGINS') && FS_DISABLE_ADD_PLUGINS) {
+        if (Tools::config('disable_add_plugins', false)) {
             return;
         }
 
@@ -211,7 +211,7 @@ class AdminPlugins extends Controller
             return;
         }
 
-        $pluginName = $this->request->get('plugin', '');
+        $pluginName = $this->request->queryOrInput('plugin', '');
         Plugins::remove($pluginName);
         Cache::clear();
     }
@@ -241,10 +241,12 @@ class AdminPlugins extends Controller
             if (false === Plugins::add($uploadFile->getPathname(), $uploadFile->getClientOriginalName())) {
                 $ok = false;
             }
+
             unlink($uploadFile->getPathname());
         }
 
         Cache::clear();
+
         if ($ok) {
             Tools::log()->notice('reloading');
             $this->redirect($this->url(), 3);

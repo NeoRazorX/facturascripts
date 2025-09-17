@@ -141,7 +141,7 @@ class EditEmailSent extends EditController
 
         // cargamos el modelo
         $model = $this->getModel();
-        if (false === $model->loadFromCode($this->request->get('code', ''))) {
+        if (false === $model->loadFromCode($this->request->queryOrInput('code', ''))) {
             $this->response->json(['getHtml' => false]);
             return;
         }

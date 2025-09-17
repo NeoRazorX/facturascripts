@@ -75,7 +75,7 @@ abstract class PanelController extends BaseController
         parent::privateCore($response, $user, $permissions);
 
         // Get any operations that have to be performed
-        $action = $this->request->get('action', '');
+        $action = $this->request->inputOrQuery('action', '');
 
         // Runs operations before reading data
         if ($this->execPreviousAction($action) === false || $this->pipeFalse('execPreviousAction', $action) === false) {

@@ -184,21 +184,6 @@ class APIModel extends APIResourceClass
     }
 
     /**
-     * This method is equivalent to $this->request->get($key, $default),
-     * but always return an array, as expected for some parameters like operation, filter or sort.
-     *
-     * @param string $key
-     * @param string $default
-     *
-     * @return array
-     */
-    private function getRequestArray($key, $default = ''): array
-    {
-        $array = $this->request->getArray($key, $default);
-        return is_array($array) ? $array : []; // if is string has bad format
-    }
-
-    /**
      * Load resource map from a folder
      *
      * @param string $folder
@@ -299,11 +284,11 @@ class APIModel extends APIResourceClass
 
     protected function listAll(): bool
     {
-        $filter = $this->getRequestArray('filter');
-        $limit = (int)$this->request->get('limit', 50);
-        $offset = (int)$this->request->get('offset', 0);
-        $operation = $this->getRequestArray('operation');
-        $order = $this->getRequestArray('sort');
+        $filter = $this->request->query->getArray('filter');
+        $limit = $this->request->query->getInt('limit', 50);
+        $offset = $this->request->query->getInt('offset', 0);
+        $operation = $this->request->query->getArray('operation');
+        $order = $this->request->query->getArray('sort');
 
         // obtenemos los registros
         $where = $this->getWhereValues($filter, $operation);
@@ -311,7 +296,7 @@ class APIModel extends APIResourceClass
 
         // obtenemos el count y lo ponemos en el header
         $count = $this->model->count($where);
-        $this->response->headers->set('X-Total-Count', $count);
+        $this->response->header('X-Total-Count', $count);
 
         $this->returnResult($data);
         return true;
