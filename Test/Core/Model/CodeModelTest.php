@@ -122,8 +122,8 @@ final class CodeModelTest extends TestCase
         $this->assertContains($variante1->referencia, $codes);
 
         // Limpiar datos de prueba
-        $this->assertTrue($variante1->delete());
-        $this->assertTrue($variante2->delete());
+        $this->assertTrue($variante1->getProducto()->delete());
+        $this->assertTrue($variante2->getProducto()->delete());
     }
 
     public function testGet(): void

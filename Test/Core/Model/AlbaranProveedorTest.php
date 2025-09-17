@@ -279,7 +279,7 @@ final class AlbaranProveedorTest extends TestCase
             $this->assertTrue($doc->delete(), "cannot-delete-albaranProveedor-{$campo}");
         }
 
-        // Eliminamos el cliente
+        // Eliminamos el proveedor
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
     }
@@ -297,7 +297,7 @@ final class AlbaranProveedorTest extends TestCase
         $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
         $warehouse->loadWhere($where);
 
-        // creamos un cliente
+        // creamos un proveedor
         $subject = $this->getRandomSupplier();
         $this->assertTrue($subject->save(), 'can-not-save-customer-2');
 
@@ -339,10 +339,10 @@ final class AlbaranProveedorTest extends TestCase
         foreach ($children as $child) {
             $this->assertTrue($child->delete(), 'factura-cant-delete');
         }
-        $this->assertTrue($doc->delete(), 'albaran-cant-delete');
-        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
-        $this->assertTrue($company2->delete(), 'empresa-cant-delete');
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
+        $this->assertTrue($company2->delete());
     }
 
     protected function tearDown(): void

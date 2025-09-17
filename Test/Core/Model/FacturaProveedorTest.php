@@ -611,7 +611,7 @@ final class FacturaProveedorTest extends TestCase
             'operacion' => [20, 21],
         ];
 
-        // creamos un cliente
+        // creamos un proveedor
         $supplier = $this->getRandomSupplier();
         $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
@@ -634,7 +634,9 @@ final class FacturaProveedorTest extends TestCase
             $this->assertTrue($invoice->delete(), "cannot-delete-facturaProveedor-{$campo}");
         }
 
-        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
+        // eliminamos el proveedor
+        $this->assertTrue($supplier->getDefaultAddress()->delete());
+        $this->assertTrue($supplier->delete());
     }
 
     public function testSetIntraCommunity(): void

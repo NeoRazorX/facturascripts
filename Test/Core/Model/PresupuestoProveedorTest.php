@@ -290,17 +290,19 @@ final class PresupuestoProveedorTest extends TestCase
 
             // Asignamos el valor inválido en el campo a probar
             $doc->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($doc->save(), "can-save-pedidoCliente-bad-{$campo}");
+            $this->assertFalse($doc->save(), "can-save-pedidoProveedor-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
             $doc->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($doc->save(), "cannot-save-pedidoCliente-fixed-{$campo}");
+            $this->assertTrue($doc->save(), "cannot-save-pedidoProveedor-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($doc->delete(), "cannot-delete-pedidoCliente-{$campo}");
+            $this->assertTrue($doc->delete(), "cannot-delete-pedidoProveedor-{$campo}");
         }
 
-        $this->assertTrue($subject->delete(), 'can-not-delete-cliente');
+        // eliminamos
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
     }
 
     public function testSecondCompany(): void
@@ -421,9 +423,9 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertTrue($doc->editable);
 
         // eliminamos
-        $this->assertTrue($doc->delete(), 'presupuesto-cant-delete');
-        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
     }
 
     protected function setUp(): void

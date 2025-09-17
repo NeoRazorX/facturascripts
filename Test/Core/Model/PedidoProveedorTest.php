@@ -274,17 +274,19 @@ final class PedidoProveedorTest extends TestCase
 
             // Asignamos el valor inválido en el campo a probar
             $doc->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($doc->save(), "can-save-pedidoCliente-bad-{$campo}");
+            $this->assertFalse($doc->save(), "can-save-pedidoProveedor-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
             $doc->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($doc->save(), "cannot-save-pedidoCliente-fixed-{$campo}");
+            $this->assertTrue($doc->save(), "cannot-save-pedidoProveedor-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($doc->delete(), "cannot-delete-pedidoCliente-{$campo}");
+            $this->assertTrue($doc->delete(), "cannot-delete-pedidoProveedor-{$campo}");
         }
 
-        $this->assertTrue($subject->delete(), 'can-not-delete-cliente');
+        // eliminamos
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
     }
 
     public function testSecondCompany(): void
@@ -300,7 +302,7 @@ final class PedidoProveedorTest extends TestCase
         $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
         $warehouse->loadWhere($where);
 
-        // creamos un cliente
+        // creamos un proveedor
         $subject = $this->getRandomSupplier();
         $this->assertTrue($subject->save(), 'can-not-save-customer-2');
 
@@ -338,14 +340,14 @@ final class PedidoProveedorTest extends TestCase
 
         // eliminamos
         $children = $doc->childrenDocuments();
-        $this->assertNotEmpty($children, 'albaranes-no-creadas');
+        $this->assertNotEmpty($children);
         foreach ($children as $child) {
-            $this->assertTrue($child->delete(), 'albarán-cant-delete');
+            $this->assertTrue($child->delete());
         }
-        $this->assertTrue($doc->delete(), 'pedido-cant-delete');
-        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
-        $this->assertTrue($company2->delete(), 'empresa-cant-delete');
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
+        $this->assertTrue($company2->delete());
     }
 
     protected function setUp(): void
