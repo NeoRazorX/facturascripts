@@ -139,13 +139,13 @@ final class Request
     /**
      * @deprecated use request->getArray() or query->getArray() instead
      */
-    public function getArray(string $key, bool $allowNull = true): ?array
+    public function getArray(string $key): array
     {
         if ($this->query->has($key)) {
-            return $this->query->getArray($key, $allowNull);
+            return $this->query->getArray($key);
         }
 
-        return $this->request->getArray($key, $allowNull);
+        return $this->request->getArray($key);
     }
 
     /**
@@ -170,85 +170,85 @@ final class Request
     /**
      * @deprecated use request->getBool() or query->getBool() instead
      */
-    public function getBool(string $key, bool $allowNull = true): ?bool
+    public function getBool(string $key, ?bool $default = null): ?bool
     {
         if ($this->query->has($key)) {
-            return $this->query->getBool($key, $allowNull);
+            return $this->query->getBool($key, $default);
         }
 
-        return $this->request->getBool($key, $allowNull);
+        return $this->request->getBool($key, $default);
     }
 
     /**
-     * @deprecated use request->getBool() or query->getBool() instead
+     * @deprecated use request->getDate() or query->getDate() instead
      */
-    public function getDate(string $key, bool $allowNull = true): ?string
+    public function getDate(string $key, ?string $default = null): ?string
     {
         if ($this->query->has($key)) {
-            return $this->query->getDate($key, $allowNull);
+            return $this->query->getDate($key, $default);
         }
 
-        return $this->request->getDate($key, $allowNull);
+        return $this->request->getDate($key, $default);
     }
 
     /**
      * @deprecated use request->getDateTime() or query->getDateTime() instead
      */
-    public function getDateTime(string $key, bool $allowNull = true): ?string
+    public function getDateTime(string $key, ?string $default = null): ?string
     {
         if ($this->query->has($key)) {
-            return $this->query->getDateTime($key, $allowNull);
+            return $this->query->getDateTime($key, $default);
         }
 
-        return $this->request->getDateTime($key, $allowNull);
+        return $this->request->getDateTime($key, $default);
     }
 
     /**
      * @deprecated use request->getEmail() or query->getEmail() instead
      */
-    public function getEmail(string $key, bool $allowNull = true): ?string
+    public function getEmail(string $key, ?string $default = null): ?string
     {
         if ($this->query->has($key)) {
-            return $this->query->getEmail($key, $allowNull);
+            return $this->query->getEmail($key, $default);
         }
 
-        return $this->request->getEmail($key, $allowNull);
+        return $this->request->getEmail($key, $default);
     }
 
     /**
      * @deprecated use request->getFloat() or query->getFloat() instead
      */
-    public function getFloat(string $key, bool $allowNull = true): ?float
+    public function getFloat(string $key, ?float $default = null): ?float
     {
         if ($this->query->has($key)) {
-            return $this->query->getFloat($key, $allowNull);
+            return $this->query->getFloat($key, $default);
         }
 
-        return $this->request->getFloat($key, $allowNull);
+        return $this->request->getFloat($key, $default);
     }
 
     /**
      * @deprecated use request->getHour() or query->getHour() instead
      */
-    public function getHour(string $key, bool $allowNull = true): ?string
+    public function getHour(string $key, ?string $default = null): ?string
     {
         if ($this->query->has($key)) {
-            return $this->query->getHour($key, $allowNull);
+            return $this->query->getHour($key, $default);
         }
 
-        return $this->request->getHour($key, $allowNull);
+        return $this->request->getHour($key, $default);
     }
 
     /**
      * @deprecated use request->getInt() or query->getInt() instead
      */
-    public function getInt(string $key, bool $allowNull = true): ?int
+    public function getInt(string $key, ?int $default = null): ?int
     {
         if ($this->query->has($key)) {
-            return $this->query->getInt($key, $allowNull);
+            return $this->query->getInt($key, $default);
         }
 
-        return $this->request->getInt($key, $allowNull);
+        return $this->request->getInt($key, $default);
     }
 
     /**
@@ -275,25 +275,25 @@ final class Request
     /**
      * @deprecated use request->getString() or query->getString() instead
      */
-    public function getString(string $key, bool $allowNull = true): ?string
+    public function getString(string $key, ?string $default = null): ?string
     {
         if ($this->query->has($key)) {
-            return $this->query->getString($key, $allowNull);
+            return $this->query->getString($key, $default);
         }
 
-        return $this->request->getString($key, $allowNull);
+        return $this->request->getString($key, $default);
     }
 
     /**
      * @deprecated use request->getUrl() or query->getUrl() instead
      */
-    public function getUrl(string $key, bool $allowNull = true): ?string
+    public function getUrl(string $key, ?string $default = null): ?string
     {
         if ($this->query->has($key)) {
-            return $this->query->getUrl($key, $allowNull);
+            return $this->query->getUrl($key, $default);
         }
 
-        return $this->request->getUrl($key, $allowNull);
+        return $this->request->getUrl($key, $default);
     }
 
     public function has(string ...$key): bool

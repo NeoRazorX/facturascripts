@@ -63,18 +63,15 @@ final class SubRequest
         return $value;
     }
 
-    public function getArray(string $key, bool $allowNull = true): ?array
+    public function getArray(string $key): array
     {
         $value = $this->data[$key] ?? [];
-        if ($allowNull && empty($value)) {
-            return null;
-        }
 
         if (is_array($value)) {
             return $value;
         }
 
-        return $allowNull ? null : [];
+        return [];
     }
 
     public function getAlnum(string $key): string
@@ -82,72 +79,72 @@ final class SubRequest
         return preg_replace('/[^[:alnum:]]/', '', $this->get($key) ?? '');
     }
 
-    public function getBool(string $key, bool $allowNull = true): ?bool
+    public function getBool(string $key, ?bool $default = null): ?bool
     {
         $value = $this->get($key);
-        if ($allowNull && is_null($value)) {
-            return null;
+        if (is_null($value)) {
+            return $default;
         }
 
         return (bool)$value;
     }
 
-    public function getDate(string $key, bool $allowNull = true): ?string
+    public function getDate(string $key, ?string $default = null): ?string
     {
         $value = $this->get($key);
         if (Validator::date($value ?? '')) {
             return Tools::date($value);
         }
 
-        return $allowNull ? null : '';
+        return $default;
     }
 
-    public function getDateTime(string $key, bool $allowNull = true): ?string
+    public function getDateTime(string $key, ?string $default = null): ?string
     {
         $value = $this->get($key);
         if (Validator::datetime($value ?? '') || Validator::date($value ?? '')) {
             return Tools::dateTime($value);
         }
 
-        return $allowNull ? null : '';
+        return $default;
     }
 
-    public function getEmail(string $key, bool $allowNull = true): ?string
+    public function getEmail(string $key, ?string $default = null): ?string
     {
         $value = $this->get($key);
         if (Validator::email($value ?? '')) {
             return strtolower($value);
         }
 
-        return $allowNull ? null : '';
+        return $default;
     }
 
-    public function getFloat(string $key, bool $allowNull = true): ?float
+    public function getFloat(string $key, ?float $default = null): ?float
     {
         $value = $this->get($key);
-        if ($allowNull && is_null($value)) {
-            return null;
+        if (is_null($value)) {
+            return $default;
         }
 
         // reemplazamos la coma decimal por el punto decimal
         return (float)str_replace(',', '.', $value);
     }
 
-    public function getHour(string $key, bool $allowNull = true): ?string
+    public function getHour(string $key, ?string $default = null): ?string
     {
         $value = $this->get($key);
         if (Validator::hour($value ?? '')) {
             return Tools::hour($value);
         }
 
-        return $allowNull ? null : '';
+        return $default;
     }
 
-    public function getInt(string $key, bool $allowNull = true): ?int
+    public function getInt(string $key, ?int $default = null): ?int
     {
         $value = $this->get($key);
-        if ($allowNull && is_null($value)) {
-            return null;
+        if (is_null($value)) {
+            return $default;
         }
 
         return (int)$value;
@@ -163,24 +160,24 @@ final class SubRequest
         return null;
     }
 
-    public function getString(string $key, bool $allowNull = true): ?string
+    public function getString(string $key, ?string $default = null): ?string
     {
         $value = $this->get($key);
-        if ($allowNull && is_null($value)) {
-            return null;
+        if (is_null($value)) {
+            return $default;
         }
 
         return (string)$value;
     }
 
-    public function getUrl(string $key, bool $allowNull = true): ?string
+    public function getUrl(string $key, ?string $default = null): ?string
     {
         $value = $this->get($key);
         if (Validator::url($value ?? '')) {
             return $value;
         }
 
-        return $allowNull ? null : '';
+        return $default;
     }
 
     public function has(string ...$key): bool
