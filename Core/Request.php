@@ -58,6 +58,9 @@ final class Request
         $this->request = new SubRequest($data['request'] ?? []);
     }
 
+    /**
+     * @deprecated use request->all() or query->all() instead
+     */
     public function all(string ...$key): array
     {
         if (empty($key)) {
@@ -122,7 +125,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use input(), inputOrQuery(), query() or queryOrInput() instead
      */
     public function get(string $key, $default = null): ?string
     {
@@ -134,7 +137,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getArray() or query->getArray() instead
      */
     public function getArray(string $key, bool $allowNull = true): ?array
     {
@@ -146,7 +149,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getAlnum() or query->getAlnum() instead
      */
     public function getAlnum(string $key): string
     {
@@ -157,8 +160,15 @@ final class Request
         return $this->query->getAlnum($key);
     }
 
+    public function getBasePath(): string
+    {
+        $url = $_SERVER['REQUEST_URI'];
+        $base = parse_url($url, PHP_URL_PATH);
+        return is_string($base) ? $base : '';
+    }
+
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getBool() or query->getBool() instead
      */
     public function getBool(string $key, bool $allowNull = true): ?bool
     {
@@ -170,7 +180,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getBool() or query->getBool() instead
      */
     public function getDate(string $key, bool $allowNull = true): ?string
     {
@@ -182,7 +192,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getDateTime() or query->getDateTime() instead
      */
     public function getDateTime(string $key, bool $allowNull = true): ?string
     {
@@ -194,7 +204,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getEmail() or query->getEmail() instead
      */
     public function getEmail(string $key, bool $allowNull = true): ?string
     {
@@ -206,7 +216,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getFloat() or query->getFloat() instead
      */
     public function getFloat(string $key, bool $allowNull = true): ?float
     {
@@ -218,7 +228,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getHour() or query->getHour() instead
      */
     public function getHour(string $key, bool $allowNull = true): ?string
     {
@@ -230,7 +240,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getInt() or query->getInt() instead
      */
     public function getInt(string $key, bool $allowNull = true): ?int
     {
@@ -251,7 +261,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getOnly() or query->getOnly() instead
      */
     public function getOnly(string $key, array $values): ?string
     {
@@ -263,7 +273,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getString() or query->getString() instead
      */
     public function getString(string $key, bool $allowNull = true): ?string
     {
@@ -275,7 +285,7 @@ final class Request
     }
 
     /**
-     * @deprecated use inputOrQuery() or queryOrInput() instead
+     * @deprecated use request->getUrl() or query->getUrl() instead
      */
     public function getUrl(string $key, bool $allowNull = true): ?string
     {
@@ -284,13 +294,6 @@ final class Request
         }
 
         return $this->query->getUrl($key, $allowNull);
-    }
-
-    public function getBasePath(): string
-    {
-        $url = $_SERVER['REQUEST_URI'];
-        $base = parse_url($url, PHP_URL_PATH);
-        return is_string($base) ? $base : '';
     }
 
     public function has(string ...$key): bool
