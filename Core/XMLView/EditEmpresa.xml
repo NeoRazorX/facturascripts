@@ -105,7 +105,7 @@
                 </widget>
             </column>
             <column name="logo" order="130">
-                <widget type="library" fieldname="idlogo" icon="fa-solid fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.png"/>
+                <widget type="library" fieldname="idlogo" icon="fa-solid fa-image" onclick="EditAttachedFile" accept=".gif,.jpg,.jpeg,.png"/>
             </column>
             <column name="observations" numcolumns="12" order="140">
                 <widget type="textarea" fieldname="observaciones"/>

@@ -20,9 +20,11 @@
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DbQuery;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UploadedFile;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
@@ -130,13 +132,15 @@ class WidgetLibrary extends BaseWidget
         // si tenemos el campo accept, filtramos por tipo de archivo
         $where = [];
         if (!empty($this->accept)) {
+            $sub = [];
             foreach (explode(',', $this->accept) as $type) {
-                $where[] = new DataBaseWhere('filename', '%' . $type, 'LIKE', 'OR');
+                $sub[] = Where::orLike('filename', '%' . $type);
             }
+            $where[] = Where::sub($sub);
         }
 
         if ($query) {
-            $where[] = new DataBaseWhere('filename', $query, 'LIKE', 'AND');
+            $where[] = Where::like('filename', $query);
         }
 
         switch ($sort) {
@@ -171,30 +175,32 @@ class WidgetLibrary extends BaseWidget
                 ? ' border-primary'
                 : '';
 
+            // JavaScript de selección para usar en todo el panel
+            $js = "widgetLibrarySelect('" . $id . "', '" . $file->idfile . "', '" . $file->shortFileName() . "');";
+
             $html .= '<div class="col-6">'
-                . '<div class="file card ' . $cssCard . ' shadow-sm mb-2" data-idfile="' . $file->idfile . '">'
+                . '<div class="file card btn btn-light text-start p-0 ' . $cssCard . ' shadow-sm mb-2" data-idfile="' . $file->idfile . '"'
+                . ' onclick="' . $js . '" role="button">'
                 . '<div class="card-body p-2">';
 
             $info = '<p class="card-text small">'
                 . Tools::bytes($file->size) . ', ' . $file->date . ' ' . $file->hour
-                . '<a href="' . $file->url() . '" target="_blank" class="ms-2">'
+                . '<a href="' . $file->url() . '" target="_blank" class="ms-2" onclick="event.stopPropagation()">'
                 . '<i class="fa-solid fa-up-right-and-down-left-from-center"></i>'
                 . '</a>'
                 . '</p>';
 
-            $js = "widgetLibrarySelect('" . $id . "', '" . $file->idfile . "', '" . $file->shortFileName() . "');";
-
             if ($file->isImage()) {
                 $html .= '<div class="media">'
                     . '<img loading="lazy" src="' . $file->url('download-permanent') . '" class="me-3" alt="' . $file->filename
-                    . '" width="64" type="button" onclick="' . $js . '" title="' . Tools::trans('select') . '">'
+                    . '" width="64" title="' . Tools::trans('select') . '">'
                     . '<div class="media-body">'
                     . '<h5 class="text-break mt-0">' . $file->filename . '</h5>'
                     . $info
                     . '</div>'
                     . '</div>';
             } else {
-                $html .= '<h5 class="card-title text-break mb-0" type="button" onclick="' . $js . '" title="'
+                $html .= '<h5 class="card-title text-break mb-0" title="'
                     . Tools::trans('select') . '">' . $file->filename . '</h5>' . $info;
             }
 
