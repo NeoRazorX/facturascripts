@@ -110,12 +110,19 @@ final class CrashReport
             return;
         }
 
-        // guardamos los datos en un archivo en MyFiles
-        $file_name = 'crash_' . $info['hash'] . '.json';
-        $file_path = Tools::folder('MyFiles', $file_name);
-        if (file_exists($file_path)) {
+        // comprobamos si ya existe un archivo crash para este hash
+        $crash_pattern = 'crash_*_' . $info['hash'] . '.json';
+        $existing_files = glob(Tools::folder('MyFiles', $crash_pattern));
+
+        if (!empty($existing_files)) {
+            // si existe algún archivo con este hash, no hacemos nada
             return;
         }
+
+        // guardamos los datos en un archivo en MyFiles con timestamp
+        $timestamp = date('YmdHis');
+        $file_name = 'crash_' . $timestamp . '_' . $info['hash'] . '.json';
+        $file_path = Tools::folder('MyFiles', $file_name);
 
         file_put_contents($file_path, json_encode($info, JSON_PRETTY_PRINT));
     }
