@@ -95,7 +95,7 @@ class Wizard extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-        $action = $this->request->input('action', '');
+        $action = $this->request->inputOrQuery('action', '');
         switch ($action) {
             case 'step1':
                 $this->saveStep1();
