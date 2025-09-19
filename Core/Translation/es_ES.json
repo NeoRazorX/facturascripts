@@ -1441,6 +1441,7 @@
     "sequences": "Secuencias",
     "serial-number": "Número de Serie",
     "serie": "Serie",
+    "serie-not-found": "Serie %serie% no encontrada",
     "serieb": "Serie B",
     "serier": "Serie R",
     "serierb": "Serie RB",

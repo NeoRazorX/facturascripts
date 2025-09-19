@@ -21,6 +21,10 @@
         <type>character varying(4)</type>
     </column>
     <column>
+        <name>codserie</name>
+        <type>character varying(4)</type>
+    </column>
+    <column>
         <name>creationdate</name>
         <type>date</type>
     </column>
@@ -97,5 +101,9 @@
     <constraint>
         <name>ca_users_company</name>
         <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_users_series</name>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

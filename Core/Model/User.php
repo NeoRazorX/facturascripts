@@ -59,6 +59,9 @@ class User extends ModelClass
     public $codalmacen;
 
     /** @var string */
+    public $codserie;
+
+    /** @var string */
     public $creationdate;
 
     /** @var string */
@@ -189,6 +192,7 @@ class User extends ModelClass
         $this->langcode = Tools::config('lang');
         $this->level = self::DEFAULT_LEVEL;
         $this->two_factor_enabled = false;
+        $this->codserie = null;
     }
 
     public function clearCache(): void
@@ -274,6 +278,7 @@ class User extends ModelClass
         // we need this models to be checked before
         new DinPage();
         new DinEmpresa();
+        new Serie();
 
         $nick = Tools::config('initial_user', 'admin');
         $pass = Tools::config('initial_pass', 'admin');
@@ -359,7 +364,17 @@ class User extends ModelClass
         }
 
         if (empty($this->lastactivity)) {
-            $this->lastactivity = null;
+            $this->astactivity = null;
+        }
+
+        // sanitizar y testear serie
+        $this->codserie = Tools::noHtml($this->codserie);
+        if(!empty($this->codserie)) {
+            if ((new Serie())->find($this->codserie) === null) {
+                Tools::log()->error('serie-not-found', ['%serie%' => $this->codserie]);
+                $this->codserie = null;
+                return false;
+            }
         }
 
         // escapamos lastbrowser y comprobamos que no excede los 200 caracteres

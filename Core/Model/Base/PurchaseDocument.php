@@ -139,6 +139,7 @@ abstract class PurchaseDocument extends TransformerDocument
         }
 
         $this->codalmacen = $user->codalmacen ?? $this->codalmacen;
+        $this->codserie = $user->codserie ?? $this->codserie;
         $this->idempresa = $user->idempresa ?? $this->idempresa;
         $this->nick = $user->nick;
 
