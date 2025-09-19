@@ -31,7 +31,7 @@ trait ExtensionsTrait
      *
      * @var array
      */
-    protected static $extensions = [];
+    public static $extensions = [];
 
     /**
      * Cache for extension lookups by method name.
