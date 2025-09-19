@@ -16,7 +16,6 @@
                     {% include includeView['path'] %}
                 {% endfor %}
 
-                {# Software Section #}
                 {% block software %}
                     <div class="card shadow mb-4">
                         <div class="card-body">
@@ -27,10 +26,14 @@
                             <div class="row align-items-center">
                                 <div class="col-md-6">
                                     <h5 class="mb-3">FacturaScripts</h5>
-                                    <p class="mb-1"><strong>{{ trans('version') }}:</strong> {{ fsc.data.core_version }}
+                                    <p class="mb-1">
+                                        <strong>{{ trans('version') }}:</strong> {{ fsc.data.core_version }}
                                     </p>
-                                    <p class="mb-1"><strong>{{ trans('license') }}:</strong> LGPL v3</p>
-                                    <p class="mb-1"><strong>{{ trans('website') }}:</strong>
+                                    <p class="mb-1">
+                                        <strong>{{ trans('license') }}:</strong> LGPL v3
+                                    </p>
+                                    <p class="mb-1">
+                                        <strong>{{ trans('website') }}:</strong>
                                         <a href="https://facturascripts.com" target="_blank" rel="nofollow">facturascripts.com</a>
                                     </p>
                                     <p class="mb-0">
@@ -51,8 +54,6 @@
                     </div>
                 {% endblock %}
 
-
-                {# Limits Section #}
                 {% block limits %}
                     <div class="card shadow mb-4">
                         <div class="card-body">
@@ -114,7 +115,6 @@
                     </div>
                 {% endblock %}
 
-                {# Plugins Section #}
                 {% block plugins %}
                     <div class="card shadow mb-4">
                         <div class="card-body">
@@ -172,7 +172,6 @@
                     </div>
                 {% endblock %}
 
-                {# Server Section #}
                 {% block server %}
                     <div class="card shadow mb-4">
                         <div class="card-body">
@@ -183,19 +182,29 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <h6 class="text-primary mb-2">{{ trans('environment') }}</h6>
-                                    <p class="mb-1"><strong>{{ trans('server-software') }}
-                                            :</strong> {{ fsc.data.server_software }}</p>
-                                    <p class="mb-1"><strong>{{ trans('operating-system') }}
-                                            :</strong> {{ fsc.data.os_info }}</p>
-                                    <p class="mb-3"><strong>{{ trans('server-accepts-filesize') }}
-                                            :</strong> {{ bytes(fsc.data.max_filesize) }}</p>
+                                    <p class="mb-1">
+                                        <strong>{{ trans('server-software') }}:</strong>
+                                        {{ fsc.data.server_software }}
+                                    </p>
+                                    <p class="mb-1">
+                                        <strong>{{ trans('operating-system') }}:</strong>
+                                        {{ fsc.data.os_info }}
+                                    </p>
+                                    <p class="mb-3">
+                                        <strong>{{ trans('server-accepts-filesize') }}:</strong>
+                                        {{ bytes(fsc.data.max_filesize) }}
+                                    </p>
                                 </div>
                                 <div class="col-lg-6">
                                     <h6 class="text-success mb-2">PHP & Database</h6>
-                                    <p class="mb-1"><strong>PHP:</strong> {{ fsc.data.php_version }}</p>
-                                    <p class="mb-1"><strong>{{ trans('database') }}
-                                            :</strong> {{ fsc.data.database_version }}</p>
-                                    <p class="mb-0"><strong>{{ trans('php-extensions') }}:</strong>
+                                    <p class="mb-1">
+                                        <strong>PHP:</strong> {{ fsc.data.php_version }}
+                                    </p>
+                                    <p class="mb-1">
+                                        <strong>{{ trans('database') }}:</strong> {{ fsc.data.database_version }}
+                                    </p>
+                                    <p class="mb-0">
+                                        <strong>{{ trans('php-extensions') }}:</strong>
                                         <small class="text-muted">{{ fsc.data.extensions | join(', ') }}</small>
                                     </p>
                                 </div>

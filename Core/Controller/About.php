@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,10 +23,10 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\UploadedFile;
-use FacturaScripts\Dinamic\Model\User;
-use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\User;
 
 class About extends Controller
 {
@@ -94,20 +94,16 @@ class About extends Controller
     private function getLimits(): array
     {
         // Contar usuarios
-        $userModel = new User();
-        $users = $userModel->count();
+        $users = User::count();
 
         // Contar productos
-        $productoModel = new Producto();
-        $products = $productoModel->count();
+        $products = Producto::count();
 
         // Contar clientes
-        $clienteModel = new Cliente();
-        $customers = $clienteModel->count();
+        $customers = Cliente::count();
 
         // Contar facturas de cliente
-        $facturaModel = new FacturaCliente();
-        $invoices = $facturaModel->count();
+        $invoices = FacturaCliente::count();
 
         return [
             'users' => $users,
