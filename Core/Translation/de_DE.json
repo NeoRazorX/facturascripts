@@ -1387,7 +1387,7 @@
     "roles": "Rollen",
     "rules": "Regeln",
     "run": "Ausführen",
-    "running": "Ejecutando",
+    "running": "Wird ausgeführt",
     "running-plugin-cron": "Führe FacturaScripts Cron für das Plugin %pluginName% aus",
     "running-work-queue": "Die Arbeitsereignisschleife wird ausgeführt",
     "sales": "Der Umsatz",
