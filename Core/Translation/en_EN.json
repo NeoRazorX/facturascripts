@@ -1231,7 +1231,7 @@
     "plugin-update": "Update of plugin %pluginName% to version %version%",
     "plugins": "Plugins",
     "plugins-p": "Plugins allow adding new features. Add the ones you need now, or do it whenever you want from the admin menu.",
-    "plugins-required": "Required Plugins",
+    "plugins-required": "Required plugins",
     "points": "Points",
     "points-of-interest": "Points of interest",
     "port": "Port",
