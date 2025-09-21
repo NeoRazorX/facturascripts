@@ -122,7 +122,7 @@ class MailNotifier
         $lastPos = 0;
 
         // recorremos los bloques encontrados
-        foreach ($matches[1] as $index => $blockIndex) {
+        foreach ($matches[1] as $blockIndex) {
             $substr = substr($text, $lastPos, strpos($text, '{block' . $blockIndex . '}') - $lastPos);
             $lastPos = strpos($text, '{block' . $blockIndex . '}') + strlen('{block' . $blockIndex . '}');
             if (empty($substr) && isset($params['block' . $blockIndex]) && $params['block' . $blockIndex] instanceof BaseBlock) {
