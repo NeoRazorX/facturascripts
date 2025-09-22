@@ -380,7 +380,6 @@ class Producto extends ModelClass
         // si el producto tiene impuesto, y el impuesto es 0, debe tener una excepción de iva
         if (!empty($this->codimpuesto) && $tax->iva == 0 && empty($this->excepcioniva)) {
             Tools::log()->warning('product-without-tax-exception', ['%reference%' => $this->referencia]);
-            return false;
         }
 
         // si el producto tiene una excepción de iva, debe tener un impuesto a 0
