@@ -540,11 +540,13 @@ abstract class ModelClass
             return false;
         }
 
-        // comprobamos que los campos no nulos tengan algún valor asignado
+        // comprobamos que los campos estén definidos
         $fields = $this->getModelFields();
         if (empty($fields)) {
-            return false;
+            throw new Exception('The model fields are not defined in the model ' . $this->modelClassName());
         }
+
+        // comprobamos que los campos no nulos tengan algún valor asignado
         $return = true;
         foreach ($fields as $key => $value) {
             if ($key == static::primaryColumn()) {
