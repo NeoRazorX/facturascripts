@@ -62,7 +62,7 @@
                             </h3>
                             <hr>
                             <div class="row">
-                                <div class="col-lg-3 col-md-6">
+                                <div class="col-lg col-md-6">
                                     <div class="text-center p-3">
                                         <i class="fa-solid fa-users fa-2x text-primary mb-2"></i>
                                         <h6 class="mb-1">{{ trans('users') }}</h6>
@@ -74,7 +74,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-6">
+                                <div class="col-lg col-md-6">
                                     <div class="text-center p-3">
                                         <i class="fa-solid fa-box fa-2x text-success mb-2"></i>
                                         <h6 class="mb-1">{{ trans('products') }}</h6>
@@ -86,7 +86,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-6">
+                                <div class="col-lg col-md-6">
                                     <div class="text-center p-3">
                                         <i class="fa-solid fa-user-tie fa-2x text-info mb-2"></i>
                                         <h6 class="mb-1">{{ trans('customers') }}</h6>
@@ -98,7 +98,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-6">
+                                <div class="col-lg col-md-6">
                                     <div class="text-center p-3">
                                         <i class="fa-solid fa-file-invoice fa-2x text-warning mb-2"></i>
                                         <h6 class="mb-1">{{ trans('invoices') }}</h6>
@@ -107,6 +107,18 @@
                                             {% set invoiceLimit = config('max_invoices') %}
                                             <strong>{{ invoiceCount }}</strong>
                                             / {% if invoiceLimit %}{{ invoiceLimit }}{% else %}∞{% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-lg col-md-6">
+                                    <div class="text-center p-3">
+                                        <i class="fa-solid fa-hard-drive fa-2x text-secondary mb-2"></i>
+                                        <h6 class="mb-1">{{ trans('app-storage') }}</h6>
+                                        <p class="mb-0">
+                                            {% set storageCount = fsc.data.limits.storage_current is defined ? fsc.data.limits.storage_current : 0 %}
+                                            {% set storageLimit = config('storage_limit') %}
+                                            <strong>{{ bytes(storageCount) }}</strong>
+                                            / {% if storageLimit %}{{ storageLimit }}{% else %}∞{% endif %}
                                         </p>
                                     </div>
                                 </div>

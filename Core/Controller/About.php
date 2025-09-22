@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\UploadedFile;
+use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\Producto;
@@ -109,7 +110,9 @@ class About extends Controller
             'users' => $users,
             'products' => $products,
             'customers' => $customers,
-            'invoices' => $invoices
+            'invoices' => $invoices,
+            'storage_current' => AttachedFile::getStorageUsed(),
+            'storage_limit' => AttachedFile::getStorageLimit()
         ];
     }
 }
