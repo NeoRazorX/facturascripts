@@ -54,7 +54,7 @@ final class Plugin
     public $min_version = 0;
 
     /** @var float */
-    public $min_php = 7.4;
+    public $min_php = 8;
 
     /** @var string */
     public $name = '-';
@@ -284,8 +284,9 @@ final class Plugin
 
     private function hidden(): bool
     {
-        if (defined('FS_HIDDEN_PLUGINS') && FS_HIDDEN_PLUGINS !== '') {
-            return in_array($this->name, explode(',', FS_HIDDEN_PLUGINS));
+        $hidden_plugins = Tools::config('hidden_plugins', '');
+        if ($hidden_plugins !== '') {
+            return in_array($this->name, explode(',', $hidden_plugins));
         }
 
         return false;
