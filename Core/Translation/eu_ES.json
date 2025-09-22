@@ -1205,7 +1205,7 @@
     "php-extension-needed": "PHP-ren konfigurazioan %extension% luzapena behar da",
     "php-extension-not-found": "%extension% PHP gehigarria instalatu gabe duzu.",
     "php-extensions": "PHP luzapenak",
-    "php-extensions-required": "Extensiones PHP requeridas",
+    "php-extensions-required": "Beharrezko PHP luzapenak",
     "php-support-end": "PHP %current%-(r)en laguntza laster amaituko da. PHP %min% bertsiora eguneratu mesedez.",
     "php-version-too-new": "%min_version% eta %max_version% artean PHP bertsio bat erabiltzea gomendatzen da. Une honetan, %version% duzu.",
     "physical-stock": "Stock fisikoa",
