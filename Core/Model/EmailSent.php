@@ -105,6 +105,14 @@ class EmailSent extends ModelClass
         return $files;
     }
 
+    public function install(): string
+    {
+        // dependencias
+        new User();
+
+        return parent::install();
+    }
+
     public static function tableName(): string
     {
         return 'emails_sent';
