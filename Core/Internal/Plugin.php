@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -223,13 +223,15 @@ final class Plugin
 
         // ejecutamos los procesos de la clase Init del plugin
         $init = new $className();
-        if ($this->enabled && $this->post_enable && Kernel::lock('plugin-init-update')) {
+        $updateLockName = 'plugin-' . $this->name . '-init-update';
+        if ($this->enabled && $this->post_enable && Kernel::lock($updateLockName)) {
             $init->update();
-            Kernel::unlock('plugin-init-update');
+            Kernel::unlock($updateLockName);
         }
-        if ($this->disabled() && $this->post_disable && Kernel::lock('plugin-init-uninstall')) {
+        $uninstallLockName = 'plugin-' . $this->name . '-init-uninstall';
+        if ($this->disabled() && $this->post_disable && Kernel::lock($uninstallLockName)) {
             $init->uninstall();
-            Kernel::unlock('plugin-init-uninstall');
+            Kernel::unlock($uninstallLockName);
         }
         if ($this->enabled) {
             $init->init();
