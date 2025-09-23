@@ -94,7 +94,7 @@ class MailNotifier
         }
 
         foreach ($attach as $adjunto) {
-            //$newMail->addAttachment($adjunto, basename($adjunto));
+            $newMail->addAttachment($adjunto, basename($adjunto));
         }
 
         return $newMail->send();
