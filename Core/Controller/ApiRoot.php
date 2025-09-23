@@ -29,8 +29,9 @@ class ApiRoot extends ApiController
     private static $custom_resources = [
         'attachedfiles', 'crearAlbaranCliente', 'crearAlbaranProveedor', 'crearFacturaCliente', 'crearFacturaProveedor',
         'crearFacturaRectificativaCliente', 'crearPedidoCliente', 'crearPedidoProveedor', 'crearPresupuestoCliente',
-        'crearPresupuestoProveedor', 'exportarAlbaranCliente', 'exportarFacturaCliente', 'exportarPedidoCliente',
-        'exportarPresupuestoCliente', 'pagarFacturaCliente', 'pagarFacturaProveedor', 'plugins', 'productoimagenes',
+        'crearPresupuestoProveedor', 'exportarAlbaranCliente', 'exportarAlbaranProveedor', 'exportarFacturaCliente',
+        'exportarFacturaProveedor', 'exportarPedidoCliente', 'exportarPedidoProveedor', 'exportarPresupuestoCliente',
+        'exportarPresupuestoProveedor', 'pagarFacturaCliente', 'pagarFacturaProveedor', 'plugins', 'productoimagenes',
         'uploadFiles'
     ];
 
