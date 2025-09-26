@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UploadedFile;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
@@ -130,13 +130,15 @@ class WidgetLibrary extends BaseWidget
         // si tenemos el campo accept, filtramos por tipo de archivo
         $where = [];
         if (!empty($this->accept)) {
+            $sub = [];
             foreach (explode(',', $this->accept) as $type) {
-                $where[] = new DataBaseWhere('filename', '%' . $type, 'LIKE', 'OR');
+                $sub[] = Where::orLike('filename', '%' . $type);
             }
+            $where[] = Where::sub($sub);
         }
 
         if ($query) {
-            $where[] = new DataBaseWhere('filename', $query, 'LIKE', 'AND');
+            $where[] = Where::like('filename', $query);
         }
 
         switch ($sort) {
