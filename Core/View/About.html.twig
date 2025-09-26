@@ -62,8 +62,20 @@
                             </h3>
                             <hr>
                             <div class="row">
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="text-center p-3">
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <div class="text-center p-2">
+                                        <i class="fa-solid fa-hard-drive fa-2x text-dark mb-2"></i>
+                                        <h6 class="mb-1">{{ trans('app-storage') }}</h6>
+                                        <p class="mb-0">
+                                            {% set storageUsed = fsc.data.storage_used is defined ? fsc.data.storage_used : 0 %}
+                                            {% set storageLimit = fsc.data.storage_limit is defined ? fsc.data.storage_limit : 0 %}
+                                            <strong>{{ bytes(storageUsed) }}</strong>
+                                            / {% if storageLimit %}{{ bytes(storageLimit) }}{% else %}∞{% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <div class="text-center p-2">
                                         <i class="fa-solid fa-users fa-2x text-primary mb-2"></i>
                                         <h6 class="mb-1">{{ trans('users') }}</h6>
                                         <p class="mb-0">
@@ -74,8 +86,8 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="text-center p-3">
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <div class="text-center p-2">
                                         <i class="fa-solid fa-box fa-2x text-success mb-2"></i>
                                         <h6 class="mb-1">{{ trans('products') }}</h6>
                                         <p class="mb-0">
@@ -86,8 +98,8 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="text-center p-3">
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <div class="text-center p-2">
                                         <i class="fa-solid fa-user-tie fa-2x text-info mb-2"></i>
                                         <h6 class="mb-1">{{ trans('customers') }}</h6>
                                         <p class="mb-0">
@@ -98,8 +110,8 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="text-center p-3">
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <div class="text-center p-2">
                                         <i class="fa-solid fa-file-invoice fa-2x text-warning mb-2"></i>
                                         <h6 class="mb-1">{{ trans('invoices') }}</h6>
                                         <p class="mb-0">
