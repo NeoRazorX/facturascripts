@@ -100,6 +100,13 @@ class MailNotifier
         return $newMail->send();
     }
 
+    /**
+     * Los bloques se añaden al campo de params como 'block1', 'block2', ...
+     * Cada bloque se compone de un string o de un objeto que herede de BaseBlock.
+     * El texto del email puede contener {block1}, {block2}, ... Para indicar
+     * dónde se debe insertar cada bloque. Si no se encuentra la etiqueta, el bloque
+     * se añade al final del email.
+     */
     protected static function replaceTextToBlock(DinNewMail &$newMail, array $params): void
     {
         // si no hay parámetros o texto, no hacemos nada
@@ -107,7 +114,7 @@ class MailNotifier
             return;
         }
 
-        // obtenemos las coincidencias de {block1}, {block2}, ... sobre el texto
+        // Obtenemos las coincidencias de {block1}, {block2}, ... sobre el texto
         preg_match_all('/{block(\d+)}/', $newMail->text, $matches);
 
         // si no hay coincidencias, no hacemos nada
