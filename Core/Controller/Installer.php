@@ -85,11 +85,11 @@ class Installer implements ControllerInterface
     public function run(): void
     {
         $this->db_host = strtolower(trim($this->request->input('fs_db_host', 'localhost')));
-        $this->db_name = strtolower(trim($this->request->input('fs_db_name', 'facturascripts')));
+        $this->db_name = trim($this->request->input('fs_db_name', 'facturascripts'));
         $this->db_pass = $this->request->input('fs_db_pass', '');
         $this->db_port = (int)$this->request->input('fs_db_port', 3306);
         $this->db_type = $this->request->input('fs_db_type', 'mysql');
-        $this->db_user = strtolower(trim($this->request->input('fs_db_user', 'root')));
+        $this->db_user = trim($this->request->input('fs_db_user', 'root'));
         $this->initial_user = $this->request->input('fs_initial_user', '');
         $this->initial_pass = $this->request->input('fs_initial_pass', '');
 
