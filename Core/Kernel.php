@@ -138,8 +138,8 @@ final class Kernel
     {
         $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
         if (file_exists($lockFile)) {
-            // si tiene más de 8 horas, lo eliminamos
-            if (filemtime($lockFile) < time() - 28800) {
+            // si tiene más de 2 horas, lo eliminamos
+            if (filemtime($lockFile) < time() - 7200) {
                 unlink($lockFile);
             } else {
                 return false;
@@ -244,7 +244,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2025.31;
+        return 2025.41;
     }
 
     private static function checkControllerClass(string $controller): array

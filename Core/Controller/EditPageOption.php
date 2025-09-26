@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -120,13 +120,16 @@ class EditPageOption extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
         $this->model = new PageOption();
         $this->loadSelectedViewName();
         $this->setBackPage();
-        $this->selectedUser = $this->user->admin ? $this->request->get('nick') : $this->user->nick;
+        $this->selectedUser = $this->user->admin ?
+            $this->request->queryOrInput('nick') :
+            $this->user->nick;
         $this->loadPageOptions();
 
-        $action = $this->request->get('action', '');
+        $action = $this->request->inputOrQuery('action', '');
         switch ($action) {
             case 'delete':
                 $this->deleteAction();
@@ -141,7 +144,7 @@ class EditPageOption extends Controller
     /**
      * Delete configuration for view
      */
-    protected function deleteAction()
+    protected function deleteAction(): void
     {
         if (false === $this->permissions->allowDelete) {
             Tools::log()->warning('not-allowed-delete');
@@ -164,7 +167,7 @@ class EditPageOption extends Controller
      * If it does not find them in the database,
      * it loads the default options of the xml view.
      */
-    protected function loadPageOptions()
+    protected function loadPageOptions(): void
     {
         if ($this->selectedUser && false === $this->loadPageOptionsForUser()) {
             VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
@@ -177,9 +180,9 @@ class EditPageOption extends Controller
         VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->model);
     }
 
-    protected function loadSelectedViewName()
+    protected function loadSelectedViewName(): void
     {
-        $code = $this->request->get('code', '');
+        $code = $this->request->queryOrInput('code', '');
         if (false === strpos($code, '-')) {
             $this->selectedViewName = $code;
             return;
@@ -192,7 +195,7 @@ class EditPageOption extends Controller
     /**
      * Save new configuration for view
      */
-    protected function saveAction()
+    protected function saveAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
             Tools::log()->warning('not-allowed-modify');
@@ -247,7 +250,7 @@ class EditPageOption extends Controller
             new DataBaseWhere('name', $this->selectedViewName),
             new DataBaseWhere('nick', null, 'IS'),
         ];
-        return $this->model->loadFromCode('', $where);
+        return $this->model->loadWhere($where);
     }
 
     /**
@@ -263,7 +266,7 @@ class EditPageOption extends Controller
             new DataBaseWhere('name', $this->selectedViewName),
             new DataBaseWhere('nick', $this->selectedUser),
         ];
-        if ($this->model->loadFromCode('', $where)) {
+        if ($this->model->loadWhere($where)) {
             // Existen opciones para el usuario.
             return true;
         }
@@ -280,12 +283,11 @@ class EditPageOption extends Controller
         return true;
     }
 
-    private function setBackPage()
+    private function setBackPage(): void
     {
         // check if the url is a real controller name
-        $url = $this->request->get('url', '');
-        $pageModel = new Page();
-        foreach ($pageModel->all([], [], 0, 0) as $page) {
+        $url = $this->request->queryOrInput('url', '');
+        foreach (Page::all() as $page) {
             if (substr($url, 0, strlen($page->name)) === $page->name) {
                 $this->backPage = $url;
                 return;
@@ -303,7 +305,7 @@ class EditPageOption extends Controller
      * @param bool $isWidget
      * @param bool $allowEmpty
      */
-    private function setColumnOption(&$column, string $name, string $key, bool $isWidget, bool $allowEmpty)
+    private function setColumnOption(&$column, string $name, string $key, bool $isWidget, bool $allowEmpty): void
     {
         $newValue = Tools::noHtml($this->request->input($name . '-' . $key));
         if ($isWidget) {

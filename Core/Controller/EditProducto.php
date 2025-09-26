@@ -300,7 +300,7 @@ class EditProducto extends EditController
 
             case 'EditProductoImagen':
                 $orderBy = ['orden' => 'ASC'];
-                $view->loadData('', $where, $orderBy);
+                $view->loadData('', $where, $orderBy, 0, 0);
                 break;
 
             case 'EditVariante':

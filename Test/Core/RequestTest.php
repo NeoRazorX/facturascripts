@@ -89,45 +89,59 @@ final class RequestTest extends TestCase
     public function testGetMethods(): void
     {
         $request = $this->createRequest([
-            'query' => ['q_param' => 'query_value'],
+            'query' => ['q_param' => 'query_value', 'priority' => 'get'],
             'request' => ['r_param' => 'request_value', 'priority' => 'post']
         ]);
 
-        // Test get() con prioridad a request sobre query
+        // Test get() con prioridad a query sobre request
         $this->assertEquals('query_value', $request->get('q_param'));
         $this->assertEquals('request_value', $request->get('r_param'));
-        $this->assertEquals('post', $request->get('priority'));
+        $this->assertEquals('get', $request->get('priority'));
         $this->assertNull($request->get('nonexistent'));
         $this->assertEquals('default', $request->get('nonexistent', 'default'));
+
+        // Test acceso directo a query y request
+        $this->assertEquals('query_value', $request->query->get('q_param'));
+        $this->assertEquals('get', $request->query->get('priority'));
+        $this->assertNull($request->query->get('r_param'));
+
+        $this->assertEquals('request_value', $request->request->get('r_param'));
+        $this->assertEquals('post', $request->request->get('priority'));
+        $this->assertNull($request->request->get('q_param'));
     }
 
     public function testGetInt(): void
     {
         $request = $this->createRequest([
-            'query' => ['int1' => '42', 'int2' => 'not_a_number', 'int3' => '3.14'],
-            'request' => ['int4' => '100']
+            'query' => ['int1' => '42', 'int2' => 'not_a_number', 'int3' => '3.14', 'priority' => '10'],
+            'request' => ['int4' => '100', 'priority' => '20']
         ]);
 
         $this->assertEquals(42, $request->getInt('int1'));
-        $this->assertEquals(0, $request->getInt('int2', false));
+        $this->assertEquals(0, $request->getInt('int2')); // String se convierte a 0
         $this->assertEquals(3, $request->getInt('int3'));
         $this->assertEquals(100, $request->getInt('int4'));
-        $this->assertNull($request->getInt('nonexistent'));
-        $this->assertEquals(0, $request->getInt('nonexistent', false));
+        $this->assertEquals(10, $request->getInt('priority')); // Prioridad a query
+        $this->assertNull($request->getInt('nonexistent')); // Sin default devuelve null
+        $this->assertEquals(99, $request->getInt('nonexistent', 99)); // Con default
+        $this->assertEquals(0, $request->getInt('nonexistent', 0)); // Con default 0
     }
 
     public function testGetFloat(): void
     {
         $request = $this->createRequest([
-            'query' => ['float1' => '3.14', 'float2' => '42', 'float3' => 'not_a_number'],
-            'request' => ['float4' => '2.718']
+            'query' => ['float1' => '3.14', 'float2' => '42', 'float3' => 'not_a_number', 'priority' => '1.5'],
+            'request' => ['float4' => '2.718', 'priority' => '2.5']
         ]);
 
         $this->assertEquals(3.14, $request->getFloat('float1'));
         $this->assertEquals(42.0, $request->getFloat('float2'));
-        $this->assertEquals(0.0, $request->getFloat('float3', false));
+        $this->assertEquals(0.0, $request->getFloat('float3')); // String se convierte a 0.0
         $this->assertEquals(2.718, $request->getFloat('float4'));
-        $this->assertNull($request->getFloat('nonexistent'));
+        $this->assertEquals(1.5, $request->getFloat('priority')); // Prioridad a query
+        $this->assertNull($request->getFloat('nonexistent')); // Sin default devuelve null
+        $this->assertEquals(9.99, $request->getFloat('nonexistent', 9.99)); // Con default
+        $this->assertEquals(0.0, $request->getFloat('nonexistent', 0.0)); // Con default 0.0
     }
 
     public function testGetBool(): void
@@ -139,8 +153,10 @@ final class RequestTest extends TestCase
                 'bool3' => 'false',
                 'bool4' => '0',
                 'bool5' => 'yes',
-                'bool6' => ''
-            ]
+                'bool6' => '',
+                'priority' => '1'
+            ],
+            'request' => ['priority' => '0']
         ]);
 
         $this->assertTrue($request->getBool('bool1'));
@@ -149,21 +165,26 @@ final class RequestTest extends TestCase
         $this->assertFalse($request->getBool('bool4'));
         $this->assertTrue($request->getBool('bool5'));
         $this->assertFalse($request->getBool('bool6')); // string vacía es false
-        $this->assertNull($request->getBool('nonexistent'));
-        $this->assertFalse($request->getBool('nonexistent', false));
+        $this->assertTrue($request->getBool('priority')); // Prioridad a query
+        $this->assertNull($request->getBool('nonexistent')); // Sin default devuelve null
+        $this->assertFalse($request->getBool('nonexistent', false)); // Con default false
+        $this->assertTrue($request->getBool('nonexistent', true)); // Con default true
     }
 
     public function testGetString(): void
     {
         $request = $this->createRequest([
-            'query' => ['str1' => 'Hello World', 'str2' => '  trimmed  ', 'str3' => '<script>alert(1)</script>']
+            'query' => ['str1' => 'Hello World', 'str2' => '  trimmed  ', 'str3' => '<script>alert(1)</script>', 'priority' => 'query_string'],
+            'request' => ['priority' => 'request_string']
         ]);
 
         $this->assertEquals('Hello World', $request->getString('str1'));
         $this->assertEquals('  trimmed  ', $request->getString('str2'));
         $this->assertEquals('<script>alert(1)</script>', $request->getString('str3'));
-        $this->assertNull($request->getString('nonexistent'));
-        $this->assertEquals('', $request->getString('nonexistent', false));
+        $this->assertEquals('query_string', $request->getString('priority')); // Prioridad a query
+        $this->assertNull($request->getString('nonexistent')); // Sin default devuelve null
+        $this->assertEquals('default_value', $request->getString('nonexistent', 'default_value')); // Con default
+        $this->assertEquals('', $request->getString('nonexistent', '')); // Con default string vacío
     }
 
     public function testGetEmail(): void
@@ -173,15 +194,20 @@ final class RequestTest extends TestCase
                 'email1' => 'valid@example.com',
                 'email2' => 'UPPER@EXAMPLE.COM',
                 'email3' => 'invalid.email',
-                'email4' => 'another@'
-            ]
+                'email4' => 'another@',
+                'priority' => 'query@example.com'
+            ],
+            'request' => ['priority' => 'request@example.com']
         ]);
 
         $this->assertEquals('valid@example.com', $request->getEmail('email1'));
         $this->assertEquals('upper@example.com', $request->getEmail('email2'));
-        $this->assertEquals('', $request->getEmail('email3', false));
-        $this->assertEquals('', $request->getEmail('email4', false));
-        $this->assertNull($request->getEmail('nonexistent'));
+        $this->assertNull($request->getEmail('email3')); // Invalid email devuelve null
+        $this->assertNull($request->getEmail('email4')); // Invalid email devuelve null
+        $this->assertEquals('query@example.com', $request->getEmail('priority')); // Prioridad a query
+        $this->assertNull($request->getEmail('nonexistent')); // Sin default devuelve null
+        $this->assertEquals('default@example.com', $request->getEmail('nonexistent', 'default@example.com')); // Con default
+        $this->assertEquals('', $request->getEmail('email3', '')); // Invalid con default string vacío
     }
 
     public function testGetDate(): void
@@ -190,15 +216,19 @@ final class RequestTest extends TestCase
             'query' => [
                 'date1' => '2025-01-15',
                 'date2' => '16-02-2025',
-                'date3' => 'invalid'
-            ]
+                'date3' => 'invalid',
+                'priority' => '2025-01-01'
+            ],
+            'request' => ['priority' => '2025-12-31']
         ]);
 
         $this->assertEquals('15-01-2025', $request->getDate('date1'));
-        $this->assertEquals('16-02-2025', $request->getDate('date2', false));
-        $this->assertEquals('', $request->getDate('date3', false));
-        $this->assertNull($request->getDate('date3'));
-        $this->assertNull($request->getDate('nonexistent'));
+        $this->assertEquals('16-02-2025', $request->getDate('date2'));
+        $this->assertNull($request->getDate('date3')); // Invalid date devuelve null
+        $this->assertEquals('01-01-2025', $request->getDate('priority')); // Prioridad a query
+        $this->assertNull($request->getDate('nonexistent')); // Sin default devuelve null
+        $this->assertEquals('01-01-2000', $request->getDate('nonexistent', '01-01-2000')); // Con default
+        $this->assertEquals('', $request->getDate('date3', '')); // Invalid con default string vacío
     }
 
     public function testGetDateTime(): void
@@ -207,14 +237,19 @@ final class RequestTest extends TestCase
             'query' => [
                 'datetime1' => '2025-01-15 14:30:00',
                 'datetime2' => '2025-01-15T14:30:00',
-                'datetime3' => 'invalid'
-            ]
+                'datetime3' => 'invalid',
+                'priority' => '2025-01-01 10:00:00'
+            ],
+            'request' => ['priority' => '2025-12-31 23:59:59']
         ]);
 
         $this->assertEquals('15-01-2025 14:30:00', $request->getDateTime('datetime1'));
         $this->assertNotEmpty($request->getDateTime('datetime2'));
-        $this->assertEquals('', $request->getDateTime('datetime3', false));
-        $this->assertNull($request->getDateTime('nonexistent'));
+        $this->assertNull($request->getDateTime('datetime3')); // Invalid datetime devuelve null
+        $this->assertEquals('01-01-2025 10:00:00', $request->getDateTime('priority')); // Prioridad a query
+        $this->assertNull($request->getDateTime('nonexistent')); // Sin default devuelve null
+        $this->assertEquals('01-01-2000 00:00:00', $request->getDateTime('nonexistent', '01-01-2000 00:00:00')); // Con default
+        $this->assertEquals('', $request->getDateTime('datetime3', '')); // Invalid con default string vacío
     }
 
     public function testGetHour(): void
@@ -224,15 +259,20 @@ final class RequestTest extends TestCase
                 'hour1' => '14:30',
                 'hour2' => '14:30:45',
                 'hour3' => '25:00',
-                'hour4' => 'invalid'
-            ]
+                'hour4' => 'invalid',
+                'priority' => '08:15'
+            ],
+            'request' => ['priority' => '20:45']
         ]);
 
         $this->assertEquals('14:30:00', $request->getHour('hour1'));
         $this->assertEquals('14:30:45', $request->getHour('hour2'));
-        $this->assertEquals('', $request->getHour('hour3', false));
-        $this->assertEquals('', $request->getHour('hour4', false));
-        $this->assertNull($request->getHour('nonexistent'));
+        $this->assertNull($request->getHour('hour3')); // Invalid hour devuelve null
+        $this->assertNull($request->getHour('hour4')); // Invalid hour devuelve null
+        $this->assertEquals('08:15:00', $request->getHour('priority')); // Prioridad a query
+        $this->assertNull($request->getHour('nonexistent')); // Sin default devuelve null
+        $this->assertEquals('12:00:00', $request->getHour('nonexistent', '12:00:00')); // Con default
+        $this->assertEquals('', $request->getHour('hour3', '')); // Invalid con default string vacío
     }
 
     public function testGetArray(): void
@@ -240,13 +280,16 @@ final class RequestTest extends TestCase
         $request = $this->createRequest([
             'query' => [
                 'array1' => ['a', 'b', 'c'],
-                'array2' => 'not_array'
-            ]
+                'array2' => 'not_array',
+                'priority' => ['query', 'array']
+            ],
+            'request' => ['priority' => ['request', 'array']]
         ]);
 
         $this->assertEquals(['a', 'b', 'c'], $request->getArray('array1'));
-        $this->assertEquals([], $request->getArray('array2', false));
-        $this->assertNull($request->getArray('nonexistent'));
+        $this->assertEquals([], $request->getArray('array2')); // Siempre devuelve array
+        $this->assertEquals(['query', 'array'], $request->getArray('priority')); // Prioridad a query
+        $this->assertEquals([], $request->getArray('nonexistent')); // Siempre devuelve array
     }
 
     public function testGetAlnum(): void
@@ -255,13 +298,16 @@ final class RequestTest extends TestCase
             'query' => [
                 'alnum1' => 'abc123',
                 'alnum2' => 'with spaces',
-                'alnum3' => 'special!@#$'
-            ]
+                'alnum3' => 'special!@#$',
+                'priority' => 'query123'
+            ],
+            'request' => ['priority' => 'request456']
         ]);
 
         $this->assertEquals('abc123', $request->getAlnum('alnum1'));
         $this->assertEquals('withspaces', $request->getAlnum('alnum2'));
         $this->assertEquals('special', $request->getAlnum('alnum3'));
+        $this->assertEquals('query123', $request->getAlnum('priority')); // Prioridad a query
     }
 
     public function testGetUrl(): void
@@ -271,42 +317,53 @@ final class RequestTest extends TestCase
                 'url1' => 'https://example.com',
                 'url2' => 'http://test.org/path?query=1',
                 'url3' => 'not_a_url',
-                'url4' => 'javascript:alert(1)'
-            ]
+                'url4' => 'javascript:alert(1)',
+                'priority' => 'https://query.example.com'
+            ],
+            'request' => ['priority' => 'https://request.example.com']
         ]);
 
         $this->assertEquals('https://example.com', $request->getUrl('url1'));
         $this->assertEquals('http://test.org/path?query=1', $request->getUrl('url2'));
-        $this->assertEquals('', $request->getUrl('url3', false));
-        $this->assertEquals('', $request->getUrl('url4', false));
+        $this->assertNull($request->getUrl('url3')); // Invalid URL devuelve null
+        $this->assertNull($request->getUrl('url4')); // Invalid URL devuelve null
+        $this->assertEquals('https://query.example.com', $request->getUrl('priority')); // Prioridad a query
+        $this->assertNull($request->getUrl('nonexistent')); // Sin default devuelve null
+        $this->assertEquals('https://default.com', $request->getUrl('nonexistent', 'https://default.com')); // Con default
+        $this->assertEquals('', $request->getUrl('url3', '')); // Invalid con default string vacío
     }
 
     public function testGetOnly(): void
     {
         $request = $this->createRequest([
-            'query' => ['status' => 'active', 'invalid' => 'pending']
+            'query' => ['status' => 'active', 'invalid' => 'pending', 'priority' => 'high'],
+            'request' => ['priority' => 'low']
         ]);
 
         $this->assertEquals('active', $request->getOnly('status', ['active', 'inactive', 'pending']));
         $this->assertNull($request->getOnly('invalid', ['active', 'inactive']));
+        $this->assertEquals('high', $request->getOnly('priority', ['high', 'medium', 'low'])); // Prioridad a query
         $this->assertNull($request->getOnly('nonexistent', ['value1', 'value2']));
     }
 
     public function testAll(): void
     {
         $request = $this->createRequest([
-            'query' => ['q1' => 'value1', 'q2' => 'value2'],
-            'request' => ['r1' => 'value3', 'r2' => 'value4']
+            'query' => ['q1' => 'value1', 'q2' => 'value2', 'priority' => 'query_value'],
+            'request' => ['r1' => 'value3', 'r2' => 'value4', 'priority' => 'request_value']
         ]);
 
+        // Test all() sin parámetros - array_merge ahora da prioridad a query
         $all = $request->all();
         $this->assertEquals('value1', $all['q1']);
         $this->assertEquals('value2', $all['q2']);
         $this->assertEquals('value3', $all['r1']);
         $this->assertEquals('value4', $all['r2']);
+        $this->assertEquals('query_value', $all['priority']); // Prioridad consistente: query > request
 
-        $specific = $request->all('q1', 'r2');
-        $this->assertEquals(['q1' => 'value1', 'r2' => 'value4'], $specific);
+        // Test all() con parámetros específicos - usa get() con prioridad query > request
+        $specific = $request->all('q1', 'r2', 'priority');
+        $this->assertEquals(['q1' => 'value1', 'r2' => 'value4', 'priority' => 'query_value'], $specific);
     }
 
     public function testHas(): void
@@ -659,6 +716,90 @@ final class RequestTest extends TestCase
             $_SERVER = $originalServer;
             $_POST = $originalPost;
         }
+    }
+
+    public function testInputOrQuery(): void
+    {
+        $request = $this->createRequest([
+            'query' => ['param1' => 'query_value', 'shared' => 'query_shared'],
+            'request' => ['param2' => 'request_value', 'shared' => 'request_shared']
+        ]);
+
+        // Prioridad a request sobre query
+        $this->assertEquals('request_value', $request->inputOrQuery('param2'));
+        $this->assertEquals('query_value', $request->inputOrQuery('param1'));
+        $this->assertEquals('request_shared', $request->inputOrQuery('shared'));
+        $this->assertNull($request->inputOrQuery('nonexistent'));
+        $this->assertEquals('default', $request->inputOrQuery('nonexistent', 'default'));
+    }
+
+    public function testQueryOrInput(): void
+    {
+        $request = $this->createRequest([
+            'query' => ['param1' => 'query_value', 'shared' => 'query_shared'],
+            'request' => ['param2' => 'request_value', 'shared' => 'request_shared']
+        ]);
+
+        // Prioridad a query sobre request
+        $this->assertEquals('query_value', $request->queryOrInput('param1'));
+        $this->assertEquals('request_value', $request->queryOrInput('param2'));
+        $this->assertEquals('query_shared', $request->queryOrInput('shared'));
+        $this->assertNull($request->queryOrInput('nonexistent'));
+        $this->assertEquals('default', $request->queryOrInput('nonexistent', 'default'));
+    }
+
+    public function testJson(): void
+    {
+        // Test con JSON válido
+        $jsonData = '{"name":"John","age":30,"active":true,"tags":["user","admin"]}';
+        $request = $this->createRequest(['input' => $jsonData]);
+
+        // Test obtener todo el JSON
+        $allData = $request->json();
+        $this->assertEquals('John', $allData['name']);
+        $this->assertEquals(30, $allData['age']);
+        $this->assertTrue($allData['active']);
+        $this->assertEquals(['user', 'admin'], $allData['tags']);
+
+        // Test obtener campos específicos
+        $this->assertEquals('John', $request->json('name'));
+        $this->assertEquals(30, $request->json('age'));
+        $this->assertTrue($request->json('active'));
+        $this->assertEquals(['user', 'admin'], $request->json('tags'));
+
+        // Test campo inexistente
+        $this->assertNull($request->json('nonexistent'));
+        $this->assertEquals('default', $request->json('nonexistent', 'default'));
+    }
+
+    public function testJsonInvalid(): void
+    {
+        // Test con JSON inválido
+        $request = $this->createRequest(['input' => '{"invalid": json}']);
+        $this->assertNull($request->json());
+        $this->assertNull($request->json('any'));
+        $this->assertEquals('default', $request->json('any', 'default'));
+
+        // Test con input vacío
+        $request = $this->createRequest(['input' => '']);
+        $this->assertNull($request->json());
+        $this->assertNull($request->json('any'));
+    }
+
+    public function testGetContent(): void
+    {
+        // Test con contenido inyectado
+        $rawData = '{"test":"value","xml":"<tag>content</tag>"}';
+        $request = $this->createRequest(['input' => $rawData]);
+        $this->assertEquals($rawData, $request->getContent());
+
+        // Test con input vacío
+        $request = $this->createRequest(['input' => '']);
+        $this->assertEquals('', $request->getContent());
+
+        // Test sin input inyectado (usaría php://input)
+        $request = $this->createRequest();
+        $this->assertIsString($request->getContent());
     }
 
     public function testConstants(): void

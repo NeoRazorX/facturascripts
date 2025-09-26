@@ -95,7 +95,7 @@ class Wizard extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-        $action = $this->request->get('action', '');
+        $action = $this->request->inputOrQuery('action', '');
         switch ($action) {
             case 'step1':
                 $this->saveStep1();
@@ -218,12 +218,11 @@ class Wizard extends Controller
         $this->empresa->save();
 
         // assigns warehouse?
-        $almacenModel = new Almacen();
         $where = [
             new DataBaseWhere('idempresa', $this->empresa->idempresa),
             new DataBaseWhere('idempresa', null, 'IS', 'OR')
         ];
-        foreach ($almacenModel->all($where) as $almacen) {
+        foreach (Almacen::all($where) as $almacen) {
             $this->setWarehouse($almacen, $codpais);
             return;
         }
@@ -335,7 +334,7 @@ class Wizard extends Controller
 
         // obtenemos el rol de empleados, y lo asignamos como rol predeterminado
         $role = new Role();
-        if ($role->loadFromCode('employee')) {
+        if ($role->load('employee')) {
             Tools::settingsSet('default', 'codrole', $role->codrole);
             Tools::settingsSave();
         }

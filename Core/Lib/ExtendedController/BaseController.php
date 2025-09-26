@@ -258,7 +258,7 @@ abstract class BaseController extends Controller
 
         $where = [];
         foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
-            $value = $this->request->get($field);
+            $value = $this->request->queryOrInput($field);
             $where[] = new DataBaseWhere($field, $value, '=', $operation);
         }
 
@@ -399,7 +399,7 @@ abstract class BaseController extends Controller
 
         $this->setTemplate(false);
         $this->exportManager->newDoc(
-            $this->request->get('option', ''),
+            $this->request->queryOrInput('option', ''),
             $this->title,
             (int)$this->request->input('idformat', ''),
             $this->request->input('langcode', '')
@@ -449,7 +449,7 @@ abstract class BaseController extends Controller
     {
         $result = [];
         foreach ($keys as $key) {
-            $result[$key] = $this->request->get($key);
+            $result[$key] = $this->request->queryOrInput($key);
         }
         return $result;
     }
@@ -462,7 +462,7 @@ abstract class BaseController extends Controller
      */
     protected function selectAction(): array
     {
-        $required = (bool)$this->request->get('required', false);
+        $required = (bool)$this->request->queryOrInput('required', false);
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
 
         $return = $this->pipe('selectAction', $data, $required);

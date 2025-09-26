@@ -866,7 +866,9 @@ final class FacturaClienteTest extends TestCase
             $this->assertTrue($invoice->delete(), "cannot-delete-facturaCliente-{$campo}");
         }
 
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');;
+        // eliminamos
+        $this->assertTrue($customer->getDefaultAddress()->delete());
+        $this->assertTrue($customer->delete());;
     }
 
     public function testSetIntraCommunity(): void

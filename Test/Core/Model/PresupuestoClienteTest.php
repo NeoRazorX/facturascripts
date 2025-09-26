@@ -390,7 +390,9 @@ final class PresupuestoClienteTest extends TestCase
             $this->assertTrue($doc->delete(), "cannot-delete-pedidoCliente-{$campo}");
         }
 
-        $this->assertTrue($subject->delete(), 'can-not-delete-cliente');
+        // eliminamos
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
     }
 
     public function testApprove(): void

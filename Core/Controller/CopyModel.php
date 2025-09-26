@@ -74,9 +74,10 @@ class CopyModel extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
         $this->codeModel = new CodeModel();
 
-        $action = $this->request->get('action');
+        $action = $this->request->inputOrQuery('action');
         if ($action === 'autocomplete') {
             $this->autocompleteAction();
             return;
@@ -153,8 +154,8 @@ class CopyModel extends Controller
 
     protected function loadModel(): bool
     {
-        $this->modelClass = $this->request->get('model');
-        $this->modelCode = $this->request->get('code');
+        $this->modelClass = $this->request->queryOrInput('model');
+        $this->modelCode = $this->request->queryOrInput('code');
         if (empty($this->modelClass) || empty($this->modelCode)) {
             return false;
         }

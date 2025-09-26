@@ -26,10 +26,9 @@ use FacturaScripts\Core\Internal\SubRequest;
 final class Request
 {
     const METHOD_GET = 'GET';
+    const METHOD_PATCH = 'PATCH';
     const METHOD_POST = 'POST';
     const METHOD_PUT = 'PUT';
-    const METHOD_PATCH = 'PATCH';
-
 
     /** @var SubRequest */
     public $cookies;
@@ -43,6 +42,9 @@ final class Request
     /** @var SubRequest */
     public $query;
 
+    /** @var string|null */
+    private $rawInput;
+
     /** @var SubRequest */
     public $request;
 
@@ -52,13 +54,17 @@ final class Request
         $this->files = new RequestFiles($data['files'] ?? []);
         $this->headers = new Headers($data['headers'] ?? []);
         $this->query = new SubRequest($data['query'] ?? []);
+        $this->rawInput = $data['input'] ?? null;
         $this->request = new SubRequest($data['request'] ?? []);
     }
 
+    /**
+     * @deprecated use request->all() or query->all() instead
+     */
     public function all(string ...$key): array
     {
         if (empty($key)) {
-            return array_merge($this->query->all(), $this->request->all());
+            return array_merge($this->request->all(), $this->query->all());
         }
 
         $result = [];
@@ -118,94 +124,136 @@ final class Request
         return $this->protocol() . '://' . $this->host() . $this->urlWithQuery();
     }
 
+    /**
+     * @deprecated use input(), inputOrQuery(), query() or queryOrInput() instead
+     */
     public function get(string $key, $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->get($key);
+        if ($this->query->has($key)) {
+            return $this->query->get($key);
         }
 
-        return $this->query->get($key, $default);
+        return $this->request->get($key, $default);
     }
 
-    public function getArray(string $key, bool $allowNull = true): ?array
+    /**
+     * @deprecated use request->getArray() or query->getArray() instead
+     */
+    public function getArray(string $key): array
     {
-        if ($this->request->has($key)) {
-            return $this->request->getArray($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getArray($key);
         }
 
-        return $this->query->getArray($key, $allowNull);
+        return $this->request->getArray($key);
     }
 
+    /**
+     * @deprecated use request->getAlnum() or query->getAlnum() instead
+     */
     public function getAlnum(string $key): string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getAlnum($key);
+        if ($this->query->has($key)) {
+            return $this->query->getAlnum($key);
         }
 
-        return $this->query->getAlnum($key);
+        return $this->request->getAlnum($key);
     }
 
-    public function getBool(string $key, bool $allowNull = true): ?bool
+    public function getBasePath(): string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getBool($key, $allowNull);
-        }
-
-        return $this->query->getBool($key, $allowNull);
+        $url = $_SERVER['REQUEST_URI'];
+        $base = parse_url($url, PHP_URL_PATH);
+        return is_string($base) ? $base : '';
     }
 
-    public function getDate(string $key, bool $allowNull = true): ?string
+    /**
+     * @deprecated use request->getBool() or query->getBool() instead
+     */
+    public function getBool(string $key, ?bool $default = null): ?bool
     {
-        if ($this->request->has($key)) {
-            return $this->request->getDate($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getBool($key, $default);
         }
 
-        return $this->query->getDate($key, $allowNull);
+        return $this->request->getBool($key, $default);
     }
 
-    public function getDateTime(string $key, bool $allowNull = true): ?string
+    public function getContent(): string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getDateTime($key, $allowNull);
-        }
-
-        return $this->query->getDateTime($key, $allowNull);
+        return $this->rawInput ?? file_get_contents('php://input');
     }
 
-    public function getEmail(string $key, bool $allowNull = true): ?string
+    /**
+     * @deprecated use request->getDate() or query->getDate() instead
+     */
+    public function getDate(string $key, ?string $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getEmail($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getDate($key, $default);
         }
 
-        return $this->query->getEmail($key, $allowNull);
+        return $this->request->getDate($key, $default);
     }
 
-    public function getFloat(string $key, bool $allowNull = true): ?float
+    /**
+     * @deprecated use request->getDateTime() or query->getDateTime() instead
+     */
+    public function getDateTime(string $key, ?string $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getFloat($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getDateTime($key, $default);
         }
 
-        return $this->query->getFloat($key, $allowNull);
+        return $this->request->getDateTime($key, $default);
     }
 
-    public function getHour(string $key, bool $allowNull = true): ?string
+    /**
+     * @deprecated use request->getEmail() or query->getEmail() instead
+     */
+    public function getEmail(string $key, ?string $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getHour($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getEmail($key, $default);
         }
 
-        return $this->query->getHour($key, $allowNull);
+        return $this->request->getEmail($key, $default);
     }
 
-    public function getInt(string $key, bool $allowNull = true): ?int
+    /**
+     * @deprecated use request->getFloat() or query->getFloat() instead
+     */
+    public function getFloat(string $key, ?float $default = null): ?float
     {
-        if ($this->request->has($key)) {
-            return $this->request->getInt($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getFloat($key, $default);
         }
 
-        return $this->query->getInt($key, $allowNull);
+        return $this->request->getFloat($key, $default);
+    }
+
+    /**
+     * @deprecated use request->getHour() or query->getHour() instead
+     */
+    public function getHour(string $key, ?string $default = null): ?string
+    {
+        if ($this->query->has($key)) {
+            return $this->query->getHour($key, $default);
+        }
+
+        return $this->request->getHour($key, $default);
+    }
+
+    /**
+     * @deprecated use request->getInt() or query->getInt() instead
+     */
+    public function getInt(string $key, ?int $default = null): ?int
+    {
+        if ($this->query->has($key)) {
+            return $this->query->getInt($key, $default);
+        }
+
+        return $this->request->getInt($key, $default);
     }
 
     /**
@@ -217,38 +265,40 @@ final class Request
         return $this->method();
     }
 
+    /**
+     * @deprecated use request->getOnly() or query->getOnly() instead
+     */
     public function getOnly(string $key, array $values): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getOnly($key, $values);
+        if ($this->query->has($key)) {
+            return $this->query->getOnly($key, $values);
         }
 
-        return $this->query->getOnly($key, $values);
+        return $this->request->getOnly($key, $values);
     }
 
-    public function getString(string $key, bool $allowNull = true): ?string
+    /**
+     * @deprecated use request->getString() or query->getString() instead
+     */
+    public function getString(string $key, ?string $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getString($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getString($key, $default);
         }
 
-        return $this->query->getString($key, $allowNull);
+        return $this->request->getString($key, $default);
     }
 
-    public function getUrl(string $key, bool $allowNull = true): ?string
+    /**
+     * @deprecated use request->getUrl() or query->getUrl() instead
+     */
+    public function getUrl(string $key, ?string $default = null): ?string
     {
-        if ($this->request->has($key)) {
-            return $this->request->getUrl($key, $allowNull);
+        if ($this->query->has($key)) {
+            return $this->query->getUrl($key, $default);
         }
 
-        return $this->query->getUrl($key, $allowNull);
-    }
-
-    public function getBasePath(): string
-    {
-        $url = $_SERVER['REQUEST_URI'];
-        $base = parse_url($url, PHP_URL_PATH);
-        return is_string($base) ? $base : '';
+        return $this->request->getUrl($key, $default);
     }
 
     public function has(string ...$key): bool
@@ -281,6 +331,13 @@ final class Request
         return $this->request->get($key, $default);
     }
 
+    public function inputOrQuery(string $key, $default = null): ?string
+    {
+        return $this->request->has($key) ?
+            $this->request->get($key) :
+            $this->query->get($key, $default);
+    }
+
     public function ip(): string
     {
         foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $field) {
@@ -295,6 +352,18 @@ final class Request
     public function isMethod(string $method): bool
     {
         return $this->method() === $method;
+    }
+
+    public function json(?string $key = null, $default = null)
+    {
+        $input = $this->getContent();
+        $data = json_decode($input, true);
+
+        if ($key === null) {
+            return $data;
+        }
+
+        return $data[$key] ?? $default;
     }
 
     public function method(): string
@@ -353,6 +422,13 @@ final class Request
     public function query(string $key, $default = null): ?string
     {
         return $this->query->get($key, $default);
+    }
+
+    public function queryOrInput(string $key, $default = null): ?string
+    {
+        return $this->query->has($key) ?
+            $this->query->get($key) :
+            $this->request->get($key, $default);
     }
 
     public function isSecure(): bool
