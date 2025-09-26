@@ -100,6 +100,7 @@ class SalesFooterHTML
             . self::renderField($model, 'totalcoste')
             . self::renderField($model, 'totalbeneficio')
             . self::renderField($model, 'total')
+            . self::renderField($model, 'total_pendiente')
             . '</div>'
             . '<div class="row g-2">'
             . '<div class="col-auto">'
@@ -207,6 +208,9 @@ class SalesFooterHTML
 
             case 'total':
                 return self::column($model, 'total', 'total');
+
+            case 'total_pendiente':
+                return self::column($model, 'total_pendiente', 'pending-total');
 
             case 'totalbeneficio':
                 return self::column($model, 'totalbeneficio', 'profits', true, Tools::settings('default', 'levelbenefitsales', 0));
