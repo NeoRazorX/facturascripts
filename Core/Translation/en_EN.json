@@ -1170,6 +1170,7 @@
     "pattern-without-number": "The chosen pattern does not include a number, so it is very likely that it will generate duplicate codes.",
     "pattern-without-serie": "The chosen pattern does not include a series, so it is possible that it will generate duplicate codes for each series",
     "pattern-without-year": "The chosen pattern does not include exercise or date, so it is possible that it generates duplicate codes in each exercise",
+    "pattern-hardcoded-year": "The pattern includes the current or previous year. Please use {EJE} instead of the year.",
     "pay": "Pay",
     "pay-with-card": "Pay with card",
     "payment": "Payment",
