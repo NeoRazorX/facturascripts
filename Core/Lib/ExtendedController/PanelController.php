@@ -439,7 +439,7 @@ abstract class PanelController extends BaseController
             return [];
         }
 
-        $file = $this->request->files->get('file');
+        $file = $this->request->file('file');
         if (empty($file)) {
             return [];
         }
@@ -451,10 +451,10 @@ abstract class PanelController extends BaseController
 
         $files = $column->widget->files();
         return [
-            'html' => $column->widget->renderFileList($files, $file->idfile, $widgetId),
+            'html' => $column->widget->renderFileList($files, $attachedFile->idfile, $widgetId),
             'records' => count($files),
-            'new_file' => $file->idfile,
-            'new_filename' => $file->shortFileName(),
+            'new_file' => $attachedFile->idfile,
+            'new_filename' => $attachedFile->shortFileName(),
         ];
     }
 
