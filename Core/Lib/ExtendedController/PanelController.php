@@ -439,8 +439,13 @@ abstract class PanelController extends BaseController
             return [];
         }
 
-        $file = $column->widget->uploadFile($this->request->files->get('file'));
-        if (false === $file->exists()) {
+        $file = $this->request->files->get('file');
+        if (empty($file)) {
+            return [];
+        }
+
+        $attachedFile = $column->widget->uploadFile($file);
+        if (false === $attachedFile->exists()) {
             return [];
         }
 
