@@ -1412,6 +1412,7 @@
     "select": "Aukeratu",
     "select-all": "Guztiak hautatu",
     "select-content-for": "%content%-erako eduki hautatu",
+    "select-file-to-add": "Puedes añadir un archivo desde aquí, seleccionalo y súbelo desde tu computador. Pulsa el botón ninguno si lo que quieres es seleccionar ninguno.",
     "select-none": "Bat ere ez hautatu",
     "select-plugin-zip-file": "Hautatu plugin zip fitxategia:",
     "select-user": "Aukeratu erabiltzailea",

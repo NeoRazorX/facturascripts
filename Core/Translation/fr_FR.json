@@ -1412,6 +1412,7 @@
     "select": "Sélectionner",
     "select-all": "Tout sélectionner",
     "select-content-for": "Sélectionnez le contenu pour %content%",
+    "select-file-to-add": "Puedes añadir un archivo desde aquí, seleccionalo y súbelo desde tu computador. Pulsa el botón ninguno si lo que quieres es seleccionar ninguno.",
     "select-none": "Ne rien sélectionner",
     "select-plugin-zip-file": "Sélectionnez le fichier ZIP du module :",
     "select-user": "Sélectionner un utilisateur",
