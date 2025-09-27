@@ -251,7 +251,7 @@ final class Plugin
         // si la versión de PHP es menor que la requerida, no es compatible
         if (version_compare(PHP_VERSION, $this->min_php, '<')) {
             $this->compatible = false;
-            $this->compatibilityDescription = Tools::lang()->trans('plugin-phpversion-error', [
+            $this->compatibilityDescription = Tools::trans('plugin-phpversion-error', [
                 '%pluginName%' => $this->name,
                 '%php%' => $this->min_php
             ]);
@@ -261,7 +261,7 @@ final class Plugin
         // si la versión de FacturaScripts es menor que la requerida, no es compatible
         if (Kernel::version() < $this->min_version) {
             $this->compatible = false;
-            $this->compatibilityDescription = Tools::lang()->trans('plugin-needs-fs-version', [
+            $this->compatibilityDescription = Tools::trans('plugin-needs-fs-version', [
                 '%pluginName%' => $this->name,
                 '%minVersion%' => $this->min_version,
                 '%version%' => Kernel::version()
@@ -269,10 +269,10 @@ final class Plugin
             return;
         }
 
-        // si la versión requerida es menor que 2021, no es compatible
-        if ($this->min_version < 2020) {
+        // si la versión requerida es menor que 2025, no es compatible
+        if ($this->min_version < 2025) {
             $this->compatible = false;
-            $this->compatibilityDescription = Tools::lang()->trans('plugin-not-compatible', [
+            $this->compatibilityDescription = Tools::trans('plugin-not-compatible', [
                 '%pluginName%' => $this->name,
                 '%version%' => Kernel::version()
             ]);
