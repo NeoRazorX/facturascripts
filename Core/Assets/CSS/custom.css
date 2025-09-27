@@ -102,9 +102,13 @@ textarea[required].form-control:not(:read-only) {
     background-image: linear-gradient(to bottom, rgba(253, 253, 150, 0.5), rgba(253, 253, 150, 0.25));
 }
 
-select[required].form-control:not(:disabled),
-select[required].select2-hidden-accessible + .select2-container .select2-selection {
+select[required].form-control:not(:disabled) {
     background-image: linear-gradient(to bottom, rgba(253, 253, 150, 0.5), rgba(253, 253, 150, 0.25));
+}
+
+/* Select2 required fields */
+select[required].form-select.select2 + .select2-container--bootstrap-5 .select2-selection {
+    box-shadow: 0 0 0 0.2rem rgba(253, 253, 150, 0.4) !important;
 }
 
 /* pace customizations */
