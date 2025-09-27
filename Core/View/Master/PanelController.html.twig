@@ -25,10 +25,10 @@
     {% set firstView = fsc.views | first %}
     <div class="container-fluid d-print-none">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col pb-2">
                 {# -- Hidden alternative page info -- #}
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb d-lg-none">
+                <nav aria-label="breadcrumb" class="d-block d-md-none">
+                    <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="#">{{ trans(pageData.menu) }}</a>
                         </li>
@@ -49,12 +49,8 @@
                         </li>
                     </ol>
                 </nav>
-            </div>
-        </div>
-        <div class="row">
             {# -- Top left buttons -- #}
-            <div class="col-12 col-lg-8 mb-2">
-                <div class="btn-group flex-wrap">
+                <div class="btn-group">
                     <a href="{{ firstView.model.url('list') }}" class="btn btn-sm btn-secondary">
                         <i class="fa-solid fa-list fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-lg-inline-block">{{ trans('all') }}</span>
@@ -65,7 +61,7 @@
                     </a>
                 </div>
                 {# -- Options button -- #}
-                {{ _self.optionsButton(fsc, firstView, i18n) }}
+                {{ _self.optionsButton(fsc, firstView) }}
                 {# -- New button -- #}
                 {% if fsc.hasData and firstView.settings.btnNew %}
                     <a href="{{ firstView.model.url('new') }}" class="btn btn-sm btn-success">
@@ -84,18 +80,20 @@
                 {% endfor %}
             </div>
             {# -- Top right text -- #}
-            <div class="col-12 col-lg-4 d-none d-md-block text-lg-end text-center mt-3 mt-lg-0">
-                {% set image = fsc.getImageUrl() %}
-                {% if image is empty %}
-                    <i class="{{ pageData.icon }} fa-3x ps-lg-3 float-lg-end" aria-hidden="true"></i>
-                {% else %}
-                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail ms-lg-3 mb-2 float-lg-end"/>
-                {% endif %}
+            <div class="col-md-auto d-none d-md-block text-end">
                 <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
                 {% if fsc.hasData %}
                     <p class="text-info mb-3">{{ firstView.model.primaryDescription() | raw }}</p>
                 {% else %}
                     <p class="text-info mb-3">{{ trans('new') }}</p>
+                {% endif %}
+            </div>
+            <div class="col-md-auto d-none d-lg-block">
+                {% set image = fsc.getImageUrl() %}
+                {% if image is empty %}
+                    <i class="{{ pageData.icon }} fa-3x" aria-hidden="true"></i>
+                {% else %}
+                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail"/>
                 {% endif %}
             </div>
         </div>
@@ -108,9 +106,9 @@
         <div class="row g-2">
             {# -- Left Panel -- #}
             {% if fsc.views | length > 1 %}
-                <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                <div class="col-12 col-lg-auto mt-lg-2">
                     {# -- Left tabs -- #}
-                    <div class="nav nav-pills flex-row flex-lg-column pb-3 overflow-x-auto" id="mainTabs" role="tablist" style="white-space: nowrap;">
+                    <div class="nav nav-pills flex-row flex-lg-column overflow-x-auto" id="mainTabs" role="tablist" style="white-space: nowrap;">
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
@@ -156,7 +154,7 @@
     </script>
 {% endblock %}
 
-{% macro optionsButton(fsc, firstView, i18n) %}
+{% macro optionsButton(fsc, firstView) %}
     {% set show = false %}
     {% for viewName, view in fsc.views %}
         {% if view.settings.active and view.columns is not empty %}
