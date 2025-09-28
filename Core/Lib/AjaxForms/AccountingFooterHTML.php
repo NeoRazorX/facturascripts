@@ -104,7 +104,7 @@ class AccountingFooterHTML
             return '';
         }
 
-        return '<div class="col-sm-3 col-md-2 mb-2">'
+        return '<div class="col-sm-6 col-md-4 col-lg-2 mb-2">'
             . '<div class="input-group">'
             . '<span class="input-group-text text-danger">' . Tools::trans('unbalance') . '</span>'
             . '<input type="number" value="' . $unbalance . '" class="form-control" step="any" readonly>'
@@ -116,7 +116,7 @@ class AccountingFooterHTML
      */
     protected static function importe(Asiento $model): string
     {
-        return '<div class="col-sm-3 col-md-2 mb-2">'
+        return '<div class="col-sm-6 col-md-4 col-lg-2 mb-2">'
             . '<div class="input-group">'
             . '<span class="input-group-text">' . Tools::trans('amount') . '</span>'
             . '<input type="number" value="' . $model->importe . '" class="form-control" step="any" tabindex="-1" readonly>'
@@ -129,7 +129,7 @@ class AccountingFooterHTML
             return '<div class="col-sm"></div>';
         }
 
-        return '<div class="col-sm-6 col-md-2 mb-2">'
+        return '<div class="col-sm-12 col-md-6 col-lg-3 col-xl-2 mb-2">'
             . '<div class="input-group">'
             . '<input type="text" class="form-control" maxlength="15" autocomplete="off" placeholder="' . Tools::trans('subaccount')
             . '" id="new_subaccount" name="new_subaccount" onchange="return newLineAction(this.value);"/>'
@@ -137,7 +137,7 @@ class AccountingFooterHTML
             . ' onclick="$(\'#findSubaccountModal\').modal(\'show\'); $(\'#findSubaccountInput\').focus();"><i class="fa-solid fa-book"></i></button>'
             . '</div>'
             . '</div>'
-            . '<div class="col-sm">'
+            . '<div class="col-sm-12 col-md-6 col-lg">'
             . '<p class="text-muted">' . Tools::trans('account-dot-code') . '</p>'
             . '</div>';
     }

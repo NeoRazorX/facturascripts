@@ -65,7 +65,7 @@ class AccountingHeaderHTML
     protected static function canal(Asiento $model): string
     {
         $attributes = $model->editable ? 'name="canal"' : 'disabled';
-        return '<div class="col-sm-2">'
+        return '<div class="col-sm-6 col-md-4 col-lg-2">'
             . '<div class="mb-2">' . Tools::trans('channel')
             . '<input type="number" ' . $attributes . ' value="' . $model->canal . '" placeholder="'
             . Tools::trans('optional') . '" class="form-control"/>'
@@ -76,7 +76,7 @@ class AccountingHeaderHTML
     protected static function concepto(Asiento $model): string
     {
         $attributes = $model->editable ? 'name="concepto" autocomplete="off" required' : 'disabled';
-        return '<div class="col-sm-6 col-md">'
+        return '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div class="mb-2">' . Tools::trans('concept')
             . '<input type="text" list="concept-items" ' . $attributes . ' value="' . Tools::noHtml($model->concepto) . '" class="form-control"/>'
             . '<datalist id="concept-items">' . static::getConceptItems($model) . '</datalist>'
@@ -106,7 +106,7 @@ class AccountingHeaderHTML
         }
 
         if ($link) {
-            return '<div class="col-sm-3 col-md-2">'
+            return '<div class="col-sm-6 col-md-4 col-lg-2">'
                 . '<div class="mb-2">' . Tools::trans('document')
                 . '<div class="input-group">'
                 . ''
@@ -118,7 +118,7 @@ class AccountingHeaderHTML
                 . '</div>';
         }
 
-        return '<div class="col-sm-3 col-md-2 mb-2">'
+        return '<div class="col-sm-6 col-md-4 col-lg-2 mb-2">'
             . '<div class="mb-2">' . Tools::trans('document')
             . '<input type="text" value="' . Tools::noHtml($model->documento) . '" class="form-control" readonly/>'
             . '</div></div>';
@@ -134,7 +134,7 @@ class AccountingHeaderHTML
         }
 
         $attributes = $model->editable ? 'name="iddiario"' : 'disabled';
-        return '<div class="col-sm-2">'
+        return '<div class="col-sm-6 col-md-4 col-lg-2">'
             . '<div class="mb-2">' . Tools::trans('daily')
             . '<select ' . $attributes . ' class="form-select">' . $options . '</select>'
             . '</div>'
@@ -144,7 +144,7 @@ class AccountingHeaderHTML
     protected static function fecha(Asiento $model): string
     {
         $attributes = $model->editable ? 'name="fecha" required' : 'disabled';
-        return '<div class="col-sm-3 col-md-2">'
+        return '<div class="col-sm-6 col-md-4 col-lg-2">'
             . '<div class="mb-2">' . Tools::trans('date')
             . '<input type="date" ' . $attributes . ' value="' . date('Y-m-d', strtotime($model->fecha)) . '" class="form-control" />'
             . '</div>'
@@ -182,7 +182,7 @@ class AccountingHeaderHTML
 
         $attributes = $model->id() ? 'readonly' : 'required';
 
-        return '<div class="col-sm-3 col-md-2">'
+        return '<div class="col-sm-6 col-md-4 col-lg-2">'
             . '<div class="mb-2">' . Tools::trans('company')
             . '<select name="idempresa" class="form-select" ' . $attributes . '>'
             . static::getItems($companyList, 'idempresa', 'nombre', $model->idempresa)
@@ -194,7 +194,7 @@ class AccountingHeaderHTML
     protected static function operacion(Asiento $model): string
     {
         $attributes = $model->editable ? 'name="operacion"' : 'disabled';
-        return '<div class="col-sm-2">'
+        return '<div class="col-sm-6 col-md-4 col-lg-2">'
             . '<div class="mb-2">' . Tools::trans('operation')
             . '<select ' . $attributes . ' class="form-select">'
             . '<option value="">' . Tools::trans('optional') . '</option>'

@@ -253,7 +253,7 @@ class AccountingLineHTML
             ? 'name="concepto_' . $idlinea . '" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col pb-2 small">' . Tools::trans('concept')
+        return '<div class="col-sm-12 col-lg pb-2 small">' . Tools::trans('concept')
             . '<input type="text" ' . $attributes . ' class="form-control" value="' . Tools::noHtml($line->concepto) . '">'
             . '</div>';
     }
@@ -265,7 +265,7 @@ class AccountingLineHTML
             ? 'name="codcontrapartida_' . $idlinea . '" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col pb-2 small">' . Tools::trans('counterpart')
+        return '<div class="col-sm-6 col-lg pb-2 small">' . Tools::trans('counterpart')
             . '<input type="text" ' . $attributes . ' value="' . $line->codcontrapartida
             . '" class="form-control" maxlength="15" autocomplete="off" placeholder="' . Tools::trans('optional') . '"/>'
             . '</div>';
@@ -389,7 +389,7 @@ class AccountingLineHTML
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $subcuenta = static::getSubcuenta($line->codsubcuenta, $model);
         if (false === $model->editable) {
-            return '<div class="col pb-2 small">' . $subcuenta->descripcion
+            return '<div class="col-sm-6 col-lg pb-2 small">' . $subcuenta->descripcion
                 . '<div class="input-group">'
                 . '<input type="text" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
                 . '<a href="' . $subcuenta->url() . '" target="_blank" class="btn btn-outline-primary">'
@@ -400,7 +400,7 @@ class AccountingLineHTML
                 . static::concepto($line, $model);
         }
 
-        return '<div class="col pb-2 small">'
+        return '<div class="col-sm-6 col-lg pb-2 small">'
             . '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' . $subcuenta->descripcion
             . '<div class="input-group">'
             . '<input type="text" name="codsubcuenta_' . $idlinea . '" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
