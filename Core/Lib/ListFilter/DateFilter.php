@@ -72,7 +72,7 @@ class DateFilter extends BaseFilter
     public function render(): string
     {
         $value = empty($this->value) ? '' : date('Y-m-d', strtotime($this->value));
-        return '<div class="col-sm-3 col-lg-2">'
+        return '<div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">'
             . '<div class="mb-3">'
             . '<div class="input-group" title="' . static::$i18n->trans($this->label) . '">'
             . ''

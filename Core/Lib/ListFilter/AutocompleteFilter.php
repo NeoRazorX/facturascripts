@@ -91,7 +91,7 @@ class AutocompleteFilter extends BaseFilter
     public function render(): string
     {
         $label = static::$i18n->trans($this->label);
-        $html = '<div class="col-sm-3 col-lg-2">'
+        $html = '<div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">'
             . '<input type="hidden" name="' . $this->name() . '" value="' . $this->value . '"/>'
             . '<div class="mb-3">'
             . '<div class="input-group">';

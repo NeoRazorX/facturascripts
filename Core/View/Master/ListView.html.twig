@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -254,13 +254,15 @@
             </a>
         {% else %}
             <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
-                <i class="fa-solid fa-filter fa-fw"></i> {{ trans('filters') }}
+                <i class="fa-solid fa-filter fa-fw"></i>
+                <span class="d-none d-lg-inline">{{ trans('filters') }}</span>
             </button>
             {% if currentView.showFilters and currentView.settings.saveFilters %}
                 {# -- Save user filters -- #}
                 <button type="button" class="btn btn-success" data-bs-toggle="modal"
                         data-bs-target="#savefilter{{ viewName }}" title="{{ trans('save-filter') }}">
-                    <i class="fa-solid fa-save fa-fw"></i> {{ trans('save') }}
+                    <i class="fa-solid fa-save fa-fw"></i>
+                    <span class="d-none d-lg-inline">{{ trans('save') }}</span>
                 </button>
             {% endif %}
         {% endif %}
@@ -314,7 +316,7 @@
                             <div class="mb-3">
                                 <label>{{ trans('description') }}</label>
                                 <input type="text" name="filter-description" class="form-control noEnterKey"
-                                       autofocus=""/>
+                                       autofocus/>
                             </div>
                         </div>
                     </div>
@@ -388,8 +390,8 @@
                 <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off"
                        placeholder="{{ trans('search') }}"/>
                 <button type="submit" class="btn btn-secondary">
-                        <i class="fa-solid fa-search" aria-hidden="true"></i>
-                    </button>
+                    <i class="fa-solid fa-search" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
     {% endif %}

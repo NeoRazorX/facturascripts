@@ -1412,7 +1412,7 @@
     "select": "Seleccionar",
     "select-all": "Seleccionar tot",
     "select-content-for": "Selecciona contingut per a %content%",
-    "select-file-to-add": "Puedes añadir un archivo desde aquí, seleccionalo y súbelo desde tu computador. Pulsa el botón ninguno si lo que quieres es seleccionar ninguno.",
+    "select-file-to-add": "Pots afegir un fitxer des d'aquí, selecciona'l i puja'l des del teu ordinador. Prem el botó cap si el que vols és seleccionar-ne cap.",
     "select-none": "Seleccionar res",
     "select-plugin-zip-file": "Seleccionar plugin (zip):",
     "select-user": "Seleccionar Usuari",
