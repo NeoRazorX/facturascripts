@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,12 +27,12 @@
 <script>
     function editViewDelete(viewName) {
         const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal' + viewName));
-        
-        document.getElementById('confirmDeleteBtn' + viewName).onclick = function() {
+
+        document.getElementById('confirmDeleteBtn' + viewName).onclick = function () {
             document.querySelector("#form" + viewName + " input[name='action']").value = "delete";
             document.getElementById("form" + viewName).submit();
         };
-        
+
         deleteModal.show();
         return false;
     }
@@ -44,7 +44,8 @@
     {{ row.render(currentView.getViewName(), '', fsc) | raw }}
 </div>
 
-<form id="form{{ currentView.getViewName() }}" method="post" enctype="multipart/form-data" onsubmit="animateSpinner('add')">
+<form id="form{{ currentView.getViewName() }}" method="post" enctype="multipart/form-data"
+      onsubmit="animateSpinner('add')">
     {{ formToken() }}
     <input type="hidden" name="action" value="{{ action }}"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
@@ -71,7 +72,7 @@
             </div>
         </div>
         <div class="{{ currentView.settings.card ? 'card-footer p-2' : 'container-fluid' }}">
-            <div class="row">
+            <div class="row g-2">
                 {% if fsc.hasData and currentView.settings.btnDelete %}
                     <div class="col-auto">
                         <button type="button" class="btn btn-sm btn-danger"
@@ -87,20 +88,22 @@
                     {% set row = currentView.getRow('actions') %}
                     {{ row.render(false, currentView.getViewName()) | raw }}
                 </div>
-                <div class="col-auto">
-                    {% if currentView.settings.btnUndo %}
+                {% if currentView.settings.btnUndo %}
+                    <div class="col-auto">
                         <button class="btn btn-sm btn-secondary" type="reset">
                             <i class="fa-solid fa-undo fa-fw" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">{{ trans('undo') }}</span>
                         </button>
-                    {% endif %}
-                    {% if currentView.settings.btnSave %}
+                    </div>
+                {% endif %}
+                {% if currentView.settings.btnSave %}
+                    <div class="col-auto">
                         <button class="btn btn-sm btn-primary" type="submit">
                             <i class="fa-solid fa-save fa-fw" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline-block">{{ trans('save') }}</span>
                         </button>
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -120,11 +123,13 @@
 {% endfor %}
 
 {# -- Delete Confirmation Modal -- #}
-<div class="modal fade" id="deleteConfirmModal{{ currentView.getViewName() }}" tabindex="-1" aria-labelledby="deleteConfirmModalLabel{{ currentView.getViewName() }}" aria-hidden="true">
+<div class="modal fade" id="deleteConfirmModal{{ currentView.getViewName() }}" tabindex="-1"
+     aria-labelledby="deleteConfirmModalLabel{{ currentView.getViewName() }}" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteConfirmModalLabel{{ currentView.getViewName() }}">{{ trans('confirm-delete') }}</h5>
+                <h5 class="modal-title"
+                    id="deleteConfirmModalLabel{{ currentView.getViewName() }}">{{ trans('confirm-delete') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
