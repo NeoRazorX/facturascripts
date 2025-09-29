@@ -1685,7 +1685,7 @@
     "unlock-entry": "Desbloquear",
     "unpaid": "Impago",
     "unsafe-file": "Arquivo não seguro",
-    "unsafe-file-p": "Por motivos de seguridad impedimos las descargas de algunos tipos de archivos, como este: %file%",
+    "unsafe-file-p": "Por motivos de segurança impedimos as transferências de alguns tipos de ficheiros, como este: %file%",
     "until-accounting-entry": "Até lançamento contábil",
     "until-date": "Até",
     "until-subaccount": "Até subconta",
