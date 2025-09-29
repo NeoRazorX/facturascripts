@@ -83,7 +83,9 @@ class BusinessDocumentCode
 
             // use old pattern for the new sequence
             $pattern = $seq->patron;
-            if (false === stripos($pattern, '{EJE}') && preg_match('/20\\d{2}/', $pattern)) {
+
+            // correct pattern
+            if (preg_match('/20\\d{2}/', $pattern)) {
                 $pattern = preg_replace('/20\\d{2}/', '{EJE}', $pattern);
             }
 
