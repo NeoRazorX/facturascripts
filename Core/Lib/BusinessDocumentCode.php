@@ -78,10 +78,6 @@ class BusinessDocumentCode
                 $selectedSequence = $seq;
             } elseif ($seq->codejercicio == $document->codejercicio) {
                 // sequence for this exercise
-                if (false === stripos($seq->patron, '{EJE}') && preg_match('/20\\d{2}/', $seq->patron)) {
-                    Tools::log()->warning('sequence-year-pattern-detected', ['%pattern%' => $seq->patron]);
-                }
-
                 return $seq;
             }
 
@@ -97,10 +93,6 @@ class BusinessDocumentCode
 
         // sequence not found? Then create
         if (false === $selectedSequence->exists()) {
-            if (false === stripos($patron, '{EJE}') && preg_match('/20\\d{2}/', $patron)) {
-                $patron = preg_replace('/20\\d{2}/', '{EJE}', $patron);
-            }
-
             $selectedSequence->codejercicio = $document->codejercicio;
             $selectedSequence->codserie = $document->codserie;
             $selectedSequence->idempresa = $document->idempresa;
@@ -109,10 +101,6 @@ class BusinessDocumentCode
             $selectedSequence->tipodoc = $document->modelClassName();
             $selectedSequence->usarhuecos = ('FacturaCliente' === $document->modelClassName());
             $selectedSequence->save();
-        }
-
-        if (false === stripos($selectedSequence->patron, '{EJE}') && preg_match('/20\\d{2}/', $selectedSequence->patron)) {
-            Tools::log()->warning('sequence-year-pattern-detected', ['%pattern%' => $selectedSequence->patron]);
         }
 
         return $selectedSequence;
