@@ -118,10 +118,7 @@ class ColumnItem extends VisualItem
             return $this->widget->inputHidden($model);
         }
 
-        // para los checkbox forzamos el col-sm-auto
-        $colAuto = $this->widget->getType() === 'checkbox' ? 'col-sm-auto' : 'col-sm';
-
-        $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css($colAuto);
+        $divClass = $this->getColumnClasses();
         if (false === empty($this->class)) {
             $divClass .= ' ' . $this->class;
         }
@@ -131,6 +128,34 @@ class ColumnItem extends VisualItem
         return '<div' . $divID . ' class="' . $divClass . '">'
             . $editHtml
             . '</div>';
+    }
+
+    /**
+     * Returns the Bootstrap column classes based on widget type and configuration
+     *
+     * @return string
+     */
+    public function getColumnClasses(): string
+    {
+        // para los checkbox forzamos el col-sm-auto
+        if ($this->widget->getType() === 'checkbox') {
+            return $this->css('col-sm-auto');
+        }
+
+        // si no tiene numcolumns configurado, usamos comportamiento adaptativo
+        if ($this->numcolumns <= 0) {
+            // para móviles siempre 12 columnas, para tablets y desktop se adapta
+            return $this->css('col-12 col-sm-6 col-md-4 col-xl');
+        }
+
+        // si tiene numcolumns configurado, aplicamos reglas responsive
+        switch ($this->numcolumns) {
+            case 12:
+                return $this->css('col-12');
+
+            default:
+                return $this->css('col-12 col-sm-6 col-md-4 col-xl-' . $this->numcolumns);
+        }
     }
 
     /**

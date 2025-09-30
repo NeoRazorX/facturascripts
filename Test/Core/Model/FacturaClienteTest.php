@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -78,7 +78,7 @@ final class FacturaClienteTest extends TestCase
         // recalculamos
         $lines = $invoice->getLines();
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
-        $neto = round(self::PRODUCT1_PRICE * self::PRODUCT1_QUANTITY, FS_NF0);
+        $neto = Tools::round(self::PRODUCT1_PRICE * self::PRODUCT1_QUANTITY);
         $this->assertEquals($neto, $invoice->neto, 'bad-invoice-neto');
 
         // buscamos la factura
@@ -229,7 +229,7 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
         // comprobamos el stock del producto
-        $product->loadFromCode($product->idproducto);
+        $product->reload();
         $this->assertEquals(0, $product->stockfis, 'bad-product1-stock');
 
         // eliminamos
@@ -239,7 +239,7 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
 
         // comprobamos que se restaura el stock del producto
-        $product->loadFromCode($product->idproducto);
+        $product->reload();
         $this->assertEquals(self::PRODUCT1_QUANTITY, $product->stockfis, 'bad-product1-stock-end');
 
         // eliminamos el producto
@@ -349,6 +349,11 @@ final class FacturaClienteTest extends TestCase
 
     public function testCreateInvoiceWithRetention(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un cliente y le asignamos una retención
         $customer = $this->getRandomCustomer();
         foreach (Retenciones::all() as $retention) {
@@ -396,6 +401,11 @@ final class FacturaClienteTest extends TestCase
 
     public function testCreateInvoiceWithSurcharge(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un cliente con régimen de recargo de equivalencia
         $customer = $this->getRandomCustomer();
         $customer->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
@@ -438,6 +448,11 @@ final class FacturaClienteTest extends TestCase
 
     public function testCompanyWithSurcharge(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos una empresa con régimen de recargo de equivalencia
         $company = $this->getRandomCompany();
         $company->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
@@ -489,6 +504,11 @@ final class FacturaClienteTest extends TestCase
 
     public function testCreateInvoiceWithSupplied(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un cliente
         $customer = $this->getRandomCustomer();
         $this->assertTrue($customer->save(), 'cant-create-customer');
@@ -766,6 +786,11 @@ final class FacturaClienteTest extends TestCase
 
     public function testIntraCommunity(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un cliente
         $customer = $this->getRandomCustomer();
         $this->assertTrue($customer->save());
@@ -841,11 +866,18 @@ final class FacturaClienteTest extends TestCase
             $this->assertTrue($invoice->delete(), "cannot-delete-facturaCliente-{$campo}");
         }
 
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');;
+        // eliminamos
+        $this->assertTrue($customer->getDefaultAddress()->delete());
+        $this->assertTrue($customer->delete());;
     }
 
     public function testSetIntraCommunity(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // comprobamos primero si el VIES funciona
         if (Vies::getLastError() != '') {
             $this->markTestSkipped('Vies service is not available');
@@ -907,6 +939,11 @@ final class FacturaClienteTest extends TestCase
 
     public function testShellUsedGoods(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos una empresa con el régimen de bienes usados
         $company = $this->getRandomCompany();
         $company->regimeniva = RegimenIVA::TAX_SYSTEM_USED_GOODS;

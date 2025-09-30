@@ -35,18 +35,18 @@
                 ? fsc.views[1:]|keys|first
                 : fsc.active
             %}
-            <div class="row">
+            <div class="row g-2">
                 {# -- Left Panel -- #}
-                <div class="col-lg-2">
-                    <div class="nav nav-pills flex-row flex-lg-column pb-3" id="mainTabs" role="tablist">
+                <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                    <div class="nav nav-pills flex-row flex-lg-column pb-3 overflow-x-auto" id="mainTabs" role="tablist" style="white-space: nowrap;">
                         {# -- All views but we skipped the first one -- #}
                         {% for viewName, view in fsc.views[1:] %}
                             {% set active = (viewName == activeViewName) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
-                                <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-bs-toggle="pill"
+                                <a class="nav-link{{ active }}{{ disable }} text-nowrap" id="{{ viewName }}-tab" data-bs-toggle="pill"
                                 href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
-                                 <i class="{{ view.icon }} fa-fw me-1 d-none d-xl-inline-block"
-                                    aria-hidden="true"></i>{{ view.title }}
+                                 <i class="{{ view.icon }} fa-fw me-1 d-none d-lg-inline-block"
+                                    aria-hidden="true"></i><span class="d-inline d-lg-inline">{{ view.title }}</span>
                                  {% if view.count >= 1 and viewName != firstView.getViewName() %}
                                      <span class='badge bg-secondary mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
                                  {% endif %}
@@ -55,7 +55,7 @@
                     </div>
                 </div>
                 {# -- Right Panel -- #}
-                <div class="col">
+                <div class="col-12 col-lg">
                     <div class="tab-content" id="mainTabsContent">
                         {# -- All views but we skipped the first one -- #}
                         {% for viewName, view in fsc.views[1:] %}

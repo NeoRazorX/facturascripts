@@ -48,7 +48,7 @@ class EditAgente extends ComercialContactController
         ];
 
         $totalModel = TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
-        return Tools::money($totalModel->totals['total'], 2);
+        return Tools::money($totalModel->totals['total']);
     }
 
     public function getModelClassName(): string

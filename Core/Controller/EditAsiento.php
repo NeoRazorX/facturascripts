@@ -239,7 +239,7 @@ class EditAsiento extends PanelController
         $this->setTemplate(false);
         AsientoExport::show(
             $this->getModel(),
-            $this->request->get('option', ''),
+            $this->request->queryOrInput('option', ''),
             $this->title,
             (int)$this->request->input('idformat', ''),
             $this->request->input('langcode', ''),

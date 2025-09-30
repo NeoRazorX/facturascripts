@@ -75,7 +75,7 @@ abstract class PanelController extends BaseController
         parent::privateCore($response, $user, $permissions);
 
         // Get any operations that have to be performed
-        $action = $this->request->get('action', '');
+        $action = $this->request->inputOrQuery('action', '');
 
         // Runs operations before reading data
         if ($this->execPreviousAction($action) === false || $this->pipeFalse('execPreviousAction', $action) === false) {
@@ -113,7 +113,7 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Sets the tabs position, by default is set to 'left', also supported 'bottom', 'top' and 'left-bottom.
+     * Sets the tabs position, by default is set to 'left', also supported 'bottom', 'top' and 'left-bottom'.
      *
      * @param string $position
      */
@@ -439,17 +439,22 @@ abstract class PanelController extends BaseController
             return [];
         }
 
-        $file = $column->widget->uploadFile($this->request->files->get('file'));
-        if (false === $file->exists()) {
+        $file = $this->request->file('file');
+        if (empty($file)) {
+            return [];
+        }
+
+        $attachedFile = $column->widget->uploadFile($file);
+        if (false === $attachedFile->exists()) {
             return [];
         }
 
         $files = $column->widget->files();
         return [
-            'html' => $column->widget->renderFileList($files, $file->idfile, $widgetId),
+            'html' => $column->widget->renderFileList($files, $attachedFile->idfile, $widgetId),
             'records' => count($files),
-            'new_file' => $file->idfile,
-            'new_filename' => $file->shortFileName(),
+            'new_file' => $attachedFile->idfile,
+            'new_filename' => $attachedFile->shortFileName(),
         ];
     }
 

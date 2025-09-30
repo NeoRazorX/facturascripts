@@ -130,7 +130,7 @@ trait CommonSalesPurchases
             'name="codalmacen" onchange="return ' . $jsFunc . '(\'recalculate\', \'0\');" required' :
             'disabled';
 
-        return empty($model->subjectColumnValue()) || $warehouses <= 1 ? '' : '<div class="col-sm-2 col-lg">'
+        return empty($model->subjectColumnValue()) || $warehouses <= 1 ? '' : '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div class="mb-2">'
             . '<a href="' . Almacenes::get($model->codalmacen)->url() . '">' . Tools::trans('company-warehouse') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
@@ -177,7 +177,7 @@ trait CommonSalesPurchases
         }
 
         $attributes = $model->editable ? 'name="codpago" required' : 'disabled';
-        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div id="payment-methods" class="mb-2">'
             . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . Tools::trans('payment-method') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
@@ -213,7 +213,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ?
             'name="codserie" onchange="return ' . $jsFunc . '(\'recalculate\', \'0\');" required' :
             'disabled';
-        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div class="mb-2">'
             . '<a href="' . Series::get($model->codserie)->url() . '">' . Tools::trans('serie') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
@@ -230,7 +230,7 @@ trait CommonSalesPurchases
         $nf0 = Tools::settings('default', 'decimals', 2);
         $nf1 = Tools::settings('default', 'decimal_separator', ',');
 
-        return empty($model->{$colName}) && $autoHide ? '' : '<div class="col-sm"><div class="mb-2">' . Tools::trans($label)
+        return empty($model->{$colName}) && $autoHide ? '' : '<div class="col-sm-6 col-md-4 col-lg"><div class="mb-2">' . Tools::trans($label)
             . '<input type="text" value="' . number_format($model->{$colName}, $nf0, $nf1, '')
             . '" class="form-control" disabled/></div></div>';
     }
@@ -321,7 +321,7 @@ trait CommonSalesPurchases
     protected static function fecha(BusinessDocument $model, bool $enabled = true): string
     {
         $attributes = $model->editable && $enabled ? 'name="fecha" required' : 'disabled';
-        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div id="document-date" class="mb-2">' . Tools::trans('date')
             . '<input type="date" ' . $attributes . ' value="' . date('Y-m-d', strtotime($model->fecha)) . '" class="form-control"/>'
             . '</div>'
@@ -498,7 +498,7 @@ trait CommonSalesPurchases
         $nf0 = Tools::settings('default', 'decimals', 2);
         $nf1 = Tools::settings('default', 'decimal_separator', ',');
 
-        return empty($model->dtopor1) && empty($model->dtopor2) ? '' : '<div class="col-sm-2"><div class="mb-2">' . Tools::trans('subtotal')
+        return empty($model->dtopor1) && empty($model->dtopor2) ? '' : '<div class="col-sm-6 col-md-4 col-lg"><div class="mb-2">' . Tools::trans('subtotal')
             . '<input type="text" value="' . number_format($model->netosindto, $nf0, $nf1, '')
             . '" class="form-control" disabled/></div></div>';
     }
@@ -664,7 +664,7 @@ trait CommonSalesPurchases
         $nf0 = Tools::settings('default', 'decimals', 2);
         $nf1 = Tools::settings('default', 'decimal_separator', ',');
 
-        return empty($model->total) ? '' : '<div class="col-sm"><div class="mb-2">' . Tools::trans('total')
+        return empty($model->total) ? '' : '<div class="col-sm-6 col-md-4 col-lg"><div class="mb-2">' . Tools::trans('total')
             . '<div class="input-group">'
             . '<input type="text" value="' . number_format($model->total, $nf0, $nf1, '')
             . '" class="form-control" disabled/>'

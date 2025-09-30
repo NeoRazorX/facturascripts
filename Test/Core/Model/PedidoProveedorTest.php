@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
@@ -42,7 +43,7 @@ final class PedidoProveedorTest extends TestCase
         self::setDefaultSettings();
     }
 
-    public function testDefaultValues()
+    public function testDefaultValues(): void
     {
         // creamos un pedido
         $doc = new PedidoProveedor();
@@ -55,7 +56,7 @@ final class PedidoProveedorTest extends TestCase
         $this->assertNotEmpty($doc->hora, 'empty-time');
     }
 
-    public function testSetAuthor()
+    public function testSetAuthor(): void
     {
         // creamos un almacén
         $warehouse = $this->getRandomWarehouse();
@@ -77,7 +78,7 @@ final class PedidoProveedorTest extends TestCase
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
     }
 
-    public function testSetSubject()
+    public function testSetSubject(): void
     {
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
@@ -97,7 +98,7 @@ final class PedidoProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
     }
 
-    public function testCreateEmpty()
+    public function testCreateEmpty(): void
     {
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
@@ -126,13 +127,13 @@ final class PedidoProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
     }
 
-    public function testCreateWithoutSubject()
+    public function testCreateWithoutSubject(): void
     {
         $doc = new PedidoProveedor();
         $this->assertFalse($doc->save(), 'can-create-pedido-proveedor-without-subject');
     }
 
-    public function testCreateOneLine()
+    public function testCreateOneLine(): void
     {
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
@@ -154,10 +155,15 @@ final class PedidoProveedorTest extends TestCase
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-pedido-proveedor-2');
 
+        // obtenemos el impuesto predeterminado
+        $default_tax = Impuestos::default();
+        $total_iva = (100 * $default_tax->iva / 100);
+        $total = 100 + $total_iva;
+
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'pedido-proveedor-bad-neto-2');
-        $this->assertEquals(121, $doc->total, 'pedido-proveedor-bad-total-2');
-        $this->assertEquals(21, $doc->totaliva, 'pedido-proveedor-bad-totaliva-2');
+        $this->assertEquals($total, $doc->total, 'pedido-proveedor-bad-total-2');
+        $this->assertEquals($total_iva, $doc->totaliva, 'pedido-proveedor-bad-totaliva-2');
         $this->assertEquals(0, $doc->totalrecargo, 'pedido-proveedor-bad-totalrecargo-2');
         $this->assertEquals(0, $doc->totalirpf, 'pedido-proveedor-bad-totalirpf-2');
         $this->assertEquals(0, $doc->totalsuplidos, 'pedido-proveedor-bad-totalsuplidos-2');
@@ -169,7 +175,7 @@ final class PedidoProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-2');
     }
 
-    public function testCreateProductLine()
+    public function testCreateProductLine(): void
     {
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
@@ -192,34 +198,43 @@ final class PedidoProveedorTest extends TestCase
         // recargamos y comprobamos el stock
         $stock = new Stock();
         $where = [new DataBaseWhere('idproducto', $product->idproducto)];
-        $stock->loadFromCode('', $where);
+        $stock->loadWhere($where);
         $this->assertEquals(1, $stock->pterecibir, 'pedido-proveedor-do-not-update-stock');
 
         // actualizamos los totales
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-pedido-proveedor-3');
 
+        // obtenemos el impuesto predeterminado
+        $default_tax = Impuestos::default();
+        $total_iva = (10 * $default_tax->iva / 100);
+        $total = 10 + $total_iva;
+
         // comprobamos
         $this->assertEquals(10, $doc->neto, 'pedido-proveedor-bad-neto-3');
-        $this->assertEquals(12.1, $doc->total, 'pedido-proveedor-bad-total-3');
-        $this->assertEquals(2.1, $doc->totaliva, 'pedido-proveedor-bad-totaliva-3');
+        $this->assertEquals($total, $doc->total, 'pedido-proveedor-bad-total-3');
+        $this->assertEquals($total_iva, $doc->totaliva, 'pedido-proveedor-bad-totaliva-3');
 
         // modificamos la cantidad
         $line->cantidad = 10;
         $this->assertTrue($line->save(), 'can-not-update-line-3');
 
         // recargamos y comprobamos el stock
-        $stock->loadFromCode('', $where);
+        $stock->loadWhere($where);
         $this->assertEquals(10, $stock->pterecibir, 'pedido-proveedor-do-not-update-stock');
 
         // actualizamos los totales
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-pedido-proveedor-3');
 
+        // obtenemos el impuesto predeterminado
+        $total_iva = (100 * $default_tax->iva / 100);
+        $total = 100 + $total_iva;
+
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'pedido-proveedor-bad-neto-3');
-        $this->assertEquals(121, $doc->total, 'pedido-proveedor-bad-total-3');
-        $this->assertEquals(21, $doc->totaliva, 'pedido-proveedor-bad-totaliva-3');
+        $this->assertEquals($total, $doc->total, 'pedido-proveedor-bad-total-3');
+        $this->assertEquals($total_iva, $doc->totaliva, 'pedido-proveedor-bad-totaliva-3');
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-pedido-proveedor-3');
@@ -228,7 +243,7 @@ final class PedidoProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-3');
 
         // recargamos y comprobamos el stock
-        $stock->loadFromCode('', $where);
+        $stock->loadWhere($where);
         $this->assertEquals(0, $stock->pterecibir, 'pedido-proveedor-do-not-update-stock');
 
         // eliminamos el producto
@@ -239,11 +254,11 @@ final class PedidoProveedorTest extends TestCase
     {
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
         $campos = [
-            'cifnif'       => [30, 31],
-            'codigo'       => [20, 21],
-            'nombre'       => [100, 101],
+            'cifnif' => [30, 31],
+            'codigo' => [20, 21],
+            'nombre' => [100, 101],
             'numproveedor' => [50, 51],
-            'operacion'    => [20, 21],
+            'operacion' => [20, 21],
         ];
 
         // creamos un proveedor
@@ -259,20 +274,22 @@ final class PedidoProveedorTest extends TestCase
 
             // Asignamos el valor inválido en el campo a probar
             $doc->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($doc->save(), "can-save-pedidoCliente-bad-{$campo}");
+            $this->assertFalse($doc->save(), "can-save-pedidoProveedor-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
             $doc->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($doc->save(), "cannot-save-pedidoCliente-fixed-{$campo}");
+            $this->assertTrue($doc->save(), "cannot-save-pedidoProveedor-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($doc->delete(), "cannot-delete-pedidoCliente-{$campo}");
+            $this->assertTrue($doc->delete(), "cannot-delete-pedidoProveedor-{$campo}");
         }
 
-        $this->assertTrue($subject->delete(), 'can-not-delete-cliente');
+        // eliminamos
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
     }
 
-    public function testSecondCompany()
+    public function testSecondCompany(): void
     {
         // creamos la empresa 2
         $company2 = new Empresa();
@@ -283,9 +300,9 @@ final class PedidoProveedorTest extends TestCase
         // obtenemos el almacén de la empresa 2
         $warehouse = new Almacen();
         $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadFromCode('', $where);
+        $warehouse->loadWhere($where);
 
-        // creamos un cliente
+        // creamos un proveedor
         $subject = $this->getRandomSupplier();
         $this->assertTrue($subject->save(), 'can-not-save-customer-2');
 
@@ -323,14 +340,14 @@ final class PedidoProveedorTest extends TestCase
 
         // eliminamos
         $children = $doc->childrenDocuments();
-        $this->assertNotEmpty($children, 'albaranes-no-creadas');
+        $this->assertNotEmpty($children);
         foreach ($children as $child) {
-            $this->assertTrue($child->delete(), 'albarán-cant-delete');
+            $this->assertTrue($child->delete());
         }
-        $this->assertTrue($doc->delete(), 'pedido-cant-delete');
-        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
-        $this->assertTrue($company2->delete(), 'empresa-cant-delete');
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
+        $this->assertTrue($company2->delete());
     }
 
     protected function setUp(): void

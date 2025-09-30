@@ -321,9 +321,9 @@ class DocumentStitcher extends Controller
             return $codes;
         }
 
-        $codes = explode(',', $this->request->get('codes', ''));
-        $newcodes = $this->request->getArray('newcodes');
-        return empty($newcodes) ? $codes : array_merge($codes, $newcodes);
+        $codes = explode(',', $this->request->queryOrInput('codes', ''));
+        $new_codes = $this->request->request->getArray('newcodes');
+        return empty($new_codes) ? $codes : array_merge($codes, $new_codes);
     }
 
     /**
@@ -366,8 +366,7 @@ class DocumentStitcher extends Controller
      */
     protected function getModelName(): string
     {
-        $model = $this->request->get('model', '');
-        return $this->request->input('model', $model);
+        return $this->request->inputOrQuery('model', '');
     }
 
     /**

@@ -59,7 +59,7 @@ abstract class ListController extends BaseController
         parent::privateCore($response, $user, $permissions);
 
         // Get action to execute
-        $action = $this->request->get('action', '');
+        $action = $this->request->inputOrQuery('action', '');
 
         // Execute actions before loading data
         if (false === $this->execPreviousAction($action) || false === $this->pipeFalse('execPreviousAction', $action)) {
@@ -343,8 +343,9 @@ abstract class ListController extends BaseController
         }
 
         $this->setTemplate(false);
+
         $codes = $this->request->request->getArray('codes');
-        $option = $this->request->get('option', '');
+        $option = $this->request->queryOrInput('option', '');
         $this->exportManager->newDoc($option);
         $this->views[$this->active]->export($this->exportManager, $codes);
         $this->exportManager->show($this->response);
@@ -410,7 +411,7 @@ abstract class ListController extends BaseController
             ];
 
             $fields = implode('|', $listView->searchFields);
-            $where = [new DataBaseWhere($fields, $this->request->get('query', ''), 'LIKE')];
+            $where = [new DataBaseWhere($fields, $this->request->queryOrInput('query', ''), 'LIKE')];
             $listView->loadData(false, $where);
             foreach ($listView->cursor as $model) {
                 $item = ['url' => $model->url()];

@@ -257,8 +257,8 @@ class SalesHeaderHTML
     private static function codcliente(SalesDocument $model): string
     {
         self::$cliente = new Cliente();
-        if (empty($model->codcliente) || false === self::$cliente->loadFromCode($model->codcliente)) {
-            return '<div class="col-sm-3">'
+        if (empty($model->codcliente) || false === self::$cliente->load($model->codcliente)) {
+            return '<div class="col-sm-6 col-md-4 col-lg-3">'
                 . '<div class="mb-2">' . Tools::trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
                 . '<a href="#" id="btnFindCustomerModal" class="btn w-100 btn-primary" onclick="$(\'#findCustomerModal\').modal(\'show\');'
@@ -274,7 +274,7 @@ class SalesHeaderHTML
             . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fa-solid fa-pen"></i></button>' :
             '<button class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-lock"></i></button>';
 
-        $html = '<div class="col-sm-3 col-lg">'
+        $html = '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div class="mb-2">'
             . '<a href="' . self::$cliente->url() . '">' . Tools::trans('customer') . '</a>'
             . '<input type="hidden" name="codcliente" value="' . $model->codcliente . '"/>'
@@ -416,7 +416,7 @@ class SalesHeaderHTML
 
         $attributes = $model->editable ? 'name="finoferta"' : 'disabled=""';
         $value = empty($model->finoferta) ? '' : 'value="' . date('Y-m-d', strtotime($model->finoferta)) . '"';
-        return '<div class="col-sm">'
+        return '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div class="mb-2">' . $label
             . '<input type="date" ' . $attributes . ' ' . $value . ' class="form-control"/>'
             . '</div>'
@@ -483,7 +483,7 @@ class SalesHeaderHTML
     private static function numero2(SalesDocument $model): string
     {
         $attributes = $model->editable ? 'name="numero2" maxlength="50" placeholder="' . Tools::trans('optional') . '"' : 'disabled=""';
-        return empty($model->codcliente) ? '' : '<div class="col-sm">'
+        return empty($model->codcliente) ? '' : '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div class="mb-2">'
             . Tools::trans('number2')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->numero2) . '" class="form-control"/>'

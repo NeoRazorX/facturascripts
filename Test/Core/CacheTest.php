@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Internal\CacheWithMemory;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -120,5 +121,110 @@ final class CacheTest extends TestCase
 
         $this->assertEquals(Cache::get($key), $cacheValue, 'cache-value-not-found');
         $this->assertNotEquals(Cache::get($key), $closureValue, 'cache-value-not-found');
+    }
+
+    public function testWithMemoryReturnsInstance(): void
+    {
+        $instance = Cache::withMemory();
+        $this->assertInstanceOf(CacheWithMemory::class, $instance, 'withMemory should return CacheWithMemory instance');
+    }
+
+    public function testWithMemoryValueIsStoredAndRemoved(): void
+    {
+        Cache::clear();
+
+        $key = 'test-memory-key';
+        $value = 'memory-value';
+
+        $memoryCache = Cache::withMemory();
+        $memoryCache->set($key, $value);
+
+        $this->assertEquals($value, $memoryCache->get($key), 'memory-cache-value-not-found');
+        $this->assertEquals($value, Cache::get($key), 'file-cache-should-also-have-value');
+
+        $memoryCache->delete($key);
+        $this->assertNull($memoryCache->get($key), 'memory-cache-value-not-erased');
+        $this->assertNull(Cache::get($key), 'file-cache-value-not-erased');
+    }
+
+    public function testWithMemoryPrioritizesMemoryOverFile(): void
+    {
+        Cache::clear();
+
+        $key = 'test-priority-key';
+        $fileValue = 'file-value';
+        $memoryValue = 'memory-value';
+
+        Cache::set($key, $fileValue);
+
+        $memoryCache = Cache::withMemory();
+        $memoryCache->set($key, $memoryValue);
+
+        $this->assertEquals($memoryValue, $memoryCache->get($key), 'should-return-memory-value-over-file');
+        $this->assertEquals($memoryValue, Cache::get($key), 'file-should-be-updated-too');
+    }
+
+    public function testWithMemoryRemember(): void
+    {
+        Cache::clear();
+
+        $key = 'test-memory-remember';
+        $value = 'remember-value';
+
+        $memoryCache = Cache::withMemory();
+        $result = $memoryCache->remember($key, function () use ($value) {
+            return $value;
+        });
+
+        $this->assertEquals($value, $result, 'remember-should-return-callback-value');
+        $this->assertEquals($value, $memoryCache->get($key), 'value-should-be-cached-in-memory');
+
+        $result2 = $memoryCache->remember($key, function () {
+            return 'should-not-be-called';
+        });
+
+        $this->assertEquals($value, $result2, 'remember-should-return-cached-value');
+    }
+
+    public function testWithMemoryClear(): void
+    {
+        $key1 = 'test-clear-memory-1';
+        $key2 = 'test-clear-memory-2';
+
+        $memoryCache = Cache::withMemory();
+        $memoryCache->set($key1, 'value1');
+        $memoryCache->set($key2, 'value2');
+
+        $this->assertEquals('value1', $memoryCache->get($key1));
+        $this->assertEquals('value2', $memoryCache->get($key2));
+
+        CacheWithMemory::clear();
+
+        $this->assertNull($memoryCache->get($key1), 'memory-should-be-cleared');
+        $this->assertNull($memoryCache->get($key2), 'memory-should-be-cleared');
+        $this->assertNull(Cache::get($key1), 'file-should-be-cleared');
+        $this->assertNull(Cache::get($key2), 'file-should-be-cleared');
+    }
+
+    public function testWithMemoryDeleteMultiWorks(): void
+    {
+        Cache::clear();
+
+        $prefix = 'test-memory-multi-';
+        $memoryCache = Cache::withMemory();
+
+        for ($num = 1; $num <= 5; $num++) {
+            $key = $prefix . $num;
+            $memoryCache->set($key, $num);
+            $this->assertEquals($num, $memoryCache->get($key), 'memory-cache-bad-value-' . $num);
+        }
+
+        $memoryCache->deleteMulti($prefix);
+
+        for ($num = 1; $num <= 5; $num++) {
+            $key = $prefix . $num;
+            $this->assertNull($memoryCache->get($key), 'memory-value-should-be-deleted');
+            $this->assertNull(Cache::get($key), 'file-value-should-be-deleted');
+        }
     }
 }

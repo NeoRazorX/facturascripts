@@ -61,6 +61,15 @@ final class UploadedFile
         return mime_content_type($this->tmp_name);
     }
 
+    /**
+     * @return string
+     * @deprecated replaced by extension() method
+     */
+    public function getClientOriginalExtension(): string
+    {
+        return $this->extension();
+    }
+
     public function getClientOriginalName(): string
     {
         return $this->name;

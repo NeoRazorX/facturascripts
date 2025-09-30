@@ -47,7 +47,7 @@
             </column>
         </group>
         <group name="description" numcolumns="12">
-            <column name="description" order="100">
+            <column name="description" numcolumns="12" order="100">
                 <widget type="textarea" fieldname="descripcion" required="true"/>
             </column>
             <column name="observations" numcolumns="12" order="110">

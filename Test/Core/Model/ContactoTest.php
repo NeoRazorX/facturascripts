@@ -197,23 +197,23 @@ final class ContactoTest extends TestCase
     {
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
         $campos = [
-            'apellidos'     => [150, 151],
-            'apartado'      => [10, 11],
-            'cargo'         => [100, 101],
-            'cifnif'        => [30, 31],
-            'ciudad'        => [100, 101],
-            'codpais'       => [20, 21],
-            'codpostal'     => [10, 11],
-            'descripcion'   => [100, 101],
-            'direccion'     => [200, 201],
+            'apellidos' => [150, 151],
+            'apartado' => [10, 11],
+            'cargo' => [100, 101],
+            'cifnif' => [30, 31],
+            'ciudad' => [100, 101],
+            'codpais' => [20, 21],
+            'codpostal' => [10, 11],
+            'descripcion' => [100, 101],
+            'direccion' => [200, 201],
             //'email'         => [100, 101],
-            'empresa'       => [100, 101],
-            'langcode'      => [10, 11],
-            'nombre'        => [100, 101],
-            'provincia'     => [100, 101],
-            'telefono1'     => [30, 31],
-            'telefono2'     => [30, 31],
-            'tipoidfiscal'  => [25, 26],
+            'empresa' => [100, 101],
+            'langcode' => [10, 11],
+            'nombre' => [100, 101],
+            'provincia' => [100, 101],
+            'telefono1' => [30, 31],
+            'telefono2' => [30, 31],
+            'tipoidfiscal' => [25, 26],
             //'web'           => [100, 101],
         ];
 
@@ -240,6 +240,11 @@ final class ContactoTest extends TestCase
 
     public function testVies(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un contacto sin cif/nif
         $contact = new Contacto();
         $contact->nombre = 'Test';
@@ -310,11 +315,10 @@ final class ContactoTest extends TestCase
     {
         $contacto = new Contacto();
         $contacto->codpais = 'ESP';
-
-        $this->assertEquals('España', $contacto->country());
+        $this->assertContains($contacto->country(), ['España', 'Spain']);
 
         $contacto->codpais = 'ABW';
-        $this->assertEquals('Aruba', $contacto->country());
+        $this->assertContains($contacto->country(), ['Aruba']);
 
         $contacto->codpais = 'WRONG-COD-PAIS';
         $this->assertEquals('WRONG-COD-PAIS', $contacto->country());

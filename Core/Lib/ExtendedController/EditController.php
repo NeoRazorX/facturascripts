@@ -77,7 +77,7 @@ abstract class EditController extends PanelController
 
         $this->setTemplate(false);
         $this->exportManager->newDoc(
-            $this->request->get('option', ''),
+            $this->request->queryOrInput('option', ''),
             $this->title,
             (int)$this->request->input('idformat', ''),
             $this->request->input('langcode', '')
@@ -90,7 +90,7 @@ abstract class EditController extends PanelController
             }
 
             // si tenemos una pestaña activa, excluimos las demás
-            $activeTab = $this->request->get('activetab', '');
+            $activeTab = $this->request->inputOrQuery('activetab', '');
             if (!empty($activeTab) && $activeTab !== $name) {
                 continue;
             }

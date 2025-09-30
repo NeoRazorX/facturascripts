@@ -132,7 +132,7 @@ class PurchasesHeaderHTML
     {
         $proveedor = new Proveedor();
         if (empty($model->codproveedor) || false === $proveedor->load($model->codproveedor)) {
-            return '<div class="col-sm-3">'
+            return '<div class="col-sm-6 col-md-4 col-lg-3">'
                 . '<div class="mb-2">' . Tools::trans('supplier')
                 . '<input type="hidden" name="codproveedor" />'
                 . '<a href="#" id="btnFindSupplierModal" class="btn btn-primary w-100" onclick="$(\'#findSupplierModal\').modal(\'show\');'
@@ -148,7 +148,7 @@ class PurchasesHeaderHTML
             . ' $(\'#findSupplierInput\').focus(); return false;"><i class="fa-solid fa-pen"></i></button>' :
             '<button class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-lock"></i></button>';
 
-        $html = '<div class="col-sm-3 col-lg">'
+        $html = '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div class="mb-2">'
             . '<a href="' . $proveedor->url() . '">' . Tools::trans('supplier') . '</a>'
             . '<input type="hidden" name="codproveedor" value="' . $model->codproveedor . '" />'
@@ -230,7 +230,7 @@ class PurchasesHeaderHTML
     private static function numproveedor(PurchaseDocument $model): string
     {
         $attributes = $model->editable ? 'name="numproveedor"' : 'disabled';
-        return empty($model->codproveedor) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
+        return empty($model->codproveedor) ? '' : '<div class="col-sm-6 col-md-4 col-lg">'
             . '<div class="mb-2">' . Tools::trans('numsupplier')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($model->numproveedor) . '" class="form-control" maxlength="50"'
             . ' placeholder="' . Tools::trans('optional') . '" />'

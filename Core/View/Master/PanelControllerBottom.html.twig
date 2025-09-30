@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -30,27 +30,41 @@
                 {{ include(firstView.template) }}
             </div>
         </div>
-        {% if fsc.views | length > 2 %}
+        {% if fsc.views | length == 2 %}
+        <div class="row">
+            <div class="col">
+                {% set secondView = fsc.views | slice(1, 1) | first %}
+                <h3 class="h4 mb-2">
+                    <i class="{{ secondView.icon }} me-2" aria-hidden="true"></i> {{ secondView.title }}
+                    {% if secondView.count > 0 %}
+                        <span class="badge bg-secondary">{{ number(secondView.count, 0) }}</span>
+                    {% endif %}
+                </h3>
+            </div>
+        </div>
+        {% elseif fsc.views | length > 2 %}
             <div class="row">
                 <div class="col">
-                    <ul class="nav nav-pills mb-3 d-print-none" id="mainTabs" role="tablist">
-                        {% set contActiveTab = 0 %}
-                        {% for viewName, view in fsc.views | slice(1, fsc.views | length) %}
-                            {% if view.settings.active %}
-                                {% set contActiveTab = contActiveTab + 1 %}
-                                <li class="nav-item">
-                                    {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and contActiveTab == 1) ? ' active' : '' %}
-                                    <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-bs-toggle="tab" role="tab" aria-controls="{{ viewName }}">
-                                        <i class="{{ view.icon }}" aria-hidden="true"></i>
-                                        <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
-                                        {% if view.count > 0 %}
-                                            <span class="badge bg-secondary">{{ number(view.count, 0) }}</span>
-                                        {% endif %}
-                                    </a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
+                    <div class="nav-pills-wrapper d-print-none">
+                        <ul class="nav nav-pills nav-pills-scroll mb-3" id="mainTabs" role="tablist">
+                            {% set contActiveTab = 0 %}
+                            {% for viewName, view in fsc.views | slice(1, fsc.views | length) %}
+                                {% if view.settings.active %}
+                                    {% set contActiveTab = contActiveTab + 1 %}
+                                    <li class="nav-item">
+                                        {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and contActiveTab == 1) ? ' active' : '' %}
+                                        <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-bs-toggle="tab" role="tab" aria-controls="{{ viewName }}">
+                                            <i class="{{ view.icon }}" aria-hidden="true"></i>
+                                            <span>&nbsp;{{ view.title }}</span>
+                                            {% if view.count > 0 %}
+                                                <span class="badge bg-secondary">{{ number(view.count, 0) }}</span>
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         {% endif %}
@@ -68,4 +82,94 @@
             {% endfor %}
         </div>
     </div>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        /* Scroll horizontal para pestañas pills en móviles */
+        @media (max-width: 767px) {
+            .nav-pills-wrapper {
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .nav-pills-scroll {
+                flex-wrap: nowrap;
+                white-space: nowrap;
+                min-width: min-content;
+            }
+
+            .nav-pills-scroll .nav-item {
+                flex-shrink: 0;
+            }
+
+            .nav-pills-scroll .nav-link {
+                white-space: nowrap;
+            }
+
+            /* Indicador visual de scroll */
+            .nav-pills-wrapper::-webkit-scrollbar {
+                height: 4px;
+            }
+
+            .nav-pills-wrapper::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+            .nav-pills-wrapper::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 2px;
+            }
+
+            .nav-pills-wrapper::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+        }
+
+        /* En pantallas grandes, comportamiento normal */
+        @media (min-width: 768px) {
+            .nav-pills-wrapper {
+                overflow: visible;
+            }
+
+            .nav-pills-scroll {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            // Función para desplazar la pestaña activa a la vista
+            function scrollActivePillIntoView() {
+                if (window.innerWidth <= 767) {
+                    var activePill = $('.nav-pills-scroll .nav-link.active');
+                    var wrapper = $('.nav-pills-wrapper');
+                    if (activePill.length && wrapper.length) {
+                        var pillLeft = activePill.parent().position().left;
+                        var pillWidth = activePill.parent().outerWidth();
+                        var wrapperWidth = wrapper.width();
+                        var scrollLeft = wrapper.scrollLeft();
+
+                        // Centrar la pestaña activa si es posible
+                        var targetScroll = pillLeft + scrollLeft - (wrapperWidth / 2) + (pillWidth / 2);
+                        wrapper.animate({ scrollLeft: targetScroll }, 300);
+                    }
+                }
+            }
+
+            // Desplazar la pestaña activa al cargar la página
+            scrollActivePillIntoView();
+
+            // Desplazar cuando se cambia de pestaña
+            $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                scrollActivePillIntoView();
+            });
+        });
+    </script>
 {% endblock %}

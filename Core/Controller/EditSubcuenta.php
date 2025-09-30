@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Cuenta;
@@ -60,6 +61,7 @@ class EditSubcuenta extends EditController
     protected function createViews()
     {
         parent::createViews();
+
         $this->setTabsPosition('bottom');
 
         // establecemos el límite de registros a 9999, para el select de cuentas
@@ -245,13 +247,13 @@ class EditSubcuenta extends EditController
      */
     private function dotAccountingAction(bool $value): bool
     {
-        $ids = $this->request->request->getArray('code');
+        $ids = $this->request->request->getArray('codes');
         if (empty($ids)) {
             Tools::log()->warning('no-selected-item');
-            return false;
+            return true;
         }
 
-        $where = [new DataBaseWhere('idpartida', implode(',', $ids), 'IN')];
+        $where = [Where::in('idpartida', $ids)];
         foreach (Partida::all($where) as $row) {
             $row->setDottedStatus($value);
         }

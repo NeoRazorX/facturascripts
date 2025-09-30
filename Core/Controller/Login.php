@@ -70,7 +70,7 @@ class Login implements ControllerInterface
         $this->title = $this->empresa->nombrecorto;
 
         $request = Request::createFromGlobals();
-        $action = $request->get('action', '');
+        $action = $request->inputOrQuery('action', '');
 
         switch ($action) {
             case 'change-password':
@@ -155,21 +155,21 @@ class Login implements ControllerInterface
             return;
         }
 
-        $username = $request->request->get('fsNewUserPasswd');
+        $username = $request->input('fsNewUserPasswd');
         if ($this->userHasManyIncidents(Session::getClientIp(), $username)) {
             Tools::log()->warning('ip-banned');
             return;
         }
 
-        $dbPassword = $request->request->get('fsDbPasswd');
+        $dbPassword = $request->input('fsDbPasswd');
         if ($dbPassword !== Tools::config('db_pass')) {
             Tools::log()->warning('login-invalid-db-password');
             $this->saveIncident(Session::getClientIp(), $username);
             return;
         }
 
-        $password = $request->request->get('fsNewPasswd');
-        $password2 = $request->request->get('fsNewPasswd2');
+        $password = $request->input('fsNewPasswd');
+        $password2 = $request->input('fsNewPasswd2');
         if (empty($username) || empty($password) || empty($password2)) {
             Tools::log()->warning('login-empty-fields');
             return;
@@ -213,14 +213,13 @@ class Login implements ControllerInterface
         $multiRequestProtection = new MultiRequestProtection();
 
         // si el usuario está autenticado, añadimos su nick a la semilla
-        $cookieNick = $request->cookies->get('fsNick', '');
+        $cookieNick = $request->cookie('fsNick', '');
         if ($cookieNick) {
             $multiRequestProtection->addSeed($cookieNick);
         }
 
         // comprobamos el token
-        $urlToken = $request->query->get('multireqtoken', '');
-        $token = $request->request->get('multireqtoken', $urlToken);
+        $token = $request->inputOrQuery('multireqtoken', '');
         if (empty($token) || false === $multiRequestProtection->validate($token)) {
             Tools::log()->warning('invalid-request');
             return false;
@@ -275,8 +274,8 @@ class Login implements ControllerInterface
             return;
         }
 
-        $userName = $request->request->get('fsNick');
-        $password = $request->request->get('fsPassword');
+        $userName = $request->input('fsNick');
+        $password = $request->input('fsPassword');
         if (empty($userName) || empty($password)) {
             Tools::log()->warning('login-error-empty-fields');
             return;
@@ -318,13 +317,13 @@ class Login implements ControllerInterface
     protected function twoFactorValidationAction(Request $request): void
     {
         $user = new User();
-        if (!$user->load($request->request->get('fsNick'))) {
+        if (!$user->load($request->input('fsNick'))) {
             Tools::log()->warning('user-not-found');
             $this->saveIncident(Session::getClientIp());
             return;
         }
 
-        if (!$user->verifyTwoFactorCode($request->request->get('fsTwoFactorCode'))) {
+        if (!$user->verifyTwoFactorCode($request->input('fsTwoFactorCode'))) {
             Tools::log()->warning('two-factor-code-invalid');
             $this->saveIncident(Session::getClientIp(), $user->nick);
             return;
@@ -337,7 +336,7 @@ class Login implements ControllerInterface
     {
         // update user data
         Session::set('user', $user);
-        $browser = $request->headers->get('User-Agent');
+        $browser = $request->userAgent();
         $user->newLogkey($ip, $browser);
         if (false === $user->save()) {
             Tools::log()->warning('login-user-not-saved');

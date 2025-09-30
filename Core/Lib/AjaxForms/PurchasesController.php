@@ -64,7 +64,7 @@ abstract class PurchasesController extends PanelController
         }
 
         // get the record identifier
-        $code = $this->request->get('code');
+        $code = $this->request->queryOrInput('code');
         if (empty($code)) {
             // empty identifier? Then sets initial parameters to the new record and return it
             $formData = $this->request->query->all();
@@ -115,7 +115,7 @@ abstract class PurchasesController extends PanelController
 
         $list = [];
         $variante = new Variante();
-        $query = (string)$this->request->get('term');
+        $query = (string)$this->request->queryOrInput('term');
         $where = [
             new DataBaseWhere('p.bloqueado', 0),
             new DataBaseWhere('p.secompra', 1)
@@ -245,7 +245,7 @@ abstract class PurchasesController extends PanelController
         $langCode = $requestLang ?? $subjectLang ?? '';
 
         $this->exportManager->newDoc(
-            $this->request->get('option', ''),
+            $this->request->queryOrInput('option', ''),
             $this->title,
             (int)$this->request->input('idformat', ''),
             $langCode
@@ -259,7 +259,7 @@ abstract class PurchasesController extends PanelController
         $this->setTemplate(false);
         $supplier = new Proveedor();
         $list = [];
-        $term = $this->request->get('term');
+        $term = $this->request->queryOrInput('term');
         foreach ($supplier->codeModelSearch($term) as $item) {
             $list[$item->code] = $item->code . ' | ' . Tools::fixHtml($item->description);
         }
@@ -292,7 +292,7 @@ abstract class PurchasesController extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $code = $this->request->get('code');
+        $code = $this->request->queryOrInput('code');
 
         switch ($viewName) {
             case 'docfiles':

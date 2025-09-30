@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -101,7 +101,7 @@ abstract class PDFDocument extends PDFCore
     protected function getBankData($receipt): string
     {
         $payMethod = new FormaPago();
-        if (false === $payMethod->loadFromCode($receipt->codpago)) {
+        if (false === $payMethod->load($receipt->codpago)) {
             // forma de pago no encontrada
             return '-';
         }
@@ -114,13 +114,13 @@ abstract class PDFDocument extends PDFCore
         // Domiciliado. Mostramos la cuenta bancaria del cliente
         $cuentaBcoCli = new CuentaBancoCliente();
         $where = [new DataBaseWhere('codcliente', $receipt->codcliente)];
-        if ($payMethod->domiciliado && $cuentaBcoCli->loadFromCode('', $where, ['principal' => 'DESC'])) {
+        if ($payMethod->domiciliado && $cuentaBcoCli->loadWhere($where, ['principal' => 'DESC'])) {
             return $payMethod->descripcion . ' : ' . $cuentaBcoCli->getIban(true, true);
         }
 
         // cuenta bancaria de la empresa
         $cuentaBco = new CuentaBanco();
-        if ($payMethod->codcuentabanco && $cuentaBco->loadFromCode($payMethod->codcuentabanco) && $cuentaBco->iban) {
+        if ($payMethod->codcuentabanco && $cuentaBco->load($payMethod->codcuentabanco) && $cuentaBco->iban) {
             return $payMethod->descripcion . ' : ' . $cuentaBco->getIban(true);
         }
 
@@ -142,7 +142,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         $country = new Pais();
-        return $country->loadFromCode($code) ? Tools::fixHtml($country->nombre) : '';
+        return $country->load($code) ? Tools::fixHtml($country->nombre) : '';
     }
 
     /**
@@ -159,7 +159,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         $divisa = new Divisa();
-        return $divisa->loadFromCode($code) ? $divisa->descripcion : '';
+        return $divisa->load($code) ? $divisa->descripcion : '';
     }
 
     protected function getLineHeaders(): array
@@ -202,7 +202,7 @@ abstract class PDFDocument extends PDFCore
                 ];
 
                 $impuesto = new Impuesto();
-                if (!empty($line->codimpuesto) && $impuesto->loadFromCode($line->codimpuesto)) {
+                if (!empty($line->codimpuesto) && $impuesto->load($line->codimpuesto)) {
                     $subtotals[$key]['tax'] = $impuesto->descripcion;
                 }
             }
@@ -546,10 +546,10 @@ abstract class PDFDocument extends PDFCore
         $this->newLine();
 
         $contacto = new Contacto();
-        if ($contacto->loadFromCode($model->idcontactoenv)) {
+        if ($contacto->load($model->idcontactoenv)) {
             $name = Tools::fixHtml($contacto->nombre) . ' ' . Tools::fixHtml($contacto->apellidos);
             $carrier = new AgenciaTransporte();
-            $carrierName = $carrier->loadFromCode($model->codtrans) ? $carrier->nombre : '-';
+            $carrierName = $carrier->load($model->codtrans) ? $carrier->nombre : '-';
             $tableData = [
                 ['key' => $this->i18n->trans('name'), 'value' => $name],
                 ['key' => $this->i18n->trans('carrier'), 'value' => $carrierName],
@@ -585,7 +585,7 @@ abstract class PDFDocument extends PDFCore
         $xPos = $this->pdf->ez['leftMargin'];
 
         $logoFile = new AttachedFile();
-        if ($idfile !== 0 && $logoFile->loadFromCode($idfile) && file_exists($logoFile->path)) {
+        if ($idfile !== 0 && $logoFile->load($idfile) && file_exists($logoFile->path)) {
             $logoSize = $this->calcImageSize($logoFile->path);
             $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
             $this->addImageFromAttachedFile($logoFile, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
@@ -623,7 +623,7 @@ abstract class PDFDocument extends PDFCore
         $this->insertedHeader = true;
         $code = $idempresa ?? Tools::settings('default', 'idempresa', '');
         $company = new Empresa();
-        if (false === $company->loadFromCode($code)) {
+        if (false === $company->load($code)) {
             return;
         }
 

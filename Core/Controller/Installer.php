@@ -66,7 +66,7 @@ class Installer implements ControllerInterface
     {
         $this->request = Request::createFromGlobals();
 
-        $lang = $this->request->get('fs_lang', $this->getUserLanguage());
+        $lang = $this->request->inputOrQuery('fs_lang', $this->getUserLanguage());
         Tools::lang()->setDefaultLang($lang);
 
         // si ya hay configuración de base de datos, lanzamos error de que ya está instalado
@@ -84,14 +84,14 @@ class Installer implements ControllerInterface
 
     public function run(): void
     {
-        $this->db_host = strtolower(trim($this->request->get('fs_db_host', 'localhost')));
-        $this->db_name = strtolower(trim($this->request->get('fs_db_name', 'facturascripts')));
-        $this->db_pass = $this->request->get('fs_db_pass', '');
-        $this->db_port = (int)$this->request->get('fs_db_port', 3306);
-        $this->db_type = $this->request->get('fs_db_type', 'mysql');
-        $this->db_user = strtolower(trim($this->request->get('fs_db_user', 'root')));
-        $this->initial_user = $this->request->get('fs_initial_user', '');
-        $this->initial_pass = $this->request->get('fs_initial_pass', '');
+        $this->db_host = strtolower(trim($this->request->input('fs_db_host', 'localhost')));
+        $this->db_name = trim($this->request->input('fs_db_name', 'facturascripts'));
+        $this->db_pass = $this->request->input('fs_db_pass', '');
+        $this->db_port = (int)$this->request->input('fs_db_port', 3306);
+        $this->db_type = $this->request->input('fs_db_type', 'mysql');
+        $this->db_user = trim($this->request->input('fs_db_user', 'root'));
+        $this->initial_user = $this->request->input('fs_initial_user', '');
+        $this->initial_pass = $this->request->input('fs_initial_pass', '');
 
         $installed = $this->searchErrors() &&
             $this->request->method() === 'POST' &&
@@ -101,7 +101,7 @@ class Installer implements ControllerInterface
             $this->saveInstall();
 
         if ($installed) {
-            if (!empty($this->request->get('unattended', ''))) {
+            if (!empty($this->request->input('unattended', ''))) {
                 echo 'OK';
                 return;
             }
@@ -113,7 +113,7 @@ class Installer implements ControllerInterface
             return;
         }
 
-        if ('TRUE' === $this->request->get('phpinfo', '')) {
+        if ('TRUE' === $this->request->query('phpinfo', '')) {
             /** @noinspection ForgottenDebugOutputInspection */
             phpinfo();
             return;

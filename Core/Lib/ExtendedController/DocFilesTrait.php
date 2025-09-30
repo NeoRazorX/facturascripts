@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\AttachedFileRelation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
 /**
@@ -44,7 +45,7 @@ trait DocFilesTrait
         }
 
         $uploadFiles = $this->request->files->getArray('new-files');
-        foreach ($uploadFiles as $key => $uploadFile) {
+        foreach ($uploadFiles as $uploadFile) {
             if (is_null($uploadFile)) {
                 continue;
             } elseif (false === $uploadFile->isValid()) {
@@ -222,14 +223,11 @@ trait DocFilesTrait
      */
     protected function updateNumDocs(): void
     {
-        $where = [
-            new DataBaseWhere('model', $this->getModelClassName()),
-            new DataBaseWhere('modelid', $this->request->get('code'))
-        ];
-        $numDocs = count(AttachedFileRelation::all($where));
-
         $model = $this->getModel();
-        $model->numdocs = $numDocs;
+        $model->numdocs = AttachedFileRelation::count([
+            Where::eq('model', $this->getModelClassName()),
+            Where::eq('modelid', $this->request->queryOrInput('code'))
+        ]);
 
         if (false === $model->save()) {
             Tools::log()->error('record-save-error');

@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
-use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\MenuManager as NewMenuManager;
@@ -234,7 +233,7 @@ class Controller implements ControllerInterface
 
         // Have this user a default page?
         $cookiesExpire = time() + Tools::config('cookies_expire');
-        $defaultPage = $this->request->query->get('defaultPage', '');
+        $defaultPage = $this->request->query('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
             $this->response->cookie('fsHomepage', $this->user->homepage, $cookiesExpire);
@@ -269,10 +268,15 @@ class Controller implements ControllerInterface
      */
     public function redirect(string $url, int $delay = 0)
     {
-        $this->response->headers->set('Refresh', $delay . '; ' . $url);
+        $this->response->header('Refresh', $delay . '; ' . $url);
         if ($delay === 0) {
             $this->setTemplate(false);
         }
+    }
+
+    public function request(): Request
+    {
+        return $this->request;
     }
 
     public function run(): void
@@ -288,12 +292,12 @@ class Controller implements ControllerInterface
             // renderizamos la plantilla
             if ($this->template) {
                 Kernel::startTimer('Controller::html-render');
-                $response->setContent(Html::render($this->template, [
+                $response->view($this->template, [
                     'controllerName' => $this->className,
                     'fsc' => $this,
                     'menuManager' => NewMenuManager::init()->selectPage($this->getPageData()),
                     'template' => $this->template,
-                ]));
+                ]);
                 Kernel::stopTimer('Controller::html-render');
             }
 
@@ -307,11 +311,11 @@ class Controller implements ControllerInterface
         // renderizamos la plantilla
         if ($this->template) {
             Kernel::startTimer('Controller::html-render');
-            $response->setContent(Html::render($this->template, [
+            $response->view($this->template, [
                 'controllerName' => $this->className,
                 'fsc' => $this,
                 'template' => $this->template,
-            ]));
+            ]);
             Kernel::stopTimer('Controller::html-render');
         }
 
@@ -344,7 +348,7 @@ class Controller implements ControllerInterface
     private function auth(): bool
     {
         // Obtener el nick del usuario de la cookie
-        $cookieNick = $this->request->cookies->get('fsNick', '');
+        $cookieNick = $this->request->cookie('fsNick', '');
         if (empty($cookieNick)) {
             // Si no hay nick en la cookie, no se puede autenticar
             return false;
@@ -368,7 +372,7 @@ class Controller implements ControllerInterface
         }
 
         // Verificar la logkey del usuario desde la cookie
-        $logKey = $this->request->cookies->get('fsLogkey', '') ?? '';
+        $logKey = $this->request->cookie('fsLogkey', '') ?? '';
         if (false === $user->verifyLogkey($logKey)) {
             // Si la logkey no es válida, registrar advertencia, eliminar cookie y fallar autenticación
             Tools::log()->warning('login-cookie-fail');
@@ -379,7 +383,7 @@ class Controller implements ControllerInterface
         // Actualizar la última actividad del usuario si ha pasado el período definido
         if (time() - strtotime($user->lastactivity) > User::UPDATE_ACTIVITY_PERIOD) {
             $ip = Session::getClientIp();
-            $browser = $this->request->headers->get('User-Agent');
+            $browser = $this->request->header('User-Agent');
             $user->updateActivity($ip, $browser);
             $user->save();
         }
@@ -397,6 +401,11 @@ class Controller implements ControllerInterface
         }
     }
 
+    protected function db(): DataBase
+    {
+        return $this->dataBase;
+    }
+
     /**
      * Return the name of the controller.
      *
@@ -405,6 +414,11 @@ class Controller implements ControllerInterface
     protected function getClassName(): string
     {
         return $this->className;
+    }
+
+    protected function response(): Response
+    {
+        return $this->response;
     }
 
     /**
@@ -418,8 +432,7 @@ class Controller implements ControllerInterface
     protected function validateFormToken(): bool
     {
         // valid request?
-        $urlToken = $this->request->query->get('multireqtoken', '');
-        $token = $this->request->request->get('multireqtoken', $urlToken);
+        $token = $this->request->inputOrQuery('multireqtoken', '');
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
             Tools::log()->warning('invalid-request');
             return false;

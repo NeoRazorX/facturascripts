@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,7 +37,7 @@ class MailNotifier
     public static function getText(string $text, array $params): string
     {
         foreach ($params as $key => $value) {
-            if (is_string($value)) {
+            if (is_string($value) || is_numeric($value)) {
                 $text = str_replace('{' . $key . '}', $value, $text);
             }
         }
@@ -100,6 +100,13 @@ class MailNotifier
         return $newMail->send();
     }
 
+    /**
+     * Los bloques se añaden al campo de params como 'block1', 'block2', ...
+     * Cada bloque se compone de un string o de un objeto que herede de BaseBlock.
+     * El texto del email puede contener {block1}, {block2}, ... Para indicar
+     * dónde se debe insertar cada bloque. Si no se encuentra la etiqueta, el bloque
+     * se añade al final del email.
+     */
     protected static function replaceTextToBlock(DinNewMail &$newMail, array $params): void
     {
         // si no hay parámetros o texto, no hacemos nada
@@ -107,7 +114,7 @@ class MailNotifier
             return;
         }
 
-        // obtenemos las coincidencias de {block1}, {block2}, ... sobre el texto
+        // Obtenemos las coincidencias de {block1}, {block2}, ... sobre el texto
         preg_match_all('/{block(\d+)}/', $newMail->text, $matches);
 
         // si no hay coincidencias, no hacemos nada
@@ -122,7 +129,7 @@ class MailNotifier
         $lastPos = 0;
 
         // recorremos los bloques encontrados
-        foreach ($matches[1] as $index => $blockIndex) {
+        foreach ($matches[1] as $blockIndex) {
             $substr = substr($text, $lastPos, strpos($text, '{block' . $blockIndex . '}') - $lastPos);
             $lastPos = strpos($text, '{block' . $blockIndex . '}') + strlen('{block' . $blockIndex . '}');
             if (empty($substr) && isset($params['block' . $blockIndex]) && $params['block' . $blockIndex] instanceof BaseBlock) {

@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,7 +35,7 @@
                 <input type="hidden" name="idproducto" value="{{ product.primaryColumnValue() }}">
                 <div class="card border-success shadow mb-3">
                     <div class="card-body p-3">
-                        <div class="row">
+                        <div class="row g-2">
                             <div class="col-sm-2">
                                 {{ trans('variant') }}
                                 <select name="referencia" class="form-select mb-2">
@@ -48,7 +48,7 @@
                             </div>
                             <div class="col">
                                 {{ trans('images') }}
-                                <input type="file" name="newfiles[]" class="form-control-file" multiple=""
+                                <input type="file" name="newfiles[]" class="form-control" multiple=""
                                        accept="image/png, image/jpeg, image/gif" required/>
                                 <p class="text-muted mb-2">
                                     {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
@@ -74,7 +74,7 @@
                 <div class="card {{ border }} shadow">
                     <img src="{{ asset(image.url('download')) }}" class="card-img-top"
                          alt="{{ image.referencia }}" loading="lazy">
-                    <div lang="card-body"></div>
+                    <div class="card-body"></div>
                     <div class="card-footer">
                         {% set formName = currentView.getViewName() ~ (counter + 1) %}
                         <form id="{{ 'form' ~ formName }}" action="{{ product.url() }}" method="post"

@@ -97,8 +97,9 @@ final class Kernel
         self::startTimer('kernel::init');
 
         // cargamos algunas constantes para dar soporte a versiones antiguas
+        $initial_codpais = Tools::config('initial_codpais', 'ESP');
         $constants = [
-            'FS_CODPAIS' => ['property' => 'codpais', 'default' => 'ESP'],
+            'FS_CODPAIS' => ['property' => 'codpais', 'default' => $initial_codpais],
             'FS_CURRENCY_POS' => ['property' => 'currency_position', 'default' => 'right'],
             'FS_ITEM_LIMIT' => ['property' => 'item_limit', 'default' => 50],
             'FS_NF0' => ['property' => 'decimals', 'default' => 2],
@@ -137,8 +138,8 @@ final class Kernel
     {
         $lockFile = Tools::folder('MyFiles', 'lock_' . md5($processName) . '.lock');
         if (file_exists($lockFile)) {
-            // si tiene más de 8 horas, lo eliminamos
-            if (filemtime($lockFile) < time() - 28800) {
+            // si tiene más de 2 horas, lo eliminamos
+            if (filemtime($lockFile) < time() - 7200) {
                 unlink($lockFile);
             } else {
                 return false;
@@ -243,7 +244,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2025.31;
+        return 2025.42;
     }
 
     private static function checkControllerClass(string $controller): array

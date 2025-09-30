@@ -677,8 +677,13 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
-    public function testExceptionVat()
+    public function testExceptionVat(): void
     {
+        // si el país no es España, saltamos el test
+        if (Tools::config('codpais') !== 'ESP') {
+            $this->markTestSkipped('country-is-not-spain');
+        }
+
         // creamos un producto
         $product = $this->getTestProduct();
         $this->assertTrue($product->save(), 'product-cant-save');
@@ -700,6 +705,49 @@ final class ProductoTest extends TestCase
         $product->excepcioniva = null;
         $product->codimpuesto = 'IVA21';
         $this->assertTrue($product->save(), 'product-cant-save-with-iva-21');
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+    }
+
+    public function testLoadWhereEq(): void
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // creamos otro producto para cargar con loadWhereEq
+        $productToLoad = new Producto();
+        $loaded = $productToLoad->loadWhereEq('referencia', $product->referencia);
+        $this->assertTrue($loaded, 'product-cant-load-where-eq');
+        $this->assertEquals($product->idproducto, $productToLoad->idproducto, 'loaded-product-different-id');
+        $this->assertEquals($product->descripcion, $productToLoad->descripcion, 'loaded-product-different-description');
+
+        // probamos con un valor que no existe
+        $productNotFound = new Producto();
+        $notLoaded = $productNotFound->loadWhereEq('referencia', 'NONEXISTENT');
+        $this->assertFalse($notLoaded, 'product-loaded-nonexistent');
+        $this->assertNull($productNotFound->idproducto, 'nonexistent-product-has-id');
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+    }
+
+    public function testFindWhereEq(): void
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // buscamos el producto con findWhereEq
+        $foundProduct = Producto::findWhereEq('referencia', $product->referencia);
+        $this->assertNotNull($foundProduct, 'product-not-found-where-eq');
+        $this->assertEquals($product->idproducto, $foundProduct->idproducto, 'found-product-different-id');
+        $this->assertEquals($product->descripcion, $foundProduct->descripcion, 'found-product-different-description');
+
+        // probamos con un valor que no existe
+        $notFoundProduct = Producto::findWhereEq('referencia', 'NONEXISTENT');
+        $this->assertNull($notFoundProduct, 'found-nonexistent-product');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');

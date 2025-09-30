@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Traits;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cuenta;
@@ -33,7 +34,7 @@ trait DefaultSettingsTrait
     protected static function installAccountingPlan(): void
     {
         // ¿Existe el archivo del plan contable?
-        $filePath = FS_FOLDER . '/Core/Data/Codpais/ESP/defaultPlan.csv';
+        $filePath = FS_FOLDER . '/Core/Data/Codpais/' . Paises::default()->codpais . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
             return;
         }
@@ -46,12 +47,6 @@ trait DefaultSettingsTrait
             if (false === $exercise->isOpened()) {
                 $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
                 $exercise->save();
-            }
-
-            // si el ejercicio no tiene 10 dígitos en las subcuentas, lo eliminamos
-            if ($exercise->longsubcuenta != 10) {
-                $exercise->delete();
-                continue;
             }
 
             $where = [new DataBaseWhere('codejercicio', $exercise->codejercicio)];
@@ -75,7 +70,7 @@ trait DefaultSettingsTrait
 
     protected static function setDefaultSettings(): void
     {
-        $fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/ESP/default.json');
+        $fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/' . Paises::default()->codpais . '/default.json');
         $defaultValues = json_decode($fileContent, true) ?? [];
         foreach ($defaultValues as $group => $values) {
             foreach ($values as $key => $value) {

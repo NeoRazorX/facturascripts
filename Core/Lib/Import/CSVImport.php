@@ -60,6 +60,9 @@ class CSVImport
 
             $insertRows[] = '(' . implode(',', $insertRow) . ')';
         }
+        if (empty($insertRows)) {
+            return '';
+        }
 
         $sql = 'INSERT INTO ' . $table . ' (' . implode(',', $insertFields) . ') VALUES ' . implode(',', $insertRows);
         return $update ? static::insertOnDuplicateSql($sql, $csv) : $sql . ';';

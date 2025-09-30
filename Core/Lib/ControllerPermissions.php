@@ -61,6 +61,10 @@ final class ControllerPermissions
             return;
         }
 
+        if ($user === null) {
+            return;
+        }
+
         if ($user->admin) {
             $this->grantAdminPermissions();
         } else {
@@ -71,11 +75,11 @@ final class ControllerPermissions
     /**
      * Manually set permissions for this controller.
      *
-     * @param bool $access     Whether to allow access
-     * @param int  $accessMode The access level
-     * @param bool $delete     Whether to allow delete operations
-     * @param bool $update     Whether to allow update operations
-     * @param bool $onlyOwner  Whether to restrict to owner data only
+     * @param bool $access Whether to allow access
+     * @param int $accessMode The access level
+     * @param bool $delete Whether to allow delete operations
+     * @param bool $update Whether to allow update operations
+     * @param bool $onlyOwner Whether to restrict to owner data only
      */
     public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner = false): void
     {
@@ -173,7 +177,7 @@ final class ControllerPermissions
     protected function getUserAccess(string $nick, string $pageName): array
     {
         $cacheKey = $this->buildCacheKey($nick, $pageName);
-        
+
         return Cache::remember($cacheKey, function () use ($nick, $pageName) {
             return RoleAccess::allFromUser($nick, $pageName);
         });

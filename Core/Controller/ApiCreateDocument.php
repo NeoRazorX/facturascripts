@@ -66,7 +66,7 @@ class ApiCreateDocument extends ApiController
     protected function createPurchase(): void
     {
         // cargamos el proveedor
-        $codproveedor = $this->request->get('codproveedor');
+        $codproveedor = $this->request->input('codproveedor');
         if (empty($codproveedor)) {
             $this->response
                 ->setHttpCode(Response::HTTP_BAD_REQUEST)
@@ -103,7 +103,7 @@ class ApiCreateDocument extends ApiController
         }
 
         // asignamos el almacén
-        $codalmacen = $this->request->get('codalmacen');
+        $codalmacen = $this->request->input('codalmacen');
         if ($codalmacen && false === $doc->setWarehouse($codalmacen)) {
             $this->response
                 ->setHttpCode(Response::HTTP_NOT_FOUND)
@@ -115,8 +115,8 @@ class ApiCreateDocument extends ApiController
         }
 
         // asignamos la fecha
-        $fecha = $this->request->get('fecha');
-        $hora = $this->request->get('hora', $doc->hora);
+        $fecha = $this->request->input('fecha');
+        $hora = $this->request->input('hora', $doc->hora);
         if ($fecha && false === $doc->setDate($fecha, $hora)) {
             $this->response
                 ->setHttpCode(Response::HTTP_BAD_REQUEST)
@@ -128,7 +128,7 @@ class ApiCreateDocument extends ApiController
         }
 
         // asignamos la divisa
-        $coddivisa = $this->request->get('coddivisa');
+        $coddivisa = $this->request->input('coddivisa');
         if ($coddivisa) {
             $doc->setCurrency($coddivisa);
         }
@@ -162,7 +162,9 @@ class ApiCreateDocument extends ApiController
         }
 
         // ¿Factura pagada?
-        if ($doc->hasColumn('idfactura') && $doc->hasColumn('pagada') && $this->request->getBool('pagada', false)) {
+        if ($doc->hasColumn('idfactura') &&
+            $doc->hasColumn('pagada') &&
+            $this->request->request->getBool('pagada', false)) {
             foreach ($doc->getReceipts() as $receipt) {
                 $receipt->pagado = true;
                 $receipt->save();
@@ -186,7 +188,7 @@ class ApiCreateDocument extends ApiController
     protected function createSale(): void
     {
         // cargamos el cliente
-        $codcliente = $this->request->get('codcliente');
+        $codcliente = $this->request->input('codcliente');
         if (empty($codcliente)) {
             $this->response
                 ->setHttpCode(Response::HTTP_BAD_REQUEST)
@@ -223,7 +225,7 @@ class ApiCreateDocument extends ApiController
         }
 
         // asignamos el almacén
-        $codalmacen = $this->request->get('codalmacen');
+        $codalmacen = $this->request->input('codalmacen');
         if ($codalmacen && false === $doc->setWarehouse($codalmacen)) {
             $this->response
                 ->setHttpCode(Response::HTTP_NOT_FOUND)
@@ -235,8 +237,8 @@ class ApiCreateDocument extends ApiController
         }
 
         // asignamos la fecha
-        $fecha = $this->request->get('fecha');
-        $hora = $this->request->get('hora', $doc->hora);
+        $fecha = $this->request->input('fecha');
+        $hora = $this->request->input('hora', $doc->hora);
         if ($fecha && false === $doc->setDate($fecha, $hora)) {
             $this->response
                 ->setHttpCode(Response::HTTP_BAD_REQUEST)
@@ -248,7 +250,7 @@ class ApiCreateDocument extends ApiController
         }
 
         // asignamos la divisa
-        $coddivisa = $this->request->get('coddivisa');
+        $coddivisa = $this->request->input('coddivisa');
         if ($coddivisa) {
             $doc->setCurrency($coddivisa);
         }
@@ -256,7 +258,7 @@ class ApiCreateDocument extends ApiController
         // asignamos el resto de campos del modelo
         foreach ($doc->getModelFields() as $key => $field) {
             if ($this->request->request->has($key)) {
-                $doc->{$key} = $this->request->request->get($key);
+                $doc->{$key} = $this->request->input($key);
             }
         }
 
@@ -282,7 +284,9 @@ class ApiCreateDocument extends ApiController
         }
 
         // ¿Factura pagada?
-        if ($doc->hasColumn('idfactura') && $doc->hasColumn('pagada') && $this->request->getBool('pagada', false)) {
+        if ($doc->hasColumn('idfactura') &&
+            $doc->hasColumn('pagada') &&
+            $this->request->request->getBool('pagada', false)) {
             foreach ($doc->getReceipts() as $receipt) {
                 $receipt->pagado = true;
                 $receipt->save();
@@ -352,7 +356,7 @@ class ApiCreateDocument extends ApiController
             return false;
         }
 
-        $lineData = $this->request->request->get('lineas');
+        $lineData = $this->request->input('lineas');
         $lineas = json_decode($lineData, true);
         if (!is_array($lineas)) {
             $this->response

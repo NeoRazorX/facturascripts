@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -94,7 +94,7 @@ final class AgenciaTransporteTest extends TestCase
             'web' => 'https://www.facturascripts.com'
         ]);
 
-        $this->assertEquals(true, $agency->activo, 'agency-cant-load-activo');
+        $this->assertTrue($agency->activo, 'agency-cant-load-activo');
         $this->assertEquals('Test', $agency->codtrans, 'agency-cant-load-codtrans');
         $this->assertEquals('Test Agency', $agency->nombre, 'agency-cant-load-nombre');
         $this->assertEquals('+34 922 000 000', $agency->telefono, 'agency-cant-load-telefono');
@@ -109,11 +109,28 @@ final class AgenciaTransporteTest extends TestCase
             'web' => 'https://www.facturascripts.com/test'
         ]);
 
-        $this->assertEquals(false, $agency->activo, 'agency-cant-load-activo-2');
+        $this->assertFalse($agency->activo, 'agency-cant-load-activo-2');
         $this->assertEquals('Test2', $agency->codtrans, 'agency-cant-load-codtrans-2');
         $this->assertEquals('Test Agency 2', $agency->nombre, 'agency-cant-load-nombre-2');
         $this->assertEquals('+34 922 000 001', $agency->telefono, 'agency-cant-load-telefono-2');
         $this->assertEquals('https://www.facturascripts.com/test', $agency->web, 'agency-cant-load-web-2');
+    }
+
+    public function testLoadWhereEq(): void
+    {
+        // creamos una agencia de transporte para buscarla
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'Test';
+        $agency->nombre = 'Test-Agency-W';
+        $this->assertTrue($agency->save(), 'agency-cant-save-for-loadwhereeq');
+
+        // ahora la buscamos
+        $agency2 = new AgenciaTransporte();
+        $this->assertTrue($agency2->loadWhereEq('nombre', 'Test-Agency-W'), 'agency-cant-loadwhereeq');
+        $this->assertEquals('Test', $agency2->codtrans, 'agency-loadwhereeq-wrong-codtrans');
+
+        // borramos la agencia de transporte
+        $this->assertTrue($agency2->delete(), 'agency-cant-delete-after-loadwhereeq');
     }
 
     protected function tearDown(): void

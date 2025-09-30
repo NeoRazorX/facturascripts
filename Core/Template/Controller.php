@@ -242,7 +242,7 @@ abstract class Controller implements ControllerInterface
         }
 
         // valid request?
-        $token = $this->request()->get('multireqtoken', '');
+        $token = $this->request()->inputOrQuery('multireqtoken', '');
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
             Tools::log()->warning('invalid-request');
             return false;

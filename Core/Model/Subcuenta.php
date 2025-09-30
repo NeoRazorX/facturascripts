@@ -206,7 +206,7 @@ class Subcuenta extends ModelClass
 
     public function test(): bool
     {
-        $this->saldo = round($this->debe - $this->haber, FS_NF0);
+        $this->saldo = Tools::round($this->debe - $this->haber);
 
         // escape html
         foreach (['codcuenta', 'codsubcuenta', 'descripcion', 'codcuentaesp'] as $field) {
@@ -216,17 +216,22 @@ class Subcuenta extends ModelClass
         $this->codsubcuenta = empty($this->idsubcuenta) ? $this->transformCodsubcuenta($this->codsubcuenta) : $this->codsubcuenta;
         $this->descripcion = Tools::noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
-            Tools::log()->warning(
-                'invalid-column-lenght',
-                ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']
-            );
+            Tools::log()->warning('invalid-column-lenght', [
+                '%column%' => 'descripcion',
+                '%min%' => '1',
+                '%max%' => '255'
+            ]);
             return false;
         }
 
         // check exercise
         $exercise = $this->getExercise();
         if (false === $this->disable_additional_test && strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
-            Tools::log()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
+            Tools::log()->warning('account-length-error', [
+                '%code%' => $this->codsubcuenta,
+                '%length%' => $exercise->longsubcuenta,
+                '%exercise%' => $exercise->id()
+            ]);
             return false;
         }
 

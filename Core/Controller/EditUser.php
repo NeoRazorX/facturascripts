@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleUser;
@@ -58,8 +59,8 @@ class EditUser extends EditController
     private function allowUpdate(): bool
     {
         // preload user data
-        $code = $this->request->get('code');
         $user = new User();
+        $code = $this->request->queryOrInput('code');
         if (false === $user->load($code)) {
             // user not found, maybe it is a new user, so only admin can create it
             return $this->user->admin;
@@ -194,7 +195,7 @@ class EditUser extends EditController
         $pageList = [];
 
         if ($user->admin) {
-            foreach (Page::all([], ['name' => 'ASC'], 0, 0) as $page) {
+            foreach (Page::all([], ['name' => 'ASC']) as $page) {
                 if (false === $page->showonmenu) {
                     continue;
                 }
@@ -205,7 +206,8 @@ class EditUser extends EditController
             return $pageList;
         }
 
-        foreach (RoleUser::all([new DataBaseWhere('nick', $user->nick)]) as $roleUser) {
+        $where = [Where::eq('nick', $user->nick)];
+        foreach (RoleUser::all($where) as $roleUser) {
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
                 $page = $roleAccess->getPage();
                 if (false === $page->exists() || false === $page->showonmenu) {
@@ -415,7 +417,7 @@ class EditUser extends EditController
 
         // load user from code
         $user = new User();
-        $code = $this->request->get('code');
+        $code = $this->request->queryOrInput('code');
         if (false === $user->load($code)) {
             Tools::log()->error('record-not-found');
             return;

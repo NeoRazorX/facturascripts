@@ -332,4 +332,63 @@ final class ToolsTest extends TestCase
         $this->assertEquals('1.234', Tools::number(1.234, 3));
         $this->assertEquals('1.23', Tools::number(1.234, 2));
     }
+
+    public function testDecimals(): void
+    {
+        // guardamos el valor actual
+        $originalDecimals = Tools::settings('default', 'decimals');
+
+        // probamos con diferentes configuraciones de decimales
+        Tools::settingsSet('default', 'decimals', 2);
+        $this->assertEquals(2, Tools::decimals());
+
+        Tools::settingsSet('default', 'decimals', 3);
+        $this->assertEquals(3, Tools::decimals());
+
+        Tools::settingsSet('default', 'decimals', 0);
+        $this->assertEquals(0, Tools::decimals());
+
+        Tools::settingsSet('default', 'decimals', 4);
+        $this->assertEquals(4, Tools::decimals());
+
+        // restauramos el valor original
+        Tools::settingsSet('default', 'decimals', $originalDecimals);
+    }
+
+    public function testRound(): void
+    {
+        // guardamos el valor actual
+        $originalDecimals = Tools::settings('default', 'decimals');
+
+        // probamos con 2 decimales
+        Tools::settingsSet('default', 'decimals', 2);
+        $this->assertEquals(1.23, Tools::round(1.234));
+        $this->assertEquals(1.24, Tools::round(1.235));
+        $this->assertEquals(-1.23, Tools::round(-1.234));
+        $this->assertEquals(-1.24, Tools::round(-1.235));
+        $this->assertEquals(0.0, Tools::round(null));
+        $this->assertEquals(0.0, Tools::round(0.0));
+
+        // probamos con 0 decimales
+        Tools::settingsSet('default', 'decimals', 0);
+        $this->assertEquals(1.0, Tools::round(1.234));
+        $this->assertEquals(1.0, Tools::round(1.4));
+        $this->assertEquals(2.0, Tools::round(1.5));
+        $this->assertEquals(2.0, Tools::round(1.6));
+        $this->assertEquals(-1.0, Tools::round(-1.4));
+        $this->assertEquals(-2.0, Tools::round(-1.5));
+
+        // probamos con 3 decimales
+        Tools::settingsSet('default', 'decimals', 3);
+        $this->assertEquals(1.235, Tools::round(1.2345));
+        $this->assertEquals(1.235, Tools::round(1.2354));
+        $this->assertEquals(1.236, Tools::round(1.2355));
+
+        // casos especiales
+        $this->assertEquals(1.0, Tools::round(1.0));
+        $this->assertEquals(123.457, Tools::round(123.4567));
+
+        // restauramos el valor original
+        Tools::settingsSet('default', 'decimals', $originalDecimals);
+    }
 }
