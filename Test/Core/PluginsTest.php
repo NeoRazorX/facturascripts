@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -136,7 +136,7 @@ final class PluginsTest extends TestCase
         $this->assertEquals('TestPlugin2', $plugin->name);
         $this->assertEquals('Description Test Plugin 2', $plugin->description);
         $this->assertEquals(1, $plugin->version);
-        $this->assertEquals(2023, $plugin->min_version);
+        $this->assertEquals(2025, $plugin->min_version);
         $this->assertTrue($plugin->compatible);
         $this->assertTrue($plugin->installed);
         $this->assertFalse($plugin->enabled);
@@ -278,7 +278,7 @@ final class PluginsTest extends TestCase
         $this->assertEquals('TestPlugin3', $plugin->name);
         $this->assertEquals('Test Plugin 3 description', $plugin->description);
         $this->assertEquals(1.1, $plugin->version);
-        $this->assertEquals(2023, $plugin->min_version);
+        $this->assertEquals(2025, $plugin->min_version);
         $this->assertIsArray($plugin->require);
         $this->assertContains('TestPlugin2', $plugin->require);
 
@@ -329,33 +329,33 @@ final class PluginsTest extends TestCase
         $this->assertEquals(2028, $plugin->min_version);
     }
 
-    public function testPluginMinPHP8(): void
+    public function testPluginMinPHP83(): void
     {
-        $zipPath = __DIR__ . '/../__files/PluginMinPHP8.zip';
+        $zipPath = __DIR__ . '/../__files/PluginMinPHP83.zip';
 
-        // si la versión de PHP es menor que 8, no podemos añadir el plugin
-        if (version_compare(PHP_VERSION, '8.0.0') < 0) {
+        // si la versión de PHP es menor que 8.3, no podemos añadir el plugin
+        if (version_compare(PHP_VERSION, '8.3.0') < 0) {
             $this->assertFalse(Plugins::add($zipPath));
 
             // leemos los datos del plugin
             $plugin = Plugin::getFromZip($zipPath);
-            $this->assertEquals('PluginMinPHP8', $plugin->name);
-            $this->assertEquals('Plugin with min_php = 8', $plugin->description);
+            $this->assertEquals('PluginMinPHP83', $plugin->name);
+            $this->assertEquals('Plugin with min_php = 8.3', $plugin->description);
             $this->assertEquals(3, $plugin->version);
-            $this->assertEquals(2023, $plugin->min_version);
-            $this->assertEquals('8', $plugin->min_php);
+            $this->assertEquals(2025, $plugin->min_version);
+            $this->assertEquals('8.3', $plugin->min_php);
             return;
         }
 
-        // la versión de PHP es mayor o igual que 8, podemos añadir el plugin
+        // la versión de PHP es mayor o igual que 8.3, podemos añadir el plugin
         $this->assertTrue(Plugins::add($zipPath));
 
         // comprobamos que podemos activar el plugin
-        $this->assertTrue(Plugins::enable('PluginMinPHP8'));
+        $this->assertTrue(Plugins::enable('PluginMinPHP83'));
 
         // comprobamos que podemos eliminar el plugin
-        $this->assertTrue(Plugins::disable('PluginMinPHP8'));
-        $this->assertTrue(Plugins::remove('PluginMinPHP8'));
+        $this->assertTrue(Plugins::disable('PluginMinPHP83'));
+        $this->assertTrue(Plugins::remove('PluginMinPHP83'));
     }
 
     public function testPluginRequirePHP(): void
@@ -369,7 +369,7 @@ final class PluginsTest extends TestCase
         $this->assertEquals('PluginRequirePHP', $plugin->name);
         $this->assertEquals("Plugin with require_php = 'yolo,yolo2'", $plugin->description);
         $this->assertEquals(1.3, $plugin->version);
-        $this->assertEquals(2023, $plugin->min_version);
+        $this->assertEquals(2025, $plugin->min_version);
         $this->assertIsArray($plugin->require_php);
         $this->assertContains('yolo', $plugin->require_php);
         $this->assertContains('yolo2', $plugin->require_php);

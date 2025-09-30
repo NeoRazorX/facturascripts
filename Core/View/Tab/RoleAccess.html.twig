@@ -24,7 +24,7 @@
                 <tr>
                     <th>{{ trans('menu') }}</th>
                     <th class="text-center">{{ trans('show') }}</th>
-                    <th class="text-center">{{ trans('only-owner-data') }}</th>
+                    <th class="table-warning text-center">{{ trans('only-owner-data') }}</th>
                     <th class="text-center">{{ trans('allow-update') }}</th>
                     <th class="text-center">{{ trans('allow-import') }}</th>
                     <th class="text-center">{{ trans('allow-export') }}</th>
@@ -33,41 +33,49 @@
                 </thead>
                 <tbody>
                 {% set menu = 'TodosMenus' %}
-                <tr class="table-warning" id="tr{{menu}}">
-                    <td><b>{{ trans('all') }}</b></td>
-                    <td class="text-center">
-                        <div class="custom-control-lg custom-control custom-checkbox">
-                            <input class="all-permission custom-control-input" id="checkbox-all-show" value="show" type="checkbox" data-menu="{{ menu }}" data-type="show"/>
-                            <label class="custom-control-label" for="checkbox-all-show">&nbsp;</label>
-                        </div>
+                <tr id="tr{{ menu }}">
+                    <td>
+                        <b>{{ trans('all') }}</b>
                     </td>
                     <td class="text-center">
                         <div class="custom-control-lg custom-control custom-checkbox">
-                            <input class="all-permission custom-control-input" id="checkbox-all-onlyOwner" value="only-owner" type="checkbox" data-menu="{{ menu }}" data-type="only-owner"/>
+                            <input class="all-permission custom-control-input" id="checkbox-all-show" value="show"
+                                   type="checkbox" data-menu="{{ menu }}" data-type="show"/>
+                            <label class="custom-control-label" for="checkbox-all-show">&nbsp;</label>
+                        </div>
+                    </td>
+                    <td class="table-warning text-center">
+                        <div class="custom-control-lg custom-control custom-checkbox">
+                            <input class="all-permission custom-control-input" id="checkbox-all-onlyOwner"
+                                   value="only-owner" type="checkbox" data-menu="{{ menu }}" data-type="only-owner"/>
                             <label class="custom-control-label" for="checkbox-all-onlyOwner">&nbsp;</label>
                         </div>
                     </td>
                     <td class="text-center">
                         <div class="custom-control-lg custom-control custom-checkbox">
-                            <input class="all-permission custom-control-input" id="checkbox-all-update" value="update" type="checkbox" data-menu="{{ menu }}" data-type="update"/>
+                            <input class="all-permission custom-control-input" id="checkbox-all-update" value="update"
+                                   type="checkbox" data-menu="{{ menu }}" data-type="update"/>
                             <label class="custom-control-label" for="checkbox-all-update">&nbsp;</label>
                         </div>
                     </td>
                     <td class="text-center">
                         <div class="custom-control-lg custom-control custom-checkbox">
-                            <input class="all-permission custom-control-input" id="checkbox-all-import" value="import" type="checkbox" data-menu="{{ menu }}" data-type="import"/>
+                            <input class="all-permission custom-control-input" id="checkbox-all-import" value="import"
+                                   type="checkbox" data-menu="{{ menu }}" data-type="import"/>
                             <label class="custom-control-label" for="checkbox-all-import">&nbsp;</label>
                         </div>
                     </td>
                     <td class="text-center">
                         <div class="custom-control-lg custom-control custom-checkbox">
-                            <input class="all-permission custom-control-input" id="checkbox-all-export" value="export" type="checkbox" data-menu="{{ menu }}" data-type="export"/>
+                            <input class="all-permission custom-control-input" id="checkbox-all-export" value="export"
+                                   type="checkbox" data-menu="{{ menu }}" data-type="export"/>
                             <label class="custom-control-label" for="checkbox-all-export">&nbsp;</label>
                         </div>
                     </td>
                     <td class="text-center">
                         <div class="custom-control-lg custom-control custom-checkbox">
-                            <input class="all-permission custom-control-input" id="checkbox-all-delete" value="delete" type="checkbox" data-menu="{{ menu }}" data-type="delete"/>
+                            <input class="all-permission custom-control-input" id="checkbox-all-delete" value="delete"
+                                   type="checkbox" data-menu="{{ menu }}" data-type="delete"/>
                             <label class="custom-control-label" for="checkbox-all-delete">&nbsp;</label>
                         </div>
                     </td>
@@ -75,47 +83,77 @@
                 {% for pageName, rule in fsc.getAccessRules() %}
                     {% if rule.menu|replace({' ': ''}) != menu %}
                         {% set menu = rule.menu|replace({' ': ''}) %}
-                        <tr class="table-warning" id="tr{{menu}}">
-                            <td><span style="cursor:pointer" onclick="toggleMenu('{{ menu }}')"><i id="plus{{ menu }}" class="far fa-plus-square"></i><i id="minus{{ menu }}" class="far fa-minus-square d-none"></i> <b>{{ trans('menu') }} {{ menu }}</b></span></td>
+                        <tr class="table-secondary" id="tr{{ menu }}">
+                            <td>
+                                <span style="cursor:pointer" onclick="toggleMenu('{{ menu }}')">
+                                    <i id="plus{{ menu }}" class="far fa-plus-square"></i>
+                                    <i id="minus{{ menu }}" class="far fa-minus-square d-none"></i>
+                                    <b>{{ trans('menu') }} {{ menu }}</b>
+                                </span>
+                            </td>
                             <td class="text-center">
                                 <div class="custom-control-lg custom-control custom-checkbox">
-                                    <input class="all-menu-permission show-menu-permission custom-control-input" id="checkbox-all-menu-show-{{ menu }}" value="show-{{ menu }}" type="checkbox" data-menu="{{ menu }}" data-type="show"/>
-                                    <label class="custom-control-label label-contador" for="checkbox-all-menu-show-{{ menu }}" data-menu="{{ menu }}" data-type="show">&nbsp;</label>
+                                    <input class="all-menu-permission show-menu-permission custom-control-input"
+                                           id="checkbox-all-menu-show-{{ menu }}" value="show-{{ menu }}"
+                                           type="checkbox" data-menu="{{ menu }}" data-type="show"/>
+                                    <label class="custom-control-label label-contador"
+                                           for="checkbox-all-menu-show-{{ menu }}" data-menu="{{ menu }}"
+                                           data-type="show">&nbsp;</label>
+                                </div>
+                            </td>
+                            <td class="table-warning text-center">
+                                <div class="custom-control-lg custom-control custom-checkbox">
+                                    <input class="all-menu-permission only-owner-menu-permission custom-control-input"
+                                           id="checkbox-all-menu-only-owner-{{ menu }}" value="only-owner-{{ menu }}"
+                                           type="checkbox" data-menu="{{ menu }}" data-type="only-owner"/>
+                                    <label class="custom-control-label label-contador"
+                                           for="checkbox-all-menu-only-owner-{{ menu }}" data-menu="{{ menu }}"
+                                           data-type="only-owner">&nbsp;</label>
                                 </div>
                             </td>
                             <td class="text-center">
                                 <div class="custom-control-lg custom-control custom-checkbox">
-                                    <input class="all-menu-permission only-owner-menu-permission custom-control-input" id="checkbox-all-menu-only-owner-{{ menu }}" value="only-owner-{{ menu }}" type="checkbox" data-menu="{{ menu }}" data-type="only-owner"/>
-                                    <label class="custom-control-label label-contador" for="checkbox-all-menu-only-owner-{{ menu }}" data-menu="{{ menu }}" data-type="only-owner">&nbsp;</label>
+                                    <input class="all-menu-permission update-menu-permission custom-control-input"
+                                           id="checkbox-all-menu-update-{{ menu }}" value="update-{{ menu }}"
+                                           type="checkbox" data-menu="{{ menu }}" data-type="update"/>
+                                    <label class="custom-control-label label-contador"
+                                           for="checkbox-all-menu-update-{{ menu }}" data-menu="{{ menu }}"
+                                           data-type="update">&nbsp;</label>
                                 </div>
                             </td>
                             <td class="text-center">
                                 <div class="custom-control-lg custom-control custom-checkbox">
-                                    <input class="all-menu-permission update-menu-permission custom-control-input" id="checkbox-all-menu-update-{{ menu }}" value="update-{{ menu }}" type="checkbox" data-menu="{{ menu }}" data-type="update"/>
-                                    <label class="custom-control-label label-contador" for="checkbox-all-menu-update-{{ menu }}" data-menu="{{ menu }}" data-type="update">&nbsp;</label>
+                                    <input class="all-menu-permission import-menu-permission custom-control-input"
+                                           id="checkbox-all-menu-import-{{ menu }}" value="import-{{ menu }}"
+                                           type="checkbox" data-menu="{{ menu }}" data-type="import"/>
+                                    <label class="custom-control-label label-contador"
+                                           for="checkbox-all-menu-import-{{ menu }}" data-menu="{{ menu }}"
+                                           data-type="import">&nbsp;</label>
                                 </div>
                             </td>
                             <td class="text-center">
                                 <div class="custom-control-lg custom-control custom-checkbox">
-                                    <input class="all-menu-permission import-menu-permission custom-control-input" id="checkbox-all-menu-import-{{ menu }}" value="import-{{ menu }}" type="checkbox" data-menu="{{ menu }}" data-type="import"/>
-                                    <label class="custom-control-label label-contador" for="checkbox-all-menu-import-{{ menu }}" data-menu="{{ menu }}" data-type="import">&nbsp;</label>
+                                    <input class="all-menu-permission export-menu-permission custom-control-input"
+                                           id="checkbox-all-menu-export-{{ menu }}" value="export-{{ menu }}"
+                                           type="checkbox" data-menu="{{ menu }}" data-type="export"/>
+                                    <label class="custom-control-label label-contador"
+                                           for="checkbox-all-menu-export-{{ menu }}" data-menu="{{ menu }}"
+                                           data-type="export">&nbsp;</label>
                                 </div>
                             </td>
                             <td class="text-center">
                                 <div class="custom-control-lg custom-control custom-checkbox">
-                                    <input class="all-menu-permission export-menu-permission custom-control-input" id="checkbox-all-menu-export-{{ menu }}" value="export-{{ menu }}" type="checkbox" data-menu="{{ menu }}" data-type="export"/>
-                                    <label class="custom-control-label label-contador" for="checkbox-all-menu-export-{{ menu }}" data-menu="{{ menu }}" data-type="export">&nbsp;</label>
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                <div class="custom-control-lg custom-control custom-checkbox">
-                                    <input class="all-menu-permission delete-menu-permission custom-control-input" id="checkbox-all-menu-delete-{{ menu }}" value="delete-{{ menu }}" type="checkbox" data-menu="{{ menu }}" data-type="delete"/>
-                                    <label class="custom-control-label label-contador" for="checkbox-all-menu-delete-{{ menu }}" data-menu="{{ menu }}" data-type="delete">&nbsp;</label>
+                                    <input class="all-menu-permission delete-menu-permission custom-control-input"
+                                           id="checkbox-all-menu-delete-{{ menu }}" value="delete-{{ menu }}"
+                                           type="checkbox" data-menu="{{ menu }}" data-type="delete"/>
+                                    <label class="custom-control-label label-contador"
+                                           for="checkbox-all-menu-delete-{{ menu }}" data-menu="{{ menu }}"
+                                           data-type="delete">&nbsp;</label>
                                 </div>
                             </td>
                         </tr>
                     {% endif %}
-                    <tr class="d-none tr{{menu}}" >
+                    <tr class="d-none tr{{ menu }}">
                         <td>
                             {{ ((rule.submenu is not empty) ? ' » ' ~ rule.submenu : '') ~ ' » ' ~ rule.page }}
                             {% if 'List' in pageName %}
@@ -124,38 +162,69 @@
                         </td>
                         <td class="text-center">
                             <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('show') }}">
-                                <input class="permission show-permission show-menu-permission show-{{menu}}-permission custom-control-input" id="checkbox-large-show-{{ pageName }}" type="checkbox" name="show[]" data-menu="{{ menu }}" data-type="show" value="{{ pageName }}" {% if rule.show %}checked="" {% endif %}/>
-                                <label class="custom-control-label" for="checkbox-large-show-{{ pageName }}">&nbsp</label>
+                                <input class="permission show-permission show-menu-permission show-{{ menu }}-permission custom-control-input"
+                                       id="checkbox-large-show-{{ pageName }}" type="checkbox" name="show[]"
+                                       data-menu="{{ menu }}" data-type="show" value="{{ pageName }}"
+                                       {% if rule.show %}checked{% endif %}/>
+                                <label class="custom-control-label"
+                                       for="checkbox-large-show-{{ pageName }}">&nbsp;</label>
+                            </div>
+                        </td>
+                        <td class="table-warning text-center">
+                            <div class="custom-control-lg custom-control custom-checkbox"
+                                 title="{{ trans('only-owner-data') }}">
+                                <input class="permission only-owner-permission only-owner-menu-permission only-owner-{{ menu }}-permission custom-control-input"
+                                       id="checkbox-large-onlyOwner-{{ pageName }}" type="checkbox" name="onlyOwner[]"
+                                       data-menu="{{ menu }}" data-type="only-owner" value="{{ pageName }}"
+                                       {% if rule.onlyOwner %}checked{% endif %}/>
+                                <label class="custom-control-label"
+                                       for="checkbox-large-onlyOwner-{{ pageName }}">
+                                    <i class="fa-solid fa-lock text-secondary"></i>
+                                </label>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('only-owner-data') }}">
-                                <input class="permission only-owner-permission only-owner-menu-permission only-owner-{{menu}}-permission custom-control-input" id="checkbox-large-onlyOwner-{{ pageName }}" type="checkbox" name="onlyOwner[]" data-menu="{{ menu }}" data-type="only-owner" value="{{ pageName }}" {% if rule.onlyOwner %}checked="" {% endif %}/>
-                                <label class="custom-control-label" for="checkbox-large-onlyOwner-{{ pageName }}">&nbsp</label>
+                            <div class="custom-control-lg custom-control custom-checkbox"
+                                 title="{{ trans('allow-update') }}">
+                                <input class="permission update-permission update-menu-permission update-{{ menu }}-permission custom-control-input"
+                                       id="checkbox-large-update-{{ pageName }}" type="checkbox" name="update[]"
+                                       data-menu="{{ menu }}" data-type="update"
+                                       value="{{ pageName }}" {% if rule.update %} checked{% endif %}/>
+                                <label class="custom-control-label"
+                                       for="checkbox-large-update-{{ pageName }}">&nbsp;</label>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('allow-update') }}">
-                                <input class="permission update-permission update-menu-permission update-{{menu}}-permission custom-control-input" id="checkbox-large-update-{{ pageName }}" type="checkbox" name="update[]" data-menu="{{ menu }}" data-type="update" value="{{ pageName }}" {% if rule.update %} checked="" {% endif %}/>
-                                <label class="custom-control-label" for="checkbox-large-update-{{ pageName }}">&nbsp</label>
+                            <div class="custom-control-lg custom-control custom-checkbox"
+                                 title="{{ trans('allow-import') }}">
+                                <input class="permission import-permission import-menu-permission import-{{ menu }}-permission custom-control-input"
+                                       id="checkbox-large-import-{{ pageName }}" type="checkbox" name="import[]"
+                                       data-menu="{{ menu }}" data-type="import"
+                                       value="{{ pageName }}" {% if rule.import %} checked{% endif %}/>
+                                <label class="custom-control-label"
+                                       for="checkbox-large-import-{{ pageName }}">&nbsp;</label>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('allow-import') }}">
-                                <input class="permission import-permission import-menu-permission import-{{menu}}-permission custom-control-input" id="checkbox-large-import-{{ pageName }}" type="checkbox" name="import[]" data-menu="{{ menu }}" data-type="import" value="{{ pageName }}" {% if rule.import %} checked="" {% endif %}/>
-                                <label class="custom-control-label" for="checkbox-large-import-{{ pageName }}">&nbsp</label>
+                            <div class="custom-control-lg custom-control custom-checkbox"
+                                 title="{{ trans('allow-export') }}">
+                                <input class="permission export-permission export-menu-permission export-{{ menu }}-permission custom-control-input"
+                                       id="checkbox-large-export-{{ pageName }}" type="checkbox" name="export[]"
+                                       data-menu="{{ menu }}" data-type="export"
+                                       value="{{ pageName }}" {% if rule.export %} checked{% endif %}/>
+                                <label class="custom-control-label"
+                                       for="checkbox-large-export-{{ pageName }}">&nbsp;</label>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('allow-export') }}">
-                                <input class="permission export-permission export-menu-permission export-{{menu}}-permission custom-control-input" id="checkbox-large-export-{{ pageName }}" type="checkbox" name="export[]" data-menu="{{ menu }}" data-type="export" value="{{ pageName }}" {% if rule.export %} checked="" {% endif %}/>
-                                <label class="custom-control-label" for="checkbox-large-export-{{ pageName }}">&nbsp</label>
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <div class="custom-control-lg custom-control custom-checkbox" title="{{ trans('allow-delete') }}">
-                                <input class="permission delete-permission delete-menu-permission delete-{{menu}}-permission custom-control-input" id="checkbox-large-delete-{{ pageName }}" type="checkbox" name="delete[]" data-menu="{{ menu }}" data-type="delete" value="{{ pageName }}" {% if rule.delete %} checked="" {% endif %}/>
-                                <label class="custom-control-label" for="checkbox-large-delete-{{ pageName }}">&nbsp</label>
+                            <div class="custom-control-lg custom-control custom-checkbox"
+                                 title="{{ trans('allow-delete') }}">
+                                <input class="permission delete-permission delete-menu-permission delete-{{ menu }}-permission custom-control-input"
+                                       id="checkbox-large-delete-{{ pageName }}" type="checkbox" name="delete[]"
+                                       data-menu="{{ menu }}" data-type="delete"
+                                       value="{{ pageName }}" {% if rule.delete %} checked{% endif %}/>
+                                <label class="custom-control-label"
+                                       for="checkbox-large-delete-{{ pageName }}">&nbsp;</label>
                             </div>
                         </td>
                     </tr>
@@ -169,56 +238,62 @@
                 </tbody>
             </table>
         </div>
-        <div class="card-footer text-end">
-            <button type="submit" class="btn btn-sm btn-primary btn-spin-action">
-                <i class="fa-solid fa-save fa-fw"></i> {{ trans('save') }}
-            </button>
+        <div class="card-footer">
+            <div class="row align-items-center">
+                <div class="col">
+                    <p class="mb-0">
+                        <i class="fa-solid fa-lock me-1"></i> {{ trans('only-owner-data-p') }}
+                    </p>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary btn-spin-action">
+                        <i class="fa-solid fa-save fa-fw"></i> {{ trans('save') }}
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </form>
 
 <script>
     $(document).ready(function () {
-
-        //Individuales
+        // Individuales
         $('input[type="checkbox"].permission').change(function () {
-            if(this.checked && 'show' !== $(this).data('type')) {
+            if (this.checked && 'show' !== $(this).data('type')) {
                 $(this).parent().parent().parent().find('input.show-permission').prop('checked', true).change();
             }
-            if(!this.checked && $(this).data('type') === 'show') {
-                $("#tr" + $(this).data("menu")).find('input').prop('checked', false)
+            if (!this.checked && $(this).data('type') === 'show') {
+                $("#tr" + $(this).data("menu")).find('input').prop('checked', false);
                 $(this).parent().parent().parent().find('input.only-owner-permission, input.update-permission, input.import-permission, input.export-permission, input.delete-permission').prop('checked', false).change();
             }
-            if(!this.checked && 'show' !== $(this).data('type')) {
-                $("#trTodosMenus").find('input[data-type=' + $(this).data('type') + ']').prop('checked', false)
-                $("#tr" + $(this).data("menu")).find('input[data-type=' + $(this).data('type') + ']').prop('checked', false)
+            if (!this.checked && 'show' !== $(this).data('type')) {
+                $("#trTodosMenus").find('input[data-type=' + $(this).data('type') + ']').prop('checked', false);
+                $("#tr" + $(this).data("menu")).find('input[data-type=' + $(this).data('type') + ']').prop('checked', false);
             }
             let cuenta = countChecked($(this).data('type'), $(this).data('menu'));
             let selector = "label[for='checkbox-all-menu-" + $(this).data('type') + "-" + $(this).data('menu') + "']";
             if ('' !== cuenta) {
                 $(selector).html('<span class="badge bg-info">' + cuenta + '</span>');
-                if(cuenta === '{{ trans('all') }}') {
+                if (cuenta === '{{ trans('all') }}') {
                     $(selector).parent().parent().parent().find('input.' + $(this).data('type') + '-menu-permission').prop('checked', true);
                 }
-            }
-            else {
+            } else {
                 $(selector).html('&nbsp;');
             }
 
-            if($("#tr" + $(this).data("menu")).find('input:not(:checked())').length === 0) {
-                $("#tr" + $(this).data("menu")).removeClass('table-warning').addClass('table-success');
-            }
-            else {
-                $("#tr" + $(this).data("menu")).removeClass('table-success').addClass('table-warning');
+            if ($("#tr" + $(this).data("menu")).find('input:not(:checked)').length === 0) {
+                $("#tr" + $(this).data("menu")).removeClass('table-secondary').addClass('table-success');
+            } else {
+                $("#tr" + $(this).data("menu")).removeClass('table-success').addClass('table-secondary');
             }
         });
 
-        //Todo el menú
+        // Todo el menú
         $('input[type="checkbox"].all-menu-permission').change(function () {
             $('input.' + this.value + '-permission').prop('checked', this.checked).change();
         });
 
-        //Todos
+        // Todos
         $('input[type="checkbox"].all-permission').change(function () {
             $('input.' + this.value + '-menu-permission').prop('checked', this.checked).change();
         });
@@ -227,42 +302,28 @@
             let cuenta = countChecked($(this).data('type'), $(this).data('menu'));
             if ('' !== cuenta) {
                 $(this).html('<span class="badge bg-info">' + cuenta + '</span>');
-                if(cuenta === '{{ trans('all') }}') {
+                if (cuenta === '{{ trans('all') }}') {
                     $(this).parent().parent().parent().find('input.' + $(this).data('type') + '-menu-permission').prop('checked', true);
                 }
-            }
-            else {
+            } else {
                 $(this).html('&nbsp;');
-            }
-
-        });
-
-        $('tr.table-warning').each(function () {
-            if($(this).find('input:not(:checked())').length === 0) {
-                $(this).removeClass('table-warning');
-                $(this).addClass('table-success');
-            }
-            else {
-                $(this).removeClass('table-success');
-                $(this).addClass('table-warning');
             }
         });
     });
 
     function countChecked(type, menu) {
-        let numchecked = $("input[data-type='" + type + "'][data-menu='" + menu + "'].permission:checked()").length;
+        let numchecked = $("input[data-type='" + type + "'][data-menu='" + menu + "'].permission:checked").length;
         let numunchecked = $("input[data-type='" + type + "'][data-menu='" + menu + "'].permission").length;
-        if(numchecked === 0) {
+        if (numchecked === 0) {
             return '';
         }
-        if(numchecked === numunchecked) {
+        if (numchecked === numunchecked) {
             return '{{ trans('all') }}';
         }
         return numchecked + '/' + numunchecked;
     }
 
     function toggleMenu(menu) {
-        $('#plus' + menu + ', #minus' + menu + ', tr.tr' + menu ).toggleClass('d-none');
+        $('#plus' + menu + ', #minus' + menu + ', tr.tr' + menu).toggleClass('d-none');
     }
-
 </script>

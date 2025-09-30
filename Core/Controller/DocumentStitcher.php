@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,6 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
@@ -107,7 +106,7 @@ class DocumentStitcher extends Controller
         $this->loadDocuments();
         $this->loadMoreDocuments();
 
-        $statusCode = $this->request->request->get('status', '');
+        $statusCode = $this->request->input('status', '');
         if ($statusCode) {
             // validate form request?
             if (false === $this->validateFormToken()) {
@@ -181,7 +180,7 @@ class DocumentStitcher extends Controller
 
     /**
      * @param TransformerDocument $doc
-     * @param BusinessDocumentLine $docLines
+     * @param array $docLines
      * @param array $newLines
      * @param array $quantities
      * @param int $idestado
@@ -190,8 +189,8 @@ class DocumentStitcher extends Controller
     {
         $full = true;
         foreach ($docLines as $line) {
-            $quantity = (float)$this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
-            $quantities[$line->primaryColumnValue()] = $quantity;
+            $quantity = (float)$this->request->input('approve_quant_' . $line->id(), '0');
+            $quantities[$line->id()] = $quantity;
 
             if (empty($quantity) && $line->cantidad) {
                 $full = $full && $line->servido >= $line->cantidad;
@@ -216,7 +215,7 @@ class DocumentStitcher extends Controller
 
         // we get the lines again in case they have been updated
         foreach ($doc->getLines() as $line) {
-            $line->servido += $quantities[$line->primaryColumnValue()];
+            $line->servido += $quantities[$line->id()];
             if (false === $line->save()) {
                 $this->dataBase->rollback();
                 Tools::log()->error('record-save-error');
@@ -254,7 +253,7 @@ class DocumentStitcher extends Controller
 
         // group needed data
         $newLines = [];
-        $properties = ['fecha' => $this->request->request->get('fecha', '')];
+        $properties = ['fecha' => $this->request->input('fecha', '')];
         $prototype = null;
         $quantities = [];
         foreach ($this->documents as $doc) {
@@ -262,12 +261,12 @@ class DocumentStitcher extends Controller
 
             if (null === $prototype) {
                 $prototype = clone $doc;
-                $prototype->codserie = $this->request->request->get('codserie', $doc->codserie);
-            } elseif ('true' === $this->request->request->get('extralines', '') && !empty($lines)) {
+                $prototype->codserie = $this->request->input('codserie', $doc->codserie);
+            } elseif ('true' === $this->request->input('extralines', '') && !empty($lines)) {
                 $this->addBlankLine($newLines, $doc);
             }
 
-            if ('true' === $this->request->request->get('extralines', '') && !empty($lines)) {
+            if ('true' === $this->request->input('extralines', '') && !empty($lines)) {
                 $this->addInfoLine($newLines, $doc);
             }
 
@@ -322,9 +321,9 @@ class DocumentStitcher extends Controller
             return $codes;
         }
 
-        $codes = explode(',', $this->request->get('codes', ''));
-        $newcodes = $this->request->getArray('newcodes');
-        return empty($newcodes) ? $codes : array_merge($codes, $newcodes);
+        $codes = explode(',', $this->request->queryOrInput('codes', ''));
+        $new_codes = $this->request->request->getArray('newcodes');
+        return empty($new_codes) ? $codes : array_merge($codes, $new_codes);
     }
 
     /**
@@ -334,7 +333,7 @@ class DocumentStitcher extends Controller
      */
     protected function getDocInfoLineDescription($doc): string
     {
-        $description = Tools::lang()->trans($doc->modelClassName() . '-min') . ' ' . $doc->codigo;
+        $description = Tools::trans($doc->modelClassName() . '-min') . ' ' . $doc->codigo;
 
         if (isset($doc->numero2) && $doc->numero2) {
             $description .= ' (' . $doc->numero2 . ')';
@@ -356,7 +355,7 @@ class DocumentStitcher extends Controller
     protected function getGenerateClass(int $idestado): ?string
     {
         $estado = new EstadoDocumento();
-        $estado->loadFromCode($idestado);
+        $estado->load($idestado);
         return $estado->generadoc;
     }
 
@@ -367,8 +366,7 @@ class DocumentStitcher extends Controller
      */
     protected function getModelName(): string
     {
-        $model = $this->request->get('model', '');
-        return $this->request->request->get('model', $model);
+        return $this->request->inputOrQuery('model', '');
     }
 
     /**
@@ -420,7 +418,7 @@ class DocumentStitcher extends Controller
         ];
         $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
         foreach ($model->all($where, $orderBy, 0, 0) as $doc) {
-            if (false === in_array($doc->primaryColumnValue(), $this->getCodes())) {
+            if (false === in_array($doc->id(), $this->getCodes())) {
                 $this->moreDocuments[] = $doc;
             }
         }

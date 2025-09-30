@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Error;
 
 use FacturaScripts\Core\Template\ErrorController;
-use FacturaScripts\Core\Tools;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -29,79 +28,41 @@ class DefaultError extends ErrorController
 {
     public function run(): void
     {
-        $this->setSaveCrash(true);
+        $this->save();
 
         http_response_code(500);
 
+        $title = '🚨 Error ' . $this->info['hash'];
+
         if ($this->exception instanceof SyntaxError) {
-            $title = 'Twig syntax error';
-            $body = '<h1>' . $title . '</h1>'
+            $content = '<h2>Twig syntax error</h2>'
                 . '<p>' . $this->exception->getRawMessage() . '</p>'
-                . '<p><b>File</b>: ' . $this->exception->getFile()
-                . ', <b>line</b>: ' . $this->exception->getLine() . '</p>';
-
-            echo $this->htmlCard($title, $body, 'bg-danger');
-            return;
-        }
-
-        if ($this->exception instanceof RuntimeError) {
-            $title = 'Twig runtime error';
-            $body = '<h1>' . $title . '</h1>'
+                . '<p><b>File</b>: ' . $this->info['file']
+                . ', <b>line</b>: ' . $this->info['line'] . '</p>';
+        } elseif ($this->exception instanceof RuntimeError) {
+            $content = '<h2>Twig runtime error</h2>'
                 . '<p>' . $this->exception->getRawMessage() . '</p>'
-                . '<p><b>File</b>: ' . $this->exception->getFile()
-                . ', <b>line</b>: ' . $this->exception->getLine() . '</p>';
-
-            echo $this->htmlCard($title, $body, 'bg-danger');
-            return;
-        }
-
-        if ($this->exception instanceof LoaderError) {
-            $title = 'Twig loader error';
-            $body = '<h1>' . $title . '</h1>'
+                . '<p><b>File</b>: ' . $this->info['file']
+                . ', <b>line</b>: ' . $this->info['line'] . '</p>';
+        } elseif ($this->exception instanceof LoaderError) {
+            $content = '<h2>Twig loader error</h2>'
                 . '<p>' . $this->exception->getRawMessage() . '</p>'
-                . '<p><b>File</b>: ' . $this->exception->getFile()
-                . ', <b>line</b>: ' . $this->exception->getLine() . '</p>';
-
-            echo $this->htmlCard($title, $body, 'bg-danger');
-            return;
+                . '<p><b>File</b>: ' . $this->info['file']
+                . ', <b>line</b>: ' . $this->info['line'] . '</p>';
+        } else {
+            $content = '<p>' . $this->exception->getMessage() . '</p>'
+                . '<p><b>File</b>: ' . $this->info['file']
+                . ', <b>line</b>: ' . $this->info['line'] . '</p>';
         }
 
-        $title = 'Internal error #' . $this->exception->getCode();
-        $body = '<h1>' . $title . '</h1>'
-            . '<p>' . $this->exception->getMessage() . '</p>'
-            . '<p><b>File</b>: ' . $this->exception->getFile()
-            . ', <b>line</b>: ' . $this->exception->getLine() . '</p>';
-
-        $table = $this->getTrace();
-
-        echo $this->htmlCard($title, $body, 'bg-danger', $table);
-    }
-
-    protected function getTrace(): string
-    {
-        $table = '';
-        if (Tools::config('debug', false)) {
-            $table .= '<div class="table-responsive">'
-                . '<table class="table table-striped mb-0">'
-                . '<thead><tr><th>#</th></th><th>Trace</th></tr></thead>'
-                . '<tbody>';
-
-            foreach (array_reverse($this->exception->getTrace()) as $num => $trace) {
-                $text = isset($trace['file']) ?
-                    $this->removePathFromFile($trace['file']) . ':' . $trace['line'] :
-                    '[internal function]: ' . $trace['class'] . $trace['type'] . $trace['function'];
-
-                $table .= '<tr><td>' . (1 + $num) . '</td><td>' . $text . '</td></tr>';
-            }
-
-            $table .= '</tbody></table></div>';
-        }
-
-        return $table;
-    }
-
-    protected function removePathFromFile(string $file): string
-    {
-        return substr($file, 1 + strlen(Tools::folder()));
+        echo $this->html(
+            $title,
+            $this->htmlContainer(
+                '<h1 class="h3 text-white mb-4">' . $title . '</h1>'
+                . $this->htmlErrorCard($content, true, $this->canShowDeployButtons())
+                . $this->htmlCodeFragmentCard()
+                . $this->htmlLogCard()
+            )
+        );
     }
 }

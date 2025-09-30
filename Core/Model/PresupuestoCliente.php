@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2025  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014       Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Base\SalesDocument;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\LineaPresupuestoCliente as LineaPresupuesto;
 
@@ -49,7 +50,7 @@ class PresupuestoCliente extends SalesDocument
      */
     public $idpresupuesto;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
 
@@ -67,10 +68,9 @@ class PresupuestoCliente extends SalesDocument
      */
     public function getLines(): array
     {
-        $lineaModel = new LineaPresupuesto();
         $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
         $orderBy = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-        return $lineaModel->all($where, $orderBy, 0, 0);
+        return LineaPresupuesto::all($where, $orderBy, 0, 0);
     }
 
     /**
@@ -88,6 +88,8 @@ class PresupuestoCliente extends SalesDocument
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
         $newLine->loadFromData($data, $exclude);
+
+        Calculator::calculateLine($this, $newLine);
 
         // allow extensions
         $this->pipe('getNewLine', $newLine, $data, $exclude);

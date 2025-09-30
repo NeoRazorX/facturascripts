@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,11 +20,13 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoCliente;
 use FacturaScripts\Core\Model\Stock;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -41,7 +43,7 @@ final class PedidoClienteTest extends TestCase
         self::setDefaultSettings();
     }
 
-    public function testDefaultValues()
+    public function testDefaultValues(): void
     {
         // Creamos un pedido
         $doc = new PedidoCliente();
@@ -54,7 +56,7 @@ final class PedidoClienteTest extends TestCase
         $this->assertNotEmpty($doc->hora, 'empty-time');
     }
 
-    public function testSetAuthor()
+    public function testSetAuthor(): void
     {
         // creamos un agente
         $agent = $this->getRandomAgent();
@@ -84,7 +86,7 @@ final class PedidoClienteTest extends TestCase
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
     }
 
-    public function testCreateEmpty()
+    public function testCreateEmpty(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -118,13 +120,13 @@ final class PedidoClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-1');
     }
 
-    public function testCreateWithoutSubject()
+    public function testCreateWithoutSubject(): void
     {
         $doc = new PedidoCliente();
         $this->assertFalse($doc->save(), 'can-create-pedido-cliente-without-subject');
     }
 
-    public function testCreateOneLine()
+    public function testCreateOneLine(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -147,10 +149,15 @@ final class PedidoClienteTest extends TestCase
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-pedido-cliente-2');
 
+        // obtenemos el impuesto predeterminado
+        $default_tax = Impuestos::default();
+        $total_iva = (100 * $default_tax->iva / 100);
+        $total = 100 + $total_iva;
+
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'pedido-cliente-bad-neto-2');
-        $this->assertEquals(121, $doc->total, 'pedido-cliente-bad-total-2');
-        $this->assertEquals(21, $doc->totaliva, 'pedido-cliente-bad-totaliva-2');
+        $this->assertEquals($total, $doc->total, 'pedido-cliente-bad-total-2');
+        $this->assertEquals($total_iva, $doc->totaliva, 'pedido-cliente-bad-totaliva-2');
         $this->assertEquals(0, $doc->totalrecargo, 'pedido-cliente-bad-totalrecargo-2');
         $this->assertEquals(0, $doc->totalirpf, 'pedido-cliente-bad-totalirpf-2');
         $this->assertEquals(0, $doc->totalsuplidos, 'pedido-cliente-bad-totalsuplidos-2');
@@ -162,7 +169,7 @@ final class PedidoClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-2');
     }
 
-    public function testCreateProductLine()
+    public function testCreateProductLine(): void
     {
         // creamos un cliente
         $subject = $this->getRandomCustomer();
@@ -197,7 +204,7 @@ final class PedidoClienteTest extends TestCase
         // recargamos y comprobamos el stock
         $stock = new Stock();
         $where = [new DataBaseWhere('idproducto', $product->idproducto)];
-        $stock->loadFromCode('', $where);
+        $stock->loadWhere($where);
         $this->assertEquals(1, $stock->reservada, 'pedido-cliente-do-not-update-stock');
         $this->assertEquals(0, $stock->disponible, 'pedido-cliente-do-not-update-stock');
         $this->assertEquals(0, $stock->cantidad, 'pedido-cliente-do-not-update-stock');
@@ -206,10 +213,15 @@ final class PedidoClienteTest extends TestCase
         $lines = $doc->getLines();
         $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-pedido-cliente-3');
 
+        // obtenemos el impuesto predeterminado
+        $default_tax = Impuestos::default();
+        $total_iva = (10 * $default_tax->iva / 100);
+        $total = 10 + $total_iva;
+
         // comprobamos
         $this->assertEquals(10, $doc->neto, 'pedido-cliente-bad-neto-3');
-        $this->assertEquals(12.1, $doc->total, 'pedido-cliente-bad-total-3');
-        $this->assertEquals(2.1, $doc->totaliva, 'pedido-cliente-bad-totaliva-3');
+        $this->assertEquals($total, $doc->total, 'pedido-cliente-bad-total-3');
+        $this->assertEquals($total_iva, $doc->totaliva, 'pedido-cliente-bad-totaliva-3');
         $this->assertEquals(5, $doc->totalcoste, 'pedido-cliente-bad-totalcoste-3');
 
         // eliminamos
@@ -219,7 +231,7 @@ final class PedidoClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-3');
 
         // recargamos y comprobamos el stock
-        $stock->loadFromCode('', $where);
+        $stock->loadWhere($where);
         $this->assertEquals(0, $stock->reservada, 'pedido-cliente-do-not-update-stock');
         $this->assertEquals(0, $stock->disponible, 'pedido-cliente-do-not-update-stock');
         $this->assertEquals(0, $stock->cantidad, 'pedido-cliente-do-not-update-stock');
@@ -228,7 +240,52 @@ final class PedidoClienteTest extends TestCase
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
     }
 
-    public function testSecondCompany()
+    public function testPropertiesLength(): void
+    {
+        // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
+        $campos = [
+            'apartado' => [10, 11],
+            'cifnif' => [30, 31],
+            'ciudad' => [100, 101],
+            'codigo' => [20, 21],
+            'codigoenv' => [200, 201],
+            'codpais' => [20, 21],
+            'codpostal' => [10, 11],
+            'direccion' => [200, 201],
+            'nombrecliente' => [100, 101],
+            'operacion' => [20, 21],
+            'provincia' => [100, 101],
+        ];
+
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        foreach ($campos as $campo => [$valido, $invalido]) {
+            // Creamos un nuevo almacén
+            $doc = new PedidoCliente();
+
+            // campo obligatorio (not null)
+            $doc->setSubject($subject);
+
+            // Asignamos el valor inválido en el campo a probar
+            $doc->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($doc->save(), "can-save-pedidoCliente-bad-{$campo}");
+
+            // Corregimos el campo y comprobamos que ahora sí se puede guardar
+            $doc->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($doc->save(), "cannot-save-pedidoCliente-fixed-{$campo}");
+
+            // Limpiar
+            $this->assertTrue($doc->delete(), "cannot-delete-pedidoCliente-{$campo}");
+        }
+
+        // eliminamos
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
+    }
+
+    public function testSecondCompany(): void
     {
         // creamos la empresa 2
         $company2 = new Empresa();
@@ -239,7 +296,7 @@ final class PedidoClienteTest extends TestCase
         // obtenemos el almacén de la empresa 2
         $warehouse = new Almacen();
         $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadFromCode('', $where);
+        $warehouse->loadWhere($where);
 
         // creamos un cliente
         $subject = $this->getRandomCustomer();

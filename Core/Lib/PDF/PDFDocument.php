@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\PDF;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Template\ExtensionsTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\AttachedFile;
@@ -46,6 +48,8 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
  */
 abstract class PDFDocument extends PDFCore
 {
+    use ExtensionsTrait;
+
     const INVOICE_TOTALS_Y = 200;
 
     /** @var FormatoDocumento */
@@ -97,7 +101,7 @@ abstract class PDFDocument extends PDFCore
     protected function getBankData($receipt): string
     {
         $payMethod = new FormaPago();
-        if (false === $payMethod->loadFromCode($receipt->codpago)) {
+        if (false === $payMethod->load($receipt->codpago)) {
             // forma de pago no encontrada
             return '-';
         }
@@ -110,13 +114,13 @@ abstract class PDFDocument extends PDFCore
         // Domiciliado. Mostramos la cuenta bancaria del cliente
         $cuentaBcoCli = new CuentaBancoCliente();
         $where = [new DataBaseWhere('codcliente', $receipt->codcliente)];
-        if ($payMethod->domiciliado && $cuentaBcoCli->loadFromCode('', $where, ['principal' => 'DESC'])) {
+        if ($payMethod->domiciliado && $cuentaBcoCli->loadWhere($where, ['principal' => 'DESC'])) {
             return $payMethod->descripcion . ' : ' . $cuentaBcoCli->getIban(true, true);
         }
 
         // cuenta bancaria de la empresa
         $cuentaBco = new CuentaBanco();
-        if ($payMethod->codcuentabanco && $cuentaBco->loadFromCode($payMethod->codcuentabanco) && $cuentaBco->iban) {
+        if ($payMethod->codcuentabanco && $cuentaBco->load($payMethod->codcuentabanco) && $cuentaBco->iban) {
             return $payMethod->descripcion . ' : ' . $cuentaBco->getIban(true);
         }
 
@@ -138,7 +142,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         $country = new Pais();
-        return $country->loadFromCode($code) ? Tools::fixHtml($country->nombre) : '';
+        return $country->load($code) ? Tools::fixHtml($country->nombre) : '';
     }
 
     /**
@@ -155,7 +159,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         $divisa = new Divisa();
-        return $divisa->loadFromCode($code) ? $divisa->descripcion : '';
+        return $divisa->load($code) ? $divisa->descripcion : '';
     }
 
     protected function getLineHeaders(): array
@@ -198,7 +202,7 @@ abstract class PDFDocument extends PDFCore
                 ];
 
                 $impuesto = new Impuesto();
-                if (!empty($line->codimpuesto) && $impuesto->loadFromCode($line->codimpuesto)) {
+                if (!empty($line->codimpuesto) && $impuesto->load($line->codimpuesto)) {
                     $subtotals[$key]['tax'] = $impuesto->descripcion;
                 }
             }
@@ -247,6 +251,9 @@ abstract class PDFDocument extends PDFCore
      */
     protected function insertBusinessDocBody($model)
     {
+        $qrImage = $this->pipe('qrImageAfterLines', $model);
+        $qrTitle = $this->pipe('qrTitleAfterLines', $model);
+
         $headers = [];
         $tableOptions = [
             'cols' => [],
@@ -299,6 +306,19 @@ abstract class PDFDocument extends PDFCore
         if (false === empty($tableData)) {
             $this->removeEmptyCols($tableData, $headers, Tools::number(0));
             $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+        }
+
+        // añadir el código QR si existe
+        if (!empty($qrImage)) {
+            // Añadir margen superior antes del QR
+            $this->pdf->y -= 10;
+
+            // Calcular el ancho disponible con margen derecho (usar mismo layout que el header)
+            $pageWidth = $this->pdf->ez['pageWidth'] - $this->pdf->ez['leftMargin'] - $this->pdf->ez['rightMargin'];
+            $rightBlockWidth = $pageWidth * 0.2; // 20% para el QR (igual que en header)
+            $leftBlockWidth = $pageWidth * 0.8;  // 80% espacio libre a la izquierda (igual que en header)
+
+            $this->renderQRimage($qrImage, $qrTitle, $this->pdf->ez['leftMargin'], $this->pdf->y, $leftBlockWidth, $rightBlockWidth);
         }
     }
 
@@ -414,28 +434,58 @@ abstract class PDFDocument extends PDFCore
      */
     protected function insertBusinessDocHeader($model)
     {
+        // obtenemos el QR y el título desde las extensiones
+        $qrImage = $this->pipe('qrImageHeader', $model);
+        $qrTitle = $this->pipe('qrTitleHeader', $model);
+
+        // Definir anchos de los bloques según si existe imagen QR o no
+        $pageWidth = $this->pdf->ez['pageWidth'] - $this->pdf->ez['leftMargin'] - $this->pdf->ez['rightMargin'];
+        $hasQrImage = !empty($qrImage);
+
+        if ($hasQrImage) {
+            // Si hay QR, usar layout de 80% / 20%
+            $leftBlockWidth = $pageWidth * 0.8;
+            $rightBlockWidth = $pageWidth * 0.2;
+        } else {
+            // Si no hay QR, usar el 100% del ancho para la tabla
+            $leftBlockWidth = $pageWidth;
+            $rightBlockWidth = 0;
+        }
+
+        $startY = $this->pdf->y;
+        $startX = $this->pdf->ez['leftMargin'];
+
+        // --- BLOQUE IZQUIERDO (80%) ---
+        $this->pdf->saveState();
+        $this->pdf->ezSetY($startY);
         $headerData = [
             'title' => $this->i18n->trans($model->modelClassName() . '-min'),
             'subject' => $this->i18n->trans('customer'),
             'fieldName' => 'nombrecliente'
         ];
-
         if (isset($model->codproveedor)) {
             $headerData['subject'] = $this->i18n->trans('supplier');
             $headerData['fieldName'] = 'nombre';
         }
-
         if (!empty($this->format->titulo)) {
             $headerData['title'] = Tools::fixHtml($this->format->titulo);
         }
 
-        $this->pdf->ezText("\n" . $headerData['title'] . ': ' . $model->codigo . "\n", self::FONT_SIZE + 6);
-        $this->newLine();
+        // Título alineado a la izquierda y dentro del bloque
+        $this->pdf->ezText("\n" . $headerData['title'] . ': ' . $model->codigo, self::FONT_SIZE + 6, [
+            'justification' => 'left',
+            'left' => $startX - $this->pdf->ez['leftMargin'], // compensar margen
+            'width' => $leftBlockWidth
+        ]);
 
+        // Línea divisoria solo del 80%
+        $lineY = $this->pdf->y;
+        $this->pdf->setStrokeColor(0, 0, 0);
+        $this->pdf->line($startX, $lineY - 8, $startX + $leftBlockWidth, $lineY - 8);
+        $this->pdf->y -= 10;
         $subject = $model->getSubject();
         $tipoIdFiscal = empty($subject->tipoidfiscal) ? $this->i18n->trans('cifnif') : $subject->tipoidfiscal;
         $serie = $model->getSerie();
-
         $tableData = [
             ['key' => $headerData['subject'], 'value' => Tools::fixHtml($model->{$headerData['fieldName']})],
             ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
@@ -445,8 +495,6 @@ abstract class PDFDocument extends PDFCore
             ['key' => $this->i18n->trans('number'), 'value' => $model->numero],
             ['key' => $this->i18n->trans('serie'), 'value' => $serie->descripcion]
         ];
-
-        // rectified invoice?
         if (isset($model->codigorect) && !empty($model->codigorect)) {
             $original = new $model();
             if ($original->loadFromCode('', [new DataBaseWhere('codigo', $model->codigorect)])) {
@@ -464,16 +512,24 @@ abstract class PDFDocument extends PDFCore
             unset($tableData[6]);
         }
 
+        // Opciones de la tabla
+        $tableWidth = $leftBlockWidth + 5;
         $tableOptions = [
-            'width' => $this->tableWidth,
+            'width' => $tableWidth,
             'showHeadings' => 0,
             'shaded' => 0,
             'lineCol' => [1, 1, 1],
-            'cols' => []
+            'cols' => [],
+            'xPos' => $startX + ($tableWidth / 2) - 5, // Posicionar el centro de la tabla para que empiece en el margen izquierdo
         ];
         $this->insertParallelTable($tableData, '', $tableOptions);
         $this->pdf->ezText('');
+        $this->pdf->restoreState();
 
+        // --- BLOQUE DERECHO (20%) ---
+        $this->renderQRimage($qrImage, $qrTitle, $startX, $startY, $leftBlockWidth, $rightBlockWidth);
+
+        // Si hay dirección de envío, insertarla después
         if (!empty($model->idcontactoenv) && ($model->idcontactoenv != $model->idcontactofact || !empty($model->codtrans))) {
             $this->insertBusinessDocShipping($model);
         }
@@ -490,10 +546,10 @@ abstract class PDFDocument extends PDFCore
         $this->newLine();
 
         $contacto = new Contacto();
-        if ($contacto->loadFromCode($model->idcontactoenv)) {
+        if ($contacto->load($model->idcontactoenv)) {
             $name = Tools::fixHtml($contacto->nombre) . ' ' . Tools::fixHtml($contacto->apellidos);
             $carrier = new AgenciaTransporte();
-            $carrierName = $carrier->loadFromCode($model->codtrans) ? $carrier->nombre : '-';
+            $carrierName = $carrier->load($model->codtrans) ? $carrier->nombre : '-';
             $tableData = [
                 ['key' => $this->i18n->trans('name'), 'value' => $name],
                 ['key' => $this->i18n->trans('carrier'), 'value' => $carrierName],
@@ -529,7 +585,7 @@ abstract class PDFDocument extends PDFCore
         $xPos = $this->pdf->ez['leftMargin'];
 
         $logoFile = new AttachedFile();
-        if ($idfile !== 0 && $logoFile->loadFromCode($idfile) && file_exists($logoFile->path)) {
+        if ($idfile !== 0 && $logoFile->load($idfile) && file_exists($logoFile->path)) {
             $logoSize = $this->calcImageSize($logoFile->path);
             $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
             $this->addImageFromAttachedFile($logoFile, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
@@ -567,7 +623,7 @@ abstract class PDFDocument extends PDFCore
         $this->insertedHeader = true;
         $code = $idempresa ?? Tools::settings('default', 'idempresa', '');
         $company = new Empresa();
-        if (false === $company->loadFromCode($code)) {
+        if (false === $company->load($code)) {
             return;
         }
 
@@ -657,6 +713,193 @@ abstract class PDFDocument extends PDFCore
             ];
             $this->pdf->ezText("\n");
             $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+        }
+    }
+
+    protected function renderQRimage(?string $qrImage, ?string $qrTitle, float $startX, float $startY, float $leftBlockWidth, float $rightBlockWidth): void
+    {
+        if (empty($qrImage)) {
+            return;
+        }
+
+        // Asegurar que el QR sea cuadrado usando el menor de los dos valores disponibles
+        $availableWidth = $rightBlockWidth - 10;
+        $qrSize = min(80, $availableWidth);
+
+        // Calcular posición para centrar el QR horizontalmente en el espacio disponible
+        $qrX = $startX + $leftBlockWidth + 10 + ($availableWidth - $qrSize) / 2; // Centrar el QR
+        $qrY = $startY - 10; // Ajuste para alineación superior
+
+        // Detectar si $qrImage es una ruta de archivo o base64
+        if (str_starts_with($qrImage, 'data:image/')) {
+            // Es una imagen en base64 - crear archivo temporal
+            $base64Data = explode(',', $qrImage, 2)[1] ?? $qrImage;
+            $imageData = base64_decode($base64Data);
+
+            // Verificar si la decodificación fue exitosa
+            if ($imageData === false) {
+                return;
+            }
+
+            // Determinar el tipo de imagen desde el data URI
+            $mimeType = 'image/png'; // por defecto PNG
+            if (preg_match('/data:image\/([^;]+)/', $qrImage, $matches)) {
+                $mimeType = 'image/' . $matches[1];
+            }
+
+            // Crear archivo temporal
+            $extension = ($mimeType === 'image/png') ? '.png' : '.jpg';
+            $tempFile = tempnam(sys_get_temp_dir(), 'qr_') . $extension;
+            if (!file_put_contents($tempFile, $imageData)) {
+                return;
+            }
+
+            try {
+                // Usar la función nativa de Cezpdf para añadir la imagen con dimensiones cuadradas
+                if ($mimeType === 'image/png') {
+                    $this->pdf->addPngFromFile($tempFile, $qrX, $qrY - $qrSize, $qrSize, $qrSize);
+                } else {
+                    $this->pdf->addJpegFromFile($tempFile, $qrX, $qrY - $qrSize, $qrSize, $qrSize);
+                }
+            } catch (Exception $e) {
+                return;
+            } finally {
+                // Limpiar el archivo temporal
+                if (file_exists($tempFile)) {
+                    unlink($tempFile);
+                }
+            }
+        } elseif (file_exists($qrImage)) {
+            // Es una ruta de archivo válida - usar directamente los métodos nativos
+            $extension = strtolower(pathinfo($qrImage, PATHINFO_EXTENSION));
+
+            try {
+                if ($extension === 'png') {
+                    $this->pdf->addPngFromFile($qrImage, $qrX, $qrY - $qrSize, $qrSize, $qrSize);
+                } else {
+                    $this->pdf->addJpegFromFile($qrImage, $qrX, $qrY - $qrSize, $qrSize, $qrSize);
+                }
+            } catch (Exception $e) {
+                return;
+            }
+        } else {
+            return;
+        }
+
+        $this->renderQRtitle($qrTitle, $qrX, $qrY, $qrSize);
+    }
+
+    protected function renderQRtitle(?string $qrTitle, float $qrX, float $qrY, float $qrSize): void
+    {
+        if (empty($qrTitle)) {
+            return;
+        }
+
+        // Añadir título del QR si existe
+        $textX = $qrX + $qrSize / 2; // Centrar el texto horizontalmente respecto al QR
+        $textY = $qrY - $qrSize - 5; // Posicionar el texto 5 puntos debajo del QR
+
+        // Calcular el ancho disponible para el texto (desde el inicio del QR hasta el margen derecho)
+        $pageRightMargin = $this->pdf->ez['pageWidth'] - $this->pdf->ez['rightMargin'];
+        $availableTextWidth = $pageRightMargin - $qrX;
+
+        // Estimar el ancho del texto
+        $textWidth = $this->pdf->getTextWidth(self::FONT_SIZE, $qrTitle);
+
+        if ($textWidth <= $availableTextWidth) {
+            // El texto cabe en una línea
+            $this->pdf->addText($textX, $textY, self::FONT_SIZE, $qrTitle, 0, 'center');
+
+            // Actualizar posición Y para texto en una línea
+            $newY = $textY - self::FONT_SIZE - 10; // Altura del texto + margen
+        } else {
+            // El texto es demasiado ancho, necesitamos dividirlo en líneas
+            $words = explode(' ', $qrTitle);
+            $lines = [];
+            $currentLine = '';
+
+            // Si no hay espacios en el texto (es una sola "palabra"), dividir por caracteres
+            if (count($words) === 1) {
+                $text = $qrTitle;
+                $currentLine = '';
+
+                for ($i = 0; $i < strlen($text); $i++) {
+                    $char = $text[$i];
+                    $testLine = $currentLine . $char;
+                    $testWidth = $this->pdf->getTextWidth(self::FONT_SIZE, $testLine);
+
+                    if ($testWidth <= $availableTextWidth) {
+                        $currentLine = $testLine;
+                    } else {
+                        if (!empty($currentLine)) {
+                            $lines[] = $currentLine;
+                            $currentLine = $char;
+                        } else {
+                            // Si un solo carácter no cabe, lo añadimos anyway
+                            $lines[] = $char;
+                        }
+                    }
+                }
+
+                // Añadir la última línea si no está vacía
+                if (!empty($currentLine)) {
+                    $lines[] = $currentLine;
+                }
+            } else {
+                // Hay espacios, dividir por palabras como antes
+                foreach ($words as $word) {
+                    $testLine = empty($currentLine) ? $word : $currentLine . ' ' . $word;
+                    $testWidth = $this->pdf->getTextWidth(self::FONT_SIZE, $testLine);
+
+                    if ($testWidth <= $availableTextWidth) {
+                        $currentLine = $testLine;
+                    } else {
+                        if (!empty($currentLine)) {
+                            $lines[] = $currentLine;
+                            $currentLine = $word;
+                        } else {
+                            // La palabra sola es demasiado larga, dividir por caracteres
+                            $currentLine = '';
+                            for ($i = 0; $i < strlen($word); $i++) {
+                                $char = $word[$i];
+                                $testLine = $currentLine . $char;
+                                $testWidth = $this->pdf->getTextWidth(self::FONT_SIZE, $testLine);
+
+                                if ($testWidth <= $availableTextWidth) {
+                                    $currentLine = $testLine;
+                                } else {
+                                    if (!empty($currentLine)) {
+                                        $lines[] = $currentLine;
+                                        $currentLine = $char;
+                                    } else {
+                                        $lines[] = $char;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Añadir la última línea si no está vacía
+                if (!empty($currentLine)) {
+                    $lines[] = $currentLine;
+                }
+            }
+
+            // Renderizar las líneas centradas
+            $lineHeight = self::FONT_SIZE + 2; // Espaciado entre líneas
+            for ($i = 0; $i < count($lines); $i++) {
+                $lineY = $textY - ($i * $lineHeight);
+                $this->pdf->addText($textX, $lineY, self::FONT_SIZE, $lines[$i], 0, 'center');
+            }
+
+            // Actualizar la posición Y del PDF para evitar solapamiento con contenido posterior
+            $totalTextHeight = count($lines) * $lineHeight;
+            $newY = $textY - $totalTextHeight - 10; // 10 puntos de margen adicional
+        }
+
+        if ($newY < $this->pdf->y) {
+            $this->pdf->y = $newY;
         }
     }
 }

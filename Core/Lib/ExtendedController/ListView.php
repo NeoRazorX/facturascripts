@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,11 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Request;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -88,14 +90,14 @@ class ListView extends BaseView
         $key1 = count($this->orderOptions);
         $this->orderOptions[$key1] = [
             'fields' => $fields,
-            'label' => Tools::lang()->trans($label),
+            'label' => Tools::trans($label),
             'type' => 'ASC'
         ];
 
         $key2 = count($this->orderOptions);
         $this->orderOptions[$key2] = [
             'fields' => $fields,
-            'label' => Tools::lang()->trans($label),
+            'label' => Tools::trans($label),
             'type' => 'DESC'
         ];
 
@@ -283,9 +285,10 @@ class ListView extends BaseView
     /**
      * Adds assets to the asset manager.
      */
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/ListView.js?v=2');
+        $route = Tools::config('route');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/ListView.js?v=2');
     }
 
     private function loadTotalAmounts(): void
@@ -358,12 +361,29 @@ class ListView extends BaseView
             return;
         }
 
+        // si la request es GET, obtenemos los filtros desde la caché
+        $cacheKeyFiltros = 'filters-' . Session::get('controllerName') . '-' . $this->getViewName() . '-' . $request->cookie('fsNick');
+        if ($request->isMethod('GET')) {
+            $filtrosCache = Cache::get($cacheKeyFiltros);
+            if ($filtrosCache) {
+                // creamos valores de filtros en la request para aprovechar los métodos ya existentes
+                foreach ($filtrosCache as $filtro) {
+                    $request->request->set('filter' . $filtro->key, $filtro->getValue());
+                }
+            }
+        }
+
         // filters
         foreach ($this->filters as $filter) {
             $filter->setValueFromRequest($request);
             if ($filter->getDataBaseWhere($this->where)) {
                 $this->showFilters = true;
             }
+        }
+
+        if ($request->isMethod('POST')) {
+            // guardamos los filtros en caché
+            Cache::set($cacheKeyFiltros, $this->filters);
         }
     }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\FormasPago;
-use FacturaScripts\Core\Model\Base\ModelClass;
-use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Template\ModelClass;
+use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
@@ -64,7 +64,7 @@ class FormaPago extends ModelClass
     /** @var string */
     public $tipovencimiento;
 
-    public function clear()
+    public function clear(): void
     {
         parent::clear();
         $this->activa = true;
@@ -74,6 +74,12 @@ class FormaPago extends ModelClass
         $this->tipovencimiento = 'days';
     }
 
+    public function clearCache(): void
+    {
+        parent::clearCache();
+        FormasPago::clear();
+    }
+
     public function delete(): bool
     {
         if ($this->isDefault()) {
@@ -81,13 +87,7 @@ class FormaPago extends ModelClass
             return false;
         }
 
-        if (false === parent::delete()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        FormasPago::clear();
-        return true;
+        return parent::delete();
     }
 
     /**
@@ -98,7 +98,7 @@ class FormaPago extends ModelClass
     public function getBankAccount(): CuentaBanco
     {
         $bank = new DinCuentaBanco();
-        $bank->loadFromCode($this->codcuentabanco);
+        $bank->load($this->codcuentabanco);
         return $bank;
     }
 
@@ -147,17 +147,6 @@ class FormaPago extends ModelClass
         return 'codpago';
     }
 
-    public function save(): bool
-    {
-        if (false === parent::save()) {
-            return false;
-        }
-
-        // limpiamos la caché
-        FormasPago::clear();
-        return true;
-    }
-
     public static function tableName(): string
     {
         return 'formaspago';
@@ -186,12 +175,12 @@ class FormaPago extends ModelClass
         return parent::test();
     }
 
-    protected function saveInsert(array $values = []): bool
+    protected function saveInsert(): bool
     {
         if (empty($this->codpago)) {
             $this->codpago = (string)$this->newCode();
         }
 
-        return parent::saveInsert($values);
+        return parent::saveInsert();
     }
 }

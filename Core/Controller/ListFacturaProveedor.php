@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,7 +45,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         return $data;
     }
 
-    protected function createViews()
+    protected function createViews(): void
     {
         // listado de facturas de proveedor
         $this->createViewPurchases('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
@@ -65,10 +65,13 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->createViewRefunds();
     }
 
-    protected function createViewPurchases(string $viewName, string $modelName, string $label)
+    protected function createViewPurchases(string $viewName, string $modelName, string $label): void
     {
         parent::createViewPurchases($viewName, $modelName, $label);
-        $this->addSearchFields($viewName, ['codigorect']);
+
+        $this->listView($viewName)
+            ->addOrderBy(['idfactura'], 'id')
+            ->addSearchFields(['codigorect']);
 
         // filtros
         $i18n = Tools::lang();
@@ -94,15 +97,16 @@ class ListFacturaProveedor extends ListBusinessDocument
         }
     }
 
-    protected function createViewReceipts(string $viewName = 'ListReciboProveedor')
+    protected function createViewReceipts(string $viewName = 'ListReciboProveedor'): void
     {
-        $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fa-solid fa-dollar-sign');
-        $this->addOrderBy($viewName, ['codproveedor'], 'supplier-code');
-        $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date');
-        $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
-        $this->addOrderBy($viewName, ['vencimiento'], 'expiration', 2);
-        $this->addOrderBy($viewName, ['importe'], 'amount');
-        $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
+        $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fa-solid fa-dollar-sign')
+            ->addOrderBy(['codproveedor'], 'supplier-code')
+            ->addOrderBy(['fecha', 'idrecibo'], 'date')
+            ->addOrderBy(['fechapago'], 'payment-date')
+            ->addOrderBy(['vencimiento'], 'expiration', 2)
+            ->addOrderBy(['importe'], 'amount')
+            ->addSearchFields(['codigofactura', 'observaciones'])
+            ->setSettings('btnNew', false);
 
         // filtros
         $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
@@ -131,17 +135,16 @@ class ListFacturaProveedor extends ListBusinessDocument
 
         // botones
         $this->addButtonPayReceipt($viewName);
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
     }
 
-    protected function createViewRefunds(string $viewName = 'ListFacturaProveedor-rect')
+    protected function createViewRefunds(string $viewName = 'ListFacturaProveedor-rect'): void
     {
-        $this->addView($viewName, 'FacturaProveedor', 'refunds', 'fa-solid fa-share-square');
-        $this->addSearchFields($viewName, ['codigo', 'codigorect', 'numproveedor', 'observaciones']);
-        $this->addOrderBy($viewName, ['fecha', 'idfactura'], 'date', 2);
-        $this->addOrderBy($viewName, ['total'], 'total');
+        $this->addView($viewName, 'FacturaProveedor', 'refunds', 'fa-solid fa-share-square')
+            ->addSearchFields(['codigo', 'codigorect', 'numproveedor', 'observaciones'])
+            ->addOrderBy(['fecha', 'idfactura'], 'date', 2)
+            ->addOrderBy(['total'], 'total')
+            ->disableColumn('original', false)
+            ->setSettings('btnNew', false);
 
         // filtro de fecha
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
@@ -149,16 +152,10 @@ class ListFacturaProveedor extends ListBusinessDocument
         // añadimos un filtro select where para forzar las que tienen idfacturarect
         $this->addFilterSelectWhere($viewName, 'idfacturarect', [
             [
-                'label' => Tools::lang()->trans('rectified-invoices'),
+                'label' => Tools::trans('rectified-invoices'),
                 'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
             ]
         ]);
-
-        // desactivamos el botón nuevo
-        $this->setSettings($viewName, 'btnNew', false);
-
-        // mostramos la columna original
-        $this->views[$viewName]->disableColumn('original', false);
     }
 
     /**
@@ -187,7 +184,7 @@ class ListFacturaProveedor extends ListBusinessDocument
             return;
         }
 
-        $codejercicio = $this->request->request->get('exercise');
+        $codejercicio = $this->request->input('exercise');
         if (FacturaProveedorRenumber::run($codejercicio)) {
             Tools::log('facturasprov')->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);
             Tools::log()->notice('renumber-invoices-success', ['%exercise%' => $codejercicio]);

@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -100,22 +100,24 @@
             </div>
         </div>
     </div>
-    <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
-        {% for viewName, view in fsc.views %}
-            <li class="nav-item">
-                {% set active = (viewName == fsc.active) ? ' active' : '' %}
-                {% set disable = view.settings.active ? '' : ' disabled' %}
-                <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-bs-toggle="tab" role="tab"
-                   aria-controls="{{ viewName }}">
-                    <i class="{{ view.icon }}" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">{{ view.title }}</span>
-                    {% if view.count > 0 %}
-                        <span class="badge bg-secondary">{{ number(view.count, 0) }}</span>
-                    {% endif %}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="nav-tabs-wrapper d-print-none">
+        <ul class="nav nav-tabs nav-tabs-scroll" id="mainTabs" role="tablist">
+            {% for viewName, view in fsc.views %}
+                <li class="nav-item">
+                    {% set active = (viewName == fsc.active) ? ' active' : '' %}
+                    {% set disable = view.settings.active ? '' : ' disabled' %}
+                    <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-bs-toggle="tab" role="tab"
+                       aria-controls="{{ viewName }}">
+                        <i class="{{ view.icon }}" aria-hidden="true"></i>
+                        <span>{{ view.title }}</span>
+                        {% if view.count > 0 %}
+                            <span class="badge bg-secondary">{{ number(view.count, 0) }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}
 
 {% block body %}
@@ -130,13 +132,98 @@
     </div>
 {% endblock %}
 
+{% block css %}
+    {{ parent() }}
+    <style>
+        /* Scroll horizontal para pestañas en móviles */
+        @media (max-width: 767px) {
+            .nav-tabs-wrapper {
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                margin-bottom: -1px;
+            }
+
+            .nav-tabs-scroll {
+                flex-wrap: nowrap;
+                white-space: nowrap;
+                border-bottom: 1px solid #dee2e6;
+                min-width: min-content;
+            }
+
+            .nav-tabs-scroll .nav-item {
+                flex-shrink: 0;
+            }
+
+            .nav-tabs-scroll .nav-link {
+                white-space: nowrap;
+            }
+
+            /* Indicador visual de scroll */
+            .nav-tabs-wrapper::-webkit-scrollbar {
+                height: 4px;
+            }
+
+            .nav-tabs-wrapper::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+            .nav-tabs-wrapper::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 2px;
+            }
+
+            .nav-tabs-wrapper::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+        }
+
+        /* En pantallas grandes, comportamiento normal */
+        @media (min-width: 768px) {
+            .nav-tabs-wrapper {
+                overflow: visible;
+            }
+
+            .nav-tabs-scroll {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
     <script>
         $(document).ready(function () {
+            // Función para desplazar la pestaña activa a la vista
+            function scrollActiveTabIntoView() {
+                if (window.innerWidth <= 767) {
+                    var activeTab = $('.nav-tabs-scroll .nav-link.active');
+                    var wrapper = $('.nav-tabs-wrapper');
+                    if (activeTab.length && wrapper.length) {
+                        var tabLeft = activeTab.parent().position().left;
+                        var tabWidth = activeTab.parent().outerWidth();
+                        var wrapperWidth = wrapper.width();
+                        var scrollLeft = wrapper.scrollLeft();
+
+                        // Centrar la pestaña activa si es posible
+                        var targetScroll = tabLeft + scrollLeft - (wrapperWidth / 2) + (tabWidth / 2);
+                        wrapper.animate({ scrollLeft: targetScroll }, 300);
+                    }
+                }
+            }
+
+            // Desplazar la pestaña activa al cargar la página
+            scrollActiveTabIntoView();
+
             if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
                 $("input:visible,textarea:visible").filter(":not([readonly='readonly']):not([disabled='disabled']):not([type='hidden'])").first().focus();
             }
+
+            // Desplazar cuando se cambia de pestaña
+            $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                scrollActiveTabIntoView();
+            });
         });
     </script>
 {% endblock %}

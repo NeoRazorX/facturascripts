@@ -66,6 +66,12 @@
                     {{ trans('become-sponsor') }}
                 </a>
             </div>
+        {% else %}
+            <div class="card-footer p-2">
+                <button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#modalTelemetry">
+                    {{ trans('register') }}
+                </button>
+            </div>
         {% endif %}
     </div>
 {% endmacro %}

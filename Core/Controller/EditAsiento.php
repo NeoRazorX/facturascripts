@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,6 +47,7 @@ class EditAsiento extends PanelController
     const MAIN_VIEW_NAME = 'main';
     const MAIN_VIEW_TEMPLATE = 'Tab/AccountingEntry';
 
+    /** @var array */
     private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
 
     /**
@@ -57,20 +58,20 @@ class EditAsiento extends PanelController
     public function getModel(): Asiento
     {
         // loaded record? just return it
-        if ($this->views[static::MAIN_VIEW_NAME]->model->primaryColumnValue()) {
+        if ($this->views[static::MAIN_VIEW_NAME]->model->id()) {
             return $this->views[static::MAIN_VIEW_NAME]->model;
         }
 
         // get the record identifier
-        $primaryKey = $this->request->request->get($this->views[static::MAIN_VIEW_NAME]->model->primaryColumn());
-        $code = $this->request->query->get('code', $primaryKey);
+        $primaryKey = $this->request->input($this->views[static::MAIN_VIEW_NAME]->model->primaryColumn());
+        $code = $this->request->query('code', $primaryKey);
         if (empty($code)) {
             // new record
             return $this->views[static::MAIN_VIEW_NAME]->model;
         }
 
         // existing record
-        $this->views[static::MAIN_VIEW_NAME]->model->loadFromCode($code);
+        $this->views[static::MAIN_VIEW_NAME]->model->load($code);
         return $this->views[static::MAIN_VIEW_NAME]->model;
     }
 
@@ -113,9 +114,9 @@ class EditAsiento extends PanelController
      * @param Partida[] $lines
      * @param bool $applyModal
      */
-    private function applyMainFormData(Asiento &$model, array &$lines, bool $applyModal = false)
+    private function applyMainFormData(Asiento &$model, array &$lines, bool $applyModal = false): void
     {
-        $formData = json_decode($this->request->request->get('data'), true);
+        $formData = json_decode($this->request->input('data'), true);
         AccountingHeaderHTML::apply($model, $formData);
         AccountingFooterHTML::apply($model, $formData);
         AccountingLineHTML::apply($model, $lines, $formData);
@@ -138,7 +139,7 @@ class EditAsiento extends PanelController
     /**
      * Add main view (Accounting)
      */
-    private function createViewsMain()
+    private function createViewsMain(): void
     {
         $this->addHtmlView(
             static::MAIN_VIEW_NAME,
@@ -152,9 +153,10 @@ class EditAsiento extends PanelController
         $this->setSettings(static::MAIN_VIEW_NAME, 'btnPrint', true);
 
         // cargamos css y javascript
-        AssetManager::addCss(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
-        AssetManager::addJs(FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
-        AssetManager::addJs(FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
+        AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
     }
 
     /**
@@ -177,7 +179,7 @@ class EditAsiento extends PanelController
             return $this->sendJsonError();
         }
 
-        $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url('list')]));
+        $this->response->json(['ok' => true, 'newurl' => $model->url('list')]);
         return false;
     }
 
@@ -237,10 +239,10 @@ class EditAsiento extends PanelController
         $this->setTemplate(false);
         AsientoExport::show(
             $this->getModel(),
-            $this->request->get('option', ''),
+            $this->request->queryOrInput('option', ''),
             $this->title,
-            (int)$this->request->request->get('idformat', ''),
-            $this->request->request->get('langcode', ''),
+            (int)$this->request->input('idformat', ''),
+            $this->request->input('langcode', ''),
             $this->response
         );
     }
@@ -263,7 +265,7 @@ class EditAsiento extends PanelController
             'list' => AccountingModalHTML::renderSubaccountList($model),
             'messages' => Tools::log()::read('', $this->logLevels)
         ];
-        $this->response->setContent(json_encode($content));
+        $this->response->json($content);
         return false;
     }
 
@@ -275,8 +277,8 @@ class EditAsiento extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $primaryKey = $this->request->request->get($view->model->primaryColumn());
-        $code = $this->request->query->get('code', $primaryKey);
+        $primaryKey = $this->request->input($view->model->primaryColumn());
+        $code = $this->request->query('code', $primaryKey);
 
         switch ($viewName) {
             case 'docfiles':
@@ -295,7 +297,7 @@ class EditAsiento extends PanelController
 
                 // data not found?
                 $view->loadData($code);
-                $action = $this->request->request->get('action', '');
+                $action = $this->request->input('action', '');
                 if ('' === $action && false === $view->model->exists()) {
                     Tools::log()->warning('record-not-found');
                     break;
@@ -309,7 +311,7 @@ class EditAsiento extends PanelController
 
                 $this->title .= ' ' . $view->model->primaryDescription();
                 $this->addButton($viewName, [
-                    'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
+                    'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->id(),
                     'icon' => 'fa-solid fa-cut',
                     'label' => 'copy',
                     'type' => 'link'
@@ -339,7 +341,7 @@ class EditAsiento extends PanelController
             'list' => '',
             'messages' => Tools::log()::read('', $this->logLevels)
         ];
-        $this->response->setContent(json_encode($content));
+        $this->response->json($content);
         return false;
     }
 
@@ -381,14 +383,14 @@ class EditAsiento extends PanelController
             }
         }
 
-        $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']));
+        $this->response->json(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         $this->dataBase->commit();
         return false;
     }
 
     protected function sendJsonError(): bool
     {
-        $this->response->setContent(json_encode(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]));
+        $this->response->json(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]);
         return false;
     }
 
@@ -408,7 +410,7 @@ class EditAsiento extends PanelController
             return $this->sendJsonError();
         }
 
-        $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']));
+        $this->response->json(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
     }
 }

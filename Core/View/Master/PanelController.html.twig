@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,10 +25,10 @@
     {% set firstView = fsc.views | first %}
     <div class="container-fluid d-print-none">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col pb-2">
                 {# -- Hidden alternative page info -- #}
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb d-md-none">
+                <nav aria-label="breadcrumb" class="d-block d-md-none">
+                    <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="#">{{ trans(pageData.menu) }}</a>
                         </li>
@@ -49,11 +49,7 @@
                         </li>
                     </ol>
                 </nav>
-            </div>
-        </div>
-        <div class="row">
             {# -- Top left buttons -- #}
-            <div class="col-md-8 mb-2">
                 <div class="btn-group">
                     <a href="{{ firstView.model.url('list') }}" class="btn btn-sm btn-secondary">
                         <i class="fa-solid fa-list fa-fw" aria-hidden="true"></i>
@@ -65,7 +61,7 @@
                     </a>
                 </div>
                 {# -- Options button -- #}
-                {{ _self.optionsButton(fsc, firstView, i18n) }}
+                {{ _self.optionsButton(fsc, firstView) }}
                 {# -- New button -- #}
                 {% if fsc.hasData and firstView.settings.btnNew %}
                     <a href="{{ firstView.model.url('new') }}" class="btn btn-sm btn-success">
@@ -84,18 +80,20 @@
                 {% endfor %}
             </div>
             {# -- Top right text -- #}
-            <div class="col-md d-none d-md-inline-block text-end">
-                {% set image = fsc.getImageUrl() %}
-                {% if image is empty %}
-                    <i class="{{ pageData.icon }} fa-3x ps-3 float-end" aria-hidden="true"></i>
-                {% else %}
-                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail ms-3 mb-2 float-end"/>
-                {% endif %}
+            <div class="col-md-auto d-none d-md-block text-end">
                 <h1 class="h5 mb-0">{{ trans(pageData.title) }}</h1>
                 {% if fsc.hasData %}
                     <p class="text-info mb-3">{{ firstView.model.primaryDescription() | raw }}</p>
                 {% else %}
                     <p class="text-info mb-3">{{ trans('new') }}</p>
+                {% endif %}
+            </div>
+            <div class="col-md-auto d-none d-lg-block">
+                {% set image = fsc.getImageUrl() %}
+                {% if image is empty %}
+                    <i class="{{ pageData.icon }} fa-3x" aria-hidden="true"></i>
+                {% else %}
+                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail"/>
                 {% endif %}
             </div>
         </div>
@@ -105,21 +103,21 @@
 {% block body %}
     {% set firstView = fsc.views | first %}
     <div class="container-fluid">
-        <div class="row">
+        <div class="row g-2">
             {# -- Left Panel -- #}
             {% if fsc.views | length > 1 %}
-                <div class="col-lg-2">
+                <div class="col-12 col-lg-auto mt-lg-2">
                     {# -- Left tabs -- #}
-                    <div class="nav nav-pills flex-row flex-lg-column pb-3" id="mainTabs" role="tablist">
+                    <div class="nav nav-pills flex-row flex-lg-column overflow-x-auto" id="mainTabs" role="tablist" style="white-space: nowrap;">
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-bs-toggle="pill"
+                            <a class="nav-link{{ active }}{{ disable }} text-nowrap" id="{{ viewName }}-tab" data-bs-toggle="pill"
                                href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
-                                <i class="{{ view.icon }} fa-fw me-1 d-none d-xl-inline-block"
-                                   aria-hidden="true"></i>{{ view.title }}
+                                <i class="{{ view.icon }} fa-fw me-1 d-none d-lg-inline-block"
+                                   aria-hidden="true"></i><span class="d-inline d-lg-inline">{{ view.title }}</span>
                                 {% if view.count >= 1 and viewName != firstView.getViewName() %}
-                                    <span class='badge bg-secondary mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
+                                    <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
                                 {% endif %}
                             </a>
                         {% endfor %}
@@ -127,7 +125,7 @@
                 </div>
             {% endif %}
             {# -- Right Panel -- #}
-            {% set rightPanelClass = (fsc.views | length > 1) ? 'col-lg-10' : 'col' %}
+            {% set rightPanelClass = (fsc.views | length > 1) ? 'col-12 col-lg' : 'col-12' %}
             <div class="{{ rightPanelClass }}">
                 {# -- Tab content -- #}
                 <div class="tab-content" id="mainTabsContent">
@@ -156,7 +154,7 @@
     </script>
 {% endblock %}
 
-{% macro optionsButton(fsc, firstView, i18n) %}
+{% macro optionsButton(fsc, firstView) %}
     {% set show = false %}
     {% for viewName, view in fsc.views %}
         {% if view.settings.active and view.columns is not empty %}

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,7 +45,6 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 class AccountingAccounts
 {
-
     const SPECIAL_CUSTOMER_ACCOUNT = 'CLIENT';
     const SPECIAL_CREDITOR_ACCOUNT = 'ACREED';
     const SPECIAL_EXPENSE_ACCOUNT = 'GTOBAN';
@@ -93,30 +92,30 @@ class AccountingAccounts
      */
     public function getCustomerAccount(&$customer, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
     {
-        /// defined sub-account code?
+        // defined sub-account code?
         if (!empty($customer->codsubcuenta)) {
             $subaccount = $this->getSubAccount($customer->codsubcuenta);
             if ($subaccount->exists()) {
                 return $subaccount;
             }
 
-            /// search parent account
+            // search parent account
             $account = $this->getSpecialAccount($specialAccount);
 
-            /// create sub-account
+            // create sub-account
             return $this->creation->createSubjectAccount($customer, $account);
         }
 
-        /// group has sub-account?
+        // group has sub-account?
         $group = new GrupoClientes();
-        if (!empty($customer->codgrupo) && $group->loadFromCode($customer->codgrupo)) {
+        if (!empty($customer->codgrupo) && $group->load($customer->codgrupo)) {
             $groupSubaccount = $this->getCustomerGroupAccount($group, $specialAccount);
             if ($groupSubaccount->exists()) {
                 return $groupSubaccount;
             }
         }
 
-        /// create and assign a new sub-account code
+        // create and assign a new sub-account code
         $account = $this->getSpecialAccount($specialAccount);
         return $this->creation->createSubjectAccount($customer, $account);
     }
@@ -140,10 +139,10 @@ class AccountingAccounts
             return $subaccount;
         }
 
-        /// search parent account
+        // search parent account
         $account = $this->getSpecialAccount($specialAccount);
 
-        /// create in this exercise
+        // create in this exercise
         return $this->creation->createFromAccount($account, $group->codsubcuenta, $group->nombre);
     }
 
@@ -159,9 +158,9 @@ class AccountingAccounts
     {
         $bankAccount = new CuentaBanco();
         $paymentMethod = new FormaPago();
-        if ($paymentMethod->loadFromCode($codpago) &&
+        if ($paymentMethod->load($codpago) &&
             $paymentMethod->codcuentabanco &&
-            $bankAccount->loadFromCode($paymentMethod->codcuentabanco) &&
+            $bankAccount->load($paymentMethod->codcuentabanco) &&
             !empty($bankAccount->codsubcuentagasto)) {
             $subaccount = $this->getSubAccount($bankAccount->codsubcuentagasto);
             return $subaccount->exists() ? $subaccount : $this->getSpecialSubAccount($specialAccount);
@@ -208,9 +207,9 @@ class AccountingAccounts
     {
         $bankAccount = new CuentaBanco();
         $paymentMethod = new FormaPago();
-        if ($paymentMethod->loadFromCode($codpago) &&
+        if ($paymentMethod->load($codpago) &&
             $paymentMethod->codcuentabanco &&
-            $bankAccount->loadFromCode($paymentMethod->codcuentabanco) &&
+            $bankAccount->load($paymentMethod->codcuentabanco) &&
             !empty($bankAccount->codsubcuenta)) {
             $subaccount = $this->getSubAccount($bankAccount->codsubcuenta);
             return $subaccount->exists() ? $subaccount : $this->getSpecialSubAccount($specialAccount);
@@ -235,7 +234,7 @@ class AccountingAccounts
         $orderBy = ['codcuenta' => 'ASC'];
 
         $account = new Cuenta();
-        $account->loadFromCode('', $where, $orderBy);
+        $account->loadWhere($where, $orderBy);
         return $account;
     }
 
@@ -256,7 +255,7 @@ class AccountingAccounts
         $orderBy = ['codsubcuenta' => 'ASC'];
 
         $subAccount = new Subcuenta();
-        if ($subAccount->loadFromCode('', $where, $orderBy)) {
+        if ($subAccount->loadWhere($where, $orderBy)) {
             return $subAccount;
         }
 
@@ -283,7 +282,7 @@ class AccountingAccounts
         ];
 
         $subAccount = new Subcuenta();
-        $subAccount->loadFromCode('', $where);
+        $subAccount->loadWhere($where);
         return $subAccount;
     }
 
@@ -303,21 +302,21 @@ class AccountingAccounts
             $specialAccount = self::SPECIAL_CREDITOR_ACCOUNT;
         }
 
-        /// defined sub-account code?
+        // defined sub-account code?
         if (!empty($supplier->codsubcuenta)) {
             $subaccount = $this->getSubAccount($supplier->codsubcuenta);
             if ($subaccount->exists()) {
                 return $subaccount;
             }
 
-            /// search parent account
+            // search parent account
             $account = $this->getSpecialAccount($specialAccount);
 
-            /// create sub-account
+            // create sub-account
             return $this->creation->createSubjectAccount($supplier, $account);
         }
 
-        /// assign a new sub-account code
+        // assign a new sub-account code
         $account = $this->getSpecialAccount($specialAccount);
         return $this->creation->createSubjectAccount($supplier, $account);
     }
@@ -360,30 +359,30 @@ class AccountingAccounts
      */
     private function getAccountFromCode($code, string $specialAccount)
     {
-        /// defined sub-account code?
+        // defined sub-account code?
         if (!empty($code)) {
             $subaccount = $this->getSubAccount($code);
             if ($subaccount->exists()) {
                 return $subaccount;
             }
 
-            /// search parent account
+            // search parent account
             $account = $this->getSpecialAccount($specialAccount);
 
-            /// create sub-account
+            // create sub-account
             return $this->creation->createFromAccount($account, $code);
         }
 
-        /// search special account in sub-accounts
+        // search special account in sub-accounts
         $subaccount = $this->getSpecialSubAccount($specialAccount);
         if ($subaccount->exists()) {
             return $subaccount;
         }
 
-        /// search special account in accounts and return the first sub-account
+        // search special account in accounts and return the first sub-account
         $account = $this->getSpecialAccount($specialAccount);
         $firstSubaccount = new Subcuenta();
-        $firstSubaccount->loadFromCode('', [new DataBaseWhere('idcuenta', $account->idcuenta)], ['idsubcuenta' => 'ASC']);
+        $firstSubaccount->loadWhere([new DataBaseWhere('idcuenta', $account->idcuenta)], ['idsubcuenta' => 'ASC']);
         return $firstSubaccount;
     }
 }

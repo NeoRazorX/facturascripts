@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -232,23 +232,24 @@ class WidgetSelect extends BaseWidget
     /**
      *  Translate the fixed titles, if they exist
      */
-    private function applyTranslations()
+    private function applyTranslations(): void
     {
         foreach ($this->values as $key => $value) {
             if (empty($value['title']) || '------' === $value['title']) {
                 continue;
             }
 
-            $this->values[$key]['title'] = Tools::lang()->trans($value['title']);
+            $this->values[$key]['title'] = Tools::trans($value['title']);
         }
     }
 
-    protected function assets()
+    protected function assets(): void
     {
-        AssetManager::add('css', FS_ROUTE . '/node_modules/select2/dist/css/select2.min.css');
-        AssetManager::add('css', FS_ROUTE . '/node_modules/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css');
-        AssetManager::add('js', FS_ROUTE . '/node_modules/select2/dist/js/select2.min.js', 2);
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/node_modules/select2/dist/css/select2.min.css?v=5');
+        AssetManager::addCss($route . '/node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css?v=5');
+        AssetManager::addJs($route . '/node_modules/select2/dist/js/select2.min.js?v=5', 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetSelect.js?v=5');
     }
 
     /**
@@ -338,7 +339,7 @@ class WidgetSelect extends BaseWidget
         $this->fieldcode = $child['fieldcode'] ?? 'id';
         $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
-        $this->limit = $child['limit'] ?? CodeModel::ALL_LIMIT;
+        $this->limit = $child['limit'] ?? CodeModel::getlimit();
         if ($loadData && $this->source) {
             static::$codeModel::setLimit($this->limit);
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);

@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
@@ -80,10 +81,12 @@ class AccountingLineHTML
                 return;
             }
 
+            $nf0 = Tools::settings('default', 'decimals', 2);
+
             $newLine = $model->getNewLine();
             $newLine->setAccount($subcuenta);
-            $newLine->debe = ($model->debe < $model->haber) ? round($model->haber - $model->debe, FS_NF0) : 0.00;
-            $newLine->haber = ($model->debe > $model->haber) ? round($model->debe - $model->haber, FS_NF0) : 0.00;
+            $newLine->debe = ($model->debe < $model->haber) ? round($model->haber - $model->debe, $nf0) : 0.00;
+            $newLine->haber = ($model->debe > $model->haber) ? round($model->debe - $model->haber, $nf0) : 0.00;
             $lines[] = $newLine;
 
             static::calculateUnbalance($model, $lines);
@@ -109,7 +112,7 @@ class AccountingLineHTML
         }
 
         return empty($html) ?
-            '<div class="alert alert-warning border-top mb-0">' . Tools::lang()->trans('new-acc-entry-line-p') . '</div>' :
+            '<div class="alert alert-warning border-top mb-0">' . Tools::trans('new-acc-entry-line-p') . '</div>' :
             $html;
     }
 
@@ -122,7 +125,7 @@ class AccountingLineHTML
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $cssClass = static::$num % 2 == 0 ? 'bg-white border-top' : 'bg-light border-top';
         return '<div class="' . $cssClass . ' line ps-2 pe-2">'
-            . '<div class="row g-3 align-items-end">'
+            . '<div class="row g-2 align-items-end">'
             . static::subcuenta($line, $model)
             . static::debe($line, $model)
             . static::haber($line, $model)
@@ -144,24 +147,25 @@ class AccountingLineHTML
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . static::iva($line, $model)
-            . static::recargo( $line, $model)
+            . static::recargo($line, $model)
             . '</div>'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . static::baseimponible($line, $model)
             . static::cifnif($line, $model)
             . '</div>'
-            . '<div class="row g-3">'
+            . '<div class="row g-2">'
             . static::documento($line, $model)
+            . static::codserie($line, $model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
             . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
-            . Tools::lang()->trans('close')
+            . Tools::trans('close')
             . '</button>'
             . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">'
-            . Tools::lang()->trans('accept')
+            . Tools::trans('accept')
             . '</button>'
             . '</div>'
             . '</div>'
@@ -173,6 +177,7 @@ class AccountingLineHTML
     {
         $line->baseimponible = (float)($formData['baseimponible_' . $id] ?? '0');
         $line->cifnif = $formData['cifnif_' . $id] ?? '';
+        $line->codserie = $formData['codserie_' . $id] ?? '';
         $line->concepto = $formData['concepto_' . $id] ?? '';
         $line->codcontrapartida = $formData['codcontrapartida_' . $id] ?? '';
         $line->codsubcuenta = $formData['codsubcuenta_' . $id] ?? '';
@@ -194,7 +199,7 @@ class AccountingLineHTML
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="baseimponible_' . $idlinea . '"' : 'disabled';
-        return '<div class="col pb-2 small">' . Tools::lang()->trans('tax-base')
+        return '<div class="col pb-2 small">' . Tools::trans('tax-base')
             . '<input type="number" ' . $attributes . ' value="' . floatval($line->baseimponible)
             . '" class="form-control" step="any" autocomplete="off">'
             . '</div>';
@@ -215,9 +220,29 @@ class AccountingLineHTML
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="cifnif_' . $idlinea . '"' : 'disabled';
-        return '<div class="col pb-2 small">' . Tools::lang()->trans('cifnif')
+        return '<div class="col pb-2 small">' . Tools::trans('cifnif')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($line->cifnif)
             . '" class="form-control" maxlength="30" autocomplete="off"/>'
+            . '</div>';
+    }
+
+    protected static function codserie(Partida $line, Asiento $model): string
+    {
+        $options = ['<option value="">------</option>'];
+        foreach (Series::all() as $row) {
+            // es la serie seleccionada
+            if ($row->codserie === $line->codserie) {
+                $options[] = '<option value="' . $row->codserie . '" selected>' . $row->descripcion . '</option>';
+                continue;
+            }
+
+            $options[] = '<option value="' . $row->codserie . '">' . $row->descripcion . '</option>';
+        }
+
+        $idlinea = $line->idpartida ?? 'n' . static::$num;
+        $attributes = $model->editable ? 'name="codserie_' . $idlinea . '"' : 'disabled';
+        return '<div class="col pb-2 small"><a href="ListSerie">' . Tools::trans('serie') . '</a>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>';
     }
 
@@ -228,7 +253,7 @@ class AccountingLineHTML
             ? 'name="concepto_' . $idlinea . '" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col pb-2 small">' . Tools::lang()->trans('concept')
+        return '<div class="col-sm-12 col-lg pb-2 small">' . Tools::trans('concept')
             . '<input type="text" ' . $attributes . ' class="form-control" value="' . Tools::noHtml($line->concepto) . '">'
             . '</div>';
     }
@@ -240,9 +265,9 @@ class AccountingLineHTML
             ? 'name="codcontrapartida_' . $idlinea . '" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col pb-2 small">' . Tools::lang()->trans('counterpart')
+        return '<div class="col-sm-6 col-lg pb-2 small">' . Tools::trans('counterpart')
             . '<input type="text" ' . $attributes . ' value="' . $line->codcontrapartida
-            . '" class="form-control" maxlength="15" autocomplete="off" placeholder="' . Tools::lang()->trans('optional') . '"/>'
+            . '" class="form-control" maxlength="15" autocomplete="off" placeholder="' . Tools::trans('optional') . '"/>'
             . '</div>';
     }
 
@@ -253,7 +278,7 @@ class AccountingLineHTML
             ? 'name="debe_' . $idlinea . '" step="1" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col pb-2 small">' . Tools::lang()->trans('debit')
+        return '<div class="col pb-2 small">' . Tools::trans('debit')
             . '<input type="number" class="form-control line-debit" ' . $attributes . ' value="' . floatval($line->debe) . '"/>'
             . '</div>';
     }
@@ -262,7 +287,7 @@ class AccountingLineHTML
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="documento_' . $idlinea . '"' : 'disabled';
-        return '<div class="col pb-2 small">' . Tools::lang()->trans('document')
+        return '<div class="col pb-2 small">' . Tools::trans('document')
             . '<input type="text" ' . $attributes . ' value="' . Tools::noHtml($line->documento)
             . '" class="form-control" maxlength="30" autocomplete="off"/>'
             . '</div>';
@@ -279,7 +304,7 @@ class AccountingLineHTML
             new DataBaseWhere('codejercicio', $model->codejercicio),
             new DataBaseWhere('codsubcuenta', $subcuenta->transformCodsubcuenta($code, $model->codejercicio))
         ];
-        $subcuenta->loadFromCode('', $where);
+        $subcuenta->loadWhere($where);
         return $subcuenta;
     }
 
@@ -290,8 +315,9 @@ class AccountingLineHTML
             ? 'name="haber_' . $idlinea . '" step="1" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col pb-2 small">' . Tools::lang()->trans('credit')
-            . '<input type="number" class="form-control" ' . $attributes . ' value="' . round($line->haber, FS_NF0) . '"/>'
+        $nf0 = Tools::settings('default', 'decimals', 2);
+        return '<div class="col pb-2 small">' . Tools::trans('credit')
+            . '<input type="number" class="form-control" ' . $attributes . ' value="' . round($line->haber, $nf0) . '"/>'
             . '</div>';
     }
 
@@ -320,7 +346,7 @@ class AccountingLineHTML
 
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="iva_' . $idlinea . '"' : 'disabled';
-        return '<div class="col pb-2 small"><a href="ListImpuesto">' . Tools::lang()->trans('vat') . '</a>'
+        return '<div class="col pb-2 small"><a href="ListImpuesto">' . Tools::trans('vat') . '</a>'
             . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>';
     }
@@ -329,7 +355,7 @@ class AccountingLineHTML
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="recargo_' . $idlinea . '"' : 'disabled';
-        return '<div class="col pb-2 small">' . Tools::lang()->trans('surcharge')
+        return '<div class="col pb-2 small">' . Tools::trans('surcharge')
             . '<input type="number" ' . $attributes . ' value="' . floatval($line->recargo)
             . '" class="form-control" step="any" autocomplete="off">'
             . '</div>';
@@ -340,20 +366,20 @@ class AccountingLineHTML
         if ($model->editable) {
             return '<div class="col-sm-auto pb-1">'
                 . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
-                . Tools::lang()->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button>'
-                . '<button class="btn btn-outline-danger btn-spin-action ms-2 mb-1" type="button" title="' . Tools::lang()->trans('delete') . '"'
+                . Tools::trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button>'
+                . '<button class="btn btn-outline-danger btn-spin-action ms-2 mb-1" type="button" title="' . Tools::trans('delete') . '"'
                 . ' onclick="return accEntryFormAction(\'rm-line\', \'' . $idlinea . '\');">'
                 . '<i class="fa-solid fa-trash-alt"></i></button></div>';
         }
 
         return '<div class="col-sm-auto pb-1">'
             . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
-            . Tools::lang()->trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button></div>';
+            . Tools::trans('more') . '"><i class="fa-solid fa-ellipsis-h"></i></button></div>';
     }
 
     protected static function saldo(Subcuenta $subcuenta): string
     {
-        return '<div class="col pb-2 small">' . Tools::lang()->trans('balance')
+        return '<div class="col pb-2 small">' . Tools::trans('balance')
             . '<input type="text" class="form-control" value="' . Tools::number($subcuenta->saldo) . '" tabindex="-1" readonly>'
             . '</div>';
     }
@@ -363,7 +389,7 @@ class AccountingLineHTML
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $subcuenta = static::getSubcuenta($line->codsubcuenta, $model);
         if (false === $model->editable) {
-            return '<div class="col pb-2 small">' . $subcuenta->descripcion
+            return '<div class="col-sm-6 col-lg pb-2 small">' . $subcuenta->descripcion
                 . '<div class="input-group">'
                 . '<input type="text" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
                 . '<a href="' . $subcuenta->url() . '" target="_blank" class="btn btn-outline-primary">'
@@ -374,7 +400,7 @@ class AccountingLineHTML
                 . static::concepto($line, $model);
         }
 
-        return '<div class="col pb-2 small">'
+        return '<div class="col-sm-6 col-lg pb-2 small">'
             . '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' . $subcuenta->descripcion
             . '<div class="input-group">'
             . '<input type="text" name="codsubcuenta_' . $idlinea . '" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'

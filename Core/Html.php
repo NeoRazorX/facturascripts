@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,10 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
+use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Model\AttachedFile;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -99,7 +99,7 @@ final class Html
                 return '';
             }
 
-            $path = FS_ROUTE . '/';
+            $path = Tools::config('route') . '/';
             return substr($string, 0, strlen($path)) == $path ?
                 $string :
                 str_replace('//', '/', $path . $string);
@@ -110,7 +110,7 @@ final class Html
     {
         return new TwigFunction('attachedFile', function ($id) {
             $attached = new AttachedFile();
-            $attached->loadFromCode($id);
+            $attached->load($id);
             return $attached;
         });
     }

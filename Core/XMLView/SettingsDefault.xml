@@ -26,8 +26,7 @@
                 <widget type="text" fieldname="name" readonly="true" required="true"/>
             </column>
             <column name="country" numcolumns="3" order="100">
-                <widget type="select" fieldname="codpais" onclick="EditPais" icon="fa-solid fa-globe-americas"
-                        required="true">
+                <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"/>
                 </widget>
             </column>
@@ -58,8 +57,7 @@
                 </widget>
             </column>
             <column name="currency" numcolumns="3" order="160">
-                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" icon="fa-solid fa-money-bill-alt"
-                        required="true">
+                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" required="true">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"/>
                 </widget>
             </column>

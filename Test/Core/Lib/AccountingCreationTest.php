@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Core\Lib\Accounting\AccountingCreation;
 use FacturaScripts\Core\Model\Cuenta;
@@ -58,13 +59,15 @@ final class AccountingCreationTest extends TestCase
         // obtenemos la cuenta de clientes
         $accounts = new AccountingAccounts();
         $accounts->exercise = $this->getCurrentExercise();
+        $this->assertTrue($accounts->exercise->exists());
         $customersAccount = $accounts->getSpecialAccount(AccountingAccounts::SPECIAL_CUSTOMER_ACCOUNT);
         $this->assertTrue($customersAccount->exists(), 'cant-get-customer-account');
 
-        // obtenemos una nueva subcuenta para el cliente, 1001 veces,
+        // obtenemos una nueva subcuenta para el cliente, 1001 veces (solo España),
         // para comprobar si en todos los casos se crea una nueva
         $creator = new AccountingCreation();
-        for ($i = 0; $i < 1000; $i++) {
+        $max = Paises::default()->codpais === 'ESP' ? 1000 : 10;
+        for ($i = 0; $i < $max; $i++) {
             $subaccount = $creator->createSubjectAccount($customer, $customersAccount);
             $this->assertTrue($subaccount->exists(), 'cant-create-customer-subaccount-' . $i);
 

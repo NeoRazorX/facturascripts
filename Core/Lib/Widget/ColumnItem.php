@@ -118,10 +118,7 @@ class ColumnItem extends VisualItem
             return $this->widget->inputHidden($model);
         }
 
-        // para los checkbox forzamos el col-sm-auto
-        $colAuto = $this->widget->getType() === 'checkbox' ? 'col-sm-auto' : 'col-sm';
-
-        $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css($colAuto);
+        $divClass = $this->getColumnClasses();
         if (false === empty($this->class)) {
             $divClass .= ' ' . $this->class;
         }
@@ -131,6 +128,34 @@ class ColumnItem extends VisualItem
         return '<div' . $divID . ' class="' . $divClass . '">'
             . $editHtml
             . '</div>';
+    }
+
+    /**
+     * Returns the Bootstrap column classes based on widget type and configuration
+     *
+     * @return string
+     */
+    public function getColumnClasses(): string
+    {
+        // para los checkbox forzamos el col-sm-auto
+        if ($this->widget->getType() === 'checkbox') {
+            return $this->css('col-sm-auto');
+        }
+
+        // si no tiene numcolumns configurado, usamos comportamiento adaptativo
+        if ($this->numcolumns <= 0) {
+            // para móviles siempre 12 columnas, para tablets y desktop se adapta
+            return $this->css('col-12 col-sm-6 col-md-4 col-xl');
+        }
+
+        // si tiene numcolumns configurado, aplicamos reglas responsive
+        switch ($this->numcolumns) {
+            case 12:
+                return $this->css('col-12');
+
+            default:
+                return $this->css('col-12 col-sm-6 col-md-4 col-xl-' . $this->numcolumns);
+        }
     }
 
     /**
@@ -206,24 +231,24 @@ class ColumnItem extends VisualItem
         switch ($orderMode) {
             case '-':
                 $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
-                    . $orderKey . '\');" title="' . Tools::lang()->trans('sort-by-column') . '"><i class="fa-solid fa-sort"></i> '
-                    . Tools::lang()->trans($this->title) . '</a>';
+                    . $orderKey . '\');" title="' . Tools::trans('sort-by-column') . '"><i class="fa-solid fa-sort"></i> '
+                    . Tools::trans($this->title) . '</a>';
                 break;
 
             case 'ASC':
                 $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
-                    . $orderKey . '\');" title="' . Tools::lang()->trans('sorted-asc') . '"><i class="fa-solid fa-angles-up"></i> '
-                    . Tools::lang()->trans($this->title) . '</a>';
+                    . $orderKey . '\');" title="' . Tools::trans('sorted-asc') . '"><i class="fa-solid fa-angles-up"></i> '
+                    . Tools::trans($this->title) . '</a>';
                 break;
 
             case 'DESC':
                 $content .= '<a href="#" onclick="listViewSetOrder(\'' . $currentView->getViewName() . '\', \''
-                    . $orderKey . '\');" title="' . Tools::lang()->trans('sorted-desc') . '"><i class="fa-solid fa-angles-down"></i> '
-                    . Tools::lang()->trans($this->title) . '</a>';
+                    . $orderKey . '\');" title="' . Tools::trans('sorted-desc') . '"><i class="fa-solid fa-angles-down"></i> '
+                    . Tools::trans($this->title) . '</a>';
                 break;
 
             default:
-                $content .= Tools::lang()->trans($this->title);
+                $content .= Tools::trans($this->title);
                 break;
         }
 

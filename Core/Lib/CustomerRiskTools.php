@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,19 +22,18 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Set of tools for the management of customer payment risk
+ * Devuelve el riesgo actual de un cliente.
  *
  * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
  * @author Carlos García Gómez              <carlos@facturascripts.com>
  */
 class CustomerRiskTools
 {
-
     /** @var DataBase */
     private static $dataBase;
 
     /**
-     * Returns the current customer's risk.
+     * Devuelve el riesgo actual de un cliente.
      *
      * @param string $codcliente
      * @param ?int $idempresa
@@ -49,7 +48,7 @@ class CustomerRiskTools
     }
 
     /**
-     * Returns the sum of the customer's pending delivery notes.
+     * Devuelve el riesgo actual en albaranes del cliente.
      *
      * @param string $codcliente
      * @param ?int $idempresa
@@ -58,6 +57,11 @@ class CustomerRiskTools
      */
     public static function getDeliveryNotesRisk(string $codcliente, ?int $idempresa = null): float
     {
+        // comprobamos que la tabla albaranescli existe
+        if (!static::dataBase()->tableExists('albaranescli')) {
+            return 0.0;
+        }
+
         $sql = "SELECT SUM(total) AS total FROM albaranescli"
             . " WHERE codcliente = " . static::database()->var2str($codcliente)
             . " AND editable = true";
@@ -73,7 +77,7 @@ class CustomerRiskTools
     }
 
     /**
-     * Returns the customer's unpaid invoices minus the customer's paid invoices receipts of those unpaid invoices.
+     * Devuelve el riesgo actual de facturas del cliente.
      *
      * @param string $codcliente
      * @param ?int $idempresa
@@ -82,9 +86,15 @@ class CustomerRiskTools
      */
     public static function getInvoicesRisk(string $codcliente, ?int $idempresa = null): float
     {
+        // comprobamos que las tablas facturascli y recibospagoscli existen
+        if (!static::dataBase()->tableExists('facturascli') ||
+            !static::dataBase()->tableExists('recibospagoscli')) {
+            return 0.0;
+        }
+
         $unpaidInvoicesAmount = static::getUnpaidInvoices($codcliente, $idempresa);
         if ($unpaidInvoicesAmount == 0.0) {
-            // If there are no unpaid invoices there is no need to calculate unpaid bills.
+            // si no hay facturas pendientes de cobro, no hay que calcular el riesgo.
             return 0.0;
         }
 
@@ -111,7 +121,7 @@ class CustomerRiskTools
     }
 
     /**
-     * Returns the sum of the customer's unpaid invoices.
+     * Devuelve el importe total de las facturas pendientes de cobro de un cliente.
      *
      * @param string $codcliente
      * @param ?int $idempresa
@@ -135,7 +145,7 @@ class CustomerRiskTools
     }
 
     /**
-     * Returns the sum of the customer's pending orders.
+     * Devuelve el riesgo actual de pedidos del cliente.
      *
      * @param string $codcliente
      * @param ?int $idempresa
@@ -144,6 +154,11 @@ class CustomerRiskTools
      */
     public static function getOrdersRisk(string $codcliente, ?int $idempresa = null): float
     {
+        // comprobamos que la tabla pedidoscli existe
+        if (!static::dataBase()->tableExists('pedidoscli')) {
+            return 0.0;
+        }
+
         $sql = "SELECT SUM(total) AS total FROM pedidoscli"
             . " WHERE codcliente = " . static::database()->var2str($codcliente)
             . " AND editable = true";
@@ -162,6 +177,7 @@ class CustomerRiskTools
     {
         if (null === self::$dataBase) {
             self::$dataBase = new DataBase();
+            self::$dataBase->connect();
         }
 
         return self::$dataBase;

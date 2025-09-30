@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -109,15 +109,15 @@ class EditEjercicio extends EditController
 
     protected function closeExerciseAction(): bool
     {
-        $code = $this->request->request->get('codejercicio');
+        $code = $this->request->input('codejercicio');
         if (false === $this->checkAndLoad($code)) {
             return true;
         }
 
         $data = [
-            'journalClosing' => $this->request->request->get('iddiario-closing'),
-            'journalOpening' => $this->request->request->get('iddiario-opening'),
-            'copySubAccounts' => (bool)$this->request->request->get('copysubaccounts', false)
+            'journalClosing' => $this->request->input('iddiario-closing'),
+            'journalOpening' => $this->request->input('iddiario-opening'),
+            'copySubAccounts' => (bool)$this->request->input('copysubaccounts', false)
         ];
 
         $model = $this->getModel();
@@ -209,17 +209,20 @@ class EditEjercicio extends EditController
             return true;
         }
 
-        $codejercicio = $this->request->get('code', '');
+        $codejercicio = $this->request->queryOrInput('code', '');
         if (empty($codejercicio)) {
             Tools::log()->error('exercise-not-found');
             return true;
         }
 
         $this->setTemplate(false);
-        $this->response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $this->response->headers->set('Content-Disposition', 'attachment;filename=' . $codejercicio . '.csv');
+
         $accountingPlanExport = new AccountingPlanExport();
-        $this->response->setContent($accountingPlanExport->exportCSV($codejercicio));
+
+        $this->response
+            ->header('Content-Type', 'text/csv; charset=utf-8')
+            ->header('Content-Disposition', 'attachment;filename=' . $codejercicio . '.csv')
+            ->setContent($accountingPlanExport->exportCSV($codejercicio));
         return false;
     }
 
@@ -235,7 +238,7 @@ class EditEjercicio extends EditController
             return true;
         }
 
-        $codejercicio = $this->request->request->get('codejercicio', '');
+        $codejercicio = $this->request->input('codejercicio', '');
         if (empty($codejercicio)) {
             Tools::log()->error('exercise-not-found');
             return true;
@@ -273,7 +276,7 @@ class EditEjercicio extends EditController
 
     protected function importDefaultPlan(string $codejercicio): bool
     {
-        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . FS_LANG . '/defaultPlan.csv';
+        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . Tools::config('lang') . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
             $codpais = Tools::settings('default', 'codpais');
             $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
@@ -336,14 +339,14 @@ class EditEjercicio extends EditController
      */
     protected function openExerciseAction(): bool
     {
-        $code = $this->request->request->get('codejercicio');
+        $code = $this->request->input('codejercicio');
         if (false === $this->checkAndLoad($code)) {
             return true;
         }
 
         $data = [
-            'deleteClosing' => (bool)$this->request->request->get('delete-closing'),
-            'deleteOpening' => (bool)$this->request->request->get('delete-opening')
+            'deleteClosing' => (bool)$this->request->input('delete-closing'),
+            'deleteOpening' => (bool)$this->request->input('delete-opening')
         ];
         $model = $this->getModel();
 

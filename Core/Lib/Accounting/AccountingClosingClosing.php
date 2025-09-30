@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,7 +52,7 @@ class AccountingClosingClosing extends AccountingClosingBase
      */
     protected function getConcept(): string
     {
-        return Tools::lang()->trans('closing-closing-concept', [
+        return Tools::trans('closing-closing-concept', [
             '%exercise%' => $this->exercise->nombre
         ]);
     }
@@ -84,7 +84,8 @@ class AccountingClosingClosing extends AccountingClosingBase
      */
     protected function getSQL(): string
     {
-        if (FS_DB_TYPE == 'postgresql') {
+        $db_type = Tools::config('db_type');
+        if ($db_type == 'postgresql') {
             return "SELECT COALESCE(t1.canal, 0) AS channel,"
                 . "t2.idsubcuenta AS id,"
                 . "t2.codsubcuenta AS code,"

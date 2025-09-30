@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,11 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Asiento;
-use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\RegularizacionImpuesto;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -52,19 +54,21 @@ final class AsientoTest extends TestCase
         $asiento = new Asiento();
         $asiento->concepto = 'Test';
         $this->assertTrue($asiento->save(), 'asiento-cant-save-1');
-        $this->assertNotNull($asiento->primaryColumnValue(), 'asiento-not-stored');
+        $this->assertNotNull($asiento->id(), 'asiento-not-stored');
         $this->assertTrue($asiento->exists(), 'asiento-cant-persist');
+
+        $ejercicio = $asiento->getExercise();
 
         // añadimos una línea
         $firstLine = $asiento->getNewLine();
-        $firstLine->codsubcuenta = '1000000000';
+        $firstLine->codsubcuenta = $this->getSampleSubaccount($ejercicio);
         $firstLine->concepto = 'Test linea 1';
         $firstLine->debe = 100;
         $this->assertTrue($firstLine->save(), 'linea-cant-save-1');
 
         // añadimos otra línea
         $secondLine = $asiento->getNewLine();
-        $secondLine->codsubcuenta = '5700000000';
+        $secondLine->codsubcuenta = $this->getSampleSubaccount($ejercicio);
         $secondLine->concepto = 'Test linea 2';
         $secondLine->haber = 100;
         $this->assertTrue($secondLine->save(), 'linea-cant-save-2');
@@ -102,16 +106,18 @@ final class AsientoTest extends TestCase
         $asiento->concepto = 'Test';
         $this->assertTrue($asiento->save(), 'asiento-cant-save-3');
 
+        $ejercicio = $asiento->getExercise();
+
         // añadimos una línea
         $firstLine = $asiento->getNewLine();
-        $firstLine->codsubcuenta = '1000000000';
+        $firstLine->codsubcuenta = $this->getSampleSubaccount($ejercicio);
         $firstLine->concepto = 'Test linea 1';
         $firstLine->debe = 100;
         $this->assertTrue($firstLine->save(), 'linea-cant-save-3');
 
         // añadimos otra línea
         $secondLine = $asiento->getNewLine();
-        $secondLine->codsubcuenta = '5700000000';
+        $secondLine->codsubcuenta = $this->getSampleSubaccount($ejercicio);
         $secondLine->concepto = 'Test linea 2';
         $secondLine->haber = 100;
         $this->assertTrue($secondLine->save(), 'linea-cant-save-4');
@@ -132,16 +138,18 @@ final class AsientoTest extends TestCase
         $asiento->concepto = 'Test';
         $this->assertTrue($asiento->save(), 'asiento-cant-save-5');
 
+        $ejercicio = $asiento->getExercise();
+
         // añadimos una línea
         $firstLine = $asiento->getNewLine();
-        $firstLine->codsubcuenta = '1000000000';
+        $firstLine->codsubcuenta = $this->getSampleSubaccount($ejercicio);
         $firstLine->concepto = 'Test linea 1';
         $firstLine->debe = 100;
         $this->assertTrue($firstLine->save(), 'linea-cant-save-5');
 
         // añadimos otra línea
         $secondLine = $asiento->getNewLine();
-        $secondLine->codsubcuenta = '5700000000';
+        $secondLine->codsubcuenta = $this->getSampleSubaccount($ejercicio);
         $secondLine->concepto = 'Test linea 2';
         $secondLine->haber = 100;
 
@@ -151,7 +159,7 @@ final class AsientoTest extends TestCase
 
         // intentamos añadir una línea
         $thirdLine = $asiento->getNewLine();
-        $thirdLine->codsubcuenta = '5720000000';
+        $thirdLine->codsubcuenta = $this->getSampleSubaccount($ejercicio);
         $thirdLine->concepto = 'Test linea 3';
         $thirdLine->haber = 100;
         $this->assertFalse($thirdLine->save(), 'linea-cant-save-7');
@@ -216,9 +224,11 @@ final class AsientoTest extends TestCase
         $asiento->idempresa = $exercise->idempresa;
         $this->assertTrue($asiento->save(), 'asiento-cant-save-4');
 
+        $ejercicio = $asiento->getExercise();
+
         // añadimos una línea
         $firstLine = $asiento->getNewLine();
-        $firstLine->codsubcuenta = '1000000000';
+        $firstLine->codsubcuenta = $this->getSampleSubaccount($ejercicio);
         $firstLine->concepto = 'Test linea 1';
         $firstLine->debe = 100;
         $this->assertTrue($firstLine->save(), 'linea-cant-save-4');
@@ -236,7 +246,7 @@ final class AsientoTest extends TestCase
 
         // no se puede añadir una línea
         $line = $asiento->getNewLine();
-        $line->codsubcuenta = '5720000000';
+        $line->codsubcuenta = $this->getSampleSubaccount($ejercicio);
         $line->concepto = 'Test linea 3';
         $line->debe = 100;
         $this->assertFalse($line->save(), 'can-add-line-on-closed-exercise');
@@ -369,7 +379,7 @@ final class AsientoTest extends TestCase
         $this->assertTrue($asiento->save(), 'asiento-cant-save-7');
 
         // obtenemos una fecha posterior a la de cierre del ejercicio
-        $nextDate = date(ModelCore::DATE_STYLE, strtotime($exercise->fechafin . ' +1 day'));
+        $nextDate = date(Tools::DATE_STYLE, strtotime($exercise->fechafin . ' +1 day'));
 
         // asignamos esa fecha al asiento
         $asiento->fecha = $nextDate;
@@ -411,7 +421,7 @@ final class AsientoTest extends TestCase
             $asiento->codejercicio = $exercise->codejercicio;
             $asiento->idempresa = $exercise->idempresa;
             $asiento->fecha = ($i > 1)
-                ? date(ModelCore::DATE_STYLE, strtotime('-' . $i . ' days', strtotime($exercise->fechafin)))
+                ? date(Tools::DATE_STYLE, strtotime('-' . $i . ' days', strtotime($exercise->fechafin)))
                 : $this->getFirstDay($exercise->fechafin);
 
             $this->assertTrue($asiento->save(), 'asiento-cant-save-7');
@@ -446,13 +456,23 @@ final class AsientoTest extends TestCase
         }
     }
 
-    protected function tearDown(): void
-    {
-        $this->logErrors();
-    }
-
     private function getFirstDay(string $date): string
     {
         return '01-01-' . date('Y', strtotime($date));
+    }
+
+    private function getSampleSubaccount(Ejercicio $eje): ?string
+    {
+        $where = [Where::eq('codejercicio', $eje->codejercicio)];
+        foreach (Subcuenta::all($where) as $item) {
+            return $item->codsubcuenta;
+        }
+
+        return null;
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

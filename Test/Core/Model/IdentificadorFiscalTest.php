@@ -84,7 +84,7 @@ final class IdentificadorFiscalTest extends TestCase
         // cargamos el identificador fiscal y activamos la validación
         $identificador = new IdentificadorFiscal();
         $where = [new DataBaseWhere('tipoidfiscal', $fiscalId)];
-        $identificador->loadFromCode('', $where);
+        $identificador->loadWhere($where);
         $identificador->validar = true;
         $this->assertTrue($identificador->save(), 'identificador-fiscal-cant-save');
 
