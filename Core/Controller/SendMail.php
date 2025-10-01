@@ -196,11 +196,11 @@ class SendMail extends Controller
             $shortCodes = ['{code}', '{name}', '{date}', '{total}', '{number2}'];
             $shortValues = [$model->codigo, '', $model->fecha, $model->total, ''];
 
-            $shortValues[1] = property_exists($model, 'nombrecliente')
+            $shortValues[1] = $model->hasColumn('nombrecliente')
                 ? $model->nombrecliente
                 : $model->nombre;
 
-            $shortValues[4] = property_exists($model, 'numero2')
+            $shortValues[4] = $model->hasColumn('numero2')
                 ? $model->numero2
                 : $model->numproveedor;
 
@@ -212,21 +212,25 @@ class SendMail extends Controller
         // si no hay notificación, usamos los datos de las traducciones
         switch ($model->modelClassName()) {
             case 'AlbaranCliente':
+            case 'AlbaranProveedor':
                 $this->newMail->title = Tools::trans('delivery-note-email-subject', ['%code%' => $model->codigo]);
                 $this->newMail->text = Tools::trans('delivery-note-email-text', ['%code%' => $model->codigo]);
                 break;
 
             case 'FacturaCliente':
+            case 'FacturaProveedor':
                 $this->newMail->title = Tools::trans('invoice-email-subject', ['%code%' => $model->codigo]);
                 $this->newMail->text = Tools::trans('invoice-email-text', ['%code%' => $model->codigo]);
                 break;
 
             case 'PedidoCliente':
+            case 'PedidoProveedor':
                 $this->newMail->title = Tools::trans('order-email-subject', ['%code%' => $model->codigo]);
                 $this->newMail->text = Tools::trans('order-email-text', ['%code%' => $model->codigo]);
                 break;
 
             case 'PresupuestoCliente':
+            case 'PresupuestoProveedor':
                 $this->newMail->title = Tools::trans('estimation-email-subject', ['%code%' => $model->codigo]);
                 $this->newMail->text = Tools::trans('estimation-email-text', ['%code%' => $model->codigo]);
                 break;
