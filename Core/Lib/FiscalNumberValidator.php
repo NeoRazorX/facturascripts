@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
-use Tavo\ValidadorEc;
 
 /**
  * Verify numbers of fiscal identity
@@ -165,8 +164,7 @@ class FiscalNumberValidator
 
         switch (strtolower($type)) {
             case 'ci':
-                $validatorEC = new ValidadorEc();
-                return $validatorEC->validarCedula($upperNumber);
+                return ValidadorEcuador::validarCedula($upperNumber);
 
             case 'cif':
                 return static::isValidSpainCIF($upperNumber);
@@ -183,14 +181,14 @@ class FiscalNumberValidator
                 return static::isValidRNC($upperNumber);
 
             case 'ruc':
-                $validatorEC = new ValidadorEc();
-                return $validatorEC->validarRucPersonaNatural($upperNumber)
-                    || $validatorEC->validarRucSociedadPrivada($upperNumber)
-                    || $validatorEC->validarRucSociedadPublica($upperNumber);
+                return ValidadorEcuador::validarRucNatural($upperNumber)
+                    || ValidadorEcuador::validarRucPrivada($upperNumber)
+                    || ValidadorEcuador::validarRucPublica($upperNumber);
         }
 
         return true;
     }
+
 
     private static function sumDigits(int $num): int
     {
