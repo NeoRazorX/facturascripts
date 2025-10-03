@@ -1388,7 +1388,7 @@
     "roles": "Grupos",
     "rules": "Reglas",
     "run": "Ejecutar",
-    "running": "Ejecutando",
+    "running": "Běží",
     "running-plugin-cron": "Ejecutando cron del plugin %pluginName%",
     "running-work-queue": "Probíhá zpracování událostí pracovního postupu",
     "sales": "Ventas",
