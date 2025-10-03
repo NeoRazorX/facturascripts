@@ -105,6 +105,7 @@ class EditFacturaProveedor extends PurchasesController
 
         $this->addButton($viewName, [
             'action' => 'paid',
+            'color' => 'outline-success',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-check',
             'label' => 'paid'

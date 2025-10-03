@@ -136,8 +136,9 @@ trait ListBusinessActionTrait
     {
         $this->addButton($viewName, [
             'action' => 'pay-receipt',
+            'color' => 'outline-success',
             'confirm' => 'true',
-            'icon' => 'fa-solid fa-dollar-sign',
+            'icon' => 'fa-solid fa-check',
             'label' => 'paid',
             'type' => 'action'
         ]);
