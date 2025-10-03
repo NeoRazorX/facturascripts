@@ -20,7 +20,7 @@
 namespace FacturaScripts\Test\Core\Lib;
 
 use FacturaScripts\Core\Lib\FiscalNumberValidator;
-use FacturaScripts\Dinamic\Lib\ValidadorEcuador;
+use FacturaScripts\Core\Lib\ValidadorEcuador;
 use PHPUnit\Framework\TestCase;
 
 class FiscalNumberValidatorTest extends TestCase
@@ -44,7 +44,7 @@ class FiscalNumberValidatorTest extends TestCase
             //RUC Persona natural
             ['type' => 'RUC', 'number' => '1000000008001', 'expected' => true],
             ['type' => 'RUC', 'number' => '0102030405001', 'expected' => false],
-            //RUC Sociedad publica
+            //RUC Sociedad pública
             ['type' => 'RUC', 'number' => '1760001550001', 'expected' => true],
             ['type' => 'RUC', 'number' => '2560001234001', 'expected' => false],
             //RUC sociedad privada

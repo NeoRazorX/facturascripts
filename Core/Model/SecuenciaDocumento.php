@@ -181,7 +181,7 @@ class SecuenciaDocumento extends ModelClass
             Tools::log()->warning('pattern-without-year');
         }
 
-        // si el patrón contiene explícitamente un año 20XX, avisamos para usar {EJE}
+        // si el patrón contiene explícitamente un año 20XX, avisamos para usar {EJE} o {ANYO}
         if (preg_match('/(?<!\d)20\d{2}(?!\d)/', $this->patron)) {
             Tools::log()->warning('pattern-hardcoded-year');
         }

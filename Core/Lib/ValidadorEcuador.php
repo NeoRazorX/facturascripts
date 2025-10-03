@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,6 @@
  */
 
 namespace FacturaScripts\Core\Lib;
-
 
 class ValidadorEcuador
 {
@@ -99,40 +98,41 @@ class ValidadorEcuador
         return true;
     }
 
-    public static function validarInicial(string $number, int $characters) : bool 
+    public static function validarInicial(?string $number, int $characters): bool
     {
-        $num = (string)$number;
-        if (!empty($num) && strlen($num) === $characters && ctype_digit($num)) {
-            return true;
-        }
-        return false;
-    }
-
-    public static function validarProvincia(string $number): bool
-    {
-        if ($number < 0 || $number > 24) {
+        if (empty($number) || strlen($number) !== $characters || !ctype_digit($number)) {
             return false;
         }
         return true;
     }
 
-    protected static function validarTercerDigito($numero, $tipo)
+    public static function validarProvincia(string $number): bool
     {
+        $provincia = (int)$number;
+        if ($provincia < 0 || $provincia > 24) {
+            return false;
+        }
+        return true;
+    }
+
+    protected static function validarTercerDigito(string $numero, string $tipo): bool
+    {
+        $digito = (int)$numero;
         switch ($tipo) {
             case 'cedula':
             case 'ruc_natural':
-                if ($numero < 0 || $numero > 5) {
+                if ($digito < 0 || $digito > 5) {
                     return false;
                 }
                 break;
             case 'ruc_privada':
-                if ($numero != 9) {
+                if ($digito != 9) {
                     return false;
                 }
                 break;
 
             case 'ruc_publica':
-                if ($numero != 6) {
+                if ($digito != 6) {
                     return false;
                 }
                 break;
@@ -148,17 +148,17 @@ class ValidadorEcuador
     {
         $arrayCoeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
 
-        $digitoVerificador = (int) $digitoVerificador;
+        $digitoVerificador = (int)$digitoVerificador;
         $digitosIniciales = str_split($number);
 
         $total = 0;
         foreach ($digitosIniciales as $key => $value) {
-            $valorPosicion = ((int) $value * $arrayCoeficientes[$key]);
+            $valorPosicion = ((int)$value * $arrayCoeficientes[$key]);
 
             if ($valorPosicion >= 10) {
                 $valorPosicion = str_split($valorPosicion);
                 $valorPosicion = array_sum($valorPosicion);
-                $valorPosicion = (int) $valorPosicion;
+                $valorPosicion = (int)$valorPosicion;
             }
 
             $total = $total + $valorPosicion;
@@ -189,12 +189,12 @@ class ValidadorEcuador
                 break;
         }
 
-        $digitoVerificador = (int) $digitoVerificador;
+        $digitoVerificador = (int)$digitoVerificador;
         $digitosIniciales = str_split($number);
 
         $total = 0;
         foreach ($digitosIniciales as $key => $value) {
-            $valorPosicion = ((int) $value * $arrayCoeficientes[$key]);
+            $valorPosicion = ((int)$value * $arrayCoeficientes[$key]);
             $total = $total + $valorPosicion;
         }
 
