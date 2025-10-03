@@ -541,7 +541,7 @@ class SalesHeaderHTML
                 return self::fecha($model, false);
 
             case '_paid':
-                return self::paid($model, 'salesFormSave');
+                return self::paid($model);
 
             case '_parents':
                 return self::parents($model);
