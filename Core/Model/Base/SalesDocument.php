@@ -326,6 +326,7 @@ abstract class SalesDocument extends TransformerDocument
 
         $this->codagente = $user->codagente ?? $this->codagente;
         $this->codalmacen = $user->codalmacen ?? $this->codalmacen;
+        $this->codserie = $user->codserie ?? $this->codserie;
         $this->idempresa = $user->idempresa ?? $this->idempresa;
         $this->nick = $user->nick;
 
