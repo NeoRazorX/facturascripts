@@ -83,6 +83,12 @@ class BusinessDocumentCode
 
             // use old pattern for the new sequence
             $patron = $seq->patron;
+
+            // correct pattern
+            if (preg_match('/20\\d{2}/', $patron)) {
+                $patron = preg_replace('/20\\d{2}/', '{EJE}', $patron);
+            }
+
             $long = $seq->longnumero;
         }
 
