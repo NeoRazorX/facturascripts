@@ -59,8 +59,8 @@
                     <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" fieldfilter="idempresa"/>
                 </widget>
             </column>
-            <column name="serie" level="99" order="140">
-                <widget type="autocomplete" fieldname="codserie" onclick="EditSerie">
+            <column name="serie" titleurl="ListSerie" level="99" order="140">
+                <widget type="select" fieldname="codserie" onclick="EditSerie">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"/>
                 </widget>
             </column>

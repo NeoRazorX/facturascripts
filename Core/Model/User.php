@@ -33,6 +33,7 @@ use FacturaScripts\Dinamic\Model\Page as DinPage;
 use FacturaScripts\Dinamic\Model\Role as DinRole;
 use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
 use FacturaScripts\Dinamic\Model\RoleUser as DinRoleUser;
+use FacturaScripts\Dinamic\Model\Serie as DinSerie;
 
 /**
  * Usuario de FacturaScripts.
@@ -192,12 +193,12 @@ class User extends ModelClass
         $this->langcode = Tools::config('lang');
         $this->level = self::DEFAULT_LEVEL;
         $this->two_factor_enabled = false;
-        $this->codserie = null;
     }
 
     public function clearCache(): void
     {
         parent::clearCache();
+
         Users::clear();
     }
 
@@ -278,7 +279,7 @@ class User extends ModelClass
         // we need this models to be checked before
         new DinPage();
         new DinEmpresa();
-        new Serie();
+        new DinSerie();
 
         $nick = Tools::config('initial_user', 'admin');
         $pass = Tools::config('initial_pass', 'admin');
@@ -364,17 +365,7 @@ class User extends ModelClass
         }
 
         if (empty($this->lastactivity)) {
-            $this->astactivity = null;
-        }
-
-        // sanitizar y testear serie
-        $this->codserie = Tools::noHtml($this->codserie);
-        if(!empty($this->codserie)) {
-            if ((new Serie())->find($this->codserie) === null) {
-                Tools::log()->error('serie-not-found', ['%serie%' => $this->codserie]);
-                $this->codserie = null;
-                return false;
-            }
+            $this->lastactivity = null;
         }
 
         // escapamos lastbrowser y comprobamos que no excede los 200 caracteres
