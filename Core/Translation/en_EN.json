@@ -815,6 +815,7 @@
     "interest": "Interés",
     "international-identifier": "International identifier",
     "intra-community": "Intra-community",
+    "invalid-admin-username": "Administrator username is incorrect. It must have between %min% and %max% alphanumeric characters without spaces, accents or other symbols.",
     "invalid-alphanumeric-code": "The alphanumeric code entered (%value%) is not valid. (%column%) must have between %min% and %max% numbers or letters, no spaces, accents or any other chraracter.",
     "invalid-column-lenght": "%column% must have between %min% and %max% characters.",
     "invalid-date": "Invalid date %date%.",

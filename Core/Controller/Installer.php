@@ -307,10 +307,7 @@ class Installer implements ControllerInterface
         }
 
         if (!empty($this->initial_user) && 1 !== preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", trim($this->initial_user))) {
-            Tools::log()->warning(
-                'invalid-alphanumeric-code',
-                ['%value%' => $this->initial_user, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']
-            );
+            Tools::log()->warning('invalid-admin-username', ['%min%' => '3', '%max%' => '50']);
             $errors = true;
         }
 
