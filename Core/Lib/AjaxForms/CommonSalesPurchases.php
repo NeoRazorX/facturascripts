@@ -562,7 +562,8 @@ trait CommonSalesPurchases
                 . '<div class="mb-2">'
                 . '<button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
                 . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::trans('paid') . '</button>'
-                . '<div class="dropdown-menu"><a class="dropdown-item text-danger" href="#" onclick="prepareForm(\'save-paid\', {\'paid-status\': 0});">'
+                . '<div class="dropdown-menu dropdown-menu-end">'
+                . '<a class="dropdown-item text-danger" href="#" onclick="prepareForm(\'save-paid\', {\'paid-status\': 0});">'
                 . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::trans('unpaid') . '</a></div>'
                 . '</div>'
                 . '</div>';
@@ -572,7 +573,7 @@ trait CommonSalesPurchases
             . '<div class="mb-2">'
             . '<button class="btn btn-spin-action btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
             . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::trans('unpaid') . '</button>'
-            . '<div class="dropdown-menu">'
+            . '<div class="dropdown-menu dropdown-menu-end">'
             . '<button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#modalPaymentConditions">'
             . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::trans('paid') . '</button>'
             . '</div>'
@@ -584,7 +585,7 @@ trait CommonSalesPurchases
             . '<div class="modal-content">'
             . '<div class="modal-body">'
             . '<div class="row g-2">'
-            . '<div class="col-sm-6 col-lg mb-2">'
+            . '<div class="col-12 mb-2">'
             . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . Tools::trans('payment-method') . '</a>'
             . '<select id="paid-payment-modal" required class="form-select select2">';
 
@@ -594,7 +595,7 @@ trait CommonSalesPurchases
 
         $html .= '</select>'
             . '</div>'
-            . '<div class="col-sm-6 col-lg mb-2">'
+            . '<div class="col-12 mb-2">'
             . Tools::trans('date')
             . '<input type="date" id="paid-date-modal" required value="' . date('Y-m-d', strtotime($model->fecha)) . '" class="form-control"/>'
             . '</div>'

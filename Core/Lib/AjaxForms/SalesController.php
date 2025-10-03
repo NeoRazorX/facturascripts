@@ -434,6 +434,12 @@ abstract class SalesController extends PanelController
             return false;
         }
 
+        // guardamos el documento
+        if ($this->getModel()->editable && false === $this->saveDocAction()) {
+            $this->sendJsonWithLogs(['ok' => false]);
+            return false;
+        }
+
         // cargamos el modelo actualizado y los datos del form
         $model = $this->getModel();
         $formData = json_decode($this->request->input('data'), true);
