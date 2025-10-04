@@ -59,7 +59,7 @@ final class Response
         $this->http_code = $http_code;
     }
 
-    public function cookie(string $name, string $value, int $expire = 0, bool $httpOnly = true, ?bool $secure = null, string $sameSite = 'Lax'): self
+    public function cookie(string $name, ?string $value, int $expire = 0, bool $httpOnly = true, ?bool $secure = null, string $sameSite = 'Lax'): self
     {
         if (empty($expire)) {
             $expire = time() + (int)Tools::config('cookies_expire');
@@ -72,7 +72,7 @@ final class Response
 
         $this->cookies[$name] = [
             'name' => $name,
-            'value' => $value,
+            'value' => $value ?? '',
             'expire' => $expire,
             'httponly' => $httpOnly,
             'secure' => $secure,
