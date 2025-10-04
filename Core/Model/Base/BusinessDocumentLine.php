@@ -270,8 +270,7 @@ abstract class BusinessDocumentLine extends NewModelClass
     public function getVariante(): Variante
     {
         $variante = new Variante();
-        $where = [new DataBaseWhere('referencia', $this->referencia)];
-        $variante->loadWhere($where);
+        $variante->loadWhereEq('referencia', $this->referencia);
         return $variante;
     }
 
@@ -302,6 +301,20 @@ abstract class BusinessDocumentLine extends NewModelClass
     {
         $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
         $this->pvpunitario = round($newPrice, Producto::ROUND_DECIMALS);
+    }
+
+    public function setTax(?string $codimpuesto): void
+    {
+        if (empty($codimpuesto)) {
+            $this->codimpuesto = null;
+            $this->iva = 0.0;
+            $this->recargo = 0.0;
+            return;
+        }
+
+        $this->codimpuesto = $codimpuesto;
+        $this->iva = $this->getTax()->iva;
+        $this->recargo = $this->getTax()->recargo;
     }
 
     /**
@@ -359,6 +372,8 @@ abstract class BusinessDocumentLine extends NewModelClass
     {
         if (empty($this->codimpuesto)) {
             $this->codimpuesto = null;
+            $this->iva = 0.0;
+            $this->recargo = 0.0;
         }
 
         if ($this->servido < 0 && $this->cantidad >= 0) {
