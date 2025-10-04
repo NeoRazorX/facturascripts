@@ -1003,7 +1003,7 @@
     "meta-description": "FacturaScripts ist ein Billing und Accounting-Software für kleine Unternehmen. Es ist freie Software unter der GNU\/LGPL Lizenz.",
     "method-payment": "Zahlungsart",
     "mime-type": "Mime-Typ",
-    "min-fs-version": "Minimale Kernversion",
+    "min-fs-version": "Minimale Core-Version",
     "min-php-version": "Min. v. PHP",
     "minimum-amount-with-cifnif": "Minimalbetrag mit CIF\/NIF",
     "minimum-amount-without-cifnif": "Mindestbetrag ohne CIF\/NIF",
