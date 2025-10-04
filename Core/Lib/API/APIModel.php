@@ -119,7 +119,7 @@ class APIModel extends APIResourceClass
         }
 
         foreach ($values as $key => $value) {
-            $this->model->{$key} = $value;
+            $this->model->{$key} = $value === 'null' ? null : $value;
         }
 
         return $this->saveResource();
@@ -146,7 +146,7 @@ class APIModel extends APIResourceClass
         }
 
         foreach ($values as $key => $value) {
-            $this->model->{$key} = $value;
+            $this->model->{$key} = $value === 'null' ? null : $value;
         }
 
         return $this->saveResource();
