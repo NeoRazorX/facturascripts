@@ -587,7 +587,7 @@ trait CommonSalesPurchases
             . '<div class="row g-2">'
             . '<div class="col-12 mb-2">'
             . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . Tools::trans('payment-method') . '</a>'
-            . '<select id="paid-payment-modal" required class="form-select select2">';
+            . '<select id="paid-payment-modal" class="form-select" required>';
 
         foreach (static::getPaymentMethods($model) as $row) {
             $html .= '<option value="' . $row->codpago . '"' . ($row->codpago === $model->codpago ? ' selected' : '') . '>' . $row->descripcion . '</option>';
@@ -597,20 +597,20 @@ trait CommonSalesPurchases
             . '</div>'
             . '<div class="col-12 mb-2">'
             . Tools::trans('date')
-            . '<input type="date" id="paid-date-modal" required value="' . date('Y-m-d', strtotime($model->fecha)) . '" class="form-control"/>'
+            . '<input type="date" id="paid-date-modal" value="' . date('Y-m-d') . '" class="form-control" required/>'
             . '</div>'
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
             . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
-            . Tools::lang()->trans('close')
+            . Tools::trans('close')
             . '</button>'
             . '<button type="button" class="btn btn-primary btn-spin-action" onclick="(function(){
-    var pago = document.getElementById(\'paid-payment-modal\') ? document.getElementById(\'paid-payment-modal\').value : \'\';
-    var fecha = document.getElementById(\'paid-date-modal\') ? document.getElementById(\'paid-date-modal\').value : \'\';
+    let pago = document.getElementById(\'paid-payment-modal\') ? document.getElementById(\'paid-payment-modal\').value : \'\';
+    let fecha = document.getElementById(\'paid-date-modal\') ? document.getElementById(\'paid-date-modal\').value : \'\';
     prepareForm(\'save-paid\', {\'paid-payment-modal\': pago, \'paid-date-modal\': fecha, \'paid-status\': 1});
 })()">'
-            . Tools::lang()->trans('paid')
+            . Tools::trans('paid')
             . '</button>'
             . '</div>'
             . '</div>'
