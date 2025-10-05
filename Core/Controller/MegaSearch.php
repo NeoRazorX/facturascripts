@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -74,6 +74,7 @@ class MegaSearch extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+
         $this->results = [];
         $this->sections = [];
 
@@ -87,25 +88,23 @@ class MegaSearch extends Controller
     /**
      * Proceeds to search in the whole page
      */
-    protected function pageSearch()
+    protected function pageSearch(): void
     {
         $results = [];
-        $pageModel = new Page();
-        $i18n = Tools::lang();
-        foreach ($pageModel->all([], [], 0, 0) as $page) {
+        foreach (Page::all() as $page) {
             if (!$page->showonmenu) {
                 continue;
             }
 
             // Does the page title coincide with the search $query?
-            $translation = mb_strtolower($i18n->trans($page->title ?? ''), 'UTF8');
+            $translation = mb_strtolower(Tools::trans($page->title ?? ''), 'UTF8');
             if (stripos($page->title, $this->query) !== false || stripos($translation, $this->query) !== false) {
                 $results[] = [
                     'icon' => $page->icon,
                     'link' => $page->url(),
-                    'menu' => $i18n->trans($page->menu ?? ''),
-                    'submenu' => $i18n->trans($page->submenu ?? ''),
-                    'title' => $i18n->trans($page->title ?? '')
+                    'menu' => Tools::trans($page->menu ?? ''),
+                    'submenu' => Tools::trans($page->submenu ?? ''),
+                    'title' => Tools::trans($page->title ?? '')
                 ];
             }
 
@@ -125,7 +124,7 @@ class MegaSearch extends Controller
         }
     }
 
-    protected function search()
+    protected function search(): void
     {
         $this->pageSearch();
     }
