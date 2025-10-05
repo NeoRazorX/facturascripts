@@ -23,8 +23,8 @@
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
-                <div class="text-center mb-4 mt-4">
-                    <h1 class="mb-2">
+                <div class="text-center mb-4 {% if fsc.query == '' %}mt-4 mt-xl-5 pt-xl-5{% else %}mt-4{% endif %}">
+                    <h1 class="mb-2 {% if fsc.query != '' %}h3{% endif %}">
                         <i class="fa-solid fa-search fa-fw text-primary"></i>
                         {{ trans('mega-search') }}
                     </h1>
@@ -43,6 +43,16 @@
                 </form>
             </div>
         </div>
+        {% if fsc.query != '' and fsc.results is empty %}
+            <div class="row justify-content-center mt-3" id="no-data-msg">
+                <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
+                    <div class="alert alert-info text-center">
+                        <i class="fa-solid fa-info-circle fa-fw"></i>
+                        {{ trans('no-results-found') }}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
         <div class="row g-2">
             <div class="col-12 col-lg-auto mt-lg-2">
                 <div class="nav nav-pills flex-row flex-lg-column overflow-x-auto" id="v-pills-tab" role="tablist" style="white-space: nowrap;">
@@ -110,7 +120,7 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('Core/Assets/JS/MegaSearch.js') }}"></script>
+    <script src="{{ asset('Core/Assets/JS/MegaSearch.js') }}?v=2"></script>
     {% if fsc.sections %}
         <script>
             $(document).ready(function () {

@@ -46,7 +46,7 @@ function json2tr(json) {
 }
 
 /**
- * Asigns clickable events to new elements.
+ * Assigns clickable events to new elements.
  */
 function reloadClickableRow() {
     $(".clickableRow").mousedown(function (event) {
