@@ -1404,6 +1404,7 @@
     "sdk": "SDK",
     "search": "Cercar",
     "search-document": "Escriu el número de %doctype% per cercar.",
+    "search-in-all-pages": "Busca en todas las páginas del programa",
     "search-message": "Buscar missatge",
     "search-product": "Cercar producte",
     "second-hand": "Segona mà",
