@@ -79,6 +79,20 @@ abstract class PDFCore extends ExportBase
     protected $tableWidth = 0.0;
 
     /**
+     * Default page size used when instantiating the PDF handler.
+     *
+     * @var string
+     */
+    protected $pageSize = 'a4';
+
+    /**
+     * Default orientation applied to new pages.
+     *
+     * @var string
+     */
+    protected $defaultOrientation = 'portrait';
+
+    /**
      * PDFExport constructor.
      */
     public function __construct()
@@ -94,13 +108,18 @@ abstract class PDFCore extends ExportBase
     /**
      * Adds a new page.
      *
-     * @param string $orientation
+     * @param string|null $orientation
      * @param bool $forceNewPage
      */
-    public function newPage(string $orientation = 'portrait', bool $forceNewPage = false)
+    public function newPage(string $orientation = null, bool $forceNewPage = false)
     {
+        if ($orientation === null) {
+            $orientation = $this->defaultOrientation;
+        }
+
         if ($this->pdf === null) {
-            $this->pdf = new Cezpdf('a4', $orientation);
+            $this->defaultOrientation = $orientation;
+            $this->pdf = new Cezpdf($this->pageSize, $this->defaultOrientation);
             $this->pdf->addInfo('Creator', 'FacturaScripts');
             $this->pdf->addInfo('Producer', 'FacturaScripts');
             $this->pdf->addInfo('Title', $this->getFileName());
@@ -115,6 +134,8 @@ abstract class PDFCore extends ExportBase
         } else {
             $this->pdf->ezText("\n");
         }
+
+        $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
     }
 
     /**
@@ -124,7 +145,26 @@ abstract class PDFCore extends ExportBase
      */
     public function setOrientation(string $orientation)
     {
-        $this->newPage($orientation);
+        $this->defaultOrientation = $orientation;
+        $this->newPage($orientation, true);
+    }
+
+    /**
+     * Sets the default page size for the PDF document.
+     *
+     * @param string $size
+     */
+    public function setSize(string $size)
+    {
+        $this->pageSize = strtolower($size);
+    }
+
+    /**
+     * Updates the translator language used inside the PDF document.
+     */
+    public function setLang(string $langcode)
+    {
+        $this->i18n->setLang($langcode);
     }
 
     /**

@@ -359,8 +359,7 @@ class ExportManager
             static::$options = [
                 'PDF' => ['description' => 'print', 'icon' => 'fa-solid fa-print'],
                 'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-solid fa-file-excel'],
-                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-solid fa-file-csv'],
-                'MAIL' => ['description' => 'email', 'icon' => 'fa-solid fa-envelope']
+                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-solid fa-file-csv']
             ];
         }
 
