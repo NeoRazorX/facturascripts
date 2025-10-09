@@ -4,6 +4,6 @@
  * Class created by Core/Internal/PluginsDeploy
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-abstract class ModelClass extends \FacturaScripts\Core\Model\Base\ModelClass
+abstract class ModelClass extends \FacturaScripts\Core\Template\ModelClass
 {
 }
