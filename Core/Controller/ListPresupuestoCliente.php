@@ -22,6 +22,8 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 use FacturaScripts\Dinamic\Model\PresupuestoCliente;
+use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Model\Provincia;
 
 /**
  * Controller to list the items in the PresupuestoCliente model
@@ -61,6 +63,11 @@ class ListPresupuestoCliente extends ListBusinessDocument
         // añadimos botones
         $this->addButtonGroupDocument($viewName);
         $this->addButtonApproveDocument($viewName);
+
+        $paises = Paises::codeModel();
+        $this->addFilterSelect($viewName, 'country', 'country', 'codpais', $paises);
+        $this->addFilterAutocomplete($viewName, 'provincia', 'provincia', 'provincia', 'provincias');
+        $this->addFilterAutocomplete($viewName, 'ciudad', 'ciudad', 'ciudad', 'ciudades');
     }
 
     /**
@@ -111,5 +118,46 @@ class ListPresupuestoCliente extends ListBusinessDocument
             $item->idestado = $expiredStatus;
             $item->save();
         }
+    }
+
+    protected function autocompleteAction(): array
+    {
+        $data = $this->requestGet(['source', 'fieldcode', 'fieldtitle', 'strict', 'term']);
+        if ($data['source'] === 'provincias') {
+            $codpais = $this->request->input('filtercountry');
+
+            $where = [];
+            if (empty($codpais) === false) {
+                $where[] = new DataBaseWhere('codpais', $codpais);
+            }
+
+            $result = [];
+            foreach ($this->codeModel->search('provincias', $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
+                $result[] = ['key' => $value->code, 'value' => $value->description];
+            }
+
+            return $result;
+        } elseif ($data['source'] === 'ciudades') {
+            $codprovincia = $this->request->input('filterprovincia');
+
+            $where = [];
+            if (empty($codprovincia) === false) {
+                $provincias = Provincia::all([new DataBaseWhere('provincia', $codprovincia)]);
+                if (empty($provincias)) {
+                    return [];
+                }
+
+                $where[] = new DataBaseWhere('idprovincia', $provincias[0]->idprovincia);
+            }
+
+            $result = [];
+            foreach ($this->codeModel->search('ciudades', $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
+                $result[] = ['key' => $value->code, 'value' => $value->description];
+            }
+
+            return $result;
+        }
+
+        return parent::autocompleteAction();
     }
 }
