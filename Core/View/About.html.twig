@@ -24,7 +24,7 @@
                             </h3>
                             <hr>
                             <div class="row align-items-center">
-                                <div class="col-md-6">
+                                <div class="col-md">
                                     <h5 class="mb-3">FacturaScripts</h5>
                                     <p class="mb-1">
                                         <strong>{{ trans('version') }}:</strong> {{ fsc.data.core_version }}
@@ -45,7 +45,7 @@
                                         {% endif %}
                                     </p>
                                 </div>
-                                <div class="col-md-6 text-center">
+                                <div class="col-md-auto">
                                     <img src="Core/Assets/Images/horizontal-logo.png" alt="FacturaScripts"
                                          class="img-fluid" style="max-height: 80px;">
                                 </div>
@@ -147,7 +147,7 @@
                                         <th scope="col">{{ trans('plugins-required') }}</th>
                                         <th scope="col">{{ trans('min-php-version') }}</th>
                                         <th scope="col">{{ trans('php-extensions-required') }}</th>
-                                        <th scope="col">{{ trans('enabled') }}</th>
+                                        <th class="text-center" scope="col">{{ trans('enabled') }}</th>
                                         <th class="text-end" scope="col">{{ trans('priority') }}</th>
                                     </tr>
                                     </thead>
@@ -162,7 +162,7 @@
                                             <td>{{ plugin.require | join(', ') }}</td>
                                             <td>{{ plugin.min_php }}</td>
                                             <td>{{ plugin.require_php | join(', ') }}</td>
-                                            <td>
+                                            <td class="text-center">
                                                 {% if plugin.enabled %}
                                                     <span class="badge bg-success">{{ trans('yes') }}</span>
                                                 {% else %}
@@ -193,31 +193,30 @@
                             <hr>
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <h6 class="text-primary mb-2">{{ trans('environment') }}</h6>
+                                    <p class="mb-1">
+                                        <strong>PHP:</strong> {{ fsc.data.php_version }}
+                                    </p>
+                                    <p class="mb-1">
+                                        <strong>{{ trans('php-extensions') }}:</strong>
+                                        <small class="text-muted">{{ fsc.data.extensions | join(', ') }}</small>
+                                    </p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p class="mb-1">
+                                        <strong>{{ trans('database') }}:</strong>
+                                        {{ fsc.data.database_type }} {{ fsc.data.database_version }}
+                                    </p>
                                     <p class="mb-1">
                                         <strong>{{ trans('server-software') }}:</strong>
                                         {{ fsc.data.server_software }}
                                     </p>
                                     <p class="mb-1">
-                                        <strong>{{ trans('operating-system') }}:</strong>
-                                        {{ fsc.data.os_info }}
-                                    </p>
-                                    <p class="mb-3">
                                         <strong>{{ trans('server-accepts-filesize') }}:</strong>
                                         {{ bytes(fsc.data.max_filesize) }}
                                     </p>
-                                </div>
-                                <div class="col-lg-6">
-                                    <h6 class="text-success mb-2">PHP & Database</h6>
-                                    <p class="mb-1">
-                                        <strong>PHP:</strong> {{ fsc.data.php_version }}
-                                    </p>
-                                    <p class="mb-1">
-                                        <strong>{{ trans('database') }}:</strong> {{ fsc.data.database_version }}
-                                    </p>
                                     <p class="mb-0">
-                                        <strong>{{ trans('php-extensions') }}:</strong>
-                                        <small class="text-muted">{{ fsc.data.extensions | join(', ') }}</small>
+                                        <strong>{{ trans('operating-system') }}:</strong>
+                                        {{ fsc.data.os_info }}
                                     </p>
                                 </div>
                             </div>
