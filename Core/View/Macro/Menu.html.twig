@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -36,8 +36,7 @@
         {# Child level submenu #}
         <li id="{{ menuId | lower }}" class="fs-menu-item dropdown-submenu">
             <a class="dropdown-item{{ active }}" href="#">
-                <i class="fa-solid fa-folder-open fa-fw" aria-hidden="true"></i>
-                &nbsp;{{ menuItem.title }}
+                <i class="fa-solid fa-folder-open fa-fw me-1" aria-hidden="true"></i> {{ menuItem.title }}
             </a>
             <ul class="dropdown-menu" aria-labelledby="{{ menuId }}">
     {% endif %}
@@ -49,7 +48,7 @@
         {% if item.menu is empty %}
             <li id="{{ childId | lower }}" class="fs-menu-item">
                 <a class="dropdown-item{{ extraClass }}" href="{{ item.url }}">
-                    <i class="{{ item.icon }} fa-fw" aria-hidden="true"></i> &nbsp;{{ item.title }}
+                    <i class="{{ item.icon }} fa-fw me-1" aria-hidden="true"></i> {{ item.title }}
                 </a>
             </li>
         {% else %}
