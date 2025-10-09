@@ -62,13 +62,13 @@
                                         <a href="{{ file.url('download-permanent') }}" target="_blank"
                                            class="btn w-100 btn-lg btn-secondary" aria-label="{{ trans('download') }} {{ file.filename }}">
                                             {% if file.isPdf() %}
-                                                <i class="far fa-file-pdf fa-fw" aria-hidden="true"></i>
+                                                <i class="fa-regular fa-file-pdf fa-fw" aria-hidden="true"></i>
                                             {% elseif file.isVideo() %}
-                                                <i class="far fa-file-video fa-fw" aria-hidden="true"></i>
+                                                <i class="fa-regular fa-file-video fa-fw" aria-hidden="true"></i>
                                             {% elseif file.isArchive() %}
-                                                <i class="far fa-file-archive fa-fw" aria-hidden="true"></i>
+                                                <i class="fa-regular fa-file-archive fa-fw" aria-hidden="true"></i>
                                             {% else %}
-                                                <i class="far fa-file fa-fw" aria-hidden="true"></i>
+                                                <i class="fa-regular fa-file fa-fw" aria-hidden="true"></i>
                                             {% endif %}
                                             <span class="text-break">{{ file.filename | raw }}</span>
                                         </a>
@@ -112,7 +112,7 @@
                                                         <button type="button"
                                                                 onclick="if(confirm('{{ trans('confirm-delete') }}')) { this.form.action.value='delete-file';this.form.submit(); }"
                                                                 class="dropdown-item text-danger">
-                                                            <i class="far fa-trash-alt fa-fw" aria-hidden="true"></i> {{ trans('delete-file') }}
+                                                            <i class="fa-regular fa-trash-alt fa-fw" aria-hidden="true"></i> {{ trans('delete-file') }}
                                                         </button>
                                                     </li>
                                                 </ul>

@@ -393,7 +393,7 @@ class AccountingLineHTML
                 . '<div class="input-group">'
                 . '<input type="text" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
                 . '<a href="' . $subcuenta->url() . '" target="_blank" class="btn btn-outline-primary">'
-                . '<i class="far fa-eye"></i></a>'
+                . '<i class="fa-regular fa-eye"></i></a>'
                 . '</div>'
                 . '</div>'
                 . static::contrapartida($line, $model)
@@ -405,7 +405,7 @@ class AccountingLineHTML
             . '<div class="input-group">'
             . '<input type="text" name="codsubcuenta_' . $idlinea . '" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
             . '<a href="' . $subcuenta->url() . '" target="_blank" class="btn btn-outline-primary">'
-            . '<i class="far fa-eye"></i></a>'
+            . '<i class="fa-regular fa-eye"></i></a>'
             . '</div>'
             . '</div>'
             . static::contrapartida($line, $model)
