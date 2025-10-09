@@ -17,7 +17,7 @@
                         <div class="card-body">
                             <div class="row g-2">
                                 {% if fsc.model.codcliente %}
-                                    <div class="col-sm">
+                                    <div class="col-sm-6 col-md">
                                         <div class="mb-3">
                                             <div class="input-group">
                                                 <span class="input-group-text">
@@ -35,7 +35,7 @@
                                         </div>
                                     </div>
                                 {% elseif fsc.model.codproveedor %}
-                                    <div class="col-sm">
+                                    <div class="col-sm-6 col-md">
                                         <div class="mb-3">
                                             <div class="input-group">
                                                 <span class="input-group-text">
@@ -53,20 +53,20 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                                <div class="col-sm">
+                                <div class="col-sm-6 col-md">
                                     <div class="mb-3">
                                         <input type="date" name="fecha" value="{{ "now" | date('Y-m-d') }}"
                                                class="form-control" required/>
                                     </div>
                                 </div>
-                                <div class="col-sm">
+                                <div class="col-sm-6 col-md">
                                     <div class="mb-3">
                                         <input type="time" name="hora" value="{{ "now" | date('H:i:s') }}"
                                                class="form-control" required/>
                                     </div>
                                 </div>
                                 {% if fsc.model.codcliente %}
-                                    <div class="col-sm">
+                                    <div class="col-sm-6 col-md">
                                         <div class="mb-3">
                                             <div class="input-group">
                                                 <span class="input-group-text">
@@ -78,7 +78,7 @@
                                         </div>
                                     </div>
                                 {% elseif fsc.model.codproveedor %}
-                                    <div class="col-sm">
+                                    <div class="col-sm-6 col-md">
                                         <div class="mb-3">
                                             <div class="input-group">
                                                 <span class="input-group-text">
@@ -90,6 +90,86 @@
                                         </div>
                                     </div>
                                 {% endif %}
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-sm-6 col-md">
+                                    <div class="mb-3">
+                                        {{ trans('warehouse') }}
+                                        <select name="codalmacen" class="form-select" required>
+                                            {% for item in fsc.codeModel.all('almacenes', 'codalmacen', 'nombre', false) %}
+                                                {% if item.code == fsc.model.codalmacen %}
+                                                    <option value="{{ item.code }}" selected>
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% else %}
+                                                    <option value="{{ item.code }}">
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md">
+                                    <div class="mb-3">
+                                        {{ trans('serie') }}
+                                        <select name="codserie" class="form-select" required>
+                                            {% for item in fsc.codeModel.all('series', 'codserie', 'descripcion', false) %}
+                                                {% if item.code == fsc.model.codserie %}
+                                                    <option value="{{ item.code }}" selected>
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% else %}
+                                                    <option value="{{ item.code }}">
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md">
+                                    <div class="mb-3">
+                                        {{ trans('payment-method') }}
+                                        <select name="codpago" class="form-select" required>
+                                            {% for item in fsc.codeModel.all('formaspago', 'codpago', 'descripcion', false) %}
+                                                {% if item.code == fsc.model.codpago %}
+                                                    <option value="{{ item.code }}" selected>
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% else %}
+                                                    <option value="{{ item.code }}">
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md">
+                                    <div class="mb-3">
+                                        {{ trans('global-dto') }}
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                    <i class="fa-solid fa-percentage"></i>
+                                                </span>
+                                            <input type="number" max="100" min="0" step="any" name="dtopor1"
+                                                   class="form-control" value="{{ fsc.model.dtopor1 }}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md">
+                                    <div class="mb-3">
+                                        {{ trans('global-dto-2') }}
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                    <i class="fa-solid fa-percentage"></i>
+                                                </span>
+                                            <input type="number" max="100" min="0" step="any" name="dtopor2"
+                                                   class="form-control" value="{{ fsc.model.dtopor2 }}"/>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -119,91 +199,8 @@
                             </table>
                         </div>
                         <div class="card-body">
-                            <div class="row g-2">
-                                <div class="col-sm">
-                                    <div class="mb-3">
-                                        {{ trans('warehouse') }}
-                                        <select name="codalmacen" class="form-select" required>
-                                            {% for item in fsc.codeModel.all('almacenes', 'codalmacen', 'nombre', false) %}
-                                                {% if item.code == fsc.model.codalmacen %}
-                                                    <option value="{{ item.code }}" selected>
-                                                        {{ item.description }}
-                                                    </option>
-                                                {% else %}
-                                                    <option value="{{ item.code }}">
-                                                        {{ item.description }}
-                                                    </option>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm">
-                                    <div class="mb-3">
-                                        {{ trans('serie') }}
-                                        <select name="codserie" class="form-select" required>
-                                            {% for item in fsc.codeModel.all('series', 'codserie', 'descripcion', false) %}
-                                                {% if item.code == fsc.model.codserie %}
-                                                    <option value="{{ item.code }}" selected>
-                                                        {{ item.description }}
-                                                    </option>
-                                                {% else %}
-                                                    <option value="{{ item.code }}">
-                                                        {{ item.description }}
-                                                    </option>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm">
-                                    <div class="mb-3">
-                                        {{ trans('payment-method') }}
-                                        <select name="codpago" class="form-select" required>
-                                            {% for item in fsc.codeModel.all('formaspago', 'codpago', 'descripcion', false) %}
-                                                {% if item.code == fsc.model.codpago %}
-                                                    <option value="{{ item.code }}" selected>
-                                                        {{ item.description }}
-                                                    </option>
-                                                {% else %}
-                                                    <option value="{{ item.code }}">
-                                                        {{ item.description }}
-                                                    </option>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm">
-                                    <div class="mb-3">
-                                        {{ trans('global-dto') }}
-                                        <div class="input-group">
-                                            <span class="input-group-text">
-                                                    <i class="fa-solid fa-percentage"></i>
-                                                </span>
-                                            <input type="number" max="100" min="0" step="any" name="dtopor1"
-                                                   class="form-control" value="{{ fsc.model.dtopor1 }}"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm">
-                                    <div class="mb-3">
-                                        {{ trans('global-dto-2') }}
-                                        <div class="input-group">
-                                            <span class="input-group-text">
-                                                    <i class="fa-solid fa-percentage"></i>
-                                                </span>
-                                            <input type="number" max="100" min="0" step="any" name="dtopor2"
-                                                   class="form-control" value="{{ fsc.model.dtopor2 }}"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    {{ trans('observations') }}
-                                    <textarea name="observaciones"
-                                              class="form-control">{{ fsc.model.observaciones }}</textarea>
-                                </div>
-                            </div>
+                            {{ trans('observations') }}
+                            <textarea name="observaciones" class="form-control">{{ fsc.model.observaciones }}</textarea>
                         </div>
                         <div class="card-footer">
                             <div class="row">
