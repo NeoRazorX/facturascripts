@@ -132,10 +132,7 @@ class ListFacturaCliente extends ListBusinessDocument
     protected function createViewSales(string $viewName, string $modelName, string $label): void
     {
         parent::createViewSales($viewName, $modelName, $label);
-
-        $this->listView($viewName)
-            ->addOrderBy(['idfactura'], 'id')
-            ->addSearchFields(['codigorect']);
+        $this->listView($viewName)->addSearchFields(['codigorect']);
 
         // filtros
         $i18n = Tools::lang();
