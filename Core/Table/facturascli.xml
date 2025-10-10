@@ -200,6 +200,10 @@
         <type>double precision</type>
     </column>
     <column>
+        <name>total_pendiente</name>
+        <type>double precision</type>
+    </column>
+    <column>
         <name>totalbeneficio</name>
         <type>double precision</type>
     </column>
