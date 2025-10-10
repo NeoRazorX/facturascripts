@@ -48,6 +48,12 @@
                                     </select>
                                 </div>
                             </div>
+                            {% set emailsCcList = fsc.newMail.getCcAddresses() %}
+                            {% set emailsBccList = fsc.newMail.getBccAddresses() %}
+                            {% set showCc = emailsCcList is not empty %}
+                            {% set showBcc = emailsBccList is not empty %}
+                            {% set emailsCc = showCc ? emailsCcList | join(',') ~ ', ' : '' %}
+                            {% set emailsBcc = showBcc ? emailsBccList | join(',') ~ ', ' : '' %}
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span class="input-group-text">{{ trans('to') }}</span>
@@ -55,26 +61,28 @@
                                     <input type="text" id="email" name="email" value="{{ emails }}" class="form-control"
                                            placeholder="{{ trans('email-to') }}" required/>
                                     <button type="button" class="btn btn-outline-secondary"
+                                                style="{{ showCc ? 'display: none;' : '' }}"
                                                 title="{{ trans('email-cc') }}" onclick="$('#fgCC').show();
                                                 $(this).hide();">{{ trans('cc') }}
                                         </button>
                                         <button type="button" class="btn btn-outline-secondary"
+                                                style="{{ showBcc ? 'display: none;' : '' }}"
                                                 title="{{ trans('email-bcc') }}" onclick="$('#fgBCC').show();
                                                 $(this).hide();">{{ trans('bcc') }}
                                         </button>
                                 </div>
                             </div>
-                            <div id="fgCC" class="mb-3" style="display: none;">
+                            <div id="fgCC" class="mb-3" style="{{ showCc ? '' : 'display: none;' }}">
                                 <div class="input-group">
                                     <span class="input-group-text">{{ trans('cc') }}</span>
-                                    <input type="text" id="email-cc" name="email-cc" class="form-control"
+                                    <input type="text" id="email-cc" name="email-cc" value="{{ emailsCc }}" class="form-control"
                                            placeholder="{{ trans('email-cc') }}"/>
                                 </div>
                             </div>
-                            <div id="fgBCC" class="mb-3" style="display: none;">
+                            <div id="fgBCC" class="mb-3" style="{{ showBcc ? '' : 'display: none;' }}">
                                 <div class="input-group">
                                     <span class="input-group-text">{{ trans('bcc') }}</span>
-                                    <input type="text" id="email-bcc" name="email-bcc" class="form-control"
+                                    <input type="text" id="email-bcc" name="email-bcc" value="{{ emailsBcc }}" class="form-control"
                                            placeholder="{{ trans('email-bcc') }}"/>
                                 </div>
                             </div>
