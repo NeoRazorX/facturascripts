@@ -84,4 +84,9 @@ class DateFilter extends BaseFilter
             . '</div>'
             . '</div>';
     }
+
+    protected function onChange(): string
+    {
+        return ' onchange="dateFilterOnChange(this, this.form);"';
+    }
 }
