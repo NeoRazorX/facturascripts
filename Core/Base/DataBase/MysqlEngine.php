@@ -206,6 +206,7 @@ class MysqlEngine extends DataBaseEngine
 
     /**
      * Escapes the column name.
+     * If it has table.column sintax, it escapes it too.
      *
      * @param mysqli $link
      * @param string $name
@@ -214,6 +215,14 @@ class MysqlEngine extends DataBaseEngine
      */
     public function escapeColumn($link, $name): string
     {
+        // Si el nombre contiene un punto, asumimos que es 'tabla.columna'
+        if (strpos($name, '.') !== false) {
+            $parts = explode('.', $name);
+            // Escapamos cada parte individualmente
+            return '`' . implode('`.`', $parts) . '`';
+        }
+
+        // Si no hay punto, escapamos el nombre completo
         return '`' . $name . '`';
     }
 
