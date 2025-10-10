@@ -251,8 +251,9 @@ abstract class PDFDocument extends PDFCore
      */
     protected function insertBusinessDocBody($model)
     {
-        $qrImage = $this->pipe('qrImageAfterLines', $model);
         $qrTitle = $this->pipe('qrTitleAfterLines', $model);
+        $qrImage = $this->pipe('qrImageAfterLines', $model);
+        $qrSubtitle = $this->pipe('qrSubtitleAfterLines', $model);
 
         $headers = [];
         $tableOptions = [
@@ -318,7 +319,7 @@ abstract class PDFDocument extends PDFCore
             $rightBlockWidth = $pageWidth * 0.2; // 20% para el QR (igual que en header)
             $leftBlockWidth = $pageWidth * 0.8;  // 80% espacio libre a la izquierda (igual que en header)
 
-            $this->renderQRimage($qrImage, $qrTitle, $this->pdf->ez['leftMargin'], $this->pdf->y, $leftBlockWidth, $rightBlockWidth);
+            $this->renderQRimage($qrImage, $qrTitle, $qrSubtitle, $this->pdf->ez['leftMargin'], $this->pdf->y, $leftBlockWidth, $rightBlockWidth);
         }
     }
 
@@ -435,8 +436,10 @@ abstract class PDFDocument extends PDFCore
     protected function insertBusinessDocHeader($model)
     {
         // obtenemos el QR y el título desde las extensiones
-        $qrImage = $this->pipe('qrImageHeader', $model);
         $qrTitle = $this->pipe('qrTitleHeader', $model);
+        $qrImage = $this->pipe('qrImageHeader', $model);
+        $qrSubtitle = $this->pipe('qrSubtitleHeader', $model);
+
 
         // Definir anchos de los bloques según si existe imagen QR o no
         $pageWidth = $this->pdf->ez['pageWidth'] - $this->pdf->ez['leftMargin'] - $this->pdf->ez['rightMargin'];
@@ -527,7 +530,7 @@ abstract class PDFDocument extends PDFCore
         $this->pdf->restoreState();
 
         // --- BLOQUE DERECHO (20%) ---
-        $this->renderQRimage($qrImage, $qrTitle, $startX, $startY, $leftBlockWidth, $rightBlockWidth);
+        $this->renderQRimage($qrImage, $qrTitle, $qrSubtitle, $startX, $startY, $leftBlockWidth, $rightBlockWidth);
 
         // Si hay dirección de envío, insertarla después
         if (!empty($model->idcontactoenv) && ($model->idcontactoenv != $model->idcontactofact || !empty($model->codtrans))) {
@@ -716,15 +719,17 @@ abstract class PDFDocument extends PDFCore
         }
     }
 
-    protected function renderQRimage(?string $qrImage, ?string $qrTitle, float $startX, float $startY, float $leftBlockWidth, float $rightBlockWidth): void
+    protected function renderQRimage(?string $qrImage, ?string $qrTitle, ?string $qrSubtitle, float $startX, float $startY, float $leftBlockWidth, float $rightBlockWidth): void
     {
         if (empty($qrImage)) {
             return;
         }
 
-        // Asegurar que el QR sea cuadrado usando el menor de los dos valores disponibles
+        // Definir espacio disponible para el QR
         $availableWidth = $rightBlockWidth - 10;
-        $qrSize = min(80, $availableWidth);
+
+        // Tamaño fijo de 110 puntos, mínimo para que tenga 3x3cm
+        $qrSize = 110;
 
         // Calcular posición para centrar el QR horizontalmente en el espacio disponible
         $qrX = $startX + $leftBlockWidth + 10 + ($availableWidth - $qrSize) / 2; // Centrar el QR
@@ -786,18 +791,25 @@ abstract class PDFDocument extends PDFCore
             return;
         }
 
-        $this->renderQRtitle($qrTitle, $qrX, $qrY, $qrSize);
+        $this->renderQRtext($qrTitle, $qrX, $qrY, $qrSize);
+        $this->renderQRtext($qrSubtitle, $qrX, $qrY, $qrSize, false);
     }
 
-    protected function renderQRtitle(?string $qrTitle, float $qrX, float $qrY, float $qrSize): void
+    protected function renderQRtext(?string $qrTitle, float $qrX, float $qrY, float $qrSize, bool $title = true): void
     {
         if (empty($qrTitle)) {
             return;
         }
 
-        // Añadir título del QR si existe
+        // Añadir texto del QR si existe
         $textX = $qrX + $qrSize / 2; // Centrar el texto horizontalmente respecto al QR
-        $textY = $qrY - $qrSize - 5; // Posicionar el texto 5 puntos debajo del QR
+
+        // si es título, poner encima del QR, si no, debajo
+        if ($title) {
+            $textY = $qrY - 3;
+        } else {
+            $textY = $qrY - $qrSize - 3;
+        }
 
         // Calcular el ancho disponible para el texto (desde el inicio del QR hasta el margen derecho)
         $pageRightMargin = $this->pdf->ez['pageWidth'] - $this->pdf->ez['rightMargin'];
