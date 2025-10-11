@@ -563,16 +563,22 @@ abstract class ModelClass
         return $this->pipeFalse('test');
     }
 
-    public function toArray(): array
+    public function toArray(bool $dynamic_attributes = false): array
     {
         $data = [];
         foreach (array_keys($this->getModelFields()) as $field_name) {
             $data[$field_name] = $this->{$field_name} ?? null;
         }
 
-        $data = $this->pipe('toArray', $data) ?? $data;
+        if ($dynamic_attributes) {
+            foreach ($this->attributes as $key => $value) {
+                if (!array_key_exists($key, $data)) {
+                    $data[$key] = $value;
+                }
+            }
+        }
 
-        return $data;
+        return $this->pipe('toArray', $data, $dynamic_attributes) ?? $data;
     }
 
     public function update(array $values): bool

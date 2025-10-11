@@ -94,7 +94,7 @@ class APIModel extends APIResourceClass
             return false;
         }
 
-        $this->returnResult($this->model->toArray());
+        $this->returnResult($this->model->toArray(true));
         return true;
     }
 
@@ -294,7 +294,7 @@ class APIModel extends APIResourceClass
         $data = [];
         $where = $this->getWhereValues($filter, $operation);
         foreach ($this->model->all($where, $order, $offset, $limit) as $item) {
-            $data[] = $item->toArray();
+            $data[] = $item->toArray(true);
         }
 
         // obtenemos el count y lo ponemos en el header
@@ -332,7 +332,7 @@ class APIModel extends APIResourceClass
     private function saveResource(): bool
     {
         if ($this->model->save()) {
-            $this->setOk(Tools::trans('record-updated-correctly'), $this->model->toArray());
+            $this->setOk(Tools::trans('record-updated-correctly'), $this->model->toArray(true));
             return true;
         }
 
@@ -341,7 +341,7 @@ class APIModel extends APIResourceClass
             $message .= ' - ' . $log['message'];
         }
 
-        $this->setError($message, $this->model->toArray());
+        $this->setError($message, $this->model->toArray(true));
         return false;
     }
 }
