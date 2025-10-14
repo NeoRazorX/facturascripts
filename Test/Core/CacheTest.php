@@ -41,6 +41,41 @@ final class CacheTest extends TestCase
         $this->assertNull(Cache::get($key), 'cache-value-not-erased');
     }
 
+    public function testHasReturnsTrueWhenKeyExists(): void
+    {
+        Cache::clear();
+
+        $key = 'test-has-key';
+        $value = 'test-value';
+        Cache::set($key, $value);
+
+        $this->assertTrue(Cache::has($key), 'has-should-return-true-for-existing-key');
+    }
+
+    public function testHasReturnsFalseWhenKeyDoesNotExist(): void
+    {
+        Cache::clear();
+
+        $key = 'non-existent-key';
+
+        $this->assertFalse(Cache::has($key), 'has-should-return-false-for-non-existent-key');
+    }
+
+    public function testHasReturnsFalseAfterDelete(): void
+    {
+        Cache::clear();
+
+        $key = 'test-delete-has-key';
+        $value = 'test-value';
+        Cache::set($key, $value);
+
+        $this->assertTrue(Cache::has($key), 'has-should-return-true-before-delete');
+
+        Cache::delete($key);
+
+        $this->assertFalse(Cache::has($key), 'has-should-return-false-after-delete');
+    }
+
     public function testSlashOnKeys(): void
     {
         Cache::clear();
