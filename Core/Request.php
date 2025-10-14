@@ -341,7 +341,7 @@ final class Request
     public function ip(): string
     {
         foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $field) {
-            if (isset($_SERVER[$field])) {
+            if (!empty($_SERVER[$field])) {
                 return (string)$_SERVER[$field];
             }
         }
