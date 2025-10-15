@@ -1704,7 +1704,7 @@
     "updater": "Actualizador",
     "updates-available": "Dostupné aktualizace",
     "updates-available-p": "Jsou k dispozici aktualizace pro FacturaScripts. Prosím, klikněte na aktuátor a stáhněte si novou verzi. Aktualizace opravují chyby a přidávají nové funkce.",
-    "updates-beta-warning": "Actualizaciones beta activadas",
+    "updates-beta-warning": "Beta aktualizace jsou povoleny",
     "updates-beta-warning-p": "⚠️ Tiene activadas las actualizaciones beta. Estas actualizaciones no han sido probadas y solamente se recomiendan en instalaciones de prueba.",
     "updating-attached-relations": "Aktualizace připojených vazeb",
     "upload-file": "Subir archivo",
