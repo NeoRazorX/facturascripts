@@ -255,7 +255,7 @@ class InvoiceToAccounting extends AccountingClass
             }
 
             // si la operación es intracomunitaria, añadimos también la línea de IVA repercutido
-            if ($this->document->operacion === InvoiceOperation::INTRA_COMMUNITY) {
+            if ($this->document->operacion === InvoiceOperation::INTRA_COMMUNITY_ACQUISITION) {
                 // calculamos el importe del IVA
                 $value['totaliva'] = round($value['neto'] * $value['iva'] / 100, 2);
                 $value['totalrecargo'] = round($value['neto'] * $value['recargo'] / 100, 2);
