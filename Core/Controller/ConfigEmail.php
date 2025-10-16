@@ -147,6 +147,7 @@ class ConfigEmail extends PanelController
      */
     protected function execAfterAction($action)
     {
+        parent::execAfterAction($action);
         if ($action === 'testmail') {
             $this->testMailAction();
         }
