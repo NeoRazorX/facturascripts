@@ -35,6 +35,11 @@
                     font-size: 2em;
                     font-weight: bold;
                 }
+                .email-logo {
+                    max-height: 120px;
+                    height: auto;
+                    width: auto;
+                }
                 .footer {
                     font-size: 10px;
                     color: black;
@@ -87,6 +92,15 @@
         <div id="body">
             {% block body %}
                 <table style="width:100%; background-color:#f6f9fc; color:black" >
+                    {% if emailLogoUrl %}
+                        <tr>
+                            <td>&nbsp;&nbsp;&nbsp;</td>
+                            <td style="padding:10px; text-align:center">
+                                <img class="email-logo" src="{{ emailLogoUrl }}" alt=""/>
+                            </td>
+                            <td>&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                    {% endif %}
                     <tr>
                         <td>&nbsp;&nbsp;&nbsp;</td>
                         <td style="padding:10px">

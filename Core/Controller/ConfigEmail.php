@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
@@ -39,6 +40,50 @@ class ConfigEmail extends PanelController
         $pageData['title'] = 'email';
         $pageData['icon'] = 'fa-solid fa-envelope';
         return $pageData;
+    }
+
+    /**
+     * Crea un nuevo png para en la carpeta especificada sobreescribiendo el antiguo
+     * 
+     * @param int $fileId el id del attached file
+     * @param string $targetPath Debe terminar en .png y válido para gd
+     * 
+     * @return bool
+     */
+    protected function createNewPng(int $fileId, string $targetPath) : bool
+    {
+        $attached = new AttachedFile();
+        if(false === $attached->load($fileId) || false === $attached->isImage()) {
+            // no existe o no es una imagen
+            Tools::log()->error('image-not-valid-or-not-exist');
+            return false;
+        }
+
+        // borrar si existe un archivo antiguo
+        if(is_file($targetPath)) {
+            @unlink($targetPath);
+        }
+
+        // crear imagen png con gd
+        $imageData = file_get_contents($attached->getFullPath());
+        $image = imagecreatefromstring($imageData);
+        if(false === $image) {
+            Tools::log()->error('image-create-error');
+            return false;
+        }
+
+        if (false === imagepng($image, $targetPath)) {
+            Tools::log()->error('image-convert-to-png-error');
+            @unlink($targetPath);
+            return false;
+        }
+
+        // Limpiar la imagen si es válida
+        if ($image instanceof \GdImage || is_resource($image)) {
+            imagedestroy($image);
+        }
+
+        return true;
     }
 
     protected function createViews()
@@ -126,7 +171,7 @@ class ConfigEmail extends PanelController
 
         foreach ($codes as $code) {
             $notification = new EmailNotification();
-            if (false === $notification->loadFromCode($code)) {
+            if (false === $notification->load($code)) {
                 continue;
             }
 
@@ -159,6 +204,10 @@ class ConfigEmail extends PanelController
      */
     protected function execPreviousAction($action)
     {
+        if ($this->isOfflineInstallation()) {
+            Tools::log()->warning('email-logo-offline-warning');
+        }
+
         switch ($action) {
             case 'disable-notification':
                 $this->enableNotificationAction(false);
@@ -170,6 +219,53 @@ class ConfigEmail extends PanelController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function editAction(): bool
+    {
+        // Asegúrate de que la acción de edición es válida
+        if (false === parent::editAction()) {
+            return false;
+        }
+
+        // revisar si existe un logo existente
+        $publicFolder = Tools::folder('MyFiles', 'Public');
+        Tools::folderCheckOrCreate($publicFolder);
+        $targetPath = $publicFolder . DIRECTORY_SEPARATOR . 'email-logo.png';
+        $existsImageLogo = is_file($targetPath);
+
+        // Obtener el ID del nuevo logo o igual que el anterior
+        $inputLogo = $this->request->request->getInt('id-email-logo', 0);
+        $idLogo = Tools::settings('email', 'id-email-logo', 0);
+        $cambiarLogo = false;
+        $borrarLogo = false;
+
+        // si no hay logo seleccionado borrar logo
+        if ($inputLogo === 0) {
+            $borrarLogo = $existsImageLogo;
+            // si no se ha seleccionado ninguno ($idLogo === 0)
+        }elseif($inputLogo !== $idLogo){
+            $cambiarLogo = true;
+            Tools::settingsSet('email', 'id-email-logo', $inputLogo);
+            // reconstruir logo si no existe y debería existír
+        }elseif($idLogo !== 0){
+            $cambiarLogo = !$existsImageLogo;
+        }
+
+        // borrar logo
+        if($borrarLogo){
+            unlink($targetPath);
+        }
+
+        // sobreescribir logo
+        if($cambiarLogo){
+            if(false === $this->createNewPng($inputLogo, $targetPath)){
+                Tools::log()->warning('email-logo-create-error');
+                return false;
+            }
+        }
+
+        return true;
     }
 
     protected function loadData($viewName, $view)
@@ -197,6 +293,21 @@ class ConfigEmail extends PanelController
                 $view->loadData();
                 break;
         }
+    }
+
+    private function isOfflineInstallation(): bool
+    {
+        $siteUrl = Tools::siteUrl();
+        $host = (string)parse_url($siteUrl, PHP_URL_HOST);
+
+        if (str_ends_with($host, 'localhost')
+            || str_ends_with($host, 'local')
+            || str_starts_with($host, '127.')
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function loadMailerValues(string $viewName)
