@@ -34,6 +34,10 @@
             <column name="email-signature" numcolumns="12" order="130">
                 <widget type="textarea" fieldname="signature"/>
             </column>
+            <column name="email-logo" numcolumns="12" order="140">
+                <widget type="library" fieldname="id-email-logo" title="email-logo" icon="fa-solid fa-image"
+                        onclick="EditAttachedFile" accept=".jpg,.jpeg,.png"/>
+            </column>
         </group>
         <group name="advanced" title="advanced" icon="fa-solid fa-server" numcolumns="12" valign="bottom">
             <column name="user" numcolumns="3" order="100">
