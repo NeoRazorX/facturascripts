@@ -204,10 +204,6 @@ class ConfigEmail extends PanelController
      */
     protected function execPreviousAction($action)
     {
-        if ($this->isOfflineInstallation()) {
-            Tools::log()->warning('email-logo-offline-warning');
-        }
-
         switch ($action) {
             case 'disable-notification':
                 $this->enableNotificationAction(false);
@@ -263,6 +259,12 @@ class ConfigEmail extends PanelController
                 Tools::log()->warning('email-logo-create-error');
                 return false;
             }
+
+            // avisar de que la instalación es local
+            if ($this->isOfflineInstallation()) {
+                Tools::log()->warning('email-logo-offline-warning');
+            }
+
         }
 
         return true;
