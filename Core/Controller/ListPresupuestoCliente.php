@@ -37,7 +37,7 @@ class ListPresupuestoCliente extends ListBusinessDocument
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'estimations';
-        $data['icon'] = 'far fa-file-powerpoint';
+        $data['icon'] = 'fa-regular fa-file-powerpoint';
         return $data;
     }
 

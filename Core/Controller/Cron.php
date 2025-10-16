@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
@@ -85,6 +86,9 @@ class Cron implements ControllerInterface
             echo PHP_EOL . $message['message'];
             ob_flush();
         }
+
+        // limpiamos los archivos expirados de la caché
+        Cache::expire();
 
         // mensaje de finalización
         $context = [

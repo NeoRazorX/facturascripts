@@ -128,7 +128,7 @@ class ConfigEmail extends PanelController
         $this->addButton($viewName, [
             'action' => 'disable-notification',
             'color' => 'warning',
-            'icon' => 'far fa-square',
+            'icon' => 'fa-regular fa-square',
             'label' => 'disable'
         ]);
     }

@@ -132,7 +132,7 @@ class Controller implements ControllerInterface
         Session::set('uri', $uri);
 
         $this->dataBase = new DataBase();
-        $this->empresa = new Empresa();
+        $this->empresa = Empresas::default();
         $this->multiRequestProtection = new MultiRequestProtection();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -89,13 +89,18 @@ final class Cache
         }
 
         foreach (scandir($folder) as $fileName) {
+            // saltamos los directorios . y ..
+            if ($fileName === '.' || $fileName === '..') {
+                continue;
+            }
+
             if (filemtime($folder . '/' . $fileName) < time() - self::EXPIRATION) {
                 unlink($folder . '/' . $fileName);
             }
         }
     }
 
-    public static function get(string $key)
+    public static function get(string $key, $default = null)
     {
         // buscamos el archivo y comprobamos su fecha de modificación
         $fileName = self::filename($key);
@@ -105,11 +110,18 @@ final class Cache
             try {
                 return unserialize($data);
             } catch (Throwable $e) {
-                return null;
+                return $default;
             }
         }
 
-        return null;
+        return $default;
+    }
+
+    public static function has(string $key): bool
+    {
+        // buscamos el archivo y comprobamos su fecha de modificación
+        $fileName = self::filename($key);
+        return file_exists($fileName) && filemtime($fileName) >= time() - self::EXPIRATION;
     }
 
     /**

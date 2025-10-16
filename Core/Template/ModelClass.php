@@ -176,8 +176,31 @@ abstract class ModelClass
 
     public function clear(): void
     {
-        foreach (array_keys($this->getModelFields()) as $field_name) {
-            $this->{$field_name} = null;
+        foreach ($this->getModelFields() as $key => $field) {
+            // si es la clave primaria, asignamos null
+            if ($key == static::primaryColumn()) {
+                $this->{$key} = null;
+                continue;
+            }
+
+            // si no tiene valor por defecto, asignamos null
+            if ($field['default'] === null) {
+                $this->{$key} = null;
+                continue;
+            }
+
+            // convertimos el valor por defecto al tipo adecuado
+            $type = strpos($field['type'], '(') === false ?
+                $field['type'] :
+                substr($field['type'], 0, strpos($field['type'], '('));
+            $this->{$key} = match ($type) {
+                'tinyint', 'boolean' => in_array($field['default'], ['true', 't', '1'], false),
+                'integer', 'int' => intval($field['default']),
+                'decimal', 'double', 'double precision', 'float' => floatval($field['default']),
+                'date' => Tools::date($field['default']),
+                'datetime', 'timestamp' => Tools::dateTime($field['default']),
+                default => $field['default'],
+            };
         }
 
         $this->pipeFalse('clear');
@@ -563,16 +586,22 @@ abstract class ModelClass
         return $this->pipeFalse('test');
     }
 
-    public function toArray(): array
+    public function toArray(bool $dynamic_attributes = false): array
     {
         $data = [];
         foreach (array_keys($this->getModelFields()) as $field_name) {
             $data[$field_name] = $this->{$field_name} ?? null;
         }
 
-        $data = $this->pipe('toArray', $data) ?? $data;
+        if ($dynamic_attributes) {
+            foreach ($this->attributes as $key => $value) {
+                if (!array_key_exists($key, $data)) {
+                    $data[$key] = $value;
+                }
+            }
+        }
 
-        return $data;
+        return $this->pipe('toArray', $data, $dynamic_attributes) ?? $data;
     }
 
     public function update(array $values): bool
