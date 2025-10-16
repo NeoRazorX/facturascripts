@@ -300,6 +300,7 @@ class ConfigEmail extends PanelController
         $siteUrl = Tools::siteUrl();
         $host = (string)parse_url($siteUrl, PHP_URL_HOST);
 
+        // si termina en localhost, local o empieza con 127
         if (str_ends_with($host, 'localhost')
             || str_ends_with($host, 'local')
             || str_starts_with($host, '127.')
