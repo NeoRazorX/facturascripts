@@ -34,8 +34,8 @@ class InvoiceOperation
 
     // === Operaciones de compra internacionales ===
     const IMPORT = 'importacion'; // Importación de bienes (arts. 17–18 LIVA) – Compras a países terceros. El IVA se liquida en aduana o se difiere según art. 167.Dos LIVA.
-    const INTRA_COMMUNITY_ACQUISITION = 'adquisicion-intracomunitaria'; // Adquisición intracomunitaria (art. 25 y 84 LIVA) – Compras a proveedores UE con inversión del sujeto pasivo.
-    const SERVICE_IMPORT = 'importacion-servicios'; // Importación de servicios (arts. 69–70 y 84 LIVA) – Servicios recibidos del extranjero, con localización en España e inversión del sujeto pasivo.
+    const INTRA_COMMUNITY_ACQUISITION = 'compra-intracom'; // Adquisición intracomunitaria (art. 25 y 84 LIVA) – Compras a proveedores UE con inversión del sujeto pasivo.
+    const SERVICE_IMPORT = 'importservices'; // Importación de servicios (arts. 69–70 y 84 LIVA) – Servicios recibidos del extranjero, con localización en España e inversión del sujeto pasivo.
 
     /** @var array */
     private static $all = [];
