@@ -434,6 +434,72 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
+    public function testTotalPendienteInitialAndAfterFullPayment(): void
+    {
+        // creamos una factura con un recibo
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // al crear la factura, el total pendiente debe ser igual al total
+        $this->assertEquals($invoice->total, $invoice->total_pendiente, 'bad-invoice-pending-total-initial');
+
+        // marcamos el recibo como pagado
+        $receipt = $invoice->getReceipts()[0];
+        $receipt->pagado = true;
+        $this->assertTrue($receipt->save(), 'can-not-set-paid-receipt');
+
+        // recargamos la factura y comprobamos el total pendiente = 0
+        $invoice->load($invoice->id());
+        $this->assertEquals(0.0, $invoice->total_pendiente, 'bad-invoice-pending-total-after-full-payment');
+
+        // limpieza
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
+    public function testTotalPendienteAfterPartialPaymentWithMultipleReceipts(): void
+    {
+        // creamos una factura
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // eliminamos recibos existentes para forzar el reparto
+        foreach ($invoice->getReceipts() as $receipt) {
+            $this->assertTrue($receipt->delete(), 'can-not-delete-receipt');
+        }
+
+        // generamos 2 recibos
+        $generator = new ReceiptGenerator();
+        $this->assertTrue($generator->generate($invoice, 2), 'can-not-create-new-receipts');
+
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(2, $receipts, 'bad-invoice-receipts-count');
+
+        // marcamos el primero como pagado, dejamos el resto impagado
+        $receipts[0]->pagado = true;
+        $this->assertTrue($receipts[0]->save(), 'can-not-set-paid-receipt');
+
+        // el total pendiente debe ser igual a la suma de los recibos impagados
+        $unpaidSum = 0.0;
+        foreach ($invoice->getReceipts() as $r) {
+            if (false === $r->pagado) {
+                $unpaidSum += $r->importe;
+            }
+        }
+
+        // recargamos la factura y comprobamos
+        $invoice->load($invoice->id());
+        $this->assertEquals($unpaidSum, $invoice->total_pendiente, 'bad-invoice-pending-total-after-partial-payment');
+
+        // limpieza
+        $subject = $invoice->getSubject();
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
