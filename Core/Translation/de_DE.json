@@ -821,7 +821,7 @@
     "interest": "Zins",
     "international-identifier": "Internationale Kennung",
     "intra-community": "Innergemeinschaftlich",
-    "invalid-admin-username": "El nombre de usuario del administrador no es válido: debe tener entre 3 y 50 caracteres, sin espacios.",
+    "invalid-admin-username": "Der Administrator-Benutzername ist ungültig: Er muss zwischen 3 und 50 Zeichen lang sein und darf keine Leerzeichen enthalten.",
     "invalid-alphanumeric-code": "Ungültiger alphanumerischer Code",
     "invalid-column-lenght": "%column% muss zwischen %min% und %max% Zeichen haben.",
     "invalid-date": "Datum %1$s ungültig.",

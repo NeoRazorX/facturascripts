@@ -399,7 +399,7 @@
     "data-source": "Origine dei dati",
     "database": "Database",
     "database-error": "Errore di connessione al database",
-    "database-error-pc": "🖥️ Se il programma è installato sul tuo PC, probabilmente ti sei dimenticato di attivare MySQL o ha problemi ad attivarsi.",
+    "database-error-pc": "🖥️ Se il programma è installato sul tuo PC, probabilmente ti sei dimenticato di avviare MySQL o ha problemi ad avviarsi.",
     "database-error-server": "🌎 Se il programma è installato su un server o hosting, probabilmente hai cambiato l'utente o la password del database, oppure hai raggiunto un limite di utilizzo dell'hosting.",
     "database-name-must-be-lowercase": "il-nome-del-database-deve-essere-maiuscolo",
     "date": "data",
