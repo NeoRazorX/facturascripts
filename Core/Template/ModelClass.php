@@ -393,6 +393,24 @@ abstract class ModelClass
         $this->syncOriginal();
     }
 
+    /**
+     * Carga el primer registro que coincida con las condiciones especificadas.
+     *
+     * Este método consulta la tabla asociada al modelo aplicando las condiciones WHERE proporcionadas
+     * y el ordenamiento especificado. Si encuentra un registro, carga sus datos en la instancia actual
+     * del modelo. Si no encuentra ningún registro, limpia la instancia y retorna false.
+     *
+     * @param array $where Array de instancias de Where o DatabaseWhere que definen las condiciones
+     *                     de filtrado para la consulta. Cada elemento representa una condición que
+     *                     debe cumplir el registro a cargar.
+     * @param array $order Array asociativo que define el ordenamiento de los resultados.
+     *                     Las claves son nombres de columnas y los valores indican la dirección
+     *                     del ordenamiento (ej: ['id' => 'DESC', 'nombre' => 'ASC']).
+     *                     Por defecto es un array vacío (sin ordenamiento específico).
+     *
+     * @return bool Retorna true si se encontró y cargó un registro exitosamente.
+     *              Retorna false si no se encontró ningún registro que cumpla las condiciones.
+     */
     public function loadWhere(array $where, array $order = []): bool
     {
         $data = static::table()
