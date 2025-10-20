@@ -353,7 +353,29 @@ abstract class ModelClass
     }
 
     /**
-     * @deprecated Use load() or loadWhere() instead
+     * Carga un registro del modelo utilizando un código y opcionalmente condiciones adicionales.
+     *
+     * IMPORTANTE: Este método está deprecado. Se recomienda usar las alternativas siguientes:
+     * - Si solo se proporciona $code: usar directamente load($code)
+     * - Si se proporciona $code junto con $where o $order: usar loadWhere() con las condiciones apropiadas
+     *
+     * Este método actúa como wrapper que redirige a load() cuando solo se proporciona el código,
+     * o a loadWhere() cuando se incluyen condiciones WHERE u ordenamiento adicionales.
+     *
+     * @deprecated Usar load() cuando solo se necesita cargar por código, o loadWhere() cuando
+     *             se requieren condiciones WHERE u ordenamiento adicionales.
+     *
+     * @param mixed $code  Código o identificador del registro a cargar. Se usa únicamente cuando
+     *                     no se proporcionan condiciones WHERE adicionales.
+     * @param array $where Array de instancias de Where o DatabaseWhere que definen condiciones
+     *                     de filtrado adicionales. Si se proporciona, el método delega a loadWhere().
+     *                     Por defecto es un array vacío.
+     * @param array $order Array asociativo que define el ordenamiento de los resultados.
+     *                     Las claves son nombres de columnas y los valores la dirección del ordenamiento.
+     *                     Por defecto es un array vacío.
+     *
+     * @return bool Retorna true si se encontró y cargó un registro exitosamente.
+     *              Retorna false si no se encontró ningún registro.
      */
     public function loadFromCode($code, array $where = [], array $order = []): bool
     {
@@ -416,6 +438,24 @@ abstract class ModelClass
         $this->syncOriginal();
     }
 
+    /**
+     * Carga el primer registro que coincida con las condiciones especificadas.
+     *
+     * Este método consulta la tabla asociada al modelo aplicando las condiciones WHERE proporcionadas
+     * y el ordenamiento especificado. Si encuentra un registro, carga sus datos en la instancia actual
+     * del modelo. Si no encuentra ningún registro, limpia la instancia y retorna false.
+     *
+     * @param array $where Array de instancias de Where o DatabaseWhere que definen las condiciones
+     *                     de filtrado para la consulta. Cada elemento representa una condición que
+     *                     debe cumplir el registro a cargar.
+     * @param array $order Array asociativo que define el ordenamiento de los resultados.
+     *                     Las claves son nombres de columnas y los valores indican la dirección
+     *                     del ordenamiento (ej: ['id' => 'DESC', 'nombre' => 'ASC']).
+     *                     Por defecto es un array vacío (sin ordenamiento específico).
+     *
+     * @return bool Retorna true si se encontró y cargó un registro exitosamente.
+     *              Retorna false si no se encontró ningún registro que cumpla las condiciones.
+     */
     public function loadWhere(array $where, array $order = []): bool
     {
         $data = static::table()
