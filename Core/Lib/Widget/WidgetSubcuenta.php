@@ -118,16 +118,10 @@ class WidgetSubcuenta extends WidgetText
                 break;
         }
 
-        if ($query !== '') {
-            foreach ($model->all($where, $orderBy, 0, 50) as $item) {
-                $list[] = $item;
-            }
+        foreach ($model->all($where, $orderBy, 0, 50) as $item) {
+            $list[] = $item;
         }
-        else{
-            foreach ($model->all() as $item) {
-                $list[] = $item;
-            }
-        }
+        
         return $list;
     }
 
