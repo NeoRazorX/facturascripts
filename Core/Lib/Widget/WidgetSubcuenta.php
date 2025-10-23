@@ -248,7 +248,12 @@ class WidgetSubcuenta extends WidgetText
             . '</div>'
             . '</div>'
             . $this->renderSubaccountList()
-            . '<div class="modal-footer flex-column align-items-stretch p-3">' . $this->renderSubaccountNoneBtn() . '</div>'
+            . '<div class="modal-footer p-3">'
+            . '<div class="w-100 d-flex gap-2">'
+            . $this->renderNewSubaccountBtn()
+            . $this->renderSubaccountNoneBtn()
+            . '</div>'
+            . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
@@ -331,14 +336,22 @@ class WidgetSubcuenta extends WidgetText
             . '</div>';
     }
 
+    protected function renderNewSubaccountBtn(): string
+    {
+        $subcuenta = new Subcuenta();
+        return '<a href="' . $subcuenta->url('new') . '" target="_blank" class="btn btn-success">'
+            . '<i class="fa-solid fa-plus me-1"></i> ' . Tools::trans('new-subaccount')
+            . '</a>';
+    }
+
     protected function renderSubaccountNoneBtn(): string
     {
         if ($this->required) {
             return '';
         }
 
-        return '<button type="button" class="btn btn-secondary w-100" onclick="widgetSubaccountSelect(\'' . $this->id . '\', \'\'); return false;">'
-            . '<i class="fa-solid fa-times me-1"></i>' . Tools::trans('none')
+        return '<button type="button" class="btn btn-secondary ms-auto" onclick="widgetSubaccountSelect(\'' . $this->id . '\', \'\'); return false;">'
+            . '<i class="fa-solid fa-times me-1"></i> ' . Tools::trans('none')
             . '</button>';
     }
 }
