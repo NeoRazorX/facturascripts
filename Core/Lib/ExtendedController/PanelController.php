@@ -500,6 +500,7 @@ abstract class PanelController extends BaseController
                 'stock' => $variante->stockfis,
                 'stock_str' => Tools::number($variante->stockfis, 0),
                 'match' => $variante->{$column->widget->match},
+                'url' => $variante->url()
             ];
         }
         return $results;

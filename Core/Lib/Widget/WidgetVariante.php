@@ -263,6 +263,11 @@ class WidgetVariante extends WidgetText
             $match = $item->{$this->match};
 
             $items[] = '<tr class="clickableRow" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'' . $match . '\');">'
+                . '<td class="text-center">'
+                . '<a href="' . $item->url() . '" target="_blank" onclick="event.stopPropagation();">'
+                . '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
+                . '</a>'
+                . '</td>'
                 . '<td><b>' . $item->referencia . '</b> ' . $item->description() . '</td>'
                 . '<td class="text-end text-nowrap">' . Tools::money($item->precio) . '</td>'
                 . '<td class="text-end text-nowrap">' . Tools::number($item->stockfis, 0) . '</td>'
@@ -273,6 +278,7 @@ class WidgetVariante extends WidgetText
             . '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
+            . '<th class="text-center"></th>'
             . '<th>' . Tools::trans('product') . '</th>'
             . '<th class="text-end">' . Tools::trans('price') . '</th>'
             . '<th class="text-end">' . Tools::trans('stock') . '</th>'

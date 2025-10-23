@@ -21,6 +21,11 @@ function widgetVarianteDraw(id, results) {
 
     results.forEach(function (element) {
         html += '<tr class="clickableRow" onclick="widgetVarianteSelect(\'' + id + '\', \'' + element.match + '\');">'
+            + '<td class="text-center">'
+            + '<a href="' + element.url + '" target="_blank" onclick="event.stopPropagation();">'
+            + '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
+            + '</a>'
+            + '</td>'
             + '<td><b>' + element.referencia + '</b> ' + element.descripcion + '</td>'
             + '<td class="text-end text-nowrap">' + element.precio_str + '</td>'
             + '<td class="text-end text-nowrap">' + element.stock_str + '</td>'
