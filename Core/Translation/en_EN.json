@@ -306,6 +306,7 @@
     "component": "Component",
     "concept": "Concept",
     "conditions": "Conditions",
+    "configuration": "Configuration",
     "configure": "Configure",
     "configure-columns": "Column Configurator",
     "confirm": "Confirm",

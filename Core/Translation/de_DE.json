@@ -306,6 +306,7 @@
     "component": "Bestandteil",
     "concept": "Konzept",
     "conditions": "Bedingungen",
+    "configuration": "Einstellungen.",
     "configure": "Konfigurieren",
     "configure-columns": "Spaltenkonfigurator",
     "confirm": "Bestätigen",
