@@ -508,8 +508,11 @@ class NewMail
      */
     protected function renderHTML(): void
     {
+        $emailLogoUrl = Tools::siteUrl() . '/MyFiles/Public/email-logo.png';
+
         $this->html = Html::render('Email/' . static::$template, [
             'company' => $this->empresa,
+            'emailLogoUrl' => Tools::settings('email', 'id-email-logo', 0) === 0 ? null : $emailLogoUrl,
             'footerBlocks' => $this->getFooterBlocks(),
             'mainBlocks' => $this->getMainBlocks(),
             'title' => $this->title
