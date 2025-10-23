@@ -21,8 +21,9 @@ namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\AssetManager;
+use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 class WidgetSubcuenta extends WidgetText
@@ -50,7 +51,7 @@ class WidgetSubcuenta extends WidgetText
             '<small class="form-text text-muted">' . Tools::trans($description) . '</small>';
         $label = Tools::trans($title);
         $labelHtml = $this->onclickHtml($label, $titleurl);
-        $icon = empty($this->icon) ? 'fa-solid fa-calculator' : $this->icon;
+        $icon = empty($this->icon) ? 'fa-solid fa-book' : $this->icon;
 
         // hay que cargar la subcuenta para mostrar su nombre
         $subcuenta = new Subcuenta();
@@ -86,15 +87,22 @@ class WidgetSubcuenta extends WidgetText
 
     /**
      * @param string $query
-     * @param string $codfabricante
-     * @param string $codfamilia
+     * @param string $codejercicio
      * @param string $sort
      * @return Subcuenta[]
      */
-    public function subcuentas(string $query = '', string $sort = 'ref-asc'): array
+    public function subcuentas(string $query = '', string $codejercicio = '', string $sort = 'ref-asc'): array
     {
         $list = [];
         $where = [];
+
+        // si no se especifica ejercicio, usamos el primero
+        if (empty($codejercicio)) {
+            $ejercicios = Ejercicio::all([], ['codejercicio' => 'DESC'], 0, 1);
+            if (!empty($ejercicios)) {
+                $codejercicio = $ejercicios[0]->codejercicio;
+            }
+        }
 
         // cargamos y añadimos la subcuenta seleccionada
         $model = new Subcuenta();
@@ -107,12 +115,48 @@ class WidgetSubcuenta extends WidgetText
             $where[] = new DataBaseWhere('codsubcuenta|descripcion', $query, 'LIKE');
         }
 
+        if ($codejercicio) {
+            $where[] = new DataBaseWhere('codejercicio', $codejercicio);
+        }
+
         switch ($sort) {
-            case 'ref-desc':
             case 'cod-desc':
                 $orderBy = ['codsubcuenta' => 'DESC'];
                 break;
 
+            case 'desc-asc':
+                $orderBy = ['descripcion' => 'ASC'];
+                break;
+
+            case 'desc-desc':
+                $orderBy = ['descripcion' => 'DESC'];
+                break;
+
+            case 'debe-asc':
+                $orderBy = ['debe' => 'ASC'];
+                break;
+
+            case 'debe-desc':
+                $orderBy = ['debe' => 'DESC'];
+                break;
+
+            case 'haber-asc':
+                $orderBy = ['haber' => 'ASC'];
+                break;
+
+            case 'haber-desc':
+                $orderBy = ['haber' => 'DESC'];
+                break;
+
+            case 'saldo-asc':
+                $orderBy = ['saldo' => 'ASC'];
+                break;
+
+            case 'saldo-desc':
+                $orderBy = ['saldo' => 'DESC'];
+                break;
+
+            case 'cod-asc':
             default:
                 $orderBy = ['codsubcuenta' => 'ASC'];
                 break;
@@ -121,7 +165,7 @@ class WidgetSubcuenta extends WidgetText
         foreach ($model->all($where, $orderBy, 0, 50) as $item) {
             $list[] = $item;
         }
-        
+
         return $list;
     }
 
@@ -199,13 +243,32 @@ class WidgetSubcuenta extends WidgetText
             . '<div class="modal-body">'
             . '<div class="row g-3">'
             . '<div class="col">' . $this->renderQueryFilter() . '</div>'
+            . '<div class="col">' . $this->renderExerciseFilter() . '</div>'
+            . '<div class="col">' . $this->renderSortFilter() . '</div>'
             . '</div>'
             . '</div>'
             . $this->renderSubaccountList()
-            . '<div class="modal-footer p-2 d-grid">' . $this->renderSubaccountNoneBtn() . '</div>'
+            . '<div class="modal-footer flex-column align-items-stretch p-3">' . $this->renderSubaccountNoneBtn() . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
+    }
+
+    protected function renderExerciseFilter(): string
+    {
+        $options = [];
+        $ejercicios = Ejercicio::all([], ['codejercicio' => 'DESC']);
+        $first = true;
+
+        foreach ($ejercicios as $item) {
+            $selected = $first ? ' selected' : '';
+            $options[] = '<option value="' . $item->codejercicio . '"' . $selected . '>' . $item->nombre . '</option>';
+            $first = false;
+        }
+
+        return '<select class="form-select mb-2" id="modal_' . $this->id . '_ej" onchange="widgetSubaccountSearch(\'' . $this->id . '\');" required>'
+            . implode('', $options)
+            . '</select>';
     }
 
     protected function renderQueryFilter(): string
@@ -219,14 +282,37 @@ class WidgetSubcuenta extends WidgetText
             . '</div>';
     }
 
+    protected function renderSortFilter(): string
+    {
+        return '<select class="form-select mb-2" id="modal_' . $this->id . '_s" onchange="widgetSubaccountSearch(\'' . $this->id . '\');">'
+            . '<option value="cod-asc" selected>' . Tools::trans('sort-by-code-asc') . '</option>'
+            . '<option value="cod-desc">' . Tools::trans('sort-by-code-desc') . '</option>'
+            . '<option value="desc-asc">' . Tools::trans('sort-by-description-asc') . '</option>'
+            . '<option value="desc-desc">' . Tools::trans('sort-by-description-desc') . '</option>'
+            . '<option value="debe-asc">' . Tools::trans('sort-by-debit-asc') . '</option>'
+            . '<option value="debe-desc">' . Tools::trans('sort-by-debit-desc') . '</option>'
+            . '<option value="haber-asc">' . Tools::trans('sort-by-credit-asc') . '</option>'
+            . '<option value="haber-desc">' . Tools::trans('sort-by-credit-desc') . '</option>'
+            . '<option value="saldo-asc">' . Tools::trans('sort-by-balance-asc') . '</option>'
+            . '<option value="saldo-desc">' . Tools::trans('sort-by-balance-desc') . '</option>'
+            . '</select>';
+    }
+
     protected function renderSubaccountList(): string
     {
         $items = [];
         foreach ($this->subcuentas() as $item) {
             $match = $item->codsubcuenta;
+            $saldoClass = $item->saldo < 0 ? ' text-danger' : '';
             $items[] = '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' . $this->id . '\', \'' . $match . '\');">'
-                . '<td><b>' . $item->codsubcuenta . '</b> ' . '</td>'
-                . '<td class="text-center text-nowrap">' . $item->descripcion . '</td>'
+                . '<td class="text-center">'
+                . '<a href="' . $item->url() . '" target="_blank" onclick="event.stopPropagation();">'
+                . '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
+                . '</a>'
+                . '</td>'
+                . '<td><b>' . $item->codsubcuenta . '</b></td>'
+                . '<td>' . $item->descripcion . '</td>'
+                . '<td class="text-end' . $saldoClass . '">' . Tools::number($item->saldo) . '</td>'
                 . '</tr>';
         }
 
@@ -234,8 +320,10 @@ class WidgetSubcuenta extends WidgetText
             . '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
+            . '<th class="text-center"></th>'
             . '<th>' . Tools::trans('Subcuenta') . '</th>'
-            . '<th class="text-center">' . Tools::trans('description') . '</th>'
+            . '<th>' . Tools::trans('description') . '</th>'
+            . '<th class="text-end">' . Tools::trans('balance') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody id="list_' . $this->id . '">' . implode('', $items) . '</tbody>'
@@ -249,9 +337,8 @@ class WidgetSubcuenta extends WidgetText
             return '';
         }
 
-        return '<a href="#" class="btn btn-secondary" onclick="widgetSubaccountSelect(\'' . $this->id . '\', \'\');">'
+        return '<button type="button" class="btn btn-secondary w-100" onclick="widgetSubaccountSelect(\'' . $this->id . '\', \'\'); return false;">'
             . '<i class="fa-solid fa-times me-1"></i>' . Tools::trans('none')
-            . '</a>';
+            . '</button>';
     }
-
 }

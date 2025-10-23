@@ -524,14 +524,17 @@ abstract class PanelController extends BaseController
 
         $subcuentas = $column->widget->subcuentas(
             $this->request->input('query', ''),
-            $this->request->request->get('codsubcuenta', ''),
+            $this->request->request->get('codejercicio', ''),
             $this->request->request->get('sort', '')
         );
 
+        $results = [];
         foreach ($subcuentas as $subcuenta) {
             $results[] = [
                 'codsubcuenta' => $subcuenta->codsubcuenta,
-                'descripcion' => $subcuenta->descripcion
+                'descripcion' => $subcuenta->descripcion,
+                'saldo' => $subcuenta->saldo,
+                'url' => $subcuenta->url()
             ];
         }
 

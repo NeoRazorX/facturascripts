@@ -20,9 +20,21 @@ function widgetSubaccountDraw(id, results) {
     let html = '';
 
     results.forEach(function (element) {
+        const saldoValue = parseFloat(element.saldo || 0);
+        const saldo = saldoValue.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        const saldoClass = saldoValue < 0 ? ' text-danger' : '';
         html += '<tr class="clickableRow" onclick="widgetSubaccountSelect(\'' + id + '\', \'' + element.codsubcuenta + '\');">'
+            + '<td class="text-center">'
+            + '<a href="' + element.url + '" target="_blank" onclick="event.stopPropagation();">'
+            + '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
+            + '</a>'
+            + '</td>'
             + '<td><b>' + element.codsubcuenta + '</b></td>'
-            + '<td class="text-center text-nowrap">' + element.descripcion + '</td>'
+            + '<td>' + element.descripcion + '</td>'
+            + '<td class="text-end' + saldoClass + '">' + saldo + '</td>'
             + '</tr>';
     });
 
@@ -37,8 +49,8 @@ function widgetSubaccountSearch(id) {
         active_tab: input.closest('form').find('input[name="activetab"]').val(),
         col_name: input.attr("name"),
         query: $("#modal_" + id + "_q").val(),
-        codejercicio: $("#searchcodejercicio").val(),
-        sort: $("#search_ordensubcta").val()
+        codejercicio: $("#modal_" + id + "_ej").val(),
+        sort: $("#modal_" + id + "_s").val()
     };
     $.ajax({
         method: "POST",
