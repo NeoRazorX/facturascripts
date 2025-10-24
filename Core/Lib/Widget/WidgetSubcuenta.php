@@ -326,7 +326,7 @@ class WidgetSubcuenta extends WidgetText
             . '<thead>'
             . '<tr>'
             . '<th class="text-center"></th>'
-            . '<th>' . Tools::trans('Subcuenta') . '</th>'
+            . '<th>' . Tools::trans('subaccount') . '</th>'
             . '<th>' . Tools::trans('description') . '</th>'
             . '<th class="text-end">' . Tools::trans('balance') . '</th>'
             . '</tr>'
