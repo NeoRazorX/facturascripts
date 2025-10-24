@@ -270,6 +270,12 @@ class AccountingPlanImport
         $csv = new Csv();
         $csv->auto($filePath);
 
+        // Verificar que el CSV tenga al menos 2 columnas (código y descripción)
+        if (count($csv->titles) < 2) {
+            Tools::log()->warning('csv-file-must-have-at-least-2-columns');
+            return false;
+        }
+
         $length = [];
         $accountPlan = [];
         foreach ($csv->data as $value) {
@@ -285,6 +291,13 @@ class AccountingPlanImport
 
         $lengths = array_unique($length);
         sort($lengths);
+
+        // Verificar que haya al menos 2 longitudes diferentes (cuentas y subcuentas)
+        if (count($lengths) < 2) {
+            Tools::log()->warning('accounting-plan-must-have-at-least-2-levels');
+            return false;
+        }
+
         $minLength = min($lengths);
         $maxLength = max($lengths);
         $keys = array_keys($accountPlan);
