@@ -24,6 +24,7 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Lib\ControllerPermissions;
+use FacturaScripts\Core\Lib\MenuManager;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
@@ -255,5 +256,14 @@ abstract class Controller implements ControllerInterface
         }
 
         return true;
+    }
+
+    protected function view(string $view, array $data = []): void
+    {
+        $data['controllerName'] = $this->className;
+        $data['fsc'] = $this;
+        $data['menuManager'] = MenuManager::init()->selectPage($this->getPageData());
+
+        $this->response()->view($view, $data);
     }
 }
