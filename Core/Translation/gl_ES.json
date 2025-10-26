@@ -365,7 +365,7 @@
     "cron-job": "Tarefa programada",
     "cron-timeout": "O cron detívose para non exceder o tempo máximo de execución de PHP. Por favor, execute o cron dende terminal para evitar este límite.",
     "crons": "Crons",
-    "csv-file-must-have-at-least-2-columns": "O CSV debe ter polo menos 2 columnas",
+    "csv-file-must-have-at-least-2-columns": "O arquivo CSV debe ter polo menos 2 columnas",
     "currency": "Moeda",
     "currency-position": "Posición do símbolo de moeda",
     "current-quarter": "Trimestre actual",
