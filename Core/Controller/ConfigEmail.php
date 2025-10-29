@@ -227,7 +227,7 @@ class ConfigEmail extends PanelController
     {
         $column = $this->views[$viewName]->columnForName('mailer');
         if ($column && $column->widget->getType() === 'select') {
-            $column->widget->setValuesFromArray(NewMail::getMailer(), true, false);
+            $column->widget->setValuesFromArrayKeys(NewMail::getMailer());
         }
     }
 
