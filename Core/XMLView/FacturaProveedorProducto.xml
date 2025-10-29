@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,13 +48,13 @@
             <widget type="number" fieldname="cantidad"/>
         </column>
         <column name="unit-purchase-price" display="right" order="170">
-            <widget type="money" fieldname="avgcoste"/>
+            <widget type="money" fieldname="avgcoste" totals="false"/>
         </column>
         <column name="cost-price" display="right" order="180">
-            <widget type="money" fieldname="coste"/>
+            <widget type="money" fieldname="coste" totals="false"/>
         </column>
         <column name="price" display="right" order="190">
-            <widget type="money" fieldname="precio"/>
+            <widget type="money" fieldname="precio" totals="false"/>
         </column>
     </columns>
     <rows>
