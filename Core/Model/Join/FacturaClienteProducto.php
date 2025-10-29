@@ -31,6 +31,11 @@ class FacturaClienteProducto extends JoinModel
     const DOC_TABLE = 'facturascli';
     const MAIN_TABLE = 'lineasfacturascli';
 
+    public function url(string $type = 'auto', string $list = 'List'): string
+    {
+        return 'ReportProducto';
+    }
+
     protected function getFields(): array
     {
         return [

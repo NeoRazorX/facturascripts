@@ -31,6 +31,11 @@ class FacturaProveedorProducto extends JoinModel
     const DOC_TABLE = 'facturasprov';
     const MAIN_TABLE = 'lineasfacturasprov';
 
+    public function url(string $type = 'auto', string $list = 'List'): string
+    {
+        return 'ReportProducto';
+    }
+
     protected function getFields(): array
     {
         return [
