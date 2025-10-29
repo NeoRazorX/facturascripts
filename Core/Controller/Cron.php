@@ -322,11 +322,9 @@ END;
         echo PHP_EOL . PHP_EOL . Tools::trans('updating-families') . ' ... ';
         ob_flush();
 
-        $producto = new Producto();
-
         // recorremos todas las familias para actualizar su contador de productos
-        foreach (Familia::all([], [], 0, 0) as $familia) {
-            $count = $producto->count([new DataBaseWhere('codfamilia', $familia->codfamilia)]);
+        foreach (Familia::all() as $familia) {
+            $count = Producto::count([new DataBaseWhere('codfamilia', $familia->codfamilia)]);
             if ($familia->numproductos == $count) {
                 continue;
             }
@@ -341,11 +339,9 @@ END;
         echo PHP_EOL . PHP_EOL . Tools::trans('updating-manufacturers') . ' ... ';
         ob_flush();
 
-        $producto = new Producto();
-
         // recorremos todos los fabricantes para actualizar su contador de productos
-        foreach (Fabricante::all([], [], 0, 0) as $fabricante) {
-            $count = $producto->count([new DataBaseWhere('codfabricante', $fabricante->codfabricante)]);
+        foreach (Fabricante::all() as $fabricante) {
+            $count = Producto::count([new DataBaseWhere('codfabricante', $fabricante->codfabricante)]);
             if ($fabricante->numproductos == $count) {
                 continue;
             }
@@ -365,7 +361,8 @@ END;
             new DataBaseWhere('pagado', false),
             new DataBaseWhere('vencimiento', Tools::date(), '<')
         ];
-        foreach (ReciboProveedor::all($where, [], 0, 0) as $recibo) {
+        $orderBy = ['vencimiento' => 'DESC'];
+        foreach (ReciboProveedor::all($where, $orderBy, 0, 500) as $recibo) {
             // si el código de factura ha cambiado, lo guardamos
             $factura = $recibo->getInvoice();
             if ($recibo->codigofactura != $factura->codigo) {
@@ -377,7 +374,7 @@ END;
         }
 
         // recorremos todos los recibos de venta impagados con fecha anterior a hoy
-        foreach (ReciboCliente::all($where, [], 0, 0) as $recibo) {
+        foreach (ReciboCliente::all($where, $orderBy, 0, 500) as $recibo) {
             // si el código de factura ha cambiado, lo guardamos
             $factura = $recibo->getInvoice();
             if ($recibo->codigofactura != $factura->codigo) {
