@@ -122,6 +122,7 @@ class Ejercicio extends ModelClass
     public function clearCache(): void
     {
         parent::clearCache();
+
         Ejercicios::clear();
     }
 
@@ -267,7 +268,6 @@ class Ejercicio extends ModelClass
 
     public function test(): bool
     {
-        // TODO: Change dates verify to $this->inRange() call
         $this->codejercicio = trim($this->codejercicio);
         $this->nombre = Tools::noHtml($this->nombre);
 
@@ -286,10 +286,12 @@ class Ejercicio extends ModelClass
                 ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
             );
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
-            $params = ['%endDate%' => $this->fechainicio, '%startDate%' => $this->fechafin];
-            Tools::log()->warning('start-date-later-end-date', $params);
+            Tools::log()->warning('start-date-later-end-date', [
+                '%endDate%' => $this->fechainicio,
+                '%startDate%' => $this->fechafin
+            ]);
         } elseif (strtotime($this->fechainicio) < 1) {
-            Tools::log()->warning('date-invalid');
+            Tools::log()->warning('invalid-date', ['%date%' => $this->fechainicio]);
         } else {
             return parent::test();
         }
