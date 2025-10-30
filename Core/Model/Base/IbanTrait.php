@@ -40,6 +40,10 @@ trait IbanTrait
      */
     public function getIban(bool $spaced = false, bool $censure = false): string
     {
+        if (empty($this->iban)) {
+            return '';
+        }
+
         $iban = str_replace(' ', '', $this->iban);
         $group_length = 4;
 
