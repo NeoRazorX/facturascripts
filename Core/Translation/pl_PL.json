@@ -1240,6 +1240,7 @@
     "plugin-disabled": "Wtyczka %pluginName% została pomyślnie wyłączona.",
     "plugin-enabled": "Wtyczka %pluginName% została pomyślnie włączona.",
     "plugin-file-too-big": "Ten serwer nie pozwala na przesyłanie plików większych niż %size% MB. Proszę zwiększyć maksymalny rozmiar przesyłanego pliku w PHP lub skopiować plik do folderu wtyczek.",
+    "plugin-folder-not-equal-name": "La carpeta del plugin (%folderName%) no se llama igual que el plugin (%pluginName%)",
     "plugin-installation-disabled": "Instalacja wtyczek jest wyłączona na tym serwerze.",
     "plugin-installed": "Plugin '%pluginName%' zainstalowany",
     "plugin-need-update": "Wtyczka %plugin% będzie wymagać aktualizacji, aby działała z nową wersją FacturaScripts.",

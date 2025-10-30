@@ -1240,6 +1240,7 @@
     "plugin-disabled": "Plugin desativado com sucesso.",
     "plugin-enabled": "Plugin ativado com sucesso.",
     "plugin-file-too-big": "Este servidor não permite fazer upload de arquivos com mais de %size% MB. Por favor, aumente o tamanho máximo de upload de arquivos no PHP ou copie o arquivo para a pasta Plugins.",
+    "plugin-folder-not-equal-name": "La carpeta del plugin (%folderName%) no se llama igual que el plugin (%pluginName%)",
     "plugin-installation-disabled": "A instalação de plugins está desativada neste servidor",
     "plugin-installed": "Plugin instalado",
     "plugin-need-update": "O plugin %plugin% precisará de atualização para funcionar com a nova versão do FacturaScripts.",

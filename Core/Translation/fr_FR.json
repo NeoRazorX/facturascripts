@@ -1240,6 +1240,7 @@
     "plugin-disabled": "Le plugin %pluginName% a été désactivé correctement.",
     "plugin-enabled": "Le plugin %pluginName% a été activé avec succès.",
     "plugin-file-too-big": "Ce serveur n'autorise pas le téléchargement de fichiers d'une taille supérieure à %size% Mo. Veuillez augmenter la taille maximale de téléchargement de fichier en PHP ou copier le fichier dans le dossier Plugins.",
+    "plugin-folder-not-equal-name": "La carpeta del plugin (%folderName%) no se llama igual que el plugin (%pluginName%)",
     "plugin-installation-disabled": "L'installation de modules est désactivée sur ce serveur",
     "plugin-installed": "Plugin '%pluginName%' installé",
     "plugin-need-update": "El plugin %plugin% necesitará actualización para funcionar con la nueva versión de FacturaScripts.",

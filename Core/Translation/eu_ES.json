@@ -1240,6 +1240,7 @@
     "plugin-disabled": "%pluginName% plugina ondo kendu da.",
     "plugin-enabled": "%pluginName% plugina ondo gaitu da.",
     "plugin-file-too-big": "Zerbitzari honek ez du fitxategiak %size% MB baino handiagoa igotzea baimentzen. Mesedez, PHPn fitxategien igoterako tamaina gehitu edo fitxategia kopiatu Plugins karpetan.",
+    "plugin-folder-not-equal-name": "La carpeta del plugin (%folderName%) no se llama igual que el plugin (%pluginName%)",
     "plugin-installation-disabled": "Plugin instalaketa desaktibatuta dago zerbitzari honetan",
     "plugin-installed": "'%pluginName%' plugina instalatuta",
     "plugin-need-update": "%plugin% pluginak eguneraketa bat beharko du FacturaScripts-en bertsio berriarekin funtzionatzeko.",
