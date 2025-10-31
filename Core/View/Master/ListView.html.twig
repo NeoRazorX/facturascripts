@@ -95,7 +95,7 @@
                 </div>
             </div>
             {# -- Filters -- #}
-            {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
+            {% set divFiltersStyle = (currentView.showFilters or currentView.settings.keepFiltersOpen) ? '' : 'display: none;' %}
             <div id="form{{ currentView.getViewName() }}Filters" class="row g-2 align-items-center border-bottom mb-3"
                  style="{{ divFiltersStyle }}">
                 {% for filterName, filter in currentView.filters %}
@@ -257,6 +257,12 @@
                 <i class="fa-solid fa-filter fa-fw"></i>
                 <span class="d-none d-lg-inline">{{ trans('filters') }}</span>
             </button>
+            {% if currentView.showFilters %}
+                <button type="button" class="btn btn-warning" onclick="listViewSetAction('{{ viewName }}', 'clear-filters');" title="{{ trans('clear-filters') }}">
+                    <i class="fa-solid fa-filter-circle-xmark fa-fw"></i>
+                    <span class="d-none d-lg-inline">{{ trans('clear-filters') }}</span>
+                </button>
+            {% endif %}
             {% if currentView.showFilters and currentView.settings.saveFilters %}
                 {# -- Save user filters -- #}
                 <button type="button" class="btn btn-success" data-bs-toggle="modal"

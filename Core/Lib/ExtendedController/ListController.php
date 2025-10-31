@@ -25,6 +25,7 @@ use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
+use FacturaScripts\Core\Lib\ListFilter\PeriodFilter;
 
 /**
  * Controller that lists the data in table mode
@@ -281,6 +282,26 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Clears all active filters for the current ListView.
+     */
+    protected function clearFiltersAction(): void
+    {
+        $listView = $this->listView($this->active);
+        foreach ($listView->filters as $filter) {
+            $this->request->request->remove('filter' . $filter->key);
+            if ($filter instanceof PeriodFilter) {
+                $this->request->request->remove('filterstart' . $filter->key);
+                $this->request->request->remove('filterend' . $filter->key);
+            }
+        }
+
+        $listView->clearActiveFilters();
+        $listView->clearCache($this->getClassName(), $this->user->nick);
+        $this->setSettings($this->active, 'keepFiltersOpen', true);
+        Tools::log()->notice('filters-cleared-correctly');
+    }
+    
+    /**             
      * Runs the controller actions after data read.
      *
      * @param string $action
@@ -317,6 +338,10 @@ abstract class ListController extends BaseController
                 $results = $this->autocompleteAction();
                 $this->response->json($results);
                 return false;
+
+            case 'clear-filters':
+                $this->clearFiltersAction();
+                break;
 
             case 'delete':
                 $this->deleteAction();

@@ -136,6 +136,11 @@ abstract class BaseFilter
         $this->value = Tools::noHtml($value);
     }
 
+    public function clear(): void
+    {
+        $this->value = null;
+    }
+
     /**
      * Set value to filter from form request
      *

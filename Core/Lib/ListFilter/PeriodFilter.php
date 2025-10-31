@@ -52,6 +52,13 @@ class PeriodFilter extends BaseFilter
         $this->endDate = new DateFilter(self::END_DATE_ID . $key, $field, 'until-date', '<=', $dateTime);
     }
 
+    public function clear(): void
+    {
+        parent::clear();
+        $this->startDate->clear();
+        $this->endDate->clear();
+    }
+
     public function getDataBaseWhere(array &$where): bool
     {
         // apply both

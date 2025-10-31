@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
 use FacturaScripts\Core\Model\User;
@@ -273,5 +274,19 @@ trait ListViewFiltersTrait
 
             return $filter1->ordernum > $filter2->ordernum ? 1 : -1;
         });
+    }
+
+    public function clearActiveFilters(): void
+    {
+        foreach ($this->filters as $filter) {
+            $filter->clear();
+        }
+        $this->showFilters = false;
+    }
+
+    public function clearCache(string $controllerName, string $nick): void
+    {
+        $cacheKey = 'filters-' . $controllerName . '-' . $this->getViewName() . '-' . $nick;
+        Cache::deleteMulti($cacheKey);
     }
 }
