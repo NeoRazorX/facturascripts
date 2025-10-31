@@ -146,6 +146,7 @@ class ListFacturaCliente extends ListBusinessDocument
         // añadimos botón de bloquear facturas
         $this->addButtonLockInvoice($viewName);
         $this->addButtonGenerateAccountingInvoices($viewName);
+        $this->addButtonPayInvoice($viewName);
 
         // añadimos botón para buscar huecos en las facturas, si el usuario tiene permiso
         if (false === $this->permissions->onlyOwnerData) {

@@ -83,6 +83,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         // botones
         $this->addButtonLockInvoice($viewName);
         $this->addButtonGenerateAccountingInvoices($viewName);
+        $this->addButtonPayInvoice($viewName);
 
         if ($this->user->admin) {
             $this->addButton($viewName, [
