@@ -107,6 +107,16 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterCheckbox($viewName, 'totalirpf', 'retention', 'totalirpf', '!=', 0);
         $this->addFilterCheckbox($viewName, 'totalsuplidos', 'supplied-amount', 'totalsuplidos', '!=', 0);
         $this->addFilterCheckbox($viewName, 'numdocs', 'has-attachments', 'numdocs', '!=', 0);
+
+        // añadimos el botón de pagar
+        $this->addButton($viewName, [
+            'action' => 'pay-invoice',
+            'color' => 'outline-success',
+            'confirm' => 'true',
+            'icon' => 'fa-solid fa-check',
+            'label' => 'paid',
+            'type' => 'action'
+        ]);
     }
 
     protected function createViewLines(string $viewName, string $modelName): void
@@ -268,11 +278,62 @@ abstract class ListBusinessDocument extends ListController
             case 'lock-invoice':
                 return $this->lockInvoiceAction($codes, $model, $allowUpdate, $this->dataBase);
 
+            case 'pay-invoice':
+                return $this->payInvoiceAction($codes, $model, $allowUpdate, $this->dataBase, $this->user->nick);
+
             case 'pay-receipt':
                 return $this->payReceiptAction($codes, $model, $allowUpdate, $this->dataBase, $this->user->nick);
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function payInvoiceAction($codes, $model, $allowUpdate, $dataBase, $nick): bool
+    {
+        if (false === $allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        }
+
+        if (false === is_array($codes) || empty($model)) {
+            Tools::log()->warning('no-selected-item');
+            return true;
+        }
+
+        if (false === $this->validateFormToken()) {
+            return true;
+        }
+
+        if(count($codes) === 0) {
+            Tools::log()->warning('no-selected-item');
+            return true;
+        }
+
+        $dataBase->beginTransaction();
+        foreach ($codes as $code) {
+            if (false === $model->loadFromCode($code)) {
+                Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            foreach ($model->getReceipts() as $receipt) {
+                if($receipt->pagado) {
+                    continue;
+                }
+                $receipt->nick = $nick;
+                $receipt->pagado = true;
+                if (false === $receipt->save()) {
+                    Tools::log()->error('record-save-error');
+                    $dataBase->rollback();
+                    return true;
+                }
+            }
+        }
+
+        $dataBase->commit();
+        Tools::log()->notice('record-updated-correctly');
+        $model->clear();
+        return true;
     }
 
     private function tableColToNumber(string $name): string
