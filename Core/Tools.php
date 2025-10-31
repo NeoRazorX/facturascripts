@@ -366,9 +366,9 @@ class Tools
      * @param string $folder La ruta de la carpeta cuyo tamaño se desea calcular.
      * @param array $exclude Lista de archivos y carpetas a excluir del cálculo. Por defecto, incluye `.DS_Store` y `.well-known`.
      *
-     * @return int El tamaño total de la carpeta y su contenido en bytes.
+     * @return int|float El tamaño total de la carpeta y su contenido en bytes.
      */
-    public static function folderSize(string $folder, array $exclude = ['.DS_Store', '.well-known']): int
+    public static function folderSize(string $folder, array $exclude = ['.DS_Store', '.well-known']): int|float
     {
         $size = 0;
         $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
