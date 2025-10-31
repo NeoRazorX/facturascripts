@@ -217,7 +217,7 @@ class WidgetRadio extends BaseWidget
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addCss($route . '/Dinamic/Assets/CSS/WidgetRadio.css', 2);
+        AssetManager::addCss($route . '/Dinamic/Assets/CSS/WidgetRadio.css?v=' . Tools::date(), 2);
     }
 
     protected function clearImagesPath(): void

@@ -180,7 +180,7 @@ class WidgetVariante extends WidgetText
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetVariante.js');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetVariante.js?v=' . Tools::date());
     }
 
     protected function renderFamilyFilter(): string

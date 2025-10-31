@@ -37,6 +37,6 @@ class WidgetColor extends BaseWidget
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/node_modules/@eastdesire/jscolor/jscolor.min.js');
+        AssetManager::addJs($route . '/node_modules/@eastdesire/jscolor/jscolor.min.js?v=' . Tools::date());
     }
 }

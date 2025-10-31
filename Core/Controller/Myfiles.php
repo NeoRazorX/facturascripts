@@ -91,6 +91,7 @@ class Myfiles implements ControllerInterface
         }
 
         header('Content-Type: ' . $this->getMime($this->filePath));
+        header('Cache-Control: public, max-age=31536000, immutable');
 
         // disable the buffer if enabled
         if (ob_get_contents()) {

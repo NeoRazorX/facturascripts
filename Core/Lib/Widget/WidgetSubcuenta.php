@@ -223,7 +223,7 @@ class WidgetSubcuenta extends WidgetText
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Core/Assets/JS/WidgetSubcuenta.js');
+        AssetManager::addJs($route . '/Core/Assets/JS/WidgetSubcuenta.js?v=' . Tools::date());
     }
 
     protected function renderModal(string $icon, string $label): string

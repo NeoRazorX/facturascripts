@@ -123,9 +123,9 @@ class WidgetAutocomplete extends WidgetSelect
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
-        AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
+        AssetManager::addCss($route . '/node_modules/jquery-ui-dist/jquery-ui.min.css?v=' . Tools::date(), 2);
+        AssetManager::addJs($route . '/node_modules/jquery-ui-dist/jquery-ui.min.js?v=' . Tools::date(), 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetAutocomplete.js?v=' . Tools::date());
     }
 
     /**
