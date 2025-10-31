@@ -150,11 +150,12 @@ class ListFacturaCliente extends ListBusinessDocument
 
         // añadimos botón para buscar huecos en las facturas, si el usuario tiene permiso
         if (false === $this->permissions->onlyOwnerData) {
-            $this->addButton($viewName, [
-                'action' => 'look-for-gaps',
-                'icon' => 'fa-solid fa-exclamation-triangle',
-                'label' => 'look-for-gaps'
-            ]);
+            $this->tab($viewName)
+                ->addButton([
+                    'action' => 'look-for-gaps',
+                    'icon' => 'fa-solid fa-exclamation-triangle',
+                    'label' => 'look-for-gaps'
+                ]);
         }
     }
 
