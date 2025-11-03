@@ -35,6 +35,11 @@
                     font-size: 2em;
                     font-weight: bold;
                 }
+                .email-logo {
+                    max-height: 120px;
+                    height: auto;
+                    width: auto;
+                }
                 .footer {
                     font-size: 10px;
                     color: black;
@@ -87,21 +92,37 @@
         <div id="body">
             {% block body %}
                 <table style="width:100%; background-color:#f6f9fc; color:black" >
-                    <tr>
-                        <td>&nbsp;&nbsp;&nbsp;</td>
-                        <td style="padding:10px">
-                            <h3 class="company" style="text-align:center; color:#3D67AC; font-size:2em; font-weight:bold">
+                    {% if logoId %}
+                        <tr>
+                            <td>&nbsp;&nbsp;&nbsp;</td>
+                            <td style="padding:10px; text-align:center">
                                 {% if company.web is empty %}
-                                    {{ company.nombrecorto }}
+                                    <img class="email-logo" src="{{ attachedFile(logoId).url('download-permanent') }}" alt="{{ company.nombrecorto }}"/>
                                 {% else %}
                                     <a href="{{ company.web }}" style="text-decoration:none">
-                                        {{ company.nombrecorto }}
+                                        <img class="email-logo" src="{{ attachedFile(logoId).url('download-permanent') }}" alt="{{ company.nombrecorto }}"/>
                                     </a>
                                 {% endif %}
-                            </h3>
-                        </td>
-                        <td>&nbsp;&nbsp;&nbsp;</td>
-                    </tr>
+                            </td>
+                            <td>&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>&nbsp;&nbsp;&nbsp;</td>
+                            <td style="padding:10px">
+                                <h3 class="company" style="text-align:center; color:#3D67AC; font-size:2em; font-weight:bold">
+                                    {% if company.web is empty %}
+                                        {{ company.nombrecorto }}
+                                    {% else %}
+                                        <a href="{{ company.web }}" style="text-decoration:none">
+                                            {{ company.nombrecorto }}
+                                        </a>
+                                    {% endif %}
+                                </h3>
+                            </td>
+                            <td>&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                    {% endif %}
                     <tr>
                         <td>&nbsp;&nbsp;&nbsp;</td>
                         <td class="container" style="background-color: #FFFFFF; border-radius: 5px; color: black; font-size: 1em; padding:10px">

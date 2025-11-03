@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,7 +34,7 @@
                     <p>{{ trans('group-or-split-p') }}</p>
                 </div>
             </div>
-            <div class="row">
+            <div class="row g-2">
                 <div class="col-lg-2 col-sm-6 mb-2">
                     <select name="codserie" class="form-select">
                         <option value="">{{ trans('serie') }}</option>
@@ -96,7 +96,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <a class="dropdown-item" href="#" onClick="return selectNone();">
-                                <i class="far fa-square fa-fw"></i> {{ trans('select-none') }}
+                                <i class="fa-regular fa-square fa-fw"></i> {{ trans('select-none') }}
                             </a>
                             <a class="dropdown-item" href="#" onClick="return selectAll();">
                                 <i class="fa-solid fa-square fa-fw"></i> {{ trans('select-all') }}
@@ -262,9 +262,9 @@
                 </div>
                 <div class="col-sm-3 text-end">
                     <p class="small mb-0">
-                        <i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
+                        <i class="fa-regular fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
                         &nbsp;
-                        <i class="far fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
+                        <i class="fa-regular fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
                         <br/>
                         {{ trans('net') }}: {{ money(doc.neto) }}
                         &nbsp;

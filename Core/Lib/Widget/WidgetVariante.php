@@ -26,6 +26,7 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\Familia;
 use FacturaScripts\Dinamic\Model\Join\VarianteProducto;
+use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Variante;
 
 class WidgetVariante extends WidgetText
@@ -147,6 +148,23 @@ class WidgetVariante extends WidgetText
                 $orderBy = ['referencia' => 'DESC'];
                 break;
 
+            case 'price-asc':
+                $orderBy = ['precio' => 'ASC'];
+                break;
+
+            case 'price-desc':
+                $orderBy = ['precio' => 'DESC'];
+                break;
+
+            case 'stock-asc':
+                $orderBy = ['stockfis' => 'ASC'];
+                break;
+
+            case 'stock-desc':
+                $orderBy = ['stockfis' => 'DESC'];
+                break;
+
+            case 'ref-asc':
             default:
                 $orderBy = ['referencia' => 'ASC'];
                 break;
@@ -162,7 +180,7 @@ class WidgetVariante extends WidgetText
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetVariante.js');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetVariante.js?v=' . Tools::date());
     }
 
     protected function renderFamilyFilter(): string
@@ -220,7 +238,12 @@ class WidgetVariante extends WidgetText
             . '</div>'
             . '</div>'
             . $this->renderVariantList()
-            . '<div class="modal-footer p-2 d-grid">' . $this->renderSelectNoneBtn() . '</div>'
+            . '<div class="modal-footer p-3">'
+            . '<div class="w-100 d-flex gap-2">'
+            . $this->renderNewProductBtn()
+            . $this->renderSelectNoneBtn()
+            . '</div>'
+            . '</div>'
             . '</div>'
             . '</div>'
             . '</div>';
@@ -237,15 +260,23 @@ class WidgetVariante extends WidgetText
             . '</div>';
     }
 
+    protected function renderNewProductBtn(): string
+    {
+        $producto = new Producto();
+        return '<a href="' . $producto->url('new') . '" target="_blank" class="btn btn-success">'
+            . '<i class="fa-solid fa-plus me-1"></i> ' . Tools::trans('new-product')
+            . '</a>';
+    }
+
     protected function renderSelectNoneBtn(): string
     {
         if ($this->required) {
             return '';
         }
 
-        return '<a href="#" class="btn btn-secondary" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'\');">'
-            . '<i class="fa-solid fa-times me-1"></i>' . Tools::trans('none')
-            . '</a>';
+        return '<button type="button" class="btn btn-secondary ms-auto" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'\'); return false;">'
+            . '<i class="fa-solid fa-times me-1"></i> ' . Tools::trans('none')
+            . '</button>';
     }
 
     protected function renderSortFilter(): string
@@ -253,6 +284,10 @@ class WidgetVariante extends WidgetText
         return '<select class="form-select mb-2" id="modal_' . $this->id . '_s" onchange="widgetVarianteSearch(\'' . $this->id . '\');">'
             . '<option value="ref-asc" selected>' . Tools::trans('sort-by-ref-asc') . '</option>'
             . '<option value="ref-desc">' . Tools::trans('sort-by-ref-desc') . '</option>'
+            . '<option value="price-asc">' . Tools::trans('sort-by-price-asc') . '</option>'
+            . '<option value="price-desc">' . Tools::trans('sort-by-price-desc') . '</option>'
+            . '<option value="stock-asc">' . Tools::trans('sort-by-stock-asc') . '</option>'
+            . '<option value="stock-desc">' . Tools::trans('sort-by-stock-desc') . '</option>'
             . '</select>';
     }
 
@@ -261,11 +296,33 @@ class WidgetVariante extends WidgetText
         $items = [];
         foreach ($this->variantes() as $item) {
             $match = $item->{$this->match};
+            $description = Tools::textBreak($item->description(), 300);
+
+            // Determinar la clase de color para el precio
+            $priceClass = '';
+            if ($item->precio < 0) {
+                $priceClass = ' text-danger';
+            } elseif ($item->precio == 0) {
+                $priceClass = ' text-warning';
+            }
+
+            // Determinar la clase de color para el stock
+            $stockClass = '';
+            if ($item->stockfis < 0) {
+                $stockClass = ' text-danger';
+            } elseif ($item->stockfis == 0) {
+                $stockClass = ' text-warning';
+            }
 
             $items[] = '<tr class="clickableRow" onclick="widgetVarianteSelect(\'' . $this->id . '\', \'' . $match . '\');">'
-                . '<td><b>' . $item->referencia . '</b> ' . $item->description() . '</td>'
-                . '<td class="text-end text-nowrap">' . Tools::money($item->precio) . '</td>'
-                . '<td class="text-end text-nowrap">' . Tools::number($item->stockfis, 0) . '</td>'
+                . '<td class="text-center">'
+                . '<a href="' . $item->url() . '" target="_blank" onclick="event.stopPropagation();">'
+                . '<i class="fa-solid fa-external-link-alt fa-fw"></i>'
+                . '</a>'
+                . '</td>'
+                . '<td><b>' . $item->referencia . '</b> ' . $description . '</td>'
+                . '<td class="text-end text-nowrap' . $priceClass . '">' . Tools::money($item->precio) . '</td>'
+                . '<td class="text-end text-nowrap' . $stockClass . '">' . Tools::number($item->stockfis, 0) . '</td>'
                 . '</tr>';
         }
 
@@ -273,6 +330,7 @@ class WidgetVariante extends WidgetText
             . '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
+            . '<th class="text-center"></th>'
             . '<th>' . Tools::trans('product') . '</th>'
             . '<th class="text-end">' . Tools::trans('price') . '</th>'
             . '<th class="text-end">' . Tools::trans('stock') . '</th>'

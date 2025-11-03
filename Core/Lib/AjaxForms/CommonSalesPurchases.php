@@ -160,17 +160,7 @@ trait CommonSalesPurchases
     protected static function codpago(BusinessDocument $model): string
     {
         $options = [];
-        foreach (FormasPago::all() as $row) {
-            // saltamos las formas de pago de otras empresas
-            if ($row->idempresa != $model->idempresa) {
-                continue;
-            }
-
-            // si la forma de pago no está activa o seleccionada, la saltamos
-            if ($row->codpago != $model->codpago && !$row->activa) {
-                continue;
-            }
-
+        foreach (static::getPaymentMethods($model) as $row) {
             $options[] = ($row->codpago === $model->codpago) ?
                 '<option value="' . $row->codpago . '" selected>' . $row->descripcion . '</option>' :
                 '<option value="' . $row->codpago . '">' . $row->descripcion . '</option>';
@@ -358,6 +348,26 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
+    protected static function getPaymentMethods(BusinessDocument $model): array
+    {
+        $data = [];
+        foreach (FormasPago::all() as $row) {
+            // saltamos las formas de pago de otras empresas
+            if ($row->idempresa != $model->idempresa) {
+                continue;
+            }
+
+            // si la forma de pago no está activa o seleccionada, la saltamos
+            if ($row->codpago != $model->codpago && !$row->activa) {
+                continue;
+            }
+
+            $data[] = $row;
+        }
+
+        return $data;
+    }
+
     protected static function hora(BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="hora" required' : 'disabled';
@@ -541,7 +551,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function paid(BusinessDocument $model, string $jsName): string
+    protected static function paid(BusinessDocument $model): string
     {
         if (empty($model->id()) || false === method_exists($model, 'getReceipts')) {
             return '';
@@ -552,20 +562,63 @@ trait CommonSalesPurchases
                 . '<div class="mb-2">'
                 . '<button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
                 . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::trans('paid') . '</button>'
-                . '<div class="dropdown-menu"><a class="dropdown-item text-danger" href="#" onclick="return ' . $jsName . '(\'save-paid\', \'0\');">'
+                . '<div class="dropdown-menu dropdown-menu-end">'
+                . '<a class="dropdown-item text-danger" href="#" onclick="prepareForm(\'save-paid\', {\'paid-status\': 0});">'
                 . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::trans('unpaid') . '</a></div>'
                 . '</div>'
                 . '</div>';
         }
 
-        return '<div class="col-sm-auto">'
+        $html = '<div class="col-sm-auto">'
             . '<div class="mb-2">'
             . '<button class="btn btn-spin-action btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
             . '<i class="fa-solid fa-times fa-fw"></i> ' . Tools::trans('unpaid') . '</button>'
-            . '<div class="dropdown-menu"><a class="dropdown-item text-success" href="#" onclick="showModalPaymentConditions(' . $jsName . ')">'
-            . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::trans('paid') . '</a></div>'
+            . '<div class="dropdown-menu dropdown-menu-end">'
+            . '<button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#modalPaymentConditions">'
+            . '<i class="fa-solid fa-check-square fa-fw"></i> ' . Tools::trans('paid') . '</button>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            // modal
+            . '<div class="modal fade" id="modalPaymentConditions" tabindex="-1" aria-hidden="true">'
+            . '<div class="modal-dialog modal-dialog-centered">'
+            . '<div class="modal-content">'
+            . '<div class="modal-body">'
+            . '<div class="row g-2">'
+            . '<div class="col-12 mb-2">'
+            . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . Tools::trans('payment-method') . '</a>'
+            . '<select id="paid-payment-modal" class="form-select" required>';
+
+        foreach (static::getPaymentMethods($model) as $row) {
+            $html .= '<option value="' . $row->codpago . '"' . ($row->codpago === $model->codpago ? ' selected' : '') . '>' . $row->descripcion . '</option>';
+        }
+
+        $html .= '</select>'
+            . '</div>'
+            . '<div class="col-12 mb-2">'
+            . Tools::trans('date')
+            . '<input type="date" id="paid-date-modal" value="' . date('Y-m-d') . '" class="form-control" required/>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer">'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+            . Tools::trans('close')
+            . '</button>'
+            . '<button type="button" class="btn btn-primary btn-spin-action" onclick="(function(){
+    let pago = document.getElementById(\'paid-payment-modal\') ? document.getElementById(\'paid-payment-modal\').value : \'\';
+    let fecha = document.getElementById(\'paid-date-modal\') ? document.getElementById(\'paid-date-modal\').value : \'\';
+    prepareForm(\'save-paid\', {\'paid-payment-modal\': pago, \'paid-date-modal\': fecha, \'paid-status\': 1});
+})()">'
+            . Tools::trans('paid')
+            . '</button>'
+            . '</div>'
+            . '</div>'
             . '</div>'
             . '</div>';
+        // fin modal
+
+        return $html;
     }
 
     protected static function parents(TransformerDocument $model): string

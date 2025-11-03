@@ -75,7 +75,7 @@
     <column>
         <name>personafisica</name>
         <type>boolean</type>
-        <default>true</default>
+        <default>false</default>
     </column>
     <column>
         <name>provincia</name>

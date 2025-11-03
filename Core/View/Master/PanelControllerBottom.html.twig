@@ -1,21 +1,21 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
 {% extends "Master/PanelController.html.twig" %}
 
@@ -23,7 +23,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                {# -- First view -- #}
+                {# -- First tab -- #}
                 {% set firstView = fsc.views | first %}
                 {% set firstViewName = firstView.getViewName() %}
                 {% do fsc.setCurrentView(firstViewName) %}
@@ -31,18 +31,22 @@
             </div>
         </div>
         {% if fsc.views | length == 2 %}
-        <div class="row">
-            <div class="col">
-                {% set secondView = fsc.views | slice(1, 1) | first %}
-                <h3 class="h4 mb-2">
-                    <i class="{{ secondView.icon }} me-2" aria-hidden="true"></i> {{ secondView.title }}
-                    {% if secondView.count > 0 %}
-                        <span class="badge bg-secondary">{{ number(secondView.count, 0) }}</span>
-                    {% endif %}
-                </h3>
-            </div>
-        </div>
+            {# -- Second tab -- #}
+            {% set secondView = fsc.views | slice(1, 1) | first %}
+            {% if secondView.settings.active %}
+                <div class="row">
+                    <div class="col">
+                        <h3 class="h4 mb-2">
+                            <i class="{{ secondView.icon }} me-2" aria-hidden="true"></i> {{ secondView.title }}
+                            {% if secondView.count > 0 %}
+                                <span class="badge bg-secondary">{{ number(secondView.count, 0) }}</span>
+                            {% endif %}
+                        </h3>
+                    </div>
+                </div>
+            {% endif %}
         {% elseif fsc.views | length > 2 %}
+            {# -- More than two tabs: show pills -- #}
             <div class="row">
                 <div class="col">
                     <div class="nav-pills-wrapper d-print-none">
@@ -53,9 +57,11 @@
                                     {% set contActiveTab = contActiveTab + 1 %}
                                     <li class="nav-item">
                                         {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and contActiveTab == 1) ? ' active' : '' %}
-                                        <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-bs-toggle="tab" role="tab" aria-controls="{{ viewName }}">
-                                            <i class="{{ view.icon }}" aria-hidden="true"></i>
-                                            <span>&nbsp;{{ view.title }}</span>
+                                        <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}"
+                                           data-bs-toggle="tab" role="tab" aria-controls="{{ viewName }}">
+                                            <i class="{{ view.icon }} fa-fw me-1 d-none d-sm-inline"
+                                               aria-hidden="true"></i>
+                                            <span>{{ view.title }}</span>
                                             {% if view.count > 0 %}
                                                 <span class="badge bg-secondary">{{ number(view.count, 0) }}</span>
                                             {% endif %}
@@ -158,7 +164,7 @@
 
                         // Centrar la pestaña activa si es posible
                         var targetScroll = pillLeft + scrollLeft - (wrapperWidth / 2) + (pillWidth / 2);
-                        wrapper.animate({ scrollLeft: targetScroll }, 300);
+                        wrapper.animate({scrollLeft: targetScroll}, 300);
                     }
                 }
             }

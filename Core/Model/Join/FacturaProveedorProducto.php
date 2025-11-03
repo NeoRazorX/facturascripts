@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,9 +28,13 @@ use FacturaScripts\Core\Model\Base\JoinModel;
  */
 class FacturaProveedorProducto extends JoinModel
 {
-
     const DOC_TABLE = 'facturasprov';
     const MAIN_TABLE = 'lineasfacturasprov';
+
+    public function url(string $type = 'auto', string $list = 'List'): string
+    {
+        return 'ReportProducto';
+    }
 
     protected function getFields(): array
     {
@@ -51,7 +55,9 @@ class FacturaProveedorProducto extends JoinModel
 
     protected function getGroupFields(): string
     {
-        return static::DOC_TABLE . '.codalmacen, ' . static::MAIN_TABLE . '.idproducto, ' . static::MAIN_TABLE . '.referencia';
+        return static::DOC_TABLE . '.codalmacen, ' . static::MAIN_TABLE . '.idproducto, '
+            . static::MAIN_TABLE . '.referencia, productos.codfabricante, productos.codfamilia, variantes.coste, '
+            . 'productos.descripcion, variantes.precio, variantes.stockfis';
     }
 
     protected function getSQLFrom(): string

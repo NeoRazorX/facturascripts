@@ -137,13 +137,13 @@ class ColumnItem extends VisualItem
      */
     public function getColumnClasses(): string
     {
-        // para los checkbox forzamos el col-sm-auto
-        if ($this->widget->getType() === 'checkbox') {
-            return $this->css('col-sm-auto');
-        }
-
         // si no tiene numcolumns configurado, usamos comportamiento adaptativo
         if ($this->numcolumns <= 0) {
+            // para los checkbox forzamos el col-sm-auto
+            if ($this->widget->getType() === 'checkbox') {
+                return $this->css('col-sm-auto');
+            }
+
             // para móviles siempre 12 columnas, para tablets y desktop se adapta
             return $this->css('col-12 col-sm-6 col-md-4 col-xl');
         }

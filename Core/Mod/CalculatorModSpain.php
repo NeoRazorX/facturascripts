@@ -373,7 +373,7 @@ class CalculatorModSpain implements CalculatorModInterface
      * Válida que cada línea tenga una exención fiscalmente coherente según el global y la propia línea.
      * Retorna falsé si alguna línea no cumple la lógica fiscal.
      */
-    private function validateLineExemptions(BusinessDocument $doc, BusinessDocumentLine $line, string $subjectFiscalID, Contacto $addressShipping, ?string $globalEx): bool
+    private function validateLineExemptions(BusinessDocument $doc, BusinessDocumentLine $line, ?string $subjectFiscalID, Contacto $addressShipping, ?string $globalEx): bool
     {
         // obtenemos y traducimos excepciones
         $exceptions = RegimenIVA::allExceptions();

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,16 +34,17 @@ class ConfigEmail extends PanelController
 {
     public function getPageData(): array
     {
-        $pageData = parent::getPageData();
-        $pageData['menu'] = 'admin';
-        $pageData['title'] = 'email';
-        $pageData['icon'] = 'fa-solid fa-envelope';
-        return $pageData;
+        $data = parent::getPageData();
+        $data['menu'] = 'admin';
+        $data['title'] = 'email';
+        $data['icon'] = 'fa-solid fa-envelope';
+        return $data;
     }
 
-    protected function createViews()
+    protected function createViews(): void
     {
         $this->setTemplate('EditSettings');
+
         $this->createViewsEmail();
         $this->createViewsEmailSent();
         $this->createViewsEmailNotification();
@@ -51,10 +52,7 @@ class ConfigEmail extends PanelController
 
     protected function createViewsEmail(string $viewName = 'ConfigEmail'): void
     {
-        $this->addEditView($viewName, 'Settings', 'email', 'fa-solid fa-envelope');
-
-        // desactivamos los botones nuevo y eliminar
-        $this->tab($viewName)
+        $this->addEditView($viewName, 'Settings', 'email', 'fa-solid fa-envelope')
             ->setSettings('btnNew', false)
             ->setSettings('btnDelete', false);
     }
@@ -64,13 +62,9 @@ class ConfigEmail extends PanelController
         $this->addListView($viewName, 'EmailNotification', 'notifications', 'fa-solid fa-bell')
             ->addSearchFields(['body', 'name', 'subject'])
             ->addOrderBy(['date'], 'date')
-            ->addOrderBy(['name'], 'name', 1);
-
-        // filtros
-        $this->listView($viewName)->addFilterCheckbox('enabled');
-
-        // desactivamos el botón nuevo
-        $this->tab($viewName)->setSettings('btnNew', false);
+            ->addOrderBy(['name'], 'name', 1)
+            ->addFilterCheckbox('enabled')
+            ->setSettings('btnNew', false);
 
         // añadimos los botones de activar y desactivar
         $this->addButton($viewName, [
@@ -83,7 +77,7 @@ class ConfigEmail extends PanelController
         $this->addButton($viewName, [
             'action' => 'disable-notification',
             'color' => 'warning',
-            'icon' => 'far fa-square',
+            'icon' => 'fa-regular fa-square',
             'label' => 'disable'
         ]);
     }
@@ -92,22 +86,35 @@ class ConfigEmail extends PanelController
     {
         $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fa-solid fa-paper-plane')
             ->addSearchFields(['addressee', 'body', 'subject'])
-            ->addOrderBy(['date'], 'date', 2);
+            ->addOrderBy(['date'], 'date', 2)
+            ->setSettings('btnNew', false);
+
+        $users = $this->codeModel->all('users', 'nick', 'nick');
+        $from = $this->codeModel->all('emails_sent', 'email_from', 'email_from');
 
         // filtros
-        $users = $this->codeModel->all('users', 'nick', 'nick');
-        $this->listView($viewName)->addFilterSelect('nick', 'user', 'nick', $users);
-
-        $from = $this->codeModel->all('emails_sent', 'email_from', 'email_from');
-        $this->listView($viewName)->addFilterSelect('from', 'from', 'email_from', $from);
-
         $this->listView($viewName)
+            ->addFilterSelect('nick', 'user', 'nick', $users)
+            ->addFilterSelect('from', 'from', 'email_from', $from)
             ->addFilterPeriod('date', 'period', 'date', true)
             ->addFilterCheckbox('opened')
             ->addFilterCheckbox('attachment', 'has-attachments');
+    }
 
-        // desactivamos el botón nuevo
-        $this->tab($viewName)->setSettings('btnNew', false);
+    protected function editAction(): bool
+    {
+        // Asegúrate de que la acción de edición es válida
+        if (false === parent::editAction()) {
+            return false;
+        }
+
+        // comprobar si hay logo y la instalación es offline
+        $idLogo = Tools::settings('email', 'idlogo');
+        if (!empty($idLogo) && $this->isOfflineInstallation()) {
+            Tools::log()->warning('email-logo-offline-warning');
+        }
+
+        return true;
     }
 
     protected function enableNotificationAction(bool $value): void
@@ -126,7 +133,7 @@ class ConfigEmail extends PanelController
 
         foreach ($codes as $code) {
             $notification = new EmailNotification();
-            if (false === $notification->loadFromCode($code)) {
+            if (false === $notification->load($code)) {
                 continue;
             }
 
@@ -150,6 +157,8 @@ class ConfigEmail extends PanelController
         if ($action === 'testmail') {
             $this->testMailAction();
         }
+
+        parent::execAfterAction($action);
     }
 
     /**
@@ -169,6 +178,22 @@ class ConfigEmail extends PanelController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    private function isOfflineInstallation(): bool
+    {
+        $siteUrl = Tools::siteUrl();
+        $host = (string)parse_url($siteUrl, PHP_URL_HOST);
+
+        // si termina en localhost, local o empieza con 127
+        if (str_ends_with($host, 'localhost')
+            || str_ends_with($host, 'local')
+            || str_starts_with($host, '127.')
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function loadData($viewName, $view)
@@ -198,11 +223,11 @@ class ConfigEmail extends PanelController
         }
     }
 
-    protected function loadMailerValues(string $viewName)
+    protected function loadMailerValues(string $viewName): void
     {
         $column = $this->views[$viewName]->columnForName('mailer');
         if ($column && $column->widget->getType() === 'select') {
-            $column->widget->setValuesFromArray(NewMail::getMailer(), true, false);
+            $column->widget->setValuesFromArrayKeys(NewMail::getMailer());
         }
     }
 

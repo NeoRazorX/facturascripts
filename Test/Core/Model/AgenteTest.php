@@ -29,6 +29,23 @@ final class AgenteTest extends TestCase
 {
     use LogErrorsTrait;
 
+    public function testClear(): void
+    {
+        $agent = new Agente();
+        $this->assertNull($agent->cargo);
+        $this->assertNull($agent->cifnif);
+        $this->assertNull($agent->codagente);
+        $this->assertFalse($agent->debaja);
+        $this->assertNull($agent->email);
+        $this->assertNull($agent->fechabaja);
+        $this->assertNull($agent->idcontacto);
+        $this->assertNull($agent->idproducto);
+        $this->assertNull($agent->nombre);
+        $this->assertNull($agent->observaciones);
+        $this->assertNull($agent->telefono1);
+        $this->assertNull($agent->telefono2);
+    }
+
     public function testCreate(): void
     {
         $agent = new Agente();

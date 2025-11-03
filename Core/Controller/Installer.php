@@ -90,7 +90,7 @@ class Installer implements ControllerInterface
         $this->db_port = (int)$this->request->input('fs_db_port', 3306);
         $this->db_type = $this->request->input('fs_db_type', 'mysql');
         $this->db_user = trim($this->request->input('fs_db_user', 'root'));
-        $this->initial_user = $this->request->input('fs_initial_user', '');
+        $this->initial_user = trim($this->request->input('fs_initial_user', ''));
         $this->initial_pass = $this->request->input('fs_initial_pass', '');
 
         $installed = $this->searchErrors() &&
@@ -303,6 +303,11 @@ class Installer implements ControllerInterface
 
         if (false === is_writable(FS_FOLDER)) {
             Tools::log()->critical('folder-not-writable');
+            $errors = true;
+        }
+
+        if (!empty($this->initial_user) && 1 !== preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->initial_user)) {
+            Tools::log()->warning('invalid-admin-username', ['%min%' => '3', '%max%' => '50']);
             $errors = true;
         }
 

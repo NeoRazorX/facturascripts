@@ -108,7 +108,7 @@ class WidgetLibrary extends BaseWidget
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetLibrary.js');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetLibrary.js?v=' . Tools::date());
     }
 
     /**

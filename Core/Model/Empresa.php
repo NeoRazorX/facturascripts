@@ -112,7 +112,6 @@ class Empresa extends ModelClass
         parent::clear();
         $this->codpais = Tools::settings('default', 'codpais');
         $this->fechaalta = Tools::date();
-        $this->personafisica = false;
         $this->regimeniva = RegimenIVA::defaultValue();
         $this->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
     }
@@ -120,6 +119,7 @@ class Empresa extends ModelClass
     public function clearCache(): void
     {
         parent::clearCache();
+
         Empresas::clear();
     }
 

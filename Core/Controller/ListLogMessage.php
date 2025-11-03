@@ -84,7 +84,7 @@ class ListLogMessage extends ListController
         $this->addButton($viewName, [
             'action' => 'disable-cronjob',
             'color' => 'warning',
-            'icon' => 'far fa-square',
+            'icon' => 'fa-regular fa-square',
             'label' => 'disable'
         ]);
     }

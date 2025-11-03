@@ -38,14 +38,14 @@
                     <div class="card shadow mb-3">
                         <div class="card-body">
                             <h1 class="h3 mb-1">
-                                <i class="{{ fsc.getPageData().icon }} mr-2"></i> {{ fsc.title }}
+                                <i class="{{ fsc.getPageData().icon }} me-2"></i> {{ fsc.title }}
                             </h1>
                             <p class="text-muted mb-4">{{ trans('report-taxes-p') }}.</p>
                             <div class="row g-2">
                                 {% if fsc.empresa.count() > 1 %}
-                                    <div class="col-sm mb-3">
+                                    <div class="col-sm-6 col-md-4">
                                         {{ trans('company') }}
-                                        <select name="idempresa" class="form-select">
+                                        <select name="idempresa" class="form-select mb-3">
                                             {% for empresa in fsc.empresa.all() %}
                                                 {% if empresa.idempresa == fsc.idempresa %}
                                                     <option value="{{ empresa.idempresa }}" selected>
@@ -62,9 +62,9 @@
                                 {% else %}
                                     <input type="hidden" name="idempresa" value="{{ fsc.idempresa }}"/>
                                 {% endif %}
-                                <div class="col-sm mb-3">
+                                <div class="col-sm-6 col-md-4">
                                     {{ trans('serie') }}
-                                    <select name="codserie" class="form-select">
+                                    <select name="codserie" class="form-select mb-3">
                                         <option value="">{{ trans('all') }}</option>
                                         <option value="">------</option>
                                         {% for serie in fsc.serie.all({}, {'descripcion': 'ASC'}, 0, 0) %}
@@ -78,9 +78,9 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-sm mb-3">
+                                <div class="col-sm-6 col-md-4">
                                     {{ trans('currency') }}
-                                    <select name="coddivisa" class="form-select">
+                                    <select name="coddivisa" class="form-select mb-3">
                                         {% for divisa in fsc.divisa.all({}, {'descripcion': 'ASC'}, 0, 0) %}
                                             {% if divisa.coddivisa == fsc.coddivisa %}
                                                 <option value="{{ divisa.coddivisa }}" selected>
@@ -92,9 +92,9 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-sm mb-3">
+                                <div class="col-sm-6 col-md-4">
                                     {{ trans('country') }}
-                                    <select name="codpais" class="form-select">
+                                    <select name="codpais" class="form-select mb-3">
                                         <option value="">{{ trans('all') }}</option>
                                         <option value="">------</option>
                                         {% for pais in fsc.pais.all({}, {'nombre': 'ASC'}, 0, 0) %}
@@ -108,11 +108,9 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-sm-3 mb-3">
+                                <div class="col-sm-6 col-md-3">
                                     {{ trans('date') }}
-                                    <select name="type-date" class="form-select">
+                                    <select name="type-date" class="form-select mb-3">
                                         <option value="create" {{ fsc.typeDate == 'create' ? 'selected': '' }}>
                                             {{ trans('creation-date') }}
                                         </option>
@@ -121,19 +119,19 @@
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-sm-3 mb-3">
+                                <div class="col-sm-6 col-md-3">
                                     {{ trans('from-date') }}
-                                    <input type="date" name="datefrom" value="{{ fsc.datefrom }}" class="form-control"
-                                           required/>
+                                    <input type="date" name="datefrom" value="{{ fsc.datefrom }}"
+                                           class="form-control mb-3" required/>
                                 </div>
-                                <div class="col-sm-3 mb-3">
+                                <div class="col-sm-6 col-md-3">
                                     {{ trans('until-date') }}
-                                    <input type="date" name="dateto" value="{{ fsc.dateto }}" class="form-control"
+                                    <input type="date" name="dateto" value="{{ fsc.dateto }}" class="form-control mb-3"
                                            required/>
                                 </div>
-                                <div class="col-sm-3 mb-3">
+                                <div class="col-sm-6 col-md-3">
                                     {{ trans('format') }}
-                                    <select name="format" class="form-select">
+                                    <select name="format" class="form-select mb-3">
                                         <option value="PDF">PDF</option>
                                         <option value="CSV">CSV</option>
                                         <option value="XLS">Excel</option>
@@ -144,7 +142,7 @@
                                 <div class="col-12 h5 border-bottom pt-4 pb-2">
                                     <i class="fa-solid fa-list-check mr-1"></i> {{ trans('columns') }}
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_serie"
                                                id="column_serie" checked>
@@ -153,7 +151,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_code"
                                                id="column_code" checked>
@@ -162,7 +160,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_number2"
                                                id="column_number2" checked>
@@ -171,7 +169,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1"
                                                name="column_numsupplier"
@@ -181,7 +179,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_date"
                                                id="column_date" checked>
@@ -190,7 +188,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_name"
                                                id="column_name" checked>
@@ -199,7 +197,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_cifnif"
                                                id="column_cifnif" checked>
@@ -208,7 +206,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_country"
                                                id="column_country" checked>
@@ -217,7 +215,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_net"
                                                id="column_net" checked>
@@ -226,7 +224,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_pct_tax"
                                                id="pct_tax" checked>
@@ -235,7 +233,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_tax"
                                                id="column_tax" checked>
@@ -244,7 +242,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1"
                                                name="column_pct_surcharge"
@@ -254,7 +252,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1"
                                                name="column_surcharge" id="column_surcharge" checked>
@@ -263,7 +261,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_pct_irpf"
                                                id="column_pct_irpf" checked>
@@ -272,7 +270,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1"
                                                name="column_irpf" id="column_irpf" checked>
@@ -281,7 +279,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1"
                                                name="column_supplied_amount"
@@ -291,7 +289,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-4 col-md-3 col-lg-2">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" name="column_total"
                                                id="column_total" checked>

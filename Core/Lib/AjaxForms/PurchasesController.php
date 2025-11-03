@@ -421,13 +421,17 @@ abstract class PurchasesController extends PanelController
 
         // guardamos el documento
         if ($this->getModel()->editable && false === $this->saveDocAction()) {
+            $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
 
-        // si la factura es de 0 €, la marcamos como pagada
+        // cargamos el modelo actualizado y los datos del form
         $model = $this->getModel();
+        $formData = json_decode($this->request->input('data'), true);
+
+        // si la factura es de 0 €, la marcamos como pagada
         if (empty($model->total) && $model->hasColumn('pagada')) {
-            $model->pagada = (bool)$this->request->input('selectedLine');
+            $model->pagada = (bool)$formData['paid-status'];
             $model->save();
             $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
             return false;
@@ -447,10 +451,10 @@ abstract class PurchasesController extends PanelController
             $receipt->nick = $this->user->nick;
             // si no está pagado, actualizamos fechapago y codpago
             if (false == $receipt->pagado) {
-                $receipt->fechapago = $formData['fechapagorecibo'] ?? Tools::date();
-                $receipt->codpago = $model->codpago;
+                $receipt->fechapago = $formData['paid-date-modal'] ?? Tools::date();
+                $receipt->codpago = $formData['paid-payment-modal'] ?? $model->codpago;
             }
-            $receipt->pagado = (bool)$this->request->input('selectedLine');
+            $receipt->pagado = (bool)$formData['paid-status'];
             if (false === $receipt->save()) {
                 $this->sendJsonWithLogs(['ok' => false]);
                 return false;

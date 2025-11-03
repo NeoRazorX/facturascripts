@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,45 +20,54 @@
 {% extends "Master/MenuBgTemplate.html.twig" %}
 
 {% block body %}
-    {% for section in fsc.sections %}
-        <script>
-            $(document).ready(function () {
-                searchOnSection("{{ section | raw }}");
-            });
-        </script>
-    {% endfor %}
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-6">
+        <div class="row justify-content-center">
+            <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
+                <div class="text-center mb-4 {% if fsc.query == '' %}mt-4 mt-xl-5 pt-xl-5{% else %}mt-4{% endif %}">
+                    <h1 class="mb-2 {% if fsc.query != '' %}h3{% endif %}">
+                        <i class="fa-solid fa-search fa-fw text-primary"></i>
+                        {{ trans('mega-search') }}
+                    </h1>
+                    <p class="text-muted">{{ trans('search-in-all-pages') }}</p>
+                </div>
                 <form action="{{ fsc.url() }}" method="post" class="form" onsubmit="animateSpinner('add')">
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <input type="text" name="query" value="{{ fsc.query }}" class="form-control form-control-lg"
-                                   autocomplete="off" autofocus=""/>
+                    <div class="mb-4">
+                        <div class="input-group input-group-lg shadow-sm">
+                            <input type="text" name="query" value="{{ fsc.query }}" class="form-control"
+                                   placeholder="{{ trans('search') }}..." autocomplete="off" autofocus/>
                             <button type="submit" class="btn btn-spin-action btn-primary">
-                                    <i class="fa-solid fa-search" aria-hidden="true"></i>
-                                </button>
+                                <i class="fa-solid fa-search" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-3 col-xl-2">
-                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+        {% if fsc.query != '' and fsc.results is empty %}
+            <div class="row justify-content-center mt-3" id="no-data-msg">
+                <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
+                    <div class="alert alert-info text-center">
+                        <i class="fa-solid fa-info-circle fa-fw"></i>
+                        {{ trans('no-results-found') }}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row g-2">
+            <div class="col-12 col-lg-auto mt-lg-2">
+                <div class="nav nav-pills flex-row flex-lg-column overflow-x-auto" id="v-pills-tab" role="tablist" style="white-space: nowrap;">
                     {% for key, result in fsc.results %}
-                        {% set active = (loop.index == 1) ? 'nav-link active' : 'nav-link' %}
+                        {% set active = (loop.index == 1) ? 'nav-link active text-nowrap' : 'nav-link text-nowrap' %}
                         <a class="{{ active }}" data-bs-toggle="pill" href="#v-pills-{{ key }}" role="tab"
                            aria-controls="v-pills-{{ key }}" aria-expanded="true">
-                            <span class="badge bg-secondary float-end">{{ result.results | length }}</span>
-                            <i class="{{ result.icon }} fa-fw"></i>
-                            {{ trans(result.title) }}
+                            <i class="{{ result.icon }} fa-fw me-1 d-none d-lg-inline-block"></i>
+                            <span class="d-inline d-lg-inline">{{ trans(result.title) }}</span>
+                            <span class="badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end">{{ result.results | length }}</span>
                         </a>
                     {% endfor %}
                 </div>
             </div>
-            <div class="col-sm-9 col-xl-10">
+            <div class="col-12 col-lg" style="min-width: 0;">
                 <div class="tab-content" id="v-pills-tabContent">
                     {% for key, result in fsc.results %}
                         {% set active = (loop.index == 1) ? ' show active' : '' %}
@@ -108,3 +117,15 @@
         </table>
     </div>
 {% endmacro %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('Core/Assets/JS/MegaSearch.js') }}?v=2"></script>
+    {% if fsc.sections %}
+        <script>
+            $(document).ready(function () {
+                searchOnSections({{ fsc.sections | json_encode | raw }});
+            });
+        </script>
+    {% endif %}
+{% endblock %}

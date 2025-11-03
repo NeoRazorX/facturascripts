@@ -59,7 +59,12 @@
                     <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" fieldfilter="idempresa"/>
                 </widget>
             </column>
-            <column name="agent" titleurl="ListAgente" level="99" order="140">
+            <column name="serie" titleurl="ListSerie" level="99" order="140">
+                <widget type="select" fieldname="codserie" onclick="EditSerie">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"/>
+                </widget>
+            </column>
+            <column name="agent" titleurl="ListAgente" level="99" order="150">
                 <widget type="select" fieldname="codagente" icon="fa-solid fa-user-tie" onclick="EditAgente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"/>
                 </widget>

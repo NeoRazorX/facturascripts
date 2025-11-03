@@ -83,6 +83,12 @@ class BusinessDocumentCode
 
             // use old pattern for the new sequence
             $patron = $seq->patron;
+
+            // replace year by {ANYO} if found
+            if (preg_match('/20\\d{2}/', $patron)) {
+                $patron = preg_replace('/20\\d{2}/', '{ANYO}', $patron);
+            }
+
             $long = $seq->longnumero;
         }
 

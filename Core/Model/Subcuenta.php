@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
 use FacturaScripts\Dinamic\Model\Partida as DinPartida;
 
 /**
- * Detail level of an accounting plan. It is related to a single account.
+ * Nivel de detalle de un plan contable. Se relaciona con una única cuenta.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
@@ -40,35 +40,35 @@ class Subcuenta extends ModelClass
     use ExerciseRelationTrait;
 
     /**
-     * Account code.
+     * Código de la cuenta.
      *
      * @var string
      */
     public $codcuenta;
 
     /**
-     * Identifier of the special account.
+     * Identificador de la cuenta especial.
      *
      * @var string
      */
     public $codcuentaesp;
 
     /**
-     * Subaccount code.
+     * Código de la subcuenta.
      *
      * @var string
      */
     public $codsubcuenta;
 
     /**
-     * Amount of the debit.
+     * Importe del debe.
      *
      * @var float|int
      */
     public $debe;
 
     /**
-     * Description of the subaccount.
+     * Descripción de la subcuenta.
      *
      * @var string
      */
@@ -80,28 +80,28 @@ class Subcuenta extends ModelClass
     private $disable_additional_test = false;
 
     /**
-     * Amount of credit.
+     * Importe del haber.
      *
      * @var float|int
      */
     public $haber;
 
     /**
-     * Account identifier.
+     * Identificador de la cuenta.
      *
      * @var int
      */
     public $idcuenta;
 
     /**
-     * Primary key.
+     * Clave primaria.
      *
      * @var int
      */
     public $idsubcuenta;
 
     /**
-     * Balance amount.
+     * Importe del saldo.
      *
      * @var float|int
      */
@@ -131,7 +131,7 @@ class Subcuenta extends ModelClass
     }
 
     /**
-     * Returns the parent account.
+     * Devuelve la cuenta padre.
      *
      * @return DinCuenta
      */
@@ -139,12 +139,12 @@ class Subcuenta extends ModelClass
     {
         $account = new DinCuenta();
 
-        // find account by id
+        // buscar cuenta por identificador
         if (!empty($this->idcuenta) && $account->load($this->idcuenta) && $account->codejercicio === $this->codejercicio) {
             return $account;
         }
 
-        // find account by code and exercise
+        // buscar cuenta por código y ejercicio
         $where = [
             new DataBaseWhere('codcuenta', $this->codcuenta),
             new DataBaseWhere('codejercicio', $this->codejercicio)
@@ -154,7 +154,7 @@ class Subcuenta extends ModelClass
     }
 
     /**
-     * Returns the related special account code.
+     * Devuelve el código de la cuenta especial relacionada.
      *
      * @return ?string
      */
@@ -172,7 +172,7 @@ class Subcuenta extends ModelClass
 
     public function install(): string
     {
-        // force the parents tables
+        // forzar las tablas padre
         new DinCuentaEspecial();
         new DinCuenta();
 
@@ -208,7 +208,7 @@ class Subcuenta extends ModelClass
     {
         $this->saldo = Tools::round($this->debe - $this->haber);
 
-        // escape html
+        // escapar html
         foreach (['codcuenta', 'codsubcuenta', 'descripcion', 'codcuentaesp'] as $field) {
             $this->{$field} = Tools::noHtml($this->{$field});
         }
@@ -224,7 +224,7 @@ class Subcuenta extends ModelClass
             return false;
         }
 
-        // check exercise
+        // comprobar ejercicio
         $exercise = $this->getExercise();
         if (false === $this->disable_additional_test && strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
             Tools::log()->warning('account-length-error', [
@@ -235,7 +235,7 @@ class Subcuenta extends ModelClass
             return false;
         }
 
-        // sets account data
+        // establecer datos de cuenta
         $account = $this->getAccount();
         $this->codcuenta = $account->codcuenta;
         $this->idcuenta = $account->idcuenta;
@@ -244,7 +244,7 @@ class Subcuenta extends ModelClass
     }
 
     /**
-     * Transform subaccount code if necessary
+     * Transforma el código de subcuenta si es necesario
      *
      * @param string $code
      * @param string $codejercicio
@@ -265,7 +265,7 @@ class Subcuenta extends ModelClass
     }
 
     /**
-     * Update subaccount balance.
+     * Actualiza el saldo de la subcuenta.
      *
      * @param float $debit
      * @param float $credit
@@ -304,5 +304,84 @@ class Subcuenta extends ModelClass
     public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    protected function saveInsert(): bool
+    {
+        // antes de insertar, comprobar si la cuenta padre es correcta
+        // basándose en el prefijo del código de subcuenta
+        $account = $this->getAccount();
+
+        // comprobar si el código de subcuenta comienza con el código de cuenta
+        // si no, buscar la cuenta padre correcta automáticamente
+        if ($account->exists()) {
+            // si la subcuenta no comienza con el código de cuenta, buscar la cuenta padre correcta
+            if (strpos($this->codsubcuenta, $account->codcuenta) !== 0) {
+                $correctAccount = $this->findCorrectParentAccount();
+                if ($correctAccount->exists()) {
+                    $this->codcuenta = $correctAccount->codcuenta;
+                    $this->idcuenta = $correctAccount->idcuenta;
+                }
+            }
+        } else {
+            // si no se encontró cuenta, intentar buscar la correcta basándose en el código de subcuenta
+            $correctAccount = $this->findCorrectParentAccount();
+            if ($correctAccount->exists()) {
+                $this->codcuenta = $correctAccount->codcuenta;
+                $this->idcuenta = $correctAccount->idcuenta;
+            }
+        }
+
+        return parent::saveInsert();
+    }
+
+    /**
+     * Encuentra la cuenta padre correcta basándose en el prefijo del código de subcuenta.
+     * Por ejemplo, para la subcuenta "572.11" o "57211", encontrará la cuenta "57".
+     *
+     * @return DinCuenta
+     */
+    private function findCorrectParentAccount(): DinCuenta
+    {
+        $account = new DinCuenta();
+
+        // si no tenemos código de subcuenta o ejercicio, devolver cuenta vacía
+        if (empty($this->codsubcuenta) || empty($this->codejercicio)) {
+            return $account;
+        }
+
+        // eliminar puntos del código de subcuenta (no transformar de nuevo, puede haber sido transformado ya)
+        $subaccountCode = str_replace('.', '', $this->codsubcuenta);
+
+        // buscar todas las cuentas para este ejercicio
+        $where = [new DataBaseWhere('codejercicio', $this->codejercicio)];
+        $accounts = $account->all($where, [], 0, 0);
+
+        // encontrar la cuenta con el código más largo que sea prefijo del código de subcuenta
+        $bestMatch = null;
+        $bestMatchLength = 0;
+
+        foreach ($accounts as $acc) {
+            $accountCode = str_replace('.', '', $acc->codcuenta);
+
+            // comprobar si el código de subcuenta comienza con este código de cuenta
+            if (strlen($accountCode) > 0 && strpos($subaccountCode, $accountCode) === 0) {
+                $accountCodeLength = strlen($accountCode);
+
+                // mantener la coincidencia más larga
+                if ($accountCodeLength > $bestMatchLength) {
+                    $bestMatch = $acc;
+                    $bestMatchLength = $accountCodeLength;
+                }
+            }
+        }
+
+        // si encontramos una cuenta coincidente, devolverla
+        if ($bestMatch !== null) {
+            return $bestMatch;
+        }
+
+        // si no se encontró coincidencia, devolver cuenta vacía
+        return $account;
     }
 }

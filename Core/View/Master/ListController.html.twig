@@ -53,7 +53,7 @@
                     {% else %}
                         <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
                            title="{{ trans('mark-as-homepage') }}">
-                            <i class="far fa-bookmark" aria-hidden="true"></i>
+                            <i class="fa-regular fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
@@ -63,14 +63,14 @@
                         <div class="dropdown">
                             <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa-solid fa-wrench fa-fw" aria-hidden="true"></i> {{ trans('options') }}
+                                <i class="fa-solid fa-wrench fa-fw me-1" aria-hidden="true"></i> {{ trans('options') }}
                             </button>
                             <div class="dropdown-menu">
                                 <h6 class="dropdown-header">{{ trans('options-button-header') }}</h6>
                                 {% for viewName, view in fsc.views %}
                                     <a class="dropdown-item"
                                        href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
-                                        <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                                        <i class="{{ view.icon }} fa-fw me-1" aria-hidden="true"></i> {{ view.title }}
                                         {% if view.settings.customized %}
                                             <i class="fa-solid fa-user-pen ms-2" title="{{ trans('personalized') }}"></i>
                                         {% endif %}
@@ -96,7 +96,7 @@
                     {% set active = (viewName == fsc.active) ? ' active' : '' %}
                     <a href="#{{ viewName }}" class="nav-link{{ active }}" data-bs-toggle="tab" role="tab"
                        aria-controls="{{ viewName }}" title="{{ view.title }}">
-                        <i class="{{ view.icon }}" aria-hidden="true"></i>
+                        <i class="{{ view.icon }} fa-fw me-1 d-none d-sm-inline" aria-hidden="true"></i>
                         {% if view.title | length > 15 %}
                             <span>{{ view.title | slice(0, 15) }}...</span>
                         {% else %}

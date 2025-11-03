@@ -167,7 +167,10 @@ final class Plugins
 
         // si la carpeta del plugin no es igual al nombre del plugin, no podemos activarlo
         if ($plugin->folder !== $plugin->name) {
-            Tools::log()->error('plugin-folder-not-equal-name', ['%pluginName%' => $pluginName]);
+            Tools::log()->error('plugin-folder-not-equal-name', [
+                '%folderName%' => $plugin->folder,
+                '%pluginName%' => $pluginName
+            ]);
             return false;
         }
 

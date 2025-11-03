@@ -261,7 +261,7 @@ class PurchasesHeaderHTML
                 return self::fecha($model, false);
 
             case '_paid':
-                return self::paid($model, 'purchasesFormSave');
+                return self::paid($model);
 
             case '_parents':
                 return self::parents($model);

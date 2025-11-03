@@ -294,6 +294,12 @@ abstract class PanelController extends BaseController
                 $results = $this->widgetVarianteSearchAction();
                 $this->response->json($results);
                 break;
+            
+            case 'widget-subcuenta-search':
+                $this->setTemplate(false);
+                $results = $this->widgetSubcuentaSearchAction();
+                $this->response->json($results);
+                break;
         }
     }
 
@@ -494,8 +500,45 @@ abstract class PanelController extends BaseController
                 'stock' => $variante->stockfis,
                 'stock_str' => Tools::number($variante->stockfis, 0),
                 'match' => $variante->{$column->widget->match},
+                'url' => $variante->url()
             ];
         }
+        return $results;
+    }
+
+    protected function widgetSubcuentaSearchAction(): array
+    {
+        // localizamos la pestaña y el nombre de la columna
+        $activeTab = $this->request->input('active_tab', '');
+        $colName = $this->request->input('col_name', '');
+
+        // si está vacío, no hacemos nada
+        if (empty($activeTab) || empty($colName)) {
+            return [];
+        }
+
+        // buscamos la columna
+        $column = $this->tab($activeTab)->columnForField($colName);
+        if (empty($column) || strtolower($column->widget->getType()) !== 'subcuenta') {
+            return [];
+        }
+
+        $subcuentas = $column->widget->subcuentas(
+            $this->request->input('query', ''),
+            $this->request->request->get('codejercicio', ''),
+            $this->request->request->get('sort', '')
+        );
+
+        $results = [];
+        foreach ($subcuentas as $subcuenta) {
+            $results[] = [
+                'codsubcuenta' => $subcuenta->codsubcuenta,
+                'descripcion' => $subcuenta->descripcion,
+                'saldo' => $subcuenta->saldo,
+                'url' => $subcuenta->url()
+            ];
+        }
+
         return $results;
     }
 }

@@ -42,7 +42,7 @@
             </column>
             <column name="fiscal-id" titleurl="EditSettings?activetab=EditIdentificadorFiscal" numcolumns="3"
                     order="130">
-                <widget type="select" fieldname="tipoidfiscal" icon="far fa-id-card" required="true">
+                <widget type="select" fieldname="tipoidfiscal" icon="fa-regular fa-id-card" required="true">
                     <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"/>
                 </widget>
             </column>

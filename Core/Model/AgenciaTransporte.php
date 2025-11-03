@@ -65,12 +65,6 @@ class AgenciaTransporte extends ModelClass
      */
     public $web;
 
-    public function clear(): void
-    {
-        parent::clear();
-        $this->activo = true;
-    }
-
     public static function primaryColumn(): string
     {
         return 'codtrans';

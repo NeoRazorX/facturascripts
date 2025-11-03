@@ -33,7 +33,7 @@ class WidgetDatalist extends WidgetSelect
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetDatalist.js');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetDatalist.js?v=' . Tools::date());
     }
 
     /**

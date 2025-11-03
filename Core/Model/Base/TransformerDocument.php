@@ -60,6 +60,25 @@ abstract class TransformerDocument extends BusinessDocument
     public $idestado;
 
     /**
+     * Campos que se pueden modificar aunque el documento no sea editable.
+     *
+     * @var array
+     */
+    private static $unlocked_fields = ['femail', 'idestado', 'numdocs', 'pagada'];
+
+    /**
+     * Adds a field to the list of unlocked fields (editable even when document is not editable).
+     *
+     * @param string $field
+     */
+    public static function addUnlockedField(string $field): void
+    {
+        if (false === in_array($field, self::$unlocked_fields, true)) {
+            self::$unlocked_fields[] = $field;
+        }
+    }
+
+    /**
      * Returns all children documents of this one.
      *
      * @return TransformerDocument[]
@@ -217,6 +236,16 @@ abstract class TransformerDocument extends BusinessDocument
         return $status;
     }
 
+    /**
+     * Returns the list of unlocked fields (editable even when document is not editable).
+     *
+     * @return array
+     */
+    public static function getUnlockedFields(): array
+    {
+        return self::$unlocked_fields;
+    }
+
     public function install(): string
     {
         // needed dependencies
@@ -261,6 +290,20 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
+     * Removes a field from the list of unlocked fields.
+     *
+     * @param string $field
+     */
+    public static function removeUnlockedField(string $field): void
+    {
+        $key = array_search($field, self::$unlocked_fields, true);
+        if ($key !== false) {
+            unset(self::$unlocked_fields[$key]);
+            self::$unlocked_fields = array_values(self::$unlocked_fields);
+        }
+    }
+
+    /**
      * Saves data in the database.
      *
      * @return bool
@@ -287,10 +330,13 @@ abstract class TransformerDocument extends BusinessDocument
      */
     protected function onChange(string $field): bool
     {
-        if (false === $this->editable && false === $this->getOriginal('editable') && $field != 'idestado') {
+        // check if field is locked when document is not editable
+        if (!$this->editable && !$this->getOriginal('editable') && !in_array($field, self::$unlocked_fields, true)) {
             Tools::log()->warning('non-editable-document');
             return false;
-        } elseif ($field !== 'idestado') {
+        }
+
+        if ($field !== 'idestado') {
             return parent::onChange($field);
         }
 

@@ -34,7 +34,7 @@
                 </widget>
             </column>
             <column name="operation" numcolumns="2" order="120">
-                <widget type="select" fieldname="operacion" translate="true" >
+                <widget type="select" fieldname="operacion" translate="true">
                     <values/>
                 </widget>
             </column>
@@ -45,27 +45,20 @@
                 <widget type="number" decimal="2" fieldname="recargo" required="true"/>
             </column>
             <column name="code" description="optional" numcolumns="2" order="150">
-                <widget type="text" fieldname="codimpuesto" icon="fa-solid fa-hashtag" maxlength="10" readonly="dinamic"/>
+                <widget type="text" fieldname="codimpuesto" icon="fa-solid fa-hashtag" maxlength="10"
+                        readonly="dinamic"/>
             </column>
             <column name="impacted-tax-subaccount" description="optional" order="160">
-                <widget type="autocomplete" fieldname="codsubcuentarep">
-                    <values source="subcuentas" fieldcode="codsubcuenta"/>
-                </widget>
+                <widget type="subcuenta" fieldname="codsubcuentarep"/>
             </column>
             <column name="impacted-tax-re-subaccount" description="optional" order="170">
-                <widget type="autocomplete" fieldname="codsubcuentarepre">
-                    <values source="subcuentas" fieldcode="codsubcuenta"/>
-                </widget>
+                <widget type="subcuenta" fieldname="codsubcuentarepre"/>
             </column>
             <column name="supported-tax-subaccount" description="optional" order="180">
-                <widget type="autocomplete" fieldname="codsubcuentasop">
-                    <values source="subcuentas" fieldcode="codsubcuenta"/>
-                </widget>
+                <widget type="subcuenta" fieldname="codsubcuentasop"/>
             </column>
             <column name="supported-tax-re-subaccount" description="optional" order="190">
-                <widget type="autocomplete" fieldname="codsubcuentasopre">
-                    <values source="subcuentas" fieldcode="codsubcuenta"/>
-                </widget>
+                <widget type="subcuenta" fieldname="codsubcuentasopre"/>
             </column>
         </group>
         <group name="extra" numcolumns="12">

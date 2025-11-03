@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Lib;
 
 use FacturaScripts\Core\Lib\FiscalNumberValidator;
+use FacturaScripts\Core\Lib\ValidadorEcuador;
 use PHPUnit\Framework\TestCase;
 
 class FiscalNumberValidatorTest extends TestCase
@@ -38,6 +39,17 @@ class FiscalNumberValidatorTest extends TestCase
             ['type' => 'NIF', 'number' => '74003828V', 'expected' => true],
             ['type' => 'NIF', 'number' => '74003828J', 'expected' => false],
             ['type' => 'NIE', 'number' => 'Y1234567X', 'expected' => true],
+            ['type' => 'CI', 'number' => '1718137159', 'expected' => true],
+            ['type' => 'CI', 'number' => '1784567890', 'expected' => false],
+            //RUC Persona natural
+            ['type' => 'RUC', 'number' => '1000000008001', 'expected' => true],
+            ['type' => 'RUC', 'number' => '0102030405001', 'expected' => false],
+            //RUC Sociedad pública
+            ['type' => 'RUC', 'number' => '1760001550001', 'expected' => true],
+            ['type' => 'RUC', 'number' => '2560001234001', 'expected' => false],
+            //RUC sociedad privada
+            ['type' => 'RUC', 'number' => '0190000001001', 'expected' => true],
+            ['type' => 'RUC', 'number' => '2598765432001', 'expected' => false]
         ];
 
         foreach ($results as $item) {
@@ -72,6 +84,58 @@ class FiscalNumberValidatorTest extends TestCase
         $invalid = ['25296158S', '74003828J', '12345678B', '12345678C'];
         foreach ($invalid as $number) {
             $this->assertFalse(FiscalNumberValidator::isValidSpainDNI($number));
+        }
+    }
+
+    public function testValidateEcuadorCi(): void
+    {
+        $valid = ['1718137159', '0102039849', '1104680135'];
+        foreach ($valid as $number) {
+            $this->assertTrue(ValidadorEcuador::validarCedula($number));
+        }
+
+        $invalid = ['1784567890', '1234567890', '1718137158'];
+        foreach ($invalid as $number) {
+            $this->assertFalse(ValidadorEcuador::validarCedula($number));
+        }
+    }
+
+    public function testValidateEcuadorRucNatural(): void
+    {
+        $valid = ['0102039849001', '0926687856001', '1710034065001'];
+        foreach ($valid as $number) {
+            $this->assertTrue(ValidadorEcuador::validarRucNatural($number));
+        }
+
+        $invalid = ['0102030405001', '0926687856000', '2512345678001'];
+        foreach ($invalid as $number) {
+            $this->assertFalse(ValidadorEcuador::validarRucNatural($number));
+        }
+    }
+
+    public function testValidateEcuadorRucPublica(): void
+    {
+        $valid = ['1760001550001', '1760000150001', '0160000000001'];
+        foreach ($valid as $number) {
+            $this->assertTrue(ValidadorEcuador::validarRucPublica($number));
+        }
+
+        $invalid = ['2560001234001', '1760001230001', '2560001550001'];
+        foreach ($invalid as $number) {
+            $this->assertFalse(ValidadorEcuador::validarRucPublica($number));
+        }
+    }
+
+    public function testValidateEcuadorRucPrivada(): void
+    {
+        $valid = ['0190000001001', '0190000036001', '0190000028001'];
+        foreach ($valid as $number) {
+            $this->assertTrue(ValidadorEcuador::validarRucPrivada($number));
+        }
+
+        $invalid = ['2598765432001', '2590001234001', '1790012345001'];
+        foreach ($invalid as $number) {
+            $this->assertFalse(ValidadorEcuador::validarRucPrivada($number));
         }
     }
 }

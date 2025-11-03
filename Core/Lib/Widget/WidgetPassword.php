@@ -35,8 +35,8 @@ class WidgetPassword extends WidgetText
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetPassword.js', 2);
-        AssetManager::addCss($route . '/Dinamic/Assets/CSS/WidgetPassword.css', 2);
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetPassword.js?v=' . Tools::date(), 2);
+        AssetManager::addCss($route . '/Dinamic/Assets/CSS/WidgetPassword.css?v=' . Tools::date(), 2);
     }
 
     /**

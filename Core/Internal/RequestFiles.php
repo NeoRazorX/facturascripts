@@ -79,6 +79,7 @@ final class RequestFiles
         return null;
     }
 
+    /** @return UploadedFile[] */
     public function getArray(string $key): array
     {
         if ($this->has($key) && is_array($this->data[$key])) {

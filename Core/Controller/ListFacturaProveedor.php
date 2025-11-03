@@ -69,23 +69,21 @@ class ListFacturaProveedor extends ListBusinessDocument
     {
         parent::createViewPurchases($viewName, $modelName, $label);
 
-        $this->listView($viewName)
-            ->addOrderBy(['idfactura'], 'id')
-            ->addSearchFields(['codigorect']);
+        $this->listView($viewName)->addSearchFields(['codigorect']);
 
         // filtros
-        $i18n = Tools::lang();
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
-            ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
-            ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
-            ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
+            ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+            ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
+            ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
+            ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
         ]);
         $this->addFilterCheckbox($viewName, 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
 
         // botones
         $this->addButtonLockInvoice($viewName);
         $this->addButtonGenerateAccountingInvoices($viewName);
+        $this->addButtonPayInvoice($viewName);
 
         if ($this->user->admin) {
             $this->addButton($viewName, [
@@ -124,12 +122,11 @@ class ListFacturaProveedor extends ListBusinessDocument
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $payMethods);
         }
 
-        $i18n = Tools::lang();
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
-            ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
-            ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
-            ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
+            ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+            ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
+            ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
+            ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
         ]);
         $this->addFilterPeriod($viewName, 'payment-date', 'payment-date', 'fechapago');
 

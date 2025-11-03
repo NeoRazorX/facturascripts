@@ -67,9 +67,9 @@ class Files implements ControllerInterface
     {
         $parts = explode('.', $filePath);
         $safe = [
-            'accdb', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'html', 'ico', 'jpeg', 'jpg', 'js',
-            'json', 'map', 'md', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png', 'pptx', 'sql', 'svg',
-            'ttf', 'txt', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
+            'accdb', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'html', 'ico', 'ics', 'jpeg',
+            'jpg', 'js', 'json', 'map', 'md', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png',
+            'pptx', 'sql', 'svg', 'ttf', 'txt', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
         ];
         return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
     }
@@ -93,6 +93,7 @@ class Files implements ControllerInterface
         }
 
         header('Content-Type: ' . $this->getMime($this->filePath));
+        header('Cache-Control: public, max-age=604800');
 
         // disable the buffer if enabled
         if (ob_get_contents()) {
