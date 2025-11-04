@@ -43,6 +43,8 @@ class Wizard extends Controller
     const ITEM_SELECT_LIMIT = 500;
     const NEW_DEFAULT_PAGE = 'Dashboard';
 
+    public $total = 0;
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -107,6 +109,10 @@ class Wizard extends Controller
 
             case 'step3':
                 $this->saveStep3();
+                break;
+
+            case 'step3_ajax':
+                $this->step3Ajax();
                 break;
 
             default:
@@ -311,10 +317,32 @@ class Wizard extends Controller
 
         // change template and redirect
         $this->setTemplate('Wizard-3');
-        $this->redirect($this->url() . '?action=step3', 2);
+        $this->redirect($this->url() . '?action=step3');
     }
 
     protected function saveStep3(): void
+    {
+        // avoid this step in 2017 installations
+        if ($this->dataBase->tableExists('fs_users')) {
+            // direct redirect, no model loading or step 3
+            $this->redirect('AdminPlugins');
+            return;
+        }
+
+        // load all models
+        $modelNames = [];
+        $modelsFolder = Tools::folder('Dinamic', 'Model');
+        foreach (Tools::folderScan($modelsFolder) as $fileName) {
+            if ('.php' === substr($fileName, -4)) {
+                $modelNames[] = substr($fileName, 0, -4);
+            }
+        }
+
+        $this->total = count($modelNames);
+        $this->setTemplate('Wizard-3');
+    }
+
+    protected function step3Ajax(): void
     {
         // load all models
         $modelNames = [];
@@ -324,11 +352,27 @@ class Wizard extends Controller
                 $modelNames[] = substr($fileName, 0, -4);
             }
         }
-        if (false === $this->dataBase->tableExists('fs_users')) {
-            // avoid this step in 2017 installations
-            $this->initModels($modelNames);
-        }
 
+        // get 5 models
+        $offset = (int) $this->request->input('offset', 0);
+        $modelsBatch = array_slice($modelNames, $offset, 5);
+
+        // if there is any model, load it and return
+        if (!empty($modelsBatch)) {
+            $this->initModels($modelsBatch);
+
+            // wait 0.1 seconds
+            usleep(100000);
+
+            $this->response->json([
+                'status' => 'loading', 
+                'offset' => $offset + count($modelsBatch), 
+                'total' => count($modelNames)
+            ]);
+
+            return;
+        }
+        
         // load controllers
         Plugins::deploy(true, true);
 
@@ -343,9 +387,12 @@ class Wizard extends Controller
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : static::NEW_DEFAULT_PAGE;
         $this->user->save();
 
-        // change template and redirect
-        $this->setTemplate('Wizard-3');
-        $this->finalRedirect();
+        $this->response->json([
+            'status' => 'done', 
+            'url' => $this->user->homepage
+        ]);
+
+        return;
     }
 
     private function setWarehouse(Almacen $almacen, string $codpais): void
