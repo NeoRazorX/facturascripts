@@ -1519,7 +1519,7 @@
     "sort": "Ordenar",
     "sort-by-balance-asc": "Ordenar por saldo ascendente",
     "sort-by-balance-desc": "Ordenar por saldo descendente",
-    "sort-by-code-asc": "Ordenar por código ascendente",
+    "sort-by-code-asc": "Ordenar por código crescente",
     "sort-by-code-desc": "Ordenar por código descendente",
     "sort-by-column": "Ordenar por coluna",
     "sort-by-credit-asc": "Ordenar por haber ascendente",

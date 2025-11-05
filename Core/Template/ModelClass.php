@@ -362,10 +362,7 @@ abstract class ModelClass
      * Este método actúa como wrapper que redirige a load() cuando solo se proporciona el código,
      * o a loadWhere() cuando se incluyen condiciones WHERE u ordenamiento adicionales.
      *
-     * @deprecated Usar load() cuando solo se necesita cargar por código, o loadWhere() cuando
-     *             se requieren condiciones WHERE u ordenamiento adicionales.
-     *
-     * @param mixed $code  Código o identificador del registro a cargar. Se usa únicamente cuando
+     * @param mixed $code Código o identificador del registro a cargar. Se usa únicamente cuando
      *                     no se proporcionan condiciones WHERE adicionales.
      * @param array $where Array de instancias de Where o DatabaseWhere que definen condiciones
      *                     de filtrado adicionales. Si se proporciona, el método delega a loadWhere().
@@ -376,6 +373,9 @@ abstract class ModelClass
      *
      * @return bool Retorna true si se encontró y cargó un registro exitosamente.
      *              Retorna false si no se encontró ningún registro.
+     * @deprecated Usar load() cuando solo se necesita cargar por código, o loadWhere() cuando
+     *             se requieren condiciones WHERE u ordenamiento adicionales.
+     *
      */
     public function loadFromCode($code, array $where = [], array $order = []): bool
     {
@@ -386,7 +386,7 @@ abstract class ModelClass
         return $this->load($code);
     }
 
-    public function loadFromData(array $data = [], array $exclude = []): void
+    public function loadFromData(array $data = [], array $exclude = [], bool $sync = true): void
     {
         $fields = $this->getModelFields();
         foreach ($data as $key => $value) {
@@ -399,43 +399,23 @@ abstract class ModelClass
 
             // We check if it is a varchar (with established length) or another type of data
             $field = $fields[$key];
-            $type = strpos($field['type'], '(') === false ?
+            $type = !str_contains($field['type'], '(') ?
                 $field['type'] :
                 substr($field['type'], 0, strpos($field['type'], '('));
 
-            switch ($type) {
-                case 'tinyint':
-                case 'boolean':
-                    $this->{$key} = $this->getBoolValueForField($field, $value);
-                    break;
-
-                case 'integer':
-                case 'int':
-                    $this->{$key} = $this->getIntegerValueForField($field, $value);
-                    break;
-
-                case 'decimal':
-                case 'double':
-                case 'double precision':
-                case 'float':
-                    $this->{$key} = $this->getFloatValueForField($field, $value);
-                    break;
-
-                case 'date':
-                    $this->{$key} = empty($value) ? null : Tools::date($value);
-                    break;
-
-                case 'datetime':
-                case 'timestamp':
-                    $this->{$key} = empty($value) ? null : Tools::dateTime($value);
-                    break;
-
-                default:
-                    $this->{$key} = ($value === null && $field['is_nullable'] === 'NO') ? '' : $value;
-            }
+            $this->{$key} = match ($type) {
+                'tinyint', 'boolean' => $this->getBoolValueForField($field, $value),
+                'integer', 'int' => $this->getIntegerValueForField($field, $value),
+                'decimal', 'double', 'double precision', 'float' => $this->getFloatValueForField($field, $value),
+                'date' => empty($value) ? null : Tools::date($value),
+                'datetime', 'timestamp' => empty($value) ? null : Tools::dateTime($value),
+                default => ($value === null && $field['is_nullable'] === 'NO') ? '' : $value,
+            };
         }
 
-        $this->syncOriginal();
+        if ($sync) {
+            $this->syncOriginal();
+        }
     }
 
     /**
