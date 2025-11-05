@@ -80,6 +80,12 @@ class SalesModalHTML
     {
         self::$codalmacen = $model->codalmacen;
 
+        if (empty($model->id()) && !$model->editable) {
+            return '<div class="alert alert-warning mt-4">'
+                . '<i class="fa-solid fa-triangle-exclamation fa-fw"></i> ' . Tools::trans('default-status-non-editable')
+                . '</div>';
+        }
+
         return $model->editable ? static::modalClientes($url) . static::modalProductos() : '';
     }
 

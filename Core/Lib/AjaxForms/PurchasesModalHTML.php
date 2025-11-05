@@ -82,6 +82,12 @@ class PurchasesModalHTML
         self::$coddivisa = $model->coddivisa;
         self::$codproveedor = $model->codproveedor;
 
+        if (empty($model->id()) && !$model->editable) {
+            return '<div class="alert alert-warning mt-4">'
+                . '<i class="fa-solid fa-triangle-exclamation fa-fw"></i> ' . Tools::trans('default-status-non-editable')
+                . '</div>';
+        }
+
         return $model->editable ? static::modalProveedores($url) . static::modalProductos() : '';
     }
 
