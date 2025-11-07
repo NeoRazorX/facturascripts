@@ -362,7 +362,7 @@ class ListView extends BaseView
         }
 
         // si la request es GET, obtenemos los filtros desde la caché
-        $cacheKeyFiltros = 'filters-' . Session::get('controllerName') . '-' . $this->getViewName() . '-' . $request->cookie('fsNick');
+        $cacheKeyFiltros = 'filters-' . Session::get('controllerName') . '-' . $this->getViewName() . '-' . Session::user()->nick;
         if ($request->isMethod('GET')) {
             $filtrosCache = Cache::get($cacheKeyFiltros);
             if ($filtrosCache) {
