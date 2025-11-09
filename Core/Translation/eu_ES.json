@@ -1091,7 +1091,7 @@
     "no-admin": "Ez da administratzaile",
     "no-data": "Ez dago daturik",
     "no-data-received-form": "Ez da inprimaki bidez daturik jaso",
-    "no-devices-detected-scan-usb": "Ez dira gailuok detektatu. Saiatu eskaneatzen.",
+    "no-devices-detected-scan-usb": "Ez da gailurik detektatu. Saiatu eskaneatzen.",
     "no-document-selected": "Ez da dokumenturik hautatu",
     "no-extra-lines": "Ez gehitu lerro gehigarriak",
     "no-gaps-found": "Ez da hutsunerik aurkitu",
