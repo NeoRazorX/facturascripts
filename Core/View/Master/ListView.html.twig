@@ -264,6 +264,10 @@
                     <i class="fa-solid fa-save fa-fw"></i>
                     <span class="d-none d-lg-inline">{{ trans('save') }}</span>
                 </button>
+                <button type="button" class="btn btn-outline-danger" title="{{ trans('clear-filters') }}"
+                        onclick="listViewSetAction('{{ viewName }}', 'clear-filters');">
+                    <i class="fa-solid fa-filter-circle-xmark fa-fw"></i>
+                </button>
             {% endif %}
         {% endif %}
         {% set saveFilters = currentView.pageFilters %}

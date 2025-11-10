@@ -21,8 +21,10 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 
@@ -266,6 +268,30 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Clears the cached filters for the active view.
+     */
+    protected function clearFiltersAction(): void
+    {
+        $viewName = $this->active;
+        $nick = Session::user()->nick;
+        $cacheKey = 'filters-' . Session::get('controllerName') . '-' . $viewName . '-' . $nick;
+
+        // clear cache
+        Cache::clear($cacheKey);
+
+        // clear filter values from request
+        $view = $this->listView($viewName);
+        foreach ($view->filters as $filter) {
+            $this->request->request->remove('filter' . $filter->key);
+        }
+
+        // clear query
+        $this->request->request->remove('query');
+
+        Tools::log()->notice('record-updated-correctly');
+    }
+
+    /**
      * Removes the selected page filter.
      */
     protected function deleteFilterAction(): void
@@ -317,6 +343,10 @@ abstract class ListController extends BaseController
                 $results = $this->autocompleteAction();
                 $this->response->json($results);
                 return false;
+
+            case 'clear-filters':
+                $this->clearFiltersAction();
+                break;
 
             case 'delete':
                 $this->deleteAction();

@@ -101,7 +101,9 @@ class CuentaBancoCliente extends ModelClass
     public function save(): bool
     {
         if (empty($this->mandato)) {
-            $this->mandato = $this->newCode('mandato');
+            $this->mandato = empty($this->codcuenta) ?
+                max($this->newCode('mandato'), $this->newCode('codcuenta')) :
+                $this->codcuenta;
         }
 
         if (false === parent::save()) {

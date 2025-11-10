@@ -451,6 +451,7 @@ class NewMail
     public function test(): bool
     {
         switch ($this->mail->Mailer) {
+            case 'smtp':
             case 'SMTP':
                 $this->mail->SMTPDebug = 3;
                 return $this->mail->smtpConnect($this->smtpOptions());

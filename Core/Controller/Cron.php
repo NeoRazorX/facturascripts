@@ -246,14 +246,18 @@ END;
 
     protected function runWorkQueue(): void
     {
-        echo PHP_EOL . PHP_EOL . Tools::trans('running-work-queue') . ' ... ';
+        $max = rand(25, 1000);
+
+        echo PHP_EOL . PHP_EOL . Tools::trans('running-work-queue') . ' ... (' . $max . ') ';
         ob_flush();
 
-        $max = 1000;
         while ($max > 0) {
             if (false === WorkQueue::run()) {
                 break;
             }
+
+            echo '.';
+            ob_flush();
 
             --$max;
 

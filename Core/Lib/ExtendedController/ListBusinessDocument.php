@@ -215,7 +215,7 @@ abstract class ListBusinessDocument extends ListController
             ];
         }
         if (count($optionsGroup) > 3) {
-            $this->addFilterSelectWhere($viewName, 'codgrupo', $optionsGroup);
+            $this->addFilterSelectWhere($viewName, 'codgrupo', $optionsGroup, 'customer-group');
         }
 
         // filtramos por clientes y direcciones
