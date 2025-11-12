@@ -1245,7 +1245,7 @@
     "plugin-disabled": "El Plugin %pluginName% s'ha desactivat correctament.",
     "plugin-enabled": "El Plugin %pluginName% s'ha activat correctament.",
     "plugin-file-too-big": "Aquest servidor no permet pujar arxius de més de %size% MB. Si us plau, augmenta la mida màxima de pujada d'arxius en PHP o copia l'arxiu a la carpeta de Plugins.",
-    "plugin-folder-not-equal-name": "La carpeta del plugin (%folderName%) no se llama igual que el plugin (%pluginName%)",
+    "plugin-folder-not-equal-name": "La carpeta del plugin (%folderName%) no té el mateix nom que el plugin (%pluginName%)",
     "plugin-installation-disabled": "L'instalacion de complements està deshabilitada en este servidor",
     "plugin-installed": "S'ha instalat el Plugin '%pluginName%'",
     "plugin-need-update": "El plugin %plugin% necessitarà actualització per a funcionar amb la nova versió de FacturaScripts.",
