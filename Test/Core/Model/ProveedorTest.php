@@ -21,12 +21,15 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ProveedorTest extends TestCase
 {
+    use RandomDataTrait;
     use LogErrorsTrait;
 
     public function testCreate(): void
@@ -196,6 +199,50 @@ final class ProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($address->delete());
         $this->assertTrue($proveedor->delete());
+    }
+
+    /**
+     * For testing the fields nick and last_nick
+     */
+    public function testNickFields()
+    {
+        // Create first user
+        $user1 = $this->getRandomUser();
+        $this->assertTrue($user1->save(), 'Cannot save user1');
+
+        // Simulate session for user1
+        $originalUser = Session::get('user');
+        Session::set('user', $user1);
+
+        // Create a new provider
+        $proveedor = $this->getRandomSupplier();
+        $this->assertTrue($proveedor->save(), 'Cannot save provider');
+
+        // Check fields after creation
+        $this->assertEquals($user1->nick, $proveedor->nick);
+        $this->assertEquals($user1->nick, $proveedor->last_nick);
+        $this->assertNotNull($proveedor->last_update);
+
+        // Create second user
+        $user2 = $this->getRandomUser();
+        $this->assertTrue($user2->save(), 'Cannot save user2');
+
+        // Simulate session for user2
+        Session::set('user', $user2);
+
+        // Modify the provider
+        $proveedor->nombre = 'Test provider Modified';
+        $this->assertTrue($proveedor->save(), 'Cannot save modified provider');
+
+        // Check fields after modification
+        $this->assertEquals($user1->nick, $proveedor->nick);
+        $this->assertEquals($user2->nick, $proveedor->last_nick);
+
+        // Clean up
+        Session::set('user', $originalUser);
+        $this->assertTrue($proveedor->delete(), 'Cannot delete provider');
+        $this->assertTrue($user1->delete(), 'Cannot delete user1');
+        $this->assertTrue($user2->delete(), 'Cannot delete user2');
     }
 
     protected function tearDown(): void
