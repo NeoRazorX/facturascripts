@@ -102,7 +102,38 @@ class ConfigEmail extends PanelController
             ->addFilterCheckbox('opened')
             ->addFilterCheckbox('attachment', 'has-attachments');
         
-        
+        // añadimos un botón para el modal delete-multi
+        $this->addButton($viewName, [
+            'action' => 'delete-multi',
+            'color' => 'warning',
+            'icon' => 'fa-solid fa-trash-alt',
+            'label' => 'delete-multi',
+            'type' => 'modal',
+        ]);
+    }
+
+    protected function deleteMultiAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        } elseif (false === $this->permissions->allowDelete) {
+            Tools::log()->warning('not-allowed-delete');
+            return;
+        }
+
+        $from = $this->request->input('delete_from', '');
+        $to = $this->request->input('delete_to', '');
+
+        $query = EmailSent::table()
+            ->whereGte('date', $from)
+            ->whereLte('date', $to);
+
+        if (false === $query->delete()) {
+            Tools::log()->warning('record-deleted-error');
+            return;
+        }
+
+        Tools::log()->notice('record-deleted-correctly');
     }
 
     protected function editAction(): bool
