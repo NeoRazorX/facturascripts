@@ -213,7 +213,10 @@ final class Telemetry
         ];
 
         if (false === $minimum) {
-            $data['pluginlist'] = implode(',', Plugins::enabled());
+            $data['pluginlist'] = implode(',', array_map(
+                fn($p) => "{$p->name} {$p->version}",
+                array_filter(Plugins::list(false, 'order'), fn($p) => $p->enabled)
+            ));
         }
 
         return $data;
