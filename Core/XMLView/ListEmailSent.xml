@@ -48,4 +48,14 @@
             <option color="success" fieldname="opened" title="opened">1</option>
         </row>
     </rows>
+    <modals>
+        <group name="delete-multi" title="delete-multi" icon="fa-solid fa-trash-alt">
+            <column name="from-date" numcolumns="12">
+                <widget type="date" fieldname="delete_from" required="true"/>
+            </column>
+            <column name="until-date" numcolumns="12">
+                <widget type="date" fieldname="delete_to" required="true"/>
+            </column>
+        </group>
+    </modals>
 </view>

@@ -20,9 +20,11 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Model\EmailSent;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
+use FacturaScripts\Dinamic\Model\LogMessage;
 
 /**
  * Controller to edit main settings
@@ -99,6 +101,8 @@ class ConfigEmail extends PanelController
             ->addFilterPeriod('date', 'period', 'date', true)
             ->addFilterCheckbox('opened')
             ->addFilterCheckbox('attachment', 'has-attachments');
+        
+        
     }
 
     protected function editAction(): bool
@@ -175,6 +179,11 @@ class ConfigEmail extends PanelController
             case 'enable-notification':
                 $this->enableNotificationAction(true);
                 break;
+            
+            case 'delete-multi':
+                $this->deleteMultiAction();
+                break;
+
         }
 
         return parent::execPreviousAction($action);
