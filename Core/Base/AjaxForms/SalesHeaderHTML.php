@@ -190,7 +190,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function addressField(Translator $i18n, SalesDocument $model, string $field, string $label, int $size, int $maxlength): string
+    public static function addressField(Translator $i18n, SalesDocument $model, string $field, string $label, int $size, int $maxlength): string
     {
         $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
             'name="' . $field . '" maxlength="' . $maxlength . '" autocomplete="off"' :
@@ -203,7 +203,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function ciudad(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
+    public static function ciudad(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
     {
         $list = '';
         $dataList = '';
@@ -231,7 +231,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function codagente(Translator $i18n, SalesDocument $model): string
+    public static function codagente(Translator $i18n, SalesDocument $model): string
     {
         $agentes = Agentes::all();
         if (count($agentes) === 0) {
@@ -259,7 +259,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function codcliente(Translator $i18n, SalesDocument $model): string
+    public static function codcliente(Translator $i18n, SalesDocument $model): string
     {
         self::$cliente = new Cliente();
         if (empty($model->codcliente) || false === self::$cliente->loadFromCode($model->codcliente)) {
@@ -297,7 +297,7 @@ class SalesHeaderHTML
         return $html;
     }
 
-    private static function codigoenv(Translator $i18n, SalesDocument $model): string
+    public static function codigoenv(Translator $i18n, SalesDocument $model): string
     {
         $attributes = $model->editable ? 'name="codigoenv" maxlength="200" autocomplete="off"' : 'disabled=""';
         return '<div class="col-sm-4">'
@@ -307,7 +307,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function codpais(Translator $i18n, SalesDocument $model): string
+    public static function codpais(Translator $i18n, SalesDocument $model): string
     {
         $options = [];
         foreach (Paises::all() as $pais) {
@@ -328,7 +328,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function codtrans(Translator $i18n, SalesDocument $model): string
+    public static function codtrans(Translator $i18n, SalesDocument $model): string
     {
         $options = ['<option value="">------</option>'];
         $agenciaTransporte = new AgenciaTransporte();
@@ -347,7 +347,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function detail(Translator $i18n, SalesDocument $model, bool $new = false): string
+    public static function detail(Translator $i18n, SalesDocument $model, bool $new = false): string
     {
         if (empty($model->primaryColumnValue()) && $new === false) {
             // si el modelo es nuevo, ya hemos pintado el modal de detalle
@@ -364,7 +364,7 @@ class SalesHeaderHTML
             . self::detailModal($i18n, $model);
     }
 
-    private static function detailModal(Translator $i18n, SalesDocument $model): string
+    public static function detailModal(Translator $i18n, SalesDocument $model): string
     {
         return '<div class="modal fade" id="headerModal" tabindex="-1" aria-labelledby="headerModalLabel" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-centered modal-lg">'
@@ -409,7 +409,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function finoferta(Translator $i18n, SalesDocument $model): string
+    public static function finoferta(Translator $i18n, SalesDocument $model): string
     {
         if (false === property_exists($model, 'finoferta') || empty($model->primaryColumnValue())) {
             return '';
@@ -435,7 +435,7 @@ class SalesHeaderHTML
      *
      * @return array
      */
-    private static function getAddressOptions(Translator $i18n, $selected, bool $empty): array
+    public static function getAddressOptions(Translator $i18n, $selected, bool $empty): array
     {
         $options = $empty ? ['<option value="">------</option>'] : [];
         foreach (self::$cliente->getAddresses() as $contact) {
@@ -448,7 +448,7 @@ class SalesHeaderHTML
         return $options;
     }
 
-    private static function idcontactoenv(Translator $i18n, SalesDocument $model): string
+    public static function idcontactoenv(Translator $i18n, SalesDocument $model): string
     {
         if (empty($model->codcliente)) {
             return '';
@@ -465,7 +465,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function idcontactofact(Translator $i18n, SalesDocument $model): string
+    public static function idcontactofact(Translator $i18n, SalesDocument $model): string
     {
         if (empty($model->codcliente)) {
             return '';
@@ -481,7 +481,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function nombrecliente(Translator $i18n, SalesDocument $model): string
+    public static function nombrecliente(Translator $i18n, SalesDocument $model): string
     {
         $attributes = $model->editable ? 'name="nombrecliente" required="" maxlength="100" autocomplete="off"' : 'disabled=""';
         return '<div class="col-sm-6">'
@@ -492,7 +492,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function numero2(Translator $i18n, SalesDocument $model): string
+    public static function numero2(Translator $i18n, SalesDocument $model): string
     {
         $attributes = $model->editable ? 'name="numero2" maxlength="50" placeholder="' . $i18n->trans('optional') . '"' : 'disabled=""';
         return empty($model->codcliente) ? '' : '<div class="col-sm">'
@@ -503,7 +503,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function provincia(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
+    public static function provincia(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
     {
         $list = '';
         $dataList = '';
@@ -531,7 +531,7 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function renderField(Translator $i18n, SalesDocument $model, string $field): ?string
+    public static function renderField(Translator $i18n, SalesDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
             $html = $mod->renderField($i18n, $model, $field);
@@ -650,7 +650,7 @@ class SalesHeaderHTML
         return null;
     }
 
-    private static function renderNewBtnFields(Translator $i18n, SalesDocument $model): string
+    public static function renderNewBtnFields(Translator $i18n, SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -676,7 +676,7 @@ class SalesHeaderHTML
         return $html;
     }
 
-    private static function renderNewFields(Translator $i18n, SalesDocument $model): string
+    public static function renderNewFields(Translator $i18n, SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -702,7 +702,7 @@ class SalesHeaderHTML
         return $html;
     }
 
-    private static function renderNewModalFields(Translator $i18n, SalesDocument $model): string
+    public static function renderNewModalFields(Translator $i18n, SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
