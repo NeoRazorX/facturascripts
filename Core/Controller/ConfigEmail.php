@@ -20,9 +20,11 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Model\EmailSent;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
+use FacturaScripts\Dinamic\Model\LogMessage;
 
 /**
  * Controller to edit main settings
@@ -99,6 +101,39 @@ class ConfigEmail extends PanelController
             ->addFilterPeriod('date', 'period', 'date', true)
             ->addFilterCheckbox('opened')
             ->addFilterCheckbox('attachment', 'has-attachments');
+        
+        // añadimos un botón para el modal delete-multi
+        $this->addButton($viewName, [
+            'action' => 'delete-multi',
+            'color' => 'warning',
+            'icon' => 'fa-solid fa-trash-alt',
+            'label' => 'delete-multi',
+            'type' => 'modal',
+        ]);
+    }
+
+    protected function deleteMultiAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        } elseif (false === $this->permissions->allowDelete) {
+            Tools::log()->warning('not-allowed-delete');
+            return;
+        }
+
+        $from = $this->request->input('delete_from', '');
+        $to = $this->request->input('delete_to', '');
+
+        $query = EmailSent::table()
+            ->whereGte('date', $from)
+            ->whereLte('date', $to);
+
+        if (false === $query->delete()) {
+            Tools::log()->warning('record-deleted-error');
+            return;
+        }
+
+        Tools::log()->notice('record-deleted-correctly');
     }
 
     protected function editAction(): bool
@@ -175,6 +210,11 @@ class ConfigEmail extends PanelController
             case 'enable-notification':
                 $this->enableNotificationAction(true);
                 break;
+            
+            case 'delete-multi':
+                $this->deleteMultiAction();
+                break;
+
         }
 
         return parent::execPreviousAction($action);
