@@ -165,6 +165,13 @@ abstract class BusinessDocument extends NewModelClass
     public $total;
 
     /**
+     * The remaining amount to pay.
+     *
+     * @var float
+     */
+    public $total_pendiente;
+
+    /**
      * Sum of the VAT of the lines.
      *
      * @var float|int
@@ -261,6 +268,7 @@ abstract class BusinessDocument extends NewModelClass
         $this->netosindto = 0.0;
         $this->numero = 1;
         $this->total = 0.0;
+        $this->total_pendiente = 0.0;
         $this->totaleuros = 0.0;
         $this->totalirpf = 0.0;
         $this->totaliva = 0.0;
