@@ -92,7 +92,7 @@ class AccountingModalHTML
      *
      * @return Subcuenta[]
      */
-    protected static function getSubaccounts(Asiento $model): array
+    public static function getSubaccounts(Asiento $model): array
     {
         $subaccount = new Subcuenta();
         if (empty($model->codejercicio)) {
@@ -120,7 +120,7 @@ class AccountingModalHTML
         return $subaccount->all($where, $order);
     }
 
-    protected static function modalSubaccount(Translator $i18n, Asiento $model): string
+    public static function modalSubaccount(Translator $i18n, Asiento $model): string
     {
         return '<div class="modal" id="findSubaccountModal" tabindex="-1" aria-hidden="true">'
             . '<div class="modal-dialog modal-xl">'
@@ -152,7 +152,7 @@ class AccountingModalHTML
             . '</div>';
     }
 
-    protected static function orden(Translator $i18n): string
+    public static function orden(Translator $i18n): string
     {
         return '<div class="col-sm">'
             . '<div class="input-group">'

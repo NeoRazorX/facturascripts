@@ -54,7 +54,7 @@ class AccountingFooterHTML
             . '</div>';
     }
 
-    protected static function deleteBtn(Translator $i18n, Asiento $model): string
+    public static function deleteBtn(Translator $i18n, Asiento $model): string
     {
         if (false === $model->exists() || false === $model->editable) {
             return '';
@@ -104,7 +104,7 @@ class AccountingFooterHTML
      *
      * @return string
      */
-    protected static function descuadre(Translator $i18n, Asiento $model): string
+    public static function descuadre(Translator $i18n, Asiento $model): string
     {
         $unbalance = isset($model->debe, $model->haber) ? round($model->debe - $model->haber, FS_NF0) : 0.0;
         if (empty($unbalance)) {
@@ -126,7 +126,7 @@ class AccountingFooterHTML
      *
      * @return string
      */
-    protected static function importe(Translator $i18n, Asiento $model): string
+    public static function importe(Translator $i18n, Asiento $model): string
     {
         return '<div class="col-sm-3 col-md-2 mb-3">'
             . '<div class="input-group">'
@@ -135,7 +135,7 @@ class AccountingFooterHTML
             . '</div></div>';
     }
 
-    protected static function newSubaccount(Translator $i18n, Asiento $model): string
+    public static function newSubaccount(Translator $i18n, Asiento $model): string
     {
         if (false === $model->editable) {
             return '<div class="col-sm"></div>';
@@ -154,7 +154,7 @@ class AccountingFooterHTML
             . '</div>';
     }
 
-    protected static function saveBtn(Translator $i18n, Asiento $model): string
+    public static function saveBtn(Translator $i18n, Asiento $model): string
     {
         if (false === $model->editable) {
             return '<div class="col-sm-3 col-md-2">'
@@ -169,7 +169,7 @@ class AccountingFooterHTML
             . '</div>';
     }
 
-    protected static function moveBtn(Translator $i18n, Asiento $model): string
+    public static function moveBtn(Translator $i18n, Asiento $model): string
     {
         if (false === $model->editable) {
             return '';

@@ -130,7 +130,7 @@ class PurchasesModalHTML
             . '</table>';
     }
 
-    protected static function fabricantes(Translator $i18n): string
+    public static function fabricantes(Translator $i18n): string
     {
         $fabricante = new Fabricante();
         $options = '<option value="">' . $i18n->trans('manufacturer') . '</option>'
@@ -143,7 +143,7 @@ class PurchasesModalHTML
             . $options . '</select>';
     }
 
-    protected static function familias(Translator $i18n): string
+    public static function familias(Translator $i18n): string
     {
         $options = '<option value="">' . $i18n->trans('family') . '</option>'
             . '<option value="">------</option>';
@@ -162,7 +162,7 @@ class PurchasesModalHTML
             . $options . '</select>';
     }
 
-    protected static function getProducts(): array
+    public static function getProducts(): array
     {
         $dataBase = new DataBase();
         $sql = 'SELECT v.referencia, pp.refproveedor, p.descripcion, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3,'
@@ -238,7 +238,7 @@ class PurchasesModalHTML
         return $dataBase->selectLimit($sql);
     }
 
-    protected static function idatributovalor(?int $id): string
+    public static function idatributovalor(?int $id): string
     {
         if (empty($id)) {
             return '';
@@ -253,7 +253,7 @@ class PurchasesModalHTML
         return ', ' . self::$idatributovalores[$id];
     }
 
-    protected static function modalProductos(Translator $i18n): string
+    public static function modalProductos(Translator $i18n): string
     {
         return '<div class="modal" id="findProductModal" tabindex="-1" aria-hidden="true">'
             . '<div class="modal-dialog modal-xl">'
@@ -295,7 +295,7 @@ class PurchasesModalHTML
             . '</div>';
     }
 
-    protected static function modalProveedores(Translator $i18n, string $url): string
+    public static function modalProveedores(Translator $i18n, string $url): string
     {
         $trs = '';
         $proveedor = new Proveedor();
@@ -337,7 +337,7 @@ class PurchasesModalHTML
             . '</div>';
     }
 
-    protected static function orden(Translator $i18n): string
+    public static function orden(Translator $i18n): string
     {
         return '<div class="input-group">'
             . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span></div>'
@@ -352,7 +352,7 @@ class PurchasesModalHTML
             . '</div>';
     }
 
-    private static function subfamilias(Familia $family, Translator $i18n, int $level = 1): string
+    public static function subfamilias(Familia $family, Translator $i18n, int $level = 1): string
     {
         $options = '';
         foreach ($family->getSubfamilias() as $fam) {

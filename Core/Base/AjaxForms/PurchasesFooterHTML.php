@@ -118,7 +118,7 @@ class PurchasesFooterHTML
             . '</div>';
     }
 
-    private static function modalFooter(Translator $i18n, PurchaseDocument $model): string
+    public static function modalFooter(Translator $i18n, PurchaseDocument $model): string
     {
         $htmlModal = self::renderNewModalFields($i18n, $model);
 
@@ -131,7 +131,7 @@ class PurchasesFooterHTML
             . self::modalFooterHtml($i18n, $htmlModal);
     }
 
-    private static function modalFooterHtml(Translator $i18n, string $htmlModal): string
+    public static function modalFooterHtml(Translator $i18n, string $htmlModal): string
     {
         return '<div class="modal fade" id="footerModal" tabindex="-1" aria-labelledby="footerModalLabel" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-centered modal-lg">'
@@ -156,7 +156,7 @@ class PurchasesFooterHTML
             . '</div>';
     }
 
-    private static function renderField(Translator $i18n, PurchaseDocument $model, string $field): ?string
+    public static function renderField(Translator $i18n, PurchaseDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
             $html = $mod->renderField($i18n, $model, $field);
@@ -224,7 +224,7 @@ class PurchasesFooterHTML
         return null;
     }
 
-    private static function renderNewBtnFields(Translator $i18n, PurchaseDocument $model): string
+    public static function renderNewBtnFields(Translator $i18n, PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -250,7 +250,7 @@ class PurchasesFooterHTML
         return $html;
     }
 
-    private static function renderNewFields(Translator $i18n, PurchaseDocument $model): string
+    public static function renderNewFields(Translator $i18n, PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -276,7 +276,7 @@ class PurchasesFooterHTML
         return $html;
     }
 
-    private static function renderNewModalFields(Translator $i18n, PurchaseDocument $model): string
+    public static function renderNewModalFields(Translator $i18n, PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
