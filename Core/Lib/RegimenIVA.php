@@ -33,6 +33,7 @@ class RegimenIVA
     const ES_TAX_EXCEPTION_E4 = 'ES_23_24'; // E4 Exenta arts. 23–24 LIVA – Zonas francas y depósitos aduaneros
     const ES_TAX_EXCEPTION_E5 = 'ES_25'; // E5 Exenta art. 25 LIVA – Entregas intracomunitarias de bienes
     const ES_TAX_EXCEPTION_E6 = 'ES_OTHER'; // E6 Otras exenciones (oro de inversión, regímenes especiales, etc.)
+    const ES_TAX_EXCEPTION_IMPORT = 'ES_IMPORT'; // Importación de bienes (arts. 17–18 LIVA) – Compras a países terceros. El IVA se liquida en aduana o se difiere según el art. 167.Dos LIVA.
     const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = 'ES_PASSIVE_SUBJECT'; // N6 Inversión del sujeto pasivo (art. 84 LIVA)
     const ES_TAX_EXCEPTION_ART_7 = 'ES_ART_7'; // N3 No sujeta art. 7 LIVA – Operaciones no sujetas (aportaciones, transmisión de UEA, muestras…)
     const ES_TAX_EXCEPTION_ART_14 = 'ES_ART_14'; // N4 No sujeta art. 14 LIVA – Operaciones vinculadas a exportaciones
@@ -107,6 +108,7 @@ class RegimenIVA
             self::ES_TAX_EXCEPTION_E4 => 'es-tax-exception-e4',
             self::ES_TAX_EXCEPTION_E5 => 'es-tax-exception-e5',
             self::ES_TAX_EXCEPTION_E6 => 'es-tax-exception-e6',
+            self::ES_TAX_EXCEPTION_IMPORT => 'es-tax-exception-import',
             self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT => 'es-tax-exception-passive-subject',
             self::ES_TAX_EXCEPTION_ART_7 => 'es-tax-exception-art-7',
             self::ES_TAX_EXCEPTION_ART_14 => 'es-tax-exception-art-14',
