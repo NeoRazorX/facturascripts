@@ -1115,6 +1115,7 @@
     "not-passed-integrity-check": "Algunos archivos no han pasado la verificación de integridad ... <br\/>Puedes <a class='alert-link' target='_blank' href='IntegritySystemCheck'>obtener más detalles aquí<\/a>.",
     "not-public": "No público",
     "not-registered": "No registrada",
+    "not-send": "No enviar",
     "not-sent": "No enviado",
     "not-stored-content": "Contenido no almacenado",
     "not-valid-email": "Email %email% no válido",

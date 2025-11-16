@@ -1115,6 +1115,7 @@
     "not-passed-integrity-check": "Fitxategi batzuk ez dute gainditu integritate egiaztapena ...  <br\/>Hemen <a class='alert-link' target='_blank' href='IntegritySystemCheck'> begiratu xehetasunak<\/a>.",
     "not-public": "Ez da publikoa",
     "not-registered": "Ez da erregistratuta",
+    "not-send": "Ez bidali",
     "not-sent": "Ez da bidalia",
     "not-stored-content": "Ezin da edukia biltegi egin",
     "not-valid-email": "%email% eposta baliogabea",
