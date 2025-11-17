@@ -386,19 +386,19 @@ class ApiCreateDocument extends ApiController
                 }
             }
 
-            if (!empty($line['suplido'] ?? '')) {
+            if ($line['suplido'] === false || $line['suplido'] === true) {
                 $newLine->suplido = (bool)$line['suplido'];
             }
 
-            if (!empty($line['mostrar_cantidad'] ?? '')) {
+            if ($line['mostrar_cantidad'] === false || $line['mostrar_cantidad'] === true) {
                 $newLine->mostrar_cantidad = (bool)$line['mostrar_cantidad'];
             }
 
-            if (!empty($line['mostrar_precio'] ?? '')) {
+            if ($line['mostrar_precio'] === false || $line['mostrar_precio'] === true) {
                 $newLine->mostrar_precio = (bool)$line['mostrar_precio'];
             }
 
-            if (!empty($line['salto_pagina'] ?? '')) {
+            if ($line['salto_pagina'] === false || $line['salto_pagina'] === true) {
                 $newLine->salto_pagina = (bool)$line['salto_pagina'];
             }
 
