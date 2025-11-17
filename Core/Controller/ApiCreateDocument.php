@@ -385,21 +385,20 @@ class ApiCreateDocument extends ApiController
                     $newLine->setTax($newCodimpuesto);
                 }
             }
-
             if ($line['suplido'] === false || $line['suplido'] === true) {
-                $newLine->suplido = (bool)$line['suplido'];
+                $newLine->suplido = $line['suplido'];
             }
 
             if ($line['mostrar_cantidad'] === false || $line['mostrar_cantidad'] === true) {
-                $newLine->mostrar_cantidad = (bool)$line['mostrar_cantidad'];
+                $newLine->mostrar_cantidad = $line['mostrar_cantidad'];
             }
 
             if ($line['mostrar_precio'] === false || $line['mostrar_precio'] === true) {
-                $newLine->mostrar_precio = (bool)$line['mostrar_precio'];
+                $newLine->mostrar_precio = $line['mostrar_precio'];
             }
 
             if ($line['salto_pagina'] === false || $line['salto_pagina'] === true) {
-                $newLine->salto_pagina = (bool)$line['salto_pagina'];
+                $newLine->salto_pagina = $line['salto_pagina'];
             }
 
             $newLines[] = $newLine;
