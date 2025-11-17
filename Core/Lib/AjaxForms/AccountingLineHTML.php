@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,7 +57,7 @@ class AccountingLineHTML
                 continue;
             }
 
-            self::applyToLine($formData, $lines[$key], (string)$value->idpartida);
+            self::applyToLine($formData, $lines[$key], (string)$value->idpartida, $model);
         }
 
         // new lines
@@ -65,7 +65,7 @@ class AccountingLineHTML
             if (isset($formData['codsubcuenta_n' . $num]) && $rmLineId !== 'n' . $num) {
                 $newLine = $model->getNewLine();
                 $idNewLine = 'n' . $num;
-                self::applyToLine($formData, $newLine, $idNewLine);
+                self::applyToLine($formData, $newLine, $idNewLine, $model);
                 $lines[] = $newLine;
             }
         }
@@ -173,13 +173,22 @@ class AccountingLineHTML
             . '</div>';
     }
 
-    protected static function applyToLine(array &$formData, Partida &$line, string $id): void
+    protected static function applyToLine(array &$formData, Partida &$line, string $id, Asiento $model): void
     {
         $line->baseimponible = (float)($formData['baseimponible_' . $id] ?? '0');
         $line->cifnif = $formData['cifnif_' . $id] ?? '';
         $line->codserie = $formData['codserie_' . $id] ?? '';
         $line->concepto = $formData['concepto_' . $id] ?? '';
-        $line->codcontrapartida = $formData['codcontrapartida_' . $id] ?? '';
+
+        // transformar el código de contrapartida si contiene punto
+        $codcontrapartida = $formData['codcontrapartida_' . $id] ?? '';
+        if (!empty($codcontrapartida)) {
+            $subcuenta = new Subcuenta();
+            $line->codcontrapartida = $subcuenta->transformCodsubcuenta($codcontrapartida, $model->codejercicio);
+        } else {
+            $line->codcontrapartida = '';
+        }
+
         $line->codsubcuenta = $formData['codsubcuenta_' . $id] ?? '';
         $line->debe = (float)($formData['debe_' . $id] ?? '0');
         $line->documento = $formData['documento_' . $id] ?? '';
