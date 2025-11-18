@@ -516,7 +516,7 @@ class NewMail
         if (!empty($logoId)) {
             $attFile = AttachedFile::find($logoId);
             if ($attFile) {
-                $logoUrl = Tools::siteUrl() . $attFile->url('download-permanent');
+                $logoUrl = Tools::siteUrl() . '/' . $attFile->url('download-permanent');
             }
         }
 
