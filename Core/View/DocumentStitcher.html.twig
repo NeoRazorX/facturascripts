@@ -293,11 +293,11 @@
                         <td class="align-middle">{{ line.descripcion | raw | nl2br }}</td>
                         <td>
                             <input type="number" value="{{ line.cantidad }}" class="form-control text-end"
-                                   readonly="true"/>
+                                   readonly="true" tabindex="-1"/>
                         </td>
                         <td class="{{ servido == 0 ? '' : 'table-warning' }}">
                             <input type="number" value="{{ line.servido }}" class="form-control text-end"
-                                   readonly="true"/>
+                                   readonly="true" tabindex="-1"/>
                         </td>
                         {% set newQuantity = line.cantidad - line.servido %}
                         <td class="{{ newQuantity == 0 ? 'table-warning' : 'table-success' }}">
