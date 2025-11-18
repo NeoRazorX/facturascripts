@@ -833,7 +833,7 @@
     "interest": "Interesse",
     "international-identifier": "Identificatore internazionale",
     "intra-community": "Intra-comunitaria",
-    "invalid-admin-username": "El nombre de usuario del administrador no es válido: debe tener entre 3 y 50 caracteres, sin espacios.",
+    "invalid-admin-username": "Il nome utente dell'amministratore non è valido: deve contenere tra 3 e 50 caratteri, senza spazi.",
     "invalid-alphanumeric-code": "Il codice inserito (%value%) non è valido. (%column%) deve contenere tra %min% e %max% numeri o lettere, senza spazi, accenti o altri caratteri.",
     "invalid-column-lenght": "%column% deve contenere tra %min% e %max% caratteri.",
     "invalid-date": "Data% 1 $ s non è valida.",
