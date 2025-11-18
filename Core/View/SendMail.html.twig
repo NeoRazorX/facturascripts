@@ -93,7 +93,7 @@
                                 <div class="mb-3">
                                     {{ trans('email-signature') }}
                                     <textarea rows="3" class="form-control"
-                                              readonly>{{ fsc.newMail.signature }}</textarea>
+                                              readonly tabindex="-1">{{ fsc.newMail.signature }}</textarea>
                                 </div>
                             {% endif %}
                             {% for name in fsc.newMail.getAttachmentNames() %}
