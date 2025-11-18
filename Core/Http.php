@@ -162,6 +162,11 @@ class Http
             ->setHeader('Content-Type', 'application/json');
     }
 
+    public static function patch(string $url, $data = []): self
+    {
+        return new self('PATCH', $url, $data);
+    }
+
     public static function put(string $url, $data = []): self
     {
         return new self('PUT', $url, $data);
@@ -250,6 +255,12 @@ class Http
                     break;
                 }
                 curl_setopt($ch, CURLOPT_URL, $this->url);
+                break;
+
+            case 'PATCH':
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+                curl_setopt($ch, CURLOPT_URL, $this->url);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
                 break;
 
             case 'POST':
