@@ -351,7 +351,7 @@ abstract class PurchasesController extends PanelController
         return false;
     }
 
-    protected function saveDocAction(): bool
+    protected function saveDocAction(bool $sendOk = true): bool
     {
         $this->setTemplate(false);
 
@@ -403,7 +403,10 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
-        $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
+        if ($sendOk) {
+            $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
+        }
+
         $this->dataBase->commit();
         return true;
     }
@@ -476,7 +479,7 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
-        if ($this->getModel()->editable && false === $this->saveDocAction()) {
+        if ($this->getModel()->editable && false === $this->saveDocAction(false)) {
             return false;
         }
 
