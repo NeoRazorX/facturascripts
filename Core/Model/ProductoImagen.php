@@ -67,22 +67,7 @@ class ProductoImagen extends ModelClass
             return false;
         }
 
-        // obtenemos el nombre de la imagen sin la extension
-        $name = pathinfo($this->getFile()->filename, PATHINFO_FILENAME);
-        if (empty($name)) {
-            return true;
-        }
-
-        // buscamos todas las imágenes que empiecen por el mismo nombre y las eliminamos
-        $path = FS_FOLDER . Thumbnail::THUMBNAIL_PATH;
-        if (file_exists($path)) {
-            foreach (scandir($path) as $file) {
-                if (strpos($file, $name) === 0) {
-                    unlink($path . $file);
-                }
-            }
-        }
-
+        Thumbnail::delete($this->getFile()->getFullPath());
         return true;
     }
 

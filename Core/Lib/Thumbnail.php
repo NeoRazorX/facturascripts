@@ -62,6 +62,30 @@ class Thumbnail
     }
 
     /**
+     * Deletes all thumbnails for a given file
+     * 
+     * @param string $filePath
+     */
+    public static function delete(string $filePath): void
+    {
+        // obtenemos el nombre de la imagen sin la extension
+        $name = pathinfo($filePath, PATHINFO_FILENAME);
+        if (empty($name)) {
+            return;
+        }
+
+        // buscamos todas las imágenes que empiecen por el mismo nombre y las eliminamos
+        $path = FS_FOLDER . self::THUMBNAIL_PATH;
+        if (file_exists($path)) {
+            foreach (scandir($path) as $file) {
+                if (strpos($file, $name) === 0) {
+                    unlink($path . $file);
+                }
+            }
+        }
+    }
+
+    /**
      * Generates a thumbnail and returns its thumbnail path
      * 
      * Uses Thumbnail::getExpectedThumbnailPath() to get the ideal thumbnail path
