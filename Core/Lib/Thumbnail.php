@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Controller\Myfiles;
 use FacturaScripts\Core\Lib\MyFilesToken;
 use FacturaScripts\Core\Tools;
 use Throwable;
