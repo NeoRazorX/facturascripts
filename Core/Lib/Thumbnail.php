@@ -163,7 +163,7 @@ class Thumbnail
      * @param bool $token if you want to add a token
      * @param bool $parmaToken if you want the token to be permanent
      */
-    private function getThumbnailPath(string $path, bool $token, bool $parmaToken): string
+    private static function getThumbnailPath(string $path, bool $token, bool $parmaToken): string
     {
         if ($token && false === $parmaToken) {
             return $path . '?myft=' . MyFilesToken::get($path, false);
