@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Stock;
 use FacturaScripts\Dinamic\Model\Variante;
@@ -329,7 +330,10 @@ class SalesLineHTML
 
     private static function precio(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
     {
-        if (false === $model->editable) {
+        $minLevel = Tools::settings('default', 'levelpriceproducts', 0);
+        $canEditPrices = Session::user()->level >= $minLevel;
+
+        if (false === $model->editable || false === $canEditPrices) {
             return '<div class="col-sm col-lg-1 order-4">'
                 . '<span class="d-lg-none small">' . $i18n->trans('price') . '</span>'
                 . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-right border-0" disabled/>'
