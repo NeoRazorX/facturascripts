@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\PedidoCliente;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -399,5 +400,68 @@ final class AlbaranClienteTest extends TestCase
     protected function tearDown(): void
     {
         $this->logErrors();
+    }
+
+    public function testDeleteLineFromOrderRestoresServed(): void
+    {
+        // creamos un producto con stock
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save(), 'fallo al guardar el producto');
+
+        $stock = new Stock();
+        $stock->idproducto = $product->idproducto;
+        $stock->referencia = $product->referencia;
+        $stock->cantidad = 100;
+        $this->assertTrue($stock->save(), 'fallo al guardar el stock');
+
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+
+        // creamos un pedido
+        $order = new PedidoCliente();
+        $order->setSubject($subject);
+        $this->assertTrue($order->save(), 'can-not-create-pedido-cliente-2');
+
+        // añadimos una línea al pedido
+        $orderLine = $order->getNewProductLine($product->referencia);
+        $orderLine->cantidad = 10;
+        $this->assertTrue($orderLine->save(), 'fallo al guardar la línea del pedido');
+
+        // Para convertir este pedido en albarán, simplemente tenemos que cambiar el estado del pedido
+        // a uno que en la columna generadoc tenga AlbaranCliente.
+        // En la configuración por defecto, el idestado = 5 se usa para pasar de PedidoCliente a AlbaranCliente.
+        $order->idestado = 5;
+        $this->assertTrue($order->save(), 'fallo al cambiar el estado del pedido');
+
+        // Obtenemos el albarán generado
+        $children = $order->childrenDocuments();
+        $this->assertNotEmpty($children, 'No se ha generado el albarán');
+        $deliveryNote = $children[0];
+        $this->assertInstanceOf(AlbaranCliente::class, $deliveryNote);
+
+        // obtenemos la línea del albarán
+        $deliveryNoteLines = $deliveryNote->getLines();
+        $this->assertCount(1, $deliveryNoteLines, 'el albarán no tiene líneas');
+        $deliveryNoteLine = $deliveryNoteLines[0];
+
+        // la cantidad servida en el pedido debe ser 10
+        $orderLine->reload();
+        $this->assertEquals(10, $orderLine->servido, 'la cantidad servida del pedido no es 10');
+
+        // eliminamos la línea del albarán
+        $this->assertTrue($deliveryNoteLine->delete(), 'fallo al eliminar la línea del albarán');
+
+        // recargamos la línea del pedido
+        $orderLine->reload();
+
+        // BUG: la cantidad servida debería volver a 0, pero no lo hace
+        $this->assertEquals(0, $orderLine->servido, 'la cantidad servida no se ha restaurado a 0');
+
+        // limpieza
+        $this->assertTrue($deliveryNote->delete(), 'fallo al eliminar el albarán');
+        $this->assertTrue($order->delete(), 'fallo al eliminar el pedido');
+        $this->assertTrue($product->delete(), 'fallo al eliminar el producto');
+        $this->assertTrue($subject->delete(), 'fallo al eliminar el cliente');
     }
 }
