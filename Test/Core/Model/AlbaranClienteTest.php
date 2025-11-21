@@ -448,11 +448,33 @@ final class AlbaranClienteTest extends TestCase
         $this->assertCount(1, $deliveryNoteLines, 'el albarán no tiene líneas');
         $deliveryNoteLine = $deliveryNoteLines[0];
 
+        // primero comprobar que la cantidad servida es 10 y correcta
         // recargamos la línea del pedido
         $this->assertTrue($orderLine->reload(), 'fallo al recargar la línea del pedido');
         // la cantidad servida en el pedido debe ser 10
         $this->assertEquals(10, $orderLine->servido, 'la cantidad servida del pedido no es 10');
 
+        // comprobamos que la cantidad servida se resta si hay menos en el albarán
+        // actualizamos la cantidad de la línea (restar cantidad)
+        $deliveryNoteLine->cantidad = 5;
+        $this->assertTrue($deliveryNoteLine->save(), 'fallo al actualizar la cantidad');
+
+        // recargamos la línea del pedido
+        $this->assertTrue($orderLine->reload(), 'fallo al recargar la línea del pedido');
+        // la cantidad servida en el pedido debe ser 5
+        $this->assertEquals(5, $orderLine->servido, 'la cantidad servida del pedido no es 5');
+
+        // comprobamos que la cantidad servida se mantiene máxima y no sobrepasa el pedido
+        // actualizamos la cantidad de la línea para sumar 10 extra
+        $deliveryNoteLine->cantidad = 15;
+        $this->assertTrue($deliveryNoteLine->save(), 'fallo al actualizar la cantidad');
+
+        // recargamos la línea del pedido
+        $this->assertTrue($orderLine->reload(), 'fallo al recargar la línea del pedido');
+        // la cantidad servida en el pedido debe ser 15
+        $this->assertEquals(10, $orderLine->servido, 'la cantidad servida del pedido no es 15');
+
+        // eliminamos la linea con la intención de ver que servido se mantiene en 0
         // eliminamos la línea del albarán
         $this->assertTrue($deliveryNoteLine->delete(), 'fallo al eliminar la línea del albarán');
 
