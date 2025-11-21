@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base\DataBase;
 
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Translator;
 
 /**
@@ -187,7 +188,19 @@ abstract class DataBaseEngine
      */
     public function compareDataTypes($dbType, $xmlType): bool
     {
-        return FS_DB_TYPE_CHECK === false || $dbType === $xmlType || strtolower($xmlType) == 'serial' || substr($dbType, 0, 4) == 'time' && substr($xmlType, 0, 4) == 'time';
+        if (false === Tools::config('db_type_check', true)) {
+            return true;
+        }
+
+        if ($dbType === $xmlType) {
+            return true;
+        }
+
+        if (strtolower($xmlType) == 'serial') {
+            return true;
+        }
+
+        return str_starts_with($dbType, 'time') && str_starts_with($xmlType, 'time');
     }
 
     /**
