@@ -436,37 +436,34 @@ abstract class BusinessDocumentLine extends NewModelClass
     protected function onChange(string $field): bool
     {
         switch ($field) {
-            case 'actualizastock':
             case 'cantidad':
-            case 'servido':
-                if($field === 'servido'){
-                    // search for parent document (if is a line of a transformation)
-                    $transformation = new DocTransformation();
-                    $where = [
-                        new DataBaseWhere('model2', $this->getDocument()->modelClassName()),
-                        new DataBaseWhere('idlinea2', $this->id())
-                    ];
-                    if ($transformation->loadWhere($where)) {
-                        // restore stock servido
-                        $parentLine = $transformation->getParentLine();
+                // search for parent document (if is a line of a transformation)
+                $transformation = new DocTransformation();
+                $where = [
+                    new DataBaseWhere('model2', $this->getDocument()->modelClassName()),
+                    new DataBaseWhere('idlinea2', $this->id())
+                ];
+                if ($transformation->loadWhere($where)) {
+                    // restore stock servido
+                    $parentLine = $transformation->getParentLine();
 
-                        $cantParent = $parentLine->cantidad;
-                        $cantLine = $this->cantidad;
+                    $cantParent = $parentLine->cantidad;
+                    $cantLine = $this->cantidad;
 
-                        if($cantLine > $cantParent){
-                            // if the cuantity is more than the original then max servido
-                            $parentLine->servido = $cantParent;
-                        }else{
-                            // if the cuantity es less or equal than the original then
-                            // servido is the original cuantity minus the new cuantity
-                            $parentLine->servido = $cantParent - $cantLine;
-                            max($parentLine->servido, 0);
-                        }
-
-                        $parentLine->save();
+                    if($cantLine > $cantParent){
+                        // if the cuantity is more than the original then max servido
+                        $parentLine->servido = $cantParent;
+                    }else{
+                        // if the cuantity es less or equal than the original then
+                        // servido is the original cuantity minus the new cuantity
+                        $parentLine->servido = $cantParent - $cantLine;
+                        max($parentLine->servido, 0);
                     }
-                }
 
+                    $parentLine->save();
+                }
+            case 'actualizastock':
+            case 'servido':
                 return $this->updateStock() && parent::onChange($field);
         }
 
