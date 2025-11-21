@@ -197,8 +197,8 @@ abstract class ModelClass
                 'tinyint', 'boolean' => in_array($field['default'], ['true', 't', '1'], false),
                 'integer', 'int' => intval($field['default']),
                 'decimal', 'double', 'double precision', 'float' => floatval($field['default']),
-                'date' => Tools::date($field['default']),
-                'datetime', 'timestamp' => Tools::dateTime($field['default']),
+                'date' => Tools::date(), // asumimos que el campo fecha nunca tendrá valor por defecto
+                'datetime', 'timestamp' => Tools::dateTime(), // asumimos que el campo datetime nunca tendrá valor por defecto
                 default => $field['default'],
             };
         }
