@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Template\ModelClass as NewModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Stock;
@@ -449,6 +450,24 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     protected function onDelete(): void
     {
+        // find transformation where this line is the child
+        $docTrans = new DocTransformation();
+        $modelName = $this->getDocument()->modelClassName();
+        $where = [
+            new DataBaseWhere('model2', $modelName),
+            new DataBaseWhere('idlinea2', $this->id())
+        ];
+
+        // restore stock servido
+        foreach ($docTrans->all($where) as $transformation) {
+            $parentLine = $transformation->getParentLine();
+            if ($parentLine && $parentLine->exists()) {
+                $parentLine->servido -= $transformation->cantidad;
+                $parentLine->save();
+            }
+            $transformation->delete();
+        }
+
         $this->cantidad = 0.0;
         $this->updateStock();
 

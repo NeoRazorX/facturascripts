@@ -402,6 +402,9 @@ final class AlbaranClienteTest extends TestCase
         $this->logErrors();
     }
 
+    /**
+     * Testea que al eliminar una linea de un albarán (generado de un pedido) se restaura el stock
+     */
     public function testDeleteLineFromOrderRestoresServed(): void
     {
         // creamos un producto con stock
@@ -445,16 +448,16 @@ final class AlbaranClienteTest extends TestCase
         $this->assertCount(1, $deliveryNoteLines, 'el albarán no tiene líneas');
         $deliveryNoteLine = $deliveryNoteLines[0];
 
+        // recargamos la línea del pedido
+        $this->assertTrue($orderLine->reload(), 'fallo al recargar la línea del pedido');
         // la cantidad servida en el pedido debe ser 10
-        $orderLine->reload();
         $this->assertEquals(10, $orderLine->servido, 'la cantidad servida del pedido no es 10');
 
         // eliminamos la línea del albarán
         $this->assertTrue($deliveryNoteLine->delete(), 'fallo al eliminar la línea del albarán');
 
         // recargamos la línea del pedido
-        $orderLine->reload();
-
+        $this->assertTrue($orderLine->reload(), 'fallo al recargar la línea del pedido');
         // BUG: la cantidad servida debería volver a 0, pero no lo hace
         $this->assertEquals(0, $orderLine->servido, 'la cantidad servida no se ha restaurado a 0');
 
