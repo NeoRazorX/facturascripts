@@ -447,20 +447,21 @@ abstract class BusinessDocumentLine extends NewModelClass
                         new DataBaseWhere('idlinea2', $this->id())
                     ];
                     if ($transformation->loadWhere($where)) {
-                        // restore stock servido if parent exists
+                        // restore stock servido
                         $parentLine = $transformation->getParentLine();
 
-                        // get added stock
-                        $addedCantidad = $this->cantidad - $this->getOriginal('cantidad');
+                        $cantParent = $parentLine->cantidad;
+                        $cantLine = $this->cantidad;
 
-                        // set parent servido with new stock
-                        $parentLine->servido += $addedCantidad;
-
-                        // if parent servido is more than his cuantity then set max servido as cuantity
-                        $parentLine->servido = min($parentLine->servido, $parentLine->cantidad);
-
-                        // if parent servido is less than 0 then set servido to 0
-                        $parentLine->servido = max($parentLine->servido, 0);
+                        if($cantLine > $cantParent){
+                            // if the cuantity is more than the original then max servido
+                            $parentLine->servido = $cantParent;
+                        }else{
+                            // if the cuantity es less or equal than the original then
+                            // servido is the original cuantity minus the new cuantity
+                            $parentLine->servido = $cantParent - $cantLine;
+                            max($parentLine->servido, 0);
+                        }
 
                         $parentLine->save();
                     }
