@@ -363,8 +363,8 @@ final class AlbaranProveedorTest extends TestCase
         $this->assertTrue($stock->save(), 'fallo al guardar el stock');
 
         // creamos un proveedor
-        $subject = $this->getRandomCustomer();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+        $subject = $this->getRandomSupplier();
+        $this->assertTrue($subject->save(), 'can-not-save-supplier-2');
 
         // creamos un pedido
         $order = new PedidoProveedor();
@@ -378,8 +378,8 @@ final class AlbaranProveedorTest extends TestCase
 
         // Para convertir este pedido en albarán, simplemente tenemos que cambiar el estado del pedido
         // a uno que en la columna generadoc tenga AlbaranProveedor.
-        // En la configuración por defecto, el idestado = 5 se usa para pasar de PedidoProveedor a AlbaranProveedor.
-        $order->idestado = 5;
+        // En la configuración por defecto, el idestado = 16 se usa para pasar de PedidoProveedor a AlbaranProveedor.
+        $order->idestado = 16;
         $this->assertTrue($order->save(), 'fallo al cambiar el estado del pedido');
 
         // Obtenemos el albarán generado
