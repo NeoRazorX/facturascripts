@@ -1577,7 +1577,7 @@
     "subaccount-belongs-other-year": "Il sottoconto 0 appartiene a un altro anno finanziario.",
     "subaccount-irpf": "Conto per deduzioni",
     "subaccount-irpf-creditor": "Subconto del creditore IRPF",
-    "subaccount-not-found": "Account secondario 0 non trovato.",
+    "subaccount-not-found": "Sottoconto %code% non trovato.",
     "subaccount-purchases": "Conto per acquisti",
     "subaccount-pyg-not-found": "Sottoconto di profitti e perdite non trovato",
     "subaccount-sales": "Conto vendite",
