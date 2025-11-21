@@ -439,6 +439,33 @@ abstract class BusinessDocumentLine extends NewModelClass
             case 'actualizastock':
             case 'cantidad':
             case 'servido':
+                if($field === 'servido'){
+                    // search for parent document (if is a line of a transformation)
+                    $transformation = new DocTransformation();
+                    $where = [
+                        new DataBaseWhere('model2', $this->getDocument()->modelClassName()),
+                        new DataBaseWhere('idlinea2', $this->id())
+                    ];
+                    if ($transformation->loadWhere($where)) {
+                        // restore stock servido if parent exists
+                        $parentLine = $transformation->getParentLine();
+
+                        // get added stock
+                        $addedCantidad = $this->cantidad - $this->getOriginal('cantidad');
+
+                        // set parent servido with new stock
+                        $parentLine->servido += $addedCantidad;
+
+                        // if parent servido is more than his cuantity then set max servido as cuantity
+                        $parentLine->servido = min($parentLine->servido, $parentLine->cantidad);
+
+                        // if parent servido is less than 0 then set servido to 0
+                        $parentLine->servido = max($parentLine->servido, 0);
+
+                        $parentLine->save();
+                    }
+                }
+
                 return $this->updateStock() && parent::onChange($field);
         }
 
@@ -450,22 +477,22 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     protected function onDelete(): void
     {
-        // find transformation where this line is the child
-        $docTrans = new DocTransformation();
-        $modelName = $this->getDocument()->modelClassName();
+        // search for parent document (if is a line of a transformation)
+        $transformation = new DocTransformation();
         $where = [
-            new DataBaseWhere('model2', $modelName),
+            new DataBaseWhere('model2', $this->getDocument()->modelClassName()),
             new DataBaseWhere('idlinea2', $this->id())
         ];
-
-        // restore stock servido
-        foreach ($docTrans->all($where) as $transformation) {
+        if ($transformation->loadWhere($where)) {
+            // restore stock servido if parent exists
             $parentLine = $transformation->getParentLine();
-            if ($parentLine && $parentLine->exists()) {
-                $parentLine->servido -= $transformation->cantidad;
-                $parentLine->save();
-            }
-            $transformation->delete();
+
+            // set parent servido to 0 because line was deleted
+            $parentLine->servido = 0.0;
+            $parentLine->save();
+
+            // eliminamos la transformación o enlace de las dos lineas también
+            // $transformation->delete();
         }
 
         $this->cantidad = 0.0;
