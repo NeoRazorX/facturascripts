@@ -87,6 +87,8 @@ class About extends Controller
         // Calcular los límites actuales
         $limits = $this->getLimits();
 
+        $server_date = date('d-m-Y H:i:s');
+
         return compact(
             'core_version',
             'database_type',
@@ -100,7 +102,8 @@ class About extends Controller
             'plugins',
             'server_software',
             'storage_limit',
-            'storage_used'
+            'storage_used',
+            'server_date'
         );
     }
 
