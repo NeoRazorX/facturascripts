@@ -149,6 +149,11 @@ class SendMail extends Controller
      */
     protected function execAction(string $action): void
     {
+        $action = $this->pipe('action', $action) ?? $action;
+        if (true === $this->pipe('execAction', $action)) {
+            return;
+        }
+
         switch ($action) {
             case 'autocomplete':
                 $this->setTemplate(false);
@@ -301,18 +306,38 @@ class SendMail extends Controller
         $this->newMail->text = $this->request->input('body', '');
         $this->newMail->setMailbox($this->request->input('email-from', ''));
 
-        foreach ($this->getEmails('email') as $email) {
+        $emailsTo = $this->getEmails('email');
+        $pipeEmailsTo = $this->pipe('emailsTo', $emailsTo, $this->newMail, $this->request);
+        if (is_array($pipeEmailsTo)) {
+            $emailsTo = $pipeEmailsTo;
+        }
+        foreach ($emailsTo as $email) {
             $this->newMail->to($email);
         }
-        foreach ($this->getEmails('email-cc') as $email) {
+
+        $emailsCc = $this->getEmails('email-cc');
+        $pipeEmailsCc = $this->pipe('emailsCc', $emailsCc, $this->newMail, $this->request);
+        if (is_array($pipeEmailsCc)) {
+            $emailsCc = $pipeEmailsCc;
+        }
+        foreach ($emailsCc as $email) {
             $this->newMail->cc($email);
         }
-        foreach ($this->getEmails('email-bcc') as $email) {
+
+        $emailsBcc = $this->getEmails('email-bcc');
+        $pipeEmailsBcc = $this->pipe('emailsBcc', $emailsBcc, $this->newMail, $this->request);
+        if (is_array($pipeEmailsBcc)) {
+            $emailsBcc = $pipeEmailsBcc;
+        }
+        foreach ($emailsBcc as $email) {
             $this->newMail->bcc($email);
         }
 
         $this->setAttachment();
-        return $this->newMail->send();
+        $sent = $this->newMail->send();
+        $this->pipe('afterSendMail', $sent, $this->newMail, $this->request);
+
+        return $sent;
     }
 
     /**
@@ -342,11 +367,13 @@ class SendMail extends Controller
         $email = $this->request->queryOrInput('email', '');
         if (!empty($email)) {
             $this->newMail->to($email);
+            $this->pipe('setEmailAddress', $this->newMail, null, $this->request);
             return;
         }
 
         $className = self::MODEL_NAMESPACE . $this->request->queryOrInput('modelClassName', '');
         if (false === class_exists($className)) {
+            $this->pipe('setEmailAddress', $this->newMail, null, $this->request);
             return;
         }
 
@@ -356,18 +383,21 @@ class SendMail extends Controller
 
         if ($model->hasColumn('email') && $model->email) {
             $this->newMail->to($model->email);
+            $this->pipe('setEmailAddress', $this->newMail, $model, $this->request);
             return;
         }
 
         $proveedor = new Proveedor();
         if ($model->hasColumn('codproveedor') && $proveedor->load($model->codproveedor) && $proveedor->email) {
             $this->newMail->to($proveedor->email, $proveedor->razonsocial);
+            $this->pipe('setEmailAddress', $this->newMail, $model, $this->request);
             return;
         }
 
         $contact = new Contacto();
         if ($model->hasColumn('idcontactofact') && $contact->load($model->idcontactofact) && $contact->email) {
             $this->newMail->to($contact->email, $contact->fullName());
+            $this->pipe('setEmailAddress', $this->newMail, $model, $this->request);
             return;
         }
 
@@ -375,6 +405,8 @@ class SendMail extends Controller
         if ($model->hasColumn('codcliente') && $cliente->load($model->codcliente) && $cliente->email) {
             $this->newMail->to($cliente->email, $cliente->razonsocial);
         }
+
+        $this->pipe('setEmailAddress', $this->newMail, $model, $this->request);
     }
 
     /**
