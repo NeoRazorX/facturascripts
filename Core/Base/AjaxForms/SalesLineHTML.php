@@ -194,7 +194,7 @@ class SalesLineHTML
             . self::renderLineModal($i18n, $line, $idlinea, $model) . '</div>';
     }
 
-    private static function applyToLine(array $formData, SalesDocumentLine &$line, string $id)
+    public static function applyToLine(array $formData, SalesDocumentLine &$line, string $id)
     {
         $line->orden = (int)$formData['orden_' . $id];
         $line->cantidad = (float)$formData['cantidad_' . $id];
@@ -229,7 +229,7 @@ class SalesLineHTML
         }
     }
 
-    private static function cantidad(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
+    public static function cantidad(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
             return '<div class="col-sm-2 col-lg-1 order-3">'
@@ -252,7 +252,7 @@ class SalesLineHTML
             . '</div>';
     }
 
-    private static function cantidadStock(Translator $i18n, SalesDocumentLine $line, SalesDocument $model): string
+    public static function cantidadStock(Translator $i18n, SalesDocumentLine $line, SalesDocument $model): string
     {
         $html = '';
         if (empty($line->referencia) || $line->modelClassName() === 'LineaFacturaCliente' || false === $model->editable) {
@@ -285,7 +285,7 @@ class SalesLineHTML
             '<div class="input-group-prepend" title="' . $i18n->trans('stock') . '">' . $html . '</div>';
     }
 
-    private static function coste(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): string
+    public static function coste(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): string
     {
         if (false === SalesHeaderHTML::checkLevel(Tools::settings('default', 'levelcostsales', 0))) {
             return '';
@@ -302,7 +302,7 @@ class SalesLineHTML
             . '</div>';
     }
 
-    private static function getFastLine(SalesDocument $model, array $formData): ?SalesDocumentLine
+    public static function getFastLine(SalesDocument $model, array $formData): ?SalesDocumentLine
     {
         if (empty($formData['fastli'])) {
             return $model->getNewLine();
@@ -327,7 +327,7 @@ class SalesLineHTML
         return null;
     }
 
-    private static function precio(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
+    public static function precio(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
             return '<div class="col-sm col-lg-1 order-4">'
@@ -343,7 +343,7 @@ class SalesLineHTML
             . '</div>';
     }
 
-    private static function renderField(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): ?string
+    public static function renderField(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
             $html = $mod->renderField($i18n, $idlinea, $line, $model, $field);
@@ -405,7 +405,7 @@ class SalesLineHTML
         return null;
     }
 
-    private static function renderLineModal(Translator $i18n, SalesDocumentLine $line, string $idlinea, SalesDocument $model): string
+    public static function renderLineModal(Translator $i18n, SalesDocumentLine $line, string $idlinea, SalesDocument $model): string
     {
         return '<div class="modal fade" id="lineModal-' . $idlinea . '" tabindex="-1" aria-labelledby="lineModal-' . $idlinea . 'Label" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-centered">'
@@ -439,7 +439,7 @@ class SalesLineHTML
             . '</div>';
     }
 
-    private static function renderNewModalFields(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model): string
+    public static function renderNewModalFields(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -465,7 +465,7 @@ class SalesLineHTML
         return $html;
     }
 
-    private static function renderNewFields(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model): string
+    public static function renderNewFields(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -491,7 +491,7 @@ class SalesLineHTML
         return $html;
     }
 
-    private static function renderNewTitles(Translator $i18n, SalesDocument $model): string
+    public static function renderNewTitles(Translator $i18n, SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -517,7 +517,7 @@ class SalesLineHTML
         return $html;
     }
 
-    private static function renderTitle(Translator $i18n, SalesDocument $model, string $field): ?string
+    public static function renderTitle(Translator $i18n, SalesDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
             $html = $mod->renderTitle($i18n, $model, $field);
@@ -555,7 +555,7 @@ class SalesLineHTML
         return null;
     }
 
-    private static function renderTitles(Translator $i18n, SalesDocument $model): string
+    public static function renderTitles(Translator $i18n, SalesDocument $model): string
     {
         return '<div class="container-fluid d-none d-lg-block titles"><div class="form-row border-bottom">'
             . self::renderTitle($i18n, $model, 'referencia')
