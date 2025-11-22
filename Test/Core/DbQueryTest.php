@@ -21,9 +21,14 @@ namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DbQuery;
-use FacturaScripts\Core\Model\LogMessage;
-use FacturaScripts\Core\Model\Pais;
+use FacturaScripts\Dinamic\Model\LogMessage;
 use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Model\Familia;
+use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Pais;
+use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -366,6 +371,215 @@ final class DbQueryTest extends TestCase
         $this->assertTrue($done);
     }
 
+    public function testJoinProductsAndFamilies(): void
+    {
+        // si no existe la tabla productos o familias, saltamos el test
+        if (false === $this->db()->tableExists('productos') || false === $this->db()->tableExists('familias')) {
+            $this->markTestSkipped('Table productos or familias does not exist.');
+        }
+
+        // Limpiamos los datos de prueba de ejecuciones anteriores
+        DbQuery::table('productos')->whereEq('referencia', 'ProJNTest')->delete();
+        DbQuery::table('familias')->whereEq('codfamilia', 'FaJNTest')->delete();
+
+        // Insertar datos de prueba usando objetos Familia y Producto
+        $familia = new Familia();
+        $familia->codfamilia = 'FaJNTest';
+        $familia->descripcion = 'Familia para Join Test';
+        $this->assertTrue($familia->save());
+
+        $producto = new Producto();
+        $producto->referencia = 'ProJNTest';
+        $producto->descripcion = 'Producto para Join Test';
+        $producto->codfamilia = 'FaJNTest';
+        $producto->precio = 100.00;
+        $this->assertTrue($producto->save());
+
+        // Construir la consulta con JOIN
+        $query = DbQuery::table('productos')
+            ->select('productos.referencia, productos.descripcion as productoDesc, familias.descripcion AS familiaDesc')
+            ->join('familias', 'codfamilia', 'codfamilia')
+            ->where([Where::like('productos.referencia', 'ProJN%')]);
+
+        // Verificar la consulta SQL generada
+        $expectedSql = 'SELECT ' . $this->db()->escapeColumn('productos.referencia')
+            . ', ' . $this->db()->escapeColumn('productos.descripcion') . ' AS ' . $this->db()->escapeColumn('productoDesc')
+            . ', ' . $this->db()->escapeColumn('familias.descripcion') . ' AS ' . $this->db()->escapeColumn('familiaDesc')
+            . ' FROM ' . $this->db()->escapeColumn('productos')
+            . ' JOIN ' . $this->db()->escapeColumn('familias') . ' ON ' . $this->db()->escapeColumn('productos.codfamilia') . ' = ' . $this->db()->escapeColumn('familias.codfamilia')
+            . ' WHERE ' . Where::like('productos.referencia', 'ProJN%')->sql();
+
+        $this->assertEquals($expectedSql, $query->sql());
+
+        // Ejecutar la consulta y verificar los resultados
+        $results = $query->get();
+        $this->assertCount(1, $results);
+
+        // Verificar el resultado
+        $this->assertEquals('ProJNTest', $results[0]['referencia']);
+        $this->assertEquals('Producto para Join Test', $results[0]['productoDesc']);
+        $this->assertEquals('Familia para Join Test', $results[0]['familiaDesc']);
+
+        // Limpiar los datos de prueba
+        DbQuery::table('productos')->whereEq('referencia', 'ProJNTest')->delete();
+        DbQuery::table('familias')->whereEq('codfamilia', 'FaJNTest')->delete();
+    }
+
+    public function testHaving(): void
+    {
+        // si no existe la tabla productos, saltamos el test
+        if (false === $this->db()->tableExists('productos')) {
+            $this->markTestSkipped('Table productos does not exist.');
+        }
+
+        // Limpiamos los productos y familias creados por este test en ejecuciones anteriores
+        $done = DbQuery::table('productos')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
+            ->delete();
+        $this->assertTrue($done);
+        $done = DbQuery::table('familias')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
+            ->delete();
+        $this->assertTrue($done);
+
+        $data = [
+            ['referencia' => 'PROD_FAM1_A', 'descripcion' => 'Producto Familia 1 A', 'codfamilia' => 'FAM1', 'precio' => 10],
+            ['referencia' => 'PROD_FAM1_B', 'descripcion' => 'Producto Familia 1 B', 'codfamilia' => 'FAM1', 'precio' => 20],
+            ['referencia' => 'PROD_FAM2_A', 'descripcion' => 'Producto Familia 2 A', 'codfamilia' => 'FAM2', 'precio' => 5],
+            ['referencia' => 'PROD_FAM3_A', 'descripcion' => 'Producto Familia 3 A', 'codfamilia' => 'FAM3', 'precio' => 30],
+        ];
+
+        // insertamos los productos
+        foreach ($data as $item) {
+            $familia = new Familia();
+            if(!$familia->loadFromCode($item['codfamilia'])) {
+                $familia->codfamilia = $item['codfamilia'];
+                $familia->descripcion = $item['codfamilia'];
+                $this->assertTrue($familia->save());
+            }
+
+            $producto = new Producto();
+            $producto->referencia = $item['referencia'];
+            $producto->descripcion = $item['descripcion'];
+            $producto->codfamilia = $item['codfamilia'];
+            $producto->precio = $item['precio'];
+            $this->assertTrue($producto->save());
+        }
+
+        // construimos la consulta con groupBy y having
+        $query = DbQuery::table('productos')
+            ->select(
+                'codfamilia,'
+                .' SUM(' . $this->db()->escapeColumn('precio') . ') as total_precio'
+            )
+            ->groupBy('codfamilia')
+            ->having('SUM(' . $this->db()->escapeColumn('precio') . ') > 25')
+            ->whereLike('codfamilia', 'FAM%');
+
+        $sql = 'SELECT ' . $this->db()->escapeColumn('codfamilia') . ', SUM(' . $this->db()->escapeColumn('precio') . ') AS ' . $this->db()->escapeColumn('total_precio')
+            . ' FROM ' . $this->db()->escapeColumn('productos')
+            . ' WHERE ' . Where::like('codfamilia', 'FAM%')->sql()
+            . ' GROUP BY ' . $this->db()->escapeColumn('codfamilia')
+            . ' HAVING SUM(' . $this->db()->escapeColumn('precio') . ') > 25';
+        $this->assertEquals($sql, $query->sql());
+
+        $results = $query->get();
+        $this->assertCount(2, $results);
+        $this->assertEquals('FAM1', $results[0]['codfamilia']);
+        $this->assertEquals(30, $results[0]['total_precio']);
+        $this->assertEquals('FAM3', $results[1]['codfamilia']);
+        $this->assertEquals(30, $results[1]['total_precio']);
+
+        // Limpiamos los productos y familias
+        $done = DbQuery::table('productos')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
+            ->delete();
+        $this->assertTrue($done);
+        $done = DbQuery::table('familias')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
+            ->delete();
+        $this->assertTrue($done);
+    }
+
+    public function testGroupBy(): void
+    {
+        // si no existe la tabla productos, saltamos el test
+        if (false === $this->db()->tableExists('productos')) {
+            $this->markTestSkipped('Table productos does not exist.');
+        }
+
+        // Limpiamos los productos y familias creados por este test en ejecuciones anteriores
+        $done = DbQuery::table('productos')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
+            ->delete();
+        $this->assertTrue($done);
+        $done = DbQuery::table('familias')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
+            ->delete();
+        $this->assertTrue($done);
+
+        $data = [
+            ['referencia' => 'PROD_FAM1_A', 'descripcion' => 'Producto Familia 1 A', 'codfamilia' => 'FAM1', 'precio' => 10],
+            ['referencia' => 'PROD_FAM1_B', 'descripcion' => 'Producto Familia 1 B', 'codfamilia' => 'FAM1', 'precio' => 20],
+            ['referencia' => 'PROD_FAM2_A', 'descripcion' => 'Producto Familia 2 A', 'codfamilia' => 'FAM2', 'precio' => 5],
+            ['referencia' => 'PROD_FAM3_A', 'descripcion' => 'Producto Familia 3 A', 'codfamilia' => 'FAM3', 'precio' => 30],
+        ];
+
+        // insertamos los productos
+        foreach ($data as $item) {
+            $familia = new Familia();
+            if(!$familia->loadFromCode($item['codfamilia'])) {
+                $familia->codfamilia = $item['codfamilia'];
+                $familia->descripcion = $item['codfamilia'];
+                $this->assertTrue($familia->save());
+            }
+
+            $producto = new Producto();
+            $producto->referencia = $item['referencia'];
+            $producto->descripcion = $item['descripcion'];
+            $producto->codfamilia = $item['codfamilia'];
+            $producto->precio = $item['precio'];
+            $this->assertTrue($producto->save());
+        }
+
+        // construimos la consulta con groupBy
+        $query = DbQuery::table('productos')
+            ->select('codfamilia, COUNT(*) AS total_productos')
+            ->groupBy('codfamilia')
+            ->whereLike('codfamilia', 'FAM%');
+
+        $sql = 'SELECT ' . $this->db()->escapeColumn('codfamilia') . ', COUNT(*) AS ' . $this->db()->escapeColumn('total_productos')
+            . ' FROM ' . $this->db()->escapeColumn('productos')
+            . ' WHERE ' . Where::like('codfamilia', 'FAM%')->sql()
+            . ' GROUP BY ' . $this->db()->escapeColumn('codfamilia');
+        $this->assertEquals($sql, $query->sql());
+
+        $results = $query->get();
+        $this->assertCount(3, $results);
+
+        // Ordenamos los resultados para asegurar un orden consistente en las aserciones
+        usort($results, function($a, $b) {
+            return strcmp($a['codfamilia'], $b['codfamilia']);
+        });
+
+        $this->assertEquals('FAM1', $results[0]['codfamilia']);
+        $this->assertEquals(2, $results[0]['total_productos']);
+        $this->assertEquals('FAM2', $results[1]['codfamilia']);
+        $this->assertEquals(1, $results[1]['total_productos']);
+        $this->assertEquals('FAM3', $results[2]['codfamilia']);
+        $this->assertEquals(1, $results[2]['total_productos']);
+
+        // Limpiamos los productos y familias
+        $done = DbQuery::table('productos')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
+            ->delete();
+        $this->assertTrue($done);
+        $done = DbQuery::table('familias')
+            ->whereIn('codfamilia', ['FAM1', 'FAM2', 'FAM3'])
+            ->delete();
+        $this->assertTrue($done);
+    }
+
     private function db(): DataBase
     {
         if (null === $this->db) {
@@ -373,6 +587,17 @@ final class DbQueryTest extends TestCase
         }
 
         return $this->db;
+    }
+
+    protected function setUp(): void
+    {
+        new Serie();
+        new Cliente();
+        new Pais();
+        new Impuesto();
+        new Producto();
+        new Familia();
+
     }
 
     protected function tearDown(): void
