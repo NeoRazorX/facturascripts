@@ -1603,7 +1603,7 @@
     "subaccount-belongs-other-year": "A subconta %subAccountCode% pertence a outro exercício.",
     "subaccount-irpf": "Conta para deduções",
     "subaccount-irpf-creditor": "Subconta de retenções para compras",
-    "subaccount-not-found": "Subconta %subAccountCode% não encontrada.",
+    "subaccount-not-found": "Subconta %code% não encontrada.",
     "subaccount-purchases": "Conta para compras",
     "subaccount-pyg-not-found": "subconta-pyg-não-encontrada",
     "subaccount-sales": "Conta de vendas",

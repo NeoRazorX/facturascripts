@@ -1807,7 +1807,7 @@
     "vat-document": "VAT Document",
     "vat-exception": "VAT Exception",
     "vat-number-is-short": "The number '%vat-number%' is too short",
-    "vat-number-not-valid": "%vat-number% is not registered in VIES",
+    "vat-number-not-valid": "VAT number %vat-number% is not registered in VIES",
     "vat-number-not-vies": "Number '%vat-number%' is not registered in VIES system",
     "vat-regime": "VAT Regime",
     "VAT-register": "VAT registration",
