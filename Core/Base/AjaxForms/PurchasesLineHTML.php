@@ -25,7 +25,6 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
-use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Variante;
 
@@ -273,7 +272,14 @@ class PurchasesLineHTML
 
     private static function precio(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $jsFunc): string
     {
-        if (false === $model->editable) {
+        $canEditPrices = true;
+        $lineaWithoutRefProduct = (empty($line->referencia) && empty($line->idproducto));
+        
+        if (false === $lineaWithoutRefProduct && false === SalesHeaderHTML::checkLevel(Tools::settings('default', 'levelpriceproducts', 0))) {
+            $canEditPrices = false;
+        }
+
+        if (false === $model->editable || false === $canEditPrices) {
             return '<div class="col-sm col-lg-1 order-4">'
                 . '<div class="d-lg-none mt-2 small">' . $i18n->trans('price') . '</div>'
                 . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-right border-0" disabled=""/>'

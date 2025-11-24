@@ -122,9 +122,6 @@
             <column name="allow-sale-without-stock-n" numcolumns="6" order="120">
                 <widget type="checkbox" fieldname="ventasinstock"/>
             </column>
-            <column name="level-price-products" numcolumns="3" order="130">
-                <widget type="number" fieldname="levelpriceproducts" min="0" max="99" decimal="0" step="1" required="true"/>
-            </column>
         </group>
         <group name="documents" title="documents" icon="fa-solid fa-copy" valign="bottom" numcolumns="12">
             <column name="view-column-net-subtotal" numcolumns="3" order="100">
@@ -141,6 +138,9 @@
             </column>
             <column name="level-benefit-sales" numcolumns="3" order="130">
                 <widget type="number" fieldname="levelbenefitsales" min="0" max="99" decimal="0" step="1" required="true"/>
+            </column>
+            <column name="level-price-products" numcolumns="3" order="140">
+                <widget type="number" fieldname="levelpriceproducts" min="0" max="99" decimal="0" step="1" required="true"/>
             </column>
         </group>
         <group name="advanced" title="advanced" icon="fa-solid fa-database" valign="bottom" numcolumns="12">
