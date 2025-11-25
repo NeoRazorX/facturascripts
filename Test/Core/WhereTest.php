@@ -68,13 +68,53 @@ final class WhereTest extends TestCase
 
     public function testColumnEqField(): void
     {
-        $item = Where::lt('disponible', 'field:cantidad');
+        $item = Where::lt('disponible', 'field:cantidad')->useField();
         $this->assertEquals('disponible', $item->fields);
         $this->assertEquals('field:cantidad', $item->value);
         $this->assertEquals('<', $item->operator);
         $this->assertEquals('AND', $item->operation);
 
         $sql = $this->db()->escapeColumn('disponible') . ' < ' . $this->db()->escapeColumn('cantidad');
+        $this->assertEquals($sql, $item->sql());
+    }
+
+    public function testUseFieldDisabled(): void
+    {
+        // sin useField(), el valor con prefijo field: debe tratarse como string literal
+        $item = Where::gt('precio', 'field:stock');
+        $this->assertEquals('precio', $item->fields);
+        $this->assertEquals('field:stock', $item->value);
+        $this->assertEquals('>', $item->operator);
+        $this->assertEquals('AND', $item->operation);
+
+        $sql = $this->db()->escapeColumn('precio') . ' > ' . $this->db()->var2str('field:stock');
+        $this->assertEquals($sql, $item->sql());
+    }
+
+    public function testUseFieldEnabled(): void
+    {
+        // con useField(), el valor con prefijo field: debe tratarse como columna
+        $item = Where::gt('precio', 'field:stock')->useField();
+        $this->assertEquals('precio', $item->fields);
+        $this->assertEquals('field:stock', $item->value);
+        $this->assertEquals('>', $item->operator);
+        $this->assertEquals('AND', $item->operation);
+
+        $sql = $this->db()->escapeColumn('precio') . ' > ' . $this->db()->escapeColumn('stock');
+        $this->assertEquals($sql, $item->sql());
+    }
+
+    public function testUseFieldBetween(): void
+    {
+        // probamos con BETWEEN y useField()
+        $item = Where::between('total', 'field:minimo', 'field:maximo')->useField();
+        $this->assertEquals('total', $item->fields);
+        $this->assertEquals(['field:minimo', 'field:maximo'], $item->value);
+        $this->assertEquals('BETWEEN', $item->operator);
+        $this->assertEquals('AND', $item->operation);
+
+        $sql = $this->db()->escapeColumn('total') . ' BETWEEN '
+            . $this->db()->escapeColumn('minimo') . ' AND ' . $this->db()->escapeColumn('maximo');
         $this->assertEquals($sql, $item->sql());
     }
 
