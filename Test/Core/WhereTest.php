@@ -311,6 +311,19 @@ final class WhereTest extends TestCase
         $this->assertEquals($sql, Where::multiSql($where));
     }
 
+    public function testDataBaseWhereUseField(): void
+    {
+        // sin useField(), el valor con prefijo field: debe tratarse como string literal
+        $item = new DataBaseWhere('precio', 'field:stock', '>');
+        $sql = ' WHERE ' . $this->db()->escapeColumn('precio') . ' > ' . $this->db()->var2str('field:stock');
+        $this->assertEquals($sql, DataBaseWhere::getSQLWhere([$item]));
+
+        // con useField=true, el valor con prefijo field: debe tratarse como columna
+        $item2 = new DataBaseWhere('precio', 'field:stock', '>', 'AND', true);
+        $sql2 = ' WHERE ' . $this->db()->escapeColumn('precio') . ' > ' . $this->db()->escapeColumn('stock');
+        $this->assertEquals($sql2, DataBaseWhere::getSQLWhere([$item2]));
+    }
+
     public function testLegacyCompatibility(): void
     {
         $whereEq = [new DataBaseWhere('name', 'test')];

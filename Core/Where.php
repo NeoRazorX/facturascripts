@@ -35,9 +35,6 @@ final class Where
     /** @var DataBase */
     private static $db;
 
-    /** @var bool */
-    private $allowFieldTransform = false;
-
     /** @var string */
     public $fields;
 
@@ -50,20 +47,25 @@ final class Where
     /** @var Where[] */
     public $subWhere;
 
+    /** @var bool */
+    public $useField;
+
     /** @var mixed */
     public $value;
 
-    public function __construct(string $fields, $value, string $operator = '=', string $operation = 'AND')
+    public function __construct(string $fields, $value, string $operator = '=', string $operation = 'AND', bool $useField = false)
     {
         $this->fields = $fields;
         $this->value = $value;
         $this->operator = $operator;
         $this->operation = $operation;
+        $this->useField = $useField;
     }
 
     public function useField(): self
     {
-        $this->allowFieldTransform = true;
+        $this->useField = true;
+
         return $this;
     }
 
@@ -154,7 +156,7 @@ final class Where
         foreach ($where as $key => $item) {
             // si es una instancia de DataBaseWhere, lo convertimos a sql
             if ($item instanceof DataBaseWhere) {
-                $dbWhere = new self($item->fields, $item->value, $item->operator, $item->operation);
+                $dbWhere = new self($item->fields, $item->value, $item->operator, $item->operation, $item->useField);
 
                 if (!empty($sql)) {
                     $sql .= ' ' . $item->operation . ' ';
@@ -501,7 +503,7 @@ final class Where
     private function sqlValue($value): string
     {
         // si empieza por field: lo tratamos como un campo solo si está autorizado
-        if ($this->allowFieldTransform && substr($value, 0, 6) === 'field:') {
+        if ($this->useField && substr($value, 0, 6) === 'field:') {
             return self::sqlColumn(substr($value, 6));
         }
 
