@@ -229,6 +229,12 @@ class MysqlEngine extends DataBaseEngine
      */
     public function escapeColumn($link, $name): string
     {
+        // Si contiene un punto, escapar cada parte por separado (tabla.columna)
+        if (strpos($name, '.') !== false) {
+            $parts = explode('.', $name);
+            return '`' . implode('`.`', $parts) . '`';
+        }
+
         return '`' . $name . '`';
     }
 
