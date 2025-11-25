@@ -42,7 +42,7 @@
     "accounting-items": "Buchhaltungsartikel",
     "accounting-lines-error": "Fehler bei der Buchung",
     "accounting-plan": "Buchhaltungsplan",
-    "accounting-plan-must-have-at-least-2-levels": "El plan contable debe tener al menos 2 niveles: cuentas y subcuentas.",
+    "accounting-plan-must-have-at-least-2-levels": "Der Kontenplan muss mindestens zwei Ebenen haben: Konten und Unterkonten.",
     "accounting-possible-duplicated": "Der Buchhaltungseintrag ist möglicherweise mit diesem anderen dupliziert. Wenn nicht, ändern Sie einfach das Konzept, um diese Meldung zu vermeiden.",
     "accounting-reports": "Buchhaltungsberichte",
     "accounting-within-regularization": "In diesem Zeitraum gibt es bereits eine steuerliche Regularisierung. Es können keine Änderungen vorgenommen werden.",
