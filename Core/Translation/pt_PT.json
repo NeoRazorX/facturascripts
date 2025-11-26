@@ -600,7 +600,7 @@
     "es-operation-tax-added-value": "Operação sujeita a IVA",
     "es-operation-tax-ceuta-melilla": "es-operation-tax-ceuta-melilla",
     "es-operation-tax-igic": "Operação sujeita ao IGIC (Canárias)",
-    "es-operation-tax-other": "es-operation-tax-other",
+    "es-operation-tax-other": "Operação não sujeita aos impostos anteriores",
     "es-tax-exception-art-14": "exceção-fiscal-es-art-14",
     "es-tax-exception-art-7": "exceção-fiscal-es-art-7",
     "es-tax-exception-e1": "E",

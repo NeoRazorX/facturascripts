@@ -1603,7 +1603,7 @@
     "subaccount-belongs-other-year": "Le sous-compte %subAccountCode% appartient à un autre exercice.",
     "subaccount-irpf": "Compte pour les déductions",
     "subaccount-irpf-creditor": "Sous-compte créditeur pour l'IRPP",
-    "subaccount-not-found": "Sous-compte %subAccountCode% non trouvé.",
+    "subaccount-not-found": "Sous-compte %code% introuvable.",
     "subaccount-purchases": "Compte pour les achats",
     "subaccount-pyg-not-found": "Sous-compte Pertes et Profits non trouvé",
     "subaccount-sales": "Compte des ventes",

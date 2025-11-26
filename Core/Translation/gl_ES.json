@@ -1807,7 +1807,7 @@
     "vat-document": "Documento",
     "vat-exception": "Excepción do IVE",
     "vat-number-is-short": "O número '%vat-number%' é demasiado corto",
-    "vat-number-not-valid": "%vat-number% no está registrado en el VIES",
+    "vat-number-not-valid": "%vat-number% non está rexistrado no VIES",
     "vat-number-not-vies": "O número '%vat-number%' non está rexistrado no sistema VIES",
     "vat-regime": "Réxime do IVE",
     "VAT-register": "Libro de impostos",
