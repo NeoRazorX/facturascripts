@@ -632,6 +632,16 @@ class Tools
     }
 
     /**
+     * Limpia el traductor almacenado para forzar su recarga con el nuevo idioma.
+     *
+     * @return void
+     */
+    public static function translatorClear(): void
+    {
+        self::$translator = null;
+    }
+
+    /**
      * Guarda la configuración actual en la base de datos.
      *
      * @return bool `true` si todos los grupos de configuración se guardan correctamente, `false` en caso contrario.
