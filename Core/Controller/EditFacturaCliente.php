@@ -307,7 +307,6 @@ class EditFacturaCliente extends SalesController
         }
 
         $newLines = $newRefund->getLines();
-        //$newRefund->idestado = $invoice->idestado;
         if (false === Calculator::calculate($newRefund, $newLines, true)) {
             Tools::log()->error('record-save-error');
             $this->dataBase->rollback();
