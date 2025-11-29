@@ -271,7 +271,14 @@ class PurchasesLineHTML
 
     private static function precio(string $idlinea, BusinessDocumentLine $line, PurchaseDocument $model, string $jsFunc): string
     {
-        if (false === $model->editable) {
+        $canEditPrices = true;
+        $lineaWithoutRefProduct = (empty($line->referencia) && empty($line->idproducto));
+        
+        if (false === $lineaWithoutRefProduct && false === SalesHeaderHTML::checkLevel(Tools::settings('default', 'levelpriceproducts', 0))) {
+            $canEditPrices = false;
+        }
+
+        if (false === $model->editable || false === $canEditPrices) {
             return '<div class="col-sm col-lg-1 order-4">'
                 . '<div class="d-lg-none mt-2 small">' . Tools::trans('price') . '</div>'
                 . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-end border-0" disabled/>'
