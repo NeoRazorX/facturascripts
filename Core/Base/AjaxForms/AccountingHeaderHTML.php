@@ -66,7 +66,7 @@ class AccountingHeaderHTML
             . '</div></div><br/>';
     }
 
-    protected static function canal(Translator $i18n, Asiento $model): string
+    public static function canal(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="canal"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
@@ -76,7 +76,7 @@ class AccountingHeaderHTML
             . '</div>';
     }
 
-    protected static function concepto(Translator $i18n, Asiento $model): string
+    public static function concepto(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="concepto" autocomplete="off" required' : 'disabled';
         return '<div class="col-sm-6 col-md">'
@@ -87,7 +87,7 @@ class AccountingHeaderHTML
             . '</div>';
     }
 
-    protected static function documento(Translator $i18n, Asiento $model): string
+    public static function documento(Translator $i18n, Asiento $model): string
     {
         if (empty($model->documento)) {
             return '';
@@ -127,7 +127,7 @@ class AccountingHeaderHTML
             . '</div></div>';
     }
 
-    protected static function diario(Translator $i18n, Asiento $model): string
+    public static function diario(Translator $i18n, Asiento $model): string
     {
         $options = '<option value="">------</option>';
         $modelDiario = new Diario();
@@ -144,7 +144,7 @@ class AccountingHeaderHTML
             . '</div>';
     }
 
-    protected static function fecha(Translator $i18n, Asiento $model): string
+    public static function fecha(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="fecha" required' : 'disabled';
         return '<div class="col-sm-3 col-md-2">'
@@ -154,7 +154,7 @@ class AccountingHeaderHTML
             . '</div>';
     }
 
-    private static function getConceptItems(Asiento $model): string
+    public static function getConceptItems(Asiento $model): string
     {
         $result = '';
         $conceptModel = new ConceptoPartida();
@@ -174,7 +174,7 @@ class AccountingHeaderHTML
      *
      * @return string
      */
-    private static function getItems(array &$options, string $key, string $name, $value): string
+    public static function getItems(array &$options, string $key, string $name, $value): string
     {
         $result = '';
         foreach ($options as $item) {
@@ -184,7 +184,7 @@ class AccountingHeaderHTML
         return $result;
     }
 
-    protected static function idempresa(Translator $i18n, Asiento $model): string
+    public static function idempresa(Translator $i18n, Asiento $model): string
     {
         $companyList = Empresas::all();
         if (count($companyList) < 2) {
@@ -202,7 +202,7 @@ class AccountingHeaderHTML
             . '</div>';
     }
 
-    protected static function operacion(Translator $i18n, Asiento $model): string
+    public static function operacion(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="operacion"' : 'disabled';
         return '<div class="col-sm-2 col-md">'
