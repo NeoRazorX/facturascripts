@@ -51,7 +51,7 @@ class PartidaWorker extends WorkerClass
         $partidaAsientoModel = new PartidaAsiento();
         $where = [new DataBaseWhere('idsubcuenta', $subcuenta->idsubcuenta)];
         $orderBy = ['fecha' => 'ASC', 'numero' => 'ASC', 'idpartida' => 'ASC'];
-        $limit = 500;
+        $limit = 1000;
         $offset = 0;
         $partidasAsientos = $partidaAsientoModel->all($where, $orderBy, $offset, $limit);
 
