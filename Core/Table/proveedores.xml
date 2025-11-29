@@ -112,6 +112,18 @@
         <name>web</name>
         <type>character varying(100)</type>
     </column>
+    <column>
+        <name>last_nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
+        <name>last_update</name>
+        <type>timestamp</type>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+    </column>
     <constraint>
         <name>proveedores_pkey</name>
         <type>PRIMARY KEY (codproveedor)</type>
