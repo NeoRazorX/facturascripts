@@ -194,6 +194,9 @@ final class WorkQueue
 
     private static function runEvent(WorkEvent &$event): bool
     {
+        // guardamos el tiempo de inicio
+        $start_time = microtime(true);
+
         // ordenamos los workers por posición
         usort(self::$workers_list, function ($a, $b) {
             return $a['position'] <=> $b['position'];
@@ -238,9 +241,13 @@ final class WorkQueue
             $event->worker_list = implode(',', $worker_list);
         }
 
+        // calculamos el tiempo de ejecución
+        $execution_time = microtime(true) - $start_time;
+
         // marcamos el evento como realizado
         $event->done = true;
         $event->done_date = Tools::dateTime();
+        $event->execution_time = $execution_time;
         $event->workers = count($worker_list);
         $event->worker_list = implode(',', $worker_list);
         return $event->save();

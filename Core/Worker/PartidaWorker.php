@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Worker;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\WorkEvent;
 use FacturaScripts\Core\Template\WorkerClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Join\PartidaAsiento;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
@@ -37,7 +38,7 @@ class PartidaWorker extends WorkerClass
 
         // cargamos la subcuenta
         $subcuenta = new Subcuenta();
-        if (false === $subcuenta->loadFromCode($event->param('idsubcuenta'))) {
+        if (false === $subcuenta->load($event->param('idsubcuenta'))) {
             return $this->done();
         }
 
@@ -50,7 +51,7 @@ class PartidaWorker extends WorkerClass
         $partidaAsientoModel = new PartidaAsiento();
         $where = [new DataBaseWhere('idsubcuenta', $subcuenta->idsubcuenta)];
         $orderBy = ['fecha' => 'ASC', 'numero' => 'ASC', 'idpartida' => 'ASC'];
-        $limit = 1000;
+        $limit = 500;
         $offset = 0;
         $partidasAsientos = $partidaAsientoModel->all($where, $orderBy, $offset, $limit);
 
@@ -68,7 +69,7 @@ class PartidaWorker extends WorkerClass
 
                 // actualizamos la partida
                 $partida = $line->getPartida();
-                $partida->saldo = round($saldo, FS_NF0);
+                $partida->saldo = Tools::round($saldo);
                 $partida->disableAdditionalTest(true);
                 $partida->save();
             }
@@ -83,9 +84,9 @@ class PartidaWorker extends WorkerClass
         $diffHaber = abs($subcuenta->haber - $haber);
         $diffSaldo = abs($subcuenta->saldo - $saldo);
         if ($diffDebe >= 0.009 || $diffHaber >= 0.009 || $diffSaldo >= 0.009) {
-            $subcuenta->debe = round($debe, FS_NF0);
-            $subcuenta->haber = round($haber, FS_NF0);
-            $subcuenta->saldo = round($saldo, FS_NF0);
+            $subcuenta->debe = Tools::round($debe);
+            $subcuenta->haber = Tools::round($haber);
+            $subcuenta->saldo = Tools::round($saldo);
             $subcuenta->disableAdditionalTest(true);
             $subcuenta->save();
         }
