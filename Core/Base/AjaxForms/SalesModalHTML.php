@@ -233,13 +233,14 @@ class SalesModalHTML
             if (count($words) === 1) {
                 $sql .= " AND (LOWER(v.codbarras) = " . $dataBase->var2str(self::$query)
                     . " OR LOWER(v.referencia) LIKE '%" . self::$query . "%'"
-                    . " OR LOWER(p.descripcion) LIKE '%" . self::$query . "%')";
+                    . " OR LOWER(p.descripcion) LIKE '%" . self::$query . "%'"
+                    . " OR LOWER(v.descripcion_alt) LIKE '%" . self::$query . "%')";
             } elseif (count($words) > 1) {
                 $sql .= " AND (LOWER(v.referencia) LIKE '%" . self::$query . "%' OR (";
                 foreach ($words as $wc => $word) {
                     $sql .= $wc > 0 ?
-                        " AND LOWER(p.descripcion) LIKE '%" . $word . "%'" :
-                        "LOWER(p.descripcion) LIKE '%" . $word . "%'";
+                        " AND (LOWER(p.descripcion) LIKE '%" . $word . "%' OR LOWER(v.descripcion_alt) LIKE '%" . $word . "%')" :
+                        "(LOWER(p.descripcion) LIKE '%" . $word . "%' OR LOWER(v.descripcion_alt) LIKE '%" . $word . "%')"; 
                 }
                 $sql .= "))";
             }
@@ -259,6 +260,9 @@ class SalesModalHTML
                 break;
 
             case 'stock_desc':
+                $sql .= " ORDER BY 8 DESC";
+                break;
+            default:
                 $sql .= " ORDER BY 8 DESC";
                 break;
         }
