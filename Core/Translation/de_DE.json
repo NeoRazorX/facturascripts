@@ -1809,7 +1809,7 @@
     "vat-document": "Steuerdokument",
     "vat-exception": "USt-Ausnahme",
     "vat-number-is-short": "Die Nummer '%vat-number%' ist zu kurz",
-    "vat-number-not-valid": "%vat-number% no está registrado en el VIES",
+    "vat-number-not-valid": "%vat-number% ist nicht im VIES registriert.",
     "vat-number-not-vies": "Die Nummer '%vat-number%' ist nicht im VIES-System registriert",
     "vat-regime": "MwSt-Regelung",
     "VAT-register": "Steuerbuch",
