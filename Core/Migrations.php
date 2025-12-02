@@ -22,6 +22,7 @@ namespace FacturaScripts\Core;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Template\MigrationClass;
+use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\LogMessage;
@@ -38,6 +39,7 @@ final class Migrations
     {
         self::runMigration('clearLogs', [self::class, 'clearLogs']);
         self::runMigration('fixSeries', [self::class, 'fixSeries']);
+        self::runMigration('fixAgentes', [self::class, 'fixAgentes']);
         self::runMigration('fixAgenciasTransporte', [self::class, 'fixAgenciasTransporte']);
         self::runMigration('fixFormasPago', [self::class, 'fixFormasPago']);
         self::runMigration('fixRectifiedInvoices', [self::class, 'fixRectifiedInvoices']);
@@ -94,6 +96,29 @@ final class Migrations
         }
 
         return self::$database;
+    }
+
+    // versión 2025.01, fecha 02-12-2025
+    private static function fixAgentes(): void
+    {
+        // forzamos la comprobación de la tabla agentes
+        new Agente();
+
+        // desvinculamos los agentes que no existan
+        $tables = [
+            'api_keys', 'clientes', 'contactos', 'albaranescli', 'pedidoscli',
+            'facturascli', 'presupuestoscli'
+        ];
+        foreach ($tables as $table) {
+            if (false === self::db()->tableExists($table)) {
+                continue;
+            }
+
+            $sql = "UPDATE " . $table . " SET codagente = NULL WHERE codagente IS NOT NULL"
+                . " AND codagente NOT IN (SELECT codagente FROM agentes);";
+
+            self::db()->exec($sql);
+        }
     }
 
     private static function fixAgenciasTransporte(): void
