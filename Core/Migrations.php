@@ -22,8 +22,8 @@ namespace FacturaScripts\Core;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Template\MigrationClass;
-use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
+use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\LogMessage;
 use FacturaScripts\Dinamic\Model\Serie;
@@ -40,6 +40,7 @@ final class Migrations
         self::runMigration('clearLogs', [self::class, 'clearLogs']);
         self::runMigration('fixSeries', [self::class, 'fixSeries']);
         self::runMigration('fixAgentes', [self::class, 'fixAgentes']);
+        self::runMigration('fixApiKeysUsers', [self::class, 'fixApiKeysUsers']);
         self::runMigration('fixAgenciasTransporte', [self::class, 'fixAgenciasTransporte']);
         self::runMigration('fixFormasPago', [self::class, 'fixFormasPago']);
         self::runMigration('fixRectifiedInvoices', [self::class, 'fixRectifiedInvoices']);
@@ -47,13 +48,13 @@ final class Migrations
 
     /**
      * Execute a plugin migration
-     * 
+     *
      * @param MigrationClass $migration The migration instance
      */
     public static function runPluginMigration(MigrationClass $migration): void
     {
         $migrationName = $migration->getFullMigrationName();
-        
+
         if (self::isMigrationExecuted($migrationName)) {
             return;
         }
@@ -64,7 +65,7 @@ final class Migrations
 
     /**
      * Execute multiple plugin migrations
-     * 
+     *
      * @param array<MigrationClass> $migrations Array of migration instances
      */
     public static function runPluginMigrations(array $migrations): void
@@ -106,8 +107,7 @@ final class Migrations
 
         // desvinculamos los agentes que no existan
         $tables = [
-            'api_keys', 'clientes', 'contactos', 'albaranescli', 'pedidoscli',
-            'facturascli', 'presupuestoscli'
+            'albaranescli', 'clientes', 'contactos', 'facturascli', 'pedidoscli', 'presupuestoscli'
         ];
         foreach ($tables as $table) {
             if (false === self::db()->tableExists($table)) {
@@ -119,6 +119,21 @@ final class Migrations
 
             self::db()->exec($sql);
         }
+    }
+
+    // versión 2025.01, fecha 02-12-2025
+    private static function fixApiKeysUsers(): void
+    {
+        // verificamos que existan ambas tablas
+        if (false === self::db()->tableExists('api_keys') || false === self::db()->tableExists('users')) {
+            return;
+        }
+
+        // desvinculamos las api_keys de usuarios que no existan
+        $sql = "UPDATE api_keys SET nick = NULL WHERE nick IS NOT NULL"
+            . " AND nick NOT IN (SELECT nick FROM users);";
+
+        self::db()->exec($sql);
     }
 
     private static function fixAgenciasTransporte(): void
