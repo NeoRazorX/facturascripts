@@ -45,8 +45,7 @@
                 <widget type="number" fieldname="longsubcuenta" decimal="0" max="15" min="4" required="true"/>
             </column>
             <column name="company" order="160">
-                <widget type="select" fieldname="idempresa" icon="fa-solid fa-building" onclick="EditEmpresa"
-                        required="true" readonly="dinamic">
+                <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true" readonly="dinamic">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
                 </widget>
             </column>

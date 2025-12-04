@@ -196,6 +196,7 @@ final class Kernel
         try {
             self::loadRoutes();
             self::runController($relativeUrl);
+            self::finishRequest();
         } catch (Exception $exception) {
             error_clear_last();
 
@@ -244,7 +245,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2025.51;
+        return 2025.61;
     }
 
     private static function checkControllerClass(string $controller): array
@@ -263,6 +264,31 @@ final class Kernel
         }
 
         return [$controller, $name];
+    }
+
+    private static function finishRequest(): void
+    {
+        // solo ejecutamos si estamos en un entorno web (no CLI)
+        if (PHP_SAPI === 'cli') {
+            return;
+        }
+
+        // si tenemos FastCGI, usamos fastcgi_finish_request()
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+            return;
+        }
+
+        // si no, cerramos la conexión manualmente
+        // enviamos los headers para cerrar la conexión
+        if (!headers_sent()) {
+            header('Connection: close');
+            header('Content-Length: ' . ob_get_length());
+        }
+
+        // enviamos el buffer de salida y cerramos
+        ob_end_flush();
+        flush();
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface

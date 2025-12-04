@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,15 +47,26 @@ final class Where
     /** @var Where[] */
     public $subWhere;
 
+    /** @var bool */
+    public $useField;
+
     /** @var mixed */
     public $value;
 
-    public function __construct(string $fields, $value, string $operator = '=', string $operation = 'AND')
+    public function __construct(string $fields, $value, string $operator = '=', string $operation = 'AND', bool $useField = false)
     {
         $this->fields = $fields;
         $this->value = $value;
         $this->operator = $operator;
         $this->operation = $operation;
+        $this->useField = $useField;
+    }
+
+    public function useField(): self
+    {
+        $this->useField = true;
+
+        return $this;
     }
 
     public static function between(string $fields, $value1, $value2): self
@@ -145,7 +156,7 @@ final class Where
         foreach ($where as $key => $item) {
             // si es una instancia de DataBaseWhere, lo convertimos a sql
             if ($item instanceof DataBaseWhere) {
-                $dbWhere = new self($item->fields, $item->value, $item->operator, $item->operation);
+                $dbWhere = new self($item->fields, $item->value, $item->operator, $item->operation, $item->useField);
 
                 if (!empty($sql)) {
                     $sql .= ' ' . $item->operation . ' ';
@@ -317,14 +328,14 @@ final class Where
                 case '=':
                     $sql .= is_null($this->value) ?
                         self::sqlColumn($field) . ' IS NULL' :
-                        self::sqlColumn($field) . ' = ' . self::sqlValue($this->value);
+                        self::sqlColumn($field) . ' = ' . $this->sqlValue($this->value);
                     break;
 
                 case '!=':
                 case '<>':
                     $sql .= is_null($this->value) ?
                         self::sqlColumn($field) . ' IS NOT NULL' :
-                        self::sqlColumn($field) . ' ' . $this->operator . ' ' . self::sqlValue($this->value);
+                        self::sqlColumn($field) . ' ' . $this->operator . ' ' . $this->sqlValue($this->value);
                     break;
 
                 case '>':
@@ -332,7 +343,7 @@ final class Where
                 case '>=':
                 case '<=':
                 case 'REGEXP':
-                    $sql .= self::sqlColumn($field) . ' ' . self::db()->getOperator($this->operator) . ' ' . self::sqlValue($this->value);
+                    $sql .= self::sqlColumn($field) . ' ' . self::db()->getOperator($this->operator) . ' ' . $this->sqlValue($this->value);
                     break;
 
                 case 'IS':
@@ -347,7 +358,7 @@ final class Where
 
                 case 'BETWEEN':
                 case 'NOT BETWEEN':
-                    $sql .= self::sqlOperatorBetween($field, $this->value, $this->operator);
+                    $sql .= $this->sqlOperatorBetween($field, $this->value, $this->operator);
                     break;
 
                 case 'LIKE':
@@ -413,7 +424,7 @@ final class Where
         return self::db()->escapeColumn($field);
     }
 
-    private static function sqlOperatorBetween(string $field, $values, string $operator): string
+    private function sqlOperatorBetween(string $field, $values, string $operator): string
     {
         // si no es un array, lanzamos una excepción
         if (!is_array($values)) {
@@ -425,8 +436,8 @@ final class Where
             throw new Exception('Invalid values in where clause ' . print_r($values, true));
         }
 
-        return self::sqlColumn($field) . ' ' . $operator . ' ' . self::sqlValue($values[0])
-            . ' AND ' . self::sqlValue($values[1]);
+        return self::sqlColumn($field) . ' ' . $operator . ' ' . $this->sqlValue($values[0])
+            . ' AND ' . $this->sqlValue($values[1]);
     }
 
     private static function sqlOperatorIn(string $field, $values, string $operator): string
@@ -489,10 +500,10 @@ final class Where
         return '(' . $sql . ')';
     }
 
-    private static function sqlValue($value): string
+    private function sqlValue($value): string
     {
-        // si empieza por field: lo tratamos como un campo
-        if (substr($value, 0, 6) === 'field:') {
+        // si empieza por field: lo tratamos como un campo solo si está autorizado
+        if ($this->useField && substr($value, 0, 6) === 'field:') {
             return self::sqlColumn(substr($value, 6));
         }
 

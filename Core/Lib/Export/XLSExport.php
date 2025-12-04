@@ -197,7 +197,7 @@ class XLSExport extends ExportBase
      */
     public function show(Response &$response)
     {
-        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', 'attachment;filename=' . $this->getFileName() . '.xlsx');
         $response->setContent($this->getDoc());
     }

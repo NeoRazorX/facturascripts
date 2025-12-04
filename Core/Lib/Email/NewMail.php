@@ -25,6 +25,7 @@ use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\HtmlBlock as DinHtmlBlock;
 use FacturaScripts\Dinamic\Lib\Email\TextBlock as DinTextBlock;
+use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
@@ -509,9 +510,19 @@ class NewMail
      */
     protected function renderHTML(): void
     {
+        $logoUrl = '';
+
+        $logoId = Tools::settings('email', 'idlogo');
+        if (!empty($logoId)) {
+            $attFile = AttachedFile::find($logoId);
+            if ($attFile) {
+                $logoUrl = Tools::siteUrl() . '/' . $attFile->url('download-permanent');
+            }
+        }
+
         $this->html = Html::render('Email/' . static::$template, [
             'company' => $this->empresa,
-            'logoId' => Tools::settings('email', 'idlogo'),
+            'logoUrl' => $logoUrl,
             'footerBlocks' => $this->getFooterBlocks(),
             'mainBlocks' => $this->getMainBlocks(),
             'title' => $this->title

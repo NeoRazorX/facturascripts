@@ -94,29 +94,32 @@
                                             <a href="{{ fsc.url() }}?action=update&item={{ item.id }}"
                                                class="btn btn-spin-action btn-sm btn-success"
                                                onclick="animateSpinner('add')">
-                                                <i class="fa-solid fa-rocket fa-fw"
-                                                   aria-hidden="true"></i> {{ trans('update') }}
+                                                <i class="fa-solid fa-rocket fa-fw fa-bounce me-1"
+                                                   aria-hidden="true"></i>{{ trans('update') }}
                                             </a>
                                             <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}"
                                                class="btn btn-spin-action btn-sm btn-warning"
                                                onclick="animateSpinner('add')">
-                                                <i class="fa-solid fa-times fa-fw"
-                                                   aria-hidden="true"></i> {{ trans('cancel') }}
+                                                <i class="fa-solid fa-times fa-fw me-1"
+                                                   aria-hidden="true"></i>{{ trans('cancel') }}
                                             </a>
                                         {% elseif item.name == 'CORE' and fsc.coreUpdateWarnings %}
                                             <button type="button" class="btn btn-spin-action btn-warning"
                                                     data-bs-toggle="modal"
-                                                    data-bs-target="#coreWarningModal">{{ trans('download') }}
+                                                    data-bs-target="#coreWarningModal">
+                                                <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
                                             </button>
                                         {% elseif item.stable %}
                                             <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
                                                class="btn btn-spin-action btn-sm btn-secondary"
-                                               onclick="animateSpinner('add')">{{ trans('download') }}
+                                               onclick="animateSpinner('add')">
+                                                <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
                                             </a>
                                         {% else %}
                                             <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
-                                               class="btn btn-spin-action btn-sm btn-outline-warning"
-                                               onclick="animateSpinner('add')">{{ trans('beta') }}
+                                               class="btn btn-spin-action btn-sm btn-secondary"
+                                               onclick="animateSpinner('add')">
+                                                <i class="fa-solid fa-flask-vial fa-fw me-1" aria-hidden="true"></i>{{ trans('beta') }}
                                             </a>
                                         {% endif %}
                                     </td>
@@ -235,7 +238,8 @@
                                 <div class="btn-group">
                                     <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&disable={{ fsc.coreUpdateWarnings | keys | join(',') }}"
                                        class="btn btn-spin-action btn-warning"
-                                       onclick="animateSpinner('add')">{{ trans('download') }}
+                                       onclick="animateSpinner('add')">
+                                        <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('download') }}
                                     </a>
                                     <button type="button"
                                             class="btn btn-spin-action btn-warning dropdown-toggle dropdown-toggle-split"
@@ -245,7 +249,8 @@
                                     <div class="dropdown-menu dropdown-menu-end">
                                         <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
                                            class="btn btn-warning"
-                                           onclick="animateSpinner('add')">{{ trans('do-not-disable-plugins') }}
+                                           onclick="animateSpinner('add')">
+                                            <i class="fa-solid fa-download fa-fw me-1" aria-hidden="true"></i>{{ trans('do-not-disable-plugins') }}
                                         </a>
                                     </div>
                                 </div>

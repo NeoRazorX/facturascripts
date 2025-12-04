@@ -38,24 +38,22 @@
         </group>
         <group name="other" numcolumns="12">
             <column name="language" order="100">
-                <widget type="select" fieldname="langcode" icon="fa-solid fa-language">
+                <widget type="select" fieldname="langcode">
                     <values/>
                 </widget>
             </column>
             <column name="homepage" order="110">
-                <widget type="select" fieldname="homepage" icon="fa-solid fa-home">
+                <widget type="select" fieldname="homepage">
                     <values/>
                 </widget>
             </column>
             <column name="company" titleurl="ListEmpresa" level="99" order="120">
-                <widget type="select" fieldname="idempresa" icon="fa-solid fa-building" onclick="EditEmpresa"
-                        required="true">
+                <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
                 </widget>
             </column>
             <column name="warehouse" titleurl="ListAlmacen" level="99" order="130">
-                <widget type="select" fieldname="codalmacen" parent="idempresa" icon="fa-solid fa-warehouse"
-                        onclick="EditAlmacen" required="true">
+                <widget type="select" fieldname="codalmacen" parent="idempresa" onclick="EditAlmacen" required="true">
                     <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" fieldfilter="idempresa"/>
                 </widget>
             </column>
@@ -65,7 +63,7 @@
                 </widget>
             </column>
             <column name="agent" titleurl="ListAgente" level="99" order="150">
-                <widget type="select" fieldname="codagente" icon="fa-solid fa-user-tie" onclick="EditAgente">
+                <widget type="select" fieldname="codagente" onclick="EditAgente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"/>
                 </widget>
             </column>
