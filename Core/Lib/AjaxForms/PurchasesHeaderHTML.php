@@ -55,7 +55,7 @@ class PurchasesHeaderHTML
         if (empty($model->id())) {
             // new record. Sets user and supplier
             $model->setAuthor(Session::user());
-            if (isset($formData['codproveedor']) && $formData['codproveedor'] && $proveedor->load($formData['codproveedor'])) {
+            if (!empty($formData['codproveedor']) && $proveedor->load($formData['codproveedor'])) {
                 $model->setSubject($proveedor);
                 if (empty($formData['action']) || $formData['action'] === 'set-supplier') {
                     return;
@@ -76,14 +76,13 @@ class PurchasesHeaderHTML
         $model->codproveedor = $formData['codproveedor'] ?? $model->codproveedor;
         $model->codserie = $formData['codserie'] ?? $model->codserie;
         $model->fecha = empty($formData['fecha']) ? $model->fecha : Tools::date($formData['fecha']);
-        $model->femail = isset($formData['femail']) && !empty($formData['femail']) ? $formData['femail'] : $model->femail;
+        $model->femail = !empty($formData['femail']) ? $formData['femail'] : $model->femail;
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombre = $formData['nombre'] ?? $model->nombre;
         $model->numproveedor = $formData['numproveedor'] ?? $model->numproveedor;
-        $model->operacion = $formData['operacion'] ?? $model->operacion;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
 
-        foreach (['fechadevengo'] as $key) {
+        foreach (['fechadevengo', 'operacion'] as $key) {
             if (isset($formData[$key])) {
                 $model->{$key} = empty($formData[$key]) ? null : $formData[$key];
             }

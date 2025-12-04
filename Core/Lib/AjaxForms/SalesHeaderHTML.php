@@ -64,7 +64,7 @@ class SalesHeaderHTML
         if (empty($model->id())) {
             // new record. Sets user and customer
             $model->setAuthor(Session::user());
-            if (isset($formData['codcliente']) && $formData['codcliente'] && $cliente->load($formData['codcliente'])) {
+            if (!empty($formData['codcliente']) && $cliente->load($formData['codcliente'])) {
                 $model->setSubject($cliente);
                 if (empty($formData['action']) || $formData['action'] === 'set-customer') {
                     return;
@@ -72,7 +72,7 @@ class SalesHeaderHTML
             }
 
             $contacto = new Contacto();
-            if (isset($formData['idcontactofact']) && $contacto->load($formData['idcontactofact'])) {
+            if (!empty($formData['idcontactofact']) && $contacto->load($formData['idcontactofact'])) {
                 $model->setSubject($contacto);
                 if (empty($formData['action'])) {
                     return;
@@ -94,14 +94,13 @@ class SalesHeaderHTML
         $model->codpago = $formData['codpago'] ?? $model->codpago;
         $model->codserie = $formData['codserie'] ?? $model->codserie;
         $model->fecha = empty($formData['fecha']) ? $model->fecha : Tools::date($formData['fecha']);
-        $model->femail = isset($formData['femail']) && !empty($formData['femail']) ? $formData['femail'] : $model->femail;
+        $model->femail = !empty($formData['femail']) ? $formData['femail'] : $model->femail;
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombrecliente = $formData['nombrecliente'] ?? $model->nombrecliente;
         $model->numero2 = $formData['numero2'] ?? $model->numero2;
-        $model->operacion = $formData['operacion'] ?? $model->operacion;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
 
-        foreach (['codagente', 'codtrans', 'fechadevengo', 'finoferta'] as $key) {
+        foreach (['codagente', 'codtrans', 'fechadevengo', 'finoferta', 'operacion'] as $key) {
             if (isset($formData[$key])) {
                 $model->{$key} = empty($formData[$key]) ? null : $formData[$key];
             }
