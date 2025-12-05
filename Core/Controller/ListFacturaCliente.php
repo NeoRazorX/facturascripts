@@ -84,6 +84,9 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
+        if (count(Empresas::all()) > 1) {
+            $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
+        }
 
         $currencies = Divisas::codeModel();
         if (count($currencies) > 2) {
