@@ -132,7 +132,7 @@ class PurchasesHeaderHTML
             . '</div>';
     }
 
-    private static function codproveedor(Translator $i18n, PurchaseDocument $model): string
+    public static function codproveedor(Translator $i18n, PurchaseDocument $model): string
     {
         $proveedor = new Proveedor();
         if (empty($model->codproveedor) || false === $proveedor->loadFromCode($model->codproveedor)) {
@@ -170,7 +170,7 @@ class PurchasesHeaderHTML
         return $html;
     }
 
-    private static function detail(Translator $i18n, PurchaseDocument $model, bool $new = false): string
+    public static function detail(Translator $i18n, PurchaseDocument $model, bool $new = false): string
     {
         if (empty($model->primaryColumnValue()) && $new === false) {
             // si el modelo es nuevo, ya hemos pintado el modal de detalle
@@ -187,7 +187,7 @@ class PurchasesHeaderHTML
             . self::detailModal($i18n, $model);
     }
 
-    private static function detailModal(Translator $i18n, PurchaseDocument $model): string
+    public static function detailModal(Translator $i18n, PurchaseDocument $model): string
     {
         return '<div class="modal fade" id="headerModal" tabindex="-1" aria-labelledby="headerModalLabel" aria-hidden="true">'
             . '<div class="modal-dialog modal-dialog-centered">'
@@ -221,7 +221,7 @@ class PurchasesHeaderHTML
             . '</div>';
     }
 
-    private static function nombre(Translator $i18n, PurchaseDocument $model): string
+    public static function nombre(Translator $i18n, PurchaseDocument $model): string
     {
         $attributes = $model->editable ? 'name="nombre" required=""' : 'disabled=""';
         return '<div class="col-sm-6">'
@@ -231,7 +231,7 @@ class PurchasesHeaderHTML
             . '</div>';
     }
 
-    private static function numproveedor(Translator $i18n, PurchaseDocument $model): string
+    public static function numproveedor(Translator $i18n, PurchaseDocument $model): string
     {
         $attributes = $model->editable ? 'name="numproveedor"' : 'disabled=""';
         return empty($model->codproveedor) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
@@ -242,7 +242,7 @@ class PurchasesHeaderHTML
             . '</div>';
     }
 
-    private static function renderField(Translator $i18n, PurchaseDocument $model, string $field): ?string
+    public static function renderField(Translator $i18n, PurchaseDocument $model, string $field): ?string
     {
         foreach (self::$mods as $mod) {
             $html = $mod->renderField($i18n, $model, $field);
@@ -325,7 +325,7 @@ class PurchasesHeaderHTML
         return null;
     }
 
-    private static function renderNewBtnFields(Translator $i18n, PurchaseDocument $model): string
+    public static function renderNewBtnFields(Translator $i18n, PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -351,7 +351,7 @@ class PurchasesHeaderHTML
         return $html;
     }
 
-    private static function renderNewFields(Translator $i18n, PurchaseDocument $model): string
+    public static function renderNewFields(Translator $i18n, PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
@@ -377,7 +377,7 @@ class PurchasesHeaderHTML
         return $html;
     }
 
-    private static function renderNewModalFields(Translator $i18n, PurchaseDocument $model): string
+    public static function renderNewModalFields(Translator $i18n, PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];

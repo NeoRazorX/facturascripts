@@ -63,7 +63,7 @@ trait CommonSalesPurchases
         return $level <= $user->level;
     }
 
-    protected static function cifnif(Translator $i18n, BusinessDocument $model): string
+    public static function cifnif(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="cifnif" maxlength="30" autocomplete="off"' : 'disabled';
         return '<div class="col-sm-6">'
@@ -73,7 +73,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function children(Translator $i18n, TransformerDocument $model): string
+    public static function children(Translator $i18n, TransformerDocument $model): string
     {
         if (empty($model->primaryColumnValue())) {
             return '';
@@ -105,7 +105,7 @@ trait CommonSalesPurchases
             . self::modalDocList($i18n, $children, 'documents-generated', 'childrenModal');
     }
 
-    protected static function codalmacen(Translator $i18n, BusinessDocument $model, string $jsFunc): string
+    public static function codalmacen(Translator $i18n, BusinessDocument $model, string $jsFunc): string
     {
         $warehouses = 0;
         $options = [];
@@ -141,7 +141,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function coddivisa(Translator $i18n, BusinessDocument $model): string
+    public static function coddivisa(Translator $i18n, BusinessDocument $model): string
     {
         $options = [];
         foreach (Divisas::all() as $row) {
@@ -160,7 +160,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function codpago(Translator $i18n, BusinessDocument $model): string
+    public static function codpago(Translator $i18n, BusinessDocument $model): string
     {
         $options = [];
         foreach (FormasPago::all() as $row) {
@@ -188,7 +188,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function codserie(Translator $i18n, BusinessDocument $model, string $jsFunc): string
+    public static function codserie(Translator $i18n, BusinessDocument $model, string $jsFunc): string
     {
         // es una factura rectificativa?
         $rectificativa = property_exists($model, 'idfacturarect') && $model->idfacturarect;
@@ -224,7 +224,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function column(Translator $i18n, BusinessDocument $model, string $colName, string $label, bool $autoHide = false, int $level = 0): string
+    public static function column(Translator $i18n, BusinessDocument $model, string $colName, string $label, bool $autoHide = false, int $level = 0): string
     {
         if (false === self::checkLevel($level)) {
             return '';
@@ -235,7 +235,7 @@ trait CommonSalesPurchases
             . '" class="form-control" disabled/></div></div>';
     }
 
-    protected static function deleteBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
+    public static function deleteBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         return $model->primaryColumnValue() && $model->editable ?
             '<button type="button" class="btn btn-spin-action btn-danger mb-3" data-toggle="modal" data-target="#deleteDocModal">'
@@ -265,7 +265,7 @@ trait CommonSalesPurchases
             . '</div>' : '';
     }
 
-    protected static function dtopor1(Translator $i18n, BusinessDocument $model, string $jsName): string
+    public static function dtopor1(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         if (empty($model->netosindto) && empty($model->dtopor1)) {
             return '<input type="hidden" name="dtopor1" value="0"/>';
@@ -281,7 +281,7 @@ trait CommonSalesPurchases
             . '</div></div></div>';
     }
 
-    protected static function dtopor2(Translator $i18n, BusinessDocument $model, string $jsName): string
+    public static function dtopor2(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         if (empty($model->dtopor1) && empty($model->dtopor2)) {
             return '<input type="hidden" name="dtopor2" value="0"/>';
@@ -299,7 +299,7 @@ trait CommonSalesPurchases
             . '</div></div></div>';
     }
 
-    private static function email(Translator $i18n, BusinessDocument $model): string
+    public static function email(Translator $i18n, BusinessDocument $model): string
     {
         return empty($model->femail) ? '' : '<div class="col-sm-auto">'
             . '<div class="form-group">'
@@ -308,7 +308,7 @@ trait CommonSalesPurchases
             . $model->femail . ' </button></div></div>';
     }
 
-    protected static function fastLineInput(Translator $i18n, BusinessDocument $model, string $jsName): string
+    public static function fastLineInput(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         return $model->editable ? '<div class="col-8 col-md">'
             . '<div class="input-group mb-3">'
@@ -318,7 +318,7 @@ trait CommonSalesPurchases
             . '</div></div>' : '<div class="col"></div>';
     }
 
-    protected static function fecha(Translator $i18n, BusinessDocument $model, bool $enabled = true): string
+    public static function fecha(Translator $i18n, BusinessDocument $model, bool $enabled = true): string
     {
         $attributes = $model->editable && $enabled ? 'name="fecha" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
@@ -328,7 +328,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function fechadevengo(Translator $i18n, BusinessDocument $model): string
+    public static function fechadevengo(Translator $i18n, BusinessDocument $model): string
     {
         if (false === property_exists($model, 'fechadevengo')) {
             return '';
@@ -343,7 +343,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function femail(Translator $i18n, BusinessDocument $model): string
+    public static function femail(Translator $i18n, BusinessDocument $model): string
     {
         if (empty($model->primaryColumnValue())) {
             return '';
@@ -358,7 +358,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function hora(Translator $i18n, BusinessDocument $model): string
+    public static function hora(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="hora" required' : 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
@@ -368,7 +368,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function idestado(Translator $i18n, TransformerDocument $model, string $jsName): string
+    public static function idestado(Translator $i18n, TransformerDocument $model, string $jsName): string
     {
         // Si no se ha guardado no se puede cambiar el estado. Mantenemos el predeterminado
         if (empty($model->primaryColumnValue())) {
@@ -425,7 +425,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function idestadoIcon(EstadoDocumento $status, bool $alternative = false): string
+    public static function idestadoIcon(EstadoDocumento $status, bool $alternative = false): string
     {
         if ($status->icon) {
             return $status->icon;
@@ -436,7 +436,7 @@ trait CommonSalesPurchases
         return $status->editable ? 'fas fa-pen' : 'fas fa-lock';
     }
 
-    protected static function idestadoTextColor(EstadoDocumento $status): string
+    public static function idestadoTextColor(EstadoDocumento $status): string
     {
         if ($status->generadoc) {
             return ' text-success';
@@ -493,21 +493,21 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function netosindto(Translator $i18n, BusinessDocument $model): string
+    public static function netosindto(Translator $i18n, BusinessDocument $model): string
     {
         return empty($model->dtopor1) && empty($model->dtopor2) ? '' : '<div class="col-sm-2"><div class="form-group">' . $i18n->trans('subtotal')
             . '<input type="text" value="' . number_format($model->netosindto, FS_NF0, FS_NF1, '')
             . '" class="form-control" disabled/></div></div>';
     }
 
-    protected static function newLineBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
+    public static function newLineBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         return $model->editable ? '<div class="col-3 col-md-auto">'
             . '<a href="#" class="btn btn-success btn-block btn-spin-action mb-3" onclick="return ' . $jsName . '(\'new-line\', \'0\');">'
             . '<i class="fas fa-plus fa-fw"></i> ' . $i18n->trans('line') . '</a></div>' : '';
     }
 
-    protected static function observaciones(Translator $i18n, BusinessDocument $model): string
+    public static function observaciones(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="observaciones"' : 'disabled';
         $rows = 1;
@@ -521,7 +521,7 @@ trait CommonSalesPurchases
             . '</div></div>';
     }
 
-    protected static function operacion(Translator $i18n, BusinessDocument $model): string
+    public static function operacion(Translator $i18n, BusinessDocument $model): string
     {
         $options = ['<option value="">------</option>'];
         foreach (InvoiceOperation::all() as $key => $value) {
@@ -538,7 +538,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function paid(Translator $i18n, BusinessDocument $model, string $jsName): string
+    public static function paid(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         if (empty($model->primaryColumnValue()) || false === method_exists($model, 'getReceipts')) {
             return '';
@@ -565,7 +565,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function parents(Translator $i18n, TransformerDocument $model): string
+    public static function parents(Translator $i18n, TransformerDocument $model): string
     {
         if (empty($model->primaryColumnValue())) {
             return '';
@@ -597,7 +597,7 @@ trait CommonSalesPurchases
             . self::modalDocList($i18n, $parents, 'previous-documents', 'parentsModal');
     }
 
-    protected static function productBtn(Translator $i18n, BusinessDocument $model): string
+    public static function productBtn(Translator $i18n, BusinessDocument $model): string
     {
         return $model->editable ? '<div class="col-9 col-md col-lg-2">'
             . '<div class="input-group mb-3">'
@@ -608,7 +608,7 @@ trait CommonSalesPurchases
             . '</div>' : '';
     }
 
-    protected static function saveBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
+    public static function saveBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         return $model->subjectColumnValue() && $model->editable ? '<button type="button" class="btn btn-primary btn-spin-action"'
             . ' load-after="true" onclick="return ' . $jsName . '(\'save-doc\', \'0\');">'
@@ -616,7 +616,7 @@ trait CommonSalesPurchases
             . '</button>' : '';
     }
 
-    protected static function sortableBtn(Translator $i18n, BusinessDocument $model): string
+    public static function sortableBtn(Translator $i18n, BusinessDocument $model): string
     {
         return $model->editable ? '<div class="col-4 col-md-auto">'
             . '<button type="button" class="btn btn-block btn-light mb-3" id="sortableBtn">'
@@ -625,7 +625,7 @@ trait CommonSalesPurchases
             . '</div>' : '';
     }
 
-    protected static function subtotalNetoBtn(Translator $i18n): string
+    public static function subtotalNetoBtn(Translator $i18n): string
     {
         $html = '<div class="col-12 col-md-auto mb-3">'
             . '<div id="columnView" class="btn-group btn-block" role="group">';
@@ -646,7 +646,7 @@ trait CommonSalesPurchases
         return $html;
     }
 
-    protected static function tasaconv(Translator $i18n, BusinessDocument $model): string
+    public static function tasaconv(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="tasaconv" step="any" autocomplete="off"' : 'disabled';
         return '<div class="col-sm-6">'
@@ -656,7 +656,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function total(Translator $i18n, BusinessDocument $model, string $jsName): string
+    public static function total(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         return empty($model->total) ? '' : '<div class="col-sm"><div class="form-group">' . $i18n->trans('total')
             . '<div class="input-group">'
@@ -668,14 +668,14 @@ trait CommonSalesPurchases
             . '</div></div></div>';
     }
 
-    protected static function undoBtn(Translator $i18n, BusinessDocument $model): string
+    public static function undoBtn(Translator $i18n, BusinessDocument $model): string
     {
         return $model->subjectColumnValue() && $model->editable ? '<a href="' . $model->url() . '" class="btn btn-secondary mr-2">'
             . '<i class="fas fa-undo fa-fw"></i> ' . $i18n->trans('undo')
             . '</a>' : '';
     }
 
-    protected static function user(Translator $i18n, BusinessDocument $model): string
+    public static function user(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = 'disabled';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'

@@ -57,7 +57,7 @@ trait CommonLineHTML
     /** @var array */
     private static $stocks = [];
 
-    private static function cantidadRestante(Translator $i18n, BusinessDocumentLine $line, TransformerDocument $model): string
+    public static function cantidadRestante(Translator $i18n, BusinessDocumentLine $line, TransformerDocument $model): string
     {
         if ($line->servido <= 0 || false === $model->editable) {
             return '';
@@ -70,7 +70,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function codimpuesto(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    public static function codimpuesto(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         // comprobamos el régimen de IVA del cliente o proveedor
         if (!isset(self::$regimeniva)) {
@@ -106,7 +106,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function descripcion(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
+    public static function descripcion(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
     {
         $attributes = $model->editable ? 'name="descripcion_' . $idlinea . '"' : 'disabled=""';
 
@@ -123,7 +123,7 @@ trait CommonLineHTML
             . $line->descripcion . '</textarea></div>';
     }
 
-    private static function dtopor(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    public static function dtopor(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="dtopor_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
@@ -134,7 +134,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function dtopor2(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
+    public static function dtopor2(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="' . $field . '_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
@@ -146,7 +146,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function excepcioniva(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
+    public static function excepcioniva(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="excepcioniva_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
@@ -168,7 +168,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function genericBool(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $label): string
+    public static function genericBool(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $label): string
     {
         $attributes = $model->editable ? 'name="' . $field . '_' . $idlinea . '"' : 'disabled=""';
         $options = $line->{$field} ?
@@ -181,7 +181,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function irpf(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    public static function irpf(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $options = ['<option value="">------</option>'];
         foreach (Retenciones::all() as $ret) {
@@ -205,7 +205,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function lineTotal(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsSubtotal, string $jsNeto): string
+    public static function lineTotal(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsSubtotal, string $jsNeto): string
     {
         if ('subtotal' === self::$columnView) {
             $cssSubtotal = '';
@@ -234,7 +234,7 @@ trait CommonLineHTML
             . '" class="form-control form-control-sm text-lg-right border-0"' . $onclickNeto . ' readonly/></div>';
     }
 
-    private static function loadProducts(array $lines, BusinessDocument $model): void
+    public static function loadProducts(array $lines, BusinessDocument $model): void
     {
         // cargamos las referencias
         $references = [];
@@ -265,7 +265,7 @@ trait CommonLineHTML
         }
     }
 
-    private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    public static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         // comprobamos el régimen de IVA del cliente o proveedor
         if (!isset(self::$regimeniva)) {
@@ -289,7 +289,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function referencia(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
+    public static function referencia(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
     {
         $sortable = $model->editable ?
             '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' :
@@ -311,7 +311,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function renderExpandButton(Translator $i18n, string $idlinea, TransformerDocument $model, string $jsName): string
+    public static function renderExpandButton(Translator $i18n, string $idlinea, TransformerDocument $model, string $jsName): string
     {
         if ($model->editable) {
             return '<div class="col-auto order-9">'
@@ -328,7 +328,7 @@ trait CommonLineHTML
             . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
     }
 
-    private static function subtotalValue(BusinessDocumentLine $line, TransformerDocument $model): float
+    public static function subtotalValue(BusinessDocumentLine $line, TransformerDocument $model): float
     {
         if ($model->subjectColumn() === 'codcliente'
             && $model->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
@@ -341,7 +341,7 @@ trait CommonLineHTML
         return $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
     }
 
-    private static function suplido(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    public static function suplido(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="suplido_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
@@ -356,43 +356,43 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function titleActionsButton(TransformerDocument $model): string
+    public static function titleActionsButton(TransformerDocument $model): string
     {
         $width = $model->editable ? 68 : 32;
         return '<div class="col-lg-auto order-8"><div style="min-width: ' . $width . 'px;"></div></div>';
     }
 
-    private static function titleCantidad(Translator $i18n): string
+    public static function titleCantidad(Translator $i18n): string
     {
         return '<div class="col-lg-1 text-right order-3">' . $i18n->trans('quantity') . '</div>';
     }
 
-    private static function titleCodimpuesto(Translator $i18n): string
+    public static function titleCodimpuesto(Translator $i18n): string
     {
         return '<div class="col-lg-1 order-6"><a href="ListImpuesto">' . $i18n->trans('tax') . '</a></div>';
     }
 
-    private static function titleDescripcion(Translator $i18n): string
+    public static function titleDescripcion(Translator $i18n): string
     {
         return '<div class="col-lg order-2">' . $i18n->trans('description') . '</div>';
     }
 
-    private static function titleDtopor(Translator $i18n): string
+    public static function titleDtopor(Translator $i18n): string
     {
         return '<div class="col-lg-1 text-center order-5">' . $i18n->trans('percentage-discount') . '</div>';
     }
 
-    private static function titlePrecio(Translator $i18n): string
+    public static function titlePrecio(Translator $i18n): string
     {
         return '<div class="col-lg-1 text-right order-4">' . $i18n->trans('price') . '</div>';
     }
 
-    private static function titleReferencia(Translator $i18n): string
+    public static function titleReferencia(Translator $i18n): string
     {
         return '<div class="col-lg-1 order-1">' . $i18n->trans('reference') . '</div>';
     }
 
-    private static function titleTotal(Translator $i18n): string
+    public static function titleTotal(Translator $i18n): string
     {
         if ('subtotal' === self::$columnView) {
             $cssSubtotal = '';
