@@ -87,14 +87,15 @@ class ReceiptGenerator
         // la factura está pagada si el importe pagado es igual o superior al importe total
         $invoice->pagada = $this->isCero($invoice->total - $paidAmount) || ($invoice->total > 0 && $invoice->total <= $paidAmount);
 
-        // actualizamos la factura por sql
-        $dataBase = new DataBase();
-        $dataBase->connect();
-        $sql = 'UPDATE ' . $invoice::tableName()
-            . ' SET pagada = ' . $dataBase->var2str($invoice->pagada)
-            . ', vencida = ' . $dataBase->var2str($invoice->vencida)
-            . ' WHERE ' . $invoice::primaryColumn() . ' = ' . $dataBase->var2str($invoice->id()) . ';';
-        $dataBase->exec($sql);
+        // añadimos el total pendiente
+        $invoice->total_pendiente = $invoice->total - $paidAmount;
+
+        // actualizamos la factura
+        $invoice->update([
+            'pagada' => $invoice->pagada,
+            'total_pendiente' => $invoice->total_pendiente,
+            'vencida' => $invoice->vencida
+        ]);
 
         WorkQueue::send('Model.' . $invoice->modelClassName() . '.Paid', $invoice->id(), $invoice->toArray());
     }
