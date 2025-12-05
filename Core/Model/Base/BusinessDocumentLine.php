@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Template\ModelClass as NewModelClass;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Stock;
@@ -435,8 +436,33 @@ abstract class BusinessDocumentLine extends NewModelClass
     protected function onChange(string $field): bool
     {
         switch ($field) {
-            case 'actualizastock':
             case 'cantidad':
+                // search for parent document (if is a line of a transformation)
+                $transformation = new DocTransformation();
+                $where = [
+                    new DataBaseWhere('model2', $this->getDocument()->modelClassName()),
+                    new DataBaseWhere('idlinea2', $this->id())
+                ];
+                if ($transformation->loadWhere($where)) {
+                    // restore stock servido
+                    $parentLine = $transformation->getParentLine();
+
+                    $cantParent = $parentLine->cantidad;
+                    $cantLine = $this->cantidad;
+
+                    if($cantLine > $cantParent){
+                        // if the cuantity is more than the original then max servido
+                        $parentLine->servido = $cantParent;
+                    }else{
+                        // if the cuantity es less or equal than the original then
+                        // servido is the original cuantity minus the new cuantity
+                        $parentLine->servido = $cantParent - $cantLine;
+                        max($parentLine->servido, 0);
+                    }
+
+                    $parentLine->save();
+                }
+            case 'actualizastock':
             case 'servido':
                 return $this->updateStock() && parent::onChange($field);
         }
@@ -449,6 +475,24 @@ abstract class BusinessDocumentLine extends NewModelClass
      */
     protected function onDelete(): void
     {
+        // search for parent document (if is a line of a transformation)
+        $transformation = new DocTransformation();
+        $where = [
+            new DataBaseWhere('model2', $this->getDocument()->modelClassName()),
+            new DataBaseWhere('idlinea2', $this->id())
+        ];
+        if ($transformation->loadWhere($where)) {
+            // restore stock servido if parent exists
+            $parentLine = $transformation->getParentLine();
+
+            // set parent servido to 0 because line was deleted
+            $parentLine->servido = 0.0;
+            $parentLine->save();
+
+            // eliminamos la transformación o enlace de las dos lineas también
+            // $transformation->delete();
+        }
+
         $this->cantidad = 0.0;
         $this->updateStock();
 
