@@ -329,7 +329,14 @@ class SalesLineHTML
 
     private static function precio(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
     {
-        if (false === $model->editable) {
+        $canEditPrices = true;
+        $lineaWithoutRefProduct = (empty($line->referencia) && empty($line->idproducto));
+        
+        if (false === $lineaWithoutRefProduct && false === SalesHeaderHTML::checkLevel(Tools::settings('default', 'levelpriceproducts', 0))) {
+            $canEditPrices = false;
+        }
+
+        if (false === $model->editable || false === $canEditPrices) {
             return '<div class="col-sm col-lg-1 order-4">'
                 . '<span class="d-lg-none small">' . $i18n->trans('price') . '</span>'
                 . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-right border-0" disabled/>'

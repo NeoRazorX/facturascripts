@@ -139,6 +139,9 @@
             <column name="level-benefit-sales" numcolumns="3" order="130">
                 <widget type="number" fieldname="levelbenefitsales" min="0" max="99" decimal="0" step="1" required="true"/>
             </column>
+            <column name="level-price-products" numcolumns="3" order="140">
+                <widget type="number" fieldname="levelpriceproducts" min="0" max="99" decimal="0" step="1" required="true"/>
+            </column>
         </group>
         <group name="advanced" title="advanced" icon="fa-solid fa-database" valign="bottom" numcolumns="12">
             <column name="url" numcolumns="3" order="100">
