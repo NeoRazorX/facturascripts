@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Lib\Thumbnail;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\UploadedFile;
@@ -188,8 +189,9 @@ class WidgetLibrary extends BaseWidget
             $js = "widgetLibrarySelect('" . $id . "', '" . $file->idfile . "', '" . $file->shortFileName() . "');";
 
             if ($file->isImage()) {
+                $thumbnail = Thumbnail::generate($file->getFullPath(), 64, 64, true, true);
                 $html .= '<div class="d-flex">'
-                    . '<img loading="lazy" src="' . $file->url('download-permanent') . '" class="me-3 flex-shrink-0" alt="' . $file->filename
+                    . '<img loading="lazy" src="' . $thumbnail . '" class="me-3 flex-shrink-0" alt="' . $file->filename
                     . '" width="64" height="64" style="object-fit: cover; cursor: pointer;" onclick="' . $js . '" title="' . Tools::trans('select') . '">'
                     . '<div class="flex-grow-1 min-width-0">'
                     . '<h6 class="text-truncate mb-1" style="cursor: pointer;" onclick="' . $js . '" title="' . Tools::trans('select') . '">' . $file->filename . '</h6>'
