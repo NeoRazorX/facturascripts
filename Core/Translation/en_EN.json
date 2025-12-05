@@ -1261,6 +1261,7 @@
     "plugin": "Plugin",
     "plugin-deleted": "Plugin %pluginName% successfully deleted.",
     "plugin-disabled": "Plugin %pluginName% disabled successfully.",
+    "plugins-disabled-incompatible": "The following plugins have been automatically disabled because they are incompatible with this version of FacturaScripts: %plugins%",
     "plugin-enabled": "Plugin %pluginName% activated successfully.",
     "plugin-file-too-big": "This server does not allow uploading files larger than %size% MB. Please increase the maximum upload file size in PHP or copy the file to the Plugins folder.",
     "plugin-folder-not-equal-name": "The plugin folder (%folderName%) does not have the same name as the plugin (%pluginName%)",
