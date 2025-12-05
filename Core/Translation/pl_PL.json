@@ -1809,7 +1809,7 @@
     "vat-document": "Dokument",
     "vat-exception": "Wyjątek VAT",
     "vat-number-is-short": "Numer '%vat-number%' jest zbyt krótki",
-    "vat-number-not-valid": "%vat-number% no está registrado en el VIES",
+    "vat-number-not-valid": "%vat-number% nie jest zarejestrowany w VIES",
     "vat-number-not-vies": "Numer '%vat-number%' nie jest zarejestrowany w systemie VIES",
     "vat-regime": "Reżim podatkowy",
     "VAT-register": "Podatki",
