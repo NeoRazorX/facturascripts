@@ -226,15 +226,9 @@ class ReceiptGenerator
             return true;
         }
 
-        $newReceipt = new ReciboCliente();
-        $newReceipt->codcliente = $invoice->codcliente;
-        $newReceipt->coddivisa = $invoice->coddivisa;
-        $newReceipt->idempresa = $invoice->idempresa;
-        $newReceipt->idfactura = $invoice->idfactura;
-        $newReceipt->importe = $amount;
-        $newReceipt->numero = $number;
-        $newReceipt->fecha = $invoice->fecha;
-        $newReceipt->setPaymentMethod($invoice->codpago);
+        $newReceipt = $invoice->getNewReceipt($number, [
+            'importe' => $amount,
+        ]);
         $newReceipt->disableInvoiceUpdate(true);
         return $newReceipt->save();
     }
@@ -252,15 +246,9 @@ class ReceiptGenerator
             return true;
         }
 
-        $newReceipt = new ReciboProveedor();
-        $newReceipt->codproveedor = $invoice->codproveedor;
-        $newReceipt->coddivisa = $invoice->coddivisa;
-        $newReceipt->idempresa = $invoice->idempresa;
-        $newReceipt->idfactura = $invoice->idfactura;
-        $newReceipt->importe = $amount;
-        $newReceipt->numero = $number;
-        $newReceipt->fecha = $invoice->fecha;
-        $newReceipt->setPaymentMethod($invoice->codpago);
+        $newReceipt = $invoice->getNewReceipt($number, [
+            'importe' => $amount,
+        ]);
         $newReceipt->disableInvoiceUpdate(true);
         return $newReceipt->save();
     }

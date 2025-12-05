@@ -186,6 +186,24 @@ class EditFacturaCliente extends SalesController
             return true;
         }
 
+        // comprobamos si se han recibido importes específicos
+        $amounts = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $amount = $this->request->input('amount_' . $i);
+            if ($amount !== null && $amount !== '') {
+                $amountFloat = (float)$amount;
+                if ($amountFloat > 0) {
+                    $amounts[] = $amountFloat;
+                }
+            }
+        }
+
+        // si hay importes específicos, creamos los recibos manualmente
+        if (!empty($amounts)) {
+            return $this->generateReceiptsWithAmounts($invoice, $amounts);
+        }
+
+        // si no hay importes específicos, usamos el generador automático
         $generator = new ReceiptGenerator();
         $number = (int)$this->request->input('number', '0');
         if ($generator->generate($invoice, $number)) {
@@ -197,6 +215,35 @@ class EditFacturaCliente extends SalesController
         }
 
         Tools::log()->error('record-save-error');
+        return true;
+    }
+
+    private function generateReceiptsWithAmounts(FacturaCliente $invoice, array $amounts): bool
+    {
+        // creamos los recibos con los importes especificados
+        $numero = count($invoice->getReceipts()) + 1;
+
+        foreach ($amounts as $amount) {
+            $receipt = $invoice->getNewReceipt($numero, [
+                'importe' => $amount,
+                'nick' => $this->user->nick
+            ]);
+
+            $receipt->disableInvoiceUpdate(true);
+            if (false === $receipt->save()) {
+                Tools::log()->error('record-save-error');
+                return true;
+            }
+
+            $numero++;
+        }
+
+        // actualizamos la factura
+        $generator = new ReceiptGenerator();
+        $generator->update($invoice);
+        $invoice->save();
+
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 
