@@ -92,17 +92,37 @@
                                 {% endif %}
                             </div>
                             <div class="row g-2">
+                                {% if fsc.empresa.count() > 1 %}
+                                    <div class="col-sm-6 col-md">
+                                        <div class="mb-3">
+                                            {{ trans('company') }}
+                                            <select name="idempresa" id="idempresa" class="form-select" required>
+                                                {% for item in fsc.codeModel.all('empresas', 'idempresa', 'nombrecorto', false) %}
+                                                    {% if item.code == fsc.model.idempresa %}
+                                                        <option value="{{ item.code }}" selected>
+                                                            {{ item.description }}
+                                                        </option>
+                                                    {% else %}
+                                                        <option value="{{ item.code }}">
+                                                            {{ item.description }}
+                                                        </option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 <div class="col-sm-6 col-md">
                                     <div class="mb-3">
                                         {{ trans('warehouse') }}
-                                        <select name="codalmacen" class="form-select" required>
-                                            {% for item in fsc.codeModel.all('almacenes', 'codalmacen', 'nombre', false) %}
+                                        <select name="codalmacen" id="codalmacen" class="form-select" required>
+                                            {% for item in fsc.warehousesList %}
                                                 {% if item.code == fsc.model.codalmacen %}
-                                                    <option value="{{ item.code }}" selected>
+                                                    <option value="{{ item.code }}" data-idempresa="{{ item.idempresa }}" selected>
                                                         {{ item.description }}
                                                     </option>
                                                 {% else %}
-                                                    <option value="{{ item.code }}">
+                                                    <option value="{{ item.code }}" data-idempresa="{{ item.idempresa }}">
                                                         {{ item.description }}
                                                     </option>
                                                 {% endif %}
@@ -113,7 +133,7 @@
                                 <div class="col-sm-6 col-md">
                                     <div class="mb-3">
                                         {{ trans('serie') }}
-                                        <select name="codserie" class="form-select" required>
+                                        <select name="codserie" id="codserie" class="form-select" required>
                                             {% for item in fsc.codeModel.all('series', 'codserie', 'descripcion', false) %}
                                                 {% if item.code == fsc.model.codserie %}
                                                     <option value="{{ item.code }}" selected>
@@ -131,14 +151,14 @@
                                 <div class="col-sm-6 col-md">
                                     <div class="mb-3">
                                         {{ trans('payment-method') }}
-                                        <select name="codpago" class="form-select" required>
-                                            {% for item in fsc.codeModel.all('formaspago', 'codpago', 'descripcion', false) %}
+                                        <select name="codpago" id="codpago" class="form-select" required>
+                                            {% for item in fsc.paymentMethodsList %}
                                                 {% if item.code == fsc.model.codpago %}
-                                                    <option value="{{ item.code }}" selected>
+                                                    <option value="{{ item.code }}" data-idempresa="{{ item.idempresa }}" selected>
                                                         {{ item.description }}
                                                     </option>
                                                 {% else %}
-                                                    <option value="{{ item.code }}">
+                                                    <option value="{{ item.code }}" data-idempresa="{{ item.idempresa }}">
                                                         {{ item.description }}
                                                     </option>
                                                 {% endif %}
@@ -242,7 +262,84 @@
             return formData;
         }
 
+        function updateSelectsByCompany(idempresa) {
+            if (!idempresa) {
+                return;
+            }
+
+            // Convertir idempresa a número para comparación consistente
+            var empresaNum = parseInt(idempresa);
+
+            // Actualizar almacenes
+            var selectedAlmacen = $("#codalmacen").val();
+            var almacenValido = false;
+
+            $("#codalmacen option").each(function() {
+                var optionEmpresa = $(this).data("idempresa");
+
+                // Si no tiene empresa asignada o coincide con la empresa seleccionada
+                if (optionEmpresa === undefined || optionEmpresa === null || optionEmpresa === "" || parseInt(optionEmpresa) === empresaNum) {
+                    $(this).prop("disabled", false).show();
+                    if ($(this).val() === selectedAlmacen) {
+                        almacenValido = true;
+                    }
+                } else {
+                    $(this).prop("disabled", true).hide();
+                }
+            });
+
+            // Si el almacén seleccionado no es válido, seleccionar el primero disponible
+            if (!almacenValido) {
+                var firstValidAlmacen = $("#codalmacen option:not(:disabled):first").val();
+                if (firstValidAlmacen) {
+                    $("#codalmacen").val(firstValidAlmacen);
+                }
+            }
+
+            // Actualizar formas de pago
+            var selectedPago = $("#codpago").val();
+            var pagoValido = false;
+
+            $("#codpago option").each(function() {
+                var optionEmpresa = $(this).data("idempresa");
+
+                // Si no tiene empresa asignada o coincide con la empresa seleccionada
+                if (optionEmpresa === undefined || optionEmpresa === null || optionEmpresa === "" || parseInt(optionEmpresa) === empresaNum) {
+                    $(this).prop("disabled", false).show();
+                    if ($(this).val() === selectedPago) {
+                        pagoValido = true;
+                    }
+                } else {
+                    $(this).prop("disabled", true).hide();
+                }
+            });
+
+            // Si la forma de pago seleccionada no es válida, seleccionar la primera disponible
+            if (!pagoValido) {
+                var firstValidPago = $("#codpago option:not(:disabled):first").val();
+                if (firstValidPago) {
+                    $("#codpago").val(firstValidPago);
+                }
+            }
+        }
+
         $(document).ready(function () {
+            // Evento para cuando cambia la empresa
+            $("#idempresa").on("change", function() {
+                updateSelectsByCompany($(this).val());
+            });
+
+            // Inicializar los selectores con la empresa actual al cargar la página
+            var currentEmpresa = $("#idempresa").val();
+            if (currentEmpresa) {
+                updateSelectsByCompany(currentEmpresa);
+            } else {
+                // Si no hay selector de empresa (solo hay una), usar la empresa del modelo
+                {% if fsc.model.idempresa %}
+                updateSelectsByCompany({{ fsc.model.idempresa }});
+                {% endif %}
+            }
+
             $(".autocomplete-dc").each(function () {
                 let data = {
                     field: $(this).attr("data-field"),
