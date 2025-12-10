@@ -70,7 +70,7 @@ class NewMail
     protected $mail;
 
     /** @var array */
-    private static $mailer = ['mail' => 'Mail', 'sendmail' => 'SendMail', 'smtp' => 'SMTP'];
+    private static $mailer = ['mail' => 'Mail', 'sendmail' => 'SendMail', 'smtp' => 'SMTP', 'msgraph' => 'msgraph'];
 
     /** @var BaseBlock[] */
     protected $mainBlocks = [];
@@ -226,7 +226,21 @@ class NewMail
      */
     public function canSendMail(): bool
     {
-        return !empty($this->fromEmail) && !empty($this->mail->Password) && !empty($this->mail->Host);
+        if (empty($this->fromEmail)) {
+            return false;
+        }
+
+        switch ($this->mail->Mailer) {
+            case 'msgraph':
+                $graphClient = new MicrosoftGraphClient();
+                return $graphClient->isReadyToSend();
+
+            case 'SMTP':
+                return !empty($this->mail->Password) && !empty($this->mail->Host);
+
+            default:
+                return true;
+        }
     }
 
     public function cc(string $email, string $name = ''): NewMail
@@ -353,6 +367,15 @@ class NewMail
         $this->renderHTML();
         $this->mail->msgHTML($this->html);
 
+        if ('msgraph' === $this->mail->Mailer) {
+            if ($this->sendWithMicrosoftGraph()) {
+                $this->saveMailSent();
+                return true;
+            }
+
+            return false;
+        }
+
         if ('SMTP' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
             Tools::log()->warning('mail-server-error');
             return false;
@@ -456,6 +479,16 @@ class NewMail
             case 'SMTP':
                 $this->mail->SMTPDebug = 3;
                 return $this->mail->smtpConnect($this->smtpOptions());
+
+            case 'msgraph':
+                $graphClient = new MicrosoftGraphClient();
+                if ($graphClient->validateConnection()) {
+                    return true;
+                }
+
+                $error = $this->formatGraphError($graphClient->getLastError());
+                Tools::log()->warning('msgraph-test-error', ['%error%' => $error]);
+                return false;
 
             default:
                 Tools::log()->warning('test-' . $this->mail->Mailer . '-not-implemented');
@@ -615,5 +648,179 @@ class NewMail
         }
 
         return [];
+    }
+
+    protected function sendWithMicrosoftGraph(): bool
+    {
+        $graphClient = new MicrosoftGraphClient();
+
+        $message = [
+            'subject' => $this->title,
+            'body' => [
+                'contentType' => 'HTML',
+                'content' => $this->html
+            ],
+            'from' => [
+                'emailAddress' => array_filter([
+                    'address' => $this->fromEmail,
+                    'name' => $this->fromName
+                ])
+            ],
+            'toRecipients' => $this->formatGraphAddresses($this->mail->getToAddresses())
+        ];
+
+        $replyTo = $this->formatGraphAddresses($this->mail->getReplyToAddresses());
+        if (!empty($replyTo)) {
+            $message['replyTo'] = $replyTo;
+        }
+
+        $ccRecipients = $this->formatGraphAddresses($this->mail->getCcAddresses());
+        if (!empty($ccRecipients)) {
+            $message['ccRecipients'] = $ccRecipients;
+        }
+
+        $bccRecipients = $this->formatGraphAddresses($this->mail->getBccAddresses());
+        if (!empty($bccRecipients)) {
+            $message['bccRecipients'] = $bccRecipients;
+        }
+
+        $attachments = $this->buildGraphAttachments();
+        if (!empty($attachments)) {
+            $message['attachments'] = $attachments;
+        }
+
+        $saveToSentItems = $this->shouldSaveToSentItems();
+        if ($graphClient->sendMail($message, $saveToSentItems)) {
+            return true;
+        }
+
+        $error = $this->formatGraphError($graphClient->getLastError());
+        Tools::log()->error('msgraph-send-error', ['%error%' => $error]);
+        return false;
+    }
+
+    protected function formatGraphAddresses(array $addresses): array
+    {
+        $recipients = [];
+        foreach ($addresses as $address) {
+            if (is_array($address)) {
+                $email = $address[0] ?? '';
+                $name = $address[1] ?? '';
+            } else {
+                $email = $address;
+                $name = '';
+            }
+
+            if (empty($email)) {
+                continue;
+            }
+
+            $recipient = [
+                'emailAddress' => ['address' => $email]
+            ];
+
+            if (!empty($name)) {
+                $recipient['emailAddress']['name'] = $name;
+            }
+
+            $recipients[] = $recipient;
+        }
+
+        return $recipients;
+    }
+
+    protected function buildGraphAttachments(): array
+    {
+        $graphAttachments = [];
+        foreach ($this->mail->getAttachments() as $attachment) {
+            $path = $this->resolveAttachmentPath($attachment);
+            if (null === $path) {
+                Tools::log('NewMail')->warning('attachment-not-found', ['%file%' => $attachment[0] ?? '']);
+                continue;
+            }
+
+            $content = @file_get_contents($path);
+            if (false === $content) {
+                Tools::log('NewMail')->warning('attachment-not-found', ['%file%' => $path]);
+                continue;
+            }
+
+            $graphAttachments[] = [
+                '@odata.type' => '#microsoft.graph.fileAttachment',
+                'name' => $attachment[1] ?? basename($path),
+                'contentType' => $this->resolveAttachmentMimeType($attachment, $path),
+                'contentBytes' => base64_encode($content)
+            ];
+        }
+
+        return $graphAttachments;
+    }
+
+    protected function resolveAttachmentMimeType(array $attachment, string $path): string
+    {
+        if (!empty($attachment[4])) {
+            return $attachment[4];
+        }
+
+        $mimeType = mime_content_type($path);
+        return $mimeType ?: 'application/octet-stream';
+    }
+
+    protected function resolveAttachmentPath(array $attachment): ?string
+    {
+        $candidates = [];
+
+        if (!empty($attachment[1])) {
+            $candidates[] = FS_FOLDER . '/' . static::ATTACHMENTS_TMP_PATH . $attachment[1];
+        }
+
+        if (!empty($attachment[0])) {
+            $candidates[] = FS_FOLDER . '/MyFiles/' . $attachment[0];
+            $candidates[] = FS_FOLDER . '/' . $attachment[0];
+            $candidates[] = $attachment[0];
+        }
+
+        foreach ($candidates as $candidate) {
+            if (!empty($candidate) && file_exists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    protected function shouldSaveToSentItems(): bool
+    {
+        $setting = Tools::settings('email', 'msgraph_save_to_sent', '1');
+        if (is_bool($setting)) {
+            return $setting;
+        }
+
+        $setting = strtolower((string)$setting);
+        return in_array($setting, ['1', 'true', 'yes', 'on'], true);
+    }
+
+    protected function formatGraphError(?string $error): string
+    {
+        if (empty($error)) {
+            return Tools::trans('unknown-error');
+        }
+
+        switch ($error) {
+            case 'missing-configuration':
+                return Tools::trans('msgraph-auth-missing-config');
+
+            case 'missing-refresh-token':
+                return Tools::trans('msgraph-token-missing');
+
+            case 'missing-password-credentials':
+                return Tools::trans('msgraph-password-missing');
+
+            case 'authorization-disabled':
+                return Tools::trans('msgraph-auth-disabled');
+
+            default:
+                return $error;
+        }
     }
 }

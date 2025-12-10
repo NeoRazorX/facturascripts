@@ -71,6 +71,38 @@
                 <widget type="checkbox" fieldname="lowsecure"/>
             </column>
         </group>
+        <group name="msgraph" title="microsoft-graph" icon="fa-brands fa-microsoft" numcolumns="12">
+            <column name="msgraph-client-id" numcolumns="4" order="100">
+                <widget type="text" fieldname="msgraph_client_id" icon="fa-solid fa-id-badge"/>
+            </column>
+            <column name="msgraph-tenant-id" numcolumns="4" order="110">
+                <widget type="text" fieldname="msgraph_tenant_id" icon="fa-solid fa-building"/>
+            </column>
+            <column name="msgraph-client-secret" numcolumns="4" order="120">
+                <widget type="password" fieldname="msgraph_client_secret" icon="fa-solid fa-key"/>
+            </column>
+            <column name="msgraph-token-mode" numcolumns="4" order="125" title="msgraph-token-mode" description="msgraph-token-mode-help">
+                <widget type="select" fieldname="msgraph_token_mode" required="true">
+                    <values title="msgraph-token-mode-auth">authorization_code</values>
+                    <values title="msgraph-token-mode-password">password</values>
+                </widget>
+            </column>
+            <column name="msgraph-scopes" numcolumns="6" order="130" description="msgraph-scopes-help">
+                <widget type="text" fieldname="msgraph_scopes" icon="fa-solid fa-shield-alt"/>
+            </column>
+            <column name="msgraph-save-to-sent" numcolumns="3" order="140">
+                <widget type="checkbox" fieldname="msgraph_save_to_sent" title="msgraph-save-to-sent"/>
+            </column>
+            <column name="msgraph-redirect" numcolumns="6" order="150" description="msgraph-redirect-help">
+                <widget type="text" fieldname="msgraph_redirect_uri" readonly="true" icon="fa-solid fa-link"/>
+            </column>
+            <column name="msgraph-username" numcolumns="4" order="160" description="msgraph-credentials-help">
+                <widget type="text" fieldname="msgraph_username" icon="fa-solid fa-user" title="msgraph-username"/>
+            </column>
+            <column name="msgraph-password" numcolumns="4" order="170" description="msgraph-credentials-help">
+                <widget type="password" fieldname="msgraph_password" icon="fa-solid fa-lock" title="msgraph-password"/>
+            </column>
+        </group>
         <group name="reply" title="reply" icon="fa-solid fa-reply" numcolumns="3">
             <column name="replytouseremail" title="email-replies" order="100">
                 <widget type="select" fieldname="replytouseremail" required="true" translate="true">
