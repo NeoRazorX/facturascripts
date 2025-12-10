@@ -22,9 +22,9 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Model\EmailSent;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
-use FacturaScripts\Dinamic\Model\LogMessage;
 
 /**
  * Controller to edit main settings
@@ -101,13 +101,13 @@ class ConfigEmail extends PanelController
             ->addFilterPeriod('date', 'period', 'date', true)
             ->addFilterCheckbox('opened')
             ->addFilterCheckbox('attachment', 'has-attachments');
-        
+
         // añadimos un botón para el modal delete-multi
         $this->addButton($viewName, [
             'action' => 'delete-multi',
             'color' => 'warning',
             'icon' => 'fa-solid fa-trash-alt',
-            'label' => 'delete-multi',
+            'label' => 'delete-logs',
             'type' => 'modal',
         ]);
     }
@@ -123,14 +123,19 @@ class ConfigEmail extends PanelController
 
         $from = $this->request->input('delete_from', '');
         $to = $this->request->input('delete_to', '');
-
-        $query = EmailSent::table()
-            ->whereGte('date', $from)
-            ->whereLte('date', $to);
-
-        if (false === $query->delete()) {
-            Tools::log()->warning('record-deleted-error');
+        if (empty($from) || empty($to)) {
             return;
+        }
+
+        $where = [
+            Where::gte('date', $from . ' 00:00:00'),
+            Where::lte('date', $to . ' 23:59:59')
+        ];
+        foreach (EmailSent::all($where) as $emailSent) {
+            if (false === $emailSent->delete()) {
+                Tools::log()->warning('record-deleted-error');
+                return;
+            }
         }
 
         Tools::log()->notice('record-deleted-correctly');
@@ -203,16 +208,16 @@ class ConfigEmail extends PanelController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'delete-multi':
+                $this->deleteMultiAction();
+                break;
+
             case 'disable-notification':
                 $this->enableNotificationAction(false);
                 break;
 
             case 'enable-notification':
                 $this->enableNotificationAction(true);
-                break;
-            
-            case 'delete-multi':
-                $this->deleteMultiAction();
                 break;
 
         }
