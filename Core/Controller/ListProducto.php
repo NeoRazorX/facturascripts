@@ -24,9 +24,9 @@ use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Lib\ProductType;
+use FacturaScripts\Core\Lib\TaxException;
 use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
 
 /**
@@ -98,7 +98,7 @@ class ListProducto extends ListController
         $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
 
         $exceptions = [['code' => '', 'description' => '------']];
-        foreach (RegimenIVA::allExceptions() as $key => $value) {
+        foreach (TaxException::all() as $key => $value) {
             $exceptions[] = [
                 'code' => $key,
                 'description' => $i18n->trans($value)

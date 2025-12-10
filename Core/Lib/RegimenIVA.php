@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
+ * @deprecated use TaxRegime instead.
  * This class centralizes all common method for VAT Regime.
  *
  * @author          Carlos García Gómez         <carlos@facturascripts.com>
@@ -33,7 +34,7 @@ class RegimenIVA
     const ES_TAX_EXCEPTION_E4 = 'ES_23_24'; // E4 Exenta arts. 23–24 LIVA – Zonas francas y depósitos aduaneros
     const ES_TAX_EXCEPTION_E5 = 'ES_25'; // E5 Exenta art. 25 LIVA – Entregas intracomunitarias de bienes
     const ES_TAX_EXCEPTION_E6 = 'ES_OTHER'; // E6 Otras exenciones (oro de inversión, regímenes especiales, etc.)
-    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = 'ES_PASSIVE_SUBJECT'; // N6 Inversión del sujeto pasivo (art. 84 LIVA)
+    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = 'ES_PASSIVE_SUBJECT'; // S2 Inversión del sujeto pasivo (art. 84 LIVA)
     const ES_TAX_EXCEPTION_ART_7 = 'ES_ART_7'; // N3 No sujeta art. 7 LIVA – Operaciones no sujetas (aportaciones, transmisión de UEA, muestras…)
     const ES_TAX_EXCEPTION_ART_14 = 'ES_ART_14'; // N4 No sujeta art. 14 LIVA – Operaciones vinculadas a exportaciones
     const ES_TAX_EXCEPTION_LOCATION_RULES = 'ES_LOCATION_RULES'; // N2 No sujeta – Reglas de localización de servicios (arts. 69–70 LIVA, servicios B2B UE o fuera UE)
@@ -41,17 +42,17 @@ class RegimenIVA
     const ES_TAX_EXCEPTION_N5 = 'ES_N5'; // No sujeta N5 – Otras disposiciones específicas (OTAN, convenios internacionales…)
     const TAX_SYSTEM_AGRARIAN = 'Agrario';
     const TAX_SYSTEM_CASH_CRITERIA = 'Caja';
-    const TAX_SYSTEM_EXEMPT = 'Exento';
+    const TAX_SYSTEM_EXEMPT = 'Exento'; // es una característica de algunas operaciones dentro de un régimen, no un régimen en sí.
     const TAX_SYSTEM_GENERAL = 'General';
     const TAX_SYSTEM_GOLD = 'Oro';
     const TAX_SYSTEM_GROUP_ENTITIES = 'Grupo entidades';
-    const TAX_SYSTEM_ONE_STOP_SHOP_OSS = 'One Stop Shop (OSS)';
-    const TAX_SYSTEM_ONE_STOP_SHOP_IOSS = 'One Stop Shop (IOSS)';
+    const TAX_SYSTEM_ONE_STOP_SHOP_OSS = 'One Stop Shop (OSS)'; // esto sería ventas a distancia de bienes dentro de la UE
+    const TAX_SYSTEM_ONE_STOP_SHOP_IOSS = 'One Stop Shop (IOSS)'; // esto sería ventas a distancia de bienes importados desde fuera de la UE
     const TAX_SYSTEM_SIMPLIFIED = 'Simplificado';
-    const TAX_SYSTEM_SPECIAL_RETAIL_TRADERS = 'Comerciante minorista';
-    const TAX_SYSTEM_SPECIAL_SMALL_BUSINESS = 'Pequeño empresario';
+    const TAX_SYSTEM_SPECIAL_RETAIL_TRADERS = 'Comerciante minorista'; // esto sería recargo de equivalencia
+    const TAX_SYSTEM_SPECIAL_SMALL_BUSINESS = 'Pequeño empresario'; // esto sería simplificado
     const TAX_SYSTEM_SURCHARGE = 'Recargo';
-    const TAX_SYSTEM_TELECOM = 'Telecom';
+    const TAX_SYSTEM_TELECOM = 'Telecom'; // esto sería ventas a distancia
     const TAX_SYSTEM_TRAVEL = 'Agencias de viaje';
     const TAX_SYSTEM_USED_GOODS = 'Bienes usados';
 
@@ -59,12 +60,12 @@ class RegimenIVA
     private static $exceptions = [];
 
     /** @var array */
-    private static $values = [];
+    private static $regimes = [];
 
     public static function add(string $key, string $value): void
     {
         $fixedKey = substr($key, 0, 20);
-        self::$exceptions[$fixedKey] = $value;
+        self::$regimes[$fixedKey] = $value;
     }
 
     public static function addException(string $key, string $value): void
@@ -75,7 +76,7 @@ class RegimenIVA
 
     public static function all(): array
     {
-        $defaultValues = [
+        $defaultRegimes = [
             self::TAX_SYSTEM_AGRARIAN => 'es-tax-regime-agrarian',
             self::TAX_SYSTEM_CASH_CRITERIA => 'es-tax-regime-cash-criteria',
             self::TAX_SYSTEM_EXEMPT => 'es-tax-regime-exempt',
@@ -91,11 +92,9 @@ class RegimenIVA
             self::TAX_SYSTEM_SPECIAL_SMALL_BUSINESS => 'es-tax-regime-special-small-business',
             self::TAX_SYSTEM_ONE_STOP_SHOP_OSS => 'es-tax-regime-one-stop-shop-oss',
             self::TAX_SYSTEM_ONE_STOP_SHOP_IOSS => 'es-tax-regime-one-stop-shop-ioss',
-            self::ES_TAX_EXCEPTION_N1 => 'es-tax-exception-n1',  
-            self::ES_TAX_EXCEPTION_N5 => 'es-tax-exception-n5', 
         ];
 
-        return array_merge($defaultValues, self::$values);
+        return array_merge($defaultRegimes, self::$regimes);
     }
 
     public static function allExceptions(): array

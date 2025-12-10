@@ -20,40 +20,11 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
+ * @deprecated use TaxOperation instead
  * This class centralizes all operations related to taxes.
  *
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
-class OperacionIVA
+class OperacionIVA extends TaxOperation
 {
-    const ES_OPERATION_01 = 'ES_01'; // valor añadido
-    const ES_OPERATION_02 = 'ES_02'; // Ceuta y Melilla
-    const ES_OPERATION_03 = 'ES_03'; // IGIC
-    const ES_OPERATION_99 = 'ES_99'; // otro
-
-    /** @var array */
-    private static $values = [];
-
-    public static function add(string $key, string $value): void
-    {
-        $fixedKey = substr($key, 0, 20);
-        self::$values[$fixedKey] = $value;
-    }
-
-    public static function all(): array
-    {
-        $defaultValues = [
-            self::ES_OPERATION_01 => 'es-operation-tax-added-value',
-            self::ES_OPERATION_02 => 'es-operation-tax-ceuta-melilla',
-            self::ES_OPERATION_03 => 'es-operation-tax-igic',
-            self::ES_OPERATION_99 => 'es-operation-tax-other',
-        ];
-
-        return array_merge($defaultValues, self::$values);
-    }
-
-    public static function default(): string
-    {
-        return self::ES_OPERATION_01;
-    }
 }

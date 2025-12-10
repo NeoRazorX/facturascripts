@@ -29,7 +29,6 @@ use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
-use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoProveedor as DinCuentaBancoProveedor;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
@@ -79,6 +78,9 @@ class Proveedor extends ModelClass
     public $debaja;
 
     /** @var string */
+    public $excepcioniva;
+
+    /** @var string */
     public $fax;
 
     /** @var string */
@@ -98,6 +100,9 @@ class Proveedor extends ModelClass
 
     /** @var string */
     public $observaciones;
+
+    /** @var string */
+    public $operacion;
 
     /** @var bool */
     public $personafisica;
@@ -125,7 +130,7 @@ class Proveedor extends ModelClass
         $this->debaja = false;
         $this->fechaalta = Tools::date();
         $this->personafisica = true;
-        $this->regimeniva = RegimenIVA::defaultValue();
+        $this->regimeniva = Tools::settings('default', 'regimeniva');
         $this->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
     }
 
@@ -258,6 +263,7 @@ class Proveedor extends ModelClass
         $this->langcode = Tools::noHtml($this->langcode);
         $this->nombre = Tools::noHtml($this->nombre);
         $this->observaciones = Tools::noHtml($this->observaciones) ?? '';
+        $this->operacion = Tools::noHtml($this->operacion);
         $this->razonsocial = Tools::noHtml($this->razonsocial);
         $this->web = Tools::noHtml($this->web);
 

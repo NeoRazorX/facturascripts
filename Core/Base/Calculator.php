@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,11 +23,12 @@ use FacturaScripts\Core\Base\Contract\CalculatorModInterface;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\ProductType;
-use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxRegime;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\ImpuestoZona;
+use FacturaScripts\Core\Tools;
 
 /**
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
@@ -157,14 +158,14 @@ final class Calculator
             $subtotals['iva'][$ivaKey]['netosindto'] += $line->pvptotal;
 
             // IVA
-            if ($line->iva > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
+            if ($line->iva > 0 && $doc->operacion != InvoiceOperation::ES_INTRA_COMMUNITY) {
                 $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
                     $pvpTotal * $line->iva :
                     $pvpTotal * $line->iva / 100;
             }
 
             // recargo de equivalencia
-            if ($line->recargo > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
+            if ($line->recargo > 0 && $doc->operacion != InvoiceOperation::ES_INTRA_COMMUNITY) {
                 $subtotals['iva'][$ivaKey]['totalrecargo'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
                     $pvpTotal * $line->recargo :
                     $pvpTotal * $line->recargo / 100;
@@ -222,7 +223,7 @@ final class Calculator
         $subject = $doc->getSubject();
         $noTax = $doc->getSerie()->siniva;
         $taxException = $subject->excepcioniva ?? null;
-        $regimen = $subject->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
+        $regimen = $subject->regimeniva ?? Tools::settings('default', 'regimeniva');
         $company = $doc->getCompany();
 
         // cargamos las zonas de impuestos
@@ -243,7 +244,7 @@ final class Calculator
         foreach ($lines as $line) {
             // Si es una compra de bienes usados, no aplicamos impuestos
             if ($doc->subjectColumn() === 'codproveedor' &&
-                $company->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS &&
+                $company->regimeniva === TaxRegime::ES_TAX_REGIME_USED_GOODS &&
                 $line->getProducto()->tipo === ProductType::SECOND_HAND) {
                 $line->codimpuesto = null;
                 $line->iva = $line->recargo = 0.0;
@@ -261,7 +262,7 @@ final class Calculator
             }
 
             // ¿La serie es sin impuestos o el régimen exento?
-            if ($noTax || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
+            if ($noTax || $subject->operacion === InvoiceOperation::EXEMPT) {
                 $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
                 $line->iva = $line->recargo = 0.0;
                 $line->excepcioniva = $taxException;
@@ -269,7 +270,7 @@ final class Calculator
             }
 
             // ¿El régimen IVA es sin recargo de equivalencia?
-            if ($regimen != RegimenIVA::TAX_SYSTEM_SURCHARGE) {
+            if ($regimen != TaxRegime::ES_TAX_REGIME_SURCHARGE) {
                 $line->recargo = 0.0;
             }
         }
@@ -286,7 +287,7 @@ final class Calculator
     private static function applyUsedGoods(array &$subtotals, BusinessDocument $doc, BusinessDocumentLine $line, string $ivaKey, float $pvpTotal, float $totalCoste): bool
     {
         if ($doc->subjectColumn() === 'codcliente' &&
-            $doc->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS &&
+            $doc->getCompany()->regimeniva === TaxRegime::ES_TAX_REGIME_USED_GOODS &&
             $line->getProducto()->tipo === ProductType::SECOND_HAND) {
             // IVA 0%
             $ivaKey0 = '0|0';

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,8 +24,10 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\ProductType;
-use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxException;
+use FacturaScripts\Core\Lib\TaxRegime;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
@@ -93,7 +95,7 @@ trait CommonLineHTML
         // solamente se puede cambiar el impuesto si el documento es editable,
         // el sujeto no está exento de impuestos, la serie tiene impuestos
         // y la línea no tiene suplidos
-        $editable = $model->editable && self::$regimeniva != RegimenIVA::TAX_SYSTEM_EXEMPT
+        $editable = $model->editable && $model->getSubject()->operacion != InvoiceOperation::EXEMPT
             && false == Series::get($model->codserie)->siniva && false == $line->suplido;
 
         $attributes = $editable ?
@@ -156,7 +158,7 @@ trait CommonLineHTML
         $product = $line->getProducto();
         $excepcionIva = empty($line->idlinea) && empty($line->{$field}) ? $product->{$field} : $line->{$field};
 
-        foreach (RegimenIVA::allExceptions() as $key => $value) {
+        foreach (TaxException::all() as $key => $value) {
             $selected = $excepcionIva === $key ? 'selected' : '';
             $options .= '<option value="' . $key . '" ' . $selected . '>' . $i18n->trans($value) . '</option>';
         }
@@ -277,7 +279,7 @@ trait CommonLineHTML
         $editable = $model->editable
             && false === $line->suplido
             && false === Series::get($model->codserie)->siniva
-            && (self::$regimeniva === RegimenIVA::TAX_SYSTEM_SURCHARGE || $model->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_SURCHARGE);
+            && (self::$regimeniva === TaxRegime::ES_TAX_REGIME_SURCHARGE || $model->getCompany()->regimeniva === TaxRegime::ES_TAX_REGIME_SURCHARGE);
 
         $attributes = $editable ?
             'name="recargo_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
@@ -331,7 +333,7 @@ trait CommonLineHTML
     private static function subtotalValue(BusinessDocumentLine $line, TransformerDocument $model): float
     {
         if ($model->subjectColumn() === 'codcliente'
-            && $model->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
+            && $model->getCompany()->regimeniva === TaxRegime::ES_TAX_REGIME_USED_GOODS
             && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
             $profit = $line->pvpunitario - $line->coste;
             $tax = $profit * ($line->iva + $line->recargo - $line->irpf) / 100;

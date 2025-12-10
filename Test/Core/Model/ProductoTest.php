@@ -20,7 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxException;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Model\Cliente;
@@ -689,12 +689,12 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->save(), 'product-cant-save');
 
         // intentamos añadir una excepción de IVA
-        $product->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E1;
+        $product->excepcioniva = TaxException::ES_TAX_EXCEPTION_E1;
         $this->assertFalse($product->save(), 'product-can-save-with-exception-iva-e1');
 
         // cambiamos el iva a 0 con una excepción de iva
         $product->codimpuesto = 'IVA0';
-        $product->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E1;
+        $product->excepcioniva = TaxException::ES_TAX_EXCEPTION_E1;
         $this->assertTrue($product->save(), 'product-cant-save-with-iva-0');
 
         // intentamos quitar el impuesto

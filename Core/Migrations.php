@@ -21,11 +21,16 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\TaxRegime;
 use FacturaScripts\Core\Template\MigrationClass;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\LogMessage;
+use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Serie;
 
 final class Migrations
@@ -44,6 +49,7 @@ final class Migrations
         self::runMigration('fixAgenciasTransporte', [self::class, 'fixAgenciasTransporte']);
         self::runMigration('fixFormasPago', [self::class, 'fixFormasPago']);
         self::runMigration('fixRectifiedInvoices', [self::class, 'fixRectifiedInvoices']);
+        self::runMigration('fixTaxRegime', [self::class, 'fixTaxRegime']);
     }
 
     /**
@@ -221,6 +227,56 @@ final class Migrations
 
         $sqlUpdate = "UPDATE series SET tipo = 'R' WHERE codserie = " . self::db()->var2str($serieRectifying) . ";";
         self::db()->exec($sqlUpdate);
+    }
+
+    // version 2025.7, fecha 05-12-2025
+    private static function fixTaxRegime(): void
+    {
+        // forzamos la comprobación de las tablas
+        new Empresa();
+        new Cliente();
+        new Proveedor();
+
+        // todos los clientes, proveedores o empresas que tengan como regimen fiscal exento,
+        // ponemos el exento en el campo operación y el campo regimeniva lo dejamos con el valor por defecto del panel de control
+        $sqlCompany = "UPDATE empresas SET operacion = '" . InvoiceOperation::EXEMPT . "', regimeniva = '" . Tools::settings('default', 'regimeniva') . "' WHERE regimeniva = '" . InvoiceOperation::EXEMPT . "';";
+        $sqlClient = "UPDATE clientes SET operacion = '" . InvoiceOperation::EXEMPT . "', regimeniva = '" . Tools::settings('default', 'regimeniva') . "' WHERE regimeniva = '" . InvoiceOperation::EXEMPT . "';";
+        $sqlSupplier = "UPDATE proveedores SET operacion = '" . InvoiceOperation::EXEMPT . "', regimeniva = '" . Tools::settings('default', 'regimeniva') . "' WHERE regimeniva = '" . InvoiceOperation::EXEMPT . "';";
+        self::db()->exec($sqlCompany);
+        self::db()->exec($sqlClient);
+        self::db()->exec($sqlSupplier);
+
+        // todas las empresas que tengan como regimen fiscal One Stop Shop (OSS) o One Stop Shop (IOSS)
+        // ponemos el regimen fiscal Grupo entidades
+        $sqlCompany2 = "UPDATE empresas SET regimeniva = '" . TaxRegime::ES_TAX_REGIME_GROUP_ENTITIES . "' WHERE regimeniva IN ('One Stop Shop (OSS)', 'One Stop Shop (IOSS)');";
+        self::db()->exec($sqlCompany2);
+
+        // todas las empresas que tengan como regimen fiscal Comerciante minorista
+        // ponemos el regimen fiscal Recargo
+        $sqlCompany4 = "UPDATE empresas SET regimeniva = '" . TaxRegime::ES_TAX_REGIME_SURCHARGE . "' WHERE regimeniva = 'Comerciante minorista';";
+        self::db()->exec($sqlCompany4);
+
+        // todas las empresas que tengan como regimen fiscal Pequeño empresario
+        // ponemos el regimen fiscal Simplificado
+        $sqlCompany5 = "UPDATE empresas SET regimeniva = '" . TaxRegime::ES_TAX_REGIME_SIMPLIFIED . "' WHERE regimeniva = 'Pequeño empresario';";
+        self::db()->exec($sqlCompany5);
+
+        // todos los clientes, proveedores o empresas que tengan como regimen fiscal uno de España,
+        // pero su país no sea España, ponemos el regimeniva al valor por defecto del panel de control
+        // los proveedores y clientes hay que hacer join con la tabla contactos que es donde está el campo codpais
+        $taxRegimenes = [];
+        foreach (TaxRegime::all() as $key => $value) {
+            // si la key empieza por ES, es un régimen de España
+            if (str_starts_with($key, 'ES')) {
+                $taxRegimenes[] = $key;
+            }
+        }
+        $sqlCompany6 = "UPDATE empresas SET regimeniva = '" . Tools::settings('default', 'regimeniva') . "' WHERE regimeniva IN ('" . implode("','", $taxRegimenes) . "') AND codpais <> 'ESP';";
+        $sqlClient2 = "UPDATE clientes AS c JOIN contactos AS co ON c.idcontactofact = co.idcontacto SET c.regimeniva = '" . Tools::settings('default', 'regimeniva') . "' WHERE c.regimeniva IN ('" . implode("','", $taxRegimenes) . "') AND co.codpais <> 'ESP';";
+        $sqlSupplier2 = "UPDATE proveedores AS p JOIN contactos AS co ON p.idcontactofact = co.idcontacto SET p.regimeniva = '" . Tools::settings('default', 'regimeniva') . "' WHERE p.regimeniva IN ('" . implode("','", $taxRegimenes) . "') AND co.codpais <> 'ESP';";
+        self::db()->exec($sqlCompany6);
+        self::db()->exec($sqlClient2);
+        self::db()->exec($sqlSupplier2);
     }
 
     private static function getExecutedMigrations(): array

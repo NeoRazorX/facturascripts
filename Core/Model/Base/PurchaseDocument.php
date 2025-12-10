@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\Proveedor as CoreProveedor;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
@@ -97,6 +98,13 @@ abstract class PurchaseDocument extends TransformerDocument
 
             $this->setLastSupplierPrice($newLine);
 
+            // set tax exception if product has one
+            if (!empty($product->excepcioniva)) {
+                $newLine->excepcioniva = $product->excepcioniva;
+            }
+
+            Calculator::calculateLine($this, $newLine);
+
             // allow extensions
             $this->pipe('getNewProductLine', $newLine, $variant, $product);
         }
@@ -172,6 +180,7 @@ abstract class PurchaseDocument extends TransformerDocument
             $this->codpago = $subject->codpago ?? $this->codpago;
             $this->codserie = $subject->codserie ?? $this->codserie;
             $this->irpf = $subject->irpf() ?? $this->irpf;
+            $this->operacion = empty($subject->operacion) ? $this->getCompany()->operacion : $subject->operacion;
         }
 
         // allow extensions

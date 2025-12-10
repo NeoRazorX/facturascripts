@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,12 +21,13 @@ namespace FacturaScripts\Test\Core\Lib;
 
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
-use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\TaxRegime;
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\ImpuestoZona;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Serie;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -223,7 +224,7 @@ final class CalculatorTest extends TestCase
     {
         // creamos un cliente con recargo de equivalencia
         $subject = $this->getRandomCustomer();
-        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
+        $subject->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
         $this->assertTrue($subject->save(), 'can-not-create-re-customer');
 
         $doc = new PresupuestoCliente();
@@ -271,7 +272,7 @@ final class CalculatorTest extends TestCase
     {
         // creamos un proveedor con recargo de equivalencia
         $subject = $this->getRandomSupplier();
-        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
+        $subject->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
         $this->assertTrue($subject->save(), 'can-not-create-re-customer');
 
         $doc = new PresupuestoProveedor();
@@ -388,7 +389,7 @@ final class CalculatorTest extends TestCase
     {
         // creamos un cliente exento
         $subject = $this->getRandomCustomer();
-        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_EXEMPT;
+        $subject->operacion = InvoiceOperation::EXEMPT;
         $this->assertTrue($subject->save(), 'can-not-create-customer-exempt');
 
         // creamos el documento
@@ -422,7 +423,7 @@ final class CalculatorTest extends TestCase
     {
         // creamos un proveedor exento
         $subject = $this->getRandomSupplier();
-        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_EXEMPT;
+        $subject->operacion = InvoiceOperation::EXEMPT;
         $this->assertTrue($subject->save(), 'can-not-create-supplier-exempt');
 
         // creamos el documento
