@@ -21,12 +21,15 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ClienteTest extends TestCase
 {
+    use RandomDataTrait;
     use LogErrorsTrait;
 
     public function testCreate(): void
@@ -238,6 +241,50 @@ final class ClienteTest extends TestCase
         $this->assertFalse($cliente->hasColumn('columna_inexistente'), 'cliente-should-not-have-columna_inexistente');
         $this->assertFalse($cliente->hasColumn('total'), 'cliente-should-not-have-total-column');
         $this->assertFalse($cliente->hasColumn(''), 'cliente-should-not-have-empty-column');
+    }
+
+    /**
+     * For testing the fields nick and last_nick
+     */
+    public function testNickFields()
+    {
+        // Create first user
+        $user1 = $this->getRandomUser();
+        $this->assertTrue($user1->save(), 'Cannot save user1');
+
+        // Simulate session for user1
+        $originalUser = Session::get('user');
+        Session::set('user', $user1);
+
+        // Create a new client
+        $cliente = $this->getRandomCustomer();
+        $this->assertTrue($cliente->save(), 'Cannot save client');
+
+        // Check fields after creation
+        $this->assertEquals($user1->nick, $cliente->nick);
+        $this->assertEquals($user1->nick, $cliente->last_nick);
+        $this->assertNotNull($cliente->last_update);
+
+        // Create second user
+        $user2 = $this->getRandomUser();
+        $this->assertTrue($user2->save(), 'Cannot save user2');
+
+        // Simulate session for user2
+        Session::set('user', $user2);
+
+        // Modify the client
+        $cliente->nombre = 'Test Client Modified';
+        $this->assertTrue($cliente->save(), 'Cannot save modified client');
+
+        // Check fields after modification
+        $this->assertEquals($user1->nick, $cliente->nick);
+        $this->assertEquals($user2->nick, $cliente->last_nick);
+
+        // Clean up
+        Session::set('user', $originalUser);
+        $this->assertTrue($cliente->delete(), 'Cannot delete client');
+        $this->assertTrue($user1->delete(), 'Cannot delete user1');
+        $this->assertTrue($user2->delete(), 'Cannot delete user2');
     }
 
     protected function tearDown(): void
