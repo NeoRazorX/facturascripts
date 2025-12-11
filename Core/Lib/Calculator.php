@@ -226,7 +226,6 @@ class Calculator
         $subject = $doc->getSubject();
         $noTax = $doc->getSerie()->siniva;
         $taxException = $subject->excepcioniva ?? null;
-        $regimen = $subject->regimeniva ?? TaxRegime::ES_TAX_REGIME_GENERAL;
 
         // cargamos las zonas de impuestos
         $taxZones = [];
@@ -254,7 +253,7 @@ class Calculator
                 }
             }
 
-            // ¿La serie es sin impuestos o el régimen exento?
+            // ¿La serie es sin impuestos o la operación exenta?
             if ($noTax || $subject->operacion === InvoiceOperation::EXEMPT) {
                 $line->codimpuesto = Impuestos::get('IVA0')->codimpuesto;
                 $line->iva = $line->recargo = 0.0;
