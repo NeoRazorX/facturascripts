@@ -237,8 +237,8 @@
                                         <span class="input-group-text">
                                             <i class="fa-solid fa-database"></i>
                                         </span>
-                                        <input type="text" name="fs_db_name" value="{{ fsc.db_name }}"
-                                               class="form-control" required/>
+                                        <input type="text" name="fs_db_name" value="{{ fsc.db_name }}" 
+                                               class="form-control" pattern="[A-Za-z0-9_]+" title="Solo se permiten letras, números y guión bajo" required/>
                                     </div>
                                 </div>
                             </div>
