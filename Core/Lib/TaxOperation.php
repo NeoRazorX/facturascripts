@@ -36,7 +36,7 @@ class TaxOperation
 
     public static function add(string $key, string $value): void
     {
-        $fixedKey = substr($key, 0, 20);
+        $fixedKey = substr($key, 0, 50);
         self::$values[$fixedKey] = $value;
     }
 

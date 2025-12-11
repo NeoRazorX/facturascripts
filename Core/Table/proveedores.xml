@@ -56,7 +56,7 @@
     </column>
     <column>
         <name>excepcioniva</name>
-        <type>character varying(20)</type>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>fax</name>
@@ -89,11 +89,7 @@
     </column>
     <column>
         <name>operacion</name>
-        <type>character varying(20)</type>
-    </column>
-    <column>
-        <name>operacion</name>
-        <type>character varying(20)</type>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>personafisica</name>
@@ -106,7 +102,7 @@
     </column>
     <column>
         <name>regimeniva</name>
-        <type>character varying(20)</type>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>telefono1</name>

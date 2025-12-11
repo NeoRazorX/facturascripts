@@ -689,12 +689,12 @@ final class ProductoTest extends TestCase
         $this->assertTrue($product->save(), 'product-cant-save');
 
         // intentamos añadir una excepción de IVA
-        $product->excepcioniva = TaxException::ES_TAX_EXCEPTION_E1;
+        $product->excepcioniva = TaxException::ES_TAX_EXCEPTION_20;
         $this->assertFalse($product->save(), 'product-can-save-with-exception-iva-e1');
 
         // cambiamos el iva a 0 con una excepción de iva
         $product->codimpuesto = 'IVA0';
-        $product->excepcioniva = TaxException::ES_TAX_EXCEPTION_E1;
+        $product->excepcioniva = TaxException::ES_TAX_EXCEPTION_20;
         $this->assertTrue($product->save(), 'product-cant-save-with-iva-0');
 
         // intentamos quitar el impuesto

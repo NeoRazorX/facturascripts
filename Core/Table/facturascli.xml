@@ -180,7 +180,7 @@
     </column>
     <column>
         <name>operacion</name>
-        <type>character varying(20)</type>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>pagada</name>

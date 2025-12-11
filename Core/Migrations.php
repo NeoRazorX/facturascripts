@@ -21,14 +21,22 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\TaxRegime;
 use FacturaScripts\Core\Template\MigrationClass;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
+use FacturaScripts\Dinamic\Lib\TaxRegime;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\FormaPago;
+use FacturaScripts\Dinamic\Model\LineaAlbaranCliente;
+use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor;
+use FacturaScripts\Dinamic\Model\LineaFacturaCliente;
+use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
+use FacturaScripts\Dinamic\Model\LineaPedidoCliente;
+use FacturaScripts\Dinamic\Model\LineaPedidoProveedor;
+use FacturaScripts\Dinamic\Model\LineaPresupuestoCliente;
+use FacturaScripts\Dinamic\Model\LineaPresupuestoProveedor;
 use FacturaScripts\Dinamic\Model\LogMessage;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Serie;
@@ -50,6 +58,7 @@ final class Migrations
         self::runMigration('fixFormasPago', [self::class, 'fixFormasPago']);
         self::runMigration('fixRectifiedInvoices', [self::class, 'fixRectifiedInvoices']);
         self::runMigration('fixTaxRegime', [self::class, 'fixTaxRegime']);
+        self::runMigration('fixTaxRegime', [self::class, 'fixTaxException']);
     }
 
     /**
@@ -227,6 +236,66 @@ final class Migrations
 
         $sqlUpdate = "UPDATE series SET tipo = 'R' WHERE codserie = " . self::db()->var2str($serieRectifying) . ";";
         self::db()->exec($sqlUpdate);
+    }
+
+    // version 2025.7, fecha 05-12-2025
+    private function fixTaxException(): void
+    {
+        // forzamos la comprobación de las tablas
+        new Empresa();
+        new Cliente();
+        new Proveedor();
+        new LineaPresupuestoProveedor();
+        new LineaPedidoProveedor();
+        new LineaAlbaranProveedor();
+        new LineaFacturaProveedor();
+        new LineaPresupuestoCliente();
+        new LineaPedidoCliente();
+        new LineaAlbaranCliente();
+        new LineaFacturaCliente();
+
+        // recorremos todas las tablas que tienen el campo excepcioniva
+        $tables = [
+            'empresas', 'clientes', 'proveedores',
+            'lineaspresupuestoprov', 'lineaspedidosprov', 'lineasalbaranesprov', 'lineasfacturasprov',
+            'lineaspresupuestocli', 'lineaspedidoscli', 'lineasalbaranescli', 'lineasfacturascli'
+        ];
+        foreach ($tables as $table) {
+            // si la tabla no existe, continuamos
+            if (false === self::db()->tableExists($table)) {
+                continue;
+            }
+
+            // si el campo excepcioniva no existe, continuamos
+            $found = false;
+            foreach (self::db()->getColumns($table) as $columnInfo) {
+                if ($columnInfo['name'] === 'excepcioniva') {
+                    $found = true;
+                    break;
+                }
+            }
+            if (false === $found) {
+                continue;
+            }
+
+            // cambios
+            // ES_N1 = ES_68_70
+            // ES_N5 = ES_OTHER_NOT_SUBJECT
+            // ES_ART_7 = ES_7
+            // ES_ART_14 = ES_14
+            // ES_LOCATION_RULES = ES_68_70
+            // ES_PASSIVE_SUBJECT = ES_84
+            // ES_141 = ES_OTHER
+            self::db()->exec("UPDATE " . $table . " SET excepcioniva = CASE "
+                . "WHEN excepcioniva = 'ES_N1' THEN 'ES_68_70' "
+                . "WHEN excepcioniva = 'ES_N5' THEN 'ES_OTHER_NOT_SUBJECT' "
+                . "WHEN excepcioniva = 'ES_ART_7' THEN 'ES_7' "
+                . "WHEN excepcioniva = 'ES_ART_14' THEN 'ES_14' "
+                . "WHEN excepcioniva = 'ES_LOCATION_RULES' THEN 'ES_68_70' "
+                . "WHEN excepcioniva = 'ES_PASSIVE_SUBJECT' THEN 'ES_84' "
+                . "WHEN excepcioniva = 'ES_141' THEN 'ES_OTHER' "
+                . "ELSE excepcioniva END;");
+        }
     }
 
     // version 2025.7, fecha 05-12-2025

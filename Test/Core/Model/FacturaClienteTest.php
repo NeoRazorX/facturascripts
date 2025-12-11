@@ -611,7 +611,7 @@ final class FacturaClienteTest extends TestCase
     {
         // creamos una empresa con exención de iva
         $company = $this->getRandomCompany();
-        $company->excepcioniva = TaxException::ES_TAX_EXCEPTION_E1;
+        $company->excepcioniva = TaxException::ES_TAX_EXCEPTION_20;
         $this->assertTrue($company->save(), 'cant-create-company');
 
         // obtenemos el almacén de la empresa
@@ -619,7 +619,7 @@ final class FacturaClienteTest extends TestCase
 
         // creamos un cliente con exención de iva
         $customerWithExemption = $this->getRandomCustomer();
-        $customerWithExemption->excepcioniva = TaxException::ES_TAX_EXCEPTION_E2;
+        $customerWithExemption->excepcioniva = TaxException::ES_TAX_EXCEPTION_21;
         $this->assertTrue($customerWithExemption->save(), 'cant-create-customer-with-exemption');
 
         // creamos un cliente sin exención de iva
@@ -629,7 +629,7 @@ final class FacturaClienteTest extends TestCase
         // creamos un producto con exención de iva
         $productWithExemption = $this->getRandomProduct();
         $productWithExemption->codimpuesto = 'IVA0';
-        $productWithExemption->excepcioniva = TaxException::ES_TAX_EXCEPTION_E3;
+        $productWithExemption->excepcioniva = TaxException::ES_TAX_EXCEPTION_22;
         $productWithExemption->nostock = true;
         $this->assertTrue($productWithExemption->save(), 'cant-create-product-with-exemption');
 
@@ -645,17 +645,17 @@ final class FacturaClienteTest extends TestCase
 
         // línea con producto con exención
         $line1 = $invoice->getNewProductLine($productWithExemption->referencia);
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_E3, $line1->excepcioniva, 'bad-line1-iva-exemption');
+        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_22, $line1->excepcioniva, 'bad-line1-iva-exemption');
         $this->assertTrue($line1->save(), 'cant-save-line1');
 
         // línea con producto sin exención
         $line2 = $invoice->getNewProductLine($productWithoutExemption->referencia);
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_E2, $line2->excepcioniva, 'bad-line2-iva-exemption');
+        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_21, $line2->excepcioniva, 'bad-line2-iva-exemption');
         $this->assertTrue($line2->save(), 'cant-save-line2');
 
         // línea en blanco sin producto
         $line3 = $invoice->getNewLine();
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_E2, $line3->excepcioniva, 'bad-line3-iva-exemption');
+        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_21, $line3->excepcioniva, 'bad-line3-iva-exemption');
         $this->assertTrue($line3->save(), 'cant-save-line3');
 
         // creamos la factura para la empresa por defecto y el cliente sin exención de iva
@@ -665,7 +665,7 @@ final class FacturaClienteTest extends TestCase
 
         // línea con producto con exención
         $line4 = $invoice2->getNewProductLine($productWithExemption->referencia);
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_E3, $line4->excepcioniva, 'bad-line4-iva-exemption');
+        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_22, $line4->excepcioniva, 'bad-line4-iva-exemption');
         $this->assertTrue($line4->save(), 'cant-save-line4');
 
         // línea con producto sin exención
@@ -686,17 +686,17 @@ final class FacturaClienteTest extends TestCase
 
         // línea con producto con exención
         $line7 = $invoice3->getNewProductLine($productWithExemption->referencia);
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_E3, $line7->excepcioniva, 'bad-line7-iva-exemption');
+        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_22, $line7->excepcioniva, 'bad-line7-iva-exemption');
         $this->assertTrue($line7->save(), 'cant-save-line7');
 
         // línea con producto sin exención
         $line8 = $invoice3->getNewProductLine($productWithoutExemption->referencia);
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_E1, $line8->excepcioniva, 'bad-line8-iva-exemption');
+        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_20, $line8->excepcioniva, 'bad-line8-iva-exemption');
         $this->assertTrue($line8->save(), 'cant-save-line8');
 
         // línea en blanco sin producto
         $line9 = $invoice3->getNewLine();
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_E1, $line9->excepcioniva, 'bad-line9-iva-exemption');
+        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_20, $line9->excepcioniva, 'bad-line9-iva-exemption');
         $this->assertTrue($line9->save(), 'cant-save-line9');
 
         // eliminamos

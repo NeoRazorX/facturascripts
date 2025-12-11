@@ -59,7 +59,7 @@
     </column>
     <column>
         <name>excepcioniva</name>
-        <type>character varying(20)</type>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>email</name>
@@ -100,7 +100,7 @@
     </column>
     <column>
         <name>operacion</name>
-        <type>character varying(20)</type>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>personafisica</name>
@@ -113,7 +113,7 @@
     </column>
     <column>
         <name>regimeniva</name>
-        <type>character varying(20)</type>
+        <type>character varying(50)</type>
     </column>
     <column>
         <name>riesgoalcanzado</name>
