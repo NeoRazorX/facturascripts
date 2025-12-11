@@ -600,7 +600,7 @@
     "es-operation-tax-added-value": "Operacja podlega VAT",
     "es-operation-tax-ceuta-melilla": "es-operation-tax-ceuta-melilla",
     "es-operation-tax-igic": "es-operation-tax-igic",
-    "es-operation-tax-other": "es-operation-tax-other",
+    "es-operation-tax-other": "Operacja niepodlegająca powyższym podatkom",
     "es-tax-exception-art-14": "Hiszpania: N4 Niepodlegające opodatkowaniu (art. 14 LIVA) – operacje związane z eksportem",
     "es-tax-exception-art-7": "wyjątek podatkowy ES - art. 7",
     "es-tax-exception-e1": "Hiszpania: wyjątek na mocy artykułu 20 ustawy o VAT",
