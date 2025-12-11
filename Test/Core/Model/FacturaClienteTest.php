@@ -514,12 +514,13 @@ final class FacturaClienteTest extends TestCase
             'cifnif' => [30, 31],
             'ciudad' => [100, 101],
             'codigo' => [20, 21],
-            'codigoenv' => [200, 201],
             'codigorect' => [20, 21],
+            'codigoenv' => [200, 201],
             'codpais' => [20, 21],
             'codpostal' => [10, 11],
             'direccion' => [200, 201],
             'nombrecliente' => [100, 101],
+            'operacion' => [50, 51],
             'provincia' => [100, 101],
         ];
 
@@ -528,22 +529,22 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($customer->save(), 'cant-create-customer');
 
         foreach ($campos as $campo => [$valido, $invalido]) {
-            // Creamos un nuevo almacén
-            $invoice = new FacturaCliente();
+            // Creamos el modelo
+            $model = new FacturaCliente();
 
             // campo obligatorio (not null)
-            $invoice->setSubject($customer);
+            $model->setSubject($customer);
 
             // Asignamos el valor inválido en el campo a probar
-            $invoice->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($invoice->save(), "can-save-facturaCliente-bad-{$campo}");
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-facturaCliente-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
-            $invoice->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($invoice->save(), "cannot-save-facturaCliente-fixed-{$campo}");
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-facturaCliente-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($invoice->delete(), "cannot-delete-facturaCliente-{$campo}");
+            $this->assertTrue($model->delete(), "cannot-delete-facturaCliente-{$campo}");
         }
 
         // eliminamos

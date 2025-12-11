@@ -306,28 +306,31 @@ final class AlbaranClienteTest extends TestCase
             'apartado' => [10, 11],
             'cifnif' => [30, 31],
             'ciudad' => [100, 101],
+            'codigo' => [20, 21],
+            'codigoenv' => [200, 201],
             'codpais' => [20, 21],
             'codpostal' => [10, 11],
             'direccion' => [200, 201],
             'nombrecliente' => [100, 101],
+            'operacion' => [50, 51],
             'provincia' => [100, 101],
         ];
 
         foreach ($campos as $campo => [$valido, $invalido]) {
-            // Creamos un nuevo albarán
-            $doc = new AlbaranCliente();
-            $doc->setSubject($subject);
+            // Creamos uel modelo
+            $model = new AlbaranCliente();
+            $model->setSubject($subject);
 
             // Asignamos el valor inválido en el campo a probar
-            $doc->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($doc->save(), "can-save-albaranCliente-bad-{$campo}");
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-albaranCliente-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
-            $doc->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($doc->save(), "cannot-save-albaranCliente-fixed-{$campo}");
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-albaranCliente-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($doc->delete(), "cannot-delete-albaranCliente-{$campo}");
+            $this->assertTrue($model->delete(), "cannot-delete-albaranCliente-{$campo}");
         }
 
         // Eliminamos el cliente

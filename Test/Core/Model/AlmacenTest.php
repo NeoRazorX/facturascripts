@@ -84,22 +84,22 @@ final class AlmacenTest extends TestCase
         ];
 
         foreach ($campos as $campo => [$valido, $invalido]) {
-            // Creamos un nuevo almacén
-            $warehouse = new Almacen();
+            // Creamos el modelo
+            $model = new Almacen();
 
             // campo obligatorio (not null)
-            $warehouse->nombre = 'Test Warehouse with new code';
+            $model->nombre = 'Test Warehouse with new code';
 
             // Asignamos el valor inválido en el campo a probar
-            $warehouse->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($warehouse->save(), "can-save-almacen-bad-{$campo}");
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-almacen-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
-            $warehouse->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($warehouse->save(), "cannot-save-almacen-fixed-{$campo}");
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-almacen-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($warehouse->delete(), "cannot-delete-almacen-{$campo}");
+            $this->assertTrue($model->delete(), "cannot-delete-almacen-{$campo}");
         }
     }
 

@@ -259,24 +259,24 @@ final class AlbaranProveedorTest extends TestCase
             'codigo' => [20, 21],
             'nombre' => [100, 101],
             'numproveedor' => [50, 51],
-            'operacion' => [20, 21],
+            'operacion' => [50, 51],
         ];
 
         foreach ($campos as $campo => [$valido, $invalido]) {
-            // Creamos un nuevo albarán
-            $doc = new AlbaranProveedor();
-            $doc->setSubject($subject);
+            // Creamos el modelo
+            $model = new AlbaranProveedor();
+            $model->setSubject($subject);
 
             // Asignamos el valor inválido en el campo a probar
-            $doc->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($doc->save(), "can-save-albaranProveedor-bad-{$campo}");
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-albaranProveedor-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
-            $doc->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($doc->save(), "cannot-save-albaranProveedor-fixed-{$campo}");
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-albaranProveedor-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($doc->delete(), "cannot-delete-albaranProveedor-{$campo}");
+            $this->assertTrue($model->delete(), "cannot-delete-albaranProveedor-{$campo}");
         }
 
         // Eliminamos el proveedor

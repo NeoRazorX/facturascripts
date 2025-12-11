@@ -281,7 +281,8 @@ final class FacturaProveedorTest extends TestCase
             'codigo' => [20, 21],
             'codigorect' => [20, 21],
             'nombre' => [100, 101],
-            'operacion' => [20, 21],
+            'numproveedor' => [50, 51],
+            'operacion' => [50, 51],
         ];
 
         // creamos un proveedor
@@ -289,22 +290,22 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
         foreach ($campos as $campo => [$valido, $invalido]) {
-            // Creamos un nuevo almacén
-            $invoice = new FacturaProveedor();
+            // Creamos el modelo
+            $model = new FacturaProveedor();
 
             // campo obligatorio (not null)
-            $invoice->setSubject($supplier);
+            $model->setSubject($supplier);
 
             // Asignamos el valor inválido en el campo a probar
-            $invoice->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($invoice->save(), "can-save-facturaProveedor-bad-{$campo}");
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-facturaProveedor-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
-            $invoice->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($invoice->save(), "cannot-save-facturaProveedor-fixed-{$campo}");
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-facturaProveedor-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($invoice->delete(), "cannot-delete-facturaProveedor-{$campo}");
+            $this->assertTrue($model->delete(), "cannot-delete-facturaProveedor-{$campo}");
         }
 
         // eliminamos el proveedor

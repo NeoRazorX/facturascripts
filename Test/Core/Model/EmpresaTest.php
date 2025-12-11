@@ -84,36 +84,37 @@ final class EmpresaTest extends TestCase
             'codpais' => [20, 21],
             'codpostal' => [10, 11],
             'direccion' => [200, 201],
-            'excepcioniva' => [20, 21],
+            'excepcioniva' => [50, 51],
             //'email'          => [100, 101],
             'fax' => [30, 31],
             'nombre' => [100, 101],
             'nombrecorto' => [32, 33],
             'provincia' => [100, 101],
-            'regimeniva' => [20, 51],
+            'regimeniva' => [50, 51],
             'telefono1' => [30, 31],
             'telefono2' => [30, 31],
             'tipoidfiscal' => [25, 26],
             //'web'            => [100, 101],
+            'operacion' => [50, 51],
         ];
 
         foreach ($campos as $campo => [$valido, $invalido]) {
-            // Creamos un nuevo almacén
-            $company = new Empresa();
+            // Creamos el modelo
+            $model = new Empresa();
 
             // campo obligatorio (not null)
-            $company->nombre = 'Test';
+            $model->nombre = 'Test';
 
             // Asignamos el valor inválido en el campo a probar
-            $company->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($company->save(), "can-save-empresa-bad-{$campo}");
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-empresa-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
-            $company->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($company->save(), "cannot-save-empresa-fixed-{$campo}");
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-empresa-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($company->delete(), "cannot-delete-empresa-{$campo}");
+            $this->assertTrue($model->delete(), "cannot-delete-empresa-{$campo}");
         }
     }
 

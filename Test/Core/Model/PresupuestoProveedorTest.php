@@ -274,7 +274,7 @@ final class PresupuestoProveedorTest extends TestCase
             'codigo' => [20, 21],
             'nombre' => [100, 101],
             'numproveedor' => [50, 51],
-            'operacion' => [20, 21],
+            'operacion' => [50, 51],
         ];
 
         // creamos un proveedor
@@ -282,22 +282,22 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertTrue($subject->save());
 
         foreach ($campos as $campo => [$valido, $invalido]) {
-            // Creamos un nuevo almacén
-            $doc = new PresupuestoProveedor();
+            // Creamos el modelo
+            $model = new PresupuestoProveedor();
 
             // campo obligatorio (not null)
-            $doc->setSubject($subject);
+            $model->setSubject($subject);
 
             // Asignamos el valor inválido en el campo a probar
-            $doc->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($doc->save(), "can-save-pedidoProveedor-bad-{$campo}");
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-pedidoProveedor-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
-            $doc->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($doc->save(), "cannot-save-pedidoProveedor-fixed-{$campo}");
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-pedidoProveedor-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($doc->delete(), "cannot-delete-pedidoProveedor-{$campo}");
+            $this->assertTrue($model->delete(), "cannot-delete-pedidoProveedor-{$campo}");
         }
 
         // eliminamos
