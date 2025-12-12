@@ -299,7 +299,6 @@ class Http
         $this->body = curl_exec($ch);
         $this->statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $this->error = curl_error($ch);
-        curl_close($ch);
 
         $this->executed = true;
     }

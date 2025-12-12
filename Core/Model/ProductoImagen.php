@@ -165,9 +165,6 @@ class ProductoImagen extends ModelClass
                     imagegif($thumb, FS_FOLDER . $thumbFile);
                     break;
             }
-
-            imagedestroy($image);
-            imagedestroy($thumb);
         } catch (Throwable $th) {
             Tools::log()->error($th->getMessage());
             return '';

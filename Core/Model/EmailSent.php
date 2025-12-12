@@ -79,6 +79,34 @@ class EmailSent extends ModelClass
         $this->opened = false;
     }
 
+    public function delete(): bool
+    {
+        // eliminamos los archivos adjuntos si existen
+        if ($this->attachment && !empty($this->uuid) && !empty($this->email_from)) {
+            $folderPath = NewMail::getAttachmentPath($this->email_from, 'Sent') . $this->uuid;
+            $fullPath = FS_FOLDER . '/' . $folderPath;
+
+            if (is_dir($fullPath)) {
+                // eliminar todos los archivos del directorio
+                foreach (scandir($fullPath) as $file) {
+                    if ('.' === $file || '..' === $file) {
+                        continue;
+                    }
+
+                    $filePath = $fullPath . '/' . $file;
+                    if (is_file($filePath)) {
+                        unlink($filePath);
+                    }
+                }
+
+                // eliminar el directorio
+                rmdir($fullPath);
+            }
+        }
+
+        return parent::delete();
+    }
+
     public function getAttachments(): array
     {
         // leemos la carpeta de adjuntos

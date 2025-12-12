@@ -138,8 +138,8 @@ abstract class Controller implements ControllerInterface
             throw new KernelException('AuthenticationRequired', 'authentication-required');
         }
 
-        // Cargamos y comprobamos los permisos del usuario
-        $this->permissions = new ControllerPermissions(Session::user(), $this->className);
+        // Cargamos y comprobamos los permisos del usuario (usamos get() en lugar de user() para obtener null si no lo hay)
+        $this->permissions = new ControllerPermissions(Session::get('user'), $this->className);
         if ($this->requiresAuth && !$this->permissions->allowAccess) {
             // Si el usuario no tiene acceso, lanzar excepción
             throw new KernelException('AccessDenied', 'access-denied');

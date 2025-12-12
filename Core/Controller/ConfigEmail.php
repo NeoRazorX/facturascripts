@@ -20,7 +20,9 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Model\EmailSent;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 
@@ -99,6 +101,44 @@ class ConfigEmail extends PanelController
             ->addFilterPeriod('date', 'period', 'date', true)
             ->addFilterCheckbox('opened')
             ->addFilterCheckbox('attachment', 'has-attachments');
+
+        // añadimos un botón para el modal delete-multi
+        $this->addButton($viewName, [
+            'action' => 'delete-multi',
+            'color' => 'warning',
+            'icon' => 'fa-solid fa-trash-alt',
+            'label' => 'delete-logs',
+            'type' => 'modal',
+        ]);
+    }
+
+    protected function deleteMultiAction(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        } elseif (false === $this->permissions->allowDelete) {
+            Tools::log()->warning('not-allowed-delete');
+            return;
+        }
+
+        $from = $this->request->input('delete_from', '');
+        $to = $this->request->input('delete_to', '');
+        if (empty($from) || empty($to)) {
+            return;
+        }
+
+        $where = [
+            Where::gte('date', $from . ' 00:00:00'),
+            Where::lte('date', $to . ' 23:59:59')
+        ];
+        foreach (EmailSent::all($where) as $emailSent) {
+            if (false === $emailSent->delete()) {
+                Tools::log()->warning('record-deleted-error');
+                return;
+            }
+        }
+
+        Tools::log()->notice('record-deleted-correctly');
     }
 
     protected function editAction(): bool
@@ -168,6 +208,10 @@ class ConfigEmail extends PanelController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'delete-multi':
+                $this->deleteMultiAction();
+                break;
+
             case 'disable-notification':
                 $this->enableNotificationAction(false);
                 break;
@@ -175,6 +219,7 @@ class ConfigEmail extends PanelController
             case 'enable-notification':
                 $this->enableNotificationAction(true);
                 break;
+
         }
 
         return parent::execPreviousAction($action);

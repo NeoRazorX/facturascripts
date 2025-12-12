@@ -88,6 +88,32 @@ class FacturaProveedor extends PurchaseDocument
     }
 
     /**
+     * Returns a new receipt for the invoice.
+     *
+     * @param int $numero
+     * @param array $data
+     *
+     * @return DinReciboProveedor
+     */
+    public function getNewReceipt(int $numero = 1, array $data = []): DinReciboProveedor
+    {
+        $newReceipt = new DinReciboProveedor();
+        $newReceipt->codproveedor = $this->codproveedor;
+        $newReceipt->coddivisa = $this->coddivisa;
+        $newReceipt->idempresa = $this->idempresa;
+        $newReceipt->idfactura = $this->idfactura;
+        $newReceipt->numero = $numero;
+        $newReceipt->fecha = $this->fecha;
+        $newReceipt->setPaymentMethod($this->codpago);
+        $newReceipt->loadFromData($data, ['idrecibo']);
+
+        // allow extensions
+        $this->pipe('getNewReceipt', $newReceipt, $numero, $data);
+
+        return $newReceipt;
+    }
+
+    /**
      * Returns all invoice's receipts.
      *
      * @return DinReciboProveedor[]

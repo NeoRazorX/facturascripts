@@ -275,9 +275,16 @@ class Updater extends Controller
     {
         $id = $plugin->forja('idplugin', 0);
         $fileName = 'update-' . $id . '.zip';
+        $coreVersion = self::getCoreVersion();
+
         foreach (Forja::getBuilds($id) as $build) {
             if ($build['version'] <= $plugin->version) {
                 continue;
+            }
+
+            // Verificar compatibilidad con el core actual
+            if ($build['mincore'] > $coreVersion) {
+                continue; // Requiere un core más reciente
             }
 
             $item = [
