@@ -58,7 +58,7 @@ final class Migrations
         self::runMigration('fixFormasPago', [self::class, 'fixFormasPago']);
         self::runMigration('fixRectifiedInvoices', [self::class, 'fixRectifiedInvoices']);
         self::runMigration('fixTaxRegime', [self::class, 'fixTaxRegime']);
-        self::runMigration('fixTaxRegime', [self::class, 'fixTaxException']);
+        self::runMigration('fixTaxException', [self::class, 'fixTaxException']);
     }
 
     /**
@@ -285,7 +285,6 @@ final class Migrations
             // ES_ART_14 = ES_14
             // ES_LOCATION_RULES = ES_68_70
             // ES_PASSIVE_SUBJECT = ES_84
-            // ES_141 = ES_OTHER
             self::db()->exec("UPDATE " . $table . " SET excepcioniva = CASE "
                 . "WHEN excepcioniva = 'ES_N1' THEN 'ES_68_70' "
                 . "WHEN excepcioniva = 'ES_N5' THEN 'ES_OTHER_NOT_SUBJECT' "
@@ -293,7 +292,6 @@ final class Migrations
                 . "WHEN excepcioniva = 'ES_ART_14' THEN 'ES_14' "
                 . "WHEN excepcioniva = 'ES_LOCATION_RULES' THEN 'ES_68_70' "
                 . "WHEN excepcioniva = 'ES_PASSIVE_SUBJECT' THEN 'ES_84' "
-                . "WHEN excepcioniva = 'ES_141' THEN 'ES_OTHER' "
                 . "ELSE excepcioniva END;");
         }
     }
