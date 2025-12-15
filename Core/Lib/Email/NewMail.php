@@ -358,6 +358,24 @@ class NewMail
             return false;
         }
 
+        // comprobar si existe to
+        $toAddrs = $this->mail->getToAddresses();
+        if (count($toAddrs) === 0) {
+            // si no hay to, probamos con bcc
+            $bccAddrs = $this->getBCCAddresses();
+            if (count($bccAddrs) !== 0) {
+                // añadimos el primer bcc como to
+                $this->mail->addAddress($bccAddrs[0]);
+            } else {
+                // si no hay bcc, probamos con cc
+                $ccAddrs = $this->getCCAddresses();
+                if (count($ccAddrs) !== 0) {
+                    // añadimos el primer cc como to
+                    $this->mail->addAddress($ccAddrs[0]);
+                }
+            }
+        }
+
         if ($this->mail->send()) {
             $this->saveMailSent();
             return true;
