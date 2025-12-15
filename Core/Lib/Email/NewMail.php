@@ -358,6 +358,12 @@ class NewMail
             return false;
         }
 
+        /**
+         * Importante: mailer no permite duplicar el mismo destinatario por lo que se
+         * usa aquí un alias en el email para sobrepasar esa reestricción
+         * 
+         * Tampoco ha funcionado.
+        */
         // comprobar si existe to
         $toAddrs = $this->mail->getToAddresses();
         if (count($toAddrs) === 0) {
@@ -365,13 +371,17 @@ class NewMail
             $bccAddrs = $this->getBCCAddresses();
             if (count($bccAddrs) !== 0) {
                 // añadimos el primer bcc como to
-                $this->mail->addAddress($bccAddrs[0]);
+                $impEmail = explode('@', $bccAddrs[0]);
+                $aliasEmail = $impEmail[0] . '+copia' . $impEmail[1];
+                $this->to($aliasEmail);
             } else {
                 // si no hay bcc, probamos con cc
                 $ccAddrs = $this->getCCAddresses();
                 if (count($ccAddrs) !== 0) {
                     // añadimos el primer cc como to
-                    $this->mail->addAddress($ccAddrs[0]);
+                     $impEmail = implode('@', $ccAddrs[0]);
+                    $aliasEmail = $impEmail[0] . '+copia' . $impEmail[1];
+                    $this->to($aliasEmail);
                 }
             }
         }
