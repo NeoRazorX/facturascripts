@@ -238,7 +238,7 @@ final class Migrations
         self::db()->exec($sqlUpdate);
     }
 
-    // version 2025.7, fecha 05-12-2025
+    // TODO: añadir versión y fecha de lanzamiento
     private function fixTaxException(): void
     {
         // forzamos la comprobación de las tablas
@@ -296,7 +296,7 @@ final class Migrations
         }
     }
 
-    // version 2025.7, fecha 05-12-2025
+    // TODO: añadir versión y fecha de lanzamiento
     private static function fixTaxRegime(): void
     {
         // forzamos la comprobación de las tablas

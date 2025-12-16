@@ -45,7 +45,7 @@ class TaxOperation
         return array_merge(self::defaults(), self::$values);
     }
 
-    public static function get(string $key): ?string
+    public static function get(?string $key): ?string
     {
         $values = self::all();
         return $values[$key] ?? null;

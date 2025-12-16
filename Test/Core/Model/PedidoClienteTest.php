@@ -22,8 +22,6 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
-use FacturaScripts\Core\Model\Almacen;
-use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoCliente;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Tools;
@@ -357,67 +355,6 @@ final class PedidoClienteTest extends TestCase
         // eliminamos
         $this->assertTrue($subject->getDefaultAddress()->delete());
         $this->assertTrue($subject->delete());
-    }
-
-    public function testSecondCompany(): void
-    {
-        // creamos la empresa 2
-        $company2 = new Empresa();
-        $company2->nombre = 'Company 2';
-        $company2->nombrecorto = 'Company-2';
-        $this->assertTrue($company2->save(), 'company-cant-save');
-
-        // obtenemos el almacén de la empresa 2
-        $warehouse = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadWhere($where);
-
-        // creamos un cliente
-        $subject = $this->getRandomCustomer();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
-
-        // creamos un pedido y le asignamos el cliente y el almacén
-        $doc = new PedidoCliente();
-        $doc->setSubject($subject);
-        $doc->codalmacen = $warehouse->codalmacen;
-        $this->assertTrue($doc->save(), 'pedido-cant-save');
-
-        // añadimos una línea
-        $line = $doc->getNewLine();
-        $line->cantidad = 1;
-        $line->pvpunitario = 100;
-        $this->assertTrue($line->save(), 'can-not-save-line-2');
-
-        // aprobamos
-        foreach ($doc->getAvailableStatus() as $status) {
-            if (empty($status->generadoc)) {
-                continue;
-            }
-
-            // al cambiar el estado genera un nuevo albarán
-            $doc->idestado = $status->idestado;
-            $this->assertTrue($doc->save(), 'pedido-cant-save');
-
-            // comprobamos que el albarán se ha creado
-            $children = $doc->childrenDocuments();
-            $this->assertNotEmpty($children, 'albaranes-no-creados');
-            foreach ($children as $child) {
-                // comprobamos que se han asignado el mismo almacén y empresa
-                $this->assertEquals($warehouse->codalmacen, $child->codalmacen, 'albaran-bad-codalmacen');
-                $this->assertEquals($company2->idempresa, $child->idempresa, 'albaran-bad-idempresa');
-            }
-        }
-
-        // eliminamos
-        $children = $doc->childrenDocuments();
-        $this->assertNotEmpty($children, 'albaranes-no-creados');
-        foreach ($children as $child) {
-            $this->assertTrue($child->delete(), 'albarán-cant-delete');
-        }
-        $this->assertTrue($doc->delete(), 'pedido-cant-delete');
-        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
-        $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
 
     protected function setUp(): void

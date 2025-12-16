@@ -19,7 +19,9 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use Exception;
 use FacturaScripts\Core\Contract\CalculatorModInterface;
+use FacturaScripts\Core\Contract\CalculatorModInterface2026;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
@@ -35,9 +37,19 @@ class Calculator
     /** @var CalculatorModInterface[] */
     public static $mods = [];
 
-    public static function addMod(CalculatorModInterface $mod): void
+    public static function addMod($mod): void
     {
-        self::$mods[] = $mod;
+        if ($mod instanceof CalculatorModInterface) {
+            self::$mods[] = $mod;
+            return;
+        }
+
+        if ($mod instanceof CalculatorModInterface2026) {
+            self::$mods[] = $mod;
+            return;
+        }
+
+        throw new Exception('The mod must implement CalculatorModInterface');
     }
 
     public static function calculate(BusinessDocument &$doc, array &$lines, bool $save): bool
@@ -46,11 +58,15 @@ class Calculator
         self::clear($doc, $lines);
 
         // aplicamos configuraciones, excepciones, etc
-        self::apply($doc, $lines);
+        if (false === self::apply($doc, $lines)) {
+            return false;
+        }
 
         // calculamos subtotales en líneas
         foreach ($lines as $line) {
-            self::calculateLine($doc, $line);
+            if (false === self::calculateLine($doc, $line)) {
+                return false;
+            }
         }
 
         // calculamos los totales
@@ -76,27 +92,54 @@ class Calculator
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
-            // si el mod devuelve false, terminamos
-            if (false === $mod->calculate($doc, $lines)) {
-                break;
+            if ($mod instanceof CalculatorModInterface) {
+                // si el mod devuelve false, salimos del foreach
+                if (false === $mod->calculate($doc, $lines)) {
+                    break;
+                }
+            }
+
+            if ($mod instanceof CalculatorModInterface2026) {
+                // si devuelve -1 terminamos, 0 salimos del foreach, 1 seguimos
+                $result = $mod->calculate($doc, $lines, $save) ?? 1;
+                if ($result === -1) {
+                    return false;
+                } elseif ($result === 0) {
+                    break;
+                }
             }
         }
 
         return $save && self::save($doc, $lines);
     }
 
-    public static function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): void
+    public static function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): bool
     {
         $line->pvpsindto = $line->cantidad * $line->pvpunitario;
         $line->pvptotal = $line->pvpsindto * (100 - $line->dtopor) / 100 * (100 - $line->dtopor2) / 100;
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
-            // si el mod devuelve false, terminamos
-            if (false === $mod->calculateLine($doc, $line)) {
-                break;
+            if ($mod instanceof CalculatorModInterface) {
+                // si el mod devuelve false, salimos del foreach
+                if (false === $mod->calculateLine($doc, $line)) {
+                    break;
+                }
+                continue;
+            }
+
+            if ($mod instanceof CalculatorModInterface2026) {
+                // si devuelve -1 terminamos, 0 salimos del foreach, 1 seguimos
+                $result = $mod->calculateLine($doc, $line) ?? 1;
+                if ($result === -1) {
+                    return false;
+                } elseif ($result === 0) {
+                    break;
+                }
             }
         }
+
+        return true;
     }
 
     /**
@@ -177,7 +220,7 @@ class Calculator
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
-            // si el mod devuelve false, terminamos
+            // si el mod devuelve false, salimos del foreach
             if (false === $mod->getSubtotals($subtotals, $doc, $lines)) {
                 break;
             }
@@ -219,9 +262,9 @@ class Calculator
      * @param BusinessDocument $doc
      * @param BusinessDocumentLine[] $lines
      *
-     * @return void
+     * @return bool
      */
-    private static function apply(BusinessDocument &$doc, array &$lines): void
+    private static function apply(BusinessDocument &$doc, array &$lines): bool
     {
         $subject = $doc->getSubject();
         $noTax = $doc->getSerie()->siniva;
@@ -263,11 +306,26 @@ class Calculator
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
-            // si el mod devuelve false, terminamos
-            if (false === $mod->apply($doc, $lines)) {
-                break;
+            if ($mod instanceof CalculatorModInterface) {
+                // si el mod devuelve false, salimos del foreach
+                if (false === $mod->apply($doc, $lines)) {
+                    break;
+                }
+                continue;
+            }
+
+            if ($mod instanceof CalculatorModInterface2026) {
+                // si devuelve -1 terminamos, 0 salimos del foreach, 1 seguimos
+                $result = $mod->apply($doc, $lines) ?? 1;
+                if ($result === -1) {
+                    return false;
+                } elseif ($result === 0) {
+                    break;
+                }
             }
         }
+
+        return true;
     }
 
     /**
@@ -296,7 +354,7 @@ class Calculator
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
-            // si el mod devuelve false, terminamos
+            // si el mod devuelve false, salimos del foreach
             if (false === $mod->clear($doc, $lines)) {
                 break;
             }
@@ -311,6 +369,19 @@ class Calculator
      */
     private static function save(BusinessDocument $doc, array $lines): bool
     {
+        // turno para que los mods apliquen cambios
+        foreach (self::$mods as $mod) {
+            if ($mod instanceof CalculatorModInterface2026) {
+                // si devuelve -1 terminamos, 0 salimos del foreach, 1 seguimos
+                $result = $mod->save($doc, $lines) ?? 1;
+                if ($result === -1) {
+                    return false;
+                } elseif ($result === 0) {
+                    break;
+                }
+            }
+        }
+
         foreach ($lines as $line) {
             if (false === $line->save()) {
                 return false;

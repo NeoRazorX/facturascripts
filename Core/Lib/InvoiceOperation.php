@@ -30,6 +30,7 @@ class InvoiceOperation
     const EXEMPT = 'exenta';
     const ES_BENEFIT_THIRD_PARTIES = 'benefit-3-parties';
     const ES_EXPORT = 'exportacion';
+    const ES_IMPORT = 'importacion';
     const ES_INTRA_COMMUNITY = 'intracomunitaria';
     const ES_SUCCESSIVE_TRACT = 'successive-tract';
     const ES_WORK_CERTIFICATION = 'work-certification';
@@ -48,7 +49,7 @@ class InvoiceOperation
         return array_merge(self::defaults(), self::$values);
     }
 
-    public static function get(string $key): ?string
+    public static function get(?string $key): ?string
     {
         $values = self::all();
         return $values[$key] ?? null;
@@ -60,6 +61,7 @@ class InvoiceOperation
             self::EXEMPT => 'exempt',
             self::ES_INTRA_COMMUNITY => 'es-intra-community',
             self::ES_EXPORT => 'es-operation-export',
+            self::ES_IMPORT => 'es-operation-import',
             self::ES_WORK_CERTIFICATION => 'es-work-certification',
             self::ES_BENEFIT_THIRD_PARTIES => 'es-benefit-3-parties',
             self::ES_SUCCESSIVE_TRACT => 'es-successive-tract',
