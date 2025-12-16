@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -159,13 +160,14 @@ class SendMail extends Controller
             case 'send':
                 // valid request?
                 if (false === $this->validateFormToken()) {
-                    break;
+                    return;
                 }
+
                 if ($this->send()) {
                     Tools::log()->notice('send-mail-ok');
                     $this->updateFemail();
                     $this->redirAfter();
-                    break;
+                    return;
                 }
                 Tools::log()->error('send-mail-error');
                 break;
@@ -301,13 +303,26 @@ class SendMail extends Controller
         $this->newMail->text = $this->request->input('body', '');
         $this->newMail->setMailbox($this->request->input('email-from', ''));
 
+        // Validar y añadir destinatarios
         foreach ($this->getEmails('email') as $email) {
+            if (false === Validator::email($email)) {
+                Tools::log()->warning('invalid-to-email', ['%email%' => $email]);
+                return false;
+            }
             $this->newMail->to($email);
         }
         foreach ($this->getEmails('email-cc') as $email) {
+            if (false === Validator::email($email)) {
+                Tools::log()->warning('invalid-cc-email', ['%email%' => $email]);
+                return false;
+            }
             $this->newMail->cc($email);
         }
         foreach ($this->getEmails('email-bcc') as $email) {
+            if (false === Validator::email($email)) {
+                Tools::log()->warning('invalid-bcc-email', ['%email%' => $email]);
+                return false;
+            }
             $this->newMail->bcc($email);
         }
 
