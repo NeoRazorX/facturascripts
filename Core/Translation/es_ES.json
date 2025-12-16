@@ -534,7 +534,6 @@
     "drag": "Arrastrar",
     "dto": "Dto.",
     "dto-2": "Dto. 2",
-    "duplicate-emails": "El email %email% está duplicado.",
     "duplicate-customer-name-or-cif": "Existe un cliente con el mismo nombre o CIF\/NIF",
     "duplicate-record": "Registro duplicado",
     "duplicated-reference": "Referencia '%reference%' duplicada",

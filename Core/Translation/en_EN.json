@@ -534,7 +534,6 @@
     "drag": "Drag",
     "dto": "Disc.",
     "dto-2": "Discount 2",
-    "duplicate-emails": "Email %email% is duplicated.",
     "duplicate-customer-name-or-cif": "A customer with the same name or VAT number exists",
     "duplicate-record": "Duplicated record",
     "duplicated-reference": "Reference '%reference%' duplicated",
