@@ -874,7 +874,7 @@
     "invoices": "factures",
     "invoices-cant-generate-new-docs": "Les factures ne peuvent générer de nouveaux documents",
     "ip": "IP",
-    "ip-banned": "Pour des raisons de sécurité, votre adrese IP a été temporairement bloquée.",
+    "ip-banned": "Pour des raisons de sécurité, l'accès depuis votre adresse IP a été bloqué pendant 10 minutes.",
     "irpf": "IRPP",
     "irpf-record-not-found": "Registre de l'IRPP %value%% non trouvé.",
     "irpf-subaccount-not-found": "Sous-compte de l'impôt sur le revenu non trouvé",
