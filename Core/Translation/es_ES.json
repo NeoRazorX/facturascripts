@@ -447,6 +447,8 @@
     "default-to-company-email": "Por defecto al email de la empresa",
     "default-to-user-email": "Por defecto al email del usuario",
     "default-warehouse": "Almacén predefinido",
+    "default-to-config-email": "Por defecto al email de la configuración.",
+    "always-to-config-email": "Siempre al email de la configuración.",
     "delete": "Eliminar",
     "delete-all": "Eliminar todo",
     "delete-closing": "Eliminar asientos de cierre",
