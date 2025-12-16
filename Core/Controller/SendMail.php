@@ -303,20 +303,6 @@ class SendMail extends Controller
         $this->newMail->text = $this->request->input('body', '');
         $this->newMail->setMailbox($this->request->input('email-from', ''));
 
-        // comprobar que no existen duplicados
-        $allEmails = array_merge(
-            $this->getEmails('email'), 
-            $this->getEmails('email-cc'), 
-            $this->getEmails('email-bcc')
-        );
-        $emailCounts = array_count_values($allEmails);
-        foreach ($emailCounts as $email => $count) {
-            if ($count > 1) {
-                Tools::log()->warning('duplicate-emails', ['%email%' => $email]);
-                return false;
-            }
-        }
-
         // Validar y añadir destinatarios
         foreach ($this->getEmails('email') as $email) {
             if (false === Validator::email($email)) {
