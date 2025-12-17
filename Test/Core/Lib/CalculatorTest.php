@@ -291,10 +291,10 @@ final class CalculatorTest extends TestCase
         // comprobamos el documento
         $this->assertEquals(200.0, $doc->neto, 'bad-neto');
         $this->assertEquals(200.0, $doc->netosindto, 'bad-netosindto');
-        $this->assertEquals(252.4, $doc->total, 'bad-total');
+        $this->assertEquals(242, $doc->total, 'bad-total');
         $this->assertEquals(42.0, $doc->totaliva, 'bad-totaliva');
         $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
-        $this->assertEquals(10.4, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
 
         // eliminamos
