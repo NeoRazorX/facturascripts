@@ -452,16 +452,15 @@ class CalculatorModSpain implements CalculatorModInterface2026
     }
 
     /**
-     * COMPRA - Régimen General del Proveedor
-     * IVA soportado deducible sobre el neto.
+     * COMPRA - Proveedor en Régimen General
+     * IVA soportado normal, deducible.
      */
     private function applyPurchaseGeneral(BusinessDocument $doc, BusinessDocumentLine &$line, string $regimenCompany): void
     {
         // IVA soportado normal
-        // El recargo solo se paga si NOSOTROS (la empresa) estamos en recargo
-        if ($regimenCompany !== TaxRegime::ES_TAX_REGIME_SURCHARGE) {
-            $line->recargo = 0.0;
-        }
+        // El recargo NO se aplica cuando el proveedor es GENERAL
+        // El recargo solo se paga cuando el PROVEEDOR está en recargo Y la empresa también
+        $line->recargo = 0.0;
     }
 
     /**

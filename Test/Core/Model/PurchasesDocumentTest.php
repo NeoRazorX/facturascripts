@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
@@ -27,20 +26,20 @@ use FacturaScripts\Dinamic\Lib\ProductType;
 use FacturaScripts\Dinamic\Lib\TaxException;
 use FacturaScripts\Dinamic\Lib\TaxRegime;
 use FacturaScripts\Dinamic\Lib\Vies;
-use FacturaScripts\Dinamic\Model\AlbaranCliente;
-use FacturaScripts\Dinamic\Model\Cliente;
-use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\AlbaranProveedor;
 use FacturaScripts\Dinamic\Model\Empresa;
-use FacturaScripts\Dinamic\Model\FacturaCliente;
-use FacturaScripts\Dinamic\Model\PedidoCliente;
-use FacturaScripts\Dinamic\Model\PresupuestoCliente;
+use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\FacturaProveedor;
+use FacturaScripts\Dinamic\Model\PedidoProveedor;
+use FacturaScripts\Dinamic\Model\PresupuestoProveedor;
 use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
-final class SalesDocumentTest extends TestCase
+final class PurchasesDocumentTest extends TestCase
 {
     use DefaultSettingsTrait;
     use LogErrorsTrait;
@@ -58,7 +57,7 @@ final class SalesDocumentTest extends TestCase
     }
 
     /**
-     * Prueba que un cliente con operación lo copia correctamente en la factura,
+     * Prueba que un proveedor con operación lo copia correctamente en la factura,
      * si no, prueba copiar el campo operación de la empresa, y si no, dejarlo vacío.
      */
     public function testInvoiceOperationField(): void
@@ -71,52 +70,52 @@ final class SalesDocumentTest extends TestCase
         // obtenemos el almacén de la empresa
         $warehouses = $company->getWarehouses();
 
-        // creamos un cliente con operación
-        $customerWithOp = $this->getRandomCustomer();
-        $customerWithOp->operacion = InvoiceOperation::EXEMPT;
-        $this->assertTrue($customerWithOp->save(), 'cant-create-customer-with-op');
+        // creamos un proveedor con operación
+        $supplierWithOp = $this->getRandomSupplier();
+        $supplierWithOp->operacion = InvoiceOperation::EXEMPT;
+        $this->assertTrue($supplierWithOp->save(), 'cant-create-supplier-with-op');
 
-        // creamos un cliente sin operación
-        $customerWithoutOp = $this->getRandomCustomer();
-        $this->assertTrue($customerWithoutOp->save(), 'cant-create-customer-without-op');
+        // creamos un proveedor sin operación
+        $supplierWithoutOp = $this->getRandomSupplier();
+        $this->assertTrue($supplierWithoutOp->save(), 'cant-create-supplier-without-op');
 
         $documentClasses = [
-            PresupuestoCliente::class,
-            PedidoCliente::class,
-            AlbaranCliente::class,
-            FacturaCliente::class
+            PresupuestoProveedor::class,
+            PedidoProveedor::class,
+            AlbaranProveedor::class,
+            FacturaProveedor::class
         ];
 
         foreach ($documentClasses as $documentClass) {
-            // creamos un documento para el cliente con operación
+            // creamos un documento para el proveedor con operación
             $doc = new $documentClass();
             $doc->setWarehouse($warehouses[0]->codalmacen);
-            $doc->setSubject($customerWithOp);
-            $this->assertTrue($doc->save(), 'cant-create-' . $doc->modelClassName() . '-with-customer-with-op');
-            $this->assertEquals(InvoiceOperation::EXEMPT, $doc->operacion, 'bad-' . $doc->modelClassName() . '-operation-from-customer');
+            $doc->setSubject($supplierWithOp);
+            $this->assertTrue($doc->save(), 'cant-create-' . $doc->modelClassName() . '-with-supplier-with-op');
+            $this->assertEquals(InvoiceOperation::EXEMPT, $doc->operacion, 'bad-' . $doc->modelClassName() . '-operation-from-supplier');
 
-            // creamos un documento para el cliente sin operación, pero con operación en la empresa
+            // creamos un documento para el proveedor sin operación, pero con operación en la empresa
             $doc2 = new $documentClass();
             $doc2->setWarehouse($warehouses[0]->codalmacen);
-            $doc2->setSubject($customerWithoutOp);
-            $this->assertTrue($doc2->save(), 'cant-create-' . $doc2->modelClassName() . '-with-customer-without-op');
+            $doc2->setSubject($supplierWithoutOp);
+            $this->assertTrue($doc2->save(), 'cant-create-' . $doc2->modelClassName() . '-with-supplier-without-op');
             $this->assertEquals(InvoiceOperation::ES_WORK_CERTIFICATION, $doc2->operacion, 'bad-' . $doc2->modelClassName() . '-operation-from-company');
 
-            // creamos un documento sin operación en cliente ni empresa, usando la empresa por defecto
+            // creamos un documento sin operación en proveedor ni empresa, usando la empresa por defecto
             $doc3 = new $documentClass();
-            $doc3->setSubject($customerWithoutOp);
+            $doc3->setSubject($supplierWithoutOp);
             $this->assertTrue($doc3->save(), 'cant-create-' . $doc3->modelClassName() . '-without-operation');
             $this->assertNull($doc3->operacion, 'bad-' . $doc3->modelClassName() . '-operation-empty');
 
             // eliminamos documentos
-            $this->assertTrue($doc->delete(), 'cant-delete-' . $doc->modelClassName() . '-with-customer-with-op');
-            $this->assertTrue($doc2->delete(), 'cant-delete-' . $doc2->modelClassName() . '-with-customer-without-op');
+            $this->assertTrue($doc->delete(), 'cant-delete-' . $doc->modelClassName() . '-with-supplier-with-op');
+            $this->assertTrue($doc2->delete(), 'cant-delete-' . $doc2->modelClassName() . '-with-supplier-without-op');
             $this->assertTrue($doc3->delete(), 'cant-delete-' . $doc3->modelClassName() . '-without-operation');
         }
 
         // eliminamos
-        $this->assertTrue($customerWithOp->delete(), 'cant-delete-customer-with-op');
-        $this->assertTrue($customerWithoutOp->delete(), 'cant-delete-customer-without-op');
+        $this->assertTrue($supplierWithOp->delete(), 'cant-delete-supplier-with-op');
+        $this->assertTrue($supplierWithoutOp->delete(), 'cant-delete-supplier-without-op');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
@@ -134,14 +133,14 @@ final class SalesDocumentTest extends TestCase
         // obtenemos el almacén de la empresa
         $warehouses = $company->getWarehouses();
 
-        // creamos un cliente con exención de iva
-        $customerWithExemption = $this->getRandomCustomer();
-        $customerWithExemption->excepcioniva = TaxException::ES_TAX_EXCEPTION_21;
-        $this->assertTrue($customerWithExemption->save(), 'cant-create-customer-with-exemption');
+        // creamos un proveedor con exención de iva
+        $supplierWithExemption = $this->getRandomSupplier();
+        $supplierWithExemption->excepcioniva = TaxException::ES_TAX_EXCEPTION_21;
+        $this->assertTrue($supplierWithExemption->save(), 'cant-create-supplier-with-exemption');
 
         // creamos un cliente sin exención de iva
-        $customerWithoutExemption = $this->getRandomCustomer();
-        $this->assertTrue($customerWithoutExemption->save(), 'cant-create-customer-without-exemption');
+        $supplierWithoutExemption = $this->getRandomSupplier();
+        $this->assertTrue($supplierWithoutExemption->save(), 'cant-create-supplier-without-exemption');
 
         // creamos un producto con exención de iva
         $productWithExemption = $this->getRandomProduct();
@@ -155,18 +154,19 @@ final class SalesDocumentTest extends TestCase
         $productWithoutExemption->nostock = true;
         $this->assertTrue($productWithoutExemption->save(), 'cant-create-product-without-exemption');
 
+
         $documentClasses = [
-            PresupuestoCliente::class,
-            PedidoCliente::class,
-            AlbaranCliente::class,
-            FacturaCliente::class
+            PresupuestoProveedor::class,
+            PedidoProveedor::class,
+            AlbaranProveedor::class,
+            FacturaProveedor::class
         ];
 
         foreach ($documentClasses as $documentClass) {
-            // creamos un documento para la empresa por defecto y el cliente con exención de iva
+            // creamos un documento para la empresa por defecto y el proveedor con exención de iva
             $doc = new $documentClass();
-            $doc->setSubject($customerWithExemption);
-            $this->assertTrue($doc->save(), 'cant-create-' . $doc->modelClassName() . '-with-customer-with-exemption');
+            $doc->setSubject($supplierWithExemption);
+            $this->assertTrue($doc->save(), 'cant-create-' . $doc->modelClassName() . '-with-supplier-with-exemption');
 
             // línea con producto con exención
             $line1 = $doc->getNewProductLine($productWithExemption->referencia);
@@ -183,10 +183,10 @@ final class SalesDocumentTest extends TestCase
             $this->assertEquals(TaxException::ES_TAX_EXCEPTION_21, $line3->excepcioniva, 'bad-line3-iva-exemption-in-' . $doc->modelClassName());
             $this->assertTrue($line3->save(), 'cant-save-line3-in-' . $doc->modelClassName());
 
-            // creamos un documento para la empresa por defecto y el cliente sin exención de iva
+            // creamos un documento para la empresa por defecto y el proveedor sin exención de iva
             $doc2 = new $documentClass();
-            $doc2->setSubject($customerWithoutExemption);
-            $this->assertTrue($doc2->save(), 'cant-create-' . $doc2->modelClassName() . '-with-customer-without-exemption');
+            $doc2->setSubject($supplierWithoutExemption);
+            $this->assertTrue($doc2->save(), 'cant-create-' . $doc2->modelClassName() . '-with-supplier-without-exemption');
 
             // línea con producto con exención
             $line4 = $doc2->getNewProductLine($productWithExemption->referencia);
@@ -203,11 +203,11 @@ final class SalesDocumentTest extends TestCase
             $this->assertNull($line6->excepcioniva, 'bad-line6-iva-exemption-in-' . $doc2->modelClassName());
             $this->assertTrue($line6->save(), 'cant-save-line6-in-' . $doc2->modelClassName());
 
-            // creamos un documento para la empresa con exención de iva y el cliente sin exención de iva
+            // creamos un documento para la empresa con exención de iva y el proveedor sin exención de iva
             $doc3 = new $documentClass();
-            $doc3->setSubject($customerWithoutExemption);
+            $doc3->setSubject($supplierWithoutExemption);
             $doc3->setWarehouse($warehouses[0]->codalmacen);
-            $this->assertTrue($doc3->save(), 'cant-create-' . $doc3->modelClassName() . '-with-company-with-exemption-and-customer-without-exemption');
+            $this->assertTrue($doc3->save(), 'cant-create-' . $doc3->modelClassName() . '-with-company-with-exemption-and-supplier-without-exemption');
 
             // línea con producto con exención
             $line7 = $doc3->getNewProductLine($productWithExemption->referencia);
@@ -225,37 +225,37 @@ final class SalesDocumentTest extends TestCase
             $this->assertTrue($line9->save(), 'cant-save-line9-in-' . $doc3->modelClassName());
 
             // eliminamos documentos
-            $this->assertTrue($doc->delete(), 'cant-delete-' . $doc->modelClassName() . '-with-customer-with-exemption');
-            $this->assertTrue($doc2->delete(), 'cant-delete-' . $doc2->modelClassName() . '-with-customer-without-exemption');
-            $this->assertTrue($doc3->delete(), 'cant-delete-' . $doc3->modelClassName() . '-with-company-with-exemption-and-customer-without-exemption');
+            $this->assertTrue($doc->delete(), 'cant-delete-' . $doc->modelClassName() . '-with-supplier-with-exemption');
+            $this->assertTrue($doc2->delete(), 'cant-delete-' . $doc2->modelClassName() . '-with-supplier-without-exemption');
+            $this->assertTrue($doc3->delete(), 'cant-delete-' . $doc3->modelClassName() . '-with-company-with-exemption-and-supplier-without-exemption');
         }
 
         // eliminamos
-        $this->assertTrue($customerWithExemption->delete(), 'cant-delete-customer-with-exemption');
-        $this->assertTrue($customerWithoutExemption->delete(), 'cant-delete-customer-without-exemption');
+        $this->assertTrue($supplierWithExemption->delete(), 'cant-delete-supplier-with-exemption');
+        $this->assertTrue($supplierWithoutExemption->delete(), 'cant-delete-supplier-without-exemption');
         $this->assertTrue($productWithExemption->delete(), 'cant-delete-product-with-exemption');
         $this->assertTrue($productWithoutExemption->delete(), 'cant-delete-product-without-exemption');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba el régimen general con cliente en régimen general.
-     * IVA normal sobre el neto. Sin recargo de equivalencia.
+     * Prueba compra a proveedor en régimen general con empresa en régimen general.
+     * IVA soportado deducible sobre el neto. Sin recargo de equivalencia.
      */
-    public function testGeneralRegimeWithGeneralCustomer(): void
+    public function testGeneralSupplierWithGeneralCompany(): void
     {
         // creamos una empresa con régimen general
         $company = $this->getRandomCompany();
         $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
         $this->assertTrue($company->save(), 'cant-create-company');
 
-        // creamos un cliente con régimen general
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
+        // creamos un proveedor con régimen general
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
         // creamos los 4 tipos de documentos
-        $this->createAndTestDocuments($company, $customer, 'testGeneralRegimeWithGeneralCustomer', [
+        $this->createAndTestDocuments($company, $supplier, 'testGeneralSupplierWithGeneralCompany', [
             'expected-doc-neto' => 200,
             'expected-doc-iva' => 42,
             'expected-doc-recargo' => 0,
@@ -268,28 +268,62 @@ final class SalesDocumentTest extends TestCase
         ]);
 
         // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba el régimen general con cliente en recargo de equivalencia.
-     * Se debe aplicar IVA + recargo de equivalencia.
+     * Prueba compra a proveedor en recargo con empresa NO en recargo.
+     * No pagamos recargo porque nosotros (empresa) no estamos en recargo.
      */
-    public function testGeneralRegimeWithSurchargeCustomer(): void
+    public function testSurchargeSupplierWithGeneralCompany(): void
     {
-        // creamos una empresa con régimen general
+        // creamos una empresa con régimen general (NO recargo)
         $company = $this->getRandomCompany();
         $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
         $this->assertTrue($company->save(), 'cant-create-company');
 
-        // creamos un cliente con recargo de equivalencia
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
+        // creamos un proveedor con recargo de equivalencia
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
+
+        // Solo IVA 21% sobre 200€ = 42, sin recargo (nosotros no estamos en recargo)
+        $this->createAndTestDocuments($company, $supplier, 'testSurchargeSupplierWithGeneralCompany', [
+            'expected-doc-neto' => 200,
+            'expected-doc-iva' => 42,
+            'expected-doc-recargo' => 0,
+            'expected-doc-irpf' => 0,
+            'expected-doc-total' => 242,
+            'expected-line-pvptotal' => 200,
+            'expected-line-iva' => 21,
+            'expected-line-recargo' => 0,
+            'expected-line-irpf' => 0
+        ]);
+
+        // eliminamos
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
+        $this->assertTrue($company->delete(), 'cant-delete-company');
+    }
+
+    /**
+     * Prueba compra a proveedor en recargo con empresa también en recargo.
+     * Pagamos IVA + recargo porque nosotros (empresa) también estamos en recargo.
+     */
+    public function testSurchargeSupplierWithSurchargeCompany(): void
+    {
+        // creamos una empresa con recargo de equivalencia
+        $company = $this->getRandomCompany();
+        $company->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
+        $this->assertTrue($company->save(), 'cant-create-company');
+
+        // creamos un proveedor con recargo de equivalencia
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
         // IVA 21% + Recargo 5.2% sobre 200€ = 42 + 10.4 = 52.4
-        $this->createAndTestDocuments($company, $customer, 'testGeneralRegimeWithSurchargeCustomer', [
+        $this->createAndTestDocuments($company, $supplier, 'testSurchargeSupplierWithSurchargeCompany', [
             'expected-doc-neto' => 200,
             'expected-doc-iva' => 42,
             'expected-doc-recargo' => 10.4,
@@ -302,28 +336,28 @@ final class SalesDocumentTest extends TestCase
         ]);
 
         // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba empresa en recargo de equivalencia con cliente en régimen general.
-     * La empresa en recargo NO aplica recargo en sus ventas a clientes generales.
+     * Prueba compra a proveedor general con empresa en recargo.
+     * No pagamos recargo porque el proveedor no está en recargo.
      */
-    public function testSurchargeRegimeWithGeneralCustomer(): void
+    public function testGeneralSupplierWithSurchargeCompany(): void
     {
         // creamos una empresa con recargo de equivalencia
         $company = $this->getRandomCompany();
         $company->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
         $this->assertTrue($company->save(), 'cant-create-company');
 
-        // creamos un cliente con régimen general
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
+        // creamos un proveedor con régimen general
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
-        // Solo IVA 21% sobre 200€ = 42, sin recargo
-        $this->createAndTestDocuments($company, $customer, 'testSurchargeRegimeWithGeneralCustomer', [
+        // Solo IVA 21% sobre 200€ = 42, sin recargo (proveedor no está en recargo)
+        $this->createAndTestDocuments($company, $supplier, 'testGeneralSupplierWithSurchargeCompany', [
             'expected-doc-neto' => 200,
             'expected-doc-iva' => 42,
             'expected-doc-recargo' => 0,
@@ -336,47 +370,14 @@ final class SalesDocumentTest extends TestCase
         ]);
 
         // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba empresa y cliente ambos en recargo de equivalencia.
-     * Las empresas en recargo NO aplican recargo en sus ventas (solo lo pagan en compras).
-     */
-    public function testSurchargeRegimeWithSurchargeCustomer(): void
-    {
-        // creamos una empresa con recargo de equivalencia
-        $company = $this->getRandomCompany();
-        $company->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
-        $this->assertTrue($company->save(), 'cant-create-company');
-
-        // creamos un cliente también con recargo de equivalencia
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
-
-        // Solo IVA 21% sobre 200€ = 42, recargo neutralizado
-        $this->createAndTestDocuments($company, $customer, 'testSurchargeRegimeWithSurchargeCustomer', [
-            'expected-doc-neto' => 200,
-            'expected-doc-iva' => 42,
-            'expected-doc-recargo' => 0,
-            'expected-doc-irpf' => 0,
-            'expected-doc-total' => 242,
-            'expected-line-pvptotal' => 200,
-            'expected-line-iva' => 21,
-            'expected-line-recargo' => 0,
-            'expected-line-irpf' => 0
-        ]);
-
-        // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
-        $this->assertTrue($company->delete(), 'cant-delete-company');
-    }
-
-    /**
-     * Prueba el régimen de bienes usados.
-     * IVA solo sobre el beneficio (venta - coste).
+     * Prueba el régimen de bienes usados en compras.
+     * Si nosotros también estamos en bienes usados y el producto es de segunda mano,
+     * no aplicamos impuestos (compra sin IVA).
      */
     public function testUsedGoodsRegime(): void
     {
@@ -385,7 +386,7 @@ final class SalesDocumentTest extends TestCase
         $company->regimeniva = TaxRegime::ES_TAX_REGIME_USED_GOODS;
         $this->assertTrue($company->save(), 'cant-create-company');
 
-        // creamos un producto de segunda mano con coste
+        // creamos un producto de segunda mano
         $product = $this->getRandomProduct();
         $product->tipo = ProductType::SECOND_HAND;
         $product->ventasinstock = true;
@@ -399,112 +400,49 @@ final class SalesDocumentTest extends TestCase
             break;
         }
 
-        // creamos un cliente
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
+        // creamos un proveedor en bienes usados
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_USED_GOODS;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
-        // calculamos el beneficio y el IVA esperado
-        // Beneficio por unidad: 100 - 60 = 40
-        // Beneficio total: 40 * 2 = 80
-        // IVA sobre beneficio: 80 * 21% = 16.8
-        $expectedNeto = 200; // pvptotal
-        $expectedIva = 16.8;  // IVA solo sobre beneficio
-        $expectedTotal = 216.8;
-
-        // creamos los 4 tipos de documentos con el producto
-        $this->createAndTestDocuments($company, $customer, 'testUsedGoodsRegime', [
-            'expected-doc-neto' => $expectedNeto,
-            'expected-doc-iva' => $expectedIva,
+        // En bienes usados, si nosotros también estamos en ese régimen,
+        // la compra de productos de segunda mano no tiene IVA
+        $this->createAndTestDocuments($company, $supplier, 'testUsedGoodsRegime', [
+            'expected-doc-neto' => 200,
+            'expected-doc-iva' => 0,
             'expected-doc-recargo' => 0,
             'expected-doc-irpf' => 0,
-            'expected-doc-total' => $expectedTotal,
+            'expected-doc-total' => 200,
             'expected-line-pvptotal' => 200,
-            'expected-line-iva' => 21,
+            'expected-line-iva' => 0,
             'expected-line-recargo' => 0,
             'expected-line-irpf' => 0
         ], $product);
 
         // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
         $this->assertTrue($product->delete(), 'cant-delete-product');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba el régimen de agencias de viaje.
-     * IVA sobre el margen (venta - coste de servicios).
-     */
-    public function testTravelAgencyRegime(): void
-    {
-        // creamos una empresa con régimen de agencias de viaje
-        $company = $this->getRandomCompany();
-        $company->regimeniva = TaxRegime::ES_TAX_REGIME_TRAVEL;
-        $this->assertTrue($company->save(), 'cant-create-company');
-
-        // creamos un producto con coste
-        $product = $this->getRandomProduct();
-        $product->ventasinstock = true;
-        $this->assertTrue($product->save(), 'cant-create-product');
-
-        // le asignamos un coste y un precio a su variante
-        foreach ($product->getVariants() as $variant) {
-            $variant->coste = self::PRODUCT_COST;
-            $variant->precio = self::PRODUCT_PRICE;
-            $this->assertTrue($variant->save(), 'cant-update-variant');
-            break;
-        }
-
-        // creamos un cliente
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
-
-        // calculamos el margen y el IVA esperado
-        // Margen por unidad: 100 - 60 = 40
-        // Margen total: 40 * 2 = 80
-        // IVA sobre margen: 80 * 21% = 16.8
-        $expectedNeto = 200; // pvptotal
-        $expectedIva = 16.8;  // IVA solo sobre margen
-        $expectedTotal = 216.8;
-
-        // creamos los 4 tipos de documentos con el producto
-        $this->createAndTestDocuments($company, $customer, 'testTravelAgencyRegime', [
-            'expected-doc-neto' => $expectedNeto,
-            'expected-doc-iva' => $expectedIva,
-            'expected-doc-recargo' => 0,
-            'expected-doc-irpf' => 0,
-            'expected-doc-total' => $expectedTotal,
-            'expected-line-pvptotal' => 200,
-            'expected-line-iva' => 21,
-            'expected-line-recargo' => 0,
-            'expected-line-irpf' => 0
-        ], $product);
-
-        // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
-        $this->assertTrue($product->delete(), 'cant-delete-product');
-        $this->assertTrue($company->delete(), 'cant-delete-company');
-    }
-
-    /**
-     * Prueba el régimen de criterio de caja.
+     * Prueba el régimen de criterio de caja en compras.
      * El cálculo es idéntico al general, solo difiere el momento del devengo.
      */
     public function testCashCriteriaRegime(): void
     {
-        // creamos una empresa con régimen de criterio de caja
+        // creamos una empresa con régimen general
         $company = $this->getRandomCompany();
-        $company->regimeniva = TaxRegime::ES_TAX_REGIME_CASH_CRITERIA;
+        $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
         $this->assertTrue($company->save(), 'cant-create-company');
 
-        // creamos un cliente con régimen general
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
+        // creamos un proveedor con régimen de criterio de caja
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_CASH_CRITERIA;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
         // IVA 21% sobre 200€ = 42
-        $this->createAndTestDocuments($company, $customer, 'testCashCriteriaRegime', [
+        $this->createAndTestDocuments($company, $supplier, 'testCashCriteriaRegime', [
             'expected-doc-neto' => 200,
             'expected-doc-iva' => 42,
             'expected-doc-recargo' => 0,
@@ -517,28 +455,28 @@ final class SalesDocumentTest extends TestCase
         ]);
 
         // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba el régimen agrario.
-     * Los tipos pueden ser reducidos, pero el cálculo es similar al general.
+     * Prueba compra a proveedor en régimen agrario.
+     * IVA reducido sobre el neto. Sin recargo normalmente.
      */
     public function testAgrarianRegime(): void
     {
-        // creamos una empresa con régimen agrario
+        // creamos una empresa con régimen general
         $company = $this->getRandomCompany();
-        $company->regimeniva = TaxRegime::ES_TAX_REGIME_AGRARIAN;
+        $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
         $this->assertTrue($company->save(), 'cant-create-company');
 
-        // creamos un cliente con régimen general
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
+        // creamos un proveedor con régimen agrario
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_AGRARIAN;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
         // IVA 21% sobre 200€ = 42 (puede variar según el producto)
-        $this->createAndTestDocuments($company, $customer, 'testAgrarianRegime', [
+        $this->createAndTestDocuments($company, $supplier, 'testAgrarianRegime', [
             'expected-doc-neto' => 200,
             'expected-doc-iva' => 42,
             'expected-doc-recargo' => 0,
@@ -551,28 +489,28 @@ final class SalesDocumentTest extends TestCase
         ]);
 
         // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba el régimen simplificado.
+     * Prueba compra a proveedor en régimen simplificado.
      * El cálculo es similar al régimen general.
      */
     public function testSimplifiedRegime(): void
     {
-        // creamos una empresa con régimen simplificado
+        // creamos una empresa con régimen general
         $company = $this->getRandomCompany();
-        $company->regimeniva = TaxRegime::ES_TAX_REGIME_SIMPLIFIED;
+        $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
         $this->assertTrue($company->save(), 'cant-create-company');
 
-        // creamos un cliente con régimen general
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
+        // creamos un proveedor con régimen simplificado
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_SIMPLIFIED;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
         // IVA 21% sobre 200€ = 42
-        $this->createAndTestDocuments($company, $customer, 'testSimplifiedRegime', [
+        $this->createAndTestDocuments($company, $supplier, 'testSimplifiedRegime', [
             'expected-doc-neto' => 200,
             'expected-doc-iva' => 42,
             'expected-doc-recargo' => 0,
@@ -585,13 +523,13 @@ final class SalesDocumentTest extends TestCase
         ]);
 
         // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba operaciones intracomunitarias.
-     * IVA = 0% con inversión del sujeto pasivo.
+     * Prueba operaciones intracomunitarias en compras.
+     * IVA = 0% con inversión del sujeto pasivo (autoliquidación).
      */
     public function testIntraCommunityOperation(): void
     {
@@ -608,24 +546,24 @@ final class SalesDocumentTest extends TestCase
         $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
         $this->assertTrue($company->save(), 'cant-create-company');
 
-        // creamos un cliente de otro país de la UE
-        $customer = $this->getRandomCustomer();
-        $customer->cifnif = 'PT513969144';
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
-        $address = $customer->getDefaultAddress();
+        // creamos un proveedor de otro país de la UE
+        $supplier = $this->getRandomSupplier();
+        $supplier->cifnif = 'PT513969144';
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
+        $address = $supplier->getDefaultAddress();
         $address->codpais = 'PRT'; // Portugal
         $this->assertTrue($address->save(), 'cant-update-address');
 
-        // IVA 0% en operación intracomunitaria
-        $this->createAndTestDocuments($company, $customer, 'testIntraCommunityOperation', [
+        // IVA 0% en operación intracomunitaria (inversión del sujeto pasivo)
+        $this->createAndTestDocuments($company, $supplier, 'testIntraCommunityOperation', [
             'expected-doc-neto' => 200,
             'expected-doc-iva' => 0,
             'expected-doc-recargo' => 0,
             'expected-doc-irpf' => 0,
             'expected-doc-total' => 200,
             'doc-operacion' => InvoiceOperation::ES_INTRA_COMMUNITY,
-            'line-excepcioniva' => TaxException::ES_TAX_EXCEPTION_25,
+            'line-excepcioniva' => TaxException::ES_TAX_EXCEPTION_84,
             'line-iva' => 0,
             'line-codimpuesto' => 'IVA0',
             'expected-line-pvptotal' => 200,
@@ -635,42 +573,37 @@ final class SalesDocumentTest extends TestCase
         ]);
 
         // eliminamos
-        $this->assertTrue($address->delete(), 'cant-delete-address');
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba operaciones de exportación.
-     * IVA = 0% en exportaciones fuera de la UE.
+     * Prueba operaciones de importación (compras fuera de la UE).
+     * IVA = 0% en la factura del proveedor, se paga en aduanas.
      */
-    public function testExportOperation(): void
+    public function testImportOperation(): void
     {
         // creamos una empresa
         $company = $this->getRandomCompany();
         $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
         $this->assertTrue($company->save(), 'cant-create-company');
 
-        // creamos un cliente fuera de la UE
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
-        $address = $customer->getDefaultAddress();
+        // creamos un proveedor fuera de la UE
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
+        $address = $supplier->getDefaultAddress();
         $address->codpais = 'USA'; // Estados Unidos
         $this->assertTrue($address->save(), 'cant-update-address');
-        $customer->idcontactoenv = $address->id();
-        $customer->idcontactofact = $address->id();
-        $this->assertTrue($customer->save(), 'cant-update-customer');
 
-        // IVA 0% en exportación
-        $this->createAndTestDocuments($company, $customer, 'testExportOperation', [
+        // IVA 0% en importación (se paga en aduanas)
+        $this->createAndTestDocuments($company, $supplier, 'testImportOperation', [
             'expected-doc-neto' => 200,
             'expected-doc-iva' => 0,
             'expected-doc-recargo' => 0,
             'expected-doc-irpf' => 0,
             'expected-doc-total' => 200,
-            'doc-operacion' => InvoiceOperation::ES_EXPORT,
-            'line-excepcioniva' => TaxException::ES_TAX_EXCEPTION_21,
+            'doc-operacion' => InvoiceOperation::ES_IMPORT,
             'line-iva' => 0,
             'line-codimpuesto' => 'IVA0',
             'expected-line-pvptotal' => 200,
@@ -680,50 +613,12 @@ final class SalesDocumentTest extends TestCase
         ]);
 
         // eliminamos
-        $this->assertTrue($address->delete(), 'cant-delete-address');
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba operaciones exentas de IVA.
-     * IVA = 0% por exención fiscal.
-     */
-    public function testExemptOperation(): void
-    {
-        // creamos una empresa
-        $company = $this->getRandomCompany();
-        $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($company->save(), 'cant-create-company');
-
-        // creamos un cliente
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
-
-        // IVA 0% por exención
-        $this->createAndTestDocuments($company, $customer, 'testExemptOperation', [
-            'expected-doc-neto' => 200,
-            'expected-doc-iva' => 0,
-            'expected-doc-recargo' => 0,
-            'expected-doc-irpf' => 0,
-            'expected-doc-total' => 200,
-            'doc-operacion' => InvoiceOperation::EXEMPT,
-            'line-iva' => 0,
-            'line-codimpuesto' => 'IVA0',
-            'expected-line-pvptotal' => 200,
-            'expected-line-iva' => 0,
-            'expected-line-recargo' => 0,
-            'expected-line-irpf' => 0
-        ]);
-
-        // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
-        $this->assertTrue($company->delete(), 'cant-delete-company');
-    }
-
-    /**
-     * Prueba régimen general con descuento del 10%.
+     * Prueba compra con descuento del 10%.
      * Neto con descuento: 200€ - 10% = 180€
      * IVA 21% sobre 180€ = 37.8€
      */
@@ -734,13 +629,13 @@ final class SalesDocumentTest extends TestCase
         $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
         $this->assertTrue($company->save(), 'cant-create-company');
 
-        // creamos un cliente con régimen general
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
+        // creamos un proveedor con régimen general
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
         // Con descuento del 10%: Neto = 180, IVA = 37.8, Total = 217.8
-        $this->createAndTestDocuments($company, $customer, 'testGeneralRegimeWithDiscount', [
+        $this->createAndTestDocuments($company, $supplier, 'testGeneralRegimeWithDiscount', [
             'expected-doc-neto' => 180,
             'expected-doc-iva' => 37.8,
             'expected-doc-recargo' => 0,
@@ -755,31 +650,30 @@ final class SalesDocumentTest extends TestCase
         ]);
 
         // eliminamos
-        
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba régimen general con recargo de equivalencia y descuento del 5%.
+     * Prueba compra con recargo y descuento del 5%.
      * Neto con descuento: 200€ - 5% = 190€
      * IVA 21% sobre 190€ = 39.9€
      * Recargo 5.2% sobre 190€ = 9.88€
      */
     public function testSurchargeRegimeWithDiscount(): void
     {
-        // creamos una empresa con régimen general
+        // creamos una empresa con recargo de equivalencia
         $company = $this->getRandomCompany();
-        $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
+        $company->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
         $this->assertTrue($company->save(), 'cant-create-company');
 
-        // creamos un cliente con recargo de equivalencia
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
+        // creamos un proveedor con recargo de equivalencia
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
         // Con descuento del 5%: Neto = 190, IVA = 39.9, Recargo = 9.88, Total = 239.78
-        $this->createAndTestDocuments($company, $customer, 'testSurchargeRegimeWithDiscount', [
+        $this->createAndTestDocuments($company, $supplier, 'testSurchargeRegimeWithDiscount', [
             'expected-doc-neto' => 190,
             'expected-doc-iva' => 39.9,
             'expected-doc-recargo' => 9.88,
@@ -794,150 +688,15 @@ final class SalesDocumentTest extends TestCase
         ]);
 
         // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
         $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     /**
-     * Prueba régimen general con descuento del 20% y cliente con recargo.
-     * Neto con descuento: 200€ - 20% = 160€
-     * IVA 21% sobre 160€ = 33.6€
-     * Recargo 5.2% sobre 160€ = 8.32€
-     */
-    public function testGeneralRegimeWithLargeDiscountAndSurcharge(): void
-    {
-        // creamos una empresa con régimen general
-        $company = $this->getRandomCompany();
-        $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($company->save(), 'cant-create-company');
-
-        // creamos un cliente con recargo de equivalencia
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_SURCHARGE;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
-
-        // Con descuento del 20%: Neto = 160, IVA = 33.6, Recargo = 8.32, Total = 201.92
-        $this->createAndTestDocuments($company, $customer, 'testGeneralRegimeWithLargeDiscountAndSurcharge', [
-            'expected-doc-neto' => 160,
-            'expected-doc-iva' => 33.6,
-            'expected-doc-recargo' => 8.32,
-            'expected-doc-irpf' => 0,
-            'expected-doc-total' => 201.92,
-            'line-dtopor' => 20,
-            'expected-line-pvptotal' => 160,
-            'expected-line-iva' => 21,
-            'expected-line-recargo' => 5.2,
-            'expected-line-irpf' => 0,
-            'expected-line-dtopor' => 20
-        ]);
-
-        // eliminamos
-        
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
-        $this->assertTrue($company->delete(), 'cant-delete-company');
-    }
-
-    /**
-     * Prueba régimen general con IRPF.
-     * Neto: 200€
-     * IVA 21% sobre 200€ = 42€
-     * IRPF 15% sobre 200€ = 30€ (se resta del total)
-     * Total: 200 + 42 - 30 = 212€
-     */
-    public function testGeneralRegimeWithIRPF(): void
-    {
-        // creamos una empresa con régimen general
-        $company = $this->getRandomCompany();
-        $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($company->save(), 'cant-create-company');
-
-        // creamos un cliente con régimen general y retención
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-
-        // asignar retención si existe
-        foreach (Retenciones::all() as $retention) {
-            $customer->codretencion = $retention->codretencion;
-            break;
-        }
-
-        $this->assertTrue($customer->save(), 'cant-create-customer');
-
-        // Sí hay retención, probar con IRPF
-        // IRPF 15% sobre 200€ = 30€, Total = 200 + 42 - 30 = 212€
-        if (!empty($customer->codretencion)) {
-            $this->createAndTestDocuments($company, $customer, 'testGeneralRegimeWithIRPF', [
-                'expected-doc-neto' => 200,
-                'expected-doc-iva' => 42,
-                'expected-doc-recargo' => 0,
-                'expected-doc-irpf' => 15,
-                'expected-doc-total' => 212,
-                'expected-line-pvptotal' => 200,
-                'expected-line-iva' => 21,
-                'expected-line-recargo' => 0,
-                'expected-line-irpf' => 15
-            ]);
-        }
-
-        // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
-        $this->assertTrue($company->delete(), 'cant-delete-company');
-    }
-
-    /**
-     * Prueba régimen general con IRPF y descuento.
-     * Neto con descuento: 200€ - 10% = 180€
-     * IVA 21% sobre 180€ = 37.8€
-     * IRPF 15% sobre 180€ = 27€ (se resta del total)
-     * Total: 180 + 37.8 - 27 = 190.8€
-     */
-    public function testGeneralRegimeWithIRPFAndDiscount(): void
-    {
-        // creamos una empresa con régimen general
-        $company = $this->getRandomCompany();
-        $company->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-        $this->assertTrue($company->save(), 'cant-create-company');
-
-        // creamos un cliente con régimen general y retención
-        $customer = $this->getRandomCustomer();
-        $customer->regimeniva = TaxRegime::ES_TAX_REGIME_GENERAL;
-
-        // asignar retención si existe
-        foreach (Retenciones::all() as $retention) {
-            $customer->codretencion = $retention->codretencion;
-            break;
-        }
-
-        $this->assertTrue($customer->save(), 'cant-create-customer');
-
-        // Si hay retención, probar con IRPF y descuento
-        // IRPF 15% sobre 180€ = 27€, Total = 180 + 37.8 - 27 = 190.8€
-        if (!empty($customer->codretencion)) {
-            $this->createAndTestDocuments($company, $customer, 'testGeneralRegimeWithIRPFAndDiscount', [
-                'expected-doc-neto' => 180,
-                'expected-doc-iva' => 37.8,
-                'expected-doc-recargo' => 0,
-                'expected-doc-irpf' => 15,
-                'expected-doc-total' => 190.8,
-                'line-dtopor' => 10,
-                'expected-line-pvptotal' => 180,
-                'expected-line-iva' => 21,
-                'expected-line-recargo' => 0,
-                'expected-line-irpf' => 15,
-                'expected-line-dtopor' => 10
-            ]);
-        }
-
-        // eliminamos
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
-        $this->assertTrue($company->delete(), 'cant-delete-company');
-    }
-
-    /**
-     * Crea y prueba los 4 tipos de documentos: presupuesto, pedido, albarán y factura.
+     * Crea y prueba los 4 tipos de documentos de compra: presupuesto, pedido, albarán y factura.
      *
      * @param Empresa $company Empresa
-     * @param Cliente $customer Cliente
+     * @param Proveedor $supplier Proveedor
      * @param string $testName Nombre del test de origen para identificar errores
      * @param array $data Array con los datos esperados y configuración:
      *   - 'expected-doc-neto': float - Neto esperado
@@ -957,14 +716,14 @@ final class SalesDocumentTest extends TestCase
      *   - 'line-excepcioniva': string - Excepción de IVA de línea (opcional)
      * @param Producto|null $product Producto a añadir en las líneas (opcional)
      */
-    private function createAndTestDocuments(Empresa $company, Cliente $customer, string $testName, array $data, ?Producto $product = null): void
+    private function createAndTestDocuments(Empresa $company, Proveedor $supplier, string $testName, array $data, ?Producto $product = null): void
     {
         $warehouse = null;
         $documentClasses = [
-            PresupuestoCliente::class,
-            PedidoCliente::class,
-            AlbaranCliente::class,
-            FacturaCliente::class
+            PresupuestoProveedor::class,
+            PedidoProveedor::class,
+            AlbaranProveedor::class,
+            FacturaProveedor::class
         ];
 
         // asignar almacén de la empresa
@@ -998,8 +757,8 @@ final class SalesDocumentTest extends TestCase
             // asignar almacén
             $doc->setWarehouse($warehouse->codalmacen);
 
-            // asignar cliente
-            $doc->setSubject($customer);
+            // asignar proveedor
+            $doc->setSubject($supplier);
 
             // recorrer los datos y añadir todos los que empiecen por 'doc-' al documento
             foreach ($data as $key => $value) {
@@ -1018,7 +777,7 @@ final class SalesDocumentTest extends TestCase
             $line = $product && !empty($product->referencia) ? $doc->getNewProductLine($product->referencia) : $doc->getNewLine();
             $line->cantidad = $data['line-cantidad'] ?? self::PRODUCT_QUANTITY;
             $line->pvpunitario = $data['line-pvpunitario'] ?? self::PRODUCT_PRICE;
-            
+
             // recorrer los datos y añadir todos los que empiecen por 'line-' a la línea
             foreach ($data as $key => $value) {
                 if (str_starts_with($key, 'line-') && $key !== 'line-cantidad' && $key !== 'line-pvpunitario') {
@@ -1058,7 +817,7 @@ final class SalesDocumentTest extends TestCase
             }
 
             // si no es una factura, continuamos
-            if (!($doc instanceof FacturaCliente)) {
+            if (!($doc instanceof FacturaProveedor)) {
                 // eliminar documento
                 $this->assertTrue($doc->delete(), $testName . '-cant-delete-document-' . $doc->modelClassName());
                 continue;

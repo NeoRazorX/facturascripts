@@ -19,12 +19,9 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Model\AlbaranProveedor;
-use FacturaScripts\Core\Model\Almacen;
-use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -282,67 +279,6 @@ final class AlbaranProveedorTest extends TestCase
         // Eliminamos el proveedor
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
-    }
-
-    public function testSecondCompany(): void
-    {
-        // creamos la empresa 2
-        $company2 = new Empresa();
-        $company2->nombre = 'Company 2';
-        $company2->nombrecorto = 'Company-2';
-        $this->assertTrue($company2->save(), 'company-cant-save');
-
-        // obtenemos el almacén de la empresa 2
-        $warehouse = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadWhere($where);
-
-        // creamos un proveedor
-        $subject = $this->getRandomSupplier();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
-
-        // creamos un albarán y le asignamos el proveedor y el almacén
-        $doc = new AlbaranProveedor();
-        $doc->setSubject($subject);
-        $doc->codalmacen = $warehouse->codalmacen;
-        $this->assertTrue($doc->save(), 'albaran-cant-save');
-
-        // añadimos una línea
-        $line = $doc->getNewLine();
-        $line->cantidad = 1;
-        $line->pvpunitario = 100;
-        $this->assertTrue($line->save(), 'can-not-save-line-2');
-
-        // aprobamos
-        foreach ($doc->getAvailableStatus() as $status) {
-            if (empty($status->generadoc)) {
-                continue;
-            }
-
-            // al cambiar el estado genera una nueva factura
-            $doc->idestado = $status->idestado;
-            $this->assertTrue($doc->save(), 'albaran-cant-save');
-
-            // comprobamos que la factura se ha creado
-            $children = $doc->childrenDocuments();
-            $this->assertNotEmpty($children, 'facturas-no-creadas');
-            foreach ($children as $child) {
-                // comprobamos que la factura tiene el mismo almacén y la misma empresa
-                $this->assertEquals($warehouse->codalmacen, $child->codalmacen, 'factura-bad-idempresa');
-                $this->assertEquals($company2->idempresa, $child->idempresa, 'factura-bad-idempresa');
-            }
-        }
-
-        // eliminamos
-        $children = $doc->childrenDocuments();
-        $this->assertNotEmpty($children, 'facturas-no-creadas');
-        foreach ($children as $child) {
-            $this->assertTrue($child->delete(), 'factura-cant-delete');
-        }
-        $this->assertTrue($doc->delete());
-        $this->assertTrue($subject->getDefaultAddress()->delete());
-        $this->assertTrue($subject->delete());
-        $this->assertTrue($company2->delete());
     }
 
     protected function tearDown(): void

@@ -20,12 +20,10 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\Calculator;
-use FacturaScripts\Core\Lib\TaxException;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Lib\InvoiceOperation;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -550,165 +548,6 @@ final class FacturaClienteTest extends TestCase
         // eliminamos
         $this->assertTrue($customer->getDefaultAddress()->delete());
         $this->assertTrue($customer->delete());;
-    }
-
-    /**
-     * Prueba que un cliente con operación lo copia correctamente en la factura,
-     * si no, prueba copiar el campo operación de la empresa, y si no, dejarlo vacío.
-     */
-    public function testInvoiceOperationField(): void
-    {
-        // creamos una empresa con operación
-        $company = $this->getRandomCompany();
-        $company->operacion = InvoiceOperation::ES_WORK_CERTIFICATION;
-        $this->assertTrue($company->save(), 'cant-create-company');
-
-        // obtenemos el almacén de la empresa
-        $warehouses = $company->getWarehouses();
-
-        // creamos un cliente con operación
-        $customerWithOp = $this->getRandomCustomer();
-        $customerWithOp->operacion = InvoiceOperation::EXEMPT;
-        $this->assertTrue($customerWithOp->save(), 'cant-create-customer-with-op');
-
-        // creamos un cliente sin operación
-        $customerWithoutOp = $this->getRandomCustomer();
-        $this->assertTrue($customerWithoutOp->save(), 'cant-create-customer-without-op');
-
-        // creamos la factura para el cliente con operación
-        $invoice1 = new FacturaCliente();
-        $invoice1->setWarehouse($warehouses[0]->codalmacen);
-        $invoice1->setSubject($customerWithOp);
-        $this->assertTrue($invoice1->save(), 'cant-create-invoice-with-customer-with-op');
-        $this->assertEquals(InvoiceOperation::EXEMPT, $invoice1->operacion, 'bad-invoice-operation-from-customer');
-
-        // creamos la factura para el cliente sin operación, pero con operación en la empresa
-        $invoice2 = new FacturaCliente();
-        $invoice2->setWarehouse($warehouses[0]->codalmacen);
-        $invoice2->setSubject($customerWithoutOp);
-        $this->assertTrue($invoice2->save(), 'cant-create-invoice-with-customer-without-op');
-        $this->assertEquals(InvoiceOperation::ES_WORK_CERTIFICATION, $invoice2->operacion, 'bad-invoice-operation-from-company');
-
-        // creamos una factura sin operación en cliente ni empresa, usando la empresa por defecto
-        $invoice3 = new FacturaCliente();
-        $invoice3->setSubject($customerWithoutOp);
-        $this->assertTrue($invoice3->save(), 'cant-create-invoice-without-operation');
-        $this->assertNull($invoice3->operacion, 'bad-invoice-operation-empty');
-
-        // eliminamos
-        $this->assertTrue($invoice1->delete(), 'cant-delete-invoice1');
-        $this->assertTrue($invoice2->delete(), 'cant-delete-invoice2');
-        $this->assertTrue($invoice3->delete(), 'cant-delete-invoice3');
-        $this->assertTrue($customerWithOp->delete(), 'cant-delete-customer-with-op');
-        $this->assertTrue($customerWithoutOp->delete(), 'cant-delete-customer-without-op');
-        $this->assertTrue($company->delete(), 'cant-delete-company');
-    }
-
-    /**
-     * Prueba que al crear una línea en la factura, ponga la excepción de iva del producto,
-     * si no tiene, que ponga la del cliente, y si no tiene, que ponga la de la empresa.
-     */
-    public function testInvoiceLineIvaExemption(): void
-    {
-        // creamos una empresa con exención de iva
-        $company = $this->getRandomCompany();
-        $company->excepcioniva = TaxException::ES_TAX_EXCEPTION_20;
-        $this->assertTrue($company->save(), 'cant-create-company');
-
-        // obtenemos el almacén de la empresa
-        $warehouses = $company->getWarehouses();
-
-        // creamos un cliente con exención de iva
-        $customerWithExemption = $this->getRandomCustomer();
-        $customerWithExemption->excepcioniva = TaxException::ES_TAX_EXCEPTION_21;
-        $this->assertTrue($customerWithExemption->save(), 'cant-create-customer-with-exemption');
-
-        // creamos un cliente sin exención de iva
-        $customerWithoutExemption = $this->getRandomCustomer();
-        $this->assertTrue($customerWithoutExemption->save(), 'cant-create-customer-without-exemption');
-
-        // creamos un producto con exención de iva
-        $productWithExemption = $this->getRandomProduct();
-        $productWithExemption->codimpuesto = 'IVA0';
-        $productWithExemption->excepcioniva = TaxException::ES_TAX_EXCEPTION_22;
-        $productWithExemption->nostock = true;
-        $this->assertTrue($productWithExemption->save(), 'cant-create-product-with-exemption');
-
-        // creamos un producto sin exención de iva
-        $productWithoutExemption = $this->getRandomProduct();
-        $productWithoutExemption->nostock = true;
-        $this->assertTrue($productWithoutExemption->save(), 'cant-create-product-without-exemption');
-
-        // creamos la factura para la empresa por defecto y el cliente con exención de iva
-        $invoice = new FacturaCliente();
-        $invoice->setSubject($customerWithExemption);
-        $this->assertTrue($invoice->save(), 'cant-create-invoice-with-customer-with-exemption');
-
-        // línea con producto con exención
-        $line1 = $invoice->getNewProductLine($productWithExemption->referencia);
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_22, $line1->excepcioniva, 'bad-line1-iva-exemption');
-        $this->assertTrue($line1->save(), 'cant-save-line1');
-
-        // línea con producto sin exención
-        $line2 = $invoice->getNewProductLine($productWithoutExemption->referencia);
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_21, $line2->excepcioniva, 'bad-line2-iva-exemption');
-        $this->assertTrue($line2->save(), 'cant-save-line2');
-
-        // línea en blanco sin producto
-        $line3 = $invoice->getNewLine();
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_21, $line3->excepcioniva, 'bad-line3-iva-exemption');
-        $this->assertTrue($line3->save(), 'cant-save-line3');
-
-        // creamos la factura para la empresa por defecto y el cliente sin exención de iva
-        $invoice2 = new FacturaCliente();
-        $invoice2->setSubject($customerWithoutExemption);
-        $this->assertTrue($invoice2->save(), 'cant-create-invoice-with-customer-without-exemption');
-
-        // línea con producto con exención
-        $line4 = $invoice2->getNewProductLine($productWithExemption->referencia);
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_22, $line4->excepcioniva, 'bad-line4-iva-exemption');
-        $this->assertTrue($line4->save(), 'cant-save-line4');
-
-        // línea con producto sin exención
-        $line5 = $invoice2->getNewProductLine($productWithoutExemption->referencia);
-        $this->assertNull($line5->excepcioniva, 'bad-line5-iva-exemption');
-        $this->assertTrue($line5->save(), 'cant-save-line5');
-
-        // línea en blanco sin producto
-        $line6 = $invoice2->getNewLine();
-        $this->assertNull($line6->excepcioniva, 'bad-line6-iva-exemption');
-        $this->assertTrue($line6->save(), 'cant-save-line6');
-
-        // creamos una factura para la empresa con exención de iva y el cliente sin exención de iva
-        $invoice3 = new FacturaCliente();
-        $invoice3->setSubject($customerWithoutExemption);
-        $invoice3->setWarehouse($warehouses[0]->codalmacen);
-        $this->assertTrue($invoice3->save(), 'cant-create-invoice-with-company-with-exemption-and-customer-without-exemption');
-
-        // línea con producto con exención
-        $line7 = $invoice3->getNewProductLine($productWithExemption->referencia);
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_22, $line7->excepcioniva, 'bad-line7-iva-exemption');
-        $this->assertTrue($line7->save(), 'cant-save-line7');
-
-        // línea con producto sin exención
-        $line8 = $invoice3->getNewProductLine($productWithoutExemption->referencia);
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_20, $line8->excepcioniva, 'bad-line8-iva-exemption');
-        $this->assertTrue($line8->save(), 'cant-save-line8');
-
-        // línea en blanco sin producto
-        $line9 = $invoice3->getNewLine();
-        $this->assertEquals(TaxException::ES_TAX_EXCEPTION_20, $line9->excepcioniva, 'bad-line9-iva-exemption');
-        $this->assertTrue($line9->save(), 'cant-save-line9');
-
-        // eliminamos
-        $this->assertTrue($invoice->delete(), 'cant-delete-invoice1');
-        $this->assertTrue($invoice2->delete(), 'cant-delete-invoice2');
-        $this->assertTrue($invoice3->delete(), 'cant-delete-invoice3');
-        $this->assertTrue($customerWithExemption->delete(), 'cant-delete-customer-with-exemption');
-        $this->assertTrue($customerWithoutExemption->delete(), 'cant-delete-customer-without-exemption');
-        $this->assertTrue($productWithExemption->delete(), 'cant-delete-product-with-exemption');
-        $this->assertTrue($productWithoutExemption->delete(), 'cant-delete-product-without-exemption');
-        $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     protected function tearDown(): void
