@@ -61,16 +61,16 @@ class TaxException
     private static function defaults(): array
     {
         return [
-            self::ES_TAX_EXCEPTION_20 => 'es-tax-exception-e1',
-            self::ES_TAX_EXCEPTION_21 => 'es-tax-exception-e2',
-            self::ES_TAX_EXCEPTION_22 => 'es-tax-exception-e3',
-            self::ES_TAX_EXCEPTION_23_24 => 'es-tax-exception-e4',
-            self::ES_TAX_EXCEPTION_25 => 'es-tax-exception-e5',
-            self::ES_TAX_EXCEPTION_OTHER => 'es-tax-exception-e6',
-            self::ES_TAX_EXCEPTION_84 => 'es-tax-exception-passive-subject',
+            self::ES_TAX_EXCEPTION_20 => 'es-tax-exception-20',
+            self::ES_TAX_EXCEPTION_21 => 'es-tax-exception-21',
+            self::ES_TAX_EXCEPTION_22 => 'es-tax-exception-22',
+            self::ES_TAX_EXCEPTION_23_24 => 'es-tax-exception-23-24',
+            self::ES_TAX_EXCEPTION_25 => 'es-tax-exception-25',
+            self::ES_TAX_EXCEPTION_OTHER => 'es-tax-exception-other',
+            self::ES_TAX_EXCEPTION_84 => 'es-tax-exception-84',
             self::ES_TAX_EXCEPTION_7 => 'es-tax-exception-art-7',
             self::ES_TAX_EXCEPTION_14 => 'es-tax-exception-art-14',
-            self::ES_TAX_EXCEPTION_68_70 => 'es-tax-exception-location-rules',
+            self::ES_TAX_EXCEPTION_68_70 => 'es-tax-exception-68-70',
             self::ES_OTHER_NOT_SUBJECT => 'es-tax-exception-other-not-subject',
         ];
     }
