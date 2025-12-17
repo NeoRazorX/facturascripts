@@ -17,8 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Test\Core\Model;
+namespace FacturaScripts\Test\Core\Lib;
 
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Where;
@@ -40,7 +41,7 @@ use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
-final class SalesDocumentTest extends TestCase
+final class CalculatorSpainSalesTest extends TestCase
 {
     use DefaultSettingsTrait;
     use LogErrorsTrait;
@@ -52,6 +53,10 @@ final class SalesDocumentTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
+        if (Paises::default()->codpais !== 'ESP') {
+            self::markTestSkipped('Default country is not Spain');
+        }
+
         self::setDefaultSettings();
         self::installAccountingPlan();
         self::removeTaxRegularization();

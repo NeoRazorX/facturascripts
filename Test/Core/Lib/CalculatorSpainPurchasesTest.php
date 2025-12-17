@@ -17,8 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Test\Core\Model;
+namespace FacturaScripts\Test\Core\Lib;
 
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\InvoiceOperation;
@@ -27,8 +28,8 @@ use FacturaScripts\Dinamic\Lib\TaxException;
 use FacturaScripts\Dinamic\Lib\TaxRegime;
 use FacturaScripts\Dinamic\Lib\Vies;
 use FacturaScripts\Dinamic\Model\AlbaranProveedor;
-use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\PedidoProveedor;
 use FacturaScripts\Dinamic\Model\PresupuestoProveedor;
@@ -39,7 +40,7 @@ use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
-final class PurchasesDocumentTest extends TestCase
+final class CalculatorSpainPurchasesTest extends TestCase
 {
     use DefaultSettingsTrait;
     use LogErrorsTrait;
@@ -51,6 +52,10 @@ final class PurchasesDocumentTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
+        if (Paises::default()->codpais !== 'ESP') {
+            self::markTestSkipped('Default country is not Spain');
+        }
+
         self::setDefaultSettings();
         self::installAccountingPlan();
         self::removeTaxRegularization();

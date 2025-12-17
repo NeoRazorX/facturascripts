@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Lib;
 
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\TaxRegime;
@@ -34,6 +35,13 @@ use PHPUnit\Framework\TestCase;
 final class CalculatorTest extends TestCase
 {
     use RandomDataTrait;
+
+    public static function setUpBeforeClass(): void
+    {
+        if (Paises::default()->codpais === 'ESP') {
+            self::markTestSkipped('These tests require a non-Spanish default country.');
+        }
+    }
 
     public function testEmptyDoc(): void
     {
@@ -291,10 +299,10 @@ final class CalculatorTest extends TestCase
         // comprobamos el documento
         $this->assertEquals(200.0, $doc->neto, 'bad-neto');
         $this->assertEquals(200.0, $doc->netosindto, 'bad-netosindto');
-        $this->assertEquals(242, $doc->total, 'bad-total');
+        $this->assertEquals(252.4, $doc->total, 'bad-total');
         $this->assertEquals(42.0, $doc->totaliva, 'bad-totaliva');
         $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
-        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(10.4, $doc->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
 
         // eliminamos
