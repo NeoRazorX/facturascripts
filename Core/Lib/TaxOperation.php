@@ -54,10 +54,10 @@ class TaxOperation
     private static function defaults(): array
     {
         return [
-            self::ES_TAX_OPERATION_01 => 'es-tax-operation-added-value',
-            self::ES_TAX_OPERATION_02 => 'es-tax-operation-ceuta-melilla',
-            self::ES_TAX_OPERATION_03 => 'es-tax-operation-igic',
-            self::ES_TAX_OPERATION_99 => 'es-tax-operation-other',
+            self::ES_TAX_OPERATION_01 => 'es-tax-operation-01',
+            self::ES_TAX_OPERATION_02 => 'es-tax-operation-02',
+            self::ES_TAX_OPERATION_03 => 'es-tax-operation-03',
+            self::ES_TAX_OPERATION_99 => 'es-tax-operation-99',
         ];
     }
 }
