@@ -874,7 +874,7 @@
     "invoices": "Banknoten",
     "invoices-cant-generate-new-docs": "Rechnungen können keine neuen Dokumente erzeugen",
     "ip": "IP",
-    "ip-banned": "IP gesperrt",
+    "ip-banned": "Aus Sicherheitsgründen wurde der Zugriff von Ihrer IP-Adresse für 10 Minuten gesperrt.",
     "irpf": "Einkommensteuer",
     "irpf-record-not-found": "IRPF-Eintrag %value% nicht gefunden.",
     "irpf-subaccount-not-found": "IRPF-Unterkonto nicht gefunden",
