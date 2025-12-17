@@ -56,6 +56,12 @@ class CopyModel extends Controller
     /** @var string */
     public $modelCode;
 
+    /** @var array */
+    public $warehousesList = [];
+
+    /** @var array */
+    public $paymentMethodsList = [];
+
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -90,6 +96,9 @@ class CopyModel extends Controller
 
         // creamos el título de la página
         $this->title .= ' ' . $this->model->primaryDescription();
+
+        // preparamos las listas con idempresa para documentos de compra/venta
+        $this->prepareBusinessDocumentLists();
 
         // si no es un documento de compra o venta, cargamos su plantilla
         switch ($this->modelClass) {
@@ -259,6 +268,10 @@ class CopyModel extends Controller
         $newDoc = new $className();
         $newDoc->setAuthor($this->user);
         $newDoc->setSubject($subject);
+
+        $company = $this->request->input('idempresa');
+        $newDoc->idempresa = empty($company) ? $newDoc->idempresa : $company;
+
         $newDoc->codalmacen = $this->request->input('codalmacen');
         $newDoc->setCurrency($this->model->coddivisa);
         $newDoc->codpago = $this->request->input('codpago');
@@ -319,6 +332,10 @@ class CopyModel extends Controller
         $newDoc = new $className();
         $newDoc->setAuthor($this->user);
         $newDoc->setSubject($subject);
+
+        $company = $this->request->input('idempresa');
+        $newDoc->idempresa = empty($company) ? $newDoc->idempresa : $company;
+
         $newDoc->codalmacen = $this->request->input('codalmacen');
         $newDoc->setCurrency($this->model->coddivisa);
         $newDoc->codpago = $this->request->input('codpago');
@@ -440,5 +457,28 @@ class CopyModel extends Controller
         $this->dataBase->commit();
         Tools::log()->notice('record-updated-correctly');
         $this->redirect($productoDestino->url() . '&action=save-ok');
+    }
+
+    protected function prepareBusinessDocumentLists(): void
+    {
+        // obtener almacenes con idempresa
+        $sql = 'SELECT codalmacen, nombre, idempresa FROM almacenes ORDER BY nombre ASC';
+        foreach ($this->dataBase->select($sql) as $row) {
+            $this->warehousesList[] = [
+                'code' => $row['codalmacen'],
+                'description' => $row['nombre'],
+                'idempresa' => $row['idempresa']
+            ];
+        }
+
+        // obtener formas de pago con idempresa
+        $sql = 'SELECT codpago, descripcion, idempresa FROM formaspago ORDER BY descripcion ASC';
+        foreach ($this->dataBase->select($sql) as $row) {
+            $this->paymentMethodsList[] = [
+                'code' => $row['codpago'],
+                'description' => $row['descripcion'],
+                'idempresa' => $row['idempresa']
+            ];
+        }
     }
 }
