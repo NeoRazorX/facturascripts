@@ -874,7 +874,7 @@
     "invoices": "banconote",
     "invoices-cant-generate-new-docs": "Le fatture non possono generare nuovi documenti",
     "ip": "IP",
-    "ip-banned": "ip-bannato",
+    "ip-banned": "Per motivi di sicurezza l'accesso dal tuo IP è stato bloccato per 10 minuti.",
     "irpf": "IRPEF",
     "irpf-record-not-found": "Registro IRPF %value%% non trovato.",
     "irpf-subaccount-not-found": "Subconto IRPF non trovato",
