@@ -597,7 +597,7 @@
     "error-write-cert": "Errore durante la scrittura del certificato",
     "errors": "errori",
     "es_EC": "Spagnolo (Ecuador)",
-    "es-operation-tax-added-value": "es-operation-tax-added-value",
+    "es-operation-tax-added-value": "Operazione soggetta all'IVA",
     "es-operation-tax-ceuta-melilla": "Operazione soggetta all'IPSI (Ceuta e Melilla)",
     "es-operation-tax-igic": "Operazione soggetta all'IGIC (Canarie)",
     "es-operation-tax-other": "Operazione non soggetta alle imposte sopra indicate",
