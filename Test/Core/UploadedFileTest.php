@@ -349,7 +349,9 @@ final class UploadedFileTest extends TestCase
     {
         $reflection = new ReflectionClass(UploadedFile::class);
         $method = $reflection->getMethod('parseFilesize');
-        $method->setAccessible(true);
+        if (PHP_VERSION_ID < 80500) {
+            $method->setAccessible(true);
+        }
 
         $result = $method->invoke(null, $input);
         $this->assertEquals($expected, $result);
