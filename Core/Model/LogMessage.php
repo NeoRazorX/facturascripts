@@ -34,6 +34,7 @@ class LogMessage extends ModelClass
     use ModelTrait;
 
     const AUDIT_CHANNEL = 'audit';
+    const DOCS_CHANNEL = 'docs';
     const MAX_MESSAGE_LEN = 3000;
 
     /**
