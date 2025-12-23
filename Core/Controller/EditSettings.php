@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\EditView;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Lib\TaxRegime;
 use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Impuesto;
@@ -315,6 +316,7 @@ class EditSettings extends PanelController
                 $this->loadLogoImageValues($viewName);
                 $this->loadSerie($viewName);
                 $this->loadSerieRectifying($viewName);
+                $this->loadRegimeValues($viewName);
                 break;
 
             default:
@@ -347,6 +349,14 @@ class EditSettings extends PanelController
         $columnPayment = $this->views[$viewName]->columnForName('payment-method');
         if ($columnPayment && $columnPayment->widget->getType() === 'select') {
             $columnPayment->widget->setValuesFromCodeModel($methods);
+        }
+    }
+
+    protected function loadRegimeValues(string $viewName): void
+    {
+        $columnVATRegime = $this->views[$viewName]->columnForName('vat-regime');
+        if ($columnVATRegime && $columnVATRegime->widget->getType() === 'select') {
+            $columnVATRegime->widget->setValuesFromArrayKeys(TaxRegime::all(), true, true);
         }
     }
 

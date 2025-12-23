@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,6 +26,9 @@ use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
+use FacturaScripts\Dinamic\Lib\TaxException;
 
 /**
  * Controller to list the items in the Proveedor model
@@ -128,7 +131,23 @@ class ListProveedor extends ListController
         $this->addFilterSelect($viewName, 'codretencion', 'retentions', 'codretencion', Retenciones::codeModel());
         $this->addFilterSelect($viewName, 'codpago', 'payment-methods', 'codpago', FormasPago::codeModel());
 
-        $vatRegimes = $this->codeModel->all('proveedores', 'regimeniva', 'regimeniva');
+        $vatRegimes = $this->codeModel->all('proveedores', 'regimeniva', 'regimeniva', true, [Where::isNotNull('regimeniva')]);
         $this->addFilterSelect($viewName, 'regimeniva', 'vat-regime', 'regimeniva', $vatRegimes);
+
+        $operations = $this->codeModel->all('proveedores', 'operacion', 'operacion', true, [Where::isNotNull('operacion')]);
+        foreach ($operations as &$item) {
+            if (!empty($item->code)) {
+                $item->description = Tools::trans(InvoiceOperation::get($item->description));
+            }
+        }
+        $this->addFilterSelect($viewName, 'operation', 'operation', 'operacion', $operations);
+
+        $vatExceptions = $this->codeModel->all('proveedores', 'excepcioniva', 'excepcioniva', true, [Where::isNotNull('excepcioniva')]);
+        foreach ($vatExceptions as &$item) {
+            if (!empty($item->code)) {
+                $item->description = Tools::trans(TaxException::get($item->description));
+            }
+        }
+        $this->addFilterSelect($viewName, 'vat-exception', 'vat-exception', 'excepcioniva', $vatExceptions);
     }
 }

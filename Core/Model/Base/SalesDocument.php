@@ -233,6 +233,11 @@ abstract class SalesDocument extends TransformerDocument
             $newLine->recargo = $product->getTax()->recargo;
             $newLine->referencia = $variant->referencia;
 
+            // set tax exception if product has one
+            if (!empty($product->excepcioniva)) {
+                $newLine->excepcioniva = $product->excepcioniva;
+            }
+
             Calculator::calculateLine($this, $newLine);
 
             // allow extensions
@@ -512,6 +517,7 @@ abstract class SalesDocument extends TransformerDocument
             $this->codpago = $subject->codpago ?? $this->codpago;
             $this->codserie = $subject->codserie ?? $this->codserie;
             $this->irpf = $subject->irpf() ?? $this->irpf;
+            $this->operacion = empty($subject->operacion) ? $this->getCompany()->operacion : $subject->operacion;
         }
 
         // billing address

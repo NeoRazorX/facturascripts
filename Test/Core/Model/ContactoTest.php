@@ -218,23 +218,23 @@ final class ContactoTest extends TestCase
         ];
 
         foreach ($campos as $campo => [$valido, $invalido]) {
-            // Creamos un nuevo almacén
-            $contact = new Contacto();
+            // Creamos el modelo
+            $model = new Contacto();
 
             // campo obligatorio (not null)
-            $contact->nombre = 'Test';
-            $contact->descripcion = 'Test'; // evitar autorellenado
+            $model->nombre = 'Test';
+            $model->descripcion = 'Test'; // evitar autorellenado
 
             // Asignamos el valor inválido en el campo a probar
-            $contact->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($contact->save(), "can-save-contacto-bad-{$campo}");
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-contacto-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
-            $contact->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($contact->save(), "cannot-save-contacto-fixed-{$campo}");
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-contacto-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($contact->delete(), "cannot-delete-contacto-{$campo}");
+            $this->assertTrue($model->delete(), "cannot-delete-contacto-{$campo}");
         }
     }
 

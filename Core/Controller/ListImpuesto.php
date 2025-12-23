@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
-use FacturaScripts\Core\Lib\OperacionIVA;
+use FacturaScripts\Dinamic\Lib\TaxOperation;
 
 /**
  * Controller to list the items in the Impuesto model
@@ -77,7 +77,7 @@ class ListImpuesto extends ListController
     {
         $column = $this->views[$viewName]->columnForName('operation');
         if ($column && $column->widget->getType() === 'select') {
-            $column->widget->setValuesFromArrayKeys(OperacionIVA::all(), true, true);
+            $column->widget->setValuesFromArrayKeys(TaxOperation::all(), true, true);
         }
     }
 }

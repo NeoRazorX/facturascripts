@@ -240,6 +240,46 @@ final class ClienteTest extends TestCase
         $this->assertFalse($cliente->hasColumn(''), 'cliente-should-not-have-empty-column');
     }
 
+    public function testPropertiesLength(): void
+    {
+        // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
+        $campos = [
+            'cifnif' => [30, 31],
+            'excepcioniva' => [50, 51],
+            //'email'          => [100, 101],
+            'fax' => [30, 31],
+            'nombre' => [100, 101],
+            'razonsocial' => [100, 101],
+            'regimeniva' => [50, 51],
+            'telefono1' => [30, 31],
+            'telefono2' => [30, 31],
+            'tipoidfiscal' => [25, 26],
+            //'web'            => [100, 101],
+            'operacion' => [50, 51],
+        ];
+
+        foreach ($campos as $campo => [$valido, $invalido]) {
+            // Creamos el modelo
+            $model = new Cliente();
+
+            // campo obligatorio (not null)
+            $model->nombre = 'Test';
+            $model->razonsocial = $model->nombre;
+            $model->cifnif = '12345678A';
+
+            // Asignamos el valor inválido en el campo a probar
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-cliente-bad-{$campo}");
+
+            // Corregimos el campo y comprobamos que ahora sí se puede guardar
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-cliente-fixed-{$campo}");
+
+            // Limpiar
+            $this->assertTrue($model->delete(), "cannot-delete-cliente-{$campo}");
+        }
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

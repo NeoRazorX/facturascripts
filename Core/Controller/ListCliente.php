@@ -26,6 +26,9 @@ use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
+use FacturaScripts\Dinamic\Lib\TaxException;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
@@ -159,6 +162,22 @@ class ListCliente extends ListController
 
         $vatRegimes = $this->codeModel->all('clientes', 'regimeniva', 'regimeniva');
         $this->addFilterSelect($viewName, 'regimeniva', 'vat-regime', 'regimeniva', $vatRegimes);
+
+        $operations = $this->codeModel->all('clientes', 'operacion', 'operacion', true, [Where::isNotNull('operacion')]);
+        foreach ($operations as &$item) {
+            if (!empty($item->code)) {
+                $item->description = Tools::trans(InvoiceOperation::get($item->description));
+            }
+        }
+        $this->addFilterSelect($viewName, 'operation', 'operation', 'operacion', $operations);
+
+        $vatExceptions = $this->codeModel->all('clientes', 'excepcioniva', 'excepcioniva', true, [Where::isNotNull('excepcioniva')]);
+        foreach ($vatExceptions as &$item) {
+            if (!empty($item->code)) {
+                $item->description = Tools::trans(TaxException::get($item->description));
+            }
+        }
+        $this->addFilterSelect($viewName, 'vat-exception', 'vat-exception', 'excepcioniva', $vatExceptions);
 
         $this->addFilterNumber($viewName, 'riesgoalcanzado', 'current-risk', 'riesgoalcanzado');
     }

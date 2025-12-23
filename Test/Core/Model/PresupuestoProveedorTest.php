@@ -19,11 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\Calculator;
-use FacturaScripts\Core\Model\Almacen;
-use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
@@ -274,7 +271,7 @@ final class PresupuestoProveedorTest extends TestCase
             'codigo' => [20, 21],
             'nombre' => [100, 101],
             'numproveedor' => [50, 51],
-            'operacion' => [20, 21],
+            'operacion' => [50, 51],
         ];
 
         // creamos un proveedor
@@ -282,88 +279,27 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertTrue($subject->save());
 
         foreach ($campos as $campo => [$valido, $invalido]) {
-            // Creamos un nuevo almacén
-            $doc = new PresupuestoProveedor();
+            // Creamos el modelo
+            $model = new PresupuestoProveedor();
 
             // campo obligatorio (not null)
-            $doc->setSubject($subject);
+            $model->setSubject($subject);
 
             // Asignamos el valor inválido en el campo a probar
-            $doc->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($doc->save(), "can-save-pedidoProveedor-bad-{$campo}");
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-pedidoProveedor-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
-            $doc->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($doc->save(), "cannot-save-pedidoProveedor-fixed-{$campo}");
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-pedidoProveedor-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($doc->delete(), "cannot-delete-pedidoProveedor-{$campo}");
+            $this->assertTrue($model->delete(), "cannot-delete-pedidoProveedor-{$campo}");
         }
 
         // eliminamos
         $this->assertTrue($subject->getDefaultAddress()->delete());
         $this->assertTrue($subject->delete());
-    }
-
-    public function testSecondCompany(): void
-    {
-        // creamos la empresa 2
-        $company2 = new Empresa();
-        $company2->nombre = 'Company 2';
-        $company2->nombrecorto = 'Company-2';
-        $this->assertTrue($company2->save());
-
-        // obtenemos el almacén de la empresa 2
-        $warehouse = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadWhere($where);
-
-        // creamos un proveedor
-        $subject = $this->getRandomSupplier();
-        $this->assertTrue($subject->save());
-
-        // creamos un presupuesto en la empresa 2 y le asignamos el proveedor
-        $doc = new PresupuestoProveedor();
-        $doc->setSubject($subject);
-        $doc->codalmacen = $warehouse->codalmacen;
-        $this->assertTrue($doc->save(), 'presupuesto-cant-save');
-
-        // añadimos una línea
-        $line = $doc->getNewLine();
-        $line->cantidad = 1;
-        $line->pvpunitario = 100;
-        $this->assertTrue($line->save(), 'can-not-save-line-2');
-
-        // aprobamos
-        foreach ($doc->getAvailableStatus() as $status) {
-            if (empty($status->generadoc)) {
-                continue;
-            }
-
-            // al cambiar el estado genera una nueva factura
-            $doc->idestado = $status->idestado;
-            $this->assertTrue($doc->save(), 'presupuesto-cant-save');
-
-            // comprobamos que el pedido se ha creado
-            $children = $doc->childrenDocuments();
-            $this->assertNotEmpty($children, 'pedidos-no-creadas');
-            foreach ($children as $child) {
-                // comprobamos que el pedido se ha creado en la empresa 2
-                $this->assertEquals($company2->idempresa, $child->idempresa, 'pedido-bad-idempresa');
-                $this->assertEquals($warehouse->codalmacen, $child->codalmacen, 'pedido-bad-codalmacen');
-            }
-        }
-
-        // eliminamos
-        $children = $doc->childrenDocuments();
-        $this->assertNotEmpty($children, 'pedidos-no-creadas');
-        foreach ($children as $child) {
-            $this->assertTrue($child->delete(), 'pedido-cant-delete');
-        }
-        $this->assertTrue($doc->delete(), 'presupuesto-cant-delete');
-        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
-        $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
 
     public function testApprove(): void

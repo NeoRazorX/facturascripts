@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,27 +20,23 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * This class centralizes all available invoice operations.
+ * This class centralizes all common method for TAX Operations.
  *
- * @author Carlos Garcia Gómez <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Daniel Fernández Giménez    <hola@danielfg.es>
  */
-class InvoiceOperation
+class TaxOperation
 {
-    const EXEMPT = 'exenta';
-    const ES_BENEFIT_THIRD_PARTIES = 'benefit-3-parties';
-    const ES_EXPORT = 'exportacion';
-    const ES_IMPORT = 'importacion';
-    const ES_INTRA_COMMUNITY = 'intracomunitaria';
-    const ES_SUCCESSIVE_TRACT = 'successive-tract';
-    const ES_WORK_CERTIFICATION = 'work-certification';
+    const ES_TAX_OPERATION_01 = 'ES_01'; // valor añadido
+    const ES_TAX_OPERATION_02 = 'ES_02'; // Ceuta y Melilla
+    const ES_TAX_OPERATION_03 = 'ES_03'; // IGIC
+    const ES_TAX_OPERATION_99 = 'ES_99'; // otro
 
     /** @var array */
     private static $values = [];
 
     public static function add(string $key, string $value): void
     {
-        $fixedKey = substr($key, 0, 20);
+        $fixedKey = substr($key, 0, 50);
         self::$values[$fixedKey] = $value;
     }
 
@@ -58,13 +54,10 @@ class InvoiceOperation
     private static function defaults(): array
     {
         return [
-            self::EXEMPT => 'exempt',
-            self::ES_INTRA_COMMUNITY => 'es-intra-community',
-            self::ES_EXPORT => 'es-operation-export',
-            self::ES_IMPORT => 'es-operation-import',
-            self::ES_WORK_CERTIFICATION => 'es-work-certification',
-            self::ES_BENEFIT_THIRD_PARTIES => 'es-benefit-3-parties',
-            self::ES_SUCCESSIVE_TRACT => 'es-successive-tract',
+            self::ES_TAX_OPERATION_01 => 'es-tax-operation-01',
+            self::ES_TAX_OPERATION_02 => 'es-tax-operation-02',
+            self::ES_TAX_OPERATION_03 => 'es-tax-operation-03',
+            self::ES_TAX_OPERATION_99 => 'es-tax-operation-99',
         ];
     }
 }

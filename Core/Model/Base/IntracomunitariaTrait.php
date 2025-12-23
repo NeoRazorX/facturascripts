@@ -70,7 +70,7 @@ trait IntracomunitariaTrait
 
         // comprobamos el vies del documento
         if (Vies::check($this->cifnif, $country->codiso) === 1) {
-            $this->operacion = InvoiceOperation::INTRA_COMMUNITY;
+            $this->operacion = InvoiceOperation::ES_INTRA_COMMUNITY;
             return true;
         }
 

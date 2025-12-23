@@ -22,11 +22,11 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\TaxRegime;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
-use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -55,8 +55,8 @@ class Wizard extends Controller
 
     public function getRegimenIva(): array
     {
-        $list = [];
-        foreach (RegimenIVA::all() as $key => $value) {
+        $list = ['' => '------'];
+        foreach (TaxRegime::all() as $key => $value) {
             $list[$key] = Tools::trans($value);
         }
         return $list;

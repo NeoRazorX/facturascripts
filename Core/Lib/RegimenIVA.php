@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
+ * @deprecated use TaxRegime instead.
  * This class centralizes all common method for VAT Regime.
  *
  * @author          Carlos García Gómez         <carlos@facturascripts.com>
@@ -27,95 +28,52 @@ namespace FacturaScripts\Core\Lib;
  */
 class RegimenIVA
 {
-    const ES_TAX_EXCEPTION_E1 = 'ES_20'; // E1 Exenta art. 20 LIVA – Exenciones interiores (sanidad, enseñanza, seguros, financieros…)
-    const ES_TAX_EXCEPTION_E2 = 'ES_21'; // E2 Exenta art. 21 LIVA – Exportaciones a países terceros
-    const ES_TAX_EXCEPTION_E3 = 'ES_22'; // E3 Exenta art. 22 LIVA – Operaciones asimiladas a exportaciones
-    const ES_TAX_EXCEPTION_E4 = 'ES_23_24'; // E4 Exenta arts. 23–24 LIVA – Zonas francas y depósitos aduaneros
-    const ES_TAX_EXCEPTION_E5 = 'ES_25'; // E5 Exenta art. 25 LIVA – Entregas intracomunitarias de bienes
-    const ES_TAX_EXCEPTION_E6 = 'ES_OTHER'; // E6 Otras exenciones (oro de inversión, regímenes especiales, etc.)
-    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = 'ES_PASSIVE_SUBJECT'; // N6 Inversión del sujeto pasivo (art. 84 LIVA)
-    const ES_TAX_EXCEPTION_ART_7 = 'ES_ART_7'; // N3 No sujeta art. 7 LIVA – Operaciones no sujetas (aportaciones, transmisión de UEA, muestras…)
-    const ES_TAX_EXCEPTION_ART_14 = 'ES_ART_14'; // N4 No sujeta art. 14 LIVA – Operaciones vinculadas a exportaciones
-    const ES_TAX_EXCEPTION_LOCATION_RULES = 'ES_LOCATION_RULES'; // N2 No sujeta – Reglas de localización de servicios (arts. 69–70 LIVA, servicios B2B UE o fuera UE)
-    const ES_TAX_EXCEPTION_N1 = 'ES_N1'; // No sujeta N1 – Reglas de localización entregas de bienes (art. 68 LIVA)
-    const ES_TAX_EXCEPTION_N5 = 'ES_N5'; // No sujeta N5 – Otras disposiciones específicas (OTAN, convenios internacionales…)
-    const TAX_SYSTEM_AGRARIAN = 'Agrario';
-    const TAX_SYSTEM_CASH_CRITERIA = 'Caja';
-    const TAX_SYSTEM_EXEMPT = 'Exento';
-    const TAX_SYSTEM_GENERAL = 'General';
-    const TAX_SYSTEM_GOLD = 'Oro';
-    const TAX_SYSTEM_GROUP_ENTITIES = 'Grupo entidades';
-    const TAX_SYSTEM_ONE_STOP_SHOP_OSS = 'One Stop Shop (OSS)';
-    const TAX_SYSTEM_ONE_STOP_SHOP_IOSS = 'One Stop Shop (IOSS)';
-    const TAX_SYSTEM_SIMPLIFIED = 'Simplificado';
-    const TAX_SYSTEM_SPECIAL_RETAIL_TRADERS = 'Comerciante minorista';
-    const TAX_SYSTEM_SPECIAL_SMALL_BUSINESS = 'Pequeño empresario';
-    const TAX_SYSTEM_SURCHARGE = 'Recargo';
-    const TAX_SYSTEM_TELECOM = 'Telecom';
-    const TAX_SYSTEM_TRAVEL = 'Agencias de viaje';
-    const TAX_SYSTEM_USED_GOODS = 'Bienes usados';
-
-    /** @var array */
-    private static $exceptions = [];
-
-    /** @var array */
-    private static $values = [];
+    const ES_TAX_EXCEPTION_E1 = TaxException::ES_TAX_EXCEPTION_20; // E1 Exenta art. 20 LIVA – Exenciones interiores (sanidad, enseñanza, seguros, financieros…)
+    const ES_TAX_EXCEPTION_E2 = TaxException::ES_TAX_EXCEPTION_21; // E2 Exenta art. 21 LIVA – Exportaciones a países terceros
+    const ES_TAX_EXCEPTION_E3 = TaxException::ES_TAX_EXCEPTION_22; // E3 Exenta art. 22 LIVA – Operaciones asimiladas a exportaciones
+    const ES_TAX_EXCEPTION_E4 = TaxException::ES_TAX_EXCEPTION_23_24; // E4 Exenta arts. 23–24 LIVA – Zonas francas y depósitos aduaneros
+    const ES_TAX_EXCEPTION_E5 = TaxException::ES_TAX_EXCEPTION_25; // E5 Exenta art. 25 LIVA – Entregas intracomunitarias de bienes
+    const ES_TAX_EXCEPTION_E6 = TaxException::ES_TAX_EXCEPTION_OTHER; // E6 Otras exenciones (oro de inversión, regímenes especiales, etc.)
+    const ES_TAX_EXCEPTION_PASSIVE_SUBJECT = TaxException::ES_TAX_EXCEPTION_84; // S2 Inversión del sujeto pasivo (art. 84 LIVA)
+    const ES_TAX_EXCEPTION_ART_7 = TaxException::ES_TAX_EXCEPTION_7; // N3 No sujeta art. 7 LIVA – Operaciones no sujetas (aportaciones, transmisión de UEA, muestras…)
+    const ES_TAX_EXCEPTION_ART_14 = TaxException::ES_TAX_EXCEPTION_14; // N4 No sujeta art. 14 LIVA – Operaciones vinculadas a exportaciones
+    const ES_TAX_EXCEPTION_LOCATION_RULES = TaxException::ES_TAX_EXCEPTION_68_70; // N2 No sujeta – Reglas de localización de servicios (arts. 69–70 LIVA, servicios B2B UE o fuera UE)
+    const ES_TAX_EXCEPTION_N1 = TaxException::ES_TAX_EXCEPTION_68_70; // No sujeta N1 – Reglas de localización entregas de bienes (art. 68 LIVA)
+    const ES_TAX_EXCEPTION_N5 = TaxException::ES_OTHER_NOT_SUBJECT; // No sujeta N5 – Otras disposiciones específicas (OTAN, convenios internacionales…)
+    const TAX_SYSTEM_AGRARIAN = TaxRegime::ES_TAX_REGIME_AGRARIAN;
+    const TAX_SYSTEM_CASH_CRITERIA = TaxRegime::ES_TAX_REGIME_CASH_CRITERIA;
+    const TAX_SYSTEM_EXEMPT = 'Exento'; // es una característica de algunas operaciones dentro de un régimen, no un régimen en sí, es un tipo de operación.
+    const TAX_SYSTEM_GENERAL = TaxRegime::ES_TAX_REGIME_GENERAL;
+    const TAX_SYSTEM_GOLD = TaxRegime::ES_TAX_REGIME_GOLD;
+    const TAX_SYSTEM_GROUP_ENTITIES = TaxRegime::ES_TAX_REGIME_GROUP_ENTITIES;
+    const TAX_SYSTEM_ONE_STOP_SHOP_OSS = TaxRegime::ES_TAX_REGIME_DISTANCE_SALES; // esto sería ventas a distancia de bienes dentro de la UE
+    const TAX_SYSTEM_ONE_STOP_SHOP_IOSS = TaxRegime::ES_TAX_REGIME_DISTANCE_SALES; // esto sería ventas a distancia de bienes importados desde fuera de la UE
+    const TAX_SYSTEM_SIMPLIFIED = TaxRegime::ES_TAX_REGIME_SIMPLIFIED;
+    const TAX_SYSTEM_SPECIAL_RETAIL_TRADERS = TaxRegime::ES_TAX_REGIME_SURCHARGE; // esto sería recargo de equivalencia
+    const TAX_SYSTEM_SPECIAL_SMALL_BUSINESS = TaxRegime::ES_TAX_REGIME_SIMPLIFIED; // esto sería simplificado
+    const TAX_SYSTEM_SURCHARGE = TaxRegime::ES_TAX_REGIME_SURCHARGE;
+    const TAX_SYSTEM_TELECOM = TaxRegime::ES_TAX_REGIME_DISTANCE_SALES; // esto sería ventas a distancia
+    const TAX_SYSTEM_TRAVEL = TaxRegime::ES_TAX_REGIME_TRAVEL;
+    const TAX_SYSTEM_USED_GOODS = TaxRegime::ES_TAX_REGIME_USED_GOODS;
 
     public static function add(string $key, string $value): void
     {
-        $fixedKey = substr($key, 0, 20);
-        self::$exceptions[$fixedKey] = $value;
+        TaxRegime::add($key, $value);
     }
 
     public static function addException(string $key, string $value): void
     {
-        $fixedKey = substr($key, 0, 20);
-        self::$exceptions[$fixedKey] = $value;
+        TaxException::add($key, $value);
     }
 
     public static function all(): array
     {
-        $defaultValues = [
-            self::TAX_SYSTEM_AGRARIAN => 'es-tax-regime-agrarian',
-            self::TAX_SYSTEM_CASH_CRITERIA => 'es-tax-regime-cash-criteria',
-            self::TAX_SYSTEM_EXEMPT => 'es-tax-regime-exempt',
-            self::TAX_SYSTEM_GENERAL => 'es-tax-regime-general',
-            self::TAX_SYSTEM_GOLD => 'es-tax-regime-gold',
-            self::TAX_SYSTEM_GROUP_ENTITIES => 'es-tax-regime-group-entities',
-            self::TAX_SYSTEM_SIMPLIFIED => 'es-tax-regime-simplified',
-            self::TAX_SYSTEM_SURCHARGE => 'es-tax-regime-surcharge',
-            self::TAX_SYSTEM_TRAVEL => 'es-tax-regime-travel',
-            self::TAX_SYSTEM_TELECOM => 'es-tax-regime-telecom',
-            self::TAX_SYSTEM_USED_GOODS => 'es-tax-regime-used-goods',
-            self::TAX_SYSTEM_SPECIAL_RETAIL_TRADERS => 'es-tax-regime-special-retail-traders',
-            self::TAX_SYSTEM_SPECIAL_SMALL_BUSINESS => 'es-tax-regime-special-small-business',
-            self::TAX_SYSTEM_ONE_STOP_SHOP_OSS => 'es-tax-regime-one-stop-shop-oss',
-            self::TAX_SYSTEM_ONE_STOP_SHOP_IOSS => 'es-tax-regime-one-stop-shop-ioss',
-            self::ES_TAX_EXCEPTION_N1 => 'es-tax-exception-n1',  
-            self::ES_TAX_EXCEPTION_N5 => 'es-tax-exception-n5', 
-        ];
-
-        return array_merge($defaultValues, self::$values);
+        return TaxRegime::all();
     }
 
     public static function allExceptions(): array
     {
-        $defaultExceptions = [
-            self::ES_TAX_EXCEPTION_E1 => 'es-tax-exception-e1',
-            self::ES_TAX_EXCEPTION_E2 => 'es-tax-exception-e2',
-            self::ES_TAX_EXCEPTION_E3 => 'es-tax-exception-e3',
-            self::ES_TAX_EXCEPTION_E4 => 'es-tax-exception-e4',
-            self::ES_TAX_EXCEPTION_E5 => 'es-tax-exception-e5',
-            self::ES_TAX_EXCEPTION_E6 => 'es-tax-exception-e6',
-            self::ES_TAX_EXCEPTION_PASSIVE_SUBJECT => 'es-tax-exception-passive-subject',
-            self::ES_TAX_EXCEPTION_ART_7 => 'es-tax-exception-art-7',
-            self::ES_TAX_EXCEPTION_ART_14 => 'es-tax-exception-art-14',
-            self::ES_TAX_EXCEPTION_LOCATION_RULES => 'es-tax-exception-location-rules',
-            self::ES_TAX_EXCEPTION_N1 => 'es-tax-exception-n1',
-            self::ES_TAX_EXCEPTION_N5 => 'es-tax-exception-n5',
-        ];
-
-        return array_merge($defaultExceptions, self::$exceptions);
+        return TaxException::all();
     }
 
     public static function defaultValue(): string

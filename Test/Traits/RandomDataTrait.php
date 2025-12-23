@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Traits;
 
 use Exception;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Calculator;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\Almacen;
@@ -144,11 +145,16 @@ trait RandomDataTrait
         return $invoice;
     }
 
-    protected function getRandomExercise(): Ejercicio
+    protected function getRandomExercise(int $idempresa = 0): Ejercicio
     {
         $model = new Ejercicio();
-        foreach ($model->all() as $ejercicio) {
+        $where = empty($idempresa) ? [] : [Where::eq('idempresa', $idempresa)];
+        foreach ($model->all($where) as $ejercicio) {
             return $ejercicio;
+        }
+
+        if (!empty($idempresa)) {
+            $model->idempresa = $idempresa;
         }
 
         // no hemos encontrado ninguno, creamos uno

@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Core\Lib\OperacionIVA;
+use FacturaScripts\Dinamic\Lib\TaxOperation;
 
 /**
  * Controller to edit a single item from the Impuesto model
@@ -143,7 +143,7 @@ class EditImpuesto extends EditController
     {
         $column = $this->views[$viewName]->columnForName('operation');
         if ($column && $column->widget->getType() === 'select') {
-            $column->widget->setValuesFromArrayKeys(OperacionIVA::all(), true, true);
+            $column->widget->setValuesFromArrayKeys(TaxOperation::all(), true, true);
         }
     }
 }

@@ -87,8 +87,12 @@ class PresupuestoCliente extends SalesDocument
         $newLine->idpresupuesto = $this->idpresupuesto;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
-        $newLine->loadFromData($data, $exclude);
 
+        // set default tax exception
+        $subject = $this->getSubject();
+        $newLine->excepcioniva = empty($subject->excepcioniva) ? $this->getCompany()->excepcioniva : $subject->excepcioniva;
+
+        $newLine->loadFromData($data, $exclude);
         Calculator::calculateLine($this, $newLine);
 
         // allow extensions
