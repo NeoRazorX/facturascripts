@@ -25,6 +25,12 @@ use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\AlbaranCliente;
+use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\PedidoCliente;
+use FacturaScripts\Dinamic\Model\PresupuestoCliente;
 
 /**
  * Controller to edit a single item from the Cliente model
@@ -92,6 +98,94 @@ class EditCliente extends ComercialContactController
         return $data;
     }
 
+    /**
+     * Actualiza la dirección de envio del cliente a todos los documentos de venta pendientes con la misma dirección:
+     * https://facturascripts.com/roadmap/3649
+     */
+    protected function applyAddressToDocsAction(): bool
+    {
+        if (false === $this->validateFormToken()) {
+            return false;
+        }
+
+        // recoger contacto
+        $idcontacto = $this->request->request->getInt('idcontacto', null);
+        $contacto = new Contacto();
+        if (false === $contacto->load($idcontacto)) {
+            Tools::log()->error('address-not-found');
+            return false;
+        }
+
+        // recoger cliente
+        $codcliente = $this->request->request->getInt('codcliente', null);
+        $cliente = new Cliente();
+        if (false === $cliente->load($codcliente)) {
+            Tools::log()->error('customer-not-found');
+            return false;
+        }
+
+        // variable para registrar los errores
+        $failCounter = 0;
+        $successCounter = 0;
+
+        // filtros
+        $where = [
+            new DataBaseWhere('codcliente', $codcliente),
+            new DataBaseWhere('editable', true),
+            new DataBaseWhere('idcontactofact', $idcontacto)
+        ];
+        // para cada documento de venta
+        foreach (['AlbaranCliente', 'FacturaCliente', 'PedidoCliente', 'PresupuestoCliente'] as $modelName) {
+            
+            // obtener el documento de venta correspondiente
+            $salesDocuments = [];
+            switch ($modelName) {
+                case 'AlbaranCliente':
+                    $salesDocuments = AlbaranCliente::all($where);
+                    break;
+                case 'FacturaCliente':
+                    $salesDocuments = FacturaCliente::all($where);
+                    break;
+                case 'PedidoCliente':
+                    $salesDocuments = PedidoCliente::all($where);
+                    break;
+                case 'PresupuestoCliente':
+                    $salesDocuments = PresupuestoCliente::all($where);
+                    break;
+            }
+
+            // para cada documento de venta aplicar y guardar
+            foreach ($salesDocuments as $salesDoc) {
+                $salesDoc->direccion = $contacto->direccion;
+                $salesDoc->apartado = $contacto->apartado;
+                $salesDoc->codpostal = $contacto->codpostal;
+                $salesDoc->ciudad = $contacto->ciudad;
+                $salesDoc->provincia = $contacto->provincia;
+                $salesDoc->codpais = $contacto->codpais;
+
+                if (false === $salesDoc->save()) {
+                    $failCounter += 1;
+                } else {
+                    $successCounter += 1;
+                }
+            }
+        }
+
+        // notificar del resultado
+        if ($failCounter === 0) {
+            Tools::log()->notice('address-applied-to-documents-successfully', [
+                '%successes%' => $successCounter
+            ]);
+        } else {
+            Tools::log()->warning('address-applied-to-documents-with-errors', [
+                '%failures%' => $failCounter,
+                '%successes%' => $successCounter
+            ]);
+        }
+
+        return true;
+    }
+
     protected function createDocumentView(string $viewName, string $model, string $label): void
     {
         $this->createCustomerListView($viewName, $model, $label);
@@ -112,7 +206,7 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     * Create views
+     * crear todas las vista de EditCliente y sus paneles
      */
     protected function createViews()
     {
@@ -146,6 +240,22 @@ class EditCliente extends ComercialContactController
         }
     }
 
+    /**
+     * Crea el panel de 'Direcciones y contactos' con el botón de Aplicar a documentos
+     */
+    protected function createContactsView(string $viewName = 'EditDireccionContacto'): void
+    {
+        parent::createContactsView($viewName);
+
+        $this->addButton($viewName, [
+            'action' => 'apply-address-to-docs',
+            'color' => 'warning',
+            'icon' => 'fa-solid fa-pencil',
+            'label' => 'apply-to-documents',
+            'confirm' => true
+        ]);
+    }
+
     protected function editAction(): bool
     {
         $return = parent::editAction();
@@ -157,6 +267,18 @@ class EditCliente extends ComercialContactController
         }
 
         return $return;
+    }
+
+    protected function execPreviousAction($action)
+    {
+        if (false === parent::execPreviousAction($action)) {
+            return false;
+        }
+
+        switch ($action) {
+            case 'apply-address-to-docs':
+                return $this->applyAddressToDocsAction();
+        }
     }
 
     protected function insertAction(): bool
