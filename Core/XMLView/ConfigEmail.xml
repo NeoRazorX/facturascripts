@@ -75,8 +75,8 @@
             <column name="replytouseremail" title="email-replies" order="100">
                 <widget type="select" fieldname="replytouseremail" required="true" translate="true">
                     <values title="default-to-user-email">1</values>
-                    <values title="default-to-company-email">0</values>
-                    <values title="always-to-company-email">-1</values>
+                    <values title="default-to-config-email">0</values>
+                    <values title="always-to-config-email">-1</values>
                 </widget>
             </column>
         </group>
