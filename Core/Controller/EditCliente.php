@@ -98,94 +98,6 @@ class EditCliente extends ComercialContactController
         return $data;
     }
 
-    /**
-     * Actualiza la dirección de envio del cliente a todos los documentos de venta pendientes con la misma dirección:
-     * https://facturascripts.com/roadmap/3649
-     */
-    protected function applyAddressToDocsAction(): bool
-    {
-        if (false === $this->validateFormToken()) {
-            return false;
-        }
-
-        // recoger contacto
-        $idcontacto = $this->request->request->getInt('idcontacto', null);
-        $contacto = new Contacto();
-        if (false === $contacto->load($idcontacto)) {
-            Tools::log()->error('address-not-found');
-            return false;
-        }
-
-        // recoger cliente
-        $codcliente = $this->request->request->getInt('codcliente', null);
-        $cliente = new Cliente();
-        if (false === $cliente->load($codcliente)) {
-            Tools::log()->error('customer-not-found');
-            return false;
-        }
-
-        // variable para registrar los errores
-        $failCounter = 0;
-        $successCounter = 0;
-
-        // filtros
-        $where = [
-            new DataBaseWhere('codcliente', $codcliente),
-            new DataBaseWhere('editable', true),
-            new DataBaseWhere('idcontactofact', $idcontacto)
-        ];
-        // para cada documento de venta
-        foreach (['AlbaranCliente', 'FacturaCliente', 'PedidoCliente', 'PresupuestoCliente'] as $modelName) {
-            
-            // obtener el documento de venta correspondiente
-            $salesDocuments = [];
-            switch ($modelName) {
-                case 'AlbaranCliente':
-                    $salesDocuments = AlbaranCliente::all($where);
-                    break;
-                case 'FacturaCliente':
-                    $salesDocuments = FacturaCliente::all($where);
-                    break;
-                case 'PedidoCliente':
-                    $salesDocuments = PedidoCliente::all($where);
-                    break;
-                case 'PresupuestoCliente':
-                    $salesDocuments = PresupuestoCliente::all($where);
-                    break;
-            }
-
-            // para cada documento de venta aplicar y guardar
-            foreach ($salesDocuments as $salesDoc) {
-                $salesDoc->direccion = $contacto->direccion;
-                $salesDoc->apartado = $contacto->apartado;
-                $salesDoc->codpostal = $contacto->codpostal;
-                $salesDoc->ciudad = $contacto->ciudad;
-                $salesDoc->provincia = $contacto->provincia;
-                $salesDoc->codpais = $contacto->codpais;
-
-                if (false === $salesDoc->save()) {
-                    $failCounter += 1;
-                } else {
-                    $successCounter += 1;
-                }
-            }
-        }
-
-        // notificar del resultado
-        if ($failCounter === 0) {
-            Tools::log()->notice('address-applied-to-documents-successfully', [
-                '%successes%' => $successCounter
-            ]);
-        } else {
-            Tools::log()->warning('address-applied-to-documents-with-errors', [
-                '%failures%' => $failCounter,
-                '%successes%' => $successCounter
-            ]);
-        }
-
-        return true;
-    }
-
     protected function createDocumentView(string $viewName, string $model, string $label): void
     {
         $this->createCustomerListView($viewName, $model, $label);
@@ -206,7 +118,7 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     * crear todas las vista de EditCliente y sus paneles
+     * Crea todas las vista de EditCliente y sus paneles
      */
     protected function createViews()
     {
@@ -248,11 +160,11 @@ class EditCliente extends ComercialContactController
         parent::createContactsView($viewName);
 
         $this->addButton($viewName, [
-            'action' => 'apply-address-to-docs',
+            'action' => 'update-docs-address',
             'color' => 'warning',
+            'confirm' => true,
             'icon' => 'fa-solid fa-pencil',
-            'label' => 'apply-to-documents',
-            'confirm' => true
+            'label' => 'update-docs-address'
         ]);
     }
 
@@ -271,14 +183,11 @@ class EditCliente extends ComercialContactController
 
     protected function execPreviousAction($action)
     {
-        if (false === parent::execPreviousAction($action)) {
-            return false;
+        if ($action == 'update-docs-address') {
+            return $this->updateDocsAddressAction();
         }
 
-        switch ($action) {
-            case 'apply-address-to-docs':
-                return $this->applyAddressToDocsAction();
-        }
+        return parent::execPreviousAction($action);
     }
 
     protected function insertAction(): bool
@@ -410,5 +319,98 @@ class EditCliente extends ComercialContactController
             $contacts2 = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', true, $where);
             $columnShipping->widget->setValuesFromCodeModel($contacts2);
         }
+    }
+
+    /**
+     * Actualiza la dirección de envío del cliente a todos los documentos de venta pendientes con la misma dirección:
+     */
+    protected function updateDocsAddressAction(): bool
+    {
+        if (false === $this->validateFormToken()) {
+            return false;
+        } elseif (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return false;
+        }
+
+        // recoger contacto
+        $contacto = new Contacto();
+        $idcontacto = $this->request->input('idcontacto');
+        if (false === $contacto->load($idcontacto)) {
+            Tools::log()->error('address-not-found');
+            return false;
+        }
+
+        // recoger cliente
+        $cliente = new Cliente();
+        $codcliente = $this->request->input('codcliente');
+        if (false === $cliente->load($codcliente)) {
+            Tools::log()->error('customer-not-found');
+            return false;
+        }
+
+        // variable para registrar los errores
+        $failCounter = 0;
+        $successCounter = 0;
+
+        // filtros
+        $where = [
+            new DataBaseWhere('codcliente', $codcliente),
+            new DataBaseWhere('idcontactofact', $idcontacto),
+            new DataBaseWhere('editable', true)
+        ];
+        // para cada documento de venta
+        foreach (['AlbaranCliente', 'FacturaCliente', 'PedidoCliente', 'PresupuestoCliente'] as $modelName) {
+
+            // obtener el documento de venta correspondiente
+            $salesDocuments = [];
+            switch ($modelName) {
+                case 'AlbaranCliente':
+                    $salesDocuments = AlbaranCliente::all($where);
+                    break;
+
+                case 'FacturaCliente':
+                    $salesDocuments = FacturaCliente::all($where);
+                    break;
+
+                case 'PedidoCliente':
+                    $salesDocuments = PedidoCliente::all($where);
+                    break;
+
+                case 'PresupuestoCliente':
+                    $salesDocuments = PresupuestoCliente::all($where);
+                    break;
+            }
+
+            // para cada documento de venta aplicar y guardar
+            foreach ($salesDocuments as $salesDoc) {
+                $salesDoc->direccion = $contacto->direccion;
+                $salesDoc->apartado = $contacto->apartado;
+                $salesDoc->codpostal = $contacto->codpostal;
+                $salesDoc->ciudad = $contacto->ciudad;
+                $salesDoc->provincia = $contacto->provincia;
+                $salesDoc->codpais = $contacto->codpais;
+
+                if (false === $salesDoc->save()) {
+                    $failCounter += 1;
+                } else {
+                    $successCounter += 1;
+                }
+            }
+        }
+
+        // notificar del resultado
+        if ($failCounter === 0) {
+            Tools::log()->notice('address-applied-to-documents-successfully', [
+                '%successes%' => $successCounter
+            ]);
+        } else {
+            Tools::log()->warning('address-applied-to-documents-with-errors', [
+                '%failures%' => $failCounter,
+                '%successes%' => $successCounter
+            ]);
+        }
+
+        return true;
     }
 }
