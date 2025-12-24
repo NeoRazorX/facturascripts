@@ -23,6 +23,7 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\Email\HtmlBlock as DinHtmlBlock;
 use FacturaScripts\Dinamic\Lib\Email\TextBlock as DinTextBlock;
 use FacturaScripts\Dinamic\Model\AttachedFile;
@@ -349,6 +350,22 @@ class NewMail
 
         $this->mail->setFrom($this->fromEmail, $this->fromName);
         $this->mail->Subject = $this->title;
+
+        // comprobamos que tenemos todos los emails en copia configurados añadidos
+        $emailAddedCC = $this->getCCAddresses();
+        foreach (static::splitEmails(Tools::settings('email', 'emailcc', '')) as $email) {
+            if (!in_array($email, $emailAddedCC) && Validator::email($email)) {
+                $this->cc($email);
+            }
+        }
+
+        // comprobamos que tenemos todos los emails en copia oculta configurados añadidos
+        $emailAddedBCC = $this->getBCCAddresses();
+        foreach (static::splitEmails(Tools::settings('email', 'emailbcc', '')) as $email) {
+            if (!in_array($email, $emailAddedBCC) && Validator::email($email)) {
+                $this->bcc($email);
+            }
+        }
 
         $this->renderHTML();
         $this->mail->msgHTML($this->html);
