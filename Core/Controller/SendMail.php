@@ -252,7 +252,7 @@ class SendMail extends Controller
 
     protected function redirectAfter(): void
     {
-        $pipeUrl = $this->pipe('redirAfter');
+        $pipeUrl = $this->pipe('redirectAfter');
         if (is_string($pipeUrl)) {
             Tools::log()->notice('reloading');
             $this->redirect($pipeUrl, 3);
