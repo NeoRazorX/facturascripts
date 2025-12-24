@@ -344,7 +344,7 @@ class SendMail extends Controller
         }
 
         // añadimos los emails en copia que no estén ya en la lista
-        $emailAddedCC = $this->newMail->getCcAddresses();
+        $emailAddedCC = $this->newMail->getCCAddresses();
         $emailInputCC = $this->getEmails('email-cc');
         foreach ($emailInputCC as $email) {
             if (empty($email)) {
