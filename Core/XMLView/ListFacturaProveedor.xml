@@ -119,12 +119,18 @@
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="currency" display="none" order="350">
+        <column name="totaleuros" title="totaleuros" display="none" order="350">
+            <widget type="money" fieldname="totaleuros"/>
+        </column>
+        <column name="conversion-rate" title="conversion-rate" display="none" order="360">
+            <widget type="text" fieldname="tasaconv"/>
+        </column>
+        <column name="currency" display="none" order="370">
             <widget type="select" fieldname="coddivisa">
                 <values source="divisas" fieldcode="coddivisa" fieldtitle="coddivisa"/>
             </widget>
         </column>
-        <column name="date" display="right" order="360">
+        <column name="date" display="right" order="380">
             <widget type="date" fieldname="fecha"/>
         </column>
     </columns>
