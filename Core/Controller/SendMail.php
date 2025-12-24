@@ -362,7 +362,7 @@ class SendMail extends Controller
         }
 
         // añadimos los emails en copia oculta que no estén ya en la lista
-        $emailAddedBCC = $this->newMail->getBccAddresses();
+        $emailAddedBCC = $this->newMail->getBCCAddresses();
         $emailInputBCC = $this->getEmails('email-bcc');
         foreach ($emailInputBCC as $email) {
             if (empty($email)) {
