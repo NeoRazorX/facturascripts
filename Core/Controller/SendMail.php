@@ -20,10 +20,9 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Template\ExtensionsTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -41,8 +40,6 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  */
 class SendMail extends Controller
 {
-    use ExtensionsTrait;
-
     const MAX_FILE_AGE = 2592000; // 30 days
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
@@ -192,8 +189,8 @@ class SendMail extends Controller
         // buscamos el texto de la notificación para usar el asunto y el cuerpo
         $notificationModel = new EmailNotification();
         $where = [
-            new DataBaseWhere('name', 'sendmail-' . $model->modelClassName()),
-            new DataBaseWhere('enabled', true)
+            Where::eq('name', 'sendmail-' . $model->modelClassName()),
+            Where::eq('enabled', true)
         ];
         if ($notificationModel->loadWhere($where)) {
             // hemos encontrado una notificación, usamos su asunto y cuerpo

@@ -58,8 +58,8 @@
                                 <div class="input-group">
                                     <span class="input-group-text">{{ trans('to') }}</span>
                                     {% set emailsTo = fsc.newMail.getToAddresses() is empty ? '' : fsc.newMail.getToAddresses() | join(', ') ~ ', ' %}
-                                    {% set emailsCC = fsc.newMail.getCcAddresses() is empty ? '' : fsc.newMail.getCCAddresses() | join(', ') ~ ', ' %}
-                                    {% set emailsBCC = fsc.newMail.getBccAddresses() is empty ? '' : fsc.newMail.getBccAddresses() | join(', ') ~ ', ' %}
+                                    {% set emailsCC = fsc.newMail.getCCAddresses() is empty ? '' : fsc.newMail.getCCAddresses() | join(', ') ~ ', ' %}
+                                    {% set emailsBCC = fsc.newMail.getBCCAddresses() is empty ? '' : fsc.newMail.getBCCAddresses() | join(', ') ~ ', ' %}
                                     <input type="text" id="email-to" name="email-to" value="{{ emailsTo }}" class="form-control"
                                            placeholder="{{ trans('email-to') }}" required/>
                                     <button type="button" class="btn btn-outline-secondary" style="display: {{ emailsCC is empty() ? 'block' : 'none' }};"
