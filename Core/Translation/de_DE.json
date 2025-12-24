@@ -598,7 +598,7 @@
     "errors": "Fehler",
     "es_EC": "es_EC",
     "es-operation-tax-added-value": "Umsatzsteuerpflichtige Leistung",
-    "es-operation-tax-ceuta-melilla": "es-operation-tax-ceuta-melilla",
+    "es-operation-tax-ceuta-melilla": "Vorgang unterliegt dem IPSI (Ceuta und Melilla)",
     "es-operation-tax-igic": "Vorgang unterliegt dem IGIC (Kanarische Inseln)",
     "es-operation-tax-other": "Vorgang nicht den oben genannten Steuern unterliegend",
     "es-tax-exception-art-14": "Spanien: N4 Nicht steuerpflichtig Art. 14 LIVA – Vorgänge im Zusammenhang mit Exporten",
