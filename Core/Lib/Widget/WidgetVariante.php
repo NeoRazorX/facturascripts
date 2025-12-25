@@ -59,8 +59,7 @@ class WidgetVariante extends WidgetText
         // hay que cargar el producto para mostrar su referencia
         $variante = new Variante();
         if ($this->value !== null && $variante->loadWhereEq($this->match, $this->value) && $this->onclick === 'EditProducto') {
-            $labelHtml = '<a href="' . Tools::config('route') . '/' . $variante->url() . '" class="cancelClickable">'
-                . $label . '</a>';
+            $labelHtml = '<a href="' . Tools::config('route') . '/' . $variante->url() . '">' . $label . '</a>';
         }
 
         if ($this->readonly()) {
@@ -257,7 +256,8 @@ class WidgetVariante extends WidgetText
     {
         return '<div class="input-group mb-2">'
             . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
-            . Tools::trans('search') . '" onkeydown="widgetVarianteSearchKp(\'' . $this->id . '\', event);" autofocus>'
+            . Tools::trans('search') . '" oninput="widgetVarianteSearchKp(\'' . $this->id . '\', event);" '
+            . 'onkeydown="if(event.key===\'Enter\'){event.preventDefault();widgetVarianteSearch(\'' . $this->id . '\');}" autofocus>'
             . '<button type="button" class="btn btn-primary" onclick="widgetVarianteSearch(\'' . $this->id . '\');">'
             . '<i class="fa-solid fa-search"></i>'
             . '</button>'
