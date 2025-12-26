@@ -25,9 +25,9 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
-use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 
@@ -147,8 +147,9 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addFilterAutocomplete($viewName, 'provincia', 'provincia', 'provincia', 'provincias');
         $this->addFilterAutocomplete($viewName, 'ciudad', 'ciudad', 'ciudad', 'ciudades');
 
-      $this->addFilterSelectWhere($viewName, 'status', [
+        $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+            ['label' => '------', 'where' => []],
             ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
             ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
             ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],

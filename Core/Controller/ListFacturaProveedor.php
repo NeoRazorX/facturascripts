@@ -75,6 +75,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         // filtros
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+            ['label' => '------', 'where' => []],
             ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
             ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
             ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
