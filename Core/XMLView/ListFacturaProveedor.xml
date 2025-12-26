@@ -119,12 +119,17 @@
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="currency" display="none" order="350">
+        <column name="pending-total" display="right" order="350">
+            <widget type="money" fieldname="total_pendiente">
+                <option color="danger">gt:0</option>
+            </widget>
+        </column>
+        <column name="currency" display="none" order="360">
             <widget type="select" fieldname="coddivisa">
                 <values source="divisas" fieldcode="coddivisa" fieldtitle="coddivisa"/>
             </widget>
         </column>
-        <column name="date" display="right" order="360">
+        <column name="date" display="right" order="370">
             <widget type="date" fieldname="fecha"/>
         </column>
     </columns>
