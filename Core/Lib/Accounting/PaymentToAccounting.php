@@ -110,23 +110,52 @@ class PaymentToAccounting
         }
 
         // Add lines and save accounting entry relation
-        if ($this->customerPaymentLine($entry)
-            && $this->customerPaymentBankLine($entry)
-            && $this->customerPaymentExpenseLine($entry)
-            && $entry->isBalanced()) {
-            $this->payment->idasiento = $entry->id();
-            return true;
+        if (false === $this->customerPaymentLine($entry)) {
+            Tools::log()->warning('customer-payment-line-error', [
+                '%receipt%' => $this->receipt->getCode()
+            ]);
+            $entry->delete();
+            return false;
         }
 
-        Tools::log()->warning('accounting-lines-error');
-        $entry->delete();
-        return false;
+        if (false === $this->customerPaymentBankLine($entry)) {
+            Tools::log()->warning('customer-payment-bank-line-error', [
+                '%receipt%' => $this->receipt->getCode(),
+                '%paymentMethod%' => $this->payment->getPaymentMethod()->descripcion
+            ]);
+            $entry->delete();
+            return false;
+        }
+
+        if (false === $this->customerPaymentExpenseLine($entry)) {
+            Tools::log()->warning('customer-payment-expense-line-error', [
+                '%receipt%' => $this->receipt->getCode()
+            ]);
+            $entry->delete();
+            return false;
+        }
+
+        if (false === $entry->isBalanced()) {
+            Tools::log()->warning('unbalanced-accounting-entry', [
+                '%document%' => $entry->documento,
+                '%difference%' => abs($entry->debe - $entry->haber)
+            ]);
+            $entry->delete();
+            return false;
+        }
+
+        $this->payment->idasiento = $entry->id();
+        return true;
     }
 
     protected function customerPaymentBankLine(Asiento &$entry): bool
     {
         $account = $this->payment->getPaymentMethod()->getSubcuenta($this->exercise->codejercicio, true);
         if (false === $account->exists()) {
+            Tools::log()->warning('payment-method-account-not-found', [
+                '%paymentMethod%' => $this->payment->getPaymentMethod()->descripcion,
+                '%exercise%' => $this->exercise->codejercicio
+            ]);
             return false;
         }
 
@@ -145,6 +174,14 @@ class PaymentToAccounting
         }
 
         $account = $this->payment->getPaymentMethod()->getSubcuentaGastos($this->exercise->codejercicio, true);
+        if (false === $account->exists()) {
+            Tools::log()->warning('payment-expense-account-not-found', [
+                '%paymentMethod%' => $this->payment->getPaymentMethod()->descripcion,
+                '%exercise%' => $this->exercise->codejercicio,
+                '%amount%' => $this->payment->gastos
+            ]);
+            return false;
+        }
 
         $expLine = $entry->getNewLine($account);
         $expLine->concepto = Tools::trans('receipt-expense-account', ['%document%' => $entry->documento]);
@@ -156,6 +193,10 @@ class PaymentToAccounting
     {
         $account = $this->receipt->getSubject()->getSubcuenta($this->exercise->codejercicio, true);
         if (false === $account->exists()) {
+            Tools::log()->warning('customer-account-not-found', [
+                '%customer%' => $this->receipt->getSubject()->nombre,
+                '%exercise%' => $this->exercise->codejercicio
+            ]);
             return false;
         }
 
@@ -186,22 +227,44 @@ class PaymentToAccounting
         }
 
         // Add lines and save accounting entry relation
-        if ($this->supplierPaymentLine($entry)
-            && $this->supplierPaymentBankLine($entry)
-            && $entry->isBalanced()) {
-            $this->payment->idasiento = $entry->id();
-            return true;
+        if (false === $this->supplierPaymentLine($entry)) {
+            Tools::log()->warning('supplier-payment-line-error', [
+                '%receipt%' => $this->receipt->getCode()
+            ]);
+            $entry->delete();
+            return false;
         }
 
-        Tools::log()->warning('accounting-lines-error');
-        $entry->delete();
-        return false;
+        if (false === $this->supplierPaymentBankLine($entry)) {
+            Tools::log()->warning('supplier-payment-bank-line-error', [
+                '%receipt%' => $this->receipt->getCode(),
+                '%paymentMethod%' => $this->payment->getPaymentMethod()->descripcion
+            ]);
+            $entry->delete();
+            return false;
+        }
+
+        if (false === $entry->isBalanced()) {
+            Tools::log()->warning('unbalanced-accounting-entry', [
+                '%document%' => $entry->documento,
+                '%difference%' => abs($entry->debe - $entry->haber)
+            ]);
+            $entry->delete();
+            return false;
+        }
+
+        $this->payment->idasiento = $entry->id();
+        return true;
     }
 
     protected function supplierPaymentBankLine(Asiento &$entry): bool
     {
         $account = $this->payment->getPaymentMethod()->getSubcuenta($this->exercise->codejercicio, true);
         if (false === $account->exists()) {
+            Tools::log()->warning('payment-method-account-not-found', [
+                '%paymentMethod%' => $this->payment->getPaymentMethod()->descripcion,
+                '%exercise%' => $this->exercise->codejercicio
+            ]);
             return false;
         }
 
@@ -215,6 +278,10 @@ class PaymentToAccounting
     {
         $account = $this->receipt->getSubject()->getSubcuenta($this->exercise->codejercicio, true);
         if (false === $account->exists()) {
+            Tools::log()->warning('supplier-account-not-found', [
+                '%supplier%' => $this->receipt->getSubject()->nombre,
+                '%exercise%' => $this->exercise->codejercicio
+            ]);
             return false;
         }
 

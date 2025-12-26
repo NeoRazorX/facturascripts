@@ -22,9 +22,9 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Session;
+use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -288,7 +288,7 @@ class ListView extends BaseView
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/ListView.js?v=2');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/ListView.js?v=' . Tools::date());
     }
 
     private function loadTotalAmounts(): void
@@ -362,7 +362,7 @@ class ListView extends BaseView
         }
 
         // si la request es GET, obtenemos los filtros desde la caché
-        $cacheKeyFiltros = 'filters-' . Session::get('controllerName') . '-' . $this->getViewName() . '-' . $request->cookie('fsNick');
+        $cacheKeyFiltros = 'filters-' . Session::get('controllerName') . '-' . $this->getViewName() . '-' . Session::user()->nick;
         if ($request->isMethod('GET')) {
             $filtrosCache = Cache::get($cacheKeyFiltros);
             if ($filtrosCache) {

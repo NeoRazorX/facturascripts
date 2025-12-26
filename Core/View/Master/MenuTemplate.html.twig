@@ -45,7 +45,7 @@
     {% block css %}
         <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}?v=5"/>
         <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}?v=6"/>
-        <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}?v=6"/>
+        <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}?v={{ 'now' | date('ymd') }}"/>
     {% endblock %}
     {# Adds custom CSS assets #}
     {% for css in assetManager.get('css') %}
@@ -62,7 +62,7 @@
         <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js') }}?v=5"></script>
         <script src="{{ asset('node_modules/pace-js/pace.min.js') }}"></script>
         <script src="{{ asset('node_modules/@fortawesome/fontawesome-free/js/all.min.js') }}?v=6"></script>
-        <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}?v=6"></script>
+        <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}?v={{ 'now' | date('ymd') }}"></script>
     {% endblock %}
     {# Adds custom JS assets #}
     {% for js in assetManager.get('js') %}
@@ -105,8 +105,7 @@
                             {% for includeView in getIncludeViews('MenuTemplate', 'MenuIconBefore') %}
                                 {% include includeView['path'] %}
                             {% endfor %}
-                            <li class="nav-item"
-                                title="{{ trans('search') }}">
+                            <li class="nav-item" title="{{ trans('search') }}">
                                 <a class="nav-link{{ template == 'MegaSearch.html.twig' ? ' active' : '' }}" href="MegaSearch" id="menuIconSearch">
                                     <i class="fa-solid fa-search" aria-hidden="true"></i>
                                 </a>
@@ -119,16 +118,15 @@
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle mr-md-2" href="#" data-bs-toggle="dropdown"
-                                   aria-haspopup="true" aria-expanded="false" id="menuIconUser"
-                                   title="{{ trans('user') }}">
-                                    <i class="fa-solid fa-user-circle fa-fw" aria-hidden="true"></i>
+                                   aria-haspopup="true" aria-expanded="false" id="menuIconUser" title="{{ trans('user') }}">
+                                    <i class="fa-solid fa-user-circle fa-fw me-1" aria-hidden="true"></i>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="user-list">
                                     <a class="dropdown-item" href="{{ fsc.user.url() }}">
-                                        <i class="fa-solid fa-user-circle fa-fw" aria-hidden="true"></i> {{ fsc.user.nick }}
+                                        <i class="fa-solid fa-user-circle fa-fw me-1" aria-hidden="true"></i> {{ fsc.user.nick }}
                                     </a>
                                     <a class="dropdown-item send-email" href="SendMail">
-                                        <i class="fa-solid fa-envelope fa-fw" aria-hidden="true"></i>
+                                        <i class="fa-solid fa-envelope fa-fw me-1" aria-hidden="true"></i>
                                         {{ trans('send-mail') }}
                                     </a>
                                     {% for includeView in getIncludeViews('MenuTemplate', 'MenuIconUser') %}
@@ -136,7 +134,7 @@
                                     {% endfor %}
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ asset('login') }}?action=logout&multireqtoken={{ formToken(false) }}">
-                                        <i class="fa-solid fa-door-open fa-fw" aria-hidden="true"></i> {{ trans('logout') }}
+                                        <i class="fa-solid fa-door-open fa-fw me-1" aria-hidden="true"></i> {{ trans('logout') }}
                                     </a>
                                 </div>
                             </li>

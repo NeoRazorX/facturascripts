@@ -81,6 +81,7 @@ final class CrashReport
             'line' => $line,
             'hash' => $errorHash,
             'url' => $errorUrl,
+            'ip' => Session::getClientIp(),
             'report_url' => $reportUrl,
             'report_qr' => $reportQr,
             'core_version' => Kernel::version(),

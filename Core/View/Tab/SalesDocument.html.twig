@@ -307,59 +307,26 @@
         $("#salesFormLines .fs-line :input").css('cursor', 'default');
     }
 
-    // Muestra el modal para elegir la forma de pago y fecha de los recibos
-    // al presionar el boton para pagar la factura.
-    function showModalPaymentConditions(callback) {
-        const textClose = "{{ trans('close') }}";
-        const textPaid = "{{ trans('paid') }}";
-        // reutilizamos los inputs del formulario del header
-        // para mantener formatos y valores dinamicos
-        const paymentMethodsHTML = $('#payment-methods').html();
-        const documentDateHTML = $('#document-date').html();
-
-        const html = `
-            <div class="modal fade" id="modalPaymentConditions" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-body">
-                    <div class="mb-3" id="payment-methods-modal">
-                        ${paymentMethodsHTML}
-                    </div>
-                    <div class="mb-3" id="document-date-modal">
-                        ${documentDateHTML}
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${textClose}</button>
-                    <button type="button" class="btn btn-primary" onclick="prepareForm(${callback})">${textPaid}</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', html);
-
-        // cambiamos la fecha del input para que por defecto sea la de hoy
-        $('#document-date-modal').children('input').val('{{ "now"|date("Y-m-d") }}');
-
-        $('#modalPaymentConditions').modal('show');
-    }
-
-    // creamos los inputs para que se envien por post
+    // creamos los inputs para que se envíen por post
     // con el resto de campos del formulario
-    function prepareForm(callback){
+    function prepareForm(action, inputs) {
+        // creamos un input para cada elemento del array con clave => valor
+        if (inputs && typeof inputs === 'object') {
+            for (const [key, value] of Object.entries(inputs)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                document.forms['salesForm'].appendChild(input);
 
-        // creamos un input para enviar la fecha de pago para los recibos
-        const inputFechaPagoRecibo = document.createElement('input');
-        inputFechaPagoRecibo.type = 'hidden';
-        inputFechaPagoRecibo.name = 'fechapagorecibo';
-        inputFechaPagoRecibo.value = $('#document-date-modal').children('input').val();
-        document.forms['salesForm'].appendChild(inputFechaPagoRecibo);
+                // cambiamos la forma de pago para que coincida con la de los recibos y se envíe por el formulario
+                if (key === 'paid-payment-modal') {
+                    $('#payment-methods').children('select').val(value);
+                }
+            }
 
-        // cambiamos la forma de pago para que coincida con la de los recibos y se envie por el formulario
-        $('#payment-methods').children('select').val($('#payment-methods-modal').children('select').val());
-
-        callback('save-paid', 1);
+            salesFormSave(action, 0);
+        }
     }
 
     $(document).on('keyup', '.doc-line-desc', function (e) {

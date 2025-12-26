@@ -33,6 +33,7 @@ use FacturaScripts\Dinamic\Model\Page as DinPage;
 use FacturaScripts\Dinamic\Model\Role as DinRole;
 use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
 use FacturaScripts\Dinamic\Model\RoleUser as DinRoleUser;
+use FacturaScripts\Dinamic\Model\Serie as DinSerie;
 
 /**
  * Usuario de FacturaScripts.
@@ -57,6 +58,9 @@ class User extends ModelClass
 
     /** @var string */
     public $codalmacen;
+
+    /** @var string */
+    public $codserie;
 
     /** @var string */
     public $creationdate;
@@ -194,6 +198,7 @@ class User extends ModelClass
     public function clearCache(): void
     {
         parent::clearCache();
+
         Users::clear();
     }
 
@@ -274,6 +279,7 @@ class User extends ModelClass
         // we need this models to be checked before
         new DinPage();
         new DinEmpresa();
+        new DinSerie();
 
         $nick = Tools::config('initial_user', 'admin');
         $pass = Tools::config('initial_pass', 'admin');

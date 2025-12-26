@@ -132,7 +132,7 @@ class Controller implements ControllerInterface
         Session::set('uri', $uri);
 
         $this->dataBase = new DataBase();
-        $this->empresa = new Empresa();
+        $this->empresa = Empresas::default();
         $this->multiRequestProtection = new MultiRequestProtection();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';
@@ -367,7 +367,7 @@ class Controller implements ControllerInterface
         if (false === $user->enabled) {
             // Si el usuario está desactivado, registrar advertencia, eliminar cookie y fallar autenticación
             Tools::log()->warning('login-user-disabled', ['%nick%' => $cookieNick]);
-            setcookie('fsNick', '', $cookiesExpire, '/');
+            setcookie('fsNick', '', $cookiesExpire, Tools::config('route', '/'));
             return false;
         }
 
@@ -376,7 +376,7 @@ class Controller implements ControllerInterface
         if (false === $user->verifyLogkey($logKey)) {
             // Si la logkey no es válida, registrar advertencia, eliminar cookie y fallar autenticación
             Tools::log()->warning('login-cookie-fail');
-            setcookie('fsNick', '', $cookiesExpire, '/');
+            setcookie('fsNick', '', $cookiesExpire, Tools::config('route', '/'));
             return false;
         }
 

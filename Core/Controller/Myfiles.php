@@ -76,9 +76,9 @@ class Myfiles implements ControllerInterface
         $parts = explode('.', $filePath);
         $safe = [
             '7z', 'accdb', 'ai', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'dxf', 'dwg', 'eot', 'gif', 'gz', 'html',
-            'ico', 'jfif', 'jpeg', 'jpg', 'js', 'json', 'map', 'md', 'mdb', 'mkv', 'mov', 'mp3', 'mp4', 'ndg', 'ods', 'odt',
-            'ogg', 'pdf', 'png', 'pptx', 'rar', 'sql', 'step', 'svg', 'ttf', 'txt', 'webm', 'webp', 'woff', 'woff2',
-            'xls', 'xlsm', 'xlsx', 'xml', 'xsig', 'zip'
+            'ico', 'ics', 'jfif', 'jpeg', 'jpg', 'js', 'json', 'map', 'md', 'mdb', 'mkv', 'mov', 'mp3', 'mp4', 'ndg',
+            'ods', 'odt', 'ogg', 'pdf', 'png', 'pptx', 'rar', 'sql', 'step', 'svg', 'ttf', 'txt', 'webm', 'webp',
+            'woff', 'woff2', 'xls', 'xlsm', 'xlsx', 'xml', 'xsig', 'zip'
         ];
         $extension = strtolower(end($parts));
         return empty($parts) || count($parts) === 1 || in_array($extension, $safe, true);
@@ -91,6 +91,7 @@ class Myfiles implements ControllerInterface
         }
 
         header('Content-Type: ' . $this->getMime($this->filePath));
+        header('Cache-Control: public, max-age=31536000, immutable');
 
         // disable the buffer if enabled
         if (ob_get_contents()) {

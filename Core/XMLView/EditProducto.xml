@@ -78,27 +78,9 @@
             <column name="stock" numcolumns="2" order="90">
                 <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
-            <column name="type" order="100">
+            <column name="type" numcolumns="2" order="100">
                 <widget type="select" fieldname="tipo">
                     <values/>
-                </widget>
-            </column>
-            <column name="codsubcuentacom" title="subaccount-purchases" titleurl="ListCuenta" description="optional"
-                    numcolumns="2" order="110">
-                <widget type="autocomplete" fieldname="codsubcuentacom">
-                    <values source="subcuentas" fieldcode="codsubcuenta"/>
-                </widget>
-            </column>
-            <column name="codsubcuentaven" title="subaccount-sales" titleurl="ListCuenta" description="optional"
-                    numcolumns="2" order="120">
-                <widget type="autocomplete" fieldname="codsubcuentaven">
-                    <values source="subcuentas" fieldcode="codsubcuenta"/>
-                </widget>
-            </column>
-            <column name="codsubcuentairpfcom" title="subaccount-irpf" titleurl="ListCuenta" description="optional"
-                    display="none" numcolumns="2" order="130">
-                <widget type="autocomplete" fieldname="codsubcuentairpfcom">
-                    <values source="subcuentas" fieldcode="codsubcuenta"/>
                 </widget>
             </column>
             <column name="creation-date" numcolumns="2" order="200">
@@ -106,6 +88,20 @@
             </column>
             <column name="last-update" numcolumns="2" order="210">
                 <widget type="datetime" fieldname="actualizado" readonly="true"/>
+            </column>
+        </group>
+        <group name="accounting" title="accounting" numcolumns="12">
+            <column name="codsubcuentacom" title="subaccount-purchases" titleurl="ListCuenta" description="optional"
+                    numcolumns="2" order="100">
+                <widget type="subcuenta" fieldname="codsubcuentacom"/>
+            </column>
+            <column name="codsubcuentaven" title="subaccount-sales" titleurl="ListCuenta" description="optional"
+                    numcolumns="2" order="110">
+                <widget type="subcuenta" fieldname="codsubcuentaven"/>
+            </column>
+            <column name="codsubcuentairpfcom" title="subaccount-irpf" titleurl="ListCuenta" description="optional"
+                    display="none" numcolumns="2" order="120">
+                <widget type="subcuenta" fieldname="codsubcuentairpfcom"/>
             </column>
         </group>
     </columns>

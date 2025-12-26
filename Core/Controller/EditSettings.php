@@ -166,7 +166,7 @@ class EditSettings extends PanelController
 
     protected function createViewsIdFiscal(string $viewName = 'EditIdentificadorFiscal'): void
     {
-        $this->addEditListView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'far fa-id-card')
+        $this->addEditListView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'fa-regular fa-id-card')
             ->setInLine(true);
     }
 

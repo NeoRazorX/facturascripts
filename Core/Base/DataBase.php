@@ -64,6 +64,13 @@ final class DataBase
     private static $tables = [];
 
     /**
+     * Type of database engine.
+     *
+     * @var string
+     */
+    private static $type;
+
+    /**
      * DataBase constructor and prepare the class to use it.
      */
     public function __construct()
@@ -71,7 +78,8 @@ final class DataBase
         if (Tools::config('db_name') && self::$link === null) {
             self::$miniLog = new MiniLog(self::CHANNEL);
 
-            switch (strtolower(FS_DB_TYPE)) {
+            self::$type = strtolower(Tools::config('db_type'));
+            switch (self::$type) {
                 case 'postgresql':
                     self::$engine = new PostgresqlEngine();
                     break;
@@ -320,7 +328,7 @@ final class DataBase
      */
     public function getIndexes(string $tableName): array
     {
-        $result =  array_filter($this->getAllIndexes($tableName), function ($dbIdx) {
+        $result = array_filter($this->getAllIndexes($tableName), function ($dbIdx) {
             return false !== strpos($dbIdx['name'], 'fs_');
         });
 
@@ -460,6 +468,11 @@ final class DataBase
         }
 
         return in_array($tableName, $list, false);
+    }
+
+    public function type(): string
+    {
+        return self::$type ?? '';
     }
 
     /**

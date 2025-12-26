@@ -290,6 +290,11 @@ abstract class BusinessDocument extends NewModelClass
         return AttachedFileRelation::all($where, ['creationdate' => 'DESC'], 0, 0);
     }
 
+    public function getAuditChannel(): string
+    {
+        return LogMessage::DOCS_CHANNEL;
+    }
+
     /**
      * Returns the Equivalent Unified Discount.
      *
@@ -502,13 +507,13 @@ abstract class BusinessDocument extends NewModelClass
 
         if ($this->isDirty()) {
             // add audit log
-            Tools::log(LogMessage::AUDIT_CHANNEL)->info('updated-model', [
+            Tools::log($this->getAuditChannel())->info('updated-model', [
                 '%model%' => $this->modelClassName(),
                 '%key%' => $this->id(),
                 '%desc%' => $this->primaryDescription(),
                 'model-class' => $this->modelClassName(),
                 'model-code' => $this->id(),
-                'model-data' => $this->toArray()
+                'model-data' => $this->getDirty()
             ]);
         }
 

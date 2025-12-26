@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2024-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -136,7 +136,7 @@ class ApiCreateDocument extends ApiController
         // asignamos el resto de campos del modelo
         foreach ($doc->getModelFields() as $key => $field) {
             if ($this->request->request->has($key)) {
-                $doc->{$key} = $this->request->request->get($key);
+                $doc->{$key} = $this->request->input($key);
             }
         }
 
@@ -161,18 +161,8 @@ class ApiCreateDocument extends ApiController
             return;
         }
 
-        // ¿Factura pagada?
-        if ($doc->hasColumn('idfactura') &&
-            $doc->hasColumn('pagada') &&
-            $this->request->request->getBool('pagada', false)) {
-            foreach ($doc->getReceipts() as $receipt) {
-                $receipt->pagado = true;
-                $receipt->save();
-            }
-
-            // recargamos la factura
-            $doc->reload();
-        }
+        // procesamos factura pagada si aplica
+        $this->processInvoicePaid($doc);
 
         // confirmamos la transacción
         $this->db()->commit();
@@ -283,18 +273,8 @@ class ApiCreateDocument extends ApiController
             return;
         }
 
-        // ¿Factura pagada?
-        if ($doc->hasColumn('idfactura') &&
-            $doc->hasColumn('pagada') &&
-            $this->request->request->getBool('pagada', false)) {
-            foreach ($doc->getReceipts() as $receipt) {
-                $receipt->pagado = true;
-                $receipt->save();
-            }
-
-            // recargamos la factura
-            $doc->reload();
-        }
+        // procesamos factura pagada si aplica
+        $this->processInvoicePaid($doc);
 
         // confirmamos la transacción
         $this->db()->commit();
@@ -344,6 +324,21 @@ class ApiCreateDocument extends ApiController
         }
     }
 
+    protected function processInvoicePaid(BusinessDocument &$doc): void
+    {
+        if ($doc->hasColumn('idfactura') &&
+            $doc->hasColumn('pagada') &&
+            $this->request->request->getBool('pagada', false)) {
+            foreach ($doc->getReceipts() as $receipt) {
+                $receipt->pagado = true;
+                $receipt->save();
+            }
+
+            // recargamos la factura
+            $doc->reload();
+        }
+    }
+
     protected function saveLines(BusinessDocument &$documento): bool
     {
         if (!$this->request->request->has('lineas')) {
@@ -380,12 +375,15 @@ class ApiCreateDocument extends ApiController
             $newLine->dtopor = (float)($line['dtopor'] ?? $newLine->dtopor);
             $newLine->dtopor2 = (float)($line['dtopor2'] ?? $newLine->dtopor2);
 
-            if (!empty($line['excepcioniva'] ?? '')) {
-                $newLine->excepcioniva = $line['excepcioniva'];
+            if (isset($line['excepcioniva'])) {
+                $newLine->excepcioniva = $line['excepcioniva'] === 'null' ? null : $line['excepcioniva'];
             }
 
-            if (!empty($line['codimpuesto'] ?? '')) {
-                $newLine->codimpuesto = $line['codimpuesto'];
+            if (isset($line['codimpuesto'])) {
+                $newCodimpuesto = $line['codimpuesto'] === 'null' ? null : $line['codimpuesto'];
+                if ($newCodimpuesto !== $newLine->codimpuesto) {
+                    $newLine->setTax($newCodimpuesto);
+                }
             }
 
             if (!empty($line['suplido'] ?? '')) {

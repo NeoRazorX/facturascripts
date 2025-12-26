@@ -110,7 +110,7 @@ class AccountingHeaderHTML
                 . '<div class="mb-2">' . Tools::trans('document')
                 . '<div class="input-group">'
                 . ''
-                . '<a class="btn btn-outline-primary" href="' . $link . '"><i class="far fa-eye"></i></a>'
+                . '<a class="btn btn-outline-primary" href="' . $link . '"><i class="fa-regular fa-eye"></i></a>'
                 . ''
                 . '<input type="text" value="' . Tools::noHtml($model->documento) . '" class="form-control" readonly/>'
                 . '</div>'

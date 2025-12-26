@@ -82,29 +82,33 @@ class ListFacturaCliente extends ListBusinessDocument
             ->setSettings('btnNew', false);
 
         // filtros
+        if (count(Empresas::all()) > 1) {
+            $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
+        }
+
         $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
-        $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
-
-        $currencies = Divisas::codeModel();
-        if (count($currencies) > 2) {
-            $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
-        }
+        $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
+        $this->addFilterPeriod($viewName, 'payment-date', 'payment-date', 'fechapago');
 
         $payMethods = FormasPago::codeModel();
         if (count($payMethods) > 2) {
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $payMethods);
         }
 
-        $i18n = Tools::lang();
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
-            ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
-            ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
-            ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
+            ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+            ['label' => '------', 'where' => []],
+            ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
+            ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
+            ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
         ]);
-        $this->addFilterPeriod($viewName, 'payment-date', 'payment-date', 'fechapago');
+
+        $currencies = Divisas::codeModel();
+        if (count($currencies) > 2) {
+            $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
+        }
 
         // botones
         $this->addButtonPayReceipt($viewName);
@@ -135,35 +139,35 @@ class ListFacturaCliente extends ListBusinessDocument
     {
         parent::createViewSales($viewName, $modelName, $label);
 
-        $this->listView($viewName)
-            ->addOrderBy(['idfactura'], 'id')
-            ->addSearchFields(['codigorect']);
+        $this->listView($viewName)->addSearchFields(['codigorect']);
 
         // filtros
         $paises = Paises::codeModel();
         $this->addFilterSelect($viewName, 'country', 'country', 'codpais', $paises);
         $this->addFilterAutocomplete($viewName, 'provincia', 'provincia', 'provincia', 'provincias');
         $this->addFilterAutocomplete($viewName, 'ciudad', 'ciudad', 'ciudad', 'ciudades');
-        $i18n = Tools::lang();
-        $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
-            ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
-            ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
-            ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
+
+      $this->addFilterSelectWhere($viewName, 'status', [
+            ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+            ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
+            ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
+            ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
         ]);
         $this->addFilterCheckbox($viewName, 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
 
         // añadimos botón de bloquear facturas
         $this->addButtonLockInvoice($viewName);
         $this->addButtonGenerateAccountingInvoices($viewName);
+        $this->addButtonPayInvoice($viewName);
 
         // añadimos botón para buscar huecos en las facturas, si el usuario tiene permiso
         if (false === $this->permissions->onlyOwnerData) {
-            $this->addButton($viewName, [
-                'action' => 'look-for-gaps',
-                'icon' => 'fa-solid fa-exclamation-triangle',
-                'label' => 'look-for-gaps'
-            ]);
+            $this->tab($viewName)
+                ->addButton([
+                    'action' => 'look-for-gaps',
+                    'icon' => 'fa-solid fa-exclamation-triangle',
+                    'label' => 'look-for-gaps'
+                ]);
         }
     }
 

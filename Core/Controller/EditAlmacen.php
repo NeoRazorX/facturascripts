@@ -76,11 +76,11 @@ class EditAlmacen extends EditController
             ],
             [
                 'label' => Tools::trans('under-minimums'),
-                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmin', '<')]
+                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmin', '<', 'AND', true)]
             ],
             [
                 'label' => Tools::trans('excess'),
-                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmax', '>')]
+                'where' => [new DataBaseWhere('stocks.disponible', 'field:stockmax', '>', 'AND', true)]
             ]
         ]);
 

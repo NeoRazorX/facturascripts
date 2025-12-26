@@ -106,11 +106,12 @@ class PageOption extends ModelClass
      *
      * @param array $data
      * @param array $exclude
+     * @param bool $sync
      */
-    public function loadFromData(array $data = [], array $exclude = []): void
+    public function loadFromData(array $data = [], array $exclude = [], bool $sync = true): void
     {
         array_push($exclude, 'columns', 'modals', 'filters', 'rows', 'code', 'action');
-        parent::loadFromData($data, $exclude);
+        parent::loadFromData($data, $exclude, $sync);
 
         $this->columns = json_decode($data['columns'], true);
         $this->modals = json_decode($data['modals'], true);

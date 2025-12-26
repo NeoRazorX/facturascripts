@@ -264,6 +264,10 @@
                     <i class="fa-solid fa-save fa-fw"></i>
                     <span class="d-none d-lg-inline">{{ trans('save') }}</span>
                 </button>
+                <button type="button" class="btn btn-outline-danger" title="{{ trans('clear-filters') }}"
+                        onclick="listViewSetAction('{{ viewName }}', 'clear-filters');">
+                    <i class="fa-solid fa-filter-circle-xmark fa-fw"></i>
+                </button>
             {% endif %}
         {% endif %}
         {% set saveFilters = currentView.pageFilters %}
@@ -402,7 +406,7 @@
         <div class="btn-group">
             <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="true">
-                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fa-solid fa-sort-amount-up' : 'fa-solid fa-sort-amount-down' %}
+                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fa-solid fa-angles-up' : 'fa-solid fa-angles-down' %}
                 <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
                 <span class="d-none d-lg-inline">{{ currentView.orderOptions[currentView.orderKey]['label'] }}</span>
                 <span class="caret"></span>

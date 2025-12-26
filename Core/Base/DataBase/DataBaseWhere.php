@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -58,6 +58,13 @@ class DataBaseWhere
     public $operator;
 
     /**
+     * Allow field transformation with field: prefix.
+     *
+     * @var bool
+     */
+    public $useField;
+
+    /**
      * Filter value.
      *
      * @var mixed
@@ -71,14 +78,16 @@ class DataBaseWhere
      * @param mixed $value
      * @param string $operator
      * @param string $operation
+     * @param bool $useField
      */
-    public function __construct(string $fields, $value, string $operator = '=', string $operation = 'AND')
+    public function __construct(string $fields, $value, string $operator = '=', string $operation = 'AND', bool $useField = false)
     {
         $this->dataBase = new DataBase();
         $this->fields = $fields;
         $this->operation = $operation;
         $this->operator = $operator;
         $this->value = $value;
+        $this->useField = $useField;
 
         // check restrictions with null values
         if (null === $value && $operator === '=') {
@@ -382,7 +391,7 @@ class DataBaseWhere
             return $this->getValueFromOperator($value);
         }
 
-        if ($value !== null && strpos($value, 'field:') === 0 && strlen($value) > 6) {
+        if ($this->useField && $value !== null && strpos($value, 'field:') === 0 && strlen($value) > 6) {
             return $this->dataBase->escapeColumn(substr($value, 6));
         }
 

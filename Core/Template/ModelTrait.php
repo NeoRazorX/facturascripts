@@ -136,7 +136,7 @@ trait ModelTrait
      */
     public function getModelFields(): array
     {
-        if (empty($this->fields)) {
+        if (empty(static::$fields)) {
             $this->loadModelFields();
         }
 

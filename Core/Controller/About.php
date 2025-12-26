@@ -67,8 +67,12 @@ class About extends Controller
         // Información del sistema operativo
         $os_info = php_uname();
 
-        // Obtener la versión de la Base de Datos
+        // Obtener la información de la Base de Datos
+        $database_type = $this->dataBase->type();
         $database_version = $this->dataBase->version();
+
+        // Obtener la versión de OpenSSL
+        $openssl_version = defined('OPENSSL_VERSION_TEXT') ? OPENSSL_VERSION_TEXT : 'No disponible';
 
         // Espacio de almacenamiento para archivos adjuntos
         $storage_limit = AttachedFile::getStorageLimit();
@@ -83,15 +87,20 @@ class About extends Controller
         // Calcular los límites actuales
         $limits = $this->getLimits();
 
+        $server_date = date('d-m-Y H:i:s');
+
         return compact(
             'core_version',
+            'database_type',
             'database_version',
             'extensions',
             'limits',
             'max_filesize',
+            'openssl_version',
             'os_info',
             'php_version',
             'plugins',
+            'server_date',
             'server_software',
             'storage_limit',
             'storage_used'

@@ -25,7 +25,7 @@ class EditPresupuestoProveedor extends PurchasesController
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'estimation';
-        $data['icon'] = 'far fa-file-powerpoint';
+        $data['icon'] = 'fa-regular fa-file-powerpoint';
         $data['showonmenu'] = false;
         return $data;
     }

@@ -116,7 +116,9 @@
                                href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
                                 <i class="{{ view.icon }} fa-fw me-1 d-none d-lg-inline-block"
                                    aria-hidden="true"></i><span class="d-inline d-lg-inline">{{ view.title }}</span>
-                                {% if view.count >= 1 and viewName != firstView.getViewName() %}
+                                {% if view.count > 1 %}
+                                    <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
+                                {% elseif view.count == 1 and viewName != firstView.getViewName() %}
                                     <span class='badge bg-secondary ms-1 mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
                                 {% endif %}
                             </a>
@@ -175,7 +177,7 @@
                         {% if view.settings.active and view.columns is not empty %}
                             <a class="dropdown-item"
                                href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
-                                <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                                <i class="{{ view.icon }} fa-fw me-1" aria-hidden="true"></i> {{ view.title }}
                                 {% if view.settings.customized %}
                                     <i class="fa-solid fa-user-pen ms-2" title="{{ trans('personalized') }}"></i>
                                 {% endif %}
@@ -203,22 +205,21 @@
             {% for key, option in fsc.exportManager.options() %}
                 {% if key != fsc.exportManager.defaultOption() %}
                     <a href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
-                        <i class="{{ option.icon }} fa-fw" aria-hidden="true"></i>
+                        <i class="{{ option.icon }} fa-fw me-1" aria-hidden="true"></i>
                         {{ trans(option.description) }}
                     </a>
                 {% endif %}
             {% endfor %}
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#advancedExportModal">
-                <i class="fa-solid fa-tools fa-fw" aria-hidden="true"></i>
-                {{ trans('advanced') }}
+                <i class="fa-solid fa-tools fa-fw me-1" aria-hidden="true"></i> {{ trans('advanced') }}
             </a>
             {% set tools = fsc.exportManager.tools() %}
             {% if tools is not empty %}
                 <div class="dropdown-divider"></div>
                 {% for key, tool in tools %}
                     <a href="{{ tool.link }}" target="_blank" class="dropdown-item">
-                        <i class="{{ tool.icon }} fa-fw" aria-hidden="true"></i>
+                        <i class="{{ tool.icon }} fa-fw me-1" aria-hidden="true"></i>
                         {{ trans(tool.description) }}
                     </a>
                 {% endfor %}
@@ -232,7 +233,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fa-solid fa-tools fa-fw" aria-hidden="true"></i>
+                            <i class="fa-solid fa-tools fa-fw me-1" aria-hidden="true"></i>
                             {{ trans('advanced') }}
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

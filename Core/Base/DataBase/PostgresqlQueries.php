@@ -38,7 +38,7 @@ class PostgresqlQueries implements DataBaseQueries
      */
     public function sql2Int(string $colName): string
     {
-        return 'CAST(' . $colName . ' as INTEGER)';
+        return 'CAST(' . $colName . ' as BIGINT)';
     }
 
     /**

@@ -142,16 +142,31 @@ class MysqlEngine extends DataBaseEngine
     {
         if (parent::compareDataTypes($dbType, $xmlType)) {
             return true;
-        } elseif ($dbType == 'tinyint(1)' && $xmlType == 'boolean') {
+        }
+
+        // bool
+        if ($dbType == 'tinyint(1)' && str_starts_with($xmlType, 'bool')) {
             return true;
-        } elseif (substr($dbType, 0, 3) == 'int' && strtolower($xmlType) == 'integer') {
+        }
+
+        // int
+        if (str_starts_with($dbType, 'int') && str_starts_with($xmlType, 'int')) {
             return true;
-        } elseif (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision') {
+        }
+
+        // double
+        if (str_starts_with($dbType, 'double') && $xmlType == 'double precision') {
             return true;
-        } elseif (substr($dbType, 0, 8) == 'varchar(' && substr($xmlType, 0, 18) == 'character varying(') {
+        }
+
+        // varchar
+        if (str_starts_with($dbType, 'varchar(') && str_starts_with($xmlType, 'character varying(')) {
             // check length
             return substr($dbType, 8, -1) == substr($xmlType, 18, -1);
-        } elseif (substr($dbType, 0, 5) == 'char(' && substr($xmlType, 0, 18) == 'character varying(') {
+        }
+
+        // char
+        if (str_starts_with($dbType, 'char(') && str_starts_with($xmlType, 'character varying(')) {
             // check length
             return substr($dbType, 5, -1) == substr($xmlType, 18, -1);
         }
@@ -214,6 +229,12 @@ class MysqlEngine extends DataBaseEngine
      */
     public function escapeColumn($link, $name): string
     {
+        // Si contiene un punto, escapar cada parte por separado (tabla.columna)
+        if (strpos($name, '.') !== false) {
+            $parts = explode('.', $name);
+            return '`' . implode('`.`', $parts) . '`';
+        }
+
         return '`' . $name . '`';
     }
 

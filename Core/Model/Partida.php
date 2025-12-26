@@ -338,9 +338,15 @@ class Partida extends ModelClass
             $this->idsubcuenta = $this->getSubcuenta()->idsubcuenta;
         }
 
-        // set missing contrapartida id
-        if (!empty($this->codcontrapartida) && empty($this->idcontrapartida)) {
+        // set contrapartida id
+        if (empty($this->codcontrapartida)) {
+            $this->codcontrapartida = null;
+            $this->idcontrapartida = null;
+        } elseif (empty($this->idcontrapartida)) {
             $this->idcontrapartida = $this->getSubcuenta($this->codcontrapartida)->idsubcuenta;
+            if (empty($this->idcontrapartida)) {
+                $this->codcontrapartida = null;
+            }
         }
 
         return parent::test();
@@ -355,7 +361,12 @@ class Partida extends ModelClass
     {
         switch ($field) {
             case 'codcontrapartida':
-                $this->idcontrapartida = $this->getSubcuenta($this->codcontrapartida)->idsubcuenta;
+                if (!empty($this->codcontrapartida)) {
+                    $this->idcontrapartida = $this->getSubcuenta($this->codcontrapartida)->idsubcuenta;
+                }
+                if (empty($this->idcontrapartida)) {
+                    $this->codcontrapartida = null;
+                }
                 break;
 
             case 'codsubcuenta':

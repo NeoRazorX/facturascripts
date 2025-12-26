@@ -378,6 +378,24 @@ abstract class BaseView
     }
 
     /**
+     * Adds a button to the view.
+     *
+     * @param array $btnArray
+     *
+     * @return BaseView
+     */
+    public function addButton(array $btnArray): BaseView
+    {
+        $rowType = isset($btnArray['row']) ? 'footer' : 'actions';
+        $row = $this->getRow($rowType);
+        if ($row) {
+            $row->addButton($btnArray);
+        }
+
+        return $this;
+    }
+
+    /**
      * Adds assets to the asset manager.
      */
     protected function assets()

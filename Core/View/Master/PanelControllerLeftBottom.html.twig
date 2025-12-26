@@ -45,7 +45,7 @@
                             {% set disable = view.settings.active ? '' : ' disabled' %}
                                 <a class="nav-link{{ active }}{{ disable }} text-nowrap" id="{{ viewName }}-tab" data-bs-toggle="pill"
                                 href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
-                                 <i class="{{ view.icon }} fa-fw me-1 d-none d-lg-inline-block"
+                                 <i class="{{ view.icon }} fa-fw me-1 d-none d-sm-inline"
                                     aria-hidden="true"></i><span class="d-inline d-lg-inline">{{ view.title }}</span>
                                  {% if view.count >= 1 and viewName != firstView.getViewName() %}
                                      <span class='badge bg-secondary mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>

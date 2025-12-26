@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoCliente;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -84,6 +85,79 @@ final class PedidoClienteTest extends TestCase
         $this->assertTrue($agent->getContact()->delete(), 'contacto-cant-delete');
         $this->assertTrue($agent->delete(), 'can-not-delete-agent');
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
+    }
+
+    public function testUserSerieOnCustomerSelection(): void
+    {
+        // creamos dos series: una para el usuario y otra para el cliente
+        $serieUser = new Serie();
+        $serieUser->codserie = 'US' . mt_rand(10, 99);
+        $serieUser->descripcion = 'Serie Usuario';
+        $this->assertTrue($serieUser->save(), 'can-not-save-user-serie');
+
+        $serieCustomer = new Serie();
+        $serieCustomer->codserie = 'CS' . mt_rand(10, 99);
+        $serieCustomer->descripcion = 'Serie Cliente';
+        $this->assertTrue($serieCustomer->save(), 'can-not-save-customer-serie');
+
+        // creamos un usuario con la serie del usuario
+        $user = $this->getRandomUser();
+        $user->codserie = $serieUser->codserie;
+        $this->assertTrue($user->save(), 'can-not-save-user');
+
+        // creamos un cliente con su propia serie
+        $customer = $this->getRandomCustomer();
+        $customer->codserie = $serieCustomer->codserie;
+        $this->assertTrue($customer->save(), 'can-not-save-customer');
+
+        // creamos un pedido, asignamos autor y luego el cliente
+        $doc = new PedidoCliente();
+        $this->assertTrue($doc->setAuthor($user), 'can-not-set-author');
+        $this->assertTrue($doc->setSubject($customer), 'can-not-set-customer');
+
+        // debe prevalecer la serie del customer
+        $this->assertEquals($customer->codserie, $doc->codserie, 'user-serie-not-applied-on-customer-selection');
+
+        // limpieza
+        $this->assertTrue($doc->delete(), 'can-not-delete-pedido');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($customer->delete(), 'can-not-delete-customer');
+        $this->assertTrue($user->delete(), 'can-not-delete-user');
+        $this->assertTrue($serieUser->delete(), 'can-not-delete-serie-user');
+        $this->assertTrue($serieCustomer->delete(), 'can-not-delete-serie-customer');
+    }
+
+    public function testUserSerieSelection(): void
+    {
+        // creamos una serie para el usuario
+        $serieUser = new Serie();
+        $serieUser->codserie = 'US' . mt_rand(10, 99);
+        $serieUser->descripcion = 'Serie Usuario';
+        $this->assertTrue($serieUser->save(), 'can-not-save-user-serie');
+
+        // creamos un usuario con la serie del usuario
+        $user = $this->getRandomUser();
+        $user->codserie = $serieUser->codserie;
+        $this->assertTrue($user->save(), 'can-not-save-user');
+
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'can-not-save-customer');
+
+        // creamos un pedido, asignamos autor y luego el cliente
+        $doc = new PedidoCliente();
+        $this->assertTrue($doc->setAuthor($user), 'can-not-set-author');
+        $this->assertTrue($doc->setSubject($customer), 'can-not-set-customer');
+
+        // debe prevalecer la serie del customer
+        $this->assertEquals($user->codserie, $doc->codserie, 'user-serie-not-applied-on-customer-selection');
+
+        // limpieza
+        $this->assertTrue($doc->delete(), 'can-not-delete-pedido');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($customer->delete(), 'can-not-delete-customer');
+        $this->assertTrue($user->delete(), 'can-not-delete-user');
+        $this->assertTrue($serieUser->delete(), 'can-not-delete-serie-user');
     }
 
     public function testCreateEmpty(): void

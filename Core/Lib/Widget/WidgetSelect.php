@@ -119,7 +119,7 @@ class WidgetSelect extends BaseWidget
         if ('' === $value) {
             $model->{$this->fieldname} = null;
         } elseif ($this->multiple && false === $this->readonly()) {
-            $model->{$this->fieldname} = implode(',', $value);
+            $model->{$this->fieldname} = implode(',', unserialize($value));
         } else {
             $model->{$this->fieldname} = $value;
         }

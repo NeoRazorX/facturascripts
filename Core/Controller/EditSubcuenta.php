@@ -105,7 +105,7 @@ class EditSubcuenta extends EditController
         $this->addButton($viewName, [
             'action' => 'dot-accounting-off',
             'color' => 'warning',
-            'icon' => 'far fa-square',
+            'icon' => 'fa-regular fa-square',
             'label' => 'unchecked'
         ]);
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,8 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" title="bank-mandate" order="100">
-                <widget type="text" fieldname="codcuenta" />
+            <column name="code" title="code" order="100">
+                <widget type="text" fieldname="codcuenta"/>
             </column>
             <column name="customer" order="110">
                 <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente">
@@ -30,19 +30,22 @@
                 </widget>
             </column>
             <column name="description" order="120">
-                <widget type="text" fieldname="descripcion" required="true" />
+                <widget type="text" fieldname="descripcion"/>
             </column>
             <column name="iban" order="130">
-                <widget type="text" fieldname="iban" maxlength="34" />
+                <widget type="text" fieldname="iban"/>
             </column>
             <column name="swift" order="140">
                 <widget type="text" fieldname="swift"/>
             </column>
             <column name="principal" display="none" order="150">
-                <widget type="checkbox" fieldname="principal" />
+                <widget type="checkbox" fieldname="principal"/>
             </column>
-            <column name="bank-mandate-date" display="right" order="160">
-                <widget type="date" fieldname="fmandato" />
+            <column name="bank-mandate" order="160">
+                <widget type="text" fieldname="mandato"/>
+            </column>
+            <column name="bank-mandate-date" display="right" order="170">
+                <widget type="date" fieldname="fmandato"/>
             </column>
         </group>
     </columns>

@@ -42,11 +42,19 @@ function widgetLibrarySearch(id) {
     });
 }
 
+// Objeto para almacenar los timeouts de cada instancia del widget
+let widgetLibrarySearchTimeouts = {};
+
 function widgetLibrarySearchKp(id, event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        widgetLibrarySearch(id);
+    // Limpiar el timeout anterior si existe
+    if (widgetLibrarySearchTimeouts[id]) {
+        clearTimeout(widgetLibrarySearchTimeouts[id]);
     }
+
+    // Crear un nuevo timeout para buscar después de 400ms
+    widgetLibrarySearchTimeouts[id] = setTimeout(function() {
+        widgetLibrarySearch(id);
+    }, 400);
 }
 
 function widgetLibrarySelect(id, id_file, filename) {

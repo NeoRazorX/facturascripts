@@ -128,6 +128,23 @@ trait ListBusinessActionTrait
     }
 
     /**
+     * Adds button to pay invoices.
+     *
+     * @param string $viewName
+     */
+    protected function addButtonPayInvoice(string $viewName): void
+    {
+        $this->addButton($viewName, [
+            'action' => 'pay-invoice',
+            'color' => 'outline-success',
+            'confirm' => 'true',
+            'icon' => 'fa-solid fa-check',
+            'label' => 'paid',
+            'type' => 'action'
+        ]);
+    }
+
+    /**
      * Adds button to pay receipts.
      *
      * @param string $viewName
@@ -136,8 +153,9 @@ trait ListBusinessActionTrait
     {
         $this->addButton($viewName, [
             'action' => 'pay-receipt',
+            'color' => 'outline-success',
             'confirm' => 'true',
-            'icon' => 'fa-solid fa-dollar-sign',
+            'icon' => 'fa-solid fa-check',
             'label' => 'paid',
             'type' => 'action'
         ]);
@@ -306,6 +324,61 @@ trait ListBusinessActionTrait
 
         Tools::log()->notice('record-updated-correctly');
         $dataBase->commit();
+        $model->clear();
+        return true;
+    }
+
+    /**
+     * Sets all receipts of selected invoices as paid.
+     *
+     * @param mixed $codes
+     * @param TransformerDocument $model
+     * @param bool $allowUpdate
+     * @param DataBase $dataBase
+     * @param string $nick
+     *
+     * @return bool
+     */
+    protected function payInvoiceAction($codes, $model, $allowUpdate, $dataBase, $nick): bool
+    {
+        if (false === $allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === is_array($codes) || empty($model)) {
+            Tools::log()->warning('no-selected-item');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
+        }
+
+        if (count($codes) === 0) {
+            Tools::log()->warning('no-selected-item');
+            return true;
+        }
+
+        $dataBase->beginTransaction();
+        foreach ($codes as $code) {
+            if (false === $model->loadFromCode($code)) {
+                Tools::log()->error('record-not-found');
+                continue;
+            }
+
+            foreach ($model->getReceipts() as $receipt) {
+                if ($receipt->pagado) {
+                    continue;
+                }
+                $receipt->nick = $nick;
+                $receipt->pagado = true;
+                if (false === $receipt->save()) {
+                    Tools::log()->error('record-save-error');
+                    $dataBase->rollback();
+                    return true;
+                }
+            }
+        }
+
+        $dataBase->commit();
+        Tools::log()->notice('record-updated-correctly');
         $model->clear();
         return true;
     }

@@ -108,7 +108,7 @@ class WidgetLibrary extends BaseWidget
     protected function assets(): void
     {
         $route = Tools::config('route');
-        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetLibrary.js');
+        AssetManager::addJs($route . '/Dinamic/Assets/JS/WidgetLibrary.js?v=' . Tools::date());
     }
 
     /**
@@ -243,7 +243,8 @@ class WidgetLibrary extends BaseWidget
     {
         return '<div class="input-group mb-2">'
             . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
-            . Tools::trans('search') . '" onkeydown="widgetLibrarySearchKp(\'' . $this->id . '\', event);">'
+            . Tools::trans('search') . '" oninput="widgetLibrarySearchKp(\'' . $this->id . '\', event);" '
+            . 'onkeydown="if(event.key===\'Enter\'){event.preventDefault();widgetLibrarySearch(\'' . $this->id . '\');}">'
             . '<button type="button" class="btn btn-primary" onclick="widgetLibrarySearch(\'' . $this->id . '\');">'
             . '<i class="fa-solid fa-search"></i>'
             . '</button>'

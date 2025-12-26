@@ -44,9 +44,10 @@ class EditFacturaProveedor extends PurchasesController
     /**
      * Load views
      */
-    protected function createViews()
+    protected function createViews(): void
     {
         parent::createViews();
+
         $this->createViewsReceipts();
         $this->createViewsAccounting();
         $this->createViewsRefunds();
@@ -59,7 +60,9 @@ class EditFacturaProveedor extends PurchasesController
      */
     private function createViewsAccounting(string $viewName = self::VIEW_ACCOUNTS): void
     {
-        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fa-solid fa-balance-scale');
+        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fa-solid fa-balance-scale')
+            ->addSearchFields(['concepto'])
+            ->addOrderBy(['fecha'], 'date', 1);
 
         // buttons
         $this->addButton($viewName, [
@@ -88,7 +91,9 @@ class EditFacturaProveedor extends PurchasesController
     private function createViewsReceipts(string $viewName = self::VIEW_RECEIPTS): void
     {
         $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fa-solid fa-dollar-sign')
-            ->addOrderBy(['vencimiento'], 'expiration');
+            ->addSearchFields(['observaciones'])
+            ->addOrderBy(['vencimiento'], 'expiration')
+            ->addOrderBy(['importe'], 'amount');
 
         // buttons
         $this->addButton($viewName, [
@@ -100,6 +105,7 @@ class EditFacturaProveedor extends PurchasesController
 
         $this->addButton($viewName, [
             'action' => 'paid',
+            'color' => 'outline-success',
             'confirm' => 'true',
             'icon' => 'fa-solid fa-check',
             'label' => 'paid'
@@ -181,6 +187,24 @@ class EditFacturaProveedor extends PurchasesController
             return true;
         }
 
+        // comprobamos si se han recibido importes específicos
+        $amounts = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $amount = $this->request->input('amount_' . $i);
+            if ($amount !== null && $amount !== '') {
+                $amountFloat = (float)$amount;
+                if ($amountFloat > 0) {
+                    $amounts[] = $amountFloat;
+                }
+            }
+        }
+
+        // si hay importes específicos, creamos los recibos manualmente
+        if (!empty($amounts)) {
+            return $this->generateReceiptsWithAmounts($invoice, $amounts);
+        }
+
+        // si no hay importes específicos, usamos el generador automático
         $generator = new ReceiptGenerator();
         $number = (int)$this->request->input('number', '0');
         if ($generator->generate($invoice, $number)) {
@@ -192,6 +216,35 @@ class EditFacturaProveedor extends PurchasesController
         }
 
         Tools::log()->error('record-save-error');
+        return true;
+    }
+
+    private function generateReceiptsWithAmounts(FacturaProveedor $invoice, array $amounts): bool
+    {
+        // creamos los recibos con los importes especificados
+        $numero = count($invoice->getReceipts()) + 1;
+
+        foreach ($amounts as $amount) {
+            $receipt = $invoice->getNewReceipt($numero, [
+                'importe' => $amount,
+                'nick' => $this->user->nick
+            ]);
+
+            $receipt->disableInvoiceUpdate(true);
+            if (false === $receipt->save()) {
+                Tools::log()->error('record-save-error');
+                return true;
+            }
+
+            $numero++;
+        }
+
+        // actualizamos la factura
+        $generator = new ReceiptGenerator();
+        $generator->update($invoice);
+        $invoice->save();
+
+        Tools::log()->notice('record-updated-correctly');
         return true;
     }
 
@@ -209,7 +262,9 @@ class EditFacturaProveedor extends PurchasesController
             case self::VIEW_RECEIPTS:
                 $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($mvn, 'idfactura'))];
                 $view->loadData('', $where);
-                $this->checkReceiptsTotal($view->cursor);
+                if (empty($view->query)) {
+                    $this->checkReceiptsTotal($view->cursor);
+                }
                 break;
 
             case self::VIEW_ACCOUNTS:

@@ -37,6 +37,16 @@ final class AgenciaTransporteTest extends TestCase
         $this->assertNotEmpty($agency->all(), 'agency-data-not-installed-from-csv');
     }
 
+    public function testClear(): void
+    {
+        $agency = new AgenciaTransporte();
+        $this->assertTrue($agency->activo);
+        $this->assertNull($agency->codtrans);
+        $this->assertNull($agency->nombre);
+        $this->assertNull($agency->telefono);
+        $this->assertNull($agency->web);
+    }
+
     public function testCreate(): void
     {
         $agency = new AgenciaTransporte();

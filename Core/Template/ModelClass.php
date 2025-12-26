@@ -176,8 +176,31 @@ abstract class ModelClass
 
     public function clear(): void
     {
-        foreach (array_keys($this->getModelFields()) as $field_name) {
-            $this->{$field_name} = null;
+        foreach ($this->getModelFields() as $key => $field) {
+            // si es la clave primaria, asignamos null
+            if ($key == static::primaryColumn()) {
+                $this->{$key} = null;
+                continue;
+            }
+
+            // si no tiene valor por defecto, asignamos null
+            if ($field['default'] === null) {
+                $this->{$key} = null;
+                continue;
+            }
+
+            // convertimos el valor por defecto al tipo adecuado
+            $type = strpos($field['type'], '(') === false ?
+                $field['type'] :
+                substr($field['type'], 0, strpos($field['type'], '('));
+            $this->{$key} = match ($type) {
+                'tinyint', 'boolean' => in_array($field['default'], ['true', 't', '1'], false),
+                'integer', 'int' => intval($field['default']),
+                'decimal', 'double', 'double precision', 'float' => floatval($field['default']),
+                'date' => Tools::date(), // asumimos que el campo fecha nunca tendrá valor por defecto
+                'datetime', 'timestamp' => Tools::dateTime(), // asumimos que el campo datetime nunca tendrá valor por defecto
+                default => $field['default'],
+            };
         }
 
         $this->pipeFalse('clear');
@@ -330,7 +353,29 @@ abstract class ModelClass
     }
 
     /**
-     * @deprecated Use load() or loadWhere() instead
+     * Carga un registro del modelo utilizando un código y opcionalmente condiciones adicionales.
+     *
+     * IMPORTANTE: Este método está deprecado. Se recomienda usar las alternativas siguientes:
+     * - Si solo se proporciona $code: usar directamente load($code)
+     * - Si se proporciona $code junto con $where o $order: usar loadWhere() con las condiciones apropiadas
+     *
+     * Este método actúa como wrapper que redirige a load() cuando solo se proporciona el código,
+     * o a loadWhere() cuando se incluyen condiciones WHERE u ordenamiento adicionales.
+     *
+     * @param mixed $code Código o identificador del registro a cargar. Se usa únicamente cuando
+     *                     no se proporcionan condiciones WHERE adicionales.
+     * @param array $where Array de instancias de Where o DatabaseWhere que definen condiciones
+     *                     de filtrado adicionales. Si se proporciona, el método delega a loadWhere().
+     *                     Por defecto es un array vacío.
+     * @param array $order Array asociativo que define el ordenamiento de los resultados.
+     *                     Las claves son nombres de columnas y los valores la dirección del ordenamiento.
+     *                     Por defecto es un array vacío.
+     *
+     * @return bool Retorna true si se encontró y cargó un registro exitosamente.
+     *              Retorna false si no se encontró ningún registro.
+     * @deprecated Usar load() cuando solo se necesita cargar por código, o loadWhere() cuando
+     *             se requieren condiciones WHERE u ordenamiento adicionales.
+     *
      */
     public function loadFromCode($code, array $where = [], array $order = []): bool
     {
@@ -341,7 +386,7 @@ abstract class ModelClass
         return $this->load($code);
     }
 
-    public function loadFromData(array $data = [], array $exclude = []): void
+    public function loadFromData(array $data = [], array $exclude = [], bool $sync = true): void
     {
         $fields = $this->getModelFields();
         foreach ($data as $key => $value) {
@@ -354,45 +399,43 @@ abstract class ModelClass
 
             // We check if it is a varchar (with established length) or another type of data
             $field = $fields[$key];
-            $type = strpos($field['type'], '(') === false ?
+            $type = !str_contains($field['type'], '(') ?
                 $field['type'] :
                 substr($field['type'], 0, strpos($field['type'], '('));
 
-            switch ($type) {
-                case 'tinyint':
-                case 'boolean':
-                    $this->{$key} = $this->getBoolValueForField($field, $value);
-                    break;
-
-                case 'integer':
-                case 'int':
-                    $this->{$key} = $this->getIntegerValueForField($field, $value);
-                    break;
-
-                case 'decimal':
-                case 'double':
-                case 'double precision':
-                case 'float':
-                    $this->{$key} = $this->getFloatValueForField($field, $value);
-                    break;
-
-                case 'date':
-                    $this->{$key} = empty($value) ? null : Tools::date($value);
-                    break;
-
-                case 'datetime':
-                case 'timestamp':
-                    $this->{$key} = empty($value) ? null : Tools::dateTime($value);
-                    break;
-
-                default:
-                    $this->{$key} = ($value === null && $field['is_nullable'] === 'NO') ? '' : $value;
-            }
+            $this->{$key} = match ($type) {
+                'tinyint', 'boolean' => $this->getBoolValueForField($field, $value),
+                'integer', 'int' => $this->getIntegerValueForField($field, $value),
+                'decimal', 'double', 'double precision', 'float' => $this->getFloatValueForField($field, $value),
+                'date' => empty($value) ? null : Tools::date($value),
+                'datetime', 'timestamp' => empty($value) ? null : Tools::dateTime($value),
+                default => ($value === null && $field['is_nullable'] === 'NO') ? '' : $value,
+            };
         }
 
-        $this->syncOriginal();
+        if ($sync) {
+            $this->syncOriginal();
+        }
     }
 
+    /**
+     * Carga el primer registro que coincida con las condiciones especificadas.
+     *
+     * Este método consulta la tabla asociada al modelo aplicando las condiciones WHERE proporcionadas
+     * y el ordenamiento especificado. Si encuentra un registro, carga sus datos en la instancia actual
+     * del modelo. Si no encuentra ningún registro, limpia la instancia y retorna false.
+     *
+     * @param array $where Array de instancias de Where o DatabaseWhere que definen las condiciones
+     *                     de filtrado para la consulta. Cada elemento representa una condición que
+     *                     debe cumplir el registro a cargar.
+     * @param array $order Array asociativo que define el ordenamiento de los resultados.
+     *                     Las claves son nombres de columnas y los valores indican la dirección
+     *                     del ordenamiento (ej: ['id' => 'DESC', 'nombre' => 'ASC']).
+     *                     Por defecto es un array vacío (sin ordenamiento específico).
+     *
+     * @return bool Retorna true si se encontró y cargó un registro exitosamente.
+     *              Retorna false si no se encontró ningún registro que cumpla las condiciones.
+     */
     public function loadWhere(array $where, array $order = []): bool
     {
         $data = static::table()
@@ -563,16 +606,22 @@ abstract class ModelClass
         return $this->pipeFalse('test');
     }
 
-    public function toArray(): array
+    public function toArray(bool $dynamic_attributes = false): array
     {
         $data = [];
         foreach (array_keys($this->getModelFields()) as $field_name) {
             $data[$field_name] = $this->{$field_name} ?? null;
         }
 
-        $data = $this->pipe('toArray', $data) ?? $data;
+        if ($dynamic_attributes) {
+            foreach ($this->attributes as $key => $value) {
+                if (!array_key_exists($key, $data)) {
+                    $data[$key] = $value;
+                }
+            }
+        }
 
-        return $data;
+        return $this->pipe('toArray', $data, $dynamic_attributes) ?? $data;
     }
 
     public function update(array $values): bool

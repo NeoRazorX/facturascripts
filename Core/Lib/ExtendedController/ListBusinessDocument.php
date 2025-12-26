@@ -167,6 +167,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addView($viewName, $modelName, $label, 'fa-solid fa-copy')
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)
+            ->addOrderBy([$this->tab($viewName)->model->primaryColumn()], 'id')
             ->addOrderBy([$this->tableColToNumber('numero')], 'number')
             ->addOrderBy(['numproveedor'], 'numsupplier')
             ->addOrderBy(['codproveedor'], 'supplier-code')
@@ -188,6 +189,7 @@ abstract class ListBusinessDocument extends ListController
             ->addOrderBy(['codigo'], 'code')
             ->addOrderBy(['codcliente'], 'customer-code')
             ->addOrderBy(['fecha', $this->tableColToNumber('numero')], 'date', 2)
+            ->addOrderBy([$this->tab($viewName)->model->primaryColumn()], 'id')
             ->addOrderBy([$this->tableColToNumber('numero')], 'number')
             ->addOrderBy(['numero2'], 'number2')
             ->addOrderBy(['total'], 'total')
@@ -213,7 +215,7 @@ abstract class ListBusinessDocument extends ListController
             ];
         }
         if (count($optionsGroup) > 3) {
-            $this->addFilterSelectWhere($viewName, 'codgrupo', $optionsGroup);
+            $this->addFilterSelectWhere($viewName, 'codgrupo', $optionsGroup, 'customer-group');
         }
 
         // filtramos por clientes y direcciones
@@ -265,6 +267,9 @@ abstract class ListBusinessDocument extends ListController
 
             case 'lock-invoice':
                 return $this->lockInvoiceAction($codes, $model, $allowUpdate, $this->dataBase);
+
+            case 'pay-invoice':
+                return $this->payInvoiceAction($codes, $model, $allowUpdate, $this->dataBase, $this->user->nick);
 
             case 'pay-receipt':
                 return $this->payReceiptAction($codes, $model, $allowUpdate, $this->dataBase, $this->user->nick);

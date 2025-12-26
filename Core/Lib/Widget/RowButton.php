@@ -76,10 +76,10 @@ class RowButton extends VisualItem
         }
 
         if (empty($this->icon) && empty($this->label)) {
-            $this->icon = 'far fa-question-circle';
+            $this->icon = 'fa-regular fa-question-circle';
         }
 
-        $cssClass = $small ? 'btn me-1 ' : 'btn btn-sm me-1 ';
+        $cssClass = $small ? 'btn btn-spin-action me-1 ' : 'btn btn-sm btn-spin-action me-1 ';
         $cssClass .= empty($this->color) ? 'btn-light' : $this->colorToClass($this->color, 'btn-');
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
         $title = empty($this->title) ? $this->label : $this->title;
@@ -98,23 +98,23 @@ class RowButton extends VisualItem
 
         switch ($this->type) {
             case 'js':
-                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" onclick="' . $this->action
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
                     . '" title="' . $title . '">' . $icon . $label . '</button>';
 
             case 'link':
                 $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
-                return '<a ' . $target . $divID . ' class="btn-spin-action ' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
                     . ' title="' . $title . '">' . $icon . $label . '</a>';
 
             case 'modal':
                 $modal = 'modal' . $this->action;
-                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" data-bs-toggle="modal" data-bs-target="#'
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-bs-toggle="modal" data-bs-target="#'
                     . $modal . '" title="' . $title . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
                     . $icon . $label . '</button>';
 
             default:
                 $onclick = $this->getOnClickValue($viewName, $jsFunction);
-                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" onclick="' . $onclick
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
                     . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
     }
@@ -126,28 +126,28 @@ class RowButton extends VisualItem
         }
 
         if (empty($this->icon) && empty($this->label)) {
-            $this->icon = 'far fa-question-circle';
+            $this->icon = 'fa-regular fa-question-circle';
         }
 
-        $cssClass = 'btn btn-sm ';
+        $cssClass = 'btn btn-sm btn-spin-action ';
         $cssClass .= empty($this->color) ? 'btn-secondary' : $this->colorToClass($this->color, 'btn-');
-        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i>';
+        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw me-1"></i>';
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
         $title = empty($this->title) ? $this->label : $this->title;
 
         $label = '';
         if ($this->label) {
-            $label = ' ' . $this->label;
+            $label = '<span class="d-none d-sm-inline">' . $this->label . '</span>';
         }
 
         switch ($this->type) {
             case 'js':
-                return '<button type="button"' . $divID . ' class="btn-spin-action ' . $cssClass . '" onclick="' . $this->action
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
                     . '" title="' . $title . '">' . $icon . $label . '</button> ';
 
             case 'link':
                 $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
-                return '<a ' . $target . $divID . ' class="btn-spin-action ' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
                     . ' title="' . $title . '">' . $icon . $label . '</a> ';
         }
 

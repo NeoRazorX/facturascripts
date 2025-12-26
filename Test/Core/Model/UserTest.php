@@ -31,6 +31,22 @@ final class UserTest extends TestCase
 {
     use LogErrorsTrait;
 
+    public function testClear(): void
+    {
+        $user = new User();
+        $this->assertFalse($user->admin);
+        $this->assertNull($user->email);
+        $this->assertTrue($user->enabled);
+        $this->assertNull($user->lastactivity);
+        $this->assertNull($user->lastbrowser);
+        $this->assertNull($user->lastip);
+        $this->assertNull($user->logkey);
+        $this->assertNull($user->nick);
+        $this->assertNull($user->password);
+        $this->assertFalse($user->two_factor_enabled);
+        $this->assertNull($user->two_factor_secret_key);
+    }
+
     public function testDefaultUser(): void
     {
         // comprobamos que ya hay un usuario por defecto
