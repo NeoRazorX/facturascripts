@@ -80,18 +80,15 @@ class ListFacturaCliente extends ListBusinessDocument
             ->setSettings('btnNew', false);
 
         // filtros
-        $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
-        $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
-        $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
-        $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
         if (count(Empresas::all()) > 1) {
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
         }
 
-        $currencies = Divisas::codeModel();
-        if (count($currencies) > 2) {
-            $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
-        }
+        $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
+        $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
+        $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
+        $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
+        $this->addFilterPeriod($viewName, 'payment-date', 'payment-date', 'fechapago');
 
         $payMethods = FormasPago::codeModel();
         if (count($payMethods) > 2) {
@@ -100,11 +97,16 @@ class ListFacturaCliente extends ListBusinessDocument
 
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+            ['label' => '------', 'where' => []],
             ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
             ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
             ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
         ]);
-        $this->addFilterPeriod($viewName, 'payment-date', 'payment-date', 'fechapago');
+
+        $currencies = Divisas::codeModel();
+        if (count($currencies) > 2) {
+            $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
+        }
 
         // botones
         $this->addButtonPayReceipt($viewName);

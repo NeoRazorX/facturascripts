@@ -100,10 +100,10 @@ class About extends Controller
             'os_info',
             'php_version',
             'plugins',
+            'server_date',
             'server_software',
             'storage_limit',
-            'storage_used',
-            'server_date'
+            'storage_used'
         );
     }
 
