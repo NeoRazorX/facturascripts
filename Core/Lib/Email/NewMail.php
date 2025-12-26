@@ -367,10 +367,43 @@ class NewMail
             }
         }
 
+        // verificamos que haya al menos un destinatario en TO
+        // si no hay, intentamos mover uno de CC o BCC a TO
+        if (empty($this->getToAddresses())) {
+            $ccAddresses = $this->getCCAddresses();
+            $bccAddresses = $this->getBCCAddresses();
+
+            if (!empty($ccAddresses)) {
+                // movemos el primer CC a TO
+                $firstCC = array_shift($ccAddresses);
+                $this->to($firstCC);
+
+                // limpiamos y volvemos a agregar los CC restantes
+                $this->mail->clearCCs();
+                foreach ($ccAddresses as $email) {
+                    $this->cc($email);
+                }
+            } elseif (!empty($bccAddresses)) {
+                // movemos el primer BCC a TO
+                $firstBCC = array_shift($bccAddresses);
+                $this->to($firstBCC);
+
+                // limpiamos y volvemos a agregar los BCC restantes
+                $this->mail->clearBCCs();
+                foreach ($bccAddresses as $email) {
+                    $this->bcc($email);
+                }
+            } else {
+                // no hay ningún destinatario
+                Tools::log()->warning('email-no-recipients');
+                return false;
+            }
+        }
+
         $this->renderHTML();
         $this->mail->msgHTML($this->html);
 
-        if ('SMTP' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
+        if ('smtp' === strtolower($this->mail->Mailer) && false === $this->mail->smtpConnect($this->smtpOptions())) {
             Tools::log()->warning('mail-server-error');
             return false;
         }
@@ -453,7 +486,7 @@ class NewMail
         $return = [];
         foreach (explode(',', $emails) as $part) {
             $email = trim($part);
-            if (!empty($part)) {
+            if (!empty($email)) {
                 $return[] = $email;
             }
         }
@@ -552,7 +585,7 @@ class NewMail
     protected function saveMailSent(): void
     {
         // Obtiene todas las direcciones de correo electrónico
-        $addresses = array_merge($this->getToAddresses(), $this->getCcAddresses(), $this->getBccAddresses());
+        $addresses = array_merge($this->getToAddresses(), $this->getCCAddresses(), $this->getBCCAddresses());
 
         // Generamos un identificador único para el correo electrónico
         $uuid = uniqid();
