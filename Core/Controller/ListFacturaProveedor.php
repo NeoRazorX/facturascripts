@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
+use FacturaScripts\Core\DataSrc\Empresas;
 
 /**
  * Controller to list the items in the FacturaProveedor model
@@ -111,6 +112,9 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
+        if (count(Empresas::all()) > 1) {
+            $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
+        }
 
         $currencies = Divisas::codeModel();
         if (count($currencies) > 2) {
