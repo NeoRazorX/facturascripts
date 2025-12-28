@@ -128,8 +128,9 @@ class EditSecuenciaDocumento extends EditController
                 $this->setSettings('ListPresupuestoProveedor', 'active', false);
 
                 // en función del tipo de documento, mostramos o no la pestaña de facturas de cliente
-                if ($view->model->tipodoc) {
-                    $this->setSettings('List' . $view->model->tipodoc, 'active', true);
+                $listViewName =  'List' . $view->model->tipodoc;
+                if ($view->model->tipodoc && isset($this->views[$listViewName])) {
+                    $this->setSettings($listViewName, 'active', true);
                 }
                 break;
         }
