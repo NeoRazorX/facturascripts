@@ -728,6 +728,8 @@
     "full-access": "Erabateko sarbidea",
     "full-path": "Bide-izen osoa",
     "gap-found": "Hutsune bat aurkitu da %number%, egun %date%, %codeseries% eta enpresa %idcompany%",
+    "gap-found-not-fillable": "Hueco encontrado para el número %numero%, día %fecha%, %codserie% y empresa %idempresa%, sin embargo no se va a rellenar.",
+    "gaps-out-of-range": "Se han encontrado %count% huecos que no se van a poder rellenar por estar a más de 1000 números del último.",
     "general": "Orokorra",
     "general-concepts": "Kontzeptu orokorrak",
     "general-data": "Datu orokorrak",

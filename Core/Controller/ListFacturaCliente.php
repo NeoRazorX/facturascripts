@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
@@ -27,6 +26,7 @@ use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
@@ -48,6 +48,47 @@ class ListFacturaCliente extends ListBusinessDocument
         $data['title'] = 'invoices';
         $data['icon'] = 'fa-solid fa-file-invoice-dollar';
         return $data;
+    }
+
+    protected function autocompleteAction(): array
+    {
+        $data = $this->requestGet(['source', 'fieldcode', 'fieldtitle', 'strict', 'term']);
+        if ($data['source'] === 'provincias') {
+            $codpais = $this->request->input('filtercountry');
+
+            $where = [];
+            if (empty($codpais) === false) {
+                $where[] = Where::eq('codpais', $codpais);
+            }
+
+            $result = [];
+            foreach ($this->codeModel->search('provincias', $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
+                $result[] = ['key' => $value->code, 'value' => $value->description];
+            }
+
+            return $result;
+        } elseif ($data['source'] === 'ciudades') {
+            $codprovincia = $this->request->input('filterprovincia');
+
+            $where = [];
+            if (empty($codprovincia) === false) {
+                $provincias = Provincia::all([Where::eq('provincia', $codprovincia)]);
+                if (empty($provincias)) {
+                    return [];
+                }
+
+                $where[] = Where::eq('idprovincia', $provincias[0]->idprovincia);
+            }
+
+            $result = [];
+            foreach ($this->codeModel->search('ciudades', $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
+                $result[] = ['key' => $value->code, 'value' => $value->description];
+            }
+
+            return $result;
+        }
+
+        return parent::autocompleteAction();
     }
 
     protected function createViews(): void
@@ -100,9 +141,9 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
             ['label' => '------', 'where' => []],
-            ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
-            ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
-            ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
+            ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagado', true)]],
+            ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagado', false)]],
+            ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencido', true)]],
         ]);
 
         $currencies = Divisas::codeModel();
@@ -130,7 +171,7 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addFilterSelectWhere($viewName, 'idfacturarect', [
             [
                 'label' => Tools::trans('rectified-invoices'),
-                'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
+                'where' => [Where::isNotNull('idfacturarect')]
             ]
         ]);
     }
@@ -150,9 +191,9 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
             ['label' => '------', 'where' => []],
-            ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
-            ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
-            ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
+            ['label' => Tools::trans('paid'), 'where' => [Where::eq('pagada', true)]],
+            ['label' => Tools::trans('unpaid'), 'where' => [Where::eq('pagada', false)]],
+            ['label' => Tools::trans('expired-receipt'), 'where' => [Where::eq('vencida', true)]],
         ]);
         $this->addFilterCheckbox($viewName, 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
 
@@ -187,17 +228,17 @@ class ListFacturaCliente extends ListBusinessDocument
 
         // buscamos todas las facturas de cliente de la secuencia
         $where = [
-            new DataBaseWhere('codserie', $sequence->codserie),
-            new DataBaseWhere('idempresa', $sequence->idempresa)
+            Where::eq('codserie', $sequence->codserie),
+            Where::eq('idempresa', $sequence->idempresa)
         ];
         if ($sequence->codejercicio) {
-            $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
+            $where[] = Where::eq('codejercicio', $sequence->codejercicio);
         }
         $db_type = Tools::config('db_type');
         $orderBy = strtolower($db_type) == 'postgresql' ?
             ['CAST(numero as integer)' => 'ASC'] :
             ['CAST(numero as unsigned)' => 'ASC'];
-        foreach (FacturaCliente::all($where, $orderBy, 0, 0) as $invoice) {
+        foreach (FacturaCliente::all($where, $orderBy) as $invoice) {
             // si el número de la factura es menor que el de la secuencia, saltamos
             if ($invoice->numero < $sequence->inicio) {
                 continue;
@@ -212,10 +253,11 @@ class ListFacturaCliente extends ListBusinessDocument
             // si el número de la factura es mayor que el esperado, añadimos huecos hasta el número
             while ($invoice->numero > $number) {
                 $gaps[] = [
+                    'idempresa' => $invoice->idempresa,
+                    'codejercicio' => $invoice->codejercicio,
                     'codserie' => $invoice->codserie,
-                    'numero' => $number,
                     'fecha' => $invoice->fecha,
-                    'idempresa' => $invoice->idempresa
+                    'numero' => $number,
                 ];
                 $number++;
             }
@@ -227,72 +269,57 @@ class ListFacturaCliente extends ListBusinessDocument
 
     protected function lookForGapsAction(): void
     {
-        $gaps = [];
+        $gapsInRange = [];
+        $gapsOutOfRange = [];
 
         // buscamos todas las secuencias de facturas de cliente que usen huecos
         $where = [
-            new DataBaseWhere('tipodoc', 'FacturaCliente'),
-            new DataBaseWhere('usarhuecos', true)
+            Where::eq('tipodoc', 'FacturaCliente'),
+            Where::eq('usarhuecos', true)
         ];
         foreach (SecuenciaDocumento::all($where) as $sequence) {
-            $gaps = array_merge($gaps, $this->lookForGaps($sequence));
+            // buscamos los huecos de esta secuencia
+            $gaps = $this->lookForGaps($sequence);
+
+            // clasificamos los huecos según estén dentro o fuera del límite de 1000
+            foreach ($gaps as $gap) {
+                if ($gap['numero'] >= $sequence->numero - 1000) {
+                    $gapsInRange[] = $gap;
+                } else {
+                    $gapsOutOfRange[] = $gap;
+                }
+            }
         }
 
         // si no hemos encontrado huecos, mostramos un mensaje
-        if (empty($gaps)) {
+        if (empty($gapsInRange) && empty($gapsOutOfRange)) {
             Tools::log()->notice('no-gaps-found');
             return;
         }
 
-        // si hemos encontrado huecos, los mostramos uno a uno
-        foreach ($gaps as $gap) {
-            Tools::log()->warning('gap-found', [
-                '%codserie%' => Series::get($gap['codserie'])->descripcion,
-                '%numero%' => $gap['numero'],
-                '%fecha%' => $gap['fecha'],
-                '%idempresa%' => Empresas::get($gap['idempresa'])->nombrecorto
-            ]);
-        }
-    }
-
-    protected function autocompleteAction(): array
-    {
-        $data = $this->requestGet(['source', 'fieldcode', 'fieldtitle', 'strict', 'term']);
-        if ($data['source'] === 'provincias') {
-            $codpais = $this->request->input('filtercountry');
-
-            $where = [];
-            if (empty($codpais) === false) {
-                $where[] = new DataBaseWhere('codpais', $codpais);
+        // mostramos primero los huecos que SÍ se rellenarán automáticamente
+        if (!empty($gapsInRange)) {
+            foreach ($gapsInRange as $gap) {
+                Tools::log()->warning('gap-found', [
+                    '%codserie%' => Series::get($gap['codserie'])->descripcion,
+                    '%numero%' => $gap['numero'],
+                    '%fecha%' => $gap['fecha'],
+                    '%idempresa%' => Empresas::get($gap['idempresa'])->nombrecorto
+                ]);
             }
-
-            $result = [];
-            foreach ($this->codeModel->search('provincias', $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
-                $result[] = ['key' => $value->code, 'value' => $value->description];
-            }
-
-            return $result;
-        } elseif ($data['source'] === 'ciudades') {
-            $codprovincia = $this->request->input('filterprovincia');
-
-            $where = [];
-            if (empty($codprovincia) === false) {
-                $provincias = Provincia::all([new DataBaseWhere('provincia', $codprovincia)]);
-                if (empty($provincias)) {
-                    return [];
-                }
-
-                $where[] = new DataBaseWhere('idprovincia', $provincias[0]->idprovincia);
-            }
-
-            $result = [];
-            foreach ($this->codeModel->search('ciudades', $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
-                $result[] = ['key' => $value->code, 'value' => $value->description];
-            }
-
-            return $result;
         }
 
-        return parent::autocompleteAction();
+        // mostramos después los huecos que NO se rellenarán automáticamente
+        if (!empty($gapsOutOfRange)) {
+            Tools::log()->error('gaps-out-of-range', ['%count%' => count($gapsOutOfRange)]);
+            foreach ($gapsOutOfRange as $gap) {
+                Tools::log()->error('gap-found-not-fillable', [
+                    '%codserie%' => Series::get($gap['codserie'])->descripcion,
+                    '%numero%' => $gap['numero'],
+                    '%fecha%' => $gap['fecha'],
+                    '%idempresa%' => Empresas::get($gap['idempresa'])->nombrecorto
+                ]);
+            }
+        }
     }
 }
