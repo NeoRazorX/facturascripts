@@ -295,7 +295,7 @@ class WidgetSelect extends BaseWidget
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
-            if ($option['value'] == $this->value && (!$found || $this->multiple)) {
+            if ($this->valuesMatch($option['value'], $this->value) && (!$found || $this->multiple)) {
                 $found = true;
                 $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
                 continue;
@@ -348,6 +348,28 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
+     * Compares two values for equality, normalizing booleans to strings
+     * and using strict string comparison to avoid type juggling issues.
+     *
+     * @param mixed $value1
+     * @param mixed $value2
+     * @return bool
+     */
+    private function valuesMatch($value1, $value2): bool
+    {
+        // normalize boolean values to string
+        if (is_bool($value1)) {
+            $value1 = $value1 ? '1' : '0';
+        }
+        if (is_bool($value2)) {
+            $value2 = $value2 ? '1' : '0';
+        }
+
+        // use string comparison to avoid type juggling (e.g., "01" != "1")
+        return (string)$value1 === (string)$value2;
+    }
+
+    /**
      * @return string
      */
     protected function show()
@@ -378,8 +400,7 @@ class WidgetSelect extends BaseWidget
 
         $selected = null;
         foreach ($this->values as $option) {
-            // don't use strict comparation (===)
-            if ($option['value'] == $this->value) {
+            if ($this->valuesMatch($option['value'], $this->value)) {
                 $selected = $option['title'];
             }
         }
