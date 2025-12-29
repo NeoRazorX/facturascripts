@@ -113,7 +113,7 @@
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="currency" display="none" order="350">
+        <column name="currency" display="none" order="330">
             <widget type="select" fieldname="coddivisa">
                 <values source="divisas" fieldcode="coddivisa" fieldtitle="coddivisa"/>
             </widget>
