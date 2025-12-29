@@ -283,6 +283,12 @@ abstract class ModelClass
         return $dirty;
     }
 
+    /**
+     * Devuelve el valor original de un campo, si no se indica campo devuelve todo el array original
+     * 
+     * @param string|null $key
+     * @return mixed|null Devuelve el valor original del campo o null si no existe
+     */
     public function getOriginal(?string $key = null)
     {
         if ($key === null) {
