@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
-use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\Provincia;
+use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 
 /**
  * Controller to list the items in the AlbaranCliente model
@@ -54,7 +54,7 @@ class ListAlbaranCliente extends ListBusinessDocument
         }
     }
 
-    protected function createViewsAlbaranes(string $viewName = 'ListAlbaranCliente')
+    protected function createViewsAlbaranes(string $viewName = 'ListAlbaranCliente'): void
     {
         $this->createViewSales($viewName, 'AlbaranCliente', 'delivery-notes');
 
@@ -64,8 +64,8 @@ class ListAlbaranCliente extends ListBusinessDocument
 
         $paises = Paises::codeModel();
         $this->addFilterSelect($viewName, 'country', 'country', 'codpais', $paises);
-        $this->addFilterAutocomplete($viewName, 'provincia', 'provincia', 'provincia', 'provincias');
-        $this->addFilterAutocomplete($viewName, 'ciudad', 'ciudad', 'ciudad', 'ciudades');
+        $this->addFilterAutocomplete($viewName, 'provincia', 'province', 'provincia', 'provincias');
+        $this->addFilterAutocomplete($viewName, 'ciudad', 'city', 'ciudad', 'ciudades');
     }
 
     protected function autocompleteAction(): array
