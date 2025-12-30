@@ -176,9 +176,7 @@ class Empresa extends ModelClass
      */
     public function getLogo(): ?AttachedFile
     {
-        $logo = new AttachedFile();
-        $logo->load($this->idlogo);
-        return $logo->id === 0 ? null : $logo;
+        return $this->belongsTo(AttachedFile::class, 'idlogo');
     }
 
     public function install(): string
