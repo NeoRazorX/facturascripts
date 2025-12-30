@@ -737,10 +737,18 @@ abstract class ModelClass
 
     /**
      * Define una relación uno a uno.
+     * 
+     * Hace uso de la propiedad del modelo (que le indiques en el parámetro $foreignKey) y devuelve el objeto
+     * cargado de la relación definida.
+     * 
+     * Ejemplo:
+     *  - Asigno a "Empresa" $this->idlogo
+     *  - Creo una función que devuelva un belongsTo('AttachedFile', 'idfile') en el Modelo
+     *  - si se llama a esa función (por ejemplo) $miempresa->getLogo(), se recibirá un attachedFile con el logo en $this->idlogo o null
      *
-     * @param string $modelName
-     * @param string $foreignKey
-     * @return object|null
+     * @param string $modelName el nombre o path (model::class) del modelo que se va a usar
+     * @param string $foreignKey el nombre de la columna con la primary key
+     * @return object|null el objeto si se ha encontrado o null
      */
     protected function belongsTo(string $modelName, string $foreignKey): ?object
     {
