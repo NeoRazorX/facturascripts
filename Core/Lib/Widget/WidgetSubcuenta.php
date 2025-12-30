@@ -280,7 +280,8 @@ class WidgetSubcuenta extends WidgetText
     {
         return '<div class="input-group mb-2">'
             . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
-            . Tools::trans('search') . '" onkeydown="widgetSubaccountSearchKp(\'' . $this->id . '\', event);" autofocus>'
+            . Tools::trans('search') . '" oninput="widgetSubaccountSearchKp(\'' . $this->id . '\', event);" '
+            . 'onkeydown="if(event.key===\'Enter\'){event.preventDefault();widgetSubaccountSearch(\'' . $this->id . '\');}" autofocus>'
             . '<button type="button" class="btn btn-primary" onclick="widgetSubaccountSearch(\'' . $this->id . '\');">'
             . '<i class="fa-solid fa-search"></i>'
             . '</button>'

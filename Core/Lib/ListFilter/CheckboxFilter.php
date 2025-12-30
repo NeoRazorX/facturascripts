@@ -57,7 +57,7 @@ class CheckboxFilter extends BaseFilter
     public function getDataBaseWhere(array &$where): bool
     {
         if ('TRUE' === $this->value) {
-            $where[] = new DataBaseWhere($this->field, $this->matchValue, $this->operation);
+            $where[] = new DataBaseWhere($this->field, $this->matchValue, $this->operation, 'AND', true);
             return true;
         }
 

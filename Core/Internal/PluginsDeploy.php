@@ -393,11 +393,19 @@ final class PluginsDeploy
 
                 switch (mb_strtolower($extDom->getAttribute('overwrite'))) {
                     case 'true':
-                        $targetNode = $sourceDom->getElementsByTagName('*')->item($num);
-                        if ($targetNode === null) {
-                            throw new Exception('No target node found at position ' . $num);
+                        // Solo podemos reemplazar nodos hijos directos, no todos los descendientes
+                        if ($num >= 0 && $num < $sourceDom->childNodes->length) {
+                            $targetNode = $sourceDom->childNodes->item($num);
+                            if ($targetNode !== null && $targetNode->parentNode === $sourceDom) {
+                                $sourceDom->replaceChild($newElement, $targetNode);
+                            } else {
+                                // Si no es un hijo directo, simplemente lo añadimos
+                                $sourceDom->appendChild($newElement);
+                            }
+                        } else {
+                            // Si el índice es inválido, añadimos el elemento
+                            $sourceDom->appendChild($newElement);
                         }
-                        $sourceDom->replaceChild($newElement, $targetNode);
                         break;
 
                     default:

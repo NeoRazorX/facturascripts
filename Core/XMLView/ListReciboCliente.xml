@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -77,6 +77,15 @@
         <group name="generate-receipts" title="new">
             <column name="receipts" numcolumns="12">
                 <widget type="number" fieldname="number" min="1" max="100" required="true" icon="fa-solid fa-copy"/>
+            </column>
+            <column name="amount-1" title="amount" description="optional" numcolumns="12">
+                <widget type="money" fieldname="amount_1"/>
+            </column>
+            <column name="amount-2" title="amount" description="optional" numcolumns="12">
+                <widget type="money" fieldname="amount_2"/>
+            </column>
+            <column name="amount-3" title="amount" description="optional" numcolumns="12">
+                <widget type="money" fieldname="amount_3"/>
             </column>
         </group>
     </modals>

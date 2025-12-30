@@ -167,9 +167,9 @@ final class DbUpdater
         foreach ($xml->column as $col) {
             $item = [
                 'name' => (string)$col->name,
-                'type' => (string)$col->type,
+                'type' => strtolower($col->type),
                 'null' => $col->null && strtolower($col->null) === 'no' ? 'NO' : 'YES',
-                'default' => $col->default === '' ? null : (string)$col->default,
+                'default' => (string)$col->default,
                 'rename' => (string)$col->rename,
             ];
 
@@ -285,7 +285,7 @@ final class DbUpdater
                 self::saveChangeLog('change-column-type', $sql_part, ['db' => $column, 'xml' => $xml_col]);
             }
 
-            if ($column['default'] === null && $xml_col['default'] !== '') {
+            if (false === self::compareDefaults($column['default'], $xml_col['default'])) {
                 $sql_part = self::sqlTool()->sqlAlterColumnDefault($table_name, $xml_col);
                 $sql .= $sql_part;
                 self::saveChangeLog('change-column-default', $sql_part, ['db' => $column, 'xml' => $xml_col]);
@@ -352,6 +352,33 @@ final class DbUpdater
             $sql;
     }
 
+    private static function compareDataTypes(string $db_type, string $xml_type): bool
+    {
+        return self::db()->getEngine()->compareDataTypes($db_type, $xml_type);
+    }
+
+    private static function compareDefaults($val1, $val2): bool
+    {
+        // Normalizar valores
+        $val1 = self::normalizeDefault($val1);
+        $val2 = self::normalizeDefault($val2);
+
+        // null y string vacío se consideran equivalentes
+        if (($val1 === null || $val1 === '') && ($val2 === null || $val2 === '')) {
+            return true;
+        }
+
+        // Comparar valores booleanos en todas sus formas
+        $bool1 = self::getBoolValue($val1);
+        $bool2 = self::getBoolValue($val2);
+        if ($bool1 !== null && $bool2 !== null) {
+            return $bool1 === $bool2;
+        }
+
+        // Comparación normal (con conversión de tipo)
+        return $val1 == $val2;
+    }
+
     private static function compareIndexes(string $table_name, array $xml_indexes, array $db_indexes): string
     {
         // Agregamos fs_ al inicio del 'name'
@@ -398,9 +425,17 @@ final class DbUpdater
         return $sql;
     }
 
-    private static function compareDataTypes(string $db_type, string $xml_type): bool
+    private static function getBoolValue($value): ?bool
     {
-        return self::db()->getEngine()->compareDataTypes($db_type, $xml_type);
+        if ($value === true || $value === 1 || $value === '1' || strtolower($value ?? '') === 'true') {
+            return true;
+        }
+
+        if ($value === false || $value === 0 || $value === '0' || strtolower($value ?? '') === 'false') {
+            return false;
+        }
+
+        return null;
     }
 
     private static function needRename(array $db_cols, array $xml_col): bool
@@ -412,6 +447,26 @@ final class DbUpdater
         // comprobamos si la columna a renombrar existe
         $column = self::searchInArray($db_cols, 'name', $xml_col['rename']);
         return !empty($column);
+    }
+
+    private static function normalizeDefault($value)
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        // Convertir a string si no lo es
+        $value = (string)$value;
+
+        // Eliminar comillas simples al inicio y final
+        $value = trim($value, "'\"");
+
+        // Eliminar casteos de PostgreSQL (ej: ::character varying)
+        if (strpos($value, '::') !== false) {
+            $value = substr($value, 0, strpos($value, '::'));
+        }
+
+        return $value === '' ? null : $value;
     }
 
     private static function save(string $table_name): void

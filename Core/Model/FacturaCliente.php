@@ -52,6 +52,11 @@ class FacturaCliente extends SalesDocument
         $this->vencida = false;
     }
 
+    public function getAuditChannel(): string
+    {
+        return LogMessage::AUDIT_CHANNEL;
+    }
+
     /**
      * Returns the lines associated with the invoice.
      *
@@ -86,6 +91,32 @@ class FacturaCliente extends SalesDocument
         $this->pipe('getNewLine', $newLine, $data, $exclude);
 
         return $newLine;
+    }
+
+    /**
+     * Returns a new receipt for the invoice.
+     *
+     * @param int $numero
+     * @param array $data
+     *
+     * @return DinReciboCliente
+     */
+    public function getNewReceipt(int $numero = 1, array $data = []): DinReciboCliente
+    {
+        $newReceipt = new DinReciboCliente();
+        $newReceipt->codcliente = $this->codcliente;
+        $newReceipt->coddivisa = $this->coddivisa;
+        $newReceipt->idempresa = $this->idempresa;
+        $newReceipt->idfactura = $this->idfactura;
+        $newReceipt->numero = $numero;
+        $newReceipt->fecha = $this->fecha;
+        $newReceipt->setPaymentMethod($this->codpago);
+        $newReceipt->loadFromData($data, ['idrecibo']);
+
+        // allow extensions
+        $this->pipe('getNewReceipt', $newReceipt, $numero, $data);
+
+        return $newReceipt;
     }
 
     /**

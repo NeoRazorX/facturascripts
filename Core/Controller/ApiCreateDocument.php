@@ -385,21 +385,20 @@ class ApiCreateDocument extends ApiController
                     $newLine->setTax($newCodimpuesto);
                 }
             }
-
-            if (!empty($line['suplido'] ?? '')) {
-                $newLine->suplido = (bool)$line['suplido'];
+            if (array_key_exists('suplido', $line)) {
+                $newLine->suplido = $this->toBool($line['suplido']);
             }
 
-            if (!empty($line['mostrar_cantidad'] ?? '')) {
-                $newLine->mostrar_cantidad = (bool)$line['mostrar_cantidad'];
+            if (array_key_exists('mostrar_cantidad', $line)) {
+                $newLine->mostrar_cantidad = $this->toBool($line['mostrar_cantidad']);
             }
 
-            if (!empty($line['mostrar_precio'] ?? '')) {
-                $newLine->mostrar_precio = (bool)$line['mostrar_precio'];
+            if (array_key_exists('mostrar_precio', $line)) {
+                $newLine->mostrar_precio = $this->toBool($line['mostrar_precio']);
             }
 
-            if (!empty($line['salto_pagina'] ?? '')) {
-                $newLine->salto_pagina = (bool)$line['salto_pagina'];
+            if (array_key_exists('salto_pagina', $line)) {
+                $newLine->salto_pagina = $this->toBool($line['salto_pagina']);
             }
 
             $newLines[] = $newLine;
@@ -417,5 +416,27 @@ class ApiCreateDocument extends ApiController
         }
 
         return true;
+    }
+
+    /**
+     * Convierte un valor a booleano.
+     * Acepta: true, false, 1, 0, "1", "0", "true", "false"
+     */
+    protected function toBool($value): bool
+    {
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_numeric($value)) {
+            return (bool)$value;
+        }
+
+        if (is_string($value)) {
+            $lower = strtolower(trim($value));
+            return in_array($lower, ['1', 'true', 'yes', 'on'], true);
+        }
+
+        return (bool)$value;
     }
 }

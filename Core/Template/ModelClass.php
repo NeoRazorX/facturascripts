@@ -158,7 +158,8 @@ abstract class ModelClass
         // Update the attributes with the new id
         $this->{$this->primaryColumn()} = $new_id;
 
-        $this->syncOriginal();
+        // sync original
+        $this->original[$this->primaryColumn()] = $this->id();
         $this->clearCache();
 
         return $this->pipeFalse('changePrimaryColumnValueAfter');
@@ -197,8 +198,8 @@ abstract class ModelClass
                 'tinyint', 'boolean' => in_array($field['default'], ['true', 't', '1'], false),
                 'integer', 'int' => intval($field['default']),
                 'decimal', 'double', 'double precision', 'float' => floatval($field['default']),
-                'date' => Tools::date($field['default']),
-                'datetime', 'timestamp' => Tools::dateTime($field['default']),
+                'date' => Tools::date(), // asumimos que el campo fecha nunca tendrá valor por defecto
+                'datetime', 'timestamp' => Tools::dateTime(), // asumimos que el campo datetime nunca tendrá valor por defecto
                 default => $field['default'],
             };
         }
@@ -283,6 +284,12 @@ abstract class ModelClass
         return $dirty;
     }
 
+    /**
+     * Devuelve el valor original de un campo, si no se indica campo devuelve todo el array original
+     *
+     * @param string|null $key
+     * @return mixed|null Devuelve el valor original del campo o null si no existe
+     */
     public function getOriginal(?string $key = null)
     {
         if ($key === null) {
@@ -318,6 +325,15 @@ abstract class ModelClass
         return CSVImport::importTableSQL(static::tableName());
     }
 
+    /**
+     * Comprueba si los campos del modelo han sido modificados.
+     * Devuelve true si hay cambios, false en caso contrario.
+     *
+     * Si introduces un parámetro key, comprueba solo ese campo
+     *
+     * @param string|null $key
+     * @return bool true si ha sido modificado, false en caso contrario
+     */
     public function isDirty(?string $key = null): bool
     {
         if ($key === null) {
@@ -334,6 +350,13 @@ abstract class ModelClass
         return $current !== $original;
     }
 
+    /**
+     * Carga un modelo dada su primary key
+     *
+     * @param mixed $code Código o identificador del registro a cargar
+     *
+     * @return bool Devuelve true si se encontró y cargó un registro exitosamente.
+     */
     public function load($code): bool
     {
         if (null === $code) {
@@ -536,6 +559,11 @@ abstract class ModelClass
         return $this->pipeFalse('reload');
     }
 
+    /**
+     * Guarda el modelo en la base de datos después de ejecutar las comprobaciones `$this->test()`
+     *
+     * @return bool Devuelve true si se ha guardado correctamente, false en caso contrario
+     */
     public function save(): bool
     {
         if (false === $this->pipeFalse('saveBefore')) {
@@ -577,6 +605,11 @@ abstract class ModelClass
         }
     }
 
+    /**
+     * Realiza pruebas de validación sobre los campos del modelo antes de guardarlo.
+     *
+     * @return bool Devuelve true si todas las pruebas pasan, false en caso contrario
+     */
     public function test(): bool
     {
         if (false === $this->pipeFalse('testBefore')) {
@@ -606,6 +639,12 @@ abstract class ModelClass
         return $this->pipeFalse('test');
     }
 
+    /**
+     * Devuelve un array con los campos y valores del modelo.
+     *
+     * @param bool $dynamic_attributes Si es true, añade también los atributos dinámicos al array resultante
+     * @return array Array asociativo con los campos y valores del modelo
+     */
     public function toArray(bool $dynamic_attributes = false): array
     {
         $data = [];
@@ -624,6 +663,12 @@ abstract class ModelClass
         return $this->pipe('toArray', $data, $dynamic_attributes) ?? $data;
     }
 
+    /**
+     * Actualiza el modelo con los valores proporcionados en el array
+     *
+     * @param array $values Array asociativo con los campos y valores a actualizar
+     * @return bool Devuelve true si la actualización se ha realizado correctamente, false en caso
+     */
     public function update(array $values): bool
     {
         if (null === $this->id()) {
@@ -658,6 +703,13 @@ abstract class ModelClass
         return $this->pipeFalse('update');
     }
 
+    /**
+     * Genera una URL para el modelo según el tipo especificado.
+     *
+     * @param string $type Tipo de URL a generar. Puede ser 'auto', 'edit', 'list' o 'new'.
+     * @param string $list Nombre de la lista a utilizar en la URL cuando el tipo es 'list' o 'auto'.
+     * @return string URL generada para el modelo
+     */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         $return = $this->pipe('url', $type, $list);
@@ -684,7 +736,7 @@ abstract class ModelClass
     }
 
     /**
-     * Define a one-to-one relationship.
+     * Define una relación uno a uno.
      *
      * @param string $modelName
      * @param string $foreignKey
@@ -713,6 +765,11 @@ abstract class ModelClass
         });
     }
 
+    /**
+     * Devuelve la instancia de la base de datos actual.
+     *
+     * @return DataBase
+     */
     protected static function db(): DataBase
     {
         if (self::$dataBase === null) {
@@ -779,10 +836,9 @@ abstract class ModelClass
     }
 
     /**
-     * This method is called before save (update) when some field has changed.
+     * Este método se llama antes de guardar (insertar) un nuevo registro en la base de datos.
      *
      * @param string $field
-     *
      * @return bool
      */
     protected function onChange(string $field): bool
@@ -795,7 +851,7 @@ abstract class ModelClass
     }
 
     /**
-     * This method is called after a record is removed from the database.
+     * Este método se llama al eliminar un registro de la base de datos.
      */
     protected function onDelete(): void
     {
@@ -803,7 +859,7 @@ abstract class ModelClass
     }
 
     /**
-     * This method is called after a new record is saved on the database (saveInsert).
+     * Este método se llama al insertar un nuevo registro en la base de datos (saveInsert).
      */
     protected function onInsert(): void
     {
@@ -811,7 +867,7 @@ abstract class ModelClass
     }
 
     /**
-     * This method is called after a record is updated on the database (saveUpdate).
+     * Este método se llama al insertar un nuevo registro en la base de datos (saveUpdate).
      */
     protected function onUpdate(): void
     {
@@ -853,6 +909,11 @@ abstract class ModelClass
         return $this->pipeFalse('saveInsert');
     }
 
+    /**
+     * Este método se llama al actualizar un registro existente en la base de datos.
+     *
+     * @return bool Devuelve true si la actualización se realizó correctamente, false en caso contrario
+     */
     protected function saveUpdate(): bool
     {
         foreach (array_keys($this->original) as $field) {

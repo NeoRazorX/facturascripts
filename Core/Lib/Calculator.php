@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\ImpuestoZona;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
@@ -65,12 +66,12 @@ class Calculator
         $doc->totalsuplidos = $subtotals['totalsuplidos'];
 
         // si tiene totalbeneficio, lo asignamos
-        if (property_exists($doc, 'totalbeneficio')) {
+        if ($doc->hasColumn('totalbeneficio')) {
             $doc->totalbeneficio = $subtotals['totalbeneficio'];
         }
 
         // si tiene totalcoste, lo asignamos
-        if (property_exists($doc, 'totalcoste')) {
+        if ($doc->hasColumn('totalcoste')) {
             $doc->totalcoste = $subtotals['totalcoste'];
         }
 
@@ -185,32 +186,32 @@ class Calculator
 
         // redondeamos los IVA
         foreach ($subtotals['iva'] as $key => $value) {
-            $subtotals['iva'][$key]['neto'] = round($value['neto'], FS_NF0);
-            $subtotals['iva'][$key]['netosindto'] = round($value['netosindto'], FS_NF0);
-            $subtotals['iva'][$key]['totaliva'] = round($value['totaliva'], FS_NF0);
-            $subtotals['iva'][$key]['totalrecargo'] = round($value['totalrecargo'], FS_NF0);
+            $subtotals['iva'][$key]['neto'] = Tools::round($value['neto']);
+            $subtotals['iva'][$key]['netosindto'] = Tools::round($value['netosindto']);
+            $subtotals['iva'][$key]['totaliva'] = Tools::round($value['totaliva']);
+            $subtotals['iva'][$key]['totalrecargo'] = Tools::round($value['totalrecargo']);
 
             // trasladamos a los subtotales
-            $subtotals['neto'] += round($value['neto'], FS_NF0);
-            $subtotals['netosindto'] += round($value['netosindto'], FS_NF0);
-            $subtotals['totaliva'] += round($value['totaliva'], FS_NF0);
-            $subtotals['totalrecargo'] += round($value['totalrecargo'], FS_NF0);
+            $subtotals['neto'] += Tools::round($value['neto']);
+            $subtotals['netosindto'] += Tools::round($value['netosindto']);
+            $subtotals['totaliva'] += Tools::round($value['totaliva']);
+            $subtotals['totalrecargo'] += Tools::round($value['totalrecargo']);
         }
 
         // redondeamos los subtotales
-        $subtotals['neto'] = round($subtotals['neto'], FS_NF0);
-        $subtotals['netosindto'] = round($subtotals['netosindto'], FS_NF0);
-        $subtotals['totalirpf'] = round($subtotals['totalirpf'], FS_NF0);
-        $subtotals['totaliva'] = round($subtotals['totaliva'], FS_NF0);
-        $subtotals['totalrecargo'] = round($subtotals['totalrecargo'], FS_NF0);
-        $subtotals['totalsuplidos'] = round($subtotals['totalsuplidos'], FS_NF0);
+        $subtotals['neto'] = Tools::round($subtotals['neto']);
+        $subtotals['netosindto'] = Tools::round($subtotals['netosindto']);
+        $subtotals['totalirpf'] = Tools::round($subtotals['totalirpf']);
+        $subtotals['totaliva'] = Tools::round($subtotals['totaliva']);
+        $subtotals['totalrecargo'] = Tools::round($subtotals['totalrecargo']);
+        $subtotals['totalsuplidos'] = Tools::round($subtotals['totalsuplidos']);
 
         // calculamos el beneficio
-        $subtotals['totalbeneficio'] = round($subtotals['neto'] - $subtotals['totalcoste'], FS_NF0);
+        $subtotals['totalbeneficio'] = Tools::round($subtotals['neto'] - $subtotals['totalcoste']);
 
         // calculamos el total
-        $subtotals['total'] = round($subtotals['neto'] + $subtotals['totalsuplidos'] + $subtotals['totaliva']
-            + $subtotals['totalrecargo'] - $subtotals['totalirpf'], FS_NF0);
+        $subtotals['total'] = Tools::round($subtotals['neto'] + $subtotals['totalsuplidos'] + $subtotals['totaliva']
+            + $subtotals['totalrecargo'] - $subtotals['totalirpf']);
 
         return $subtotals;
     }
@@ -287,7 +288,7 @@ class Calculator
         $doc->totalsuplidos = 0.0;
 
         // si tiene totalcoste, lo reiniciamos
-        if (property_exists($doc, 'totalcoste')) {
+        if ($doc->hasColumn('totalcoste')) {
             $doc->totalcoste = 0.0;
         }
 

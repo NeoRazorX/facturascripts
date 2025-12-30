@@ -142,7 +142,7 @@ class CalculatorModSpain implements CalculatorModInterface
 
         $subject = $doc->getSubject();
         $addressShipping = new Contacto();
-        if (property_exists($doc, 'idcontactoenv')) {
+        if ($doc->hasColumn('idcontactoenv')) {
             $addressShipping->load($doc->idcontactoenv);
         }
 

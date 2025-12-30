@@ -145,6 +145,7 @@ class ReportTaxes extends Controller
                 Tools::trans('date') => $hide ? '' : Tools::date($row['fecha']),
                 Tools::trans('name') => $hide ? '' : Tools::fixHtml($row['nombre']),
                 Tools::trans('cifnif') => $hide ? '' : $row['cifnif'],
+                Tools::trans('subaccount') => $hide ? '' : $row['codsubcuenta'] ?? '',
                 Tools::trans('country') => $hide ? '' : ($row['codpais'] ? Paises::get($row['codpais'])->nombre : ''),
                 Tools::trans('net') => $this->exportFieldFormat('number', $row['neto']),
                 Tools::trans('pct-tax') => $this->exportFieldFormat('number', $row['iva']),
@@ -239,9 +240,10 @@ class ReportTaxes extends Controller
         switch ($this->source) {
             case 'purchases':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor, f.fecha, f.fechadevengo, f.nombre, f.cifnif, l.pvptotal,'
-                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion'
+                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion, pr.codsubcuenta'
                     . ' FROM lineasfacturasprov AS l'
                     . ' LEFT JOIN facturasprov AS f ON l.idfactura = f.idfactura '
+                    . ' LEFT JOIN proveedores AS pr ON f.codproveedor = pr.codproveedor'  
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
                     . ' AND ' . $columnDate . ' >= ' . $this->dataBase->var2str($this->datefrom)
                     . ' AND ' . $columnDate . ' <= ' . $this->dataBase->var2str($this->dateto)
@@ -251,9 +253,10 @@ class ReportTaxes extends Controller
 
             case 'sales':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numero2, f.fecha, f.fechadevengo, f.nombrecliente AS nombre, f.cifnif, l.pvptotal,'
-                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion, f.codpais'
+                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total, f.operacion, f.codpais, cl.codsubcuenta'
                     . ' FROM lineasfacturascli AS l'
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
+                    . ' LEFT JOIN clientes AS cl ON f.codcliente = cl.codcliente'
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
                     . ' AND ' . $columnDate . ' >= ' . $this->dataBase->var2str($this->datefrom)
                     . ' AND ' . $columnDate . ' <= ' . $this->dataBase->var2str($this->dateto)
@@ -296,6 +299,7 @@ class ReportTaxes extends Controller
                     $row['fecha'] :
                     $row['fechadevengo'] ?? $row['fecha'],
                 'nombre' => $row['nombre'],
+                'codsubcuenta' => $row['codsubcuenta'],
                 'cifnif' => $row['cifnif'],
                 'neto' => $row['suplido'] ? 0 : $pvpTotal,
                 'iva' => $row['suplido'] ? 0 : (float)$row['iva'],

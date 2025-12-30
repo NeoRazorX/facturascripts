@@ -23,8 +23,10 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\Email\HtmlBlock as DinHtmlBlock;
 use FacturaScripts\Dinamic\Lib\Email\TextBlock as DinTextBlock;
+use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
@@ -349,10 +351,59 @@ class NewMail
         $this->mail->setFrom($this->fromEmail, $this->fromName);
         $this->mail->Subject = $this->title;
 
+        // comprobamos que tenemos todos los emails en copia configurados añadidos
+        $emailAddedCC = $this->getCCAddresses();
+        foreach (static::splitEmails(Tools::settings('email', 'emailcc', '')) as $email) {
+            if (!in_array($email, $emailAddedCC) && Validator::email($email)) {
+                $this->cc($email);
+            }
+        }
+
+        // comprobamos que tenemos todos los emails en copia oculta configurados añadidos
+        $emailAddedBCC = $this->getBCCAddresses();
+        foreach (static::splitEmails(Tools::settings('email', 'emailbcc', '')) as $email) {
+            if (!in_array($email, $emailAddedBCC) && Validator::email($email)) {
+                $this->bcc($email);
+            }
+        }
+
+        // verificamos que haya al menos un destinatario en TO
+        // si no hay, intentamos mover uno de CC o BCC a TO
+        if (empty($this->getToAddresses())) {
+            $ccAddresses = $this->getCCAddresses();
+            $bccAddresses = $this->getBCCAddresses();
+
+            if (!empty($ccAddresses)) {
+                // movemos el primer CC a TO
+                $firstCC = array_shift($ccAddresses);
+                $this->to($firstCC);
+
+                // limpiamos y volvemos a agregar los CC restantes
+                $this->mail->clearCCs();
+                foreach ($ccAddresses as $email) {
+                    $this->cc($email);
+                }
+            } elseif (!empty($bccAddresses)) {
+                // movemos el primer BCC a TO
+                $firstBCC = array_shift($bccAddresses);
+                $this->to($firstBCC);
+
+                // limpiamos y volvemos a agregar los BCC restantes
+                $this->mail->clearBCCs();
+                foreach ($bccAddresses as $email) {
+                    $this->bcc($email);
+                }
+            } else {
+                // no hay ningún destinatario
+                Tools::log()->warning('email-no-recipients');
+                return false;
+            }
+        }
+
         $this->renderHTML();
         $this->mail->msgHTML($this->html);
 
-        if ('SMTP' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
+        if ('smtp' === strtolower($this->mail->Mailer) && false === $this->mail->smtpConnect($this->smtpOptions())) {
             Tools::log()->warning('mail-server-error');
             return false;
         }
@@ -435,7 +486,7 @@ class NewMail
         $return = [];
         foreach (explode(',', $emails) as $part) {
             $email = trim($part);
-            if (!empty($part)) {
+            if (!empty($email)) {
                 $return[] = $email;
             }
         }
@@ -509,9 +560,19 @@ class NewMail
      */
     protected function renderHTML(): void
     {
+        $logoUrl = '';
+
+        $logoId = Tools::settings('email', 'idlogo');
+        if (!empty($logoId)) {
+            $attFile = AttachedFile::find($logoId);
+            if ($attFile) {
+                $logoUrl = Tools::siteUrl() . '/' . $attFile->url('download-permanent');
+            }
+        }
+
         $this->html = Html::render('Email/' . static::$template, [
             'company' => $this->empresa,
-            'logoId' => Tools::settings('email', 'idlogo'),
+            'logoUrl' => $logoUrl,
             'footerBlocks' => $this->getFooterBlocks(),
             'mainBlocks' => $this->getMainBlocks(),
             'title' => $this->title
@@ -524,7 +585,7 @@ class NewMail
     protected function saveMailSent(): void
     {
         // Obtiene todas las direcciones de correo electrónico
-        $addresses = array_merge($this->getToAddresses(), $this->getCcAddresses(), $this->getBccAddresses());
+        $addresses = array_merge($this->getToAddresses(), $this->getCCAddresses(), $this->getBCCAddresses());
 
         // Generamos un identificador único para el correo electrónico
         $uuid = uniqid();

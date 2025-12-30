@@ -183,7 +183,7 @@ class Installer implements ControllerInterface
 
     private function getUserLanguage(): string
     {
-        $dataLanguage = explode(';', filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
+        $dataLanguage = explode(';', filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE') ?? '');
         $userLanguage = str_replace('-', '_', explode(',', $dataLanguage[0])[0]);
         return file_exists(FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json') ? $userLanguage : 'en_EN';
     }

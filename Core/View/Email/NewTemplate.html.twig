@@ -92,15 +92,15 @@
         <div id="body">
             {% block body %}
                 <table style="width:100%; background-color:#f6f9fc; color:black" >
-                    {% if logoId %}
+                    {% if logoUrl %}
                         <tr>
                             <td>&nbsp;&nbsp;&nbsp;</td>
                             <td style="padding:10px; text-align:center">
                                 {% if company.web is empty %}
-                                    <img class="email-logo" src="{{ attachedFile(logoId).url('download-permanent') }}" alt="{{ company.nombrecorto }}"/>
+                                    <img class="email-logo" src="{{ logoUrl }}" alt="{{ company.nombrecorto }}"/>
                                 {% else %}
                                     <a href="{{ company.web }}" style="text-decoration:none">
-                                        <img class="email-logo" src="{{ attachedFile(logoId).url('download-permanent') }}" alt="{{ company.nombrecorto }}"/>
+                                        <img class="email-logo" src="{{ logoUrl }}" alt="{{ company.nombrecorto }}"/>
                                     </a>
                                 {% endif %}
                             </td>

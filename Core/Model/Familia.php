@@ -276,8 +276,10 @@ class Familia extends ModelClass
         $fam->madre = $this->madre;
         while ($fam->madre && $fam->load($fam->madre)) {
             if (in_array($fam->codfamilia, $ancestros)) {
+                Tools::log()->warning('parent-family-cant-be-child');
                 return false;
             }
+
             $ancestros[] = $fam->codfamilia;
         }
 

@@ -37,8 +37,7 @@
         </group>
         <group name="accounting" numcolumns="12">
             <column name="company" titleurl="ListEmpresa" numcolumns="2" order="100">
-                <widget type="select" fieldname="idempresa" icon="fa-solid fa-building" onclick="EditEmpresa" required="true"
-                        readonly="dinamic">
+                <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true" readonly="dinamic">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
                 </widget>
             </column>

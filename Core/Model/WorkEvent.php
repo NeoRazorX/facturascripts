@@ -37,6 +37,9 @@ class WorkEvent extends ModelClass
     /** @var string */
     public $done_date;
 
+    /** @var float */
+    public $execution_time;
+
     /** @var int */
     public $id;
 

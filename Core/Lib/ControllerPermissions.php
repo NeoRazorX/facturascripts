@@ -61,10 +61,6 @@ final class ControllerPermissions
             return;
         }
 
-        if ($user === null) {
-            return;
-        }
-
         if ($user->admin) {
             $this->grantAdminPermissions();
         } else {

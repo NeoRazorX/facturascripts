@@ -203,7 +203,25 @@ final class Plugin
 
     public function hasUpdate(): bool
     {
-        return $this->version < $this->forja('version', 0.0);
+        // obtenemos los builds disponibles para este plugin
+        foreach (Forja::getBuildsByName($this->name) as $build) {
+            // comprobamos si hay una versión estable más reciente
+            if ($build['stable'] && $build['version'] > $this->version) {
+                return true;
+            }
+
+            // si no están habilitadas las actualizaciones beta, continuamos
+            if (false === Tools::settings('default', 'enableupdatesbeta', false)) {
+                continue;
+            }
+
+            // comprobamos si hay una versión beta más reciente
+            if ($build['beta'] && $build['version'] > $this->version) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function init(): bool

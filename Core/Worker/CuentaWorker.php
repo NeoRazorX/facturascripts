@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Worker;
 
 use FacturaScripts\Core\Model\WorkEvent;
 use FacturaScripts\Core\Template\WorkerClass;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cuenta;
 
 /**
@@ -35,7 +36,7 @@ class CuentaWorker extends WorkerClass
 
         // si es una subcuenta, su cuenta padre es idcuenta, para cuentas es parent_idcuenta
         $id = $event->param('parent_idcuenta') ?? $event->param('idcuenta');
-        if (false === $cuenta->loadFromCode($id)) {
+        if (false === $cuenta->load($id)) {
             return $this->done();
         }
 
@@ -61,9 +62,9 @@ class CuentaWorker extends WorkerClass
         $diffSaldo = abs($cuenta->saldo - ($debe - $haber));
         if ($diffDebe >= 0.009 || $diffHaber >= 0.009 || $diffSaldo >= 0.009) {
             // actualizamos la cuenta
-            $cuenta->debe = round($debe, FS_NF0);
-            $cuenta->haber = round($haber, FS_NF0);
-            $cuenta->saldo = round($debe - $haber, FS_NF0);
+            $cuenta->debe = Tools::round($debe);
+            $cuenta->haber = Tools::round($haber);
+            $cuenta->saldo = Tools::round($debe - $haber);
             $cuenta->disableAdditionalTest(true);
             $cuenta->save();
         }

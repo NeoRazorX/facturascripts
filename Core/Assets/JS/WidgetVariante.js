@@ -84,11 +84,19 @@ function widgetVarianteSearch(id) {
     });
 }
 
+// Objeto para almacenar los timeouts de cada instancia del widget
+let widgetVarianteSearchTimeouts = {};
+
 function widgetVarianteSearchKp(id, event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        widgetVarianteSearch(id);
+    // Limpiar el timeout anterior si existe
+    if (widgetVarianteSearchTimeouts[id]) {
+        clearTimeout(widgetVarianteSearchTimeouts[id]);
     }
+
+    // Crear un nuevo timeout para buscar después de 400ms
+    widgetVarianteSearchTimeouts[id] = setTimeout(function() {
+        widgetVarianteSearch(id);
+    }, 400);
 }
 
 function widgetVarianteSelect(id, value) {
