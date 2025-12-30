@@ -338,6 +338,159 @@ final class AgenciaTransporteTest extends TestCase
         $this->assertTrue($agency2->delete(), 'agency-cant-delete-after-dirty-after-save');
     }
 
+    public function testChangeId(): void
+    {
+        // creamos una agencia de transporte con un codtrans específico
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'OLD';
+        $agency->nombre = 'Test Agency for ChangeId';
+        $agency->telefono = '+34 922 000 000';
+        $this->assertTrue($agency->save(), 'agency-cant-save-for-changeid');
+
+        // verificamos que existe con el codtrans original
+        $this->assertEquals('OLD', $agency->codtrans, 'agency-wrong-codtrans-before-change');
+        $this->assertEquals('OLD', $agency->id(), 'agency-wrong-id-before-change');
+        $this->assertTrue($agency->exists(), 'agency-not-exists-before-change');
+
+        // cambiamos el codtrans a un nuevo valor
+        $this->assertTrue($agency->changeId('NEW'), 'agency-cant-changeid');
+
+        // verificamos que el codtrans ha cambiado en el objeto
+        $this->assertEquals('NEW', $agency->codtrans, 'agency-codtrans-not-changed');
+        $this->assertEquals('NEW', $agency->id(), 'agency-id-not-changed');
+
+        // verificamos que el antiguo codtrans ya no existe en la base de datos
+        $oldAgency = new AgenciaTransporte();
+        $this->assertFalse($oldAgency->loadWhereEq('codtrans', 'OLD'), 'agency-old-codtrans-still-exists');
+
+        // verificamos que el nuevo codtrans existe en la base de datos
+        $newAgency = new AgenciaTransporte();
+        $this->assertTrue($newAgency->loadWhereEq('codtrans', 'NEW'), 'agency-new-codtrans-not-exists');
+        $this->assertEquals('Test Agency for ChangeId', $newAgency->nombre, 'agency-nombre-wrong-after-changeid');
+        $this->assertEquals('+34 922 000 000', $newAgency->telefono, 'agency-telefono-wrong-after-changeid');
+
+        // verificamos que getOriginal devuelve el nuevo valor después del cambio
+        $this->assertEquals('NEW', $agency->getOriginal('codtrans'), 'agency-getoriginal-codtrans-wrong-after-changeid');
+
+        // borramos la agencia de transporte
+        $this->assertTrue($newAgency->delete(), 'agency-cant-delete-after-changeid');
+    }
+
+    public function testChangeIdWithEmptyValue(): void
+    {
+        // creamos una agencia de transporte
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'TEST1';
+        $agency->nombre = 'Test Agency';
+        $this->assertTrue($agency->save(), 'agency-cant-save-for-changeid-empty');
+
+        // intentamos cambiar a un valor vacío (debe fallar)
+        $this->assertFalse($agency->changeId(''), 'agency-changeid-empty-should-fail');
+        $this->assertFalse($agency->changeId(null), 'agency-changeid-null-should-fail');
+
+        // verificamos que el codtrans no ha cambiado
+        $this->assertEquals('TEST1', $agency->codtrans, 'agency-codtrans-changed-with-empty');
+
+        // borramos la agencia de transporte
+        $this->assertTrue($agency->delete(), 'agency-cant-delete-after-changeid-empty');
+    }
+
+    public function testChangeIdWithSameValue(): void
+    {
+        // creamos una agencia de transporte
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'TEST2';
+        $agency->nombre = 'Test Agency';
+        $this->assertTrue($agency->save(), 'agency-cant-save-for-changeid-same');
+
+        // intentamos cambiar al mismo valor (debe fallar)
+        $this->assertFalse($agency->changeId('TEST2'), 'agency-changeid-same-should-fail');
+
+        // verificamos que sigue existiendo con el mismo codtrans
+        $this->assertEquals('TEST2', $agency->codtrans, 'agency-codtrans-changed-incorrectly');
+        $this->assertTrue($agency->exists(), 'agency-not-exists-after-changeid-same');
+
+        // borramos la agencia de transporte
+        $this->assertTrue($agency->delete(), 'agency-cant-delete-after-changeid-same');
+    }
+
+    public function testChangeIdKeepsDirtyFields(): void
+    {
+        // creamos una agencia de transporte
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'OLDCODE';
+        $agency->nombre = 'Original Name';
+        $agency->telefono = '+34 922 000 000';
+        $agency->web = 'https://www.original.com';
+        $this->assertTrue($agency->save(), 'agency-cant-save-for-changeid-dirty');
+
+        // cargamos la agencia de transporte
+        $agency2 = new AgenciaTransporte();
+        $this->assertTrue($agency2->loadWhereEq('codtrans', 'OLDCODE'), 'agency-cant-load-for-changeid-dirty');
+
+        // verificamos que no está dirty después de cargar
+        $this->assertFalse($agency2->isDirty(), 'agency-is-dirty-after-load');
+
+        // modificamos varios campos
+        $agency2->nombre = 'Modified Name';
+        $agency2->telefono = '+34 922 111 111';
+        $agency2->web = 'https://www.modified.com';
+
+        // verificamos que está dirty antes de cambiar el id
+        $this->assertTrue($agency2->isDirty(), 'agency-is-not-dirty-before-changeid');
+        $this->assertTrue($agency2->isDirty('nombre'), 'agency-nombre-is-not-dirty-before-changeid');
+        $this->assertTrue($agency2->isDirty('telefono'), 'agency-telefono-is-not-dirty-before-changeid');
+        $this->assertTrue($agency2->isDirty('web'), 'agency-web-is-not-dirty-before-changeid');
+        $this->assertFalse($agency2->isDirty('codtrans'), 'agency-codtrans-is-dirty-before-changeid');
+
+        $dirtyBefore = $agency2->getDirty();
+        $this->assertCount(3, $dirtyBefore, 'agency-getdirty-wrong-count-before-changeid');
+
+        // cambiamos el id
+        $this->assertTrue($agency2->changeId('NEWCODE'), 'agency-cant-changeid-with-dirty');
+
+        // verificamos que el id ha cambiado
+        $this->assertEquals('NEWCODE', $agency2->codtrans, 'agency-codtrans-not-changed-after-changeid');
+        $this->assertEquals('NEWCODE', $agency2->id(), 'agency-id-not-changed-after-changeid');
+
+        // IMPORTANTE: verificamos que los otros campos modificados siguen siendo dirty
+        $this->assertTrue($agency2->isDirty(), 'agency-is-not-dirty-after-changeid');
+        $this->assertTrue($agency2->isDirty('nombre'), 'agency-nombre-is-not-dirty-after-changeid');
+        $this->assertTrue($agency2->isDirty('telefono'), 'agency-telefono-is-not-dirty-after-changeid');
+        $this->assertTrue($agency2->isDirty('web'), 'agency-web-is-not-dirty-after-changeid');
+        $this->assertFalse($agency2->isDirty('codtrans'), 'agency-codtrans-is-dirty-after-changeid');
+
+        $dirtyAfter = $agency2->getDirty();
+        $this->assertCount(3, $dirtyAfter, 'agency-getdirty-wrong-count-after-changeid');
+        $this->assertArrayHasKey('nombre', $dirtyAfter, 'agency-getdirty-missing-nombre-after-changeid');
+        $this->assertArrayHasKey('telefono', $dirtyAfter, 'agency-getdirty-missing-telefono-after-changeid');
+        $this->assertArrayHasKey('web', $dirtyAfter, 'agency-getdirty-missing-web-after-changeid');
+        $this->assertArrayNotHasKey('codtrans', $dirtyAfter, 'agency-getdirty-has-codtrans-after-changeid');
+
+        // verificamos que en la base de datos el registro tiene los valores originales (no los modificados)
+        $agency3 = new AgenciaTransporte();
+        $this->assertTrue($agency3->loadWhereEq('codtrans', 'NEWCODE'), 'agency-cant-load-newcode-for-verification');
+        $this->assertEquals('Original Name', $agency3->nombre, 'agency-nombre-saved-incorrectly');
+        $this->assertEquals('+34 922 000 000', $agency3->telefono, 'agency-telefono-saved-incorrectly');
+        $this->assertEquals('https://www.original.com', $agency3->web, 'agency-web-saved-incorrectly');
+
+        // ahora guardamos los cambios pendientes
+        $this->assertTrue($agency2->save(), 'agency-cant-save-after-changeid');
+
+        // verificamos que ya no está dirty después de guardar
+        $this->assertFalse($agency2->isDirty(), 'agency-is-dirty-after-save-changeid');
+
+        // verificamos que en la base de datos ahora sí tiene los valores modificados
+        $agency4 = new AgenciaTransporte();
+        $this->assertTrue($agency4->loadWhereEq('codtrans', 'NEWCODE'), 'agency-cant-load-newcode-after-save');
+        $this->assertEquals('Modified Name', $agency4->nombre, 'agency-nombre-not-saved-after-changeid');
+        $this->assertEquals('+34 922 111 111', $agency4->telefono, 'agency-telefono-not-saved-after-changeid');
+        $this->assertEquals('https://www.modified.com', $agency4->web, 'agency-web-not-saved-after-changeid');
+
+        // borramos la agencia de transporte
+        $this->assertTrue($agency4->delete(), 'agency-cant-delete-after-changeid-dirty');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

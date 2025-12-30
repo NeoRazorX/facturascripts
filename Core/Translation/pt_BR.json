@@ -729,7 +729,7 @@
     "full-path": "Caminho completo",
     "gap-found": "Intervalo encontrado para o número %numero%, dia %data%, %codserie% e empresa %idempresa%",
     "gap-found-not-fillable": "Hueco encontrado para el número %numero%, día %fecha%, %codserie% y empresa %idempresa%, sin embargo no se va a rellenar.",
-    "gaps-out-of-range": "Se han encontrado %count% huecos que no se van a poder rellenar por estar a más de 1000 números del último.",
+    "gaps-out-of-range": "Foram encontradas %count% lacunas que não poderão ser preenchidas por estarem a mais de 1000 números do último.",
     "general": "Geral",
     "general-concepts": "Conceitos Gerais",
     "general-data": "Dados Gerais",

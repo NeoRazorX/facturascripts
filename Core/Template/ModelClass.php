@@ -158,7 +158,8 @@ abstract class ModelClass
         // Update the attributes with the new id
         $this->{$this->primaryColumn()} = $new_id;
 
-        $this->syncOriginal();
+        // sync original
+        $this->original[$this->primaryColumn()] = $this->id();
         $this->clearCache();
 
         return $this->pipeFalse('changePrimaryColumnValueAfter');
@@ -285,7 +286,7 @@ abstract class ModelClass
 
     /**
      * Devuelve el valor original de un campo, si no se indica campo devuelve todo el array original
-     * 
+     *
      * @param string|null $key
      * @return mixed|null Devuelve el valor original del campo o null si no existe
      */
@@ -327,7 +328,7 @@ abstract class ModelClass
     /**
      * Comprueba si los campos del modelo han sido modificados.
      * Devuelve true si hay cambios, false en caso contrario.
-     * 
+     *
      * Si introduces un parámetro key, comprueba solo ese campo
      *
      * @param string|null $key
@@ -351,9 +352,9 @@ abstract class ModelClass
 
     /**
      * Carga un modelo dada su primary key
-     * 
+     *
      * @param mixed $code Código o identificador del registro a cargar
-     * 
+     *
      * @return bool Devuelve true si se encontró y cargó un registro exitosamente.
      */
     public function load($code): bool
@@ -560,7 +561,7 @@ abstract class ModelClass
 
     /**
      * Guarda el modelo en la base de datos después de ejecutar las comprobaciones `$this->test()`
-     * 
+     *
      * @return bool Devuelve true si se ha guardado correctamente, false en caso contrario
      */
     public function save(): bool
@@ -606,7 +607,7 @@ abstract class ModelClass
 
     /**
      * Realiza pruebas de validación sobre los campos del modelo antes de guardarlo.
-     * 
+     *
      * @return bool Devuelve true si todas las pruebas pasan, false en caso contrario
      */
     public function test(): bool
@@ -640,7 +641,7 @@ abstract class ModelClass
 
     /**
      * Devuelve un array con los campos y valores del modelo.
-     * 
+     *
      * @param bool $dynamic_attributes Si es true, añade también los atributos dinámicos al array resultante
      * @return array Array asociativo con los campos y valores del modelo
      */
@@ -664,7 +665,7 @@ abstract class ModelClass
 
     /**
      * Actualiza el modelo con los valores proporcionados en el array
-     * 
+     *
      * @param array $values Array asociativo con los campos y valores a actualizar
      * @return bool Devuelve true si la actualización se ha realizado correctamente, false en caso
      */
@@ -704,7 +705,7 @@ abstract class ModelClass
 
     /**
      * Genera una URL para el modelo según el tipo especificado.
-     * 
+     *
      * @param string $type Tipo de URL a generar. Puede ser 'auto', 'edit', 'list' o 'new'.
      * @param string $list Nombre de la lista a utilizar en la URL cuando el tipo es 'list' o 'auto'.
      * @return string URL generada para el modelo
@@ -836,7 +837,7 @@ abstract class ModelClass
 
     /**
      * Este método se llama antes de guardar (insertar) un nuevo registro en la base de datos.
-     * 
+     *
      * @param string $field
      * @return bool
      */
@@ -910,7 +911,7 @@ abstract class ModelClass
 
     /**
      * Este método se llama al actualizar un registro existente en la base de datos.
-     * 
+     *
      * @return bool Devuelve true si la actualización se realizó correctamente, false en caso contrario
      */
     protected function saveUpdate(): bool
