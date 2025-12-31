@@ -378,10 +378,7 @@ abstract class SalesController extends PanelController
             return false;
         }
 
-        $inTransaction = $this->db()->inTransaction();
-        if (!$inTransaction) {
-            $this->db()->beginTransaction();
-        }
+        $this->db()->beginTransaction();
 
         $model = $this->getModel();
         $formData = json_decode($this->request->input('data'), true);
@@ -389,9 +386,7 @@ abstract class SalesController extends PanelController
         SalesFooterHTML::apply($model, $formData);
 
         if (false === $model->save()) {
-            if (!$inTransaction) {
-                $this->db()->rollback();
-            }
+            $this->db()->rollback();
             $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
@@ -402,9 +397,7 @@ abstract class SalesController extends PanelController
 
         foreach ($lines as $line) {
             if (false === $line->save()) {
-                if (!$inTransaction) {
-                    $this->db()->rollback();
-                }
+                $this->db()->rollback();
                 $this->sendJsonWithLogs(['ok' => false]);
                 return false;
             }
@@ -413,9 +406,7 @@ abstract class SalesController extends PanelController
         // remove missing lines
         foreach ($model->getLines() as $oldLine) {
             if (in_array($oldLine->idlinea, SalesLineHTML::getDeletedLines()) && false === $oldLine->delete()) {
-                if (!$inTransaction) {
-                    $this->db()->rollback();
-                }
+                $this->db()->rollback();
                 $this->sendJsonWithLogs(['ok' => false]);
                 return false;
             }
@@ -423,16 +414,12 @@ abstract class SalesController extends PanelController
 
         $lines = $model->getLines();
         if (false === Calculator::calculate($model, $lines, true)) {
-            if (!$inTransaction) {
-                $this->db()->rollback();
-            }
+            $this->db()->rollback();
             $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
 
-        if (!$inTransaction) {
-            $this->db()->commit();
-        }
+        $this->db()->commit();
 
         if ($sendOk) {
             $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
@@ -507,12 +494,11 @@ abstract class SalesController extends PanelController
             return false;
         }
 
-        $this->db()->beginTransaction();
-
         if ($this->getModel()->editable && false === $this->saveDocAction(false)) {
-            $this->db()->rollback();
             return false;
         }
+
+        $this->db()->beginTransaction();
 
         $model = $this->getModel();
         $model->idestado = (int)$this->request->input('selectedLine');
