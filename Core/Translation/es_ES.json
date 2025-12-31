@@ -1768,6 +1768,7 @@
     "unlock-entry": "Desbloquear",
     "unpaid": "Impagado",
     "unsafe-file": "Archivo no seguro",
+    "unsafe-file-with-name": "El archivo %fileName% no es seguro",
     "unsafe-file-p": "Por motivos de seguridad impedimos las descargas de algunos tipos de archivos, como este: %file%",
     "until-accounting-entry": "Hasta asiento",
     "until-date": "Hasta",

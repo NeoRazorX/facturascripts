@@ -1768,6 +1768,7 @@
     "unlock-entry": "Unlock",
     "unpaid": "Unpaid",
     "unsafe-file": "Unsafe File",
+    "unsafe-file-with-name": "The file %fileName% is unsafe",
     "unsafe-file-p": "For security reasons, we prevent downloads of certain file types, such as this one: %file%.",
     "until-accounting-entry": "Until entry",
     "until-date": "Until date",
