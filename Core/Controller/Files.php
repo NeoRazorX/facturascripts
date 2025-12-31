@@ -23,6 +23,12 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Tools;
 
+/**
+ * Esta clase se debe usar para los ficheros pertenecientes al sistema (el core o plugins).
+ * Esto quiere decir ficheros no subidos por el usuario y que estén en MyFiles.
+ * 
+ * Para manejar ficheros usados por el usuario usar MyFiles
+ */
 class Files implements ControllerInterface
 {
     /** @var string */
@@ -63,6 +69,15 @@ class Files implements ControllerInterface
         return [];
     }
 
+    /**
+     * Devuelve si un fichero es seguro para ser servido. (Debe usarse para ficheros NO subidos por el usuario)
+     * 
+     * Se debe de usar antes de devolver un fichero y en las subidas también.
+     * 
+     * @param string $filePath
+     * 
+     * @return bool true si el fichero es seguro
+     */
     public static function isFileSafe(string $filePath): bool
     {
         $parts = explode('.', $filePath);
