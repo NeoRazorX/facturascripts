@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core;
 
-use FacturaScripts\Core\Controller\Files;
+use FacturaScripts\Dinamic\Controller\Myfiles;
 
 final class UploadedFile
 {
@@ -124,7 +124,7 @@ final class UploadedFile
      */
     public function isSafe(): bool
     {
-        return Files::isFileSafe($this->getClientOriginalName());
+        return Myfiles::isFileSafe($this->getClientOriginalName());
     }
 
     public function isUploaded(): bool
