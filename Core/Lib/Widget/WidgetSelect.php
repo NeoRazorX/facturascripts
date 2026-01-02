@@ -139,6 +139,8 @@ class WidgetSelect extends BaseWidget
      */
     public function setValuesFromArray(array $items, bool $translate = false, bool $addEmpty = false, string $col1 = 'value', string $col2 = 'title')
     {
+        $this->values = [];
+
         if ($addEmpty && false === $this->multiple) {
             $this->values = [['value' => null, 'title' => '------']];
         }
@@ -166,6 +168,8 @@ class WidgetSelect extends BaseWidget
 
     public function setValuesFromArrayKeys(array $values, bool $translate = false, bool $addEmpty = false)
     {
+        $this->values = [];
+
         if ($addEmpty && false === $this->multiple) {
             $this->values = [['value' => null, 'title' => '------']];
         }
