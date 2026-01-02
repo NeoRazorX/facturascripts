@@ -32,6 +32,7 @@ use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
+use FacturaScripts\Core\DataSrc\Paises;
 
 /**
  * Description of ListBusinessDocument
@@ -102,6 +103,9 @@ abstract class ListBusinessDocument extends ListController
         if (count($currencies) > 2) {
             $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
         }
+
+        $countries = Paises::codeModel();
+        $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', $countries);
 
         $this->addFilterCheckbox($viewName, 'totalrecargo', 'surcharge', 'totalrecargo', '!=', 0);
         $this->addFilterCheckbox($viewName, 'totalirpf', 'retention', 'totalirpf', '!=', 0);
