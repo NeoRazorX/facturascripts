@@ -1737,7 +1737,7 @@
     "two-factor-auth-disabled": "Dwustopniowa weryfikacja została wyłączona",
     "two-factor-auth-enable": "Włącz uwierzytelnianie dwuetapowe",
     "two-factor-auth-enabled": "Autoryzacja dwuetapowa włączona",
-    "two-factor-auth-p": "Configura la app Google Authenticator usando el QR, introduce aquí el código y pulsa verificar para completar el proceso de activación.",
+    "two-factor-auth-p": "Skonfiguruj aplikację Google Authenticator za pomocą kodu QR, wpisz tutaj kod i naciśnij \"Weryfikuj\", aby zakończyć proces aktywacji.",
     "two-factor-code": "Kod dwuskładnikowy",
     "two-factor-enabled": "Aktywuj uwierzytelnianie dwuskładnikowe",
     "type": "Typ",

@@ -730,7 +730,7 @@
     "full-access": "Accés complet",
     "full-path": "Ruta completa",
     "gap-found": "Forat trobat per al número %numero%, dia %fecha%, %codserie% i empresa %idempresa%",
-    "gap-found-not-fillable": "S'ha detectat un buit pel número %numero%, dia %fecha%, %codserie% i empresa %idempresa%, però no s'omplirà.",
+    "gap-found-not-fillable": "S'ha detectat un buit pel número %numero%, dia %fecha%, %codserie% i empresa %idempresa%, tanmateix no s'omplirà.",
     "gaps-out-of-range": "S'han trobat %count% buits que no es podran omplir perquè estan a més de 1000 números del darrer.",
     "general": "General",
     "general-concepts": "Conceptes generals",

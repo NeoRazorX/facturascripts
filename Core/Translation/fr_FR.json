@@ -730,7 +730,7 @@
     "full-access": "Accès complet",
     "full-path": "Chemin complet",
     "gap-found": "Lacune trouvée pour le numéro %numero%, le jour %fecha%, %codserie% et la société %idempresa%.",
-    "gap-found-not-fillable": "Hueco encontrado para el número %numero%, día %fecha%, %codserie% y empresa %idempresa%, sin embargo no se va a rellenar.",
+    "gap-found-not-fillable": "Un trou a été trouvé pour le numéro %numero%, le jour %fecha%, %codserie% et l'entreprise %idempresa%, toutefois il ne sera pas comblé.",
     "gaps-out-of-range": "Se han encontrado %count% huecos que no se van a poder rellenar por estar a más de 1000 números del último.",
     "general": "Général",
     "general-concepts": "Concepts généraux",
