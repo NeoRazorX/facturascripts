@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -542,9 +542,9 @@ class NewMail
         }
 
         // buscamos si en el texto hay algo de html
-        $textWhitoutHtml = strip_tags($this->text);
-        if ($textWhitoutHtml !== $this->text) {
-            return array_merge([new DinHtmlBlock(nl2br($this->text))], $this->mainBlocks);
+        $textWithoutHtml = strip_tags($this->text);
+        if ($textWithoutHtml !== $this->text) {
+            return array_merge([new DinHtmlBlock($this->text)], $this->mainBlocks);
         }
 
         // si no hay html, devolvemos el texto como bloque de texto
