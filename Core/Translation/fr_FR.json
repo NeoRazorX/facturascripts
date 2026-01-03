@@ -731,7 +731,7 @@
     "full-path": "Chemin complet",
     "gap-found": "Lacune trouvée pour le numéro %numero%, le jour %fecha%, %codserie% et la société %idempresa%.",
     "gap-found-not-fillable": "Un trou a été trouvé pour le numéro %numero%, le jour %fecha%, %codserie% et l'entreprise %idempresa%, toutefois il ne sera pas comblé.",
-    "gaps-out-of-range": "Se han encontrado %count% huecos que no se van a poder rellenar por estar a más de 1000 números del último.",
+    "gaps-out-of-range": "Il y a %count% écarts qui ne pourront pas être comblés parce qu'ils sont à plus de 1000 numéros du dernier.",
     "general": "Général",
     "general-concepts": "Concepts généraux",
     "general-data": "Données générales",

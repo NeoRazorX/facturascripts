@@ -731,7 +731,7 @@
     "full-path": "Ruta sancera",
     "gap-found": "Buit trobat per al número %numero%, dia %fecha%, %codserie% i empresa %idempresa%",
     "gap-found-not-fillable": "Hueco encontrado para el número %numero%, día %fecha%, %codserie% y empresa %idempresa%, sin embargo no se va a rellenar.",
-    "gaps-out-of-range": "Se han encontrado %count% huecos que no se van a poder rellenar por estar a más de 1000 números del último.",
+    "gaps-out-of-range": "S'han trobat %count% buits que no es podran omplir per estar a més de 1000 números de l'últim.",
     "general": "General",
     "general-concepts": "Conceptes generals",
     "general-data": "Senyes generals",

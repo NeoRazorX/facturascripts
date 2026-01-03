@@ -873,7 +873,7 @@
     "invoice-receipts-diff": "Hai unha diferencia (%diff%) entre o importe da factura e a suma dos seus recibos.",
     "invoice-regularized-cant-change-date": "A factura está dentro dunha regularización %tax%. Non se pode modificar a data.",
     "invoice-regularized-cant-delete": "A factura está dentro dunha regularización de %tax%. Non se pode eliminar.",
-    "invoice-without-acc-entry": "Factura sen asento",
+    "invoice-without-acc-entry": "Atopouse unha factura sen asento contable. Vai ao listado de facturas e preme o botón de xerar asentos.",
     "invoiced": "Facturado",
     "invoices": "Facturas",
     "invoices-cant-generate-new-docs": "As facturas non poden xerar novos documentos",
