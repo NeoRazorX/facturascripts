@@ -730,7 +730,7 @@
     "full-access": "Full access",
     "full-path": "Full path",
     "gap-found": "Gap found for number %numero%, day %fecha%, %codserie% and company %idempresa%",
-    "gap-found-not-fillable": "Gap found for number %numero%, date %fecha%, series %codserie% and company %idempresa%; it will not be filled.",
+    "gap-found-not-fillable": "A gap was found for number %numero%, date %fecha%, series %codserie% and company %idempresa%; it will not be filled.",
     "gaps-out-of-range": "Found %count% gaps that cannot be filled because they are more than 1000 numbers away from the last one.",
     "general": "General",
     "general-concepts": "General concepts",

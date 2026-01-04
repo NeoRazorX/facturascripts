@@ -873,7 +873,7 @@
     "invoice-receipts-diff": "Hay una diferencia (%diff%) entre el importe de la factura y la suma de sus recibos.",
     "invoice-regularized-cant-change-date": "La facture est dans une régularisation de %tax%. La date ne peut pas être modifiée.",
     "invoice-regularized-cant-delete": "La facture est dans une régularisation de %tax%. Elle ne peut pas être supprimée.",
-    "invoice-without-acc-entry": "Facture sans entrée comptable",
+    "invoice-without-acc-entry": "Des factures sans écriture comptable ont été trouvées. Allez dans la liste des factures et cliquez sur le bouton « Générer les écritures ».",
     "invoiced": "Facturé",
     "invoices": "factures",
     "invoices-cant-generate-new-docs": "Les factures ne peuvent générer de nouveaux documents",
