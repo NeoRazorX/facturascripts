@@ -240,7 +240,7 @@ abstract class PanelController extends BaseController
         $this->views[$this->active]->processFormData($this->request, 'edit');
 
         // has PK value been changed?
-        $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
+        $this->views[$this->active]->newCode = (string)$this->views[$this->active]->model->primaryColumnValue();
         if ($code !== $this->views[$this->active]->newCode && $this->views[$this->active]->model->test()) {
             $pkColumn = $this->views[$this->active]->model->primaryColumn();
             $this->views[$this->active]->model->{$pkColumn} = $code;

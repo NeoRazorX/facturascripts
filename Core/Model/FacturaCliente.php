@@ -52,6 +52,11 @@ class FacturaCliente extends SalesDocument
         $this->vencida = false;
     }
 
+    public function getAuditChannel(): string
+    {
+        return LogMessage::AUDIT_CHANNEL;
+    }
+
     /**
      * Returns the lines associated with the invoice.
      *

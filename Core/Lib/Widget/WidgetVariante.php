@@ -58,9 +58,9 @@ class WidgetVariante extends WidgetText
 
         // hay que cargar el producto para mostrar su referencia
         $variante = new Variante();
-        $variante->loadWhere([
-            new DataBaseWhere($this->match, $this->value)
-        ]);
+        if ($this->value !== null && $variante->loadWhereEq($this->match, $this->value) && $this->onclick === 'EditProducto') {
+            $labelHtml = '<a href="' . Tools::config('route') . '/' . $variante->url() . '">' . $label . '</a>';
+        }
 
         if ($this->readonly()) {
             return '<div class="mb-3 d-grid">'
@@ -102,9 +102,12 @@ class WidgetVariante extends WidgetText
 
         // hay que cargar el producto para mostrar su referencia
         $variante = new Variante();
-        $variante->loadWhere([
-            new DataBaseWhere($this->match, $this->value)
-        ]);
+        if ($this->value !== null && $variante->loadWhereEq($this->match, $this->value) && $this->onclick === 'EditProducto') {
+            return '<td class="' . $class . '">'
+                . '<a href="' . Tools::config('route') . '/' . $variante->url() . '" class="cancelClickable">'
+                . $variante->referencia . '</a>'
+                . '</td>';
+        }
 
         return '<td class="' . $class . '">' . $this->onclickHtml($variante->referencia) . '</td>';
     }
@@ -253,7 +256,8 @@ class WidgetVariante extends WidgetText
     {
         return '<div class="input-group mb-2">'
             . '<input type="text" id="modal_' . $this->id . '_q" class="form-control" placeholder="'
-            . Tools::trans('search') . '" onkeydown="widgetVarianteSearchKp(\'' . $this->id . '\', event);" autofocus>'
+            . Tools::trans('search') . '" oninput="widgetVarianteSearchKp(\'' . $this->id . '\', event);" '
+            . 'onkeydown="if(event.key===\'Enter\'){event.preventDefault();widgetVarianteSearch(\'' . $this->id . '\');}" autofocus>'
             . '<button type="button" class="btn btn-primary" onclick="widgetVarianteSearch(\'' . $this->id . '\');">'
             . '<i class="fa-solid fa-search"></i>'
             . '</button>'

@@ -100,7 +100,7 @@ class CalculatorModSpain implements CalculatorModInterface2026
         ];
 
         $addressShipping = new Contacto();
-        if (property_exists($doc, 'idcontactoenv')) {
+        if ($doc->hasColumn('idcontactoenv')) {
             $addressShipping->load($doc->idcontactoenv);
         }
 

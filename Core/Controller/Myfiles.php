@@ -98,8 +98,8 @@ class Myfiles implements ControllerInterface
             ob_end_flush();
         }
 
-        // force to download svg files to prevent XSS attacks
-        if ($this->isSvg($this->filePath)) {
+        // force to download svg, xml and html files to prevent XSS attacks
+        if ($this->shouldForceDownload($this->filePath)) {
             header('Content-Disposition: attachment; filename="' . basename($this->filePath) . '"');
         }
 
@@ -125,16 +125,25 @@ class Myfiles implements ControllerInterface
         return mime_content_type($filePath);
     }
 
-    private function isSvg(string $filePath): bool
+    private function shouldForceDownload(string $filePath): bool
     {
-        // comprobamos la extensión
-        if (strpos($filePath, '.svg') !== false) {
-            return true;
+        // verificar extensión
+        $info = pathinfo($filePath);
+        if (isset($info['extension'])) {
+            $extension = strtolower($info['extension']);
+            $dangerousExtensions = ['svg', 'xml', 'xsig', 'html', 'htm', 'xhtml'];
+            if (in_array($extension, $dangerousExtensions, true)) {
+                return true;
+            }
         }
 
-        // comprobamos mime
-        if (strpos($this->getMime($filePath), 'image/svg') !== false) {
-            return true;
+        // verificar MIME type detectado (por si el archivo está renombrado)
+        $mime = $this->getMime($filePath);
+        $dangerousMimes = ['text/html', 'text/xml', 'application/xml', 'image/svg+xml', 'application/xhtml+xml'];
+        foreach ($dangerousMimes as $dangerousMime) {
+            if (strpos($mime, $dangerousMime) !== false) {
+                return true;
+            }
         }
 
         return false;

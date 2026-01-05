@@ -156,7 +156,7 @@ final class Where
         foreach ($where as $key => $item) {
             // si es una instancia de DataBaseWhere, lo convertimos a sql
             if ($item instanceof DataBaseWhere) {
-                $dbWhere = new self($item->fields, $item->value, $item->operator, $item->operation, $item->useField);
+                $dbWhere = new self($item->fields, $item->value, $item->operator, $item->operation, $item->useField ?? false);
 
                 if (!empty($sql)) {
                     $sql .= ' ' . $item->operation . ' ';

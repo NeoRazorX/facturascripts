@@ -53,7 +53,9 @@ final class ResponseTest extends TestCase
         // Test que los valores por defecto de seguridad se aplican
         $reflection = new ReflectionClass($response);
         $cookiesProperty = $reflection->getProperty('cookies');
-        $cookiesProperty->setAccessible(true);
+        if (PHP_VERSION_ID < 80500) {
+            $cookiesProperty->setAccessible(true);
+        }
 
         $response->cookie('test', 'value');
         $cookies = $cookiesProperty->getValue($response);
@@ -69,7 +71,9 @@ final class ResponseTest extends TestCase
 
         $reflection = new ReflectionClass($response);
         $headersProperty = $reflection->getProperty('headers');
-        $headersProperty->setAccessible(true);
+        if (PHP_VERSION_ID < 80500) {
+            $headersProperty->setAccessible(true);
+        }
 
         $response->pdf('PDF content', 'file<script>.pdf');
 
@@ -90,7 +94,9 @@ final class ResponseTest extends TestCase
 
         $reflection = new ReflectionClass($response);
         $httpCodeProperty = $reflection->getProperty('http_code');
-        $httpCodeProperty->setAccessible(true);
+        if (PHP_VERSION_ID < 80500) {
+            $httpCodeProperty->setAccessible(true);
+        }
 
         $response->file($tempFile);
 
@@ -109,7 +115,9 @@ final class ResponseTest extends TestCase
 
         $reflection = new ReflectionClass($response);
         $headersProperty = $reflection->getProperty('headers');
-        $headersProperty->setAccessible(true);
+        if (PHP_VERSION_ID < 80500) {
+            $headersProperty->setAccessible(true);
+        }
 
         $response->file($tempFile, 'file<>"|*.txt');
 

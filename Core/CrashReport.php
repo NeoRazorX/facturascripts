@@ -118,6 +118,9 @@ final class CrashReport
             return;
         }
 
+        // añadimos la fecha de creación
+        $info['created_at'] = date('Y-m-d H:i:s');
+
         file_put_contents($file_path, json_encode($info, JSON_PRETTY_PRINT));
     }
 

@@ -28,6 +28,7 @@ use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
+use FacturaScripts\Core\Model\LogMessage;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -377,7 +378,7 @@ abstract class SalesController extends PanelController
             return false;
         }
 
-        $this->dataBase->beginTransaction();
+        $this->db()->beginTransaction();
 
         $model = $this->getModel();
         $formData = json_decode($this->request->input('data'), true);
@@ -385,8 +386,8 @@ abstract class SalesController extends PanelController
         SalesFooterHTML::apply($model, $formData);
 
         if (false === $model->save()) {
+            $this->db()->rollback();
             $this->sendJsonWithLogs(['ok' => false]);
-            $this->dataBase->rollback();
             return false;
         }
 
@@ -396,8 +397,8 @@ abstract class SalesController extends PanelController
 
         foreach ($lines as $line) {
             if (false === $line->save()) {
+                $this->db()->rollback();
                 $this->sendJsonWithLogs(['ok' => false]);
-                $this->dataBase->rollback();
                 return false;
             }
         }
@@ -405,24 +406,24 @@ abstract class SalesController extends PanelController
         // remove missing lines
         foreach ($model->getLines() as $oldLine) {
             if (in_array($oldLine->idlinea, SalesLineHTML::getDeletedLines()) && false === $oldLine->delete()) {
+                $this->db()->rollback();
                 $this->sendJsonWithLogs(['ok' => false]);
-                $this->dataBase->rollback();
                 return false;
             }
         }
 
         $lines = $model->getLines();
         if (false === Calculator::calculate($model, $lines, true)) {
+            $this->db()->rollback();
             $this->sendJsonWithLogs(['ok' => false]);
-            $this->dataBase->rollback();
             return false;
         }
+
+        $this->db()->commit();
 
         if ($sendOk) {
             $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         }
-
-        $this->dataBase->commit();
         return true;
     }
 
@@ -497,13 +498,17 @@ abstract class SalesController extends PanelController
             return false;
         }
 
+        $this->db()->beginTransaction();
+
         $model = $this->getModel();
         $model->idestado = (int)$this->request->input('selectedLine');
         if (false === $model->save()) {
+            $this->db()->rollback();
             $this->sendJsonWithLogs(['ok' => false]);
             return false;
         }
 
+        $this->db()->commit();
         $this->sendJsonWithLogs(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']);
         return false;
     }
@@ -512,7 +517,7 @@ abstract class SalesController extends PanelController
     {
         $data['messages'] = [];
         foreach (Tools::log()::read('', $this->logLevels) as $message) {
-            if ($message['channel'] != 'audit') {
+            if (!in_array($message['channel'], [LogMessage::AUDIT_CHANNEL, LogMessage::DOCS_CHANNEL])) {
                 $data['messages'][] = $message;
             }
         }

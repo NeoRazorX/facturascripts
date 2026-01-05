@@ -66,11 +66,19 @@ function widgetSubaccountSearch(id) {
     });
 }
 
+// Objeto para almacenar los timeouts de cada instancia del widget
+let widgetSubaccountSearchTimeouts = {};
+
 function widgetSubaccountSearchKp(id, event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        widgetSubaccountSearch(id);
+    // Limpiar el timeout anterior si existe
+    if (widgetSubaccountSearchTimeouts[id]) {
+        clearTimeout(widgetSubaccountSearchTimeouts[id]);
     }
+
+    // Crear un nuevo timeout para buscar después de 400ms
+    widgetSubaccountSearchTimeouts[id] = setTimeout(function() {
+        widgetSubaccountSearch(id);
+    }, 400);
 }
 
 function widgetSubaccountSelect(id, value) {

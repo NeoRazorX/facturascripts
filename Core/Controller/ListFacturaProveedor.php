@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
 use FacturaScripts\Core\Tools;
@@ -74,6 +75,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         // filtros
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+            ['label' => '------', 'where' => []],
             ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
             ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
             ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
@@ -107,15 +109,15 @@ class ListFacturaProveedor extends ListBusinessDocument
             ->setSettings('btnNew', false);
 
         // filtros
+        if (count(Empresas::all()) > 1) {
+            $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
+        }
+
         $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
-        $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
-
-        $currencies = Divisas::codeModel();
-        if (count($currencies) > 2) {
-            $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
-        }
+        $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
+        $this->addFilterPeriod($viewName, 'payment-date', 'payment-date', 'fechapago');
 
         $payMethods = FormasPago::codeModel();
         if (count($payMethods) > 2) {
@@ -124,11 +126,16 @@ class ListFacturaProveedor extends ListBusinessDocument
 
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::trans('paid-or-unpaid'), 'where' => []],
+            ['label' => '------', 'where' => []],
             ['label' => Tools::trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
             ['label' => Tools::trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
             ['label' => Tools::trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
         ]);
-        $this->addFilterPeriod($viewName, 'payment-date', 'payment-date', 'fechapago');
+
+        $currencies = Divisas::codeModel();
+        if (count($currencies) > 2) {
+            $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
+        }
 
         // botones
         $this->addButtonPayReceipt($viewName);
