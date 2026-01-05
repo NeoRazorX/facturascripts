@@ -293,8 +293,8 @@ class ReportTaxes extends Controller
                 'codpais' => $row['codpais'] ?? null,
                 'codserie' => $row['codserie'],
                 'codigo' => $row['codigo'],
-                'numero2' => $row['numero2'],
-                'numproveedor' => $row['numproveedor'],
+                'numero2' => $row['numero2'] ?? null,
+                'numproveedor' => $row['numproveedor'] ?? null,
                 'fecha' => $this->typeDate == 'create' ?
                     $row['fecha'] :
                     $row['fechadevengo'] ?? $row['fecha'],
