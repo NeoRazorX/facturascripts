@@ -1,0 +1,41 @@
+.widget-radio img {
+    cursor: pointer;
+    transition: transform 1s;
+    object-fit: cover;
+}
+
+.widget-radio label {
+    overflow: hidden;
+    position: relative;
+}
+
+.widget-radio .imgbgchk:checked + label > .tick_container {
+    opacity: 1;
+}
+
+/* ANIMATION */
+.widget-radio .imgbgchk:checked + label > img {
+    opacity: 0.5;
+}
+
+.widget-radio .tick_container {
+    transition: .5s ease;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    cursor: pointer;
+    text-align: center;
+}
+
+.widget-radio .tick {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    padding: 9px 12px;
+    height: 40px;
+    width: 40px;
+    border-radius: 100%;
+}
