@@ -1,9 +1,7 @@
 <?php
-
-declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,32 +19,30 @@ declare(strict_types=1);
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-class WidgetJson extends WidgetText
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\AssetManager;
+
+class WidgetJson extends WidgetTextarea
 {
+    protected function assets(): void
+    {
+        $route = Tools::config('route');
+        AssetManager::addCss($route . '/Dinamic/Assets/CSS/WidgetJson.css?v=' . Tools::date(), 2);
+    }
+
     protected function recursiveRender($arg, $class = 'col-12'): string
     {
-        $html = '';
-
-        $html .= '<style>
-            .widgetjsonkeyvalue{
-                background-color: #e9ecef;
-                padding: .375rem .75rem;
-                border: 1px solid #ced4da;
-                border-radius: .25rem;
-            }
-        </style>';
-
-        $html .= '<div class="form-row widgetjsonkeyvalue">';
+        $html = '<div class="form-row widgetjsonkeyvalue">';
 
         foreach ($arg as $key => $value) {
-            $html .= '<div class="' . $class . '">';
+            $html .= '<div class="' . Tools::noHtml($class) . '">';
 
             if (is_array($value)) {
                 $nextArray = $arg[$key];
                 $nextClass = count($value) > 15 ? 'col-3' : 'col-6';
-                $html .= $key . ': ' . $this->recursiveRender($nextArray, $nextClass);
+                $html .= Tools::noHtml($key) . ': ' . $this->recursiveRender($nextArray, $nextClass);
             } else {
-                $html .= $key . ': <strong>' . $value . '</strong>';
+                $html .= Tools::noHtml($key) . ': <strong>' . Tools::noHtml($value) . '</strong>';
             }
             $html .= '</div>';
         }
@@ -57,7 +53,15 @@ class WidgetJson extends WidgetText
 
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $data = json_decode(htmlspecialchars_decode($this->value), true);
+        if (empty($this->value)) {
+            return parent::inputHtml($type, $extraClass);
+        }
+
+        $data = json_decode(Tools::fixHtml($this->value), true);
+
+        if (!is_array($data)) {
+            return parent::inputHtml($type, $extraClass);
+        }
 
         return $this->recursiveRender($data);
     }
