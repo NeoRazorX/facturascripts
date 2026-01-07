@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -75,6 +75,262 @@ final class TarifaTest extends TestCase
 
         // eliminamos la tarifa
         $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
+    }
+
+    public function testApply(): void
+    {
+        // probamos una tarifa de precio de coste
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_COST;
+        $tarifa->codtarifa = '01';
+        $tarifa->nombre = 'Tarifa de prueba';
+        $tarifa->valorx = 10;
+        $tarifa->valory = 1;
+
+        // probamos
+        $coste = 50;
+        $precio = 100;
+        $this->assertEquals(56, $tarifa->apply($coste, $precio));
+
+        // ahora modificamos la tarifa para que sea de precio de venta
+        $tarifa->aplicar = Tarifa::APPLY_PRICE;
+
+        // probamos
+        $this->assertEquals(89, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyCostWithoutLimits(): void
+    {
+        // tarifa sobre coste sin límites
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_COST;
+        $tarifa->maxpvp = false;
+        $tarifa->mincoste = false;
+        $tarifa->valorx = 10; // +10%
+        $tarifa->valory = 5; // +5
+
+        $coste = 100;
+        $precio = 150;
+
+        // Resultado: 100 + (100 * 10 / 100) + 5 = 100 + 10 + 5 = 115
+        $this->assertEquals(115, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyCostWithMaxPvp(): void
+    {
+        // tarifa sobre coste con límite máximo de pvp
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_COST;
+        $tarifa->maxpvp = true;
+        $tarifa->mincoste = false;
+        $tarifa->valorx = 100; // +100%
+        $tarifa->valory = 50; // +50
+
+        $coste = 100;
+        $precio = 150;
+
+        // Sin límite sería: 100 + (100 * 100 / 100) + 50 = 100 + 100 + 50 = 250
+        // Con maxpvp, se limita a 150
+        $this->assertEquals(150, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyCostWithMinCoste(): void
+    {
+        // tarifa sobre coste con límite mínimo (no debería aplicar si aumenta el precio)
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_COST;
+        $tarifa->maxpvp = false;
+        $tarifa->mincoste = true;
+        $tarifa->valorx = 10; // +10%
+        $tarifa->valory = 5; // +5
+
+        $coste = 100;
+        $precio = 150;
+
+        // Resultado: 100 + (100 * 10 / 100) + 5 = 115 (mayor que coste, no se limita)
+        $this->assertEquals(115, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyCostWithBothLimits(): void
+    {
+        // tarifa sobre coste con ambos límites
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_COST;
+        $tarifa->maxpvp = true;
+        $tarifa->mincoste = true;
+        $tarifa->valorx = 100; // +100%
+        $tarifa->valory = 50; // +50
+
+        $coste = 100;
+        $precio = 150;
+
+        // Sin límite sería: 100 + (100 * 100 / 100) + 50 = 250
+        // Con maxpvp, se limita a 150
+        $this->assertEquals(150, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyPriceWithoutLimits(): void
+    {
+        // tarifa sobre precio sin límites
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_PRICE;
+        $tarifa->maxpvp = false;
+        $tarifa->mincoste = false;
+        $tarifa->valorx = 20; // -20%
+        $tarifa->valory = 10; // -10
+
+        $coste = 100;
+        $precio = 200;
+
+        // Resultado: 200 - (200 * 20 / 100) - 10 = 200 - 40 - 10 = 150
+        $this->assertEquals(150, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyPriceWithMaxPvp(): void
+    {
+        // tarifa sobre precio con límite máximo (no debería aplicar si reduce el precio)
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_PRICE;
+        $tarifa->maxpvp = true;
+        $tarifa->mincoste = false;
+        $tarifa->valorx = 20; // -20%
+        $tarifa->valory = 10; // -10
+
+        $coste = 100;
+        $precio = 200;
+
+        // Resultado: 200 - (200 * 20 / 100) - 10 = 150 (menor que pvp, no se limita)
+        $this->assertEquals(150, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyPriceWithMinCoste(): void
+    {
+        // tarifa sobre precio con límite mínimo de coste
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_PRICE;
+        $tarifa->maxpvp = false;
+        $tarifa->mincoste = true;
+        $tarifa->valorx = 60; // -60%
+        $tarifa->valory = 20; // -20
+
+        $coste = 100;
+        $precio = 200;
+
+        // Sin límite sería: 200 - (200 * 60 / 100) - 20 = 200 - 120 - 20 = 60
+        // Con mincoste, se limita a 100
+        $this->assertEquals(100, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyPriceWithBothLimits(): void
+    {
+        // tarifa sobre precio con ambos límites
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_PRICE;
+        $tarifa->maxpvp = true;
+        $tarifa->mincoste = true;
+        $tarifa->valorx = 60; // -60%
+        $tarifa->valory = 20; // -20
+
+        $coste = 100;
+        $precio = 200;
+
+        // Sin límite sería: 200 - (200 * 60 / 100) - 20 = 60
+        // Con mincoste, se limita a 100
+        $this->assertEquals(100, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyCostNegativeDiscount(): void
+    {
+        // tarifa sobre coste con descuento negativo (reduce el precio desde el coste)
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_COST;
+        $tarifa->maxpvp = false;
+        $tarifa->mincoste = true;
+        $tarifa->valorx = -20; // -20%
+        $tarifa->valory = -10; // -10
+
+        $coste = 100;
+        $precio = 200;
+
+        // Resultado: 100 + (100 * -20 / 100) + (-10) = 100 - 20 - 10 = 70
+        // Con mincoste, se limita a 100
+        $this->assertEquals(100, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyPriceNegativeDiscount(): void
+    {
+        // tarifa sobre precio con descuento negativo (aumenta el precio)
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_PRICE;
+        $tarifa->maxpvp = true;
+        $tarifa->mincoste = false;
+        $tarifa->valorx = -30; // +30%
+        $tarifa->valory = -20; // +20
+
+        $coste = 100;
+        $precio = 200;
+
+        // Resultado: 200 - (200 * -30 / 100) - (-20) = 200 + 60 + 20 = 280
+        // Con maxpvp, se limita a 200
+        $this->assertEquals(200, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyCostWithBothLimitsAndZeroPvp(): void
+    {
+        // tarifa sobre coste con ambos límites y pvp = 0 (caso edge)
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_COST;
+        $tarifa->maxpvp = true;
+        $tarifa->mincoste = true;
+        $tarifa->valorx = 10; // +10%
+        $tarifa->valory = 5; // +5
+
+        $coste = 100;
+        $precio = 0;
+
+        // Resultado: 100 + (100 * 10 / 100) + 5 = 115
+        // Con maxpvp = true, se limitaría a 0 (precio)
+        // Pero con mincoste = true, nunca debe bajar del coste (100)
+        // mincoste debe tener prioridad sobre maxpvp para garantizar que no se venda por debajo del coste
+        $this->assertEquals(100, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyPriceWithBothLimitsWhenPriceBelowCost(): void
+    {
+        // caso donde el pvp ya está por debajo del coste (vendiendo a pérdida)
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_PRICE;
+        $tarifa->maxpvp = true;
+        $tarifa->mincoste = true;
+        $tarifa->valorx = 20; // -20%
+        $tarifa->valory = 10; // -10
+
+        $coste = 100;
+        $precio = 80; // ya vendiendo por debajo del coste
+
+        // Resultado: 80 - (80 * 20 / 100) - 10 = 80 - 16 - 10 = 54
+        // Con maxpvp: 54 no es mayor que 80, no se limita
+        // Con mincoste: 54 < 100, se limita a 100
+        $this->assertEquals(100, $tarifa->apply($coste, $precio));
+    }
+
+    public function testApplyCostWithBothLimitsWhenPriceBelowCost(): void
+    {
+        // caso donde el pvp ya está por debajo del coste, aplicando tarifa sobre coste
+        $tarifa = new Tarifa();
+        $tarifa->aplicar = Tarifa::APPLY_COST;
+        $tarifa->maxpvp = true;
+        $tarifa->mincoste = true;
+        $tarifa->valorx = 20; // +20%
+        $tarifa->valory = 10; // +10
+
+        $coste = 100;
+        $precio = 80; // ya vendiendo por debajo del coste
+
+        // Resultado: 100 + (100 * 20 / 100) + 10 = 100 + 20 + 10 = 130
+        // Con maxpvp: 130 > 80, se limita a 80
+        // Con mincoste: 80 < 100, se limita a 100
+        $this->assertEquals(100, $tarifa->apply($coste, $precio));
     }
 
     public function testApplyToCustomer(): void
@@ -287,7 +543,7 @@ final class TarifaTest extends TestCase
 
         // comprobamos que el cliente sigue existiendo sin tarifa
         $this->assertTrue($cliente->exists(), 'cliente-does-not-exist');
-        $this->assertTrue($cliente->loadFromCode($cliente->codcliente), 'cliente-does-not-exist');
+        $this->assertTrue($cliente->load($cliente->codcliente), 'cliente-does-not-exist');
         $this->assertNull($cliente->codtarifa, 'cliente-codtarifa-is-not-null');
 
         // comprobamos que el grupo sigue existiendo sin tarifa
