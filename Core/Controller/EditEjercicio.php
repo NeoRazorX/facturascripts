@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Accounting\ClosingToAcounting;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -315,19 +315,24 @@ class EditEjercicio extends EditController
 
             case 'ListAsiento':
                 $where = [
-                    new DataBaseWhere('codejercicio', $codejercicio),
-                    new DataBaseWhere('operacion', null, 'IS NOT')
+                    Where::eq('codejercicio', $codejercicio),
+                    Where::isNotNull('operacion')
                 ];
                 $view->loadData('', $where);
                 break;
 
             case 'ListCuenta':
             case 'ListSubcuenta':
-                $where = [new DataBaseWhere('codejercicio', $codejercicio)];
+                $where = [Where::eq('codejercicio', $codejercicio)];
                 $view->loadData('', $where);
 
                 // ocultamos la columna saldo de los totales
                 unset($view->totalAmounts['saldo']);
+
+                // si hay cuentas o subcuentas, ponemos readonly el campo longsubcuenta del ejercicio
+                if ($view->count > 0) {
+                    $this->tab('EditEjercicio')->disableColumn('account-length', false, 'true');
+                }
                 break;
         }
     }
