@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,8 +33,8 @@ final class Retenciones implements DataSrcInterface
     public static function all(): array
     {
         if (!isset(self::$list)) {
-            self::$list = Cache::remember('model-Retenciones-list', function () {
-                return Retencion::all([], ['codretencion' => 'ASC'], 0, 0);
+            self::$list = Cache::remember('model-Retencion-list', function () {
+                return Retencion::all([], ['codretencion' => 'ASC']);
             });
         }
 
