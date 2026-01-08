@@ -118,6 +118,11 @@ class SecuenciaDocumento extends ModelClass
             $this->numero = $this->inicio;
         }
 
+        if ($this->longnumero < 1 || $this->longnumero > 10) {
+            Tools::log()->warning('longnumero-must-be-between-1-and-10');
+            return false;
+        }
+
         // si usar huecos es false, tipodoc es FacturaCliente y el país predeterminado es España, mostramos aviso
         if (!$this->usarhuecos && 'FacturaCliente' === $this->tipodoc && 'ESP' === Tools::settings('default', 'codpais')) {
             Tools::log()->error('use-holes-invoices-esp');

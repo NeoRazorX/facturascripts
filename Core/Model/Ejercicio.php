@@ -285,6 +285,11 @@ class Ejercicio extends ModelClass
                 'invalid-column-lenght',
                 ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
             );
+        } elseif ($this->longsubcuenta < 4 || $this->longsubcuenta > 15) {
+            Tools::log()->warning(
+                'invalid-column-lenght',
+                ['%column%' => 'longsubcuenta', '%min%' => '4', '%max%' => '15']
+            );
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
             Tools::log()->warning('start-date-later-end-date', [
                 '%endDate%' => $this->fechainicio,

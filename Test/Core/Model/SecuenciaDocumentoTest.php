@@ -596,6 +596,107 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertFalse($sequence->save());
     }
 
+    public function testDisablePatternTest(): void
+    {
+        // creamos una empresa
+        $company = $this->getRandomCompany();
+        $this->assertTrue($company->save(), 'company-cant-save');
+
+        // creamos una serie
+        $serie = $this->getRandomSerie();
+        $this->assertTrue($serie->save(), 'serie-cant-save');
+
+        // intentamos crear una secuencia con patrón inválido (sin número)
+        $sequence = new SecuenciaDocumento();
+        $sequence->codserie = $serie->codserie;
+        $sequence->idempresa = $company->idempresa;
+        $sequence->longnumero = 6;
+        $sequence->numero = 1;
+        $sequence->patron = 'TEST{EJE}{SERIE}'; // patrón sin {NUM} o {0NUM}
+        $sequence->tipodoc = 'PresupuestoCliente';
+        $sequence->usarhuecos = false;
+
+        // con validaciones activas, no debe guardar
+        $this->assertFalse($sequence->save(), 'sequence-should-not-save-with-invalid-pattern');
+
+        // desactivamos las validaciones de patrón
+        $sequence->disablePatternTest(true);
+
+        // ahora sí debe poder guardar
+        $this->assertTrue($sequence->save(), 'sequence-should-save-when-pattern-test-disabled');
+        $this->assertNotNull($sequence->primaryColumnValue(), 'sequence-not-stored');
+
+        // volvemos a activar las validaciones
+        $sequence->disablePatternTest(false);
+
+        // intentamos crear otra secuencia con patrón inválido (sin ejercicio ni fecha)
+        $sequence2 = new SecuenciaDocumento();
+        $sequence2->codserie = $serie->codserie;
+        $sequence2->idempresa = $company->idempresa;
+        $sequence2->longnumero = 6;
+        $sequence2->numero = 1;
+        $sequence2->patron = '{SERIE}{0NUM}'; // patrón sin ejercicio ni fecha
+        $sequence2->tipodoc = 'PedidoCliente';
+        $sequence2->usarhuecos = false;
+
+        // con validaciones activas, debe mostrar warning pero guardar (solo es warning, no error)
+        $this->assertTrue($sequence2->save(), 'sequence-should-save-but-show-warning');
+
+        // eliminamos
+        $this->assertTrue($sequence2->delete(), 'sequence-cant-delete');
+        $this->assertTrue($sequence->delete(), 'sequence-cant-delete');
+        $this->assertTrue($serie->delete(), 'serie-cant-delete');
+        $this->assertTrue($company->delete(), 'company-cant-delete');
+    }
+
+    public function testLongnumeroLimit(): void
+    {
+        // creamos una empresa
+        $company = $this->getRandomCompany();
+        $this->assertTrue($company->save(), 'company-cant-save');
+
+        // creamos una serie
+        $serie = $this->getRandomSerie();
+        $this->assertTrue($serie->save(), 'serie-cant-save');
+
+        // intentamos crear una secuencia con longnumero = 0 (inválido)
+        $sequence = new SecuenciaDocumento();
+        $sequence->codserie = $serie->codserie;
+        $sequence->idempresa = $company->idempresa;
+        $sequence->longnumero = 0;
+        $sequence->numero = 1;
+        $sequence->patron = '{EJE}{SERIE}{0NUM}';
+        $sequence->tipodoc = 'PresupuestoCliente';
+        $sequence->usarhuecos = false;
+        $this->assertFalse($sequence->save(), 'sequence-should-not-save-with-longnumero-0');
+
+        // intentamos crear una secuencia con longnumero = 11 (inválido)
+        $sequence->longnumero = 11;
+        $this->assertFalse($sequence->save(), 'sequence-should-not-save-with-longnumero-11');
+
+        // intentamos crear una secuencia con longnumero = 20 (inválido)
+        $sequence->longnumero = 20;
+        $this->assertFalse($sequence->save(), 'sequence-should-not-save-with-longnumero-20');
+
+        // intentamos crear una secuencia con longnumero negativo (inválido)
+        $sequence->longnumero = -5;
+        $this->assertFalse($sequence->save(), 'sequence-should-not-save-with-negative-longnumero');
+
+        // creamos una secuencia con longnumero = 1 (válido)
+        $sequence->longnumero = 1;
+        $this->assertTrue($sequence->save(), 'sequence-should-save-with-longnumero-1');
+        $this->assertTrue($sequence->delete(), 'sequence-cant-delete');
+
+        // creamos una secuencia con longnumero = 10 (válido)
+        $sequence->longnumero = 10;
+        $this->assertTrue($sequence->save(), 'sequence-should-save-with-longnumero-10');
+
+        // eliminamos
+        $this->assertTrue($sequence->delete(), 'sequence-cant-delete');
+        $this->assertTrue($serie->delete(), 'serie-cant-delete');
+        $this->assertTrue($company->delete(), 'company-cant-delete');
+    }
+
     private function deleteSequences(SecuenciaDocumento $sequence): void
     {
         $where = [new DataBaseWhere('tipodoc', 'PresupuestoCliente')];
