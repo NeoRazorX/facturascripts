@@ -21,12 +21,26 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Lib\Calculator;
+use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ImpuestoTest extends TestCase
 {
+    use DefaultSettingsTrait;
     use LogErrorsTrait;
+    use RandomDataTrait;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::setDefaultSettings();
+        self::installAccountingPlan();
+        self::removeTaxRegularization();
+    }
 
     public function testCreate(): void
     {
@@ -144,6 +158,92 @@ final class ImpuestoTest extends TestCase
                 $this->assertFalse($defaultTax->delete(), 'default-tax-should-not-be-deletable');
             }
         }
+    }
+
+    /**
+     * Probar que se puede crear dos impuestos con el mismo iva
+     */
+    public function testTwoTaxesSameIva(): void
+    {
+        // creamos un impuesto
+        $impuesto = new Impuesto();
+        $impuesto->codimpuesto = 'TEST22';
+        $impuesto->descripcion = 'Test IVA 22%';
+        $impuesto->iva = 22.0;
+        $impuesto->recargo = 0;
+        $this->assertTrue($impuesto->save(), 'cant-save-impuesto');
+
+        // creamos un impuesto con el mismo iva
+        $impuesto2 = new Impuesto();
+        $impuesto2->codimpuesto = 'TEST222';
+        $impuesto2->descripcion = 'Test IVA 22%';
+        $impuesto2->iva = 22.0;
+        $impuesto2->recargo = 0;
+        $this->assertTrue($impuesto2->save(), 'cant-save-impuesto-2');
+
+        // revisamos que existen los dos con el mismo iva
+        $this->assertTrue($impuesto->exists());
+        $this->assertTrue($impuesto2->exists());
+        $this->assertEquals($impuesto->iva, $impuesto2->iva);
+
+        // limpiamos
+        $this->assertTrue($impuesto->delete());
+        $this->assertTrue($impuesto2->delete());
+    }
+
+    /**
+     * Si se crea un impuesto de tipo porcentaje y 10 de iva, al hacer una compra con una 
+     * línea con ese impuesto, cantidad 2 y precio 50, el totaliva es 10.
+     */
+    public function testTotalIva()
+    {
+        // creamos un impuesto tipo porcentaje y 10 de iva
+        $impuesto = new Impuesto();
+        $impuesto->codimpuesto = 'TEST10';
+        $impuesto->descripcion = 'Test IVA 10%';
+        $impuesto->tipo = Impuesto::TYPE_PERCENTAGE;
+        $impuesto->iva = 10.0;
+        $impuesto->recargo = 0.0;
+        $this->assertTrue($impuesto->save(), 'cant-save-impuesto');
+
+        // creamos el cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos la factura
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->numero2 = 'ABC-DEF';
+        $invoice->observaciones = 'TEST';
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // añadimos una línea
+        $line = $invoice->getNewLine();
+        $line->descripcion = 'Test';
+        $line->codimpuesto = $impuesto->codimpuesto;
+        $line->cantidad = 50.0;
+        $line->pvpunitario = 2;
+        $this->assertTrue($line->save(), 'cant-save-first-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        var_dump($lines);
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+
+        $imp = new Impuesto();
+        $imp->load($line->codimpuesto);
+        echo "EL IVA: -------------------------------: ";
+        var_dump($imp->iva);
+
+        // comprobar que total iva es correcto
+        $this->assertEquals(10.0, $invoice->totaliva, 'bad-total-iva');
+
+        // limpiamos
+        $this->assertTrue($line->delete(), 'cant-delete-line');
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($impuesto->delete(), 'cant-delete-impuesto');
     }
 
     protected function tearDown(): void
