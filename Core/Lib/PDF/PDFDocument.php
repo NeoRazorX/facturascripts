@@ -379,7 +379,7 @@ abstract class PDFDocument extends PDFCore
             'net' => $this->i18n->trans('net'),
             'taxes' => $this->i18n->trans('taxes'),
             'totalSurcharge' => $this->i18n->trans('re'),
-            'totalIrpf' => $this->i18n->trans('irpf'),
+            'totalIrpf' => $this->i18n->trans('retention'),
             'totalSupplied' => $this->i18n->trans('supplied-amount'),
             'total' => $this->i18n->trans('total')
         ];
