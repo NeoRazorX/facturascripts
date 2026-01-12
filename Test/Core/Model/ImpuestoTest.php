@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Impuesto;
+use FacturaScripts\Core\Model\Subcuenta;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Calculator;
 use FacturaScripts\Dinamic\Model\Almacen;
@@ -220,30 +221,238 @@ final class ImpuestoTest extends TestCase
         // añadimos una línea
         $line = $invoice->getNewLine();
         $line->descripcion = 'Test';
-        $line->codimpuesto = $impuesto->codimpuesto;
-        $line->cantidad = 50.0;
-        $line->pvpunitario = 2;
-        $this->assertTrue($line->save(), 'cant-save-first-line');
+        $line->cantidad = 2;
+        $line->pvpunitario = 50;
+        $line->setTax($impuesto->codimpuesto);
+        $this->assertTrue($line->save(), 'cant-add-line');
 
-        // recalculamos
+        // recalculamos factura
         $lines = $invoice->getLines();
-        var_dump($lines);
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
-
-        $imp = new Impuesto();
-        $imp->load($line->codimpuesto);
-        echo "EL IVA: -------------------------------: ";
-        var_dump($imp->iva);
 
         // comprobar que total iva es correcto
         $this->assertEquals(10.0, $invoice->totaliva, 'bad-total-iva');
 
         // limpiamos
         $this->assertTrue($line->delete(), 'cant-delete-line');
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
         $this->assertTrue($impuesto->delete(), 'cant-delete-impuesto');
+    }
+
+    // /**
+    //  * Si se crea un impuesto de tipo valor fijo y 10 de iva,
+    //  * al hacer una compra con una línea con ese impuesto, cantidad 2 y precio 50, el totaliva es 20.
+    //  */
+    // public function testTotalIvaFixedValue()
+    // {
+    //     // creamos un impuesto tipo fijo y 10 de iva
+    //     $impuesto = new Impuesto();
+    //     $impuesto->codimpuesto = 'TEST10';
+    //     $impuesto->descripcion = 'Test IVA 10% Fijo';
+    //     $impuesto->tipo = Impuesto::TYPE_FIXED_VALUE;
+    //     $impuesto->iva = 10.0;
+    //     $impuesto->recargo = 0.0;
+    //     $this->assertTrue($impuesto->save(), 'cant-save-impuesto');
+
+    //     // creamos el cliente
+    //     $customer = $this->getRandomCustomer();
+    //     $this->assertTrue($customer->save(), 'cant-create-customer');
+
+    //     // creamos la factura
+    //     $invoice = new FacturaCliente();
+    //     $invoice->setSubject($customer);
+    //     $invoice->numero2 = 'ABC-DEF';
+    //     $invoice->observaciones = 'TEST';
+    //     $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+    //     // añadimos una línea
+    //     $line = $invoice->getNewLine();
+    //     $line->descripcion = 'Test';
+    //     $line->cantidad = 2;
+    //     $line->pvpunitario = 50;
+    //     $line->setTax($impuesto->codimpuesto);
+    //     $this->assertTrue($line->save(), 'cant-add-line');
+
+    //     // recalculamos factura
+    //     $lines = $invoice->getLines();
+    //     $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+    //     // comprobar que total iva es correcto
+    //     $this->assertEquals(20.0, $invoice->totaliva, 'bad-total-iva');
+
+    //     // limpiamos
+    //     $this->assertTrue($line->delete(), 'cant-delete-line');
+    //     $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+    //     $this->assertTrue($customer->delete(), 'cant-delete-customer');
+    //     $this->assertTrue($impuesto->delete(), 'cant-delete-impuesto');
+    // }
+
+    /**
+     * Al asignar una subcuenta de impuestos soportado al impuesto, 
+     * cuando se hace una factura de compra con ese impuesto, 
+     * el asiento utiliza la subcuenta asignada.
+     */
+    public function testSubcuentaSoportado()
+    {
+        // obtenemos un ejercicio
+        $exercise = $this->getRandomExercise();
+        $this->assertTrue($exercise->save(), 'cant-save-exercise-2');
+
+        // obtenemos una cuenta
+        $account = $this->getRandomAccount($exercise->codejercicio);
+        $this->assertTrue($account->save(), 'cant-save-account-2');
+
+        // obtenemos una subcuenta
+        $subaccount = new Subcuenta();
+        $subaccount->codcuenta = $account->codcuenta;
+        $subaccount->codejercicio = $exercise->codejercicio;
+        $subaccount->codsubcuenta = 'test';
+        $subaccount->descripcion = 'Test';
+        $this->assertFalse($subaccount->save(), 'can-save-subaccount-bad-code');
+
+        // creamos un impuesto tipo fijo y 10 de iva
+        $impuesto = new Impuesto();
+        $impuesto->codimpuesto = 'TEST10';
+        $impuesto->descripcion = 'Test IVA 10% Fijo';
+        $impuesto->tipo = Impuesto::TYPE_PERCENTAGE;
+        $impuesto->iva = 10.0;
+        $impuesto->recargo = 0.0;
+        $impuesto->codsubcuentasop = $subaccount->idsubcuenta;
+        $this->assertTrue($impuesto->save(), 'cant-save-impuesto');
+
+        // creamos el cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos la factura
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->numero2 = 'ABC-DEF';
+        $invoice->observaciones = 'TEST';
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // añadimos una línea
+        $line = $invoice->getNewLine();
+        $line->descripcion = 'Test';
+        $line->cantidad = 2;
+        $line->pvpunitario = 50;
+        $line->setTax($impuesto->codimpuesto);
+        $this->assertTrue($line->save(), 'cant-add-line');
+
+        // recalculamos factura
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // obtener asiento
+        $accounting = $invoice->getAccountingEntry();
+
+        // comprobar que existe
+        $this->assertTrue($accounting->exists(), 'accounting-entry-not-found');
+
+        // obtener lineas del asiento
+        $accountingLines = $accounting->getLines();
+
+        // encontrar una linea con el cod subcuenta === codsubcuenta impuesto
+        $foundedSameSubcuenta = false;
+        foreach ($accountingLines as $partida) {
+            if ($partida->codsubcuenta === $impuesto->codsubcuentarep || $partida->idcontrapartida === $impuesto->codsubcuentarep) {
+                $foundedSameSubcuenta = true;
+                break;
+            }
+        }
+        $this->assertTrue($foundedSameSubcuenta, 'no-line-with-tax-subaccount-found');
+
+        // limpiamos
+        $this->assertTrue($line->delete(), 'cant-delete-line');
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($impuesto->delete(), 'cant-delete-impuesto');
+        $this->assertTrue($subaccount->delete(), 'subaccount-cant-delete');
+    }
+
+    /**
+     * Al asignar una subcuenta de impuestos repercutido al impuesto, 
+     * cuando se hace una factura de venta con ese impuesto, 
+     * el asiento utiliza la subcuenta asignada.
+     */
+    public function testTaxSubaccountPurchase()
+    {
+        // obtenemos un ejercicio
+        $exercise = $this->getRandomExercise();
+        $this->assertTrue($exercise->save(), 'cant-save-exercise-2');
+
+        // obtenemos una cuenta
+        $account = $this->getRandomAccount($exercise->codejercicio);
+        $this->assertTrue($account->save(), 'cant-save-account-2');
+
+        // obtenemos una subcuenta
+        $subaccount = new Subcuenta();
+        $subaccount->codcuenta = $account->codcuenta;
+        $subaccount->codejercicio = $exercise->codejercicio;
+        $subaccount->codsubcuenta = 'test';
+        $subaccount->descripcion = 'Test';
+        $this->assertFalse($subaccount->save(), 'can-save-subaccount-bad-code');
+
+        // creamos un impuesto tipo fijo y 10 de iva
+        $impuesto = new Impuesto();
+        $impuesto->codimpuesto = 'TEST10';
+        $impuesto->descripcion = 'Test IVA 10% Fijo';
+        $impuesto->tipo = Impuesto::TYPE_PERCENTAGE;
+        $impuesto->iva = 10.0;
+        $impuesto->recargo = 0.0;
+        $impuesto->codsubcuentarep = $subaccount->idsubcuenta;
+        $this->assertTrue($impuesto->save(), 'cant-save-impuesto');
+
+        // creamos el cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos la factura
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->numero2 = 'ABC-DEF';
+        $invoice->observaciones = 'TEST';
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // añadimos una línea
+        $line = $invoice->getNewLine();
+        $line->descripcion = 'Test';
+        $line->cantidad = 2;
+        $line->pvpunitario = 50;
+        $line->setTax($impuesto->codimpuesto);
+        $this->assertTrue($line->save(), 'cant-add-line');
+
+        // recalculamos factura
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // obtener asiento
+        $accounting = $invoice->getAccountingEntry();
+
+        // comprobar que existe
+        $this->assertTrue($accounting->exists(), 'accounting-entry-not-found');
+
+        // obtener lineas del asiento
+        $accountingLines = $accounting->getLines();
+
+        // encontrar una linea con el cod subcuenta === codsubcuenta impuesto
+        $foundedSameSubcuenta = false;
+        foreach ($accountingLines as $partida) {
+            if ($partida->codsubcuenta === $impuesto->codsubcuentasop || $partida->idcontrapartida === $impuesto->codsubcuentasop) {
+                $foundedSameSubcuenta = true;
+                break;
+            }
+        }
+        $this->assertTrue($foundedSameSubcuenta, 'no-line-with-tax-subaccount-found');
+
+        // limpiamos
+        $this->assertTrue($line->delete(), 'cant-delete-line');
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($impuesto->delete(), 'cant-delete-impuesto');
+        $this->assertTrue($subaccount->delete(), 'subaccount-cant-delete');
     }
 
     protected function tearDown(): void
