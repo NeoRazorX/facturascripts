@@ -228,14 +228,14 @@ class CalculatorModSpain implements CalculatorModInterface
             // IVA
             if ($line->iva > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
                 $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
-                    $pvpTotal * $line->iva :
+                    $line->cantidad * $line->iva :
                     $pvpTotal * $line->iva / 100;
             }
 
             // recargo de equivalencia
             if ($line->recargo > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
                 $subtotals['iva'][$ivaKey]['totalrecargo'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
-                    $pvpTotal * $line->recargo :
+                    $line->cantidad * $line->recargo :
                     $pvpTotal * $line->recargo / 100;
             }
         }
