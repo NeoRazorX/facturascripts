@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\Subcuenta;
 use FacturaScripts\Core\Tools;
@@ -323,12 +324,12 @@ final class ImpuestoTest extends TestCase
         $this->assertTrue($impuesto->save(), 'cant-save-impuesto');
 
         // creamos el cliente
-        $customer = $this->getRandomCustomer();
-        $this->assertTrue($customer->save(), 'cant-create-customer');
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save(), 'cant-create-customer');
 
         // creamos la factura
-        $invoice = new FacturaCliente();
-        $invoice->setSubject($customer);
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($supplier);
         $invoice->numero2 = 'ABC-DEF';
         $invoice->observaciones = 'TEST';
         $this->assertTrue($invoice->save(), 'cant-create-invoice');
@@ -367,9 +368,10 @@ final class ImpuestoTest extends TestCase
         // limpiamos
         $this->assertTrue($line->delete(), 'cant-delete-line');
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
-        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($supplier->delete(), 'cant-delete-customer');
         $this->assertTrue($impuesto->delete(), 'cant-delete-impuesto');
         $this->assertTrue($subaccount->delete(), 'subaccount-cant-delete');
+        $this->assertTrue($account->delete(), 'account-cant-delete');
     }
 
     /**
@@ -453,6 +455,7 @@ final class ImpuestoTest extends TestCase
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
         $this->assertTrue($impuesto->delete(), 'cant-delete-impuesto');
         $this->assertTrue($subaccount->delete(), 'subaccount-cant-delete');
+        $this->assertTrue($account->delete(), 'account-cant-delete');
     }
 
     protected function tearDown(): void
