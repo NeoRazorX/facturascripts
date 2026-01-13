@@ -501,13 +501,7 @@ abstract class PurchasesController extends PanelController
 
     private function sendJsonWithLogs(array $data): void
     {
-        $data['messages'] = [];
-        foreach (Tools::log()::read('', $this->logLevels) as $message) {
-            if (!in_array($message['channel'], [LogMessage::AUDIT_CHANNEL, LogMessage::DOCS_CHANNEL])) {
-                $data['messages'][] = $message;
-            }
-        }
-
+        $data['messages'] = Tools::log()::read('master', $this->logLevels);
         $this->response->json($data);
     }
 }
