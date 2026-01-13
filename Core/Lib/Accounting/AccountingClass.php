@@ -26,7 +26,7 @@ use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Base class for creation of accounting processes
+ * Clase base para la generación de asientos contables
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>
@@ -37,7 +37,7 @@ abstract class AccountingClass extends AccountingAccounts
     protected $document;
 
     /**
-     * Method to launch the accounting process
+     * Genera los asientos contables para una factura.
      *
      * @param ModelClass $model
      */
@@ -48,7 +48,7 @@ abstract class AccountingClass extends AccountingAccounts
     }
 
     /**
-     * Add a standard line to the accounting entry based on the reported sub-account
+     * Añade una línea básica al asiento contable en base a la subcuenta reportada
      *
      * @param Asiento $accountEntry
      * @param Subcuenta $subaccount
@@ -63,7 +63,7 @@ abstract class AccountingClass extends AccountingAccounts
     }
 
     /**
-     * Add a group of lines from array of subaccounts/amount.
+     * Añade un grupo de líneas desde un array de subcuentas/importes.
      *
      * @param Asiento $accountEntry
      * @param array $totals
@@ -99,8 +99,8 @@ abstract class AccountingClass extends AccountingAccounts
     }
 
     /**
-     * Add a line of taxes to the accounting entry based on the sub-account
-     * and values reported
+     * Añade una línea de impuestos al asiento contable en base a la subcuenta
+     * y valores informados
      *
      * @param Asiento $accountEntry
      * @param Subcuenta $subaccount
@@ -116,7 +116,7 @@ abstract class AccountingClass extends AccountingAccounts
             return true;
         }
 
-        // add basic data
+        // añadir datos básicos
         $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $values['totalrecargo']);
 
         // counterpart?
@@ -124,7 +124,7 @@ abstract class AccountingClass extends AccountingAccounts
             $line->setCounterpart($counterpart);
         }
 
-        // add tax register data
+        // añadir datos de registro de impuestos
         $line->baseimponible = (float)$values['neto'];
         $line->iva = 0;
         $line->recargo = (float)$values['recargo'];
@@ -138,8 +138,8 @@ abstract class AccountingClass extends AccountingAccounts
     }
 
     /**
-     * Add a line of taxes to the accounting entry based on the sub-account
-     * and values reported
+     * Añade una línea de impuestos al asiento contable en base a la subcuenta
+     * y valores informados
      *
      * @param Asiento $accountEntry
      * @param Subcuenta $subaccount
@@ -151,7 +151,7 @@ abstract class AccountingClass extends AccountingAccounts
      */
     protected function addTaxLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool
     {
-        // add basic data
+        // obtener una linea
         $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $values['totaliva']);
 
         // counterpart?
@@ -159,7 +159,7 @@ abstract class AccountingClass extends AccountingAccounts
             $line->setCounterpart($counterpart);
         }
 
-        // add tax register data
+        // añadir datos de registro de impuestos
         $line->baseimponible = (float)$values['neto'];
         $line->iva = (float)$values['iva'];
         $line->recargo = 0;
@@ -173,7 +173,7 @@ abstract class AccountingClass extends AccountingAccounts
     }
 
     /**
-     * Obtain a standard line to the accounting entry based on the reported sub-account
+     * Devuelve una línea estándar para el asiento contable en base a la subcuenta reportada
      *
      * @param Asiento $accountEntry
      * @param Subcuenta $subaccount
