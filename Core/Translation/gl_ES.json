@@ -980,6 +980,7 @@
     "login": "Iniciar sesión",
     "login-cookie-fail": "Fallou a cookie da sesión",
     "login-image": "Imagen de login",
+    "login-invalid-db-password": "Contraseña de base de datos incorrecta",
     "login-ok": "Sesión iniciada con éxito (cookie). Usuario: '%nick%'",
     "login-password-changed": "Contrasinal cambiado correctamente",
     "login-password-fail": "Fallo de sesión",

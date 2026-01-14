@@ -980,6 +980,7 @@
     "login": "Zaloguj się",
     "login-cookie-fail": "Nieprawidłowy ciasteczko logowania",
     "login-image": "Obrazek logowania",
+    "login-invalid-db-password": "Contraseña de base de datos incorrecta",
     "login-ok": "Sesja została pomyślnie uruchomiona (ciasteczko). Użytkownik: '%nick%'",
     "login-password-changed": "Hasło zmienione pomyślnie",
     "login-password-fail": "Użytkownik lub hasło są niepoprawne",

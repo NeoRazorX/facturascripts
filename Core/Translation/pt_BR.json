@@ -980,6 +980,7 @@
     "login": "Entrar",
     "login-cookie-fail": "Cookie de sessão inválido: provavelmente você fez login a partir de outro dispositivo ou navegador.",
     "login-image": "Imagem de login",
+    "login-invalid-db-password": "Contraseña de base de datos incorrecta",
     "login-ok": "Login bem-sucedido (cookie). Usuário: '%nick%'",
     "login-password-changed": "Senha alterada com sucesso",
     "login-password-fail": "Usuário ou senha incorretos",

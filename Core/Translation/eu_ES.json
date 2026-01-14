@@ -980,6 +980,7 @@
     "login": "Saioa hasi",
     "login-cookie-fail": "Saioaren cookiea baliogabea da",
     "login-image": "Saioa hasteko irudia",
+    "login-invalid-db-password": "Contraseña de base de datos incorrecta",
     "login-ok": "Saioa ondo hasi da (cookie). Erabiltzailea: '%nick%'",
     "login-password-changed": "Pasahitza arrakastaz aldatu da",
     "login-password-fail": "Erabiltzailea edo pasahitza ez dira zuzenak",

@@ -980,6 +980,7 @@
     "login": "Iniciar sessió",
     "login-cookie-fail": "La cookie de sessió ha fallat",
     "login-image": "Imatge de login",
+    "login-invalid-db-password": "Contrasenya de base de dades incorrecta",
     "login-ok": "Sessió iniciada satisfactòriament (cookie). Usuari: '%nick%'",
     "login-password-changed": "Contrasenya canviada correctament",
     "login-password-fail": "Error a l'iniciar sessió",

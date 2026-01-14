@@ -980,6 +980,7 @@
     "login": "Anmeldung",
     "login-cookie-fail": "Session-Cookie ist fehlgeschlagen: Möglicherweise haben Sie sich von einem anderen Gerät oder Browser angemeldet.",
     "login-image": "Login-Bild",
+    "login-invalid-db-password": "Contraseña de base de datos incorrecta",
     "login-ok": "Melden Sie sich erfolgreich an (Cookie). Benutzer: '0'",
     "login-password-changed": "Passwort erfolgreich geändert",
     "login-password-fail": "Anmeldung fehlgeschlagen",

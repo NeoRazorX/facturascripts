@@ -980,6 +980,7 @@
     "login": "S'identifier",
     "login-cookie-fail": "Échec du login-cookie",
     "login-image": "Imagen de login",
+    "login-invalid-db-password": "Contraseña de base de datos incorrecta",
     "login-ok": "Connectez-vous avec succès (cookie). Utilisateur: '%nick'",
     "login-password-changed": "Mot de passe changé avec succès",
     "login-password-fail": "Échec de la connexion",

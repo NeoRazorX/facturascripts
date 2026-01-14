@@ -980,6 +980,7 @@
     "login": "Login",
     "login-cookie-fail": "Session cookie failed",
     "login-image": "Login image",
+    "login-invalid-db-password": "Contraseña de base de datos incorrecta",
     "login-ok": "Login successfully (cookie). User: '%nick%'",
     "login-password-changed": "Password changed successfully",
     "login-password-fail": "Login failed",
