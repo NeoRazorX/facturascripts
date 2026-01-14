@@ -176,7 +176,7 @@ class Login implements ControllerInterface
         }
 
         if ($password !== $password2) {
-            Tools::log()->warning('different-passwords', ['%userNick%' => $username]);
+            Tools::log()->warning('different-passwords', ['%userNick%' => htmlspecialchars($username)]);
             return;
         }
 
@@ -193,7 +193,7 @@ class Login implements ControllerInterface
         }
 
         if (false === $user->setPassword($password)) {
-            Tools::log()->warning('weak-password', ['%userNick%' => $username]);
+            Tools::log()->warning('weak-password', ['%userNick%' => htmlspecialchars($username)]);
             return;
         }
 

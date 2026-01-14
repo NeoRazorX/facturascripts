@@ -314,7 +314,7 @@ class SendMail extends Controller
 
         $emailFrom = $this->request->input('email-from', '');
         if (false === Validator::email($emailFrom)) {
-            Tools::log()->error('invalid-email-from', ['%email%' => $emailFrom]);
+            Tools::log()->error('invalid-email-from', ['%email%' => htmlspecialchars($emailFrom)]);
             return false;
         }
 
@@ -331,7 +331,7 @@ class SendMail extends Controller
             }
 
             if (false === Validator::email($email)) {
-                Tools::log()->error('invalid-email-to', ['%email%' => $email]);
+                Tools::log()->error('invalid-email-to', ['%email%' => htmlspecialchars($email)]);
                 return false;
             }
 
@@ -349,7 +349,7 @@ class SendMail extends Controller
             }
 
             if (false === Validator::email($email)) {
-                Tools::log()->error('invalid-email-cc', ['%email%' => $email]);
+                Tools::log()->error('invalid-email-cc', ['%email%' => htmlspecialchars($email)]);
                 return false;
             }
 
@@ -367,7 +367,7 @@ class SendMail extends Controller
             }
 
             if (false === Validator::email($email)) {
-                Tools::log()->error('invalid-email-bcc', ['%email%' => $email]);
+                Tools::log()->error('invalid-email-bcc', ['%email%' => htmlspecialchars($email)]);
                 return false;
             }
 
