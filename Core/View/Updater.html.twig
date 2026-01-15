@@ -181,12 +181,14 @@
                         <p>{{ trans('telemetry-data-to-send') }}</p>
                         <a class="btn btn-primary float-start" href="{{ fsc.url() }}?action=claim-install"
                            target="_blank">
+                            <i class="fa-solid fa-cog fa-fw" aria-hidden="true"></i>
                             {{ trans('manage') }}
                         </a>
                         <form action="{{ fsc.url() }}" method="post" onsubmit="animateSpinner('add')">
                             {{ formToken() }}
                             <input type="hidden" name="action" value="unlink"/>
                             <button type="submit" class="btn btn-danger btn-spin-action float-end">
+                                <i class="fa-solid fa-unlink fa-fw" aria-hidden="true"></i>
                                 {{ trans('unlink') }}
                             </button>
                         </form>
