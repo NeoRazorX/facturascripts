@@ -26,6 +26,7 @@ use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
 
 /**
@@ -193,6 +194,43 @@ abstract class ListController extends BaseController
      */
     protected function addFilterSelect(string $viewName, string $key, string $label, string $field, array $values = []): ListView
     {
+        return $this->listView($viewName)->addFilterSelect($key, $label, $field, $values);
+    }
+
+    /**
+     * Añade un filtro de tipo select o autocompletado a un ListView dependiendo del número de registros.
+     * 
+     * Las condiciones del where aplican para ambos también.
+     *
+     * @param string $viewName Nombre de la vista.
+     * @param string $key Identificador del filtro.
+     * @param string $label Nombre a mostrar o key de Translator
+     * @param string $field Campo de la tabla al que aplicar el filtro.
+     * @param string $table Tabla en la que buscar.
+     * @param string $fieldcode Columna primaria de la tabla a buscar y coincidir.
+     * @param string $fieldtitle Columna para mostrar nombre o descripción.
+     * @param array $where Condiciones extra where.
+     * @return ListView
+     */
+    protected function addFilterSelectMix(string $viewName, string $key, string $label, string $field, string $table, string $fieldcode = '', string $fieldtitle = '', array $where = []): ListView
+    {
+        if (empty($fieldcode)) {
+            $fieldcode = $field;
+        }
+
+        if (empty($fieldtitle)) {
+            $fieldtitle = $fieldcode;
+        }
+
+        // buscar todos los code model (con el where)
+        $values = $this->codeModel->all($table, $fieldcode, $fieldtitle, true, $where);
+
+        // si sobrepasa el límite entonces mostrar un filterAutocomplete
+        if (count($values) >= CodeModel::getlimit()) {
+            return $this->listView($viewName)->addFilterAutocomplete($key, $label, $field, $table, $fieldcode, $fieldtitle, $where);
+        }
+
+        // en caso contrario devolver el filtro select
         return $this->listView($viewName)->addFilterSelect($key, $label, $field, $values);
     }
 
