@@ -416,6 +416,8 @@
     "database-error-pc": "🖥️ Si el programa está instalado en tu PC, probablemente se te haya olvidado activar MySQL o tenga problemas para activarse.",
     "database-error-server": "🌎 si el programa está instalado en un servidor o hosting, probablemente hayas cambiado el usuario o contraseña de la base de datos, o hayas llegado a algún límite de uso del hosting.",
     "database-name-must-be-lowercase": "El nombre de la base de datos debe ser en minúsculas",
+    "database-not-permited-characters": "Se ha intentado de introducir caracteres no permitidos en los campos de la base de datos (\"%campo%\"). Para mantener la integridad y seguridad del sistema, solamente se permiten caracteres alfanuméricos y espacios ([a-z], [A-Z], [0-9]).",
+    "database-not-valid-order": "El valor de ordenación introducido no es válido. Solamente se permiten 'asc' o 'desc'.",
     "date": "Fecha",
     "date-in": "Fecha entrada",
     "date-of-suspension": "Fecha de baja",

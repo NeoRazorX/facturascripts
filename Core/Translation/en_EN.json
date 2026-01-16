@@ -416,6 +416,8 @@
     "database-error-pc": "🖥️ If the program is installed on your PC, you probably forgot to activate MySQL or it has problems activating.",
     "database-error-server": "🌎 If the program is installed on a server or hosting, you may have changed the user or password for the database, or you may have reached some usage limit of the hosting.",
     "database-name-must-be-lowercase": "The database name must be lowercase",
+    "database-not-permited-characters": "An attempt has been detected to introduce disallowed characters into the database fields (\"%campo%\"). To maintain system integrity and security, only alphanumeric characters and spaces ([a-z], [A-Z], [0-9]) are permitted.",
+    "database-not-valid-order": "The provided order value is not valid. Only 'asc' or 'desc' are allowed.",
     "date": "Date",
     "date-in": "Date in",
     "date-of-suspension": "Date of suspension",
