@@ -283,17 +283,22 @@ final class DbQuery
 
     public function orderBy(string $field, string $order = 'ASC'): self
     {
-        // si lleva paréntesis, no escapamos
-        if (strpos($field, '(') !== false && strpos($field, ')') !== false) {
-            $this->orderBy[] = $field . ' ' . $order;
-            return $this;
-        }
+        // // si lleva paréntesis, no escapamos
+        // if (strpos($field, '(') !== false && strpos($field, ')') !== false) {
+        //     $this->orderBy[] = $field . ' ' . $order;
+        //     return $this;
+        // }
 
-        // si contiene espacios, no escapamos
-        if (strpos($field, ' ') !== false) {
-            $this->orderBy[] = $field . ' ' . $order;
-            return $this;
-        }
+        // // si contiene espacios, no escapamos
+        // if (strpos($field, ' ') !== false) {
+        //     $this->orderBy[] = $field . ' ' . $order;
+        //     return $this;
+        // }
+
+
+
+        // validar directamente
+        $key = preg_replace('/[^a-z0-9 ]/gim', '', $field);
 
         // si el campo comienza por integer: hacemos el cast a integer
         if (0 === strpos($field, 'integer:')) {

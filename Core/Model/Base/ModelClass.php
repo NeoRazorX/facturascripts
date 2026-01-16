@@ -487,6 +487,10 @@ abstract class ModelClass extends ModelCore
         $result = '';
         $coma = ' ORDER BY ';
         foreach ($order as $key => $value) {
+            // validar campos:
+            $key = preg_replace('/[^a-z0-9 ]/gim', '', $key);
+            $value = preg_replace('/[^a-z0-9 ]/gim', '', $value);
+
             $result .= $coma . $key . ' ' . $value;
             $coma = ', ';
         }
