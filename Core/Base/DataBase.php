@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
 use FacturaScripts\Core\Base\DataBase\MysqlEngine;
 use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
@@ -88,6 +89,24 @@ final class DataBase
                     self::$engine = new MysqlEngine();
                     break;
             }
+        }
+    }
+
+    /**
+     * Comprueba que el string introducido es idéntico a ese string si se filtra.
+     * Sirve para alertar de que algo anda mal o si se está intentando comprometer
+     * la integridad del sistema.
+     *
+     * @param string $field campo a revisar
+     * @throws KernelException
+     */
+    public function checkField(string $field): void
+    {
+        // el preg elimina cualquier carácter que no sea un número, espacio o de la a-z y el guión y guión bajo
+        $filteredField = preg_replace('/[^a-zñ0-9\-_ ]/im', '', $field);
+        if ($field !== $filteredField) {
+            Tools::log()->critical('Invalid characters detected in field: ' . $field);
+            throw new Exception(Tools::trans('database-not-permited-characters', ['%campo%' => $field]));
         }
     }
 
