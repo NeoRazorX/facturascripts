@@ -732,7 +732,7 @@
     "full-path": "vollständigen Pfad",
     "gap-found": "L",
     "gap-found-not-fillable": "Für die Nummer %numero%, den Tag %fecha%, %codserie% und das Unternehmen %idempresa% wurde eine Lücke gefunden; sie wird jedoch nicht ausgefüllt.",
-    "gaps-out-of-range": "Se han encontrado %count% huecos que no se van a poder rellenar por estar a más de 1000 números del último.",
+    "gaps-out-of-range": "Es wurden %count% Lücken gefunden, die nicht gefüllt werden können, weil sie mehr als 1000 Nummern vom letzten entfernt liegen.",
     "general": "Allgemeines",
     "general-concepts": "Allgemeine Konzepte",
     "general-data": "allgemeine Informationen",
