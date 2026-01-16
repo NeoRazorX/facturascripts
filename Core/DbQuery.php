@@ -287,31 +287,32 @@ final class DbQuery
         if (strtoupper($order) !== 'ASC' && strtoupper($order) !== 'DESC') {
             throw new Exception(Tools::trans('database-not-valid-order'));
         }
-
-        // si contiene espacios, no escapamos
-        if (strpos($field, ' ') !== false) {
-            self::db()->checkField($field);
-            $this->orderBy[] = $field . ' ' . $order;
-            return $this;
-        }
         
         // detectar funciones a campos: lower(campo)
         // funciones permitidas al inicio ejemplo: 'lower|super|tal'
-        $validExternField = 'lower';
+        $validExternField = 'lower|cast';
         // extraer lo que hay dentro de lower o paréntesis
-        preg_match('/(?<=^('.$validExternField.')\().+(?=\)$)/i', $field, $matches);
-        if ($matches && count($matches) > 0) {
+        preg_match('/^('.$validExternField.')\(.+\)$/i', $field, $matches);
+        if ($matches && count($matches) !== 0) {
             // entonces lleva un paréntesis
-            $innerField = $matches[0];
-            $externField = '';
-            preg_match('/(?<=^)('.$validExternField.')(?=\(.+\)$)/i', $field, $matches);
-            $externField = $matches[0];
-
+            $externField = $matches[1]; // rescatar campo externo
+            
+            // recoger lo que hay dentro de los paréntesis
+            $_substr = explode('(', $field)[1];
+            $innerField = substr($_substr, 0, strlen($_substr) - 1);
+            
             // validar campo interno
             self::db()->checkField($innerField);
 
             // insertar de manera controlada
             $this->orderBy[] = $externField . '(' . $field . ')' . ' ' . $order;
+            return $this;
+        }
+
+        // si contiene espacios, no escapamos
+        if (strpos($field, ' ') !== false) {
+            self::db()->checkField($field);
+            $this->orderBy[] = $field . ' ' . $order;
             return $this;
         }
 
@@ -330,6 +331,7 @@ final class DbQuery
             $field = 'LOWER(' . self::db()->escapeColumn(substr($field, 6)) . ')';
         }
 
+        self::db()->checkField($field);
         $this->orderBy[] = self::db()->escapeColumn($field) . ' ' . $order;
 
         return $this;
