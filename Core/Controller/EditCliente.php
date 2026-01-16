@@ -24,14 +24,15 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
-use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
+use FacturaScripts\Dinamic\Lib\TaxException;
+use FacturaScripts\Dinamic\Lib\TaxRegime;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\PedidoCliente;
 use FacturaScripts\Dinamic\Model\PresupuestoCliente;
-
 /**
  * Controller to edit a single item from the Cliente model
  *
@@ -118,7 +119,7 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     * Crea todas las vista de EditCliente y sus paneles
+     * Create views
      */
     protected function createViews()
     {
@@ -254,20 +255,11 @@ class EditCliente extends ComercialContactController
             case $mainViewName:
                 parent::loadData($viewName, $view);
                 $this->loadLanguageValues($viewName);
-                $this->loadExceptionVat($viewName);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
                 break;
-        }
-    }
-
-    protected function loadExceptionVat(string $viewName): void
-    {
-        $column = $this->views[$viewName]->columnForName('vat-exception');
-        if ($column && $column->widget->getType() === 'select') {
-            $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
     }
 
@@ -289,10 +281,19 @@ class EditCliente extends ComercialContactController
 
     protected function setCustomWidgetValues(string $viewName): void
     {
-        // Load values option to VAT Type select input
-        $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
-        if ($columnVATType && $columnVATType->widget->getType() === 'select') {
-            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all(), true);
+        $columnVATRegime = $this->views[$viewName]->columnForName('vat-regime');
+        if ($columnVATRegime && $columnVATRegime->widget->getType() === 'select') {
+            $columnVATRegime->widget->setValuesFromArrayKeys(TaxRegime::all(), true, true);
+        }
+
+        $columnInvoiceOperation = $this->views[$viewName]->columnForName('operation');
+        if ($columnInvoiceOperation && $columnInvoiceOperation->widget->getType() === 'select') {
+            $columnInvoiceOperation->widget->setValuesFromArrayKeys(InvoiceOperation::all(), true, true);
+        }
+
+        $columnVATException = $this->views[$viewName]->columnForName('vat-exception');
+        if ($columnVATException && $columnVATException->widget->getType() === 'select') {
+            $columnVATException->widget->setValuesFromArrayKeys(TaxException::all(), true, true);
         }
 
         // Model exists?

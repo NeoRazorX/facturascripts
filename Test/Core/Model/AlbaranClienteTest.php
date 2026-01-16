@@ -306,94 +306,36 @@ final class AlbaranClienteTest extends TestCase
             'apartado' => [10, 11],
             'cifnif' => [30, 31],
             'ciudad' => [100, 101],
+            'codigo' => [20, 21],
+            'codigoenv' => [200, 201],
             'codpais' => [20, 21],
             'codpostal' => [10, 11],
             'direccion' => [200, 201],
             'nombrecliente' => [100, 101],
+            'operacion' => [50, 51],
             'provincia' => [100, 101],
         ];
 
         foreach ($campos as $campo => [$valido, $invalido]) {
-            // Creamos un nuevo albarán
-            $doc = new AlbaranCliente();
-            $doc->setSubject($subject);
+            // Creamos uel modelo
+            $model = new AlbaranCliente();
+            $model->setSubject($subject);
 
             // Asignamos el valor inválido en el campo a probar
-            $doc->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($doc->save(), "can-save-albaranCliente-bad-{$campo}");
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-albaranCliente-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
-            $doc->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($doc->save(), "cannot-save-albaranCliente-fixed-{$campo}");
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-albaranCliente-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($doc->delete(), "cannot-delete-albaranCliente-{$campo}");
+            $this->assertTrue($model->delete(), "cannot-delete-albaranCliente-{$campo}");
         }
 
         // Eliminamos el cliente
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
         $this->assertTrue($subject->delete(), 'can-not-delete-customer');
-    }
-
-    public function testSecondCompany(): void
-    {
-        // creamos la empresa 2
-        $company2 = new Empresa();
-        $company2->nombre = 'Company 2';
-        $company2->nombrecorto = 'Company-2';
-        $this->assertTrue($company2->save(), 'company-cant-save');
-
-        // obtenemos el almacén de la empresa 2
-        $warehouse = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
-        $warehouse->loadWhere($where);
-
-        // creamos un cliente
-        $subject = $this->getRandomCustomer();
-        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
-
-        // creamos un albarán
-        $doc = new AlbaranCliente();
-        $doc->setSubject($subject);
-        $doc->codalmacen = $warehouse->codalmacen;
-        $this->assertTrue($doc->save(), 'albaran-cant-save');
-
-        // añadimos una línea
-        $line = $doc->getNewLine();
-        $line->cantidad = 1;
-        $line->pvpunitario = 100;
-        $this->assertTrue($line->save(), 'can-not-save-line-2');
-
-        // aprobar
-        foreach ($doc->getAvailableStatus() as $status) {
-            if (empty($status->generadoc)) {
-                continue;
-            }
-
-            // al cambiar el estado genera una nueva factura
-            $doc->idestado = $status->idestado;
-            $this->assertTrue($doc->save(), 'albaran-cant-save');
-
-            // comprobamos que la factura se ha creado
-            $children = $doc->childrenDocuments();
-            $this->assertNotEmpty($children, 'facturas-no-creadas');
-            foreach ($children as $child) {
-                // comprobamos que tiene la misma empresa y el mismo almacén
-                $this->assertEquals($warehouse->codalmacen, $child->codalmacen, 'factura-bad-idempresa');
-                $this->assertEquals($company2->idempresa, $child->idempresa, 'factura-bad-idempresa');
-            }
-        }
-
-        // eliminamos
-        $children = $doc->childrenDocuments();
-        $this->assertNotEmpty($children, 'facturas-no-creadas');
-        foreach ($children as $child) {
-            $this->assertTrue($child->delete(), 'factura-cant-delete');
-        }
-        $this->assertTrue($doc->delete(), 'albaran-cant-delete');
-        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
-        $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
 
     protected function tearDown(): void

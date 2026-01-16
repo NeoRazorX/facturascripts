@@ -255,7 +255,7 @@ class InvoiceToAccounting extends AccountingClass
             }
 
             // si la operación es intracomunitaria, añadimos también la línea de IVA repercutido
-            if ($this->document->operacion === InvoiceOperation::INTRA_COMMUNITY) {
+            if ($this->document->operacion === InvoiceOperation::ES_INTRA_COMMUNITY) {
                 // calculamos el importe del IVA
                 $value['totaliva'] = round($value['neto'] * $value['iva'] / 100, 2);
                 $value['totalrecargo'] = round($value['neto'] * $value['recargo'] / 100, 2);
@@ -363,7 +363,7 @@ class InvoiceToAccounting extends AccountingClass
                 return false;
             }
 
-            if ($this->document->operacion === InvoiceOperation::INTRA_COMMUNITY) {
+            if ($this->document->operacion === InvoiceOperation::ES_INTRA_COMMUNITY) {
                 $value['totaliva'] = round($value['neto'] * $value['iva'] / 100, 2);
                 $value['totalrecargo'] = round($value['neto'] * $value['recargo'] / 100, 2);
                 $done = $this->addTaxLine($entry, $subAccOut, $this->counterpart, false, $value) &&

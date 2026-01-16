@@ -30,7 +30,6 @@ use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
-use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Almacen as DinAlmacen;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
@@ -89,6 +88,9 @@ class Empresa extends ModelClass
     /** @var string */
     public $observaciones;
 
+    /** @var string */
+    public $operacion;
+
     /** @var bool */
     public $personafisica;
 
@@ -112,7 +114,7 @@ class Empresa extends ModelClass
         parent::clear();
         $this->codpais = Tools::settings('default', 'codpais');
         $this->fechaalta = Tools::date();
-        $this->regimeniva = RegimenIVA::defaultValue();
+        $this->regimeniva = Tools::settings('default', 'regimeniva');
         $this->tipoidfiscal = Tools::settings('default', 'tipoidfiscal');
     }
 
@@ -177,7 +179,7 @@ class Empresa extends ModelClass
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,direccion,administrador,cifnif,nombre,'
             . 'nombrecorto,personafisica,regimeniva) '
             . "VALUES (1,'','" . $codpais . "','','','00000014Z','" . Tools::textBreak($name, 100)
-            . "','" . Tools::textBreak($name, 32) . "','0'," . "'" . RegimenIVA::defaultValue() . "');";
+            . "','" . Tools::textBreak($name, 32) . "','0'," . "'" . Tools::settings('default', 'regimeniva') . "');";
     }
 
     /**
@@ -216,6 +218,7 @@ class Empresa extends ModelClass
         $this->nombre = Tools::noHtml($this->nombre);
         $this->nombrecorto = Tools::noHtml($this->nombrecorto);
         $this->observaciones = Tools::noHtml($this->observaciones);
+        $this->operacion = Tools::noHtml($this->operacion);
         $this->provincia = Tools::noHtml($this->provincia);
         $this->web = Tools::noHtml($this->web);
 

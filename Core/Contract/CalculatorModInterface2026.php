@@ -17,14 +17,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Lib;
+namespace FacturaScripts\Core\Contract;
 
-/**
- * @deprecated use TaxOperation instead
- * This class centralizes all operations related to taxes.
- *
- * @author Daniel Fernández Giménez <hola@danielfg.es>
- */
-class OperacionIVA extends TaxOperation
+use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+
+interface CalculatorModInterface2026
 {
+    public function apply(BusinessDocument &$doc, array &$lines): int;
+
+    public function calculate(BusinessDocument &$doc, array &$lines, bool $save): int;
+
+    public function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): int;
+
+    public function clear(BusinessDocument &$doc, array &$lines): bool;
+
+    public function getSubtotals(array &$subtotals, BusinessDocument $doc, array $lines): bool;
+
+    public function save(BusinessDocument &$doc, array $lines): int;
 }

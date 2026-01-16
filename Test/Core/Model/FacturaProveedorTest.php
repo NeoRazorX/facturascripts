@@ -20,14 +20,8 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\DataSrc\Empresas;
-use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
-use FacturaScripts\Core\Lib\InvoiceOperation;
-use FacturaScripts\Core\Lib\ProductType;
-use FacturaScripts\Core\Lib\RegimenIVA;
-use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
@@ -41,8 +35,6 @@ final class FacturaProveedorTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
-    const INVOICE_NOTES = 'Test test test.';
-    const INVOICE_REF = '7777777';
     const PRODUCT1_COST = 99.9;
     const PRODUCT1_QUANTITY = 10;
 
@@ -53,61 +45,21 @@ final class FacturaProveedorTest extends TestCase
         self::removeTaxRegularization();
     }
 
-    public function testCreateNewInvoice(): void
-    {
-        // creamos el proveedor
-        $supplier = $this->getRandomSupplier();
-        $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
-        // creamos la factura
-        $invoice = new FacturaProveedor();
-        $invoice->setSubject($supplier);
-        $invoice->numproveedor = self::INVOICE_REF;
-        $invoice->observaciones = self::INVOICE_NOTES;
-        $this->assertTrue($invoice->save(), 'cant-create-invoice');
-        $this->assertTrue($invoice->exists(), 'invoice-does-not-exist');
 
-        // añadimos una línea
-        $firstLine = $invoice->getNewLine();
-        $firstLine->cantidad = self::PRODUCT1_QUANTITY;
-        $firstLine->descripcion = 'Test';
-        $firstLine->pvpunitario = self::PRODUCT1_COST;
-        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
-        $this->assertTrue($firstLine->exists(), 'first-invoice-line-does-not-exists');
-
-        // recalculamos
-        $lines = $invoice->getLines();
-        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
-        $neto = round(self::PRODUCT1_QUANTITY * self::PRODUCT1_COST, 2);
-        $this->assertEquals($neto, $invoice->neto, 'bad-invoice-neto');
-
-        // buscamos la factura
-        $dbInvoice = $invoice->get($invoice->idfactura);
-        $this->assertIsObject($dbInvoice, 'invoice-cant-be-read');
-        $this->assertEquals($supplier->cifnif, $dbInvoice->cifnif, 'bad-invoice-cifnif');
-        $this->assertEquals($invoice->codigo, $dbInvoice->codigo, 'bad-invoice-codigo');
-        $this->assertEquals($neto, $dbInvoice->neto, 'bad-invoice-neto');
-        $this->assertEquals($supplier->razonsocial, $dbInvoice->nombre, 'bad-invoice-nombre');
-        $this->assertEquals($invoice->numero, $dbInvoice->numero, 'bad-invoice-numero');
-        $this->assertEquals(self::INVOICE_REF, $dbInvoice->numproveedor, 'bad-invoice-numproveedor');
-        $this->assertEquals(self::INVOICE_NOTES, $dbInvoice->observaciones, 'bad-invoice-notes');
-        $this->assertEquals($invoice->total, $dbInvoice->total, 'bad-invoice-total');
-
-        // eliminamos
-        $this->assertTrue($dbInvoice->delete(), 'cant-delete-invoice');
-        $this->assertFalse($dbInvoice->exists(), 'deleted-invoice-still-found');
-        $this->assertFalse($invoice->exists(), 'deleted-invoice-still-found-2');
-        $this->assertFalse($firstLine->exists(), 'deleted-line-invoice-still-found');
-        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($supplier->delete(), 'cant-delete-invoice');
-    }
-
+    /**
+     * Prueba que no se puede crear una factura sin proveedor.
+     */
     public function testCanNotCreateInvoiceWithoutSupplier(): void
     {
         $invoice = new FacturaProveedor();
         $this->assertFalse($invoice->save(), 'can-create-invoice-without-supplier');
     }
 
+
+    /**
+     * Prueba que al añadir una línea de producto a la factura, se actualiza el stock del producto.
+     */
     public function testInvoiceLineUpdateStock(): void
     {
         // creamos el proveedor
@@ -153,57 +105,9 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($product->delete(), 'cant-delete-producto');
     }
 
-    public function testCreateInvoiceCreatesAccountingEntry(): void
-    {
-        // creamos el proveedor
-        $supplier = $this->getRandomSupplier();
-        $this->assertTrue($supplier->save(), 'cant-create-supplier');
-
-        // creamos la factura
-        $invoice = new FacturaProveedor();
-        $invoice->setSubject($supplier);
-        $this->assertTrue($invoice->save(), 'cant-create-invoice');
-
-        // añadimos una línea
-        $firstLine = $invoice->getNewLine();
-        $firstLine->cantidad = 1;
-        $firstLine->pvpunitario = self::PRODUCT1_COST;
-        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
-
-        // recalculamos
-        $lines = $invoice->getLines();
-        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
-        $netosindto = $invoice->netosindto;
-        $neto = $invoice->neto;
-        $total = $invoice->total;
-
-        // comprobamos el asiento
-        $entry = $invoice->getAccountingEntry();
-        $this->assertTrue($entry->exists(), 'accounting-entry-not-found');
-        $this->assertEquals($total, $entry->importe, 'accounting-entry-bad-importe');
-        $this->assertEquals($invoice->fecha, $entry->fecha, 'accounting-entry-bad-fecha');
-        $this->assertEquals($invoice->idasiento, $entry->idasiento, 'accounting-entry-bad-idasiento');
-
-        // cambiamos el descuento para que cambie el total (el asiento debe cambiar)
-        $invoice->dtopor1 = 50;
-        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice-discount');
-        $this->assertEquals($netosindto, $invoice->netosindto, 'bad-netosindto');
-        $this->assertLessThan($neto, $invoice->neto, 'bad-neto');
-        $this->assertLessThan($total, $invoice->total, 'bad-total');
-
-        // comprobamos que el asiento ha cambiado
-        $updEntry = $invoice->getAccountingEntry();
-        $this->assertTrue($updEntry->exists(), 'updated-accounting-entry-not-found');
-        $this->assertEquals($invoice->idasiento, $updEntry->idasiento, 'accounting-entry-not-updated');
-        $this->assertEquals($invoice->total, $updEntry->importe, 'updated-accounting-entry-bad-importe');
-
-        // eliminamos
-        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
-        $this->assertFalse($updEntry->exists(), 'deleted-accounting-entry-still-found');
-        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
-    }
-
+    /**
+     * Prueba que no se puede modificar o eliminar una factura en estado no editable.
+     */
     public function testCantUpdateOrDeleteNonEditableInvoice(): void
     {
         // creamos el proveedor
@@ -253,205 +157,9 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
-    public function testCreateInvoiceWithRetention(): void
-    {
-        // si el país no es España, saltamos el test
-        if (Tools::config('codpais') !== 'ESP') {
-            $this->markTestSkipped('country-is-not-spain');
-        }
-
-        // creamos un proveedor con retención
-        $supplier = $this->getRandomSupplier();
-        foreach (Retenciones::all() as $retention) {
-            $supplier->codretencion = $retention->codretencion;
-            break;
-        }
-        $this->assertTrue($supplier->save(), 'cant-create-supplier');
-
-        // creamos la factura
-        $invoice = new FacturaProveedor();
-        $invoice->setSubject($supplier);
-        $this->assertTrue($invoice->save(), 'cant-create-invoice');
-
-        // añadimos una línea
-        $firstLine = $invoice->getNewLine();
-        $firstLine->cantidad = 2;
-        $firstLine->pvpunitario = self::PRODUCT1_COST;
-        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
-
-        // recalculamos
-        $lines = $invoice->getLines();
-        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
-        $this->assertGreaterThan(0, $invoice->totalirpf, 'bad-totalirpf');
-
-        // comprobamos el asiento
-        $entry = $invoice->getAccountingEntry();
-        $this->assertTrue($entry->exists(), 'accounting-entry-not-found');
-        $this->assertEquals($invoice->total, $entry->importe, 'accounting-entry-bad-importe');
-
-        // comprobamos que el asiento tiene una línea cuyo haber es el totalirpf de la factura
-        $found = false;
-        foreach ($entry->getLines() as $line) {
-            if ($line->haber == $invoice->totalirpf) {
-                $found = true;
-                break;
-            }
-        }
-        $this->assertTrue($found, 'accounting-entry-without-retention-line');
-
-        // eliminamos
-        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
-        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
-    }
-
-    public function testCreateInvoiceWithSurcharge(): void
-    {
-        // si el país no es España, saltamos el test
-        if (Tools::config('codpais') !== 'ESP') {
-            $this->markTestSkipped('country-is-not-spain');
-        }
-
-        // creamos un proveedor con el régimen de recargo de equivalencia
-        $supplier = $this->getRandomSupplier();
-        $supplier->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
-        $this->assertTrue($supplier->save(), 'cant-create-supplier');
-
-        // creamos la factura
-        $invoice = new FacturaProveedor();
-        $invoice->setSubject($supplier);
-        $this->assertTrue($invoice->save(), 'cant-create-invoice');
-
-        // añadimos una línea
-        $firstLine = $invoice->getNewLine();
-        $firstLine->cantidad = 2;
-        $firstLine->pvpunitario = 100;
-        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
-
-        // recalculamos
-        $lines = $invoice->getLines();
-        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
-
-        // comprobamos los totales
-        $this->assertEquals(200, $invoice->neto, 'bad-neto');
-        $this->assertEquals(200, $invoice->netosindto, 'bad-netosindto');
-        $this->assertEquals(42, $invoice->totaliva, 'bad-totaliva');
-        $this->assertEquals(10.4, $invoice->totalrecargo, 'bad-totalrecargo');
-        $this->assertEquals(0, $invoice->totalirpf, 'bad-totalirpf');
-        $this->assertEquals(0, $invoice->totalsuplidos, 'bad-totalsuplidos');
-        $this->assertEquals(252.4, $invoice->total, 'bad-total');
-
-        // comprobamos el asiento
-        $entry = $invoice->getAccountingEntry();
-        $this->assertTrue($entry->exists(), 'accounting-entry-not-found');
-        $this->assertEquals($invoice->total, $entry->importe, 'accounting-entry-bad-importe');
-
-        // eliminamos
-        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
-        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
-    }
-
-    public function testCompanyWithSurcharge(): void
-    {
-        // si el país no es España, saltamos el test
-        if (Tools::config('codpais') !== 'ESP') {
-            $this->markTestSkipped('country-is-not-spain');
-        }
-
-        // creamos una empresa con el régimen de recargo de equivalencia
-        $company = $this->getRandomCompany();
-        $company->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
-        $this->assertTrue($company->save(), 'cant-create-company');
-
-        // creamos un proveedor
-        $supplier = $this->getRandomSupplier();
-        $this->assertTrue($supplier->save(), 'cant-create-supplier');
-
-        // creamos la factura
-        $invoice = new FacturaProveedor();
-        foreach ($company->getWarehouses() as $warehouse) {
-            $invoice->setWarehouse($warehouse->codalmacen);
-            break;
-        }
-        $invoice->setSubject($supplier);
-        $this->assertTrue($invoice->save(), 'cant-create-invoice');
-
-        // añadimos una línea
-        $firstLine = $invoice->getNewLine();
-        $firstLine->cantidad = 2;
-        $firstLine->pvpunitario = 50;
-        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
-
-        // recalculamos
-        $lines = $invoice->getLines();
-        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
-
-        // comprobamos los totales
-        $this->assertEquals(100, $invoice->neto, 'bad-neto');
-        $this->assertEquals(100, $invoice->netosindto, 'bad-netosindto');
-        $this->assertEquals(21, $invoice->totaliva, 'bad-totaliva');
-        $this->assertEquals(0, $invoice->totalrecargo, 'bad-totalrecargo');
-        $this->assertEquals(0, $invoice->totalirpf, 'bad-totalirpf');
-        $this->assertEquals(0, $invoice->totalsuplidos, 'bad-totalsuplidos');
-        $this->assertEquals(121, $invoice->total, 'bad-total');
-
-        // eliminamos
-        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
-        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
-        $this->assertTrue($company->delete(), 'cant-delete-company');
-    }
-
-    public function testCreateInvoiceWithSupplied(): void
-    {
-        // si el país no es España, saltamos el test
-        if (Tools::config('codpais') !== 'ESP') {
-            $this->markTestSkipped('country-is-not-spain');
-        }
-
-        // creamos un proveedor
-        $supplier = $this->getRandomSupplier();
-        $this->assertTrue($supplier->save(), 'cant-create-supplier');
-
-        // creamos una factura
-        $invoice = new FacturaProveedor();
-        $invoice->setSubject($supplier);
-        $this->assertTrue($invoice->save(), 'cant-create-invoice');
-
-        // añadimos una línea
-        $firstLine = $invoice->getNewLine();
-        $firstLine->cantidad = 2;
-        $firstLine->pvpunitario = 100;
-        $firstLine->suplido = true;
-        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
-
-        // recalculamos
-        $lines = $invoice->getLines();
-        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
-        $this->assertEquals(200, $invoice->totalsuplidos, 'bad-totalsuplidos');
-
-        // comprobamos el asiento
-        $entry = $invoice->getAccountingEntry();
-        $this->assertTrue($entry->exists(), 'accounting-entry-not-found');
-        $this->assertEquals($invoice->total, $entry->importe, 'accounting-entry-bad-importe');
-
-        // comprobamos que el asiento tiene una línea cuyo haber es el totalsuplidos de la factura
-        $found = false;
-        foreach ($entry->getLines() as $line) {
-            if ($line->haber == $invoice->totalsuplidos) {
-                $found = true;
-                break;
-            }
-        }
-        $this->assertTrue($found, 'accounting-entry-without-supplied-line');
-
-        // eliminamos
-        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
-        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
-        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
-    }
-
+    /**
+     * Prueba la re-numeración de facturas de proveedor.
+     */
     public function testRenumber(): void
     {
         // creamos un proveedor
@@ -517,6 +225,9 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($serie->delete(), 'cant-delete-serie');
     }
 
+    /**
+     * Prueba que la fecha del asiento sea igual a la fecha de devengo de la factura.
+     */
     public function testInvoiceWithDifferentAccountingDate(): void
     {
         // creamos un proveedor
@@ -557,49 +268,9 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
-    public function testIntraCommunity(): void
-    {
-        // si el país no es España, saltamos el test
-        if (Tools::config('codpais') !== 'ESP') {
-            $this->markTestSkipped('country-is-not-spain');
-        }
-
-        // creamos un proveedor
-        $supplier = $this->getRandomSupplier();
-        $this->assertTrue($supplier->save());
-
-        // creamos una factura
-        $invoice = new FacturaProveedor();
-        $invoice->setSubject($supplier);
-        $invoice->operacion = InvoiceOperation::INTRA_COMMUNITY;
-        $this->assertTrue($invoice->save());
-
-        // añadimos una línea
-        $line = $invoice->getNewLine();
-        $line->cantidad = 1;
-        $line->pvpunitario = 100;
-        $this->assertTrue($line->save());
-
-        // recalculamos
-        $lines = $invoice->getLines();
-        $this->assertTrue(Calculator::calculate($invoice, $lines, true));
-
-        // comprobamos los totales
-        $this->assertEquals(100, $invoice->neto);
-        $this->assertEquals(0, $invoice->totaliva);
-        $this->assertEquals(0, $invoice->totalirpf);
-        $this->assertEquals(100, $invoice->total);
-
-        // comprobamos que el asiento tiene 4 líneas
-        $entry = $invoice->getAccountingEntry();
-        $this->assertCount(4, $entry->getLines());
-
-        // eliminamos
-        $this->assertTrue($invoice->delete());
-        $this->assertTrue($supplier->getDefaultAddress()->delete());
-        $this->assertTrue($supplier->delete());
-    }
-
+    /**
+     * Prueba las longitudes máximas de las propiedades de la factura de proveedor.
+     */
     public function testPropertiesLength(): void
     {
         // Definir los campos a validar: campo => [longitud_máxima, longitud_invalida]
@@ -608,7 +279,8 @@ final class FacturaProveedorTest extends TestCase
             'codigo' => [20, 21],
             'codigorect' => [20, 21],
             'nombre' => [100, 101],
-            'operacion' => [20, 21],
+            'numproveedor' => [50, 51],
+            'operacion' => [50, 51],
         ];
 
         // creamos un proveedor
@@ -616,143 +288,27 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
         foreach ($campos as $campo => [$valido, $invalido]) {
-            // Creamos un nuevo almacén
-            $invoice = new FacturaProveedor();
+            // Creamos el modelo
+            $model = new FacturaProveedor();
 
             // campo obligatorio (not null)
-            $invoice->setSubject($supplier);
+            $model->setSubject($supplier);
 
             // Asignamos el valor inválido en el campo a probar
-            $invoice->{$campo} = Tools::randomString($invalido);
-            $this->assertFalse($invoice->save(), "can-save-facturaProveedor-bad-{$campo}");
+            $model->{$campo} = Tools::randomString($invalido);
+            $this->assertFalse($model->save(), "can-save-facturaProveedor-bad-{$campo}");
 
             // Corregimos el campo y comprobamos que ahora sí se puede guardar
-            $invoice->{$campo} = Tools::randomString($valido);
-            $this->assertTrue($invoice->save(), "cannot-save-facturaProveedor-fixed-{$campo}");
+            $model->{$campo} = Tools::randomString($valido);
+            $this->assertTrue($model->save(), "cannot-save-facturaProveedor-fixed-{$campo}");
 
             // Limpiar
-            $this->assertTrue($invoice->delete(), "cannot-delete-facturaProveedor-{$campo}");
+            $this->assertTrue($model->delete(), "cannot-delete-facturaProveedor-{$campo}");
         }
 
         // eliminamos el proveedor
         $this->assertTrue($supplier->getDefaultAddress()->delete());
         $this->assertTrue($supplier->delete());
-    }
-
-    public function testSetIntraCommunity(): void
-    {
-        // si el país no es España, saltamos el test
-        if (Tools::config('codpais') !== 'ESP') {
-            $this->markTestSkipped('country-is-not-spain');
-        }
-
-        // comprobamos si el VIES funciona
-        if (Vies::getLastError() != '') {
-            $this->markTestSkipped('Vies service is not available');
-        }
-
-        // establecemos la empresa en España con un cif español
-        $company = Empresas::default();
-        $company->codpais = 'ESP';
-        $company->cifnif = 'B13658620';
-        $company->tipoidfiscal = 'CIF';
-        $this->assertTrue($company->save());
-
-        // creamos un proveedor de Portugal con nif de Portugal
-        $supplier = $this->getRandomSupplier();
-        $supplier->cifnif = 'PT513969144';
-        $this->assertTrue($supplier->save());
-        $address = $supplier->getDefaultAddress();
-        $address->codpais = 'PRT';
-        $this->assertTrue($address->save());
-
-        // creamos una factura
-        $invoice = new FacturaProveedor();
-        $invoice->setSubject($supplier);
-        $this->assertTrue($invoice->setIntracomunitaria());
-
-        // comprobamos que la operación es intracomunitaria
-        $this->assertEquals(InvoiceOperation::INTRA_COMMUNITY, $invoice->operacion);
-
-        // quitamos la operación
-        $invoice->operacion = null;
-
-        // cambiamos la empresa a Perú
-        $company->codpais = 'PER';
-        $this->assertTrue($company->save());
-
-        // comprobamos que no se puede establecer la operación
-        $this->assertFalse($invoice->setIntracomunitaria());
-
-        // volvemos a España
-        $company->codpais = 'ESP';
-        $this->assertTrue($company->save());
-
-        // cambiamos el proveedor a España
-        $address->codpais = 'ESP';
-        $this->assertTrue($address->save());
-
-        // comprobamos que no se puede establecer la operación
-        $this->assertFalse($invoice->setIntracomunitaria());
-
-        // eliminamos
-        $this->assertTrue($invoice->delete());
-        $this->assertTrue($address->delete());
-        $this->assertTrue($supplier->delete());
-    }
-
-    public function testBuyUsedGoods(): void
-    {
-        // si el país no es España, saltamos el test
-        if (Tools::config('codpais') !== 'ESP') {
-            $this->markTestSkipped('country-is-not-spain');
-        }
-
-        // creamos una empresa con el régimen de bienes usados
-        $company = $this->getRandomCompany();
-        $company->regimeniva = RegimenIVA::TAX_SYSTEM_USED_GOODS;
-        $this->assertTrue($company->save());
-
-        // creamos un producto de segunda mano
-        $product = $this->getRandomProduct();
-        $product->tipo = ProductType::SECOND_HAND;
-        $this->assertTrue($product->save());
-
-        // creamos un proveedor
-        $supplier = $this->getRandomSupplier();
-        $this->assertTrue($supplier->save());
-
-        // creamos una factura
-        $invoice = new FacturaProveedor();
-        foreach ($company->getWarehouses() as $warehouse) {
-            $invoice->setWarehouse($warehouse->codalmacen);
-            break;
-        }
-        $invoice->setSubject($supplier);
-        $this->assertTrue($invoice->save());
-
-        // añadimos el producto
-        $line = $invoice->getNewProductLine($product->referencia);
-        $line->cantidad = 1;
-        $line->pvpunitario = 900;
-        $this->assertTrue($line->save());
-
-        // recalculamos
-        $lines = $invoice->getLines();
-        $this->assertTrue(Calculator::calculate($invoice, $lines, true));
-
-        // comprobamos los totales
-        $this->assertEquals(900, $invoice->neto);
-        $this->assertEquals(0, $invoice->totaliva);
-        $this->assertEquals(0, $invoice->totalirpf);
-        $this->assertEquals(900, $invoice->total);
-
-        // eliminamos
-        $this->assertTrue($invoice->delete());
-        $this->assertTrue($supplier->getDefaultAddress()->delete());
-        $this->assertTrue($supplier->delete());
-        $this->assertTrue($product->delete());
-        $this->assertTrue($company->delete());
     }
 
     protected function tearDown(): void

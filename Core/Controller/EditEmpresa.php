@@ -23,7 +23,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Lib\InvoiceOperation;
+use FacturaScripts\Dinamic\Lib\TaxException;
+use FacturaScripts\Dinamic\Lib\TaxRegime;
 
 /**
  * Controller to edit a single item from the  Empresa model
@@ -149,14 +151,19 @@ class EditEmpresa extends EditController
 
     protected function setCustomWidgetValues(BaseView &$view): void
     {
-        $columnVATType = $view->columnForName('vat-regime');
-        if ($columnVATType && $columnVATType->widget->getType() === 'select') {
-            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all(), true);
+        $columnVATRegime = $view->columnForName('vat-regime');
+        if ($columnVATRegime && $columnVATRegime->widget->getType() === 'select') {
+            $columnVATRegime->widget->setValuesFromArrayKeys(TaxRegime::all(), true, true);
+        }
+
+        $columnInvoiceOperation = $view->columnForName('operation');
+        if ($columnInvoiceOperation && $columnInvoiceOperation->widget->getType() === 'select') {
+            $columnInvoiceOperation->widget->setValuesFromArrayKeys(InvoiceOperation::all(), true, true);
         }
 
         $columnVATException = $view->columnForName('vat-exception');
         if ($columnVATException && $columnVATException->widget->getType() === 'select') {
-            $columnVATException->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
+            $columnVATException->widget->setValuesFromArrayKeys(TaxException::all(), true, true);
         }
     }
 }
