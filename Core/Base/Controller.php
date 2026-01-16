@@ -358,7 +358,7 @@ class Controller implements ControllerInterface
         $user = new DinUser();
         if (false === $user->load($cookieNick)) {
             // Si el usuario no se encuentra, registrar advertencia y fallar autenticación
-            Tools::log()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
+            Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($cookieNick)]);
             return false;
         }
 
@@ -366,7 +366,7 @@ class Controller implements ControllerInterface
         $cookiesExpire = time() + Tools::config('cookies_expire');
         if (false === $user->enabled) {
             // Si el usuario está desactivado, registrar advertencia, eliminar cookie y fallar autenticación
-            Tools::log()->warning('login-user-disabled', ['%nick%' => $cookieNick]);
+            Tools::log()->warning('login-user-disabled', ['%nick%' => htmlspecialchars($cookieNick)]);
             setcookie('fsNick', '', $cookiesExpire, Tools::config('route', '/'));
             return false;
         }

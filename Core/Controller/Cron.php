@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use Exception;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
@@ -28,10 +29,12 @@ use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Core\WorkQueue;
+use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\AlbaranProveedor;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\CronJob;
+use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
@@ -181,6 +184,18 @@ END;
         Tools::log('cron')->notice('old-work-events-delete-ok');
     }
 
+    protected function restoreNotifications(): void
+    {
+        echo PHP_EOL . PHP_EOL . Tools::trans('restoring-notifications') . ' ... ';
+        ob_flush();
+
+        $sql = CSVImport::updateTableSQL(EmailNotification::tableName());
+        if (!empty($sql)) {
+            $db = new DataBase();
+            $db->exec($sql);
+        }
+    }
+
     protected function runCoreJobs(): void
     {
         $this->job('update-attached-relations')
@@ -212,6 +227,12 @@ END;
             ->everyDayAt(4)
             ->run(function () {
                 $this->updateReceipts();
+            });
+
+        $this->job('restore-notifications')
+            ->everyDayAt(5)
+            ->run(function () {
+                $this->restoreNotifications();
             });
     }
 

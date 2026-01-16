@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -176,13 +176,13 @@ class Login implements ControllerInterface
         }
 
         if ($password !== $password2) {
-            Tools::log()->warning('different-passwords', ['%userNick%' => $username]);
+            Tools::log()->warning('different-passwords', ['%userNick%' => htmlspecialchars($username)]);
             return;
         }
 
         $user = new User();
         if (false === $user->load($username)) {
-            Tools::log()->warning('login-user-not-found');
+            Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($username)]);
             $this->saveIncident(Session::getClientIp(), $username);
             return;
         }
@@ -192,7 +192,10 @@ class Login implements ControllerInterface
             return;
         }
 
-        $user->setPassword($password);
+        if (false === $user->setPassword($password)) {
+            Tools::log()->warning('weak-password', ['%userNick%' => htmlspecialchars($username)]);
+            return;
+        }
 
         // desactivamos el 2FA si estaba activado
         if ($user->two_factor_enabled) {

@@ -21,10 +21,23 @@ namespace FacturaScripts\Test\Core\Lib;
 
 use FacturaScripts\Core\Lib\FiscalNumberValidator;
 use FacturaScripts\Core\Lib\ValidadorEcuador;
+use FacturaScripts\Core\Model\IdentificadorFiscal;
 use PHPUnit\Framework\TestCase;
 
 class FiscalNumberValidatorTest extends TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        // Creamos los identificadores fiscales necesarios para los tests
+        $tipos = ['CIF', 'DNI', 'NIF', 'NIE', 'CI', 'RUC'];
+        foreach ($tipos as $tipo) {
+            $identificador = new IdentificadorFiscal();
+            $identificador->tipoidfiscal = $tipo;
+            $identificador->validar = false;
+            $identificador->save();
+        }
+    }
+
     public function testValidate(): void
     {
         $results = [

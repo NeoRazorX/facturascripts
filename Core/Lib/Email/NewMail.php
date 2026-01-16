@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\Email\HtmlBlock as DinHtmlBlock;
 use FacturaScripts\Dinamic\Lib\Email\TextBlock as DinTextBlock;
 use FacturaScripts\Dinamic\Model\AttachedFile;
@@ -350,10 +351,59 @@ class NewMail
         $this->mail->setFrom($this->fromEmail, $this->fromName);
         $this->mail->Subject = $this->title;
 
+        // comprobamos que tenemos todos los emails en copia configurados añadidos
+        $emailAddedCC = $this->getCCAddresses();
+        foreach (static::splitEmails(Tools::settings('email', 'emailcc', '')) as $email) {
+            if (!in_array($email, $emailAddedCC) && Validator::email($email)) {
+                $this->cc($email);
+            }
+        }
+
+        // comprobamos que tenemos todos los emails en copia oculta configurados añadidos
+        $emailAddedBCC = $this->getBCCAddresses();
+        foreach (static::splitEmails(Tools::settings('email', 'emailbcc', '')) as $email) {
+            if (!in_array($email, $emailAddedBCC) && Validator::email($email)) {
+                $this->bcc($email);
+            }
+        }
+
+        // verificamos que haya al menos un destinatario en TO
+        // si no hay, intentamos mover uno de CC o BCC a TO
+        if (empty($this->getToAddresses())) {
+            $ccAddresses = $this->getCCAddresses();
+            $bccAddresses = $this->getBCCAddresses();
+
+            if (!empty($ccAddresses)) {
+                // movemos el primer CC a TO
+                $firstCC = array_shift($ccAddresses);
+                $this->to($firstCC);
+
+                // limpiamos y volvemos a agregar los CC restantes
+                $this->mail->clearCCs();
+                foreach ($ccAddresses as $email) {
+                    $this->cc($email);
+                }
+            } elseif (!empty($bccAddresses)) {
+                // movemos el primer BCC a TO
+                $firstBCC = array_shift($bccAddresses);
+                $this->to($firstBCC);
+
+                // limpiamos y volvemos a agregar los BCC restantes
+                $this->mail->clearBCCs();
+                foreach ($bccAddresses as $email) {
+                    $this->bcc($email);
+                }
+            } else {
+                // no hay ningún destinatario
+                Tools::log()->warning('email-no-recipients');
+                return false;
+            }
+        }
+
         $this->renderHTML();
         $this->mail->msgHTML($this->html);
 
-        if ('SMTP' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
+        if ('smtp' === strtolower($this->mail->Mailer) && false === $this->mail->smtpConnect($this->smtpOptions())) {
             Tools::log()->warning('mail-server-error');
             return false;
         }
@@ -436,7 +486,7 @@ class NewMail
         $return = [];
         foreach (explode(',', $emails) as $part) {
             $email = trim($part);
-            if (!empty($part)) {
+            if (!empty($email)) {
                 $return[] = $email;
             }
         }
@@ -492,9 +542,9 @@ class NewMail
         }
 
         // buscamos si en el texto hay algo de html
-        $textWhitoutHtml = strip_tags($this->text);
-        if ($textWhitoutHtml !== $this->text) {
-            return array_merge([new DinHtmlBlock(nl2br($this->text))], $this->mainBlocks);
+        $textWithoutHtml = strip_tags($this->text);
+        if ($textWithoutHtml !== $this->text) {
+            return array_merge([new DinHtmlBlock($this->text)], $this->mainBlocks);
         }
 
         // si no hay html, devolvemos el texto como bloque de texto
@@ -535,7 +585,7 @@ class NewMail
     protected function saveMailSent(): void
     {
         // Obtiene todas las direcciones de correo electrónico
-        $addresses = array_merge($this->getToAddresses(), $this->getCcAddresses(), $this->getBccAddresses());
+        $addresses = array_merge($this->getToAddresses(), $this->getCCAddresses(), $this->getBCCAddresses());
 
         // Generamos un identificador único para el correo electrónico
         $uuid = uniqid();

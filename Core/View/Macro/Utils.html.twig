@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,7 @@
         <div class="alert alert-dismissible alert-{{ style }}" role="alert">
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             {% for item in messages %}
-                <div>{{ item.message | raw }}</div>
+                <div>{{ item.message }}</div>
             {% endfor %}
         </div>
     {% endif %}
@@ -37,7 +37,7 @@
         {% if item.level in levels and item.channel == 'master' %}
             <div class="alert alert-dismissible alert-{{ style }}" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                <div>{{ item.message | raw }}</div>
+                <div>{{ item.message }}</div>
             </div>
         {% endif %}
     {% endfor %}

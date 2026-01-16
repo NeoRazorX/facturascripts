@@ -171,7 +171,7 @@ abstract class Controller implements ControllerInterface
         $user = new User();
         if (false === $user->load($cookieNick)) {
             // Si el usuario no se encuentra, registrar advertencia y fallar autenticación
-            Tools::log()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
+            Tools::log()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($cookieNick)]);
             return false;
         }
 
@@ -179,7 +179,7 @@ abstract class Controller implements ControllerInterface
         $cookiesExpire = time() + Tools::config('cookies_expire');
         if (false === $user->enabled) {
             // Si el usuario está desactivado, registrar advertencia, eliminar cookie y fallar autenticación
-            Tools::log()->warning('login-user-disabled', ['%nick%' => $cookieNick]);
+            Tools::log()->warning('login-user-disabled', ['%nick%' => htmlspecialchars($cookieNick)]);
             $this->response()->cookie('fsNick', '', $cookiesExpire);
             return false;
         }

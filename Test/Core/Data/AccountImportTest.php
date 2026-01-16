@@ -37,7 +37,7 @@ final class AccountImportTest extends TestCase
 
     private const CODEJERCICIO = '1980';
     private const TOTAL_ACCOUNT = 802;
-    private const TOTAL_SUBACCOUNT = 721;
+    private const TOTAL_SUBACCOUNT = 739;
 
     public static function setUpBeforeClass(): void
     {

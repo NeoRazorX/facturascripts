@@ -263,7 +263,7 @@ class EditAsiento extends PanelController
             'lines' => '',
             'footer' => '',
             'list' => AccountingModalHTML::renderSubaccountList($model),
-            'messages' => Tools::log()::read('', $this->logLevels)
+            'messages' => Tools::log()::read('master', $this->logLevels)
         ];
         $this->response->json($content);
         return false;
@@ -339,7 +339,7 @@ class EditAsiento extends PanelController
             'lines' => $renderLines ? AccountingLineHTML::render($lines, $model) : '',
             'footer' => AccountingFooterHTML::render($model),
             'list' => '',
-            'messages' => Tools::log()::read('', $this->logLevels)
+            'messages' => Tools::log()::read('master', $this->logLevels)
         ];
         $this->response->json($content);
         return false;
@@ -390,7 +390,7 @@ class EditAsiento extends PanelController
 
     protected function sendJsonError(): bool
     {
-        $this->response->json(['ok' => false, 'messages' => Tools::log()::read('', $this->logLevels)]);
+        $this->response->json(['ok' => false, 'messages' => Tools::log()::read('master', $this->logLevels)]);
         return false;
     }
 

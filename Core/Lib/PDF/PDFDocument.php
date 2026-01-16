@@ -366,7 +366,7 @@ abstract class PDFDocument extends PDFCore
             $this->removeEmptyCols($taxRows, $taxHeaders, Tools::number(0));
             $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
             $this->pdf->ezText("\n");
-        } elseif ($this->pdf->ezPageCount < 2 && strlen($this->format->texto) < 400 && $this->pdf->y > static::INVOICE_TOTALS_Y) {
+        } elseif ($this->pdf->ezPageCount < 2 && strlen($this->format->texto ?? '') < 400 && $this->pdf->y > static::INVOICE_TOTALS_Y) {
             $this->pdf->y = static::INVOICE_TOTALS_Y;
         }
 
@@ -379,7 +379,7 @@ abstract class PDFDocument extends PDFCore
             'net' => $this->i18n->trans('net'),
             'taxes' => $this->i18n->trans('taxes'),
             'totalSurcharge' => $this->i18n->trans('re'),
-            'totalIrpf' => $this->i18n->trans('irpf'),
+            'totalIrpf' => $this->i18n->trans('retention'),
             'totalSupplied' => $this->i18n->trans('supplied-amount'),
             'total' => $this->i18n->trans('total')
         ];
