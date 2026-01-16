@@ -74,10 +74,9 @@ class CodeModel
     public static function all(string $tableName, string $fieldCode, string $fieldDescription, bool $addEmpty = true, array $where = []): array
     {
         // validar campos:
-        $stringFilterPreg = '/[^a-z0-9 ]/gim'; // detecta lo que no sea un texto, numero o espacio
-        $tableName = preg_replace($stringFilterPreg, '', $tableName);
-        $fieldCode = preg_replace($stringFilterPreg, '', $fieldCode);
-        $fieldDescription = preg_replace($stringFilterPreg, '', $fieldDescription);
+        self::db()->checkField($tableName);
+        self::db()->checkField($fieldCode);
+        self::db()->checkField($fieldDescription);
     
         // check cache
         $cacheKey = $addEmpty ?
@@ -151,8 +150,8 @@ class CodeModel
     private static function codeModelAll(mixed $model, string $fieldCode): array
     {
         // validar campos:
-        $fieldCode = preg_replace('/[^a-z0-9 ]/gim', '', $fieldCode);
-
+        self::db()->checkField($fieldCode);
+        
         $results = [];
         $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
 

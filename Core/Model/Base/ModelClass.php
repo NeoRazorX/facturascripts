@@ -488,8 +488,8 @@ abstract class ModelClass extends ModelCore
         $coma = ' ORDER BY ';
         foreach ($order as $key => $value) {
             // validar campos:
-            $key = preg_replace('/[^a-z0-9 ]/gim', '', $key);
-            $value = preg_replace('/[^a-z0-9 ]/gim', '', $value);
+            self::$dataBase->checkField($key);
+            self::$dataBase->checkField($value);
 
             $result .= $coma . $key . ' ' . $value;
             $coma = ', ';
