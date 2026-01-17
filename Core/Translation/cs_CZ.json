@@ -446,7 +446,7 @@
     "default-role": "Grupo de usuario pred.",
     "default-tax": "Impuesto predeterminado",
     "default-to-company-email": "Por defecto al email de la empresa",
-    "default-to-config-email": "Por defecto al email de la configuración",
+    "default-to-config-email": "Výchozí e-mail z konfigurace",
     "default-to-user-email": "Por defecto al email del usuario",
     "default-warehouse": "Almacén predefinido",
     "delete": "Eliminar",
