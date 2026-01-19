@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Lib;
 
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\Calculator;
 use FacturaScripts\Core\Lib\RegimenIVA;
@@ -686,5 +687,179 @@ final class CalculatorTest extends TestCase
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');
         $tax->delete();
+    }
+
+    public function testProductPriceWithTax(): void
+    {
+        // creamos el impuesto IVA21%, si no existe
+        $tax = Impuestos::get('IVA21');
+        $taxCreated = false;
+        if (false === $tax->exists()) {
+            $tax->codimpuesto = 'IVA21';
+            $tax->descripcion = 'IVA 21%';
+            $tax->iva = 21;
+            $tax->recargo = 0;
+            $this->assertTrue($tax->save(), 'can-not-save-product-tax');
+            $taxCreated = true;
+        }
+
+        // creamos un producto con IVA 21%
+        $product = $this->getRandomProduct();
+        $product->codimpuesto = $tax->codimpuesto;
+        $this->assertTrue($product->save(), 'can-not-save-product');
+
+        // establecemos el precio con impuestos = 10
+        // con IVA 21%, el precio sin IVA será: 10 / 1.21 = 8.26446
+        $this->assertTrue($product->setPriceWithTax(10.0), 'can-not-set-price-with-tax');
+
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        // creamos un presupuesto
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-customer');
+        $this->assertTrue($doc->save(), 'can-not-save-doc');
+
+        // añadimos el producto
+        $line = $doc->getNewProductLine($product->referencia);
+        $this->assertEquals($tax->codimpuesto, $line->codimpuesto);
+        $this->assertEquals($tax->iva, $line->iva);
+        $this->assertEquals($tax->recargo, $line->recargo);
+        $this->assertTrue($line->save(), 'can-not-save-line');
+
+        // actualizamos los totales
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate');
+
+        // comprobamos que el total sea exactamente 10.00
+        $this->assertEquals(10.0, $doc->total, 'bad-total');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-doc');
+        $this->assertTrue($product->delete(), 'can-not-delete-product');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+
+        // si creamos el impuesto en el test, lo eliminamos
+        if ($taxCreated) {
+            $tax->delete();
+        }
+    }
+
+    public function testProductPriceWithTax10(): void
+    {
+        // creamos el impuesto IVA10%, si no existe
+        $tax = Impuestos::get('IVA10');
+        $taxCreated = false;
+        if (false === $tax->exists()) {
+            $tax->codimpuesto = 'IVA10';
+            $tax->descripcion = 'IVA 10%';
+            $tax->iva = 10;
+            $tax->recargo = 0;
+            $this->assertTrue($tax->save(), 'can-not-save-product-tax');
+            $taxCreated = true;
+        }
+
+        // creamos un producto con IVA 10%
+        $product = $this->getRandomProduct();
+        $product->codimpuesto = $tax->codimpuesto;
+        $this->assertTrue($product->save(), 'can-not-save-product');
+
+        // establecemos el precio con impuestos = 0.65
+        // con IVA 10%, el precio sin IVA será: 0.65 / 1.10 = 0.59091
+        $this->assertTrue($product->setPriceWithTax(0.65), 'can-not-set-price-with-tax');
+
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        // creamos un presupuesto
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-customer');
+        $this->assertTrue($doc->save(), 'can-not-save-doc');
+
+        // añadimos el producto
+        $line = $doc->getNewProductLine($product->referencia);
+        $this->assertEquals($tax->codimpuesto, $line->codimpuesto);
+        $this->assertEquals($tax->iva, $line->iva);
+        $this->assertEquals($tax->recargo, $line->recargo);
+        $this->assertTrue($line->save(), 'can-not-save-line');
+
+        // actualizamos los totales
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate');
+
+        // comprobamos que el total sea exactamente 0.65
+        $this->assertEquals(0.65, $doc->total, 'bad-total');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-doc');
+        $this->assertTrue($product->delete(), 'can-not-delete-product');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+
+        // si creamos el impuesto en el test, lo eliminamos
+        if ($taxCreated) {
+            $tax->delete();
+        }
+    }
+
+    public function testProductPriceWithTax4(): void
+    {
+        // creamos el impuesto IVA4%, si no existe
+        $tax = Impuestos::get('IVA4');
+        $taxCreated = false;
+        if (false === $tax->exists()) {
+            $tax->codimpuesto = 'IVA4';
+            $tax->descripcion = 'IVA 4%';
+            $tax->iva = 4;
+            $tax->recargo = 0;
+            $this->assertTrue($tax->save(), 'can-not-save-product-tax');
+            $taxCreated = true;
+        }
+
+        // creamos un producto con IVA 4%
+        $product = $this->getRandomProduct();
+        $product->codimpuesto = $tax->codimpuesto;
+        $this->assertTrue($product->save(), 'can-not-save-product');
+
+        // establecemos el precio con impuestos = 0.65
+        // con IVA 4%, el precio sin IVA será: 0.65 / 1.04 = 0.625
+        $this->assertTrue($product->setPriceWithTax(0.65), 'can-not-set-price-with-tax');
+
+        // creamos un cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer');
+
+        // creamos un presupuesto
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-customer');
+        $this->assertTrue($doc->save(), 'can-not-save-doc');
+
+        // añadimos el producto
+        $line = $doc->getNewProductLine($product->referencia);
+        $this->assertEquals($tax->codimpuesto, $line->codimpuesto);
+        $this->assertEquals($tax->iva, $line->iva);
+        $this->assertEquals($tax->recargo, $line->recargo);
+        $this->assertTrue($line->save(), 'can-not-save-line');
+
+        // actualizamos los totales
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate');
+
+        // comprobamos que el total sea exactamente 0.65
+        $this->assertEquals(0.65, $doc->total, 'bad-total');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-doc');
+        $this->assertTrue($product->delete(), 'can-not-delete-product');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'can-not-delete-contact');
+        $this->assertTrue($subject->delete(), 'can-not-delete-customer');
+
+        // si creamos el impuesto en el test, lo eliminamos
+        if ($taxCreated) {
+            $tax->delete();
+        }
     }
 }
