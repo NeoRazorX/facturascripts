@@ -319,16 +319,18 @@ final class DbQuery
         // si el campo comienza por integer: hacemos el cast a integer
         if (0 === strpos($field, 'integer:')) {
             // revisar el campo
-            self::db()->checkField(substr($field, 0, 8));
+            $parsedField = substr($field, 0, 8);
+            self::db()->checkField($parsedField);
             // colocar el cast a integer
-            $field = self::db()->castInteger(substr($field, 8));
+            $field = self::db()->castInteger($parsedField);
         }
 
         // si empieza por lower, hacemos el lower
         if (0 === strpos($field, 'lower:')) {
             // revisar el campo
-            self::db()->checkField(substr($field, 0, 6));
-            $field = 'LOWER(' . self::db()->escapeColumn(substr($field, 6)) . ')';
+            $parsedField = substr($field, 0, 6);
+            self::db()->checkField($parsedField);
+            $field = 'LOWER(' . self::db()->escapeColumn($parsedField) . ')';
         }
 
         self::db()->checkField($field);
