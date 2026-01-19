@@ -305,7 +305,7 @@ final class DbQuery
             self::db()->checkField($innerField);
 
             // insertar de manera controlada
-            $this->orderBy[] = $externField . '(' . $field . ')' . ' ' . $order;
+            $this->orderBy[] = $externField . '(' . $innerField . ')' . ' ' . $order;
             return $this;
         }
 
