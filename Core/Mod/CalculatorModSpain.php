@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -96,8 +96,7 @@ class CalculatorModSpain implements CalculatorModInterface
             // En VENTAS intracomunitarias, aplicamos E5 (art. 25 LIVA - Entregas intracomunitarias)
             if ($doc->subjectColumn() === 'codcliente') {
                 $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_E5;
-            }
-            // En COMPRAS intracomunitarias, aplicamos inversión del sujeto pasivo (art. 84 LIVA)
+            } // En COMPRAS intracomunitarias, aplicamos inversión del sujeto pasivo (art. 84 LIVA)
             else {
                 $line->excepcioniva = RegimenIVA::ES_TAX_EXCEPTION_PASSIVE_SUBJECT;
             }
@@ -120,6 +119,12 @@ class CalculatorModSpain implements CalculatorModInterface
         return true;
     }
 
+    /**
+     * @param array $subtotals
+     * @param BusinessDocument $doc
+     * @param BusinessDocumentLine[] $lines
+     * @return bool
+     */
     public function getSubtotals(array &$subtotals, BusinessDocument $doc, array $lines): bool
     {
         // No se aplica el cálculo si la empresa no está en España
@@ -228,14 +233,14 @@ class CalculatorModSpain implements CalculatorModInterface
             // IVA
             if ($line->iva > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
                 $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
-                    $pvpTotal * $line->iva :
+                    $line->cantidad * $line->iva :
                     $pvpTotal * $line->iva / 100;
             }
 
             // recargo de equivalencia
             if ($line->recargo > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
                 $subtotals['iva'][$ivaKey]['totalrecargo'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
-                    $pvpTotal * $line->recargo :
+                    $line->cantidad * $line->recargo :
                     $pvpTotal * $line->recargo / 100;
             }
         }
