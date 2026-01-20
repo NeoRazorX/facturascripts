@@ -204,6 +204,20 @@ final class DbQueryTest extends TestCase
             . ' ORDER BY ' . $this->db()->escapeColumn('codserie') . ' ASC, '
             . 'LOWER(' . $this->db()->escapeColumn('descripcion') . ') DESC';
         $this->assertEquals($expected10, $query10->sql());
+
+        // Test 11: Intento de inyección SQL con SELECT - NO debe permitirse
+        $query11 = DbQuery::table('series')
+            ->orderBy('(SELECT password FROM users)');
+        $expected11 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->escapeColumn('(SELECT password FROM users)') . ' ASC';
+        $this->assertEquals($expected11, $query11->sql());
+
+        // Test 12: Otra expresión no permitida con paréntesis
+        $query12 = DbQuery::table('series')
+            ->orderBy('SUBSTRING(descripcion, 1, 10)');
+        $expected12 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->escapeColumn('SUBSTRING(descripcion, 1, 10)') . ' ASC';
+        $this->assertEquals($expected12, $query12->sql());
     }
 
     public function testCount(): void
