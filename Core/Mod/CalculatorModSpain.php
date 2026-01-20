@@ -232,9 +232,24 @@ class CalculatorModSpain implements CalculatorModInterface
 
             // IVA
             if ($line->iva > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
-                $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
-                    $line->cantidad * $line->iva :
-                    $pvpTotal * $line->iva / 100;
+                if ($line->pvpunitario < 2 && $line->getTax()->tipo !== Impuesto::TYPE_FIXED_VALUE) {
+                    // calculamos el precio con IVA unitario
+                    $pvp_iva = Tools::round($line->pvpunitario * (100 + $line->iva) / 100);
+
+                    // calculamos el IVA como la diferencia
+                    // entre el total con IVA redondeado y el neto redondeado
+                    // para evitar errores de redondeo acumulados
+                    $pvpTotalConIva = $line->cantidad * $pvp_iva
+                        * (100 - $line->dtopor) / 100
+                        * (100 - $line->dtopor2) / 100
+                        * (100 - $doc->dtopor1) / 100
+                        * (100 - $doc->dtopor2) / 100;
+                    $subtotals['iva'][$ivaKey]['totaliva'] += Tools::round($pvpTotalConIva) - Tools::round($pvpTotal);
+                } else {
+                    $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
+                        $line->cantidad * $line->iva :
+                        $pvpTotal * $line->iva / 100;
+                }
             }
 
             // recargo de equivalencia
