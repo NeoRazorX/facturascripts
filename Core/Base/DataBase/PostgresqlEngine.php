@@ -61,7 +61,7 @@ class PostgresqlEngine extends DataBaseEngine
 
     public function castInteger($link, $column): string
     {
-        return 'CAST(' . $this->escapeColumn($link, $column) . ' AS unsigned)';
+        return 'CAST(' . $this->escapeColumn($link, $column) . ' AS integer)';
     }
 
     /**

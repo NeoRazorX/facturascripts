@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -283,26 +283,39 @@ final class DbQuery
 
     public function orderBy(string $field, string $order = 'ASC'): self
     {
-        // si lleva paréntesis, no escapamos
-        if (strpos($field, '(') !== false && strpos($field, ')') !== false) {
-            $this->orderBy[] = $field . ' ' . $order;
-            return $this;
-        }
+        // validamos que order sea ASC o DESC
+        $order = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
 
-        // si contiene espacios, no escapamos
-        if (strpos($field, ' ') !== false) {
-            $this->orderBy[] = $field . ' ' . $order;
-            return $this;
+        // si lleva paréntesis, validamos que sea una expresión permitida
+        if (str_contains($field, '(') && str_contains($field, ')')) {
+            // permitimos LOWER(), UPPER() y CAST()
+            if (preg_match('/^(LOWER|UPPER)\([a-zA-Z0-9_.]+\)$/i', $field) ||
+                preg_match('/^CAST\([a-zA-Z0-9_.]+ AS [a-zA-Z0-9_ ]+\)$/i', $field)) {
+                $this->orderBy[] = $field . ' ' . $order;
+                return $this;
+            }
+            // si no es una expresión permitida, escapamos el campo completo
         }
 
         // si el campo comienza por integer: hacemos el cast a integer
-        if (0 === strpos($field, 'integer:')) {
+        if (str_starts_with($field, 'integer:')) {
             $field = self::db()->castInteger(substr($field, 8));
+            $this->orderBy[] = $field . ' ' . $order;
+            return $this;
         }
 
         // si empieza por lower, hacemos el lower
-        if (0 === strpos($field, 'lower:')) {
+        if (str_starts_with($field, 'lower:')) {
             $field = 'LOWER(' . self::db()->escapeColumn(substr($field, 6)) . ')';
+            $this->orderBy[] = $field . ' ' . $order;
+            return $this;
+        }
+
+        // si empieza por upper, hacemos el upper
+        if (str_starts_with($field, 'upper:')) {
+            $field = 'UPPER(' . self::db()->escapeColumn(substr($field, 6)) . ')';
+            $this->orderBy[] = $field . ' ' . $order;
+            return $this;
         }
 
         $this->orderBy[] = self::db()->escapeColumn($field) . ' ' . $order;

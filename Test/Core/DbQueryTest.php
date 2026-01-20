@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -124,6 +124,86 @@ final class DbQueryTest extends TestCase
             . ' FROM ' . $this->db()->escapeColumn('series')
             . ' ORDER BY ' . $this->db()->escapeColumn('codserie') . ' ASC';
         $this->assertEquals($sql, $query->sql());
+    }
+
+    public function testOrderByAdvanced(): void
+    {
+        // si no existe la tabla series, saltamos el test
+        if (false === $this->db()->tableExists('series')) {
+            $this->markTestSkipped('Table series does not exist.');
+        }
+
+        // Test 1: Sanitización de ORDER - DESC en mayúsculas
+        $query1 = DbQuery::table('series')
+            ->orderBy('codserie', 'DESC');
+        $expected1 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->escapeColumn('codserie') . ' DESC';
+        $this->assertEquals($expected1, $query1->sql());
+
+        // Test 2: Sanitización de ORDER - desc en minúsculas
+        $query2 = DbQuery::table('series')
+            ->orderBy('codserie', 'desc');
+        $expected2 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->escapeColumn('codserie') . ' DESC';
+        $this->assertEquals($expected2, $query2->sql());
+
+        // Test 3: Sanitización de ORDER - valor inválido debe convertirse a ASC
+        $query3 = DbQuery::table('series')
+            ->orderBy('codserie', 'INVALID');
+        $expected3 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->escapeColumn('codserie') . ' ASC';
+        $this->assertEquals($expected3, $query3->sql());
+
+        // Test 4: Prefijo lower:
+        $query4 = DbQuery::table('series')
+            ->orderBy('lower:descripcion');
+        $expected4 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY LOWER(' . $this->db()->escapeColumn('descripcion') . ') ASC';
+        $this->assertEquals($expected4, $query4->sql());
+
+        // Test 5: Prefijo upper:
+        $query5 = DbQuery::table('series')
+            ->orderBy('upper:descripcion', 'DESC');
+        $expected5 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY UPPER(' . $this->db()->escapeColumn('descripcion') . ') DESC';
+        $this->assertEquals($expected5, $query5->sql());
+
+        // Test 6: Prefijo integer:
+        $query6 = DbQuery::table('series')
+            ->orderBy('integer:codserie');
+        $expected6 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->castInteger('codserie') . ' ASC';
+        $this->assertEquals($expected6, $query6->sql());
+
+        // Test 7: Expresión permitida LOWER()
+        $query7 = DbQuery::table('series')
+            ->orderBy('LOWER(descripcion)');
+        $expected7 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY LOWER(descripcion) ASC';
+        $this->assertEquals($expected7, $query7->sql());
+
+        // Test 8: Expresión permitida UPPER()
+        $query8 = DbQuery::table('series')
+            ->orderBy('UPPER(descripcion)');
+        $expected8 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY UPPER(descripcion) ASC';
+        $this->assertEquals($expected8, $query8->sql());
+
+        // Test 9: Expresión permitida CAST()
+        $query9 = DbQuery::table('series')
+            ->orderBy('CAST(codserie AS INTEGER)');
+        $expected9 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY CAST(codserie AS INTEGER) ASC';
+        $this->assertEquals($expected9, $query9->sql());
+
+        // Test 10: Múltiples orderBy
+        $query10 = DbQuery::table('series')
+            ->orderBy('codserie', 'ASC')
+            ->orderBy('lower:descripcion', 'DESC');
+        $expected10 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->escapeColumn('codserie') . ' ASC, '
+            . 'LOWER(' . $this->db()->escapeColumn('descripcion') . ') DESC';
+        $this->assertEquals($expected10, $query10->sql());
     }
 
     public function testCount(): void
