@@ -73,6 +73,11 @@ class CodeModel
      */
     public static function all(string $tableName, string $fieldCode, string $fieldDescription, bool $addEmpty = true, array $where = []): array
     {
+        // validar campos:
+        self::db()->checkField($tableName);
+        self::db()->checkField($fieldCode);
+        self::db()->checkField($fieldDescription);
+    
         // check cache
         $cacheKey = $addEmpty ?
             'table-' . $tableName . '-code-model-' . $fieldCode . '-' . $fieldDescription . '-empty' :
@@ -144,6 +149,9 @@ class CodeModel
 
     private static function codeModelAll(mixed $model, string $fieldCode): array
     {
+        // validar campos:
+        self::db()->checkField($fieldCode);
+        
         $results = [];
         $field = empty($fieldCode) ? $model::primaryColumn() : $fieldCode;
 

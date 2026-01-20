@@ -487,6 +487,10 @@ abstract class ModelClass extends ModelCore
         $result = '';
         $coma = ' ORDER BY ';
         foreach ($order as $key => $value) {
+            // validar campos:
+            self::$dataBase->checkField($key);
+            self::$dataBase->checkField($value);
+
             $result .= $coma . $key . ' ' . $value;
             $coma = ', ';
         }

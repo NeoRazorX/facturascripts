@@ -283,28 +283,57 @@ final class DbQuery
 
     public function orderBy(string $field, string $order = 'ASC'): self
     {
-        // si lleva paréntesis, no escapamos
-        if (strpos($field, '(') !== false && strpos($field, ')') !== false) {
-            $this->orderBy[] = $field . ' ' . $order;
+        // verificar que es desc o asc
+        if (strtoupper($order) !== 'ASC' && strtoupper($order) !== 'DESC') {
+            throw new Exception(Tools::trans('database-not-valid-order'));
+        }
+        
+        // detectar funciones a campos: lower(campo)
+        // funciones permitidas al inicio ejemplo: 'lower|super|tal'
+        $validExternField = 'lower|cast';
+        // extraer lo que hay dentro de lower o paréntesis
+        preg_match('/^('.$validExternField.')\(.+\)$/i', $field, $matches);
+        if ($matches && count($matches) !== 0) {
+            // entonces lleva un paréntesis
+            $externField = $matches[1]; // rescatar campo externo
+            
+            // recoger lo que hay dentro de los paréntesis
+            $_substr = explode('(', $field)[1];
+            $innerField = substr($_substr, 0, strlen($_substr) - 1);
+            
+            // validar campo interno
+            self::db()->checkField($innerField);
+
+            // insertar de manera controlada
+            $this->orderBy[] = $externField . '(' . $innerField . ')' . ' ' . $order;
             return $this;
         }
 
         // si contiene espacios, no escapamos
         if (strpos($field, ' ') !== false) {
+            self::db()->checkField($field);
             $this->orderBy[] = $field . ' ' . $order;
             return $this;
         }
 
         // si el campo comienza por integer: hacemos el cast a integer
         if (0 === strpos($field, 'integer:')) {
-            $field = self::db()->castInteger(substr($field, 8));
+            // revisar el campo
+            $parsedField = substr($field, 0, 8);
+            self::db()->checkField($parsedField);
+            // colocar el cast a integer
+            $field = self::db()->castInteger($parsedField);
         }
 
         // si empieza por lower, hacemos el lower
         if (0 === strpos($field, 'lower:')) {
-            $field = 'LOWER(' . self::db()->escapeColumn(substr($field, 6)) . ')';
+            // revisar el campo
+            $parsedField = substr($field, 0, 6);
+            self::db()->checkField($parsedField);
+            $field = 'LOWER(' . self::db()->escapeColumn($parsedField) . ')';
         }
 
+        self::db()->checkField($field);
         $this->orderBy[] = self::db()->escapeColumn($field) . ' ' . $order;
 
         return $this;
