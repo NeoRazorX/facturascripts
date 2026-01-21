@@ -270,8 +270,9 @@ class CodeModel
     }
 
     /**
-     * Valida que un nombre de campo sea seguro para usar en consultas SQL.
+     * Valída que un nombre de campo sea seguro para usar en consultas SQL.
      * Solo permite letras, números, guiones bajos y puntos (para campos con alias de tabla).
+     * También permite el uso de las funciones lower() y upper().
      *
      * @param string $fieldName
      *
@@ -281,6 +282,11 @@ class CodeModel
     {
         // permite campos vacíos (se usan valores por defecto en algunos casos)
         if (empty($fieldName)) {
+            return true;
+        }
+
+        // permite lower() y upper() con un campo válido dentro
+        if (preg_match('/^(lower|upper)\(([a-zA-Z0-9_\.]+)\)$/i', $fieldName, $matches)) {
             return true;
         }
 
