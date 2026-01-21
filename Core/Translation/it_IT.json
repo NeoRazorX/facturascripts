@@ -980,7 +980,7 @@
     "login": "Accesso",
     "login-cookie-fail": "Cookie di sessione non valido: probabilmente hai effettuato l'accesso da un altro dispositivo o browser.",
     "login-image": "immagine di login",
-    "login-invalid-db-password": "Contraseña de base de datos incorrecta",
+    "login-invalid-db-password": "Password del database non corretta",
     "login-ok": "Accedi con successo (cookie). Utente: '0'",
     "login-password-changed": "Password cambiata correttamente",
     "login-password-fail": "Accesso fallito",
