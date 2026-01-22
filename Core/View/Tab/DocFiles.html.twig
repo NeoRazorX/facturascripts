@@ -44,6 +44,7 @@
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
                 {% for docfile in currentView.cursor %}
                     {% set file = docfile.getFile() %}
+                    {% if file %}
                     <div class="col">
                         <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data"
                               onsubmit="animateSpinner('add')">
@@ -130,6 +131,7 @@
                             </div>
                         </form>
                     </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
