@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use Exception;
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
@@ -48,6 +47,7 @@ use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
 use FacturaScripts\Dinamic\Model\WorkEvent;
+use ParseCsv\Csv;
 
 class Cron implements ControllerInterface
 {
@@ -189,10 +189,43 @@ END;
         echo PHP_EOL . PHP_EOL . Tools::trans('restoring-notifications') . ' ... ';
         ob_flush();
 
-        $sql = CSVImport::updateTableSQL(EmailNotification::tableName());
-        if (!empty($sql)) {
-            $db = new DataBase();
-            $db->exec($sql);
+        // obtenemos las notificaciones existentes en la base de datos
+        $existing = [];
+        $emailNotification = new EmailNotification();
+        foreach ($emailNotification->all() as $notification) {
+            $existing[] = $notification->name;
+        }
+
+        // obtenemos las notificaciones que deberían existir del CSV
+        $filePath = CSVImport::getTableFilePath(EmailNotification::tableName());
+        if (empty($filePath)) {
+            return;
+        }
+
+        // leemos el CSV y restauramos solo las que faltan
+        $csv = new Csv();
+        $csv->auto($filePath);
+
+        $restored = 0;
+        foreach ($csv->data as $row) {
+            // si ya existe, la saltamos
+            if (in_array($row['name'], $existing)) {
+                continue;
+            }
+
+            // creamos la notificación que falta
+            $notification = new EmailNotification();
+            $notification->name = $row['name'];
+            $notification->enabled = $row['enabled'] === 'true';
+            $notification->subject = $row['subject'];
+            $notification->body = $row['body'];
+            if ($notification->save()) {
+                $restored++;
+            }
+        }
+
+        if ($restored > 0) {
+            Tools::log('cron')->notice('restored-notifications', ['%count%' => $restored]);
         }
     }
 
