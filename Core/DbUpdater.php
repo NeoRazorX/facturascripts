@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -233,9 +233,16 @@ final class DbUpdater
         $db_cols = self::db()->getColumns($table_name);
         $db_cons = self::db()->getConstraints($table_name);
         $db_indexes = self::db()->getIndexes($table_name);
-        $sql = self::compareColumns($table_name, $structure['columns'], $db_cols) .
-            self::compareConstraints($table_name, $structure['constraints'], $db_cons) .
-            self::compareIndexes($table_name, $structure['indexes'], $db_indexes);
+
+        $sqlQueries = [];
+        // primero las columnas, para que estén disponibles cuando se añadan las restricciones
+        self::compareColumns($table_name, $structure['columns'], $db_cols, $sqlQueries);
+        // luego las restricciones (los DROP se añaden al principio, los ADD al final)
+        self::compareConstraints($table_name, $structure['constraints'], $db_cons, $sqlQueries);
+        // finalmente los índices
+        self::compareIndexes($table_name, $structure['indexes'], $db_indexes, $sqlQueries);
+
+        $sql = implode('', $sqlQueries);
         if (empty($sql)) {
             self::save($table_name);
             Tools::log()->debug('table-checked', ['%tableName%' => $table_name]);
@@ -264,92 +271,98 @@ final class DbUpdater
         return self::$db;
     }
 
-    private static function compareColumns(string $table_name, array $xml_cols, array $db_cols): string
+    private static function compareColumns(string $table_name, array $xml_cols, array $db_cols, array &$sqlQueries): void
     {
-        $sql = '';
-
         foreach ($xml_cols as $xml_col) {
             $column = self::searchInArray($db_cols, 'name', $xml_col['name']);
             if (empty($column)) {
                 $sql_part = self::needRename($db_cols, $xml_col) ?
                     self::sqlTool()->sqlRenameColumn($table_name, $xml_col['rename'], $xml_col['name']) :
                     self::sqlTool()->sqlAlterAddColumn($table_name, $xml_col);
-                $sql .= $sql_part;
+                $sqlQueries[] = $sql_part;
                 self::saveChangeLog('new-column', $sql_part, $xml_col);
                 continue;
             }
 
             if (false === self::compareDataTypes($column['type'], $xml_col['type'])) {
                 $sql_part = self::sqlTool()->sqlAlterModifyColumn($table_name, $xml_col);
-                $sql .= $sql_part;
+                $sqlQueries[] = $sql_part;
                 self::saveChangeLog('change-column-type', $sql_part, ['db' => $column, 'xml' => $xml_col]);
             }
 
             if (false === self::compareDefaults($column['default'], $xml_col['default'])) {
                 $sql_part = self::sqlTool()->sqlAlterColumnDefault($table_name, $xml_col);
-                $sql .= $sql_part;
+                $sqlQueries[] = $sql_part;
                 self::saveChangeLog('change-column-default', $sql_part, ['db' => $column, 'xml' => $xml_col]);
             }
 
             if ($column['is_nullable'] !== $xml_col['null']) {
                 $sql_part = self::sqlTool()->sqlAlterColumnNull($table_name, $xml_col);
-                $sql .= $sql_part;
+                $sqlQueries[] = $sql_part;
                 self::saveChangeLog('change-column-null', $sql_part, ['db' => $column, 'xml' => $xml_col]);
             }
         }
-
-        return $sql;
     }
 
-    private static function compareConstraints(string $table_name, array $xml_cons, array $db_cons): string
+    private static function compareConstraints(string $table_name, array $xml_cons, array $db_cons, array &$sqlQueries): void
     {
         if (empty($xml_cons) || false === Tools::config('db_foreign_keys')) {
-            return '';
+            return;
         }
 
-        // si hay que borrar alguna restricción, es mejor borrar todas
-        $delete_cons = false;
-        $sql_delete = '';
-        $sql_delete_fk = '';
+        // recolectamos las restricciones a borrar
+        $sql_delete_fk = [];
+        $sql_delete = [];
 
         foreach ($db_cons as $db_con) {
             if ($db_con['type'] === 'PRIMARY KEY') {
                 // excluimos las claves primarias
                 continue;
-            } elseif ($db_con['type'] === 'FOREIGN KEY') {
-                // es mejor borrar las claves foráneas antes que el resto
-                $sql_delete_fk .= self::sqlTool()->sqlDropConstraint($table_name, $db_con);
-            } else {
-                $sql_delete .= self::sqlTool()->sqlDropConstraint($table_name, $db_con);
             }
 
+            // comprobamos si la restricción está en el XML
             $column = self::searchInArray($xml_cons, 'name', $db_con['name']);
-            if (empty($column)) {
-                $delete_cons = true;
-            }
-        }
-
-        // añadimos las nuevas restricciones
-        $sql = '';
-        foreach ($xml_cons as $xml_con) {
-            // excluimos las claves primarias
-            if (0 === strpos($xml_con['constraint'], 'PRIMARY')) {
+            if (!empty($column)) {
+                // ya existe
                 continue;
             }
 
+            // esta restricción no está en el XML, hay que borrarla
+            if ($db_con['type'] === 'FOREIGN KEY') {
+                // es mejor borrar las claves foráneas antes que el resto
+                $sql_delete_fk[] = self::sqlTool()->sqlDropConstraint($table_name, $db_con);
+                continue;
+            }
+
+            $sql_delete[] = self::sqlTool()->sqlDropConstraint($table_name, $db_con);
+        }
+
+        // añadimos las restricciones a borrar al principio del array
+        // primero las foreign keys, luego las demás
+        foreach (array_reverse($sql_delete) as $sql_part) {
+            array_unshift($sqlQueries, $sql_part);
+            self::saveChangeLog('drop-constraints', $sql_part);
+        }
+        foreach (array_reverse($sql_delete_fk) as $sql_part) {
+            array_unshift($sqlQueries, $sql_part);
+            self::saveChangeLog('drop-constraints', $sql_part);
+        }
+
+        // añadimos las nuevas restricciones al final
+        foreach ($xml_cons as $xml_con) {
+            // excluimos las claves primarias
+            if (str_starts_with($xml_con['constraint'], 'PRIMARY')) {
+                continue;
+            }
+
+            // comprobamos si la restricción está en la base de datos
             $column = self::searchInArray($db_cons, 'name', $xml_con['name']);
             if (empty($column)) {
-                $sql .= self::sqlTool()->sqlAddConstraint($table_name, $xml_con['name'], $xml_con['constraint']);
+                $sql_part = self::sqlTool()->sqlAddConstraint($table_name, $xml_con['name'], $xml_con['constraint']);
+                $sqlQueries[] = $sql_part;
+                self::saveChangeLog('add-constraints', $sql_part);
             }
         }
-
-        if (!empty($sql)) {
-            self::saveChangeLog('constraints', $sql);
-        }
-
-        return $delete_cons ?
-            $sql_delete_fk . $sql_delete . $sql :
-            $sql;
     }
 
     private static function compareDataTypes(string $db_type, string $xml_type): bool
@@ -379,7 +392,7 @@ final class DbUpdater
         return $val1 == $val2;
     }
 
-    private static function compareIndexes(string $table_name, array $xml_indexes, array $db_indexes): string
+    private static function compareIndexes(string $table_name, array $xml_indexes, array $db_indexes, array &$sqlQueries): void
     {
         // Agregamos fs_ al inicio del 'name'
         // Así la comparación es correcta al buscar los índices
@@ -389,24 +402,23 @@ final class DbUpdater
             }
         }
 
-        $sql = '';
-
         // si no existen índices en el xml, borramos todos lo que existan en la base de datos.
         if (empty($xml_indexes)) {
             foreach ($db_indexes as $db_idx) {
-                $sql .= self::sqlTool()->sqlDropIndex($table_name, $db_idx);
+                $sql_part = self::sqlTool()->sqlDropIndex($table_name, $db_idx);
+                $sqlQueries[] = $sql_part;
+                self::saveChangeLog('drop-indexes', $sql_part);
             }
-            if (!empty($sql)) {
-                self::saveChangeLog('drop-all-indexes', $sql);
-            }
-            return $sql;
+            return;
         }
 
         // eliminamos los índices que no estén en el XML
         foreach ($db_indexes as $db_idx) {
             $column = self::searchInArray($xml_indexes, 'name', $db_idx['name']);
             if (empty($column)) {
-                $sql .= self::sqlTool()->sqlDropIndex($table_name, $db_idx);
+                $sql_part = self::sqlTool()->sqlDropIndex($table_name, $db_idx);
+                $sqlQueries[] = $sql_part;
+                self::saveChangeLog('drop-indexes', $sql_part);
             }
         }
 
@@ -414,15 +426,11 @@ final class DbUpdater
         foreach ($xml_indexes as $xml_idx) {
             $column = self::searchInArray($db_indexes, 'name', $xml_idx['name']);
             if (empty($column)) {
-                $sql .= self::sqlTool()->sqlAddIndex($table_name, $xml_idx['name'], $xml_idx['columns']);
+                $sql_part = self::sqlTool()->sqlAddIndex($table_name, $xml_idx['name'], $xml_idx['columns']);
+                $sqlQueries[] = $sql_part;
+                self::saveChangeLog('add-indexes', $sql_part);
             }
         }
-
-        if (!empty($sql)) {
-            self::saveChangeLog('indexes', $sql);
-        }
-
-        return $sql;
     }
 
     private static function getBoolValue($value): ?bool
