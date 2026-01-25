@@ -1612,7 +1612,7 @@
     "subaccount-belongs-other-year": "Konto podrzędne %subAccountCode% należy do innego roku.",
     "subaccount-irpf": "Konto dla potrąceń",
     "subaccount-irpf-creditor": "Rachunek IRPF dla zakupów",
-    "subaccount-not-found": "Subkonto %subAccountCode% nie zostało znalezione.",
+    "subaccount-not-found": "Subkonto %code% nie zostało znalezione.",
     "subaccount-purchases": "Konto do zakupów",
     "subaccount-pyg-not-found": "Subkonto zysków i strat nie znalezione",
     "subaccount-sales": "Konto sprzedaży",
