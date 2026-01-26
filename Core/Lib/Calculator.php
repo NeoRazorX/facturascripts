@@ -163,13 +163,16 @@ class Calculator
 
             // IVA
             if ($line->iva > 0) {
-                if ($line->pvpunitario < 2 && $line->getTax()->tipo !== Impuesto::TYPE_FIXED_VALUE) {
+                // método de cálculo configurable: classic (por defecto) o price-adjusted
+                $taxMethod = Tools::settings('default', 'taxcalculationmethod', 'classic');
+
+                if ($taxMethod === 'price-adjusted' && $line->getTax()->tipo !== Impuesto::TYPE_FIXED_VALUE) {
                     // calculamos el precio con IVA unitario
                     $pvp_iva = Tools::round($line->pvpunitario * (100 + $line->iva) / 100);
 
                     // calculamos el IVA como la diferencia
                     // entre el total con IVA redondeado y el neto redondeado
-                    // para evitar errores de redondeo acumulados
+                    // para evitar errores de redondeo cuando se establece el precio con IVA incluido
                     $pvpTotalConIva = $line->cantidad * $pvp_iva
                         * (100 - $line->dtopor) / 100
                         * (100 - $line->dtopor2) / 100

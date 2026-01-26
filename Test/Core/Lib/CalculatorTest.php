@@ -28,6 +28,7 @@ use FacturaScripts\Core\Model\ImpuestoZona;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Serie;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -728,12 +729,22 @@ final class CalculatorTest extends TestCase
         $this->assertEquals($tax->recargo, $line->recargo);
         $this->assertTrue($line->save(), 'can-not-save-line');
 
-        // actualizamos los totales
-        $lines = $doc->getLines();
-        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate');
+        // PRUEBA 1: con método clásico, el total es exactamente 10.00
+        // (con este precio e IVA no hay error de redondeo)
+        Tools::settingsSet('default', 'taxcalculationmethod', 'classic');
+        Tools::settingsSave();
 
-        // comprobamos que el total sea exactamente 10.00
-        $this->assertEquals(10.0, $doc->total, 'bad-total');
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate-classic');
+        $this->assertEquals(10.0, $doc->total, 'classic-method-total');
+
+        // PRUEBA 2: con método ajustado a precio, el total también es exactamente 10.00
+        Tools::settingsSet('default', 'taxcalculationmethod', 'price-adjusted');
+        Tools::settingsSave();
+
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate-price-adjusted');
+        $this->assertEquals(10.0, $doc->total, 'price-adjusted-method-total');
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-doc');
@@ -745,6 +756,10 @@ final class CalculatorTest extends TestCase
         if ($taxCreated) {
             $tax->delete();
         }
+
+        // dejamos el método predeterminado (classic)
+        Tools::settingsSet('default', 'taxcalculationmethod', 'classic');
+        Tools::settingsSave();
     }
 
     public function testProductPriceWithTax10(): void
@@ -786,12 +801,22 @@ final class CalculatorTest extends TestCase
         $this->assertEquals($tax->recargo, $line->recargo);
         $this->assertTrue($line->save(), 'can-not-save-line');
 
-        // actualizamos los totales
-        $lines = $doc->getLines();
-        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate');
+        // PRUEBA 1: con método clásico, el total es exactamente 0.65
+        // (con este IVA no hay error de redondeo)
+        Tools::settingsSet('default', 'taxcalculationmethod', 'classic');
+        Tools::settingsSave();
 
-        // comprobamos que el total sea exactamente 0.65
-        $this->assertEquals(0.65, $doc->total, 'bad-total');
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate-classic');
+        $this->assertEquals(0.65, $doc->total, 'classic-method-total');
+
+        // PRUEBA 2: con método ajustado a precio, el total también es exactamente 0.65
+        Tools::settingsSet('default', 'taxcalculationmethod', 'price-adjusted');
+        Tools::settingsSave();
+
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate-price-adjusted');
+        $this->assertEquals(0.65, $doc->total, 'price-adjusted-method-total');
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-doc');
@@ -803,6 +828,10 @@ final class CalculatorTest extends TestCase
         if ($taxCreated) {
             $tax->delete();
         }
+
+        // dejamos el método predeterminado (classic)
+        Tools::settingsSet('default', 'taxcalculationmethod', 'classic');
+        Tools::settingsSave();
     }
 
     public function testProductPriceWithTax4(): void
@@ -844,12 +873,21 @@ final class CalculatorTest extends TestCase
         $this->assertEquals($tax->recargo, $line->recargo);
         $this->assertTrue($line->save(), 'can-not-save-line');
 
-        // actualizamos los totales
-        $lines = $doc->getLines();
-        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate');
+        // PRUEBA 1: con método clásico, el total NO es exactamente 0.65 por errores de redondeo
+        Tools::settingsSet('default', 'taxcalculationmethod', 'classic');
+        Tools::settingsSave();
 
-        // comprobamos que el total sea exactamente 0.65
-        $this->assertEquals(0.65, $doc->total, 'bad-total');
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate-classic');
+        $this->assertNotEquals(0.65, $doc->total, 'classic-method-should-have-rounding-error');
+
+        // PRUEBA 2: con método ajustado a precio, el total es exactamente 0.65
+        Tools::settingsSet('default', 'taxcalculationmethod', 'price-adjusted');
+        Tools::settingsSave();
+
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-calculate-price-adjusted');
+        $this->assertEquals(0.65, $doc->total, 'price-adjusted-method-should-be-exact');
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-doc');
@@ -861,5 +899,9 @@ final class CalculatorTest extends TestCase
         if ($taxCreated) {
             $tax->delete();
         }
+
+        // dejamos el método predeterminado (classic)
+        Tools::settingsSet('default', 'taxcalculationmethod', 'classic');
+        Tools::settingsSave();
     }
 }
