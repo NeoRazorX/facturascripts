@@ -36,6 +36,9 @@
             <column name="duration" numcolumns="2" order="140">
                 <widget type="number" fieldname="duration" icon="fa-solid fa-clock" readonly="true"/>
             </column>
+            <column name="daily-exec" numcolumns="2" order="145">
+                <widget type="number" fieldname="dailyexec" readonly="true"/>
+            </column>
             <column name="enabled" numcolumns="2" order="150">
                 <widget type="checkbox" fieldname="enabled"/>
             </column>
