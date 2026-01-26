@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -397,8 +397,24 @@ class ListView extends BaseView
         if (isset($this->orderOptions[$orderKey])) {
             $this->order = [];
             $option = $this->orderOptions[$orderKey];
+
+            // normalizar todos los campos a un array plano
+            $allFields = [];
             foreach ($option['fields'] as $field) {
-                $this->order[$field] = $option['type'];
+                if (str_contains($field, ',')) {
+                    $allFields = array_merge($allFields, array_map('trim', explode(',', $field)));
+                } else {
+                    $allFields[] = $field;
+                }
+            }
+
+            // procesar cada campo: si especifica asc/desc lo respeta, sino usa el tipo del orderBy
+            foreach ($allFields as $field) {
+                if (preg_match('/^(.+)\s+(asc|desc)$/i', $field, $matches)) {
+                    $this->order[$matches[1]] = strtoupper($matches[2]);
+                } else {
+                    $this->order[$field] = $option['type'];
+                }
             }
 
             $this->orderKey = $orderKey;
