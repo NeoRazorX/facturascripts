@@ -38,8 +38,8 @@ use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
- * Class for the generation of accounting entries of a sale/purchase document
- * and the settlement of your receipts.
+ * Clase para la generación de asientos contables de un documento de venta/compra
+ * y la liquidación de sus recibos.
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -58,14 +58,14 @@ class InvoiceToAccounting extends AccountingClass
     protected $document;
 
     /**
-     * Document Subtotals Lines array
+     * Array de subtotales del documento
      *
      * @var array
      */
     protected $subtotals;
 
     /**
-     * Method to launch the accounting process
+     * Genera los asientos contables para una factura.
      *
      * @param FacturaCliente|FacturaProveedor $model
      */
@@ -88,8 +88,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the customer line to the accounting entry
-     *
+     * Añade la línea de cliente al asiento contable
+     *  
      * @param Asiento $entry
      *
      * @return bool
@@ -115,8 +115,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the goods purchase line to the accounting entry.
-     * Make one line for each product/family purchase subaccount.
+     * Añade la línea de compras de mercancías al asiento contable.
+     * Hace una línea por cada subcuenta de compras de producto/familia.
      *
      * @param Asiento $entry
      *
@@ -141,8 +141,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the goods sales line to the accounting entry.
-     * Make one line for each product/family sale subaccount.
+     * Añade la línea de venta de mercaderías al asiento contable.
+     * Crea una línea por cada subcuenta de venta de producto/familia.
      *
      * @param Asiento $entry
      *
@@ -167,6 +167,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Añade las líneas de IRPF de compras.
+     * 
      * @param Asiento $entry
      *
      * @return bool
@@ -202,6 +204,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Añade las lineas de suplidos de compras
+     * 
      * @param Asiento $entry
      *
      * @return bool
@@ -222,7 +226,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the purchase line to the accounting entry
+     * Añade las líneas de IVA de compras.
      *
      * @param Asiento $entry
      *
@@ -281,6 +285,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Añade las líneas de IRPF de ventas.
+     * 
      * @param Asiento $entry
      *
      * @return bool
@@ -309,7 +315,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the supplied line to the accounting entry
+     * Añade la línea de suplidos al asiento contable
      *
      * @param Asiento $entry
      *
@@ -331,7 +337,7 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Add the sales line to the accounting entry
+     * Añade las líneas de IVA de ventas.
      *
      * @param Asiento $entry
      *
@@ -387,6 +393,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Añade la línea de proveedor al asiento contable
+     * 
      * @param Asiento $entry
      *
      * @return bool
@@ -412,9 +420,17 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Perform the initial checks to continue with the accounting process
-     *
-     * @return bool
+     * Realiza las comprobaciones iniciales para asegurar que se puede generar el asiento.
+     * 
+     * Comprueba que:
+     *   - el documento no tenga ya un asiento asociado
+     *   - el documento tenga un total válido
+     *   - el ejercicio exista y esté abierto
+     *   - el ejercicio tenga un plan contable
+     *   - el documento tenga subtotales
+     *   - el ejercicio esté asignado almenos a una cuenta
+
+     * @return bool Devuelve false si no se puede generar el asiento.
      */
     protected function initialChecks(): bool
     {
@@ -459,7 +475,17 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Generate the accounting entry for a purchase document.
+     * Genera el asiento contable para un documento de compra.
+     * 
+     * Crea el asiento y realiza varias comprobaciones:
+     * - Verifica que se pueda añadir la línea de proveedor.
+     * - Verifica que se pueda añadir las líneas de iva de compras.
+     * - Verifica que se pueda añadir las líneas de irpf de compras.
+     * - Verifica que se pueda añadir la línea suplidos de compras.
+     * - Verifica que se pueda añadir la linea de mercancías de compras.
+     * - Verifica que el asiento esté balanceado.
+     * 
+     * Si alguna de las comprobaciones falla, no se asigna el asiento y se muestra un mensaje de error.
      */
     protected function purchaseAccountingEntry(): void
     {
@@ -528,7 +554,19 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Generate the accounting entry for a sales document.
+     * Genera el asiento contable para un documento de venta.
+     * 
+     * Crea el asiento y realiza varias comprobaciones:
+     * - Verifica que se pueda añadir la línea de cliente.
+     * - Verifica que se pueda añadir las líneas de iva de ventas.
+     * - Verifica que se pueda añadir las líneas de irpf de ventas.
+     * - Verifica que se pueda añadir la línea suplidos.
+     * - Verifica que se pueda añadir la linea de mercancías de ventas.
+     * - Verifica que el asiento esté balanceado.
+     * 
+     * Si alguna de las comprobaciones falla, no se asigna el asiento y se muestra un mensaje de error.
+     * 
+     * @return void
      */
     protected function salesAccountingEntry(): void
     {
@@ -597,7 +635,11 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     * Assign the document data to the accounting entry
+     * Asigna al asiento $entry los datos básicos del documento.
+     * 
+     * Codejercicio, concepto, documento, fecha, idempresa, importe
+     * 
+     * Además, asigna los datos analíticos definidos en el modelo Serie
      *
      * @param Asiento $entry
      * @param string $concept
