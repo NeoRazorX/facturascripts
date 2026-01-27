@@ -126,6 +126,17 @@ final class Telemetry
         return !empty($this->id_install);
     }
 
+    /**
+     * Esto hace que telemetry se pueda actualizar inmediatamente, sin esperar al cron.
+     * 
+     * @return bool
+     */
+    public function setNullLastUpdate(): bool
+    {
+        $this->last_update = null;
+        return $this->save();
+    }
+
     public function signUrl(string $url): string
     {
         if (empty($this->id_install)) {
