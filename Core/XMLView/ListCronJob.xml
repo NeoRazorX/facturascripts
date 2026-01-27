@@ -50,6 +50,9 @@
                 <option color="danger">gt:30</option>
             </widget>
         </column>
+        <column name="daily-exec" display="left" order="190">
+            <widget type="number" fieldname="dailyexec" decimal="0"/>
+        </column>
         <column name="last-duration" display="left" order="190">
             <widget type="seconds" fieldname="last_duration">
                 <option color="danger">gt:30</option>
