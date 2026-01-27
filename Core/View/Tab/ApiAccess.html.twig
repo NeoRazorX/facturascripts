@@ -20,36 +20,81 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr>
+                    <td>
+                        <b>{{ trans('all') }}</b>
+                    </td>
+                    <td>
+                        <div class="form-check d-flex justify-content-center">
+                            <input class="all-permission form-check-input" id="checkbox-all-allowget" value="allowget"
+                                   type="checkbox"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-check d-flex justify-content-center">
+                            <input class="all-permission form-check-input" id="checkbox-all-allowput" value="allowput"
+                                   type="checkbox"/>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <div class="form-check d-flex justify-content-center">
+                            <input class="all-permission form-check-input" id="checkbox-all-allowpost" value="allowpost"
+                                   type="checkbox"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-check d-flex justify-content-center">
+                            <input class="all-permission form-check-input" id="checkbox-all-allowdelete" value="allowdelete"
+                                   type="checkbox"/>
+                        </div>
+                    </td>
+                </tr>
                 {% for resource, rule in fsc.getAccessRules() %}
                     <tr>
                         <td>{{ resource }}</td>
-                        <td class="text-center">
-                            {% if rule.allowget %}
-                                <input type="checkbox" name="allowget[]" value="{{ resource }}" checked/>
-                            {% else %}
-                                <input type="checkbox" name="allowget[]" value="{{ resource }}"/>
-                            {% endif %}
+                        <td>
+                            <div class="form-check d-flex justify-content-center">
+                                {% if rule.allowget %}
+                                    <input type="checkbox" name="allowget[]" value="{{ resource }}"
+                                           class="form-check-input" checked/>
+                                {% else %}
+                                    <input type="checkbox" name="allowget[]" value="{{ resource }}"
+                                           class="form-check-input"/>
+                                {% endif %}
+                            </div>
                         </td>
-                        <td class="text-center">
-                            {% if rule.allowput %}
-                                <input type="checkbox" name="allowput[]" value="{{ resource }}" checked/>
-                            {% else %}
-                                <input type="checkbox" name="allowput[]" value="{{ resource }}"/>
-                            {% endif %}
+                        <td>
+                            <div class="form-check d-flex justify-content-center">
+                                {% if rule.allowput %}
+                                    <input type="checkbox" name="allowput[]" value="{{ resource }}"
+                                           class="form-check-input" checked/>
+                                {% else %}
+                                    <input type="checkbox" name="allowput[]" value="{{ resource }}"
+                                           class="form-check-input"/>
+                                {% endif %}
+                            </div>
                         </td>
-                        <td class="text-center">
-                            {% if rule.allowpost %}
-                                <input type="checkbox" name="allowpost[]" value="{{ resource }}" checked/>
-                            {% else %}
-                                <input type="checkbox" name="allowpost[]" value="{{ resource }}"/>
-                            {% endif %}
+                        <td>
+                            <div class="form-check d-flex justify-content-center">
+                                {% if rule.allowpost %}
+                                    <input type="checkbox" name="allowpost[]" value="{{ resource }}"
+                                           class="form-check-input" checked/>
+                                {% else %}
+                                    <input type="checkbox" name="allowpost[]" value="{{ resource }}"
+                                           class="form-check-input"/>
+                                {% endif %}
+                            </div>
                         </td>
-                        <td class="text-center">
-                            {% if rule.allowdelete %}
-                                <input type="checkbox" name="allowdelete[]" value="{{ resource }}" checked/>
-                            {% else %}
-                                <input type="checkbox" name="allowdelete[]" value="{{ resource }}"/>
-                            {% endif %}
+                        <td>
+                            <div class="form-check d-flex justify-content-center">
+                                {% if rule.allowdelete %}
+                                    <input type="checkbox" name="allowdelete[]" value="{{ resource }}"
+                                           class="form-check-input" checked/>
+                                {% else %}
+                                    <input type="checkbox" name="allowdelete[]" value="{{ resource }}"
+                                           class="form-check-input"/>
+                                {% endif %}
+                            </div>
                         </td>
                     </tr>
                 {% else %}
@@ -67,3 +112,15 @@
         </div>
     </div>
 </form>
+
+<script>
+    $(document).ready(function () {
+        // Todos
+        $('input[type="checkbox"].all-permission').change(function () {
+            var isChecked = $(this).is(':checked');
+            var permissionType = $(this).val();
+
+            $('input[type="checkbox"][name="' + permissionType + '[]"]').prop('checked', isChecked);
+        });
+    });
+</script>
