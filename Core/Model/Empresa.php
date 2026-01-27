@@ -30,6 +30,7 @@ use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Validator;
+use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Almacen as DinAlmacen;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
@@ -164,6 +165,18 @@ class Empresa extends ModelClass
     {
         $where = [new DataBaseWhere($this->primaryColumn(), $this->id())];
         return DinAlmacen::all($where, [], 0, 0);
+    }
+
+    /**
+     * Returns the company logo as an AttachedFile.
+     * 
+     * if the logo is not set, returns null.
+     *
+     * @return AttachedFile|null
+     */
+    public function getLogo(): ?AttachedFile
+    {
+        return $this->belongsTo(AttachedFile::class, 'idlogo');
     }
 
     public function install(): string
