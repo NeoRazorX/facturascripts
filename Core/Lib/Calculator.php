@@ -123,13 +123,13 @@ class Calculator
         // acumulamos por cada línea
         foreach ($lines as $line) {
             // coste
-            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
-            if (isset($line->coste)) {
+            $totalCoste = $line->coste !== null ? $line->cantidad * $line->coste : 0.0;
+            if ($line->coste !== null) {
                 $subtotals['totalcoste'] += $totalCoste;
             }
 
             $pvpTotal = $line->pvptotal * (100 - $doc->dtopor1) / 100 * (100 - $doc->dtopor2) / 100;
-            if (empty($line->pvptotal)) {
+            if ($line->pvptotal !== null) {
                 continue;
             }
 
