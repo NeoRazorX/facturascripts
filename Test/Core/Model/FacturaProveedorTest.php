@@ -571,7 +571,7 @@ final class FacturaProveedorTest extends TestCase
         // creamos una factura
         $invoice = new FacturaProveedor();
         $invoice->setSubject($supplier);
-        $invoice->operacion = InvoiceOperation::INTRA_COMMUNITY;
+        $invoice->operacion = InvoiceOperation::INTRA_COMMUNITY_ACQUISITION;
         $this->assertTrue($invoice->save());
 
         // añadimos una línea
@@ -672,7 +672,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($invoice->setIntracomunitaria());
 
         // comprobamos que la operación es intracomunitaria
-        $this->assertEquals(InvoiceOperation::INTRA_COMMUNITY, $invoice->operacion);
+        $this->assertEquals(InvoiceOperation::INTRA_COMMUNITY_ACQUISITION, $invoice->operacion);
 
         // quitamos la operación
         $invoice->operacion = null;
