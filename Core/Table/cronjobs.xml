@@ -59,6 +59,10 @@
         <type>integer</type>
         <default>0</default>
     </column>
+    <column>
+        <name>dailyexec</name>
+        <type>integer</type>
+    </column>
     <constraint>
         <name>cronjobs_pkey</name>
         <type>PRIMARY KEY (id)</type>

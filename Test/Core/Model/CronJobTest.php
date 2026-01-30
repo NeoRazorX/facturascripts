@@ -673,6 +673,44 @@ final class CronJobTest extends TestCase
         $this->assertTrue($job4->delete());
     }
 
+    public function testDailyExec(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestDailyexec';
+        $job->pluginname = 'TestPluginDailyexec';
+        $job->setMockDateTime('2025-03-05 10:00:00');
+
+        // comprobamos que daylyexec está a cero o vacío
+        $this->assertTrue(empty($job->dailyexec));
+
+        $this->assertTrue($job->every('1 minute')->isReady()); 
+        $this->assertTrue($job->run(function () {  
+            return true;  
+        })); 
+        // comprobamos que dailyexec se ha puesto a 1
+        $this->assertEquals(1, $job->dailyexec);
+
+        // repetimos para comprobar que se a incrementado el contador
+        $this->assertTrue($job->every('1 minute')->isReady()); 
+        $this->assertTrue($job->run(function () {  
+            return true;  
+        })); 
+        $this->assertEquals(2, $job->dailyexec);
+
+        // avanzamos un dia
+        $job->setMockDateTime('2025-03-06 10:00:00');
+        // ejecutamos el cronjob
+        $this->assertTrue($job->every('1 minute')->isReady()); 
+        $this->assertTrue($job->run(function () {  
+            return true;  
+        }));
+        // comprobamos que dailyexec se puso a 1 de nuevo
+        $this->assertEquals(1, $job->dailyexec);
+        
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
