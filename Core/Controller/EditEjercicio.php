@@ -329,9 +329,12 @@ class EditEjercicio extends EditController
                 // ocultamos la columna saldo de los totales
                 unset($view->totalAmounts['saldo']);
 
-                // si hay cuentas o subcuentas, ponemos readonly el campo longsubcuenta del ejercicio
+                // si hay cuentas o subcuentas, ponemos readonly los campos longsubcuenta, fechainicio y fechafin
                 if ($view->count > 0) {
-                    $this->tab('EditEjercicio')->disableColumn('account-length', false, 'true');
+                    $this->tab('EditEjercicio')
+                        ->disableColumn('account-length', false, 'true')
+                        ->disableColumn('start-date', false, 'true')
+                        ->disableColumn('end-date', false, 'true');
                 }
                 break;
         }
