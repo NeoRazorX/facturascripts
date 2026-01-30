@@ -32,6 +32,10 @@
         <default>false</default>
     </column>
     <column>
+        <name>lastactivity</name>
+        <type>timestamp</type>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>

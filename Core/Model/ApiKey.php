@@ -55,6 +55,9 @@ class ApiKey extends ModelClass
     public $id;
 
     /** @var string */
+    public $lastactivity;
+
+    /** @var string */
     public $nick;
 
     /**
@@ -159,7 +162,17 @@ class ApiKey extends ModelClass
         $this->description = Tools::noHtml($this->description);
         $this->nick = Tools::noHtml($this->nick);
 
+        if (empty($this->lastactivity)) {
+            $this->lastactivity = null;
+        }
+
         return parent::test();
+    }
+
+    public function updateActivity(): bool
+    {
+        $this->lastactivity = Tools::dateTime();
+        return $this->save();
     }
 
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string

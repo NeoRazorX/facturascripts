@@ -161,6 +161,7 @@ class EditSettings extends PanelController
             ->addOrderBy(['id'], 'id')
             ->addOrderBy(['descripcion'], 'description')
             ->addOrderBy(['creationdate', 'id'], 'date', 2)
+            ->addOrderBy(['lastactivity', 'id'], 'last-activity')
             ->addSearchFields(['description', 'apikey', 'nick']);
     }
 
