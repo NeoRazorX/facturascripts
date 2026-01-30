@@ -479,6 +479,7 @@
     "desc-provider-name": "Nombre por el que es conocido el proveedor. Para uso interno.",
     "desc-rate-code": "Código para uso interno de la tarifa.",
     "desc-vat-document": "Identificador del documento donde se aplica el impuesto",
+    "descendant-of": "Descendiente de",
     "description": "Descripción",
     "description-1": "Descripción 1",
     "description-2": "Descripción 2",
