@@ -85,6 +85,9 @@ class CronJob extends ModelClass
     /** @var float */
     private $start;
 
+    /** @var int */
+    public $dailyexec;
+
     public function clear(): void
     {
         parent::clear();
@@ -203,6 +206,10 @@ class CronJob extends ModelClass
             return false;
         }
 
+        if (date('Y-m-d', strtotime($this->date ?? '-1 day')) !== date('Y-m-d', $this->getCurrentTimestamp())) {
+            $this->dailyexec = 0;
+        }
+
         $this->start = $this->getCurrentMicrotime();
         $this->done = false;
         $this->failed = false;
@@ -254,6 +261,7 @@ class CronJob extends ModelClass
         $this->done = true;
         $this->failed = false;
         $this->running--;
+        $this->dailyexec++;
         $this->save();
 
         return true;
