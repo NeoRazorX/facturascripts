@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -239,15 +239,15 @@ final class CronJobTest extends TestCase
 
         $this->assertTrue(
             $job->run(function () {
-                // esperamos 1 segundo
-                sleep(1);
+                // esperamos 0.1 segundos
+                usleep(100000);
 
                 return true;
             })
         );
         $this->assertTrue($job->done);
         $this->assertFalse($job->failed);
-        $this->assertGreaterThan(0.99, $job->duration);
+        $this->assertGreaterThan(0.09, $job->duration);
 
         // eliminamos
         $this->assertTrue($job->delete());
@@ -262,15 +262,15 @@ final class CronJobTest extends TestCase
 
         $this->assertFalse(
             $job->run(function () {
-                // esperamos 1 segundo
-                sleep(1);
+                // esperamos 0.1 segundos
+                usleep(100000);
 
                 throw new Exception('Test');
             })
         );
         $this->assertTrue($job->done);
         $this->assertTrue($job->failed);
-        $this->assertGreaterThan(0.99, $job->duration);
+        $this->assertGreaterThan(0.09, $job->duration);
 
         // eliminamos
         $this->assertTrue($job->delete());
@@ -676,37 +676,37 @@ final class CronJobTest extends TestCase
     public function testDailyExec(): void
     {
         $job = new CronJob();
-        $job->jobname = 'TestDailyexec';
-        $job->pluginname = 'TestPluginDailyexec';
+        $job->jobname = 'TestDailyExec';
+        $job->pluginname = 'TestPluginDailyExec';
         $job->setMockDateTime('2025-03-05 10:00:00');
 
-        // comprobamos que daylyexec está a cero o vacío
-        $this->assertTrue(empty($job->dailyexec));
+        // comprobamos que daily_exec está a cero o vacío
+        $this->assertTrue(empty($job->daily_exec));
 
-        $this->assertTrue($job->every('1 minute')->isReady()); 
-        $this->assertTrue($job->run(function () {  
-            return true;  
-        })); 
-        // comprobamos que dailyexec se ha puesto a 1
-        $this->assertEquals(1, $job->dailyexec);
+        $this->assertTrue($job->every('1 minute')->isReady());
+        $this->assertTrue($job->run(function () {
+            return true;
+        }));
+        // comprobamos que daily_exec se ha puesto a 1
+        $this->assertEquals(1, $job->daily_exec);
 
-        // repetimos para comprobar que se a incrementado el contador
-        $this->assertTrue($job->every('1 minute')->isReady()); 
-        $this->assertTrue($job->run(function () {  
-            return true;  
-        })); 
-        $this->assertEquals(2, $job->dailyexec);
+        // repetimos para comprobar que se ha incrementado el contador
+        $this->assertTrue($job->every('1 minute')->isReady());
+        $this->assertTrue($job->run(function () {
+            return true;
+        }));
+        $this->assertEquals(2, $job->daily_exec);
 
-        // avanzamos un dia
+        // avanzamos un día
         $job->setMockDateTime('2025-03-06 10:00:00');
         // ejecutamos el cronjob
-        $this->assertTrue($job->every('1 minute')->isReady()); 
-        $this->assertTrue($job->run(function () {  
-            return true;  
+        $this->assertTrue($job->every('1 minute')->isReady());
+        $this->assertTrue($job->run(function () {
+            return true;
         }));
-        // comprobamos que dailyexec se puso a 1 de nuevo
-        $this->assertEquals(1, $job->dailyexec);
-        
+        // comprobamos que daily_exec se puso a 1 de nuevo
+        $this->assertEquals(1, $job->daily_exec);
+
         // eliminamos
         $this->assertTrue($job->delete());
     }
