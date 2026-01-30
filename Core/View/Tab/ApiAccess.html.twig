@@ -3,16 +3,29 @@
     <input type="hidden" name="action" value="edit-rules"/>
     <input type="hidden" name="activetab" value="{{ fsc.getCurrentView().getViewName() }}"/>
     <div class="card shadow">
-        <div class="card-body text-end">
-            <button type="submit" class="btn btn-sm btn-primary">
-                <i class="fa-solid fa-save fa-fw"></i> {{ trans('save') }}
-            </button>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col"></div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-sm btn-outline-primary btn-spin-action">
+                        <i class="fa-solid fa-save fa-fw"></i> {{ trans('save') }}
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead>
-                <tr>
-                    <th>{{ trans('resource') }}</th>
+                <tr class="align-middle">
+                    <th>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fa-solid fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="filter-resource"
+                                   placeholder="{{ trans('search') }}"/>
+                        </div>
+                    </th>
                     <th class="text-center">{{ trans('allow-get-data') }}</th>
                     <th class="text-center">{{ trans('allow-put-data') }}</th>
                     <th class="text-center">{{ trans('allow-post-data') }}</th>
@@ -20,7 +33,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr class="table-warning">
                     <td>
                         <b>{{ trans('all') }}</b>
                     </td>
@@ -106,7 +119,7 @@
             </table>
         </div>
         <div class="card-body text-end">
-            <button type="submit" class="btn btn-sm btn-primary">
+            <button type="submit" class="btn btn-primary btn-spin-action">
                 <i class="fa-solid fa-save fa-fw"></i> {{ trans('save') }}
             </button>
         </div>
@@ -121,6 +134,19 @@
             var permissionType = $(this).val();
 
             $('input[type="checkbox"][name="' + permissionType + '[]"]').prop('checked', isChecked);
+        });
+
+        // Filtrar recursos
+        $('#filter-resource').on('keyup', function () {
+            var value = $(this).val().toLowerCase();
+            $('table tbody tr').each(function () {
+                var resourceName = $(this).find('td:first').text().toLowerCase();
+                if (resourceName.indexOf(value) > -1 || $(this).find('td:first b').length > 0) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
         });
     });
 </script>

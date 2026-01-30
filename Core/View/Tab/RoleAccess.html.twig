@@ -47,6 +47,21 @@
     <input type="hidden" name="action" value="edit-rules"/>
     <input type="hidden" name="activetab" value="{{ fsc.getCurrentView().getViewName() }}"/>
     <div class="card shadow">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0">
+                        <i class="fa-solid fa-user-lock me-2"></i>
+                        {{ trans('permissions-by-page') }}
+                    </h5>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-sm btn-outline-primary btn-spin-action">
+                        <i class="fa-solid fa-save fa-fw"></i> {{ trans('save') }}
+                    </button>
+                </div>
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead>
@@ -57,7 +72,7 @@
                                 <i class="fa-solid fa-search"></i>
                             </span>
                             <input type="text" class="form-control" id="search-menu"
-                                   placeholder="{{ trans('search-controller') }}"/>
+                                   placeholder="{{ trans('search') }}"/>
                         </div>
                     </th>
                     <th class="text-center">{{ trans('show') }}</th>
@@ -77,43 +92,43 @@
                     <td class="text-center">
                         <div class="form-check checkbox-center-aligned">
                             <input class="all-permission form-check-input" id="checkbox-all-show" value="show"
-                                   type="checkbox" data-menu="{{ menu }}" data-type="show"/>
-                            <label class="form-check-label" for="checkbox-all-show">&nbsp;</label>
+                                   type="checkbox" data-menu="{{ menu }}" data-type="show"
+                                   aria-label="{{ trans('show') }} - {{ trans('all') }}"/>
                         </div>
                     </td>
                     <td class="table-warning text-center">
                         <div class="form-check checkbox-center-aligned">
                             <input class="all-permission form-check-input" id="checkbox-all-onlyOwner"
-                                   value="only-owner" type="checkbox" data-menu="{{ menu }}" data-type="only-owner"/>
-                            <label class="form-check-label" for="checkbox-all-onlyOwner">&nbsp;</label>
+                                   value="only-owner" type="checkbox" data-menu="{{ menu }}" data-type="only-owner"
+                                   aria-label="{{ trans('only-owner-data') }} - {{ trans('all') }}"/>
                         </div>
                     </td>
                     <td class="text-center">
                         <div class="form-check checkbox-center-aligned">
                             <input class="all-permission form-check-input" id="checkbox-all-update" value="update"
-                                   type="checkbox" data-menu="{{ menu }}" data-type="update"/>
-                            <label class="form-check-label" for="checkbox-all-update">&nbsp;</label>
+                                   type="checkbox" data-menu="{{ menu }}" data-type="update"
+                                   aria-label="{{ trans('allow-update') }} - {{ trans('all') }}"/>
                         </div>
                     </td>
                     <td class="text-center">
                         <div class="form-check checkbox-center-aligned">
                             <input class="all-permission form-check-input" id="checkbox-all-import" value="import"
-                                   type="checkbox" data-menu="{{ menu }}" data-type="import"/>
-                            <label class="form-check-label" for="checkbox-all-import">&nbsp;</label>
+                                   type="checkbox" data-menu="{{ menu }}" data-type="import"
+                                   aria-label="{{ trans('allow-import') }} - {{ trans('all') }}"/>
                         </div>
                     </td>
                     <td class="text-center">
                         <div class="form-check checkbox-center-aligned">
                             <input class="all-permission form-check-input" id="checkbox-all-export" value="export"
-                                   type="checkbox" data-menu="{{ menu }}" data-type="export"/>
-                            <label class="form-check-label" for="checkbox-all-export">&nbsp;</label>
+                                   type="checkbox" data-menu="{{ menu }}" data-type="export"
+                                   aria-label="{{ trans('allow-export') }} - {{ trans('all') }}"/>
                         </div>
                     </td>
                     <td class="text-center">
                         <div class="form-check checkbox-center-aligned">
                             <input class="all-permission form-check-input" id="checkbox-all-delete" value="delete"
-                                   type="checkbox" data-menu="{{ menu }}" data-type="delete"/>
-                            <label class="form-check-label" for="checkbox-all-delete">&nbsp;</label>
+                                   type="checkbox" data-menu="{{ menu }}" data-type="delete"
+                                   aria-label="{{ trans('allow-delete') }} - {{ trans('all') }}"/>
                         </div>
                     </td>
                 </tr>
@@ -132,60 +147,66 @@
                                 <div class="form-check checkbox-center-aligned">
                                     <input class="all-menu-permission show-menu-permission form-check-input"
                                            id="checkbox-all-menu-show-{{ menu }}" value="show-{{ menu }}"
-                                           type="checkbox" data-menu="{{ menu }}" data-type="show"/>
+                                           type="checkbox" data-menu="{{ menu }}" data-type="show"
+                                           aria-label="{{ trans('show') }} - {{ menu }}"/>
                                     <label class="form-check-label label-contador"
                                            for="checkbox-all-menu-show-{{ menu }}" data-menu="{{ menu }}"
-                                           data-type="show">&nbsp;</label>
+                                           data-type="show" aria-hidden="true">&nbsp;</label>
                                 </div>
                             </td>
                             <td class="table-warning text-center">
                                 <div class="form-check checkbox-center-aligned">
                                     <input class="all-menu-permission only-owner-menu-permission form-check-input"
                                            id="checkbox-all-menu-only-owner-{{ menu }}" value="only-owner-{{ menu }}"
-                                           type="checkbox" data-menu="{{ menu }}" data-type="only-owner"/>
+                                           type="checkbox" data-menu="{{ menu }}" data-type="only-owner"
+                                           aria-label="{{ trans('only-owner-data') }} - {{ menu }}"/>
                                     <label class="form-check-label label-contador"
                                            for="checkbox-all-menu-only-owner-{{ menu }}" data-menu="{{ menu }}"
-                                           data-type="only-owner">&nbsp;</label>
+                                           data-type="only-owner" aria-hidden="true">&nbsp;</label>
                                 </div>
                             </td>
                             <td class="text-center">
                                 <div class="form-check checkbox-center-aligned">
                                     <input class="all-menu-permission update-menu-permission form-check-input"
                                            id="checkbox-all-menu-update-{{ menu }}" value="update-{{ menu }}"
-                                           type="checkbox" data-menu="{{ menu }}" data-type="update"/>
+                                           type="checkbox" data-menu="{{ menu }}" data-type="update"
+                                           aria-label="{{ trans('allow-update') }} - {{ menu }}"/>
                                     <label class="form-check-label label-contador"
                                            for="checkbox-all-menu-update-{{ menu }}" data-menu="{{ menu }}"
-                                           data-type="update">&nbsp;</label>
+                                           data-type="update" aria-hidden="true">&nbsp;</label>
                                 </div>
                             </td>
                             <td class="text-center">
                                 <div class="form-check checkbox-center-aligned">
                                     <input class="all-menu-permission import-menu-permission form-check-input"
                                            id="checkbox-all-menu-import-{{ menu }}" value="import-{{ menu }}"
-                                           type="checkbox" data-menu="{{ menu }}" data-type="import"/>
+                                           type="checkbox" data-menu="{{ menu }}" data-type="import"
+                                           aria-label="{{ trans('allow-import') }} - {{ menu }}"/>
                                     <label class="form-check-label label-contador"
                                            for="checkbox-all-menu-import-{{ menu }}" data-menu="{{ menu }}"
-                                           data-type="import">&nbsp;</label>
+                                           data-type="import" aria-hidden="true">&nbsp;</label>
                                 </div>
                             </td>
                             <td class="text-center">
                                 <div class="form-check checkbox-center-aligned">
                                     <input class="all-menu-permission export-menu-permission form-check-input"
                                            id="checkbox-all-menu-export-{{ menu }}" value="export-{{ menu }}"
-                                           type="checkbox" data-menu="{{ menu }}" data-type="export"/>
+                                           type="checkbox" data-menu="{{ menu }}" data-type="export"
+                                           aria-label="{{ trans('allow-export') }} - {{ menu }}"/>
                                     <label class="form-check-label label-contador"
                                            for="checkbox-all-menu-export-{{ menu }}" data-menu="{{ menu }}"
-                                           data-type="export">&nbsp;</label>
+                                           data-type="export" aria-hidden="true">&nbsp;</label>
                                 </div>
                             </td>
                             <td class="text-center">
                                 <div class="form-check checkbox-center-aligned">
                                     <input class="all-menu-permission delete-menu-permission form-check-input"
                                            id="checkbox-all-menu-delete-{{ menu }}" value="delete-{{ menu }}"
-                                           type="checkbox" data-menu="{{ menu }}" data-type="delete"/>
+                                           type="checkbox" data-menu="{{ menu }}" data-type="delete"
+                                           aria-label="{{ trans('allow-delete') }} - {{ menu }}"/>
                                     <label class="form-check-label label-contador"
                                            for="checkbox-all-menu-delete-{{ menu }}" data-menu="{{ menu }}"
-                                           data-type="delete">&nbsp;</label>
+                                           data-type="delete" aria-hidden="true">&nbsp;</label>
                                 </div>
                             </td>
                         </tr>
@@ -201,70 +222,61 @@
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="form-check checkbox-center-aligned" title="{{ trans('show') }}">
+                            <div class="form-check checkbox-center-aligned">
                                 <input class="permission show-permission show-menu-permission show-{{ menu }}-permission form-check-input"
                                        id="checkbox-large-show-{{ pageName }}" type="checkbox" name="show[]"
                                        data-menu="{{ menu }}" data-type="show" value="{{ pageName }}"
-                                       {% if rule.show %}checked{% endif %}/>
-                                <label class="form-check-label"
-                                       for="checkbox-large-show-{{ pageName }}">&nbsp;</label>
+                                       {% if rule.show %}checked{% endif %}
+                                       aria-label="{{ trans('show') }} - {{ pageName }}"/>
                             </div>
                         </td>
                         <td class="table-warning text-center">
-                            <div class="form-check checkbox-center-aligned"
-                                 title="{{ trans('only-owner-data') }}">
+                            <div class="form-check checkbox-center-aligned">
                                 <input class="permission only-owner-permission only-owner-menu-permission only-owner-{{ menu }}-permission form-check-input"
                                        id="checkbox-large-onlyOwner-{{ pageName }}" type="checkbox" name="onlyOwner[]"
                                        data-menu="{{ menu }}" data-type="only-owner" value="{{ pageName }}"
-                                       {% if rule.onlyOwner %}checked{% endif %}/>
+                                       {% if rule.onlyOwner %}checked{% endif %}
+                                       aria-label="{{ trans('only-owner-data') }} - {{ pageName }}"/>
                                 <label class="form-check-label"
-                                       for="checkbox-large-onlyOwner-{{ pageName }}">
+                                       for="checkbox-large-onlyOwner-{{ pageName }}" aria-hidden="true">
                                     <i class="fa-solid fa-lock text-secondary"></i>
                                 </label>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="form-check checkbox-center-aligned"
-                                 title="{{ trans('allow-update') }}">
+                            <div class="form-check checkbox-center-aligned">
                                 <input class="permission update-permission update-menu-permission update-{{ menu }}-permission form-check-input"
                                        id="checkbox-large-update-{{ pageName }}" type="checkbox" name="update[]"
                                        data-menu="{{ menu }}" data-type="update"
-                                       value="{{ pageName }}" {% if rule.update %} checked{% endif %}/>
-                                <label class="form-check-label"
-                                       for="checkbox-large-update-{{ pageName }}">&nbsp;</label>
+                                       value="{{ pageName }}" {% if rule.update %} checked{% endif %}
+                                       aria-label="{{ trans('allow-update') }} - {{ pageName }}"/>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="form-check checkbox-center-aligned"
-                                 title="{{ trans('allow-import') }}">
+                            <div class="form-check checkbox-center-aligned">
                                 <input class="permission import-permission import-menu-permission import-{{ menu }}-permission form-check-input"
                                        id="checkbox-large-import-{{ pageName }}" type="checkbox" name="import[]"
                                        data-menu="{{ menu }}" data-type="import"
-                                       value="{{ pageName }}" {% if rule.import %} checked{% endif %}/>
-                                <label class="form-check-label"
-                                       for="checkbox-large-import-{{ pageName }}">&nbsp;</label>
+                                       value="{{ pageName }}" {% if rule.import %} checked{% endif %}
+                                       aria-label="{{ trans('allow-import') }} - {{ pageName }}"/>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="form-check checkbox-center-aligned"
-                                 title="{{ trans('allow-export') }}">
+                            <div class="form-check checkbox-center-aligned">
                                 <input class="permission export-permission export-menu-permission export-{{ menu }}-permission form-check-input"
                                        id="checkbox-large-export-{{ pageName }}" type="checkbox" name="export[]"
                                        data-menu="{{ menu }}" data-type="export"
-                                       value="{{ pageName }}" {% if rule.export %} checked{% endif %}/>
-                                <label class="form-check-label"
-                                       for="checkbox-large-export-{{ pageName }}">&nbsp;</label>
+                                       value="{{ pageName }}" {% if rule.export %} checked{% endif %}
+                                       aria-label="{{ trans('allow-export') }} - {{ pageName }}"/>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="form-check checkbox-center-aligned"
-                                 title="{{ trans('allow-delete') }}">
+                            <div class="form-check checkbox-center-aligned">
                                 <input class="permission delete-permission delete-menu-permission delete-{{ menu }}-permission form-check-input"
                                        id="checkbox-large-delete-{{ pageName }}" type="checkbox" name="delete[]"
                                        data-menu="{{ menu }}" data-type="delete"
-                                       value="{{ pageName }}" {% if rule.delete %} checked{% endif %}/>
-                                <label class="form-check-label"
-                                       for="checkbox-large-delete-{{ pageName }}">&nbsp;</label>
+                                       value="{{ pageName }}" {% if rule.delete %} checked{% endif %}
+                                       aria-label="{{ trans('allow-delete') }} - {{ pageName }}"/>
                             </div>
                         </td>
                     </tr>
@@ -299,15 +311,16 @@
     $(document).ready(function () {
         let searchTimeout;
 
-        // Búsqueda de controladores
+        // Búsqueda de controladores (optimizada)
         $('#search-menu').on('input', function () {
             clearTimeout(searchTimeout);
 
             searchTimeout = setTimeout(function () {
                 const searchValue = $('#search-menu').val().toLowerCase().trim();
+                const $controllerNames = $('.controller-name');
 
                 // Eliminar resaltado anterior
-                $('.controller-name').removeClass('search-highlight');
+                $controllerNames.removeClass('search-highlight');
 
                 // Si el input está vacío, colapsar todos los menús
                 if (searchValue === '') {
@@ -317,32 +330,19 @@
                     return;
                 }
 
-                // Buscar coincidencias
-                let firstMatch = null;
-                let foundMenus = new Set();
+                // Buscar coincidencias usando filter (más eficiente)
+                const foundMenus = new Set();
+                const $matches = $controllerNames.filter(function () {
+                    return $(this).text().toLowerCase().includes(searchValue);
+                }).addClass('search-highlight');
 
-                $('.controller-name').each(function () {
-                    const controllerName = $(this).text().toLowerCase();
-
-                    if (controllerName.includes(searchValue)) {
-                        // Resaltar coincidencia
-                        $(this).addClass('search-highlight');
-
-                        // Obtener el tr padre
-                        const $parentTr = $(this).closest('tr');
-
-                        // Guardar el primer resultado para hacer scroll
-                        if (firstMatch === null) {
-                            firstMatch = $parentTr;
-                        }
-
-                        // Obtener las clases del tr para identificar el menú
-                        const classes = $parentTr.attr('class');
-                        if (classes) {
-                            const menuMatch = classes.match(/tr([^\s]+)/);
-                            if (menuMatch && menuMatch[1]) {
-                                foundMenus.add(menuMatch[1]);
-                            }
+                // Extraer menús de las coincidencias
+                $matches.each(function () {
+                    const classes = $(this).closest('tr').attr('class');
+                    if (classes) {
+                        const menuMatch = classes.match(/tr([^\s]+)/);
+                        if (menuMatch && menuMatch[1]) {
+                            foundMenus.add(menuMatch[1]);
                         }
                     }
                 });
@@ -360,11 +360,14 @@
                 });
 
                 // Hacer scroll suave al primer resultado
-                if (firstMatch !== null) {
-                    firstMatch[0].scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
+                if ($matches.length > 0) {
+                    const firstElement = $matches.first().closest('tr')[0];
+                    if (firstElement && firstElement.scrollIntoView) {
+                        firstElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
                 }
             }, 300); // 300 milisegundos de debounce
         });
