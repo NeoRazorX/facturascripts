@@ -25,12 +25,15 @@ use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Model\Provincia;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Core\Where;
 
 /**
  * Controller for editing models that are related and show
@@ -99,10 +102,64 @@ abstract class ComercialContactController extends EditController
             $listView->addFilterSelect('coddivisa', 'currency', 'coddivisa', $currencies);
         }
 
+        if ($this->getClassName() === 'EditCliente') {
+            $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
+            $listView->addFilterSelect('codtrans', 'carrier', 'codtrans', $carriers);
+
+            $paises = Paises::codeModel();
+            $listView->addFilterSelect('country', 'country', 'codpais', $paises);
+            $listView->addFilterAutocomplete('provincia', 'province', 'provincia', 'provincias');
+            $listView->addFilterAutocomplete('ciudad', 'city', 'ciudad', 'ciudades');
+        }
+
         $listView->addFilterCheckbox('totalrecargo', 'surcharge', 'totalrecargo', '!=', 0)
             ->addFilterCheckbox('totalirpf', 'retention', 'totalirpf', '!=', 0)
             ->addFilterCheckbox('totalsuplidos', 'supplied-amount', 'totalsuplidos', '!=', 0)
             ->addFilterCheckbox('numdocs', 'has-attachments', 'numdocs', '!=', 0);
+
+        $listView->addFilterCheckbox('femail', 'email-not-sent', 'femail', 'IS', null);
+
+    }
+
+    protected function autocompleteAction(): array
+    {
+        $data = $this->requestGet(['source', 'fieldcode', 'fieldtitle', 'strict', 'term']);
+        if ($data['source'] === 'provincias') {
+            $codpais = $this->request->input('filtercountry');
+
+            $where = [];
+            if (empty($codpais) === false) {
+                $where[] = Where::eq('codpais', $codpais);
+            }
+
+            $result = [];
+            foreach ($this->codeModel->search('provincias', $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
+                $result[] = ['key' => $value->code, 'value' => $value->description];
+            }
+
+            return $result;
+        } elseif ($data['source'] === 'ciudades') {
+            $codprovincia = $this->request->input('filterprovincia');
+
+            $where = [];
+            if (empty($codprovincia) === false) {
+                $provincias = Provincia::all([Where::eq('provincia', $codprovincia)]);
+                if (empty($provincias)) {
+                    return [];
+                }
+
+                $where[] = Where::eq('idprovincia', $provincias[0]->idprovincia);
+            }
+
+            $result = [];
+            foreach ($this->codeModel->search('ciudades', $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
+                $result[] = ['key' => $value->code, 'value' => $value->description];
+            }
+
+            return $result;
+        }
+
+        return parent::autocompleteAction();
     }
 
     /**
