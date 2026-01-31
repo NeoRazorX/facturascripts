@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -109,6 +109,16 @@ final class DataBase
     public function castInteger(string $col): string
     {
         return self::$engine->castInteger(self::$link, $col);
+    }
+
+    /**
+     * Returns the random function for the database engine.
+     *
+     * @return string
+     */
+    public function random(): string
+    {
+        return self::$engine->random();
     }
 
     /**

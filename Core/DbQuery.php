@@ -288,6 +288,12 @@ final class DbQuery
 
         // si lleva paréntesis, validamos que sea una expresión permitida
         if (str_contains($field, '(') && str_contains($field, ')')) {
+            // si es RAND() o RANDOM(), usamos la función random del engine
+            if (preg_match('/^(RAND|RANDOM)\(\)$/i', $field)) {
+                $this->orderBy[] = self::db()->random();
+                return $this;
+            }
+
             // permitimos LOWER(), UPPER() y CAST()
             if (preg_match('/^(LOWER|UPPER)\([a-zA-Z0-9_.]+\)$/i', $field) ||
                 preg_match('/^CAST\([a-zA-Z0-9_.]+ AS [a-zA-Z0-9_ ]+\)$/i', $field)) {
@@ -328,6 +334,13 @@ final class DbQuery
         foreach ($fields as $field => $order) {
             $this->orderBy($field, $order);
         }
+
+        return $this;
+    }
+
+    public function orderByRandom(): self
+    {
+        $this->orderBy[] = self::db()->random();
 
         return $this;
     }

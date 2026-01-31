@@ -220,6 +220,64 @@ final class DbQueryTest extends TestCase
         $this->assertEquals($expected12, $query12->sql());
     }
 
+    public function testOrderByRandom(): void
+    {
+        // si no existe la tabla series, saltamos el test
+        if (false === $this->db()->tableExists('series')) {
+            $this->markTestSkipped('Table series does not exist.');
+        }
+
+        // Test 1: orderByRandom() - debe usar la función random del engine
+        $query1 = DbQuery::table('series')->orderByRandom();
+        $expected1 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->random();
+        $this->assertEquals($expected1, $query1->sql());
+
+        // Test 2: orderBy('RAND()') - debe convertirse automáticamente
+        $query2 = DbQuery::table('series')->orderBy('RAND()');
+        $expected2 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->random();
+        $this->assertEquals($expected2, $query2->sql());
+
+        // Test 3: orderBy('RANDOM()') - debe convertirse automáticamente
+        $query3 = DbQuery::table('series')->orderBy('RANDOM()');
+        $expected3 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->random();
+        $this->assertEquals($expected3, $query3->sql());
+
+        // Test 4: orderBy('rand()') en minúsculas - debe convertirse automáticamente
+        $query4 = DbQuery::table('series')->orderBy('rand()');
+        $expected4 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->random();
+        $this->assertEquals($expected4, $query4->sql());
+
+        // Test 5: orderBy('random()') en minúsculas - debe convertirse automáticamente
+        $query5 = DbQuery::table('series')->orderBy('random()');
+        $expected5 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->random();
+        $this->assertEquals($expected5, $query5->sql());
+
+        // Test 6: orderByRandom() con select y where
+        $query6 = DbQuery::table('series')
+            ->select('codserie, descripcion')
+            ->whereEq('codserie', 'A')
+            ->orderByRandom();
+        $expected6 = 'SELECT ' . $this->db()->escapeColumn('codserie')
+            . ', ' . $this->db()->escapeColumn('descripcion')
+            . ' FROM ' . $this->db()->escapeColumn('series')
+            . ' WHERE ' . $this->db()->escapeColumn('codserie') . ' = ' . $this->db()->var2str('A')
+            . ' ORDER BY ' . $this->db()->random();
+        $this->assertEquals($expected6, $query6->sql());
+
+        // Test 7: Combinar ordenamiento aleatorio con otro ordenamiento
+        $query7 = DbQuery::table('series')
+            ->orderByRandom()
+            ->orderBy('codserie', 'ASC');
+        $expected7 = 'SELECT * FROM ' . $this->db()->escapeColumn('series')
+            . ' ORDER BY ' . $this->db()->random() . ', ' . $this->db()->escapeColumn('codserie') . ' ASC';
+        $this->assertEquals($expected7, $query7->sql());
+    }
+
     public function testCount(): void
     {
         // si no existe la tabla países, saltamos el test
