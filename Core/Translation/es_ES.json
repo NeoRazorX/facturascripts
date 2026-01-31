@@ -402,6 +402,7 @@
     "customers": "Clientes",
     "customize": "Personalizar",
     "daily": "Diario",
+    "daily-executions": "Ejecuciones diarias",
     "dasboard-backup-li1": "Si borra o desinstala FacturaScripts, pierde los datos.",
     "dasboard-backup-li2": "Si borra o desinstala XAMPP, pierde los datos.",
     "dasboard-backup-li3": "Si pierde, formatea o destruye el PC, pierde los datos.",
