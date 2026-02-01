@@ -224,15 +224,6 @@ class OpenAi
         return json_decode($json['choices'][0]['message']['content'], true) ?? [];
     }
 
-    public function dalle2(string $prompt, int $width = 256, int $height = 256, $count = 1): string
-    {
-        return $this->image($prompt, $width, $height, $count, 'dall-e-2');
-    }
-
-    public function dalle3(string $prompt, int $width = 1024, int $height = 1024, $count = 1): string
-    {
-        return $this->image($prompt, $width, $height, $count, 'dall-e-3');
-    }
 
     public function fileDelete(string $id_file): bool
     {
@@ -303,38 +294,73 @@ class OpenAi
         return $this->total_tokens;
     }
 
-    public function image(string $prompt, int $width = 256, int $height = 256, $count = 1, string $model = 'dall-e-2'): string
+    public function image(string $prompt, int $width = 1024, int $height = 1024, int $count = 1, string $model = 'gpt-image-1-mini', array $options = []): string
     {
         $resize = false;
         $data = [
             'model' => $model,
             'prompt' => $prompt,
             'n' => $count,
-            'size' => $this->getDalleSize($resize, $model, $width, $height)
+            'size' => $this->getImageSize($resize, $width, $height)
         ];
+
+        // Añadir parámetros opcionales
+        if (isset($options['output_format'])) {
+            $data['output_format'] = $options['output_format'];
+        }
+        if (isset($options['output_compression'])) {
+            $data['output_compression'] = $options['output_compression'];
+        }
+        if (isset($options['stream'])) {
+            $data['stream'] = $options['stream'];
+        }
+        if (isset($options['content_moderation'])) {
+            $data['content_moderation'] = $options['content_moderation'];
+        }
+
         $response = Http::post(self::IMAGES_URL, json_encode($data))
             ->setHeader('Content-Type', 'application/json')
             ->setBearerToken($this->api_key)
             ->setTimeOut($this->timeout);
 
         if ($response->failed()) {
-            Tools::log()->error('dalle error: ' . $response->status() . ' ' . $response->errorMessage());
+            Tools::log()->error('image generation error: ' . $response->status() . ' ' . $response->errorMessage(), [
+                'body' => $response->body(),
+                'data_sent' => $data
+            ]);
             return '';
         }
 
         // descargamos la imagen en MyFiles
         $json = $response->json();
-        $url = $json['data'][0]['url'] ?? '';
-        if (empty($url)) {
-            Tools::log()->error('dalle error: no image url');
-            return '';
-        }
 
-        $file_name = 'image_' . uniqid() . '.png';
+        // Determinar la extensión del archivo según el formato de salida
+        $format = $options['output_format'] ?? 'png';
+        $file_name = 'image_' . uniqid() . '.' . $format;
         $file_path = 'MyFiles/' . $file_name;
-        $image = file_get_contents($url);
-        if (file_put_contents($file_path, $image) === false) {
-            Tools::log()->error('dalle error: saving image');
+
+        // La API puede devolver la imagen como URL o como base64
+        if (isset($json['data'][0]['url'])) {
+            // Formato URL (DALL-E y algunos GPT Image)
+            $url = $json['data'][0]['url'];
+            $image = file_get_contents($url);
+            if (file_put_contents($file_path, $image) === false) {
+                Tools::log()->error('image generation error: saving image from url');
+                return '';
+            }
+        } elseif (isset($json['data'][0]['b64_json'])) {
+            // Formato base64 (GPT Image)
+            $b64_data = $json['data'][0]['b64_json'];
+            $image = base64_decode($b64_data);
+            if (file_put_contents($file_path, $image) === false) {
+                Tools::log()->error('image generation error: saving image from base64');
+                return '';
+            }
+        } else {
+            Tools::log()->error('image generation error: no image url or base64', [
+                'response' => $json,
+                'model' => $model
+            ]);
             return '';
         }
 
@@ -579,30 +605,22 @@ class OpenAi
         return $response->json();
     }
 
-    private function getDalleSize(bool &$resize, string $model, int $width, int $height): string
+    private function getImageSize(bool &$resize, int $width, int $height): string
     {
-        switch ($model) {
-            case 'dall-e-2':
-                $sizes = ['256', '512', '1024'];
-                if (!in_array($width, $sizes) || !in_array($height, $sizes)) {
-                    $resize = true;
-                    return '256x256';
-                }
-                break;
+        // Tamaños soportados por GPT Image: 1024x1024, 1536x1024, 1024x1536
+        $validSizes = [
+            '1024x1024',
+            '1536x1024',
+            '1024x1536'
+        ];
 
-            case 'dall-e-3':
-                $sizes = ['1024', '1792'];
-                if (!in_array($width, $sizes) || !in_array($height, $sizes)) {
-                    $resize = true;
-                    return '1024x1024';
-                } elseif ($width === 1792 && $height === 1792) {
-                    $resize = true;
-                    return '1024x1024';
-                }
-                break;
+        $size = $width . 'x' . $height;
+        if (!in_array($size, $validSizes)) {
+            $resize = true;
+            return '1024x1024';
         }
 
-        return $width . 'x' . $height;
+        return $size;
     }
 
     private function imageResize(string $filePath, int $width, int $height): string
