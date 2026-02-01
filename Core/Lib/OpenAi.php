@@ -365,11 +365,27 @@ class OpenAi
         }
 
         if ($resize) {
+            Tools::log('openai-image')->info('attempting image resize', [
+                'from_path' => $file_path,
+                'to_size' => $width . 'x' . $height
+            ]);
+
             $resized = $this->imageResize($file_path, $width, $height);
+
+            Tools::log('openai-image')->info('resize result', [
+                'resized_path' => $resized,
+                'is_empty' => empty($resized)
+            ]);
+
             if (!empty($resized)) {
                 unlink($file_path);
                 return $resized;
             }
+
+            Tools::log('openai-image')->error('image resize failed, returning original size', [
+                'original_path' => $file_path,
+                'requested_size' => $width . 'x' . $height
+            ]);
         }
 
         return $file_path;
@@ -617,6 +633,17 @@ class OpenAi
         $size = $width . 'x' . $height;
         if (!in_array($size, $validSizes)) {
             $resize = true;
+
+            // Elegir el tamaño base según la orientación
+            if ($width > $height) {
+                // Horizontal/landscape
+                return '1536x1024';
+            } elseif ($height > $width) {
+                // Vertical/portrait
+                return '1024x1536';
+            }
+
+            // Cuadrado
             return '1024x1024';
         }
 
@@ -625,20 +652,35 @@ class OpenAi
 
     private function imageResize(string $filePath, int $width, int $height): string
     {
+        Tools::log('openai-image')->info('imageResize called', [
+            'file' => $filePath,
+            'target_width' => $width,
+            'target_height' => $height
+        ]);
+
         try {
             $image = imagecreatefromstring(file_get_contents($filePath));
             $imageWidth = imagesx($image);
             $imageHeight = imagesy($image);
-            $ratio = $imageWidth / $imageHeight;
-            if ($width / $height > $ratio) {
-                $width = intval($height * $ratio);
-            } else {
-                $height = intval($width / $ratio);
-            }
+
+            Tools::log('openai-image')->info('original image dimensions', [
+                'width' => $imageWidth,
+                'height' => $imageHeight,
+                'resizing_to' => $width . 'x' . $height
+            ]);
 
             $thumb = imagecreatetruecolor($width, $height);
-            imagecopyresampled($thumb, $image, 0, 0, 0, 0, $width, $height, $imageWidth, $imageHeight);
+
+            // Preservar transparencia para PNG
             $ext = pathinfo($filePath, PATHINFO_EXTENSION);
+            if ($ext === 'png') {
+                imagealphablending($thumb, false);
+                imagesavealpha($thumb, true);
+                $transparent = imagecolorallocatealpha($thumb, 0, 0, 0, 127);
+                imagefilledrectangle($thumb, 0, 0, $width, $height, $transparent);
+            }
+
+            imagecopyresampled($thumb, $image, 0, 0, 0, 0, $width, $height, $imageWidth, $imageHeight);
             $thumbName = pathinfo($filePath, PATHINFO_FILENAME) . '_' . $width . 'x' . $height . '.' . $ext;
             $thumbFile = 'MyFiles/' . $thumbName;
             switch ($ext) {
@@ -657,8 +699,14 @@ class OpenAi
             }
 
             imagedestroy($image);
+            imagedestroy($thumb);
+
+            Tools::log('openai-image')->info('image resize successful', [
+                'output_file' => $thumbFile,
+                'final_size' => $width . 'x' . $height
+            ]);
         } catch (Throwable $th) {
-            Tools::log()->error($th->getMessage());
+            Tools::log('openai-image')->error('image resize error: ' . $th->getMessage());
             return '';
         }
 
