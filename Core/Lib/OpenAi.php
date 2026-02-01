@@ -365,27 +365,12 @@ class OpenAi
         }
 
         if ($resize) {
-            Tools::log('openai-image')->info('attempting image resize', [
-                'from_path' => $file_path,
-                'to_size' => $width . 'x' . $height
-            ]);
-
             $resized = $this->imageResize($file_path, $width, $height);
-
-            Tools::log('openai-image')->info('resize result', [
-                'resized_path' => $resized,
-                'is_empty' => empty($resized)
-            ]);
 
             if (!empty($resized)) {
                 unlink($file_path);
                 return $resized;
             }
-
-            Tools::log('openai-image')->error('image resize failed, returning original size', [
-                'original_path' => $file_path,
-                'requested_size' => $width . 'x' . $height
-            ]);
         }
 
         return $file_path;
@@ -652,22 +637,10 @@ class OpenAi
 
     private function imageResize(string $filePath, int $width, int $height): string
     {
-        Tools::log('openai-image')->info('imageResize called', [
-            'file' => $filePath,
-            'target_width' => $width,
-            'target_height' => $height
-        ]);
-
         try {
             $image = imagecreatefromstring(file_get_contents($filePath));
             $imageWidth = imagesx($image);
             $imageHeight = imagesy($image);
-
-            Tools::log('openai-image')->info('original image dimensions', [
-                'width' => $imageWidth,
-                'height' => $imageHeight,
-                'resizing_to' => $width . 'x' . $height
-            ]);
 
             $thumb = imagecreatetruecolor($width, $height);
 
@@ -700,11 +673,6 @@ class OpenAi
 
             imagedestroy($image);
             imagedestroy($thumb);
-
-            Tools::log('openai-image')->info('image resize successful', [
-                'output_file' => $thumbFile,
-                'final_size' => $width . 'x' . $height
-            ]);
         } catch (Throwable $th) {
             Tools::log('openai-image')->error('image resize error: ' . $th->getMessage());
             return '';
