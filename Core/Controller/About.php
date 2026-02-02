@@ -78,7 +78,7 @@ class About extends Controller
         // Espacio de almacenamiento para archivos adjuntos
         $storage_limit = AttachedFile::getStorageLimit();
         $storage_used = AttachedFile::getStorageUsed();
-        $storage = $this->getStorage();
+        $storage_details = $this->getStorageDetails();
 
         // Obtener el tamaño maxim de subida de archivo
         $max_filesize = UploadedFile::getMaxFilesize();
@@ -104,9 +104,9 @@ class About extends Controller
             'plugins',
             'server_date',
             'server_software',
+            'storage_details',
             'storage_limit',
             'storage_used',
-            'storage'
         );
     }
 
@@ -132,7 +132,7 @@ class About extends Controller
         ];
     }
 
-    private function getStorage(): array
+    private function getStorageDetails(): array
     {
         $storage = [];
 
