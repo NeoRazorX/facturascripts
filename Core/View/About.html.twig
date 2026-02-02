@@ -127,6 +127,38 @@
                     </div>
                 {% endblock %}
 
+                {% block storage %}
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <h3>
+                                <i class="fa-solid fa-hard-drive me-2"></i> {{ trans('app-storage') }}
+                            </h3>
+                            <hr>
+                            <div class="row">
+                                {% for dataStorare in fsc.data.storage %}
+                                    <div class="col-lg-2 col-md-4 col-sm-6">
+                                        <div class="text-center p-2">
+                                            {% if dataStorare.name == 'files' %}
+                                                <i class="fa-regular fa-file fa-2x mb-2"></i>
+                                                <h6 class="mb-1">{{ dataStorare.name }}</h6>
+                                                <p class="mb-0">
+                                                    <strong>{{ dataStorare.human_size }}</strong>
+                                                </p>
+                                            {% else %}
+                                                <i class="fa-regular fa-folder fa-2x mb-2"></i>
+                                                <h6 class="mb-1">{{ dataStorare.name }}</h6>
+                                                <p class="mb-0">
+                                                    <strong>{{ dataStorare.human_size }}</strong>
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endblock %}
+
                 {% block plugins %}
                     <div class="card shadow mb-4">
                         <div class="card-body">
