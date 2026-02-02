@@ -39,6 +39,8 @@ class BaseWidget extends VisualItem
      */
     public $fieldname;
 
+    public $fieldclick;
+
     /**
      * @var string
      */
@@ -80,6 +82,11 @@ class BaseWidget extends VisualItem
     protected $value;
 
     /**
+     * @var mixed
+     */
+    protected $valueOnClick = null;
+
+    /**
      * @param array $data
      */
     public function __construct($data)
@@ -87,6 +94,7 @@ class BaseWidget extends VisualItem
         parent::__construct($data);
         $this->autocomplete = false;
         $this->fieldname = $data['fieldname'];
+        $this->fieldclick = $data['fieldclick'] ?? '';
         $this->icon = $data['icon'] ?? '';
         $this->onclick = $data['onclick'] ?? '';
         $this->readonly = $data['readonly'] ?? 'false';
@@ -264,12 +272,13 @@ class BaseWidget extends VisualItem
      */
     protected function onclickHtml($inside, $titleurl = '')
     {
-        if (empty($this->onclick) || is_null($this->value)) {
+        $value = empty($this->valueOnClick) ? $this->value : $this->valueOnClick;
+        if (empty($this->onclick) || is_null($value)) {
             return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
-        $params = strpos($this->onclick, '?') !== false ? '&' : '?';
-        return '<a href="' . Tools::config('route') . '/' . $this->onclick . $params . 'code=' . rawurlencode($this->value)
+        $params = str_contains($this->onclick, '?') ? '&' : '?';
+        return '<a href="' . Tools::config('route') . '/' . $this->onclick . $params . 'code=' . rawurlencode($value)
             . '" class="cancelClickable">' . $inside . '</a>';
     }
 
@@ -291,6 +300,9 @@ class BaseWidget extends VisualItem
     protected function setValue($model)
     {
         $this->value = $model->{$this->fieldname} ?? null;
+        if (false === empty($this->fieldclick)) {
+            $this->valueOnClick = $model->{$this->fieldclick} ?? null;
+        }
     }
 
     /**
