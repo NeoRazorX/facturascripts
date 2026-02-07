@@ -1377,6 +1377,7 @@
     "receipt": "Receipt",
     "receipt-expense-account": "Expenses in the remittance %document%",
     "receipts": "Receipts",
+    "receiver": "Receiver",
     "record-deleted-correctly": "Record deleted correctly!",
     "record-deleted-error": "Error when deleting the record",
     "record-not-found": "Record not found",

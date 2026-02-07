@@ -1377,6 +1377,7 @@
     "receipt": "Reçu",
     "receipt-expense-account": "Dépenses sur justificatif %document%",
     "receipts": "Reçus",
+    "receiver": "Destinataire",
     "record-deleted-correctly": "Enregistrement supprimé correctement!",
     "record-deleted-error": "Erreur de suppression de l'enregistrement",
     "record-not-found": "Enregistrement non trouvé",

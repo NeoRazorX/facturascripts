@@ -1377,6 +1377,7 @@
     "receipt": "Beleg",
     "receipt-expense-account": "Ausgaben im Beleg %document%",
     "receipts": "Rechnungen",
+    "receiver": "Empfänger",
     "record-deleted-correctly": "Datensatz wurde korrekt gelöscht!",
     "record-deleted-error": "Fehler beim löschen des Registers",
     "record-not-found": "Register nicht gefunden",

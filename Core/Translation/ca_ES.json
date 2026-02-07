@@ -1377,6 +1377,7 @@
     "receipt": "rebut",
     "receipt-expense-account": "Despeses en el rebut %document%",
     "receipts": "rebuts",
+    "receiver": "Receptor",
     "record-deleted-correctly": "Registre eliminat correctament!",
     "record-deleted-error": "S'ha produït un error en suprimir el registre",
     "record-not-found": "No s'ha trobat el registre",

@@ -1377,6 +1377,7 @@
     "receipt": "ricevuta",
     "receipt-expense-account": "Spese nel ricevimento %document%",
     "receipts": "ricevute",
+    "receiver": "Destinatario",
     "record-deleted-correctly": "Record cancellato correttamente!",
     "record-deleted-error": "Errore nell'eliminare il record",
     "record-not-found": "Record non trovato",
