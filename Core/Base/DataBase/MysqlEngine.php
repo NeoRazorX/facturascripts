@@ -271,6 +271,8 @@ class MysqlEngine extends DataBaseEngine
      */
     public function exec($link, $sql): bool
     {
+        $this->lastErrorMsg = '';
+
         try {
             if ($link->multi_query($sql)) {
                 do {
@@ -359,11 +361,12 @@ class MysqlEngine extends DataBaseEngine
      */
     public function select($link, $sql): array
     {
+        $this->lastErrorMsg = '';
         $result = [];
+
         try {
             $aux = $link->query($sql);
             if ($aux) {
-                $result = [];
                 while ($row = $aux->fetch_array(MYSQLI_ASSOC)) {
                     $result[] = $row;
                 }
