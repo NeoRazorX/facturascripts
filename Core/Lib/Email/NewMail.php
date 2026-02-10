@@ -365,6 +365,8 @@ class NewMail
 
     /**
      * Envía el correo.
+     * 
+     * Si se envía correctamente, borra los BCC, CC y To del email después de enviarlo.
      *
      * @throws Exception
      * @throws LoaderError
