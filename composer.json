@@ -13,7 +13,8 @@
   "config": {
     "platform": {
       "php": "8.0"
-    }
+    },
+    "process-timeout": 0
   },
   "require": {
     "php": ">=8.0",
