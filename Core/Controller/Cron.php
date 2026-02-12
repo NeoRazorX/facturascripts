@@ -449,5 +449,12 @@ END;
                 $factura->save();
             }
         }
+        foreach (ReciboProveedor::all() as $recibo) {
+            $factura = $recibo->getInvoice();
+            if (empty($factura->vencimiento) || $recibo->vencimiento > $factura->vencimiento) {
+                $factura->vencimiento = $recibo->vencimiento;
+                $factura->save();
+            }
+        }
     }
 }
