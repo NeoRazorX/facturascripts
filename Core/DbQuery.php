@@ -294,9 +294,10 @@ final class DbQuery
                 return $this;
             }
 
-            // permitimos LOWER(), UPPER() y CAST()
+            // permitimos LOWER(), UPPER(), CAST() y COALESCE()
             if (preg_match('/^(LOWER|UPPER)\([a-zA-Z0-9_.]+\)$/i', $field) ||
-                preg_match('/^CAST\([a-zA-Z0-9_.]+ AS [a-zA-Z0-9_ ]+\)$/i', $field)) {
+                preg_match('/^CAST\([a-zA-Z0-9_.]+ AS [a-zA-Z0-9_ ]+\)$/i', $field) ||
+                preg_match('/^COALESCE\([a-zA-Z0-9_., ]+\)$/i', $field)) {
                 $this->orderBy[] = $field . ' ' . $order;
                 return $this;
             }
