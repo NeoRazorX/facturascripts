@@ -346,6 +346,7 @@ class PostgresqlEngine extends DataBaseEngine
      */
     private function runSql($link, $sql, $selectRows = true)
     {
+        $this->lastErrorMsg = '';
         $result = $selectRows ? [] : false;
 
         try {

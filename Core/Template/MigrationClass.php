@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,16 +22,16 @@ namespace FacturaScripts\Core\Template;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Template class for plugin migrations
+ * Template class for plugin migration
  *
- * This class serves as a base for creating plugin-specific migrations that will be
+ * This class serves as a base for creating plugin-specific migration that will be
  * executed only once and tracked in MyFiles/migrations.json to prevent re-execution.
  *
  * Usage example:
  *
- * In your plugin's Migrations directory, create a migration class:
+ * In your plugin's Migration directory, create a migration class:
  *
- * namespace PluginName\Migrations;
+ * namespace PluginName\Migration;
  *
  * use FacturaScripts\Core\Template\MigrationClass;
  *
@@ -53,7 +53,7 @@ use FacturaScripts\Core\Base\DataBase;
  * Then in your plugin's Init.php update() method:
  *
  * use FacturaScripts\Core\Migrations;
- * use FacturaScripts\Plugins\PluginName\Migrations\FixUsersTable;
+ * use FacturaScripts\Plugins\PluginName\Migration\FixUsersTable;
  *
  * public function update(): void
  * {
