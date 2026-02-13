@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -104,7 +104,7 @@ class EditRole extends EditController
 
     protected function createViewsUsers(string $viewName = 'EditRoleUser'): void
     {
-        $this->addEditListView($viewName, 'RoleUser', 'users', 'fa-solid fa-address-card')
+        $this->addEditListView($viewName, 'RoleUser', 'users', 'fa-solid fa-users')
             ->disableColumn('role', true)
             ->setInLine(true);
     }

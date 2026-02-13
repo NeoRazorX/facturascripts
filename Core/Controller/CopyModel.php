@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -151,6 +151,15 @@ class CopyModel extends Controller
         $this->setTemplate(false);
         $results = [];
         $data = $this->request->request->all();
+
+        // validación de seguridad: solo permitir búsquedas en Cliente, Proveedor y Contacto
+        $allowedSources = ['Cliente', 'Contacto', 'Proveedor', 'clientes', 'contactos', 'proveedores'];
+        if (false === in_array($data['source'], $allowedSources, true)) {
+            Tools::log()->error('invalid-autocomplete-source: ' . $data['source']);
+            $this->response->json($results);
+            return;
+        }
+
         foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
             $results[] = [
                 'key' => Tools::fixHtml($value->code),

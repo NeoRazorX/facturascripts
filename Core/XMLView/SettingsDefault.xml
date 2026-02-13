@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -124,19 +124,25 @@
             </column>
         </group>
         <group name="documents" title="documents" icon="fa-solid fa-copy" valign="bottom" numcolumns="12">
-            <column name="view-column-net-subtotal" numcolumns="3" order="100">
+            <column name="tax-calculation-method" numcolumns="3" order="100">
+                <widget type="select" fieldname="taxcalculationmethod" translate="true" required="true">
+                    <values title="classic-tax-method">classic</values>
+                    <values title="price-adjusted-tax-method">price-adjusted</values>
+                </widget>
+            </column>
+            <column name="view-column-net-subtotal" numcolumns="3" order="110">
                 <widget type="select" fieldname="columnetosubtotal" translate="true" required="true">
                     <values title="subtotal">subtotal</values>
                     <values title="net">neto</values>
                 </widget>
             </column>
-            <column name="days-until-expiration" numcolumns="3" order="110">
+            <column name="days-until-expiration" numcolumns="3" order="120">
                 <widget type="number" fieldname="finofertadays" min="0" required="true"/>
             </column>
-            <column name="level-cost-sales" numcolumns="3" order="120">
+            <column name="level-cost-sales" numcolumns="3" order="130">
                 <widget type="number" fieldname="levelcostsales" min="0" max="99" decimal="0" step="1" required="true"/>
             </column>
-            <column name="level-benefit-sales" numcolumns="3" order="130">
+            <column name="level-benefit-sales" numcolumns="3" order="140">
                 <widget type="number" fieldname="levelbenefitsales" min="0" max="99" decimal="0" step="1" required="true"/>
             </column>
         </group>

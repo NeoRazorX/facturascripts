@@ -241,6 +241,182 @@ final class CodeModelTest extends TestCase
         $this->assertEquals('------', $result[0]->description);
     }
 
+    public function testFieldNameValidation(): void
+    {
+        // Crear almacenes de prueba con códigos válidos (1-4 caracteres) en mayúsculas y nombres con mayúsculas/minúsculas
+        $almacen1 = $this->getRandomWarehouse();
+        $almacen1->codalmacen = 'TST1';
+        $almacen1->nombre = 'Almacen Principal';
+        $this->assertTrue($almacen1->save());
+
+        $almacen2 = $this->getRandomWarehouse();
+        $almacen2->codalmacen = 'TST2';
+        $almacen2->nombre = 'Almacen Secundario';
+        $this->assertTrue($almacen2->save());
+
+        // Test con campos normales - el código debe estar en mayúsculas como se guardó
+        $result = CodeModel::all('almacenes', 'codalmacen', 'nombre', false);
+        $this->assertIsArray($result);
+        $found = false;
+        foreach ($result as $item) {
+            if ($item->code === 'TST1') {
+                $this->assertEquals('Almacen Principal', $item->description);
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found, 'No se encontró el almacén TST1');
+
+        // Test con lower() en fieldCode - el código debe estar en minúsculas
+        $result = CodeModel::all('almacenes', 'lower(codalmacen)', 'nombre', false);
+        $this->assertIsArray($result);
+        $found = false;
+        foreach ($result as $item) {
+            if ($item->code === 'tst1') {
+                $this->assertEquals('Almacen Principal', $item->description);
+                // Verificar que NO está en mayúsculas
+                $this->assertNotEquals('TST1', $item->code);
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found, 'No se encontró el código en minúsculas tst1');
+
+        // Test con upper() en fieldCode - el código debe estar en mayúsculas
+        $result = CodeModel::all('almacenes', 'upper(codalmacen)', 'nombre', false);
+        $this->assertIsArray($result);
+        $found = false;
+        foreach ($result as $item) {
+            if ($item->code === 'TST1') {
+                $this->assertEquals('Almacen Principal', $item->description);
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found, 'No se encontró el código en mayúsculas TST1');
+
+        // Test con LOWER() en mayúsculas (case-insensitive) - debe funcionar igual
+        $result = CodeModel::all('almacenes', 'LOWER(codalmacen)', 'nombre', false);
+        $this->assertIsArray($result);
+        $found = false;
+        foreach ($result as $item) {
+            if ($item->code === 'tst2') {
+                $this->assertEquals('Almacen Secundario', $item->description);
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found, 'LOWER() no funcionó correctamente');
+
+        // Test con lower() en fieldDescription - la descripción debe estar en minúsculas
+        $result = CodeModel::all('almacenes', 'codalmacen', 'lower(nombre)', false);
+        $this->assertIsArray($result);
+        $found = false;
+        foreach ($result as $item) {
+            if ($item->code === 'TST1') {
+                $this->assertEquals('almacen principal', $item->description);
+                // Verificar que NO tiene mayúsculas
+                $this->assertNotEquals('Almacen Principal', $item->description);
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found, 'No se encontró la descripción en minúsculas');
+
+        // Test con upper() en fieldDescription - la descripción debe estar en mayúsculas
+        $result = CodeModel::all('almacenes', 'codalmacen', 'upper(nombre)', false);
+        $this->assertIsArray($result);
+        $found = false;
+        foreach ($result as $item) {
+            if ($item->code === 'TST2') {
+                $this->assertEquals('ALMACEN SECUNDARIO', $item->description);
+                // Verificar que NO tiene minúsculas
+                $this->assertNotEquals('Almacen Secundario', $item->description);
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found, 'No se encontró la descripción en mayúsculas');
+
+        // Test con lower() en ambos campos
+        $result = CodeModel::all('almacenes', 'lower(codalmacen)', 'lower(nombre)', false);
+        $this->assertIsArray($result);
+        $found = false;
+        foreach ($result as $item) {
+            if ($item->code === 'tst1') {
+                $this->assertEquals('almacen principal', $item->description);
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found, 'No funcionó lower() en ambos campos');
+
+        // Test con upper() en ambos campos
+        $result = CodeModel::all('almacenes', 'upper(codalmacen)', 'upper(nombre)', false);
+        $this->assertIsArray($result);
+        $found = false;
+        foreach ($result as $item) {
+            if ($item->code === 'TST2') {
+                $this->assertEquals('ALMACEN SECUNDARIO', $item->description);
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found, 'No funcionó upper() en ambos campos');
+
+        // Test con campo de tabla con punto
+        $result = CodeModel::all('almacenes', 'almacenes.codalmacen', 'almacenes.nombre', false);
+        $this->assertIsArray($result);
+        $found = false;
+        foreach ($result as $item) {
+            if ($item->code === 'TST1') {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found, 'No funcionó con tabla.campo');
+
+        // Test con lower() y tabla.campo
+        $result = CodeModel::all('almacenes', 'lower(almacenes.codalmacen)', 'nombre', false);
+        $this->assertIsArray($result);
+        $found = false;
+        foreach ($result as $item) {
+            if ($item->code === 'tst1') {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found, 'No funcionó lower() con tabla.campo');
+
+        // Test con función no permitida concat() - debe fallar
+        $result = CodeModel::all('almacenes', 'concat(codalmacen, nombre)', 'nombre', true);
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result); // Solo debe retornar el elemento vacío
+        $this->assertNull($result[0]->code);
+
+        // Test con función no permitida substring() - debe fallar
+        $result = CodeModel::all('almacenes', 'codalmacen', 'substring(nombre, 1, 10)', true);
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result); // Solo debe retornar el elemento vacío
+        $this->assertNull($result[0]->code);
+
+        // Test con intento de SQL injection - debe fallar
+        $result = CodeModel::all('almacenes', 'codalmacen; DROP TABLE almacenes--', 'nombre', true);
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result); // Solo debe retornar el elemento vacío
+        $this->assertNull($result[0]->code);
+
+        // Test con caracteres especiales no permitidos - debe fallar
+        $result = CodeModel::all('almacenes', 'codalmacen OR 1=1', 'nombre', true);
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result); // Solo debe retornar el elemento vacío
+        $this->assertNull($result[0]->code);
+
+        // Limpiar datos de prueba
+        $this->assertTrue($almacen1->delete());
+        $this->assertTrue($almacen2->delete());
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

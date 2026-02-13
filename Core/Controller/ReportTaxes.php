@@ -272,7 +272,7 @@ class ReportTaxes extends Controller
                 return [];
         }
         if ($this->codserie) {
-            $sql .= ' AND codserie = ' . $this->dataBase->var2str($this->codserie);
+            $sql .= ' AND f.codserie = ' . $this->dataBase->var2str($this->codserie);
         }
         $sql .= ' ORDER BY ' . $columnDate . ', ' . $numCol . ' ASC;';
 

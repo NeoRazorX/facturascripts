@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -61,7 +61,7 @@ class PostgresqlEngine extends DataBaseEngine
 
     public function castInteger($link, $column): string
     {
-        return 'CAST(' . $this->escapeColumn($link, $column) . ' AS unsigned)';
+        return 'CAST(' . $this->escapeColumn($link, $column) . ' AS integer)';
     }
 
     /**
@@ -74,6 +74,16 @@ class PostgresqlEngine extends DataBaseEngine
     public function close($link): bool
     {
         return pg_close($link);
+    }
+
+    /**
+     * Returns the random function for PostgreSQL.
+     *
+     * @return string
+     */
+    public function random(): string
+    {
+        return 'RANDOM()';
     }
 
     /**
@@ -336,6 +346,7 @@ class PostgresqlEngine extends DataBaseEngine
      */
     private function runSql($link, $sql, $selectRows = true)
     {
+        $this->lastErrorMsg = '';
         $result = $selectRows ? [] : false;
 
         try {

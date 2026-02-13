@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,6 +39,9 @@ class CronJob extends ModelClass
 
     /** @var string */
     public $date;
+
+    /** @var int */
+    public $daily_exec;
 
     /** @var bool */
     public $done;
@@ -88,6 +91,7 @@ class CronJob extends ModelClass
     public function clear(): void
     {
         parent::clear();
+        $this->daily_exec = 0;
         $this->done = false;
         $this->duration = 0.0;
         $this->enabled = true;
@@ -203,6 +207,10 @@ class CronJob extends ModelClass
             return false;
         }
 
+        if (date('Y-m-d', strtotime($this->date ?? '-1 day')) !== date('Y-m-d', $this->getCurrentTimestamp())) {
+            $this->daily_exec = 0;
+        }
+
         $this->start = $this->getCurrentMicrotime();
         $this->done = false;
         $this->failed = false;
@@ -254,6 +262,7 @@ class CronJob extends ModelClass
         $this->done = true;
         $this->failed = false;
         $this->running--;
+        $this->daily_exec++;
         $this->save();
 
         return true;

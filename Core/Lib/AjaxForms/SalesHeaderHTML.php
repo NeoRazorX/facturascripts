@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -304,7 +304,7 @@ class SalesHeaderHTML
 
     private static function codpais(SalesDocument $model): string
     {
-        $options = [];
+        $options = ['<option value="">------</option>'];
         foreach (Paises::all() as $pais) {
             $options[] = ($pais->codpais === $model->codpais) ?
                 '<option value="' . $pais->codpais . '" selected>' . $pais->nombre . '</option>' :

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,10 +39,10 @@
             <column name="enabled" numcolumns="2" order="150">
                 <widget type="checkbox" fieldname="enabled"/>
             </column>
-            <column name="done" numcolumns="2" order="160">
+            <column name="done" numcolumns="1" order="160">
                 <widget type="checkbox" fieldname="done" readonly="true"/>
             </column>
-            <column name="failed" numcolumns="2" order="170">
+            <column name="failed" numcolumns="1" order="170">
                 <widget type="checkbox" fieldname="failed" readonly="true"/>
             </column>
             <column name="running" numcolumns="2" order="180">
@@ -51,7 +51,10 @@
             <column name="fails" numcolumns="2" order="190">
                 <widget type="number" fieldname="fails" readonly="true"/>
             </column>
-            <column name="last-duration" numcolumns="2" order="200">
+            <column name="daily-executions" numcolumns="2" order="200">
+                <widget type="number" fieldname="daily_exec" readonly="true"/>
+            </column>
+            <column name="last-duration" numcolumns="2" order="210">
                 <widget type="number" fieldname="last_duration" icon="fa-solid fa-clock" readonly="true"/>
             </column>
         </group>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -73,6 +73,15 @@ class CodeModel
      */
     public static function all(string $tableName, string $fieldCode, string $fieldDescription, bool $addEmpty = true, array $where = []): array
     {
+        // validar nombres de campos para prevenir SQL injection
+        if (false === self::isValidFieldName($fieldCode)) {
+            Tools::log()->error('invalid-field-name: ' . $fieldCode);
+            return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
+        } elseif (false === self::isValidFieldName($fieldDescription)) {
+            Tools::log()->error('invalid-field-description: ' . $fieldDescription);
+            return $addEmpty ? [new static(['code' => null, 'description' => '------'])] : [];
+        }
+
         // check cache
         $cacheKey = $addEmpty ?
             'table-' . $tableName . '-code-model-' . $fieldCode . '-' . $fieldDescription . '-empty' :
@@ -176,6 +185,15 @@ class CodeModel
      */
     public function get(string $tableName, string $fieldCode, $code, $fieldDescription)
     {
+        // validar nombres de campos para prevenir SQL injection
+        if (false === self::isValidFieldName($fieldCode)) {
+            Tools::log()->error('invalid-field-name: ' . $fieldCode);
+            return new static();
+        } elseif (false === self::isValidFieldName($fieldDescription)) {
+            Tools::log()->error('invalid-field-description: ' . $fieldDescription);
+            return new static();
+        }
+
         // is a table or a model?
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if ($tableName && class_exists($modelClass)) {
@@ -249,6 +267,31 @@ class CodeModel
     public static function setLimit(int $newLimit): void
     {
         self::$limit = $newLimit;
+    }
+
+    /**
+     * Valída que un nombre de campo sea seguro para usar en consultas SQL.
+     * Solo permite letras, números, guiones bajos y puntos (para campos con alias de tabla).
+     * También permite el uso de las funciones lower() y upper().
+     *
+     * @param string $fieldName
+     *
+     * @return bool
+     */
+    protected static function isValidFieldName(string $fieldName): bool
+    {
+        // permite campos vacíos (se usan valores por defecto en algunos casos)
+        if (empty($fieldName)) {
+            return true;
+        }
+
+        // permite lower() y upper() con un campo válido dentro
+        if (preg_match('/^(lower|upper)\(([a-zA-Z0-9_\.]+)\)$/i', $fieldName, $matches)) {
+            return true;
+        }
+
+        // permite letras, números, guiones bajos y puntos (para tabla.campo)
+        return preg_match('/^[a-zA-Z0-9_\.]+$/', $fieldName) === 1;
     }
 
     protected static function db(): DataBase

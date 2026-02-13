@@ -468,25 +468,25 @@ class SendMail extends Controller
         // cargamos los datos por defecto del modelo
         $this->loadDataDefault($model);
 
-        if ($model->hasColumn('email') && Validator::email($model->email)) {
+        if ($model->hasColumn('email') && !empty($model->email) && Validator::email($model->email)) {
             $this->newMail->to($model->email);
             return;
         }
 
         $proveedor = new Proveedor();
-        if ($model->hasColumn('codproveedor') && $proveedor->load($model->codproveedor) && Validator::email($proveedor->email)) {
+        if ($model->hasColumn('codproveedor') && $proveedor->load($model->codproveedor) && !empty($proveedor->email) && Validator::email($proveedor->email)) {
             $this->newMail->to($proveedor->email, $proveedor->razonsocial);
             return;
         }
 
         $contact = new Contacto();
-        if ($model->hasColumn('idcontactofact') && $contact->load($model->idcontactofact) && Validator::email($contact->email)) {
+        if ($model->hasColumn('idcontactofact') && $contact->load($model->idcontactofact) && !empty($contact->email) && Validator::email($contact->email)) {
             $this->newMail->to($contact->email, $contact->fullName());
             return;
         }
 
         $cliente = new Cliente();
-        if ($model->hasColumn('codcliente') && $cliente->load($model->codcliente) && Validator::email($cliente->email)) {
+        if ($model->hasColumn('codcliente') && $cliente->load($model->codcliente) && !empty($cliente->email) && Validator::email($cliente->email)) {
             $this->newMail->to($cliente->email, $cliente->razonsocial);
         }
     }

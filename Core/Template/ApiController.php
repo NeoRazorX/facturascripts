@@ -101,6 +101,11 @@ abstract class ApiController implements ControllerInterface
             throw new KernelException('InvalidApiToken', Tools::trans('auth-token-invalid'));
         }
 
+        // actualizamos la última actividad de la API key
+        if ($this->apiKey->id && false === $this->apiKey->fullaccess) {
+            $this->apiKey->updateActivity();
+        }
+
         // comprobamos los permisos
         $resource = $this->getUriParam(2);
         if (false === $this->isAllowed($resource)) {

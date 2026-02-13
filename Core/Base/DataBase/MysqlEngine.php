@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -95,6 +95,16 @@ class MysqlEngine extends DataBaseEngine
     {
         $this->rollbackTransactions();
         return $link->close();
+    }
+
+    /**
+     * Returns the random function for MySQL.
+     *
+     * @return string
+     */
+    public function random(): string
+    {
+        return 'RAND()';
     }
 
     /**
@@ -261,6 +271,8 @@ class MysqlEngine extends DataBaseEngine
      */
     public function exec($link, $sql): bool
     {
+        $this->lastErrorMsg = '';
+
         try {
             if ($link->multi_query($sql)) {
                 do {
@@ -349,11 +361,12 @@ class MysqlEngine extends DataBaseEngine
      */
     public function select($link, $sql): array
     {
+        $this->lastErrorMsg = '';
         $result = [];
+
         try {
             $aux = $link->query($sql);
             if ($aux) {
-                $result = [];
                 while ($row = $aux->fetch_array(MYSQLI_ASSOC)) {
                     $result[] = $row;
                 }

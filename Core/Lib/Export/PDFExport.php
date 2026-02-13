@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -261,7 +261,7 @@ class PDFExport extends PDFDocument
     public function show(Response &$response)
     {
         $response->headers->set('Content-type', 'application/pdf');
-        $response->headers->set('Content-Disposition', 'inline;filename=' . $this->getFileName() . '.pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename=' . $this->getFileName() . '.pdf');
         $response->setContent($this->getDoc());
     }
 }

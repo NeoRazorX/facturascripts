@@ -245,7 +245,7 @@ final class Kernel
 
     public static function version(): float
     {
-        return 2025.73;
+        return 2025.91;
     }
 
     private static function checkControllerClass(string $controller): array
@@ -372,6 +372,7 @@ final class Kernel
             '/api/3/pagarFacturaCliente/*' => 'ApiPagarFacturaCliente',
             '/api/3/pagarFacturaProveedor/*' => 'ApiPagarFacturaProveedor',
             '/api/3/plugins' => 'ApiPlugins',
+            '/api/3/plugins/*' => 'ApiPlugins',
             '/api/3/productoimagenes' => 'ApiProductoImagen',
             '/api/3/productoimagenes/*' => 'ApiProductoImagen',
             '/api/3/uploadFiles' => 'ApiUploadFiles',

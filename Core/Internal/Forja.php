@@ -51,7 +51,7 @@ final class Forja
                 return true;
             }
 
-            if (false === Tools::settings('default', 'enableupdatesbeta', false)) {
+            if (false === (bool)Tools::settings('default', 'enableupdatesbeta', 0)) {
                 continue;
             }
 
