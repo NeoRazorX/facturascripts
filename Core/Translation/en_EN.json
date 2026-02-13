@@ -188,7 +188,6 @@
     "cache": "Cache",
     "cache-dir": "Cache directory '%folderName%'",
     "calculate": "Calculate",
-    "calculated-tax-diff": "Difference found when calculating the total VAT. %tax% VS %tax2%",
     "calculation": "Calculation",
     "calendar": "Calendar",
     "can-not-open-zip-file": "Can't open zip file '%zipFile%'",

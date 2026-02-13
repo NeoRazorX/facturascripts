@@ -188,7 +188,6 @@
     "cache": "Caché",
     "cache-dir": "Carpeta de cache '%folderName%'",
     "calculate": "Calcular",
-    "calculated-tax-diff": "Diferencia encontrada al calcular el total de IVA. %tax% VS %tax2%",
     "calculation": "Cálculo",
     "calendar": "Calendario",
     "can-not-open-zip-file": "No puedo abrir archivo zip '%zipFile%'",
