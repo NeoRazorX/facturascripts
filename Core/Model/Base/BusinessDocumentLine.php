@@ -156,6 +156,9 @@ abstract class BusinessDocumentLine extends NewModelClass
     /** @var bool */
     public $suplido;
 
+    /** @var int|null */
+    private static $ultimo = null;
+
     /**
      * Returns the parent document of this line.
      */
@@ -528,5 +531,29 @@ abstract class BusinessDocumentLine extends NewModelClass
         $this->disable_update_stock = true;
 
         return true;
+    }
+
+    /**
+     * Devuelve el siguiente número de orden para una línea.
+     *
+     * Se hace en negativo porque desde siempre se ha estado
+     * asignando el orden descendentemente.
+     *
+     * Es decir el la primera línea tiene el orden 20 y la segunda el orden 10.
+     *
+     * @return int
+     */
+    public function getOrder(): int
+    {
+        if (is_null(self::$ultimo)){
+            $doc = $this->getDocument();
+            $ultimo = (int)$this::table()
+                ->whereEq($doc->primaryColumn(), $doc->primaryColumnValue())
+                ->min('orden');
+        }else{
+            $ultimo = self::$ultimo;
+        }
+
+        return self::$ultimo = $ultimo - 10;
     }
 }
