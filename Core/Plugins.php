@@ -91,10 +91,13 @@ final class Plugins
             self::$plugins[] = $plugin;
         }
 
+        // si la version maxima del plugin es menor a la actual mostramos un aviso
         $maxVersion = $plugin->forja('maxcore', 0.0);
         $fsVersion = Kernel::version();
         if ($maxVersion > 0.0 && $fsVersion > $maxVersion) {
-            Tools::log()->warning('plugin-version-higher');
+            Tools::log()->warning('plugin-version-higher', [
+                '%pluginName%' => $plugin->name
+            ]);
         }
 
         // si el plugin estaba activado, marcamos el post_enable
