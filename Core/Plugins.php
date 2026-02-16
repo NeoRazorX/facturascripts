@@ -91,6 +91,12 @@ final class Plugins
             self::$plugins[] = $plugin;
         }
 
+        $maxVersion = $plugin->forja('maxcore', 0.0);
+        $fsVersion = Kernel::version();
+        if ($maxVersion > 0.0 && $fsVersion > $maxVersion) {
+            Tools::log()->warning('plugin-version-higher');
+        }
+
         // si el plugin estaba activado, marcamos el post_enable
         $plugin = self::get($plugin->name);
         if ($plugin->enabled) {
