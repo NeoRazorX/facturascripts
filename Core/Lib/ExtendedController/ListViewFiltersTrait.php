@@ -229,6 +229,11 @@ trait ListViewFiltersTrait
             $value = $request->request->get($name);
             if ($value !== null) {
                 $pageFilter->filters[$name] = $value;
+
+                if($filter instanceof PeriodFilter){
+                    $pageFilter->filters['filterstart' . $filter->key] = $request->request->get('filterstart' . $filter->key);
+                    $pageFilter->filters['filterend' . $filter->key] = $request->request->get('filterend' . $filter->key);
+                }
             }
         }
 
