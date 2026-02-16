@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core;
 
+use FacturaScripts\Dinamic\Controller\Myfiles;
+
 final class UploadedFile
 {
     /** @var int */
@@ -115,6 +117,14 @@ final class UploadedFile
     public function getSize(): int
     {
         return $this->size;
+    }
+
+    /**
+     * Devuelve si el nombre del fichero es seguro (si contiene alguno de los formatos soportados)
+     */
+    public function isSafe(): bool
+    {
+        return Myfiles::isFileSafe($this->getClientOriginalName());
     }
 
     public function isUploaded(): bool
