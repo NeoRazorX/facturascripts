@@ -216,6 +216,28 @@ abstract class BaseController extends Controller
         $this->pipe('createViews');
     }
 
+    public function removeButton(string $viewName, string $hash): void
+    {
+        if (!array_key_exists($viewName, $this->views)) {
+            throw new Exception('View not found: ' . $viewName);
+        }
+
+        $rowTypes = ['actions', 'footer'];
+        foreach ($rowTypes as $rowType) {
+            $row = $this->views[$viewName]->getRow($rowType);
+            if ($row) {
+                $children = $row->getChildren();
+                foreach ($children as $key => $child) {
+                    if (isset($child['hash']) && $child['hash'] === $hash) {
+                        unset($children[$key]);
+                        $row->setChildren($children);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     public function setCurrentView(string $viewName): void
     {
         $this->current = $viewName;
