@@ -408,6 +408,14 @@ abstract class PurchasesController extends PanelController
             return false;
         }
 
+        if (empty($model->idasiento) && $model->hasColumn('idasiento')) {
+            $generator = new \FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting();
+            $generator->generate($model);
+            if (!empty($model->idasiento)) {
+                $model->save();
+            }
+        }
+
         $this->db()->commit();
 
         if ($sendOk) {

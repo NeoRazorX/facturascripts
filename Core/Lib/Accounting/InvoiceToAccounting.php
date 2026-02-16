@@ -423,7 +423,7 @@ class InvoiceToAccounting extends AccountingClass
             return false;
         }
 
-        if (empty($this->document->total)) {
+        if ($this->document->total === null) {
             Tools::log()->warning('document-without-total', ['%document%' => $this->document->codigo]);
             return false;
         }
@@ -455,7 +455,8 @@ class InvoiceToAccounting extends AccountingClass
     protected function loadSubtotals(): bool
     {
         $this->subtotals = Calculator::getSubtotals($this->document, $this->document->getLines());
-        return !empty($this->document->total);
+
+        return $this->document->total !== null;
     }
 
     /**
