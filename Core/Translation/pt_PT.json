@@ -741,7 +741,7 @@
     "generate-accounting-entry": "Gerar lançamento contábil",
     "generate-doc-type": "Gerar tipo de documento",
     "generate-document": "Gerar documento",
-    "generate-document-desc": "Adiciona uma linha no início do documento com a informação selecionada",
+    "generate-document-desc": "Adiciona uma linha no início do documento com a informação seleccionada",
     "generate-invoice": "Criar fatura",
     "generate-receipts": "Gerar recibos",
     "generate-settlements": "Gerar liquidações",
