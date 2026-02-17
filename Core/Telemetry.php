@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,9 @@
  */
 
 namespace FacturaScripts\Core;
+
+use Exception;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * This class allow sending telemetry data to the master server,
@@ -206,6 +209,7 @@ final class Telemetry
         $data = [
             'codpais' => Tools::settings('default', 'codpais'),
             'coreversion' => Kernel::version(),
+            'dbengine' => $this->getDatabaseEngine(),
             'idinstall' => $this->id_install,
             'langcode' => Tools::config('lang'),
             'phpversion' => (float)PHP_VERSION,
@@ -217,6 +221,16 @@ final class Telemetry
         }
 
         return $data;
+    }
+
+    private function getDatabaseEngine(): string
+    {
+        try {
+            $db = new DataBase();
+            return $db->type();
+        } catch (Exception $e) {
+            return '';
+        }
     }
 
     private function save(): bool
