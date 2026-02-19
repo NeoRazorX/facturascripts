@@ -107,7 +107,7 @@ final class Telemetry
         $params['action'] = 'install';
 
         // hacemos una petición a la url de telemetría
-        $request = Http::get(self::TELEMETRY_URL, $params)->setTimeout(10);
+        $request = Http::post(self::TELEMETRY_URL, $params)->setTimeout(10);
         if ($request->failed()) {
             return false;
         }
@@ -185,7 +185,7 @@ final class Telemetry
         $this->calculateHash($params);
 
         // hacemos una petición a la url de telemetría
-        $request = Http::get(self::TELEMETRY_URL, $params)->setTimeout(3);
+        $request = Http::post(self::TELEMETRY_URL, $params)->setTimeout(3);
         if ($request->failed()) {
             return false;
         }
@@ -209,7 +209,6 @@ final class Telemetry
         $data = [
             'codpais' => Tools::settings('default', 'codpais'),
             'coreversion' => Kernel::version(),
-            'dbengine' => $this->getDatabaseEngine(),
             'idinstall' => $this->id_install,
             'langcode' => Tools::config('lang'),
             'phpversion' => (float)PHP_VERSION,
@@ -217,10 +216,27 @@ final class Telemetry
         ];
 
         if (false === $minimum) {
+            $data['dbengine'] = $this->getDatabaseEngine();
+            $data['fingerprints'] = $this->collectFingerprints();
             $data['pluginlist'] = implode(',', Plugins::enabled());
         }
 
         return $data;
+    }
+
+    private function collectFingerprints(): string
+    {
+        $fingerprints = [];
+        foreach (Plugins::list() as $plugin) {
+            $path = Tools::folder('Plugins', $plugin->name, '.fingerprint');
+            if (file_exists($path)) {
+                $content = trim(file_get_contents($path));
+                if (!empty($content)) {
+                    $fingerprints[] = $content;
+                }
+            }
+        }
+        return implode(',', $fingerprints);
     }
 
     private function getDatabaseEngine(): string
