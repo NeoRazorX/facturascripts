@@ -137,6 +137,18 @@ END;
             $job->jobname = $name;
         }
 
+        // si el job lleva más de 6 horas en running, es un proceso zombie: lo liberamos
+        if ($job->running > 0 && strtotime($job->date) < time() - (6 * 3600)) {
+            Tools::log('cron')->warning('cron-stale-job-released', [
+                '%jobName%' => $job->jobname,
+            ]);
+            $job->running = 0;
+            $job->done = true;
+            $job->failed = true;
+            $job->fails++;
+            $job->save();
+        }
+
         return $job;
     }
 
