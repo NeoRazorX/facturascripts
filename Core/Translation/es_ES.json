@@ -1285,6 +1285,7 @@
     "plugin-removal-disabled": "La eliminación de plugins está desactivada en este servidor",
     "plugin-unsupported-version": "El plugin %pluginName% es para FacturaScripts 2017 o anteriores, pero estás usando FacturaScripts %version%",
     "plugin-update": "Actualización del plugin %pluginName% a la versión %version%",
+    "plugin-version-higher": "La version actual de %pluginName% no ha sido probada en esta versión de FacturaScripts, es posible que encuentre errores",
     "plugins": "Plugins",
     "plugins-p": "Los plugins permiten añadir nuevas funciones. Activa los que necesites ahora, o bien hazlo cuando quieras desde el menú administrador.",
     "plugins-required": "Plugins requeridos",
