@@ -159,3 +159,39 @@ $(document).ready(function () {
         return !(e.which == 13 || e.keyCode == 13);
     });
 });
+
+function dateFilterOnChange(e, form){
+    // determinamos si el input es dateStart
+    const isStart = e.name.includes('start');
+
+    // obtenemos el input contrario
+    const relatedName = e.name.replace(isStart ? 'start' : 'end', isStart ? 'end' : 'start');
+    const relatedInput = document.querySelector(`input[name="${relatedName}"]`);
+
+    // asignamos los input start y end
+    const dateStart = isStart ? e : relatedInput;
+    const dateEnd = isStart ? relatedInput : e;
+
+    // si son fechas válidas, enviamos formulario
+    if(isValidDateInput(dateStart) && isValidDateInput(dateEnd)){
+        form.onsubmit();
+        form.submit();
+    }
+}
+
+function isValidDateInput(input) {
+    if (!input || !input.value) return false; // Si está vacío, es inválido
+
+    const dateValue = input.value.trim(); // Obtener valor del input
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/; // Formato YYYY-MM-DD
+
+    if (!datePattern.test(dateValue)) return false; // Validar formato
+
+    const date = new Date(dateValue);
+    const [year, month, day] = dateValue.split('-').map(Number);
+
+    // Validar que la fecha exista (ej: evitar 2024-02-30)
+    return date.getFullYear() === year &&
+        date.getMonth() + 1 === month &&
+        date.getDate() === day;
+}
