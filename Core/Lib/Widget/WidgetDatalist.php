@@ -51,8 +51,8 @@ class WidgetDatalist extends WidgetSelect
 
         $list = $this->fieldname . '-list-' . $this->getUniqueId();
         $html = '<input type="text" name="' . $this->fieldname . '" value="' . $this->value . '"'
+            . ' id="input-' . $list . '"'
             . ' class="' . $class . '"'
-            . ' list="' . $list . '"'
             . $this->inputHtmlExtraParams()
             . ' parent="' . $this->parent . '"'
             . ' data-field="' . $this->fieldname . '"'
@@ -63,12 +63,8 @@ class WidgetDatalist extends WidgetSelect
             . ' data-limit="' . $this->limit . '"'
             . '/>';
 
-        $html .= '<datalist id="' . $list . '">';
-        foreach ($this->values as $option) {
-            $title = empty($option['title']) ? $option['value'] : $option['title'];
-            $html .= '<option value="' . $title . '" />';
-        }
-        $html .= '</datalist>';
+        $html .= $this->generateAutocompleteScript($list);
+
         return $html;
     }
 
@@ -90,5 +86,38 @@ class WidgetDatalist extends WidgetSelect
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, false);
             $this->setValuesFromCodeModel($values, $this->translate);
         }
+    }
+
+    /**
+     * Genera el script de autocomplete para el campo input.
+     *
+     * @param $list
+     * @return string
+     */
+    protected function generateAutocompleteScript($list)
+    {
+        $options = array_map(function ($option) {
+            return empty($option['title']) ? $option['value'] : $option['title'];
+        }, $this->values);
+
+        $optionsJson = json_encode($options, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+
+        return '<script>
+            $(document).ready(function() {
+                const options = ' . $optionsJson . ';
+    
+                $("#input-' . htmlspecialchars($list, ENT_QUOTES, 'UTF-8') . '").autocomplete({
+                    minLength: 3,               
+                    source: function(request, response) {
+                        const term = request.term.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                        const matches = options.filter(option => {
+                            const normalizedOption = option.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                            return normalizedOption.includes(term);
+                        });
+                        response(matches);
+                    }
+                });
+            });
+        </script>';
     }
 }
