@@ -28,6 +28,7 @@ use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Core\Template\ModelClass;
 use FacturaScripts\Core\Template\ModelTrait;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Validator;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
@@ -130,6 +131,15 @@ class Cliente extends ModelClass
 
     /** @var string */
     public $web;
+
+    /** @var string */
+    public $last_nick;
+
+    /** @var string */
+    public $last_update;
+
+    /** @var string */
+    public $nick;
 
     public function checkVies(bool $msg = true): bool
     {
@@ -309,6 +319,12 @@ class Cliente extends ModelClass
 
     public function test(): bool
     {
+        $this->last_nick = Session::user()->nick;
+        $this->last_update = Tools::date();
+        if (false === $this->exists()) {
+            $this->nick = $this->last_nick;
+        }
+
         $this->debaja = !empty($this->fechabaja);
         $this->fax = Tools::noHtml($this->fax) ?? '';
         $this->langcode = Tools::noHtml($this->langcode);
