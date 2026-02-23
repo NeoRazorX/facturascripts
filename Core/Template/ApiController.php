@@ -45,13 +45,13 @@ abstract class ApiController implements ControllerInterface
     private $dataBase;
 
     /** @var Request */
-    protected $request;
+    public $request;
 
     /** @var Response */
-    protected $response;
+    public $response;
 
     /** @var string */
-    protected $url;
+    public $url;
 
     abstract protected function runResource(): void;
 
