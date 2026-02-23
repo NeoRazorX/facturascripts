@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Lib\ExportPDF;
 use FacturaScripts\Core\Request;
 use FacturaScripts\Core\Response;
 use FacturaScripts\Core\Template\ApiController;
@@ -80,11 +81,21 @@ class ApiExportDocument extends ApiController
         $lang = $this->request->query('lang', $doc->getSubject()->langcode) ?? '';
         $title = Tools::lang($lang)->trans('invoice') . ' ' . $doc->id();
 
+        // if (strtoupper($type) === 'PDF') {
+        //     $exporter = ExportPDF::create()
+        //         ->setLang($lang)
+        //         ->addModel($doc);
+
+        //     $fileName = $this->buildFileName($title) . '.pdf';
+        //     $this->response->headers->set('Content-type', 'application/pdf');
+        //     $this->response->headers->set('Content-Disposition', 'inline;filename=' . $fileName);
+        //     $this->response->setContent($exporter->output());
+        //     return;
+        // }
+
         $exportManager = new ExportManager();
         $exportManager->newDoc($type, $title, $format, $lang);
         $exportManager->addBusinessDocPage($doc);
-
-        // devolvemos la respuesta
         $exportManager->show($this->response);
     }
 
@@ -125,5 +136,11 @@ class ApiExportDocument extends ApiController
         }
 
         return false;
+    }
+
+    private function buildFileName(string $title): string
+    {
+        $normalized = str_replace([' ', '"', "'", '/', '\\'], '_', Tools::noHtml($title));
+        return trim($normalized) ?: 'documento';
     }
 }
