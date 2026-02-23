@@ -28,6 +28,8 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\PedidoProveedor;
 use FacturaScripts\Dinamic\Model\PresupuestoProveedor;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
+use FacturaScripts\Core\Lib\CostPriceTools;
+use FacturaScripts\Dinamic\Model\Variante;
 
 class PurchaseDocumentWorker extends WorkerClass
 {
@@ -77,7 +79,12 @@ class PurchaseDocumentWorker extends WorkerClass
                 $product->idproducto = $line->idproducto;
                 $product->precio = $line->pvpunitario;
                 $product->referencia = $line->referencia;
-                $product->save();
+                if ($product->save()) {
+                    $variant = $product->getVariant();
+                    if ($variant->id) {
+                        CostPriceTools::update($variant);
+                    }
+                }
             }
         }
 

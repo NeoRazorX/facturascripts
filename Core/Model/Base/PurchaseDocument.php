@@ -95,8 +95,6 @@ abstract class PurchaseDocument extends TransformerDocument
             $newLine->recargo = $product->getTax()->recargo;
             $newLine->referencia = $variant->referencia;
 
-            $this->setLastSupplierPrice($newLine);
-
             // allow extensions
             $this->pipe('getNewProductLine', $newLine, $variant, $product);
         }
@@ -207,28 +205,5 @@ abstract class PurchaseDocument extends TransformerDocument
     {
         $proveedor = new Proveedor();
         return $this->codproveedor && $proveedor->load($this->codproveedor) && $this->setSubject($proveedor);
-    }
-
-    /**
-     * Sets the last price and discounts from this supplier.
-     *
-     * @param BusinessDocumentLine $newLine
-     */
-    protected function setLastSupplierPrice(&$newLine): void
-    {
-        $where = [
-            new DataBaseWhere('codproveedor', $this->codproveedor),
-            new DataBaseWhere('referencia', $newLine->referencia),
-            new DataBaseWhere('precio', 0, '>')
-        ];
-        $orderBy = ['coddivisa' => 'DESC'];
-        foreach (ProductoProveedor::all($where, $orderBy) as $prod) {
-            if ($prod->coddivisa === $this->coddivisa || $prod->coddivisa === null) {
-                $newLine->dtopor = $prod->dtopor;
-                $newLine->dtopor2 = $prod->dtopor2;
-                $newLine->pvpunitario = $prod->precio;
-                return;
-            }
-        }
     }
 }
