@@ -1,0 +1,15 @@
+parameters:
+    level: 1
+    paths:
+        - Core
+    scanDirectories:
+        - Dinamic
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    ignoreErrors:
+        -
+            identifier: new.static
+        -
+            identifier: empty.variable
+        -
+            identifier: isset.variable
