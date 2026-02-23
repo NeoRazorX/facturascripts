@@ -26,11 +26,16 @@ namespace FacturaScripts\Core\Lib;
  */
 class InvoiceOperation
 {
-    const BENEFIT_THIRD_PARTIES = 'benefit-3-parties';
-    const EXPORT = 'exportacion';
-    const INTRA_COMMUNITY = 'intracomunitaria';
-    const SUCCESSIVE_TRACT = 'successive-tract';
-    const WORK_CERTIFICATION = 'work-certification';
+    const BENEFIT_THIRD_PARTIES = 'benefit-3-parties'; // Operación triangular (art. 26 LIVA) – Entrega en beneficio de terceros en operaciones en cadena dentro de la UE.
+    const EXPORT = 'exportacion'; // Exportación (art. 21 LIVA) – Ventas a países terceros fuera de la UE, exentas de IVA.
+    const INTRA_COMMUNITY = 'intracomunitaria'; // Entrega intracomunitaria (art. 25 LIVA) – Venta a cliente con NIF-IVA de otro Estado miembro, exenta de IVA.
+    const SUCCESSIVE_TRACT = 'successive-tract'; // Entrega sucesiva (art. 8.Dos LIVA) – Operaciones en cadena con un único transporte del bien.
+    const WORK_CERTIFICATION = 'work-certification'; // Certificación de obra (art. 75 LIVA) – Devengo del IVA al aprobarse la certificación, no al emitir la factura.
+
+    // === Operaciones de compra internacionales ===
+    const IMPORT = 'importacion'; // Importación de bienes (arts. 17–18 LIVA) – Compras a países terceros. El IVA se liquida en aduana o se difiere según art. 167.Dos LIVA.
+    const INTRA_COMMUNITY_ACQUISITION = 'compra-intracom'; // Adquisición intracomunitaria (art. 25 y 84 LIVA) – Compras a proveedores UE con inversión del sujeto pasivo.
+    const SERVICE_IMPORT = 'importservices'; // Importación de servicios (arts. 69–70 y 84 LIVA) – Servicios recibidos del extranjero, con localización en España e inversión del sujeto pasivo.
 
     /** @var array */
     private static $all = [];
@@ -49,6 +54,11 @@ class InvoiceOperation
             self::WORK_CERTIFICATION => 'work-certification',
             self::BENEFIT_THIRD_PARTIES => 'benefit-3-parties',
             self::SUCCESSIVE_TRACT => 'successive-tract',
+
+            // Compras internacionales
+            self::IMPORT => 'operation-import',
+            self::INTRA_COMMUNITY_ACQUISITION => 'operation-intra-community-acquisition',
+            self::SERVICE_IMPORT => 'operation-import-services',
         ];
 
         return array_merge($defaults, self::$all);
