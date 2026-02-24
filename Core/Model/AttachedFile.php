@@ -325,7 +325,6 @@ class AttachedFile extends ModelClass
                 $image = @imagecreatefromjpeg($filePath);
                 if ($image) {
                     imagejpeg($image, $filePath, 95);
-                    imagedestroy($image);
                 }
                 break;
 
@@ -335,7 +334,6 @@ class AttachedFile extends ModelClass
                     imagealphablending($image, false);
                     imagesavealpha($image, true);
                     imagepng($image, $filePath, 6);
-                    imagedestroy($image);
                 }
                 break;
 
@@ -348,7 +346,6 @@ class AttachedFile extends ModelClass
                     imagealphablending($image, false);
                     imagesavealpha($image, true);
                     imagewebp($image, $filePath, 95);
-                    imagedestroy($image);
                 }
                 break;
         }
