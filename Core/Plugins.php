@@ -451,7 +451,15 @@ final class Plugins
         $folders = [];
         for ($index = 0; $index < $zipFile->numFiles; $index++) {
             $data = $zipFile->statIndex($index);
-            $path = explode('/', $data['name']);
+            $name = $data['name'];
+
+            // comprobamos que no hay path traversal (Zip Slip)
+            if (false !== strpos($name, '..')) {
+                Tools::log()->error('zip-error-wrong-structure');
+                return false;
+            }
+
+            $path = explode('/', $name);
             if (count($path) > 1) {
                 $folders[$path[0]] = $path[0];
             }
