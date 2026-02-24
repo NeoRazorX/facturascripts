@@ -252,11 +252,7 @@ class Calculator
         if (isset($doc->codpais) && $doc->codpais) {
             $taxZoneModel = new ImpuestoZona();
             foreach ($taxZoneModel->all([], ['prioridad' => 'DESC']) as $taxZone) {
-                if ($taxZone->codpais == $doc->codpais && $taxZone->provincia() == $doc->provincia) {
-                    $taxZones[] = $taxZone;
-                } elseif ($taxZone->codpais == $doc->codpais && $taxZone->codisopro == null) {
-                    $taxZones[] = $taxZone;
-                } elseif ($taxZone->codpais == null) {
+                if ($taxZone->matchPais($doc->codpais, $doc->provincia)) {
                     $taxZones[] = $taxZone;
                 }
             }

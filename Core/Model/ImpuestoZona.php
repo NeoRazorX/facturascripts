@@ -90,6 +90,28 @@ class ImpuestoZona extends ModelClass
         $this->prioridad = 1;
     }
 
+    public function matchPais(?string $codpais, ?string $provincia): bool
+    {
+        if ($this->codpais !== null && $this->codpais != $codpais) {
+            return false;
+        }
+
+        return $this->matchProvincia($provincia);
+    }
+
+    public function matchProvincia(?string $provincia): bool
+    {
+        if ($this->codisopro === null) {
+            return true;
+        }
+
+        if ($provincia === null) {
+            return false;
+        }
+
+        return 0 === strcasecmp($this->provincia(), $provincia);
+    }
+
     public function provincia(): ?string
     {
         if (!isset($this->provincia)) {
