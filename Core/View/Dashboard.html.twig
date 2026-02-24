@@ -44,6 +44,10 @@
         </div>
     </div>
     <div class="container" style="margin-top: -40px;">
+        {# sectionLinks #}
+        {% for includeView in getIncludeViews('Dashboard', 'sectionLinksBefore') %}
+            {% include includeView['path'] %}
+        {% endfor %}
         {% block sectionLinks %}
             <div class="row">
                 <div class="col">
@@ -51,6 +55,11 @@
                 </div>
             </div>
         {% endblock %}
+        {% for includeView in getIncludeViews('Dashboard', 'sectionLinksAfter') %}
+            {% include includeView['path'] %}
+        {% endfor %}
+
+        {# backup warning #}
         {% if fsc.showBackupWarning() %}
             <div class="row">
                 <div class="col">
@@ -83,9 +92,22 @@
                 {{ Utils.registerInstall() }}
             </div>
         {% endif %}
+
+        {# sectionStats #}
+        {% for includeView in getIncludeViews('Dashboard', 'sectionStatsBefore') %}
+            {% include includeView['path'] %}
+        {% endfor %}
         {% block sectionStats %}
             {{ _self.sectionStats(fsc) }}
         {% endblock %}
+        {% for includeView in getIncludeViews('Dashboard', 'sectionStatsAfter') %}
+            {% include includeView['path'] %}
+        {% endfor %}
+
+        {# sections #}
+        {% for includeView in getIncludeViews('Dashboard', 'sectionsBefore') %}
+            {% include includeView['path'] %}
+        {% endfor %}
         {% block sections %}
             <div class="row">
                 <div class="col">
@@ -99,6 +121,10 @@
             </div>
             {{ _self.sectionNews(fsc) }}
         {% endblock %}
+        {% for includeView in getIncludeViews('Dashboard', 'sectionsAfter') %}
+            {% include includeView['path'] %}
+        {% endfor %}
+
     </div>
 {% endblock %}
 
