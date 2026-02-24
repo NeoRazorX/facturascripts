@@ -295,13 +295,62 @@ class AttachedFile extends ModelClass
         }
 
         $this->path = $newFolder . '/' . $this->idfile . '.' . $this->getExtension();
-        $this->size = filesize($this->getFullPath());
         $info = new finfo();
         $this->mimetype = $info->file($this->getFullPath(), FILEINFO_MIME_TYPE);
         if (strlen($this->mimetype) > 100) {
             $this->mimetype = substr($this->mimetype, 0, 100);
         }
 
+        // Strip EXIF and embedded metadata from image files to prevent privacy leaks
+        // (GPS coordinates, device info, author names, etc.)
+        $this->stripImageMetadata($this->getFullPath(), $this->mimetype);
+
+        $this->size = filesize($this->getFullPath());
+
         return true;
+    }
+
+    /**
+     * Re-encodes an image using GD to strip all embedded metadata (EXIF, XMP, IPTC, GPS, etc.).
+     * Only processes JPEG, PNG, and WebP formats. GIF is skipped to preserve animation support.
+     */
+    protected function stripImageMetadata(string $filePath, string $mimeType): void
+    {
+        if (false === function_exists('imagecreatefromjpeg')) {
+            return;
+        }
+
+        switch ($mimeType) {
+            case 'image/jpeg':
+                $image = @imagecreatefromjpeg($filePath);
+                if ($image) {
+                    imagejpeg($image, $filePath, 95);
+                    imagedestroy($image);
+                }
+                break;
+
+            case 'image/png':
+                $image = @imagecreatefrompng($filePath);
+                if ($image) {
+                    imagealphablending($image, false);
+                    imagesavealpha($image, true);
+                    imagepng($image, $filePath, 6);
+                    imagedestroy($image);
+                }
+                break;
+
+            case 'image/webp':
+                if (false === function_exists('imagecreatefromwebp')) {
+                    break;
+                }
+                $image = @imagecreatefromwebp($filePath);
+                if ($image) {
+                    imagealphablending($image, false);
+                    imagesavealpha($image, true);
+                    imagewebp($image, $filePath, 95);
+                    imagedestroy($image);
+                }
+                break;
+        }
     }
 }
