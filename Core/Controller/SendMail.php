@@ -194,8 +194,8 @@ class SendMail extends Controller
         ];
         if ($notificationModel->loadWhere($where)) {
             // hemos encontrado una notificación, usamos su asunto y cuerpo
-            $shortCodes = ['{code}', '{name}', '{date}', '{total}', '{number2}'];
-            $shortValues = [$model->codigo, '', $model->fecha, $model->total, ''];
+            $shortCodes = ['{code}', '{name}', '{date}', '{total}', '{number2}', '{contact_name}', '{contact_surname}'];
+            $shortValues = [$model->codigo, '', $model->fecha, $model->total, '', '', ''];
 
             $shortValues[1] = $model->hasColumn('nombrecliente')
                 ? $model->nombrecliente
@@ -204,6 +204,11 @@ class SendMail extends Controller
             $shortValues[4] = $model->hasColumn('numero2')
                 ? $model->numero2
                 : $model->numproveedor;
+
+            if($model->hasColumn('idcontactofact') && $contacto = Contacto::find($model->idcontactofact)){
+                $shortValues[5] = $contacto->nombre;
+                $shortValues[6] = $contacto->apellidos;
+            }
 
             $subject = str_replace($shortCodes, $shortValues, $notificationModel->subject);
             $body = str_replace($shortCodes, $shortValues, $notificationModel->body);
