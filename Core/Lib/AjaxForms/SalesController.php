@@ -197,6 +197,7 @@ abstract class SalesController extends PanelController
             case 'fast-line':
             case 'fast-product':
             case 'new-line':
+            case 'new-text-line':
             case 'recalculate':
             case 'rm-line':
             case 'set-customer':
