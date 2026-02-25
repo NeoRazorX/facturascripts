@@ -106,8 +106,7 @@ class ListProducto extends ListController
             ->addFilterCheckbox('nostock', 'no-stock', 'nostock')
             ->addFilterCheckbox('ventasinstock', 'allow-sale-without-stock', 'ventasinstock')
             ->addFilterCheckbox('secompra', 'for-purchase', 'secompra')
-            ->addFilterCheckbox('sevende', 'for-sale', 'sevende')
-            ->addFilterTree('descendientede', 'descendant-of', 'codfamilia', 'familias', 'madre', 'codfamilia', 'descripcion');
+            ->addFilterCheckbox('sevende', 'for-sale', 'sevende');
     }
 
     protected function createViewVariante(string $viewName = 'ListVariante'): void

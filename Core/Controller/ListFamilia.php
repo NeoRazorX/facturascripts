@@ -52,7 +52,6 @@ class ListFamilia extends ListController
             ->addOrderBy(['numproductos'], 'products');
 
         $selectValues = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
-        $this->addFilterSelect($viewName, 'madre', 'parent', 'madre', $selectValues)
-            ->addFilterTree('descendientede', 'descendant-of', 'codfamilia', 'familias', 'madre', 'codfamilia', 'descripcion');
+        $this->addFilterSelect($viewName, 'madre', 'parent', 'madre', $selectValues);
     }
 }

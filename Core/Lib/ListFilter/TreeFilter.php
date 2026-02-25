@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -15,14 +15,14 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
- * @author Jose Antonio Cuello Principal <yopli2000@gmail.com> https://github.com/Yopli2k/ProductFamilyFilter/blob/6bf80b2e87c0ad5620f1586733460e592140d9c5/Lib/ListFilter/TreeFilter.php
+ *
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
+
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Lib\ListFilter\AutocompleteFilter;
 
 /**
  * Filter all records that match the search term and his child's.
@@ -31,9 +31,7 @@ use FacturaScripts\Dinamic\Lib\ListFilter\AutocompleteFilter;
  */
 class TreeFilter extends AutocompleteFilter
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public string $fieldparent;
 
     /**
@@ -49,6 +47,7 @@ class TreeFilter extends AutocompleteFilter
     public function __construct(string $key, string $field, string $label, string $table, string $fieldparent, string $fieldcode = '', string $fieldtitle = '', array $where = [])
     {
         parent::__construct($key, $field, $label, $table, $fieldcode, $fieldtitle, $where);
+
         $this->fieldparent = $fieldparent;
     }
 
@@ -81,12 +80,12 @@ class TreeFilter extends AutocompleteFilter
 
         $sql = "WITH RECURSIVE valuelist AS ("
             . "SELECT " . $this->fieldcode . "," . $this->fieldparent
-                . " FROM " . $this->table
-                . " WHERE " . $this->fieldcode . " = '" . $this->value . "'"
+            . " FROM " . $this->table
+            . " WHERE " . $this->fieldcode . " = '" . $this->value . "'"
             . " UNION ALL "
             . "SELECT t1." . $this->fieldcode . ", t1." . $this->fieldparent
-                . " FROM " . $this->table . " t1"
-                . " INNER JOIN valuelist t2 ON t2." . $this->fieldcode . " = t1." . $this->fieldparent
+            . " FROM " . $this->table . " t1"
+            . " INNER JOIN valuelist t2 ON t2." . $this->fieldcode . " = t1." . $this->fieldparent
             . ") "
             . "SELECT * FROM valuelist;";
 
