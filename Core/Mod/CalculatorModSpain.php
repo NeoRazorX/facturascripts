@@ -151,6 +151,9 @@ class CalculatorModSpain implements CalculatorModInterface
             $addressShipping->load($doc->idcontactoenv);
         }
 
+        // método de cálculo configurable: classic (por defecto) o price-adjusted
+        $taxMethod = Tools::settings('default', 'taxcalculationmethod', 'classic');
+
         // Inicialización de variables globales para las 4 comprobaciones
         $globalEx = $doc->operacion;
         $allZeroIva = true;
@@ -232,9 +235,6 @@ class CalculatorModSpain implements CalculatorModInterface
 
             // IVA
             if ($line->iva > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
-                // método de cálculo configurable: classic (por defecto) o price-adjusted
-                $taxMethod = Tools::settings('default', 'taxcalculationmethod', 'classic');
-
                 if ($taxMethod === 'price-adjusted' && $line->getTax()->tipo !== Impuesto::TYPE_FIXED_VALUE) {
                     // calculamos el precio con IVA unitario
                     $pvp_iva = Tools::round($line->pvpunitario * (100 + $line->iva) / 100);
@@ -315,7 +315,7 @@ class CalculatorModSpain implements CalculatorModInterface
         $subtotals['iva'][$ivaKey]['neto'] += $beneficio;
         $subtotals['iva'][$ivaKey]['netosindto'] += $beneficio;
         $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
-            $beneficio * $line->iva :
+            $line->cantidad * $line->iva :
             $beneficio * $line->iva / 100;
 
         return true;
