@@ -183,6 +183,9 @@ class EditProducto extends EditController
 
             case 'unlink-file':
                 return $this->unlinkFileAction();
+
+            case 'sort-files':
+                return $this->sortFilesAction();
         }
 
         return parent::execPreviousAction($action);
