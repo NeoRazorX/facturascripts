@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2023-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,9 +31,9 @@ final class ViesTest extends TestCase
             ['results' => -1, 'number' => '123', 'iso' => ''],
             ['results' => 0, 'number' => '123456789', 'iso' => 'ES'],
             ['results' => 0, 'number' => 'ES74003828J', 'iso' => 'ES'],
-            ['results' => 1, 'number' => 'ES74003828V', 'iso' => 'ES'],
-            ['results' => 1, 'number' => '74003828V', 'iso' => 'ES'],
+            ['results' => 1, 'number' => 'ES75897326V', 'iso' => 'ES'],
             ['results' => 1, 'number' => '43834596223', 'iso' => 'FR'],
+            ['results' => 1, 'number' => 'FR38821737384', 'iso' => 'FR'],
             ['results' => 0, 'number' => '81328757100011', 'iso' => 'FR'],
             ['results' => 1, 'number' => '514356480', 'iso' => 'PT'],
             ['results' => 1, 'number' => '513969144', 'iso' => 'PT'],
@@ -47,7 +47,7 @@ final class ViesTest extends TestCase
                 $this->markTestSkipped('Vies service returns error: ' . Vies::getLastError());
             }
 
-            $this->assertEquals($item['results'], $check);
+            $this->assertEquals($item['results'], $check, 'Vies::check(' . $item['number'] . ', ' . $item['iso'] . ') returned ' . $check . ', expected ' . $item['results']);
 
             // esperamos medio segundo para no saturar el servicio
             usleep(500000);
