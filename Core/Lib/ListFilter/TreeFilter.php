@@ -198,7 +198,8 @@ class TreeFilter extends SelectFilter
             $prefix = str_repeat('&nbsp;&nbsp;', $level);
             $result[] = [
                 'code' => $node[$this->fieldcode],
-                'description' => $prefix . htmlspecialchars($node[$this->fieldtitle])
+                // si es el nivel superior entonces no mostrar espacio y bolita
+                'description' => ($level !== 0 ? $prefix . '&bull;&nbsp;' : '') . htmlspecialchars($node[$this->fieldtitle])
             ];
             if (isset($node['children'])) {
                 $result = array_merge($result, $this->flattenTree($node['children'], $level + 1));
