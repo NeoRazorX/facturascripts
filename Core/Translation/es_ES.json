@@ -62,6 +62,7 @@
     "add-user": "Añadir usuario",
     "additional-text": "Texto adicional",
     "address": "Dirección",
+    "address-changed-save-msg": "La dirección ha sido actualizada. No olvides guardar el documento para aplicar los cambios.",
     "addresses": "Direcciones",
     "addresses-and-contacts": "Direcciones y contactos",
     "admin": "Administrador",
