@@ -111,6 +111,28 @@ select[required].form-select.select2 + .select2-container--bootstrap-5 .select2-
     box-shadow: 0 0 0 0.2rem rgba(253, 253, 150, 0.4) !important;
 }
 
+select[required][data-campo-requerido-no-seleccionado].form-select.select2 + .select2-container--bootstrap-5 .select2-selection {
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.4) !important;
+    border-color: #dc3545 !important;
+}
+
+.marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+.marquee-text {
+    display: inline-block;
+    padding-left: 100%;
+    animation: cartel-rotativo 5s linear infinite;
+}
+
+@keyframes cartel-rotativo {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
 /* pace customizations */
 .pace {
     -webkit-pointer-events: none;
